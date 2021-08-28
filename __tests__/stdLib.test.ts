@@ -41,7 +41,22 @@ describe('evaluator', () => {
       expect(executeProgram('(- 2 2)')).toBe(2 - 2)
       expect(executeProgram('(- -2 2)')).toBe(-2 - 2)
       expect(executeProgram('(- 1 2 3 4)')).toBe(1 - 2 - 3 - 4)
-      expect(() => executeProgram('(/ "1" 2 3 4)')).toThrow()
+      expect(() => executeProgram('(- "1" 2 3 4)')).toThrow()
+    })
+  })
+
+  describe('%', () => {
+    test('samples', () => {
+      expect(() => executeProgram('(%)')).toThrow()
+      expect(() => executeProgram('(% 3)')).toThrow()
+      expect(() => executeProgram('(% 3 4 5)')).toThrow()
+      expect(executeProgram('(% 2 1)')).toBe(0)
+      expect(executeProgram('(% 2 2)')).toBe(0)
+      expect(executeProgram('(% 3 2)')).toBe(1)
+      expect(executeProgram('(% 3 -2)')).toBe(1)
+      expect(executeProgram('(% -3 -2)')).toBe(-1)
+      expect(executeProgram('(% -3 2)')).toBe(-1)
+      expect(() => executeProgram('(% 4 0)')).toThrow()
     })
   })
 

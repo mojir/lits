@@ -64,6 +64,15 @@ const stdLib: StdLib = {
     },
   },
 
+  '%': {
+    evaluate: ([first, second]: unknown[]): number => {
+      assertNumber(first)
+      assertNumberNotZero(second)
+      return first % second
+    },
+    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+  },
+
   '=': {
     evaluate: ([first, ...rest]: unknown[]): boolean => {
       for (const param of rest) {
