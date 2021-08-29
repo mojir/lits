@@ -1,7 +1,7 @@
 import {
   AstNode,
-  BasicExpressionNode,
-  LetExpressionNode,
+  NormalExpressionNode,
+  SpecialExpressionNode,
   NameNode,
   NumberNode,
   StringNode,
@@ -9,8 +9,15 @@ import {
 import get from 'lodash/get'
 import { Ast } from '../parser/Parser.types'
 import { stdLibEvaluators } from '../stdLib/stdLib'
-
 export type Context = Record<string, EvaluationResult>
+
+const reservedName: Record<string, () => unknown> = {
+  true: () => true,
+  false: () => false,
+  null: () => null,
+  undefined: () => undefined,
+}
+
 type EvaluationResult = unknown
 
 export function evaluateAst(ast: Ast, globalContext: Context): EvaluationResult {
@@ -28,10 +35,10 @@ function evaluateAstNode(node: AstNode, contextStack: Context[]): EvaluationResu
       return evaluateNumber(node)
     case 'String':
       return evaluateString(node)
-    case 'BasicExpression':
-      return evaluateBasicExpression(node, contextStack)
-    case 'LetExpression':
-      return evaluateLetExpression(node, contextStack)
+    case 'NormalExpression':
+      return evaluateNormalExpression(node, contextStack)
+    case 'SpecialExpression':
+      return evaluateSpecialExpression(node, contextStack)
     case 'Name':
       return evaluateName(node, contextStack)
   }
@@ -46,16 +53,11 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateName(node: NameNode, contextStack: Context[]): unknown {
-  switch (node.value) {
-    case 'true':
-      return true
-    case 'false':
-      return false
-    case 'null':
-      return null
-    case 'undefined':
-      return undefined
+  const keyWordFn = reservedName[node.value]
+  if (keyWordFn) {
+    return keyWordFn()
   }
+
   const path = node.value
   const dotPosition = path.indexOf('.')
   const bracketPosition = path.indexOf('[')
@@ -70,7 +72,7 @@ function evaluateName(node: NameNode, contextStack: Context[]): unknown {
   throw Error(`Undefined identifier ${path}`)
 }
 
-function evaluateBasicExpression(node: BasicExpressionNode, contextStack: Context[]): EvaluationResult {
+function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): EvaluationResult {
   const func = stdLibEvaluators[node.name]
   if (!func) {
     throw Error(`Unrecognized name ${node.name}`)
@@ -83,12 +85,16 @@ function evaluateBasicExpression(node: BasicExpressionNode, contextStack: Contex
 
   // Special case, setq should set data on global scope
   if (node.name === 'setq') {
-    const variable = assertNameNode(node.params[0]).value
+    const name = assertNameNode(node.params[0]).value
+    if (reservedName[name]) {
+      throw SyntaxError(`Cannot set symbol name to "${name}", it's a reserved name`)
+    }
+
     const value = evaluateAstNode(assertAstNode(node.params[1]), contextStack)
 
     // The second last stack entry is the "global" scope
     const globalContext = contextStack[contextStack.length - 2] as Context
-    globalContext[variable] = value
+    globalContext[name] = value
 
     return value
   }
@@ -103,7 +109,7 @@ function evaluateBasicExpression(node: BasicExpressionNode, contextStack: Contex
   }
 }
 
-function evaluateLetExpression(node: LetExpressionNode, contextStack: Context[]): EvaluationResult {
+function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): EvaluationResult {
   const locals: Context = {}
   for (const binding of node.bindings) {
     const bindingNode = binding.params[0]

@@ -1,7 +1,7 @@
-import { BasicExpressionNode } from '../parser/Parser.types'
+import { NormalExpressionNode } from '../parser/Parser.types'
 
 type Evaluate = (params: unknown[]) => unknown
-type ValidateNode = (node: BasicExpressionNode) => void
+type ValidateNode = (node: NormalExpressionNode) => void
 
 export type StdLib = Record<
   string,

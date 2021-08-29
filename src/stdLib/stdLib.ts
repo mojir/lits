@@ -1,4 +1,4 @@
-import { BasicExpressionNode } from '../parser/Parser.types'
+import { NormalExpressionNode } from '../parser/Parser.types'
 import {
   assertLengthEven,
   assertLengthOne,
@@ -70,7 +70,7 @@ const stdLib: StdLib = {
       assertNumberNotZero(second)
       return first % second
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
   '=': {
@@ -82,7 +82,7 @@ const stdLib: StdLib = {
       }
       return true
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
   },
 
   '!=': {
@@ -96,7 +96,7 @@ const stdLib: StdLib = {
       }
       return true
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
   },
 
   '>': {
@@ -117,7 +117,7 @@ const stdLib: StdLib = {
       }
       return true
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
   },
 
   '<': {
@@ -138,7 +138,7 @@ const stdLib: StdLib = {
       }
       return true
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
   },
 
   '>=': {
@@ -158,7 +158,7 @@ const stdLib: StdLib = {
       }
       return true
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
   },
 
   '<=': {
@@ -178,7 +178,7 @@ const stdLib: StdLib = {
       }
       return true
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
   },
 
   and: {
@@ -191,42 +191,42 @@ const stdLib: StdLib = {
 
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   stringp: {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'string',
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   numberp: {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'number',
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   booleanp: {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'boolean',
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   undefinedp: {
     evaluate: ([first]: unknown[]): boolean => first === undefined,
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   nullp: {
     evaluate: ([first]: unknown[]): boolean => first === null,
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   arrayp: {
     evaluate: ([first]: unknown[]): boolean => Array.isArray(first),
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   objectp: {
     evaluate: ([first]: unknown[]): boolean => first !== null && !Array.isArray(first) && typeof first === 'object',
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   substring: {
@@ -242,7 +242,7 @@ const stdLib: StdLib = {
       assertNumberGte(third, second)
       return (first as string).substring(second, third)
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwoOrThree(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwoOrThree(params),
   },
 
   length: {
@@ -250,10 +250,10 @@ const stdLib: StdLib = {
       assertStringOrArray(first)
       return first.length
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  'string-concat': {
+  concat: {
     evaluate: (params: unknown[]): unknown => {
       return params.reduce((result: string, param) => {
         assertString(param)
@@ -277,7 +277,7 @@ const stdLib: StdLib = {
       }
       return result
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthEven(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthEven(params),
   },
 
   aref: {
@@ -286,16 +286,16 @@ const stdLib: StdLib = {
       assertNonNegativeNumber(second)
       return first[second]
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
   write: {
     evaluate: ([first]: unknown[]): unknown => {
       // eslint-disable-next-line no-console
-      console.log('LISP>', first)
+      console.log('LISPISH>', first)
       return first
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
   'string>': {
@@ -304,7 +304,7 @@ const stdLib: StdLib = {
       assertString(second)
       return first > second
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
   'string<': {
@@ -313,7 +313,7 @@ const stdLib: StdLib = {
       assertString(second)
       return first < second
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
   'string>=': {
@@ -322,7 +322,7 @@ const stdLib: StdLib = {
       assertString(second)
       return first >= second
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
   'string<=': {
@@ -331,17 +331,17 @@ const stdLib: StdLib = {
       assertString(second)
       return first <= second
     },
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
   setq: {
-    evaluate: () => undefined, // Handled by parseBasicExpression
-    validate: ({ params }: BasicExpressionNode): void => assertLengthTwo(params),
+    evaluate: () => undefined, // Handled by parseNormalExpression
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
   if: {
-    evaluate: () => undefined, // Handled by parseBasicExpression
-    validate: ({ params }: BasicExpressionNode): void => assertLengthThree(params),
+    evaluate: () => undefined, // Handled by parseNormalExpression
+    validate: ({ params }: NormalExpressionNode): void => assertLengthThree(params),
   },
 }
 

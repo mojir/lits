@@ -1,4 +1,4 @@
-export type NodeType = 'Number' | 'String' | 'BasicExpression' | 'LetExpression' | 'Name'
+export type NodeType = 'Number' | 'String' | 'NormalExpression' | 'SpecialExpression' | 'Name'
 
 interface GenericNode {
   type: NodeType
@@ -16,19 +16,19 @@ export interface NameNode extends GenericNode {
   type: 'Name'
   value: string
 }
-export interface BasicExpressionNode extends GenericNode {
-  type: 'BasicExpression'
+export interface NormalExpressionNode extends GenericNode {
+  type: 'NormalExpression'
   name: string
   params: AstNode[]
 }
 
-export interface LetExpressionNode extends GenericNode {
-  type: 'LetExpression'
+export interface SpecialExpressionNode extends GenericNode {
+  type: 'SpecialExpression'
   params: AstNode[]
-  bindings: BasicExpressionNode[]
+  bindings: NormalExpressionNode[]
 }
 
-export type AstNode = NumberNode | StringNode | NameNode | BasicExpressionNode | LetExpressionNode
+export type AstNode = NumberNode | StringNode | NameNode | NormalExpressionNode | SpecialExpressionNode
 
 export type Ast = {
   type: 'Program'

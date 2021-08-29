@@ -1,6 +1,6 @@
 import { Token } from '../tokenizer/Tokenizer.types'
 import { assertToken } from '../utils'
-import { AstNode, BasicExpressionNode, LetExpressionNode, NameNode, NumberNode, StringNode } from './Parser.types'
+import { AstNode, NormalExpressionNode, SpecialExpressionNode, NameNode, NumberNode, StringNode } from './Parser.types'
 import { stdLibValidators } from '../stdLib/stdLib'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
@@ -21,7 +21,7 @@ export const parseName: ParseName = (tokens: Token[], position: number) => {
   return [position + 1, { type: 'Name', value: token.value }]
 }
 
-type ExpressionNode = BasicExpressionNode | LetExpressionNode
+type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
 type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
 export const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis - end of let bindingshesis
@@ -31,7 +31,7 @@ export const parseExpression: ParseExpression = (tokens, position) => {
 
   if (token.value === 'let') {
     node = {
-      type: 'LetExpression',
+      type: 'SpecialExpression',
       params: [],
       bindings: [],
     }
@@ -45,7 +45,7 @@ export const parseExpression: ParseExpression = (tokens, position) => {
         throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected an expression`)
       }
       const [newPosition, param] = parseExpression(tokens, position)
-      if (param.type === 'LetExpression') {
+      if (param.type === 'SpecialExpression') {
         throw Error('Expected a binding expression')
       }
       position = newPosition
@@ -55,7 +55,7 @@ export const parseExpression: ParseExpression = (tokens, position) => {
     position += 1 // skip right parenthesis - end of let bindings
   } else {
     node = {
-      type: 'BasicExpression',
+      type: 'NormalExpression',
       name: token.value,
       params: [],
     }
@@ -68,7 +68,7 @@ export const parseExpression: ParseExpression = (tokens, position) => {
     token = assertToken(tokens[position], position)
   }
   position += 1
-  if (node.type === 'BasicExpression') {
+  if (node.type === 'NormalExpression') {
     try {
       stdLibValidators[node.name]?.(node)
     } catch (e) {
