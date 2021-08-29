@@ -11,11 +11,11 @@ import { Ast } from '../parser/interface'
 import { builtInFunction, specialExpression } from '../builtin'
 export type Context = Record<string, EvaluationResult>
 
-const reservedName: Record<string, () => unknown> = {
-  true: () => true,
-  false: () => false,
-  null: () => null,
-  undefined: () => undefined,
+const reservedName: Record<string, { value: unknown }> = {
+  true: { value: true },
+  false: { value: false },
+  null: { value: null },
+  undefined: { value: undefined },
 }
 
 type EvaluationResult = unknown
@@ -53,9 +53,9 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateName(node: NameNode, contextStack: Context[]): unknown {
-  const keyWordFn = reservedName[node.value]
-  if (keyWordFn) {
-    return keyWordFn()
+  const keyWord = reservedName[node.value]
+  if (keyWord) {
+    return keyWord.value
   }
 
   const path = node.value
