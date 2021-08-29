@@ -20,7 +20,7 @@ const reservedName: Record<string, () => unknown> = {
 
 type EvaluationResult = unknown
 
-export function evaluateAst(ast: Ast, globalContext: Context): EvaluationResult {
+export function evaluateProgram(ast: Ast, globalContext: Context): EvaluationResult {
   let result: EvaluationResult
   const contextStack = [{}, globalContext]
   for (const node of ast.body) {
