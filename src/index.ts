@@ -1,6 +1,6 @@
-import { Context, evaluateAst } from './evaluator/Evaluator'
-import { parseProgram } from './parser/Parser'
-import { tokenize } from './tokenizer/Tokenizer'
+import { Context, evaluateAst } from './evaluator'
+import { parseProgram } from './parser'
+import { tokenize } from './tokenizer'
 
 export function executeProgram(program: string, context: Context = {}): unknown {
   const tokens = tokenize(program)

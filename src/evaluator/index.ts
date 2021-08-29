@@ -5,10 +5,10 @@ import {
   NameNode,
   NumberNode,
   StringNode,
-} from '../parser/Parser.types'
+} from '../parser/interface'
 import get from 'lodash/get'
-import { Ast } from '../parser/Parser.types'
-import { stdLibEvaluators } from '../stdLib/stdLib'
+import { Ast } from '../parser/interface'
+import { builtInFunction, specialExpression } from '../builtin'
 export type Context = Record<string, EvaluationResult>
 
 const reservedName: Record<string, () => unknown> = {
@@ -29,7 +29,7 @@ export function evaluateAst(ast: Ast, globalContext: Context): EvaluationResult 
   return result
 }
 
-function evaluateAstNode(node: AstNode, contextStack: Context[]): EvaluationResult {
+export function evaluateAstNode(node: AstNode, contextStack: Context[]): EvaluationResult {
   switch (node.type) {
     case 'Number':
       return evaluateNumber(node)
@@ -73,8 +73,8 @@ function evaluateName(node: NameNode, contextStack: Context[]): unknown {
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): EvaluationResult {
-  const func = stdLibEvaluators[node.name]
-  if (!func) {
+  const evaluate = builtInFunction[node.name]?.evaluate
+  if (!evaluate) {
     throw Error(`Unrecognized name ${node.name}`)
   }
 
@@ -100,7 +100,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
   }
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   try {
-    return func(params)
+    return evaluate(params)
   } catch (e: unknown) {
     if (e instanceof Error) {
       throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
@@ -110,21 +110,11 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): EvaluationResult {
-  const locals: Context = {}
-  for (const binding of node.bindings) {
-    const bindingNode = binding.params[0]
-    if (bindingNode === undefined) {
-      throw Error(`binding node undefined`)
-    }
-    locals[binding.name] = evaluateAstNode(bindingNode, contextStack)
+  const specialExpressionEvaluator = specialExpression[node.name]?.evaluate
+  if (specialExpressionEvaluator) {
+    return specialExpressionEvaluator(node, contextStack)
   }
-  const astNode = node.params[0]
-  if (astNode === undefined) {
-    throw Error(`let didn't have a node to evaluate`)
-  }
-
-  const newContextStack = [locals, ...contextStack]
-  return evaluateAstNode(astNode, newContextStack)
+  throw Error(`Unrecognized special expression node: ${node.name}`)
 }
 
 function getIfNode(ifNodeParams: AstNode[], contextStack: Context[]): AstNode {

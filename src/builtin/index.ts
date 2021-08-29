@@ -1,4 +1,4 @@
-import { NormalExpressionNode } from '../parser/Parser.types'
+import { NormalExpressionNode } from '../parser/interface'
 import {
   assertLengthEven,
   assertLengthOne,
@@ -13,9 +13,21 @@ import {
   assertString,
   assertStringOrArray,
 } from '../utils'
-import { StdLib, StdLibValidators, StdLibEvaluators } from './stdLib.types'
+import { letSpecialExpression } from './specialExpressions'
+import { SpecialExpression } from './interface'
 
-const stdLib: StdLib = {
+type Evaluate = (params: unknown[]) => unknown
+type ValidateNode = (node: NormalExpressionNode) => void
+
+export type StdLib = Record<
+  string,
+  {
+    evaluate: Evaluate
+    validate?: ValidateNode
+  }
+>
+
+export const builtInFunction: StdLib = {
   '+': {
     evaluate: (params: unknown[]): number =>
       params.reduce((result: number, param) => {
@@ -345,20 +357,6 @@ const stdLib: StdLib = {
   },
 }
 
-export const stdLibEvaluators: StdLibEvaluators = Object.entries(stdLib).reduce(
-  (result: StdLibEvaluators, [key, record]) => {
-    result[key] = record.evaluate
-    return result
-  },
-  {},
-)
-
-export const stdLibValidators: StdLibValidators = Object.entries(stdLib).reduce(
-  (result: StdLibValidators, [key, record]) => {
-    if (record.validate) {
-      result[key] = record.validate
-    }
-    return result
-  },
-  {},
-)
+export const specialExpression: Record<string, SpecialExpression> = {
+  let: letSpecialExpression,
+}

@@ -1,6 +1,6 @@
-import { tokenize } from '../src/tokenizer/Tokenizer'
-import { parseProgram } from '../src/parser/Parser'
-import { evaluateAst } from '../src/evaluator/Evaluator'
+import { tokenize } from '../src/tokenizer'
+import { parseProgram } from '../src/parser'
+import { evaluateAst } from '../src/evaluator'
 import { executeProgram } from '../src'
 
 const simpleProgram = `

@@ -1,5 +1,5 @@
-import { parseProgram } from '../src/parser/Parser'
-import { tokenize } from '../src/tokenizer/Tokenizer'
+import { parseProgram } from '../src/parser'
+import { tokenize } from '../src/tokenizer'
 
 const program = `
 (let ((day (* 24 60 60 1000)))

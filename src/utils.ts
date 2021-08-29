@@ -1,10 +1,8 @@
-import { Token } from './tokenizer/Tokenizer.types'
-
-export function assertToken(token: Token | undefined, position: number): Token {
-  if (!token) {
-    throw Error(`Unexpected, no token found at position ${position}`)
+export function notUndefined<T>(value: T | undefined): T {
+  if (value === undefined) {
+    throw Error(`Expected anything but undefined, got undefined`)
   }
-  return token
+  return value
 }
 
 export function assertNumber(value: unknown): asserts value is number {

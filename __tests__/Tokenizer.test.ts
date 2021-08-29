@@ -1,4 +1,4 @@
-import { tokenize } from '../src/tokenizer/Tokenizer'
+import { tokenize } from '../src/tokenizer'
 
 describe('Tokenizer', () => {
   test('simple expressions', () => {
@@ -10,9 +10,7 @@ describe('Tokenizer', () => {
   })
   test('another simple expressions', () => {
     const tokens = tokenize(`(do-me)`)
-    console.log(JSON.stringify(tokens, null, 2))
+    // console.log(JSON.stringify(tokens, null, 2))
     expect(tokens.length).toBeGreaterThan(0)
   })
 })
-
-//  (+ (* 2 7) 3)

@@ -1,4 +1,5 @@
-export type NodeType = 'Number' | 'String' | 'NormalExpression' | 'SpecialExpression' | 'Name'
+type NodeType = 'Number' | 'String' | 'NormalExpression' | 'SpecialExpression' | 'Name'
+type SpecialExpressionName = 'let'
 
 interface GenericNode {
   type: NodeType
@@ -24,8 +25,8 @@ export interface NormalExpressionNode extends GenericNode {
 
 export interface SpecialExpressionNode extends GenericNode {
   type: 'SpecialExpression'
+  name: SpecialExpressionName
   params: AstNode[]
-  bindings: NormalExpressionNode[]
 }
 
 export type AstNode = NumberNode | StringNode | NameNode | NormalExpressionNode | SpecialExpressionNode

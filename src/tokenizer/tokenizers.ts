@@ -1,4 +1,4 @@
-import { TokenDescriptor, Tokenizer, TokenizerType } from './Tokenizer.types'
+import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
 const nameRegExp = /[0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]/

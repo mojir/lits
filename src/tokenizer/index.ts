@@ -1,4 +1,4 @@
-import { Token, Tokenizer } from './Tokenizer.types'
+import { Token, Tokenizer } from './interface'
 import {
   skipWhiteSpace,
   tokenizeLeftParen,
