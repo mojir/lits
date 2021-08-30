@@ -26,9 +26,9 @@ type ParseExpression = (tokens: Token[], position: number) => [number, Expressio
 export const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
-  const tokenValue = asNotUndefined(tokens[position]).value
+  const expressionName = asNotUndefined(tokens[position]).value
 
-  if (specialExpressions[tokenValue]) {
+  if (specialExpressions[expressionName]) {
     return parseSpecialExpression(tokens, position)
   }
   return parseNormalExpression(tokens, position)
