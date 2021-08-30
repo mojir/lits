@@ -2,6 +2,7 @@ import { Token, Tokenizer } from './interface'
 import {
   skipWhiteSpace,
   tokenizeLeftParen,
+  tokenizeReservedName,
   tokenizeName,
   tokenizeNumber,
   tokenizeRightParen,
@@ -14,6 +15,7 @@ const tokenizers: Tokenizer[] = [
   tokenizeRightParen,
   tokenizeString,
   tokenizeNumber,
+  tokenizeReservedName,
   tokenizeName,
 ]
 

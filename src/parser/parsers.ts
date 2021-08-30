@@ -1,24 +1,40 @@
 import { Token } from '../tokenizer/interface'
 import { asNotUndefined } from '../utils'
-import { AstNode, NormalExpressionNode, SpecialExpressionNode, NameNode, NumberNode, StringNode } from './interface'
-import { specialExpressions, normalExpressions } from '../builtin'
+import {
+  AstNode,
+  NormalExpressionNode,
+  SpecialExpressionNode,
+  NameNode,
+  NumberNode,
+  StringNode,
+  ReservedNameNode,
+} from './interface'
+import { builtin } from '../builtin'
+import { optimizeExpression } from '../evaluator'
+import { ReservedName } from '../reservedNames'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'Number', value: Number(token.value) }]
+  return [position + 1, { type: 'Number', value: Number(token.value), preEvaluate: true }]
 }
 
 type ParseString = (tokens: Token[], position: number) => [number, StringNode]
 export const parseString: ParseString = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'String', value: token.value }]
+  return [position + 1, { type: 'String', value: token.value, preEvaluate: true }]
 }
 
 type ParseName = (tokens: Token[], position: number) => [number, NameNode]
 export const parseName: ParseName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'Name', value: token.value }]
+  return [position + 1, { type: 'Name', value: token.value, preEvaluate: true }]
+}
+
+type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
+export const parseReservedName: ParseReservedName = (tokens: Token[], position: number) => {
+  const token = asNotUndefined(tokens[position])
+  return [position + 1, { type: 'ReservedName', value: token.value as ReservedName, preEvaluate: true }]
 }
 
 type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
@@ -28,7 +44,7 @@ export const parseExpression: ParseExpression = (tokens, position) => {
 
   const expressionName = asNotUndefined(tokens[position]).value
 
-  if (specialExpressions[expressionName]) {
+  if (builtin.specialExpressions[expressionName]) {
     return parseSpecialExpression(tokens, position)
   }
   return parseNormalExpression(tokens, position)
@@ -39,20 +55,27 @@ export const parseNormalExpression: ParseExpression = (tokens, position) => {
 
   const [newPosition, params] = parseExpressionParams(tokens, position + 1)
   position = newPosition + 1
+  const preEvaluate = params.every(param => param.preEvaluate)
 
   const node: NormalExpressionNode = {
     type: 'NormalExpression',
     name: expressionName,
     params,
+    preEvaluate,
   }
 
-  try {
-    normalExpressions[node.name]?.validate?.(node)
-  } catch (e) {
-    if (e instanceof Error) {
-      throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
+  const builtinExpression = builtin.normalExpressions[node.name]
+
+  if (builtinExpression) {
+    node.preEvaluate = node.preEvaluate && builtinExpression.preEvaluate
+    try {
+      builtinExpression.validate?.(node)
+    } catch (e) {
+      if (e instanceof Error) {
+        throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
+      }
+      throw Error(e + '\n' + JSON.stringify(node, null, 2))
     }
-    throw Error(e + '\n' + JSON.stringify(node, null, 2))
   }
 
   return [position, node]
@@ -62,7 +85,7 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
   position += 1
 
-  const specialExpression = asNotUndefined(specialExpressions[expressionName])
+  const specialExpression = asNotUndefined(builtin.specialExpressions[expressionName])
 
   const [positionAfterParse, node] = specialExpression.parse(tokens, position)
   position = positionAfterParse
@@ -71,6 +94,7 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
   position = positionAfterParseParams
 
   node.params = params
+  node.preEvaluate = node.preEvaluate && params.every(param => param.preEvaluate)
 
   position += 1
   try {
@@ -111,9 +135,13 @@ export const parseToken: ParseToken = (tokens, position) => {
     case 'name':
       nodeDescriptor = parseName(tokens, position)
       break
+    case 'reservedName':
+      nodeDescriptor = parseReservedName(tokens, position)
+      break
     case 'paren':
       if (token.value === '(') {
-        nodeDescriptor = parseExpression(tokens, position)
+        const [newPosition, node] = parseExpression(tokens, position)
+        nodeDescriptor = [newPosition, node.preEvaluate ? optimizeExpression(node, [{}, {}]) : node]
       }
       break
   }

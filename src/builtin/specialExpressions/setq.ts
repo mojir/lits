@@ -1,6 +1,6 @@
 import { Context, evaluateAstNode } from '../../evaluator'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { reservedName } from '../../reservedName'
+import { ReservedName, reservedNames } from '../../reservedNames'
 import { Token } from '../../tokenizer/interface'
 import { asAstNode, asNameNode, assertLengthTwo } from '../../utils'
 import { SpecialExpression } from '../interface'
@@ -17,13 +17,14 @@ export const setqSpecialExpression: SpecialExpression = {
         type: 'SpecialExpression',
         name: 'setq',
         params: [],
+        preEvaluate: false,
       },
     ]
   },
   evaluate: (node: SpecialExpressionNode, contextStack: Context[]) => {
     assertSetqExpressionNode(node)
     const name = asNameNode(node.params[0]).value
-    if (reservedName[name]) {
+    if (reservedNames[name as ReservedName]) {
       throw SyntaxError(`Cannot set symbol name to "${name}", it's a reserved name`)
     }
 

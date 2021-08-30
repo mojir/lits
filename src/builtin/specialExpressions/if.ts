@@ -16,6 +16,7 @@ export const ifSpecialExpression: SpecialExpression = {
         type: 'SpecialExpression',
         name: 'if',
         params: [],
+        preEvaluate: true,
       },
     ]
   },

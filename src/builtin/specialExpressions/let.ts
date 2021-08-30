@@ -17,6 +17,7 @@ export const letSpecialExpression: SpecialExpression = {
       name: 'let',
       params: [],
       bindings: [],
+      preEvaluate: true,
     }
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {

@@ -1,3 +1,4 @@
+import { reservedNames } from '../reservedNames'
 import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
@@ -74,6 +75,20 @@ export const tokenizeRightParen: Tokenizer = (input: string, position: number) =
 
 export const tokenizeName: Tokenizer = (input: string, position: number) =>
   tokenizePattern('name', nameRegExp, input, position)
+
+export function tokenizeReservedName(input: string, position: number): TokenDescriptor {
+  for (const reservedName of Object.keys(reservedNames)) {
+    const length = reservedName.length
+    const nextChar = input[position + length]
+    if (nextChar && nameRegExp.test(nextChar)) {
+      continue
+    }
+    if (input.substr(position, length) === reservedName) {
+      return [length, { type: 'reservedName', value: reservedName }]
+    }
+  }
+  return [0, null]
+}
 
 export const tokenizeNumber: Tokenizer = (input: string, position: number) => {
   const result = tokenizePattern('number', /[0-9.-]/, input, position)
