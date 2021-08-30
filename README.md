@@ -1,2 +1,2 @@
 # lispish
-A lispish implmentation in typescript
+A lispish implementation in typescript
