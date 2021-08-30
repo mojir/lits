@@ -1,70 +1,105 @@
 import { Token } from '../tokenizer/interface'
-import { notUndefined } from '../utils'
+import { asNotUndefined } from '../utils'
 import { AstNode, NormalExpressionNode, SpecialExpressionNode, NameNode, NumberNode, StringNode } from './interface'
-import { specialExpression, builtInFunction } from '../builtin'
+import { specialExpressions, normalExpressions } from '../builtin'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
-  const token = notUndefined(tokens[position])
+  const token = asNotUndefined(tokens[position])
   return [position + 1, { type: 'Number', value: Number(token.value) }]
 }
 
 type ParseString = (tokens: Token[], position: number) => [number, StringNode]
 export const parseString: ParseString = (tokens: Token[], position: number) => {
-  const token = notUndefined(tokens[position])
+  const token = asNotUndefined(tokens[position])
   return [position + 1, { type: 'String', value: token.value }]
 }
 
 type ParseName = (tokens: Token[], position: number) => [number, NameNode]
 export const parseName: ParseName = (tokens: Token[], position: number) => {
-  const token = notUndefined(tokens[position])
+  const token = asNotUndefined(tokens[position])
   return [position + 1, { type: 'Name', value: token.value }]
 }
 
 type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
 type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
 export const parseExpression: ParseExpression = (tokens, position) => {
-  position += 1 // Skip parenthesis - end of let bindingshesis
-  let token = notUndefined(tokens[position])
-  let node: ExpressionNode
+  position += 1 // Skip parenthesis
+
+  const tokenValue = asNotUndefined(tokens[position]).value
+
+  if (specialExpressions[tokenValue]) {
+    return parseSpecialExpression(tokens, position)
+  }
+  return parseNormalExpression(tokens, position)
+}
+
+export const parseNormalExpression: ParseExpression = (tokens, position) => {
+  const expressionName = asNotUndefined(tokens[position]).value
+
+  const [newPosition, params] = parseExpressionParams(tokens, position + 1)
+  position = newPosition + 1
+
+  const node: NormalExpressionNode = {
+    type: 'NormalExpression',
+    name: expressionName,
+    params,
+  }
+
+  try {
+    normalExpressions[node.name]?.validate?.(node)
+  } catch (e) {
+    if (e instanceof Error) {
+      throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
+    }
+    throw Error(e + '\n' + JSON.stringify(node, null, 2))
+  }
+
+  return [position, node]
+}
+
+export const parseSpecialExpression: ParseExpression = (tokens, position) => {
+  const expressionName = asNotUndefined(tokens[position]).value
   position += 1
 
-  const specialExpressionParser = specialExpression[token.value]?.parse
-  if (specialExpressionParser) {
-    const [newPosition, specialExpressionNode] = specialExpressionParser(tokens, position)
-    node = specialExpressionNode
-    position = newPosition
-  } else {
-    node = {
-      type: 'NormalExpression',
-      name: token.value,
-      params: [],
+  const specialExpression = asNotUndefined(specialExpressions[expressionName])
+
+  const [positionAfterParse, node] = specialExpression.parse(tokens, position)
+  position = positionAfterParse
+
+  const [positionAfterParseParams, params] = parseExpressionParams(tokens, position)
+  position = positionAfterParseParams
+
+  node.params = params
+
+  position += 1
+  try {
+    specialExpression.validate(node)
+  } catch (e) {
+    if (e instanceof Error) {
+      throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
     }
+    throw Error(e + '\n' + JSON.stringify(node, null, 2))
   }
-  token = notUndefined(tokens[position])
+
+  return [position, node]
+}
+
+function parseExpressionParams(tokens: Token[], position: number): [number, AstNode[]] {
+  let token = asNotUndefined(tokens[position])
+  const params: AstNode[] = []
   while (!(token.type === 'paren' && token.value === ')')) {
     const [newPosition, param] = parseToken(tokens, position)
     position = newPosition
-    node.params.push(param)
-    token = notUndefined(tokens[position])
+    params.push(param)
+    token = asNotUndefined(tokens[position])
   }
-  position += 1
-  if (node.type === 'NormalExpression') {
-    try {
-      builtInFunction[node.name]?.validate?.(node)
-    } catch (e) {
-      if (e instanceof Error) {
-        throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
-      }
-      throw Error(e + '\n' + JSON.stringify(node, null, 2))
-    }
-  }
-  return [position, node]
+  return [position, params]
 }
 
 type ParseToken = (tokens: Token[], position: number) => [number, AstNode]
 export const parseToken: ParseToken = (tokens, position) => {
-  const token = notUndefined(tokens[position])
+  const token = asNotUndefined(tokens[position])
   let nodeDescriptor: [number, AstNode] | undefined = undefined
   switch (token.type) {
     case 'number':

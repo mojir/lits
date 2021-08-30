@@ -1,4 +1,20 @@
-export function notUndefined<T>(value: T | undefined): T {
+import { AstNode, NameNode } from './parser/interface'
+
+export function asAstNode(node: AstNode | undefined): AstNode {
+  if (node === undefined) {
+    throw Error('Expected an AST node, got undefined')
+  }
+  return node
+}
+
+export function asNameNode(node: AstNode | undefined): NameNode {
+  if (node === undefined || node.type !== 'Name') {
+    throw Error(`Expected an AST node, got ${node ? `${node.type} node` : 'undefined'}.`)
+  }
+  return node
+}
+
+export function asNotUndefined<T>(value: T | undefined): T {
   if (value === undefined) {
     throw Error(`Expected anything but undefined, got undefined`)
   }

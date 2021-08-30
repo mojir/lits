@@ -1,14 +1,15 @@
-import { Context, evaluateAstNode } from '../evaluator'
-import { NormalExpressionNode, SpecialExpressionNode } from '../parser/interface'
-import { parseExpression } from '../parser/parsers'
-import { Token } from '../tokenizer/interface'
-import { notUndefined } from '../utils'
-import { SpecialExpression } from './interface'
+import { Context, evaluateAstNode } from '../../evaluator'
+import { NormalExpressionNode, SpecialExpressionNode } from '../../parser/interface'
+import { parseExpression } from '../../parser/parsers'
+import { Token } from '../../tokenizer/interface'
+import { asNotUndefined } from '../../utils'
+import { SpecialExpression } from '../interface'
 
 interface LetSpecialExpressionNode extends SpecialExpressionNode {
   name: 'let'
   bindings: NormalExpressionNode[]
 }
+
 export const letSpecialExpression: SpecialExpression = {
   parse: (tokens: Token[], position: number) => {
     const node: LetSpecialExpressionNode = {
@@ -17,7 +18,7 @@ export const letSpecialExpression: SpecialExpression = {
       params: [],
       bindings: [],
     }
-    let token = notUndefined(tokens[position])
+    let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
       throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected list of bindings`)
     }
@@ -32,7 +33,7 @@ export const letSpecialExpression: SpecialExpression = {
       }
       position = newPosition
       node.bindings.push(param)
-      token = notUndefined(tokens[position])
+      token = asNotUndefined(tokens[position])
     }
     position += 1 // skip right parenthesis - end of let bindings
     return [position, node]

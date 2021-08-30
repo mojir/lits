@@ -1,5 +1,5 @@
 type NodeType = 'Number' | 'String' | 'NormalExpression' | 'SpecialExpression' | 'Name'
-type SpecialExpressionName = 'let'
+type SpecialExpressionName = 'let' | 'if' | 'setq'
 
 interface GenericNode {
   type: NodeType

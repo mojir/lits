@@ -3,7 +3,6 @@ import {
   assertLengthEven,
   assertLengthOne,
   assertLengthOneOrMore,
-  assertLengthThree,
   assertLengthTwo,
   assertLengthTwoOrThree,
   assertNonNegativeNumber,
@@ -13,13 +12,15 @@ import {
   assertString,
   assertStringOrArray,
 } from '../utils'
-import { letSpecialExpression } from './specialExpressions'
+import { letSpecialExpression } from './specialExpression/let'
+import { ifSpecialExpression } from './specialExpression/if'
+import { setqSpecialExpression } from './specialExpression/setq'
 import { SpecialExpression } from './interface'
 
 type Evaluate = (params: unknown[]) => unknown
 type ValidateNode = (node: NormalExpressionNode) => void
 
-export type StdLib = Record<
+type NormalExpressions = Record<
   string,
   {
     evaluate: Evaluate
@@ -27,7 +28,15 @@ export type StdLib = Record<
   }
 >
 
-export const builtInFunction: StdLib = {
+type SpecialExpressions = Record<string, SpecialExpression>
+
+export const specialExpressions: SpecialExpressions = {
+  let: letSpecialExpression,
+  if: ifSpecialExpression,
+  setq: setqSpecialExpression,
+}
+
+export const normalExpressions: NormalExpressions = {
   '+': {
     evaluate: (params: unknown[]): number =>
       params.reduce((result: number, param) => {
@@ -345,18 +354,4 @@ export const builtInFunction: StdLib = {
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
-
-  setq: {
-    evaluate: () => undefined, // Handled by parseNormalExpression
-    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-  },
-
-  if: {
-    evaluate: () => undefined, // Handled by parseNormalExpression
-    validate: ({ params }: NormalExpressionNode): void => assertLengthThree(params),
-  },
-}
-
-export const specialExpression: Record<string, SpecialExpression> = {
-  let: letSpecialExpression,
 }

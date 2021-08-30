@@ -8,15 +8,10 @@ import {
 } from '../parser/interface'
 import get from 'lodash/get'
 import { Ast } from '../parser/interface'
-import { builtInFunction, specialExpression } from '../builtin'
+import { normalExpressions, specialExpressions } from '../builtin'
+import { reservedName } from '../reservedName'
+import { asNotUndefined } from '../utils'
 export type Context = Record<string, unknown>
-
-const reservedName: Record<string, { value: unknown }> = {
-  true: { value: true },
-  false: { value: false },
-  null: { value: null },
-  undefined: { value: undefined },
-}
 
 export function evaluateProgram(ast: Ast, globalContext: Context): unknown {
   let result: unknown
@@ -71,31 +66,8 @@ function evaluateName(node: NameNode, contextStack: Context[]): unknown {
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {
-  const evaluate = builtInFunction[node.name]?.evaluate
-  if (!evaluate) {
-    throw Error(`Unrecognized name ${node.name}`)
-  }
+  const evaluate = asNotUndefined(normalExpressions[node.name]).evaluate
 
-  // Special case, we don't want to evaluate parameter until we know what if-branch to evaluate
-  if (node.name === 'if') {
-    return evaluateAstNode(getIfNode(node.params, contextStack), contextStack)
-  }
-
-  // Special case, setq should set data on global scope
-  if (node.name === 'setq') {
-    const name = assertNameNode(node.params[0]).value
-    if (reservedName[name]) {
-      throw SyntaxError(`Cannot set symbol name to "${name}", it's a reserved name`)
-    }
-
-    const value = evaluateAstNode(assertAstNode(node.params[1]), contextStack)
-
-    // The second last stack entry is the "global" scope
-    const globalContext = contextStack[contextStack.length - 2] as Context
-    globalContext[name] = value
-
-    return value
-  }
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   try {
     return evaluate(params)
@@ -108,29 +80,9 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {
-  const specialExpressionEvaluator = specialExpression[node.name]?.evaluate
+  const specialExpressionEvaluator = specialExpressions[node.name]?.evaluate
   if (specialExpressionEvaluator) {
     return specialExpressionEvaluator(node, contextStack)
   }
   throw Error(`Unrecognized special expression node: ${node.name}`)
-}
-
-function getIfNode(ifNodeParams: AstNode[], contextStack: Context[]): AstNode {
-  return evaluateAstNode(assertAstNode(ifNodeParams[0]), contextStack)
-    ? assertAstNode(ifNodeParams[1])
-    : assertAstNode(ifNodeParams[2])
-}
-
-function assertAstNode(node: AstNode | undefined): AstNode {
-  if (node === undefined) {
-    throw Error('Expected an AST node, got undefined')
-  }
-  return node
-}
-
-function assertNameNode(node: AstNode | undefined): NameNode {
-  if (node === undefined || node.type !== 'Name') {
-    throw Error('Expected an AST node, got undefined')
-  }
-  return node
 }
