@@ -9,7 +9,7 @@ import {
 import get from 'lodash/get'
 import { Ast } from '../parser/interface'
 import { builtInFunction, specialExpression } from '../builtin'
-export type Context = Record<string, EvaluationResult>
+export type Context = Record<string, unknown>
 
 const reservedName: Record<string, { value: unknown }> = {
   true: { value: true },
@@ -18,10 +18,8 @@ const reservedName: Record<string, { value: unknown }> = {
   undefined: { value: undefined },
 }
 
-type EvaluationResult = unknown
-
-export function evaluateProgram(ast: Ast, globalContext: Context): EvaluationResult {
-  let result: EvaluationResult
+export function evaluateProgram(ast: Ast, globalContext: Context): unknown {
+  let result: unknown
   const contextStack = [{}, globalContext]
   for (const node of ast.body) {
     result = evaluateAstNode(node, contextStack)
@@ -29,18 +27,18 @@ export function evaluateProgram(ast: Ast, globalContext: Context): EvaluationRes
   return result
 }
 
-export function evaluateAstNode(node: AstNode, contextStack: Context[]): EvaluationResult {
+export function evaluateAstNode(node: AstNode, contextStack: Context[]): unknown {
   switch (node.type) {
     case 'Number':
       return evaluateNumber(node)
     case 'String':
       return evaluateString(node)
+    case 'Name':
+      return evaluateName(node, contextStack)
     case 'NormalExpression':
       return evaluateNormalExpression(node, contextStack)
     case 'SpecialExpression':
       return evaluateSpecialExpression(node, contextStack)
-    case 'Name':
-      return evaluateName(node, contextStack)
   }
 }
 
@@ -72,7 +70,7 @@ function evaluateName(node: NameNode, contextStack: Context[]): unknown {
   throw Error(`Undefined identifier ${path}`)
 }
 
-function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): EvaluationResult {
+function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {
   const evaluate = builtInFunction[node.name]?.evaluate
   if (!evaluate) {
     throw Error(`Unrecognized name ${node.name}`)
@@ -109,7 +107,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
   }
 }
 
-function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): EvaluationResult {
+function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {
   const specialExpressionEvaluator = specialExpression[node.name]?.evaluate
   if (specialExpressionEvaluator) {
     return specialExpressionEvaluator(node, contextStack)
