@@ -10,7 +10,6 @@ import {
   ReservedNameNode,
 } from './interface'
 import { builtin } from '../builtin'
-import { optimizeExpression } from '../evaluator'
 import { ReservedName } from '../reservedNames'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
@@ -140,8 +139,7 @@ export const parseToken: ParseToken = (tokens, position) => {
       break
     case 'paren':
       if (token.value === '(') {
-        const [newPosition, node] = parseExpression(tokens, position)
-        nodeDescriptor = [newPosition, node.preEvaluate ? optimizeExpression(node, [{}, {}]) : node]
+        nodeDescriptor = parseExpression(tokens, position)
       }
       break
   }
