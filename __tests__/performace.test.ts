@@ -68,7 +68,7 @@ xdescribe('performace', () => {
   test('executeProgram tokenize - parse - evaluate', () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      executeProgram(program, { x: 3, y: 4 })
+      executeProgram(program, context)
     }
     logPerformace('Execute program (tokenize, parse and evaluate)', Date.now() - startTime)
   })
