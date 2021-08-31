@@ -82,6 +82,30 @@ describe('evaluator', () => {
     test('samples', () => {
       expect(executeProgram(`(let ((a "A")) a)`)).toBe('A')
       expect(executeProgram(`(let ((a "A") (b "B")) a b)`)).toBe('B')
+      expect(executeProgram(`(let ((a "A") (b "B")) a b)`)).toBe('B')
+    })
+    test('local and global variables', () => {
+      expect(() =>
+        executeProgram(`
+          (let (
+            (a "A")
+            (b a)     ;Cannot access local variable a here. This is what let* whould be for
+          )
+            b
+          )
+        `),
+      ).toThrow()
+      expect(
+        executeProgram(`
+          (setq a "X")
+          (let (
+            (a "A")
+            (b a)     ;a is the global variable
+          )
+            b
+          )
+        `),
+      ).toBe('X')
     })
   })
 })
