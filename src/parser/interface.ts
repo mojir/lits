@@ -5,7 +5,6 @@ type SpecialExpressionName = 'let' | 'if' | 'setq'
 
 interface GenericNode {
   type: NodeType
-  preEvaluate: boolean
 }
 
 export interface NumberNode extends GenericNode {
@@ -19,12 +18,10 @@ export interface StringNode extends GenericNode {
 export interface NameNode extends GenericNode {
   type: 'Name'
   value: string
-  preEvaluate: boolean
 }
 export interface ReservedNameNode extends GenericNode {
   type: 'ReservedName'
   value: ReservedName
-  preEvaluate: true
 }
 export interface NormalExpressionNode extends GenericNode {
   type: 'NormalExpression'

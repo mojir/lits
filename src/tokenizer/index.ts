@@ -1,6 +1,7 @@
 import { Token, Tokenizer } from './interface'
 import {
   skipWhiteSpace,
+  skipComment,
   tokenizeLeftParen,
   tokenizeReservedName,
   tokenizeName,
@@ -10,6 +11,7 @@ import {
 } from './tokenizers'
 
 const tokenizers: Tokenizer[] = [
+  skipComment,
   skipWhiteSpace,
   tokenizeLeftParen,
   tokenizeRightParen,

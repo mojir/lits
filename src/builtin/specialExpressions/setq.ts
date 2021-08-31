@@ -17,7 +17,6 @@ export const setqSpecialExpression: SpecialExpression = {
         type: 'SpecialExpression',
         name: 'setq',
         params: [],
-        preEvaluate: false,
       },
     ]
   },
@@ -31,8 +30,18 @@ export const setqSpecialExpression: SpecialExpression = {
     const value = evaluateAstNode(asAstNode(node.params[1]), contextStack)
 
     // The second last stack entry is the "global" scope
-    const globalContext = contextStack[contextStack.length - 2] as Context
-    globalContext[name] = value
+    let context: Context | undefined = undefined
+    for (let i = 0; i < contextStack.length - 1; i += 1) {
+      if (Object.getOwnPropertyDescriptor(contextStack[i], name)) {
+        context = contextStack[i]
+        break
+      }
+    }
+
+    // The second last stack entry is the "global" scope
+    context = context || (contextStack[contextStack.length - 2] as Context)
+
+    context[name] = value
 
     return value
   },

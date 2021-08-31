@@ -17,7 +17,6 @@ export const letSpecialExpression: SpecialExpression = {
       name: 'let',
       params: [],
       bindings: [],
-      preEvaluate: true,
     }
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
@@ -49,13 +48,13 @@ export const letSpecialExpression: SpecialExpression = {
       }
       locals[binding.name] = evaluateAstNode(bindingNode, contextStack)
     }
-    const astNode = node.params[0]
-    if (astNode === undefined) {
-      throw Error(`let didn't have a node to evaluate`)
-    }
-
     const newContextStack = [locals, ...contextStack]
-    return evaluateAstNode(astNode, newContextStack)
+
+    let result: unknown
+    for (const astNode of node.params) {
+      result = evaluateAstNode(astNode, newContextStack)
+    }
+    return result
   },
   validate: (node: SpecialExpressionNode) => {
     assertLetExpressionNode(node)

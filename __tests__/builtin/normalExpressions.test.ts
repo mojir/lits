@@ -1,8 +1,18 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { executeProgram } from '../src'
+import { executeProgram } from '../../src'
 
 describe('evaluator', () => {
+  let oldLog: () => void
+  let logSpy: jest.Mock<any, any>
+  beforeEach(() => {
+    oldLog = console.log
+    logSpy = jest.fn()
+    console.log = logSpy
+  })
+  afterEach(() => {
+    console.log = oldLog
+  })
   describe('+', () => {
     test('samples', () => {
       expect(executeProgram('(+)')).toBe(0)
@@ -463,16 +473,6 @@ describe('evaluator', () => {
   })
 
   describe('write', () => {
-    let oldLog: () => void
-    let logSpy: jest.Mock<any, any>
-    beforeEach(() => {
-      oldLog = console.log
-      logSpy = jest.fn()
-      console.log = logSpy
-    })
-    afterEach(() => {
-      console.log = oldLog
-    })
     test('samples', () => {
       expect(executeProgram('(write 1)')).toBe(1)
       expect(executeProgram('(write "1")')).toBe('1')
@@ -487,149 +487,93 @@ describe('evaluator', () => {
       executeProgram('(write 1)')
       expect(logSpy).toHaveBeenCalledWith('LISPISH>', 1)
     })
+  })
 
-    describe('string>', () => {
-      test('samples', () => {
-        expect(executeProgram('(string> "albert" "ALBERT")')).toBe(true)
-        expect(executeProgram('(string> "ALBERT" "albert")')).toBe(false)
-        expect(executeProgram('(string> "albert" "alber")')).toBe(true)
-        expect(executeProgram('(string> "albert" "albert")')).toBe(false)
-        expect(executeProgram('(string> "alber" "albert")')).toBe(false)
-        expect(() => executeProgram('(string>)')).toThrow()
-        expect(() => executeProgram('(string> "a")')).toThrow()
-        expect(() => executeProgram('(string> "a", "A", "Q")')).toThrow()
-        expect(() => executeProgram('(string> 2 1)')).toThrow()
-        expect(() => executeProgram('(string> null null)')).toThrow()
-        expect(() => executeProgram('(string> undefined undefined)')).toThrow()
-        expect(() => executeProgram('(string> true true)')).toThrow()
-        expect(() => executeProgram('(string> false false)')).toThrow()
-        expect(() => executeProgram('(string> "a" true)')).toThrow()
-        expect(() => executeProgram('(string> true "a")')).toThrow()
-        expect(() => executeProgram('(string> (array) "a")')).toThrow()
-        expect(() => executeProgram('(string> (object) "a")')).toThrow()
-      })
+  describe('string>', () => {
+    test('samples', () => {
+      expect(executeProgram('(string> "albert" "ALBERT")')).toBe(true)
+      expect(executeProgram('(string> "ALBERT" "albert")')).toBe(false)
+      expect(executeProgram('(string> "albert" "alber")')).toBe(true)
+      expect(executeProgram('(string> "albert" "albert")')).toBe(false)
+      expect(executeProgram('(string> "alber" "albert")')).toBe(false)
+      expect(() => executeProgram('(string>)')).toThrow()
+      expect(() => executeProgram('(string> "a")')).toThrow()
+      expect(() => executeProgram('(string> "a", "A", "Q")')).toThrow()
+      expect(() => executeProgram('(string> 2 1)')).toThrow()
+      expect(() => executeProgram('(string> null null)')).toThrow()
+      expect(() => executeProgram('(string> undefined undefined)')).toThrow()
+      expect(() => executeProgram('(string> true true)')).toThrow()
+      expect(() => executeProgram('(string> false false)')).toThrow()
+      expect(() => executeProgram('(string> "a" true)')).toThrow()
+      expect(() => executeProgram('(string> true "a")')).toThrow()
+      expect(() => executeProgram('(string> (array) "a")')).toThrow()
+      expect(() => executeProgram('(string> (object) "a")')).toThrow()
     })
+  })
 
-    describe('string<', () => {
-      test('samples', () => {
-        expect(executeProgram('(string< "albert" "ALBERT")')).toBe(false)
-        expect(executeProgram('(string< "ALBERT" "albert")')).toBe(true)
-        expect(executeProgram('(string< "albert" "alber")')).toBe(false)
-        expect(executeProgram('(string< "albert" "albert")')).toBe(false)
-        expect(executeProgram('(string< "alber" "albert")')).toBe(true)
-        expect(() => executeProgram('(string<)')).toThrow()
-        expect(() => executeProgram('(string< "a")')).toThrow()
-        expect(() => executeProgram('(string< "a", "A", "Q")')).toThrow()
-        expect(() => executeProgram('(string< 2 1)')).toThrow()
-        expect(() => executeProgram('(string< null null)')).toThrow()
-        expect(() => executeProgram('(string< undefined undefined)')).toThrow()
-        expect(() => executeProgram('(string< true true)')).toThrow()
-        expect(() => executeProgram('(string< false false)')).toThrow()
-        expect(() => executeProgram('(string< "a" true)')).toThrow()
-        expect(() => executeProgram('(string< true "a")')).toThrow()
-        expect(() => executeProgram('(string< (array) "a")')).toThrow()
-        expect(() => executeProgram('(string< (object) "a")')).toThrow()
-      })
+  describe('string<', () => {
+    test('samples', () => {
+      expect(executeProgram('(string< "albert" "ALBERT")')).toBe(false)
+      expect(executeProgram('(string< "ALBERT" "albert")')).toBe(true)
+      expect(executeProgram('(string< "albert" "alber")')).toBe(false)
+      expect(executeProgram('(string< "albert" "albert")')).toBe(false)
+      expect(executeProgram('(string< "alber" "albert")')).toBe(true)
+      expect(() => executeProgram('(string<)')).toThrow()
+      expect(() => executeProgram('(string< "a")')).toThrow()
+      expect(() => executeProgram('(string< "a", "A", "Q")')).toThrow()
+      expect(() => executeProgram('(string< 2 1)')).toThrow()
+      expect(() => executeProgram('(string< null null)')).toThrow()
+      expect(() => executeProgram('(string< undefined undefined)')).toThrow()
+      expect(() => executeProgram('(string< true true)')).toThrow()
+      expect(() => executeProgram('(string< false false)')).toThrow()
+      expect(() => executeProgram('(string< "a" true)')).toThrow()
+      expect(() => executeProgram('(string< true "a")')).toThrow()
+      expect(() => executeProgram('(string< (array) "a")')).toThrow()
+      expect(() => executeProgram('(string< (object) "a")')).toThrow()
     })
+  })
 
-    describe('string>=', () => {
-      test('samples', () => {
-        expect(executeProgram('(string>= "albert" "ALBERT")')).toBe(true)
-        expect(executeProgram('(string>= "ALBERT" "albert")')).toBe(false)
-        expect(executeProgram('(string>= "albert" "alber")')).toBe(true)
-        expect(executeProgram('(string>= "albert" "albert")')).toBe(true)
-        expect(executeProgram('(string>= "alber" "albert")')).toBe(false)
-        expect(() => executeProgram('(string>=)')).toThrow()
-        expect(() => executeProgram('(string>= "a")')).toThrow()
-        expect(() => executeProgram('(string>= "a", "A", "Q")')).toThrow()
-        expect(() => executeProgram('(string>= 2 1)')).toThrow()
-        expect(() => executeProgram('(string>= null null)')).toThrow()
-        expect(() => executeProgram('(string>= undefined undefined)')).toThrow()
-        expect(() => executeProgram('(string>= true true)')).toThrow()
-        expect(() => executeProgram('(string>= false false)')).toThrow()
-        expect(() => executeProgram('(string>= "a" true)')).toThrow()
-        expect(() => executeProgram('(string>= true "a")')).toThrow()
-        expect(() => executeProgram('(string>= (array) "a")')).toThrow()
-        expect(() => executeProgram('(string>= (object) "a")')).toThrow()
-      })
+  describe('string>=', () => {
+    test('samples', () => {
+      expect(executeProgram('(string>= "albert" "ALBERT")')).toBe(true)
+      expect(executeProgram('(string>= "ALBERT" "albert")')).toBe(false)
+      expect(executeProgram('(string>= "albert" "alber")')).toBe(true)
+      expect(executeProgram('(string>= "albert" "albert")')).toBe(true)
+      expect(executeProgram('(string>= "alber" "albert")')).toBe(false)
+      expect(() => executeProgram('(string>=)')).toThrow()
+      expect(() => executeProgram('(string>= "a")')).toThrow()
+      expect(() => executeProgram('(string>= "a", "A", "Q")')).toThrow()
+      expect(() => executeProgram('(string>= 2 1)')).toThrow()
+      expect(() => executeProgram('(string>= null null)')).toThrow()
+      expect(() => executeProgram('(string>= undefined undefined)')).toThrow()
+      expect(() => executeProgram('(string>= true true)')).toThrow()
+      expect(() => executeProgram('(string>= false false)')).toThrow()
+      expect(() => executeProgram('(string>= "a" true)')).toThrow()
+      expect(() => executeProgram('(string>= true "a")')).toThrow()
+      expect(() => executeProgram('(string>= (array) "a")')).toThrow()
+      expect(() => executeProgram('(string>= (object) "a")')).toThrow()
     })
+  })
 
-    describe('string<=', () => {
-      test('samples', () => {
-        expect(executeProgram('(string<= "albert" "ALBERT")')).toBe(false)
-        expect(executeProgram('(string<= "ALBERT" "albert")')).toBe(true)
-        expect(executeProgram('(string<= "albert" "alber")')).toBe(false)
-        expect(executeProgram('(string<= "albert" "albert")')).toBe(true)
-        expect(executeProgram('(string<= "alber" "albert")')).toBe(true)
-        expect(() => executeProgram('(string<=)')).toThrow()
-        expect(() => executeProgram('(string<= "a")')).toThrow()
-        expect(() => executeProgram('(string<= "a", "A", "Q")')).toThrow()
-        expect(() => executeProgram('(string<= 2 1)')).toThrow()
-        expect(() => executeProgram('(string<= null null)')).toThrow()
-        expect(() => executeProgram('(string<= undefined undefined)')).toThrow()
-        expect(() => executeProgram('(string<= true true)')).toThrow()
-        expect(() => executeProgram('(string<= false false)')).toThrow()
-        expect(() => executeProgram('(string<= "a" true)')).toThrow()
-        expect(() => executeProgram('(string<= true "a")')).toThrow()
-        expect(() => executeProgram('(string<= (array) "a")')).toThrow()
-        expect(() => executeProgram('(string<= (object) "a")')).toThrow()
-      })
-    })
-
-    describe('setq', () => {
-      test('samples', () => {
-        expect(executeProgram(`(setq a 10) a`)).toBe(10)
-        expect(executeProgram(`(setq a 10) (setq a 20) a`)).toBe(20)
-        expect(() => executeProgram(`(setq a)`)).toThrow()
-        expect(() => executeProgram(`(setq a 10 10)`)).toThrow()
-        expect(() => executeProgram(`(setq 1 10)`)).toThrow()
-        expect(() => executeProgram(`(setq null 10)`)).toThrow()
-        expect(() => executeProgram(`(setq undefined 10)`)).toThrow()
-        expect(() => executeProgram(`(setq false 10)`)).toThrow()
-        expect(() => executeProgram(`(setq true 10)`)).toThrow()
-        expect(() => executeProgram(`(setq (array) 10)`)).toThrow()
-        expect(() => executeProgram(`(setq (object) 10)`)).toThrow()
-        expect(() => executeProgram(`(setq "a" 10)`)).toThrow()
-      })
-    })
-    describe('if', () => {
-      let oldLog: () => void
-      let logSpy: jest.Mock<any, any>
-      beforeEach(() => {
-        oldLog = console.log
-        logSpy = jest.fn()
-        console.log = logSpy
-      })
-      afterEach(() => {
-        console.log = oldLog
-      })
-      test('samples', () => {
-        expect(executeProgram(`(if true "A" "B")`)).toBe('A')
-        expect(executeProgram(`(if false "A" "B")`)).toBe('B')
-        expect(executeProgram(`(if null "A" "B")`)).toBe('B')
-        expect(executeProgram(`(if undefined "A" "B")`)).toBe('B')
-        expect(executeProgram(`(if "" "A" "B")`)).toBe('B')
-        expect(executeProgram(`(if "x" "A" "B")`)).toBe('A')
-        expect(executeProgram(`(if 0 "A" "B")`)).toBe('B')
-        expect(executeProgram(`(if 1 "A" "B")`)).toBe('A')
-        expect(executeProgram(`(if -1 "A" "B")`)).toBe('A')
-        expect(executeProgram(`(if (array) "A" "B")`)).toBe('A')
-        expect(executeProgram(`(if (object) "A" "B")`)).toBe('A')
-        expect(() => executeProgram(`(if)`)).toThrow()
-        expect(() => executeProgram(`(if true)`)).toThrow()
-        expect(() => executeProgram(`(if true "A")`)).toThrow()
-        expect(() => executeProgram(`(if true "A" "B" "Q")`)).toThrow()
-      })
-      test('That special form "if" only evaluate the correct path (true)', () => {
-        executeProgram(`(if true (write "A") (write "B"))`)
-        expect(logSpy).toHaveBeenCalledWith('LISPISH>', 'A')
-        expect(logSpy).not.toHaveBeenCalledWith('LISPISH>', 'B')
-      })
-      test('That special form "if" only evaluate the correct path (false)', () => {
-        executeProgram(`(if false (write "A") (write "B"))`)
-        expect(logSpy).not.toHaveBeenCalledWith('LISPISH>', 'A')
-        expect(logSpy).toHaveBeenCalledWith('LISPISH>', 'B')
-      })
+  describe('string<=', () => {
+    test('samples', () => {
+      expect(executeProgram('(string<= "albert" "ALBERT")')).toBe(false)
+      expect(executeProgram('(string<= "ALBERT" "albert")')).toBe(true)
+      expect(executeProgram('(string<= "albert" "alber")')).toBe(false)
+      expect(executeProgram('(string<= "albert" "albert")')).toBe(true)
+      expect(executeProgram('(string<= "alber" "albert")')).toBe(true)
+      expect(() => executeProgram('(string<=)')).toThrow()
+      expect(() => executeProgram('(string<= "a")')).toThrow()
+      expect(() => executeProgram('(string<= "a", "A", "Q")')).toThrow()
+      expect(() => executeProgram('(string<= 2 1)')).toThrow()
+      expect(() => executeProgram('(string<= null null)')).toThrow()
+      expect(() => executeProgram('(string<= undefined undefined)')).toThrow()
+      expect(() => executeProgram('(string<= true true)')).toThrow()
+      expect(() => executeProgram('(string<= false false)')).toThrow()
+      expect(() => executeProgram('(string<= "a" true)')).toThrow()
+      expect(() => executeProgram('(string<= true "a")')).toThrow()
+      expect(() => executeProgram('(string<= (array) "a")')).toThrow()
+      expect(() => executeProgram('(string<= (object) "a")')).toThrow()
     })
   })
 })

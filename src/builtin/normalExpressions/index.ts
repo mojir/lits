@@ -21,7 +21,6 @@ type NormalExpressions = Record<
   {
     evaluate: Evaluate
     validate?: ValidateNode
-    preEvaluate: boolean
   }
 >
 
@@ -32,7 +31,6 @@ export const normalExpressions: NormalExpressions = {
         assertNumber(param)
         return result + param
       }, 0),
-    preEvaluate: true,
   },
 
   '*': {
@@ -41,7 +39,6 @@ export const normalExpressions: NormalExpressions = {
         assertNumber(param)
         return result * param
       }, 1),
-    preEvaluate: true,
   },
 
   '/': {
@@ -58,7 +55,6 @@ export const normalExpressions: NormalExpressions = {
         return result / param
       }, first)
     },
-    preEvaluate: true,
   },
 
   '-': {
@@ -75,7 +71,6 @@ export const normalExpressions: NormalExpressions = {
         return result - param
       }, first)
     },
-    preEvaluate: true,
   },
 
   '%': {
@@ -85,7 +80,6 @@ export const normalExpressions: NormalExpressions = {
       return first % second
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-    preEvaluate: true,
   },
 
   '=': {
@@ -98,7 +92,6 @@ export const normalExpressions: NormalExpressions = {
       return true
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
-    preEvaluate: true,
   },
 
   '!=': {
@@ -113,7 +106,6 @@ export const normalExpressions: NormalExpressions = {
       return true
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
-    preEvaluate: true,
   },
 
   '>': {
@@ -135,7 +127,6 @@ export const normalExpressions: NormalExpressions = {
       return true
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
-    preEvaluate: true,
   },
 
   '<': {
@@ -157,7 +148,6 @@ export const normalExpressions: NormalExpressions = {
       return true
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
-    preEvaluate: true,
   },
 
   '>=': {
@@ -178,7 +168,6 @@ export const normalExpressions: NormalExpressions = {
       return true
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
-    preEvaluate: true,
   },
 
   '<=': {
@@ -199,53 +188,44 @@ export const normalExpressions: NormalExpressions = {
       return true
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
-    preEvaluate: true,
   },
 
   and: {
     evaluate: (params: unknown[]): unknown => params.reduce((result: unknown, param) => result && param, true),
-    preEvaluate: true,
   },
 
   or: {
     evaluate: (params: unknown[]): unknown => params.reduce((result: unknown, param) => result || param, false),
-    preEvaluate: true,
   },
 
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   stringp: {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'string',
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   numberp: {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'number',
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   booleanp: {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'boolean',
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   undefinedp: {
     evaluate: ([first]: unknown[]): boolean => first === undefined,
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   nullp: {
     evaluate: ([first]: unknown[]): boolean => first === null,
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   arrayp: {
@@ -253,13 +233,11 @@ export const normalExpressions: NormalExpressions = {
       return Array.isArray(first)
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   objectp: {
     evaluate: ([first]: unknown[]): boolean => first !== null && !Array.isArray(first) && typeof first === 'object',
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   substring: {
@@ -276,7 +254,6 @@ export const normalExpressions: NormalExpressions = {
       return (first as string).substring(second, third)
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwoOrThree(params),
-    preEvaluate: true,
   },
 
   length: {
@@ -285,7 +262,6 @@ export const normalExpressions: NormalExpressions = {
       return first.length
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: true,
   },
 
   concat: {
@@ -295,12 +271,10 @@ export const normalExpressions: NormalExpressions = {
         return result + param
       }, '')
     },
-    preEvaluate: true,
   },
 
   array: {
     evaluate: (params: unknown[]): unknown => params,
-    preEvaluate: true,
   },
 
   object: {
@@ -315,7 +289,6 @@ export const normalExpressions: NormalExpressions = {
       return result
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthEven(params),
-    preEvaluate: true,
   },
 
   aref: {
@@ -325,7 +298,6 @@ export const normalExpressions: NormalExpressions = {
       return first[second]
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-    preEvaluate: true,
   },
 
   write: {
@@ -335,7 +307,6 @@ export const normalExpressions: NormalExpressions = {
       return first
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
-    preEvaluate: false,
   },
 
   'string>': {
@@ -345,7 +316,6 @@ export const normalExpressions: NormalExpressions = {
       return first > second
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-    preEvaluate: true,
   },
 
   'string<': {
@@ -355,7 +325,6 @@ export const normalExpressions: NormalExpressions = {
       return first < second
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-    preEvaluate: true,
   },
 
   'string>=': {
@@ -365,7 +334,6 @@ export const normalExpressions: NormalExpressions = {
       return first >= second
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-    preEvaluate: true,
   },
 
   'string<=': {
@@ -375,6 +343,5 @@ export const normalExpressions: NormalExpressions = {
       return first <= second
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-    preEvaluate: true,
   },
 }

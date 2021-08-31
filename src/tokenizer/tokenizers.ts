@@ -33,6 +33,20 @@ function tokenizePattern(type: TokenizerType, pattern: RegExp, input: string, po
 
 export const skipWhiteSpace: Tokenizer = (input, current) => (/\s/.test(input[current] ?? '') ? [1, null] : [0, null])
 
+export const skipComment: Tokenizer = (input, current) => {
+  if (input[current] === ';') {
+    let length = 1
+    while (input[current + length] !== '\n' && current + length < input.length) {
+      length += 1
+    }
+    if (input[current + length] === '\n' && current + length < input.length) {
+      length += 1
+    }
+    return [length, null]
+  }
+  return [0, null]
+}
+
 export const tokenizeString: Tokenizer = (input, position) => {
   if (input[position] !== '"') {
     return [0, null]
