@@ -1,4 +1,4 @@
-import { parseProgram } from '../src/parser'
+import { parse } from '../src/parser'
 import { tokenize } from '../src/tokenizer'
 
 const program = `
@@ -14,19 +14,19 @@ const optimizableProgram = `
 describe('Parser', () => {
   test('simple program', () => {
     const tokens = tokenize(program)
-    const ast = parseProgram(tokens)
+    const ast = parse(tokens)
     // console.log(JSON.stringify(ast, null, 4))
     expect(ast.body.length).toBe(1)
   })
   test('empty program', () => {
     const tokens = tokenize('')
-    const ast = parseProgram(tokens)
+    const ast = parse(tokens)
     expect(ast.body.length).toBe(0)
   })
 
   test('optimization', () => {
     const tokens = tokenize(optimizableProgram)
-    const ast = parseProgram(tokens)
+    const ast = parse(tokens)
     expect(ast.body.length).toBe(1)
   })
 })

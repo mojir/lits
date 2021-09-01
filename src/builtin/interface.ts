@@ -1,4 +1,4 @@
-import { Context } from '../evaluator'
+import { Context } from '../evaluator/interface'
 import { SpecialExpressionNode } from '../parser/interface'
 import { Token } from '../tokenizer/interface'
 

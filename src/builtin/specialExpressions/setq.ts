@@ -1,4 +1,5 @@
-import { Context, evaluateAstNode } from '../../evaluator'
+import { evaluateAstNode } from '../../evaluator'
+import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { ReservedName, reservedNames } from '../../reservedNames'
 import { Token } from '../../tokenizer/interface'

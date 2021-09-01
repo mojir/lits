@@ -2,7 +2,7 @@ import { Token } from '../tokenizer/interface'
 import { Ast } from './interface'
 import { parseToken } from './parsers'
 
-export function parseProgram(tokens: Token[]): Ast {
+export function parse(tokens: Token[]): Ast {
   const ast: Ast = {
     type: 'Program',
     body: [],

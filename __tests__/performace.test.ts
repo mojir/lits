@@ -1,9 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { executeProgram } from '../src'
-import { evaluateProgram } from '../src/evaluator'
-import { parseProgram } from '../src/parser'
-import { tokenize } from '../src/tokenizer'
+import { lispish, evaluate, parse, tokenize } from '../src'
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
@@ -46,29 +43,29 @@ xdescribe('performace', () => {
     logPerformace('Tokenise', Date.now() - startTime)
   })
 
-  test('parseProgram', () => {
+  test('parse', () => {
     const tokens = tokenize(program)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      parseProgram(tokens)
+      parse(tokens)
     }
     logPerformace('Parse tokens', Date.now() - startTime)
   })
 
-  test('evaluateProgram', () => {
+  test('evaluate', () => {
     const tokens = tokenize(program)
-    const ast = parseProgram(tokens)
+    const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      evaluateProgram(ast, context)
+      evaluate(ast, context)
     }
     logPerformace('Evaluate AST', Date.now() - startTime)
   })
 
-  test('executeProgram tokenize - parse - evaluate', () => {
+  test('lispish tokenize - parse - evaluate', () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      executeProgram(program, context)
+      lispish(program, context)
     }
     logPerformace('Execute program (tokenize, parse and evaluate)', Date.now() - startTime)
   })

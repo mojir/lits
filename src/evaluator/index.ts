@@ -12,9 +12,9 @@ import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNames } from '../reservedNames'
 import { asNotUndefined } from '../utils'
-export type Context = Record<string, unknown>
+import { Context } from './interface'
 
-export function evaluateProgram(ast: Ast, globalContext: Context): unknown {
+export function evaluate(ast: Ast, globalContext: Context): unknown {
   let result: unknown
   const contextStack = [{}, globalContext]
   for (const node of ast.body) {

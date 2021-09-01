@@ -1,4 +1,5 @@
-import { Context, evaluateAstNode } from '../../evaluator'
+import { evaluateAstNode } from '../../evaluator'
+import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
 import { asAstNode, assertLengthThree } from '../../utils'
