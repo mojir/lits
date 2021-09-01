@@ -46,7 +46,8 @@
     "lint": "eslint \"src/**/*.ts\"",
     "build": "rm -rf dist && rollup -c",
     "test": "jest --collect-coverage",
-    "compile": "tsc -p ./tsconfig.json --noEmit"
+    "compile": "tsc -p ./tsconfig.json --noEmit",
+    "lispish": "node ./cli/index.js"
   },
   "repository": {
     "type": "git",
