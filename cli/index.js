@@ -50,6 +50,7 @@ function processArguments(args) {
           config.globalContext = JSON.parse(argument)
         } catch (e) {
           console.error(`Couldn't parse global context: ${e?.message}`)
+          process.exit(1)
         }
         break
       case '-C':
@@ -62,6 +63,7 @@ function processArguments(args) {
           config.globalContext = JSON.parse(contextString)
         } catch (e) {
           console.error(`Couldn't parse global context: ${e?.message}`)
+          process.exit(1)
         }
         break
       case '-s':
@@ -73,6 +75,7 @@ function processArguments(args) {
           config.localScope = JSON.parse(argument)
         } catch (e) {
           console.error(`Couldn't parse local scope: ${e?.message}`)
+          process.exit(1)
         }
         break
       case '-S':
@@ -85,6 +88,7 @@ function processArguments(args) {
           config.localScope = JSON.parse(scopeString)
         } catch (e) {
           console.error(`Couldn't parse local scope: ${e?.message}`)
+          process.exit(1)
         }
         break
       case '-e':
