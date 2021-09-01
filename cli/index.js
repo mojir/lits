@@ -15,9 +15,9 @@ if (config.expression) {
   runREPL()
 }
 
-function execute(expression, globalContext = {}) {
+function execute(expression) {
   try {
-    console.log(lispish(expression, config.context, globalContext))
+    console.log(lispish(expression, config.globalContext, config.localScope))
   } catch (error) {
     console.error(error.message)
   }
@@ -26,7 +26,8 @@ function execute(expression, globalContext = {}) {
 function processArguments(args) {
   const config = {
     filename: '',
-    context: {},
+    globalContext: {},
+    localScope: {},
     expression: '',
   }
   for (let i = 0; i < args.length; i += 2) {
@@ -42,25 +43,48 @@ function processArguments(args) {
         break
       case '-c':
         if (!argument) {
-          console.error('Missing context after -c')
+          console.error('Missing global context after -s')
           process.exit(1)
         }
         try {
-          config.context = JSON.parse(argument)
+          config.globalContext = JSON.parse(argument)
         } catch (e) {
-          console.error(`Couldn't parse context: ${e?.message}`)
+          console.error(`Couldn't parse global context: ${e?.message}`)
         }
         break
       case '-C':
         if (!argument) {
-          console.error('Missing context filename after -C')
+          console.error('Missing global context filename after -C')
           process.exit(1)
         }
         try {
           const contextString = fs.readFileSync(argument, { encoding: 'utf-8' })
-          config.context = JSON.parse(contextString)
+          config.globalContext = JSON.parse(contextString)
         } catch (e) {
-          console.error(`Couldn't parse context: ${e?.message}`)
+          console.error(`Couldn't parse global context: ${e?.message}`)
+        }
+        break
+      case '-s':
+        if (!argument) {
+          console.error('Missing local scope after -s')
+          process.exit(1)
+        }
+        try {
+          config.localScope = JSON.parse(argument)
+        } catch (e) {
+          console.error(`Couldn't parse local scope: ${e?.message}`)
+        }
+        break
+      case '-S':
+        if (!argument) {
+          console.error('Missing local scope filename after -C')
+          process.exit(1)
+        }
+        try {
+          const scopeString = fs.readFileSync(argument, { encoding: 'utf-8' })
+          config.localScope = JSON.parse(scopeString)
+        } catch (e) {
+          console.error(`Couldn't parse local scope: ${e?.message}`)
         }
         break
       case '-e':
@@ -91,28 +115,51 @@ function runREPL() {
     prompt: 'LISPISH> ',
   })
 
-  let globalContext = {}
-
   console.log('Type "`help" for more information.')
   rl.prompt()
 
   rl.on('line', line => {
-    switch (line) {
-      case '`help':
-        printHelp()
-        break
-      case '`context':
-        printContext(false)
-        break
-      case '`Context':
-        printContext(true)
-        break
-      case '`reset':
-        globalContext = {}
-        console.log('Context is now empty\n')
-        break
-      default:
-        execute(line, globalContext)
+    if (line.startsWith('`')) {
+      switch (line) {
+        case '`h':
+        case '`help':
+          printHelp()
+          break
+        case '`c':
+        case '`context':
+          printObj('Global context', config.globalContext, false)
+          break
+        case '`C':
+        case '`Context':
+          printObj('Global context', config.globalContext, true)
+          break
+        case '`s':
+        case '`scope':
+          printObj('Local scope', config.localScope, false)
+          break
+        case '`S':
+        case '`Scope':
+          printObj('Local scope', config.localScope, true)
+          break
+        case '`rc':
+        case '`reset-context':
+          config.globalContext = {}
+          console.log('Global context is now empty\n')
+          break
+        case '`rs':
+        case '`reset-scope':
+          config.localScope = {}
+          console.log('Local scope is now empty\n')
+          break
+        case '`q':
+        case '`quit':
+          rl.close()
+          break
+        default:
+          console.error(`Unrecognized command "${line}", try "\`help"\n`)
+      }
+    } else if (line) {
+      execute(line)
     }
     rl.prompt()
   }).on('close', () => {
@@ -122,10 +169,14 @@ function runREPL() {
 }
 
 function printHelp() {
-  console.log(`\`context  Print the global context
-\`Context  Print the global context (JSON.stringify)
-\`help     Print this help message
-\`reset    Reset the context
+  console.log(`\`c, \`context        Print the global context
+\`C, \`Context         Print the global context (JSON.stringify)
+\`rc, \`reset-context  Reset the global context
+\`rs, \`reset-scope    Reset the local scope
+\`s, \`scope           Print the local scope
+\`S, \`Scope           Print the local scope (JSON.stringify)
+\`h, \`help            Print this help message
+\`q, \`quit            Quit
 `)
 }
 
@@ -133,23 +184,31 @@ function printUsage() {
   console.log(`Usage: lispish [options]
 
 Options:
-  -c ...         Context as a JSON string
-  -C ...         Context file (.json file)
+  -c ...         Global context as a JSON string
+  -C ...         Global context file (.json file)
+  -s ...         Local scope as a JSON string
+  -S ...         Local scope file (.json file)
   -f ...         Lispish file
   -e ...         Lispish expression
   -h, --help     Show this help
 `)
 }
 
-function printContext(stringify) {
-  Object.keys(globalContext)
-    .sort()
-    .forEach(x => {
-      if (stringify) {
-        console.log(`${x} = ${JSON.stringify(globalContext[x], null, 2)}`)
-      } else {
-        console.log(`${x} =`, globalContext[x])
-      }
-    })
-  console.log()
+function printObj(label, obj, stringify) {
+  console.log(`${label}:`)
+  if (Object.keys(obj).length === 0) {
+    console.log('[empty]\n')
+    return
+  } else {
+    Object.keys(obj)
+      .sort()
+      .forEach(x => {
+        if (stringify) {
+          console.log(`${x} = ${JSON.stringify(obj[x], null, 2)}`)
+        } else {
+          console.log(`${x} =`, obj[x])
+        }
+      })
+    console.log()
+  }
 }
