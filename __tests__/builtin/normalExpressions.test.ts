@@ -485,7 +485,7 @@ describe('evaluator', () => {
     })
     test('that it does console.log', () => {
       lispish('(write 1)')
-      expect(logSpy).toHaveBeenCalledWith('LISPISH>', 1)
+      expect(logSpy).toHaveBeenCalledWith(1)
     })
   })
 

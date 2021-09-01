@@ -13,9 +13,15 @@ import { reservedNames } from '../reservedNames'
 import { asNotUndefined } from '../utils'
 import { Context, EvaluateAstNode } from './interface'
 
-export function evaluate(ast: Ast, globalContext: Context): unknown {
+export function evaluate(ast: Ast, context: Context, globalContext: Context): unknown {
+  const frozenContext = { ...context }
+  Object.freeze(frozenContext)
+
+  // First element is the global context. E.g. setq will assign to this if no local variable is available
+  // Second element is the context sent in from outside (this should never be mutated)
+  const contextStack = [globalContext, frozenContext]
+
   let result: unknown
-  const contextStack = [{}, globalContext]
   for (const node of ast.body) {
     result = evaluateAstNode(node, contextStack)
   }
@@ -67,11 +73,11 @@ function evaluateName(node: NameNode, contextStack: Context[]): unknown {
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {
-  const evaluate = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
+  const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
 
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   try {
-    return evaluate(params)
+    return normalExpressionEvaluator(params)
   } catch (e: unknown) {
     if (e instanceof Error) {
       throw Error(e.message + '\n' + JSON.stringify(node, null, 2))

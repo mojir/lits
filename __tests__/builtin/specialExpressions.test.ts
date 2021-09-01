@@ -33,19 +33,19 @@ describe('evaluator', () => {
     test('local variable', () => {
       const program = `
         (setq x "A")     ;Global variable x
-        (write x)        ;LISPISH> "A"
+        (write x)        ;"A"
         (let ((x "B"))   ;Local variable x
-          (write x)      ;LISPISH> "B"
+          (write x)      ;"B"
           (setq x "C")   ;Set local variable x
-          (write x)      ;LISPISH> "C"
+          (write x)      ;"C"
         )
-        (write x)        ;LISPISH> "A" - global variable x
+        (write x)        ;"A" - global variable x
       `
       lispish(program)
-      expect(logSpy).toHaveBeenNthCalledWith(1, 'LISPISH>', 'A')
-      expect(logSpy).toHaveBeenNthCalledWith(2, 'LISPISH>', 'B')
-      expect(logSpy).toHaveBeenNthCalledWith(3, 'LISPISH>', 'C')
-      expect(logSpy).toHaveBeenNthCalledWith(4, 'LISPISH>', 'A')
+      expect(logSpy).toHaveBeenNthCalledWith(1, 'A')
+      expect(logSpy).toHaveBeenNthCalledWith(2, 'B')
+      expect(logSpy).toHaveBeenNthCalledWith(3, 'C')
+      expect(logSpy).toHaveBeenNthCalledWith(4, 'A')
     })
   })
   describe('if', () => {
@@ -68,13 +68,13 @@ describe('evaluator', () => {
     })
     test('That special form "if" only evaluate the correct path (true)', () => {
       lispish(`(if true (write "A") (write "B"))`)
-      expect(logSpy).toHaveBeenCalledWith('LISPISH>', 'A')
-      expect(logSpy).not.toHaveBeenCalledWith('LISPISH>', 'B')
+      expect(logSpy).toHaveBeenCalledWith('A')
+      expect(logSpy).not.toHaveBeenCalledWith('B')
     })
     test('That special form "if" only evaluate the correct path (false)', () => {
       lispish(`(if false (write "A") (write "B"))`)
-      expect(logSpy).not.toHaveBeenCalledWith('LISPISH>', 'A')
-      expect(logSpy).toHaveBeenCalledWith('LISPISH>', 'B')
+      expect(logSpy).not.toHaveBeenCalledWith('A')
+      expect(logSpy).toHaveBeenCalledWith('B')
     })
   })
 

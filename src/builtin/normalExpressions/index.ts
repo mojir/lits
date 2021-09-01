@@ -303,7 +303,7 @@ export const normalExpressions: NormalExpressions = {
   write: {
     evaluate: ([first]: unknown[]): unknown => {
       // eslint-disable-next-line no-console
-      console.log('LISPISH>', first)
+      console.log(first)
       return first
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),

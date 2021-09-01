@@ -12,9 +12,9 @@ export { Ast } from './parser/interface'
 export { tokenize } from './tokenizer'
 export { Token } from './tokenizer/interface'
 
-export function lispish(program: string, context: Context = {}): unknown {
+export function lispish(program: string, context: Context = {}, globalContext = {}): unknown {
   const tokens: Token[] = tokenize(program)
   const ast: Ast = parse(tokens)
-  const result = evaluate(ast, context)
+  const result = evaluate(ast, context, globalContext)
   return result
 }

@@ -10,6 +10,7 @@ import {
   tokenizeString,
 } from './tokenizers'
 
+// All tokenizers, order matters!
 const tokenizers: Tokenizer[] = [
   skipComment,
   skipWhiteSpace,
@@ -27,11 +28,15 @@ export function tokenize(input: string): Token[] {
   let tokenized = false
   while (position < input.length) {
     tokenized = false
+
+    // Loop through all tokenizer until one matches
     for (const tokenize of tokenizers) {
-      const [length, token] = tokenize(input, position)
-      if (length > 0) {
+      const [nbrOfCharacters, token] = tokenize(input, position)
+
+      // tokenizer matched
+      if (nbrOfCharacters > 0) {
         tokenized = true
-        position += length
+        position += nbrOfCharacters
         if (token) {
           tokens.push(token)
           break

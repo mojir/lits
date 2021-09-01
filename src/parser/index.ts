@@ -1,5 +1,5 @@
 import { Token } from '../tokenizer/interface'
-import { Ast } from './interface'
+import { Ast, AstNode } from './interface'
 import { parseToken } from './parsers'
 
 export function parse(tokens: Token[]): Ast {
@@ -7,11 +7,13 @@ export function parse(tokens: Token[]): Ast {
     type: 'Program',
     body: [],
   }
+
   let position = 0
+  let node: AstNode
   while (position < tokens.length) {
-    const [newPosition, node] = parseToken(tokens, position)
-    position = newPosition
+    ;[position, node] = parseToken(tokens, position)
     ast.body.push(node)
   }
+
   return ast
 }

@@ -57,7 +57,7 @@ xdescribe('performace', () => {
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      evaluate(ast, context)
+      evaluate(ast, context, {})
     }
     logPerformace('Evaluate AST', Date.now() - startTime)
   })
