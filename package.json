@@ -5,6 +5,8 @@
   "main": "dist/lispish.js",
   "module": "dist/lispish.mjs",
   "typings": "dist/lispish.d.ts",
+  "bin": "cli/index.js",
+  "files": ["dist", "cli"],
   "jest": {
     "testResultsProcessor": "jest-junit",
     "transform": {

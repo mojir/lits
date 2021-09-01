@@ -72,5 +72,5 @@
   },
   "include": ["src/**/*", "types/**/*", "__tests__/**/*.test.ts", "__tests__/FormMLLisp/Parser.test.ts", "__tests__/FormMLLisp/stdLib.ts"],
   // "exclude": []
-  "exclude": ["__tests__"]
+  "exclude": ["__tests__", "cli/**/*"]
 }
