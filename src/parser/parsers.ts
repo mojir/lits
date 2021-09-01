@@ -3,11 +3,11 @@ import { asNotUndefined } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
-  SpecialExpressionNode,
   NameNode,
   NumberNode,
   StringNode,
   ReservedNameNode,
+  ParseExpression,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -36,8 +36,6 @@ export const parseReservedName: ParseReservedName = (tokens: Token[], position: 
   return [position + 1, { type: 'ReservedName', value: token.value as ReservedName }]
 }
 
-type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
-type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
 export const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
@@ -83,7 +81,7 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
 
   const specialExpression = asNotUndefined(builtin.specialExpressions[expressionName])
 
-  const [positionAfterParse, node] = specialExpression.parse(tokens, position)
+  const [positionAfterParse, node] = specialExpression.parse(tokens, position, parseExpression)
   position = positionAfterParse
 
   const [positionAfterParseParams, params] = parseExpressionParams(tokens, position)

@@ -1,8 +1,6 @@
-import { evaluateAstNode } from '../../evaluator'
 import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { ReservedName, reservedNames } from '../../reservedNames'
-import { Token } from '../../tokenizer/interface'
 import { asAstNode, asNameNode, assertLengthTwo } from '../../utils'
 import { SpecialExpression } from '../interface'
 
@@ -11,7 +9,7 @@ interface SetqSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const setqSpecialExpression: SpecialExpression = {
-  parse: (_tokens: Token[], position: number) => {
+  parse: (_tokens, position) => {
     return [
       position,
       {
@@ -21,7 +19,7 @@ export const setqSpecialExpression: SpecialExpression = {
       },
     ]
   },
-  evaluate: (node: SpecialExpressionNode, contextStack: Context[]) => {
+  evaluate: (node, contextStack, evaluateAstNode) => {
     assertSetqExpressionNode(node)
     const name = asNameNode(node.params[0]).value
     if (reservedNames[name as ReservedName]) {
@@ -46,7 +44,7 @@ export const setqSpecialExpression: SpecialExpression = {
 
     return value
   },
-  validate: (node: SpecialExpressionNode) => {
+  validate: node => {
     assertSetqExpressionNode(node)
     assertLengthTwo(node.params)
   },

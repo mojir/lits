@@ -1,5 +1,4 @@
 import {
-  AstNode,
   NormalExpressionNode,
   SpecialExpressionNode,
   NameNode,
@@ -12,7 +11,7 @@ import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNames } from '../reservedNames'
 import { asNotUndefined } from '../utils'
-import { Context } from './interface'
+import { Context, EvaluateAstNode } from './interface'
 
 export function evaluate(ast: Ast, globalContext: Context): unknown {
   let result: unknown
@@ -23,7 +22,7 @@ export function evaluate(ast: Ast, globalContext: Context): unknown {
   return result
 }
 
-export function evaluateAstNode(node: AstNode, contextStack: Context[]): unknown {
+export const evaluateAstNode: EvaluateAstNode = (node, contextStack) => {
   switch (node.type) {
     case 'Number':
       return evaluateNumber(node)
@@ -84,7 +83,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {
   const specialExpressionEvaluator = builtin.specialExpressions[node.name]?.evaluate
   if (specialExpressionEvaluator) {
-    return specialExpressionEvaluator(node, contextStack)
+    return specialExpressionEvaluator(node, contextStack, evaluateAstNode)
   }
   throw Error(`Unrecognized special expression node: ${node.name}`)
 }

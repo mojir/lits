@@ -1,3 +1,4 @@
+import { Token } from '..'
 import { ReservedName } from '../reservedNames'
 
 type NodeType = 'Number' | 'String' | 'NormalExpression' | 'SpecialExpression' | 'Name' | 'ReservedName'
@@ -6,6 +7,9 @@ type SpecialExpressionName = 'let' | 'if' | 'setq'
 interface GenericNode {
   type: NodeType
 }
+
+type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
+export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
 
 export interface NumberNode extends GenericNode {
   type: 'Number'

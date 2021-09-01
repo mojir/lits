@@ -1,8 +1,5 @@
-import { evaluateAstNode } from '../../evaluator'
 import { Context } from '../../evaluator/interface'
 import { NormalExpressionNode, SpecialExpressionNode } from '../../parser/interface'
-import { parseExpression } from '../../parser/parsers'
-import { Token } from '../../tokenizer/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
@@ -12,7 +9,7 @@ interface LetSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const letSpecialExpression: SpecialExpression = {
-  parse: (tokens: Token[], position: number) => {
+  parse: (tokens, position, parseExpression) => {
     const node: LetSpecialExpressionNode = {
       type: 'SpecialExpression',
       name: 'let',
@@ -39,7 +36,7 @@ export const letSpecialExpression: SpecialExpression = {
     position += 1 // skip right parenthesis - end of let bindings
     return [position, node]
   },
-  evaluate: (node: SpecialExpressionNode, contextStack: Context[]) => {
+  evaluate: (node, contextStack, evaluateAstNode) => {
     assertLetExpressionNode(node)
     const locals: Context = {}
     for (const binding of node.bindings) {
@@ -57,7 +54,7 @@ export const letSpecialExpression: SpecialExpression = {
     }
     return result
   },
-  validate: (node: SpecialExpressionNode) => {
+  validate: node => {
     assertLetExpressionNode(node)
   },
 }

@@ -1,7 +1,4 @@
-import { evaluateAstNode } from '../../evaluator'
-import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { Token } from '../../tokenizer/interface'
 import { asAstNode, assertLengthThree } from '../../utils'
 import { SpecialExpression } from '../interface'
 
@@ -10,7 +7,7 @@ interface IfSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const ifSpecialExpression: SpecialExpression = {
-  parse: (_tokens: Token[], position: number) => {
+  parse: (_tokens, position) => {
     return [
       position,
       {
@@ -20,14 +17,14 @@ export const ifSpecialExpression: SpecialExpression = {
       },
     ]
   },
-  evaluate: (node: SpecialExpressionNode, contextStack: Context[]) => {
+  evaluate: (node, contextStack, evaluateAstNode) => {
     assertIfExpressionNode(node)
 
     const [conditionNode, trueNode, falseNode] = node.params
     const ifNode = evaluateAstNode(asAstNode(conditionNode), contextStack) ? asAstNode(trueNode) : asAstNode(falseNode)
     return evaluateAstNode(ifNode, contextStack)
   },
-  validate: (node: SpecialExpressionNode) => {
+  validate: node => {
     assertIfExpressionNode(node)
     assertLengthThree(node.params)
   },
