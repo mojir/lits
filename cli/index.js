@@ -1,7 +1,12 @@
 #!/usr/bin/env node
-const fs = require('fs')
 const readline = require('readline')
-const { lispish } = require('../dist/lispish.js')
+const path = require('path')
+const fs = require('fs')
+const homeDir = require('os').homedir()
+const { lispish, normalExpressionKeys, specialExpressionKeys } = require('../dist/lispish.js')
+
+const historyDir = path.join(homeDir, '.config')
+const historyFile = path.join(historyDir, 'lispish_history.txt')
 
 const config = processArguments(process.argv.slice(2))
 if (config.expression) {
@@ -17,7 +22,7 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    console.log(lispish(expression, config.globalContext, config.localScope))
+    console.log(lispish(expression, config.globalContext, config.replScope))
   } catch (error) {
     console.error(error.message)
   }
@@ -27,7 +32,7 @@ function processArguments(args) {
   const config = {
     filename: '',
     globalContext: {},
-    localScope: {},
+    replScope: {},
     expression: '',
   }
   for (let i = 0; i < args.length; i += 2) {
@@ -68,26 +73,26 @@ function processArguments(args) {
         break
       case '-s':
         if (!argument) {
-          console.error('Missing local scope after -s')
+          console.error('Missing repl scope after -s')
           process.exit(1)
         }
         try {
-          config.localScope = JSON.parse(argument)
+          config.replScope = JSON.parse(argument)
         } catch (e) {
-          console.error(`Couldn't parse local scope: ${e?.message}`)
+          console.error(`Couldn't parse repl scope: ${e?.message}`)
           process.exit(1)
         }
         break
       case '-S':
         if (!argument) {
-          console.error('Missing local scope filename after -C')
+          console.error('Missing repl scope filename after -C')
           process.exit(1)
         }
         try {
           const scopeString = fs.readFileSync(argument, { encoding: 'utf-8' })
-          config.localScope = JSON.parse(scopeString)
+          config.replScope = JSON.parse(scopeString)
         } catch (e) {
-          console.error(`Couldn't parse local scope: ${e?.message}`)
+          console.error(`Couldn't parse repl scope: ${e?.message}`)
           process.exit(1)
         }
         break
@@ -113,74 +118,73 @@ function processArguments(args) {
 }
 
 function runREPL() {
-  const rl = readline.createInterface({
+  createInterface({
     input: process.stdin,
     output: process.stdout,
     prompt: 'LISPISH> ',
-  })
+    completer,
+    next: function (rl) {
+      console.log('Type "`help" for more information.')
+      rl.prompt()
 
-  console.log('Type "`help" for more information.')
-  rl.prompt()
-
-  rl.on('line', line => {
-    if (line.startsWith('`')) {
-      switch (line) {
-        case '`h':
-        case '`help':
-          printHelp()
-          break
-        case '`c':
-        case '`context':
-          printObj('Global context', config.globalContext, false)
-          break
-        case '`C':
-        case '`Context':
-          printObj('Global context', config.globalContext, true)
-          break
-        case '`s':
-        case '`scope':
-          printObj('Local scope', config.localScope, false)
-          break
-        case '`S':
-        case '`Scope':
-          printObj('Local scope', config.localScope, true)
-          break
-        case '`rc':
-        case '`reset-context':
-          config.globalContext = {}
-          console.log('Global context is now empty\n')
-          break
-        case '`rs':
-        case '`reset-scope':
-          config.localScope = {}
-          console.log('Local scope is now empty\n')
-          break
-        case '`q':
-        case '`quit':
-          rl.close()
-          break
-        default:
-          console.error(`Unrecognized command "${line}", try "\`help"\n`)
-      }
-    } else if (line) {
-      execute(line)
-    }
-    rl.prompt()
-  }).on('close', () => {
-    console.log('Over and out!')
-    process.exit(0)
+      rl.on('line', line => {
+        line = line.trim()
+        if (line.startsWith('`')) {
+          switch (line) {
+            case '`help':
+              printHelp()
+              break
+            case '`context':
+              printObj('Global context', config.globalContext, false)
+              break
+            case '`Context':
+              printObj('Global context', config.globalContext, true)
+              break
+            case '`scope':
+              printObj('Repl scope', config.replScope, false)
+              break
+            case '`Scope':
+              printObj('Repl scope', config.replScope, true)
+              break
+            case '`reset-context':
+              config.globalContext = {}
+              console.log('Global context is now empty\n')
+              break
+            case '`reset-scope':
+              config.replScope = {}
+              console.log('Repl scope is now empty\n')
+              break
+            case '`quit':
+              rl.close()
+              break
+            default:
+              console.error(`Unrecognized command "${line}", try "\`help"\n`)
+          }
+        } else if (line) {
+          execute(line)
+        }
+        rl.prompt()
+      })
+        .on('close', () => {
+          console.log('Over and out!')
+          process.exit(0)
+        })
+        .on('history', history => {
+          console.log('HISTORY', history)
+        })
+    },
   })
 }
 
 function printHelp() {
-  console.log(`\`c, \`context        Print the global context
-\`C, \`Context         Print the global context (JSON.stringify)
-\`rc, \`reset-context  Reset the global context
-\`rs, \`reset-scope    Reset the local scope
-\`s, \`scope           Print the local scope
-\`S, \`Scope           Print the local scope (JSON.stringify)
-\`h, \`help            Print this help message
-\`q, \`quit            Quit
+  console.log(`\`context        Print the global context
+\`Context         Print the global context (JSON.stringify)
+\`scope           Print the repl scope
+\`Scope           Print the repl scope (JSON.stringify)
+\`reset-context   Reset the global context
+\`reset-scope     Reset the repl scope
+\`help            Print this help message
+\`quit            Quit
 `)
 }
 
@@ -190,8 +194,8 @@ function printUsage() {
 Options:
   -c ...         Global context as a JSON string
   -C ...         Global context file (.json file)
-  -s ...         Local scope as a JSON string
-  -S ...         Local scope file (.json file)
+  -s ...         Repl scope as a JSON string
+  -S ...         Repl scope file (.json file)
   -f ...         Lispish file
   -e ...         Lispish expression
   -h, --help     Show this help
@@ -215,4 +219,76 @@ function printObj(label, obj, stringify) {
       })
     console.log()
   }
+}
+
+const commands = ['`help', '`quit', '`context', '`Context', '`scope', '`Scope', '`reset-context', '`reset-scope']
+const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]*)$/
+const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]*)$/
+const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
+
+function completer(line) {
+  if (line.startsWith('`')) {
+    return [commands.filter(c => c.startsWith(line)).map(c => `${c} `), line]
+  }
+
+  const expressionMatch = expressionRegExp.exec(line)
+  if (expressionMatch) {
+    return [expressions.filter(c => c.startsWith(expressionMatch[2])).map(c => `${expressionMatch[1]}${c} `), line]
+  }
+
+  const names = Array.from(new Set([...Object.keys(config.replScope), ...Object.keys(config.globalContext)]))
+  const nameMatch = nameRegExp.exec(line)
+  if (nameMatch) {
+    return [names.filter(c => c.startsWith(nameMatch[2])).map(c => `${nameMatch[1]}${c} `), line]
+  }
+
+  return [[], line]
+}
+
+function isHistoryEnabled() {
+  if (fs.existsSync(historyFile)) {
+    return true
+  }
+
+  try {
+    fs.openSync(historyFile)
+  } catch {
+    console.error(`No history for you!
+If you would like to enable history persistence, make sure the directory "${path.resolve(
+      historyDir,
+    )}" exists and is writable.
+`)
+    return false
+  }
+}
+
+function createInterface(options) {
+  const historyEnabled = isHistoryEnabled()
+  const history = historyEnabled
+    ? fs.readFileSync(historyFile, 'utf8').toString().split('\n').slice(0, -1).reverse().slice(0, 100)
+    : []
+
+  readline.kHistorySize = Math.max(readline.kHistorySize, 100)
+
+  const rl = readline.createInterface(options)
+
+  if (historyEnabled) {
+    const oldAddHistory = rl._addHistory
+
+    rl._addHistory = function () {
+      const last = rl.history[0]
+      const line = oldAddHistory.call(rl)
+
+      if (line.length > 0 && line != last) {
+        fs.appendFileSync(historyFile, line + '\n')
+      }
+      return line
+    }
+
+    if (rl.history instanceof Array) {
+      rl.history.push(...history)
+    }
+  }
+
+  options.next(rl)
 }

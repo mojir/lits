@@ -11,3 +11,6 @@ export const builtin = {
   normalExpressions,
   specialExpressions,
 }
+
+export const normalExpressionKeys = Object.keys(normalExpressions)
+export const specialExpressionKeys = Object.keys(specialExpressions)

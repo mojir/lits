@@ -13,8 +13,8 @@ import { reservedNames } from '../reservedNames'
 import { asNotUndefined } from '../utils'
 import { Context, EvaluateAstNode } from './interface'
 
-export function evaluate(ast: Ast, context: Context, globalContext: Context): unknown {
-  const frozenContext = { ...context }
+export function evaluate(ast: Ast, fixedContext: Context = {}, globalContext: Context = {}): unknown {
+  const frozenContext = { ...fixedContext }
   Object.freeze(frozenContext)
 
   // First element is the global context. E.g. setq will assign to this if no local variable is available
