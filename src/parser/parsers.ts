@@ -92,15 +92,15 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
   position += 1
 
-  const specialExpression = asNotUndefined(builtin.specialExpressions[expressionName])
+  const { parse, validate } = asNotUndefined(builtin.specialExpressions[expressionName])
 
-  const [positionAfterParse, node] = specialExpression.parse(tokens, position, {
+  const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
     parseParams,
   })
 
   try {
-    specialExpression.validate(node)
+    validate(node)
   } catch (e) {
     if (e instanceof Error) {
       throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
