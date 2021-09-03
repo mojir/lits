@@ -10,6 +10,7 @@ interface GenericNode {
 
 type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
 export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
+export type ParseParams = (tokens: Token[], position: number) => [number, AstNode[]]
 
 export interface NumberNode extends GenericNode {
   type: 'Number'

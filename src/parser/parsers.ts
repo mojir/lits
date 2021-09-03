@@ -8,6 +8,7 @@ import {
   StringNode,
   ReservedNameNode,
   ParseExpression,
+  ParseParams,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -36,6 +37,18 @@ export const parseReservedName: ParseReservedName = (tokens: Token[], position: 
   return [position + 1, { type: 'ReservedName', value: token.value as ReservedName }]
 }
 
+const parseParams: ParseParams = (tokens, position) => {
+  let token = asNotUndefined(tokens[position])
+  const params: AstNode[] = []
+  while (!(token.type === 'paren' && token.value === ')')) {
+    const [newPosition, param] = parseToken(tokens, position)
+    position = newPosition
+    params.push(param)
+    token = asNotUndefined(tokens[position])
+  }
+  return [position, params]
+}
+
 export const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
@@ -50,7 +63,7 @@ export const parseExpression: ParseExpression = (tokens, position) => {
 export const parseNormalExpression: ParseExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
 
-  const [newPosition, params] = parseExpressionParams(tokens, position + 1)
+  const [newPosition, params] = parseParams(tokens, position + 1)
   position = newPosition + 1
 
   const node: NormalExpressionNode = {
@@ -81,15 +94,11 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
 
   const specialExpression = asNotUndefined(builtin.specialExpressions[expressionName])
 
-  const [positionAfterParse, node] = specialExpression.parse(tokens, position, parseExpression)
-  position = positionAfterParse
+  const [positionAfterParse, node] = specialExpression.parse(tokens, position, {
+    parseExpression,
+    parseParams,
+  })
 
-  const [positionAfterParseParams, params] = parseExpressionParams(tokens, position)
-  position = positionAfterParseParams
-
-  node.params = params
-
-  position += 1
   try {
     specialExpression.validate(node)
   } catch (e) {
@@ -99,19 +108,7 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
     throw Error(e + '\n' + JSON.stringify(node, null, 2))
   }
 
-  return [position, node]
-}
-
-function parseExpressionParams(tokens: Token[], position: number): [number, AstNode[]] {
-  let token = asNotUndefined(tokens[position])
-  const params: AstNode[] = []
-  while (!(token.type === 'paren' && token.value === ')')) {
-    const [newPosition, param] = parseToken(tokens, position)
-    position = newPosition
-    params.push(param)
-    token = asNotUndefined(tokens[position])
-  }
-  return [position, params]
+  return [positionAfterParse, node]
 }
 
 type ParseToken = (tokens: Token[], position: number) => [number, AstNode]

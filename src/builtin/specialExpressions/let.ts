@@ -9,7 +9,7 @@ interface LetSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const letSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, parseExpression) => {
+  parse: (tokens, position, { parseExpression, parseParams }) => {
     const node: LetSpecialExpressionNode = {
       type: 'SpecialExpression',
       name: 'let',
@@ -34,7 +34,9 @@ export const letSpecialExpression: SpecialExpression = {
       token = asNotUndefined(tokens[position])
     }
     position += 1 // skip right parenthesis - end of let bindings
-    return [position, node]
+    const [newPosition, params] = parseParams(tokens, position)
+    node.params = params
+    return [newPosition + 1, node]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     assertLetExpressionNode(node)

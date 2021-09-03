@@ -9,13 +9,14 @@ interface SetqSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const setqSpecialExpression: SpecialExpression = {
-  parse: (_tokens, position) => {
+  parse: (tokens, position, { parseParams }) => {
+    const [newPosition, params] = parseParams(tokens, position)
     return [
-      position,
+      newPosition + 1,
       {
         type: 'SpecialExpression',
         name: 'setq',
-        params: [],
+        params,
       },
     ]
   },

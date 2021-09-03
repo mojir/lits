@@ -6,13 +6,14 @@ interface OrSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const orSpecialExpression: SpecialExpression = {
-  parse: (_tokens, position) => {
+  parse: (tokens, position, { parseParams }) => {
+    const [newPosition, params] = parseParams(tokens, position)
     return [
-      position,
+      newPosition + 1,
       {
         type: 'SpecialExpression',
         name: 'or',
-        params: [],
+        params,
       },
     ]
   },

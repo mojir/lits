@@ -6,13 +6,14 @@ interface AndSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const andSpecialExpression: SpecialExpression = {
-  parse: (_tokens, position) => {
+  parse: (tokens, position, { parseParams }) => {
+    const [newPosition, params] = parseParams(tokens, position)
     return [
-      position,
+      newPosition + 1,
       {
         type: 'SpecialExpression',
         name: 'and',
-        params: [],
+        params,
       },
     ]
   },
