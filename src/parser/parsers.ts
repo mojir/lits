@@ -9,6 +9,7 @@ import {
   ReservedNameNode,
   ParseExpression,
   ParseParams,
+  ParseToken,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -97,6 +98,7 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
     parseParams,
+    parseToken,
   })
 
   try {
@@ -111,7 +113,6 @@ export const parseSpecialExpression: ParseExpression = (tokens, position) => {
   return [positionAfterParse, node]
 }
 
-type ParseToken = (tokens: Token[], position: number) => [number, AstNode]
 export const parseToken: ParseToken = (tokens, position) => {
   const token = asNotUndefined(tokens[position])
   let nodeDescriptor: [number, AstNode] | undefined = undefined

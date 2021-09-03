@@ -182,4 +182,22 @@ describe('evaluator', () => {
       })
     })
   })
+
+  describe('cond', () => {
+    test('samples', () => {
+      expect(lispish('(cond)')).toBeUndefined()
+      expect(lispish('(cond (true 10) (true 20))')).toBe(10)
+      expect(lispish('(cond (true 10))')).toBe(10)
+      expect(lispish('(cond (false 20) (true (+ 5 5)) )')).toBe(10)
+      expect(
+        lispish('(cond ((> 5 10) 20) ((> 10 10) (write "Hej") (+ 5 5)) ((>= 10 10) "This will work" (+ 5 5 5)))'),
+      ).toBe(15)
+    })
+    test('middle condition true', () => {
+      expect(
+        lispish('(cond ((> 5 10) (write 20)) ((>= 10 10) (+ 5 5)) ((write (>= 10 10)) "This will work" (+ 5 5 5)))'),
+      ).toBe(10)
+      expect(logSpy).not.toHaveBeenCalled()
+    })
+  })
 })

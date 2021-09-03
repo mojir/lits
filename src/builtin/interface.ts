@@ -1,10 +1,11 @@
 import { Context, EvaluateAstNode } from '../evaluator/interface'
-import { ParseExpression, ParseParams, SpecialExpressionNode } from '../parser/interface'
+import { ParseExpression, ParseParams, ParseToken, SpecialExpressionNode } from '../parser/interface'
 import { Token } from '../tokenizer/interface'
 
 type Parsers = {
   parseExpression: ParseExpression
   parseParams: ParseParams
+  parseToken: ParseToken
 }
 
 export type SpecialExpression = {

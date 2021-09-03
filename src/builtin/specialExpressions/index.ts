@@ -4,6 +4,7 @@ import { setqSpecialExpression } from './setq'
 import { SpecialExpression } from '../interface'
 import { andSpecialExpression } from './and'
 import { orSpecialExpression } from './or'
+import { condSpecialExpression } from './cond'
 
 type SpecialExpressions = Record<string, SpecialExpression>
 
@@ -13,4 +14,5 @@ export const specialExpressions: SpecialExpressions = {
   setq: setqSpecialExpression,
   and: andSpecialExpression,
   or: orSpecialExpression,
+  cond: condSpecialExpression,
 }
