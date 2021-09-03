@@ -12,7 +12,7 @@ Start the lispish REPL in a terminal by enter `lispish`
 ```
 $ lispish
 Type "`help" for more information.
-LSIPISH> (+ 7 4)
+LISPISH> (+ 7 4)
 11
 LISPISH> (let ((day (* 24 60 60 1000))) (* 7 day)) ; Ever wondered how many milliseconds there are in a week?
 604800000

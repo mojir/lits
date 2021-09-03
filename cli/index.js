@@ -3,7 +3,7 @@ const readline = require('readline')
 const path = require('path')
 const fs = require('fs')
 const homeDir = require('os').homedir()
-const { lispish, normalExpressionKeys, specialExpressionKeys } = require('../dist/lispish.js')
+const { lispish, normalExpressionKeys, specialExpressionKeys, reservedNames } = require('../dist/lispish.js')
 
 const historyDir = path.join(homeDir, '.config')
 const historyFile = path.join(historyDir, 'lispish_history.txt')
@@ -236,7 +236,9 @@ function completer(line) {
     return [expressions.filter(c => c.startsWith(expressionMatch[2])).map(c => `${expressionMatch[1]}${c} `), line]
   }
 
-  const names = Array.from(new Set([...Object.keys(config.replScope), ...Object.keys(config.globalContext)]))
+  const names = Array.from(
+    new Set([...reservedNames, ...Object.keys(config.replScope), ...Object.keys(config.globalContext)]),
+  )
   const nameMatch = nameRegExp.exec(line)
   if (nameMatch) {
     return [names.filter(c => c.startsWith(nameMatch[2])).map(c => `${nameMatch[1]}${c} `), line]

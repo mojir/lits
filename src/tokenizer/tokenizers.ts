@@ -1,4 +1,4 @@
-import { reservedNames } from '../reservedNames'
+import { reservedNamesRecord } from '../reservedNames'
 import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
@@ -81,7 +81,7 @@ export const tokenizeNumber: Tokenizer = (input: string, position: number) => {
 }
 
 export function tokenizeReservedName(input: string, position: number): TokenDescriptor {
-  for (const reservedName of Object.keys(reservedNames)) {
+  for (const reservedName of Object.keys(reservedNamesRecord)) {
     const length = reservedName.length
     const nextChar = input[position + length]
     if (nextChar && nameRegExp.test(nextChar)) {

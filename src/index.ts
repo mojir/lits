@@ -20,3 +20,4 @@ export function lispish(program: string, fixedContext: Context = {}, globalConte
 }
 
 export { normalExpressionKeys, specialExpressionKeys } from './builtin'
+export { reservedNames } from './reservedNames'

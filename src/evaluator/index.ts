@@ -9,7 +9,7 @@ import {
 import get from 'lodash/get'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
-import { reservedNames } from '../reservedNames'
+import { reservedNamesRecord } from '../reservedNames'
 import { asNotUndefined } from '../utils'
 import { Context, EvaluateAstNode } from './interface'
 
@@ -54,7 +54,7 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedNameNode): unknown {
-  return asNotUndefined(reservedNames[node.value]).value
+  return asNotUndefined(reservedNamesRecord[node.value]).value
 }
 
 function evaluateName(node: NameNode, contextStack: Context[]): unknown {

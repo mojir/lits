@@ -82,6 +82,47 @@ export const normalExpressions: NormalExpressions = {
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
+  sqrt: {
+    evaluate: ([first]: unknown[]): number => {
+      assertNonNegativeNumber(first)
+      return Math.sqrt(first)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  expt: {
+    evaluate: ([first, second]: unknown[]): number => {
+      assertNumber(first)
+      assertNumber(second)
+      return Math.pow(first, second)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
+  },
+
+  round: {
+    evaluate: ([first]: unknown[]): number => {
+      assertNumber(first)
+      return Math.round(first)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  floor: {
+    evaluate: ([first]: unknown[]): number => {
+      assertNumber(first)
+      return Math.floor(first)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  ceil: {
+    evaluate: ([first]: unknown[]): number => {
+      assertNumber(first)
+      return Math.ceil(first)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
   '=': {
     evaluate: ([first, ...rest]: unknown[]): boolean => {
       for (const param of rest) {
