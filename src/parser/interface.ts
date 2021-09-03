@@ -2,7 +2,7 @@ import { Token } from '..'
 import { ReservedName } from '../reservedNames'
 
 type NodeType = 'Number' | 'String' | 'NormalExpression' | 'SpecialExpression' | 'Name' | 'ReservedName'
-type SpecialExpressionName = 'let' | 'if' | 'setq'
+type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or'
 
 interface GenericNode {
   type: NodeType

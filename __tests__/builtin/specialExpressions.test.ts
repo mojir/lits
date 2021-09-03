@@ -108,4 +108,78 @@ describe('evaluator', () => {
       ).toBe('X')
     })
   })
+
+  describe('and', () => {
+    test('samples', () => {
+      expect(lispish('(and)')).toBe(true)
+      expect(lispish('(and 0)')).toBe(0)
+      expect(lispish('(and 0 1)')).toBe(0)
+      expect(lispish('(and 2 0)')).toBe(0)
+      expect(lispish('(and 2 0 1)')).toBe(0)
+      expect(lispish('(and 2 3 0)')).toBe(0)
+      expect(lispish('(and 2 3 "")')).toBe('')
+      expect(lispish('(and 2 3 "x")')).toBe('x')
+      expect(lispish('(and false 1)')).toBe(false)
+      expect(lispish('(and 1 false)')).toBe(false)
+      expect(lispish('(and 1 undefined)')).toBe(undefined)
+      expect(lispish('(and 1 null)')).toBe(null)
+      expect(lispish('(and 2 2 false)')).toBe(false)
+      expect(lispish('(and 3 true 3)')).toBe(3)
+    })
+    describe('short circuit', () => {
+      test('true, false', () => {
+        expect(lispish('(and (write true) (write false))')).toBe(false)
+        expect(logSpy).toHaveBeenNthCalledWith(1, true)
+        expect(logSpy).toHaveBeenNthCalledWith(2, false)
+      })
+      test('true, 1', () => {
+        expect(lispish('(and (write true) (write 1))')).toBe(1)
+        expect(logSpy).toHaveBeenNthCalledWith(1, true)
+        expect(logSpy).toHaveBeenNthCalledWith(2, 1)
+      })
+      test('false, true', () => {
+        expect(lispish('(and (write false) (write true))')).toBe(false)
+        expect(logSpy).toHaveBeenCalledWith(false)
+        expect(logSpy).not.toHaveBeenCalledWith(true)
+      })
+      test('false, true', () => {
+        expect(lispish('(and (write false) (write 0))')).toBe(false)
+        expect(logSpy).toHaveBeenCalledWith(false)
+        expect(logSpy).not.toHaveBeenCalledWith(0)
+      })
+    })
+  })
+
+  describe('or', () => {
+    test('samples', () => {
+      expect(lispish('(or)')).toBe(false)
+      expect(lispish('(or 0)')).toBe(0)
+      expect(lispish('(or 0 1)')).toBe(1)
+      expect(lispish('(or 2 0)')).toBe(2)
+      expect(lispish('(or null 0 false undefined)')).toBe(undefined)
+      expect(lispish('(or null 0 1 undefined)')).toBe(1)
+    })
+    describe('short circuit', () => {
+      test('true, false', () => {
+        expect(lispish('(or (write true) (write false))')).toBe(true)
+        expect(logSpy).toHaveBeenCalledWith(true)
+        expect(logSpy).not.toHaveBeenCalledWith(false)
+      })
+      test('true, 1', () => {
+        expect(lispish('(or (write true) (write 1))')).toBe(true)
+        expect(logSpy).toHaveBeenCalledWith(true)
+        expect(logSpy).not.toHaveBeenCalledWith(1)
+      })
+      test('false, true', () => {
+        expect(lispish('(or (write false) (write true))')).toBe(true)
+        expect(logSpy).toHaveBeenNthCalledWith(1, false)
+        expect(logSpy).toHaveBeenNthCalledWith(2, true)
+      })
+      test('false, true', () => {
+        expect(lispish('(or (write false) (write 0))')).toBe(0)
+        expect(logSpy).toHaveBeenNthCalledWith(1, false)
+        expect(logSpy).toHaveBeenNthCalledWith(2, 0)
+      })
+    })
+  })
 })

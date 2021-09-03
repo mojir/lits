@@ -249,36 +249,6 @@ describe('evaluator', () => {
     })
   })
 
-  describe('and', () => {
-    test('samples', () => {
-      expect(lispish('(and)')).toBe(true)
-      expect(lispish('(and 0)')).toBe(0)
-      expect(lispish('(and 0 1)')).toBe(0)
-      expect(lispish('(and 2 0)')).toBe(0)
-      expect(lispish('(and 2 0 1)')).toBe(0)
-      expect(lispish('(and 2 3 0)')).toBe(0)
-      expect(lispish('(and 2 3 "")')).toBe('')
-      expect(lispish('(and 2 3 "x")')).toBe('x')
-      expect(lispish('(and false 1)')).toBe(false)
-      expect(lispish('(and 1 false)')).toBe(false)
-      expect(lispish('(and 1 undefined)')).toBe(undefined)
-      expect(lispish('(and 1 null)')).toBe(null)
-      expect(lispish('(and 2 2 false)')).toBe(false)
-      expect(lispish('(and 3 true 3)')).toBe(3)
-    })
-  })
-
-  describe('or', () => {
-    test('samples', () => {
-      expect(lispish('(or)')).toBe(false)
-      expect(lispish('(or 0)')).toBe(0)
-      expect(lispish('(or 0 1)')).toBe(1)
-      expect(lispish('(or 2 0)')).toBe(2)
-      expect(lispish('(or null 0 false undefined)')).toBe(undefined)
-      expect(lispish('(or null 0 1 undefined)')).toBe(1)
-    })
-  })
-
   describe('not', () => {
     test('samples', () => {
       expect(() => lispish('(not)')).toThrow()

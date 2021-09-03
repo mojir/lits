@@ -231,14 +231,6 @@ export const normalExpressions: NormalExpressions = {
     validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
   },
 
-  and: {
-    evaluate: (params: unknown[]): unknown => params.reduce((result: unknown, param) => result && param, true),
-  },
-
-  or: {
-    evaluate: (params: unknown[]): unknown => params.reduce((result: unknown, param) => result || param, false),
-  },
-
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
