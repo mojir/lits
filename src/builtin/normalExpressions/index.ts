@@ -1,14 +1,21 @@
 import { NormalExpressionNode } from '../../parser/interface'
 import {
+  assertArray,
+  assertInteger,
   assertLengthEven,
   assertLengthOne,
   assertLengthOneOrMore,
+  assertLengthThree,
   assertLengthTwo,
   assertLengthTwoOrThree,
+  assertLengthZero,
+  assertNonNegativeInteger,
   assertNonNegativeNumber,
   assertNumber,
   assertNumberGte,
+  assertNumberLt,
   assertNumberNotZero,
+  assertPositiveNumber,
   assertString,
   assertStringOrArray,
 } from '../../utils'
@@ -121,6 +128,21 @@ export const normalExpressions: NormalExpressions = {
       return Math.ceil(first)
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  random: {
+    evaluate: ([first]: unknown[]): number => {
+      assertPositiveNumber(first)
+      return Math.random() * first
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  now: {
+    evaluate: (): number => {
+      return Date.now()
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthZero(params),
   },
 
   '=': {
@@ -331,6 +353,30 @@ export const normalExpressions: NormalExpressions = {
       return first[second]
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
+  },
+
+  aset: {
+    evaluate: ([first, second, third]: unknown[]): unknown => {
+      assertArray(first)
+      assertNonNegativeInteger(second)
+      assertNumberLt(second, first.length)
+      first[second] = third
+      return third
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthThree(params),
+  },
+
+  slice: {
+    evaluate: ([first, second, third]: unknown[]): unknown => {
+      assertArray(first)
+      assertInteger(second)
+      if (typeof third === 'number') {
+        assertInteger(third)
+        return first.slice(second, third)
+      }
+      return first.slice(second)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwoOrThree(params),
   },
 
   write: {

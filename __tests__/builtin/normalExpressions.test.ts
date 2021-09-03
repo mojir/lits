@@ -145,6 +145,35 @@ describe('evaluator', () => {
     })
   })
 
+  describe('random', () => {
+    test('samples', () => {
+      expect(() => lispish('(random)')).toThrow()
+      expect(() => lispish('(random "x")')).toThrow()
+      expect(() => lispish('(random 1 2)')).toThrow()
+      expect(lispish('(random 0.1)')).toBeLessThan(0.1)
+      expect(lispish('(random 0.1)')).toBeGreaterThanOrEqual(0)
+    })
+  })
+
+  describe('now', () => {
+    test('samples', () => {
+      expect(() => lispish('(now 1)')).toThrow()
+      expect(() => lispish('(now "x")')).toThrow()
+      expect(() => lispish('(now undefined)')).toThrow()
+      expect(lispish('(now)')).toBeLessThanOrEqual(Date.now())
+    })
+  })
+
+  describe('aset', () => {
+    test('samples', () => {
+      expect(() => lispish('(aset 1 1 1)')).toThrow()
+      expect(() => lispish('(aset [1 1 1)')).toThrow()
+      expect(() => lispish('(aset "x")')).toThrow()
+      expect(() => lispish('(aset undefined)')).toThrow()
+      expect(lispish('(now)')).toBeLessThanOrEqual(Date.now())
+    })
+  })
+
   describe('!=', () => {
     test('samples', () => {
       expect(() => lispish('(!=)')).toThrow()

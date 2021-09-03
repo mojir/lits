@@ -27,10 +27,31 @@ export function assertNumber(value: unknown): asserts value is number {
   }
 }
 
+export function assertPositiveNumber(value: unknown): asserts value is number {
+  assertNumber(value)
+  if (value <= 0) {
+    throw TypeError(`Expected positive number, got ${value}`)
+  }
+}
+
 export function assertNonNegativeNumber(value: unknown): asserts value is number {
   assertNumber(value)
   if (value < 0) {
     throw TypeError(`Expected non negative number, got ${value}`)
+  }
+}
+
+export function assertInteger(value: unknown): asserts value is number {
+  assertNumber(value)
+  if (!Number.isInteger(value)) {
+    throw TypeError(`Expected integer, got ${value}`)
+  }
+}
+
+export function assertNonNegativeInteger(value: unknown): asserts value is number {
+  assertInteger(value)
+  if (value < 0) {
+    throw TypeError(`Expected non negative integer, got ${value}`)
   }
 }
 
@@ -41,9 +62,36 @@ export function assertNumberGte(value: unknown, x: number): asserts value is num
   }
 }
 
+export function assertNumberGt(value: unknown, x: number): asserts value is number {
+  assertNumber(value)
+  if (value <= x) {
+    throw TypeError(`Expected parameter (${value}) to be a number grater than ${x}`)
+  }
+}
+
+export function assertNumberLte(value: unknown, x: number): asserts value is number {
+  assertNumber(value)
+  if (value > x) {
+    throw TypeError(`Expected parameter (${value}) to be a number equal or less than ${x}`)
+  }
+}
+
+export function assertNumberLt(value: unknown, x: number): asserts value is number {
+  assertNumber(value)
+  if (value >= x) {
+    throw TypeError(`Expected parameter (${value}) to be a number less than ${x}`)
+  }
+}
+
 export function assertString(value: unknown): asserts value is string {
   if (typeof value !== 'string') {
     throw TypeError(`Expected string, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function assertArray(value: unknown): asserts value is Array<unknown> {
+  if (!Array.isArray(value)) {
+    throw TypeError(`Expected array, got: ${value} type="${typeof value}"`)
   }
 }
 
@@ -59,6 +107,12 @@ export function assertNumberNotZero(value: unknown): asserts value is number {
   }
   if (value === 0) {
     throw TypeError(`Expected non zero value, got: ${value}"`)
+  }
+}
+
+export function assertLengthZero(params: unknown[]): void {
+  if (params.length !== 0) {
+    throw Error(`Wrong number of arguments, expected 0, got ${params.length}`)
   }
 }
 

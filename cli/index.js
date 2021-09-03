@@ -253,7 +253,7 @@ function isHistoryEnabled() {
   }
 
   try {
-    fs.openSync(historyFile)
+    fs.openSync(historyFile, 'w')
   } catch {
     console.error(`No history for you!
 If you would like to enable history persistence, make sure the directory "${path.resolve(
