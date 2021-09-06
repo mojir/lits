@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { version } = require('../package.json')
 const readline = require('readline')
 const path = require('path')
 const fs = require('fs')
@@ -81,6 +82,10 @@ function processArguments(args) {
       case '-h':
       case '--help':
         printUsage()
+        process.exit(0)
+      case '-v':
+      case '--version':
+        console.log(version)
         process.exit(0)
       default:
         console.error(`Unknown argument "${argument}"`)
@@ -172,6 +177,7 @@ Options:
   -f ...         .lispish file
   -e ...         Lispish expression
   -h, --help     Show this help
+  -v, --version  Print lispish version
 `)
 }
 
