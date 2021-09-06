@@ -26,7 +26,7 @@ export const letSpecialExpression: SpecialExpression = {
         throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected an expression`)
       }
       const [newPosition, param] = parseExpression(tokens, position)
-      if (param.type === 'SpecialExpression') {
+      if (param.type !== 'NormalExpression') {
         throw Error('Expected a binding expression')
       }
       position = newPosition
@@ -40,7 +40,7 @@ export const letSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     assertLetExpressionNode(node)
-    const locals: Context = { variables: {} }
+    const locals: Context = { variables: {}, functions: {} }
     for (const binding of node.bindings) {
       const bindingNode = binding.params[0]
       if (bindingNode === undefined) {

@@ -5,25 +5,28 @@ import {
   NumberNode,
   StringNode,
   ReservedNameNode,
+  LispishFunction,
+  ExpressionExpressionNode,
 } from '../parser/interface'
 import get from 'lodash/get'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
-import { asNotUndefined } from '../utils'
-import { Context, EvaluateAstNode, VariableScope } from './interface'
+import { asLispishFunction, asNotUndefined, isLispishFunction, isUserDefinedLispishFunction } from '../utils'
+import { Context, EvaluateAstNode, EvaluateLispishFunction, VariableScope } from './interface'
+import { normalExpressions } from '../builtin/normalExpressions'
 
 export function evaluate(
   ast: Ast,
   globalVariables: VariableScope = {},
-  topScope: Context = { variables: {} },
+  topScope: Context = { variables: {}, functions: {} },
 ): unknown {
   const frozenGlobalVariables = { ...globalVariables }
   Object.freeze(frozenGlobalVariables)
 
   // First element is the global context. E.g. setq will assign to this if no local variable is available
   // Second element is the context sent in from outside (this should never be mutated)
-  const contextStack: Context[] = [topScope, { variables: frozenGlobalVariables }]
+  const contextStack: Context[] = [topScope, { variables: frozenGlobalVariables, functions: {} }]
 
   let result: unknown
   for (const node of ast.body) {
@@ -46,6 +49,8 @@ export const evaluateAstNode: EvaluateAstNode = (node, contextStack) => {
       return evaluateNormalExpression(node, contextStack)
     case 'SpecialExpression':
       return evaluateSpecialExpression(node, contextStack)
+    case 'ExpressionExpression':
+      return evaluateExpressionExpression(node, contextStack)
   }
 }
 
@@ -77,11 +82,76 @@ function evaluateName(node: NameNode, contextStack: Context[]): unknown {
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {
+  const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
+
+  let lispishFunction: LispishFunction | undefined = undefined
+  for (const context of contextStack) {
+    lispishFunction = context.functions[node.name]
+    if (lispishFunction) {
+      break
+    }
+  }
+
+  if (lispishFunction) {
+    return evaluateLispishFunction(lispishFunction, params, contextStack)
+  } else {
+    return evaluateBuiltinNormalExpression(node, params, contextStack)
+  }
+}
+
+const evaluateLispishFunction: EvaluateLispishFunction = (
+  lispishFunction: LispishFunction,
+  params: unknown[],
+  contextStack: Context[],
+) => {
+  const newContext: Context = {
+    functions: {},
+    variables: {},
+  }
+
+  if (isUserDefinedLispishFunction(lispishFunction)) {
+    if (lispishFunction.arguments.length !== params.length) {
+      throw Error(
+        `Function "${lispishFunction.name}" requires ${lispishFunction.arguments.length} arguments. Got ${params.length}`,
+      )
+    }
+
+    for (let i = 0; i < params.length; i += 1) {
+      const param = params[i]
+      const key = lispishFunction.arguments[i]
+      if (key === undefined) {
+        throw Error('Expected string, got undefined')
+      }
+      if (isLispishFunction(param)) {
+        newContext.functions[key] = param
+      } else {
+        newContext.variables[key] = param
+      }
+    }
+
+    let result: unknown = undefined
+    for (const node of lispishFunction.body) {
+      result = evaluateAstNode(node, [newContext, ...contextStack])
+    }
+    return result
+  } else {
+    const normalExpression = normalExpressions[lispishFunction.builtin]
+    if (normalExpression) {
+      return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
+    }
+    throw Error(`Could not find builtin normal expression with name "${lispishFunction.builtin}"`)
+  }
+}
+
+function evaluateBuiltinNormalExpression(
+  node: NormalExpressionNode,
+  params: unknown[],
+  contextStack: Context[],
+): unknown {
   const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
 
-  const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   try {
-    return normalExpressionEvaluator(params)
+    return normalExpressionEvaluator(params, contextStack, { evaluateLispishFunction })
   } catch (e: unknown) {
     if (e instanceof Error) {
       throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
@@ -96,4 +166,12 @@ function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Co
     return specialExpressionEvaluator(node, contextStack, evaluateAstNode)
   }
   throw Error(`Unrecognized special expression node: ${node.name}`)
+}
+
+function evaluateExpressionExpression(node: ExpressionExpressionNode, contextStack: Context[]): unknown {
+  const lispishFunction = asLispishFunction(evaluateAstNode(node.expression, contextStack))
+
+  const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
+
+  return evaluateLispishFunction(lispishFunction, params, contextStack)
 }

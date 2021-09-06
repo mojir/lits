@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { lispish } from '../../src'
+import { FunctionScope } from '../../src/evaluator/interface'
 
 describe('evaluator', () => {
   let oldLog: () => void
@@ -198,6 +199,29 @@ describe('evaluator', () => {
         lispish('(cond ((> 5 10) (write 20)) ((>= 10 10) (+ 5 5)) ((write (>= 10 10)) "This will work" (+ 5 5 5)))'),
       ).toBe(10)
       expect(logSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defun', () => {
+    test('samples', () => {
+      const functions: FunctionScope = {}
+      lispish('(defun add (a b) (+ a b))', {}, { variables: {}, functions })
+      expect(functions.add).toBeTruthy()
+    })
+    test('call defun function', () => {
+      expect(lispish('(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
+    })
+  })
+
+  describe('function', () => {
+    test('samples', () => {
+      lispish('(function +)')
+    })
+  })
+
+  describe('function', () => {
+    test('samples', () => {
+      lispish('(function +)')
     })
   })
 })

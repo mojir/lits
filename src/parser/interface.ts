@@ -1,15 +1,40 @@
 import { Token } from '..'
 import { ReservedName } from '../reservedNames'
 
-type NodeType = 'Number' | 'String' | 'NormalExpression' | 'SpecialExpression' | 'Name' | 'ReservedName'
-type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond'
+export const functionSymbol = Symbol('function')
+export type UserDefinedLispishFunction = {
+  [functionSymbol]: true
+  name: string | undefined
+  arguments: string[]
+  body: AstNode[]
+}
+
+export type BuiltinLispishFunction = {
+  [functionSymbol]: true
+  builtin: string
+}
+
+export type LispishFunction = UserDefinedLispishFunction | BuiltinLispishFunction
+
+type NodeType =
+  | 'Number'
+  | 'String'
+  | 'NormalExpression'
+  | 'SpecialExpression'
+  | 'ExpressionExpression'
+  | 'Name'
+  | 'ReservedName'
+type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'defun' | 'function' | 'lambda'
 
 interface GenericNode {
   type: NodeType
 }
 
-type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
+type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | ExpressionExpressionNode
 export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
+export type ParseNormalExpression = (tokens: Token[], position: number) => [number, NormalExpressionNode]
+export type ParseSpecialExpression = (tokens: Token[], position: number) => [number, SpecialExpressionNode]
+export type ParseExpressionExpression = (tokens: Token[], position: number) => [number, ExpressionExpressionNode]
 export type ParseParams = (tokens: Token[], position: number) => [number, AstNode[]]
 export type ParseToken = (tokens: Token[], position: number) => [number, AstNode]
 
@@ -35,9 +60,15 @@ export interface NormalExpressionNode extends GenericNode {
   params: AstNode[]
 }
 
-export interface SpecialExpressionNode extends GenericNode {
+export interface ExpressionExpressionNode extends GenericNode {
+  type: 'ExpressionExpression'
+  expression: ExpressionNode
+  params: AstNode[]
+}
+
+export interface SpecialExpressionNode<T extends SpecialExpressionName = SpecialExpressionName> extends GenericNode {
   type: 'SpecialExpression'
-  name: SpecialExpressionName
+  name: T
   params: AstNode[]
 }
 
@@ -48,6 +79,7 @@ export type AstNode =
   | NameNode
   | NormalExpressionNode
   | SpecialExpressionNode
+  | ExpressionExpressionNode
 
 export type Ast = {
   type: 'Program'

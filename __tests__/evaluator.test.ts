@@ -45,13 +45,13 @@ describe('Evaluator', () => {
   test('super simple program', () => {
     const tokens = tokenize(`(+ 10 kalle)`)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {} })
+    const result = evaluate(ast, context, { variables: {}, functions: {} })
     expect(result).toBe(15)
   })
   test('simple program', () => {
     const tokens = tokenize(simpleProgram)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {} })
+    const result = evaluate(ast, context, { variables: {}, functions: {} })
     expect(result).toBe(13 * 24 * 60 * 60 * 1000)
   })
   test('if statement (true)', () => {
@@ -59,7 +59,7 @@ describe('Evaluator', () => {
       (if (= info.gender "male") "It's a boy" "It's not a girl")
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {} })
+    const result = evaluate(ast, context, { variables: {}, functions: {} })
     expect(result).toBe(`It's a boy`)
   })
   test('if statement (false)', () => {
@@ -67,7 +67,7 @@ describe('Evaluator', () => {
       (if (= info.gender "female") "It's a girl" "It's not a girl")
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {} })
+    const result = evaluate(ast, context, { variables: {}, functions: {} })
     expect(result).toBe(`It's not a girl`)
   })
   test('> statement', () => {
@@ -75,7 +75,7 @@ describe('Evaluator', () => {
       (> 0 -1)
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {} })
+    const result = evaluate(ast, context, { variables: {}, functions: {} })
     expect(result).toBe(true)
   })
   test('!= statement 1', () => {
@@ -83,7 +83,7 @@ describe('Evaluator', () => {
       (array (!= 0 -1) (!= 1 1))
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {} })
+    const result = evaluate(ast, context, { variables: {}, functions: {} })
     expect(result).toEqual([true, false])
   })
 
@@ -114,5 +114,38 @@ describe('Evaluator', () => {
     expect(lispish(formatPhoneNumber, { $data: '234567890' })).toBe('(234) 567-890')
     expect(lispish(formatPhoneNumber, { $data: '2345678901' })).toBe('(234) 567-8901')
     expect(lispish(formatPhoneNumber, { $data: '23456789012' })).toBe('(234) 567-89012')
+  })
+
+  test('reduce', () => {
+    let program = `
+      (defun countChars (stringArray)
+        (reduce
+          (lambda (sum str) (+ sum (length str)))
+          stringArray
+          0
+        )
+      )
+
+      (countChars (array "First" "Second" "Third"))
+      `
+    expect(lispish(program)).toBe(16)
+
+    program = `
+      (defun longestLength (stringArray)
+        (reduce
+          (lambda (sum str)
+            (if (> sum (length str))
+              sum
+              (length str)
+            )
+          )
+          stringArray
+          0
+        )
+      )
+
+      (longestLength (array "First" "Second" "Third"))
+      `
+    expect(lispish(program)).toBe(6)
   })
 })

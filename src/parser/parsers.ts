@@ -10,6 +10,10 @@ import {
   ParseExpression,
   ParseParams,
   ParseToken,
+  ParseSpecialExpression,
+  ParseNormalExpression,
+  ParseExpressionExpression,
+  ExpressionExpressionNode,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -53,15 +57,35 @@ const parseParams: ParseParams = (tokens, position) => {
 export const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
-  const expressionName = asNotUndefined(tokens[position]).value
-
-  if (builtin.specialExpressions[expressionName]) {
-    return parseSpecialExpression(tokens, position)
+  const token = asNotUndefined(tokens[position])
+  if (token.type === 'name') {
+    const expressionName = token.value
+    if (builtin.specialExpressions[expressionName]) {
+      return parseSpecialExpression(tokens, position)
+    }
+    return parseNormalExpression(tokens, position)
+  } else if (token.type === 'paren' && token.value === '(') {
+    return parseExpressionExpression(tokens, position + 1)
+  } else {
+    throw Error('Could not parse expression')
   }
-  return parseNormalExpression(tokens, position)
 }
 
-export const parseNormalExpression: ParseExpression = (tokens, position) => {
+const parseExpressionExpression: ParseExpressionExpression = (tokens, position) => {
+  const [newPosition1, expression] = parseExpression(tokens, position)
+
+  const [newPosition2, params] = parseParams(tokens, newPosition1)
+
+  const node: ExpressionExpressionNode = {
+    type: 'ExpressionExpression',
+    expression,
+    params,
+  }
+
+  return [newPosition2 + 1, node]
+}
+
+const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
 
   const [newPosition, params] = parseParams(tokens, position + 1)
@@ -89,7 +113,7 @@ export const parseNormalExpression: ParseExpression = (tokens, position) => {
   return [position, node]
 }
 
-export const parseSpecialExpression: ParseExpression = (tokens, position) => {
+const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
   position += 1
 

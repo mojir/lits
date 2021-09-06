@@ -15,7 +15,7 @@ export { Token } from './tokenizer/interface'
 export function lispish(
   program: string,
   globalVariables: VariableScope = {},
-  topScope: Context = { variables: {} },
+  topScope: Context = { variables: {}, functions: {} },
 ): unknown {
   const tokens: Token[] = tokenize(program)
   const ast: Ast = parse(tokens)

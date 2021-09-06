@@ -33,7 +33,7 @@ function processArguments(args) {
   const config = {
     filename: '',
     globalVariables: {},
-    topScope: { variables: {} },
+    topScope: { variables: {}, functions: {} },
     expression: '',
   }
   for (let i = 0; i < args.length; i += 2) {
@@ -122,9 +122,11 @@ function runREPL() {
               break
             case '`topScope':
               printObj('Top scope variables', config.topScope.variables, false)
+              printObj('Top scope functions', config.topScope.functions, false)
               break
             case '`TopScope':
               printObj('Top scope variables', config.topScope.variables, true)
+              printObj('Top scope functions', config.topScope.functions, true)
               break
             case '`resetglobalVariables':
               config.globalVariables = {}

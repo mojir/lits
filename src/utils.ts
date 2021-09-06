@@ -1,10 +1,17 @@
-import { AstNode, NameNode } from './parser/interface'
+import { AstNode, functionSymbol, LispishFunction, NameNode, UserDefinedLispishFunction } from './parser/interface'
 
 export function asAstNode(node: AstNode | undefined): AstNode {
   if (node === undefined) {
     throw Error('Expected an AST node, got undefined')
   }
   return node
+}
+
+export function asLispishFunction(value: unknown): LispishFunction {
+  if (isLispishFunction(value)) {
+    return value
+  }
+  throw Error(`Expected a Lispish function, got ${value}`)
 }
 
 export function asNameNode(node: AstNode | undefined): NameNode {
@@ -150,4 +157,34 @@ export function assertLengthEven(params: unknown[]): void {
   if (params.length % 2 !== 0) {
     throw Error(`Wrong number of arguments, expected an even number, got ${params.length}`)
   }
+}
+
+export function isLispishFunction(func: unknown): func is LispishFunction {
+  if (func === null || typeof func !== 'object') {
+    return false
+  }
+  return !!(func as LispishFunction)[functionSymbol]
+}
+
+export function assertLispishFunction(func: unknown): asserts func is LispishFunction {
+  if (func === null || typeof func !== 'object') {
+    throw Error('Not a lispish function')
+  }
+  if (!(func as LispishFunction)[functionSymbol]) {
+    throw Error('Not a lispish function')
+  }
+}
+
+export function isUserDefinedLispishFunction(func: unknown): func is UserDefinedLispishFunction {
+  if (isLispishFunction(func)) {
+    return !!(func as UserDefinedLispishFunction).arguments
+  }
+  return false
+}
+
+export function isBuiltinLispishFunction(func: unknown): func is UserDefinedLispishFunction {
+  if (isLispishFunction(func)) {
+    return !!(func as UserDefinedLispishFunction).arguments
+  }
+  return false
 }

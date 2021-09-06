@@ -1,3 +1,5 @@
+import { Context } from '../..'
+import { EvaluateLispishFunction } from '../../evaluator/interface'
 import { NormalExpressionNode } from '../../parser/interface'
 import {
   assertArray,
@@ -8,6 +10,7 @@ import {
   assertLengthTwo,
   assertLengthTwoOrThree,
   assertLengthZero,
+  assertLispishFunction,
   assertNonNegativeNumber,
   assertNumber,
   assertNumberGte,
@@ -17,18 +20,21 @@ import {
   assertStringOrArray,
 } from '../../utils'
 
-type Evaluate = (params: unknown[]) => unknown
+export type Evaluate = (
+  params: unknown[],
+  contextStack: Context[],
+  { evaluateLispishFunction }: { evaluateLispishFunction: EvaluateLispishFunction },
+) => unknown
 type ValidateNode = (node: NormalExpressionNode) => void
 
-type NormalExpressions = Record<
-  string,
-  {
-    evaluate: Evaluate
-    validate?: ValidateNode
-  }
->
+type BuiltinNormalExpression = {
+  evaluate: Evaluate
+  validate?: ValidateNode
+}
 
-export const normalExpressions: NormalExpressions = {
+export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression>
+
+export const normalExpressions: BuiltinNormalExpressions = {
   '+': {
     evaluate: (params: unknown[]): number =>
       params.reduce((result: number, param) => {
@@ -361,6 +367,23 @@ export const normalExpressions: NormalExpressions = {
         return first.slice(second, third)
       }
       return first.slice(second)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwoOrThree(params),
+  },
+
+  reduce: {
+    evaluate: ([first, second, third]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+      assertLispishFunction(first)
+      assertArray(second)
+      if (third !== undefined) {
+        return second.reduce((result, elem) => {
+          return evaluateLispishFunction(first, [result, elem], contextStack)
+        }, third)
+      } else {
+        return second.slice(1).reduce((result, elem) => {
+          return evaluateLispishFunction(first, [result, elem], contextStack)
+        }, second[0])
+      }
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwoOrThree(params),
   },
