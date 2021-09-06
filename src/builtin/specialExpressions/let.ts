@@ -1,6 +1,6 @@
 import { Context } from '../../evaluator/interface'
 import { NormalExpressionNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined } from '../../utils'
+import { asNotUndefined, isLispishFunction } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface LetSpecialExpressionNode extends SpecialExpressionNode {
@@ -46,7 +46,11 @@ export const letSpecialExpression: SpecialExpression = {
       if (bindingNode === undefined) {
         throw Error(`binding node undefined`)
       }
-      locals.variables[binding.name] = evaluateAstNode(bindingNode, contextStack)
+      const bindingValue = evaluateAstNode(bindingNode, contextStack)
+      if (isLispishFunction(bindingValue)) {
+        throw Error('Cannot bind function in let expression')
+      }
+      locals.variables[binding.name] = bindingValue
     }
     const newContextStack = [locals, ...contextStack]
 

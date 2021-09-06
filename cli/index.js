@@ -4,7 +4,14 @@ const readline = require('readline')
 const path = require('path')
 const fs = require('fs')
 const homeDir = require('os').homedir()
-const { lispish, normalExpressionKeys, specialExpressionKeys, reservedNames } = require('../dist/lispish.js')
+const {
+  lispish,
+  normalExpressionKeys,
+  specialExpressionKeys,
+  reservedNames,
+  isLispishFunction,
+  LispishFunction,
+} = require('../dist/lispish.js')
 
 const historyDir = path.join(homeDir, '.config')
 const historyFile = path.join(historyDir, 'lispish_history.txt')
@@ -195,11 +202,15 @@ function printObj(label, obj, stringify) {
         if (stringify) {
           console.log(`${x} = ${JSON.stringify(obj[x], null, 2)}`)
         } else {
-          console.log(`${x} =`, obj[x])
+          console.log(`${x} =`, isLispishFunction(obj[x]) ? functionToString(x, obj[x]) : obj[x])
         }
       })
     console.log()
   }
+}
+
+function functionToString(name, fun) {
+  return `[Function] arguments: (${fun.arguments.join(' ')})`
 }
 
 const commands = [
@@ -223,7 +234,12 @@ function completer(line) {
 
   const expressionMatch = expressionRegExp.exec(line)
   if (expressionMatch) {
-    return [expressions.filter(c => c.startsWith(expressionMatch[2])).map(c => `${expressionMatch[1]}${c} `), line]
+    return [
+      [...expressions, ...Object.keys(config.topScope.functions)]
+        .filter(c => c.startsWith(expressionMatch[2]))
+        .map(c => `${expressionMatch[1]}${c} `),
+      line,
+    ]
   }
 
   const names = Array.from(

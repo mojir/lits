@@ -5,6 +5,8 @@ import { Ast } from './parser/interface'
 import { tokenize } from './tokenizer'
 import { Token } from './tokenizer/interface'
 
+export { isLispishFunction } from './utils'
+export { LispishFunction } from './parser/interface'
 export { evaluate } from './evaluator'
 export { Context } from './evaluator/interface'
 export { parse } from './parser'
