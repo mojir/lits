@@ -40,13 +40,13 @@ export const letSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     assertLetExpressionNode(node)
-    const locals: Context = {}
+    const locals: Context = { variables: {} }
     for (const binding of node.bindings) {
       const bindingNode = binding.params[0]
       if (bindingNode === undefined) {
         throw Error(`binding node undefined`)
       }
-      locals[binding.name] = evaluateAstNode(bindingNode, contextStack)
+      locals.variables[binding.name] = evaluateAstNode(bindingNode, contextStack)
     }
     const newContextStack = [locals, ...contextStack]
 

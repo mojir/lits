@@ -5,15 +5,12 @@ import {
   assertLengthEven,
   assertLengthOne,
   assertLengthOneOrMore,
-  assertLengthThree,
   assertLengthTwo,
   assertLengthTwoOrThree,
   assertLengthZero,
-  assertNonNegativeInteger,
   assertNonNegativeNumber,
   assertNumber,
   assertNumberGte,
-  assertNumberLt,
   assertNumberNotZero,
   assertPositiveNumber,
   assertString,
@@ -353,17 +350,6 @@ export const normalExpressions: NormalExpressions = {
       return first[second]
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
-  },
-
-  aset: {
-    evaluate: ([first, second, third]: unknown[]): unknown => {
-      assertArray(first)
-      assertNonNegativeInteger(second)
-      assertNumberLt(second, first.length)
-      first[second] = third
-      return third
-    },
-    validate: ({ params }: NormalExpressionNode): void => assertLengthThree(params),
   },
 
   slice: {

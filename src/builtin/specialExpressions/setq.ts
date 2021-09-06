@@ -32,16 +32,20 @@ export const setqSpecialExpression: SpecialExpression = {
     // The second last stack entry is the "global" scope
     let context: Context | undefined = undefined
     for (let i = 0; i < contextStack.length - 1; i += 1) {
-      if (Object.getOwnPropertyDescriptor(contextStack[i], name)) {
+      if (Object.getOwnPropertyDescriptor(contextStack[i]?.variables, name)) {
         context = contextStack[i]
         break
       }
     }
 
-    // The second last stack entry is the "global" scope
-    context = context || (contextStack[contextStack.length - 2] as Context)
-
-    context[name] = value
+    if (!context) {
+      // The second last stack entry is the "global" scope
+      context = contextStack[contextStack.length - 2]
+      if (!context) {
+        throw Error(`Couldn't find global context`)
+      }
+    }
+    context.variables[name] = value
 
     return value
   },

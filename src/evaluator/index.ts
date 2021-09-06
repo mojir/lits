@@ -11,15 +11,19 @@ import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
 import { asNotUndefined } from '../utils'
-import { Context, EvaluateAstNode } from './interface'
+import { Context, EvaluateAstNode, VariableScope } from './interface'
 
-export function evaluate(ast: Ast, fixedContext: Context = {}, globalContext: Context = {}): unknown {
-  const frozenContext = { ...fixedContext }
-  Object.freeze(frozenContext)
+export function evaluate(
+  ast: Ast,
+  globalVariables: VariableScope = {},
+  topScope: Context = { variables: {} },
+): unknown {
+  const frozenGlobalVariables = { ...globalVariables }
+  Object.freeze(frozenGlobalVariables)
 
   // First element is the global context. E.g. setq will assign to this if no local variable is available
   // Second element is the context sent in from outside (this should never be mutated)
-  const contextStack = [globalContext, frozenContext]
+  const contextStack: Context[] = [topScope, { variables: frozenGlobalVariables }]
 
   let result: unknown
   for (const node of ast.body) {
@@ -65,8 +69,8 @@ function evaluateName(node: NameNode, contextStack: Context[]): unknown {
     dotPosition === -1 ? bracketPosition : bracketPosition === -1 ? dotPosition : Math.min(dotPosition, bracketPosition)
   const contextPrefix = index === -1 ? path : path.substring(0, index)
   for (const context of contextStack) {
-    if (Object.getOwnPropertyDescriptor(context, contextPrefix)) {
-      return get(context, path)
+    if (Object.getOwnPropertyDescriptor(context.variables, contextPrefix)) {
+      return get(context.variables, path)
     }
   }
   throw Error(`Undefined identifier ${path}`)

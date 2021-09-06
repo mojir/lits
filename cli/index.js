@@ -22,7 +22,7 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    console.log(lispish(expression, config.globalContext, config.replScope))
+    console.log(lispish(expression, config.globalVariables, config.topScope))
   } catch (error) {
     console.error(error.message)
   }
@@ -31,8 +31,8 @@ function execute(expression) {
 function processArguments(args) {
   const config = {
     filename: '',
-    globalContext: {},
-    replScope: {},
+    globalVariables: {},
+    topScope: { variables: {} },
     expression: '',
   }
   for (let i = 0; i < args.length; i += 2) {
@@ -46,53 +46,28 @@ function processArguments(args) {
         }
         config.filename = argument
         break
-      case '-c':
+      case '-g':
         if (!argument) {
-          console.error('Missing global context after -s')
+          console.error('Missing global variables after -g')
           process.exit(1)
         }
         try {
-          config.globalContext = JSON.parse(argument)
+          config.globalVariables = JSON.parse(argument)
         } catch (e) {
-          console.error(`Couldn't parse global context: ${e?.message}`)
+          console.error(`Couldn't parse global variables: ${e?.message}`)
           process.exit(1)
         }
         break
-      case '-C':
+      case '-G':
         if (!argument) {
-          console.error('Missing global context filename after -C')
+          console.error('Missing global variables filename after -G')
           process.exit(1)
         }
         try {
           const contextString = fs.readFileSync(argument, { encoding: 'utf-8' })
-          config.globalContext = JSON.parse(contextString)
+          config.globalVariables = JSON.parse(contextString)
         } catch (e) {
-          console.error(`Couldn't parse global context: ${e?.message}`)
-          process.exit(1)
-        }
-        break
-      case '-s':
-        if (!argument) {
-          console.error('Missing repl scope after -s')
-          process.exit(1)
-        }
-        try {
-          config.replScope = JSON.parse(argument)
-        } catch (e) {
-          console.error(`Couldn't parse repl scope: ${e?.message}`)
-          process.exit(1)
-        }
-        break
-      case '-S':
-        if (!argument) {
-          console.error('Missing repl scope filename after -C')
-          process.exit(1)
-        }
-        try {
-          const scopeString = fs.readFileSync(argument, { encoding: 'utf-8' })
-          config.replScope = JSON.parse(scopeString)
-        } catch (e) {
-          console.error(`Couldn't parse repl scope: ${e?.message}`)
+          console.error(`Couldn't parse global variables: ${e?.message}`)
           process.exit(1)
         }
         break
@@ -134,25 +109,25 @@ function runREPL() {
             case '`help':
               printHelp()
               break
-            case '`context':
-              printObj('Global context', config.globalContext, false)
+            case '`globalVariables':
+              printObj('Global variables', config.globalVariables, false)
               break
-            case '`Context':
-              printObj('Global context', config.globalContext, true)
+            case '`GlobalVariables':
+              printObj('Global variables', config.globalVariables, true)
               break
-            case '`scope':
-              printObj('Repl scope', config.replScope, false)
+            case '`topScope':
+              printObj('Top scope variables', config.topScope.variables, false)
               break
-            case '`Scope':
-              printObj('Repl scope', config.replScope, true)
+            case '`TopScope':
+              printObj('Top scope variables', config.topScope.variables, true)
               break
-            case '`reset-context':
-              config.globalContext = {}
-              console.log('Global context is now empty\n')
+            case '`resetglobalVariables':
+              config.globalVariables = {}
+              console.log('Global variables is now empty\n')
               break
-            case '`reset-scope':
-              config.replScope = {}
-              console.log('Repl scope is now empty\n')
+            case '`resetTopScope':
+              config.topScope = {}
+              console.log('Top scope is now empty\n')
               break
             case '`quit':
               rl.close()
@@ -177,14 +152,14 @@ function runREPL() {
 }
 
 function printHelp() {
-  console.log(`\`context        Print the global context
-\`Context         Print the global context (JSON.stringify)
-\`scope           Print the repl scope
-\`Scope           Print the repl scope (JSON.stringify)
-\`reset-context   Reset the global context
-\`reset-scope     Reset the repl scope
-\`help            Print this help message
-\`quit            Quit
+  console.log(`\`globalVariables        Print all global variables
+\`GlobalVariables        Print all global variables (JSON.stringify)
+\`topScope               Print top scope
+\`TopScope               Print top scope (JSON.stringify)
+\`resetglobalVariables   Reset global variables
+\`resetTopScope          Reset top scope
+\`help                   Print this help message
+\`quit                   Quit
 `)
 }
 
@@ -192,11 +167,9 @@ function printUsage() {
   console.log(`Usage: lispish [options]
 
 Options:
-  -c ...         Global context as a JSON string
-  -C ...         Global context file (.json file)
-  -s ...         Repl scope as a JSON string
-  -S ...         Repl scope file (.json file)
-  -f ...         Lispish file
+  -g ...         Global variables as a JSON string
+  -G ...         Global variables file (.json file)
+  -f ...         .lispish file
   -e ...         Lispish expression
   -h, --help     Show this help
 `)
@@ -221,7 +194,16 @@ function printObj(label, obj, stringify) {
   }
 }
 
-const commands = ['`help', '`quit', '`context', '`Context', '`scope', '`Scope', '`reset-context', '`reset-scope']
+const commands = [
+  '`help',
+  '`quit',
+  '`globalVariables',
+  '`GlobalVariables',
+  '`topScope',
+  '`TopScope',
+  '`resetglobalVariables',
+  '`resetTopScope',
+]
 const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]*)$/
 const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]*)$/
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
@@ -237,7 +219,7 @@ function completer(line) {
   }
 
   const names = Array.from(
-    new Set([...reservedNames, ...Object.keys(config.replScope), ...Object.keys(config.globalContext)]),
+    new Set([...reservedNames, ...Object.keys(config.topScope), ...Object.keys(config.globalVariables)]),
   )
   const nameMatch = nameRegExp.exec(line)
   if (nameMatch) {
