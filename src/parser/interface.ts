@@ -74,9 +74,9 @@ export interface ExpressionExpressionNode extends GenericNode {
   params: AstNode[]
 }
 
-export interface SpecialExpressionNode<T extends SpecialExpressionName = SpecialExpressionName> extends GenericNode {
+export interface SpecialExpressionNode extends GenericNode {
   type: 'SpecialExpression'
-  name: T
+  name: SpecialExpressionName
   params: AstNode[]
 }
 

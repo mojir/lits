@@ -223,8 +223,8 @@ const commands = [
   '`resetglobalVariables',
   '`resetTopScope',
 ]
-const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]*)$/
-const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]*)$/
+const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
+const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 function completer(line) {

@@ -3,7 +3,7 @@ import { functionSymbol, LispishFunction, SpecialExpressionNode } from '../../pa
 import { asNameNode, asNotUndefined, assertLengthOne } from '../../utils'
 import { SpecialExpression } from '../interface'
 
-interface FunctionSpecialExpressionNode extends SpecialExpressionNode {
+export interface FunctionSpecialExpressionNode extends SpecialExpressionNode {
   name: 'function'
 }
 
