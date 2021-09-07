@@ -104,4 +104,31 @@ export const list: BuiltinNormalExpressions = {
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
+
+  first: {
+    evaluate: ([first]: unknown[]): unknown => {
+      assertArray(first)
+      return first[0]
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  rest: {
+    evaluate: ([first]: unknown[]): unknown => {
+      assertArray(first)
+      if (first.length <= 1) {
+        return []
+      }
+      return first.slice(1)
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  cons: {
+    evaluate: ([first, second]: unknown[]): unknown => {
+      assertArray(second)
+      return [first, ...second]
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
+  },
 }

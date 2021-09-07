@@ -180,4 +180,55 @@ describe('list functions', () => {
       expect(() => lispish(`(map (function numberp) (array 1) 2)`)).toThrow()
     })
   })
+  describe('first', () => {
+    test('samples', () => {
+      expect(lispish('(first (array 1 2 3))')).toEqual(1)
+      expect(lispish('(first (array "1"))')).toEqual('1')
+      expect(lispish('(first (array))')).toBeUndefined()
+
+      expect(() => lispish('(first')).toThrow()
+      expect(() => lispish('(first "1")')).toThrow()
+      expect(() => lispish('(first true)')).toThrow()
+      expect(() => lispish('(first false)')).toThrow()
+      expect(() => lispish('(first null)')).toThrow()
+      expect(() => lispish('(first undefined)')).toThrow()
+      expect(() => lispish('(first (object))')).toThrow()
+      expect(() => lispish('(first 10)')).toThrow()
+    })
+  })
+
+  describe('rest', () => {
+    test('samples', () => {
+      expect(lispish('(rest (array 1 2 3))')).toEqual([2, 3])
+      expect(lispish('(rest (array 1 2))')).toEqual([2])
+      expect(lispish('(rest (array "1"))')).toEqual([])
+      expect(lispish('(rest (array))')).toEqual([])
+
+      expect(() => lispish('(rest')).toThrow()
+      expect(() => lispish('(rest "1")')).toThrow()
+      expect(() => lispish('(rest true)')).toThrow()
+      expect(() => lispish('(rest false)')).toThrow()
+      expect(() => lispish('(rest null)')).toThrow()
+      expect(() => lispish('(rest undefined)')).toThrow()
+      expect(() => lispish('(rest (object))')).toThrow()
+      expect(() => lispish('(rest 10)')).toThrow()
+    })
+  })
+
+  describe('cons', () => {
+    test('samples', () => {
+      expect(lispish('(cons 0 (array 1 2 3))')).toEqual([0, 1, 2, 3])
+      expect(lispish('(cons 0 (array "1"))')).toEqual([0, '1'])
+      expect(lispish('(cons 0 (array))')).toEqual([0])
+
+      expect(() => lispish('(cons')).toThrow()
+      expect(() => lispish('(cons 1 "1")')).toThrow()
+      expect(() => lispish('(cons 1 true)')).toThrow()
+      expect(() => lispish('(cons 1 false)')).toThrow()
+      expect(() => lispish('(cons 1 null)')).toThrow()
+      expect(() => lispish('(cons 1 undefined)')).toThrow()
+      expect(() => lispish('(cons 1 (object))')).toThrow()
+      expect(() => lispish('(cons 1 10)')).toThrow()
+    })
+  })
 })
