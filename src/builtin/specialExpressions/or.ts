@@ -18,7 +18,7 @@ export const orSpecialExpression: SpecialExpression = {
     ]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    assertOrExpressionNode(node)
+    castOrExpressionNode(node)
     let value: unknown = false
 
     for (const param of node.params) {
@@ -30,13 +30,8 @@ export const orSpecialExpression: SpecialExpression = {
 
     return value
   },
-  validate: node => {
-    assertOrExpressionNode(node)
-  },
 }
 
-function assertOrExpressionNode(node: SpecialExpressionNode): asserts node is OrSpecialExpressionNode {
-  if (node.name !== 'or') {
-    throw Error('Expected or special expression node')
-  }
+function castOrExpressionNode(_node: SpecialExpressionNode): asserts _node is OrSpecialExpressionNode {
+  return
 }

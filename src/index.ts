@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { evaluate } from './evaluator'
 import { Context, VariableScope } from './evaluator/interface'
 import { parse } from './parser'

@@ -29,4 +29,9 @@ describe('Parser', () => {
     const ast = parse(tokens)
     expect(ast.body.length).toBe(1)
   })
+
+  test('Unparsable expression', () => {
+    const tokens = tokenize('("s")')
+    expect(() => parse(tokens)).toThrow()
+  })
 })

@@ -16,11 +16,7 @@ import { asLispishFunction, asNotUndefined, isLispishFunction, isUserDefinedLisp
 import { Context, EvaluateAstNode, EvaluateLispishFunction, VariableScope } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 
-export function evaluate(
-  ast: Ast,
-  globalVariables: VariableScope = {},
-  topScope: Context = { variables: {}, functions: {} },
-): unknown {
+export function evaluate(ast: Ast, globalVariables: VariableScope, topScope: Context): unknown {
   const frozenGlobalVariables = { ...globalVariables }
   Object.freeze(frozenGlobalVariables)
 
@@ -118,10 +114,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
 
     for (let i = 0; i < params.length; i += 1) {
       const param = params[i]
-      const key = lispishFunction.arguments[i]
-      if (key === undefined) {
-        throw Error('Expected string, got undefined')
-      }
+      const key = asNotUndefined(lispishFunction.arguments[i])
       if (isLispishFunction(param)) {
         newContext.functions[key] = param
       } else {
@@ -135,11 +128,8 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
     }
     return result
   } else {
-    const normalExpression = normalExpressions[lispishFunction.builtin]
-    if (normalExpression) {
-      return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
-    }
-    throw Error(`Could not find builtin normal expression with name "${lispishFunction.builtin}"`)
+    const normalExpression = asNotUndefined(normalExpressions[lispishFunction.builtin])
+    return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
   }
 }
 
@@ -152,20 +142,14 @@ function evaluateBuiltinNormalExpression(
 
   try {
     return normalExpressionEvaluator(params, contextStack, { evaluateLispishFunction })
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
-    }
-    throw Error(e + '\n' + JSON.stringify(node, null, 2))
+  } catch (e) {
+    throw Error((e as Error).message + '\n' + JSON.stringify(node, null, 2))
   }
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {
-  const specialExpressionEvaluator = builtin.specialExpressions[node.name]?.evaluate
-  if (specialExpressionEvaluator) {
-    return specialExpressionEvaluator(node, contextStack, evaluateAstNode)
-  }
-  throw Error(`Unrecognized special expression node: ${node.name}`)
+  const specialExpressionEvaluator = asNotUndefined(builtin.specialExpressions[node.name]).evaluate
+  return specialExpressionEvaluator(node, contextStack, evaluateAstNode)
 }
 
 function evaluateExpressionExpression(node: ExpressionExpressionNode, contextStack: Context[]): unknown {

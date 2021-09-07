@@ -46,6 +46,9 @@ export const defunSpecialExpression: SpecialExpression = {
       position = newPosition
       token = asNotUndefined(tokens[position])
     }
+    if (body.length === 0) {
+      throw Error('Missing defun body')
+    }
 
     const node: DefunSpecialExpressionNode = {
       type: 'SpecialExpression',
@@ -59,7 +62,7 @@ export const defunSpecialExpression: SpecialExpression = {
     return [position + 1, node]
   },
   evaluate: (node, contextStack, _evaluateAstNode): undefined => {
-    assertDefunExpressionNode(node)
+    castDefunExpressionNode(node)
     const lispishFunction: LispishFunction = {
       [functionSymbol]: true,
       name: node.functionName.value,
@@ -68,21 +71,13 @@ export const defunSpecialExpression: SpecialExpression = {
     }
 
     // The second last stack entry is the "global" scope
-    const context = contextStack[contextStack.length - 2]
-    if (!context) {
-      throw Error(`Couldn't find global context`)
-    }
+    const context = asNotUndefined(contextStack[contextStack.length - 2])
 
     context.functions[node.functionName.value] = lispishFunction
     return undefined
   },
-  validate: node => {
-    assertDefunExpressionNode(node)
-  },
 }
 
-function assertDefunExpressionNode(node: SpecialExpressionNode): asserts node is DefunSpecialExpressionNode {
-  if (node.name !== 'defun') {
-    throw Error('Expected defun special expression node')
-  }
+function castDefunExpressionNode(_node: SpecialExpressionNode): asserts _node is DefunSpecialExpressionNode {
+  return
 }

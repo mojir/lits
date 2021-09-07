@@ -18,11 +18,11 @@ const simpleProgram = `
 const formatPhoneNumber = `
 (if (stringp $data)
   (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
-    (if (> (length phoneNumber) 6)
+    (if (> (stringLength phoneNumber) 6)
       (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
-      (if (> (length phoneNumber) 3)
+      (if (> (stringLength phoneNumber) 3)
         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
-        (if (> (length phoneNumber) 0)
+        (if (> (stringLength phoneNumber) 0)
           (concat "(" (substring phoneNumber 0))
           phoneNumber
         )
@@ -87,6 +87,19 @@ describe('Evaluator', () => {
     expect(result).toEqual([true, false])
   })
 
+  test('expressionExpression', () => {
+    expect(lispish('((lambda (x) (* x x)) 10)')).toBe(100)
+  })
+
+  test('lispishFunction', () => {
+    expect(lispish(`((lambda () 10))`)).toBe(10)
+    expect(lispish(`((lambda (x) (x 10)) (lambda (x) (* x x)))`)).toBe(100)
+    expect(lispish(`((lambda (x) (x 10)) (function 1+))`)).toBe(11)
+    expect(() => lispish(`((lambda (x) (x 10)) (function 1++))`)).toThrow()
+    expect(() => lispish(`((lambda (x) (* x x)) 10 20)`)).toThrow()
+    expect(() => lispish(`((lambda (x) (* x x)))`)).toThrow()
+  })
+
   test('formatPhoneNumber', () => {
     expect(lispish(formatPhoneNumber, { $data: null })).toBe('')
     expect(lispish(formatPhoneNumber, { $data: '' })).toBe('')
@@ -114,38 +127,5 @@ describe('Evaluator', () => {
     expect(lispish(formatPhoneNumber, { $data: '234567890' })).toBe('(234) 567-890')
     expect(lispish(formatPhoneNumber, { $data: '2345678901' })).toBe('(234) 567-8901')
     expect(lispish(formatPhoneNumber, { $data: '23456789012' })).toBe('(234) 567-89012')
-  })
-
-  test('reduce', () => {
-    let program = `
-      (defun countChars (stringArray)
-        (reduce
-          (lambda (sum str) (+ sum (length str)))
-          stringArray
-          0
-        )
-      )
-
-      (countChars (array "First" "Second" "Third"))
-      `
-    expect(lispish(program)).toBe(16)
-
-    program = `
-      (defun longestLength (stringArray)
-        (reduce
-          (lambda (sum str)
-            (if (> sum (length str))
-              sum
-              (length str)
-            )
-          )
-          stringArray
-          0
-        )
-      )
-
-      (longestLength (array "First" "Second" "Third"))
-      `
-    expect(lispish(program)).toBe(6)
   })
 })

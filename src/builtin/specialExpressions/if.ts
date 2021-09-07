@@ -19,20 +19,17 @@ export const ifSpecialExpression: SpecialExpression = {
     ]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    assertIfExpressionNode(node)
+    castIfExpressionNode(node)
 
     const [conditionNode, trueNode, falseNode] = node.params
     const ifNode = evaluateAstNode(asAstNode(conditionNode), contextStack) ? asAstNode(trueNode) : asAstNode(falseNode)
     return evaluateAstNode(ifNode, contextStack)
   },
   validate: node => {
-    assertIfExpressionNode(node)
     assertLengthThree(node.params)
   },
 }
 
-function assertIfExpressionNode(node: SpecialExpressionNode): asserts node is IfSpecialExpressionNode {
-  if (node.name !== 'if') {
-    throw Error('Expected if special expression node')
-  }
+function castIfExpressionNode(_node: SpecialExpressionNode): asserts _node is IfSpecialExpressionNode {
+  return
 }

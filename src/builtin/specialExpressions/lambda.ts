@@ -46,6 +46,10 @@ export const lambdaSpecialExpression: SpecialExpression = {
       token = asNotUndefined(tokens[position])
     }
 
+    if (body.length === 0) {
+      throw Error('Missing lambda body')
+    }
+
     const node: LambdaSpecialExpressionNode = {
       type: 'SpecialExpression',
       name: 'lambda',
@@ -57,7 +61,7 @@ export const lambdaSpecialExpression: SpecialExpression = {
     return [position + 1, node]
   },
   evaluate: (node): UserDefinedLispishFunction => {
-    assertLambdaExpressionNode(node)
+    castLambdaExpressionNode(node)
     const lispishFunction: LispishFunction = {
       [functionSymbol]: true,
       name: undefined,
@@ -67,13 +71,8 @@ export const lambdaSpecialExpression: SpecialExpression = {
 
     return lispishFunction
   },
-  validate: node => {
-    assertLambdaExpressionNode(node)
-  },
 }
 
-function assertLambdaExpressionNode(node: SpecialExpressionNode): asserts node is LambdaSpecialExpressionNode {
-  if (node.name !== 'lambda') {
-    throw Error('Expected lambda special expression node')
-  }
+function castLambdaExpressionNode(_node: SpecialExpressionNode): asserts _node is LambdaSpecialExpressionNode {
+  return
 }

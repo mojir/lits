@@ -1,10 +1,10 @@
-import { Token } from '..'
 import { ReservedName } from '../reservedNames'
+import { Token } from '../tokenizer/interface'
 
 export const functionSymbol = Symbol('function')
 export type UserDefinedLispishFunction = {
   [functionSymbol]: true
-  name: string | undefined
+  name?: string
   arguments: string[]
   body: AstNode[]
 }
@@ -24,6 +24,7 @@ type NodeType =
   | 'ExpressionExpression'
   | 'Name'
   | 'ReservedName'
+  | 'Binding'
 type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'defun' | 'function' | 'lambda'
 
 interface GenericNode {
@@ -31,6 +32,7 @@ interface GenericNode {
 }
 
 type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | ExpressionExpressionNode
+export type ParseBinding = (tokens: Token[], position: number) => [number, BindingNode]
 export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
 export type ParseNormalExpression = (tokens: Token[], position: number) => [number, NormalExpressionNode]
 export type ParseSpecialExpression = (tokens: Token[], position: number) => [number, SpecialExpressionNode]
@@ -58,6 +60,12 @@ export interface NormalExpressionNode extends GenericNode {
   type: 'NormalExpression'
   name: string
   params: AstNode[]
+}
+
+export interface BindingNode extends GenericNode {
+  type: 'Binding'
+  name: string
+  value: AstNode
 }
 
 export interface ExpressionExpressionNode extends GenericNode {

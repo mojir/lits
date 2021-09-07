@@ -18,7 +18,7 @@ export const andSpecialExpression: SpecialExpression = {
     ]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    assertAndExpressionNode(node)
+    castAndExpressionNode(node)
     let value: unknown = true
 
     for (const param of node.params) {
@@ -30,13 +30,8 @@ export const andSpecialExpression: SpecialExpression = {
 
     return value
   },
-  validate: node => {
-    assertAndExpressionNode(node)
-  },
 }
 
-function assertAndExpressionNode(node: SpecialExpressionNode): asserts node is AndSpecialExpressionNode {
-  if (node.name !== 'and') {
-    throw Error('Expected and special expression node')
-  }
+function castAndExpressionNode(_node: SpecialExpressionNode): asserts _node is AndSpecialExpressionNode {
+  return
 }

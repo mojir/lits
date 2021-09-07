@@ -1,7 +1,6 @@
 import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { ReservedName, reservedNamesRecord } from '../../reservedNames'
-import { asAstNode, asNameNode, assertLengthTwo } from '../../utils'
+import { asAstNode, asNameNode, asNotUndefined, assertLengthTwo, assertNameNode } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface SetqSpecialExpressionNode extends SpecialExpressionNode {
@@ -11,6 +10,7 @@ interface SetqSpecialExpressionNode extends SpecialExpressionNode {
 export const setqSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseParams }) => {
     const [newPosition, params] = parseParams(tokens, position)
+    assertNameNode(params[0])
     return [
       newPosition + 1,
       {
@@ -21,18 +21,15 @@ export const setqSpecialExpression: SpecialExpression = {
     ]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    assertSetqExpressionNode(node)
+    castSetqExpressionNode(node)
     const name = asNameNode(node.params[0]).value
-    if (reservedNamesRecord[name as ReservedName]) {
-      throw SyntaxError(`Cannot set symbol name to "${name}", it's a reserved name`)
-    }
 
     const value = evaluateAstNode(asAstNode(node.params[1]), contextStack)
 
     // The second last stack entry is the "global" scope
     let context: Context | undefined = undefined
     for (let i = 0; i < contextStack.length - 1; i += 1) {
-      if (Object.getOwnPropertyDescriptor(contextStack[i]?.variables, name)) {
+      if (Object.getOwnPropertyDescriptor(asNotUndefined(contextStack[i]).variables, name)) {
         context = contextStack[i]
         break
       }
@@ -40,23 +37,17 @@ export const setqSpecialExpression: SpecialExpression = {
 
     if (!context) {
       // The second last stack entry is the "global" scope
-      context = contextStack[contextStack.length - 2]
-      if (!context) {
-        throw Error(`Couldn't find global context`)
-      }
+      context = asNotUndefined(contextStack[contextStack.length - 2])
     }
     context.variables[name] = value
 
     return value
   },
   validate: node => {
-    assertSetqExpressionNode(node)
     assertLengthTwo(node.params)
   },
 }
 
-function assertSetqExpressionNode(node: SpecialExpressionNode): asserts node is SetqSpecialExpressionNode {
-  if (node.name !== 'setq') {
-    throw Error('Expected setq special expression node')
-  }
+function castSetqExpressionNode(_node: SpecialExpressionNode): asserts _node is SetqSpecialExpressionNode {
+  return
 }

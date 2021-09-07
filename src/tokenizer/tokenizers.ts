@@ -1,11 +1,13 @@
 import { reservedNamesRecord } from '../reservedNames'
+import { asNotUndefined } from '../utils'
 import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
 const nameRegExp = /[0-9a-zA-Z_^?=!#$%&<>.+*/\-[\]]/
 const fullNumberRegExp = /^-?\d+(\.\d+)?$/
 
-export const skipWhiteSpace: Tokenizer = (input, current) => (/\s/.test(input[current] ?? '') ? [1, null] : [0, null])
+export const skipWhiteSpace: Tokenizer = (input, current) =>
+  /\s/.test(input[current] ?? '') ? [1, undefined] : [0, undefined]
 
 export const skipComment: Tokenizer = (input, current) => {
   if (input[current] === ';') {
@@ -16,9 +18,9 @@ export const skipComment: Tokenizer = (input, current) => {
     if (input[current + length] === '\n' && current + length < input.length) {
       length += 1
     }
-    return [length, null]
+    return [length, undefined]
   }
-  return [0, null]
+  return [0, undefined]
 }
 
 export const tokenizeLeftParen: Tokenizer = (input: string, position: number) =>
@@ -29,7 +31,7 @@ export const tokenizeRightParen: Tokenizer = (input: string, position: number) =
 
 export const tokenizeString: Tokenizer = (input, position) => {
   if (input[position] !== '"') {
-    return [0, null]
+    return [0, undefined]
   }
 
   let value = ''
@@ -63,19 +65,20 @@ export const tokenizeString: Tokenizer = (input, position) => {
 
 export const tokenizeNumber: Tokenizer = (input: string, position: number) => {
   const result = tokenizePattern('number', /[0-9.-]/, input, position)
-  if (result[0] === 0) {
+  const [length, token] = result
+  if (length === 0) {
     return result
   }
 
-  const nextPosition = position + result[0]
+  const nextPosition = position + length
   const nextChar = input[nextPosition]
   if (nextChar && nameRegExp.test(nextChar)) {
-    return [0, null]
+    return [0, undefined]
   }
-  const value = result[1]?.value ?? ''
+  const value = asNotUndefined(token).value
 
   if (!fullNumberRegExp.test(value)) {
-    return [0, null]
+    return [0, undefined]
   }
   return result
 }
@@ -91,7 +94,7 @@ export function tokenizeReservedName(input: string, position: number): TokenDesc
       return [length, { type: 'reservedName', value: reservedName }]
     }
   }
-  return [0, null]
+  return [0, undefined]
 }
 
 export const tokenizeName: Tokenizer = (input: string, position: number) =>
@@ -101,7 +104,7 @@ function tokenizeCharacter(type: TokenizerType, value: string, input: string, po
   if (value === input[position]) {
     return [1, { type, value }]
   } else {
-    return [0, null]
+    return [0, undefined]
   }
 }
 
@@ -111,7 +114,7 @@ function tokenizePattern(type: TokenizerType, pattern: RegExp, input: string, po
   let value = ''
 
   if (!char || !pattern.test(char)) {
-    return [0, null]
+    return [0, undefined]
   }
 
   while (char && pattern.test(char)) {

@@ -1,15 +1,15 @@
 import { Context } from '../../evaluator/interface'
-import { NormalExpressionNode, SpecialExpressionNode } from '../../parser/interface'
+import { BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined, isLispishFunction } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface LetSpecialExpressionNode extends SpecialExpressionNode {
   name: 'let'
-  bindings: NormalExpressionNode[]
+  bindings: BindingNode[]
 }
 
 export const letSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseExpression, parseParams }) => {
+  parse: (tokens, position, { parseBinding, parseParams }) => {
     const node: LetSpecialExpressionNode = {
       type: 'SpecialExpression',
       name: 'let',
@@ -25,12 +25,9 @@ export const letSpecialExpression: SpecialExpression = {
       if (!(token.type === 'paren' && token.value === '(')) {
         throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected an expression`)
       }
-      const [newPosition, param] = parseExpression(tokens, position)
-      if (param.type !== 'NormalExpression') {
-        throw Error('Expected a binding expression')
-      }
+      const [newPosition, binding] = parseBinding(tokens, position)
       position = newPosition
-      node.bindings.push(param)
+      node.bindings.push(binding)
       token = asNotUndefined(tokens[position])
     }
     position += 1 // skip right parenthesis - end of let bindings
@@ -39,14 +36,11 @@ export const letSpecialExpression: SpecialExpression = {
     return [newPosition + 1, node]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    assertLetExpressionNode(node)
+    castLetExpressionNode(node)
     const locals: Context = { variables: {}, functions: {} }
     for (const binding of node.bindings) {
-      const bindingNode = binding.params[0]
-      if (bindingNode === undefined) {
-        throw Error(`binding node undefined`)
-      }
-      const bindingValue = evaluateAstNode(bindingNode, contextStack)
+      const bindingValueNode = binding.value
+      const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
       if (isLispishFunction(bindingValue)) {
         throw Error('Cannot bind function in let expression')
       }
@@ -60,13 +54,8 @@ export const letSpecialExpression: SpecialExpression = {
     }
     return result
   },
-  validate: node => {
-    assertLetExpressionNode(node)
-  },
 }
 
-function assertLetExpressionNode(node: SpecialExpressionNode): asserts node is LetSpecialExpressionNode {
-  if (node.name !== 'let') {
-    throw Error('Expected let special expression node')
-  }
+function castLetExpressionNode(_node: SpecialExpressionNode): asserts _node is LetSpecialExpressionNode {
+  return
 }

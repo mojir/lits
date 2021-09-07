@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { ifSpecialExpression } from './if'
 import { letSpecialExpression } from './let'
 import { setqSpecialExpression } from './setq'

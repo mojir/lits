@@ -1,5 +1,6 @@
+import { builtin } from '..'
 import { functionSymbol, LispishFunction, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLengthOne } from '../../utils'
+import { asNameNode, asNotUndefined, assertLengthOne } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface FunctionSpecialExpressionNode extends SpecialExpressionNode {
@@ -29,36 +30,34 @@ export const functionSpecialExpression: SpecialExpression = {
     return [position + 1, node]
   },
   evaluate: (node, contextStack): LispishFunction => {
-    assertFunctionExpressionNode(node)
+    castFunctionExpressionNode(node)
 
-    const parameter = asNotUndefined(node.params[0])
-    if (parameter.type === 'Name') {
-      let lispishFunction: LispishFunction | undefined = undefined
-      for (const context of contextStack) {
-        lispishFunction = context.functions[parameter.value]
-        if (lispishFunction) {
-          break
-        }
-      }
+    const parameter = asNameNode(node.params[0])
+    let lispishFunction: LispishFunction | undefined = undefined
+    for (const context of contextStack) {
+      lispishFunction = context.functions[parameter.value]
       if (lispishFunction) {
-        return lispishFunction
-      }
-
-      return {
-        [functionSymbol]: true,
-        builtin: parameter.value,
+        break
       }
     }
-    throw Error('Unexpected function parameter, expected a name')
+    if (lispishFunction) {
+      return lispishFunction
+    }
+
+    if (!builtin.normalExpressions[parameter.value]) {
+      throw Error(`Could not find built in function (normal expresssion) ${parameter.value}`)
+    }
+
+    return {
+      [functionSymbol]: true,
+      builtin: parameter.value,
+    }
   },
   validate: node => {
-    assertFunctionExpressionNode(node)
     assertLengthOne(node.params)
   },
 }
 
-function assertFunctionExpressionNode(node: SpecialExpressionNode): asserts node is FunctionSpecialExpressionNode {
-  if (node.name !== 'function') {
-    throw Error('Expected function special expression node')
-  }
+function castFunctionExpressionNode(_node: SpecialExpressionNode): asserts _node is FunctionSpecialExpressionNode {
+  return
 }

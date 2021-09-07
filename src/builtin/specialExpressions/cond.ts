@@ -1,5 +1,5 @@
-import { Token } from '../..'
 import { AstNode, ParseToken, SpecialExpressionNode } from '../../parser/interface'
+import { Token } from '../../tokenizer/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
@@ -50,7 +50,7 @@ export const condSpecialExpression: SpecialExpression = {
     ]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    assertCondExpressionNode(node)
+    castCondExpressionNode(node)
     let value: unknown
 
     for (const condition of node.conditions) {
@@ -64,13 +64,8 @@ export const condSpecialExpression: SpecialExpression = {
       return value
     }
   },
-  validate: node => {
-    assertCondExpressionNode(node)
-  },
 }
 
-function assertCondExpressionNode(node: SpecialExpressionNode): asserts node is CondSpecialExpressionNode {
-  if (node.name !== 'cond') {
-    throw Error('Expected cond special expression node')
-  }
+function castCondExpressionNode(_node: SpecialExpressionNode): asserts _node is CondSpecialExpressionNode {
+  return
 }

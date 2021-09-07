@@ -19,6 +19,7 @@ describe('evaluator', () => {
     test('samples', () => {
       expect(lispish(`(setq a 10) a`)).toBe(10)
       expect(lispish(`(setq a 10) (setq a 20) a`)).toBe(20)
+      expect(() => lispish(`(setq true false)`)).toThrow()
       expect(() => lispish(`(setq a)`)).toThrow()
       expect(() => lispish(`(setq a 10 10)`)).toThrow()
       expect(() => lispish(`(setq 1 10)`)).toThrow()
@@ -84,6 +85,15 @@ describe('evaluator', () => {
       expect(lispish(`(let ((a "A")) a)`)).toBe('A')
       expect(lispish(`(let ((a "A") (b "B")) a b)`)).toBe('B')
       expect(lispish(`(let ((a "A") (b "B")) a b)`)).toBe('B')
+      expect(lispish(`(let ((a (+ 10 20)) (b "B")) b a)`)).toBe(30)
+      expect(() => lispish(`(let)`)).toThrow()
+      expect(() => lispish(`(let ())`)).toThrow()
+      expect(() => lispish(`(let (()))`)).toThrow()
+      expect(() => lispish(`(let ((let ((b "B")) b)))`)).toThrow()
+      expect(() => lispish(`(let ((a "A") b) a`)).toThrow()
+      expect(() => lispish(`(let (a "A"))`)).toThrow()
+      expect(() => lispish(`(let (a "A") a)`)).toThrow()
+      expect(() => lispish(`(let ((a (lambda () 1))) a)`)).toThrow()
     })
     test('local and global variables', () => {
       expect(() =>
@@ -207,6 +217,15 @@ describe('evaluator', () => {
       const functions: FunctionScope = {}
       lispish('(defun add (a b) (+ a b))', {}, { variables: {}, functions })
       expect(functions.add).toBeTruthy()
+      expect(() => lispish('(defun add () 10)')).not.toThrow()
+      expect(() => lispish('(defun true () 10)')).toThrow()
+      expect(() => lispish('(defun false () 10)')).toThrow()
+      expect(() => lispish('(defun null () 10)')).toThrow()
+      expect(() => lispish('(defun undefined () 10)')).toThrow()
+      expect(() => lispish('(defun add ("s") 10)')).toThrow()
+      expect(() => lispish('(defun "add" (a b) (+ a b))')).toThrow()
+      expect(() => lispish('(defun add 1 (+ a b))')).toThrow()
+      expect(() => lispish('(defun add (a b))')).toThrow()
     })
     test('call defun function', () => {
       expect(lispish('(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
@@ -216,12 +235,31 @@ describe('evaluator', () => {
   describe('function', () => {
     test('samples', () => {
       lispish('(function +)')
+      expect(() => lispish('(function)')).toThrow()
+      expect(() => lispish('(function "k")')).toThrow()
+      expect(() => lispish('(function k s)')).toThrow()
+      expect(() => lispish('(function add)')).toThrow()
+      expect(() => lispish('(function true)')).toThrow()
+      expect(() => lispish('(function false)')).toThrow()
+      expect(() => lispish('(function null)')).toThrow()
+      expect(() => lispish('(function undefined)')).toThrow()
+      expect(() => lispish('(defun add (x y) (+ x y)) (function add)')).not.toThrow()
     })
   })
 
-  describe('function', () => {
+  describe('lambda', () => {
     test('samples', () => {
-      lispish('(function +)')
+      lispish('(lambda (x) (+ x 1))')
+      lispish('(lambda () 1)')
+      expect(() => lispish('(lambda (false) 1)')).toThrow()
+      expect(() => lispish('(lambda (true) 1)')).toThrow()
+      expect(() => lispish('(lambda (null) 1)')).toThrow()
+      expect(() => lispish('(lambda (undefined) 1)')).toThrow()
+      expect(() => lispish('(lambda)')).toThrow()
+      expect(() => lispish('(lambda (x))')).toThrow()
+      expect(() => lispish('(lambda "k")')).toThrow()
+      expect(() => lispish('(lambda k s)')).toThrow()
+      expect(() => lispish('(lambda add)')).toThrow()
     })
   })
 })

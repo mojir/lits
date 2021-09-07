@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { lispish, evaluate, parse, tokenize } from '../src'
+import { lispish } from '../src'
+import { tokenize } from '../src/tokenizer'
+import { parse } from '../src/parser'
+import { evaluate } from '../src/evaluator'
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`

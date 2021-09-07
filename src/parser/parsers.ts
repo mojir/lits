@@ -14,6 +14,8 @@ import {
   ParseNormalExpression,
   ParseExpressionExpression,
   ExpressionExpressionNode,
+  ParseBinding,
+  BindingNode,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -65,10 +67,37 @@ export const parseExpression: ParseExpression = (tokens, position) => {
     }
     return parseNormalExpression(tokens, position)
   } else if (token.type === 'paren' && token.value === '(') {
-    return parseExpressionExpression(tokens, position + 1)
+    return parseExpressionExpression(tokens, position)
   } else {
     throw Error('Could not parse expression')
   }
+}
+
+const parseBinding: ParseBinding = (tokens, position) => {
+  position += 1 // Skip parenthesis
+
+  let token = asNotUndefined(tokens[position])
+  if (token.type !== 'name') {
+    throw Error(`Expected name node in binding, got ${token.type} value=${token.value}`)
+  }
+  const name = token.value
+
+  position += 1
+  token = asNotUndefined(tokens[position])
+  const [newPosition, value] = parseToken(tokens, position)
+  position = newPosition
+
+  token = asNotUndefined(tokens[position])
+  if (!(token.type === 'paren' && token.value === ')')) {
+    throw Error(`Expected paren ')'node in binding, got ${token.type} value=${token.value}`)
+  }
+
+  const node: BindingNode = {
+    type: 'Binding',
+    name,
+    value,
+  }
+  return [position + 1, node]
 }
 
 const parseExpressionExpression: ParseExpressionExpression = (tokens, position) => {
@@ -103,10 +132,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
     try {
       builtinExpression.validate?.(node)
     } catch (e) {
-      if (e instanceof Error) {
-        throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
-      }
-      throw Error(e + '\n' + JSON.stringify(node, null, 2))
+      throw Error((e as Error).message + '\n' + JSON.stringify(node, null, 2))
     }
   }
 
@@ -123,15 +149,13 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
     parseExpression,
     parseParams,
     parseToken,
+    parseBinding,
   })
 
   try {
-    validate(node)
+    validate?.(node)
   } catch (e) {
-    if (e instanceof Error) {
-      throw Error(e.message + '\n' + JSON.stringify(node, null, 2))
-    }
-    throw Error(e + '\n' + JSON.stringify(node, null, 2))
+    throw Error((e as Error).message + '\n' + JSON.stringify(node, null, 2))
   }
 
   return [positionAfterParse, node]

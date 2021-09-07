@@ -16,9 +16,15 @@ export function asLispishFunction(value: unknown): LispishFunction {
 
 export function asNameNode(node: AstNode | undefined): NameNode {
   if (node === undefined || node.type !== 'Name') {
-    throw Error(`Expected an AST node, got ${node ? `${node.type} node` : 'undefined'}.`)
+    throw Error(`Expected a Name node, got ${node ? `${node.type} node` : 'undefined'}.`)
   }
   return node
+}
+
+export function assertNameNode(node: AstNode | undefined): asserts node is NameNode {
+  if (node === undefined || node.type !== 'Name') {
+    throw Error(`Expected a Name node, got ${node ? `${node.type} node` : 'undefined'}.`)
+  }
 }
 
 export function asNotUndefined<T>(value: T | undefined): T {
@@ -102,12 +108,6 @@ export function assertArray(value: unknown): asserts value is Array<unknown> {
   }
 }
 
-export function assertStringOrArray(value: unknown): asserts value is string | Array<unknown> {
-  if (typeof value !== 'string' && !Array.isArray(value)) {
-    throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
-  }
-}
-
 export function assertNumberNotZero(value: unknown): asserts value is number {
   if (typeof value !== 'number') {
     throw TypeError(`Expected number, got: ${value} type="${typeof value}"`)
@@ -153,6 +153,12 @@ export function assertLengthTwoOrThree(params: unknown[]): void {
   }
 }
 
+export function assertLengthOneOrTwoOrThree(params: unknown[]): void {
+  if (params.length !== 1 && params.length !== 2 && params.length !== 3) {
+    throw Error(`Wrong number of arguments, expected 1, 2 or 3, got ${params.length}`)
+  }
+}
+
 export function assertLengthEven(params: unknown[]): void {
   if (params.length % 2 !== 0) {
     throw Error(`Wrong number of arguments, expected an even number, got ${params.length}`)
@@ -183,8 +189,5 @@ export function isUserDefinedLispishFunction(func: unknown): func is UserDefined
 }
 
 export function isBuiltinLispishFunction(func: unknown): func is UserDefinedLispishFunction {
-  if (isLispishFunction(func)) {
-    return !!(func as UserDefinedLispishFunction).arguments
-  }
-  return false
+  return isLispishFunction(func) && !isUserDefinedLispishFunction(func)
 }
