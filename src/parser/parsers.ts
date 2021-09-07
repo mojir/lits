@@ -24,25 +24,28 @@ import { FunctionSpecialExpressionNode } from '../builtin/specialExpressions/fun
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'Number', value: Number(token.value) }]
+  return [position + 1, { type: 'Number', value: Number(token.value), inputPosition: token.inputPosition }]
 }
 
 type ParseString = (tokens: Token[], position: number) => [number, StringNode]
 export const parseString: ParseString = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'String', value: token.value }]
+  return [position + 1, { type: 'String', value: token.value, inputPosition: token.inputPosition }]
 }
 
 type ParseName = (tokens: Token[], position: number) => [number, NameNode]
 export const parseName: ParseName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'Name', value: token.value }]
+  return [position + 1, { type: 'Name', value: token.value, inputPosition: token.inputPosition }]
 }
 
 type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
 export const parseReservedName: ParseReservedName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'ReservedName', value: token.value as ReservedName }]
+  return [
+    position + 1,
+    { type: 'ReservedName', value: token.value as ReservedName, inputPosition: token.inputPosition },
+  ]
 }
 
 const parseParams: ParseParams = (tokens, position) => {
@@ -81,6 +84,7 @@ interface ListNormalExpressionNode extends NormalExpressionNode {
 }
 type ParseListShorthand = (tokens: Token[], position: number) => [number, ListNormalExpressionNode]
 export const parseListShorthand: ParseListShorthand = (tokens, position) => {
+  const { inputPosition } = asNotUndefined(tokens[position])
   position += 1
   let token = asNotUndefined(tokens[position])
   if (!(token.type === 'paren' && token.value === '(')) {
@@ -100,23 +104,27 @@ export const parseListShorthand: ParseListShorthand = (tokens, position) => {
     type: 'NormalExpression',
     name: 'list',
     params,
+    inputPosition,
   }
   return [position, node]
 }
 
 type ParseFunctionShorthand = (tokens: Token[], position: number) => [number, FunctionSpecialExpressionNode]
 export const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position) => {
+  const { inputPosition } = asNotUndefined(tokens[position])
   const [newPosition, innerNode] = parseToken(tokens, position + 1)
 
   const node: FunctionSpecialExpressionNode = {
     type: 'SpecialExpression',
     name: 'function',
     params: [innerNode],
+    inputPosition,
   }
   return [newPosition, node]
 }
 
 const parseBinding: ParseBinding = (tokens, position) => {
+  const { inputPosition } = asNotUndefined(tokens[position])
   position += 1 // Skip parenthesis
 
   let token = asNotUndefined(tokens[position])
@@ -139,11 +147,13 @@ const parseBinding: ParseBinding = (tokens, position) => {
     type: 'Binding',
     name,
     value,
+    inputPosition,
   }
   return [position + 1, node]
 }
 
 const parseExpressionExpression: ParseExpressionExpression = (tokens, position) => {
+  const { inputPosition } = asNotUndefined(tokens[position])
   const [newPosition1, expression] = parseExpression(tokens, position)
 
   const [newPosition2, params] = parseParams(tokens, newPosition1)
@@ -152,13 +162,14 @@ const parseExpressionExpression: ParseExpressionExpression = (tokens, position) 
     type: 'ExpressionExpression',
     expression,
     params,
+    inputPosition,
   }
 
   return [newPosition2 + 1, node]
 }
 
 const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
-  const expressionName = asNotUndefined(tokens[position]).value
+  const { value: expressionName, inputPosition } = asNotUndefined(tokens[position])
 
   const [newPosition, params] = parseParams(tokens, position + 1)
   position = newPosition + 1
@@ -167,6 +178,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
     type: 'NormalExpression',
     name: expressionName,
     params,
+    inputPosition,
   }
 
   const builtinExpression = builtin.normalExpressions[node.name]

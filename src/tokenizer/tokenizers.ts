@@ -60,7 +60,7 @@ export const tokenizeString: Tokenizer = (input, position) => {
     }
     char = input[position + length]
   }
-  return [length + 1, { type: 'string', value }]
+  return [length + 1, { type: 'string', value, inputPosition: position }]
 }
 
 export const tokenizeNumber: Tokenizer = (input: string, position: number) => {
@@ -91,7 +91,7 @@ export function tokenizeReservedName(input: string, position: number): TokenDesc
       continue
     }
     if (input.substr(position, length) === reservedName) {
-      return [length, { type: 'reservedName', value: reservedName }]
+      return [length, { type: 'reservedName', value: reservedName, inputPosition: position }]
     }
   }
   return [0, undefined]
@@ -102,17 +102,17 @@ export const tokenizeName: Tokenizer = (input: string, position: number) =>
 
 export const tokenizeShorthand: Tokenizer = (input: string, position: number) => {
   if (input.substr(position, 2) === `#'`) {
-    return [2, { type: 'shorthand', value: `#'` }]
+    return [2, { type: 'shorthand', value: `#'`, inputPosition: position }]
   }
   if (input[position] === `'`) {
-    return [1, { type: 'shorthand', value: `'` }]
+    return [1, { type: 'shorthand', value: `'`, inputPosition: position }]
   }
   return [0, undefined]
 }
 
 function tokenizeCharacter(type: TokenizerType, value: string, input: string, position: number): TokenDescriptor {
   if (value === input[position]) {
-    return [1, { type, value }]
+    return [1, { type, value, inputPosition: position }]
   } else {
     return [0, undefined]
   }
@@ -133,5 +133,5 @@ function tokenizePattern(type: TokenizerType, pattern: RegExp, input: string, po
     char = input[position + length]
   }
 
-  return [length, { type, value }]
+  return [length, { type, value, inputPosition: position }]
 }

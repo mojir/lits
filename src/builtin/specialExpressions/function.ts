@@ -9,6 +9,7 @@ export interface FunctionSpecialExpressionNode extends SpecialExpressionNode {
 
 export const functionSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
+    const { inputPosition } = asNotUndefined(tokens[position])
     const [newPosition, parameter] = parseToken(tokens, position)
     if (parameter.type !== 'Name') {
       throw Error('Expected a name node')
@@ -25,6 +26,7 @@ export const functionSpecialExpression: SpecialExpression = {
       type: 'SpecialExpression',
       name: 'function',
       params: [parameter],
+      inputPosition,
     }
 
     return [position + 1, node]

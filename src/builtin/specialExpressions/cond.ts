@@ -38,6 +38,7 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
 export const condSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
+    const { inputPosition } = asNotUndefined(tokens[position])
     const [newPosition, conditions] = parseConditions(tokens, position, parseToken)
     return [
       newPosition + 1,
@@ -46,6 +47,7 @@ export const condSpecialExpression: SpecialExpression = {
         name: 'cond',
         conditions,
         params: [],
+        inputPosition,
       },
     ]
   },

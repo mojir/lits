@@ -10,11 +10,13 @@ interface LetSpecialExpressionNode extends SpecialExpressionNode {
 
 export const letSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseBinding, parseParams }) => {
+    const { inputPosition } = asNotUndefined(tokens[position])
     const node: LetSpecialExpressionNode = {
       type: 'SpecialExpression',
       name: 'let',
       params: [],
       bindings: [],
+      inputPosition,
     }
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {

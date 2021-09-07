@@ -15,10 +15,10 @@ describe('Tokenizer', () => {
   })
 
   test('comments', () => {
-    expect(tokenize('"Hej" ;This is a string')).toEqual([{ type: 'string', value: 'Hej' }])
+    expect(tokenize('"Hej" ;This is a string')).toEqual([{ type: 'string', value: 'Hej', inputPosition: 0 }])
     expect(tokenize('"Hej" ;This is a string\n"då"')).toEqual([
-      { type: 'string', value: 'Hej' },
-      { type: 'string', value: 'då' },
+      { type: 'string', value: 'Hej', inputPosition: 0 },
+      { type: 'string', value: 'då', inputPosition: 24 },
     ])
   })
 
@@ -27,9 +27,9 @@ describe('Tokenizer', () => {
       expect(() => tokenize('"Hej')).toThrow()
     })
     test('Escaped string', () => {
-      expect(tokenize('"He\\"j"')[0]).toEqual({ type: 'string', value: 'He"j' })
-      expect(tokenize('"He\\\\j"')[0]).toEqual({ type: 'string', value: 'He\\j' })
-      expect(tokenize('"H\\ej"')[0]).toEqual({ type: 'string', value: 'H\\ej' })
+      expect(tokenize('"He\\"j"')[0]).toEqual({ type: 'string', value: 'He"j', inputPosition: 0 })
+      expect(tokenize('"He\\\\j"')[0]).toEqual({ type: 'string', value: 'He\\j', inputPosition: 0 })
+      expect(tokenize('"H\\ej"')[0]).toEqual({ type: 'string', value: 'H\\ej', inputPosition: 0 })
     })
   })
 })
