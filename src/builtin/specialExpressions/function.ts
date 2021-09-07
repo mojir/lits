@@ -1,4 +1,4 @@
-import { builtin } from '..'
+import { normalExpressions } from '../normalExpressions'
 import { functionSymbol, LispishFunction, SpecialExpressionNode } from '../../parser/interface'
 import { asNameNode, asNotUndefined, assertLengthOne } from '../../utils'
 import { SpecialExpression } from '../interface'
@@ -44,7 +44,7 @@ export const functionSpecialExpression: SpecialExpression = {
       return lispishFunction
     }
 
-    if (!builtin.normalExpressions[parameter.value]) {
+    if (!normalExpressions[parameter.value]) {
       throw Error(`Could not find built in function (normal expresssion) ${parameter.value}`)
     }
 
