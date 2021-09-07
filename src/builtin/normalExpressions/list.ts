@@ -12,7 +12,7 @@ import {
 import { BuiltinNormalExpressions } from './interface'
 
 export const list: BuiltinNormalExpressions = {
-  array: {
+  list: {
     evaluate: (params: unknown[]): unknown => params,
   },
 
@@ -105,10 +105,26 @@ export const list: BuiltinNormalExpressions = {
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
 
+  reverse: {
+    evaluate: ([first]: unknown[]): unknown => {
+      assertArray(first)
+      return first.reverse()
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
   first: {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)
       return first[0]
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  last: {
+    evaluate: ([first]: unknown[]): unknown => {
+      assertArray(first)
+      return first[first.length - 1]
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },

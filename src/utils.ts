@@ -104,7 +104,7 @@ export function assertString(value: unknown): asserts value is string {
 
 export function assertArray(value: unknown): asserts value is Array<unknown> {
   if (!Array.isArray(value)) {
-    throw TypeError(`Expected array, got: ${value} type="${typeof value}"`)
+    throw TypeError(`Expected list, got: ${value} type="${typeof value}"`)
   }
 }
 

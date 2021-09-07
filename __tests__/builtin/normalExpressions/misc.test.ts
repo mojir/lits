@@ -78,7 +78,7 @@ describe('misc functions', () => {
       expect(lispish('(not "0")')).toBe(false)
       expect(lispish('(not 1)')).toBe(false)
       expect(lispish('(not -1)')).toBe(false)
-      expect(lispish('(not (array))')).toBe(false)
+      expect(lispish('(not (list))')).toBe(false)
       expect(lispish('(not false)')).toBe(true)
       expect(lispish('(not true)')).toBe(false)
       expect(lispish('(not null)')).toBe(true)
@@ -92,7 +92,7 @@ describe('misc functions', () => {
       expect(lispish(`(object)`)).toEqual({})
       expect(lispish(`(object "x" 1)`)).toEqual({ x: 1 })
       expect(lispish(`(object "x" 1 "x" 2)`)).toEqual({ x: 2 })
-      expect(lispish(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" (array)))`)).toEqual({
+      expect(lispish(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" (list)))`)).toEqual({
         a: null,
         b: true,
         c: false,
@@ -108,7 +108,7 @@ describe('misc functions', () => {
       expect(() => lispish(`(object false 1)`)).toThrow()
       expect(() => lispish(`(object null 1)`)).toThrow()
       expect(() => lispish(`(object undefined 1)`)).toThrow()
-      expect(() => lispish(`(object (array) 1)`)).toThrow()
+      expect(() => lispish(`(object (list) 1)`)).toThrow()
       expect(() => lispish(`(object (object) 1)`)).toThrow()
     })
   })
@@ -117,7 +117,7 @@ describe('misc functions', () => {
     test('samples', () => {
       expect(lispish('(write 1)')).toBe(1)
       expect(lispish('(write "1")')).toBe('1')
-      expect(lispish('(write (array))')).toEqual([])
+      expect(lispish('(write (list))')).toEqual([])
       expect(lispish('(write (object))')).toEqual({})
       expect(lispish('(write null)')).toBe(null)
       expect(lispish('(write undefined)')).toBe(undefined)

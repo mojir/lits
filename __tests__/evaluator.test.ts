@@ -80,7 +80,7 @@ describe('Evaluator', () => {
   })
   test('!= statement 1', () => {
     const tokens = tokenize(`
-      (array (!= 0 -1) (!= 1 1))
+      (list (!= 0 -1) (!= 1 1))
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, { variables: {}, functions: {} })
