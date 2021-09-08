@@ -1,5 +1,4 @@
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface AndSpecialExpressionNode extends SpecialExpressionNode {
@@ -8,7 +7,6 @@ interface AndSpecialExpressionNode extends SpecialExpressionNode {
 
 export const andSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseParams }) => {
-    const { inputPosition } = asNotUndefined(tokens[position])
     const [newPosition, params] = parseParams(tokens, position)
     return [
       newPosition + 1,
@@ -16,7 +14,6 @@ export const andSpecialExpression: SpecialExpression = {
         type: 'SpecialExpression',
         name: 'and',
         params,
-        inputPosition,
       },
     ]
   },

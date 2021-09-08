@@ -29,7 +29,6 @@ type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'de
 
 interface GenericNode {
   type: NodeType
-  inputPosition: number
 }
 
 type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | ExpressionExpressionNode

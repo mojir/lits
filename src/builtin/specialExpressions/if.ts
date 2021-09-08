@@ -1,5 +1,5 @@
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asAstNode, asNotUndefined, assertLengthThree } from '../../utils'
+import { asAstNode, assertLengthThree } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface IfSpecialExpressionNode extends SpecialExpressionNode {
@@ -8,7 +8,6 @@ interface IfSpecialExpressionNode extends SpecialExpressionNode {
 
 export const ifSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseParams }) => {
-    const { inputPosition } = asNotUndefined(tokens[position])
     const [newPosition, params] = parseParams(tokens, position)
     return [
       newPosition + 1,
@@ -16,7 +15,6 @@ export const ifSpecialExpression: SpecialExpression = {
         type: 'SpecialExpression',
         name: 'if',
         params,
-        inputPosition,
       },
     ]
   },

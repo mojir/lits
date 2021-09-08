@@ -9,7 +9,6 @@ interface SetqSpecialExpressionNode extends SpecialExpressionNode {
 
 export const setqSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseParams }) => {
-    const { inputPosition } = asNotUndefined(tokens[position])
     const [newPosition, params] = parseParams(tokens, position)
     assertNameNode(params[0])
     return [
@@ -18,7 +17,6 @@ export const setqSpecialExpression: SpecialExpression = {
         type: 'SpecialExpression',
         name: 'setq',
         params,
-        inputPosition,
       },
     ]
   },

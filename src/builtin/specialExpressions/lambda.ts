@@ -17,7 +17,6 @@ interface LambdaSpecialExpressionNode extends SpecialExpressionNode {
 
 export const lambdaSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
-    const { inputPosition } = asNotUndefined(tokens[position])
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
       throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected list of arguments`)
@@ -57,7 +56,6 @@ export const lambdaSpecialExpression: SpecialExpression = {
       params: [],
       arguments: functionArguments,
       body,
-      inputPosition,
     }
 
     return [position + 1, node]

@@ -11,7 +11,6 @@ interface DefunSpecialExpressionNode extends SpecialExpressionNode {
 
 export const defunSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
-    const { inputPosition } = asNotUndefined(tokens[position])
     const [newPosition, functionName] = parseToken(tokens, position)
     if (functionName.type !== 'Name') {
       throw Error('Expected a name node')
@@ -58,7 +57,6 @@ export const defunSpecialExpression: SpecialExpression = {
       params: [],
       arguments: functionArguments,
       body,
-      inputPosition,
     }
 
     return [position + 1, node]

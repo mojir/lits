@@ -33,7 +33,7 @@ import {
 describe('utils', () => {
   test('asAstNode', () => {
     expect(() => asAstNode(undefined)).toThrow()
-    const node: AstNode = { type: 'Name', value: 'test', inputPosition: 0 }
+    const node: AstNode = { type: 'Name', value: 'test' }
     expect(asAstNode(node)).toBe(node)
   })
   test('asLispishFunction', () => {
@@ -47,11 +47,10 @@ describe('utils', () => {
   })
   test('asNameNode', () => {
     expect(() => asNameNode(undefined)).toThrow()
-    expect(() => asNameNode({ type: 'Number', value: 12, inputPosition: 0 })).toThrow()
+    expect(() => asNameNode({ type: 'Number', value: 12 })).toThrow()
     const nameNode: NameNode = {
       type: 'Name',
       value: 'a-name',
-      inputPosition: 0,
     }
     expect(asNameNode(nameNode)).toBe(nameNode)
   })
@@ -60,7 +59,6 @@ describe('utils', () => {
     const nameNode: NameNode = {
       type: 'Name',
       value: 'a-name',
-      inputPosition: 0,
     }
     asNameNode(nameNode)
   })
