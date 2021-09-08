@@ -30,7 +30,8 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    console.log(lispish(expression, config.globalVariables, config.topScope))
+    const result = lispish(expression, config.globalVariables, config.topScope)
+    console.log(isLispishFunction(result) ? functionToString(result) : result)
   } catch (error) {
     console.error(error.message)
   }
@@ -202,15 +203,19 @@ function printObj(label, obj, stringify) {
         if (stringify) {
           console.log(`${x} = ${JSON.stringify(obj[x], null, 2)}`)
         } else {
-          console.log(`${x} =`, isLispishFunction(obj[x]) ? functionToString(x, obj[x]) : obj[x])
+          console.log(`${x} =`, isLispishFunction(obj[x]) ? functionToString(obj[x]) : obj[x])
         }
       })
     console.log()
   }
 }
 
-function functionToString(name, fun) {
-  return `[Function] arguments: (${fun.arguments.join(' ')})`
+function functionToString(fun) {
+  if (fun.builtin) {
+    return `<BUILTIN FUNCTION ${fun.builtin}>`
+  } else {
+    return `<FUNCTION ${fun.name ?? 'λ'} (${fun.arguments.join(' ')})>`
+  }
 }
 
 const commands = [

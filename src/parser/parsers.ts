@@ -74,36 +74,6 @@ export const parseExpression: ParseExpression = (tokens, position) => {
   }
 }
 
-interface ListNormalExpressionNode extends NormalExpressionNode {
-  type: 'NormalExpression'
-  name: 'list'
-  params: AstNode[]
-}
-type ParseListShorthand = (tokens: Token[], position: number) => [number, ListNormalExpressionNode]
-export const parseListShorthand: ParseListShorthand = (tokens, position) => {
-  position += 1
-  let token = asNotUndefined(tokens[position])
-  if (!(token.type === 'paren' && token.value === '(')) {
-    throw Error('Expected a "("')
-  }
-  position += 1
-  token = asNotUndefined(tokens[position])
-  const params: AstNode[] = []
-  while (!(token.type === 'paren' && token.value === ')')) {
-    const [newPosition, param] = parseToken(tokens, position)
-    position = newPosition
-    params.push(param)
-    token = asNotUndefined(tokens[position])
-  }
-  position += 1
-  const node: ListNormalExpressionNode = {
-    type: 'NormalExpression',
-    name: 'list',
-    params,
-  }
-  return [position, node]
-}
-
 type ParseFunctionShorthand = (tokens: Token[], position: number) => [number, FunctionSpecialExpressionNode]
 export const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position) => {
   const [newPosition, innerNode] = parseToken(tokens, position + 1)
@@ -228,9 +198,6 @@ export const parseToken: ParseToken = (tokens, position) => {
     case 'shorthand':
       if (token.value === `#'`) {
         nodeDescriptor = parseFunctionShorthand(tokens, position)
-      }
-      if (token.value === `'`) {
-        nodeDescriptor = parseListShorthand(tokens, position)
       }
       break
   }
