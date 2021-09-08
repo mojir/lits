@@ -17,11 +17,15 @@ export const regexp: BuiltinNormalExpressions = {
     validate: ({ params }) => assertLengthOneOrTwo(params),
   },
   match: {
-    evaluate: ([first, second]: unknown[]): RegExpExecArray | undefined => {
+    evaluate: ([first, second]: unknown[]): string[] | undefined => {
       assertRegExp(first)
       assertString(second)
 
-      return first.exec(second) ?? undefined
+      const match = first.exec(second)
+      if (match) {
+        return [...match]
+      }
+      return undefined
     },
     validate: ({ params }) => assertLengthTwo(params),
   },

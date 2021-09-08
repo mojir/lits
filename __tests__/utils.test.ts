@@ -25,6 +25,7 @@ import {
   assertNumberLte,
   assertNumberNotZero,
   assertPositiveNumber,
+  assertRegExp,
   assertString,
   isBuiltinLispishFunction,
   isLispishFunction,
@@ -89,6 +90,18 @@ describe('utils', () => {
     expect(() => assertInteger(undefined)).toThrow()
     expect(() => assertInteger(null)).toThrow()
     expect(() => assertInteger([])).toThrow()
+  })
+  test('assertRegExp', () => {
+    expect(() => assertRegExp(/a/)).not.toThrow()
+    expect(() => assertRegExp(new RegExp('a'))).not.toThrow()
+    expect(() => assertRegExp(0)).toThrow()
+    expect(() => assertRegExp('0')).toThrow()
+    expect(() => assertRegExp(null)).toThrow()
+    expect(() => assertRegExp(undefined)).toThrow()
+    expect(() => assertRegExp(false)).toThrow()
+    expect(() => assertRegExp(true)).toThrow()
+    expect(() => assertRegExp([])).toThrow()
+    expect(() => assertRegExp({})).toThrow()
   })
   test('assertLengthEven', () => {
     expect(() => assertLengthEven([])).not.toThrow()

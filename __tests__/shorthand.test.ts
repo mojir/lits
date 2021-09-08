@@ -1,24 +1,6 @@
 import { lispish } from '../src'
 
 describe('shorthand', () => {
-  describe('list shorthand ', () => {
-    test('samples', () => {
-      expect(() => lispish(`'1`)).toThrow()
-      expect(lispish(`'()`)).toEqual([])
-      expect(lispish(`'(1)`)).toEqual([1])
-      expect(lispish(`'(0 "1" null true false undefined (list (list)) (object))`)).toEqual([
-        0,
-        '1',
-        null,
-        true,
-        false,
-        undefined,
-        [[]],
-        {},
-      ])
-    })
-  })
-
   describe('function shorthand ', () => {
     test('samples', () => {
       lispish(`#'+`)

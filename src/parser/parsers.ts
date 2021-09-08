@@ -196,9 +196,7 @@ export const parseToken: ParseToken = (tokens, position) => {
       }
       break
     case 'shorthand':
-      if (token.value === `#'`) {
-        nodeDescriptor = parseFunctionShorthand(tokens, position)
-      }
+      nodeDescriptor = parseFunctionShorthand(tokens, position)
       break
   }
   if (!nodeDescriptor) {
