@@ -102,6 +102,12 @@ export function assertString(value: unknown): asserts value is string {
   }
 }
 
+export function assertRegExp(value: unknown): asserts value is RegExp {
+  if (!(value instanceof RegExp)) {
+    throw TypeError(`Expected RegExp, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function assertArray(value: unknown): asserts value is Array<unknown> {
   if (!Array.isArray(value)) {
     throw TypeError(`Expected list, got: ${value} type="${typeof value}"`)
@@ -150,6 +156,12 @@ export function assertLengthOneOrMore(params: unknown[]): void {
 export function assertLengthTwoOrThree(params: unknown[]): void {
   if (params.length !== 2 && params.length !== 3) {
     throw Error(`Wrong number of arguments, expected 2 or 3, got ${params.length}`)
+  }
+}
+
+export function assertLengthOneOrTwo(params: unknown[]): void {
+  if (params.length !== 1 && params.length !== 2) {
+    throw Error(`Wrong number of arguments, expected 1 or 2, got ${params.length}`)
   }
 }
 

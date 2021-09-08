@@ -1,4 +1,3 @@
-import { NormalExpressionNode } from '../../parser/interface'
 import { assertLengthEven, assertLengthOne, assertLengthOneOrMore, assertLengthZero, assertString } from '../../utils'
 import { BuiltinNormalExpressions } from './interface'
 
@@ -9,14 +8,14 @@ export const misc: BuiltinNormalExpressions = {
       console.log(first)
       return first
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }) => assertLengthOne(params),
   },
 
   now: {
     evaluate: (): number => {
       return Date.now()
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLengthZero(params),
+    validate: ({ params }) => assertLengthZero(params),
   },
 
   '=': {
@@ -28,7 +27,7 @@ export const misc: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }) => assertLengthOneOrMore(params),
   },
 
   '!=': {
@@ -42,12 +41,12 @@ export const misc: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrMore(params),
+    validate: ({ params }) => assertLengthOneOrMore(params),
   },
 
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
-    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }) => assertLengthOne(params),
   },
 
   object: {
@@ -61,6 +60,6 @@ export const misc: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLengthEven(params),
+    validate: ({ params }) => assertLengthEven(params),
   },
 }
