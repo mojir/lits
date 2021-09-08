@@ -136,7 +136,7 @@ function runREPL() {
               printObj('Top scope variables', config.topScope.variables, true)
               printObj('Top scope functions', config.topScope.functions, true)
               break
-            case '`resetglobalVariables':
+            case '`resetGlobalVariables':
               config.globalVariables = {}
               console.log('Global variables is now empty\n')
               break
@@ -171,7 +171,7 @@ function printHelp() {
 \`GlobalVariables        Print all global variables (JSON.stringify)
 \`topScope               Print top scope
 \`TopScope               Print top scope (JSON.stringify)
-\`resetglobalVariables   Reset global variables
+\`resetGlobalVariables   Reset global variables
 \`resetTopScope          Reset top scope
 \`help                   Print this help message
 \`quit                   Quit
@@ -225,7 +225,7 @@ const commands = [
   '`GlobalVariables',
   '`topScope',
   '`TopScope',
-  '`resetglobalVariables',
+  '`resetGlobalVariables',
   '`resetTopScope',
 ]
 const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/

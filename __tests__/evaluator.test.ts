@@ -15,17 +15,39 @@ const simpleProgram = `
   (* info.days[1] day)
 )`
 
+// const formatPhoneNumberOld = `
+// (if (stringp $data)
+//   (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
+//     (if (> (stringLength phoneNumber) 6)
+//       (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
+//       (if (> (stringLength phoneNumber) 3)
+//         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
+//         (if (> (stringLength phoneNumber) 0)
+//           (concat "(" (substring phoneNumber 0))
+//           phoneNumber
+//         )
+//       )
+//     )
+//   )
+//   ""
+// )
+// `
+
 const formatPhoneNumber = `
 (if (stringp $data)
   (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
-    (if (> (stringLength phoneNumber) 6)
-      (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
-      (if (> (stringLength phoneNumber) 3)
+    (cond
+      ((> (stringLength phoneNumber) 6)
+        (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
+      )
+      ((> (stringLength phoneNumber) 3)
         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
-        (if (> (stringLength phoneNumber) 0)
-          (concat "(" (substring phoneNumber 0))
-          phoneNumber
-        )
+      )
+      ((> (stringLength phoneNumber) 0)
+        (concat "(" (substring phoneNumber 0))
+      )
+      (true
+        phoneNumber
       )
     )
   )
