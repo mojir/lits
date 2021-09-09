@@ -12,12 +12,14 @@ import {
   assertLengthOneOrTwoOrThree,
   assertLengthThree,
   assertLengthTwo,
+  assertLengthTwoOrMore,
   assertLengthTwoOrThree,
   assertLengthZero,
   assertLispishFunction,
   assertNameNode,
-  assertNonNegativeInteger,
+  assertNegativeNumber,
   assertNonNegativeNumber,
+  assertNonPositiveNumber,
   assertNumber,
   assertNumberGt,
   assertNumberGte,
@@ -144,6 +146,15 @@ describe('utils', () => {
     expect(() => assertLengthOneOrMore([0, 1, 2, 3, 4])).not.toThrow()
     expect(() => assertLengthOneOrMore([0, 1, 2, 3, 4, 5])).not.toThrow()
   })
+  test('assertLengthTwoOrMore', () => {
+    expect(() => assertLengthTwoOrMore([])).toThrow()
+    expect(() => assertLengthTwoOrMore([0])).toThrow()
+    expect(() => assertLengthTwoOrMore([0, 1])).not.toThrow()
+    expect(() => assertLengthTwoOrMore([0, 1, 2])).not.toThrow()
+    expect(() => assertLengthTwoOrMore([0, 1, 2, 3])).not.toThrow()
+    expect(() => assertLengthTwoOrMore([0, 1, 2, 3, 4])).not.toThrow()
+    expect(() => assertLengthTwoOrMore([0, 1, 2, 3, 4, 5])).not.toThrow()
+  })
   test('assertLengthOneOrTwoOrThree', () => {
     expect(() => assertLengthOneOrTwoOrThree([])).toThrow()
     expect(() => assertLengthOneOrTwoOrThree([0])).not.toThrow()
@@ -199,20 +210,33 @@ describe('utils', () => {
     expect(() => assertLispishFunction(1)).toThrow()
     expect(() => assertLispishFunction({})).toThrow()
   })
-  test('assertNonNegativeInteger', () => {
-    expect(() => assertNonNegativeInteger(-1)).toThrow()
-    expect(() => assertNonNegativeInteger(-1.1)).toThrow()
-    expect(() => assertNonNegativeInteger(0)).not.toThrow()
-    expect(() => assertNonNegativeInteger(0.1)).toThrow()
-    expect(() => assertNonNegativeInteger(1)).not.toThrow()
-    expect(() => assertNonNegativeInteger(1.1)).toThrow()
-    expect(() => assertNonNegativeInteger('1')).toThrow()
-    expect(() => assertNonNegativeInteger([])).toThrow()
-    expect(() => assertNonNegativeInteger({})).toThrow()
-    expect(() => assertNonNegativeInteger(true)).toThrow()
-    expect(() => assertNonNegativeInteger(false)).toThrow()
-    expect(() => assertNonNegativeInteger(null)).toThrow()
-    expect(() => assertNonNegativeInteger(undefined)).toThrow()
+  test('assertPositiveNumber', () => {
+    expect(() => assertPositiveNumber(-1)).toThrow()
+    expect(() => assertPositiveNumber(-0.5)).toThrow()
+    expect(() => assertPositiveNumber(0)).toThrow()
+    expect(() => assertPositiveNumber(0.5)).not.toThrow()
+    expect(() => assertPositiveNumber(1)).not.toThrow()
+    expect(() => assertPositiveNumber('1')).toThrow()
+    expect(() => assertPositiveNumber([])).toThrow()
+    expect(() => assertPositiveNumber({})).toThrow()
+    expect(() => assertPositiveNumber(true)).toThrow()
+    expect(() => assertPositiveNumber(false)).toThrow()
+    expect(() => assertPositiveNumber(null)).toThrow()
+    expect(() => assertPositiveNumber(undefined)).toThrow()
+  })
+  test('assertNegativeNumber', () => {
+    expect(() => assertNegativeNumber(-1)).not.toThrow()
+    expect(() => assertNegativeNumber(-0.5)).not.toThrow()
+    expect(() => assertNegativeNumber(0)).toThrow()
+    expect(() => assertNegativeNumber(0.5)).toThrow()
+    expect(() => assertNegativeNumber(1)).toThrow()
+    expect(() => assertNegativeNumber('1')).toThrow()
+    expect(() => assertNegativeNumber([])).toThrow()
+    expect(() => assertNegativeNumber({})).toThrow()
+    expect(() => assertNegativeNumber(true)).toThrow()
+    expect(() => assertNegativeNumber(false)).toThrow()
+    expect(() => assertNegativeNumber(null)).toThrow()
+    expect(() => assertNegativeNumber(undefined)).toThrow()
   })
   test('assertNonNegativeNumber', () => {
     expect(() => assertNonNegativeNumber(-1)).toThrow()
@@ -228,6 +252,21 @@ describe('utils', () => {
     expect(() => assertNonNegativeNumber(false)).toThrow()
     expect(() => assertNonNegativeNumber(null)).toThrow()
     expect(() => assertNonNegativeNumber(undefined)).toThrow()
+  })
+  test('assertNonPositiveNumber', () => {
+    expect(() => assertNonPositiveNumber(-1)).not.toThrow()
+    expect(() => assertNonPositiveNumber(-1.1)).not.toThrow()
+    expect(() => assertNonPositiveNumber(0)).not.toThrow()
+    expect(() => assertNonPositiveNumber(0.1)).toThrow()
+    expect(() => assertNonPositiveNumber(1)).toThrow()
+    expect(() => assertNonPositiveNumber(1.1)).toThrow()
+    expect(() => assertNonPositiveNumber('1')).toThrow()
+    expect(() => assertNonPositiveNumber([])).toThrow()
+    expect(() => assertNonPositiveNumber({})).toThrow()
+    expect(() => assertNonPositiveNumber(true)).toThrow()
+    expect(() => assertNonPositiveNumber(false)).toThrow()
+    expect(() => assertNonPositiveNumber(null)).toThrow()
+    expect(() => assertNonPositiveNumber(undefined)).toThrow()
   })
   test('assertNumber', () => {
     expect(() => assertNumber(-1)).not.toThrow()
@@ -297,20 +336,6 @@ describe('utils', () => {
     expect(() => assertNumberNotZero(false)).toThrow()
     expect(() => assertNumberNotZero(null)).toThrow()
     expect(() => assertNumberNotZero(undefined)).toThrow()
-  })
-  test('assertPositiveNumber', () => {
-    expect(() => assertPositiveNumber(-1)).toThrow()
-    expect(() => assertPositiveNumber(-0.5)).toThrow()
-    expect(() => assertPositiveNumber(0)).toThrow()
-    expect(() => assertPositiveNumber(0.5)).not.toThrow()
-    expect(() => assertPositiveNumber(1)).not.toThrow()
-    expect(() => assertPositiveNumber('1')).toThrow()
-    expect(() => assertPositiveNumber([])).toThrow()
-    expect(() => assertPositiveNumber({})).toThrow()
-    expect(() => assertPositiveNumber(true)).toThrow()
-    expect(() => assertPositiveNumber(false)).toThrow()
-    expect(() => assertPositiveNumber(null)).toThrow()
-    expect(() => assertPositiveNumber(undefined)).toThrow()
   })
   test('assertString', () => {
     expect(() => assertString('')).not.toThrow()

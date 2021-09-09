@@ -47,6 +47,13 @@ export function assertPositiveNumber(value: unknown): asserts value is number {
   }
 }
 
+export function assertNegativeNumber(value: unknown): asserts value is number {
+  assertNumber(value)
+  if (value >= 0) {
+    throw TypeError(`Expected negative number, got ${value}`)
+  }
+}
+
 export function assertNonNegativeNumber(value: unknown): asserts value is number {
   assertNumber(value)
   if (value < 0) {
@@ -54,17 +61,17 @@ export function assertNonNegativeNumber(value: unknown): asserts value is number
   }
 }
 
+export function assertNonPositiveNumber(value: unknown): asserts value is number {
+  assertNumber(value)
+  if (value > 0) {
+    throw TypeError(`Expected non positive number, got ${value}`)
+  }
+}
+
 export function assertInteger(value: unknown): asserts value is number {
   assertNumber(value)
   if (!Number.isInteger(value)) {
     throw TypeError(`Expected integer, got ${value}`)
-  }
-}
-
-export function assertNonNegativeInteger(value: unknown): asserts value is number {
-  assertInteger(value)
-  if (value < 0) {
-    throw TypeError(`Expected non negative integer, got ${value}`)
   }
 }
 
@@ -156,6 +163,12 @@ export function assertLengthThree(params: unknown[]): void {
 export function assertLengthOneOrMore(params: unknown[]): void {
   if (params.length < 1) {
     throw Error(`Wrong number of arguments, expected 1 or more, got ${params.length}`)
+  }
+}
+
+export function assertLengthTwoOrMore(params: unknown[]): void {
+  if (params.length < 2) {
+    throw Error(`Wrong number of arguments, expected 2 or more, got ${params.length}`)
   }
 }
 
