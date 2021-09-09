@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const colors = require('colors')
 const { version } = require('../package.json')
 const readline = require('readline')
 const path = require('path')
@@ -10,13 +11,34 @@ const {
   specialExpressionKeys,
   reservedNames,
   isLispishFunction,
-  LispishFunction,
 } = require('../dist/lispish.js')
+const referece = require('../reference/reference.js')
+
+const commands = [
+  '`help',
+  '`quit',
+  '`builtins',
+  '`globalVariables',
+  '`GlobalVariables',
+  '`topScope',
+  '`TopScope',
+  '`resetGlobalVariables',
+  '`resetTopScope',
+]
+const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
+const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
+const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]+)\s*$/
+const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const historyDir = path.join(homeDir, '.config')
 const historyFile = path.join(historyDir, 'lispish_history.txt')
 
 const config = processArguments(process.argv.slice(2))
+
+if (!config.colors) {
+  colors.disable()
+}
+
 if (config.expression) {
   execute(config.expression)
   process.exit(0)
@@ -39,6 +61,7 @@ function execute(expression) {
 
 function processArguments(args) {
   const config = {
+    colors: true,
     filename: '',
     globalVariables: {},
     topScope: { variables: {}, functions: {} },
@@ -48,6 +71,10 @@ function processArguments(args) {
     const option = args[i]
     const argument = args[i + 1]
     switch (option) {
+      case '--no-colors':
+        i -= 1 // no argument
+        config.colors = false
+        break
       case '-f':
         if (!argument) {
           console.error('Missing filename after -f')
@@ -89,7 +116,11 @@ function processArguments(args) {
         break
       case '-h':
       case '--help':
-        printUsage()
+        if (argument) {
+          console.log(getFullDocumentation(argument))
+        } else {
+          printUsage()
+        }
         process.exit(0)
       case '-v':
       case '--version':
@@ -102,6 +133,7 @@ function processArguments(args) {
   if (config.filename && config.expression) {
     console.error('Cannot both specify -f and -e')
   }
+  console.log('asdasdasdasdassdassdsgasdf')
   return config
 }
 
@@ -109,7 +141,7 @@ function runREPL() {
   createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: 'LISPISH> ',
+    prompt: 'LISPISH> '['yellow'],
     completer,
     next: function (rl) {
       console.log('Type "`help" for more information.')
@@ -117,12 +149,17 @@ function runREPL() {
 
       rl.on('line', line => {
         line = line.trim()
-        if (line.startsWith('`')) {
+
+        const helpMatch = helpRegExp.exec(line)
+        if (helpMatch) {
+          const name = helpMatch[1]
+          console.log(getFullDocumentation(name))
+        } else if (line.startsWith('`')) {
           switch (line) {
             case '`builtins':
               printBuiltins()
               break
-            case '` (* = special expression)help':
+            case '`help':
               printHelp()
               break
             case '`globalVariables':
@@ -170,26 +207,76 @@ function runREPL() {
 }
 
 function printBuiltins() {
+  const all = [
+    ...normalExpressionKeys.map(name => ({ name, special: false })),
+    ...specialExpressionKeys.map(name => ({ name, special: true })),
+  ].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+
+  const maxLength = all.reduce((max, current) => {
+    return Math.max(max, current.name.length)
+  }, 0)
+
   console.log(
-    `Builtins (* = special expression):\n${[
-      ...normalExpressionKeys.map(name => ({ name, special: false })),
-      ...specialExpressionKeys.map(name => ({ name, special: true })),
-    ]
-      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-      .map(entry => `${entry.special ? '* ' : '  '}${entry.name}`)
-      .join('\n')}`,
+    `Builtins (* = special expression):\n${all
+      .map(entry => {
+        const prefix = entry.special ? '* '.bold.yellow : '  '
+        const name = entry.name.padEnd(maxLength + 2, ' ')
+        const coloredName = entry.special ? name.yellow.bold : name.yellow
+        return `${prefix}${coloredName}  ${getDocString(entry.name)}`
+      })
+      .join('\n')}\n`,
   )
 }
 
+function getDocString(name) {
+  const doc = referece[name]
+  if (!doc) {
+    return ''
+  }
+
+  return `${'Syntax:'.gray} ${doc.syntax.bold}  ${`"${doc.shortDescription}"`.gray}`
+}
+
+function getFullDocumentation(name) {
+  const doc = referece[name]
+  if (!doc) {
+    return `No documentation available for ${name.bold}`
+  }
+
+  const header = `${doc.specialExpression ? 'Normal function' : 'Special expression'} ${name.bold}`.underline
+
+  return `${header}
+
+${doc.longDescription.italic}
+
+${'Syntax'.underline}
+  ${doc.syntax.bold}
+
+${'Arguments'.underline}
+${
+  doc.arguments.length === 0 ? '[no arguments]' : doc.arguments.map(arg => `  ${arg.name.bold}  ${arg.type}`).join('\n')
+}
+
+${'Examples'.underline}
+${
+  doc.examples.length === 0
+    ? '[no examples]'
+    : doc.examples.map(example => `  ${example.bold}  =>  ${lispish(example)}`).join('\n')
+}
+`
+}
+
 function printHelp() {
-  console.log(`\`globalVariables        Print all global variables
-\`GlobalVariables        Print all global variables (JSON.stringify)
-\`topScope               Print top scope
-\`TopScope               Print top scope (JSON.stringify)
-\`resetGlobalVariables   Reset global variables
-\`resetTopScope          Reset top scope
-\`help                   Print this help message
-\`quit                   Quit
+  console.log(`\`builtins                 Print all builtin functions
+\`globalVariables          Print all global variables
+\`GlobalVariables          Print all global variables (JSON.stringify)
+\`topScope                 Print top scope
+\`TopScope                 Print top scope (JSON.stringify)
+\`resetGlobalVariables     Reset global variables
+\`resetTopScope            Reset top scope
+\`help                     Print this help message
+\`help [builtin function]  Print help for [builtin function]
+\`quit                     Quit
 `)
 }
 
@@ -197,12 +284,13 @@ function printUsage() {
   console.log(`Usage: lispish [options]
 
 Options:
-  -g ...         Global variables as a JSON string
-  -G ...         Global variables file (.json file)
-  -f ...         .lispish file
-  -e ...         Lispish expression
-  -h, --help     Show this help
-  -v, --version  Print lispish version
+  -g ...                          Global variables as a JSON string
+  -G ...                          Global variables file (.json file)
+  -f ...                          .lispish file
+  -e ...                          Lispish expression
+  -h, --help                      Show this help
+  -h, --help <builtin function>   Show help for <builtin function>
+  -v, --version                   Print lispish version
 `)
 }
 
@@ -233,22 +321,12 @@ function functionToString(fun) {
   }
 }
 
-const commands = [
-  '`help',
-  '`quit',
-  '`builtins',
-  '`globalVariables',
-  '`GlobalVariables',
-  '`topScope',
-  '`TopScope',
-  '`resetGlobalVariables',
-  '`resetTopScope',
-]
-const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
-const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
-const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
-
 function completer(line) {
+  const helpMatch = line.match(/`help\s+(.*)/)
+  if (helpMatch) {
+    return [expressions.filter(c => c.startsWith(helpMatch[1])).map(c => `\`help ${c} `), line]
+  }
+
   if (line.startsWith('`')) {
     return [commands.filter(c => c.startsWith(line)).map(c => `${c} `), line]
   }

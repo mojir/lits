@@ -23,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "colors": "^1.4.0",
     "eslint-plugin-prettier": "^4.0.0",
     "lodash": "^4.17.20"
   },
