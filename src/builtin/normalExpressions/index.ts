@@ -1,16 +1,18 @@
 import { BuiltinNormalExpressions } from './interface'
-import { string } from './string'
 import { list } from './list'
 import { math } from './math'
-import { predicates } from './predicates'
 import { misc } from './misc'
+import { object } from './object'
+import { predicates } from './predicates'
 import { regexp } from './regexp'
+import { string } from './string'
 
 export const normalExpressions: BuiltinNormalExpressions = {
-  ...predicates,
-  ...math,
   ...list,
-  ...string,
-  ...regexp,
+  ...math,
   ...misc,
+  ...object,
+  ...predicates,
+  ...regexp,
+  ...string,
 }

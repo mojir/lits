@@ -24,6 +24,7 @@ import {
   assertNumberLt,
   assertNumberLte,
   assertNumberNotZero,
+  assertObject,
   assertPositiveNumber,
   assertRegExp,
   assertString,
@@ -78,6 +79,19 @@ describe('utils', () => {
     expect(() => assertArray([])).not.toThrow()
     expect(() => assertArray([1])).not.toThrow()
     expect(() => assertArray(true)).toThrow()
+    expect(() => assertArray(null)).toThrow()
+    expect(() => assertArray(undefined)).toThrow()
+  })
+  test('assertObject', () => {
+    expect(() => assertObject(0)).toThrow()
+    expect(() => assertObject({})).not.toThrow()
+    expect(() => assertObject({ a: 1 })).not.toThrow()
+    expect(() => assertObject(/test/)).toThrow()
+    expect(() => assertObject([])).toThrow()
+    expect(() => assertObject([1])).toThrow()
+    expect(() => assertObject(true)).toThrow()
+    expect(() => assertObject(null)).toThrow()
+    expect(() => assertObject(undefined)).toThrow()
   })
   test('assertInteger', () => {
     expect(() => assertInteger(-0)).not.toThrow()

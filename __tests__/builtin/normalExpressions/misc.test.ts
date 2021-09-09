@@ -68,6 +68,24 @@ describe('misc functions', () => {
       expect(lispish('(= false false)')).toBe(true)
       expect(lispish('(= null undefined)')).toBe(false)
     })
+
+    test('Object equality', () => {
+      const program = `
+        (setq obj1 (object "x" 10))
+        (setq obj2 (object "x" 10))
+        (list (= obj1 obj1) (= obj1 obj2))
+      `
+      expect(lispish(program)).toEqual([true, false])
+    })
+
+    test('List equality', () => {
+      const program = `
+        (setq list1 (list 1 2 3))
+        (setq list2 (list 1 2 3))
+        (list (= list1 list1) (= list1 list2))
+      `
+      expect(lispish(program)).toEqual([true, false])
+    })
   })
 
   describe('not', () => {
@@ -84,32 +102,6 @@ describe('misc functions', () => {
       expect(lispish('(not null)')).toBe(true)
       expect(lispish('(not undefined)')).toBe(true)
       expect(() => lispish('(not 0 1)')).toThrow()
-    })
-  })
-
-  describe('object', () => {
-    test('samples', () => {
-      expect(lispish(`(object)`)).toEqual({})
-      expect(lispish(`(object "x" 1)`)).toEqual({ x: 1 })
-      expect(lispish(`(object "x" 1 "x" 2)`)).toEqual({ x: 2 })
-      expect(lispish(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" (list)))`)).toEqual({
-        a: null,
-        b: true,
-        c: false,
-        d: undefined,
-        e: { x: [] },
-      })
-      expect(lispish(`(let ((a "a")) (object a 1))`)).toEqual({ a: 1 })
-      expect(() => lispish(`(object "x")`)).toThrow()
-      expect(() => lispish(`(object "x")`)).toThrow()
-      expect(() => lispish(`(object "x" 1 "y")`)).toThrow()
-      expect(() => lispish(`(object 0 1)`)).toThrow()
-      expect(() => lispish(`(object true 1)`)).toThrow()
-      expect(() => lispish(`(object false 1)`)).toThrow()
-      expect(() => lispish(`(object null 1)`)).toThrow()
-      expect(() => lispish(`(object undefined 1)`)).toThrow()
-      expect(() => lispish(`(object (list) 1)`)).toThrow()
-      expect(() => lispish(`(object (object) 1)`)).toThrow()
     })
   })
 

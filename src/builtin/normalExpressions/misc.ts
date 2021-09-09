@@ -1,4 +1,4 @@
-import { assertLengthEven, assertLengthOne, assertLengthOneOrMore, assertLengthZero, assertString } from '../../utils'
+import { assertLengthOne, assertLengthOneOrMore, assertLengthZero } from '../../utils'
 import { BuiltinNormalExpressions } from './interface'
 
 export const misc: BuiltinNormalExpressions = {
@@ -47,19 +47,5 @@ export const misc: BuiltinNormalExpressions = {
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
     validate: ({ params }) => assertLengthOne(params),
-  },
-
-  object: {
-    evaluate: (params: unknown[]): Record<string, unknown> => {
-      const result: Record<string, unknown> = {}
-      for (let i = 0; i < params.length; i += 2) {
-        const key = params[i]
-        const value = params[i + 1]
-        assertString(key)
-        result[key] = value
-      }
-      return result
-    },
-    validate: ({ params }) => assertLengthEven(params),
   },
 }
