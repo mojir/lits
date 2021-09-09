@@ -177,7 +177,7 @@ describe('list functions', () => {
       let program = `
       (defun countChars (stringArray)
         (reduce
-          (lambda (sum str) (+ sum (stringLength str)))
+          (lambda (sum str) (+ sum (string-length str)))
           stringArray
           0
         )
@@ -191,9 +191,9 @@ describe('list functions', () => {
       (defun longestLength (stringArray)
         (reduce
           (lambda (sum str)
-            (if (> sum (stringLength str))
+            (if (> sum (string-length str))
               sum
-              (stringLength str)
+              (string-length str)
             )
           )
           stringArray
@@ -215,35 +215,35 @@ describe('list functions', () => {
     })
   })
 
-  describe('reduceRight', () => {
+  describe('reduce-right', () => {
     test('samples', () => {
-      expect(lispish(`(reduceRight (function +) (list 1 2 3) 0)`)).toBe(6)
-      expect(lispish(`(reduceRight (function +) (list) 0)`)).toBe(0)
-      expect(lispish(`(reduceRight (function +) (list) 1)`)).toBe(1)
-      expect(lispish(`(reduceRight (function concat) (list "1" "2" "3") "")`)).toBe('321')
-      expect(() => lispish(`(reduceRight (function +))`)).toThrow()
-      expect(() => lispish(`(reduceRight)`)).toThrow()
-      expect(() => lispish(`(reduceRight (function +) 1 2)`)).toThrow()
+      expect(lispish(`(reduce-right (function +) (list 1 2 3) 0)`)).toBe(6)
+      expect(lispish(`(reduce-right (function +) (list) 0)`)).toBe(0)
+      expect(lispish(`(reduce-right (function +) (list) 1)`)).toBe(1)
+      expect(lispish(`(reduce-right (function concat) (list "1" "2" "3") "")`)).toBe('321')
+      expect(() => lispish(`(reduce-right (function +))`)).toThrow()
+      expect(() => lispish(`(reduce-right)`)).toThrow()
+      expect(() => lispish(`(reduce-right (function +) 1 2)`)).toThrow()
     })
   })
   describe('filter', () => {
     test('samples', () => {
-      expect(lispish(`(filter (function numberp) (list 1 "2" 3))`)).toEqual([1, 3])
-      expect(lispish(`(filter (function numberp) (list))`)).toEqual([])
-      expect(lispish(`(filter (function nullp) (list 1 "2" 3))`)).toEqual([])
-      expect(lispish(`(filter (lambda (x) (zerop (% x 3))) (list 0 1 2 3 4 5 6 7))`)).toEqual([0, 3, 6])
+      expect(lispish(`(filter (function number?) (list 1 "2" 3))`)).toEqual([1, 3])
+      expect(lispish(`(filter (function number?) (list))`)).toEqual([])
+      expect(lispish(`(filter (function null?) (list 1 "2" 3))`)).toEqual([])
+      expect(lispish(`(filter (lambda (x) (zero? (% x 3))) (list 0 1 2 3 4 5 6 7))`)).toEqual([0, 3, 6])
       expect(() => lispish(`(filter (function +))`)).toThrow()
       expect(() => lispish(`(filter)`)).toThrow()
-      expect(() => lispish(`(filter (function numberp) (list 1) 2)`)).toThrow()
+      expect(() => lispish(`(filter (function number?) (list 1) 2)`)).toThrow()
     })
   })
 
   describe('map', () => {
     test('samples', () => {
-      expect(lispish(`(map (function numberp) (list 1 "2" 3))`)).toEqual([true, false, true])
-      expect(lispish(`(map (function numberp) (list))`)).toEqual([])
-      expect(lispish(`(map (function nullp) (list 1 "2" 3))`)).toEqual([false, false, false])
-      expect(lispish(`(map (lambda (x) (zerop (% x 3))) (list 0 1 2 3 4 5 6 7))`)).toEqual([
+      expect(lispish(`(map (function number?) (list 1 "2" 3))`)).toEqual([true, false, true])
+      expect(lispish(`(map (function number?) (list))`)).toEqual([])
+      expect(lispish(`(map (function null?) (list 1 "2" 3))`)).toEqual([false, false, false])
+      expect(lispish(`(map (lambda (x) (zero? (% x 3))) (list 0 1 2 3 4 5 6 7))`)).toEqual([
         true,
         false,
         false,
@@ -256,7 +256,7 @@ describe('list functions', () => {
       expect(lispish(`(map (function 1+) (list 0 1 2 3 4 5 6 7))`)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
       expect(() => lispish(`(map (function +))`)).toThrow()
       expect(() => lispish(`(map)`)).toThrow()
-      expect(() => lispish(`(map (function numberp) (list 1) 2)`)).toThrow()
+      expect(() => lispish(`(map (function number?) (list 1) 2)`)).toThrow()
     })
   })
   describe('first', () => {

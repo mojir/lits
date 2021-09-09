@@ -1,34 +1,45 @@
+import { isLispishFunction } from '../../utils'
 import { NormalExpressionNode } from '../../parser/interface'
 import { assertLengthOne, assertNumber } from '../../utils'
 import { BuiltinNormalExpressions } from './interface'
 
 export const predicates: BuiltinNormalExpressions = {
-  stringp: {
+  'function?': {
+    evaluate: ([first]: unknown[]): boolean => isLispishFunction(first),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'string?': {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'string',
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  numberp: {
+  'number?': {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'number',
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  booleanp: {
+  'integer?': {
+    evaluate: ([first]: unknown[]): boolean => typeof first === 'number' && Number.isInteger(first),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'boolean?': {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'boolean',
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  undefinedp: {
+  'undefined?': {
     evaluate: ([first]: unknown[]): boolean => first === undefined,
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  nullp: {
+  'null?': {
     evaluate: ([first]: unknown[]): boolean => first === null,
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  zerop: {
+  'zero?': {
     evaluate: ([first]: unknown[]): boolean => {
       assertNumber(first)
       return first === 0
@@ -36,7 +47,7 @@ export const predicates: BuiltinNormalExpressions = {
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  evenp: {
+  'even?': {
     evaluate: ([first]: unknown[]): boolean => {
       assertNumber(first)
       return first % 2 === 0
@@ -44,7 +55,7 @@ export const predicates: BuiltinNormalExpressions = {
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  oddp: {
+  'odd?': {
     evaluate: ([first]: unknown[]): boolean => {
       assertNumber(first)
       return Number.isInteger(first) && first % 2 !== 0
@@ -52,15 +63,26 @@ export const predicates: BuiltinNormalExpressions = {
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  arrayp: {
+  'list?': {
     evaluate: ([first]: unknown[]): boolean => {
       return Array.isArray(first)
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 
-  objectp: {
-    evaluate: ([first]: unknown[]): boolean => first !== null && !Array.isArray(first) && typeof first === 'object',
+  'object?': {
+    evaluate: ([first]: unknown[]): boolean =>
+      first !== null &&
+      !Array.isArray(first) &&
+      typeof first === 'object' &&
+      !(first instanceof RegExp) &&
+      !isLispishFunction(first),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'regexp?': {
+    evaluate: ([first]: unknown[]): boolean =>
+      first !== null && !Array.isArray(first) && typeof first === 'object' && first instanceof RegExp,
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 }

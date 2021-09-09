@@ -121,4 +121,19 @@ describe('misc functions', () => {
       expect(logSpy).toHaveBeenCalledWith(1)
     })
   })
+
+  describe('get-path', () => {
+    test('samples', () => {
+      expect(lispish('(get-path (list 1 2 3) "[1]")')).toBe(2)
+      expect(lispish('(get-path (object "a" 1) "a")')).toBe(1)
+      expect(lispish('(get-path (object "a" (object "b" (list 1 2 3))) "a.b[1]")')).toBe(2)
+      expect(lispish('(get-path O "a.b[1]")', { O: { a: { b: [1, 2, 3] } } })).toBe(2)
+      expect(lispish('(get-path O "a.c[1]")', { O: { a: { b: [1, 2, 3] } } })).toBeUndefined()
+      expect(lispish('(get-path O "")', { O: { a: { b: [1, 2, 3] } } })).toBeUndefined()
+      expect(() => lispish('(get-path O)', { O: { a: { b: [1, 2, 3] } } })).toThrow()
+      expect(() => lispish('(get-path)', { O: { a: { b: [1, 2, 3] } } })).toThrow()
+      expect(() => lispish('(get-path O "a" "b")', { O: { a: { b: [1, 2, 3] } } })).toThrow()
+      expect(() => lispish('(get-path (regexp "abc" "a")')).toThrow()
+    })
+  })
 })

@@ -48,7 +48,7 @@ export const object: BuiltinNormalExpressions = {
     validate: ({ params }) => assertLengthOne(params),
   },
 
-  hasAttr: {
+  'has-attr': {
     evaluate: ([obj, key]: unknown[]): boolean => {
       assertObject(obj)
       assertString(key)
@@ -57,7 +57,7 @@ export const object: BuiltinNormalExpressions = {
     validate: ({ params }) => assertLengthTwo(params),
   },
 
-  getAttr: {
+  'get-attr': {
     evaluate: ([obj, key]: unknown[]): unknown => {
       assertObject(obj)
       assertString(key)
@@ -66,7 +66,7 @@ export const object: BuiltinNormalExpressions = {
     validate: ({ params }) => assertLengthTwo(params),
   },
 
-  setAttr: {
+  'set-attr': {
     evaluate: ([obj, key, value]: unknown[]): unknown => {
       assertObject(obj)
       assertString(key)
@@ -76,7 +76,7 @@ export const object: BuiltinNormalExpressions = {
     validate: ({ params }) => assertLengthThree(params),
   },
 
-  delAttr: {
+  'del-attr': {
     evaluate: ([obj, key]: unknown[]): unknown => {
       assertObject(obj)
       assertString(key)

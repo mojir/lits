@@ -1,4 +1,12 @@
-import { assertLengthOne, assertLengthOneOrMore, assertLengthZero } from '../../utils'
+import get from 'lodash/get'
+import {
+  assertLengthOne,
+  assertLengthOneOrMore,
+  assertLengthTwo,
+  assertLengthZero,
+  assertObjectOrArray,
+  assertString,
+} from '../../utils'
 import { BuiltinNormalExpressions } from './interface'
 
 export const misc: BuiltinNormalExpressions = {
@@ -47,5 +55,14 @@ export const misc: BuiltinNormalExpressions = {
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
     validate: ({ params }) => assertLengthOne(params),
+  },
+
+  'get-path': {
+    evaluate: ([first, second]: unknown[]): unknown => {
+      assertObjectOrArray(first)
+      assertString(second)
+      return get(first, second)
+    },
+    validate: ({ params }) => assertLengthTwo(params),
   },
 }

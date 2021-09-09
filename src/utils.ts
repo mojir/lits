@@ -122,8 +122,27 @@ export function assertArray(value: unknown): asserts value is Array<unknown> {
 }
 
 export function assertObject(value: unknown): asserts value is Record<string, unknown> {
-  if (value === null || typeof value !== 'object' || Array.isArray(value) || value instanceof RegExp) {
+  if (
+    value === null ||
+    typeof value !== 'object' ||
+    Array.isArray(value) ||
+    value instanceof RegExp ||
+    isLispishFunction(value)
+  ) {
     throw TypeError(`Expected object, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function assertObjectOrArray(value: unknown): asserts value is Record<string, unknown> | unknown[] {
+  if (
+    (value === null ||
+      typeof value !== 'object' ||
+      Array.isArray(value) ||
+      value instanceof RegExp ||
+      isLispishFunction(value)) &&
+    !Array.isArray(value)
+  ) {
+    throw TypeError(`Expected object or array, got: ${value} type="${typeof value}"`)
   }
 }
 

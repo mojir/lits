@@ -12,38 +12,20 @@ const simpleProgram = `
       )
     )
   )
-  (* info.days[1] day)
+  (* (get-path info "days[1]") day)
 )`
 
-// const formatPhoneNumberOld = `
-// (if (stringp $data)
-//   (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
-//     (if (> (stringLength phoneNumber) 6)
-//       (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
-//       (if (> (stringLength phoneNumber) 3)
-//         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
-//         (if (> (stringLength phoneNumber) 0)
-//           (concat "(" (substring phoneNumber 0))
-//           phoneNumber
-//         )
-//       )
-//     )
-//   )
-//   ""
-// )
-// `
-
 const formatPhoneNumber = `
-(if (stringp $data)
+(if (string? $data)
   (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
     (cond
-      ((> (stringLength phoneNumber) 6)
+      ((> (string-length phoneNumber) 6)
         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
       )
-      ((> (stringLength phoneNumber) 3)
+      ((> (string-length phoneNumber) 3)
         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
       )
-      ((> (stringLength phoneNumber) 0)
+      ((> (string-length phoneNumber) 0)
         (concat "(" (substring phoneNumber 0))
       )
       (true
@@ -78,7 +60,7 @@ describe('Evaluator', () => {
   })
   test('if statement (true)', () => {
     const tokens = tokenize(`
-      (if (= info.gender "male") "It's a boy" "It's not a girl")
+      (if (= (get-attr info "gender") "male") "It's a boy" "It's not a girl")
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, { variables: {}, functions: {} })
@@ -86,7 +68,7 @@ describe('Evaluator', () => {
   })
   test('if statement (false)', () => {
     const tokens = tokenize(`
-      (if (= info.gender "female") "It's a girl" "It's not a girl")
+      (if (= (get-attr info "gender") "female") "It's a girl" "It's not a girl")
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, { variables: {}, functions: {} })

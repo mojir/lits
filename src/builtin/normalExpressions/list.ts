@@ -196,7 +196,7 @@ export const list: BuiltinNormalExpressions = {
     validate: ({ params }) => assertLengthThree(params),
   },
 
-  reduceRight: {
+  'reduce-right': {
     evaluate: ([first, second, third]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
       assertLispishFunction(first)
       assertArray(second)

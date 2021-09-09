@@ -119,7 +119,10 @@ function runREPL() {
         line = line.trim()
         if (line.startsWith('`')) {
           switch (line) {
-            case '`help':
+            case '`builtins':
+              printBuiltins()
+              break
+            case '` (* = special expression)help':
               printHelp()
               break
             case '`globalVariables':
@@ -164,6 +167,18 @@ function runREPL() {
         })
     },
   })
+}
+
+function printBuiltins() {
+  console.log(
+    `Builtins (* = special expression):\n${[
+      ...normalExpressionKeys.map(name => ({ name, special: false })),
+      ...specialExpressionKeys.map(name => ({ name, special: true })),
+    ]
+      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+      .map(entry => `${entry.special ? '* ' : '  '}${entry.name}`)
+      .join('\n')}`,
+  )
 }
 
 function printHelp() {
@@ -221,6 +236,7 @@ function functionToString(fun) {
 const commands = [
   '`help',
   '`quit',
+  '`builtins',
   '`globalVariables',
   '`GlobalVariables',
   '`topScope',

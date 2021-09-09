@@ -8,7 +8,6 @@ import {
   LispishFunction,
   ExpressionExpressionNode,
 } from '../parser/interface'
-import get from 'lodash/get'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
@@ -17,12 +16,9 @@ import { Context, EvaluateAstNode, EvaluateLispishFunction, VariableScope } from
 import { normalExpressions } from '../builtin/normalExpressions'
 
 export function evaluate(ast: Ast, globalVariables: VariableScope, topScope: Context): unknown {
-  const frozenGlobalVariables = { ...globalVariables }
-  Object.freeze(frozenGlobalVariables)
-
   // First element is the global context. E.g. setq will assign to this if no local variable is available
   // Second element is the context sent in from outside (this should never be mutated)
-  const contextStack: Context[] = [topScope, { variables: frozenGlobalVariables, functions: {} }]
+  const contextStack: Context[] = [topScope, { variables: globalVariables, functions: {} }]
 
   let result: unknown
   for (const node of ast.body) {
@@ -62,19 +58,13 @@ function evaluateReservedName(node: ReservedNameNode): unknown {
   return asNotUndefined(reservedNamesRecord[node.value]).value
 }
 
-function evaluateName(node: NameNode, contextStack: Context[]): unknown {
-  const path = node.value
-  const dotPosition = path.indexOf('.')
-  const bracketPosition = path.indexOf('[')
-  const index =
-    dotPosition === -1 ? bracketPosition : bracketPosition === -1 ? dotPosition : Math.min(dotPosition, bracketPosition)
-  const contextPrefix = index === -1 ? path : path.substring(0, index)
+function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
   for (const context of contextStack) {
-    if (Object.getOwnPropertyDescriptor(context.variables, contextPrefix)) {
-      return get(context.variables, path)
+    if (Object.getOwnPropertyDescriptor(context.variables, value)) {
+      return context.variables[value]
     }
   }
-  throw Error(`Undefined identifier ${path}`)
+  throw Error(`Undefined identifier ${value}`)
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {

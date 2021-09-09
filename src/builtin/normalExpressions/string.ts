@@ -27,7 +27,7 @@ export const string: BuiltinNormalExpressions = {
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwoOrThree(params),
   },
 
-  stringLength: {
+  'string-length': {
     evaluate: ([first]: unknown[]): unknown => {
       assertString(first)
       return first.length
