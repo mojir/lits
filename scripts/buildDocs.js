@@ -41,7 +41,7 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
       try {
         context = JSON.parse(contextString)
       } catch (e) {
-        output.innerHTML = "ERROR: Could not parse context"
+        output.innerHTML = "Error: Could not parse context"
         output.classList.add('error')
         return
       }
@@ -49,7 +49,7 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
       try {
         result = lispish.lispish(code, context)
       } catch (error) {
-        output.innerHTML = "LISPISH ERROR" + error
+        output.innerHTML = error
         output.classList.add('error')
         return
       }
