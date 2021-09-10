@@ -11,7 +11,7 @@ module.exports = {
     ],
     shortDescription: 'Computes sum of numbers',
     longDescription: 'Computes sum of numbers',
-    examples: ['(+)', '(+ 1)', '(+ 2 4)', '(+ 1 2 3 4)'],
+    examples: ['(+)', '(+ 1)', '(+ 2 4)', '(+ 1 2 3 4)', '(+ (+ 2 3) (+ 5 6))'],
     specialExpression: false,
     sideEffects: [],
   },

@@ -1,0 +1,127 @@
+body {
+  margin: 0;
+  padding: 1rem;
+  font-family: verdana;
+  background-color: #222222;
+  color: #dddddd;
+}
+
+a:link, a:visited, a:hover, a:active {
+  color: #dddddd;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#lispish-header:hover {
+  text-decoration: underline;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  list-style-position: inside;
+  padding: 0;
+  margin: 0;
+}
+
+.row {
+  display: flex;
+}
+
+.sidebar {
+  flex: 25%;
+}
+
+.main {
+  padding: 0 2rem;
+  flex: 75%;
+}
+
+.content {
+  display: none;
+}
+
+.content.active {
+  display: block;
+}
+
+.column-third {
+  flex: 33.33333%;
+}
+
+.column-half {
+  flex: 1;
+  margin-right: 16px;
+}
+
+h4, h2, h1 {
+  margin: 0;
+  padding: 0;
+}
+
+.top-bar {
+  background-color: #333333;
+  margin-bottom: 3rem;
+}
+
+.main-header {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.small-pre, pre {
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.sidebar .active-sidebar-entry, .sidebar li:hover.active-sidebar-entry {
+  background-color: #444444;
+  font-weight: bold;
+}
+
+.sidebar li:hover {
+  background-color: #333333;
+}
+
+.playground {
+  margin-top: 9rem;
+}
+
+.playground .header {
+  font-size: 24px;
+  margin-bottom: 1.5rem;
+}
+
+textarea {
+  outline: none;
+  background-color: #333333;
+  width: 100%;
+  resize: none;
+  padding: 0.5rem;
+  color: #dddddd;
+  font-size: 1rem;
+}
+
+.play {
+  cursor: pointer;
+  color: gray;
+}
+
+.play:hover {
+  color: white;
+}
+
+#output {
+  margin-top: 1rem;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#output.error {
+  color: red;
+}
+
+#index pre {
+ margin: 0;
+ display: inline;
+ color: #fdff91;
+}
+

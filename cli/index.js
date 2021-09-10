@@ -74,7 +74,6 @@ function executeExample(expression) {
     const outputString = outputs.map(output => `console.log(${output.join(', ')})`).join('  ').gray
     return `${formatValue(result)}    ${outputString}`
   } catch (error) {
-    console.error(error)
     return 'ERROR!'.brightRed
   } finally {
     console.log = oldLog

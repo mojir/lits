@@ -4,6 +4,7 @@
   "description": "A lispish implementation in Typescript",
   "main": "dist/lispish.js",
   "module": "dist/lispish.mjs",
+  "iife": "dist/lispish.iife.js",
   "typings": "dist/lispish.d.ts",
   "bin": "cli/index.js",
   "files": [
