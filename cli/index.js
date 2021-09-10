@@ -13,6 +13,7 @@ const {
   isLispishFunction,
 } = require('../dist/lispish.js')
 const reference = require('./reference.js')
+const { type } = require('os')
 
 const commands = [
   '`help',
@@ -65,43 +66,65 @@ function execute(expression) {
 }
 
 function executeExample(expression) {
+  const outputs = []
+  const oldLog = console.log
+  console.log = (...values) => outputs.push(values.map(value => formatValue(value, true)))
   try {
     const result = lispish(expression, config.globalVariables, config.topScope)
-    return formatValue(result)
+    const outputString = outputs.map(output => `console.log(${output.join(', ')})`).join('  ').gray
+    return `${formatValue(result)}    ${outputString}`
   } catch (error) {
     console.error(error)
     return 'ERROR!'.brightRed
+  } finally {
+    console.log = oldLog
   }
 }
 
-function formatValue(value) {
-  if (isLispishFunction(value)) {
-    return functionToString(value).white
-  }
+function formatValue(value, noColors) {
+  if (noColors) {
+    if (isLispishFunction(value)) {
+      return functionToString(value)
+    }
 
-  if (value === null || value === undefined) {
-    return `${value}`.blue
-  }
-  if (value === true) {
-    return `${value}`.green
-  }
-  if (value === false) {
-    return `${value}`.red
-  }
-  if (typeof value === 'string') {
-    return `${JSON.stringify(value)}`.yellow
-  }
-  if (typeof value === 'number') {
-    return `${value}`.brightMagenta
-  }
-  if (Array.isArray(value)) {
-    return `${JSON.stringify(value)}`.cyan
-  }
-  if (typeof value === 'object') {
-    if (value instanceof RegExp) {
-      return `${value}`.yellow
-    } else {
-      return `${JSON.stringify(value)}`.brightGreen
+    if (
+      typeof value === 'string' ||
+      Array.isArray(value) ||
+      (value !== null && typeof value === 'object' && !(value instanceof RegExp))
+    ) {
+      return `${JSON.stringify(value)}`
+    }
+
+    return `${value}`
+  } else {
+    if (isLispishFunction(value)) {
+      return functionToString(value).white
+    }
+
+    if (value === null || value === undefined) {
+      return `${value}`.blue
+    }
+    if (value === true) {
+      return `${value}`.green
+    }
+    if (value === false) {
+      return `${value}`.red
+    }
+    if (typeof value === 'string') {
+      return `${JSON.stringify(value)}`.yellow
+    }
+    if (typeof value === 'number') {
+      return `${value}`.brightMagenta
+    }
+    if (Array.isArray(value)) {
+      return `${JSON.stringify(value)}`.cyan
+    }
+    if (typeof value === 'object') {
+      if (value instanceof RegExp) {
+        return `${value}`.yellow
+      } else {
+        return `${JSON.stringify(value)}`.brightGreen
+      }
     }
   }
 }

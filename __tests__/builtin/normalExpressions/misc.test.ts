@@ -107,8 +107,10 @@ describe('misc functions', () => {
 
   describe('write', () => {
     test('samples', () => {
+      expect(lispish('(write)')).toBeUndefined()
       expect(lispish('(write 1)')).toBe(1)
       expect(lispish('(write "1")')).toBe('1')
+      expect(lispish('(write 100 (list) "1")')).toBe('1')
       expect(lispish('(write (list))')).toEqual([])
       expect(lispish('(write (object))')).toEqual({})
       expect(lispish('(write null)')).toBe(null)

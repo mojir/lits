@@ -11,12 +11,14 @@ import { BuiltinNormalExpressions } from './interface'
 
 export const misc: BuiltinNormalExpressions = {
   write: {
-    evaluate: ([first]: unknown[]): unknown => {
+    evaluate: (params: unknown[]): unknown => {
       // eslint-disable-next-line no-console
-      console.log(first)
-      return first
+      console.log(...params)
+      if (params.length > 0) {
+        return params[params.length - 1]
+      }
+      return undefined
     },
-    validate: ({ params }) => assertLengthOne(params),
   },
 
   now: {

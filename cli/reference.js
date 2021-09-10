@@ -891,4 +891,28 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
+  write: {
+    name: 'write',
+    linkName: 'write',
+    syntax: 'write values => value',
+    arguments: [
+      {
+        name: 'values',
+        type: 'any[]',
+      },
+    ],
+    shortDescription: 'It console.log the value arguments and then returns the last argument',
+    longDescription:
+      'It console.log the value arguments and then returns the last argument. If called with no arguments undefined is returned',
+    examples: [
+      '(write "A string")',
+      '(write 100 "items")',
+      '(write (object "a" 10))',
+      '(write (list "a" "b" "c"))',
+      '(write (regexp "^start"))',
+      '(write null undefined true false)',
+    ],
+    specialExpression: false,
+    sideEffects: ['Does a console.log'],
+  },
 }
