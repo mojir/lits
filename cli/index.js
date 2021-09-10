@@ -133,7 +133,6 @@ function processArguments(args) {
   if (config.filename && config.expression) {
     console.error('Cannot both specify -f and -e')
   }
-  console.log('asdasdasdasdassdassdsgasdf')
   return config
 }
 
@@ -217,12 +216,11 @@ function printBuiltins() {
   }, 0)
 
   console.log(
-    `Builtins (* = special expression):\n${all
+    `${'Builtins (* = special expression):'.underline}\n${all
       .map(entry => {
-        const prefix = entry.special ? '* '.bold.yellow : '  '
+        const prefix = entry.special ? '* ' : '  '
         const name = entry.name.padEnd(maxLength + 2, ' ')
-        const coloredName = entry.special ? name.yellow.bold : name.yellow
-        return `${prefix}${coloredName}  ${getDocString(entry.name)}`
+        return `${prefix}${name}  ${getDocString(entry.name)}`
       })
       .join('\n')}\n`,
   )
@@ -234,7 +232,7 @@ function getDocString(name) {
     return ''
   }
 
-  return `${'Syntax:'.gray} ${doc.syntax.bold}  ${`"${doc.shortDescription}"`.gray}`
+  return `${doc.syntax}   ${doc.shortDescription.gray.italic}`
 }
 
 function getFullDocumentation(name) {
@@ -253,9 +251,10 @@ ${'Syntax'.underline}
   ${doc.syntax.bold}
 
 ${'Arguments'.underline}
-${
-  doc.arguments.length === 0 ? '[no arguments]' : doc.arguments.map(arg => `  ${arg.name.bold}  ${arg.type}`).join('\n')
-}
+${doc.arguments.length === 0 ? '  None'.italic : doc.arguments.map(arg => `  ${arg.name.bold}: ${arg.type}`).join('\n')}
+
+${'Side effects'.underline}
+${doc.sideEffects.length === 0 ? '  None'.italic : doc.sideEffects.map(sideEffect => `  ${sideEffect}`).join('\n')}
 
 ${'Examples'.underline}
 ${
