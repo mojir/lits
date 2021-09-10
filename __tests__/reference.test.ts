@@ -1,15 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import reference from '../reference/reference'
+import reference from '../cli/reference'
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
+
+function getLinkName(name: string): string {
+  name = name.replace(/<=/g, '_lte')
+  name = name.replace(/</g, '_lt')
+  name = name.replace(/>=/g, '_gte')
+  name = name.replace(/>/g, '_gt')
+  name = name.replace(/!=/g, '_notequal')
+  name = name.replace(/=/g, '_equal')
+  name = name.replace(/%/g, '_percent')
+  name = name.replace(/\+/g, '_plus')
+  name = name.replace(/-$/g, '_minus')
+  name = name.replace(/\*/g, '_star')
+  name = name.replace(/\//g, '_slash')
+  name = name.replace(/\?/g, '_question')
+  return name
+}
 
 describe('reference', () => {
   Object.entries(reference).forEach(([key, obj]: [key: string, obj: any]) => {
     test(key, () => {
       expect(obj.name).toBe(key)
       expect(obj.syntax.startsWith(key)).toBe(true)
-      expect(obj.linkName.length).toBeGreaterThanOrEqual(1)
+      expect(obj.linkName).toEqual(getLinkName(key))
       expect(obj.shortDescription.length).toBeGreaterThanOrEqual(1)
       expect(obj.longDescription.length).toBeGreaterThanOrEqual(obj.shortDescription.length)
       expect(obj.examples.length).toBeGreaterThan(0)

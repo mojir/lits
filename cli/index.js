@@ -12,7 +12,7 @@ const {
   reservedNames,
   isLispishFunction,
 } = require('../dist/lispish.js')
-const referece = require('../reference/reference.js')
+const referece = require('./reference.js')
 
 const commands = [
   '`help',
@@ -39,6 +39,11 @@ if (!config.colors) {
   colors.disable()
 }
 
+if (config.help) {
+  console.log(getFullDocumentation(config.help))
+  process.exit(0)
+}
+
 if (config.expression) {
   execute(config.expression)
   process.exit(0)
@@ -52,7 +57,7 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    const result = lispish(expression, config.globalVariableexecuteExample, config.topScope)
+    const result = lispish(expression, config.globalVariables, config.topScope)
     console.log(formatValue(result))
   } catch (error) {
     console.log(error.message ? error.message.brightRed : 'ERROR!'.brightRed)
@@ -61,9 +66,10 @@ function execute(expression) {
 
 function executeExample(expression) {
   try {
-    const result = lispish(expression, config.globalVariableexecuteExample, config.topScope)
+    const result = lispish(expression, config.globalVariables, config.topScope)
     return formatValue(result)
   } catch (error) {
+    console.error(error)
     return 'ERROR!'.brightRed
   }
 }
@@ -107,6 +113,7 @@ function processArguments(args) {
     globalVariables: {},
     topScope: { variables: {}, functions: {} },
     expression: '',
+    help: undefined,
   }
   for (let i = 0; i < args.length; i += 2) {
     const option = args[i]
@@ -158,11 +165,12 @@ function processArguments(args) {
       case '-h':
       case '--help':
         if (argument) {
-          console.log(getFullDocumentation(argument))
+          config.help = argument
         } else {
           printUsage()
+          process.exit(0)
         }
-        process.exit(0)
+        break
       case '-v':
       case '--version':
         console.log(version)
