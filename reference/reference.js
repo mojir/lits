@@ -130,7 +130,7 @@ module.exports = {
   },
   '1+': {
     name: '1+',
-    linkName: '_1plus',
+    linkName: '1_plus',
     syntax: '1+ number => number',
     arguments: [
       {
@@ -146,7 +146,7 @@ module.exports = {
   },
   '1-': {
     name: '1-',
-    linkName: '_1minus',
+    linkName: '1_minus',
     syntax: '1- number => number',
     arguments: [
       {
@@ -157,6 +157,106 @@ module.exports = {
     shortDescription: 'Subtracts one from the argument.',
     longDescription: 'Subtracts one from the argument.',
     examples: ['(1- 0)', '(1- 1)', '(1- 100.1)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  sqrt: {
+    name: 'sqrt',
+    linkName: 'sqrt',
+    syntax: 'sqrt number => number',
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Computes square root of number.',
+    longDescription: 'Computes square root of number.',
+    examples: ['(sqrt 0)', '(sqrt 9)', '(sqrt 2)', '(sqrt -1)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  expt: {
+    name: 'expt',
+    linkName: 'expt',
+    syntax: 'expt base-number power-number => number',
+    arguments: [
+      {
+        name: 'base-number',
+        type: 'number',
+      },
+      {
+        name: 'power-number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Computes returns base-number raised to the power-number.',
+    longDescription: 'Computes returns base-number raised to the power-number.',
+    examples: ['(expt 2 3)', '(expt 2 0)', '(expt 2 -3)', '(expt -2 3)', '(expt -2 -3)', '(expt -2)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  round: {
+    name: 'round',
+    linkName: 'round',
+    syntax: 'round number => integer',
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Returns argument rounded to the nearest integer.',
+    longDescription: 'Returns argument rounded to the nearest integer.',
+    examples: ['(round 2)', '(round 2.49)', '(round 2.5)', '(round -2.49)', '(round -2.5)', '(round -2.501)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  floor: {
+    name: 'floor',
+    linkName: 'floor',
+    syntax: 'floor number => integer',
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Returns the largest integer less than or equal to the argument.',
+    longDescription: 'Returns the largest integer less than or equal to the argument.',
+    examples: ['(floor 2)', '(floor 2.49)', '(floor 2.5)', '(floor -2.49)', '(floor -2.5)', '(floor -2.501)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  ceil: {
+    name: 'ceil',
+    linkName: 'ceil',
+    syntax: 'ceil number => integer',
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Returns the smallest integer larger than or equal to the argument.',
+    longDescription: 'Returns the smallest integer larger than or equal to the argument.',
+    examples: ['(ceil 2)', '(ceil 2.49)', '(ceil 2.5)', '(ceil -2.49)', '(ceil -2.5)', '(ceil -2.501)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  random: {
+    name: 'random',
+    linkName: 'random',
+    syntax: 'random number => number',
+    arguments: [
+      {
+        name: 'number',
+        type: 'positive number',
+      },
+    ],
+    shortDescription: 'Returns a semi random number between 0 (inclusive) and argument (exclusive).',
+    longDescription: 'Returns a semi random number between 0 (inclusive) and argument (exclusive).',
+    examples: ['(random 1)', '(random 0.01)', '(random 2.5)', '(random 0)', '(random -1)'],
     specialExpression: false,
     sideEffects: [],
   },
@@ -213,7 +313,7 @@ module.exports = {
   },
   '>=': {
     name: '>=',
-    linkName: '_gt',
+    linkName: '_gte',
     syntax: '>= number => true | false',
     arguments: [
       {
@@ -309,6 +409,484 @@ module.exports = {
       '(append (list 1 2) (list))',
       '(append (list 1 2) (list 3 4) (list 5 6))',
       '(append (list))',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  aref: {
+    name: 'aref',
+    linkName: 'aref',
+    syntax: 'aref string index => string',
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+      {
+        name: 'index',
+        type: 'integer',
+      },
+    ],
+    shortDescription: 'Accesses specified element of a string.',
+    longDescription:
+      'Accesses specified element of a string. String index is counted from zero. Accessing out-of-bounds indices returns undefined',
+    examples: ['(aref "A string" 0)', '(aref "A string" 2)', '(aref "A string" 20)', '(aref "A string" -1)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'boolean?': {
+    name: 'boolean?',
+    linkName: 'boolean_question',
+    syntax: 'boolean? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is a boolean, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is a boolean, otherwise it returns false.',
+    examples: [
+      '(boolean? true)',
+      '(boolean? false)',
+      '(boolean? (list 1 2 3))',
+      '(boolean? 0)',
+      '(boolean? "A string")',
+      '(boolean?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'null?': {
+    name: 'null?',
+    linkName: 'null_question',
+    syntax: 'null? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is null, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is null, otherwise it returns false.',
+    examples: ['(null? null)', '(null? false)', '(null? (list 1 2 3))', '(null? 0)', '(null? "A string")', '(null?)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'undefined?': {
+    name: 'undefined?',
+    linkName: 'undefined_question',
+    syntax: 'undefined? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is undefined, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is undefined, otherwise it returns false.',
+    examples: [
+      '(undefined? undefined)',
+      '(undefined? false)',
+      '(undefined? null)',
+      '(undefined? (list 1 2 3))',
+      '(undefined? 0)',
+      '(undefined? "A string")',
+      '(undefined?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'number?': {
+    name: 'number?',
+    linkName: 'number_question',
+    syntax: 'number? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is a number, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is a number, otherwise it returns false.',
+    examples: [
+      '(number? 0)',
+      '(number? 2)',
+      '(number? -0.12)',
+      '(number? false)',
+      '(number? (list 1 2 3))',
+      '(number? "A string")',
+      '(number?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string?': {
+    name: 'string?',
+    linkName: 'string_question',
+    syntax: 'string? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is a string, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is a string, otherwise it returns false.',
+    examples: [
+      '(string? "")',
+      '(string? "A string")',
+      '(string? (if true "A string" false))',
+      '(string? false)',
+      '(string? (list 1 2 3))',
+      '(string? 100)',
+      '(string?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'function?': {
+    name: 'function?',
+    linkName: 'function_question',
+    syntax: 'function? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is a function, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is a function, otherwise it returns false.',
+    examples: [
+      `(function? #'+)`,
+      '(function? (function /))',
+      '(function? (lambda (x y) (+ x y)))',
+      '(function? false)',
+      '(function? "false")',
+      '(function? (list 1 2 3))',
+      '(function? 100)',
+      '(function?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'integer?': {
+    name: 'integer?',
+    linkName: 'integer_question',
+    syntax: 'integer? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is an integer, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is an integer, otherwise it returns false.',
+    examples: [
+      `(integer? 0)`,
+      `(integer? -12)`,
+      `(integer? 42)`,
+      '(integer? 10.1)',
+      '(integer? (lambda (x y) (+ x y)))',
+      '(integer? false)',
+      '(integer? "false")',
+      '(integer? (list 1 2 3))',
+      '(integer?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'list?': {
+    name: 'list?',
+    linkName: 'list_question',
+    syntax: 'list? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is a list, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is a list, otherwise it returns false.',
+    examples: [
+      `(list? (list))`,
+      `(list? (list 1 2 3))`,
+      `(list? (object "a" 10))`,
+      `(list? 42)`,
+      '(list? 10.1)',
+      '(list? (lambda (x y) (+ x y)))',
+      '(list?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'object?': {
+    name: 'object?',
+    linkName: 'object_question',
+    syntax: 'object? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is an object, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is an object, otherwise it returns false.',
+    examples: [
+      `(object? (object "a" 10))`,
+      `(object? (object))`,
+      `(object? 42)`,
+      '(object? 10.1)',
+      '(object? (lambda (x y) (+ x y)))',
+      '(object? (regexp "^start"))',
+      '(object? "false")',
+      '(object? (list 1 2 3))',
+      '(object?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'regexp?': {
+    name: 'regexp?',
+    linkName: 'regexp_question',
+    syntax: 'regexp? value => true | false',
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is a regexp, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is a regexp, otherwise it returns false.',
+    examples: [
+      '(regexp? (regexp "^start"))',
+      `(regexp? -12)`,
+      `(regexp? (object))`,
+      '(regexp? 10.1)',
+      '(regexp? (lambda (x y) (+ x y)))',
+      '(regexp? false)',
+      '(regexp? "false")',
+      '(regexp? (list 1 2 3))',
+      '(regexp?)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'zero?': {
+    name: 'zero?',
+    linkName: 'zero_question',
+    syntax: 'zero? number => true | false',
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is zero, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is zero, otherwise it returns false.',
+    examples: ['(zero? 0)', `(zero? -0.0)`, '(zero? 1)', `(zero? 0.1)`, '(zero? "10")', '(zero?)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'even?': {
+    name: 'even?',
+    linkName: 'even_question',
+    syntax: 'even? number => true | false',
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is even, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is even, otherwise it returns false.',
+    examples: ['(even? 0)', `(even? -0.0)`, '(even? -1)', `(even? 2.1)`, '(even? "10")', '(even?)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'odd?': {
+    name: 'odd?',
+    linkName: 'odd_question',
+    syntax: 'odd? number => true | false',
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Returns true if the argument is odd, otherwise it returns false.',
+    longDescription: 'Returns true if the argument is odd, otherwise it returns false.',
+    examples: ['(odd? 1.0)', `(odd? 1.001)`, '(odd? -1)', `(odd? 2.1)`, '(odd? "10")', '(odd?)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  substring: {
+    name: 'substring',
+    linkName: 'substring',
+    syntax: 'substring string indexStart indexEnd => string',
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+      {
+        name: 'indexStart',
+        type: 'integer',
+      },
+      {
+        name: 'indexEnd',
+        type: 'integer',
+        optional: true,
+      },
+    ],
+    shortDescription: 'Extracts characters from indexStart up to but not including indexEnd',
+    longDescription: 'Extracts characters from indexStart up to but not including indexEnd',
+    examples: [
+      '(substring "A string" 2)',
+      '(substring "A string" 2 5)',
+      '(substring "A string" 2 100)',
+      '(substring "A string" 100)',
+      '(substring "A string" 5 2)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string-length': {
+    name: 'string-length',
+    linkName: 'string-length',
+    syntax: 'string-length string => number',
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns length of string.',
+    longDescription: 'Returns length of string.',
+    examples: ['(string-length "A string")', '(string-length "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  concat: {
+    name: 'concat',
+    linkName: 'concat',
+    syntax: 'concat strings (zero or more) => number',
+    arguments: [
+      {
+        name: 'strings',
+        type: 'string[]',
+      },
+    ],
+    shortDescription: 'Returns length of string.',
+    longDescription: 'Returns length of string.',
+    examples: ['(concat "A string" ", and another string" " ...and more")', '(concat "Just one string")', '(concat)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string>': {
+    name: 'string>',
+    linkName: 'string_gt',
+    syntax: 'string> string1 string2 => number',
+    arguments: [
+      {
+        name: 'string1',
+        type: 'string',
+      },
+      {
+        name: 'string2',
+        type: 'string',
+      },
+    ],
+    shortDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false',
+    longDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false',
+    examples: [
+      '(string> "A string" "Another string")',
+      '(string> "Albert Mojir" "Albert")',
+      '(string> "Albert" "Albert")',
+      '(string> "Albert" "albert")',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string>=': {
+    name: 'string>=',
+    linkName: 'string_gte',
+    syntax: 'string>= string1 string2 => number',
+    arguments: [
+      {
+        name: 'string1',
+        type: 'string',
+      },
+      {
+        name: 'string2',
+        type: 'string',
+      },
+    ],
+    shortDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false',
+    longDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false',
+    examples: [
+      '(string>= "A string" "Another string")',
+      '(string>= "Albert Mojir" "Albert")',
+      '(string>= "Albert" "Albert")',
+      '(string>= "Albert" "albert")',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string<': {
+    name: 'string<',
+    linkName: 'string_lt',
+    syntax: 'string< string1 string2 => number',
+    arguments: [
+      {
+        name: 'string1',
+        type: 'string',
+      },
+      {
+        name: 'string2',
+        type: 'string',
+      },
+    ],
+    shortDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false',
+    longDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false',
+    examples: [
+      '(string< "A string" "Another string")',
+      '(string< "Albert Mojir" "Albert")',
+      '(string< "Albert" "Albert")',
+      '(string< "Albert" "albert")',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string<=': {
+    name: 'string<=',
+    linkName: 'string_lte',
+    syntax: 'string<= string1 string2 => number',
+    arguments: [
+      {
+        name: 'string1',
+        type: 'string',
+      },
+      {
+        name: 'string2',
+        type: 'string',
+      },
+    ],
+    shortDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false',
+    longDescription:
+      'Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false',
+    examples: [
+      '(string<= "A string" "Another string")',
+      '(string<= "Albert Mojir" "Albert")',
+      '(string<= "Albert" "Albert")',
+      '(string<= "Albert" "albert")',
     ],
     specialExpression: false,
     sideEffects: [],

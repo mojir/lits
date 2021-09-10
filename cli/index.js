@@ -52,10 +52,51 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    const result = lispish(expression, config.globalVariables, config.topScope)
-    console.log(isLispishFunction(result) ? functionToString(result) : result)
+    const result = lispish(expression, config.globalVariableexecuteExample, config.topScope)
+    console.log(formatValue(result))
   } catch (error) {
-    console.error(error.message)
+    console.log(error.message ? error.message.brightRed : 'ERROR!'.brightRed)
+  }
+}
+
+function executeExample(expression) {
+  try {
+    const result = lispish(expression, config.globalVariableexecuteExample, config.topScope)
+    return formatValue(result)
+  } catch (error) {
+    return 'ERROR!'.brightRed
+  }
+}
+
+function formatValue(value) {
+  if (isLispishFunction(value)) {
+    return functionToString(value).white
+  }
+
+  if (value === null || value === undefined) {
+    return `${value}`.blue
+  }
+  if (value === true) {
+    return `${value}`.green
+  }
+  if (value === false) {
+    return `${value}`.red
+  }
+  if (typeof value === 'string') {
+    return `${JSON.stringify(value)}`.yellow
+  }
+  if (typeof value === 'number') {
+    return `${value}`.brightMagenta
+  }
+  if (Array.isArray(value)) {
+    return `${JSON.stringify(value)}`.cyan
+  }
+  if (typeof value === 'object') {
+    if (value instanceof RegExp) {
+      return `${value}`.yellow
+    } else {
+      return `${JSON.stringify(value)}`.brightGreen
+    }
   }
 }
 
@@ -140,7 +181,7 @@ function runREPL() {
   createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: 'LISPISH> '['yellow'],
+    prompt: 'LISPISH> '.brightWhite.bold,
     completer,
     next: function (rl) {
       console.log('Type "`help" for more information.')
@@ -241,7 +282,7 @@ function getFullDocumentation(name) {
     return `No documentation available for ${name.bold}`
   }
 
-  const header = `${doc.specialExpression ? 'Normal function' : 'Special expression'} ${name.bold}`.underline
+  const header = `${doc.specialExpression ? 'Special expression' : 'Function'} ${name.bold}`.underline.brightWhite
 
   return `${header}
 
@@ -260,7 +301,7 @@ ${'Examples'.underline}
 ${
   doc.examples.length === 0
     ? '[no examples]'
-    : doc.examples.map(example => `  ${example.bold}  =>  ${lispish(example)}`).join('\n')
+    : doc.examples.map(example => `  ${example} ${'=>'.gray} ${executeExample(example)}`).join('\n')
 }
 `
 }
