@@ -1,6 +1,6 @@
 {
   "name": "lispish",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "A lispish implementation in Typescript",
   "main": "dist/lispish.js",
   "module": "dist/lispish.mjs",
@@ -53,7 +53,8 @@
     "build": "rm -rf dist && rollup -c",
     "test": "jest --collect-coverage",
     "compile": "tsc -p ./tsconfig.json --noEmit",
-    "lispish": "node ./cli/index.js"
+    "lispish": "node ./cli/index.js",
+    "docs": "node ./scripts/buildDocs.js"
   },
   "repository": {
     "type": "git",
