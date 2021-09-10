@@ -12,7 +12,7 @@ const {
   reservedNames,
   isLispishFunction,
 } = require('../dist/lispish.js')
-const referece = require('./reference.js')
+const reference = require('./reference.js')
 
 const commands = [
   '`help',
@@ -276,7 +276,7 @@ function printBuiltins() {
 }
 
 function getDocString(name) {
-  const doc = referece[name]
+  const doc = reference[name]
   if (!doc) {
     return ''
   }
@@ -285,7 +285,7 @@ function getDocString(name) {
 }
 
 function getFullDocumentation(name) {
-  const doc = referece[name]
+  const doc = reference[name]
   if (!doc) {
     return `No documentation available for ${name.bold}`
   }
