@@ -60,6 +60,7 @@
 <label>List</label><ul>
         <a class="small-pre" onclick="showPage('append')"><li id="append_link">append</li></a>
 <a class="small-pre" onclick="showPage('list')"><li id="list_link">list</li></a>
+<a class="small-pre" onclick="showPage('listf')"><li id="listf_link">listf</li></a>
 </ul>
 <label>Object</label><ul>
         <a class="small-pre" onclick="showPage('has-attr')"><li id="has-attr_link">has-attr</li></a>
@@ -396,9 +397,9 @@
       <label>Side effects</label>
       <pre>No side effects</pre>
       <label>Examples</label>
-      <pre>(random 1) => 0.6721881508271241</pre>
-<pre>(random 0.01) => 0.004525322635638469</pre>
-<pre>(random 2.5) => 2.113201031068032</pre>
+      <pre>(random 1) => 0.1191408738661448</pre>
+<pre>(random 0.01) => 0.006904633649193035</pre>
+<pre>(random 2.5) => 0.37451670517777536</pre>
 <pre>(random 0) => "Error!"</pre>
 <pre>(random -1) => "Error!"</pre>
 
@@ -1048,7 +1049,7 @@
       
       <p>Makes new list from arguments.</p>
       <label>Syntax</label>
-      <pre>list values => value</pre>
+      <pre>list values => list</pre>
       <label>Arguments</label>
       <pre>values: any[]</pre>
       <label>Side effects</label>
@@ -1057,6 +1058,22 @@
       <pre>(list 1 2 3) => [1,2,3]</pre>
 <pre>(list (list null undefined false true)) => [[null,undefined,false,true]]</pre>
 <pre>(list) => []</pre>
+
+    </div>
+
+    <div id="listf" class="content function">
+      <h1 class="function-header">listf</h1>
+      
+      <p>Creates a list with "length" number of elements and sets all elements to "value"</p>
+      <label>Syntax</label>
+      <pre>listf length value => list</pre>
+      <label>Arguments</label>
+      <pre>length: number<br />value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
+<pre>(listf 0 100) => "Error!"</pre>
 
     </div>
 

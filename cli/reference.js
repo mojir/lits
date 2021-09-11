@@ -1066,7 +1066,7 @@ module.exports = {
     name: 'list',
     category: 'List',
     linkName: 'list',
-    syntax: 'list values => value',
+    syntax: 'list values => list',
     arguments: [
       {
         name: 'values',
@@ -1076,6 +1076,27 @@ module.exports = {
     shortDescription: 'Makes new list from arguments.',
     longDescription: 'Makes new list from arguments.',
     examples: ['(list 1 2 3)', '(list (list null undefined false true))', '(list)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  listf: {
+    name: 'listf',
+    category: 'List',
+    linkName: 'listf',
+    syntax: 'listf length value => list',
+    arguments: [
+      {
+        name: 'length',
+        type: 'number',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Creates a list with "length" number of elements and sets all elements to "value"',
+    longDescription: 'Creates a list with "length" number of elements and sets all elements to "value"',
+    examples: ['(listf 10 null)', '(listf 0 100)'],
     specialExpression: false,
     sideEffects: [],
   },
