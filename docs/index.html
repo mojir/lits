@@ -60,6 +60,7 @@
 </ul>
 <label>List</label><ul>
         <a class="small-pre" onclick="setActive('append')"><li id="append_link">append</li></a>
+<a class="small-pre" onclick="setActive('list')"><li id="list_link">list</li></a>
 </ul>
 <label>Object</label><ul>
         <a class="small-pre" onclick="setActive('has-attr')"><li id="has-attr_link">has-attr</li></a>
@@ -91,7 +92,7 @@
         <li>No dotted pairs.</li>
       </ul>
       <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
-      <p>For more instruction on how to install and use lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+      <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
       <p/>
       <p>Happy coding!</p>
 
@@ -99,7 +100,7 @@
 
       </div>
           <div id="_plus" class="content function">
-      <h1>+</h1>
+      <h1 class="function-header">+</h1>
       
       <p>Computes sum of numbers</p>
       <label>Syntax</label>
@@ -118,7 +119,7 @@
     </div>
 
     <div id="_minus" class="content function">
-      <h1>-</h1>
+      <h1 class="function-header">-</h1>
       
       <p>Computes difference between first value and sum of the rest. When called with only one argument, it does negation.</p>
       <label>Syntax</label>
@@ -136,7 +137,7 @@
     </div>
 
     <div id="_star" class="content function">
-      <h1>*</h1>
+      <h1 class="function-header">*</h1>
       
       <p>Computes product of numbers.</p>
       <label>Syntax</label>
@@ -154,7 +155,7 @@
     </div>
 
     <div id="_slash" class="content function">
-      <h1>/</h1>
+      <h1 class="function-header">/</h1>
       
       <p>Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining number.</p>
       <label>Syntax</label>
@@ -172,7 +173,7 @@
     </div>
 
     <div id="_percent" class="content function">
-      <h1>%</h1>
+      <h1 class="function-header">%</h1>
       
       <p>Returns modulus of two number arguments.</p>
       <label>Syntax</label>
@@ -191,7 +192,7 @@
     </div>
 
     <div id="_notequal" class="content function">
-      <h1>!=</h1>
+      <h1 class="function-header">!=</h1>
       
       <p>Result is true if no two values are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).</p>
       <label>Syntax</label>
@@ -211,7 +212,7 @@
     </div>
 
     <div id="_equal" class="content function">
-      <h1>=</h1>
+      <h1 class="function-header">=</h1>
       
       <p>Compares values according to "equal" predicate. Result is true if every specified value is equal to each other, otherwise result is false.</p>
       <label>Syntax</label>
@@ -230,7 +231,7 @@
     </div>
 
     <div id="not" class="content function">
-      <h1>not</h1>
+      <h1 class="function-header">not</h1>
       
       <p>Computes logical negation. Note that any other value than false, 0, null, undefined and "" is considered as true.</p>
       <label>Syntax</label>
@@ -252,7 +253,7 @@
     </div>
 
     <div id="1_plus" class="content function">
-      <h1>1+</h1>
+      <h1 class="function-header">1+</h1>
       
       <p>Adds one to the argument.</p>
       <label>Syntax</label>
@@ -269,7 +270,7 @@
     </div>
 
     <div id="1_minus" class="content function">
-      <h1>1-</h1>
+      <h1 class="function-header">1-</h1>
       
       <p>Subtracts one from the argument.</p>
       <label>Syntax</label>
@@ -286,7 +287,7 @@
     </div>
 
     <div id="sqrt" class="content function">
-      <h1>sqrt</h1>
+      <h1 class="function-header">sqrt</h1>
       
       <p>Computes square root of number.</p>
       <label>Syntax</label>
@@ -304,7 +305,7 @@
     </div>
 
     <div id="expt" class="content function">
-      <h1>expt</h1>
+      <h1 class="function-header">expt</h1>
       
       <p>Computes returns base-number raised to the power-number.</p>
       <label>Syntax</label>
@@ -324,7 +325,7 @@
     </div>
 
     <div id="round" class="content function">
-      <h1>round</h1>
+      <h1 class="function-header">round</h1>
       
       <p>Returns argument rounded to the nearest integer.</p>
       <label>Syntax</label>
@@ -344,7 +345,7 @@
     </div>
 
     <div id="floor" class="content function">
-      <h1>floor</h1>
+      <h1 class="function-header">floor</h1>
       
       <p>Returns the largest integer less than or equal to the argument.</p>
       <label>Syntax</label>
@@ -364,7 +365,7 @@
     </div>
 
     <div id="ceil" class="content function">
-      <h1>ceil</h1>
+      <h1 class="function-header">ceil</h1>
       
       <p>Returns the smallest integer larger than or equal to the argument.</p>
       <label>Syntax</label>
@@ -384,7 +385,7 @@
     </div>
 
     <div id="random" class="content function">
-      <h1>random</h1>
+      <h1 class="function-header">random</h1>
       
       <p>Returns a semi random number between 0 (inclusive) and argument (exclusive).</p>
       <label>Syntax</label>
@@ -394,16 +395,16 @@
       <label>Side effects</label>
       <pre>No side effects</pre>
       <label>Examples</label>
-      <pre>(random 1) => 0.5520766899772704</pre>
-<pre>(random 0.01) => 0.00534926526872721</pre>
-<pre>(random 2.5) => 2.433301504423167</pre>
+      <pre>(random 1) => 0.31942124509294567</pre>
+<pre>(random 0.01) => 0.001218904504240772</pre>
+<pre>(random 2.5) => 2.401148596623794</pre>
 <pre>(random 0) => "Error!"</pre>
 <pre>(random -1) => "Error!"</pre>
 
     </div>
 
     <div id="_lt" class="content function">
-      <h1><</h1>
+      <h1 class="function-header"><</h1>
       
       <p>Compares numbers according to "less than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
@@ -422,7 +423,7 @@
     </div>
 
     <div id="_gt" class="content function">
-      <h1>></h1>
+      <h1 class="function-header">></h1>
       
       <p>Compares numbers according to "greater than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
@@ -441,7 +442,7 @@
     </div>
 
     <div id="_lte" class="content function">
-      <h1><=</h1>
+      <h1 class="function-header"><=</h1>
       
       <p>Compares numbers according to "less than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
@@ -460,7 +461,7 @@
     </div>
 
     <div id="_gte" class="content function">
-      <h1>>=</h1>
+      <h1 class="function-header">>=</h1>
       
       <p>Compares numbers according to "greater than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
@@ -479,7 +480,7 @@
     </div>
 
     <div id="and" class="content function">
-      <h1>and</h1>
+      <h1 class="function-header">and</h1>
       <h3>Special Expression</h3>
       <p>Computes logical "and" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
       <label>Syntax</label>
@@ -498,7 +499,7 @@
     </div>
 
     <div id="or" class="content function">
-      <h1>or</h1>
+      <h1 class="function-header">or</h1>
       <h3>Special Expression</h3>
       <p>Computes logical "or" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
       <label>Syntax</label>
@@ -517,7 +518,7 @@
     </div>
 
     <div id="append" class="content function">
-      <h1>append</h1>
+      <h1 class="function-header">append</h1>
       
       <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified lists.</p>
       <label>Syntax</label>
@@ -536,7 +537,7 @@
     </div>
 
     <div id="aref" class="content function">
-      <h1>aref</h1>
+      <h1 class="function-header">aref</h1>
       
       <p>Accesses specified element of a string. String index is counted from zero. Accessing out-of-bounds indices returns undefined</p>
       <label>Syntax</label>
@@ -554,7 +555,7 @@
     </div>
 
     <div id="boolean_question" class="content function">
-      <h1>boolean?</h1>
+      <h1 class="function-header">boolean?</h1>
       
       <p>Returns true if the argument is a boolean, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -574,7 +575,7 @@
     </div>
 
     <div id="null_question" class="content function">
-      <h1>null?</h1>
+      <h1 class="function-header">null?</h1>
       
       <p>Returns true if the argument is null, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -594,7 +595,7 @@
     </div>
 
     <div id="undefined_question" class="content function">
-      <h1>undefined?</h1>
+      <h1 class="function-header">undefined?</h1>
       
       <p>Returns true if the argument is undefined, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -615,7 +616,7 @@
     </div>
 
     <div id="number_question" class="content function">
-      <h1>number?</h1>
+      <h1 class="function-header">number?</h1>
       
       <p>Returns true if the argument is a number, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -636,7 +637,7 @@
     </div>
 
     <div id="string_question" class="content function">
-      <h1>string?</h1>
+      <h1 class="function-header">string?</h1>
       
       <p>Returns true if the argument is a string, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -657,7 +658,7 @@
     </div>
 
     <div id="function_question" class="content function">
-      <h1>function?</h1>
+      <h1 class="function-header">function?</h1>
       
       <p>Returns true if the argument is a function, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -679,7 +680,7 @@
     </div>
 
     <div id="integer_question" class="content function">
-      <h1>integer?</h1>
+      <h1 class="function-header">integer?</h1>
       
       <p>Returns true if the argument is an integer, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -702,7 +703,7 @@
     </div>
 
     <div id="list_question" class="content function">
-      <h1>list?</h1>
+      <h1 class="function-header">list?</h1>
       
       <p>Returns true if the argument is a list, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -723,7 +724,7 @@
     </div>
 
     <div id="object_question" class="content function">
-      <h1>object?</h1>
+      <h1 class="function-header">object?</h1>
       
       <p>Returns true if the argument is an object, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -746,7 +747,7 @@
     </div>
 
     <div id="regexp_question" class="content function">
-      <h1>regexp?</h1>
+      <h1 class="function-header">regexp?</h1>
       
       <p>Returns true if the argument is a regexp, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -769,7 +770,7 @@
     </div>
 
     <div id="zero_question" class="content function">
-      <h1>zero?</h1>
+      <h1 class="function-header">zero?</h1>
       
       <p>Returns true if the argument is zero, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -789,7 +790,7 @@
     </div>
 
     <div id="even_question" class="content function">
-      <h1>even?</h1>
+      <h1 class="function-header">even?</h1>
       
       <p>Returns true if the argument is even, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -809,7 +810,7 @@
     </div>
 
     <div id="odd_question" class="content function">
-      <h1>odd?</h1>
+      <h1 class="function-header">odd?</h1>
       
       <p>Returns true if the argument is odd, otherwise it returns false.</p>
       <label>Syntax</label>
@@ -829,7 +830,7 @@
     </div>
 
     <div id="substring" class="content function">
-      <h1>substring</h1>
+      <h1 class="function-header">substring</h1>
       
       <p>Extracts characters from indexStart up to but not including indexEnd</p>
       <label>Syntax</label>
@@ -848,7 +849,7 @@
     </div>
 
     <div id="string-length" class="content function">
-      <h1>string-length</h1>
+      <h1 class="function-header">string-length</h1>
       
       <p>Returns length of string.</p>
       <label>Syntax</label>
@@ -864,7 +865,7 @@
     </div>
 
     <div id="concat" class="content function">
-      <h1>concat</h1>
+      <h1 class="function-header">concat</h1>
       
       <p>Returns length of string.</p>
       <label>Syntax</label>
@@ -881,7 +882,7 @@
     </div>
 
     <div id="string_gt" class="content function">
-      <h1>string></h1>
+      <h1 class="function-header">string></h1>
       
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false</p>
       <label>Syntax</label>
@@ -899,7 +900,7 @@
     </div>
 
     <div id="string_gte" class="content function">
-      <h1>string>=</h1>
+      <h1 class="function-header">string>=</h1>
       
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false</p>
       <label>Syntax</label>
@@ -917,7 +918,7 @@
     </div>
 
     <div id="string_lt" class="content function">
-      <h1>string<</h1>
+      <h1 class="function-header">string<</h1>
       
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false</p>
       <label>Syntax</label>
@@ -935,7 +936,7 @@
     </div>
 
     <div id="string_lte" class="content function">
-      <h1>string<=</h1>
+      <h1 class="function-header">string<=</h1>
       
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false</p>
       <label>Syntax</label>
@@ -953,7 +954,7 @@
     </div>
 
     <div id="write" class="content function">
-      <h1>write</h1>
+      <h1 class="function-header">write</h1>
       
       <p>It console.log the value arguments and then returns the last argument. If called with no arguments undefined is returned</p>
       <label>Syntax</label>
@@ -973,7 +974,7 @@
     </div>
 
     <div id="has-attr" class="content function">
-      <h1>has-attr</h1>
+      <h1 class="function-header">has-attr</h1>
       
       <p>Returns true if object has an attribute named attr, otherwise returns false</p>
       <label>Syntax</label>
@@ -990,7 +991,7 @@
     </div>
 
     <div id="get-attr" class="content function">
-      <h1>get-attr</h1>
+      <h1 class="function-header">get-attr</h1>
       
       <p>Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr</p>
       <label>Syntax</label>
@@ -1007,7 +1008,7 @@
     </div>
 
     <div id="del-attr" class="content function">
-      <h1>del-attr</h1>
+      <h1 class="function-header">del-attr</h1>
       
       <p>Deletes the attribute attr from obj</p>
       <label>Syntax</label>
@@ -1025,9 +1026,9 @@
     </div>
 
     <div id="set-attr" class="content function">
-      <h1>set-attr</h1>
+      <h1 class="function-header">set-attr</h1>
       
-      <p>Sets an attribute on an object. Returns value</p>
+      <p>Sets an attribute on an object. Returns value.</p>
       <label>Syntax</label>
       <pre>set-attr object attr => value</pre>
       <label>Arguments</label>
@@ -1038,6 +1039,23 @@
       <pre>(set-attr (object "x" 10) "a" 10) => 10</pre>
 <pre>(setq o (object)) (set-attr o "a" 10) o => {"a":10}</pre>
 <pre>(setq o (object "a" 5)) (set-attr o "a" 10) o => {"a":10}</pre>
+
+    </div>
+
+    <div id="list" class="content function">
+      <h1 class="function-header">list</h1>
+      
+      <p>Makes new list from arguments.</p>
+      <label>Syntax</label>
+      <pre>list values => value</pre>
+      <label>Arguments</label>
+      <pre>values: any[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(list 1 2 3) => [1,2,3]</pre>
+<pre>(list (list null undefined false true)) => [[null,undefined,false,true]]</pre>
+<pre>(list) => []</pre>
 
     </div>
 
@@ -1084,7 +1102,7 @@
         return
       }
       output.classList.remove('error')
-      output.innerHTML = JSON.parse(result)
+      output.innerHTML = stringifyValue(result)
     }
     function setActive(id) {
       document.getElementById(activeId).classList.remove('active')
@@ -1096,6 +1114,12 @@
         document.getElementById(id + '_link').classList.add('active-sidebar-entry')
       }
       activeId = id
+    }
+    function stringifyValue(value) {
+      return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
+        /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
+        'undefined',
+      )
     }
   </script>
 

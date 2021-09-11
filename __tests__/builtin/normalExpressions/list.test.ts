@@ -5,6 +5,7 @@ describe('list functions', () => {
     test('samples', () => {
       expect(lispish(`(list)`)).toEqual([])
       expect(lispish(`(list 1)`)).toEqual([1])
+      expect((lispish(`(list undefined)`) as unknown[])[0]).toEqual(undefined)
       expect(lispish(`(list 0 "1" null true false undefined (list (list)) (object))`)).toEqual([
         0,
         '1',

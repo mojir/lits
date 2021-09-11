@@ -13,7 +13,6 @@ const {
   isLispishFunction,
 } = require('../dist/lispish.js')
 const reference = require('./reference.js')
-const { type } = require('os')
 
 const commands = [
   '`help',
@@ -80,6 +79,14 @@ function executeExample(expression) {
   }
 }
 
+function stringifyValue(value, indent) {
+  return JSON.stringify(
+    value,
+    (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v),
+    indent ? 2 : undefined,
+  ).replace(/"b234ca78-ccc4-5749-9384-1d3415d29423"/g, 'undefined')
+}
+
 function formatValue(value, noColors) {
   if (noColors) {
     if (isLispishFunction(value)) {
@@ -91,7 +98,7 @@ function formatValue(value, noColors) {
       Array.isArray(value) ||
       (value !== null && typeof value === 'object' && !(value instanceof RegExp))
     ) {
-      return `${JSON.stringify(value)}`
+      return `${stringifyValue(value)}`
     }
 
     return `${value}`
@@ -110,19 +117,19 @@ function formatValue(value, noColors) {
       return `${value}`.red
     }
     if (typeof value === 'string') {
-      return `${JSON.stringify(value)}`.yellow
+      return `${stringifyValue(value)}`.yellow
     }
     if (typeof value === 'number') {
       return `${value}`.brightMagenta
     }
     if (Array.isArray(value)) {
-      return `${JSON.stringify(value)}`.cyan
+      return `${stringifyValue(value)}`.cyan
     }
     if (typeof value === 'object') {
       if (value instanceof RegExp) {
         return `${value}`.yellow
       } else {
-        return `${JSON.stringify(value)}`.brightGreen
+        return `${stringifyValue(value)}`.brightGreen
       }
     }
   }
@@ -374,7 +381,7 @@ function printObj(label, obj, stringify) {
       .sort()
       .forEach(x => {
         if (stringify) {
-          console.log(`${x} = ${JSON.stringify(obj[x], null, 2)}`)
+          console.log(`${x} = ${stringifyValue(obj[x], true)}`)
         } else {
           console.log(`${x} =`, isLispishFunction(obj[x]) ? functionToString(obj[x]) : obj[x])
         }

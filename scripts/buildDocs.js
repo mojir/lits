@@ -55,7 +55,7 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
         return
       }
       output.classList.remove('error')
-      output.innerHTML = JSON.parse(result)
+      output.innerHTML = stringifyValue(result)
     }
     function setActive(id) {
       document.getElementById(activeId).classList.remove('active')
@@ -67,6 +67,12 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
         document.getElementById(id + '_link').classList.add('active-sidebar-entry')
       }
       activeId = id
+    }
+    function stringifyValue(value) {
+      return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
+        /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
+        'undefined',
+      )
     }
   </script>
 `
@@ -99,7 +105,7 @@ ${getHeader()}
         <li>No dotted pairs.</li>
       </ul>
       <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
-      <p>For more instruction on how to install and use lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+      <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
       <p/>
       <p>Happy coding!</p>
 
@@ -122,7 +128,7 @@ ${getHeader()}
 function writeDoc(docObj) {
   const { name, longDescription, syntax, linkName, specialExpression, examples, sideEffects, arguments } = docObj
   return `    <div id="${linkName}" class="content function">
-      <h1>${name}</h1>
+      <h1 class="function-header">${name}</h1>
       ${specialExpression ? '<h3>Special Expression</h3>' : ''}
       <p>${longDescription}</p>
       <label>Syntax</label>
@@ -146,7 +152,7 @@ function writeDoc(docObj) {
           } finally {
             console.log = oldLog
           }
-          return `<pre>${example} => ${JSON.stringify(result)}</pre>`
+          return `<pre>${example} => ${stringifyValue(result)}</pre>`
         })
         .join('\n')}
 
@@ -204,6 +210,13 @@ function escape(str) {
   str = str.replace(/>/g, '&gt;')
   str = str.replace(/</g, '&lt;')
   return str
+}
+
+function stringifyValue(value) {
+  return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
+    /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
+    'undefined',
+  )
 }
 
 function writeStyles() {
@@ -349,7 +362,11 @@ label {
 #index a {
   text-decoration: underline;
   color: #fdff91;
- }
+}
+
+h1.function-header {
+  font-family: monospace;
+}
 
 `
   fs.writeFileSync(path.join(DOC_DIR, `styles.css`), styles, { encoding: 'utf-8' })

@@ -140,5 +140,9 @@ label {
 #index a {
   text-decoration: underline;
   color: #fdff91;
- }
+}
+
+h1.function-header {
+  font-family: monospace;
+}
 
