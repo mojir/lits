@@ -64,7 +64,6 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
         document.getElementById(activeId + '_link').classList.remove('active-sidebar-entry')
       }
       if (id !== 'index') {
-        console.log(id + '_link')
         document.getElementById(id + '_link').classList.add('active-sidebar-entry')
       }
       activeId = id
@@ -174,7 +173,6 @@ function getSideBar() {
   return `<div class="sidebar">
     ${categoryKeys
       .map(categoryKey => {
-        console.log(categoryKey, categories[categoryKey])
         return `<label>${categoryKey}</label><ul>
         ${
           categories[categoryKey]

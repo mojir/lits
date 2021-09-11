@@ -25,7 +25,7 @@ describe('reference', () => {
     test(key, () => {
       expect(obj.name).toBe(key)
       expect(
-        ['Math', 'Misc', 'Object', 'List', 'Predicate', 'Regular expression', 'Special expression', 'String'].includes(
+        ['Special expression', 'Math', 'Predicate', 'String', 'List', 'Object', 'Regular expression', 'Misc'].includes(
           obj.category,
         ),
       ).toBe(true)
