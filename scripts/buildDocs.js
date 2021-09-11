@@ -155,14 +155,14 @@ function writeDoc(docObj) {
 }
 function getSideBar() {
   const categoryKeys = [
-    'Math',
-    'Misc',
-    'Object',
-    'List',
-    'Predicate',
-    'Regular expression',
     'Special expression',
+    'Math',
+    'Predicate',
     'String',
+    'List',
+    'Object',
+    'Regular expression',
+    'Misc',
   ]
   const categories = Object.values(reference).reduce((result, obj) => {
     result[obj.category] = result[obj.category] || []

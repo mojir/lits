@@ -9,7 +9,11 @@
 </div>
   <div class="row">
     <div class="sidebar">
-    <label>Math</label><ul>
+    <label>Special expression</label><ul>
+        <a class="small-pre" onclick="setActive('and')"><li id="and_link">and</li></a>
+<a class="small-pre" onclick="setActive('or')"><li id="or_link">or</li></a>
+</ul>
+<label>Math</label><ul>
         <a class="small-pre" onclick="setActive('_plus')"><li id="_plus_link">+</li></a>
 <a class="small-pre" onclick="setActive('_minus')"><li id="_minus_link">-</li></a>
 <a class="small-pre" onclick="setActive('_star')"><li id="_star_link">*</li></a>
@@ -28,20 +32,6 @@
 <a class="small-pre" onclick="setActive('_lte')"><li id="_lte_link">&lt;=</li></a>
 <a class="small-pre" onclick="setActive('_gte')"><li id="_gte_link">&gt;=</li></a>
 </ul>
-<label>Misc</label><ul>
-        <a class="small-pre" onclick="setActive('_notequal')"><li id="_notequal_link">!=</li></a>
-<a class="small-pre" onclick="setActive('_equal')"><li id="_equal_link">=</li></a>
-<a class="small-pre" onclick="setActive('not')"><li id="not_link">not</li></a>
-</ul>
-<label>Object</label><ul>
-        <a class="small-pre" onclick="setActive('has-attr')"><li id="has-attr_link">has-attr</li></a>
-<a class="small-pre" onclick="setActive('get-attr')"><li id="get-attr_link">get-attr</li></a>
-<a class="small-pre" onclick="setActive('del-attr')"><li id="del-attr_link">del-attr</li></a>
-<a class="small-pre" onclick="setActive('set-attr')"><li id="set-attr_link">set-attr</li></a>
-</ul>
-<label>List</label><ul>
-        <a class="small-pre" onclick="setActive('append')"><li id="append_link">append</li></a>
-</ul>
 <label>Predicate</label><ul>
         <a class="small-pre" onclick="setActive('boolean_question')"><li id="boolean_question_link">boolean?</li></a>
 <a class="small-pre" onclick="setActive('null_question')"><li id="null_question_link">null?</li></a>
@@ -57,13 +47,6 @@
 <a class="small-pre" onclick="setActive('even_question')"><li id="even_question_link">even?</li></a>
 <a class="small-pre" onclick="setActive('odd_question')"><li id="odd_question_link">odd?</li></a>
 </ul>
-<label>Regular expression</label><ul>
-        
-</ul>
-<label>Special expression</label><ul>
-        <a class="small-pre" onclick="setActive('and')"><li id="and_link">and</li></a>
-<a class="small-pre" onclick="setActive('or')"><li id="or_link">or</li></a>
-</ul>
 <label>String</label><ul>
         <a class="small-pre" onclick="setActive('aref')"><li id="aref_link">aref</li></a>
 <a class="small-pre" onclick="setActive('substring')"><li id="substring_link">substring</li></a>
@@ -74,6 +57,23 @@
 <a class="small-pre" onclick="setActive('string_lt')"><li id="string_lt_link">string&lt;</li></a>
 <a class="small-pre" onclick="setActive('string_lte')"><li id="string_lte_link">string&lt;=</li></a>
 <a class="small-pre" onclick="setActive('write')"><li id="write_link">write</li></a>
+</ul>
+<label>List</label><ul>
+        <a class="small-pre" onclick="setActive('append')"><li id="append_link">append</li></a>
+</ul>
+<label>Object</label><ul>
+        <a class="small-pre" onclick="setActive('has-attr')"><li id="has-attr_link">has-attr</li></a>
+<a class="small-pre" onclick="setActive('get-attr')"><li id="get-attr_link">get-attr</li></a>
+<a class="small-pre" onclick="setActive('del-attr')"><li id="del-attr_link">del-attr</li></a>
+<a class="small-pre" onclick="setActive('set-attr')"><li id="set-attr_link">set-attr</li></a>
+</ul>
+<label>Regular expression</label><ul>
+        
+</ul>
+<label>Misc</label><ul>
+        <a class="small-pre" onclick="setActive('_notequal')"><li id="_notequal_link">!=</li></a>
+<a class="small-pre" onclick="setActive('_equal')"><li id="_equal_link">=</li></a>
+<a class="small-pre" onclick="setActive('not')"><li id="not_link">not</li></a>
 </ul>
 </div>
     <div class="main">
@@ -394,9 +394,9 @@
       <label>Side effects</label>
       <pre>No side effects</pre>
       <label>Examples</label>
-      <pre>(random 1) => 0.8479534242883122</pre>
-<pre>(random 0.01) => 0.006937208849103193</pre>
-<pre>(random 2.5) => 1.1739224389808216</pre>
+      <pre>(random 1) => 0.5520766899772704</pre>
+<pre>(random 0.01) => 0.00534926526872721</pre>
+<pre>(random 2.5) => 2.433301504423167</pre>
 <pre>(random 0) => "Error!"</pre>
 <pre>(random -1) => "Error!"</pre>
 
