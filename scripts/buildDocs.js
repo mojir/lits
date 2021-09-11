@@ -1,4 +1,5 @@
 const reference = require('../cli/reference')
+const lispish = require('../dist/lispish')
 const path = require('path')
 const fs = require('fs')
 
@@ -120,12 +121,36 @@ ${getHeader()}
 }
 
 function writeDoc(docObj) {
-  const { name, longDescription, syntax, linkName } = docObj
-  return `    <div id="${linkName}" class="content">
+  const { name, longDescription, syntax, linkName, specialExpression, examples, sideEffects, arguments } = docObj
+  return `    <div id="${linkName}" class="content function">
       <h1>${name}</h1>
+      ${specialExpression ? '<h3>Special Expression</h3>' : ''}
       <p>${longDescription}</p>
       <label>Syntax</label>
       <pre>${syntax}</pre>
+      <label>Arguments</label>
+      <pre>${
+        arguments.length === 0 ? 'No arguments' : arguments.map(arg => `${arg.name}: ${arg.type}`).join('<br />')
+      }</pre>
+      <label>Side effects</label>
+      <pre>${sideEffects.length === 0 ? 'No side effects' : sideEffects.map(effect => effect).join('<br />')}</pre>
+      <label>Examples</label>
+      ${examples
+        .map(example => {
+          var oldLog = console.log
+          console.log = function () {}
+          var result
+          try {
+            result = lispish.lispish(example)
+          } catch (error) {
+            result = 'Error!'
+          } finally {
+            console.log = oldLog
+          }
+          return `<pre>${example} => ${JSON.stringify(result)}</pre>`
+        })
+        .join('\n')}
+
     </div>
 `
 }
@@ -287,6 +312,12 @@ textarea {
  margin: 0;
  display: inline;
  color: #fdff91;
+}
+
+label {
+  display: block;
+  margin-top: 1.5rem;
+  font-weight: bold;
 }
 
 #index a {

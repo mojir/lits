@@ -125,6 +125,12 @@ textarea {
  color: #fdff91;
 }
 
+label {
+  display: block;
+  margin-top: 1.5rem;
+  font-weight: bold;
+}
+
 #index a {
   text-decoration: underline;
   color: #fdff91;

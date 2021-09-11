@@ -79,319 +79,878 @@
 
 
       </div>
-          <div id="_plus" class="content">
+          <div id="_plus" class="content function">
       <h1>+</h1>
+      
       <p>Computes sum of numbers</p>
       <label>Syntax</label>
       <pre>+ numbers(zero or more) => number</pre>
+      <label>Arguments</label>
+      <pre>numbers: number[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(+) => 0</pre>
+<pre>(+ 1) => 1</pre>
+<pre>(+ 2 4) => 6</pre>
+<pre>(+ 1 2 3 4) => 10</pre>
+<pre>(+ (+ 2 3) (+ 5 6)) => 16</pre>
+
     </div>
 
-    <div id="_minus" class="content">
+    <div id="_minus" class="content function">
       <h1>-</h1>
+      
       <p>Computes difference between first value and sum of the rest. When called with only one argument, it does negation.</p>
       <label>Syntax</label>
       <pre>- numbers(zero or more) => number</pre>
+      <label>Arguments</label>
+      <pre>numbers: number[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(-) => 0</pre>
+<pre>(- 1) => -1</pre>
+<pre>(- 2 4) => -2</pre>
+<pre>(- 4 3 2 1) => -2</pre>
+
     </div>
 
-    <div id="_star" class="content">
+    <div id="_star" class="content function">
       <h1>*</h1>
+      
       <p>Computes product of numbers.</p>
       <label>Syntax</label>
       <pre>* numbers(zero or more) => number</pre>
+      <label>Arguments</label>
+      <pre>numbers: number[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(*) => 1</pre>
+<pre>(* 2) => 2</pre>
+<pre>(* 2 4) => 8</pre>
+<pre>(* 1 2 3 4) => 24</pre>
+
     </div>
 
-    <div id="_slash" class="content">
+    <div id="_slash" class="content function">
       <h1>/</h1>
+      
       <p>Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining number.</p>
       <label>Syntax</label>
       <pre>/ numbers(zero or more) => number</pre>
+      <label>Arguments</label>
+      <pre>numbers: number[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(/) => 1</pre>
+<pre>(/ 2) => 0.5</pre>
+<pre>(/ 2 4) => 0.5</pre>
+<pre>(/ 4 3 2 1) => 0.6666666666666666</pre>
+
     </div>
 
-    <div id="_percent" class="content">
+    <div id="_percent" class="content function">
       <h1>%</h1>
+      
       <p>Returns modulus of two number arguments.</p>
       <label>Syntax</label>
       <pre>% number divisor => number</pre>
+      <label>Arguments</label>
+      <pre>number: number<br />divisor: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(% 5 3) => 2</pre>
+<pre>(% 5.2 3.1) => 2.1</pre>
+<pre>(% -5 3) => -2</pre>
+<pre>(% 5 -3) => 2</pre>
+<pre>(% -5 -3) => -2</pre>
+
     </div>
 
-    <div id="_notequal" class="content">
+    <div id="_notequal" class="content function">
       <h1>!=</h1>
+      
       <p>Result is true if no two numbers are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).</p>
       <label>Syntax</label>
       <pre>!= numbers (one or more) => true | false</pre>
+      <label>Arguments</label>
+      <pre>numbers: number[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(!= 3) => true</pre>
+<pre>(!= 3 2) => true</pre>
+<pre>(!= 3 3) => false</pre>
+<pre>(!= 3 3 2) => false</pre>
+<pre>(!= 3 2 1 0) => true</pre>
+<pre>(!= 0 -0) => false</pre>
+
     </div>
 
-    <div id="not" class="content">
+    <div id="not" class="content function">
       <h1>not</h1>
+      
       <p>Computes logical negation. Note that any other value than false, 0, null, undefined and "" is considered as true.</p>
       <label>Syntax</label>
       <pre>not value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(not 3) => false</pre>
+<pre>(not true) => false</pre>
+<pre>(not "A string") => false</pre>
+<pre>(not 0) => true</pre>
+<pre>(not false) => true</pre>
+<pre>(not null) => true</pre>
+<pre>(not undefined) => true</pre>
+<pre>(not "") => true</pre>
+
     </div>
 
-    <div id="1_plus" class="content">
+    <div id="1_plus" class="content function">
       <h1>1+</h1>
+      
       <p>Adds one to the argument.</p>
       <label>Syntax</label>
       <pre>1+ number => number</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(1+ 0) => 1</pre>
+<pre>(1+ 1) => 2</pre>
+<pre>(1+ 100.1) => 101.1</pre>
+
     </div>
 
-    <div id="1_minus" class="content">
+    <div id="1_minus" class="content function">
       <h1>1-</h1>
+      
       <p>Subtracts one from the argument.</p>
       <label>Syntax</label>
       <pre>1- number => number</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(1- 0) => -1</pre>
+<pre>(1- 1) => 0</pre>
+<pre>(1- 100.1) => 99.1</pre>
+
     </div>
 
-    <div id="sqrt" class="content">
+    <div id="sqrt" class="content function">
       <h1>sqrt</h1>
+      
       <p>Computes square root of number.</p>
       <label>Syntax</label>
       <pre>sqrt number => number</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(sqrt 0) => 0</pre>
+<pre>(sqrt 9) => 3</pre>
+<pre>(sqrt 2) => 1.4142135623730951</pre>
+<pre>(sqrt -1) => "Error!"</pre>
+
     </div>
 
-    <div id="expt" class="content">
+    <div id="expt" class="content function">
       <h1>expt</h1>
+      
       <p>Computes returns base-number raised to the power-number.</p>
       <label>Syntax</label>
       <pre>expt base-number power-number => number</pre>
+      <label>Arguments</label>
+      <pre>base-number: number<br />power-number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(expt 2 3) => 8</pre>
+<pre>(expt 2 0) => 1</pre>
+<pre>(expt 2 -3) => 0.125</pre>
+<pre>(expt -2 3) => -8</pre>
+<pre>(expt -2 -3) => -0.125</pre>
+<pre>(expt -2) => "Error!"</pre>
+
     </div>
 
-    <div id="round" class="content">
+    <div id="round" class="content function">
       <h1>round</h1>
+      
       <p>Returns argument rounded to the nearest integer.</p>
       <label>Syntax</label>
       <pre>round number => integer</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(round 2) => 2</pre>
+<pre>(round 2.49) => 2</pre>
+<pre>(round 2.5) => 3</pre>
+<pre>(round -2.49) => -2</pre>
+<pre>(round -2.5) => -2</pre>
+<pre>(round -2.501) => -3</pre>
+
     </div>
 
-    <div id="floor" class="content">
+    <div id="floor" class="content function">
       <h1>floor</h1>
+      
       <p>Returns the largest integer less than or equal to the argument.</p>
       <label>Syntax</label>
       <pre>floor number => integer</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(floor 2) => 2</pre>
+<pre>(floor 2.49) => 2</pre>
+<pre>(floor 2.5) => 2</pre>
+<pre>(floor -2.49) => -3</pre>
+<pre>(floor -2.5) => -3</pre>
+<pre>(floor -2.501) => -3</pre>
+
     </div>
 
-    <div id="ceil" class="content">
+    <div id="ceil" class="content function">
       <h1>ceil</h1>
+      
       <p>Returns the smallest integer larger than or equal to the argument.</p>
       <label>Syntax</label>
       <pre>ceil number => integer</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(ceil 2) => 2</pre>
+<pre>(ceil 2.49) => 3</pre>
+<pre>(ceil 2.5) => 3</pre>
+<pre>(ceil -2.49) => -2</pre>
+<pre>(ceil -2.5) => -2</pre>
+<pre>(ceil -2.501) => -2</pre>
+
     </div>
 
-    <div id="random" class="content">
+    <div id="random" class="content function">
       <h1>random</h1>
+      
       <p>Returns a semi random number between 0 (inclusive) and argument (exclusive).</p>
       <label>Syntax</label>
       <pre>random number => number</pre>
+      <label>Arguments</label>
+      <pre>number: positive number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(random 1) => 0.2619595553771277</pre>
+<pre>(random 0.01) => 0.006455814941491667</pre>
+<pre>(random 2.5) => 0.5488743988054268</pre>
+<pre>(random 0) => "Error!"</pre>
+<pre>(random -1) => "Error!"</pre>
+
     </div>
 
-    <div id="_lt" class="content">
+    <div id="_lt" class="content function">
       <h1><</h1>
+      
       <p>Compares numbers according to "less than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
       <pre>< number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(< 0 1) => true</pre>
+<pre>(< 1 1.01) => true</pre>
+<pre>(< 1 1) => false</pre>
+<pre>(< 1 2 3 4) => true</pre>
+<pre>(< 1 2 2 3) => false</pre>
+
     </div>
 
-    <div id="_gt" class="content">
+    <div id="_gt" class="content function">
       <h1>></h1>
+      
       <p>Compares numbers according to "greater than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
       <pre>> number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(> 1 0) => true</pre>
+<pre>(> 1.01 1) => true</pre>
+<pre>(> 1 1) => false</pre>
+<pre>(> 4 3 2 1) => true</pre>
+<pre>(> 3 2 2 1) => false</pre>
+
     </div>
 
-    <div id="_lte" class="content">
+    <div id="_lte" class="content function">
       <h1><=</h1>
+      
       <p>Compares numbers according to "less than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
       <pre><= number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(<= 0 1) => true</pre>
+<pre>(<= 1 1.01) => true</pre>
+<pre>(<= 1 1) => true</pre>
+<pre>(<= 1 2 3 4) => true</pre>
+<pre>(<= 1 2 2 3) => true</pre>
+
     </div>
 
-    <div id="_gte" class="content">
+    <div id="_gte" class="content function">
       <h1>>=</h1>
+      
       <p>Compares numbers according to "greater than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
       <label>Syntax</label>
       <pre>>= number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(>= 1 0) => true</pre>
+<pre>(>= 1.01 1) => true</pre>
+<pre>(>= 1 1) => true</pre>
+<pre>(>= 4 3 2 1) => true</pre>
+<pre>(>= 3 2 2 1) => true</pre>
+
     </div>
 
-    <div id="_equal" class="content">
+    <div id="_equal" class="content function">
       <h1>=</h1>
+      
       <p>Compares numbers according to "equal" predicate. Result is true if every specified number is equal to each other, otherwise result is false.</p>
       <label>Syntax</label>
       <pre>= number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(= 1 1) => true</pre>
+<pre>(= 1.01 1) => false</pre>
+<pre>(= 1 1) => true</pre>
+<pre>(= 2 2 2 2) => true</pre>
+<pre>(= 2 2 1 2) => false</pre>
+
     </div>
 
-    <div id="and" class="content">
+    <div id="and" class="content function">
       <h1>and</h1>
+      <h3>Special Expression</h3>
       <p>Computes logical "and" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
       <label>Syntax</label>
       <pre>and forms => true | false</pre>
+      <label>Arguments</label>
+      <pre>forms: form[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(and 1 1) => 1</pre>
+<pre>(and (> 3 2) "string") => "string"</pre>
+<pre>(and (< 3 2) "string") => false</pre>
+<pre>(and true true true true) => true</pre>
+<pre>(and true true 0 true) => 0</pre>
+
     </div>
 
-    <div id="or" class="content">
+    <div id="or" class="content function">
       <h1>or</h1>
+      <h3>Special Expression</h3>
       <p>Computes logical "or" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
       <label>Syntax</label>
       <pre>or forms => true | false</pre>
+      <label>Arguments</label>
+      <pre>forms: form[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(or 1 1) => 1</pre>
+<pre>(or (> 3 2) "string") => true</pre>
+<pre>(or (< 3 2) "string") => "string"</pre>
+<pre>(or true true true true) => true</pre>
+<pre>(or 1 2 3 4) => 1</pre>
+
     </div>
 
-    <div id="append" class="content">
+    <div id="append" class="content function">
       <h1>append</h1>
+      
       <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified lists.</p>
       <label>Syntax</label>
       <pre>append lists (zero or more) => list</pre>
+      <label>Arguments</label>
+      <pre>lists: list[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(append (list 1 2) (list 3 4)) => [1,2,3,4]</pre>
+<pre>(append (list) (list 3 4)) => [3,4]</pre>
+<pre>(append (list 1 2) (list)) => [1,2]</pre>
+<pre>(append (list 1 2) (list 3 4) (list 5 6)) => [1,2,3,4,5,6]</pre>
+<pre>(append (list)) => []</pre>
+
     </div>
 
-    <div id="aref" class="content">
+    <div id="aref" class="content function">
       <h1>aref</h1>
+      
       <p>Accesses specified element of a string. String index is counted from zero. Accessing out-of-bounds indices returns undefined</p>
       <label>Syntax</label>
       <pre>aref string index => string</pre>
+      <label>Arguments</label>
+      <pre>string: string<br />index: integer</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(aref "A string" 0) => "A"</pre>
+<pre>(aref "A string" 2) => "s"</pre>
+<pre>(aref "A string" 20) => undefined</pre>
+<pre>(aref "A string" -1) => "Error!"</pre>
+
     </div>
 
-    <div id="boolean_question" class="content">
+    <div id="boolean_question" class="content function">
       <h1>boolean?</h1>
+      
       <p>Returns true if the argument is a boolean, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>boolean? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(boolean? true) => true</pre>
+<pre>(boolean? false) => true</pre>
+<pre>(boolean? (list 1 2 3)) => false</pre>
+<pre>(boolean? 0) => false</pre>
+<pre>(boolean? "A string") => false</pre>
+<pre>(boolean?) => "Error!"</pre>
+
     </div>
 
-    <div id="null_question" class="content">
+    <div id="null_question" class="content function">
       <h1>null?</h1>
+      
       <p>Returns true if the argument is null, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>null? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(null? null) => true</pre>
+<pre>(null? false) => false</pre>
+<pre>(null? (list 1 2 3)) => false</pre>
+<pre>(null? 0) => false</pre>
+<pre>(null? "A string") => false</pre>
+<pre>(null?) => "Error!"</pre>
+
     </div>
 
-    <div id="undefined_question" class="content">
+    <div id="undefined_question" class="content function">
       <h1>undefined?</h1>
+      
       <p>Returns true if the argument is undefined, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>undefined? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(undefined? undefined) => true</pre>
+<pre>(undefined? false) => false</pre>
+<pre>(undefined? null) => false</pre>
+<pre>(undefined? (list 1 2 3)) => false</pre>
+<pre>(undefined? 0) => false</pre>
+<pre>(undefined? "A string") => false</pre>
+<pre>(undefined?) => "Error!"</pre>
+
     </div>
 
-    <div id="number_question" class="content">
+    <div id="number_question" class="content function">
       <h1>number?</h1>
+      
       <p>Returns true if the argument is a number, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>number? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(number? 0) => true</pre>
+<pre>(number? 2) => true</pre>
+<pre>(number? -0.12) => true</pre>
+<pre>(number? false) => false</pre>
+<pre>(number? (list 1 2 3)) => false</pre>
+<pre>(number? "A string") => false</pre>
+<pre>(number?) => "Error!"</pre>
+
     </div>
 
-    <div id="string_question" class="content">
+    <div id="string_question" class="content function">
       <h1>string?</h1>
+      
       <p>Returns true if the argument is a string, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>string? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(string? "") => true</pre>
+<pre>(string? "A string") => true</pre>
+<pre>(string? (if true "A string" false)) => true</pre>
+<pre>(string? false) => false</pre>
+<pre>(string? (list 1 2 3)) => false</pre>
+<pre>(string? 100) => false</pre>
+<pre>(string?) => "Error!"</pre>
+
     </div>
 
-    <div id="function_question" class="content">
+    <div id="function_question" class="content function">
       <h1>function?</h1>
+      
       <p>Returns true if the argument is a function, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>function? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(function? #'+) => true</pre>
+<pre>(function? (function /)) => true</pre>
+<pre>(function? (lambda (x y) (+ x y))) => true</pre>
+<pre>(function? false) => false</pre>
+<pre>(function? "false") => false</pre>
+<pre>(function? (list 1 2 3)) => false</pre>
+<pre>(function? 100) => false</pre>
+<pre>(function?) => "Error!"</pre>
+
     </div>
 
-    <div id="integer_question" class="content">
+    <div id="integer_question" class="content function">
       <h1>integer?</h1>
+      
       <p>Returns true if the argument is an integer, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>integer? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(integer? 0) => true</pre>
+<pre>(integer? -12) => true</pre>
+<pre>(integer? 42) => true</pre>
+<pre>(integer? 10.1) => false</pre>
+<pre>(integer? (lambda (x y) (+ x y))) => false</pre>
+<pre>(integer? false) => false</pre>
+<pre>(integer? "false") => false</pre>
+<pre>(integer? (list 1 2 3)) => false</pre>
+<pre>(integer?) => "Error!"</pre>
+
     </div>
 
-    <div id="list_question" class="content">
+    <div id="list_question" class="content function">
       <h1>list?</h1>
+      
       <p>Returns true if the argument is a list, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>list? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(list? (list)) => true</pre>
+<pre>(list? (list 1 2 3)) => true</pre>
+<pre>(list? (object "a" 10)) => false</pre>
+<pre>(list? 42) => false</pre>
+<pre>(list? 10.1) => false</pre>
+<pre>(list? (lambda (x y) (+ x y))) => false</pre>
+<pre>(list?) => "Error!"</pre>
+
     </div>
 
-    <div id="object_question" class="content">
+    <div id="object_question" class="content function">
       <h1>object?</h1>
+      
       <p>Returns true if the argument is an object, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>object? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(object? (object "a" 10)) => true</pre>
+<pre>(object? (object)) => true</pre>
+<pre>(object? 42) => false</pre>
+<pre>(object? 10.1) => false</pre>
+<pre>(object? (lambda (x y) (+ x y))) => false</pre>
+<pre>(object? (regexp "^start")) => false</pre>
+<pre>(object? "false") => false</pre>
+<pre>(object? (list 1 2 3)) => false</pre>
+<pre>(object?) => "Error!"</pre>
+
     </div>
 
-    <div id="regexp_question" class="content">
+    <div id="regexp_question" class="content function">
       <h1>regexp?</h1>
+      
       <p>Returns true if the argument is a regexp, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>regexp? value => true | false</pre>
+      <label>Arguments</label>
+      <pre>value: any</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(regexp? (regexp "^start")) => true</pre>
+<pre>(regexp? -12) => false</pre>
+<pre>(regexp? (object)) => false</pre>
+<pre>(regexp? 10.1) => false</pre>
+<pre>(regexp? (lambda (x y) (+ x y))) => false</pre>
+<pre>(regexp? false) => false</pre>
+<pre>(regexp? "false") => false</pre>
+<pre>(regexp? (list 1 2 3)) => false</pre>
+<pre>(regexp?) => "Error!"</pre>
+
     </div>
 
-    <div id="zero_question" class="content">
+    <div id="zero_question" class="content function">
       <h1>zero?</h1>
+      
       <p>Returns true if the argument is zero, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>zero? number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(zero? 0) => true</pre>
+<pre>(zero? -0.0) => true</pre>
+<pre>(zero? 1) => false</pre>
+<pre>(zero? 0.1) => false</pre>
+<pre>(zero? "10") => "Error!"</pre>
+<pre>(zero?) => "Error!"</pre>
+
     </div>
 
-    <div id="even_question" class="content">
+    <div id="even_question" class="content function">
       <h1>even?</h1>
+      
       <p>Returns true if the argument is even, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>even? number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(even? 0) => true</pre>
+<pre>(even? -0.0) => true</pre>
+<pre>(even? -1) => false</pre>
+<pre>(even? 2.1) => false</pre>
+<pre>(even? "10") => "Error!"</pre>
+<pre>(even?) => "Error!"</pre>
+
     </div>
 
-    <div id="odd_question" class="content">
+    <div id="odd_question" class="content function">
       <h1>odd?</h1>
+      
       <p>Returns true if the argument is odd, otherwise it returns false.</p>
       <label>Syntax</label>
       <pre>odd? number => true | false</pre>
+      <label>Arguments</label>
+      <pre>number: number</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(odd? 1.0) => true</pre>
+<pre>(odd? 1.001) => false</pre>
+<pre>(odd? -1) => true</pre>
+<pre>(odd? 2.1) => false</pre>
+<pre>(odd? "10") => "Error!"</pre>
+<pre>(odd?) => "Error!"</pre>
+
     </div>
 
-    <div id="substring" class="content">
+    <div id="substring" class="content function">
       <h1>substring</h1>
+      
       <p>Extracts characters from indexStart up to but not including indexEnd</p>
       <label>Syntax</label>
       <pre>substring string indexStart indexEnd => string</pre>
+      <label>Arguments</label>
+      <pre>string: string<br />indexStart: integer<br />indexEnd: integer</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(substring "A string" 2) => "string"</pre>
+<pre>(substring "A string" 2 5) => "str"</pre>
+<pre>(substring "A string" 2 100) => "string"</pre>
+<pre>(substring "A string" 100) => ""</pre>
+<pre>(substring "A string" 5 2) => "Error!"</pre>
+
     </div>
 
-    <div id="string-length" class="content">
+    <div id="string-length" class="content function">
       <h1>string-length</h1>
+      
       <p>Returns length of string.</p>
       <label>Syntax</label>
       <pre>string-length string => number</pre>
+      <label>Arguments</label>
+      <pre>string: string</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(string-length "A string") => 8</pre>
+<pre>(string-length "") => 0</pre>
+
     </div>
 
-    <div id="concat" class="content">
+    <div id="concat" class="content function">
       <h1>concat</h1>
+      
       <p>Returns length of string.</p>
       <label>Syntax</label>
       <pre>concat strings (zero or more) => number</pre>
+      <label>Arguments</label>
+      <pre>strings: string[]</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(concat "A string" ", and another string" " ...and more") => "A string, and another string ...and more"</pre>
+<pre>(concat "Just one string") => "Just one string"</pre>
+<pre>(concat) => ""</pre>
+
     </div>
 
-    <div id="string_gt" class="content">
+    <div id="string_gt" class="content function">
       <h1>string></h1>
+      
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false</p>
       <label>Syntax</label>
       <pre>string> string1 string2 => number</pre>
+      <label>Arguments</label>
+      <pre>string1: string<br />string2: string</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(string> "A string" "Another string") => false</pre>
+<pre>(string> "Albert Mojir" "Albert") => true</pre>
+<pre>(string> "Albert" "Albert") => false</pre>
+<pre>(string> "Albert" "albert") => false</pre>
+
     </div>
 
-    <div id="string_gte" class="content">
+    <div id="string_gte" class="content function">
       <h1>string>=</h1>
+      
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false</p>
       <label>Syntax</label>
       <pre>string>= string1 string2 => number</pre>
+      <label>Arguments</label>
+      <pre>string1: string<br />string2: string</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(string>= "A string" "Another string") => false</pre>
+<pre>(string>= "Albert Mojir" "Albert") => true</pre>
+<pre>(string>= "Albert" "Albert") => true</pre>
+<pre>(string>= "Albert" "albert") => false</pre>
+
     </div>
 
-    <div id="string_lt" class="content">
+    <div id="string_lt" class="content function">
       <h1>string<</h1>
+      
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false</p>
       <label>Syntax</label>
       <pre>string< string1 string2 => number</pre>
+      <label>Arguments</label>
+      <pre>string1: string<br />string2: string</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(string< "A string" "Another string") => true</pre>
+<pre>(string< "Albert Mojir" "Albert") => false</pre>
+<pre>(string< "Albert" "Albert") => false</pre>
+<pre>(string< "Albert" "albert") => true</pre>
+
     </div>
 
-    <div id="string_lte" class="content">
+    <div id="string_lte" class="content function">
       <h1>string<=</h1>
+      
       <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false</p>
       <label>Syntax</label>
       <pre>string<= string1 string2 => number</pre>
+      <label>Arguments</label>
+      <pre>string1: string<br />string2: string</pre>
+      <label>Side effects</label>
+      <pre>No side effects</pre>
+      <label>Examples</label>
+      <pre>(string<= "A string" "Another string") => true</pre>
+<pre>(string<= "Albert Mojir" "Albert") => false</pre>
+<pre>(string<= "Albert" "Albert") => true</pre>
+<pre>(string<= "Albert" "albert") => true</pre>
+
     </div>
 
-    <div id="write" class="content">
+    <div id="write" class="content function">
       <h1>write</h1>
+      
       <p>It console.log the value arguments and then returns the last argument. If called with no arguments undefined is returned</p>
       <label>Syntax</label>
       <pre>write values => value</pre>
+      <label>Arguments</label>
+      <pre>values: any[]</pre>
+      <label>Side effects</label>
+      <pre>Does a console.log</pre>
+      <label>Examples</label>
+      <pre>(write "A string") => "A string"</pre>
+<pre>(write 100 "items") => "items"</pre>
+<pre>(write (object "a" 10)) => {"a":10}</pre>
+<pre>(write (list "a" "b" "c")) => ["a","b","c"]</pre>
+<pre>(write (regexp "^start")) => {}</pre>
+<pre>(write null undefined true false) => false</pre>
+
     </div>
 
         <div class="playground">
