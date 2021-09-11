@@ -1113,7 +1113,6 @@ const categoryOrder = [
   'Misc',
 ]
 
-const missingCategoies = {}
 const categories = Object.values(functionReference)
   .reduce((result, item) => {
     if (!result.includes(item.category)) {
@@ -1121,31 +1120,7 @@ const categories = Object.values(functionReference)
     }
     return result
   }, [])
-  .sort((a, b) => {
-    let aVal = categoryOrder.indexOf(a)
-    let bVal = categoryOrder.indexOf(b)
-
-    bVal = bVal === -1 ? 100 : bVal
-
-    if (aVal === -1) {
-      aVal === 100
-      if (!missingCategoies[a]) {
-        console.warn(`Missing categoryOrder "${a}"`)
-        missingCategoies[a] = true
-      }
-    }
-
-    if (bVal === -1) {
-      bVal === 100
-      if (!missingCategoies[b]) {
-        console.warn(`Missing categoryOrder "${b}"`)
-        missingCategoies[b] = true
-      }
-      console.warn(`Missing categoryOrder "${b}"`)
-    }
-
-    return aVal - bVal
-  })
+  .sort((a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b))
 
 module.exports = {
   functionReference,
