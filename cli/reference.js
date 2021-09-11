@@ -1,4 +1,4 @@
-module.exports = {
+const functionReference = {
   '+': {
     name: '+',
     category: 'Math',
@@ -1100,4 +1100,54 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
+}
+
+const categoryOrder = [
+  'Special expression',
+  'Math',
+  'Predicate',
+  'String',
+  'List',
+  'Object',
+  'Regular expression',
+  'Misc',
+]
+
+const missingCategoies = {}
+const categories = Object.values(functionReference)
+  .reduce((result, item) => {
+    if (!result.includes(item.category)) {
+      result.push(item.category)
+    }
+    return result
+  }, [])
+  .sort((a, b) => {
+    let aVal = categoryOrder.indexOf(a)
+    let bVal = categoryOrder.indexOf(b)
+
+    bVal = bVal === -1 ? 100 : bVal
+
+    if (aVal === -1) {
+      aVal === 100
+      if (!missingCategoies[a]) {
+        console.warn(`Missing categoryOrder "${a}"`)
+        missingCategoies[a] = true
+      }
+    }
+
+    if (bVal === -1) {
+      bVal === 100
+      if (!missingCategoies[b]) {
+        console.warn(`Missing categoryOrder "${b}"`)
+        missingCategoies[b] = true
+      }
+      console.warn(`Missing categoryOrder "${b}"`)
+    }
+
+    return aVal - bVal
+  })
+
+module.exports = {
+  functionReference,
+  categories,
 }

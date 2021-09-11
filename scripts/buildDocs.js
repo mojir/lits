@@ -1,4 +1,4 @@
-const reference = require('../cli/reference')
+const { functionReference, categories } = require('../cli/reference')
 const lispish = require('../dist/lispish')
 const path = require('path')
 const fs = require('fs')
@@ -122,7 +122,7 @@ ${getHeader()}
 
 
       </div>
-      ${Object.values(reference)
+      ${Object.values(functionReference)
         .map(obj => writeDoc(obj))
         .join('\n')}
       ${getPlayground()}
@@ -168,29 +168,19 @@ function writeDoc(docObj) {
 `
 }
 function getSideBar() {
-  const categoryKeys = [
-    'Special expression',
-    'Math',
-    'Predicate',
-    'String',
-    'List',
-    'Object',
-    'Regular expression',
-    'Misc',
-  ]
-  const categories = Object.values(reference).reduce((result, obj) => {
+  const categoryCollections = Object.values(functionReference).reduce((result, obj) => {
     result[obj.category] = result[obj.category] || []
     result[obj.category].push(obj)
     return result
   }, {})
 
   return `<div class="sidebar">
-    ${categoryKeys
+    ${categories
       .map(categoryKey => {
         return `<label>${categoryKey}</label><ul>
         ${
-          categories[categoryKey]
-            ? categories[categoryKey]
+          categoryCollections[categoryKey]
+            ? categoryCollections[categoryKey]
                 .map(obj => {
                   const linkName = obj.linkName
                   const name = escape(obj.name)
