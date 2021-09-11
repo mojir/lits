@@ -20,11 +20,11 @@ const getPlayground = () => `  <div class="playground">
     <div class="row">
       <div class="column-half">
         <h4>Lisp</h4>
-        <textarea spellcheck=false rows="20" id="code">(* x x)</textarea>
+        <textarea spellcheck=false rows="15" id="code">(* x x)</textarea>
       </div>
       <div class="column-half">
         <h4>Context (JSON)</h4>
-        <textarea spellcheck=false rows="20" id="context">{ "x": 12 }</textarea>
+        <textarea spellcheck=false rows="15" id="context">{ "x": 12 }</textarea>
       </div>
     </div>
     <div id="output" />
@@ -272,7 +272,7 @@ h4, h2, h1 {
 }
 
 .playground {
-  margin-top: 9rem;
+  margin-top: 5rem;
 }
 
 .playground .header {
