@@ -937,7 +937,7 @@ module.exports = {
   },
   write: {
     name: 'write',
-    category: 'String',
+    category: 'Misc',
     linkName: 'write',
     syntax: 'write values => value',
     arguments: [

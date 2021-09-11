@@ -6,7 +6,7 @@ const fs = require('fs')
 const DOC_DIR = path.resolve(__dirname, '../docs')
 
 const getTopBar = ({ back }) => `<div class="top-bar">
-  <center><pre><span class="main-header"><a id="lispish-header" onclick="setActive('index')">Lispish</a></span></pre></center>
+  <center><pre><span class="main-header"><a id="lispish-header" onclick="showPage('index')">Lispish</a></span></pre></center>
 </div>`
 
 const getHeader = () => `<head>
@@ -33,6 +33,9 @@ const getPlayground = () => `  <div class="playground">
 const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
   <script src="lispish.iife.js"></script>
   <script>
+    var id = location.hash.substring(1) || 'index'
+    showPage(id)
+
     var activeId='index';
     function play() {
       var code = document.getElementById("code").value
@@ -57,16 +60,22 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
       output.classList.remove('error')
       output.innerHTML = stringifyValue(result)
     }
-    function setActive(id) {
-      document.getElementById(activeId).classList.remove('active')
-      document.getElementById(id).classList.add('active')
-      if (activeId !== 'index') {
-        document.getElementById(activeId + '_link').classList.remove('active-sidebar-entry')
+    function showPage(id) {
+      var els = document.getElementsByClassName('active')
+      while (els[0]) {
+        els[0].classList.remove('active')
       }
+      els = document.getElementsByClassName('active-sidebar-entry')
+      while (els[0]) {
+        els[0].classList.remove('active-sidebar-entry')
+      }
+
+      document.getElementById(id).classList.add('active')
       if (id !== 'index') {
         document.getElementById(id + '_link').classList.add('active-sidebar-entry')
       }
       activeId = id
+      history.pushState(null, '', '#' + id)
     }
     function stringifyValue(value) {
       return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
@@ -91,7 +100,7 @@ ${getHeader()}
   <div class="row">
     ${getSideBar()}
     <div class="main">
-      <div id="index" class="content active">
+      <div id="index" class="content">
       <h1>Welcome to the Lispish playground!</h1>
       <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
       <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
@@ -103,6 +112,7 @@ ${getHeader()}
         <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
         <li>No tail call optimization (yet).</li>
         <li>No dotted pairs.</li>
+        <li>100% test coverage</li>
       </ul>
       <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
       <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
@@ -126,7 +136,7 @@ ${getHeader()}
 }
 
 function writeDoc(docObj) {
-  const { name, longDescription, syntax, linkName, specialExpression, examples, sideEffects, arguments } = docObj
+  const { name, longDescription, syntax, linkName, specialExpression, examples, sideEffects, arguments: args } = docObj
   return `    <div id="${linkName}" class="content function">
       <h1 class="function-header">${name}</h1>
       ${specialExpression ? '<h3>Special Expression</h3>' : ''}
@@ -134,9 +144,7 @@ function writeDoc(docObj) {
       <label>Syntax</label>
       <pre>${syntax}</pre>
       <label>Arguments</label>
-      <pre>${
-        arguments.length === 0 ? 'No arguments' : arguments.map(arg => `${arg.name}: ${arg.type}`).join('<br />')
-      }</pre>
+      <pre>${args.length === 0 ? 'No arguments' : args.map(arg => `${arg.name}: ${arg.type}`).join('<br />')}</pre>
       <label>Side effects</label>
       <pre>${sideEffects.length === 0 ? 'No side effects' : sideEffects.map(effect => effect).join('<br />')}</pre>
       <label>Examples</label>
@@ -186,7 +194,7 @@ function getSideBar() {
                 .map(obj => {
                   const linkName = obj.linkName
                   const name = escape(obj.name)
-                  return `<a class="small-pre" onclick="setActive('${linkName}')"><li id="${linkName}_link">${name}</li></a>`
+                  return `<a class="small-pre" onclick="showPage('${linkName}')"><li id="${linkName}_link">${name}</li></a>`
                 })
                 .join('\n')
             : ''

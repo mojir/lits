@@ -5,80 +5,80 @@
 </head>
 <body>
   <div class="top-bar">
-  <center><pre><span class="main-header"><a id="lispish-header" onclick="setActive('index')">Lispish</a></span></pre></center>
+  <center><pre><span class="main-header"><a id="lispish-header" onclick="showPage('index')">Lispish</a></span></pre></center>
 </div>
   <div class="row">
     <div class="sidebar">
     <label>Special expression</label><ul>
-        <a class="small-pre" onclick="setActive('and')"><li id="and_link">and</li></a>
-<a class="small-pre" onclick="setActive('or')"><li id="or_link">or</li></a>
+        <a class="small-pre" onclick="showPage('and')"><li id="and_link">and</li></a>
+<a class="small-pre" onclick="showPage('or')"><li id="or_link">or</li></a>
 </ul>
 <label>Math</label><ul>
-        <a class="small-pre" onclick="setActive('_plus')"><li id="_plus_link">+</li></a>
-<a class="small-pre" onclick="setActive('_minus')"><li id="_minus_link">-</li></a>
-<a class="small-pre" onclick="setActive('_star')"><li id="_star_link">*</li></a>
-<a class="small-pre" onclick="setActive('_slash')"><li id="_slash_link">/</li></a>
-<a class="small-pre" onclick="setActive('_percent')"><li id="_percent_link">%</li></a>
-<a class="small-pre" onclick="setActive('1_plus')"><li id="1_plus_link">1+</li></a>
-<a class="small-pre" onclick="setActive('1_minus')"><li id="1_minus_link">1-</li></a>
-<a class="small-pre" onclick="setActive('sqrt')"><li id="sqrt_link">sqrt</li></a>
-<a class="small-pre" onclick="setActive('expt')"><li id="expt_link">expt</li></a>
-<a class="small-pre" onclick="setActive('round')"><li id="round_link">round</li></a>
-<a class="small-pre" onclick="setActive('floor')"><li id="floor_link">floor</li></a>
-<a class="small-pre" onclick="setActive('ceil')"><li id="ceil_link">ceil</li></a>
-<a class="small-pre" onclick="setActive('random')"><li id="random_link">random</li></a>
-<a class="small-pre" onclick="setActive('_lt')"><li id="_lt_link">&lt;</li></a>
-<a class="small-pre" onclick="setActive('_gt')"><li id="_gt_link">&gt;</li></a>
-<a class="small-pre" onclick="setActive('_lte')"><li id="_lte_link">&lt;=</li></a>
-<a class="small-pre" onclick="setActive('_gte')"><li id="_gte_link">&gt;=</li></a>
+        <a class="small-pre" onclick="showPage('_plus')"><li id="_plus_link">+</li></a>
+<a class="small-pre" onclick="showPage('_minus')"><li id="_minus_link">-</li></a>
+<a class="small-pre" onclick="showPage('_star')"><li id="_star_link">*</li></a>
+<a class="small-pre" onclick="showPage('_slash')"><li id="_slash_link">/</li></a>
+<a class="small-pre" onclick="showPage('_percent')"><li id="_percent_link">%</li></a>
+<a class="small-pre" onclick="showPage('1_plus')"><li id="1_plus_link">1+</li></a>
+<a class="small-pre" onclick="showPage('1_minus')"><li id="1_minus_link">1-</li></a>
+<a class="small-pre" onclick="showPage('sqrt')"><li id="sqrt_link">sqrt</li></a>
+<a class="small-pre" onclick="showPage('expt')"><li id="expt_link">expt</li></a>
+<a class="small-pre" onclick="showPage('round')"><li id="round_link">round</li></a>
+<a class="small-pre" onclick="showPage('floor')"><li id="floor_link">floor</li></a>
+<a class="small-pre" onclick="showPage('ceil')"><li id="ceil_link">ceil</li></a>
+<a class="small-pre" onclick="showPage('random')"><li id="random_link">random</li></a>
+<a class="small-pre" onclick="showPage('_lt')"><li id="_lt_link">&lt;</li></a>
+<a class="small-pre" onclick="showPage('_gt')"><li id="_gt_link">&gt;</li></a>
+<a class="small-pre" onclick="showPage('_lte')"><li id="_lte_link">&lt;=</li></a>
+<a class="small-pre" onclick="showPage('_gte')"><li id="_gte_link">&gt;=</li></a>
 </ul>
 <label>Predicate</label><ul>
-        <a class="small-pre" onclick="setActive('boolean_question')"><li id="boolean_question_link">boolean?</li></a>
-<a class="small-pre" onclick="setActive('null_question')"><li id="null_question_link">null?</li></a>
-<a class="small-pre" onclick="setActive('undefined_question')"><li id="undefined_question_link">undefined?</li></a>
-<a class="small-pre" onclick="setActive('number_question')"><li id="number_question_link">number?</li></a>
-<a class="small-pre" onclick="setActive('string_question')"><li id="string_question_link">string?</li></a>
-<a class="small-pre" onclick="setActive('function_question')"><li id="function_question_link">function?</li></a>
-<a class="small-pre" onclick="setActive('integer_question')"><li id="integer_question_link">integer?</li></a>
-<a class="small-pre" onclick="setActive('list_question')"><li id="list_question_link">list?</li></a>
-<a class="small-pre" onclick="setActive('object_question')"><li id="object_question_link">object?</li></a>
-<a class="small-pre" onclick="setActive('regexp_question')"><li id="regexp_question_link">regexp?</li></a>
-<a class="small-pre" onclick="setActive('zero_question')"><li id="zero_question_link">zero?</li></a>
-<a class="small-pre" onclick="setActive('even_question')"><li id="even_question_link">even?</li></a>
-<a class="small-pre" onclick="setActive('odd_question')"><li id="odd_question_link">odd?</li></a>
+        <a class="small-pre" onclick="showPage('boolean_question')"><li id="boolean_question_link">boolean?</li></a>
+<a class="small-pre" onclick="showPage('null_question')"><li id="null_question_link">null?</li></a>
+<a class="small-pre" onclick="showPage('undefined_question')"><li id="undefined_question_link">undefined?</li></a>
+<a class="small-pre" onclick="showPage('number_question')"><li id="number_question_link">number?</li></a>
+<a class="small-pre" onclick="showPage('string_question')"><li id="string_question_link">string?</li></a>
+<a class="small-pre" onclick="showPage('function_question')"><li id="function_question_link">function?</li></a>
+<a class="small-pre" onclick="showPage('integer_question')"><li id="integer_question_link">integer?</li></a>
+<a class="small-pre" onclick="showPage('list_question')"><li id="list_question_link">list?</li></a>
+<a class="small-pre" onclick="showPage('object_question')"><li id="object_question_link">object?</li></a>
+<a class="small-pre" onclick="showPage('regexp_question')"><li id="regexp_question_link">regexp?</li></a>
+<a class="small-pre" onclick="showPage('zero_question')"><li id="zero_question_link">zero?</li></a>
+<a class="small-pre" onclick="showPage('even_question')"><li id="even_question_link">even?</li></a>
+<a class="small-pre" onclick="showPage('odd_question')"><li id="odd_question_link">odd?</li></a>
 </ul>
 <label>String</label><ul>
-        <a class="small-pre" onclick="setActive('aref')"><li id="aref_link">aref</li></a>
-<a class="small-pre" onclick="setActive('substring')"><li id="substring_link">substring</li></a>
-<a class="small-pre" onclick="setActive('string-length')"><li id="string-length_link">string-length</li></a>
-<a class="small-pre" onclick="setActive('concat')"><li id="concat_link">concat</li></a>
-<a class="small-pre" onclick="setActive('string_gt')"><li id="string_gt_link">string&gt;</li></a>
-<a class="small-pre" onclick="setActive('string_gte')"><li id="string_gte_link">string&gt;=</li></a>
-<a class="small-pre" onclick="setActive('string_lt')"><li id="string_lt_link">string&lt;</li></a>
-<a class="small-pre" onclick="setActive('string_lte')"><li id="string_lte_link">string&lt;=</li></a>
-<a class="small-pre" onclick="setActive('write')"><li id="write_link">write</li></a>
+        <a class="small-pre" onclick="showPage('aref')"><li id="aref_link">aref</li></a>
+<a class="small-pre" onclick="showPage('substring')"><li id="substring_link">substring</li></a>
+<a class="small-pre" onclick="showPage('string-length')"><li id="string-length_link">string-length</li></a>
+<a class="small-pre" onclick="showPage('concat')"><li id="concat_link">concat</li></a>
+<a class="small-pre" onclick="showPage('string_gt')"><li id="string_gt_link">string&gt;</li></a>
+<a class="small-pre" onclick="showPage('string_gte')"><li id="string_gte_link">string&gt;=</li></a>
+<a class="small-pre" onclick="showPage('string_lt')"><li id="string_lt_link">string&lt;</li></a>
+<a class="small-pre" onclick="showPage('string_lte')"><li id="string_lte_link">string&lt;=</li></a>
 </ul>
 <label>List</label><ul>
-        <a class="small-pre" onclick="setActive('append')"><li id="append_link">append</li></a>
-<a class="small-pre" onclick="setActive('list')"><li id="list_link">list</li></a>
+        <a class="small-pre" onclick="showPage('append')"><li id="append_link">append</li></a>
+<a class="small-pre" onclick="showPage('list')"><li id="list_link">list</li></a>
 </ul>
 <label>Object</label><ul>
-        <a class="small-pre" onclick="setActive('has-attr')"><li id="has-attr_link">has-attr</li></a>
-<a class="small-pre" onclick="setActive('get-attr')"><li id="get-attr_link">get-attr</li></a>
-<a class="small-pre" onclick="setActive('del-attr')"><li id="del-attr_link">del-attr</li></a>
-<a class="small-pre" onclick="setActive('set-attr')"><li id="set-attr_link">set-attr</li></a>
+        <a class="small-pre" onclick="showPage('has-attr')"><li id="has-attr_link">has-attr</li></a>
+<a class="small-pre" onclick="showPage('get-attr')"><li id="get-attr_link">get-attr</li></a>
+<a class="small-pre" onclick="showPage('del-attr')"><li id="del-attr_link">del-attr</li></a>
+<a class="small-pre" onclick="showPage('set-attr')"><li id="set-attr_link">set-attr</li></a>
 </ul>
 <label>Regular expression</label><ul>
         
 </ul>
 <label>Misc</label><ul>
-        <a class="small-pre" onclick="setActive('_notequal')"><li id="_notequal_link">!=</li></a>
-<a class="small-pre" onclick="setActive('_equal')"><li id="_equal_link">=</li></a>
-<a class="small-pre" onclick="setActive('not')"><li id="not_link">not</li></a>
+        <a class="small-pre" onclick="showPage('_notequal')"><li id="_notequal_link">!=</li></a>
+<a class="small-pre" onclick="showPage('_equal')"><li id="_equal_link">=</li></a>
+<a class="small-pre" onclick="showPage('not')"><li id="not_link">not</li></a>
+<a class="small-pre" onclick="showPage('write')"><li id="write_link">write</li></a>
 </ul>
 </div>
     <div class="main">
-      <div id="index" class="content active">
+      <div id="index" class="content">
       <h1>Welcome to the Lispish playground!</h1>
       <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
       <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
@@ -90,6 +90,7 @@
         <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
         <li>No tail call optimization (yet).</li>
         <li>No dotted pairs.</li>
+        <li>100% test coverage</li>
       </ul>
       <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
       <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
@@ -395,9 +396,9 @@
       <label>Side effects</label>
       <pre>No side effects</pre>
       <label>Examples</label>
-      <pre>(random 1) => 0.31942124509294567</pre>
-<pre>(random 0.01) => 0.001218904504240772</pre>
-<pre>(random 2.5) => 2.401148596623794</pre>
+      <pre>(random 1) => 0.6721881508271241</pre>
+<pre>(random 0.01) => 0.004525322635638469</pre>
+<pre>(random 2.5) => 2.113201031068032</pre>
 <pre>(random 0) => "Error!"</pre>
 <pre>(random -1) => "Error!"</pre>
 
@@ -1080,6 +1081,9 @@
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
   <script src="lispish.iife.js"></script>
   <script>
+    var id = location.hash.substring(1) || 'index'
+    showPage(id)
+
     var activeId='index';
     function play() {
       var code = document.getElementById("code").value
@@ -1104,16 +1108,22 @@
       output.classList.remove('error')
       output.innerHTML = stringifyValue(result)
     }
-    function setActive(id) {
-      document.getElementById(activeId).classList.remove('active')
-      document.getElementById(id).classList.add('active')
-      if (activeId !== 'index') {
-        document.getElementById(activeId + '_link').classList.remove('active-sidebar-entry')
+    function showPage(id) {
+      var els = document.getElementsByClassName('active')
+      while (els[0]) {
+        els[0].classList.remove('active')
       }
+      els = document.getElementsByClassName('active-sidebar-entry')
+      while (els[0]) {
+        els[0].classList.remove('active-sidebar-entry')
+      }
+
+      document.getElementById(id).classList.add('active')
       if (id !== 'index') {
         document.getElementById(id + '_link').classList.add('active-sidebar-entry')
       }
       activeId = id
+      history.pushState(null, '', '#' + id)
     }
     function stringifyValue(value) {
       return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
