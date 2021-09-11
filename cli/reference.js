@@ -1,6 +1,7 @@
 module.exports = {
   '+': {
     name: '+',
+    category: 'Math',
     linkName: '_plus',
     syntax: '+ numbers(zero or more) => number',
     arguments: [
@@ -17,6 +18,7 @@ module.exports = {
   },
   '-': {
     name: '-',
+    category: 'Math',
     linkName: '_minus',
     syntax: '- numbers(zero or more) => number',
     arguments: [
@@ -34,6 +36,7 @@ module.exports = {
   },
   '*': {
     name: '*',
+    category: 'Math',
     linkName: '_star',
     syntax: '* numbers(zero or more) => number',
     arguments: [
@@ -50,6 +53,7 @@ module.exports = {
   },
   '/': {
     name: '/',
+    category: 'Math',
     linkName: '_slash',
     syntax: '/ numbers(zero or more) => number',
     arguments: [
@@ -67,6 +71,7 @@ module.exports = {
   },
   '%': {
     name: '%',
+    category: 'Math',
     linkName: '_percent',
     syntax: '% number divisor => number',
     arguments: [
@@ -87,23 +92,43 @@ module.exports = {
   },
   '!=': {
     name: '!=',
+    category: 'Misc',
     linkName: '_notequal',
-    syntax: '!= numbers (one or more) => true | false',
+    syntax: '!= values (one or more) => true | false',
     arguments: [
       {
-        name: 'numbers',
-        type: 'number[]',
+        name: 'values',
+        type: 'any[]',
       },
     ],
-    shortDescription: 'Result is true if no two numbers are equal to each other.',
+    shortDescription: 'Result is true if no two values are equal to each other.',
     longDescription:
-      'Result is true if no two numbers are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).',
-    examples: ['(!= 3)', '(!= 3 2)', '(!= 3 3)', '(!= 3 3 2)', '(!= 3 2 1 0)', '(!= 0 -0)'],
+      'Result is true if no two values are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).',
+    examples: ['(!= 3)', '(!= 3 2)', '(!= "3" 3)', '(!= 3 3 2)', '(!= "3" "2" "1" "0")', '(!= 0 -0)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  '=': {
+    name: '=',
+    category: 'Misc',
+    linkName: '_equal',
+    syntax: '= values (one or more) => true | false',
+    arguments: [
+      {
+        name: 'values',
+        type: 'any[]',
+      },
+    ],
+    shortDescription: 'Compares values according to "equal" predicate.',
+    longDescription:
+      'Compares values according to "equal" predicate. Result is true if every specified value is equal to each other, otherwise result is false.',
+    examples: ['(= 1 1)', '(= 1.01 1)', '(= "1" 1)', '(= "2" "2" "2" "2")', '(= 2 2 1 2)'],
     specialExpression: false,
     sideEffects: [],
   },
   not: {
     name: 'not',
+    category: 'Misc',
     linkName: 'not',
     syntax: 'not value => true | false',
     arguments: [
@@ -130,6 +155,7 @@ module.exports = {
   },
   '1+': {
     name: '1+',
+    category: 'Math',
     linkName: '1_plus',
     syntax: '1+ number => number',
     arguments: [
@@ -146,6 +172,7 @@ module.exports = {
   },
   '1-': {
     name: '1-',
+    category: 'Math',
     linkName: '1_minus',
     syntax: '1- number => number',
     arguments: [
@@ -162,6 +189,7 @@ module.exports = {
   },
   sqrt: {
     name: 'sqrt',
+    category: 'Math',
     linkName: 'sqrt',
     syntax: 'sqrt number => number',
     arguments: [
@@ -178,6 +206,7 @@ module.exports = {
   },
   expt: {
     name: 'expt',
+    category: 'Math',
     linkName: 'expt',
     syntax: 'expt base-number power-number => number',
     arguments: [
@@ -198,6 +227,7 @@ module.exports = {
   },
   round: {
     name: 'round',
+    category: 'Math',
     linkName: 'round',
     syntax: 'round number => integer',
     arguments: [
@@ -214,6 +244,7 @@ module.exports = {
   },
   floor: {
     name: 'floor',
+    category: 'Math',
     linkName: 'floor',
     syntax: 'floor number => integer',
     arguments: [
@@ -230,6 +261,7 @@ module.exports = {
   },
   ceil: {
     name: 'ceil',
+    category: 'Math',
     linkName: 'ceil',
     syntax: 'ceil number => integer',
     arguments: [
@@ -246,6 +278,7 @@ module.exports = {
   },
   random: {
     name: 'random',
+    category: 'Math',
     linkName: 'random',
     syntax: 'random number => number',
     arguments: [
@@ -262,6 +295,7 @@ module.exports = {
   },
   '<': {
     name: '<',
+    category: 'Math',
     linkName: '_lt',
     syntax: '< number => true | false',
     arguments: [
@@ -279,6 +313,7 @@ module.exports = {
   },
   '>': {
     name: '>',
+    category: 'Math',
     linkName: '_gt',
     syntax: '> number => true | false',
     arguments: [
@@ -296,6 +331,7 @@ module.exports = {
   },
   '<=': {
     name: '<=',
+    category: 'Math',
     linkName: '_lte',
     syntax: '<= number => true | false',
     arguments: [
@@ -313,6 +349,7 @@ module.exports = {
   },
   '>=': {
     name: '>=',
+    category: 'Math',
     linkName: '_gte',
     syntax: '>= number => true | false',
     arguments: [
@@ -328,25 +365,9 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
-  '=': {
-    name: '=',
-    linkName: '_equal',
-    syntax: '= number => true | false',
-    arguments: [
-      {
-        name: 'number',
-        type: 'number',
-      },
-    ],
-    shortDescription: 'Compares numbers according to "equal" predicate.',
-    longDescription:
-      'Compares numbers according to "equal" predicate. Result is true if every specified number is equal to each other, otherwise result is false.',
-    examples: ['(= 1 1)', '(= 1.01 1)', '(= 1 1)', '(= 2 2 2 2)', '(= 2 2 1 2)'],
-    specialExpression: false,
-    sideEffects: [],
-  },
   and: {
     name: 'and',
+    category: 'Special expression',
     linkName: 'and',
     syntax: 'and forms => true | false',
     arguments: [
@@ -370,6 +391,7 @@ module.exports = {
   },
   or: {
     name: 'or',
+    category: 'Special expression',
     linkName: 'or',
     syntax: 'or forms => true | false',
     arguments: [
@@ -393,6 +415,7 @@ module.exports = {
   },
   append: {
     name: 'append',
+    category: 'List',
     linkName: 'append',
     syntax: 'append lists (zero or more) => list',
     arguments: [
@@ -415,6 +438,7 @@ module.exports = {
   },
   aref: {
     name: 'aref',
+    category: 'String',
     linkName: 'aref',
     syntax: 'aref string index => string',
     arguments: [
@@ -436,6 +460,7 @@ module.exports = {
   },
   'boolean?': {
     name: 'boolean?',
+    category: 'Predicate',
     linkName: 'boolean_question',
     syntax: 'boolean? value => true | false',
     arguments: [
@@ -459,6 +484,7 @@ module.exports = {
   },
   'null?': {
     name: 'null?',
+    category: 'Predicate',
     linkName: 'null_question',
     syntax: 'null? value => true | false',
     arguments: [
@@ -475,6 +501,7 @@ module.exports = {
   },
   'undefined?': {
     name: 'undefined?',
+    category: 'Predicate',
     linkName: 'undefined_question',
     syntax: 'undefined? value => true | false',
     arguments: [
@@ -499,6 +526,7 @@ module.exports = {
   },
   'number?': {
     name: 'number?',
+    category: 'Predicate',
     linkName: 'number_question',
     syntax: 'number? value => true | false',
     arguments: [
@@ -523,6 +551,7 @@ module.exports = {
   },
   'string?': {
     name: 'string?',
+    category: 'Predicate',
     linkName: 'string_question',
     syntax: 'string? value => true | false',
     arguments: [
@@ -547,6 +576,7 @@ module.exports = {
   },
   'function?': {
     name: 'function?',
+    category: 'Predicate',
     linkName: 'function_question',
     syntax: 'function? value => true | false',
     arguments: [
@@ -572,6 +602,7 @@ module.exports = {
   },
   'integer?': {
     name: 'integer?',
+    category: 'Predicate',
     linkName: 'integer_question',
     syntax: 'integer? value => true | false',
     arguments: [
@@ -598,6 +629,7 @@ module.exports = {
   },
   'list?': {
     name: 'list?',
+    category: 'Predicate',
     linkName: 'list_question',
     syntax: 'list? value => true | false',
     arguments: [
@@ -622,6 +654,7 @@ module.exports = {
   },
   'object?': {
     name: 'object?',
+    category: 'Predicate',
     linkName: 'object_question',
     syntax: 'object? value => true | false',
     arguments: [
@@ -648,6 +681,7 @@ module.exports = {
   },
   'regexp?': {
     name: 'regexp?',
+    category: 'Predicate',
     linkName: 'regexp_question',
     syntax: 'regexp? value => true | false',
     arguments: [
@@ -674,6 +708,7 @@ module.exports = {
   },
   'zero?': {
     name: 'zero?',
+    category: 'Predicate',
     linkName: 'zero_question',
     syntax: 'zero? number => true | false',
     arguments: [
@@ -690,6 +725,7 @@ module.exports = {
   },
   'even?': {
     name: 'even?',
+    category: 'Predicate',
     linkName: 'even_question',
     syntax: 'even? number => true | false',
     arguments: [
@@ -706,6 +742,7 @@ module.exports = {
   },
   'odd?': {
     name: 'odd?',
+    category: 'Predicate',
     linkName: 'odd_question',
     syntax: 'odd? number => true | false',
     arguments: [
@@ -722,6 +759,7 @@ module.exports = {
   },
   substring: {
     name: 'substring',
+    category: 'String',
     linkName: 'substring',
     syntax: 'substring string indexStart indexEnd => string',
     arguments: [
@@ -753,6 +791,7 @@ module.exports = {
   },
   'string-length': {
     name: 'string-length',
+    category: 'String',
     linkName: 'string-length',
     syntax: 'string-length string => number',
     arguments: [
@@ -769,6 +808,7 @@ module.exports = {
   },
   concat: {
     name: 'concat',
+    category: 'String',
     linkName: 'concat',
     syntax: 'concat strings (zero or more) => number',
     arguments: [
@@ -785,6 +825,7 @@ module.exports = {
   },
   'string>': {
     name: 'string>',
+    category: 'String',
     linkName: 'string_gt',
     syntax: 'string> string1 string2 => number',
     arguments: [
@@ -812,6 +853,7 @@ module.exports = {
   },
   'string>=': {
     name: 'string>=',
+    category: 'String',
     linkName: 'string_gte',
     syntax: 'string>= string1 string2 => number',
     arguments: [
@@ -839,6 +881,7 @@ module.exports = {
   },
   'string<': {
     name: 'string<',
+    category: 'String',
     linkName: 'string_lt',
     syntax: 'string< string1 string2 => number',
     arguments: [
@@ -866,6 +909,7 @@ module.exports = {
   },
   'string<=': {
     name: 'string<=',
+    category: 'String',
     linkName: 'string_lte',
     syntax: 'string<= string1 string2 => number',
     arguments: [
@@ -893,6 +937,7 @@ module.exports = {
   },
   write: {
     name: 'write',
+    category: 'String',
     linkName: 'write',
     syntax: 'write values => value',
     arguments: [
@@ -914,5 +959,107 @@ module.exports = {
     ],
     specialExpression: false,
     sideEffects: ['Does a console.log'],
+  },
+  'has-attr': {
+    name: 'has-attr',
+    category: 'Object',
+    linkName: 'has-attr',
+    syntax: 'has-attr object attr => true | false',
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+      },
+      {
+        name: 'attr',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns true if object has an attribute named attr, otherwise returns false',
+    longDescription: 'Returns true if object has an attribute named attr, otherwise returns false',
+    examples: [
+      '(has-attr (object "a" 10 "b" 20) "a")',
+      '(has-attr (object "a" 10 "b" undefined) "b")',
+      '(has-attr (object "a" 10 "b" undefined) "c")',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'get-attr': {
+    name: 'get-attr',
+    category: 'Object',
+    linkName: 'get-attr',
+    syntax: 'get-attr object attr => value',
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+      },
+      {
+        name: 'attr',
+        type: 'string',
+      },
+    ],
+    shortDescription:
+      "Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr",
+    longDescription: "Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr",
+    examples: [
+      '(get-attr (object "a" 10 "b" 20) "a")',
+      '(get-attr (object "a" 10 "b" undefined) "b")',
+      '(get-attr (object "a" 10 "b" undefined) "c")',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'del-attr': {
+    name: 'del-attr',
+    category: 'Object',
+    linkName: 'del-attr',
+    syntax: 'del-attr object attr => value',
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+      },
+      {
+        name: 'attr',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Deletes the attribute attr from obj',
+    longDescription: 'Deletes the attribute attr from obj',
+    examples: [
+      '(del-attr (object "x" 10) "x")',
+      '(del-attr (object "x" 10) "y")',
+      '(setq o (object "a" 5)) (del-attr o "a") o',
+      '(setq o (object "a" 5)) (del-attr o "b") o',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'set-attr': {
+    name: 'set-attr',
+    category: 'Object',
+    linkName: 'set-attr',
+    syntax: 'set-attr object attr => value',
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+      },
+      {
+        name: 'attr',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Sets an attribute on an object. Returns value',
+    longDescription: 'Sets an attribute on an object. Returns value',
+    examples: [
+      '(set-attr (object "x" 10) "a" 10)',
+      '(setq o (object)) (set-attr o "a" 10) o',
+      '(setq o (object "a" 5)) (set-attr o "a" 10) o',
+    ],
+    specialExpression: false,
+    sideEffects: [],
   },
 }

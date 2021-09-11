@@ -24,6 +24,11 @@ describe('reference', () => {
   Object.entries(reference).forEach(([key, obj]: [key: string, obj: any]) => {
     test(key, () => {
       expect(obj.name).toBe(key)
+      expect(
+        ['Math', 'Misc', 'Object', 'List', 'Predicate', 'Regular expression', 'Special expression', 'String'].includes(
+          obj.category,
+        ),
+      ).toBe(true)
       expect(obj.syntax.startsWith(key)).toBe(true)
       expect(obj.linkName).toEqual(getLinkName(key))
       expect(obj.shortDescription.length).toBeGreaterThanOrEqual(1)
@@ -48,7 +53,7 @@ describe('reference', () => {
     expect(linkNames).toEqual([])
   })
 
-  xtest('Everything documented', () => {
+  test('Everything documented', () => {
     const referenceKeys = Object.keys(reference)
     const builtinKeys = [...specialExpressionKeys, ...normalExpressionKeys]
     referenceKeys.forEach(key => builtinKeys.splice(builtinKeys.indexOf(key), 1))

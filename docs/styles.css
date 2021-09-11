@@ -23,6 +23,12 @@ a:link, a:visited, a:hover, a:active {
   margin: 0;
 }
 
+.sidebar label {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-decoration: underline;
+}
+
 .row {
   display: flex;
 }

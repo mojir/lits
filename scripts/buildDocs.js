@@ -154,21 +154,43 @@ function writeDoc(docObj) {
     </div>
 `
 }
-
 function getSideBar() {
+  const categoryKeys = [
+    'Math',
+    'Misc',
+    'Object',
+    'List',
+    'Predicate',
+    'Regular expression',
+    'Special expression',
+    'String',
+  ]
+  const categories = Object.values(reference).reduce((result, obj) => {
+    result[obj.category] = result[obj.category] || []
+    result[obj.category].push(obj)
+    return result
+  }, {})
+
   return `<div class="sidebar">
-      <ul>
-        ${Object.keys(reference)
-          .sort()
-          .map(
-            key =>
-              `<a class="small-pre" onclick="setActive('${reference[key].linkName}')"><li id="${
-                reference[key].linkName
-              }_link">${escape(key)}</li></a>`,
-          )
-          .join('\n        ')}
-      </ul>
-    </div>`
+    ${categoryKeys
+      .map(categoryKey => {
+        console.log(categoryKey, categories[categoryKey])
+        return `<label>${categoryKey}</label><ul>
+        ${
+          categories[categoryKey]
+            ? categories[categoryKey]
+                .map(obj => {
+                  const linkName = obj.linkName
+                  const name = escape(obj.name)
+                  return `<a class="small-pre" onclick="setActive('${linkName}')"><li id="${linkName}_link">${name}</li></a>`
+                })
+                .join('\n')
+            : ''
+        }
+</ul>`
+      })
+      .join('\n')}
+</div>`
 }
 
 function setupDocDir() {
@@ -210,6 +232,12 @@ a:link, a:visited, a:hover, a:active {
   list-style-position: inside;
   padding: 0;
   margin: 0;
+}
+
+.sidebar label {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-decoration: underline;
 }
 
 .row {
