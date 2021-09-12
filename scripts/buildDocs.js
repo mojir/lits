@@ -275,7 +275,7 @@ function writeStyles() {
   const styles = `body {
   margin: 0;
   padding: 1rem;
-  font-family: Helvetica;
+  font-family: Arial;
   background-color: #222222;
   color: #cccccc;
 }
