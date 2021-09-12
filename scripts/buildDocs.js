@@ -285,7 +285,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .main {
-  padding: 0 2rem;
+  padding: 0 0 0 2rem;
   flex: 75%;
 }
 
@@ -335,6 +335,7 @@ h4, h2, h1 {
   font-weight: bold;
   text-align: center;
   font-family: monospace;
+  text-decoration: underline;
 }
 
 .small-pre, pre {
@@ -413,6 +414,8 @@ label {
 
 h1.function-header {
   font-family: monospace;
+  background-color: #333333;
+  padding: 5px 1rem;
 }
 
 `
