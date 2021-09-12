@@ -5,15 +5,23 @@ const fs = require('fs')
 
 const DOC_DIR = path.resolve(__dirname, '../docs')
 
-const getTopBar = ({ back }) => `<div class="top-bar">
-  <center><pre><span class="main-header"><a id="lispish-header" onclick="showPage('index')">Lispish</a></span></pre></center>
+const getTopBar = () => `
+<div class="top-bar">
+  <div class="row">
+    <div class="column-third">
+      <a id="home-link" onclick="showPage('index')">Home</a>
+    </div>
+    <div class="column-third main-header">Lispish</div>
+    <div class="column-third">
+    </div>
+  </div>
 </div>`
 
 const getHeader = () => `<head>
   <link rel="stylesheet" href="styles.css">
 </head>`
 
-const getPlayground = () => `  <div class="playground">
+const getPlayground = () => `  <div id="playground">
     <div class="header">
       Playground <span class="play" onclick="play()">&#9654;</span>
     </div>
@@ -33,8 +41,12 @@ const getPlayground = () => `  <div class="playground">
 const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
   <script src="lispish.iife.js"></script>
   <script>
+    window.addEventListener('popstate', () => {
+      var id = location.hash.substring(1) || 'index'
+      showPage(id, 'none')
+    })
     var id = location.hash.substring(1) || 'index'
-    showPage(id)
+    showPage(id, 'replace')
 
     var activeId='index';
     function play() {
@@ -60,22 +72,40 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
       output.classList.remove('error')
       output.innerHTML = stringifyValue(result)
     }
-    function showPage(id) {
-      var els = document.getElementsByClassName('active')
+    function showPage(id, historyEvent) {
+      var els = document.getElementsByClassName('active-content')
       while (els[0]) {
-        els[0].classList.remove('active')
+        els[0].classList.remove('active-content')
       }
       els = document.getElementsByClassName('active-sidebar-entry')
       while (els[0]) {
         els[0].classList.remove('active-sidebar-entry')
       }
 
-      document.getElementById(id).classList.add('active')
-      if (id !== 'index') {
-        document.getElementById(id + '_link').classList.add('active-sidebar-entry')
+      document.getElementById('playground').classList.add('active')
+
+      if (id === 'index') {
+        document.getElementById('home-link').classList.remove('active')
+        document.getElementById('index').classList.add('active-content')
+      } else {
+        var docPage = document.getElementById(id)
+        if (docPage) {
+          docPage.classList.add('active-content')
+          document.getElementById(id + '_link').classList.add('active-sidebar-entry')
+        } else {
+          showPage('index', 'replace')
+          return
+        }
+        document.getElementById('home-link').classList.add('active')
       }
       activeId = id
-      history.pushState(null, '', '#' + id)
+      if (historyEvent === 'none') {
+        return
+      } else if (historyEvent === 'replace') {
+        history.replaceState(null, '', '#' + id)
+      } else {
+        history.pushState(null, '', '#' + id)
+      }
     }
     function stringifyValue(value) {
       return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
@@ -101,26 +131,23 @@ ${getHeader()}
     ${getSideBar()}
     <div class="main">
       <div id="index" class="content">
-      <h1>Welcome to the Lispish playground!</h1>
-      <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
-      <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
-      <ul>
-        <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
-        <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
-        <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
-        <li>No macros.</li>
-        <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
-        <li>No tail call optimization (yet).</li>
-        <li>No dotted pairs.</li>
-        <li>100% test coverage</li>
-      </ul>
-      <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
-      <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
-      <p/>
-      <p>Happy coding!</p>
-
-
-
+        <h1>Welcome to the Lispish playground!</h1>
+        <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
+        <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
+        <ul>
+          <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
+          <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
+          <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
+          <li>No macros.</li>
+          <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
+          <li>No tail call optimization (yet).</li>
+          <li>No dotted pairs.</li>
+          <li>100% test coverage</li>
+        </ul>
+        <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
+        <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+        <p/>
+        <p>Happy coding!</p>
       </div>
       ${Object.values(functionReference)
         .map(obj => writeDoc(obj))
@@ -266,7 +293,7 @@ a:link, a:visited, a:hover, a:active {
   display: none;
 }
 
-.content.active {
+.content.active-content {
   display: block;
 }
 
@@ -289,9 +316,25 @@ h4, h2, h1 {
   margin-bottom: 3rem;
 }
 
+.top-bar #home-link {
+  text-decoration: underline;
+  display: none;
+}
+
+.top-bar #home-link.active {
+  display: inline;
+}
+
+.top-bar .row {
+  align-items: center;
+  margin-left: 1rem;
+}
+
 .main-header {
   font-size: 36px;
   font-weight: bold;
+  text-align: center;
+  font-family: monospace;
 }
 
 .small-pre, pre {
@@ -308,11 +351,17 @@ h4, h2, h1 {
   background-color: #333333;
 }
 
-.playground {
+#playground {
   margin-top: 5rem;
+  display: none;
 }
 
-.playground .header {
+#playground.active {
+  margin-top: 5rem;
+  display: block;
+}
+
+#playground .header {
   font-size: 24px;
   margin-bottom: 1.5rem;
 }

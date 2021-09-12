@@ -46,7 +46,7 @@ a:link, a:visited, a:hover, a:active {
   display: none;
 }
 
-.content.active {
+.content.active-content {
   display: block;
 }
 
@@ -69,9 +69,25 @@ h4, h2, h1 {
   margin-bottom: 3rem;
 }
 
+.top-bar #home-link {
+  text-decoration: underline;
+  display: none;
+}
+
+.top-bar #home-link.active {
+  display: inline;
+}
+
+.top-bar .row {
+  align-items: center;
+  margin-left: 1rem;
+}
+
 .main-header {
   font-size: 36px;
   font-weight: bold;
+  text-align: center;
+  font-family: monospace;
 }
 
 .small-pre, pre {
@@ -88,11 +104,17 @@ h4, h2, h1 {
   background-color: #333333;
 }
 
-.playground {
+#playground {
   margin-top: 5rem;
+  display: none;
 }
 
-.playground .header {
+#playground.active {
+  margin-top: 5rem;
+  display: block;
+}
+
+#playground .header {
   font-size: 24px;
   margin-bottom: 1.5rem;
 }
