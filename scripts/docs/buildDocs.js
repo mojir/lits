@@ -53,6 +53,7 @@ function getHeader() {
   return `
 <head>
   <title>Lispish</title>
+  <meta name="description" content="A reference and a playground for Lispish - a Typescript Lisp implementation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
 </head>
