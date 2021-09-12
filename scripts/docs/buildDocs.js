@@ -12,7 +12,7 @@ writeIndexPage()
 
 function writeIndexPage() {
   const page = `<!DOCTYPE html>
-<html>
+<html lang="en">
 ${getHeader()}
 <body>
   ${getTopBar({ back: false })}
@@ -42,7 +42,7 @@ function getTopBar() {
     <div class="column">
       <a id="home-link" onclick="showPage('index')">Home</a>
     </div>
-    <div class="column header">Lispish</div>
+    <header class="column header">Lispish</header>
     <div class="column">
     </div>
   </div>
@@ -52,6 +52,7 @@ function getTopBar() {
 function getHeader() {
   return `
 <head>
+  <title>Lispish</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -64,23 +65,23 @@ function getPlayground() {
   <div class="header"><span class="icon-button" onclick="play()">▶ Playground</span></div>
   <div class="row">
     <div class="column" id="context">
-      <div class="textarea-header">Context (JSON)</div>
+      <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
       <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
     <div class="column" id="lisp">
-      <div class="textarea-header">Lisp</div>
+      <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
       <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)\n\n(write "y" y)\n\n(write (* x y))</textarea>
     </div>
     <div class="column" id="output">
       <div class="row">
-        <div class="column textarea-header">Result</div>
+        <div class="column textarea-header"><label for="output-textarea">Result</label></div>
         <div class="column small right"><span id="clear-output" class="icon-button" onclick="clearOutput()">✖</span></div>
       </div>
       <textarea id="output-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
     </div>
     <div class="column" id="log">
       <div class="row">
-        <div class="column textarea-header">Console log</div>
+        <div class="column textarea-header"><label for="log-textarea">Console log</label></div>
         <div class="column small right"><span id="clear-log" class="icon-button" onclick="clearLog()">✖</span></div>
       </div>
       <textarea id="log-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
@@ -168,7 +169,7 @@ function getSideBar() {
                   .map(obj => {
                     const linkName = obj.linkName
                     const name = escape(obj.name)
-                    return `<a onclick="showPage('${linkName}')"><li id="${linkName}_link">${name}</li></a>`
+                    return `<li id="${linkName}_link" onclick="showPage('${linkName}')">${name}</li>`
                   })
                   .join('\n')
               : ''

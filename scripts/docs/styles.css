@@ -212,6 +212,11 @@ h4, h2, h1 {
   font-weight: bold;
 }
 
+#playground .textarea-header label {
+  margin: 0;
+  padding: 0;
+}
+
 #index pre {
  margin: 0;
  display: inline;
