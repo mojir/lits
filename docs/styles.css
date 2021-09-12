@@ -1,13 +1,13 @@
 body {
   margin: 0;
   padding: 1rem;
-  font-family: verdana;
+  font-family: Helvetica;
   background-color: #222222;
-  color: #dddddd;
+  color: #cccccc;
 }
 
 a:link, a:visited, a:hover, a:active {
-  color: #dddddd;
+  color: #cccccc;
   text-decoration: none;
   cursor: pointer;
 }
@@ -212,3 +212,6 @@ h1.function-header {
   text-decoration: underline;
 }
 
+h2.discrete {
+  color: gray;
+}

@@ -157,7 +157,8 @@ ${getHeader()}
     ${getSideBar()}
     <div class="main">
       <div id="index" class="content">
-        <h1>Welcome to the Lispish playground!</h1>
+        <h1>Welcome to Lispish!</h1>
+        <br />
         <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
         <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
         <ul>
@@ -274,13 +275,13 @@ function writeStyles() {
   const styles = `body {
   margin: 0;
   padding: 1rem;
-  font-family: verdana;
+  font-family: Helvetica;
   background-color: #222222;
-  color: #dddddd;
+  color: #cccccc;
 }
 
 a:link, a:visited, a:hover, a:active {
-  color: #dddddd;
+  color: #cccccc;
   text-decoration: none;
   cursor: pointer;
 }
@@ -485,6 +486,9 @@ h1.function-header {
   text-decoration: underline;
 }
 
+h2.discrete {
+  color: gray;
+}
 `
   fs.writeFileSync(path.join(DOC_DIR, `styles.css`), styles, { encoding: 'utf-8' })
 }
