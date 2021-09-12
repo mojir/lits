@@ -1,6 +1,8 @@
 A lisp implementation in Typescript. Could be used in browser or node.js.
 
 # REPL
+## Documentation
+[mojir.github.io/lispish](https://mojir.github.io/lispish/#sqrt)
 ## Install
 ```
 npm i -g lispish
