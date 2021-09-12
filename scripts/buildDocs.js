@@ -26,16 +26,27 @@ const getPlayground = () => `  <div id="playground">
       Playground <span class="play" onclick="play()">&#9654;</span>
     </div>
     <div class="row">
-      <div class="column-half">
+      <div class="column-half" id="lisp">
         <h4>Lisp</h4>
-        <textarea spellcheck=false rows="15" id="code">(* x x)</textarea>
+        <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)\n\n(write "y" y)\n\n(write (* x y))</textarea>
       </div>
-      <div class="column-half">
+      <div class="column-half" id="context">
         <h4>Context (JSON)</h4>
-        <textarea spellcheck=false rows="15" id="context">{ "x": 12 }</textarea>
+        <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
       </div>
     </div>
-    <div id="output" />
+    <div class="row">
+      <div class="column-half" id="output">
+        <h4>Result</h4>
+        <textarea id="output-textarea" readonly spellcheck=false rows="6" id="context"></textarea>
+      </div>
+      <div class="column-half" id="log">
+        <h4>Log</h4>
+        <textarea id="log-textarea" readonly spellcheck=false rows="6" id="context"></textarea>
+      </div>
+    </div>
+    <a id="clear" onclick="clearPlayground()">Clear</a>
+
   </div>`
 
 const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
@@ -50,9 +61,9 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
 
     var activeId='index';
     function play() {
-      var code = document.getElementById("code").value
-      var contextString = document.getElementById("context").value
-      var output = document.getElementById("output")
+      var code = document.getElementById("lisp-textarea").value
+      var contextString = document.getElementById("context-textarea").value
+      var output = document.getElementById("output-textarea")
       var context
       try {
         context = JSON.parse(contextString)
@@ -62,12 +73,23 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
         return
       }
       var result
+      var oldLog = console.log
+      console.log = function () {
+        var args = Array.from(arguments)
+        var logRow = args.map(arg => '' + arg).join(' ')
+        var textarea = document.getElementById('log-textarea')
+        var oldInnerHTML = textarea.innerHTML
+        textarea.innerHTML = oldInnerHTML ? (oldInnerHTML + '\\n' + logRow) : logRow
+        textarea.scrollTop = textarea.scrollHeight;
+      }
       try {
         result = lispish.lispish(code, context)
       } catch (error) {
         output.innerHTML = error
         output.classList.add('error')
         return
+      } finally {
+        console.log = oldLog
       }
       output.classList.remove('error')
       output.innerHTML = stringifyValue(result)
@@ -112,6 +134,10 @@ const getScriptTags = () => `  <script src="https://cdn.jsdelivr.net/npm/lodash@
         /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
         'undefined',
       )
+    }
+    function clearPlayground() {
+      document.getElementById('log-textarea').innerHTML = ''
+      document.getElementById('output-textarea').innerHTML = ''
     }
   </script>
 `
@@ -302,6 +328,7 @@ a:link, a:visited, a:hover, a:active {
 
 .content {
   display: none;
+  padding-left: 0.5rem;
 }
 
 .content.active-content {
@@ -366,6 +393,7 @@ h4, h2, h1 {
 #playground {
   margin-top: 5rem;
   display: none;
+  margin-left: 0.5rem;
 }
 
 #playground.active {
@@ -376,6 +404,10 @@ h4, h2, h1 {
 #playground .header {
   font-size: 24px;
   margin-bottom: 1.5rem;
+  background-color: #333333;
+  padding: 5px 1rem;
+  margin-right: -1rem;
+  margin-left: -1rem;
 }
 
 textarea {
@@ -397,11 +429,28 @@ textarea {
   color: white;
 }
 
-#output {
-  margin-top: 1rem;
-  font-family: monospace;
-  font-size: 1rem;
+#output, #log {
+  margin-top: 0.5rem;
 }
+
+#output-textarea, #log-textarea {
+  background-color: #222222;
+}
+
+#output {
+  margin-right: 1.2rem;
+}
+#log {
+  margin-left: 1.2rem;
+}
+
+#lisp {
+  margin-right: 1.2rem;
+}
+#context {
+  margin-left: 1.2rem;
+}
+
 #output.error {
   color: red;
 }
@@ -428,6 +477,12 @@ h1.function-header {
   background-color: #333333;
   padding: 5px 1rem;
   margin-right: -1rem;
+  margin-left: -1rem;
+}
+
+#clear {
+  font-size: 0.8rem;
+  text-decoration: underline;
 }
 
 `

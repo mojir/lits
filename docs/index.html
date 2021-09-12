@@ -399,9 +399,9 @@
       <label>Side effects</label>
       <pre>No side effects</pre>
       <label>Examples</label>
-      <pre>(random 1) => 0.034715895860768065</pre>
-<pre>(random 0.01) => 0.008306805183179505</pre>
-<pre>(random 2.5) => 1.5033916450497553</pre>
+      <pre>(random 1) => 0.963828415871699</pre>
+<pre>(random 0.01) => 0.005991419985771365</pre>
+<pre>(random 2.5) => 0.02930266417127847</pre>
 <pre>(random 0) => Error!</pre>
 <pre>(random -1) => Error!</pre>
 
@@ -1084,16 +1084,31 @@
       Playground <span class="play" onclick="play()">&#9654;</span>
     </div>
     <div class="row">
-      <div class="column-half">
+      <div class="column-half" id="lisp">
         <h4>Lisp</h4>
-        <textarea spellcheck=false rows="15" id="code">(* x x)</textarea>
+        <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)
+
+(write "y" y)
+
+(write (* x y))</textarea>
       </div>
-      <div class="column-half">
+      <div class="column-half" id="context">
         <h4>Context (JSON)</h4>
-        <textarea spellcheck=false rows="15" id="context">{ "x": 12 }</textarea>
+        <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
       </div>
     </div>
-    <div id="output" />
+    <div class="row">
+      <div class="column-half" id="output">
+        <h4>Result</h4>
+        <textarea id="output-textarea" readonly spellcheck=false rows="6" id="context"></textarea>
+      </div>
+      <div class="column-half" id="log">
+        <h4>Log</h4>
+        <textarea id="log-textarea" readonly spellcheck=false rows="6" id="context"></textarea>
+      </div>
+    </div>
+    <a id="clear" onclick="clearPlayground()">Clear</a>
+
   </div>
     </div>
   </div>
@@ -1109,9 +1124,9 @@
 
     var activeId='index';
     function play() {
-      var code = document.getElementById("code").value
-      var contextString = document.getElementById("context").value
-      var output = document.getElementById("output")
+      var code = document.getElementById("lisp-textarea").value
+      var contextString = document.getElementById("context-textarea").value
+      var output = document.getElementById("output-textarea")
       var context
       try {
         context = JSON.parse(contextString)
@@ -1121,12 +1136,23 @@
         return
       }
       var result
+      var oldLog = console.log
+      console.log = function () {
+        var args = Array.from(arguments)
+        var logRow = args.map(arg => '' + arg).join(' ')
+        var textarea = document.getElementById('log-textarea')
+        var oldInnerHTML = textarea.innerHTML
+        textarea.innerHTML = oldInnerHTML ? (oldInnerHTML + '\n' + logRow) : logRow
+        textarea.scrollTop = textarea.scrollHeight;
+      }
       try {
         result = lispish.lispish(code, context)
       } catch (error) {
         output.innerHTML = error
         output.classList.add('error')
         return
+      } finally {
+        console.log = oldLog
       }
       output.classList.remove('error')
       output.innerHTML = stringifyValue(result)
@@ -1171,6 +1197,10 @@
         /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
         'undefined',
       )
+    }
+    function clearPlayground() {
+      document.getElementById('log-textarea').innerHTML = ''
+      document.getElementById('output-textarea').innerHTML = ''
     }
   </script>
 
