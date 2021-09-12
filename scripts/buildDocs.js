@@ -182,12 +182,12 @@ function writeDoc(docObj) {
           var result
           try {
             result = lispish.lispish(example)
+            return `<pre>${example} => ${stringifyValue(result)}</pre>`
           } catch (error) {
-            result = 'Error!'
+            return `<pre>${example} => Error!</pre>`
           } finally {
             console.log = oldLog
           }
-          return `<pre>${example} => ${stringifyValue(result)}</pre>`
         })
         .join('\n')}
 
@@ -263,18 +263,29 @@ a:link, a:visited, a:hover, a:active {
   text-decoration: underline;
 }
 
+.sidebar {
+  padding-left: 1rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
 .sidebar ul {
   list-style-type: none;
   list-style-position: inside;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar li {
+  white-space: nowrap;
 }
 
 .sidebar label {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 0.2rem;
   text-decoration: underline;
 }
+
 
 .row {
   display: flex;
@@ -285,7 +296,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .main {
-  padding: 0 0 0 2rem;
+  padding: 0 1rem 0 2rem;
   flex: 75%;
 }
 
@@ -416,6 +427,7 @@ h1.function-header {
   font-family: monospace;
   background-color: #333333;
   padding: 5px 1rem;
+  margin-right: -1rem;
 }
 
 `

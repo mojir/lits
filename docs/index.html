@@ -304,7 +304,7 @@
       <pre>(sqrt 0) => 0</pre>
 <pre>(sqrt 9) => 3</pre>
 <pre>(sqrt 2) => 1.4142135623730951</pre>
-<pre>(sqrt -1) => "Error!"</pre>
+<pre>(sqrt -1) => Error!</pre>
 
     </div>
 
@@ -324,7 +324,7 @@
 <pre>(expt 2 -3) => 0.125</pre>
 <pre>(expt -2 3) => -8</pre>
 <pre>(expt -2 -3) => -0.125</pre>
-<pre>(expt -2) => "Error!"</pre>
+<pre>(expt -2) => Error!</pre>
 
     </div>
 
@@ -399,11 +399,11 @@
       <label>Side effects</label>
       <pre>No side effects</pre>
       <label>Examples</label>
-      <pre>(random 1) => 0.3482817124815556</pre>
-<pre>(random 0.01) => 0.000761014328766203</pre>
-<pre>(random 2.5) => 1.1969012589712036</pre>
-<pre>(random 0) => "Error!"</pre>
-<pre>(random -1) => "Error!"</pre>
+      <pre>(random 1) => 0.034715895860768065</pre>
+<pre>(random 0.01) => 0.008306805183179505</pre>
+<pre>(random 2.5) => 1.5033916450497553</pre>
+<pre>(random 0) => Error!</pre>
+<pre>(random -1) => Error!</pre>
 
     </div>
 
@@ -554,7 +554,7 @@
       <pre>(aref "A string" 0) => "A"</pre>
 <pre>(aref "A string" 2) => "s"</pre>
 <pre>(aref "A string" 20) => undefined</pre>
-<pre>(aref "A string" -1) => "Error!"</pre>
+<pre>(aref "A string" -1) => Error!</pre>
 
     </div>
 
@@ -574,7 +574,7 @@
 <pre>(boolean? (list 1 2 3)) => false</pre>
 <pre>(boolean? 0) => false</pre>
 <pre>(boolean? "A string") => false</pre>
-<pre>(boolean?) => "Error!"</pre>
+<pre>(boolean?) => Error!</pre>
 
     </div>
 
@@ -594,7 +594,7 @@
 <pre>(null? (list 1 2 3)) => false</pre>
 <pre>(null? 0) => false</pre>
 <pre>(null? "A string") => false</pre>
-<pre>(null?) => "Error!"</pre>
+<pre>(null?) => Error!</pre>
 
     </div>
 
@@ -615,7 +615,7 @@
 <pre>(undefined? (list 1 2 3)) => false</pre>
 <pre>(undefined? 0) => false</pre>
 <pre>(undefined? "A string") => false</pre>
-<pre>(undefined?) => "Error!"</pre>
+<pre>(undefined?) => Error!</pre>
 
     </div>
 
@@ -636,7 +636,7 @@
 <pre>(number? false) => false</pre>
 <pre>(number? (list 1 2 3)) => false</pre>
 <pre>(number? "A string") => false</pre>
-<pre>(number?) => "Error!"</pre>
+<pre>(number?) => Error!</pre>
 
     </div>
 
@@ -657,7 +657,7 @@
 <pre>(string? false) => false</pre>
 <pre>(string? (list 1 2 3)) => false</pre>
 <pre>(string? 100) => false</pre>
-<pre>(string?) => "Error!"</pre>
+<pre>(string?) => Error!</pre>
 
     </div>
 
@@ -679,7 +679,7 @@
 <pre>(function? "false") => false</pre>
 <pre>(function? (list 1 2 3)) => false</pre>
 <pre>(function? 100) => false</pre>
-<pre>(function?) => "Error!"</pre>
+<pre>(function?) => Error!</pre>
 
     </div>
 
@@ -702,7 +702,7 @@
 <pre>(integer? false) => false</pre>
 <pre>(integer? "false") => false</pre>
 <pre>(integer? (list 1 2 3)) => false</pre>
-<pre>(integer?) => "Error!"</pre>
+<pre>(integer?) => Error!</pre>
 
     </div>
 
@@ -723,7 +723,7 @@
 <pre>(list? 42) => false</pre>
 <pre>(list? 10.1) => false</pre>
 <pre>(list? (lambda (x y) (+ x y))) => false</pre>
-<pre>(list?) => "Error!"</pre>
+<pre>(list?) => Error!</pre>
 
     </div>
 
@@ -746,7 +746,7 @@
 <pre>(object? (regexp "^start")) => false</pre>
 <pre>(object? "false") => false</pre>
 <pre>(object? (list 1 2 3)) => false</pre>
-<pre>(object?) => "Error!"</pre>
+<pre>(object?) => Error!</pre>
 
     </div>
 
@@ -769,7 +769,7 @@
 <pre>(regexp? false) => false</pre>
 <pre>(regexp? "false") => false</pre>
 <pre>(regexp? (list 1 2 3)) => false</pre>
-<pre>(regexp?) => "Error!"</pre>
+<pre>(regexp?) => Error!</pre>
 
     </div>
 
@@ -788,8 +788,8 @@
 <pre>(zero? -0.0) => true</pre>
 <pre>(zero? 1) => false</pre>
 <pre>(zero? 0.1) => false</pre>
-<pre>(zero? "10") => "Error!"</pre>
-<pre>(zero?) => "Error!"</pre>
+<pre>(zero? "10") => Error!</pre>
+<pre>(zero?) => Error!</pre>
 
     </div>
 
@@ -808,8 +808,8 @@
 <pre>(even? -0.0) => true</pre>
 <pre>(even? -1) => false</pre>
 <pre>(even? 2.1) => false</pre>
-<pre>(even? "10") => "Error!"</pre>
-<pre>(even?) => "Error!"</pre>
+<pre>(even? "10") => Error!</pre>
+<pre>(even?) => Error!</pre>
 
     </div>
 
@@ -828,8 +828,8 @@
 <pre>(odd? 1.001) => false</pre>
 <pre>(odd? -1) => true</pre>
 <pre>(odd? 2.1) => false</pre>
-<pre>(odd? "10") => "Error!"</pre>
-<pre>(odd?) => "Error!"</pre>
+<pre>(odd? "10") => Error!</pre>
+<pre>(odd?) => Error!</pre>
 
     </div>
 
@@ -848,7 +848,7 @@
 <pre>(substring "A string" 2 5) => "str"</pre>
 <pre>(substring "A string" 2 100) => "string"</pre>
 <pre>(substring "A string" 100) => ""</pre>
-<pre>(substring "A string" 5 2) => "Error!"</pre>
+<pre>(substring "A string" 5 2) => Error!</pre>
 
     </div>
 
@@ -1075,7 +1075,7 @@
       <pre>No side effects</pre>
       <label>Examples</label>
       <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
-<pre>(listf 0 100) => "Error!"</pre>
+<pre>(listf 0 100) => Error!</pre>
 
     </div>
 
