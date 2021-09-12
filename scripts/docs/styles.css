@@ -70,9 +70,10 @@ a:link, a:visited, a:hover, a:active {
   margin-bottom: 1.5rem;
 }
 
-#sidebar ul a {
+#sidebar ul li {
   font-family: monospace;
   font-size: 1rem;
+  cursor: pointer;
 }
 
 #sidebar li {

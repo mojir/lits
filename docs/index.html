@@ -10,19 +10,19 @@
 
 <body>
   
-<div id="top-bar">
+<header id="top-bar">
   <div class="row">
     <div class="column">
       <a id="home-link" onclick="showPage('index')">Home</a>
     </div>
-    <header class="column header">Lispish</header>
+    <div class="column header">Lispish</div>
     <div class="column">
     </div>
   </div>
-</div>
+</header>
   <div id="page" class="row">
     
-<div id="sidebar">
+<nav id="sidebar">
   
         <label>Special expression</label>
         <ul>
@@ -102,9 +102,9 @@
 <li id="not_link" onclick="showPage('not')">not</li>
 <li id="write_link" onclick="showPage('write')">write</li>
         </ul>
-</div>
+</nav>
 
-    <div id="main-panel">
+    <main id="main-panel">
       
 <div id="index" class="content">
   <h1>Welcome to Lispish!</h1>
@@ -424,9 +424,9 @@
   <label>Side effects</label>
   <pre>No side effects</pre>
   <label>Examples</label>
-  <pre>(random 1) => 0.62022245346981</pre>
-<pre>(random 0.01) => 0.005820009325184497</pre>
-<pre>(random 2.5) => 2.484610961202904</pre>
+  <pre>(random 1) => 0.796110984019017</pre>
+<pre>(random 0.01) => 0.009151912742911845</pre>
+<pre>(random 2.5) => 1.989230786232266</pre>
 <pre>(random 0) => Error!</pre>
 <pre>(random -1) => Error!</pre>
 </div>
@@ -1103,7 +1103,7 @@
 <pre>(listf 0 100) => Error!</pre>
 </div>
 
-    </div>
+    </main>
   </div>
   
 <div id="playground">

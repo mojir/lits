@@ -18,12 +18,12 @@ ${getHeader()}
   ${getTopBar({ back: false })}
   <div id="page" class="row">
     ${getSideBar()}
-    <div id="main-panel">
+    <main id="main-panel">
       ${getIndexContent()}
       ${Object.values(functionReference)
         .map(obj => getDocumentationContent(obj))
         .join('\n')}
-    </div>
+    </main>
   </div>
   ${getPlayground()}
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
@@ -37,16 +37,16 @@ ${getHeader()}
 
 function getTopBar() {
   return `
-<div id="top-bar">
+<header id="top-bar">
   <div class="row">
     <div class="column">
       <a id="home-link" onclick="showPage('index')">Home</a>
     </div>
-    <header class="column header">Lispish</header>
+    <div class="column header">Lispish</div>
     <div class="column">
     </div>
   </div>
-</div>`
+</header>`
 }
 
 function getHeader() {
@@ -158,7 +158,7 @@ function getSideBar() {
   }, {})
 
   return `
-<div id="sidebar">
+<nav id="sidebar">
   ${categories
     .map(categoryKey => {
       return `
@@ -178,7 +178,7 @@ function getSideBar() {
         </ul>`
     })
     .join('\n')}
-</div>
+</nav>
 `
 }
 
