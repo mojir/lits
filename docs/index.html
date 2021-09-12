@@ -1,252 +1,274 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   
-<div class="top-bar">
+<div id="top-bar">
   <div class="row">
-    <div class="column-third">
+    <div class="column">
       <a id="home-link" onclick="showPage('index')">Home</a>
     </div>
-    <div class="column-third main-header">Lispish</div>
-    <div class="column-third">
+    <div class="column header">Lispish</div>
+    <div class="column">
     </div>
   </div>
 </div>
-  <div class="row">
-    <div class="sidebar">
-    <label>Special expression</label><ul>
-        <a class="small-pre" onclick="showPage('and')"><li id="and_link">and</li></a>
-<a class="small-pre" onclick="showPage('or')"><li id="or_link">or</li></a>
-</ul>
-<label>Math</label><ul>
-        <a class="small-pre" onclick="showPage('_plus')"><li id="_plus_link">+</li></a>
-<a class="small-pre" onclick="showPage('_minus')"><li id="_minus_link">-</li></a>
-<a class="small-pre" onclick="showPage('_star')"><li id="_star_link">*</li></a>
-<a class="small-pre" onclick="showPage('_slash')"><li id="_slash_link">/</li></a>
-<a class="small-pre" onclick="showPage('_percent')"><li id="_percent_link">%</li></a>
-<a class="small-pre" onclick="showPage('1_plus')"><li id="1_plus_link">1+</li></a>
-<a class="small-pre" onclick="showPage('1_minus')"><li id="1_minus_link">1-</li></a>
-<a class="small-pre" onclick="showPage('sqrt')"><li id="sqrt_link">sqrt</li></a>
-<a class="small-pre" onclick="showPage('expt')"><li id="expt_link">expt</li></a>
-<a class="small-pre" onclick="showPage('round')"><li id="round_link">round</li></a>
-<a class="small-pre" onclick="showPage('floor')"><li id="floor_link">floor</li></a>
-<a class="small-pre" onclick="showPage('ceil')"><li id="ceil_link">ceil</li></a>
-<a class="small-pre" onclick="showPage('random')"><li id="random_link">random</li></a>
-<a class="small-pre" onclick="showPage('_lt')"><li id="_lt_link">&lt;</li></a>
-<a class="small-pre" onclick="showPage('_gt')"><li id="_gt_link">&gt;</li></a>
-<a class="small-pre" onclick="showPage('_lte')"><li id="_lte_link">&lt;=</li></a>
-<a class="small-pre" onclick="showPage('_gte')"><li id="_gte_link">&gt;=</li></a>
-</ul>
-<label>Predicate</label><ul>
-        <a class="small-pre" onclick="showPage('boolean_question')"><li id="boolean_question_link">boolean?</li></a>
-<a class="small-pre" onclick="showPage('null_question')"><li id="null_question_link">null?</li></a>
-<a class="small-pre" onclick="showPage('undefined_question')"><li id="undefined_question_link">undefined?</li></a>
-<a class="small-pre" onclick="showPage('number_question')"><li id="number_question_link">number?</li></a>
-<a class="small-pre" onclick="showPage('string_question')"><li id="string_question_link">string?</li></a>
-<a class="small-pre" onclick="showPage('function_question')"><li id="function_question_link">function?</li></a>
-<a class="small-pre" onclick="showPage('integer_question')"><li id="integer_question_link">integer?</li></a>
-<a class="small-pre" onclick="showPage('list_question')"><li id="list_question_link">list?</li></a>
-<a class="small-pre" onclick="showPage('object_question')"><li id="object_question_link">object?</li></a>
-<a class="small-pre" onclick="showPage('regexp_question')"><li id="regexp_question_link">regexp?</li></a>
-<a class="small-pre" onclick="showPage('zero_question')"><li id="zero_question_link">zero?</li></a>
-<a class="small-pre" onclick="showPage('even_question')"><li id="even_question_link">even?</li></a>
-<a class="small-pre" onclick="showPage('odd_question')"><li id="odd_question_link">odd?</li></a>
-</ul>
-<label>String</label><ul>
-        <a class="small-pre" onclick="showPage('aref')"><li id="aref_link">aref</li></a>
-<a class="small-pre" onclick="showPage('substring')"><li id="substring_link">substring</li></a>
-<a class="small-pre" onclick="showPage('string-length')"><li id="string-length_link">string-length</li></a>
-<a class="small-pre" onclick="showPage('concat')"><li id="concat_link">concat</li></a>
-<a class="small-pre" onclick="showPage('string_gt')"><li id="string_gt_link">string&gt;</li></a>
-<a class="small-pre" onclick="showPage('string_gte')"><li id="string_gte_link">string&gt;=</li></a>
-<a class="small-pre" onclick="showPage('string_lt')"><li id="string_lt_link">string&lt;</li></a>
-<a class="small-pre" onclick="showPage('string_lte')"><li id="string_lte_link">string&lt;=</li></a>
-</ul>
-<label>List</label><ul>
-        <a class="small-pre" onclick="showPage('append')"><li id="append_link">append</li></a>
-<a class="small-pre" onclick="showPage('list')"><li id="list_link">list</li></a>
-<a class="small-pre" onclick="showPage('listf')"><li id="listf_link">listf</li></a>
-</ul>
-<label>Object</label><ul>
-        <a class="small-pre" onclick="showPage('has-attr')"><li id="has-attr_link">has-attr</li></a>
-<a class="small-pre" onclick="showPage('get-attr')"><li id="get-attr_link">get-attr</li></a>
-<a class="small-pre" onclick="showPage('del-attr')"><li id="del-attr_link">del-attr</li></a>
-<a class="small-pre" onclick="showPage('set-attr')"><li id="set-attr_link">set-attr</li></a>
-</ul>
-<label>Misc</label><ul>
-        <a class="small-pre" onclick="showPage('_notequal')"><li id="_notequal_link">!=</li></a>
-<a class="small-pre" onclick="showPage('_equal')"><li id="_equal_link">=</li></a>
-<a class="small-pre" onclick="showPage('not')"><li id="not_link">not</li></a>
-<a class="small-pre" onclick="showPage('write')"><li id="write_link">write</li></a>
-</ul>
-</div>
-    <div class="main">
-      <div id="index" class="content">
-        <h1>Welcome to Lispish!</h1>
-        <br />
-        <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
-        <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
+  <div id="page" class="row">
+    
+<div id="sidebar">
+  
+        <label>Special expression</label>
         <ul>
-          <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
-          <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
-          <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
-          <li>No macros.</li>
-          <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
-          <li>No tail call optimization (yet).</li>
-          <li>No dotted pairs.</li>
-          <li>100% test coverage</li>
+          <a onclick="showPage('and')"><li id="and_link">and</li></a>
+<a onclick="showPage('or')"><li id="or_link">or</li></a>
         </ul>
-        <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
-        <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
-        <p/>
-        <p>Happy coding!</p>
-      </div>
-          <div id="_plus" class="content function">
-      <h1 class="function-header">+</h1>
+
+        <label>Math</label>
+        <ul>
+          <a onclick="showPage('_plus')"><li id="_plus_link">+</li></a>
+<a onclick="showPage('_minus')"><li id="_minus_link">-</li></a>
+<a onclick="showPage('_star')"><li id="_star_link">*</li></a>
+<a onclick="showPage('_slash')"><li id="_slash_link">/</li></a>
+<a onclick="showPage('_percent')"><li id="_percent_link">%</li></a>
+<a onclick="showPage('1_plus')"><li id="1_plus_link">1+</li></a>
+<a onclick="showPage('1_minus')"><li id="1_minus_link">1-</li></a>
+<a onclick="showPage('sqrt')"><li id="sqrt_link">sqrt</li></a>
+<a onclick="showPage('expt')"><li id="expt_link">expt</li></a>
+<a onclick="showPage('round')"><li id="round_link">round</li></a>
+<a onclick="showPage('floor')"><li id="floor_link">floor</li></a>
+<a onclick="showPage('ceil')"><li id="ceil_link">ceil</li></a>
+<a onclick="showPage('random')"><li id="random_link">random</li></a>
+<a onclick="showPage('_lt')"><li id="_lt_link">&lt;</li></a>
+<a onclick="showPage('_gt')"><li id="_gt_link">&gt;</li></a>
+<a onclick="showPage('_lte')"><li id="_lte_link">&lt;=</li></a>
+<a onclick="showPage('_gte')"><li id="_gte_link">&gt;=</li></a>
+        </ul>
+
+        <label>Predicate</label>
+        <ul>
+          <a onclick="showPage('boolean_question')"><li id="boolean_question_link">boolean?</li></a>
+<a onclick="showPage('null_question')"><li id="null_question_link">null?</li></a>
+<a onclick="showPage('undefined_question')"><li id="undefined_question_link">undefined?</li></a>
+<a onclick="showPage('number_question')"><li id="number_question_link">number?</li></a>
+<a onclick="showPage('string_question')"><li id="string_question_link">string?</li></a>
+<a onclick="showPage('function_question')"><li id="function_question_link">function?</li></a>
+<a onclick="showPage('integer_question')"><li id="integer_question_link">integer?</li></a>
+<a onclick="showPage('list_question')"><li id="list_question_link">list?</li></a>
+<a onclick="showPage('object_question')"><li id="object_question_link">object?</li></a>
+<a onclick="showPage('regexp_question')"><li id="regexp_question_link">regexp?</li></a>
+<a onclick="showPage('zero_question')"><li id="zero_question_link">zero?</li></a>
+<a onclick="showPage('even_question')"><li id="even_question_link">even?</li></a>
+<a onclick="showPage('odd_question')"><li id="odd_question_link">odd?</li></a>
+        </ul>
+
+        <label>String</label>
+        <ul>
+          <a onclick="showPage('aref')"><li id="aref_link">aref</li></a>
+<a onclick="showPage('substring')"><li id="substring_link">substring</li></a>
+<a onclick="showPage('string-length')"><li id="string-length_link">string-length</li></a>
+<a onclick="showPage('concat')"><li id="concat_link">concat</li></a>
+<a onclick="showPage('string_gt')"><li id="string_gt_link">string&gt;</li></a>
+<a onclick="showPage('string_gte')"><li id="string_gte_link">string&gt;=</li></a>
+<a onclick="showPage('string_lt')"><li id="string_lt_link">string&lt;</li></a>
+<a onclick="showPage('string_lte')"><li id="string_lte_link">string&lt;=</li></a>
+        </ul>
+
+        <label>List</label>
+        <ul>
+          <a onclick="showPage('append')"><li id="append_link">append</li></a>
+<a onclick="showPage('list')"><li id="list_link">list</li></a>
+<a onclick="showPage('listf')"><li id="listf_link">listf</li></a>
+        </ul>
+
+        <label>Object</label>
+        <ul>
+          <a onclick="showPage('has-attr')"><li id="has-attr_link">has-attr</li></a>
+<a onclick="showPage('get-attr')"><li id="get-attr_link">get-attr</li></a>
+<a onclick="showPage('del-attr')"><li id="del-attr_link">del-attr</li></a>
+<a onclick="showPage('set-attr')"><li id="set-attr_link">set-attr</li></a>
+        </ul>
+
+        <label>Misc</label>
+        <ul>
+          <a onclick="showPage('_notequal')"><li id="_notequal_link">!=</li></a>
+<a onclick="showPage('_equal')"><li id="_equal_link">=</li></a>
+<a onclick="showPage('not')"><li id="not_link">not</li></a>
+<a onclick="showPage('write')"><li id="write_link">write</li></a>
+        </ul>
+</div>
+
+    <div id="main-panel">
       
-      <p>Computes sum of numbers</p>
-      <label>Syntax</label>
-      <pre>+ numbers(zero or more) => number</pre>
-      <label>Arguments</label>
-      <pre>numbers: number[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(+) => 0</pre>
+<div id="index" class="content">
+  <h1>Welcome to Lispish!</h1>
+  <br />
+  <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
+  <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
+  <ul>
+    <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
+    <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
+    <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
+    <li>No macros.</li>
+    <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
+    <li>No tail call optimization (yet).</li>
+    <li>No dotted pairs.</li>
+    <li>100% test coverage</li>
+  </ul>
+  <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
+  <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+  <p/>
+  <p>Happy coding!</p>
+</div>
+
+      
+<div id="_plus" class="content function">
+  <div class="function-header">+</div>
+  
+  <p>Computes sum of numbers</p>
+  <label>Syntax</label>
+  <pre>+ numbers(zero or more) => number</pre>
+  <label>Arguments</label>
+  <pre>numbers: number[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(+) => 0</pre>
 <pre>(+ 1) => 1</pre>
 <pre>(+ 2 4) => 6</pre>
 <pre>(+ 1 2 3 4) => 10</pre>
 <pre>(+ (+ 2 3) (+ 5 6)) => 16</pre>
+</div>
 
-    </div>
 
-    <div id="_minus" class="content function">
-      <h1 class="function-header">-</h1>
-      
-      <p>Computes difference between first value and sum of the rest. When called with only one argument, it does negation.</p>
-      <label>Syntax</label>
-      <pre>- numbers(zero or more) => number</pre>
-      <label>Arguments</label>
-      <pre>numbers: number[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(-) => 0</pre>
+<div id="_minus" class="content function">
+  <div class="function-header">-</div>
+  
+  <p>Computes difference between first value and sum of the rest. When called with only one argument, it does negation.</p>
+  <label>Syntax</label>
+  <pre>- numbers(zero or more) => number</pre>
+  <label>Arguments</label>
+  <pre>numbers: number[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(-) => 0</pre>
 <pre>(- 1) => -1</pre>
 <pre>(- 2 4) => -2</pre>
 <pre>(- 4 3 2 1) => -2</pre>
+</div>
 
-    </div>
 
-    <div id="_star" class="content function">
-      <h1 class="function-header">*</h1>
-      
-      <p>Computes product of numbers.</p>
-      <label>Syntax</label>
-      <pre>* numbers(zero or more) => number</pre>
-      <label>Arguments</label>
-      <pre>numbers: number[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(*) => 1</pre>
+<div id="_star" class="content function">
+  <div class="function-header">*</div>
+  
+  <p>Computes product of numbers.</p>
+  <label>Syntax</label>
+  <pre>* numbers(zero or more) => number</pre>
+  <label>Arguments</label>
+  <pre>numbers: number[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(*) => 1</pre>
 <pre>(* 2) => 2</pre>
 <pre>(* 2 4) => 8</pre>
 <pre>(* 1 2 3 4) => 24</pre>
+</div>
 
-    </div>
 
-    <div id="_slash" class="content function">
-      <h1 class="function-header">/</h1>
-      
-      <p>Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining number.</p>
-      <label>Syntax</label>
-      <pre>/ numbers(zero or more) => number</pre>
-      <label>Arguments</label>
-      <pre>numbers: number[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(/) => 1</pre>
+<div id="_slash" class="content function">
+  <div class="function-header">/</div>
+  
+  <p>Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining number.</p>
+  <label>Syntax</label>
+  <pre>/ numbers(zero or more) => number</pre>
+  <label>Arguments</label>
+  <pre>numbers: number[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(/) => 1</pre>
 <pre>(/ 2) => 0.5</pre>
 <pre>(/ 2 4) => 0.5</pre>
 <pre>(/ 4 3 2 1) => 0.6666666666666666</pre>
+</div>
 
-    </div>
 
-    <div id="_percent" class="content function">
-      <h1 class="function-header">%</h1>
-      
-      <p>Returns modulus of two number arguments.</p>
-      <label>Syntax</label>
-      <pre>% number divisor => number</pre>
-      <label>Arguments</label>
-      <pre>number: number<br />divisor: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(% 5 3) => 2</pre>
+<div id="_percent" class="content function">
+  <div class="function-header">%</div>
+  
+  <p>Returns modulus of two number arguments.</p>
+  <label>Syntax</label>
+  <pre>% number divisor => number</pre>
+  <label>Arguments</label>
+  <pre>number: number<br />divisor: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(% 5 3) => 2</pre>
 <pre>(% 5.2 3.1) => 2.1</pre>
 <pre>(% -5 3) => -2</pre>
 <pre>(% 5 -3) => 2</pre>
 <pre>(% -5 -3) => -2</pre>
+</div>
 
-    </div>
 
-    <div id="_notequal" class="content function">
-      <h1 class="function-header">!=</h1>
-      
-      <p>Result is true if no two values are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).</p>
-      <label>Syntax</label>
-      <pre>!= values (one or more) => true | false</pre>
-      <label>Arguments</label>
-      <pre>values: any[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(!= 3) => true</pre>
+<div id="_notequal" class="content function">
+  <div class="function-header">!=</div>
+  
+  <p>Result is true if no two values are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).</p>
+  <label>Syntax</label>
+  <pre>!= values (one or more) => true | false</pre>
+  <label>Arguments</label>
+  <pre>values: any[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(!= 3) => true</pre>
 <pre>(!= 3 2) => true</pre>
 <pre>(!= "3" 3) => true</pre>
 <pre>(!= 3 3 2) => false</pre>
 <pre>(!= "3" "2" "1" "0") => true</pre>
 <pre>(!= 0 -0) => false</pre>
+</div>
 
-    </div>
 
-    <div id="_equal" class="content function">
-      <h1 class="function-header">=</h1>
-      
-      <p>Compares values according to "equal" predicate. Result is true if every specified value is equal to each other, otherwise result is false.</p>
-      <label>Syntax</label>
-      <pre>= values (one or more) => true | false</pre>
-      <label>Arguments</label>
-      <pre>values: any[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(= 1 1) => true</pre>
+<div id="_equal" class="content function">
+  <div class="function-header">=</div>
+  
+  <p>Compares values according to "equal" predicate. Result is true if every specified value is equal to each other, otherwise result is false.</p>
+  <label>Syntax</label>
+  <pre>= values (one or more) => true | false</pre>
+  <label>Arguments</label>
+  <pre>values: any[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(= 1 1) => true</pre>
 <pre>(= 1.01 1) => false</pre>
 <pre>(= "1" 1) => false</pre>
 <pre>(= "2" "2" "2" "2") => true</pre>
 <pre>(= 2 2 1 2) => false</pre>
+</div>
 
-    </div>
 
-    <div id="not" class="content function">
-      <h1 class="function-header">not</h1>
-      
-      <p>Computes logical negation. Note that any other value than false, 0, null, undefined and "" is considered as true.</p>
-      <label>Syntax</label>
-      <pre>not value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(not 3) => false</pre>
+<div id="not" class="content function">
+  <div class="function-header">not</div>
+  
+  <p>Computes logical negation. Note that any other value than false, 0, null, undefined and "" is considered as true.</p>
+  <label>Syntax</label>
+  <pre>not value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(not 3) => false</pre>
 <pre>(not true) => false</pre>
 <pre>(not "A string") => false</pre>
 <pre>(not 0) => true</pre>
@@ -254,426 +276,426 @@
 <pre>(not null) => true</pre>
 <pre>(not undefined) => true</pre>
 <pre>(not "") => true</pre>
+</div>
 
-    </div>
 
-    <div id="1_plus" class="content function">
-      <h1 class="function-header">1+</h1>
-      
-      <p>Adds one to the argument.</p>
-      <label>Syntax</label>
-      <pre>1+ number => number</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(1+ 0) => 1</pre>
+<div id="1_plus" class="content function">
+  <div class="function-header">1+</div>
+  
+  <p>Adds one to the argument.</p>
+  <label>Syntax</label>
+  <pre>1+ number => number</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(1+ 0) => 1</pre>
 <pre>(1+ 1) => 2</pre>
 <pre>(1+ 100.1) => 101.1</pre>
+</div>
 
-    </div>
 
-    <div id="1_minus" class="content function">
-      <h1 class="function-header">1-</h1>
-      
-      <p>Subtracts one from the argument.</p>
-      <label>Syntax</label>
-      <pre>1- number => number</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(1- 0) => -1</pre>
+<div id="1_minus" class="content function">
+  <div class="function-header">1-</div>
+  
+  <p>Subtracts one from the argument.</p>
+  <label>Syntax</label>
+  <pre>1- number => number</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(1- 0) => -1</pre>
 <pre>(1- 1) => 0</pre>
 <pre>(1- 100.1) => 99.1</pre>
+</div>
 
-    </div>
 
-    <div id="sqrt" class="content function">
-      <h1 class="function-header">sqrt</h1>
-      
-      <p>Computes square root of number.</p>
-      <label>Syntax</label>
-      <pre>sqrt number => number</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(sqrt 0) => 0</pre>
+<div id="sqrt" class="content function">
+  <div class="function-header">sqrt</div>
+  
+  <p>Computes square root of number.</p>
+  <label>Syntax</label>
+  <pre>sqrt number => number</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(sqrt 0) => 0</pre>
 <pre>(sqrt 9) => 3</pre>
 <pre>(sqrt 2) => 1.4142135623730951</pre>
 <pre>(sqrt -1) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="expt" class="content function">
-      <h1 class="function-header">expt</h1>
-      
-      <p>Computes returns base-number raised to the power-number.</p>
-      <label>Syntax</label>
-      <pre>expt base-number power-number => number</pre>
-      <label>Arguments</label>
-      <pre>base-number: number<br />power-number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(expt 2 3) => 8</pre>
+<div id="expt" class="content function">
+  <div class="function-header">expt</div>
+  
+  <p>Computes returns base-number raised to the power-number.</p>
+  <label>Syntax</label>
+  <pre>expt base-number power-number => number</pre>
+  <label>Arguments</label>
+  <pre>base-number: number<br />power-number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(expt 2 3) => 8</pre>
 <pre>(expt 2 0) => 1</pre>
 <pre>(expt 2 -3) => 0.125</pre>
 <pre>(expt -2 3) => -8</pre>
 <pre>(expt -2 -3) => -0.125</pre>
 <pre>(expt -2) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="round" class="content function">
-      <h1 class="function-header">round</h1>
-      
-      <p>Returns argument rounded to the nearest integer.</p>
-      <label>Syntax</label>
-      <pre>round number => integer</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(round 2) => 2</pre>
+<div id="round" class="content function">
+  <div class="function-header">round</div>
+  
+  <p>Returns argument rounded to the nearest integer.</p>
+  <label>Syntax</label>
+  <pre>round number => integer</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(round 2) => 2</pre>
 <pre>(round 2.49) => 2</pre>
 <pre>(round 2.5) => 3</pre>
 <pre>(round -2.49) => -2</pre>
 <pre>(round -2.5) => -2</pre>
 <pre>(round -2.501) => -3</pre>
+</div>
 
-    </div>
 
-    <div id="floor" class="content function">
-      <h1 class="function-header">floor</h1>
-      
-      <p>Returns the largest integer less than or equal to the argument.</p>
-      <label>Syntax</label>
-      <pre>floor number => integer</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(floor 2) => 2</pre>
+<div id="floor" class="content function">
+  <div class="function-header">floor</div>
+  
+  <p>Returns the largest integer less than or equal to the argument.</p>
+  <label>Syntax</label>
+  <pre>floor number => integer</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(floor 2) => 2</pre>
 <pre>(floor 2.49) => 2</pre>
 <pre>(floor 2.5) => 2</pre>
 <pre>(floor -2.49) => -3</pre>
 <pre>(floor -2.5) => -3</pre>
 <pre>(floor -2.501) => -3</pre>
+</div>
 
-    </div>
 
-    <div id="ceil" class="content function">
-      <h1 class="function-header">ceil</h1>
-      
-      <p>Returns the smallest integer larger than or equal to the argument.</p>
-      <label>Syntax</label>
-      <pre>ceil number => integer</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(ceil 2) => 2</pre>
+<div id="ceil" class="content function">
+  <div class="function-header">ceil</div>
+  
+  <p>Returns the smallest integer larger than or equal to the argument.</p>
+  <label>Syntax</label>
+  <pre>ceil number => integer</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(ceil 2) => 2</pre>
 <pre>(ceil 2.49) => 3</pre>
 <pre>(ceil 2.5) => 3</pre>
 <pre>(ceil -2.49) => -2</pre>
 <pre>(ceil -2.5) => -2</pre>
 <pre>(ceil -2.501) => -2</pre>
+</div>
 
-    </div>
 
-    <div id="random" class="content function">
-      <h1 class="function-header">random</h1>
-      
-      <p>Returns a semi random number between 0 (inclusive) and argument (exclusive).</p>
-      <label>Syntax</label>
-      <pre>random number => number</pre>
-      <label>Arguments</label>
-      <pre>number: positive number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(random 1) => 0.11034834887822531</pre>
-<pre>(random 0.01) => 0.004607926365287152</pre>
-<pre>(random 2.5) => 0.7170862339467587</pre>
+<div id="random" class="content function">
+  <div class="function-header">random</div>
+  
+  <p>Returns a semi random number between 0 (inclusive) and argument (exclusive).</p>
+  <label>Syntax</label>
+  <pre>random number => number</pre>
+  <label>Arguments</label>
+  <pre>number: positive number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(random 1) => 0.9312358375792686</pre>
+<pre>(random 0.01) => 0.0037945526935717266</pre>
+<pre>(random 2.5) => 2.026738599886232</pre>
 <pre>(random 0) => Error!</pre>
 <pre>(random -1) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="_lt" class="content function">
-      <h1 class="function-header"><</h1>
-      
-      <p>Compares numbers according to "less than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
-      <label>Syntax</label>
-      <pre>< number => true | false</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(< 0 1) => true</pre>
+<div id="_lt" class="content function">
+  <div class="function-header"><</div>
+  
+  <p>Compares numbers according to "less than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <pre>< number => true | false</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(< 0 1) => true</pre>
 <pre>(< 1 1.01) => true</pre>
 <pre>(< 1 1) => false</pre>
 <pre>(< 1 2 3 4) => true</pre>
 <pre>(< 1 2 2 3) => false</pre>
+</div>
 
-    </div>
 
-    <div id="_gt" class="content function">
-      <h1 class="function-header">></h1>
-      
-      <p>Compares numbers according to "greater than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
-      <label>Syntax</label>
-      <pre>> number => true | false</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(> 1 0) => true</pre>
+<div id="_gt" class="content function">
+  <div class="function-header">></div>
+  
+  <p>Compares numbers according to "greater than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <pre>> number => true | false</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(> 1 0) => true</pre>
 <pre>(> 1.01 1) => true</pre>
 <pre>(> 1 1) => false</pre>
 <pre>(> 4 3 2 1) => true</pre>
 <pre>(> 3 2 2 1) => false</pre>
+</div>
 
-    </div>
 
-    <div id="_lte" class="content function">
-      <h1 class="function-header"><=</h1>
-      
-      <p>Compares numbers according to "less than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
-      <label>Syntax</label>
-      <pre><= number => true | false</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(<= 0 1) => true</pre>
+<div id="_lte" class="content function">
+  <div class="function-header"><=</div>
+  
+  <p>Compares numbers according to "less than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <pre><= number => true | false</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(<= 0 1) => true</pre>
 <pre>(<= 1 1.01) => true</pre>
 <pre>(<= 1 1) => true</pre>
 <pre>(<= 1 2 3 4) => true</pre>
 <pre>(<= 1 2 2 3) => true</pre>
+</div>
 
-    </div>
 
-    <div id="_gte" class="content function">
-      <h1 class="function-header">>=</h1>
-      
-      <p>Compares numbers according to "greater than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
-      <label>Syntax</label>
-      <pre>>= number => true | false</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(>= 1 0) => true</pre>
+<div id="_gte" class="content function">
+  <div class="function-header">>=</div>
+  
+  <p>Compares numbers according to "greater than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <pre>>= number => true | false</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(>= 1 0) => true</pre>
 <pre>(>= 1.01 1) => true</pre>
 <pre>(>= 1 1) => true</pre>
 <pre>(>= 4 3 2 1) => true</pre>
 <pre>(>= 3 2 2 1) => true</pre>
+</div>
 
-    </div>
 
-    <div id="and" class="content function">
-      <h1 class="function-header">and</h1>
-      <h3>Special Expression</h3>
-      <p>Computes logical "and" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
-      <label>Syntax</label>
-      <pre>and forms => true | false</pre>
-      <label>Arguments</label>
-      <pre>forms: form[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(and 1 1) => 1</pre>
+<div id="and" class="content function">
+  <div class="function-header">and</div>
+  <h3>Special Expression</h3>
+  <p>Computes logical "and" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
+  <label>Syntax</label>
+  <pre>and forms => true | false</pre>
+  <label>Arguments</label>
+  <pre>forms: form[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(and 1 1) => 1</pre>
 <pre>(and (> 3 2) "string") => "string"</pre>
 <pre>(and (< 3 2) "string") => false</pre>
 <pre>(and true true true true) => true</pre>
 <pre>(and true true 0 true) => 0</pre>
+</div>
 
-    </div>
 
-    <div id="or" class="content function">
-      <h1 class="function-header">or</h1>
-      <h3>Special Expression</h3>
-      <p>Computes logical "or" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
-      <label>Syntax</label>
-      <pre>or forms => true | false</pre>
-      <label>Arguments</label>
-      <pre>forms: form[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(or 1 1) => 1</pre>
+<div id="or" class="content function">
+  <div class="function-header">or</div>
+  <h3>Special Expression</h3>
+  <p>Computes logical "or" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
+  <label>Syntax</label>
+  <pre>or forms => true | false</pre>
+  <label>Arguments</label>
+  <pre>forms: form[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(or 1 1) => 1</pre>
 <pre>(or (> 3 2) "string") => true</pre>
 <pre>(or (< 3 2) "string") => "string"</pre>
 <pre>(or true true true true) => true</pre>
 <pre>(or 1 2 3 4) => 1</pre>
+</div>
 
-    </div>
 
-    <div id="append" class="content function">
-      <h1 class="function-header">append</h1>
-      
-      <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified lists.</p>
-      <label>Syntax</label>
-      <pre>append lists (zero or more) => list</pre>
-      <label>Arguments</label>
-      <pre>lists: list[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(append (list 1 2) (list 3 4)) => [1,2,3,4]</pre>
+<div id="append" class="content function">
+  <div class="function-header">append</div>
+  
+  <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified lists.</p>
+  <label>Syntax</label>
+  <pre>append lists (zero or more) => list</pre>
+  <label>Arguments</label>
+  <pre>lists: list[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(append (list 1 2) (list 3 4)) => [1,2,3,4]</pre>
 <pre>(append (list) (list 3 4)) => [3,4]</pre>
 <pre>(append (list 1 2) (list)) => [1,2]</pre>
 <pre>(append (list 1 2) (list 3 4) (list 5 6)) => [1,2,3,4,5,6]</pre>
 <pre>(append (list)) => []</pre>
+</div>
 
-    </div>
 
-    <div id="aref" class="content function">
-      <h1 class="function-header">aref</h1>
-      
-      <p>Accesses specified element of a string. String index is counted from zero. Accessing out-of-bounds indices returns undefined</p>
-      <label>Syntax</label>
-      <pre>aref string index => string</pre>
-      <label>Arguments</label>
-      <pre>string: string<br />index: integer</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(aref "A string" 0) => "A"</pre>
+<div id="aref" class="content function">
+  <div class="function-header">aref</div>
+  
+  <p>Accesses specified element of a string. String index is counted from zero. Accessing out-of-bounds indices returns undefined</p>
+  <label>Syntax</label>
+  <pre>aref string index => string</pre>
+  <label>Arguments</label>
+  <pre>string: string<br />index: integer</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(aref "A string" 0) => "A"</pre>
 <pre>(aref "A string" 2) => "s"</pre>
 <pre>(aref "A string" 20) => undefined</pre>
 <pre>(aref "A string" -1) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="boolean_question" class="content function">
-      <h1 class="function-header">boolean?</h1>
-      
-      <p>Returns true if the argument is a boolean, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>boolean? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(boolean? true) => true</pre>
+<div id="boolean_question" class="content function">
+  <div class="function-header">boolean?</div>
+  
+  <p>Returns true if the argument is a boolean, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>boolean? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(boolean? true) => true</pre>
 <pre>(boolean? false) => true</pre>
 <pre>(boolean? (list 1 2 3)) => false</pre>
 <pre>(boolean? 0) => false</pre>
 <pre>(boolean? "A string") => false</pre>
 <pre>(boolean?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="null_question" class="content function">
-      <h1 class="function-header">null?</h1>
-      
-      <p>Returns true if the argument is null, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>null? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(null? null) => true</pre>
+<div id="null_question" class="content function">
+  <div class="function-header">null?</div>
+  
+  <p>Returns true if the argument is null, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>null? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(null? null) => true</pre>
 <pre>(null? false) => false</pre>
 <pre>(null? (list 1 2 3)) => false</pre>
 <pre>(null? 0) => false</pre>
 <pre>(null? "A string") => false</pre>
 <pre>(null?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="undefined_question" class="content function">
-      <h1 class="function-header">undefined?</h1>
-      
-      <p>Returns true if the argument is undefined, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>undefined? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(undefined? undefined) => true</pre>
+<div id="undefined_question" class="content function">
+  <div class="function-header">undefined?</div>
+  
+  <p>Returns true if the argument is undefined, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>undefined? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(undefined? undefined) => true</pre>
 <pre>(undefined? false) => false</pre>
 <pre>(undefined? null) => false</pre>
 <pre>(undefined? (list 1 2 3)) => false</pre>
 <pre>(undefined? 0) => false</pre>
 <pre>(undefined? "A string") => false</pre>
 <pre>(undefined?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="number_question" class="content function">
-      <h1 class="function-header">number?</h1>
-      
-      <p>Returns true if the argument is a number, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>number? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(number? 0) => true</pre>
+<div id="number_question" class="content function">
+  <div class="function-header">number?</div>
+  
+  <p>Returns true if the argument is a number, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>number? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(number? 0) => true</pre>
 <pre>(number? 2) => true</pre>
 <pre>(number? -0.12) => true</pre>
 <pre>(number? false) => false</pre>
 <pre>(number? (list 1 2 3)) => false</pre>
 <pre>(number? "A string") => false</pre>
 <pre>(number?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="string_question" class="content function">
-      <h1 class="function-header">string?</h1>
-      
-      <p>Returns true if the argument is a string, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>string? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(string? "") => true</pre>
+<div id="string_question" class="content function">
+  <div class="function-header">string?</div>
+  
+  <p>Returns true if the argument is a string, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>string? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(string? "") => true</pre>
 <pre>(string? "A string") => true</pre>
 <pre>(string? (if true "A string" false)) => true</pre>
 <pre>(string? false) => false</pre>
 <pre>(string? (list 1 2 3)) => false</pre>
 <pre>(string? 100) => false</pre>
 <pre>(string?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="function_question" class="content function">
-      <h1 class="function-header">function?</h1>
-      
-      <p>Returns true if the argument is a function, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>function? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(function? #'+) => true</pre>
+<div id="function_question" class="content function">
+  <div class="function-header">function?</div>
+  
+  <p>Returns true if the argument is a function, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>function? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(function? #'+) => true</pre>
 <pre>(function? (function /)) => true</pre>
 <pre>(function? (lambda (x y) (+ x y))) => true</pre>
 <pre>(function? false) => false</pre>
@@ -681,21 +703,21 @@
 <pre>(function? (list 1 2 3)) => false</pre>
 <pre>(function? 100) => false</pre>
 <pre>(function?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="integer_question" class="content function">
-      <h1 class="function-header">integer?</h1>
-      
-      <p>Returns true if the argument is an integer, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>integer? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(integer? 0) => true</pre>
+<div id="integer_question" class="content function">
+  <div class="function-header">integer?</div>
+  
+  <p>Returns true if the argument is an integer, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>integer? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(integer? 0) => true</pre>
 <pre>(integer? -12) => true</pre>
 <pre>(integer? 42) => true</pre>
 <pre>(integer? 10.1) => false</pre>
@@ -704,42 +726,42 @@
 <pre>(integer? "false") => false</pre>
 <pre>(integer? (list 1 2 3)) => false</pre>
 <pre>(integer?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="list_question" class="content function">
-      <h1 class="function-header">list?</h1>
-      
-      <p>Returns true if the argument is a list, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>list? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(list? (list)) => true</pre>
+<div id="list_question" class="content function">
+  <div class="function-header">list?</div>
+  
+  <p>Returns true if the argument is a list, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>list? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(list? (list)) => true</pre>
 <pre>(list? (list 1 2 3)) => true</pre>
 <pre>(list? (object "a" 10)) => false</pre>
 <pre>(list? 42) => false</pre>
 <pre>(list? 10.1) => false</pre>
 <pre>(list? (lambda (x y) (+ x y))) => false</pre>
 <pre>(list?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="object_question" class="content function">
-      <h1 class="function-header">object?</h1>
-      
-      <p>Returns true if the argument is an object, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>object? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(object? (object "a" 10)) => true</pre>
+<div id="object_question" class="content function">
+  <div class="function-header">object?</div>
+  
+  <p>Returns true if the argument is an object, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>object? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(object? (object "a" 10)) => true</pre>
 <pre>(object? (object)) => true</pre>
 <pre>(object? 42) => false</pre>
 <pre>(object? 10.1) => false</pre>
@@ -748,21 +770,21 @@
 <pre>(object? "false") => false</pre>
 <pre>(object? (list 1 2 3)) => false</pre>
 <pre>(object?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="regexp_question" class="content function">
-      <h1 class="function-header">regexp?</h1>
-      
-      <p>Returns true if the argument is a regexp, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>regexp? value => true | false</pre>
-      <label>Arguments</label>
-      <pre>value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(regexp? (regexp "^start")) => true</pre>
+<div id="regexp_question" class="content function">
+  <div class="function-header">regexp?</div>
+  
+  <p>Returns true if the argument is a regexp, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>regexp? value => true | false</pre>
+  <label>Arguments</label>
+  <pre>value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(regexp? (regexp "^start")) => true</pre>
 <pre>(regexp? -12) => false</pre>
 <pre>(regexp? (object)) => false</pre>
 <pre>(regexp? 10.1) => false</pre>
@@ -771,439 +793,351 @@
 <pre>(regexp? "false") => false</pre>
 <pre>(regexp? (list 1 2 3)) => false</pre>
 <pre>(regexp?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="zero_question" class="content function">
-      <h1 class="function-header">zero?</h1>
-      
-      <p>Returns true if the argument is zero, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>zero? number => true | false</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(zero? 0) => true</pre>
+<div id="zero_question" class="content function">
+  <div class="function-header">zero?</div>
+  
+  <p>Returns true if the argument is zero, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>zero? number => true | false</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(zero? 0) => true</pre>
 <pre>(zero? -0.0) => true</pre>
 <pre>(zero? 1) => false</pre>
 <pre>(zero? 0.1) => false</pre>
 <pre>(zero? "10") => Error!</pre>
 <pre>(zero?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="even_question" class="content function">
-      <h1 class="function-header">even?</h1>
-      
-      <p>Returns true if the argument is even, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>even? number => true | false</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(even? 0) => true</pre>
+<div id="even_question" class="content function">
+  <div class="function-header">even?</div>
+  
+  <p>Returns true if the argument is even, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>even? number => true | false</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(even? 0) => true</pre>
 <pre>(even? -0.0) => true</pre>
 <pre>(even? -1) => false</pre>
 <pre>(even? 2.1) => false</pre>
 <pre>(even? "10") => Error!</pre>
 <pre>(even?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="odd_question" class="content function">
-      <h1 class="function-header">odd?</h1>
-      
-      <p>Returns true if the argument is odd, otherwise it returns false.</p>
-      <label>Syntax</label>
-      <pre>odd? number => true | false</pre>
-      <label>Arguments</label>
-      <pre>number: number</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(odd? 1.0) => true</pre>
+<div id="odd_question" class="content function">
+  <div class="function-header">odd?</div>
+  
+  <p>Returns true if the argument is odd, otherwise it returns false.</p>
+  <label>Syntax</label>
+  <pre>odd? number => true | false</pre>
+  <label>Arguments</label>
+  <pre>number: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(odd? 1.0) => true</pre>
 <pre>(odd? 1.001) => false</pre>
 <pre>(odd? -1) => true</pre>
 <pre>(odd? 2.1) => false</pre>
 <pre>(odd? "10") => Error!</pre>
 <pre>(odd?) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="substring" class="content function">
-      <h1 class="function-header">substring</h1>
-      
-      <p>Extracts characters from indexStart up to but not including indexEnd</p>
-      <label>Syntax</label>
-      <pre>substring string indexStart indexEnd => string</pre>
-      <label>Arguments</label>
-      <pre>string: string<br />indexStart: integer<br />indexEnd: integer</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(substring "A string" 2) => "string"</pre>
+<div id="substring" class="content function">
+  <div class="function-header">substring</div>
+  
+  <p>Extracts characters from indexStart up to but not including indexEnd</p>
+  <label>Syntax</label>
+  <pre>substring string indexStart indexEnd => string</pre>
+  <label>Arguments</label>
+  <pre>string: string<br />indexStart: integer<br />indexEnd: integer</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(substring "A string" 2) => "string"</pre>
 <pre>(substring "A string" 2 5) => "str"</pre>
 <pre>(substring "A string" 2 100) => "string"</pre>
 <pre>(substring "A string" 100) => ""</pre>
 <pre>(substring "A string" 5 2) => Error!</pre>
+</div>
 
-    </div>
 
-    <div id="string-length" class="content function">
-      <h1 class="function-header">string-length</h1>
-      
-      <p>Returns length of string.</p>
-      <label>Syntax</label>
-      <pre>string-length string => number</pre>
-      <label>Arguments</label>
-      <pre>string: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(string-length "A string") => 8</pre>
+<div id="string-length" class="content function">
+  <div class="function-header">string-length</div>
+  
+  <p>Returns length of string.</p>
+  <label>Syntax</label>
+  <pre>string-length string => number</pre>
+  <label>Arguments</label>
+  <pre>string: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(string-length "A string") => 8</pre>
 <pre>(string-length "") => 0</pre>
+</div>
 
-    </div>
 
-    <div id="concat" class="content function">
-      <h1 class="function-header">concat</h1>
-      
-      <p>Returns length of string.</p>
-      <label>Syntax</label>
-      <pre>concat strings (zero or more) => number</pre>
-      <label>Arguments</label>
-      <pre>strings: string[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(concat "A string" ", and another string" " ...and more") => "A string, and another string ...and more"</pre>
+<div id="concat" class="content function">
+  <div class="function-header">concat</div>
+  
+  <p>Returns length of string.</p>
+  <label>Syntax</label>
+  <pre>concat strings (zero or more) => number</pre>
+  <label>Arguments</label>
+  <pre>strings: string[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(concat "A string" ", and another string" " ...and more") => "A string, and another string ...and more"</pre>
 <pre>(concat "Just one string") => "Just one string"</pre>
 <pre>(concat) => ""</pre>
+</div>
 
-    </div>
 
-    <div id="string_gt" class="content function">
-      <h1 class="function-header">string></h1>
-      
-      <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false</p>
-      <label>Syntax</label>
-      <pre>string> string1 string2 => number</pre>
-      <label>Arguments</label>
-      <pre>string1: string<br />string2: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(string> "A string" "Another string") => false</pre>
+<div id="string_gt" class="content function">
+  <div class="function-header">string></div>
+  
+  <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false</p>
+  <label>Syntax</label>
+  <pre>string> string1 string2 => number</pre>
+  <label>Arguments</label>
+  <pre>string1: string<br />string2: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(string> "A string" "Another string") => false</pre>
 <pre>(string> "Albert Mojir" "Albert") => true</pre>
 <pre>(string> "Albert" "Albert") => false</pre>
 <pre>(string> "Albert" "albert") => false</pre>
+</div>
 
-    </div>
 
-    <div id="string_gte" class="content function">
-      <h1 class="function-header">string>=</h1>
-      
-      <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false</p>
-      <label>Syntax</label>
-      <pre>string>= string1 string2 => number</pre>
-      <label>Arguments</label>
-      <pre>string1: string<br />string2: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(string>= "A string" "Another string") => false</pre>
+<div id="string_gte" class="content function">
+  <div class="function-header">string>=</div>
+  
+  <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false</p>
+  <label>Syntax</label>
+  <pre>string>= string1 string2 => number</pre>
+  <label>Arguments</label>
+  <pre>string1: string<br />string2: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(string>= "A string" "Another string") => false</pre>
 <pre>(string>= "Albert Mojir" "Albert") => true</pre>
 <pre>(string>= "Albert" "Albert") => true</pre>
 <pre>(string>= "Albert" "albert") => false</pre>
+</div>
 
-    </div>
 
-    <div id="string_lt" class="content function">
-      <h1 class="function-header">string<</h1>
-      
-      <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false</p>
-      <label>Syntax</label>
-      <pre>string< string1 string2 => number</pre>
-      <label>Arguments</label>
-      <pre>string1: string<br />string2: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(string< "A string" "Another string") => true</pre>
+<div id="string_lt" class="content function">
+  <div class="function-header">string<</div>
+  
+  <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false</p>
+  <label>Syntax</label>
+  <pre>string< string1 string2 => number</pre>
+  <label>Arguments</label>
+  <pre>string1: string<br />string2: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(string< "A string" "Another string") => true</pre>
 <pre>(string< "Albert Mojir" "Albert") => false</pre>
 <pre>(string< "Albert" "Albert") => false</pre>
 <pre>(string< "Albert" "albert") => true</pre>
+</div>
 
-    </div>
 
-    <div id="string_lte" class="content function">
-      <h1 class="function-header">string<=</h1>
-      
-      <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false</p>
-      <label>Syntax</label>
-      <pre>string<= string1 string2 => number</pre>
-      <label>Arguments</label>
-      <pre>string1: string<br />string2: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(string<= "A string" "Another string") => true</pre>
+<div id="string_lte" class="content function">
+  <div class="function-header">string<=</div>
+  
+  <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false</p>
+  <label>Syntax</label>
+  <pre>string<= string1 string2 => number</pre>
+  <label>Arguments</label>
+  <pre>string1: string<br />string2: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(string<= "A string" "Another string") => true</pre>
 <pre>(string<= "Albert Mojir" "Albert") => false</pre>
 <pre>(string<= "Albert" "Albert") => true</pre>
 <pre>(string<= "Albert" "albert") => true</pre>
+</div>
 
-    </div>
 
-    <div id="write" class="content function">
-      <h1 class="function-header">write</h1>
-      
-      <p>It console.log the value arguments and then returns the last argument. If called with no arguments undefined is returned</p>
-      <label>Syntax</label>
-      <pre>write values => value</pre>
-      <label>Arguments</label>
-      <pre>values: any[]</pre>
-      <label>Side effects</label>
-      <pre>Does a console.log</pre>
-      <label>Examples</label>
-      <pre>(write "A string") => "A string"</pre>
+<div id="write" class="content function">
+  <div class="function-header">write</div>
+  
+  <p>It console.log the value arguments and then returns the last argument. If called with no arguments undefined is returned</p>
+  <label>Syntax</label>
+  <pre>write values => value</pre>
+  <label>Arguments</label>
+  <pre>values: any[]</pre>
+  <label>Side effects</label>
+  <pre>Does a console.log</pre>
+  <label>Examples</label>
+  <pre>(write "A string") => "A string"</pre>
 <pre>(write 100 "items") => "items"</pre>
 <pre>(write (object "a" 10)) => {"a":10}</pre>
 <pre>(write (list "a" "b" "c")) => ["a","b","c"]</pre>
 <pre>(write (regexp "^start")) => {}</pre>
 <pre>(write null undefined true false) => false</pre>
+</div>
 
-    </div>
 
-    <div id="has-attr" class="content function">
-      <h1 class="function-header">has-attr</h1>
-      
-      <p>Returns true if object has an attribute named attr, otherwise returns false</p>
-      <label>Syntax</label>
-      <pre>has-attr object attr => true | false</pre>
-      <label>Arguments</label>
-      <pre>object: object<br />attr: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(has-attr (object "a" 10 "b" 20) "a") => true</pre>
+<div id="has-attr" class="content function">
+  <div class="function-header">has-attr</div>
+  
+  <p>Returns true if object has an attribute named attr, otherwise returns false</p>
+  <label>Syntax</label>
+  <pre>has-attr object attr => true | false</pre>
+  <label>Arguments</label>
+  <pre>object: object<br />attr: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(has-attr (object "a" 10 "b" 20) "a") => true</pre>
 <pre>(has-attr (object "a" 10 "b" undefined) "b") => true</pre>
 <pre>(has-attr (object "a" 10 "b" undefined) "c") => false</pre>
+</div>
 
-    </div>
 
-    <div id="get-attr" class="content function">
-      <h1 class="function-header">get-attr</h1>
-      
-      <p>Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr</p>
-      <label>Syntax</label>
-      <pre>get-attr object attr => value</pre>
-      <label>Arguments</label>
-      <pre>object: object<br />attr: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(get-attr (object "a" 10 "b" 20) "a") => 10</pre>
+<div id="get-attr" class="content function">
+  <div class="function-header">get-attr</div>
+  
+  <p>Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr</p>
+  <label>Syntax</label>
+  <pre>get-attr object attr => value</pre>
+  <label>Arguments</label>
+  <pre>object: object<br />attr: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(get-attr (object "a" 10 "b" 20) "a") => 10</pre>
 <pre>(get-attr (object "a" 10 "b" undefined) "b") => undefined</pre>
 <pre>(get-attr (object "a" 10 "b" undefined) "c") => undefined</pre>
+</div>
 
-    </div>
 
-    <div id="del-attr" class="content function">
-      <h1 class="function-header">del-attr</h1>
-      
-      <p>Deletes the attribute attr from obj</p>
-      <label>Syntax</label>
-      <pre>del-attr object attr => value</pre>
-      <label>Arguments</label>
-      <pre>object: object<br />attr: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(del-attr (object "x" 10) "x") => 10</pre>
+<div id="del-attr" class="content function">
+  <div class="function-header">del-attr</div>
+  
+  <p>Deletes the attribute attr from obj</p>
+  <label>Syntax</label>
+  <pre>del-attr object attr => value</pre>
+  <label>Arguments</label>
+  <pre>object: object<br />attr: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(del-attr (object "x" 10) "x") => 10</pre>
 <pre>(del-attr (object "x" 10) "y") => undefined</pre>
 <pre>(setq o (object "a" 5)) (del-attr o "a") o => {}</pre>
 <pre>(setq o (object "a" 5)) (del-attr o "b") o => {"a":5}</pre>
+</div>
 
-    </div>
 
-    <div id="set-attr" class="content function">
-      <h1 class="function-header">set-attr</h1>
-      
-      <p>Sets an attribute on an object. Returns value.</p>
-      <label>Syntax</label>
-      <pre>set-attr object attr => value</pre>
-      <label>Arguments</label>
-      <pre>object: object<br />attr: string</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(set-attr (object "x" 10) "a" 10) => 10</pre>
+<div id="set-attr" class="content function">
+  <div class="function-header">set-attr</div>
+  
+  <p>Sets an attribute on an object. Returns value.</p>
+  <label>Syntax</label>
+  <pre>set-attr object attr => value</pre>
+  <label>Arguments</label>
+  <pre>object: object<br />attr: string</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(set-attr (object "x" 10) "a" 10) => 10</pre>
 <pre>(setq o (object)) (set-attr o "a" 10) o => {"a":10}</pre>
 <pre>(setq o (object "a" 5)) (set-attr o "a" 10) o => {"a":10}</pre>
+</div>
 
-    </div>
 
-    <div id="list" class="content function">
-      <h1 class="function-header">list</h1>
-      
-      <p>Makes new list from arguments.</p>
-      <label>Syntax</label>
-      <pre>list values => list</pre>
-      <label>Arguments</label>
-      <pre>values: any[]</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(list 1 2 3) => [1,2,3]</pre>
+<div id="list" class="content function">
+  <div class="function-header">list</div>
+  
+  <p>Makes new list from arguments.</p>
+  <label>Syntax</label>
+  <pre>list values => list</pre>
+  <label>Arguments</label>
+  <pre>values: any[]</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(list 1 2 3) => [1,2,3]</pre>
 <pre>(list (list null undefined false true)) => [[null,undefined,false,true]]</pre>
 <pre>(list) => []</pre>
+</div>
 
-    </div>
 
-    <div id="listf" class="content function">
-      <h1 class="function-header">listf</h1>
-      
-      <p>Creates a list with "length" number of elements and sets all elements to "value"</p>
-      <label>Syntax</label>
-      <pre>listf length value => list</pre>
-      <label>Arguments</label>
-      <pre>length: number<br />value: any</pre>
-      <label>Side effects</label>
-      <pre>No side effects</pre>
-      <label>Examples</label>
-      <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
+<div id="listf" class="content function">
+  <div class="function-header">listf</div>
+  
+  <p>Creates a list with "length" number of elements and sets all elements to "value"</p>
+  <label>Syntax</label>
+  <pre>listf length value => list</pre>
+  <label>Arguments</label>
+  <pre>length: number<br />value: any</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
 <pre>(listf 0 100) => Error!</pre>
+</div>
 
     </div>
-
-        <div id="playground">
-    <div class="header">
-      Playground <span class="play" onclick="play()">&#9654;</span>
+  </div>
+  
+<div id="playground">
+  <div class="header"><span class="icon-button" onclick="play()">▶ Playground</span></div>
+  <div class="row">
+    <div class="column" id="context">
+      <div class="textarea-header">Context (JSON)</div>
+      <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
-    <div class="row">
-      <div class="column-half" id="lisp">
-        <h4>Lisp</h4>
-        <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)
+    <div class="column" id="lisp">
+      <div class="textarea-header">Lisp</div>
+      <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)
 
 (write "y" y)
 
 (write (* x y))</textarea>
-      </div>
-      <div class="column-half" id="context">
-        <h4>Context (JSON)</h4>
-        <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
-      </div>
     </div>
-    <div class="row">
-      <div class="column-half" id="output">
-        <h4>Result</h4>
-        <textarea id="output-textarea" readonly spellcheck=false rows="6" id="context"></textarea>
+    <div class="column" id="output">
+      <div class="row">
+        <div class="column textarea-header">Result</div>
+        <div class="column small right"><span id="clear-output" class="icon-button" onclick="clearOutput()">✖</span></div>
       </div>
-      <div class="column-half" id="log">
-        <h4>Log</h4>
-        <textarea id="log-textarea" readonly spellcheck=false rows="6" id="context"></textarea>
-      </div>
+      <textarea id="output-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
     </div>
-    <a id="clear" onclick="clearPlayground()">Clear</a>
+    <div class="column" id="log">
+      <div class="row">
+        <div class="column textarea-header">Console log</div>
+        <div class="column small right"><span id="clear-log" class="icon-button" onclick="clearLog()">✖</span></div>
+      </div>
+      <textarea id="log-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
+    </div>
+  </div>
+</div>
 
-  </div>
-    </div>
-  </div>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
   <script src="lispish.iife.js"></script>
-  <script>
-    window.addEventListener('popstate', () => {
-      var id = location.hash.substring(1) || 'index'
-      showPage(id, 'none')
-    })
-    var id = location.hash.substring(1) || 'index'
-    showPage(id, 'replace')
-
-    var activeId='index';
-    function play() {
-      var code = document.getElementById("lisp-textarea").value
-      var contextString = document.getElementById("context-textarea").value
-      var output = document.getElementById("output-textarea")
-      var context
-      try {
-        context = JSON.parse(contextString)
-      } catch (e) {
-        output.innerHTML = "Error: Could not parse context"
-        output.classList.add('error')
-        return
-      }
-      var result
-      var oldLog = console.log
-      console.log = function () {
-        var args = Array.from(arguments)
-        var logRow = args.map(arg => '' + arg).join(' ')
-        var textarea = document.getElementById('log-textarea')
-        var oldInnerHTML = textarea.innerHTML
-        textarea.innerHTML = oldInnerHTML ? (oldInnerHTML + '\n' + logRow) : logRow
-        textarea.scrollTop = textarea.scrollHeight;
-      }
-      try {
-        result = lispish.lispish(code, context)
-      } catch (error) {
-        output.innerHTML = error
-        output.classList.add('error')
-        return
-      } finally {
-        console.log = oldLog
-      }
-      output.classList.remove('error')
-      output.innerHTML = stringifyValue(result)
-    }
-    function showPage(id, historyEvent) {
-      var els = document.getElementsByClassName('active-content')
-      while (els[0]) {
-        els[0].classList.remove('active-content')
-      }
-      els = document.getElementsByClassName('active-sidebar-entry')
-      while (els[0]) {
-        els[0].classList.remove('active-sidebar-entry')
-      }
-
-      document.getElementById('playground').classList.add('active')
-
-      if (id === 'index') {
-        document.getElementById('home-link').classList.remove('active')
-        document.getElementById('index').classList.add('active-content')
-      } else {
-        var docPage = document.getElementById(id)
-        if (docPage) {
-          docPage.classList.add('active-content')
-          document.getElementById(id + '_link').classList.add('active-sidebar-entry')
-        } else {
-          showPage('index', 'replace')
-          return
-        }
-        document.getElementById('home-link').classList.add('active')
-      }
-      activeId = id
-      if (historyEvent === 'none') {
-        return
-      } else if (historyEvent === 'replace') {
-        history.replaceState(null, '', '#' + id)
-      } else {
-        history.pushState(null, '', '#' + id)
-      }
-    }
-    function stringifyValue(value) {
-      return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
-        /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
-        'undefined',
-      )
-    }
-    function clearPlayground() {
-      document.getElementById('log-textarea').innerHTML = ''
-      document.getElementById('output-textarea').innerHTML = ''
-    }
-  </script>
-
+  <script src='scripts.js'></script>
 </body>
 </html>
