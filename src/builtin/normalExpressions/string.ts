@@ -88,4 +88,32 @@ export const string: BuiltinNormalExpressions = {
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthTwo(params),
   },
+
+  'string-reverse': {
+    evaluate: ([str]: unknown[]): string => {
+      assertString(str)
+      return str.split('').reverse().join('')
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'string-to-number': {
+    evaluate: ([str]: unknown[]): number => {
+      assertString(str)
+      const number = parseFloat(str)
+      if (Number.isNaN(number)) {
+        throw Error(`Could not convert '${str}' to a number`)
+      }
+      return number
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'number-to-string': {
+    evaluate: ([nbr]: unknown[]): string => {
+      assertNumber(nbr)
+      return `${nbr}`
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
 }

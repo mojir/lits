@@ -159,4 +159,33 @@ describe('string functions', () => {
       expect(() => lispish('(string<= (object) "a")')).toThrow()
     })
   })
+
+  describe('string-reverse', () => {
+    test('samples', () => {
+      expect(lispish('(string-reverse "albert")')).toBe('trebla')
+      expect(lispish('(string-reverse "A 1")')).toBe('1 A')
+      expect(lispish('(string-reverse "")')).toBe('')
+      expect(() => lispish('(string-reverse)')).toThrow()
+      expect(() => lispish('(string-reverse "word1" "word2")')).toThrow()
+    })
+  })
+
+  describe('string-to-number', () => {
+    test('samples', () => {
+      expect(lispish('(string-to-number "123.25")')).toBe(123.25)
+      expect(lispish('(string-to-number "-0.125")')).toBe(-0.125)
+      expect(() => lispish('(string-to-number)')).toThrow()
+      expect(() => lispish('(string-to-number "987" "65")')).toThrow()
+      expect(() => lispish('(string-to-number "non parsable number")')).toThrow()
+    })
+  })
+
+  describe('number-to-string', () => {
+    test('samples', () => {
+      expect(lispish('(number-to-string 10.25)')).toBe('10.25')
+      expect(lispish('(number-to-string -11)')).toBe('-11')
+      expect(() => lispish('(number-to-string)')).toThrow()
+      expect(() => lispish('(number-to-string 10 20)')).toThrow()
+    })
+  })
 })

@@ -1439,6 +1439,133 @@ const functionReference = {
     specialExpression: false,
     sideEffects: [],
   },
+  splice: {
+    name: 'splice',
+    category: 'List',
+    linkName: 'splice',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'start',
+        type: 'number',
+        description: 'optional',
+      },
+      {
+        name: 'deleteCount',
+        type: 'number',
+        description: 'optional',
+      },
+      {
+        name: '...values',
+        type: 'any[]',
+        description: 'optional',
+      },
+    ],
+    shortDescription:
+      'Changes the contents of a list by removing or replacing existing elements and/or adding new elements.',
+    longDescription:
+      'Changes the contents of a list by removing or replacing existing elements and/or adding new elements. Returns a list of the removed values.',
+    examples: [
+      '(splice (list 1 2 3 4 5) 2 2)',
+      '(splice (list 1 2 3 4 5) 1 4 "3" "4")',
+      '(setq l (list 1 2 3 4 5)) (splice l 2 2 "3" "4") l',
+    ],
+    specialExpression: false,
+    sideEffects: ['Mutating list'],
+  },
+  reduce: {
+    name: 'reduce',
+    category: 'List',
+    linkName: 'reduce',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'reducer',
+        type: 'function',
+      },
+      {
+        name: 'startValue',
+        type: 'any',
+      },
+    ],
+    shortDescription:
+      'Runs `reducer` function on each element of the `list`, passing in the return value from the calculation on the preceding element.',
+    longDescription:
+      'Runs `reducer` function on each element of the `list`, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.',
+    examples: [
+      `(reduce #'+ (list 1 2 3) 0)`,
+      `(reduce #'+ (list) 0)`,
+      `(reduce (lambda (result value) (+ result (if (even? value) value 0))) (list 1 2 3 4 5 6 7 8 9) 0)`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'reduce-right': {
+    name: 'reduce-right',
+    category: 'List',
+    linkName: 'reduce-right',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'reducer',
+        type: 'function',
+      },
+      {
+        name: 'startValue',
+        type: 'any',
+      },
+    ],
+    shortDescription:
+      'Runs `reducer` function on each element of the `list` (starting from the last item), passing in the return value from the calculation on the preceding element.',
+    longDescription:
+      'Runs `reducer` function on each element of the `list` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.',
+    examples: [`(reduce-right #'concat (list "A" "B" "C") "")`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  map: {
+    name: 'map',
+    category: 'List',
+    linkName: 'map',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'mapper',
+        type: 'function',
+      },
+    ],
+    shortDescription:
+      'Creates a new list populated with the results of calling `mapper` on every element in the calling list.',
+    longDescription:
+      'Creates a new list populated with the results of calling `mapper` on every element in the calling list.',
+    examples: [`(map #'string-reverse (list "Albert" "Mojir"))`, `(map #'string-reverse (list))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
 }
 
 const categoryOrder = [

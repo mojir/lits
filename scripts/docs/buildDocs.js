@@ -175,6 +175,13 @@ function getDocumentationContent(docObj) {
 `
 }
 
+function stringifyValue(value) {
+  return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
+    /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
+    'undefined',
+  )
+}
+
 function getSideBar() {
   const categoryCollections = Object.values(functionReference).reduce((result, obj) => {
     result[obj.category] = result[obj.category] || []
