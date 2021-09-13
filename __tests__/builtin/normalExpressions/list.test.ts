@@ -350,8 +350,8 @@ describe('list functions', () => {
     test('samples', () => {
       expect(lispish('(selt (list 1 2 3) 0 "1")')).toEqual(['1', 2, 3])
       expect(lispish('(selt (list 1 2 3) 1 "2")')).toEqual([1, '2', 3])
-      expect(lispish('(selt (list 1 2 3) 3 "4")')).toEqual([1, 2, 3, '4'])
 
+      expect(() => lispish('(selt (list 1 2 3) 3 "4")')).toThrow()
       expect(() => lispish('(selt (object) 0 "2")')).toThrow()
       expect(() => lispish('(selt null 0 "2")')).toThrow()
       expect(() => lispish('(selt undefined 0 "2")')).toThrow()
@@ -377,12 +377,11 @@ describe('list functions', () => {
 
   describe('push', () => {
     test('samples', () => {
-      expect(lispish('(push (list 1 2 3) 0)')).toBe(4)
-      expect(lispish('(push (list 1 2 3) 1 "2")')).toBe(5)
-      expect(lispish('(push (list 1 2 3))')).toBe(3)
+      expect(lispish('(push (list 1 2 3) 0)')).toEqual([1, 2, 3, 0])
+      expect(lispish('(push (list 1 2 3) 1 "2")')).toEqual([1, 2, 3, 1, '2'])
       expect(lispish('(setq l (list 1 2 3)) (push l 1 "2") l')).toEqual([1, 2, 3, 1, '2'])
-      expect(lispish('(setq l (list 1 2 3)) (push l) l')).toEqual([1, 2, 3])
 
+      expect(() => lispish('(push (list 1 2 3))')).toThrow()
       expect(() => lispish('(push (object) 0 "2")')).toThrow()
       expect(() => lispish('(push null 0 "2")')).toThrow()
       expect(() => lispish('(push undefined 0 "2")')).toThrow()

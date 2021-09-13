@@ -114,7 +114,7 @@ const functionReference = {
     arguments: [
       {
         name: 'values',
-        type: 'any[]',
+        type: 'list',
       },
     ],
     shortDescription: 'Result is `true` if no two `values` are equal to each other.',
@@ -134,7 +134,7 @@ const functionReference = {
     arguments: [
       {
         name: 'values',
-        type: 'any[]',
+        type: 'list',
       },
     ],
     shortDescription: 'Compares `values` according to "equal" predicate.',
@@ -1039,7 +1039,7 @@ const functionReference = {
     arguments: [
       {
         name: 'values',
-        type: 'any[]',
+        type: 'list',
       },
     ],
     shortDescription: 'It console.log the `values` and then returns the last element of the `values` list.',
@@ -1181,7 +1181,7 @@ const functionReference = {
     arguments: [
       {
         name: 'values',
-        type: 'any[]',
+        type: 'list',
       },
     ],
     shortDescription: 'Makes new list from `values`.',
@@ -1285,6 +1285,81 @@ const functionReference = {
     examples: ['(elt (list 1 2 3) 1)', '(elt (list 1 2 3) 3)'],
     specialExpression: false,
     sideEffects: [],
+  },
+  selt: {
+    name: 'selt',
+    category: 'List',
+    linkName: 'selt',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'index',
+        type: 'non negative integer',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Sets `value` on specified element of `list`.',
+    longDescription:
+      'Sets `value` on specified element of `list`. The `index` is counted from `0`. Accessing out-of-bounds indices returns throws `Error`.',
+    examples: ['(selt (list 1 2 3) 1 "two")', '(selt (list 1 2 3) 3 "Four")'],
+    specialExpression: false,
+    sideEffects: ['Mutates list'],
+  },
+  push: {
+    name: 'push',
+    category: 'List',
+    linkName: 'push',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'values',
+        type: 'list',
+        description: 'one or more',
+      },
+    ],
+    shortDescription: 'Pushes `values` to the end of `list`.',
+    longDescription: 'Pushes `values` to the end of `list`.',
+    examples: ['(push (list 1 2 3) 4)', '(push (list 1 2 3) 4 5 6)', '(setq l (list 1 2 3)) (push l 4) l'],
+    specialExpression: false,
+    sideEffects: ['Mutates list'],
+  },
+  pop: {
+    name: 'pop',
+    category: 'List',
+    linkName: 'pop',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Removes and returns last value of `list`.',
+    longDescription: 'Removes and returns last value of `list`. If `list` is empty, `undefined` is returned.',
+    examples: ['(pop (list 1 2 3))', '(pop (list))'],
+    specialExpression: false,
+    sideEffects: ['Mutates list'],
   },
 }
 

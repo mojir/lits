@@ -129,14 +129,22 @@ function getDocumentationContent(docObj) {
   <div class="indent">
     <pre>${getSyntax(name, args, returns)}</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent">${
-    args.length === 0 ? 'No arguments' : args.map(arg => `<pre>${arg.name}: ${arg.type}</pre>`).join('\n')
-  }</div>
-  <label>Side effects</label>
-  <div class="indent">${
-    sideEffects.length === 0 ? 'No side effects' : sideEffects.map(effect => `<pre>${effect}</pre>`).join('\n')
-  }</div>
+
+  ${
+    args.length === 0
+      ? '<label>No arguments</label>'
+      : `<label>Arguments</label><div class="indent">${args
+          .map(arg => `<pre>${arg.name}: ${arg.type}</pre>`)
+          .join('\n')}</div>`
+  }
+
+  ${
+    sideEffects.length === 0
+      ? '<label>No side effects</label>'
+      : `<label>Side effects</label><div class="indent">${sideEffects
+          .map(effect => `<pre>${effect}</pre>`)
+          .join('\n')}</div>`
+  }
   <label>Examples</label>
   <div class="indent">
     ${examples

@@ -11,7 +11,7 @@ import {
   assertNegativeNumber,
   assertNonNegativeNumber,
   assertNumber,
-  assertNumberLte,
+  assertNumberLt,
   assertNumberNotZero,
   assertPositiveNumber,
 } from '../../utils'
@@ -111,7 +111,7 @@ export const list: BuiltinNormalExpressions = {
     evaluate: ([arr, index, value]: unknown[]): unknown => {
       assertArray(arr)
       assertNonNegativeNumber(index)
-      assertNumberLte(index, arr.length) // Can set index to arr.length (same as push)
+      assertNumberLt(index, arr.length)
       arr[index] = value
       return arr
     },
@@ -119,11 +119,12 @@ export const list: BuiltinNormalExpressions = {
   },
 
   push: {
-    evaluate: ([arr, ...values]: unknown[]): number => {
+    evaluate: ([arr, ...values]: unknown[]): unknown[] => {
       assertArray(arr)
-      return arr.push(...values)
+      arr.push(...values)
+      return arr
     },
-    validate: ({ params }) => assertLengthOneOrMore(params),
+    validate: ({ params }) => assertLengthTwoOrMore(params),
   },
 
   pop: {

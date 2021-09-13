@@ -88,6 +88,9 @@
 <li id="range_link" onclick="showPage('range')">range</li>
 <li id="length_link" onclick="showPage('length')">length</li>
 <li id="elt_link" onclick="showPage('elt')">elt</li>
+<li id="selt_link" onclick="showPage('selt')">selt</li>
+<li id="push_link" onclick="showPage('push')">push</li>
+<li id="pop_link" onclick="showPage('pop')">pop</li>
         </ul>
 
         <label>Object</label>
@@ -139,10 +142,10 @@
   <div class="indent">
     <pre>+ numbers(zero or more) => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>numbers: number[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>numbers: number[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(+) => 0</pre>
@@ -162,10 +165,10 @@
   <div class="indent">
     <pre>- numbers(zero or more) => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>numbers: number[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>numbers: number[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(-) => 0</pre>
@@ -184,10 +187,10 @@
   <div class="indent">
     <pre>* numbers(zero or more) => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>numbers: number[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>numbers: number[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(*) => 1</pre>
@@ -206,10 +209,10 @@
   <div class="indent">
     <pre>/ numbers(zero or more) => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>numbers: number[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>numbers: number[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(/) => 1</pre>
@@ -228,11 +231,11 @@
   <div class="indent">
     <pre>% number divisor => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre>
 <pre>divisor: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(% 5 3) => 2</pre>
@@ -252,10 +255,10 @@
   <div class="indent">
     <pre>!= values => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>values: any[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(!= 3) => true</pre>
@@ -276,10 +279,10 @@
   <div class="indent">
     <pre>= values => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>values: any[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(= 1 1) => true</pre>
@@ -299,10 +302,10 @@
   <div class="indent">
     <pre>not value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(not 3) => false</pre>
@@ -325,10 +328,10 @@
   <div class="indent">
     <pre>1+ number => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(1+ 0) => 1</pre>
@@ -346,10 +349,10 @@
   <div class="indent">
     <pre>1- number => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(1- 0) => -1</pre>
@@ -367,10 +370,10 @@
   <div class="indent">
     <pre>sqrt number => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(sqrt 0) => 0</pre>
@@ -389,11 +392,11 @@
   <div class="indent">
     <pre>expt base-number power-number => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>base-number: number</pre>
+
+  <label>Arguments</label><div class="indent"><pre>base-number: number</pre>
 <pre>power-number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(expt 2 3) => 8</pre>
@@ -414,10 +417,10 @@
   <div class="indent">
     <pre>round number => integer</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(round 2) => 2</pre>
@@ -438,10 +441,10 @@
   <div class="indent">
     <pre>floor number => integer</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(floor 2) => 2</pre>
@@ -462,10 +465,10 @@
   <div class="indent">
     <pre>ceil number => integer</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(ceil 2) => 2</pre>
@@ -486,15 +489,15 @@
   <div class="indent">
     <pre>random number => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: positive number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: positive number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(random 1) => 0.5156728198658</pre>
-<pre>(random 0.01) => 0.009408539222417703</pre>
-<pre>(random 2.5) => 1.8008124231704943</pre>
+    <pre>(random 1) => 0.28555252698920697</pre>
+<pre>(random 0.01) => 0.002359107578190536</pre>
+<pre>(random 2.5) => 0.8681461745824709</pre>
 <pre>(random 0) => Error!</pre>
 <pre>(random -1) => Error!</pre>
   </div>
@@ -509,10 +512,10 @@
   <div class="indent">
     <pre>< number => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(< 0 1) => true</pre>
@@ -532,10 +535,10 @@
   <div class="indent">
     <pre>> number => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(> 1 0) => true</pre>
@@ -555,10 +558,10 @@
   <div class="indent">
     <pre><= number => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(<= 0 1) => true</pre>
@@ -578,10 +581,10 @@
   <div class="indent">
     <pre>>= number => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(>= 1 0) => true</pre>
@@ -601,10 +604,10 @@
   <div class="indent">
     <pre>and forms => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>forms: form[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>forms: form[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(and 1 1) => 1</pre>
@@ -624,10 +627,10 @@
   <div class="indent">
     <pre>or forms => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>forms: form[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>forms: form[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(or 1 1) => 1</pre>
@@ -647,10 +650,10 @@
   <div class="indent">
     <pre>append lists(zero or more) => list</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>lists: list[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>lists: list[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(append (list 1 2) (list 3 4)) => [1,2,3,4]</pre>
@@ -670,11 +673,11 @@
   <div class="indent">
     <pre>aref string index => string</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>string: string</pre>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre>
 <pre>index: integer</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(aref "A string" 0) => "A"</pre>
@@ -693,10 +696,10 @@
   <div class="indent">
     <pre>boolean? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(boolean? true) => true</pre>
@@ -717,10 +720,10 @@
   <div class="indent">
     <pre>null? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(null? null) => true</pre>
@@ -741,10 +744,10 @@
   <div class="indent">
     <pre>undefined? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(undefined? undefined) => true</pre>
@@ -766,10 +769,10 @@
   <div class="indent">
     <pre>number? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(number? 0) => true</pre>
@@ -791,10 +794,10 @@
   <div class="indent">
     <pre>string? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(string? "") => true</pre>
@@ -816,10 +819,10 @@
   <div class="indent">
     <pre>function? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(function? #'+) => true</pre>
@@ -842,10 +845,10 @@
   <div class="indent">
     <pre>integer? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(integer? 0) => true</pre>
@@ -869,10 +872,10 @@
   <div class="indent">
     <pre>list? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(list? (list)) => true</pre>
@@ -894,10 +897,10 @@
   <div class="indent">
     <pre>object? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(object? (object "a" 10)) => true</pre>
@@ -921,10 +924,10 @@
   <div class="indent">
     <pre>regexp? value => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(regexp? (regexp "^start")) => true</pre>
@@ -948,10 +951,10 @@
   <div class="indent">
     <pre>zero? number => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(zero? 0) => true</pre>
@@ -972,10 +975,10 @@
   <div class="indent">
     <pre>even? number => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(even? 0) => true</pre>
@@ -996,10 +999,10 @@
   <div class="indent">
     <pre>odd? number => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>number: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(odd? 1.0) => true</pre>
@@ -1020,12 +1023,12 @@
   <div class="indent">
     <pre>substring string indexStart indexEnd(optional) => string</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>string: string</pre>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre>
 <pre>indexStart: integer</pre>
 <pre>indexEnd: integer</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(substring "A string" 2) => "string"</pre>
@@ -1045,10 +1048,10 @@
   <div class="indent">
     <pre>string-length string => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>string: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(string-length "A string") => 8</pre>
@@ -1065,10 +1068,10 @@
   <div class="indent">
     <pre>concat strings(zero or more) => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>strings: string[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>strings: string[]</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(concat "A string" ", and another string" " ...and more") => "A string, and another string ...and more"</pre>
@@ -1086,11 +1089,11 @@
   <div class="indent">
     <pre>string> string1 string2 => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>string1: string</pre>
+
+  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
 <pre>string2: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(string> "A string" "Another string") => false</pre>
@@ -1109,11 +1112,11 @@
   <div class="indent">
     <pre>string>= string1 string2 => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>string1: string</pre>
+
+  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
 <pre>string2: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(string>= "A string" "Another string") => false</pre>
@@ -1132,11 +1135,11 @@
   <div class="indent">
     <pre>string< string1 string2 => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>string1: string</pre>
+
+  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
 <pre>string2: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(string< "A string" "Another string") => true</pre>
@@ -1155,11 +1158,11 @@
   <div class="indent">
     <pre>string<= string1 string2 => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>string1: string</pre>
+
+  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
 <pre>string2: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(string<= "A string" "Another string") => true</pre>
@@ -1178,10 +1181,10 @@
   <div class="indent">
     <pre>write values => value</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>values: any[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent"><pre>Does a console.log</pre></div>
+
+  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+
+  <label>Side effects</label><div class="indent"><pre>Does a console.log</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre>(write "A string") => "A string"</pre>
@@ -1202,11 +1205,11 @@
   <div class="indent">
     <pre>has-attr object attr => boolean</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>object: object</pre>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre>
 <pre>attr: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(has-attr (object "a" 10 "b" 20) "a") => true</pre>
@@ -1224,11 +1227,11 @@
   <div class="indent">
     <pre>get-attr object attr => value</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>object: object</pre>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre>
 <pre>attr: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(get-attr (object "a" 10 "b" 20) "a") => 10</pre>
@@ -1246,11 +1249,11 @@
   <div class="indent">
     <pre>del-attr object attr => value</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>object: object</pre>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre>
 <pre>attr: string</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(del-attr (object "x" 10) "x") => 10</pre>
@@ -1269,12 +1272,12 @@
   <div class="indent">
     <pre>set-attr object attr value => value</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>object: object</pre>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre>
 <pre>attr: string</pre>
 <pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(set-attr (object "x" 10) "a" 10) => 10</pre>
@@ -1292,10 +1295,10 @@
   <div class="indent">
     <pre>list values => list</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>values: any[]</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(list 1 2 3) => [1,2,3]</pre>
@@ -1313,11 +1316,11 @@
   <div class="indent">
     <pre>listf length value => list</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>length: number</pre>
+
+  <label>Arguments</label><div class="indent"><pre>length: number</pre>
 <pre>value: any</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
@@ -1334,12 +1337,12 @@
   <div class="indent">
     <pre>range a length(optional) length(optional) => list</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>a: number</pre>
+
+  <label>Arguments</label><div class="indent"><pre>a: number</pre>
 <pre>length: number</pre>
 <pre>length: number</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(range 4) => [0,1,2,3]</pre>
@@ -1358,10 +1361,10 @@
   <div class="indent">
     <pre>length list => number</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>list: list</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(length (list 1 2 3) => Error!</pre>
@@ -1378,15 +1381,80 @@
   <div class="indent">
     <pre>elt list index => any</pre>
   </div>
-  <label>Arguments</label>
-  <div class="indent"><pre>list: list</pre>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
 <pre>index: non negative integer</pre></div>
-  <label>Side effects</label>
-  <div class="indent">No side effects</div>
+
+  <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre>(elt (list 1 2 3) 1) => 2</pre>
 <pre>(elt (list 1 2 3) 3) => undefined</pre>
+  </div>
+</div>
+
+
+<div id="selt" class="content function">
+  <div class="function-header">selt</div>
+  
+  <p>Sets <span class="pre">value</span> on specified element of <span class="pre">list</span>. The <span class="pre">index</span> is counted from <span class="pre">0</span>. Accessing out-of-bounds indices returns throws <span class="pre">Error</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>selt list index value => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>index: non negative integer</pre>
+<pre>value: any</pre></div>
+
+  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Examples</label>
+  <div class="indent">
+    <pre>(selt (list 1 2 3) 1 "two") => [1,"two",3]</pre>
+<pre>(selt (list 1 2 3) 3 "Four") => Error!</pre>
+  </div>
+</div>
+
+
+<div id="push" class="content function">
+  <div class="function-header">push</div>
+  
+  <p>Pushes <span class="pre">values</span> to the end of <span class="pre">list</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>push list values(one or more) => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>values: list</pre></div>
+
+  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Examples</label>
+  <div class="indent">
+    <pre>(push (list 1 2 3) 4) => [1,2,3,4]</pre>
+<pre>(push (list 1 2 3) 4 5 6) => [1,2,3,4,5,6]</pre>
+<pre>(setq l (list 1 2 3)) (push l 4) l => [1,2,3,4]</pre>
+  </div>
+</div>
+
+
+<div id="pop" class="content function">
+  <div class="function-header">pop</div>
+  
+  <p>Removes and returns last value of <span class="pre">list</span>. If <span class="pre">list</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>pop list value => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>value: any</pre></div>
+
+  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Examples</label>
+  <div class="indent">
+    <pre>(pop (list 1 2 3)) => 3</pre>
+<pre>(pop (list)) => undefined</pre>
   </div>
 </div>
 
