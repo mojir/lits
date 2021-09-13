@@ -239,6 +239,14 @@ h4, h2, h1 {
   font-size: 1.8rem;
 }
 
+.content.function pre {
+  margin: 0.5rem 0;
+}
+
+.content.function .indent {
+  margin-left: 1rem;
+}
+
 #clear {
   font-size: 0.8rem;
   text-decoration: underline;

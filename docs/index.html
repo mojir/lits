@@ -136,17 +136,21 @@
   
   <p>Computes sum of <span class="pre">numbers</span>.</p>
   <label>Syntax</label>
-  <pre>+ numbers(zero or more) => number</pre>
+  <div class="indent">
+    <pre>+ numbers(zero or more) => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>numbers: number[]</pre>
+  <div class="indent"><pre>numbers: number[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(+) => 0</pre>
+  <div class="indent">
+    <pre>(+) => 0</pre>
 <pre>(+ 1) => 1</pre>
 <pre>(+ 2 4) => 6</pre>
 <pre>(+ 1 2 3 4) => 10</pre>
 <pre>(+ (+ 2 3) (+ 5 6)) => 16</pre>
+  </div>
 </div>
 
 
@@ -155,16 +159,20 @@
   
   <p>Computes difference between first value and sum of the rest. When called with only one argument, it does negation.</p>
   <label>Syntax</label>
-  <pre>- numbers(zero or more) => number</pre>
+  <div class="indent">
+    <pre>- numbers(zero or more) => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>numbers: number[]</pre>
+  <div class="indent"><pre>numbers: number[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(-) => 0</pre>
+  <div class="indent">
+    <pre>(-) => 0</pre>
 <pre>(- 1) => -1</pre>
 <pre>(- 2 4) => -2</pre>
 <pre>(- 4 3 2 1) => -2</pre>
+  </div>
 </div>
 
 
@@ -173,16 +181,20 @@
   
   <p>Computes product of <span class="pre">numbers</span>.</p>
   <label>Syntax</label>
-  <pre>* numbers(zero or more) => number</pre>
+  <div class="indent">
+    <pre>* numbers(zero or more) => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>numbers: number[]</pre>
+  <div class="indent"><pre>numbers: number[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(*) => 1</pre>
+  <div class="indent">
+    <pre>(*) => 1</pre>
 <pre>(* 2) => 2</pre>
 <pre>(* 2 4) => 8</pre>
 <pre>(* 1 2 3 4) => 24</pre>
+  </div>
 </div>
 
 
@@ -191,16 +203,20 @@
   
   <p>Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining <span class="pre">numbers</span>.</p>
   <label>Syntax</label>
-  <pre>/ numbers(zero or more) => number</pre>
+  <div class="indent">
+    <pre>/ numbers(zero or more) => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>numbers: number[]</pre>
+  <div class="indent"><pre>numbers: number[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(/) => 1</pre>
+  <div class="indent">
+    <pre>(/) => 1</pre>
 <pre>(/ 2) => 0.5</pre>
 <pre>(/ 2 4) => 0.5</pre>
 <pre>(/ 4 3 2 1) => 0.6666666666666666</pre>
+  </div>
 </div>
 
 
@@ -209,17 +225,22 @@
   
   <p>Returns modulus of two number arguments.</p>
   <label>Syntax</label>
-  <pre>% number divisor => number</pre>
+  <div class="indent">
+    <pre>% number divisor => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number<br />divisor: number</pre>
+  <div class="indent"><pre>number: number</pre>
+<pre>divisor: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(% 5 3) => 2</pre>
+  <div class="indent">
+    <pre>(% 5 3) => 2</pre>
 <pre>(% 5.2 3.1) => 2.1</pre>
 <pre>(% -5 3) => -2</pre>
 <pre>(% 5 -3) => 2</pre>
 <pre>(% -5 -3) => -2</pre>
+  </div>
 </div>
 
 
@@ -228,18 +249,22 @@
   
   <p>Result is <span class="pre">true</span> if no two <span class="pre">values</span> are equal to each other, otherwise result is <span class="pre">false</span>. Note that only two argument version result is negation of <span class="pre">=</span> function, that is <span class="pre">(!= a b)</span> is same as <span class="pre">(! (= a b))</span>.</p>
   <label>Syntax</label>
-  <pre>!= values => boolean</pre>
+  <div class="indent">
+    <pre>!= values => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>values: any[]</pre>
+  <div class="indent"><pre>values: any[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(!= 3) => true</pre>
+  <div class="indent">
+    <pre>(!= 3) => true</pre>
 <pre>(!= 3 2) => true</pre>
 <pre>(!= "3" 3) => true</pre>
 <pre>(!= 3 3 2) => false</pre>
 <pre>(!= "3" "2" "1" "0") => true</pre>
 <pre>(!= 0 -0) => false</pre>
+  </div>
 </div>
 
 
@@ -248,17 +273,21 @@
   
   <p>Compares <span class="pre">values</span> according to "equal" predicate. Result is <span class="pre">true</span> if every specified value is equal to each other, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>= values => boolean</pre>
+  <div class="indent">
+    <pre>= values => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>values: any[]</pre>
+  <div class="indent"><pre>values: any[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(= 1 1) => true</pre>
+  <div class="indent">
+    <pre>(= 1 1) => true</pre>
 <pre>(= 1.01 1) => false</pre>
 <pre>(= "1" 1) => false</pre>
 <pre>(= "2" "2" "2" "2") => true</pre>
 <pre>(= 2 2 1 2) => false</pre>
+  </div>
 </div>
 
 
@@ -267,13 +296,16 @@
   
   <p>Computes logical negation. Note that any other <span class="pre">value</span> than <span class="pre">false</span>, <span class="pre">0</span>, <span class="pre">null</span>, <span class="pre">undefined</span> and <span class="pre">""</span> is considered as <span class="pre">true</span>.</p>
   <label>Syntax</label>
-  <pre>not value => boolean</pre>
+  <div class="indent">
+    <pre>not value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(not 3) => false</pre>
+  <div class="indent">
+    <pre>(not 3) => false</pre>
 <pre>(not true) => false</pre>
 <pre>(not "A string") => false</pre>
 <pre>(not 0) => true</pre>
@@ -281,6 +313,7 @@
 <pre>(not null) => true</pre>
 <pre>(not undefined) => true</pre>
 <pre>(not "") => true</pre>
+  </div>
 </div>
 
 
@@ -289,15 +322,19 @@
   
   <p>Adds one to <span class="pre">number</span>.</p>
   <label>Syntax</label>
-  <pre>1+ number => number</pre>
+  <div class="indent">
+    <pre>1+ number => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(1+ 0) => 1</pre>
+  <div class="indent">
+    <pre>(1+ 0) => 1</pre>
 <pre>(1+ 1) => 2</pre>
 <pre>(1+ 100.1) => 101.1</pre>
+  </div>
 </div>
 
 
@@ -306,15 +343,19 @@
   
   <p>Subtracts one from <span class="pre">number</span>.</p>
   <label>Syntax</label>
-  <pre>1- number => number</pre>
+  <div class="indent">
+    <pre>1- number => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(1- 0) => -1</pre>
+  <div class="indent">
+    <pre>(1- 0) => -1</pre>
 <pre>(1- 1) => 0</pre>
 <pre>(1- 100.1) => 99.1</pre>
+  </div>
 </div>
 
 
@@ -323,16 +364,20 @@
   
   <p>Computes square root of <span class="pre">number</span>.</p>
   <label>Syntax</label>
-  <pre>sqrt number => number</pre>
+  <div class="indent">
+    <pre>sqrt number => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(sqrt 0) => 0</pre>
+  <div class="indent">
+    <pre>(sqrt 0) => 0</pre>
 <pre>(sqrt 9) => 3</pre>
 <pre>(sqrt 2) => 1.4142135623730951</pre>
 <pre>(sqrt -1) => Error!</pre>
+  </div>
 </div>
 
 
@@ -341,18 +386,23 @@
   
   <p>Computes returns <span class="pre">base-number</span> raised to the <span class="pre">power-number</span>.</p>
   <label>Syntax</label>
-  <pre>expt base-number power-number => number</pre>
+  <div class="indent">
+    <pre>expt base-number power-number => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>base-number: number<br />power-number: number</pre>
+  <div class="indent"><pre>base-number: number</pre>
+<pre>power-number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(expt 2 3) => 8</pre>
+  <div class="indent">
+    <pre>(expt 2 3) => 8</pre>
 <pre>(expt 2 0) => 1</pre>
 <pre>(expt 2 -3) => 0.125</pre>
 <pre>(expt -2 3) => -8</pre>
 <pre>(expt -2 -3) => -0.125</pre>
 <pre>(expt -2) => Error!</pre>
+  </div>
 </div>
 
 
@@ -361,18 +411,22 @@
   
   <p>Returns <span class="pre">number</span> rounded to the nearest <span class="pre">integer</span>.</p>
   <label>Syntax</label>
-  <pre>round number => integer</pre>
+  <div class="indent">
+    <pre>round number => integer</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(round 2) => 2</pre>
+  <div class="indent">
+    <pre>(round 2) => 2</pre>
 <pre>(round 2.49) => 2</pre>
 <pre>(round 2.5) => 3</pre>
 <pre>(round -2.49) => -2</pre>
 <pre>(round -2.5) => -2</pre>
 <pre>(round -2.501) => -3</pre>
+  </div>
 </div>
 
 
@@ -381,18 +435,22 @@
   
   <p>Returns the largest <span class="pre">integer</span> less than or equal to <span class="pre">number</span>.</p>
   <label>Syntax</label>
-  <pre>floor number => integer</pre>
+  <div class="indent">
+    <pre>floor number => integer</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(floor 2) => 2</pre>
+  <div class="indent">
+    <pre>(floor 2) => 2</pre>
 <pre>(floor 2.49) => 2</pre>
 <pre>(floor 2.5) => 2</pre>
 <pre>(floor -2.49) => -3</pre>
 <pre>(floor -2.5) => -3</pre>
 <pre>(floor -2.501) => -3</pre>
+  </div>
 </div>
 
 
@@ -401,18 +459,22 @@
   
   <p>Returns the smallest <span class="pre">integer</span> larger than or equal to <span class="pre">number</span>.</p>
   <label>Syntax</label>
-  <pre>ceil number => integer</pre>
+  <div class="indent">
+    <pre>ceil number => integer</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(ceil 2) => 2</pre>
+  <div class="indent">
+    <pre>(ceil 2) => 2</pre>
 <pre>(ceil 2.49) => 3</pre>
 <pre>(ceil 2.5) => 3</pre>
 <pre>(ceil -2.49) => -2</pre>
 <pre>(ceil -2.5) => -2</pre>
 <pre>(ceil -2.501) => -2</pre>
+  </div>
 </div>
 
 
@@ -421,17 +483,21 @@
   
   <p>Returns a semi random number between <span class="pre">0</span> (inclusive) and <span class="pre">number</span> (exclusive).</p>
   <label>Syntax</label>
-  <pre>random number => number</pre>
+  <div class="indent">
+    <pre>random number => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: positive number</pre>
+  <div class="indent"><pre>number: positive number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(random 1) => 0.7804471364321626</pre>
-<pre>(random 0.01) => 0.0011026677737701362</pre>
-<pre>(random 2.5) => 0.9521677280372237</pre>
+  <div class="indent">
+    <pre>(random 1) => 0.5156728198658</pre>
+<pre>(random 0.01) => 0.009408539222417703</pre>
+<pre>(random 2.5) => 1.8008124231704943</pre>
 <pre>(random 0) => Error!</pre>
 <pre>(random -1) => Error!</pre>
+  </div>
 </div>
 
 
@@ -440,17 +506,21 @@
   
   <p>Compares <span class="pre">numbers</span> according to "less than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre>< number => boolean</pre>
+  <div class="indent">
+    <pre>< number => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(< 0 1) => true</pre>
+  <div class="indent">
+    <pre>(< 0 1) => true</pre>
 <pre>(< 1 1.01) => true</pre>
 <pre>(< 1 1) => false</pre>
 <pre>(< 1 2 3 4) => true</pre>
 <pre>(< 1 2 2 3) => false</pre>
+  </div>
 </div>
 
 
@@ -459,17 +529,21 @@
   
   <p>Compares <span class="pre">numbers</span> according to "greater than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre>> number => boolean</pre>
+  <div class="indent">
+    <pre>> number => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(> 1 0) => true</pre>
+  <div class="indent">
+    <pre>(> 1 0) => true</pre>
 <pre>(> 1.01 1) => true</pre>
 <pre>(> 1 1) => false</pre>
 <pre>(> 4 3 2 1) => true</pre>
 <pre>(> 3 2 2 1) => false</pre>
+  </div>
 </div>
 
 
@@ -478,17 +552,21 @@
   
   <p>Compares <span class="pre">numbers</span> according to "less than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre><= number => boolean</pre>
+  <div class="indent">
+    <pre><= number => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(<= 0 1) => true</pre>
+  <div class="indent">
+    <pre>(<= 0 1) => true</pre>
 <pre>(<= 1 1.01) => true</pre>
 <pre>(<= 1 1) => true</pre>
 <pre>(<= 1 2 3 4) => true</pre>
 <pre>(<= 1 2 2 3) => true</pre>
+  </div>
 </div>
 
 
@@ -497,17 +575,21 @@
   
   <p>Compares <span class="pre">numbers</span> according to "greater than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre>>= number => boolean</pre>
+  <div class="indent">
+    <pre>>= number => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(>= 1 0) => true</pre>
+  <div class="indent">
+    <pre>(>= 1 0) => true</pre>
 <pre>(>= 1.01 1) => true</pre>
 <pre>(>= 1 1) => true</pre>
 <pre>(>= 4 3 2 1) => true</pre>
 <pre>(>= 3 2 2 1) => true</pre>
+  </div>
 </div>
 
 
@@ -516,17 +598,21 @@
   <h3>Special Expression</h3>
   <p>Computes logical "and" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so <span class="pre">forms</span> at end of argument list may not evaluated.</p>
   <label>Syntax</label>
-  <pre>and forms => boolean</pre>
+  <div class="indent">
+    <pre>and forms => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>forms: form[]</pre>
+  <div class="indent"><pre>forms: form[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(and 1 1) => 1</pre>
+  <div class="indent">
+    <pre>(and 1 1) => 1</pre>
 <pre>(and (> 3 2) "string") => "string"</pre>
 <pre>(and (< 3 2) "string") => false</pre>
 <pre>(and true true true true) => true</pre>
 <pre>(and true true 0 true) => 0</pre>
+  </div>
 </div>
 
 
@@ -535,17 +621,21 @@
   <h3>Special Expression</h3>
   <p>Computes logical "or" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
   <label>Syntax</label>
-  <pre>or forms => boolean</pre>
+  <div class="indent">
+    <pre>or forms => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>forms: form[]</pre>
+  <div class="indent"><pre>forms: form[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(or 1 1) => 1</pre>
+  <div class="indent">
+    <pre>(or 1 1) => 1</pre>
 <pre>(or (> 3 2) "string") => true</pre>
 <pre>(or (< 3 2) "string") => "string"</pre>
 <pre>(or true true true true) => true</pre>
 <pre>(or 1 2 3 4) => 1</pre>
+  </div>
 </div>
 
 
@@ -554,17 +644,21 @@
   
   <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified <span class="pre">lists</span>.</p>
   <label>Syntax</label>
-  <pre>append lists(zero or more) => list</pre>
+  <div class="indent">
+    <pre>append lists(zero or more) => list</pre>
+  </div>
   <label>Arguments</label>
-  <pre>lists: list[]</pre>
+  <div class="indent"><pre>lists: list[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(append (list 1 2) (list 3 4)) => [1,2,3,4]</pre>
+  <div class="indent">
+    <pre>(append (list 1 2) (list 3 4)) => [1,2,3,4]</pre>
 <pre>(append (list) (list 3 4)) => [3,4]</pre>
 <pre>(append (list 1 2) (list)) => [1,2]</pre>
 <pre>(append (list 1 2) (list 3 4) (list 5 6)) => [1,2,3,4,5,6]</pre>
 <pre>(append (list)) => []</pre>
+  </div>
 </div>
 
 
@@ -573,16 +667,21 @@
   
   <p>Accesses specified element of a string. <span class="pre">index</span> is counted from <span class="pre">0</span>. Accessing out-of-bounds indices returns <span class="pre">undefined</span>.</p>
   <label>Syntax</label>
-  <pre>aref string index => string</pre>
+  <div class="indent">
+    <pre>aref string index => string</pre>
+  </div>
   <label>Arguments</label>
-  <pre>string: string<br />index: integer</pre>
+  <div class="indent"><pre>string: string</pre>
+<pre>index: integer</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(aref "A string" 0) => "A"</pre>
+  <div class="indent">
+    <pre>(aref "A string" 0) => "A"</pre>
 <pre>(aref "A string" 2) => "s"</pre>
 <pre>(aref "A string" 20) => undefined</pre>
 <pre>(aref "A string" -1) => Error!</pre>
+  </div>
 </div>
 
 
@@ -591,18 +690,22 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a <span class="pre">boolean</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>boolean? value => boolean</pre>
+  <div class="indent">
+    <pre>boolean? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(boolean? true) => true</pre>
+  <div class="indent">
+    <pre>(boolean? true) => true</pre>
 <pre>(boolean? false) => true</pre>
 <pre>(boolean? (list 1 2 3)) => false</pre>
 <pre>(boolean? 0) => false</pre>
 <pre>(boolean? "A string") => false</pre>
 <pre>(boolean?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -611,18 +714,22 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">null</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>null? value => boolean</pre>
+  <div class="indent">
+    <pre>null? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(null? null) => true</pre>
+  <div class="indent">
+    <pre>(null? null) => true</pre>
 <pre>(null? false) => false</pre>
 <pre>(null? (list 1 2 3)) => false</pre>
 <pre>(null? 0) => false</pre>
 <pre>(null? "A string") => false</pre>
 <pre>(null?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -631,19 +738,23 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">undefined</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>undefined? value => boolean</pre>
+  <div class="indent">
+    <pre>undefined? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(undefined? undefined) => true</pre>
+  <div class="indent">
+    <pre>(undefined? undefined) => true</pre>
 <pre>(undefined? false) => false</pre>
 <pre>(undefined? null) => false</pre>
 <pre>(undefined? (list 1 2 3)) => false</pre>
 <pre>(undefined? 0) => false</pre>
 <pre>(undefined? "A string") => false</pre>
 <pre>(undefined?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -652,19 +763,23 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a number, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>number? value => boolean</pre>
+  <div class="indent">
+    <pre>number? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(number? 0) => true</pre>
+  <div class="indent">
+    <pre>(number? 0) => true</pre>
 <pre>(number? 2) => true</pre>
 <pre>(number? -0.12) => true</pre>
 <pre>(number? false) => false</pre>
 <pre>(number? (list 1 2 3)) => false</pre>
 <pre>(number? "A string") => false</pre>
 <pre>(number?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -673,19 +788,23 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a string, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>string? value => boolean</pre>
+  <div class="indent">
+    <pre>string? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(string? "") => true</pre>
+  <div class="indent">
+    <pre>(string? "") => true</pre>
 <pre>(string? "A string") => true</pre>
 <pre>(string? (if true "A string" false)) => true</pre>
 <pre>(string? false) => false</pre>
 <pre>(string? (list 1 2 3)) => false</pre>
 <pre>(string? 100) => false</pre>
 <pre>(string?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -694,13 +813,16 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a function, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>function? value => boolean</pre>
+  <div class="indent">
+    <pre>function? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(function? #'+) => true</pre>
+  <div class="indent">
+    <pre>(function? #'+) => true</pre>
 <pre>(function? (function /)) => true</pre>
 <pre>(function? (lambda (x y) (+ x y))) => true</pre>
 <pre>(function? false) => false</pre>
@@ -708,6 +830,7 @@
 <pre>(function? (list 1 2 3)) => false</pre>
 <pre>(function? 100) => false</pre>
 <pre>(function?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -716,13 +839,16 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an integer, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>integer? value => boolean</pre>
+  <div class="indent">
+    <pre>integer? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(integer? 0) => true</pre>
+  <div class="indent">
+    <pre>(integer? 0) => true</pre>
 <pre>(integer? -12) => true</pre>
 <pre>(integer? 42) => true</pre>
 <pre>(integer? 10.1) => false</pre>
@@ -731,6 +857,7 @@
 <pre>(integer? "false") => false</pre>
 <pre>(integer? (list 1 2 3)) => false</pre>
 <pre>(integer?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -739,19 +866,23 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a list, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>list? value => boolean</pre>
+  <div class="indent">
+    <pre>list? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(list? (list)) => true</pre>
+  <div class="indent">
+    <pre>(list? (list)) => true</pre>
 <pre>(list? (list 1 2 3)) => true</pre>
 <pre>(list? (object "a" 10)) => false</pre>
 <pre>(list? 42) => false</pre>
 <pre>(list? 10.1) => false</pre>
 <pre>(list? (lambda (x y) (+ x y))) => false</pre>
 <pre>(list?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -760,13 +891,16 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an object, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>object? value => boolean</pre>
+  <div class="indent">
+    <pre>object? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(object? (object "a" 10)) => true</pre>
+  <div class="indent">
+    <pre>(object? (object "a" 10)) => true</pre>
 <pre>(object? (object)) => true</pre>
 <pre>(object? 42) => false</pre>
 <pre>(object? 10.1) => false</pre>
@@ -775,6 +909,7 @@
 <pre>(object? "false") => false</pre>
 <pre>(object? (list 1 2 3)) => false</pre>
 <pre>(object?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -783,13 +918,16 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a regexp, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>regexp? value => boolean</pre>
+  <div class="indent">
+    <pre>regexp? value => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>value: any</pre>
+  <div class="indent"><pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(regexp? (regexp "^start")) => true</pre>
+  <div class="indent">
+    <pre>(regexp? (regexp "^start")) => true</pre>
 <pre>(regexp? -12) => false</pre>
 <pre>(regexp? (object)) => false</pre>
 <pre>(regexp? 10.1) => false</pre>
@@ -798,6 +936,7 @@
 <pre>(regexp? "false") => false</pre>
 <pre>(regexp? (list 1 2 3)) => false</pre>
 <pre>(regexp?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -806,18 +945,22 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is <span class="pre">0</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>zero? number => boolean</pre>
+  <div class="indent">
+    <pre>zero? number => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(zero? 0) => true</pre>
+  <div class="indent">
+    <pre>(zero? 0) => true</pre>
 <pre>(zero? -0.0) => true</pre>
 <pre>(zero? 1) => false</pre>
 <pre>(zero? 0.1) => false</pre>
 <pre>(zero? "10") => Error!</pre>
 <pre>(zero?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -826,18 +969,22 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is even, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>even? number => boolean</pre>
+  <div class="indent">
+    <pre>even? number => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(even? 0) => true</pre>
+  <div class="indent">
+    <pre>(even? 0) => true</pre>
 <pre>(even? -0.0) => true</pre>
 <pre>(even? -1) => false</pre>
 <pre>(even? 2.1) => false</pre>
 <pre>(even? "10") => Error!</pre>
 <pre>(even?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -846,18 +993,22 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is odd, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>odd? number => boolean</pre>
+  <div class="indent">
+    <pre>odd? number => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>number: number</pre>
+  <div class="indent"><pre>number: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(odd? 1.0) => true</pre>
+  <div class="indent">
+    <pre>(odd? 1.0) => true</pre>
 <pre>(odd? 1.001) => false</pre>
 <pre>(odd? -1) => true</pre>
 <pre>(odd? 2.1) => false</pre>
 <pre>(odd? "10") => Error!</pre>
 <pre>(odd?) => Error!</pre>
+  </div>
 </div>
 
 
@@ -866,17 +1017,23 @@
   
   <p>Extracts characters from <span class="pre">indexStart</span> up to but not including <span class="pre">indexEnd</span>.</p>
   <label>Syntax</label>
-  <pre>substring string indexStart indexEnd(optional) => string</pre>
+  <div class="indent">
+    <pre>substring string indexStart indexEnd(optional) => string</pre>
+  </div>
   <label>Arguments</label>
-  <pre>string: string<br />indexStart: integer<br />indexEnd: integer</pre>
+  <div class="indent"><pre>string: string</pre>
+<pre>indexStart: integer</pre>
+<pre>indexEnd: integer</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(substring "A string" 2) => "string"</pre>
+  <div class="indent">
+    <pre>(substring "A string" 2) => "string"</pre>
 <pre>(substring "A string" 2 5) => "str"</pre>
 <pre>(substring "A string" 2 100) => "string"</pre>
 <pre>(substring "A string" 100) => ""</pre>
 <pre>(substring "A string" 5 2) => Error!</pre>
+  </div>
 </div>
 
 
@@ -885,14 +1042,18 @@
   
   <p>Returns length of <span class="pre">string</span>.</p>
   <label>Syntax</label>
-  <pre>string-length string => number</pre>
+  <div class="indent">
+    <pre>string-length string => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>string: string</pre>
+  <div class="indent"><pre>string: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(string-length "A string") => 8</pre>
+  <div class="indent">
+    <pre>(string-length "A string") => 8</pre>
 <pre>(string-length "") => 0</pre>
+  </div>
 </div>
 
 
@@ -901,15 +1062,19 @@
   
   <p>Concatenats <span class="pre">strings</span> into one <span class="pre">string</span>.</p>
   <label>Syntax</label>
-  <pre>concat strings(zero or more) => number</pre>
+  <div class="indent">
+    <pre>concat strings(zero or more) => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>strings: string[]</pre>
+  <div class="indent"><pre>strings: string[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(concat "A string" ", and another string" " ...and more") => "A string, and another string ...and more"</pre>
+  <div class="indent">
+    <pre>(concat "A string" ", and another string" " ...and more") => "A string, and another string ...and more"</pre>
 <pre>(concat "Just one string") => "Just one string"</pre>
 <pre>(concat) => ""</pre>
+  </div>
 </div>
 
 
@@ -918,16 +1083,21 @@
   
   <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is greater than <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>string> string1 string2 => number</pre>
+  <div class="indent">
+    <pre>string> string1 string2 => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>string1: string<br />string2: string</pre>
+  <div class="indent"><pre>string1: string</pre>
+<pre>string2: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(string> "A string" "Another string") => false</pre>
+  <div class="indent">
+    <pre>(string> "A string" "Another string") => false</pre>
 <pre>(string> "Albert Mojir" "Albert") => true</pre>
 <pre>(string> "Albert" "Albert") => false</pre>
 <pre>(string> "Albert" "albert") => false</pre>
+  </div>
 </div>
 
 
@@ -936,16 +1106,21 @@
   
   <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is greater than or equal to <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>string>= string1 string2 => number</pre>
+  <div class="indent">
+    <pre>string>= string1 string2 => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>string1: string<br />string2: string</pre>
+  <div class="indent"><pre>string1: string</pre>
+<pre>string2: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(string>= "A string" "Another string") => false</pre>
+  <div class="indent">
+    <pre>(string>= "A string" "Another string") => false</pre>
 <pre>(string>= "Albert Mojir" "Albert") => true</pre>
 <pre>(string>= "Albert" "Albert") => true</pre>
 <pre>(string>= "Albert" "albert") => false</pre>
+  </div>
 </div>
 
 
@@ -954,16 +1129,21 @@
   
   <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is less than <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>string< string1 string2 => number</pre>
+  <div class="indent">
+    <pre>string< string1 string2 => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>string1: string<br />string2: string</pre>
+  <div class="indent"><pre>string1: string</pre>
+<pre>string2: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(string< "A string" "Another string") => true</pre>
+  <div class="indent">
+    <pre>(string< "A string" "Another string") => true</pre>
 <pre>(string< "Albert Mojir" "Albert") => false</pre>
 <pre>(string< "Albert" "Albert") => false</pre>
 <pre>(string< "Albert" "albert") => true</pre>
+  </div>
 </div>
 
 
@@ -972,16 +1152,21 @@
   
   <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is less than or equal to <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>string<= string1 string2 => number</pre>
+  <div class="indent">
+    <pre>string<= string1 string2 => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>string1: string<br />string2: string</pre>
+  <div class="indent"><pre>string1: string</pre>
+<pre>string2: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(string<= "A string" "Another string") => true</pre>
+  <div class="indent">
+    <pre>(string<= "A string" "Another string") => true</pre>
 <pre>(string<= "Albert Mojir" "Albert") => false</pre>
 <pre>(string<= "Albert" "Albert") => true</pre>
 <pre>(string<= "Albert" "albert") => true</pre>
+  </div>
 </div>
 
 
@@ -990,18 +1175,22 @@
   
   <p>It console.log the <span class="pre">values</span> and then returns the last element of the <span class="pre">values</span> list.. If called with no arguments <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
-  <pre>write values => value</pre>
+  <div class="indent">
+    <pre>write values => value</pre>
+  </div>
   <label>Arguments</label>
-  <pre>values: any[]</pre>
+  <div class="indent"><pre>values: any[]</pre></div>
   <label>Side effects</label>
-  <pre>Does a console.log</pre>
+  <div class="indent"><pre>Does a console.log</pre></div>
   <label>Examples</label>
-  <pre>(write "A string") => "A string"</pre>
+  <div class="indent">
+    <pre>(write "A string") => "A string"</pre>
 <pre>(write 100 "items") => "items"</pre>
 <pre>(write (object "a" 10)) => {"a":10}</pre>
 <pre>(write (list "a" "b" "c")) => ["a","b","c"]</pre>
 <pre>(write (regexp "^start")) => {}</pre>
 <pre>(write null undefined true false) => false</pre>
+  </div>
 </div>
 
 
@@ -1010,15 +1199,20 @@
   
   <p>Returns <span class="pre">true</span> if <span class="pre">object</span> has an attribute named <span class="pre">attr</span>, otherwise returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>has-attr object attr => boolean</pre>
+  <div class="indent">
+    <pre>has-attr object attr => boolean</pre>
+  </div>
   <label>Arguments</label>
-  <pre>object: object<br />attr: string</pre>
+  <div class="indent"><pre>object: object</pre>
+<pre>attr: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(has-attr (object "a" 10 "b" 20) "a") => true</pre>
+  <div class="indent">
+    <pre>(has-attr (object "a" 10 "b" 20) "a") => true</pre>
 <pre>(has-attr (object "a" 10 "b" undefined) "b") => true</pre>
 <pre>(has-attr (object "a" 10 "b" undefined) "c") => false</pre>
+  </div>
 </div>
 
 
@@ -1027,15 +1221,20 @@
   
   <p>Returns the value of <span class="pre">object</span>'s attribute <span class="pre">attr</span>. Returns <span class="pre">undefined</span> if <span class="pre">object</span> has no attribute named <span class="pre">attr</span>.</p>
   <label>Syntax</label>
-  <pre>get-attr object attr => value</pre>
+  <div class="indent">
+    <pre>get-attr object attr => value</pre>
+  </div>
   <label>Arguments</label>
-  <pre>object: object<br />attr: string</pre>
+  <div class="indent"><pre>object: object</pre>
+<pre>attr: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(get-attr (object "a" 10 "b" 20) "a") => 10</pre>
+  <div class="indent">
+    <pre>(get-attr (object "a" 10 "b" 20) "a") => 10</pre>
 <pre>(get-attr (object "a" 10 "b" undefined) "b") => undefined</pre>
 <pre>(get-attr (object "a" 10 "b" undefined) "c") => undefined</pre>
+  </div>
 </div>
 
 
@@ -1044,16 +1243,21 @@
   
   <p>Deletes the attribute <span class="pre">attr</span> from <span class="pre">object</span>.</p>
   <label>Syntax</label>
-  <pre>del-attr object attr => value</pre>
+  <div class="indent">
+    <pre>del-attr object attr => value</pre>
+  </div>
   <label>Arguments</label>
-  <pre>object: object<br />attr: string</pre>
+  <div class="indent"><pre>object: object</pre>
+<pre>attr: string</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(del-attr (object "x" 10) "x") => 10</pre>
+  <div class="indent">
+    <pre>(del-attr (object "x" 10) "x") => 10</pre>
 <pre>(del-attr (object "x" 10) "y") => undefined</pre>
 <pre>(setq o (object "a" 5)) (del-attr o "a") o => {}</pre>
 <pre>(setq o (object "a" 5)) (del-attr o "b") o => {"a":5}</pre>
+  </div>
 </div>
 
 
@@ -1062,15 +1266,21 @@
   
   <p>Sets an attribute on <span class="pre">object</span>. Returns <span class="pre">value</span>.</p>
   <label>Syntax</label>
-  <pre>set-attr object attr value => value</pre>
+  <div class="indent">
+    <pre>set-attr object attr value => value</pre>
+  </div>
   <label>Arguments</label>
-  <pre>object: object<br />attr: string<br />value: any</pre>
+  <div class="indent"><pre>object: object</pre>
+<pre>attr: string</pre>
+<pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(set-attr (object "x" 10) "a" 10) => 10</pre>
+  <div class="indent">
+    <pre>(set-attr (object "x" 10) "a" 10) => 10</pre>
 <pre>(setq o (object)) (set-attr o "a" 10) o => {"a":10}</pre>
 <pre>(setq o (object "a" 5)) (set-attr o "a" 10) o => {"a":10}</pre>
+  </div>
 </div>
 
 
@@ -1079,15 +1289,19 @@
   
   <p>Makes new list from <span class="pre">values</span>.</p>
   <label>Syntax</label>
-  <pre>list values => list</pre>
+  <div class="indent">
+    <pre>list values => list</pre>
+  </div>
   <label>Arguments</label>
-  <pre>values: any[]</pre>
+  <div class="indent"><pre>values: any[]</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(list 1 2 3) => [1,2,3]</pre>
+  <div class="indent">
+    <pre>(list 1 2 3) => [1,2,3]</pre>
 <pre>(list (list null undefined false true)) => [[null,undefined,false,true]]</pre>
 <pre>(list) => []</pre>
+  </div>
 </div>
 
 
@@ -1096,14 +1310,19 @@
   
   <p>Creates a list with <span class="pre">length</span> number of elements and sets all elements to "value".</p>
   <label>Syntax</label>
-  <pre>listf length value => list</pre>
+  <div class="indent">
+    <pre>listf length value => list</pre>
+  </div>
   <label>Arguments</label>
-  <pre>length: number<br />value: any</pre>
+  <div class="indent"><pre>length: number</pre>
+<pre>value: any</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
+  <div class="indent">
+    <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
 <pre>(listf 0 100) => Error!</pre>
+  </div>
 </div>
 
 
@@ -1112,16 +1331,22 @@
   
   <p>Create a list with a range of numbers. If only one argument: <span class="pre">0...a</span>, otherwise: <span class="pre">a...b</span>. <span class="pre">step</span> defaults to <span class="pre">1</span>.</p>
   <label>Syntax</label>
-  <pre>range a length(optional) length(optional) => list</pre>
+  <div class="indent">
+    <pre>range a length(optional) length(optional) => list</pre>
+  </div>
   <label>Arguments</label>
-  <pre>a: number<br />length: number<br />length: number</pre>
+  <div class="indent"><pre>a: number</pre>
+<pre>length: number</pre>
+<pre>length: number</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(range 4) => [0,1,2,3]</pre>
+  <div class="indent">
+    <pre>(range 4) => [0,1,2,3]</pre>
 <pre>(range 1 4) => [1,2,3]</pre>
 <pre>(range 0.4 4.9) => [0.4,1.4,2.4,3.4,4.4]</pre>
 <pre>(range 0.25 1 0.25) => [0.25,0.5,0.75]</pre>
+  </div>
 </div>
 
 
@@ -1130,14 +1355,18 @@
   
   <p>Returns length of <span class="pre">list</span>.</p>
   <label>Syntax</label>
-  <pre>length list => number</pre>
+  <div class="indent">
+    <pre>length list => number</pre>
+  </div>
   <label>Arguments</label>
-  <pre>list: list</pre>
+  <div class="indent"><pre>list: list</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(length (list 1 2 3) => Error!</pre>
+  <div class="indent">
+    <pre>(length (list 1 2 3) => Error!</pre>
 <pre>(length (list)) => 0</pre>
+  </div>
 </div>
 
 
@@ -1146,14 +1375,19 @@
   
   <p>Accesses specified element of <span class="pre">list</span>. The <span class="pre">index</span> is counted from <span class="pre">0</span>. Accessing out-of-bounds indices returns <span class="pre">undefined</span>.</p>
   <label>Syntax</label>
-  <pre>elt list index => any</pre>
+  <div class="indent">
+    <pre>elt list index => any</pre>
+  </div>
   <label>Arguments</label>
-  <pre>list: list<br />index: non negative integer</pre>
+  <div class="indent"><pre>list: list</pre>
+<pre>index: non negative integer</pre></div>
   <label>Side effects</label>
-  <pre>No side effects</pre>
+  <div class="indent">No side effects</div>
   <label>Examples</label>
-  <pre>(elt (list 1 2 3) 1) => 2</pre>
+  <div class="indent">
+    <pre>(elt (list 1 2 3) 1) => 2</pre>
 <pre>(elt (list 1 2 3) 3) => undefined</pre>
+  </div>
 </div>
 
     </main>

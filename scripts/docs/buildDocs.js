@@ -126,27 +126,35 @@ function getDocumentationContent(docObj) {
   ${specialExpression ? '<h3>Special Expression</h3>' : ''}
   <p>${formattedDescription}</p>
   <label>Syntax</label>
-  <pre>${getSyntax(name, args, returns)}</pre>
+  <div class="indent">
+    <pre>${getSyntax(name, args, returns)}</pre>
+  </div>
   <label>Arguments</label>
-  <pre>${args.length === 0 ? 'No arguments' : args.map(arg => `${arg.name}: ${arg.type}`).join('<br />')}</pre>
+  <div class="indent">${
+    args.length === 0 ? 'No arguments' : args.map(arg => `<pre>${arg.name}: ${arg.type}</pre>`).join('\n')
+  }</div>
   <label>Side effects</label>
-  <pre>${sideEffects.length === 0 ? 'No side effects' : sideEffects.map(effect => effect).join('<br />')}</pre>
+  <div class="indent">${
+    sideEffects.length === 0 ? 'No side effects' : sideEffects.map(effect => `<pre>${effect}</pre>`).join('\n')
+  }</div>
   <label>Examples</label>
-  ${examples
-    .map(example => {
-      var oldLog = console.log
-      console.log = function () {}
-      var result
-      try {
-        result = lispish.lispish(example)
-        return `<pre>${example} => ${stringifyValue(result)}</pre>`
-      } catch (error) {
-        return `<pre>${example} => Error!</pre>`
-      } finally {
-        console.log = oldLog
-      }
-    })
-    .join('\n')}
+  <div class="indent">
+    ${examples
+      .map(example => {
+        var oldLog = console.log
+        console.log = function () {}
+        var result
+        try {
+          result = lispish.lispish(example)
+          return `<pre>${example} => ${stringifyValue(result)}</pre>`
+        } catch (error) {
+          return `<pre>${example} => Error!</pre>`
+        } finally {
+          console.log = oldLog
+        }
+      })
+      .join('\n')}
+  </div>
 </div>
 `
 }
