@@ -14,7 +14,7 @@ function play() {
   var output = document.getElementById('output-textarea')
   var context
   try {
-    context = JSON.parse(contextString)
+    context = contextString.trim().length > 0 ? JSON.parse(contextString) : {}
   } catch (e) {
     output.innerHTML = 'Error: Could not parse context'
     output.classList.add('error')
@@ -93,9 +93,6 @@ function stringifyValue(value) {
 function clearOutput() {
   document.getElementById('output-textarea').innerHTML = ''
   document.getElementById('clear-output').classList.remove('active')
-}
-
-function clearLog() {
   document.getElementById('log-textarea').innerHTML = ''
   document.getElementById('clear-log').classList.remove('active')
 }

@@ -83,7 +83,7 @@ function getPlayground() {
     <div class="column" id="log">
       <div class="row">
         <div class="column textarea-header"><label for="log-textarea">Console log</label></div>
-        <div class="column small right"><span id="clear-log" class="icon-button" onclick="clearLog()">✖</span></div>
+        <div class="column small right"><span id="clear-log" class="icon-button" onclick="clearOutput()">✖</span></div>
       </div>
       <textarea id="log-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
     </div>
