@@ -3,15 +3,18 @@ const functionReference = {
     name: '+',
     category: 'Math',
     linkName: '_plus',
-    syntax: '+ numbers(zero or more) => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'numbers',
         type: 'number[]',
+        description: 'zero or more',
       },
     ],
-    shortDescription: 'Computes sum of numbers',
-    longDescription: 'Computes sum of numbers',
+    shortDescription: 'Computes sum of `numbers`.',
+    longDescription: 'Computes sum of `numbers`.',
     examples: ['(+)', '(+ 1)', '(+ 2 4)', '(+ 1 2 3 4)', '(+ (+ 2 3) (+ 5 6))'],
     specialExpression: false,
     sideEffects: [],
@@ -20,11 +23,14 @@ const functionReference = {
     name: '-',
     category: 'Math',
     linkName: '_minus',
-    syntax: '- numbers(zero or more) => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'numbers',
         type: 'number[]',
+        description: 'zero or more',
       },
     ],
     shortDescription: 'Computes difference between first value and sum of the rest.',
@@ -38,15 +44,18 @@ const functionReference = {
     name: '*',
     category: 'Math',
     linkName: '_star',
-    syntax: '* numbers(zero or more) => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'numbers',
         type: 'number[]',
+        description: 'zero or more',
       },
     ],
-    shortDescription: 'Computes product of numbers.',
-    longDescription: 'Computes product of numbers.',
+    shortDescription: 'Computes product of `numbers`.',
+    longDescription: 'Computes product of `numbers`.',
     examples: ['(*)', '(* 2)', '(* 2 4)', '(* 1 2 3 4)'],
     specialExpression: false,
     sideEffects: [],
@@ -55,16 +64,19 @@ const functionReference = {
     name: '/',
     category: 'Math',
     linkName: '_slash',
-    syntax: '/ numbers(zero or more) => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'numbers',
         type: 'number[]',
+        description: 'zero or more',
       },
     ],
     shortDescription: 'Computes division or reciprocal.',
     longDescription:
-      'Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining number.',
+      'Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining `numbers`.',
     examples: ['(/)', '(/ 2)', '(/ 2 4)', '(/ 4 3 2 1)'],
     specialExpression: false,
     sideEffects: [],
@@ -73,7 +85,9 @@ const functionReference = {
     name: '%',
     category: 'Math',
     linkName: '_percent',
-    syntax: '% number divisor => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'number',
@@ -94,16 +108,18 @@ const functionReference = {
     name: '!=',
     category: 'Misc',
     linkName: '_notequal',
-    syntax: '!= values (one or more) => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'values',
         type: 'any[]',
       },
     ],
-    shortDescription: 'Result is true if no two values are equal to each other.',
+    shortDescription: 'Result is `true` if no two `values` are equal to each other.',
     longDescription:
-      'Result is true if no two values are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).',
+      'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (= a b))`.',
     examples: ['(!= 3)', '(!= 3 2)', '(!= "3" 3)', '(!= 3 3 2)', '(!= "3" "2" "1" "0")', '(!= 0 -0)'],
     specialExpression: false,
     sideEffects: [],
@@ -112,16 +128,18 @@ const functionReference = {
     name: '=',
     category: 'Misc',
     linkName: '_equal',
-    syntax: '= values (one or more) => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'values',
         type: 'any[]',
       },
     ],
-    shortDescription: 'Compares values according to "equal" predicate.',
+    shortDescription: 'Compares `values` according to "equal" predicate.',
     longDescription:
-      'Compares values according to "equal" predicate. Result is true if every specified value is equal to each other, otherwise result is false.',
+      'Compares `values` according to "equal" predicate. Result is `true` if every specified value is equal to each other, otherwise result is `false`.',
     examples: ['(= 1 1)', '(= 1.01 1)', '(= "1" 1)', '(= "2" "2" "2" "2")', '(= 2 2 1 2)'],
     specialExpression: false,
     sideEffects: [],
@@ -130,7 +148,9 @@ const functionReference = {
     name: 'not',
     category: 'Misc',
     linkName: 'not',
-    syntax: 'not value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
@@ -139,7 +159,7 @@ const functionReference = {
     ],
     shortDescription: 'Computes logical negation.',
     longDescription:
-      'Computes logical negation. Note that any other value than false, 0, null, undefined and "" is considered as true.',
+      'Computes logical negation. Note that any other `value` than `false`, `0`, `null`, `undefined` and `""` is considered as `true`.',
     examples: [
       '(not 3)',
       '(not true)',
@@ -157,15 +177,17 @@ const functionReference = {
     name: '1+',
     category: 'Math',
     linkName: '1_plus',
-    syntax: '1+ number => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Adds one to the argument.',
-    longDescription: 'Adds one to the argument.',
+    shortDescription: 'Adds one to `number`.',
+    longDescription: 'Adds one to `number`.',
     examples: ['(1+ 0)', '(1+ 1)', '(1+ 100.1)'],
     specialExpression: false,
     sideEffects: [],
@@ -174,15 +196,17 @@ const functionReference = {
     name: '1-',
     category: 'Math',
     linkName: '1_minus',
-    syntax: '1- number => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Subtracts one from the argument.',
-    longDescription: 'Subtracts one from the argument.',
+    shortDescription: 'Subtracts one from `number`.',
+    longDescription: 'Subtracts one from `number`.',
     examples: ['(1- 0)', '(1- 1)', '(1- 100.1)'],
     specialExpression: false,
     sideEffects: [],
@@ -191,15 +215,17 @@ const functionReference = {
     name: 'sqrt',
     category: 'Math',
     linkName: 'sqrt',
-    syntax: 'sqrt number => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Computes square root of number.',
-    longDescription: 'Computes square root of number.',
+    shortDescription: 'Computes square root of `number`.',
+    longDescription: 'Computes square root of `number`.',
     examples: ['(sqrt 0)', '(sqrt 9)', '(sqrt 2)', '(sqrt -1)'],
     specialExpression: false,
     sideEffects: [],
@@ -208,7 +234,9 @@ const functionReference = {
     name: 'expt',
     category: 'Math',
     linkName: 'expt',
-    syntax: 'expt base-number power-number => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'base-number',
@@ -219,8 +247,8 @@ const functionReference = {
         type: 'number',
       },
     ],
-    shortDescription: 'Computes returns base-number raised to the power-number.',
-    longDescription: 'Computes returns base-number raised to the power-number.',
+    shortDescription: 'Computes returns `base-number` raised to the `power-number`.',
+    longDescription: 'Computes returns `base-number` raised to the `power-number`.',
     examples: ['(expt 2 3)', '(expt 2 0)', '(expt 2 -3)', '(expt -2 3)', '(expt -2 -3)', '(expt -2)'],
     specialExpression: false,
     sideEffects: [],
@@ -229,15 +257,17 @@ const functionReference = {
     name: 'round',
     category: 'Math',
     linkName: 'round',
-    syntax: 'round number => integer',
+    returns: {
+      type: 'integer',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Returns argument rounded to the nearest integer.',
-    longDescription: 'Returns argument rounded to the nearest integer.',
+    shortDescription: 'Returns `number` rounded to the nearest `integer`.',
+    longDescription: 'Returns `number` rounded to the nearest `integer`.',
     examples: ['(round 2)', '(round 2.49)', '(round 2.5)', '(round -2.49)', '(round -2.5)', '(round -2.501)'],
     specialExpression: false,
     sideEffects: [],
@@ -246,15 +276,17 @@ const functionReference = {
     name: 'floor',
     category: 'Math',
     linkName: 'floor',
-    syntax: 'floor number => integer',
+    returns: {
+      type: 'integer',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Returns the largest integer less than or equal to the argument.',
-    longDescription: 'Returns the largest integer less than or equal to the argument.',
+    shortDescription: 'Returns the largest `integer` less than or equal to `number`.',
+    longDescription: 'Returns the largest `integer` less than or equal to `number`.',
     examples: ['(floor 2)', '(floor 2.49)', '(floor 2.5)', '(floor -2.49)', '(floor -2.5)', '(floor -2.501)'],
     specialExpression: false,
     sideEffects: [],
@@ -263,15 +295,17 @@ const functionReference = {
     name: 'ceil',
     category: 'Math',
     linkName: 'ceil',
-    syntax: 'ceil number => integer',
+    returns: {
+      type: 'integer',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Returns the smallest integer larger than or equal to the argument.',
-    longDescription: 'Returns the smallest integer larger than or equal to the argument.',
+    shortDescription: 'Returns the smallest `integer` larger than or equal to `number`.',
+    longDescription: 'Returns the smallest `integer` larger than or equal to `number`.',
     examples: ['(ceil 2)', '(ceil 2.49)', '(ceil 2.5)', '(ceil -2.49)', '(ceil -2.5)', '(ceil -2.501)'],
     specialExpression: false,
     sideEffects: [],
@@ -280,15 +314,17 @@ const functionReference = {
     name: 'random',
     category: 'Math',
     linkName: 'random',
-    syntax: 'random number => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'number',
         type: 'positive number',
       },
     ],
-    shortDescription: 'Returns a semi random number between 0 (inclusive) and argument (exclusive).',
-    longDescription: 'Returns a semi random number between 0 (inclusive) and argument (exclusive).',
+    shortDescription: 'Returns a semi random number between `0` (inclusive) and `number` (exclusive).',
+    longDescription: 'Returns a semi random number between `0` (inclusive) and `number` (exclusive).',
     examples: ['(random 1)', '(random 0.01)', '(random 2.5)', '(random 0)', '(random -1)'],
     specialExpression: false,
     sideEffects: [],
@@ -297,16 +333,18 @@ const functionReference = {
     name: '<',
     category: 'Math',
     linkName: '_lt',
-    syntax: '< number => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Compares numbers according to "less than" predicate.',
+    shortDescription: 'Compares `numbers` according to "less than" predicate.',
     longDescription:
-      'Compares numbers according to "less than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.',
+      'Compares `numbers` according to "less than" predicate. Each (overlapping) pair of the `numbers` is compared by it. The result is `true` if all compared pairs satisfy comparison.',
     examples: ['(< 0 1)', '(< 1 1.01)', '(< 1 1)', '(< 1 2 3 4)', '(< 1 2 2 3)'],
     specialExpression: false,
     sideEffects: [],
@@ -315,16 +353,18 @@ const functionReference = {
     name: '>',
     category: 'Math',
     linkName: '_gt',
-    syntax: '> number => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Compares numbers according to "greater than" predicate.',
+    shortDescription: 'Compares `numbers` according to "greater than" predicate.',
     longDescription:
-      'Compares numbers according to "greater than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.',
+      'Compares `numbers` according to "greater than" predicate. Each (overlapping) pair of the `numbers` is compared by it. The result is `true` if all compared pairs satisfy comparison.',
     examples: ['(> 1 0)', '(> 1.01 1)', '(> 1 1)', '(> 4 3 2 1)', '(> 3 2 2 1)'],
     specialExpression: false,
     sideEffects: [],
@@ -333,16 +373,18 @@ const functionReference = {
     name: '<=',
     category: 'Math',
     linkName: '_lte',
-    syntax: '<= number => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Compares numbers according to "less than or equal" predicate.',
+    shortDescription: 'Compares `numbers` according to "less than or equal" predicate.',
     longDescription:
-      'Compares numbers according to "less than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.',
+      'Compares `numbers` according to "less than or equal" predicate. Each (overlapping) pair of the `numbers` is compared by it. The result is `true` if all compared pairs satisfy comparison.',
     examples: ['(<= 0 1)', '(<= 1 1.01)', '(<= 1 1)', '(<= 1 2 3 4)', '(<= 1 2 2 3)'],
     specialExpression: false,
     sideEffects: [],
@@ -351,16 +393,18 @@ const functionReference = {
     name: '>=',
     category: 'Math',
     linkName: '_gte',
-    syntax: '>= number => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Compares numbers according to "greater than or equal" predicate.',
+    shortDescription: 'Compares `numbers` according to "greater than or equal" predicate.',
     longDescription:
-      'Compares numbers according to "greater than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.',
+      'Compares `numbers` according to "greater than or equal" predicate. Each (overlapping) pair of the `numbers` is compared by it. The result is `true` if all compared pairs satisfy comparison.',
     examples: ['(>= 1 0)', '(>= 1.01 1)', '(>= 1 1)', '(>= 4 3 2 1)', '(>= 3 2 2 1)'],
     specialExpression: false,
     sideEffects: [],
@@ -369,7 +413,9 @@ const functionReference = {
     name: 'and',
     category: 'Special expression',
     linkName: 'and',
-    syntax: 'and forms => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'forms',
@@ -378,7 +424,7 @@ const functionReference = {
     ],
     shortDescription: 'Computes logical "and" function.',
     longDescription:
-      'Computes logical "and" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.',
+      'Computes logical "and" function. `forms` evaluation starts from left. Value from the first form that decides result is returned so `forms` at end of argument list may not evaluated.',
     examples: [
       '(and 1 1)',
       '(and (> 3 2) "string")',
@@ -393,7 +439,9 @@ const functionReference = {
     name: 'or',
     category: 'Special expression',
     linkName: 'or',
-    syntax: 'or forms => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'forms',
@@ -402,7 +450,7 @@ const functionReference = {
     ],
     shortDescription: 'Computes logical "or" function.',
     longDescription:
-      'Computes logical "or" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.',
+      'Computes logical "or" function. `forms` evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.',
     examples: [
       '(or 1 1)',
       '(or (> 3 2) "string")',
@@ -417,15 +465,18 @@ const functionReference = {
     name: 'append',
     category: 'List',
     linkName: 'append',
-    syntax: 'append lists (zero or more) => list',
+    returns: {
+      type: 'list',
+    },
     arguments: [
       {
         name: 'lists',
         type: 'list[]',
+        description: 'zero or more',
       },
     ],
     shortDescription: 'Concatenates list arguments into one list.',
-    longDescription: 'Concatenates list arguments into one list. Resulting list is shallow copy of specified lists.',
+    longDescription: 'Concatenates list arguments into one list. Resulting list is shallow copy of specified `lists`.',
     examples: [
       '(append (list 1 2) (list 3 4))',
       '(append (list) (list 3 4))',
@@ -440,7 +491,9 @@ const functionReference = {
     name: 'aref',
     category: 'String',
     linkName: 'aref',
-    syntax: 'aref string index => string',
+    returns: {
+      type: 'string',
+    },
     arguments: [
       {
         name: 'string',
@@ -453,7 +506,7 @@ const functionReference = {
     ],
     shortDescription: 'Accesses specified element of a string.',
     longDescription:
-      'Accesses specified element of a string. String index is counted from zero. Accessing out-of-bounds indices returns undefined',
+      'Accesses specified element of a string. `index` is counted from `0`. Accessing out-of-bounds indices returns `undefined`.',
     examples: ['(aref "A string" 0)', '(aref "A string" 2)', '(aref "A string" 20)', '(aref "A string" -1)'],
     specialExpression: false,
     sideEffects: [],
@@ -462,15 +515,17 @@ const functionReference = {
     name: 'boolean?',
     category: 'Predicate',
     linkName: 'boolean_question',
-    syntax: 'boolean? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is a boolean, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is a boolean, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is a `boolean`, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is a `boolean`, otherwise it returns `false`.',
     examples: [
       '(boolean? true)',
       '(boolean? false)',
@@ -486,15 +541,17 @@ const functionReference = {
     name: 'null?',
     category: 'Predicate',
     linkName: 'null_question',
-    syntax: 'null? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is null, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is null, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is `null`, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is `null`, otherwise it returns `false`.',
     examples: ['(null? null)', '(null? false)', '(null? (list 1 2 3))', '(null? 0)', '(null? "A string")', '(null?)'],
     specialExpression: false,
     sideEffects: [],
@@ -503,15 +560,17 @@ const functionReference = {
     name: 'undefined?',
     category: 'Predicate',
     linkName: 'undefined_question',
-    syntax: 'undefined? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is undefined, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is undefined, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is `undefined`, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is `undefined`, otherwise it returns `false`.',
     examples: [
       '(undefined? undefined)',
       '(undefined? false)',
@@ -528,15 +587,17 @@ const functionReference = {
     name: 'number?',
     category: 'Predicate',
     linkName: 'number_question',
-    syntax: 'number? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is a number, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is a number, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is a number, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is a number, otherwise it returns `false`.',
     examples: [
       '(number? 0)',
       '(number? 2)',
@@ -553,15 +614,17 @@ const functionReference = {
     name: 'string?',
     category: 'Predicate',
     linkName: 'string_question',
-    syntax: 'string? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is a string, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is a string, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is a string, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is a string, otherwise it returns `false`.',
     examples: [
       '(string? "")',
       '(string? "A string")',
@@ -578,15 +641,17 @@ const functionReference = {
     name: 'function?',
     category: 'Predicate',
     linkName: 'function_question',
-    syntax: 'function? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is a function, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is a function, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is a function, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is a function, otherwise it returns `false`.',
     examples: [
       `(function? #'+)`,
       '(function? (function /))',
@@ -604,15 +669,17 @@ const functionReference = {
     name: 'integer?',
     category: 'Predicate',
     linkName: 'integer_question',
-    syntax: 'integer? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is an integer, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is an integer, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is an integer, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is an integer, otherwise it returns `false`.',
     examples: [
       `(integer? 0)`,
       `(integer? -12)`,
@@ -631,15 +698,17 @@ const functionReference = {
     name: 'list?',
     category: 'Predicate',
     linkName: 'list_question',
-    syntax: 'list? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is a list, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is a list, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is a list, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is a list, otherwise it returns `false`.',
     examples: [
       `(list? (list))`,
       `(list? (list 1 2 3))`,
@@ -656,15 +725,17 @@ const functionReference = {
     name: 'object?',
     category: 'Predicate',
     linkName: 'object_question',
-    syntax: 'object? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is an object, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is an object, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is an object, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is an object, otherwise it returns `false`.',
     examples: [
       `(object? (object "a" 10))`,
       `(object? (object))`,
@@ -683,15 +754,17 @@ const functionReference = {
     name: 'regexp?',
     category: 'Predicate',
     linkName: 'regexp_question',
-    syntax: 'regexp? value => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'value',
         type: 'any',
       },
     ],
-    shortDescription: 'Returns true if the argument is a regexp, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is a regexp, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `value` is a regexp, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `value` is a regexp, otherwise it returns `false`.',
     examples: [
       '(regexp? (regexp "^start"))',
       `(regexp? -12)`,
@@ -710,15 +783,17 @@ const functionReference = {
     name: 'zero?',
     category: 'Predicate',
     linkName: 'zero_question',
-    syntax: 'zero? number => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Returns true if the argument is zero, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is zero, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `number` is `0`, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `number` is `0`, otherwise it returns `false`.',
     examples: ['(zero? 0)', `(zero? -0.0)`, '(zero? 1)', `(zero? 0.1)`, '(zero? "10")', '(zero?)'],
     specialExpression: false,
     sideEffects: [],
@@ -727,15 +802,17 @@ const functionReference = {
     name: 'even?',
     category: 'Predicate',
     linkName: 'even_question',
-    syntax: 'even? number => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Returns true if the argument is even, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is even, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `number` is even, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `number` is even, otherwise it returns `false`.',
     examples: ['(even? 0)', `(even? -0.0)`, '(even? -1)', `(even? 2.1)`, '(even? "10")', '(even?)'],
     specialExpression: false,
     sideEffects: [],
@@ -744,15 +821,17 @@ const functionReference = {
     name: 'odd?',
     category: 'Predicate',
     linkName: 'odd_question',
-    syntax: 'odd? number => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'number',
         type: 'number',
       },
     ],
-    shortDescription: 'Returns true if the argument is odd, otherwise it returns false.',
-    longDescription: 'Returns true if the argument is odd, otherwise it returns false.',
+    shortDescription: 'Returns `true` if `number` is odd, otherwise it returns `false`.',
+    longDescription: 'Returns `true` if `number` is odd, otherwise it returns `false`.',
     examples: ['(odd? 1.0)', `(odd? 1.001)`, '(odd? -1)', `(odd? 2.1)`, '(odd? "10")', '(odd?)'],
     specialExpression: false,
     sideEffects: [],
@@ -761,7 +840,9 @@ const functionReference = {
     name: 'substring',
     category: 'String',
     linkName: 'substring',
-    syntax: 'substring string indexStart indexEnd => string',
+    returns: {
+      type: 'string',
+    },
     arguments: [
       {
         name: 'string',
@@ -774,11 +855,11 @@ const functionReference = {
       {
         name: 'indexEnd',
         type: 'integer',
-        optional: true,
+        description: 'optional',
       },
     ],
-    shortDescription: 'Extracts characters from indexStart up to but not including indexEnd',
-    longDescription: 'Extracts characters from indexStart up to but not including indexEnd',
+    shortDescription: 'Extracts characters from `indexStart` up to but not including `indexEnd`.',
+    longDescription: 'Extracts characters from `indexStart` up to but not including `indexEnd`.',
     examples: [
       '(substring "A string" 2)',
       '(substring "A string" 2 5)',
@@ -793,15 +874,17 @@ const functionReference = {
     name: 'string-length',
     category: 'String',
     linkName: 'string-length',
-    syntax: 'string-length string => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'string',
         type: 'string',
       },
     ],
-    shortDescription: 'Returns length of string.',
-    longDescription: 'Returns length of string.',
+    shortDescription: 'Returns length of `string`.',
+    longDescription: 'Returns length of `string`.',
     examples: ['(string-length "A string")', '(string-length "")'],
     specialExpression: false,
     sideEffects: [],
@@ -810,15 +893,18 @@ const functionReference = {
     name: 'concat',
     category: 'String',
     linkName: 'concat',
-    syntax: 'concat strings (zero or more) => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'strings',
         type: 'string[]',
+        description: 'zero or more',
       },
     ],
-    shortDescription: 'Returns length of string.',
-    longDescription: 'Returns length of string.',
+    shortDescription: 'Concatenats `strings` into one `string`.',
+    longDescription: 'Concatenats `strings` into one `string`.',
     examples: ['(concat "A string" ", and another string" " ...and more")', '(concat "Just one string")', '(concat)'],
     specialExpression: false,
     sideEffects: [],
@@ -827,7 +913,9 @@ const functionReference = {
     name: 'string>',
     category: 'String',
     linkName: 'string_gt',
-    syntax: 'string> string1 string2 => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'string1',
@@ -839,9 +927,9 @@ const functionReference = {
       },
     ],
     shortDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is greater than `string2`, otherwise result is `false`.',
     longDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is greater than `string2`, otherwise result is `false`.',
     examples: [
       '(string> "A string" "Another string")',
       '(string> "Albert Mojir" "Albert")',
@@ -855,7 +943,9 @@ const functionReference = {
     name: 'string>=',
     category: 'String',
     linkName: 'string_gte',
-    syntax: 'string>= string1 string2 => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'string1',
@@ -867,9 +957,9 @@ const functionReference = {
       },
     ],
     shortDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is greater than or equal to `string2`, otherwise result is `false`.',
     longDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is greater than or equal to `string2`, otherwise result is `false`.',
     examples: [
       '(string>= "A string" "Another string")',
       '(string>= "Albert Mojir" "Albert")',
@@ -883,7 +973,9 @@ const functionReference = {
     name: 'string<',
     category: 'String',
     linkName: 'string_lt',
-    syntax: 'string< string1 string2 => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'string1',
@@ -895,9 +987,9 @@ const functionReference = {
       },
     ],
     shortDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is less than `string2`, otherwise result is `false`.',
     longDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is less than `string2`, otherwise result is `false`.',
     examples: [
       '(string< "A string" "Another string")',
       '(string< "Albert Mojir" "Albert")',
@@ -911,7 +1003,9 @@ const functionReference = {
     name: 'string<=',
     category: 'String',
     linkName: 'string_lte',
-    syntax: 'string<= string1 string2 => number',
+    returns: {
+      type: 'number',
+    },
     arguments: [
       {
         name: 'string1',
@@ -923,9 +1017,9 @@ const functionReference = {
       },
     ],
     shortDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is less than or equal to `string2`, otherwise result is `false`.',
     longDescription:
-      'Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false',
+      'Compares the two string arguments lexicographically, and the result is `true` if `string1` is less than or equal to `string2`, otherwise result is `false`.',
     examples: [
       '(string<= "A string" "Another string")',
       '(string<= "Albert Mojir" "Albert")',
@@ -939,16 +1033,18 @@ const functionReference = {
     name: 'write',
     category: 'Misc',
     linkName: 'write',
-    syntax: 'write values => value',
+    returns: {
+      type: 'value',
+    },
     arguments: [
       {
         name: 'values',
         type: 'any[]',
       },
     ],
-    shortDescription: 'It console.log the value arguments and then returns the last argument',
+    shortDescription: 'It console.log the `values` and then returns the last element of the `values` list.',
     longDescription:
-      'It console.log the value arguments and then returns the last argument. If called with no arguments undefined is returned',
+      'It console.log the `values` and then returns the last element of the `values` list.. If called with no arguments `undefined` is returned.',
     examples: [
       '(write "A string")',
       '(write 100 "items")',
@@ -964,7 +1060,9 @@ const functionReference = {
     name: 'has-attr',
     category: 'Object',
     linkName: 'has-attr',
-    syntax: 'has-attr object attr => true | false',
+    returns: {
+      type: 'boolean',
+    },
     arguments: [
       {
         name: 'object',
@@ -975,8 +1073,8 @@ const functionReference = {
         type: 'string',
       },
     ],
-    shortDescription: 'Returns true if object has an attribute named attr, otherwise returns false',
-    longDescription: 'Returns true if object has an attribute named attr, otherwise returns false',
+    shortDescription: 'Returns `true` if `object` has an attribute named `attr`, otherwise returns `false`.',
+    longDescription: 'Returns `true` if `object` has an attribute named `attr`, otherwise returns `false`.',
     examples: [
       '(has-attr (object "a" 10 "b" 20) "a")',
       '(has-attr (object "a" 10 "b" undefined) "b")',
@@ -989,7 +1087,9 @@ const functionReference = {
     name: 'get-attr',
     category: 'Object',
     linkName: 'get-attr',
-    syntax: 'get-attr object attr => value',
+    returns: {
+      type: 'value',
+    },
     arguments: [
       {
         name: 'object',
@@ -1001,8 +1101,9 @@ const functionReference = {
       },
     ],
     shortDescription:
-      "Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr",
-    longDescription: "Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr",
+      "Returns the value of `object`'s attribute `attr`. Returns `undefined` if `object` has no attribute named `attr`.",
+    longDescription:
+      "Returns the value of `object`'s attribute `attr`. Returns `undefined` if `object` has no attribute named `attr`.",
     examples: [
       '(get-attr (object "a" 10 "b" 20) "a")',
       '(get-attr (object "a" 10 "b" undefined) "b")',
@@ -1015,7 +1116,9 @@ const functionReference = {
     name: 'del-attr',
     category: 'Object',
     linkName: 'del-attr',
-    syntax: 'del-attr object attr => value',
+    returns: {
+      type: 'value',
+    },
     arguments: [
       {
         name: 'object',
@@ -1026,8 +1129,8 @@ const functionReference = {
         type: 'string',
       },
     ],
-    shortDescription: 'Deletes the attribute attr from obj',
-    longDescription: 'Deletes the attribute attr from obj',
+    shortDescription: 'Deletes the attribute `attr` from `object`.',
+    longDescription: 'Deletes the attribute `attr` from `object`.',
     examples: [
       '(del-attr (object "x" 10) "x")',
       '(del-attr (object "x" 10) "y")',
@@ -1041,7 +1144,9 @@ const functionReference = {
     name: 'set-attr',
     category: 'Object',
     linkName: 'set-attr',
-    syntax: 'set-attr object attr => value',
+    returns: {
+      type: 'value',
+    },
     arguments: [
       {
         name: 'object',
@@ -1051,9 +1156,13 @@ const functionReference = {
         name: 'attr',
         type: 'string',
       },
+      {
+        name: 'value',
+        type: 'any',
+      },
     ],
-    shortDescription: 'Sets an attribute on an object. Returns value.',
-    longDescription: 'Sets an attribute on an object. Returns value.',
+    shortDescription: 'Sets an attribute on `object`. Returns `value`.',
+    longDescription: 'Sets an attribute on `object`. Returns `value`.',
     examples: [
       '(set-attr (object "x" 10) "a" 10)',
       '(setq o (object)) (set-attr o "a" 10) o',
@@ -1066,15 +1175,17 @@ const functionReference = {
     name: 'list',
     category: 'List',
     linkName: 'list',
-    syntax: 'list values => list',
+    returns: {
+      type: 'list',
+    },
     arguments: [
       {
         name: 'values',
         type: 'any[]',
       },
     ],
-    shortDescription: 'Makes new list from arguments.',
-    longDescription: 'Makes new list from arguments.',
+    shortDescription: 'Makes new list from `values`.',
+    longDescription: 'Makes new list from `values`.',
     examples: ['(list 1 2 3)', '(list (list null undefined false true))', '(list)'],
     specialExpression: false,
     sideEffects: [],
@@ -1083,7 +1194,9 @@ const functionReference = {
     name: 'listf',
     category: 'List',
     linkName: 'listf',
-    syntax: 'listf length value => list',
+    returns: {
+      type: 'list',
+    },
     arguments: [
       {
         name: 'length',
@@ -1094,9 +1207,82 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Creates a list with "length" number of elements and sets all elements to "value"',
-    longDescription: 'Creates a list with "length" number of elements and sets all elements to "value"',
+    shortDescription: 'Creates a list with `length` number of elements and sets all elements to "value".',
+    longDescription: 'Creates a list with `length` number of elements and sets all elements to "value".',
     examples: ['(listf 10 null)', '(listf 0 100)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  range: {
+    name: 'range',
+    category: 'List',
+    linkName: 'range',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'a',
+        type: 'number',
+      },
+      {
+        name: 'length',
+        type: 'number',
+        description: 'optional',
+      },
+      {
+        name: 'length',
+        type: 'number',
+        description: 'optional',
+      },
+    ],
+    shortDescription: 'Create a list with a range of numbers.',
+    longDescription:
+      'Create a list with a range of numbers. If only one argument: `0...a`, otherwise: `a...b`. `step` defaults to `1`.',
+    examples: ['(range 4)', '(range 1 4)', '(range 0.4 4.9)', '(range 0.25 1 0.25)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  length: {
+    name: 'length',
+    category: 'List',
+    linkName: 'length',
+    returns: {
+      type: 'number',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Returns length of `list`.',
+    longDescription: 'Returns length of `list`.',
+    examples: ['(length (list 1 2 3)', '(length (list))'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  elt: {
+    name: 'elt',
+    category: 'List',
+    linkName: 'elt',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'index',
+        type: 'non negative integer',
+      },
+    ],
+    shortDescription: 'Accesses specified element of `list`.',
+    longDescription:
+      'Accesses specified element of `list`. The `index` is counted from `0`. Accessing out-of-bounds indices returns `undefined`.',
+    examples: ['(elt (list 1 2 3) 1)', '(elt (list 1 2 3) 3)'],
     specialExpression: false,
     sideEffects: [],
   },

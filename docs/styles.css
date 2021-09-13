@@ -218,7 +218,7 @@ h4, h2, h1 {
   padding: 0;
 }
 
-#index pre {
+#index pre, span.pre {
  margin: 0;
  display: inline;
  color: #fdff91;

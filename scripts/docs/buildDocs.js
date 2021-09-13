@@ -118,14 +118,15 @@ function getIndexContent() {
 }
 
 function getDocumentationContent(docObj) {
-  const { name, longDescription, syntax, linkName, specialExpression, examples, sideEffects, arguments: args } = docObj
+  const { name, longDescription, returns, linkName, specialExpression, examples, sideEffects, arguments: args } = docObj
+  const formattedDescription = formatDescription(longDescription)
   return `
 <div id="${linkName}" class="content function">
   <div class="function-header">${name}</div>
   ${specialExpression ? '<h3>Special Expression</h3>' : ''}
-  <p>${longDescription}</p>
+  <p>${formattedDescription}</p>
   <label>Syntax</label>
-  <pre>${syntax}</pre>
+  <pre>${getSyntax(name, args, returns)}</pre>
   <label>Arguments</label>
   <pre>${args.length === 0 ? 'No arguments' : args.map(arg => `${arg.name}: ${arg.type}`).join('<br />')}</pre>
   <label>Side effects</label>
@@ -207,4 +208,22 @@ function stringifyValue(value) {
     /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
     'undefined',
   )
+}
+
+function formatDescription(value) {
+  const logThis = value.indexOf('***') >= 0
+  value = value.replace(/`(.*?)`/g, '<span class="pre">$1</span>')
+  value = value.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+  value = value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+  value = value.replace(/\*(.*?)\*/g, '<em>$1</em>')
+  if (logThis) {
+    console.log(value)
+  }
+  return value
+}
+
+function getSyntax(name, args, returns) {
+  return `${name}${
+    args.length ? ' ' + args.map(arg => `${arg.name}${arg.description ? `(${arg.description})` : ''}`).join(' ') : ''
+  } => ${returns.type}`
 }

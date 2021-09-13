@@ -310,7 +310,7 @@ function getDocString(name) {
     return ''
   }
 
-  return `${doc.syntax}   ${doc.shortDescription.gray.italic}`
+  return `${getSyntax(doc)}   ${doc.shortDescription.gray.italic}`
 }
 
 function getFullDocumentation(name) {
@@ -326,7 +326,7 @@ function getFullDocumentation(name) {
 ${doc.longDescription.italic}
 
 ${'Syntax'.underline}
-  ${doc.syntax.bold}
+  ${getSyntax(doc).bold}
 
 ${'Arguments'.underline}
 ${doc.arguments.length === 0 ? '  None'.italic : doc.arguments.map(arg => `  ${arg.name.bold}: ${arg.type}`).join('\n')}
@@ -341,6 +341,14 @@ ${
     : doc.examples.map(example => `  ${example} ${'=>'.gray} ${executeExample(example)}`).join('\n')
 }
 `
+}
+
+function getSyntax(doc) {
+  return `${doc.name}${
+    doc.arguments.length
+      ? ' ' + doc.arguments.map(arg => `${arg.name}${arg.description ? `(${arg.description})` : ''}`).join(' ')
+      : ''
+  } => ${doc.returns.type}`
 }
 
 function printHelp() {

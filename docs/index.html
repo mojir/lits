@@ -85,6 +85,9 @@
           <li id="append_link" onclick="showPage('append')">append</li>
 <li id="list_link" onclick="showPage('list')">list</li>
 <li id="listf_link" onclick="showPage('listf')">listf</li>
+<li id="range_link" onclick="showPage('range')">range</li>
+<li id="length_link" onclick="showPage('length')">length</li>
+<li id="elt_link" onclick="showPage('elt')">elt</li>
         </ul>
 
         <label>Object</label>
@@ -131,7 +134,7 @@
 <div id="_plus" class="content function">
   <div class="function-header">+</div>
   
-  <p>Computes sum of numbers</p>
+  <p>Computes sum of <span class="pre">numbers</span>.</p>
   <label>Syntax</label>
   <pre>+ numbers(zero or more) => number</pre>
   <label>Arguments</label>
@@ -168,7 +171,7 @@
 <div id="_star" class="content function">
   <div class="function-header">*</div>
   
-  <p>Computes product of numbers.</p>
+  <p>Computes product of <span class="pre">numbers</span>.</p>
   <label>Syntax</label>
   <pre>* numbers(zero or more) => number</pre>
   <label>Arguments</label>
@@ -186,7 +189,7 @@
 <div id="_slash" class="content function">
   <div class="function-header">/</div>
   
-  <p>Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining number.</p>
+  <p>Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining <span class="pre">numbers</span>.</p>
   <label>Syntax</label>
   <pre>/ numbers(zero or more) => number</pre>
   <label>Arguments</label>
@@ -223,9 +226,9 @@
 <div id="_notequal" class="content function">
   <div class="function-header">!=</div>
   
-  <p>Result is true if no two values are equal to each other, otherwise result is false. Note that only two argument version result is negation of = function, that is (!= a b) is same as (! (= a b)).</p>
+  <p>Result is <span class="pre">true</span> if no two <span class="pre">values</span> are equal to each other, otherwise result is <span class="pre">false</span>. Note that only two argument version result is negation of <span class="pre">=</span> function, that is <span class="pre">(!= a b)</span> is same as <span class="pre">(! (= a b))</span>.</p>
   <label>Syntax</label>
-  <pre>!= values (one or more) => true | false</pre>
+  <pre>!= values => boolean</pre>
   <label>Arguments</label>
   <pre>values: any[]</pre>
   <label>Side effects</label>
@@ -243,9 +246,9 @@
 <div id="_equal" class="content function">
   <div class="function-header">=</div>
   
-  <p>Compares values according to "equal" predicate. Result is true if every specified value is equal to each other, otherwise result is false.</p>
+  <p>Compares <span class="pre">values</span> according to "equal" predicate. Result is <span class="pre">true</span> if every specified value is equal to each other, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>= values (one or more) => true | false</pre>
+  <pre>= values => boolean</pre>
   <label>Arguments</label>
   <pre>values: any[]</pre>
   <label>Side effects</label>
@@ -262,9 +265,9 @@
 <div id="not" class="content function">
   <div class="function-header">not</div>
   
-  <p>Computes logical negation. Note that any other value than false, 0, null, undefined and "" is considered as true.</p>
+  <p>Computes logical negation. Note that any other <span class="pre">value</span> than <span class="pre">false</span>, <span class="pre">0</span>, <span class="pre">null</span>, <span class="pre">undefined</span> and <span class="pre">""</span> is considered as <span class="pre">true</span>.</p>
   <label>Syntax</label>
-  <pre>not value => true | false</pre>
+  <pre>not value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -284,7 +287,7 @@
 <div id="1_plus" class="content function">
   <div class="function-header">1+</div>
   
-  <p>Adds one to the argument.</p>
+  <p>Adds one to <span class="pre">number</span>.</p>
   <label>Syntax</label>
   <pre>1+ number => number</pre>
   <label>Arguments</label>
@@ -301,7 +304,7 @@
 <div id="1_minus" class="content function">
   <div class="function-header">1-</div>
   
-  <p>Subtracts one from the argument.</p>
+  <p>Subtracts one from <span class="pre">number</span>.</p>
   <label>Syntax</label>
   <pre>1- number => number</pre>
   <label>Arguments</label>
@@ -318,7 +321,7 @@
 <div id="sqrt" class="content function">
   <div class="function-header">sqrt</div>
   
-  <p>Computes square root of number.</p>
+  <p>Computes square root of <span class="pre">number</span>.</p>
   <label>Syntax</label>
   <pre>sqrt number => number</pre>
   <label>Arguments</label>
@@ -336,7 +339,7 @@
 <div id="expt" class="content function">
   <div class="function-header">expt</div>
   
-  <p>Computes returns base-number raised to the power-number.</p>
+  <p>Computes returns <span class="pre">base-number</span> raised to the <span class="pre">power-number</span>.</p>
   <label>Syntax</label>
   <pre>expt base-number power-number => number</pre>
   <label>Arguments</label>
@@ -356,7 +359,7 @@
 <div id="round" class="content function">
   <div class="function-header">round</div>
   
-  <p>Returns argument rounded to the nearest integer.</p>
+  <p>Returns <span class="pre">number</span> rounded to the nearest <span class="pre">integer</span>.</p>
   <label>Syntax</label>
   <pre>round number => integer</pre>
   <label>Arguments</label>
@@ -376,7 +379,7 @@
 <div id="floor" class="content function">
   <div class="function-header">floor</div>
   
-  <p>Returns the largest integer less than or equal to the argument.</p>
+  <p>Returns the largest <span class="pre">integer</span> less than or equal to <span class="pre">number</span>.</p>
   <label>Syntax</label>
   <pre>floor number => integer</pre>
   <label>Arguments</label>
@@ -396,7 +399,7 @@
 <div id="ceil" class="content function">
   <div class="function-header">ceil</div>
   
-  <p>Returns the smallest integer larger than or equal to the argument.</p>
+  <p>Returns the smallest <span class="pre">integer</span> larger than or equal to <span class="pre">number</span>.</p>
   <label>Syntax</label>
   <pre>ceil number => integer</pre>
   <label>Arguments</label>
@@ -416,7 +419,7 @@
 <div id="random" class="content function">
   <div class="function-header">random</div>
   
-  <p>Returns a semi random number between 0 (inclusive) and argument (exclusive).</p>
+  <p>Returns a semi random number between <span class="pre">0</span> (inclusive) and <span class="pre">number</span> (exclusive).</p>
   <label>Syntax</label>
   <pre>random number => number</pre>
   <label>Arguments</label>
@@ -424,9 +427,9 @@
   <label>Side effects</label>
   <pre>No side effects</pre>
   <label>Examples</label>
-  <pre>(random 1) => 0.796110984019017</pre>
-<pre>(random 0.01) => 0.009151912742911845</pre>
-<pre>(random 2.5) => 1.989230786232266</pre>
+  <pre>(random 1) => 0.7804471364321626</pre>
+<pre>(random 0.01) => 0.0011026677737701362</pre>
+<pre>(random 2.5) => 0.9521677280372237</pre>
 <pre>(random 0) => Error!</pre>
 <pre>(random -1) => Error!</pre>
 </div>
@@ -435,9 +438,9 @@
 <div id="_lt" class="content function">
   <div class="function-header"><</div>
   
-  <p>Compares numbers according to "less than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <p>Compares <span class="pre">numbers</span> according to "less than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre>< number => true | false</pre>
+  <pre>< number => boolean</pre>
   <label>Arguments</label>
   <pre>number: number</pre>
   <label>Side effects</label>
@@ -454,9 +457,9 @@
 <div id="_gt" class="content function">
   <div class="function-header">></div>
   
-  <p>Compares numbers according to "greater than" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <p>Compares <span class="pre">numbers</span> according to "greater than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre>> number => true | false</pre>
+  <pre>> number => boolean</pre>
   <label>Arguments</label>
   <pre>number: number</pre>
   <label>Side effects</label>
@@ -473,9 +476,9 @@
 <div id="_lte" class="content function">
   <div class="function-header"><=</div>
   
-  <p>Compares numbers according to "less than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <p>Compares <span class="pre">numbers</span> according to "less than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre><= number => true | false</pre>
+  <pre><= number => boolean</pre>
   <label>Arguments</label>
   <pre>number: number</pre>
   <label>Side effects</label>
@@ -492,9 +495,9 @@
 <div id="_gte" class="content function">
   <div class="function-header">>=</div>
   
-  <p>Compares numbers according to "greater than or equal" predicate. Each (overlapping) pair of the numbers is compared by it. The result is true if all compared pairs satisfy comparison.</p>
+  <p>Compares <span class="pre">numbers</span> according to "greater than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
   <label>Syntax</label>
-  <pre>>= number => true | false</pre>
+  <pre>>= number => boolean</pre>
   <label>Arguments</label>
   <pre>number: number</pre>
   <label>Side effects</label>
@@ -511,9 +514,9 @@
 <div id="and" class="content function">
   <div class="function-header">and</div>
   <h3>Special Expression</h3>
-  <p>Computes logical "and" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
+  <p>Computes logical "and" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so <span class="pre">forms</span> at end of argument list may not evaluated.</p>
   <label>Syntax</label>
-  <pre>and forms => true | false</pre>
+  <pre>and forms => boolean</pre>
   <label>Arguments</label>
   <pre>forms: form[]</pre>
   <label>Side effects</label>
@@ -530,9 +533,9 @@
 <div id="or" class="content function">
   <div class="function-header">or</div>
   <h3>Special Expression</h3>
-  <p>Computes logical "or" function. Forms evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
+  <p>Computes logical "or" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
   <label>Syntax</label>
-  <pre>or forms => true | false</pre>
+  <pre>or forms => boolean</pre>
   <label>Arguments</label>
   <pre>forms: form[]</pre>
   <label>Side effects</label>
@@ -549,9 +552,9 @@
 <div id="append" class="content function">
   <div class="function-header">append</div>
   
-  <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified lists.</p>
+  <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified <span class="pre">lists</span>.</p>
   <label>Syntax</label>
-  <pre>append lists (zero or more) => list</pre>
+  <pre>append lists(zero or more) => list</pre>
   <label>Arguments</label>
   <pre>lists: list[]</pre>
   <label>Side effects</label>
@@ -568,7 +571,7 @@
 <div id="aref" class="content function">
   <div class="function-header">aref</div>
   
-  <p>Accesses specified element of a string. String index is counted from zero. Accessing out-of-bounds indices returns undefined</p>
+  <p>Accesses specified element of a string. <span class="pre">index</span> is counted from <span class="pre">0</span>. Accessing out-of-bounds indices returns <span class="pre">undefined</span>.</p>
   <label>Syntax</label>
   <pre>aref string index => string</pre>
   <label>Arguments</label>
@@ -586,9 +589,9 @@
 <div id="boolean_question" class="content function">
   <div class="function-header">boolean?</div>
   
-  <p>Returns true if the argument is a boolean, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a <span class="pre">boolean</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>boolean? value => true | false</pre>
+  <pre>boolean? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -606,9 +609,9 @@
 <div id="null_question" class="content function">
   <div class="function-header">null?</div>
   
-  <p>Returns true if the argument is null, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">null</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>null? value => true | false</pre>
+  <pre>null? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -626,9 +629,9 @@
 <div id="undefined_question" class="content function">
   <div class="function-header">undefined?</div>
   
-  <p>Returns true if the argument is undefined, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">undefined</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>undefined? value => true | false</pre>
+  <pre>undefined? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -647,9 +650,9 @@
 <div id="number_question" class="content function">
   <div class="function-header">number?</div>
   
-  <p>Returns true if the argument is a number, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a number, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>number? value => true | false</pre>
+  <pre>number? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -668,9 +671,9 @@
 <div id="string_question" class="content function">
   <div class="function-header">string?</div>
   
-  <p>Returns true if the argument is a string, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a string, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>string? value => true | false</pre>
+  <pre>string? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -689,9 +692,9 @@
 <div id="function_question" class="content function">
   <div class="function-header">function?</div>
   
-  <p>Returns true if the argument is a function, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a function, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>function? value => true | false</pre>
+  <pre>function? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -711,9 +714,9 @@
 <div id="integer_question" class="content function">
   <div class="function-header">integer?</div>
   
-  <p>Returns true if the argument is an integer, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an integer, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>integer? value => true | false</pre>
+  <pre>integer? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -734,9 +737,9 @@
 <div id="list_question" class="content function">
   <div class="function-header">list?</div>
   
-  <p>Returns true if the argument is a list, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a list, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>list? value => true | false</pre>
+  <pre>list? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -755,9 +758,9 @@
 <div id="object_question" class="content function">
   <div class="function-header">object?</div>
   
-  <p>Returns true if the argument is an object, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an object, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>object? value => true | false</pre>
+  <pre>object? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -778,9 +781,9 @@
 <div id="regexp_question" class="content function">
   <div class="function-header">regexp?</div>
   
-  <p>Returns true if the argument is a regexp, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a regexp, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>regexp? value => true | false</pre>
+  <pre>regexp? value => boolean</pre>
   <label>Arguments</label>
   <pre>value: any</pre>
   <label>Side effects</label>
@@ -801,9 +804,9 @@
 <div id="zero_question" class="content function">
   <div class="function-header">zero?</div>
   
-  <p>Returns true if the argument is zero, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is <span class="pre">0</span>, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>zero? number => true | false</pre>
+  <pre>zero? number => boolean</pre>
   <label>Arguments</label>
   <pre>number: number</pre>
   <label>Side effects</label>
@@ -821,9 +824,9 @@
 <div id="even_question" class="content function">
   <div class="function-header">even?</div>
   
-  <p>Returns true if the argument is even, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is even, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>even? number => true | false</pre>
+  <pre>even? number => boolean</pre>
   <label>Arguments</label>
   <pre>number: number</pre>
   <label>Side effects</label>
@@ -841,9 +844,9 @@
 <div id="odd_question" class="content function">
   <div class="function-header">odd?</div>
   
-  <p>Returns true if the argument is odd, otherwise it returns false.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is odd, otherwise it returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>odd? number => true | false</pre>
+  <pre>odd? number => boolean</pre>
   <label>Arguments</label>
   <pre>number: number</pre>
   <label>Side effects</label>
@@ -861,9 +864,9 @@
 <div id="substring" class="content function">
   <div class="function-header">substring</div>
   
-  <p>Extracts characters from indexStart up to but not including indexEnd</p>
+  <p>Extracts characters from <span class="pre">indexStart</span> up to but not including <span class="pre">indexEnd</span>.</p>
   <label>Syntax</label>
-  <pre>substring string indexStart indexEnd => string</pre>
+  <pre>substring string indexStart indexEnd(optional) => string</pre>
   <label>Arguments</label>
   <pre>string: string<br />indexStart: integer<br />indexEnd: integer</pre>
   <label>Side effects</label>
@@ -880,7 +883,7 @@
 <div id="string-length" class="content function">
   <div class="function-header">string-length</div>
   
-  <p>Returns length of string.</p>
+  <p>Returns length of <span class="pre">string</span>.</p>
   <label>Syntax</label>
   <pre>string-length string => number</pre>
   <label>Arguments</label>
@@ -896,9 +899,9 @@
 <div id="concat" class="content function">
   <div class="function-header">concat</div>
   
-  <p>Returns length of string.</p>
+  <p>Concatenats <span class="pre">strings</span> into one <span class="pre">string</span>.</p>
   <label>Syntax</label>
-  <pre>concat strings (zero or more) => number</pre>
+  <pre>concat strings(zero or more) => number</pre>
   <label>Arguments</label>
   <pre>strings: string[]</pre>
   <label>Side effects</label>
@@ -913,7 +916,7 @@
 <div id="string_gt" class="content function">
   <div class="function-header">string></div>
   
-  <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than string2, otherwise result is false</p>
+  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is greater than <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <pre>string> string1 string2 => number</pre>
   <label>Arguments</label>
@@ -931,7 +934,7 @@
 <div id="string_gte" class="content function">
   <div class="function-header">string>=</div>
   
-  <p>Compares the two string arguments lexicographically, and the result is true if string1 is greater than or equal to string2, otherwise result is false</p>
+  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is greater than or equal to <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <pre>string>= string1 string2 => number</pre>
   <label>Arguments</label>
@@ -949,7 +952,7 @@
 <div id="string_lt" class="content function">
   <div class="function-header">string<</div>
   
-  <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than string2, otherwise result is false</p>
+  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is less than <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <pre>string< string1 string2 => number</pre>
   <label>Arguments</label>
@@ -967,7 +970,7 @@
 <div id="string_lte" class="content function">
   <div class="function-header">string<=</div>
   
-  <p>Compares the two string arguments lexicographically, and the result is true if string1 is less than or equal to string2, otherwise result is false</p>
+  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is less than or equal to <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <pre>string<= string1 string2 => number</pre>
   <label>Arguments</label>
@@ -985,7 +988,7 @@
 <div id="write" class="content function">
   <div class="function-header">write</div>
   
-  <p>It console.log the value arguments and then returns the last argument. If called with no arguments undefined is returned</p>
+  <p>It console.log the <span class="pre">values</span> and then returns the last element of the <span class="pre">values</span> list.. If called with no arguments <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <pre>write values => value</pre>
   <label>Arguments</label>
@@ -1005,9 +1008,9 @@
 <div id="has-attr" class="content function">
   <div class="function-header">has-attr</div>
   
-  <p>Returns true if object has an attribute named attr, otherwise returns false</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">object</span> has an attribute named <span class="pre">attr</span>, otherwise returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
-  <pre>has-attr object attr => true | false</pre>
+  <pre>has-attr object attr => boolean</pre>
   <label>Arguments</label>
   <pre>object: object<br />attr: string</pre>
   <label>Side effects</label>
@@ -1022,7 +1025,7 @@
 <div id="get-attr" class="content function">
   <div class="function-header">get-attr</div>
   
-  <p>Returns the value of obj's attribute attr. Returns sundefined if obj has no attribute named attr</p>
+  <p>Returns the value of <span class="pre">object</span>'s attribute <span class="pre">attr</span>. Returns <span class="pre">undefined</span> if <span class="pre">object</span> has no attribute named <span class="pre">attr</span>.</p>
   <label>Syntax</label>
   <pre>get-attr object attr => value</pre>
   <label>Arguments</label>
@@ -1039,7 +1042,7 @@
 <div id="del-attr" class="content function">
   <div class="function-header">del-attr</div>
   
-  <p>Deletes the attribute attr from obj</p>
+  <p>Deletes the attribute <span class="pre">attr</span> from <span class="pre">object</span>.</p>
   <label>Syntax</label>
   <pre>del-attr object attr => value</pre>
   <label>Arguments</label>
@@ -1057,11 +1060,11 @@
 <div id="set-attr" class="content function">
   <div class="function-header">set-attr</div>
   
-  <p>Sets an attribute on an object. Returns value.</p>
+  <p>Sets an attribute on <span class="pre">object</span>. Returns <span class="pre">value</span>.</p>
   <label>Syntax</label>
-  <pre>set-attr object attr => value</pre>
+  <pre>set-attr object attr value => value</pre>
   <label>Arguments</label>
-  <pre>object: object<br />attr: string</pre>
+  <pre>object: object<br />attr: string<br />value: any</pre>
   <label>Side effects</label>
   <pre>No side effects</pre>
   <label>Examples</label>
@@ -1074,7 +1077,7 @@
 <div id="list" class="content function">
   <div class="function-header">list</div>
   
-  <p>Makes new list from arguments.</p>
+  <p>Makes new list from <span class="pre">values</span>.</p>
   <label>Syntax</label>
   <pre>list values => list</pre>
   <label>Arguments</label>
@@ -1091,7 +1094,7 @@
 <div id="listf" class="content function">
   <div class="function-header">listf</div>
   
-  <p>Creates a list with "length" number of elements and sets all elements to "value"</p>
+  <p>Creates a list with <span class="pre">length</span> number of elements and sets all elements to "value".</p>
   <label>Syntax</label>
   <pre>listf length value => list</pre>
   <label>Arguments</label>
@@ -1101,6 +1104,56 @@
   <label>Examples</label>
   <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
 <pre>(listf 0 100) => Error!</pre>
+</div>
+
+
+<div id="range" class="content function">
+  <div class="function-header">range</div>
+  
+  <p>Create a list with a range of numbers. If only one argument: <span class="pre">0...a</span>, otherwise: <span class="pre">a...b</span>. <span class="pre">step</span> defaults to <span class="pre">1</span>.</p>
+  <label>Syntax</label>
+  <pre>range a length(optional) length(optional) => list</pre>
+  <label>Arguments</label>
+  <pre>a: number<br />length: number<br />length: number</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(range 4) => [0,1,2,3]</pre>
+<pre>(range 1 4) => [1,2,3]</pre>
+<pre>(range 0.4 4.9) => [0.4,1.4,2.4,3.4,4.4]</pre>
+<pre>(range 0.25 1 0.25) => [0.25,0.5,0.75]</pre>
+</div>
+
+
+<div id="length" class="content function">
+  <div class="function-header">length</div>
+  
+  <p>Returns length of <span class="pre">list</span>.</p>
+  <label>Syntax</label>
+  <pre>length list => number</pre>
+  <label>Arguments</label>
+  <pre>list: list</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(length (list 1 2 3) => Error!</pre>
+<pre>(length (list)) => 0</pre>
+</div>
+
+
+<div id="elt" class="content function">
+  <div class="function-header">elt</div>
+  
+  <p>Accesses specified element of <span class="pre">list</span>. The <span class="pre">index</span> is counted from <span class="pre">0</span>. Accessing out-of-bounds indices returns <span class="pre">undefined</span>.</p>
+  <label>Syntax</label>
+  <pre>elt list index => any</pre>
+  <label>Arguments</label>
+  <pre>list: list<br />index: non negative integer</pre>
+  <label>Side effects</label>
+  <pre>No side effects</pre>
+  <label>Examples</label>
+  <pre>(elt (list 1 2 3) 1) => 2</pre>
+<pre>(elt (list 1 2 3) 3) => undefined</pre>
 </div>
 
     </main>

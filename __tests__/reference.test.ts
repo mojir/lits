@@ -29,10 +29,13 @@ describe('functionReference', () => {
           obj.category,
         ),
       ).toBe(true)
-      expect(obj.syntax.startsWith(key)).toBe(true)
       expect(obj.linkName).toEqual(getLinkName(key))
-      expect(obj.shortDescription.length).toBeGreaterThanOrEqual(1)
+      expect(obj.longDescription.length).toBeGreaterThanOrEqual(1)
+      expect(obj.returns.type.length).toBeGreaterThanOrEqual(1)
+      expect(obj.shortDescription[obj.shortDescription.length - 1]).toBe('.')
       expect(obj.longDescription.length).toBeGreaterThanOrEqual(obj.shortDescription.length)
+      expect(obj.longDescription[obj.longDescription.length - 1]).toBe('.')
+
       expect(obj.examples.length).toBeGreaterThan(0)
       expect(Array.isArray(obj.sideEffects)).toBe(true)
       expect(Array.isArray(obj.arguments)).toBe(true)
