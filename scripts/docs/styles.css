@@ -143,7 +143,11 @@ h4, h2, h1 {
 
 #top-bar .row {
   align-items: center;
-  margin-left: 1rem;
+  margin: 0 1rem;
+}
+
+#top-bar .version {
+  font-family: monospace;
 }
 
 #sidebar .active-sidebar-entry, #sidebar li:hover.active-sidebar-entry {

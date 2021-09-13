@@ -1,6 +1,6 @@
 {
   "name": "lispish",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "A lispish implementation in Typescript",
   "main": "dist/lispish.js",
   "module": "dist/lispish.mjs",
@@ -13,7 +13,8 @@
     "test": "jest --collect-coverage",
     "compile": "tsc -p ./tsconfig.json --noEmit",
     "lispish": "node ./cli/index.js",
-    "docs": "node ./scripts/docs/buildDocs.js"
+    "docs": "node ./scripts/docs/buildDocs.js",
+    "build-and-publish": "npm run lint && npm run test && npm run build && npm run docs && npm publish"
   },
   "files": [
     "dist",

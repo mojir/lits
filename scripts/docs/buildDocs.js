@@ -1,3 +1,4 @@
+const { version } = require('../../package.json')
 const { functionReference, categories } = require('../../cli/reference')
 const lispish = require('../../dist/lispish')
 const path = require('path')
@@ -43,8 +44,7 @@ function getTopBar() {
       <a id="home-link" onclick="showPage('index')">Home</a>
     </div>
     <div class="column header">Lispish</div>
-    <div class="column">
-    </div>
+    <div class="column right version"><span>v${version}</span></div>
   </div>
 </header>`
 }
