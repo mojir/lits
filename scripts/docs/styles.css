@@ -41,8 +41,16 @@ a:link, a:visited, a:hover, a:active {
   display: flex;
 }
 
+.row {
+  align-self: flex-start;
+}
+
 .column {
   flex: 1;
+}
+
+.column.wide {
+  flex: 2;
 }
 
 .column.right {
@@ -53,24 +61,44 @@ a:link, a:visited, a:hover, a:active {
   flex: 0;
 }
 
-/************ SIDEBAR **********/
-
-#sidebar {
-  position: fixed;
-  bottom: 350px;
-  left: 0;
-  width: 250px;
-  top: 87px;
-  padding-left: 1rem;
-  white-space: nowrap;
-  overflow-y: scroll;
-  padding-right: 1rem;
+.gray {
+  color: gray;
+}
+.error {
+  color: #b10000;
 }
 
-/* #sidebar::-webkit-scrollbar {
-  display: none;
-} */
+#play-button {
+  margin-bottom: 16px;
+	cursor: pointer;
+  border:solid 1px #555555;
+  background: #444444;
+  color: #cccccc;
+  border-radius: 5px;
+  text-decoration: none;
+  padding: 6px 12px;
+  font-size: 1rem;
+  line-height: 14px;
+  -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+  box-shadow: #222222 5px 5px 5px;
+}
 
+#play-button:hover,
+input[type="submit"]:hover{
+  -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+  border:solid 1px #cccccc;
+  background: #444444;
+  color: #cccccc;
+  box-shadow: #222222 0px 0px 0px;
+}
 
 .fancy-scroll::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -91,12 +119,20 @@ a:link, a:visited, a:hover, a:active {
 .fancy-scroll::-webkit-scrollbar-corner {
   background-color: #222222;
 }
-/* Hide scrollbar for IE, Edge and Firefox */
-/* #sidebar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+/************ SIDEBAR **********/
+
+#sidebar {
+  position: fixed;
+  bottom: 350px;
+  left: 0;
+  width: 250px;
+  top: 87px;
+  padding-left: 1rem;
+  white-space: nowrap;
+  overflow-y: scroll;
+  padding-right: 1rem;
 }
- */
 
 #sidebar .active-sidebar-entry, #sidebar li:hover.active-sidebar-entry {
   background-color: #444444;
@@ -151,6 +187,14 @@ a:link, a:visited, a:hover, a:active {
 
 .content.active-content {
   display: block;
+}
+
+.content .example {
+  cursor: pointer;
+}
+
+.content .example:hover {
+  color: white;
 }
 
 h4, h2, h1 {
@@ -216,12 +260,12 @@ h4, h2, h1 {
 
 #playground .header {
   font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
   background-color: #333333;
   color: #dddddd;
   color: #dddddd;
   padding: 5px 0;
-  text-align: center;
 }
 
 #playground .icon-button {

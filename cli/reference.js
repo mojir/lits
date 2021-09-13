@@ -1258,7 +1258,7 @@ const functionReference = {
     ],
     shortDescription: 'Returns length of `list`.',
     longDescription: 'Returns length of `list`.',
-    examples: ['(length (list 1 2 3)', '(length (list))'],
+    examples: ['(length (list 1 2 3))', '(length (list))'],
     specialExpression: false,
     sideEffects: [],
   },
@@ -1407,6 +1407,37 @@ const functionReference = {
     examples: ['(shift (list 1 2 3))', '(shift (list))'],
     specialExpression: false,
     sideEffects: ['Mutates list'],
+  },
+  slice: {
+    name: 'slice',
+    category: 'List',
+    linkName: 'slice',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'start',
+        type: 'number',
+        description: 'optional',
+      },
+      {
+        name: 'end',
+        type: 'number',
+        description: 'optional',
+      },
+    ],
+    shortDescription:
+      'Returns a shallow copy of a portion of `list` into a new list selected from index `start` (inclusive) to index `end` (exclusive).',
+    longDescription:
+      'Returns a shallow copy of a portion of `list` into a new list selected from index `start` (inclusive) to index `end` (exclusive). If `start` is not provided it defaults to `0`. If `end` is not provided, the rest of the list will be copied.',
+    examples: ['(slice (list 1 2 3 4 5) 2 4)', '(slice (list 1 2 3 4 5) 2)'],
+    specialExpression: false,
+    sideEffects: [],
   },
 }
 

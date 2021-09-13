@@ -61,13 +61,17 @@ function getHeader() {
 function getPlayground() {
   return `
 <div id="playground">
-  <div class="header"><span class="icon-button" onclick="play()">▶ Playground</span></div>
+  <div class="header row">
+    <div class="column">Playground</span></div>
+    <div class="column"><center><span id="play-button" onclick="play()">Run [Ctrl-Enter]</span></center></div>
+    <div class="column"></div>
+  </div>
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
       <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
-    <div class="column" id="lisp">
+    <div class="column wide" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
       <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)\n\n(write "y" y)\n\n(write (* x y))</textarea>
     </div>
@@ -152,9 +156,15 @@ function getDocumentationContent(docObj) {
         var result
         try {
           result = lispish.lispish(example)
-          return `<pre>${example} => ${stringifyValue(result)}</pre>`
+          return `<pre class="example" onclick="runPlayground('${escapeExample(
+            example,
+          )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifyValue(
+            result,
+          )}</span></pre>`
         } catch (error) {
-          return `<pre>${example} => Error!</pre>`
+          return `<pre class="example" onclick="runPlayground('${escapeExample(
+            example,
+          )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
         } finally {
           console.log = oldLog
         }
@@ -217,13 +227,6 @@ function escape(str) {
   return str
 }
 
-function stringifyValue(value) {
-  return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
-    /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
-    'undefined',
-  )
-}
-
 function formatDescription(value) {
   const logThis = value.indexOf('***') >= 0
   value = value.replace(/`(.*?)`/g, '<span class="pre">$1</span>')
@@ -240,4 +243,8 @@ function getSyntax(name, args, returns) {
   return `${name}${
     args.length ? ' ' + args.map(arg => `${arg.name}${arg.description ? `(${arg.description})` : ''}`).join(' ') : ''
   } => ${returns.type}`
+}
+
+function escapeExample(example) {
+  return example.replace(/'/g, '___single_quote___').replace(/"/g, '___double_quote___')
 }

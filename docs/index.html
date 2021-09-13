@@ -16,7 +16,7 @@
       <a id="home-link" onclick="showPage('index')">Home</a>
     </div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.0.25</span></div>
+    <div class="column right version"><span>v0.0.27</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -57,11 +57,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(+) => 0</pre>
-<pre>(+ 1) => 1</pre>
-<pre>(+ 2 4) => 6</pre>
-<pre>(+ 1 2 3 4) => 10</pre>
-<pre>(+ (+ 2 3) (+ 5 6)) => 16</pre>
+    <pre class="example" onclick="runPlayground('(+)')"><span class="icon-button">▶</span> (+) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(+ 1)')"><span class="icon-button">▶</span> (+ 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(+ 2 4)')"><span class="icon-button">▶</span> (+ 2 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(+ 1 2 3 4)')"><span class="icon-button">▶</span> (+ 1 2 3 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(+ (+ 2 3) (+ 5 6))')"><span class="icon-button">▶</span> (+ (+ 2 3) (+ 5 6)) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -80,10 +80,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(-) => 0</pre>
-<pre>(- 1) => -1</pre>
-<pre>(- 2 4) => -2</pre>
-<pre>(- 4 3 2 1) => -2</pre>
+    <pre class="example" onclick="runPlayground('(-)')"><span class="icon-button">▶</span> (-) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(- 1)')"><span class="icon-button">▶</span> (- 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(- 2 4)')"><span class="icon-button">▶</span> (- 2 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(- 4 3 2 1)')"><span class="icon-button">▶</span> (- 4 3 2 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -102,10 +102,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(*) => 1</pre>
-<pre>(* 2) => 2</pre>
-<pre>(* 2 4) => 8</pre>
-<pre>(* 1 2 3 4) => 24</pre>
+    <pre class="example" onclick="runPlayground('(*)')"><span class="icon-button">▶</span> (*) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(* 2)')"><span class="icon-button">▶</span> (* 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(* 2 4)')"><span class="icon-button">▶</span> (* 2 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(* 1 2 3 4)')"><span class="icon-button">▶</span> (* 1 2 3 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -124,10 +124,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(/) => 1</pre>
-<pre>(/ 2) => 0.5</pre>
-<pre>(/ 2 4) => 0.5</pre>
-<pre>(/ 4 3 2 1) => 0.6666666666666666</pre>
+    <pre class="example" onclick="runPlayground('(/)')"><span class="icon-button">▶</span> (/) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(/ 2)')"><span class="icon-button">▶</span> (/ 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(/ 2 4)')"><span class="icon-button">▶</span> (/ 2 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(/ 4 3 2 1)')"><span class="icon-button">▶</span> (/ 4 3 2 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -147,11 +147,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(% 5 3) => 2</pre>
-<pre>(% 5.2 3.1) => 2.1</pre>
-<pre>(% -5 3) => -2</pre>
-<pre>(% 5 -3) => 2</pre>
-<pre>(% -5 -3) => -2</pre>
+    <pre class="example" onclick="runPlayground('(% 5 3)')"><span class="icon-button">▶</span> (% 5 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(% 5.2 3.1)')"><span class="icon-button">▶</span> (% 5.2 3.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(% -5 3)')"><span class="icon-button">▶</span> (% -5 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(% 5 -3)')"><span class="icon-button">▶</span> (% 5 -3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(% -5 -3)')"><span class="icon-button">▶</span> (% -5 -3) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -170,12 +170,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(!= 3) => true</pre>
-<pre>(!= 3 2) => true</pre>
-<pre>(!= "3" 3) => true</pre>
-<pre>(!= 3 3 2) => false</pre>
-<pre>(!= "3" "2" "1" "0") => true</pre>
-<pre>(!= 0 -0) => false</pre>
+    <pre class="example" onclick="runPlayground('(!= 3)')"><span class="icon-button">▶</span> (!= 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(!= 3 2)')"><span class="icon-button">▶</span> (!= 3 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(!= ___double_quote___3___double_quote___ 3)')"><span class="icon-button">▶</span> (!= "3" 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(!= 3 3 2)')"><span class="icon-button">▶</span> (!= 3 3 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(!= ___double_quote___3___double_quote___ ___double_quote___2___double_quote___ ___double_quote___1___double_quote___ ___double_quote___0___double_quote___)')"><span class="icon-button">▶</span> (!= "3" "2" "1" "0") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(!= 0 -0)')"><span class="icon-button">▶</span> (!= 0 -0) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -194,11 +194,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(= 1 1) => true</pre>
-<pre>(= 1.01 1) => false</pre>
-<pre>(= "1" 1) => false</pre>
-<pre>(= "2" "2" "2" "2") => true</pre>
-<pre>(= 2 2 1 2) => false</pre>
+    <pre class="example" onclick="runPlayground('(= 1 1)')"><span class="icon-button">▶</span> (= 1 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(= 1.01 1)')"><span class="icon-button">▶</span> (= 1.01 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(= ___double_quote___1___double_quote___ 1)')"><span class="icon-button">▶</span> (= "1" 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(= ___double_quote___2___double_quote___ ___double_quote___2___double_quote___ ___double_quote___2___double_quote___ ___double_quote___2___double_quote___)')"><span class="icon-button">▶</span> (= "2" "2" "2" "2") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(= 2 2 1 2)')"><span class="icon-button">▶</span> (= 2 2 1 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -217,14 +217,14 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(not 3) => false</pre>
-<pre>(not true) => false</pre>
-<pre>(not "A string") => false</pre>
-<pre>(not 0) => true</pre>
-<pre>(not false) => true</pre>
-<pre>(not null) => true</pre>
-<pre>(not undefined) => true</pre>
-<pre>(not "") => true</pre>
+    <pre class="example" onclick="runPlayground('(not 3)')"><span class="icon-button">▶</span> (not 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(not true)')"><span class="icon-button">▶</span> (not true) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(not ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (not "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(not 0)')"><span class="icon-button">▶</span> (not 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(not false)')"><span class="icon-button">▶</span> (not false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(not null)')"><span class="icon-button">▶</span> (not null) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(not undefined)')"><span class="icon-button">▶</span> (not undefined) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(not ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (not "") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -243,9 +243,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(1+ 0) => 1</pre>
-<pre>(1+ 1) => 2</pre>
-<pre>(1+ 100.1) => 101.1</pre>
+    <pre class="example" onclick="runPlayground('(1+ 0)')"><span class="icon-button">▶</span> (1+ 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(1+ 1)')"><span class="icon-button">▶</span> (1+ 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(1+ 100.1)')"><span class="icon-button">▶</span> (1+ 100.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -264,9 +264,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(1- 0) => -1</pre>
-<pre>(1- 1) => 0</pre>
-<pre>(1- 100.1) => 99.1</pre>
+    <pre class="example" onclick="runPlayground('(1- 0)')"><span class="icon-button">▶</span> (1- 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(1- 1)')"><span class="icon-button">▶</span> (1- 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(1- 100.1)')"><span class="icon-button">▶</span> (1- 100.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -285,10 +285,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(sqrt 0) => 0</pre>
-<pre>(sqrt 9) => 3</pre>
-<pre>(sqrt 2) => 1.4142135623730951</pre>
-<pre>(sqrt -1) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(sqrt 0)')"><span class="icon-button">▶</span> (sqrt 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(sqrt 9)')"><span class="icon-button">▶</span> (sqrt 9) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(sqrt 2)')"><span class="icon-button">▶</span> (sqrt 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(sqrt -1)')"><span class="icon-button">▶</span> (sqrt -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -308,12 +308,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(expt 2 3) => 8</pre>
-<pre>(expt 2 0) => 1</pre>
-<pre>(expt 2 -3) => 0.125</pre>
-<pre>(expt -2 3) => -8</pre>
-<pre>(expt -2 -3) => -0.125</pre>
-<pre>(expt -2) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(expt 2 3)')"><span class="icon-button">▶</span> (expt 2 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(expt 2 0)')"><span class="icon-button">▶</span> (expt 2 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(expt 2 -3)')"><span class="icon-button">▶</span> (expt 2 -3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(expt -2 3)')"><span class="icon-button">▶</span> (expt -2 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(expt -2 -3)')"><span class="icon-button">▶</span> (expt -2 -3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(expt -2)')"><span class="icon-button">▶</span> (expt -2) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -332,12 +332,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(round 2) => 2</pre>
-<pre>(round 2.49) => 2</pre>
-<pre>(round 2.5) => 3</pre>
-<pre>(round -2.49) => -2</pre>
-<pre>(round -2.5) => -2</pre>
-<pre>(round -2.501) => -3</pre>
+    <pre class="example" onclick="runPlayground('(round 2)')"><span class="icon-button">▶</span> (round 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(round 2.49)')"><span class="icon-button">▶</span> (round 2.49) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(round 2.5)')"><span class="icon-button">▶</span> (round 2.5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(round -2.49)')"><span class="icon-button">▶</span> (round -2.49) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(round -2.5)')"><span class="icon-button">▶</span> (round -2.5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(round -2.501)')"><span class="icon-button">▶</span> (round -2.501) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -356,12 +356,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(floor 2) => 2</pre>
-<pre>(floor 2.49) => 2</pre>
-<pre>(floor 2.5) => 2</pre>
-<pre>(floor -2.49) => -3</pre>
-<pre>(floor -2.5) => -3</pre>
-<pre>(floor -2.501) => -3</pre>
+    <pre class="example" onclick="runPlayground('(floor 2)')"><span class="icon-button">▶</span> (floor 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(floor 2.49)')"><span class="icon-button">▶</span> (floor 2.49) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(floor 2.5)')"><span class="icon-button">▶</span> (floor 2.5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(floor -2.49)')"><span class="icon-button">▶</span> (floor -2.49) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(floor -2.5)')"><span class="icon-button">▶</span> (floor -2.5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(floor -2.501)')"><span class="icon-button">▶</span> (floor -2.501) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -380,12 +380,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(ceil 2) => 2</pre>
-<pre>(ceil 2.49) => 3</pre>
-<pre>(ceil 2.5) => 3</pre>
-<pre>(ceil -2.49) => -2</pre>
-<pre>(ceil -2.5) => -2</pre>
-<pre>(ceil -2.501) => -2</pre>
+    <pre class="example" onclick="runPlayground('(ceil 2)')"><span class="icon-button">▶</span> (ceil 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(ceil 2.49)')"><span class="icon-button">▶</span> (ceil 2.49) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(ceil 2.5)')"><span class="icon-button">▶</span> (ceil 2.5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(ceil -2.49)')"><span class="icon-button">▶</span> (ceil -2.49) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(ceil -2.5)')"><span class="icon-button">▶</span> (ceil -2.5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(ceil -2.501)')"><span class="icon-button">▶</span> (ceil -2.501) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -404,11 +404,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(random 1) => 0.7101137351898725</pre>
-<pre>(random 0.01) => 0.005108013115138286</pre>
-<pre>(random 2.5) => 1.828814014209087</pre>
-<pre>(random 0) => Error!</pre>
-<pre>(random -1) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -427,11 +427,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(< 0 1) => true</pre>
-<pre>(< 1 1.01) => true</pre>
-<pre>(< 1 1) => false</pre>
-<pre>(< 1 2 3 4) => true</pre>
-<pre>(< 1 2 2 3) => false</pre>
+    <pre class="example" onclick="runPlayground('(< 0 1)')"><span class="icon-button">▶</span> (< 0 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(< 1 1.01)')"><span class="icon-button">▶</span> (< 1 1.01) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(< 1 1)')"><span class="icon-button">▶</span> (< 1 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(< 1 2 3 4)')"><span class="icon-button">▶</span> (< 1 2 3 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(< 1 2 2 3)')"><span class="icon-button">▶</span> (< 1 2 2 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -450,11 +450,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(> 1 0) => true</pre>
-<pre>(> 1.01 1) => true</pre>
-<pre>(> 1 1) => false</pre>
-<pre>(> 4 3 2 1) => true</pre>
-<pre>(> 3 2 2 1) => false</pre>
+    <pre class="example" onclick="runPlayground('(> 1 0)')"><span class="icon-button">▶</span> (> 1 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(> 1.01 1)')"><span class="icon-button">▶</span> (> 1.01 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(> 1 1)')"><span class="icon-button">▶</span> (> 1 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(> 4 3 2 1)')"><span class="icon-button">▶</span> (> 4 3 2 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(> 3 2 2 1)')"><span class="icon-button">▶</span> (> 3 2 2 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -473,11 +473,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(<= 0 1) => true</pre>
-<pre>(<= 1 1.01) => true</pre>
-<pre>(<= 1 1) => true</pre>
-<pre>(<= 1 2 3 4) => true</pre>
-<pre>(<= 1 2 2 3) => true</pre>
+    <pre class="example" onclick="runPlayground('(<= 0 1)')"><span class="icon-button">▶</span> (<= 0 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(<= 1 1.01)')"><span class="icon-button">▶</span> (<= 1 1.01) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(<= 1 1)')"><span class="icon-button">▶</span> (<= 1 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(<= 1 2 3 4)')"><span class="icon-button">▶</span> (<= 1 2 3 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(<= 1 2 2 3)')"><span class="icon-button">▶</span> (<= 1 2 2 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -496,11 +496,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(>= 1 0) => true</pre>
-<pre>(>= 1.01 1) => true</pre>
-<pre>(>= 1 1) => true</pre>
-<pre>(>= 4 3 2 1) => true</pre>
-<pre>(>= 3 2 2 1) => true</pre>
+    <pre class="example" onclick="runPlayground('(>= 1 0)')"><span class="icon-button">▶</span> (>= 1 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(>= 1.01 1)')"><span class="icon-button">▶</span> (>= 1.01 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(>= 1 1)')"><span class="icon-button">▶</span> (>= 1 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(>= 4 3 2 1)')"><span class="icon-button">▶</span> (>= 4 3 2 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(>= 3 2 2 1)')"><span class="icon-button">▶</span> (>= 3 2 2 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -519,11 +519,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(and 1 1) => 1</pre>
-<pre>(and (> 3 2) "string") => "string"</pre>
-<pre>(and (< 3 2) "string") => false</pre>
-<pre>(and true true true true) => true</pre>
-<pre>(and true true 0 true) => 0</pre>
+    <pre class="example" onclick="runPlayground('(and 1 1)')"><span class="icon-button">▶</span> (and 1 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(and (> 3 2) ___double_quote___string___double_quote___)')"><span class="icon-button">▶</span> (and (> 3 2) "string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(and (< 3 2) ___double_quote___string___double_quote___)')"><span class="icon-button">▶</span> (and (< 3 2) "string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(and true true true true)')"><span class="icon-button">▶</span> (and true true true true) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(and true true 0 true)')"><span class="icon-button">▶</span> (and true true 0 true) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -542,11 +542,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(or 1 1) => 1</pre>
-<pre>(or (> 3 2) "string") => true</pre>
-<pre>(or (< 3 2) "string") => "string"</pre>
-<pre>(or true true true true) => true</pre>
-<pre>(or 1 2 3 4) => 1</pre>
+    <pre class="example" onclick="runPlayground('(or 1 1)')"><span class="icon-button">▶</span> (or 1 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(or (> 3 2) ___double_quote___string___double_quote___)')"><span class="icon-button">▶</span> (or (> 3 2) "string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(or (< 3 2) ___double_quote___string___double_quote___)')"><span class="icon-button">▶</span> (or (< 3 2) "string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(or true true true true)')"><span class="icon-button">▶</span> (or true true true true) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(or 1 2 3 4)')"><span class="icon-button">▶</span> (or 1 2 3 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -565,11 +565,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(append (list 1 2) (list 3 4)) => [1,2,3,4]</pre>
-<pre>(append (list) (list 3 4)) => [3,4]</pre>
-<pre>(append (list 1 2) (list)) => [1,2]</pre>
-<pre>(append (list 1 2) (list 3 4) (list 5 6)) => [1,2,3,4,5,6]</pre>
-<pre>(append (list)) => []</pre>
+    <pre class="example" onclick="runPlayground('(append (list 1 2) (list 3 4))')"><span class="icon-button">▶</span> (append (list 1 2) (list 3 4)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(append (list) (list 3 4))')"><span class="icon-button">▶</span> (append (list) (list 3 4)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(append (list 1 2) (list))')"><span class="icon-button">▶</span> (append (list 1 2) (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(append (list 1 2) (list 3 4) (list 5 6))')"><span class="icon-button">▶</span> (append (list 1 2) (list 3 4) (list 5 6)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(append (list))')"><span class="icon-button">▶</span> (append (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -589,10 +589,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(aref "A string" 0) => "A"</pre>
-<pre>(aref "A string" 2) => "s"</pre>
-<pre>(aref "A string" 20) => undefined</pre>
-<pre>(aref "A string" -1) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(aref ___double_quote___A string___double_quote___ 0)')"><span class="icon-button">▶</span> (aref "A string" 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(aref ___double_quote___A string___double_quote___ 2)')"><span class="icon-button">▶</span> (aref "A string" 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(aref ___double_quote___A string___double_quote___ 20)')"><span class="icon-button">▶</span> (aref "A string" 20) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(aref ___double_quote___A string___double_quote___ -1)')"><span class="icon-button">▶</span> (aref "A string" -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -611,12 +611,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(boolean? true) => true</pre>
-<pre>(boolean? false) => true</pre>
-<pre>(boolean? (list 1 2 3)) => false</pre>
-<pre>(boolean? 0) => false</pre>
-<pre>(boolean? "A string") => false</pre>
-<pre>(boolean?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(boolean? true)')"><span class="icon-button">▶</span> (boolean? true) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(boolean? false)')"><span class="icon-button">▶</span> (boolean? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(boolean? (list 1 2 3))')"><span class="icon-button">▶</span> (boolean? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(boolean? 0)')"><span class="icon-button">▶</span> (boolean? 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(boolean? ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (boolean? "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(boolean?)')"><span class="icon-button">▶</span> (boolean?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -635,12 +635,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(null? null) => true</pre>
-<pre>(null? false) => false</pre>
-<pre>(null? (list 1 2 3)) => false</pre>
-<pre>(null? 0) => false</pre>
-<pre>(null? "A string") => false</pre>
-<pre>(null?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(null? null)')"><span class="icon-button">▶</span> (null? null) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(null? false)')"><span class="icon-button">▶</span> (null? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(null? (list 1 2 3))')"><span class="icon-button">▶</span> (null? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(null? 0)')"><span class="icon-button">▶</span> (null? 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(null? ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (null? "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(null?)')"><span class="icon-button">▶</span> (null?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -659,13 +659,13 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(undefined? undefined) => true</pre>
-<pre>(undefined? false) => false</pre>
-<pre>(undefined? null) => false</pre>
-<pre>(undefined? (list 1 2 3)) => false</pre>
-<pre>(undefined? 0) => false</pre>
-<pre>(undefined? "A string") => false</pre>
-<pre>(undefined?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(undefined? undefined)')"><span class="icon-button">▶</span> (undefined? undefined) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(undefined? false)')"><span class="icon-button">▶</span> (undefined? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(undefined? null)')"><span class="icon-button">▶</span> (undefined? null) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(undefined? (list 1 2 3))')"><span class="icon-button">▶</span> (undefined? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(undefined? 0)')"><span class="icon-button">▶</span> (undefined? 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(undefined? ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (undefined? "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(undefined?)')"><span class="icon-button">▶</span> (undefined?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -684,13 +684,13 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(number? 0) => true</pre>
-<pre>(number? 2) => true</pre>
-<pre>(number? -0.12) => true</pre>
-<pre>(number? false) => false</pre>
-<pre>(number? (list 1 2 3)) => false</pre>
-<pre>(number? "A string") => false</pre>
-<pre>(number?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(number? 0)')"><span class="icon-button">▶</span> (number? 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(number? 2)')"><span class="icon-button">▶</span> (number? 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(number? -0.12)')"><span class="icon-button">▶</span> (number? -0.12) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(number? false)')"><span class="icon-button">▶</span> (number? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(number? (list 1 2 3))')"><span class="icon-button">▶</span> (number? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(number? ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (number? "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(number?)')"><span class="icon-button">▶</span> (number?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -709,13 +709,13 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(string? "") => true</pre>
-<pre>(string? "A string") => true</pre>
-<pre>(string? (if true "A string" false)) => true</pre>
-<pre>(string? false) => false</pre>
-<pre>(string? (list 1 2 3)) => false</pre>
-<pre>(string? 100) => false</pre>
-<pre>(string?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(string? ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (string? "") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string? ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (string? "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string? (if true ___double_quote___A string___double_quote___ false))')"><span class="icon-button">▶</span> (string? (if true "A string" false)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string? false)')"><span class="icon-button">▶</span> (string? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string? (list 1 2 3))')"><span class="icon-button">▶</span> (string? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string? 100)')"><span class="icon-button">▶</span> (string? 100) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string?)')"><span class="icon-button">▶</span> (string?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -734,14 +734,14 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(function? #'+) => true</pre>
-<pre>(function? (function /)) => true</pre>
-<pre>(function? (lambda (x y) (+ x y))) => true</pre>
-<pre>(function? false) => false</pre>
-<pre>(function? "false") => false</pre>
-<pre>(function? (list 1 2 3)) => false</pre>
-<pre>(function? 100) => false</pre>
-<pre>(function?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(function? #___single_quote___+)')"><span class="icon-button">▶</span> (function? #'+) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(function? (function /))')"><span class="icon-button">▶</span> (function? (function /)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(function? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (function? (lambda (x y) (+ x y))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(function? false)')"><span class="icon-button">▶</span> (function? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(function? ___double_quote___false___double_quote___)')"><span class="icon-button">▶</span> (function? "false") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(function? (list 1 2 3))')"><span class="icon-button">▶</span> (function? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(function? 100)')"><span class="icon-button">▶</span> (function? 100) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(function?)')"><span class="icon-button">▶</span> (function?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -760,15 +760,15 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(integer? 0) => true</pre>
-<pre>(integer? -12) => true</pre>
-<pre>(integer? 42) => true</pre>
-<pre>(integer? 10.1) => false</pre>
-<pre>(integer? (lambda (x y) (+ x y))) => false</pre>
-<pre>(integer? false) => false</pre>
-<pre>(integer? "false") => false</pre>
-<pre>(integer? (list 1 2 3)) => false</pre>
-<pre>(integer?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(integer? 0)')"><span class="icon-button">▶</span> (integer? 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer? -12)')"><span class="icon-button">▶</span> (integer? -12) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer? 42)')"><span class="icon-button">▶</span> (integer? 42) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer? 10.1)')"><span class="icon-button">▶</span> (integer? 10.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (integer? (lambda (x y) (+ x y))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer? false)')"><span class="icon-button">▶</span> (integer? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer? ___double_quote___false___double_quote___)')"><span class="icon-button">▶</span> (integer? "false") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer? (list 1 2 3))')"><span class="icon-button">▶</span> (integer? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(integer?)')"><span class="icon-button">▶</span> (integer?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -787,13 +787,13 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(list? (list)) => true</pre>
-<pre>(list? (list 1 2 3)) => true</pre>
-<pre>(list? (object "a" 10)) => false</pre>
-<pre>(list? 42) => false</pre>
-<pre>(list? 10.1) => false</pre>
-<pre>(list? (lambda (x y) (+ x y))) => false</pre>
-<pre>(list?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(list? (list))')"><span class="icon-button">▶</span> (list? (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list? (list 1 2 3))')"><span class="icon-button">▶</span> (list? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list? (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (list? (object "a" 10)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list? 42)')"><span class="icon-button">▶</span> (list? 42) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list? 10.1)')"><span class="icon-button">▶</span> (list? 10.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (list? (lambda (x y) (+ x y))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list?)')"><span class="icon-button">▶</span> (list?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -812,15 +812,15 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(object? (object "a" 10)) => true</pre>
-<pre>(object? (object)) => true</pre>
-<pre>(object? 42) => false</pre>
-<pre>(object? 10.1) => false</pre>
-<pre>(object? (lambda (x y) (+ x y))) => false</pre>
-<pre>(object? (regexp "^start")) => false</pre>
-<pre>(object? "false") => false</pre>
-<pre>(object? (list 1 2 3)) => false</pre>
-<pre>(object?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(object? (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (object? (object "a" 10)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object? (object))')"><span class="icon-button">▶</span> (object? (object)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object? 42)')"><span class="icon-button">▶</span> (object? 42) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object? 10.1)')"><span class="icon-button">▶</span> (object? 10.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (object? (lambda (x y) (+ x y))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object? (regexp ___double_quote___^start___double_quote___))')"><span class="icon-button">▶</span> (object? (regexp "^start")) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object? ___double_quote___false___double_quote___)')"><span class="icon-button">▶</span> (object? "false") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object? (list 1 2 3))')"><span class="icon-button">▶</span> (object? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(object?)')"><span class="icon-button">▶</span> (object?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -839,15 +839,15 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(regexp? (regexp "^start")) => true</pre>
-<pre>(regexp? -12) => false</pre>
-<pre>(regexp? (object)) => false</pre>
-<pre>(regexp? 10.1) => false</pre>
-<pre>(regexp? (lambda (x y) (+ x y))) => false</pre>
-<pre>(regexp? false) => false</pre>
-<pre>(regexp? "false") => false</pre>
-<pre>(regexp? (list 1 2 3)) => false</pre>
-<pre>(regexp?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(regexp? (regexp ___double_quote___^start___double_quote___))')"><span class="icon-button">▶</span> (regexp? (regexp "^start")) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp? -12)')"><span class="icon-button">▶</span> (regexp? -12) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp? (object))')"><span class="icon-button">▶</span> (regexp? (object)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp? 10.1)')"><span class="icon-button">▶</span> (regexp? 10.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (regexp? (lambda (x y) (+ x y))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp? false)')"><span class="icon-button">▶</span> (regexp? false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp? ___double_quote___false___double_quote___)')"><span class="icon-button">▶</span> (regexp? "false") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp? (list 1 2 3))')"><span class="icon-button">▶</span> (regexp? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(regexp?)')"><span class="icon-button">▶</span> (regexp?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -866,12 +866,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(zero? 0) => true</pre>
-<pre>(zero? -0.0) => true</pre>
-<pre>(zero? 1) => false</pre>
-<pre>(zero? 0.1) => false</pre>
-<pre>(zero? "10") => Error!</pre>
-<pre>(zero?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(zero? 0)')"><span class="icon-button">▶</span> (zero? 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(zero? -0.0)')"><span class="icon-button">▶</span> (zero? -0.0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(zero? 1)')"><span class="icon-button">▶</span> (zero? 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(zero? 0.1)')"><span class="icon-button">▶</span> (zero? 0.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(zero? ___double_quote___10___double_quote___)')"><span class="icon-button">▶</span> (zero? "10") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(zero?)')"><span class="icon-button">▶</span> (zero?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -890,12 +890,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(even? 0) => true</pre>
-<pre>(even? -0.0) => true</pre>
-<pre>(even? -1) => false</pre>
-<pre>(even? 2.1) => false</pre>
-<pre>(even? "10") => Error!</pre>
-<pre>(even?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(even? 0)')"><span class="icon-button">▶</span> (even? 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(even? -0.0)')"><span class="icon-button">▶</span> (even? -0.0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(even? -1)')"><span class="icon-button">▶</span> (even? -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(even? 2.1)')"><span class="icon-button">▶</span> (even? 2.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(even? ___double_quote___10___double_quote___)')"><span class="icon-button">▶</span> (even? "10") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(even?)')"><span class="icon-button">▶</span> (even?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -914,12 +914,12 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(odd? 1.0) => true</pre>
-<pre>(odd? 1.001) => false</pre>
-<pre>(odd? -1) => true</pre>
-<pre>(odd? 2.1) => false</pre>
-<pre>(odd? "10") => Error!</pre>
-<pre>(odd?) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(odd? 1.0)')"><span class="icon-button">▶</span> (odd? 1.0) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(odd? 1.001)')"><span class="icon-button">▶</span> (odd? 1.001) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(odd? -1)')"><span class="icon-button">▶</span> (odd? -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(odd? 2.1)')"><span class="icon-button">▶</span> (odd? 2.1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(odd? ___double_quote___10___double_quote___)')"><span class="icon-button">▶</span> (odd? "10") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(odd?)')"><span class="icon-button">▶</span> (odd?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -940,11 +940,11 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(substring "A string" 2) => "string"</pre>
-<pre>(substring "A string" 2 5) => "str"</pre>
-<pre>(substring "A string" 2 100) => "string"</pre>
-<pre>(substring "A string" 100) => ""</pre>
-<pre>(substring "A string" 5 2) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(substring ___double_quote___A string___double_quote___ 2)')"><span class="icon-button">▶</span> (substring "A string" 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(substring ___double_quote___A string___double_quote___ 2 5)')"><span class="icon-button">▶</span> (substring "A string" 2 5) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(substring ___double_quote___A string___double_quote___ 2 100)')"><span class="icon-button">▶</span> (substring "A string" 2 100) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(substring ___double_quote___A string___double_quote___ 100)')"><span class="icon-button">▶</span> (substring "A string" 100) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(substring ___double_quote___A string___double_quote___ 5 2)')"><span class="icon-button">▶</span> (substring "A string" 5 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -963,8 +963,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(string-length "A string") => 8</pre>
-<pre>(string-length "") => 0</pre>
+    <pre class="example" onclick="runPlayground('(string-length ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (string-length "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string-length ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (string-length "") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -983,9 +983,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(concat "A string" ", and another string" " ...and more") => "A string, and another string ...and more"</pre>
-<pre>(concat "Just one string") => "Just one string"</pre>
-<pre>(concat) => ""</pre>
+    <pre class="example" onclick="runPlayground('(concat ___double_quote___A string___double_quote___ ___double_quote___, and another string___double_quote___ ___double_quote___ ...and more___double_quote___)')"><span class="icon-button">▶</span> (concat "A string" ", and another string" " ...and more") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(concat ___double_quote___Just one string___double_quote___)')"><span class="icon-button">▶</span> (concat "Just one string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(concat)')"><span class="icon-button">▶</span> (concat) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1005,10 +1005,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(string> "A string" "Another string") => false</pre>
-<pre>(string> "Albert Mojir" "Albert") => true</pre>
-<pre>(string> "Albert" "Albert") => false</pre>
-<pre>(string> "Albert" "albert") => false</pre>
+    <pre class="example" onclick="runPlayground('(string> ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string> "A string" "Another string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string> ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string> "Albert Mojir" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string> ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string> "Albert" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string> ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string> "Albert" "albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1028,10 +1028,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(string>= "A string" "Another string") => false</pre>
-<pre>(string>= "Albert Mojir" "Albert") => true</pre>
-<pre>(string>= "Albert" "Albert") => true</pre>
-<pre>(string>= "Albert" "albert") => false</pre>
+    <pre class="example" onclick="runPlayground('(string>= ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string>= "A string" "Another string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string>= ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string>= "Albert Mojir" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string>= ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string>= "Albert" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string>= ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string>= "Albert" "albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1051,10 +1051,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(string< "A string" "Another string") => true</pre>
-<pre>(string< "Albert Mojir" "Albert") => false</pre>
-<pre>(string< "Albert" "Albert") => false</pre>
-<pre>(string< "Albert" "albert") => true</pre>
+    <pre class="example" onclick="runPlayground('(string< ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string< "A string" "Another string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string< ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string< "Albert Mojir" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string< ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string< "Albert" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string< ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string< "Albert" "albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1074,10 +1074,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(string<= "A string" "Another string") => true</pre>
-<pre>(string<= "Albert Mojir" "Albert") => false</pre>
-<pre>(string<= "Albert" "Albert") => true</pre>
-<pre>(string<= "Albert" "albert") => true</pre>
+    <pre class="example" onclick="runPlayground('(string<= ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string<= "A string" "Another string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string<= ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string<= "Albert Mojir" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string<= ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string<= "Albert" "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(string<= ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string<= "Albert" "albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1096,12 +1096,12 @@
   <label>Side effects</label><div class="indent"><pre>Does a console.log</pre></div>
   <label>Examples</label>
   <div class="indent">
-    <pre>(write "A string") => "A string"</pre>
-<pre>(write 100 "items") => "items"</pre>
-<pre>(write (object "a" 10)) => {"a":10}</pre>
-<pre>(write (list "a" "b" "c")) => ["a","b","c"]</pre>
-<pre>(write (regexp "^start")) => {}</pre>
-<pre>(write null undefined true false) => false</pre>
+    <pre class="example" onclick="runPlayground('(write ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (write "A string") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(write 100 ___double_quote___items___double_quote___)')"><span class="icon-button">▶</span> (write 100 "items") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(write (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (write (object "a" 10)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(write (list ___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___))')"><span class="icon-button">▶</span> (write (list "a" "b" "c")) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(write (regexp ___double_quote___^start___double_quote___))')"><span class="icon-button">▶</span> (write (regexp "^start")) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(write null undefined true false)')"><span class="icon-button">▶</span> (write null undefined true false) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1121,9 +1121,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(has-attr (object "a" 10 "b" 20) "a") => true</pre>
-<pre>(has-attr (object "a" 10 "b" undefined) "b") => true</pre>
-<pre>(has-attr (object "a" 10 "b" undefined) "c") => false</pre>
+    <pre class="example" onclick="runPlayground('(has-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20) ___double_quote___a___double_quote___)')"><span class="icon-button">▶</span> (has-attr (object "a" 10 "b" 20) "a") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(has-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (has-attr (object "a" 10 "b" undefined) "b") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(has-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (has-attr (object "a" 10 "b" undefined) "c") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1143,9 +1143,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(get-attr (object "a" 10 "b" 20) "a") => 10</pre>
-<pre>(get-attr (object "a" 10 "b" undefined) "b") => undefined</pre>
-<pre>(get-attr (object "a" 10 "b" undefined) "c") => undefined</pre>
+    <pre class="example" onclick="runPlayground('(get-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20) ___double_quote___a___double_quote___)')"><span class="icon-button">▶</span> (get-attr (object "a" 10 "b" 20) "a") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(get-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (get-attr (object "a" 10 "b" undefined) "b") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(get-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (get-attr (object "a" 10 "b" undefined) "c") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1165,10 +1165,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(del-attr (object "x" 10) "x") => 10</pre>
-<pre>(del-attr (object "x" 10) "y") => undefined</pre>
-<pre>(setq o (object "a" 5)) (del-attr o "a") o => {}</pre>
-<pre>(setq o (object "a" 5)) (del-attr o "b") o => {"a":5}</pre>
+    <pre class="example" onclick="runPlayground('(del-attr (object ___double_quote___x___double_quote___ 10) ___double_quote___x___double_quote___)')"><span class="icon-button">▶</span> (del-attr (object "x" 10) "x") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(del-attr (object ___double_quote___x___double_quote___ 10) ___double_quote___y___double_quote___)')"><span class="icon-button">▶</span> (del-attr (object "x" 10) "y") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (del-attr o ___double_quote___a___double_quote___) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (del-attr o "a") o <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (del-attr o ___double_quote___b___double_quote___) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (del-attr o "b") o <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1189,9 +1189,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(set-attr (object "x" 10) "a" 10) => 10</pre>
-<pre>(setq o (object)) (set-attr o "a" 10) o => {"a":10}</pre>
-<pre>(setq o (object "a" 5)) (set-attr o "a" 10) o => {"a":10}</pre>
+    <pre class="example" onclick="runPlayground('(set-attr (object ___double_quote___x___double_quote___ 10) ___double_quote___a___double_quote___ 10)')"><span class="icon-button">▶</span> (set-attr (object "x" 10) "a" 10) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(setq o (object)) (set-attr o ___double_quote___a___double_quote___ 10) o')"><span class="icon-button">▶</span> (setq o (object)) (set-attr o "a" 10) o <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (set-attr o ___double_quote___a___double_quote___ 10) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (set-attr o "a" 10) o <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1210,9 +1210,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(list 1 2 3) => [1,2,3]</pre>
-<pre>(list (list null undefined false true)) => [[null,undefined,false,true]]</pre>
-<pre>(list) => []</pre>
+    <pre class="example" onclick="runPlayground('(list 1 2 3)')"><span class="icon-button">▶</span> (list 1 2 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list (list null undefined false true))')"><span class="icon-button">▶</span> (list (list null undefined false true)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(list)')"><span class="icon-button">▶</span> (list) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1232,8 +1232,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(listf 10 null) => [null,null,null,null,null,null,null,null,null,null]</pre>
-<pre>(listf 0 100) => Error!</pre>
+    <pre class="example" onclick="runPlayground('(listf 10 null)')"><span class="icon-button">▶</span> (listf 10 null) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(listf 0 100)')"><span class="icon-button">▶</span> (listf 0 100) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1254,10 +1254,10 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(range 4) => [0,1,2,3]</pre>
-<pre>(range 1 4) => [1,2,3]</pre>
-<pre>(range 0.4 4.9) => [0.4,1.4,2.4,3.4,4.4]</pre>
-<pre>(range 0.25 1 0.25) => [0.25,0.5,0.75]</pre>
+    <pre class="example" onclick="runPlayground('(range 4)')"><span class="icon-button">▶</span> (range 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(range 1 4)')"><span class="icon-button">▶</span> (range 1 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(range 0.4 4.9)')"><span class="icon-button">▶</span> (range 0.4 4.9) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(range 0.25 1 0.25)')"><span class="icon-button">▶</span> (range 0.25 1 0.25) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1276,8 +1276,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(length (list 1 2 3) => Error!</pre>
-<pre>(length (list)) => 0</pre>
+    <pre class="example" onclick="runPlayground('(length (list 1 2 3))')"><span class="icon-button">▶</span> (length (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(length (list))')"><span class="icon-button">▶</span> (length (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1297,8 +1297,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre>(elt (list 1 2 3) 1) => 2</pre>
-<pre>(elt (list 1 2 3) 3) => undefined</pre>
+    <pre class="example" onclick="runPlayground('(elt (list 1 2 3) 1)')"><span class="icon-button">▶</span> (elt (list 1 2 3) 1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(elt (list 1 2 3) 3)')"><span class="icon-button">▶</span> (elt (list 1 2 3) 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1319,8 +1319,8 @@
   <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
   <label>Examples</label>
   <div class="indent">
-    <pre>(selt (list 1 2 3) 1 "two") => [1,"two",3]</pre>
-<pre>(selt (list 1 2 3) 3 "Four") => Error!</pre>
+    <pre class="example" onclick="runPlayground('(selt (list 1 2 3) 1 ___double_quote___two___double_quote___)')"><span class="icon-button">▶</span> (selt (list 1 2 3) 1 "two") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(selt (list 1 2 3) 3 ___double_quote___Four___double_quote___)')"><span class="icon-button">▶</span> (selt (list 1 2 3) 3 "Four") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1340,9 +1340,9 @@
   <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
   <label>Examples</label>
   <div class="indent">
-    <pre>(push (list 1 2 3) 4) => [1,2,3,4]</pre>
-<pre>(push (list 1 2 3) 4 5 6) => [1,2,3,4,5,6]</pre>
-<pre>(setq l (list 1 2 3)) (push l 4) l => [1,2,3,4]</pre>
+    <pre class="example" onclick="runPlayground('(push (list 1 2 3) 4)')"><span class="icon-button">▶</span> (push (list 1 2 3) 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(push (list 1 2 3) 4 5 6)')"><span class="icon-button">▶</span> (push (list 1 2 3) 4 5 6) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(setq l (list 1 2 3)) (push l 4) l')"><span class="icon-button">▶</span> (setq l (list 1 2 3)) (push l 4) l <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1362,8 +1362,8 @@
   <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
   <label>Examples</label>
   <div class="indent">
-    <pre>(pop (list 1 2 3)) => 3</pre>
-<pre>(pop (list)) => undefined</pre>
+    <pre class="example" onclick="runPlayground('(pop (list 1 2 3))')"><span class="icon-button">▶</span> (pop (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(pop (list))')"><span class="icon-button">▶</span> (pop (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1383,9 +1383,9 @@
   <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
   <label>Examples</label>
   <div class="indent">
-    <pre>(unshift (list 1 2 3) 4) => [4,1,2,3]</pre>
-<pre>(unshift (list 1 2 3) 4 5 6) => [4,5,6,1,2,3]</pre>
-<pre>(setq l (list 1 2 3)) (unshift l 4) l => [4,1,2,3]</pre>
+    <pre class="example" onclick="runPlayground('(unshift (list 1 2 3) 4)')"><span class="icon-button">▶</span> (unshift (list 1 2 3) 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(unshift (list 1 2 3) 4 5 6)')"><span class="icon-button">▶</span> (unshift (list 1 2 3) 4 5 6) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(setq l (list 1 2 3)) (unshift l 4) l')"><span class="icon-button">▶</span> (setq l (list 1 2 3)) (unshift l 4) l <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1405,8 +1405,30 @@
   <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
   <label>Examples</label>
   <div class="indent">
-    <pre>(shift (list 1 2 3)) => 1</pre>
-<pre>(shift (list)) => undefined</pre>
+    <pre class="example" onclick="runPlayground('(shift (list 1 2 3))')"><span class="icon-button">▶</span> (shift (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(shift (list))')"><span class="icon-button">▶</span> (shift (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="slice" class="content function">
+  <div class="function-header">slice</div>
+  
+  <p>Returns a shallow copy of a portion of <span class="pre">list</span> into a new list selected from index <span class="pre">start</span> (inclusive) to index <span class="pre">end</span> (exclusive). If <span class="pre">start</span> is not provided it defaults to <span class="pre">0</span>. If <span class="pre">end</span> is not provided, the rest of the list will be copied.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>slice list start(optional) end(optional) => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>start: number</pre>
+<pre>end: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(slice (list 1 2 3 4 5) 2 4)')"><span class="icon-button">▶</span> (slice (list 1 2 3 4 5) 2 4) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(slice (list 1 2 3 4 5) 2)')"><span class="icon-button">▶</span> (slice (list 1 2 3 4 5) 2) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1483,6 +1505,7 @@
 <li id="pop_link" onclick="showPage('pop')">pop</li>
 <li id="unshift_link" onclick="showPage('unshift')">unshift</li>
 <li id="shift_link" onclick="showPage('shift')">shift</li>
+<li id="slice_link" onclick="showPage('slice')">slice</li>
         </ul>
 
         <label>Object</label>
@@ -1504,13 +1527,17 @@
 
   
 <div id="playground">
-  <div class="header"><span class="icon-button" onclick="play()">▶ Playground</span></div>
+  <div class="header row">
+    <div class="column">Playground</span></div>
+    <div class="column"><center><span id="play-button" onclick="play()">Run [Ctrl-Enter]</span></center></div>
+    <div class="column"></div>
+  </div>
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
       <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
-    <div class="column" id="lisp">
+    <div class="column wide" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
       <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)
 

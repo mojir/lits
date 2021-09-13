@@ -1,4 +1,9 @@
 ;(function () {
+  window.addEventListener('keyup', function (evt) {
+    if (evt.key === 'Enter' && evt.ctrlKey === true) {
+      play()
+    }
+  })
   var id = location.hash.substring(1) || 'index'
   showPage(id, 'replace')
 })()
@@ -12,11 +17,13 @@ function play() {
   var code = document.getElementById('lisp-textarea').value
   var contextString = document.getElementById('context-textarea').value
   var output = document.getElementById('output-textarea')
+  var logTextarea = document.getElementById('log-textarea')
+  logTextarea.value = ''
   var context
   try {
     context = contextString.trim().length > 0 ? JSON.parse(contextString) : {}
   } catch (e) {
-    output.innerHTML = 'Error: Could not parse context'
+    output.value = 'Error: Could not parse context'
     output.classList.add('error')
     return
   }
@@ -24,15 +31,11 @@ function play() {
   var oldLog = console.log
   console.log = function () {
     var args = Array.from(arguments)
-    var logRow = args.map(arg => '' + arg).join(' ')
-    var textarea = document.getElementById('log-textarea')
-    var oldInnerHTML = textarea.innerHTML
-    var newContent = oldInnerHTML ? oldInnerHTML + '\n' + logRow : logRow
-    textarea.innerHTML = newContent
-    textarea.scrollTop = textarea.scrollHeight
-    if (newContent) {
-      document.getElementById('clear-log').classList.add('active')
-    }
+    var logRow = args.map(arg => stringifyValue(arg)).join(' ')
+    var oldContent = logTextarea.value
+    var newContent = oldContent ? oldContent + '\n' + logRow : logRow
+    logTextarea.value = newContent
+    logTextarea.scrollTop = logTextarea.scrollHeight
   }
   try {
     result = lispish.lispish(code, context)
@@ -48,6 +51,11 @@ function play() {
   output.innerHTML = content
   if (content) {
     document.getElementById('clear-output').classList.add('active')
+  }
+  if (logTextarea.value) {
+    document.getElementById('clear-log').classList.add('active')
+  } else {
+    document.getElementById('clear-log').classList.remove('active')
   }
 }
 function showPage(id, historyEvent) {
@@ -95,4 +103,11 @@ function clearOutput() {
   document.getElementById('clear-output').classList.remove('active')
   document.getElementById('log-textarea').innerHTML = ''
   document.getElementById('clear-log').classList.remove('active')
+}
+
+function runPlayground(example) {
+  example = example.replace(/___single_quote___/g, "'").replace(/___double_quote___/g, '"')
+  var textarea = document.getElementById('lisp-textarea')
+  textarea.value = example
+  play()
 }
