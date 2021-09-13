@@ -17,15 +17,13 @@ function writeIndexPage() {
 ${getHeader()}
 <body>
   ${getTopBar({ back: false })}
-  <div id="page" class="row">
-    ${getSideBar()}
-    <main id="main-panel">
-      ${getIndexContent()}
-      ${Object.values(functionReference)
-        .map(obj => getDocumentationContent(obj))
-        .join('\n')}
-    </main>
-  </div>
+  <main id="main-panel" class="fancy-scroll">
+    ${getIndexContent()}
+    ${Object.values(functionReference)
+      .map(obj => getDocumentationContent(obj))
+      .join('\n')}
+  </main>
+  ${getSideBar()}
   ${getPlayground()}
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
   <script src="lispish.iife.js"></script>
@@ -175,7 +173,7 @@ function getSideBar() {
   }, {})
 
   return `
-<nav id="sidebar">
+<nav id="sidebar" class="fancy-scroll">
   ${categories
     .map(categoryKey => {
       return `

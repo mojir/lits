@@ -144,11 +144,12 @@ export const list: BuiltinNormalExpressions = {
   },
 
   unshift: {
-    evaluate: ([arr, ...values]: unknown[]): number => {
+    evaluate: ([arr, ...values]: unknown[]): unknown[] => {
       assertArray(arr)
-      return arr.unshift(...values)
+      arr.unshift(...values)
+      return arr
     },
-    validate: ({ params }) => assertLengthOneOrMore(params),
+    validate: ({ params }) => assertLengthTwoOrMore(params),
   },
 
   slice: {

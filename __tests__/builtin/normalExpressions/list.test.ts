@@ -415,12 +415,11 @@ describe('list functions', () => {
 
   describe('unshift', () => {
     test('samples', () => {
-      expect(lispish('(unshift (list 1 2 3) 0)')).toBe(4)
-      expect(lispish('(unshift (list 1 2 3) 1 "2")')).toBe(5)
-      expect(lispish('(unshift (list 1 2 3))')).toBe(3)
+      expect(lispish('(unshift (list 1 2 3) 0)')).toEqual([0, 1, 2, 3])
+      expect(lispish('(unshift (list 1 2 3) 1 "2")')).toEqual([1, '2', 1, 2, 3])
       expect(lispish('(setq l (list 1 2 3)) (unshift l 1 "2") l')).toEqual([1, '2', 1, 2, 3])
-      expect(lispish('(setq l (list 1 2 3)) (unshift l) l')).toEqual([1, 2, 3])
 
+      expect(() => lispish('(unshift (list 1 2 3))')).toThrow()
       expect(() => lispish('(unshift (object) 0 "2")')).toThrow()
       expect(() => lispish('(unshift null 0 "2")')).toThrow()
       expect(() => lispish('(unshift undefined 0 "2")')).toThrow()

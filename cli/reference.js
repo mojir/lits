@@ -1355,9 +1355,56 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Removes and returns last value of `list`.',
-    longDescription: 'Removes and returns last value of `list`. If `list` is empty, `undefined` is returned.',
+    shortDescription: 'Removes and returns the last item of `list`.',
+    longDescription: 'Removes and returns then last item of `list`. If `list` is empty, `undefined` is returned.',
     examples: ['(pop (list 1 2 3))', '(pop (list))'],
+    specialExpression: false,
+    sideEffects: ['Mutates list'],
+  },
+  unshift: {
+    name: 'unshift',
+    category: 'List',
+    linkName: 'unshift',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'values',
+        type: 'list',
+        description: 'one or more',
+      },
+    ],
+    shortDescription: 'Inserts `values` at the beginning of `list`.',
+    longDescription: 'Inserts `values` at the beginning of `list`.',
+    examples: ['(unshift (list 1 2 3) 4)', '(unshift (list 1 2 3) 4 5 6)', '(setq l (list 1 2 3)) (unshift l 4) l'],
+    specialExpression: false,
+    sideEffects: ['Mutates list'],
+  },
+  shift: {
+    name: 'shift',
+    category: 'List',
+    linkName: 'shift',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Removes and returns the first item of `list`.',
+    longDescription: 'Removes and returns the first item of `list`. If `list` is empty, `undefined` is returned.',
+    examples: ['(shift (list 1 2 3))', '(shift (list))'],
     specialExpression: false,
     sideEffects: ['Mutates list'],
   },
