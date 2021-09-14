@@ -119,7 +119,7 @@ const functionReference = {
     ],
     shortDescription: 'Result is `true` if no two `values` are equal to each other.',
     longDescription:
-      'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (= a b))`.',
+      'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (= a b))`.',
     examples: ['(!= 3)', '(!= 3 2)', '(!= "3" 3)', '(!= 3 3 2)', '(!= "3" "2" "1" "0")', '(!= 0 -0)'],
     specialExpression: false,
     sideEffects: [],
