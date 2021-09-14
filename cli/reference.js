@@ -2212,6 +2212,42 @@ const functionReference = {
   },
 }
 
+const examples = [
+  {
+    name: 'Phone number formatter',
+    linkName: 'phone-number-formatter',
+    description: 'Pretty prints a US phone number',
+    code: `
+(defun formatPhoneNumber ($data)
+  (if (string? $data)
+    (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
+      (cond
+        ((> (string-length phoneNumber) 6)
+          (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
+        )
+        ((> (string-length phoneNumber) 3)
+          (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
+        )
+        ((> (string-length phoneNumber) 0)
+          (concat "(" (substring phoneNumber 0))
+        )
+        (true
+          phoneNumber
+        )
+      )
+    )
+    ""
+  )
+)
+
+(write #'formatPhoneNumber)
+(write (formatPhoneNumber "+11232343456"))
+(write (formatPhoneNumber "1232343456"))
+(write (formatPhoneNumber "123234"))
+`.trim(),
+  },
+]
+
 const categoryOrder = [
   'Special expression',
   'Predicate',
@@ -2235,4 +2271,5 @@ const categories = Object.values(functionReference)
 module.exports = {
   functionReference,
   categories,
+  examples,
 }

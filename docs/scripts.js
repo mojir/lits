@@ -61,7 +61,6 @@ function showPage(id, historyEvent) {
   }
 
   if (id === 'index') {
-    document.getElementById('home-link').classList.remove('active')
     document.getElementById('index').classList.add('active-content')
   } else {
     var docPage = document.getElementById(id)
@@ -72,7 +71,11 @@ function showPage(id, historyEvent) {
       showPage('index', 'replace')
       return
     }
-    document.getElementById('home-link').classList.add('active')
+  }
+  if (id.startsWith('example_')) {
+    const textarea = document.getElementById(id + '_textarea')
+    textarea.style.height = '5px'
+    textarea.style.height = textarea.scrollHeight + 10 + 'px'
   }
   if (historyEvent === 'none') {
     return

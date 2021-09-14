@@ -12,11 +12,9 @@
   
 <header id="top-bar">
   <div class="row">
-    <div class="column">
-      <a id="home-link" onclick="showPage('index')">Home</a>
-    </div>
+    <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.0</span></div>
+    <div class="column right version"><span>v0.1.1</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -404,9 +402,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.46255466149925994</span></pre>
-<pre class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0028086467659023473</span></pre>
-<pre class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.0732082608359095</span></pre>
+    <pre class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.8993619240237773</span></pre>
+<pre class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.004418205712151444</span></pre>
+<pre class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.8653253188204333</span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -2116,7 +2114,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631615599998</span></pre>
+    <pre class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631625633854</span></pre>
   </div>
 </div>
 
@@ -2141,9 +2139,66 @@
   </div>
 </div>
 
+    
+<div id="example_phone-number-formatter" class="content function">
+  <div class="function-header">
+    <div class="row">
+      <div class="column">Phone number formatter</div>
+      <div class="column right" id="example-description">
+        <i>Pretty prints a US phone number</i>
+      </div>
+    </div>
+  </div>
+  <textarea readonly spellcheck="false" class="mt-2 mb-2" id="example_phone-number-formatter_textarea">(defun formatPhoneNumber ($data)
+  (if (string? $data)
+    (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
+      (cond
+        ((> (string-length phoneNumber) 6)
+          (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
+        )
+        ((> (string-length phoneNumber) 3)
+          (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
+        )
+        ((> (string-length phoneNumber) 0)
+          (concat "(" (substring phoneNumber 0))
+        )
+        (true
+          phoneNumber
+        )
+      )
+    )
+    ""
+  )
+)
+
+(write #'formatPhoneNumber)
+(write (formatPhoneNumber "+11232343456"))
+(write (formatPhoneNumber "1232343456"))
+(write (formatPhoneNumber "123234"))</textarea>
+  <div class="row mt-2">
+    <div class="column fancy-scroll mr-1">
+      <div class="sub-header">Result</div>
+      <pre class="big-example-result">"(123) 234"</pre>
+    </div>
+    <div class="column fancy-scroll">
+      <div class="sub-header">Console log</div>
+      <pre>&lt;FUNCTION formatPhoneNumber ($data)&gt;</pre>
+<pre>"(123) 234-3456"</pre>
+<pre>"(123) 234-3456"</pre>
+<pre>"(123) 234"</pre>
+    </div>
+  </div>
+</div>
+
   </main>
   
 <nav id="sidebar" class="fancy-scroll">
+  <label class="link" onclick="showPage('index')">Home</label>
+  <br />
+  <label>Examples</label>
+  <ul>
+    <li id="example_phone-number-formatter_link" onclick="showPage('example_phone-number-formatter')">Phone number formatter</li>
+  </ul>
   
         <label>Special expression</label>
         <ul>
@@ -2287,11 +2342,11 @@
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
-      <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
+      <textarea spellcheck="false" rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
     <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
-      <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)
+      <textarea spellcheck="false" rows="12" id="lisp-textarea">(setq y 5)
 
 (write "y" y)
 
@@ -2299,9 +2354,9 @@
     </div>
     <div class="column wide" id="output">
       <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck=false rows="4"></textarea>
+      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="4"></textarea>
       <div class="textarea-header"><label for="log-textarea">Console log</label></div>
-      <textarea id="log-textarea" readonly spellcheck=false rows="5"></textarea>
+      <textarea id="log-textarea" readonly spellcheck="false" rows="5"></textarea>
     </div>
   </div>
 </div>

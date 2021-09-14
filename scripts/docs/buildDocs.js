@@ -1,5 +1,5 @@
 const { version } = require('../../package.json')
-const { functionReference, categories } = require('../../cli/reference')
+const { functionReference, categories, examples } = require('../../cli/reference')
 const lispish = require('../../dist/lispish')
 const path = require('path')
 const fs = require('fs')
@@ -22,6 +22,9 @@ ${getHeader()}
     ${Object.values(functionReference)
       .map(obj => getDocumentationContent(obj))
       .join('\n')}
+    ${Object.values(examples)
+      .map(obj => getExampleContent(obj))
+      .join('\n')}
   </main>
   ${getSideBar()}
   ${getPlayground()}
@@ -38,9 +41,7 @@ function getTopBar() {
   return `
 <header id="top-bar">
   <div class="row">
-    <div class="column">
-      <a id="home-link" onclick="showPage('index')">Home</a>
-    </div>
+    <div class="column"></div>
     <div class="column header">Lispish</div>
     <div class="column right version"><span>v${version}</span></div>
   </div>
@@ -74,17 +75,17 @@ function getPlayground() {
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
-      <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
+      <textarea spellcheck="false" rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
     <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
-      <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)\n\n(write "y" y)\n\n(write (* x y))</textarea>
+      <textarea spellcheck="false" rows="12" id="lisp-textarea">(setq y 5)\n\n(write "y" y)\n\n(write (* x y))</textarea>
     </div>
     <div class="column wide" id="output">
       <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck=false rows="4"></textarea>
+      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="4"></textarea>
       <div class="textarea-header"><label for="log-textarea">Console log</label></div>
-      <textarea id="log-textarea" readonly spellcheck=false rows="5"></textarea>
+      <textarea id="log-textarea" readonly spellcheck="false" rows="5"></textarea>
     </div>
   </div>
 </div>
@@ -172,6 +173,50 @@ function getDocumentationContent(docObj) {
 `
 }
 
+function getExampleContent(example) {
+  const { name, linkName, description, code } = example
+  const formattedDescription = formatDescription(description)
+  var oldLog = console.log
+  const log = []
+  console.log = function () {
+    var args = Array.from(arguments)
+    var logRow = args.map(arg => `<pre>${stringifyValue(arg)}</pre>`).join(' ')
+    log.push(logRow)
+  }
+  var result
+  try {
+    result = `<pre class="big-example-result">${stringifyValue(lispish.lispish(code))}</pre>`
+  } catch (error) {
+    return `<pre class="big-example-result">Error!</pre>`
+  } finally {
+    console.log = oldLog
+  }
+
+  return `
+<div id="example_${linkName}" class="content function">
+  <div class="function-header">
+    <div class="row">
+      <div class="column">${name}</div>
+      <div class="column right" id="example-description">
+        <i>${formattedDescription}</i>
+      </div>
+    </div>
+  </div>
+  <textarea readonly spellcheck="false" class="mt-2 mb-2" id="example_${linkName}_textarea">${code}</textarea>
+  <div class="row mt-2">
+    <div class="column fancy-scroll mr-1">
+      <div class="sub-header">Result</div>
+      ${result}
+    </div>
+    <div class="column fancy-scroll">
+      <div class="sub-header">Console log</div>
+      ${log.join('\n')}
+    </div>
+  </div>
+</div>
+`
+}
+
 function stringifyValue(value) {
   if (lispish.isLispishFunction(value)) {
     if (value.builtin) {
@@ -198,6 +243,18 @@ function getSideBar() {
 
   return `
 <nav id="sidebar" class="fancy-scroll">
+  <label class="link" onclick="showPage('index')">Home</label>
+  <br />
+  <label>Examples</label>
+  <ul>
+    ${examples
+      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+      .map(
+        example =>
+          `<li id="example_${example.linkName}_link" onclick="showPage('example_${example.linkName}')">${example.name}</li>`,
+      )
+      .join('\n')}
+  </ul>
   ${categories
     .map(categoryKey => {
       return `
