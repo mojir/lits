@@ -14,7 +14,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.1</span></div>
+    <div class="column right version"><span>v0.1.2</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -449,9 +449,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.7847779664842176</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.001256321722914704</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 2.296675746201036</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.8668572624854838</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0019627271009821823</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.7871017302015964</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -983,8 +983,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(empty? (list))')"><span class="icon-button">▶</span> (empty? (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(empty? (list 1 2 3))')"><span class="icon-button">▶</span> (empty? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="runPlayground('(empty? (list))')"><span class="icon-button">▶</span> (empty? (list)) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(empty? (list 1 2 3))')"><span class="icon-button">▶</span> (empty? (list 1 2 3)) <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -1223,8 +1223,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(lower-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (lower-case "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(lower-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (lower-case "") <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="runPlayground('(lower-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (lower-case "Albert") <span class="gray">=> "albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(lower-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (lower-case "") <span class="gray">=> ""</span></span></pre>
   </div>
 </div>
 
@@ -1243,8 +1243,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(upper-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (upper-case "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(upper-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (upper-case "") <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="runPlayground('(upper-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (upper-case "Albert") <span class="gray">=> "ALBERT"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(upper-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (upper-case "") <span class="gray">=> ""</span></span></pre>
   </div>
 </div>
 
@@ -1263,9 +1263,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(capitalize ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize "albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(capitalize ___double_quote___ albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize " albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(capitalize ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (capitalize "") <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="runPlayground('(capitalize ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize "albert") <span class="gray">=> "Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(capitalize ___double_quote___ albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize " albert") <span class="gray">=> " albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(capitalize ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (capitalize "") <span class="gray">=> ""</span></span></pre>
   </div>
 </div>
 
@@ -1284,9 +1284,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(trim ___double_quote___  albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim "  albert  ") <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(trim ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim "   ") <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(trim ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim "") <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="runPlayground('(trim ___double_quote___  albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim "  albert  ") <span class="gray">=> "albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trim ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim "   ") <span class="gray">=> ""</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trim ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim "") <span class="gray">=> ""</span></span></pre>
   </div>
 </div>
 
@@ -2161,7 +2161,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631655330564</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631655520116</span></span></pre>
   </div>
 </div>
 
