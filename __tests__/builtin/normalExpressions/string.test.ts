@@ -188,4 +188,41 @@ describe('string functions', () => {
       expect(() => lispish('(number-to-string 10 20)')).toThrow()
     })
   })
+
+  describe('lower-case', () => {
+    test('samples', () => {
+      expect(lispish('(lower-case "Albert!")')).toBe('albert!')
+      expect(lispish('(lower-case "")')).toBe('')
+      expect(() => lispish('(lower-case)')).toThrow()
+      expect(() => lispish('(lower-case "First" "Second")')).toThrow()
+    })
+  })
+
+  describe('upper-case', () => {
+    test('samples', () => {
+      expect(lispish('(upper-case "Albert!")')).toBe('ALBERT!')
+      expect(lispish('(upper-case "")')).toBe('')
+      expect(() => lispish('(upper-case)')).toThrow()
+      expect(() => lispish('(upper-case "First" "Second")')).toThrow()
+    })
+  })
+
+  describe('capitalize', () => {
+    test('samples', () => {
+      expect(lispish('(capitalize "albert!")')).toBe('Albert!')
+      expect(lispish('(capitalize "")')).toBe('')
+      expect(() => lispish('(capitalize)')).toThrow()
+      expect(() => lispish('(capitalize "First" "Second")')).toThrow()
+    })
+  })
+
+  describe('trim', () => {
+    test('samples', () => {
+      expect(lispish('(trim "  Albert!  ")')).toBe('Albert!')
+      expect(lispish('(trim " ")')).toBe('')
+      expect(lispish('(trim "")')).toBe('')
+      expect(() => lispish('(trim)')).toThrow()
+      expect(() => lispish('(trim "First" "Second")')).toThrow()
+    })
+  })
 })

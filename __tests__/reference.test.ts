@@ -56,7 +56,7 @@ describe('functionReference', () => {
     expect(linkNames).toEqual([])
   })
 
-  xtest('Everything documented', () => {
+  test('Everything documented', () => {
     const referenceKeys = Object.keys(functionReference)
     const builtinKeys = [...specialExpressionKeys, ...normalExpressionKeys]
     referenceKeys.forEach(key => builtinKeys.splice(builtinKeys.indexOf(key), 1))

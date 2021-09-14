@@ -1,4 +1,4 @@
-import { isLispishFunction } from '../../utils'
+import { assertArray, isLispishFunction } from '../../utils'
 import { NormalExpressionNode } from '../../parser/interface'
 import { assertLengthOne, assertNumber } from '../../utils'
 import { BuiltinNormalExpressions } from './interface'
@@ -83,6 +83,14 @@ export const predicates: BuiltinNormalExpressions = {
   'regexp?': {
     evaluate: ([first]: unknown[]): boolean =>
       first !== null && !Array.isArray(first) && typeof first === 'object' && first instanceof RegExp,
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'empty?': {
+    evaluate: ([first]: unknown[]): boolean => {
+      assertArray(first)
+      return first.length === 0
+    },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
 }

@@ -40,7 +40,7 @@ function play() {
   try {
     result = lispish.lispish(code, context)
   } catch (error) {
-    output.innerHTML = error
+    output.value = error
     output.classList.add('error')
     return
   } finally {
@@ -48,15 +48,7 @@ function play() {
   }
   output.classList.remove('error')
   var content = stringifyValue(result)
-  output.innerHTML = content
-  if (content) {
-    document.getElementById('clear-output').classList.add('active')
-  }
-  if (logTextarea.value) {
-    document.getElementById('clear-log').classList.add('active')
-  } else {
-    document.getElementById('clear-log').classList.remove('active')
-  }
+  output.value = content
 }
 function showPage(id, historyEvent) {
   var els = document.getElementsByClassName('active-content')
@@ -92,6 +84,16 @@ function showPage(id, historyEvent) {
 }
 
 function stringifyValue(value) {
+  if (lispish.isLispishFunction(value)) {
+    if (value.builtin) {
+      return `<BUILTIN FUNCTION ${value.builtin}>`
+    } else {
+      return `<FUNCTION ${value.name ?? 'λ'} (${value.arguments.join(' ')})>`
+    }
+  }
+  if (typeof value === 'object' && value instanceof RegExp) {
+    return `${value}`
+  }
   return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
     /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
     'undefined',
@@ -99,10 +101,8 @@ function stringifyValue(value) {
 }
 
 function clearOutput() {
-  document.getElementById('output-textarea').innerHTML = ''
-  document.getElementById('clear-output').classList.remove('active')
-  document.getElementById('log-textarea').innerHTML = ''
-  document.getElementById('clear-log').classList.remove('active')
+  document.getElementById('output-textarea').value = ''
+  document.getElementById('log-textarea').value = ''
 }
 
 function runPlayground(example) {

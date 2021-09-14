@@ -230,7 +230,7 @@ export const list: BuiltinNormalExpressions = {
   reverse: {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)
-      return first.reverse()
+      return [...first].reverse()
     },
     validate: ({ params }) => assertLengthOne(params),
   },

@@ -277,4 +277,21 @@ describe('predicates', () => {
       expect(() => lispish(`(regexp? true false)`)).toThrow()
     })
   })
+
+  describe('empty?', () => {
+    test('samples', () => {
+      expect(lispish(`(empty? (list))`)).toBe(true)
+      expect(lispish(`(empty? (list 0))`)).toBe(false)
+      expect(() => lispish(`(empty?)`)).toThrow()
+      expect(() => lispish(`(empty?)`)).toThrow()
+      expect(() => lispish(`(empty? true)`)).toThrow()
+      expect(() => lispish(`(empty? false)`)).toThrow()
+      expect(() => lispish(`(empty? null)`)).toThrow()
+      expect(() => lispish(`(empty? undefined)`)).toThrow()
+      expect(() => lispish(`(empty? "A string")`)).toThrow()
+      expect(() => lispish(`(empty? 10)`)).toThrow()
+      expect(() => lispish(`(empty? (object))`)).toThrow()
+      expect(() => lispish(`(empty? (regexp "^start"))`)).toThrow()
+    })
+  })
 })

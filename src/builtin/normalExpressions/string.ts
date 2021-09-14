@@ -116,4 +116,40 @@ export const string: BuiltinNormalExpressions = {
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
   },
+
+  'lower-case': {
+    evaluate: ([str]: unknown[]): string => {
+      assertString(str)
+      return str.toLowerCase()
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'upper-case': {
+    evaluate: ([str]: unknown[]): string => {
+      assertString(str)
+      return str.toUpperCase()
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  capitalize: {
+    evaluate: ([str]: unknown[]): string => {
+      assertString(str)
+      const firstChar = str[0]
+      if (!firstChar) {
+        return ''
+      }
+      return `${firstChar.toUpperCase()}${str.substring(1)}`
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  trim: {
+    evaluate: ([str]: unknown[]): string => {
+      assertString(str)
+      return str.trim()
+    },
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
 }

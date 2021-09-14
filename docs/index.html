@@ -404,9 +404,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.4592882529252367</span></pre>
-<pre class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0030245278383378826</span></pre>
-<pre class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.5938938308779018</span></pre>
+    <pre class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.933032560421148</span></pre>
+<pre class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.009182552481489123</span></pre>
+<pre class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.2487251987813908</span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -600,7 +600,7 @@
 <div id="boolean_question" class="content function">
   <div class="function-header">boolean?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a <span class="pre">boolean</span>, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a <span class="pre">boolean</span>, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>boolean? value => boolean</pre>
@@ -624,7 +624,7 @@
 <div id="null_question" class="content function">
   <div class="function-header">null?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">null</span>, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">null</span>, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>null? value => boolean</pre>
@@ -648,7 +648,7 @@
 <div id="undefined_question" class="content function">
   <div class="function-header">undefined?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">undefined</span>, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">undefined</span>, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>undefined? value => boolean</pre>
@@ -673,7 +673,7 @@
 <div id="number_question" class="content function">
   <div class="function-header">number?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a number, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a number, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>number? value => boolean</pre>
@@ -698,7 +698,7 @@
 <div id="string_question" class="content function">
   <div class="function-header">string?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a string, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a string, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>string? value => boolean</pre>
@@ -723,7 +723,7 @@
 <div id="function_question" class="content function">
   <div class="function-header">function?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a function, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a function, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>function? value => boolean</pre>
@@ -749,7 +749,7 @@
 <div id="integer_question" class="content function">
   <div class="function-header">integer?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an integer, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an integer, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>integer? value => boolean</pre>
@@ -776,7 +776,7 @@
 <div id="list_question" class="content function">
   <div class="function-header">list?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a list, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a list, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>list? value => boolean</pre>
@@ -801,7 +801,7 @@
 <div id="object_question" class="content function">
   <div class="function-header">object?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an object, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an object, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>object? value => boolean</pre>
@@ -828,7 +828,7 @@
 <div id="regexp_question" class="content function">
   <div class="function-header">regexp?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a regexp, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a regexp, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>regexp? value => boolean</pre>
@@ -855,7 +855,7 @@
 <div id="zero_question" class="content function">
   <div class="function-header">zero?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is <span class="pre">0</span>, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is <span class="pre">0</span>, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>zero? number => boolean</pre>
@@ -879,7 +879,7 @@
 <div id="even_question" class="content function">
   <div class="function-header">even?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is even, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is even, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>even? number => boolean</pre>
@@ -903,7 +903,7 @@
 <div id="odd_question" class="content function">
   <div class="function-header">odd?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is odd, otherwise it returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is odd, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>odd? number => boolean</pre>
@@ -920,6 +920,26 @@
 <pre class="example" onclick="runPlayground('(odd? 2.1)')"><span class="icon-button">▶</span> (odd? 2.1) <span class="gray">=> false</span></pre>
 <pre class="example" onclick="runPlayground('(odd? ___double_quote___10___double_quote___)')"><span class="icon-button">▶</span> (odd? "10") <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(odd?)')"><span class="icon-button">▶</span> (odd?) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="empty_question" class="content function">
+  <div class="function-header">empty?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">list</span> is empty, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>empty? list => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(empty? (list))')"><span class="icon-button">▶</span> (empty? (list)) <span class="gray">=> true</span></pre>
+<pre class="example" onclick="runPlayground('(empty? (list 1 2 3))')"><span class="icon-button">▶</span> (empty? (list 1 2 3)) <span class="gray">=> false</span></pre>
   </div>
 </div>
 
@@ -1082,6 +1102,150 @@
 </div>
 
 
+<div id="string-to-number" class="content function">
+  <div class="function-header">string-to-number</div>
+  
+  <p>Parses <span class="pre">string</span> to a number.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>string-to-number string => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(string-to-number ___double_quote___10___double_quote___)')"><span class="icon-button">▶</span> (string-to-number "10") <span class="gray">=> 10</span></pre>
+<pre class="example" onclick="runPlayground('(string-to-number ___double_quote___010___double_quote___)')"><span class="icon-button">▶</span> (string-to-number "010") <span class="gray">=> 10</span></pre>
+<pre class="example" onclick="runPlayground('(string-to-number ___double_quote___-1.01___double_quote___)')"><span class="icon-button">▶</span> (string-to-number "-1.01") <span class="gray">=> -1.01</span></pre>
+<pre class="example" onclick="runPlayground('(string-to-number ___double_quote___a10___double_quote___)')"><span class="icon-button">▶</span> (string-to-number "a10") <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="number-to-string" class="content function">
+  <div class="function-header">number-to-string</div>
+  
+  <p>Converts <span class="pre">number</span> to a string.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>number-to-string number => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(number-to-string 10)')"><span class="icon-button">▶</span> (number-to-string 10) <span class="gray">=> "10"</span></pre>
+<pre class="example" onclick="runPlayground('(number-to-string -1.01)')"><span class="icon-button">▶</span> (number-to-string -1.01) <span class="gray">=> "-1.01"</span></pre>
+  </div>
+</div>
+
+
+<div id="string-reverse" class="content function">
+  <div class="function-header">string-reverse</div>
+  
+  <p>Reverses a string.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>string-reverse string => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(string-reverse ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string-reverse "Albert") <span class="gray">=> "treblA"</span></pre>
+<pre class="example" onclick="runPlayground('(string-reverse ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (string-reverse "") <span class="gray">=> ""</span></pre>
+  </div>
+</div>
+
+
+<div id="lower-case" class="content function">
+  <div class="function-header">lower-case</div>
+  
+  <p>Returns <span class="pre">string</span> converted to lower case.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>lower-case string => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(lower-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (lower-case "Albert") <span class="gray">=> "albert"</span></pre>
+<pre class="example" onclick="runPlayground('(lower-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (lower-case "") <span class="gray">=> ""</span></pre>
+  </div>
+</div>
+
+
+<div id="upper-case" class="content function">
+  <div class="function-header">upper-case</div>
+  
+  <p>Returns <span class="pre">string</span> converted to upper case.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>upper-case string => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(upper-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (upper-case "Albert") <span class="gray">=> "ALBERT"</span></pre>
+<pre class="example" onclick="runPlayground('(upper-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (upper-case "") <span class="gray">=> ""</span></pre>
+  </div>
+</div>
+
+
+<div id="capitalize" class="content function">
+  <div class="function-header">capitalize</div>
+  
+  <p>Returns copy of <span class="pre">string</span> with <span class="pre">string</span>'s first character converted to upper case.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>capitalize string => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(capitalize ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize "albert") <span class="gray">=> "Albert"</span></pre>
+<pre class="example" onclick="runPlayground('(capitalize ___double_quote___ albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize " albert") <span class="gray">=> " albert"</span></pre>
+<pre class="example" onclick="runPlayground('(capitalize ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (capitalize "") <span class="gray">=> ""</span></pre>
+  </div>
+</div>
+
+
+<div id="trim" class="content function">
+  <div class="function-header">trim</div>
+  
+  <p>Returns a new string with leading and trailing whitespaces removed.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>trim string => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(trim ___double_quote___  albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim "  albert  ") <span class="gray">=> "albert"</span></pre>
+<pre class="example" onclick="runPlayground('(trim ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim "   ") <span class="gray">=> ""</span></pre>
+<pre class="example" onclick="runPlayground('(trim ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim "") <span class="gray">=> ""</span></pre>
+  </div>
+</div>
+
+
 <div id="write" class="content function">
   <div class="function-header">write</div>
   
@@ -1100,7 +1264,7 @@
 <pre class="example" onclick="runPlayground('(write 100 ___double_quote___items___double_quote___)')"><span class="icon-button">▶</span> (write 100 "items") <span class="gray">=> "items"</span></pre>
 <pre class="example" onclick="runPlayground('(write (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (write (object "a" 10)) <span class="gray">=> {"a":10}</span></pre>
 <pre class="example" onclick="runPlayground('(write (list ___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___))')"><span class="icon-button">▶</span> (write (list "a" "b" "c")) <span class="gray">=> ["a","b","c"]</span></pre>
-<pre class="example" onclick="runPlayground('(write (regexp ___double_quote___^start___double_quote___))')"><span class="icon-button">▶</span> (write (regexp "^start")) <span class="gray">=> {}</span></pre>
+<pre class="example" onclick="runPlayground('(write (regexp ___double_quote___^start___double_quote___))')"><span class="icon-button">▶</span> (write (regexp "^start")) <span class="gray">=> /^start/</span></pre>
 <pre class="example" onclick="runPlayground('(write null undefined true false)')"><span class="icon-button">▶</span> (write null undefined true false) <span class="gray">=> false</span></pre>
   </div>
 </div>
@@ -1521,6 +1685,462 @@
   </div>
 </div>
 
+
+<div id="filter" class="content function">
+  <div class="function-header">filter</div>
+  
+  <p>Creates a new list with all elements that pass the test implemented by <span class="pre">filter</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>filter list filter => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>filter: function</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(filter #___single_quote___string? (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (filter #'string? (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> ["Albert","Mojir"]</span></pre>
+<pre class="example" onclick="runPlayground('(filter (lambda (x) (> x 10)) (list 5 10 15 20))')"><span class="icon-button">▶</span> (filter (lambda (x) (> x 10)) (list 5 10 15 20)) <span class="gray">=> [15,20]</span></pre>
+  </div>
+</div>
+
+
+<div id="reverse" class="content function">
+  <div class="function-header">reverse</div>
+  
+  <p>Creates a new list with the elements from <span class="pre">list</span> in reversed order.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>reverse list reverse => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>reverse: function</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(reverse (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (reverse (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> [[1,2],160,"Mojir","Albert"]</span></pre>
+<pre class="example" onclick="runPlayground('(reverse (list))')"><span class="icon-button">▶</span> (reverse (list)) <span class="gray">=> []</span></pre>
+  </div>
+</div>
+
+
+<div id="first" class="content function">
+  <div class="function-header">first</div>
+  
+  <p>Returns the first element of <span class="pre">list</span>. If <span class="pre">list</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>first list => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(first (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (first (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> "Albert"</span></pre>
+<pre class="example" onclick="runPlayground('(first (list))')"><span class="icon-button">▶</span> (first (list)) <span class="gray">=> undefined</span></pre>
+  </div>
+</div>
+
+
+<div id="last" class="content function">
+  <div class="function-header">last</div>
+  
+  <p>Returns the last element of <span class="pre">list</span>. If <span class="pre">list</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>last list => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(last (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (last (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> [1,2]</span></pre>
+<pre class="example" onclick="runPlayground('(last (list))')"><span class="icon-button">▶</span> (last (list)) <span class="gray">=> undefined</span></pre>
+  </div>
+</div>
+
+
+<div id="rest" class="content function">
+  <div class="function-header">rest</div>
+  
+  <p>Returns a new list with all but the first element from <span class="pre">list</span>. If <span class="pre">list</span> has less than two elements, an empty list is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>rest list => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(rest (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (rest (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> ["Mojir",160,[1,2]]</span></pre>
+<pre class="example" onclick="runPlayground('(rest (list ___double_quote___Albert___double_quote___))')"><span class="icon-button">▶</span> (rest (list "Albert")) <span class="gray">=> []</span></pre>
+<pre class="example" onclick="runPlayground('(rest (list))')"><span class="icon-button">▶</span> (rest (list)) <span class="gray">=> []</span></pre>
+  </div>
+</div>
+
+
+<div id="cons" class="content function">
+  <div class="function-header">cons</div>
+  
+  <p>Constructs a new list with <span class="pre">element</span> as first element and <span class="pre">rest</span> as the rest.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>cons list => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(cons ___double_quote___Hi___double_quote___ (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (cons "Hi" (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> ["Hi","Albert","Mojir",160,[1,2]]</span></pre>
+<pre class="example" onclick="runPlayground('(cons ___double_quote___Hi___double_quote___ (list))')"><span class="icon-button">▶</span> (cons "Hi" (list)) <span class="gray">=> ["Hi"]</span></pre>
+<pre class="example" onclick="runPlayground('(cons ___double_quote___Hi___double_quote___)')"><span class="icon-button">▶</span> (cons "Hi") <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="object" class="content function">
+  <div class="function-header">object</div>
+  
+  <p>Constructs a new object. Object members are created from <span class="pre">key</span> - <span class="pre">value</span> pairs. Requires an even number of arguments.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>object [key value](zero or more) => object</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>[key value]: [string any]</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(object)')"><span class="icon-button">▶</span> (object) <span class="gray">=> {}</span></pre>
+<pre class="example" onclick="runPlayground('(object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (object "x" 10 "y" true "z" "A string") <span class="gray">=> {"x":10,"y":true,"z":"A string"}</span></pre>
+  </div>
+</div>
+
+
+<div id="keys" class="content function">
+  <div class="function-header">keys</div>
+  
+  <p>Returns list of all keys in <span class="pre">object</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>keys object => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(keys (object))')"><span class="icon-button">▶</span> (keys (object)) <span class="gray">=> []</span></pre>
+<pre class="example" onclick="runPlayground('(keys (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (keys (object "x" 10 "y" true "z" "A string")) <span class="gray">=> ["x","y","z"]</span></pre>
+  </div>
+</div>
+
+
+<div id="values" class="content function">
+  <div class="function-header">values</div>
+  
+  <p>Returns list of all values in <span class="pre">object</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>values object => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(values (object))')"><span class="icon-button">▶</span> (values (object)) <span class="gray">=> []</span></pre>
+<pre class="example" onclick="runPlayground('(values (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (values (object "x" 10 "y" true "z" "A string")) <span class="gray">=> [10,true,"A string"]</span></pre>
+  </div>
+</div>
+
+
+<div id="entries" class="content function">
+  <div class="function-header">entries</div>
+  
+  <p>Returns nested list of all key - value pairs in <span class="pre">object</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>entries object => list of [key value] - paris</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(entries (object))')"><span class="icon-button">▶</span> (entries (object)) <span class="gray">=> []</span></pre>
+<pre class="example" onclick="runPlayground('(entries (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (entries (object "x" 10 "y" true "z" "A string")) <span class="gray">=> [["x",10],["y",true],["z","A string"]]</span></pre>
+  </div>
+</div>
+
+
+<div id="merge" class="content function">
+  <div class="function-header">merge</div>
+  
+  <p>Returns a new object created by merging together all arguments.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>merge object(one or many) => object</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(merge (object ___double_quote___x___double_quote___ 10) (object ___double_quote___y___double_quote___ 20))')"><span class="icon-button">▶</span> (merge (object "x" 10) (object "y" 20)) <span class="gray">=> {"x":10,"y":20}</span></pre>
+<pre class="example" onclick="runPlayground('(merge (object ___double_quote___x___double_quote___ 10) (object ___double_quote___x___double_quote___ 15 ___double_quote___y___double_quote___ 20))')"><span class="icon-button">▶</span> (merge (object "x" 10) (object "x" 15 "y" 20)) <span class="gray">=> {"x":15,"y":20}</span></pre>
+  </div>
+</div>
+
+
+<div id="setq" class="content function">
+  <div class="function-header">setq</div>
+  <h3>Special Expression</h3>
+  <p>Bind <span class="pre">value</span> to <span class="pre">variable</span>. If a variable name is not know, A global variable is created.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>setq variable value => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>variable: name</pre>
+<pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(setq (object))')"><span class="icon-button">▶</span> (setq (object)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(setq (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (setq (object "x" 10 "y" true "z" "A string")) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="let" class="content function">
+  <div class="function-header">let</div>
+  <h3>Special Expression</h3>
+  <p>Binds local variables. The variables lives only within the body. It returns evaluation of the last expression in the body.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>let bindings body => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>bindings: bindings</pre>
+<pre>body: lisp expressions</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(let ((a (+ 1 2 3 4)) (b (* 1 2 3 4))) (write a b))')"><span class="icon-button">▶</span> (let ((a (+ 1 2 3 4)) (b (* 1 2 3 4))) (write a b)) <span class="gray">=> 24</span></pre>
+  </div>
+</div>
+
+
+<div id="lambda" class="content function">
+  <div class="function-header">lambda</div>
+  <h3>Special Expression</h3>
+  <p>Creates a function. When called, evaluation of the last expression in the body is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>lambda arguments body => function</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>arguments: arguments</pre>
+<pre>body: lisp expressions</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(lambda (a b) (sqrt (+ (* a a) (* b b))))')"><span class="icon-button">▶</span> (lambda (a b) (sqrt (+ (* a a) (* b b)))) <span class="gray">=> &lt;FUNCTION λ (a b)&gt;</span></pre>
+<pre class="example" onclick="runPlayground('((lambda (a b) (sqrt (+ (* a a) (* b b)))) 3 4)')"><span class="icon-button">▶</span> ((lambda (a b) (sqrt (+ (* a a) (* b b)))) 3 4) <span class="gray">=> 5</span></pre>
+  </div>
+</div>
+
+
+<div id="defun" class="content function">
+  <div class="function-header">defun</div>
+  <h3>Special Expression</h3>
+  <p>Creates a named global function. When called, evaluation of the last expression in the body is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>defun name arguments body => function</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>name: name</pre>
+<pre>arguments: arguments</pre>
+<pre>body: lisp expressions</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #___single_quote___hyp')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #'hyp <span class="gray">=> &lt;FUNCTION hyp (a b)&gt;</span></pre>
+<pre class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5</span></pre>
+  </div>
+</div>
+
+
+<div id="function" class="content function">
+  <div class="function-header">function</div>
+  <h3>Special Expression</h3>
+  <p>Accessing namespace of functions. Shortform <span class="pre">#'</span> is equivalent.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>function name arguments body => function</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>name: name</pre>
+<pre>arguments: arguments</pre>
+<pre>body: lisp expressions</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(function +)')"><span class="icon-button">▶</span> (function +) <span class="gray">=> &lt;BUILTIN FUNCTION +&gt;</span></pre>
+<pre class="example" onclick="runPlayground('#___single_quote___+')"><span class="icon-button">▶</span> #'+ <span class="gray">=> &lt;BUILTIN FUNCTION +&gt;</span></pre>
+<pre class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp) <span class="gray">=> &lt;FUNCTION hyp (a b)&gt;</span></pre>
+  </div>
+</div>
+
+
+<div id="if" class="content function">
+  <div class="function-header">if</div>
+  <h3>Special Expression</h3>
+  <p>Either <span class="pre">then</span> or <span class="pre">else</span> branch is taken. Then branch is selected when <span class="pre">test</span> result is truthy.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>if test then else => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>test: any</pre>
+<pre>then: any</pre>
+<pre>else: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(if true (write ___double_quote___TRUE___double_quote___) (write ___double_quote___FALSE___double_quote___))')"><span class="icon-button">▶</span> (if true (write "TRUE") (write "FALSE")) <span class="gray">=> "TRUE"</span></pre>
+<pre class="example" onclick="runPlayground('(if false (write ___double_quote___TRUE___double_quote___) (write ___double_quote___FALSE___double_quote___))')"><span class="icon-button">▶</span> (if false (write "TRUE") (write "FALSE")) <span class="gray">=> "FALSE"</span></pre>
+  </div>
+</div>
+
+
+<div id="cond" class="content function">
+  <div class="function-header">cond</div>
+  <h3>Special Expression</h3>
+  <p>Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, <span class="pre">undefined</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>cond variants => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>variants: variants</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(cond (false (write ___double_quote___FALSE___double_quote___)) (null (write ___double_quote___NULL___double_quote___)) (true (write ___double_quote___TRUE___double_quote___)))')"><span class="icon-button">▶</span> (cond (false (write "FALSE")) (null (write "NULL")) (true (write "TRUE"))) <span class="gray">=> "TRUE"</span></pre>
+<pre class="example" onclick="runPlayground('(cond (false (write ___double_quote___FALSE___double_quote___)) (null (write ___double_quote___NULL___double_quote___)))')"><span class="icon-button">▶</span> (cond (false (write "FALSE")) (null (write "NULL"))) <span class="gray">=> undefined</span></pre>
+  </div>
+</div>
+
+
+<div id="regexp" class="content function">
+  <div class="function-header">regexp</div>
+  
+  <p>Creates a RegExp from <span class="pre">regexp-string</span> and <span class="pre">flags</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>regexp regexp-string flags => RegExp</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>regexp-string: string</pre>
+<pre>flags: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(regexp ___double_quote___^\s*(.*)$___double_quote___)')"><span class="icon-button">▶</span> (regexp "^\s*(.*)$") <span class="gray">=> /^\s*(.*)$/</span></pre>
+<pre class="example" onclick="runPlayground('(regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___)')"><span class="icon-button">▶</span> (regexp "albert" "i") <span class="gray">=> /albert/i</span></pre>
+  </div>
+</div>
+
+
+<div id="match" class="content function">
+  <div class="function-header">match</div>
+  
+  <p>Matches <span class="pre">string</span> against <span class="pre">regexp</span>. If <span class="pre">string</span> matches, a <em>match</em>-list is returned, otherwise <span class="pre">undefined</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>match regexp string => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>regexp: RegExp</pre>
+<pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(match (regexp ___double_quote___^\s*(.*)$___double_quote___) ___double_quote___  A string___double_quote___)')"><span class="icon-button">▶</span> (match (regexp "^\s*(.*)$") "  A string") <span class="gray">=> ["  A string","A string"]</span></pre>
+<pre class="example" onclick="runPlayground('(match (regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___) ___double_quote___My name is Albert___double_quote___)')"><span class="icon-button">▶</span> (match (regexp "albert" "i") "My name is Albert") <span class="gray">=> ["Albert"]</span></pre>
+<pre class="example" onclick="runPlayground('(match (regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___) ___double_quote___My name is Ben___double_quote___)')"><span class="icon-button">▶</span> (match (regexp "albert" "i") "My name is Ben") <span class="gray">=> undefined</span></pre>
+  </div>
+</div>
+
+
+<div id="now" class="content function">
+  <div class="function-header">now</div>
+  
+  <p>Returns milliseconds elapsed since the UNIX epoch.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>now => number</pre>
+  </div>
+
+  <label>No arguments</label>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631615509068</span></pre>
+  </div>
+</div>
+
+
+<div id="get-path" class="content function">
+  <div class="function-header">get-path</div>
+  
+  <p>Is used to get the value at path of object or list.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>get-path => number</pre>
+  </div>
+
+  <label>No arguments</label>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(get-path (write (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ (list 1 2 3)))) ___double_quote___a.x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (object "a" (object "x" (list 1 2 3)))) "a.x[2]") <span class="gray">=> 3</span></pre>
+<pre class="example" onclick="runPlayground('(get-path (write (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ (list 1 2 3)))) ___double_quote___b.z[10]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (object "a" (object "x" (list 1 2 3)))) "b.z[10]") <span class="gray">=> undefined</span></pre>
+<pre class="example" onclick="runPlayground('(get-path (write (list (object ___double_quote___x___double_quote___ (list 1 2 3)) (object ___double_quote___x___double_quote___ (list 4 5 6)))) ___double_quote___[1].x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (list (object "x" (list 1 2 3)) (object "x" (list 4 5 6)))) "[1].x[2]") <span class="gray">=> 6</span></pre>
+  </div>
+</div>
+
   </main>
   
 <nav id="sidebar" class="fancy-scroll">
@@ -1528,92 +2148,126 @@
         <label>Special expression</label>
         <ul>
           <li id="and_link" onclick="showPage('and')">and</li>
+<li id="cond_link" onclick="showPage('cond')">cond</li>
+<li id="defun_link" onclick="showPage('defun')">defun</li>
+<li id="function_link" onclick="showPage('function')">function</li>
+<li id="if_link" onclick="showPage('if')">if</li>
+<li id="lambda_link" onclick="showPage('lambda')">lambda</li>
+<li id="let_link" onclick="showPage('let')">let</li>
 <li id="or_link" onclick="showPage('or')">or</li>
-        </ul>
-
-        <label>Math</label>
-        <ul>
-          <li id="_plus_link" onclick="showPage('_plus')">+</li>
-<li id="_minus_link" onclick="showPage('_minus')">-</li>
-<li id="_star_link" onclick="showPage('_star')">*</li>
-<li id="_slash_link" onclick="showPage('_slash')">/</li>
-<li id="_percent_link" onclick="showPage('_percent')">%</li>
-<li id="1_plus_link" onclick="showPage('1_plus')">1+</li>
-<li id="1_minus_link" onclick="showPage('1_minus')">1-</li>
-<li id="sqrt_link" onclick="showPage('sqrt')">sqrt</li>
-<li id="expt_link" onclick="showPage('expt')">expt</li>
-<li id="round_link" onclick="showPage('round')">round</li>
-<li id="floor_link" onclick="showPage('floor')">floor</li>
-<li id="ceil_link" onclick="showPage('ceil')">ceil</li>
-<li id="random_link" onclick="showPage('random')">random</li>
-<li id="_lt_link" onclick="showPage('_lt')">&lt;</li>
-<li id="_gt_link" onclick="showPage('_gt')">&gt;</li>
-<li id="_lte_link" onclick="showPage('_lte')">&lt;=</li>
-<li id="_gte_link" onclick="showPage('_gte')">&gt;=</li>
+<li id="setq_link" onclick="showPage('setq')">setq</li>
         </ul>
 
         <label>Predicate</label>
         <ul>
           <li id="boolean_question_link" onclick="showPage('boolean_question')">boolean?</li>
-<li id="null_question_link" onclick="showPage('null_question')">null?</li>
-<li id="undefined_question_link" onclick="showPage('undefined_question')">undefined?</li>
-<li id="number_question_link" onclick="showPage('number_question')">number?</li>
-<li id="string_question_link" onclick="showPage('string_question')">string?</li>
+<li id="empty_question_link" onclick="showPage('empty_question')">empty?</li>
+<li id="even_question_link" onclick="showPage('even_question')">even?</li>
 <li id="function_question_link" onclick="showPage('function_question')">function?</li>
 <li id="integer_question_link" onclick="showPage('integer_question')">integer?</li>
 <li id="list_question_link" onclick="showPage('list_question')">list?</li>
+<li id="null_question_link" onclick="showPage('null_question')">null?</li>
+<li id="number_question_link" onclick="showPage('number_question')">number?</li>
 <li id="object_question_link" onclick="showPage('object_question')">object?</li>
-<li id="regexp_question_link" onclick="showPage('regexp_question')">regexp?</li>
-<li id="zero_question_link" onclick="showPage('zero_question')">zero?</li>
-<li id="even_question_link" onclick="showPage('even_question')">even?</li>
 <li id="odd_question_link" onclick="showPage('odd_question')">odd?</li>
-        </ul>
-
-        <label>String</label>
-        <ul>
-          <li id="aref_link" onclick="showPage('aref')">aref</li>
-<li id="substring_link" onclick="showPage('substring')">substring</li>
-<li id="string-length_link" onclick="showPage('string-length')">string-length</li>
-<li id="concat_link" onclick="showPage('concat')">concat</li>
-<li id="string_gt_link" onclick="showPage('string_gt')">string&gt;</li>
-<li id="string_gte_link" onclick="showPage('string_gte')">string&gt;=</li>
-<li id="string_lt_link" onclick="showPage('string_lt')">string&lt;</li>
-<li id="string_lte_link" onclick="showPage('string_lte')">string&lt;=</li>
+<li id="regexp_question_link" onclick="showPage('regexp_question')">regexp?</li>
+<li id="string_question_link" onclick="showPage('string_question')">string?</li>
+<li id="undefined_question_link" onclick="showPage('undefined_question')">undefined?</li>
+<li id="zero_question_link" onclick="showPage('zero_question')">zero?</li>
         </ul>
 
         <label>List</label>
         <ul>
           <li id="append_link" onclick="showPage('append')">append</li>
+<li id="cons_link" onclick="showPage('cons')">cons</li>
+<li id="elt_link" onclick="showPage('elt')">elt</li>
+<li id="filter_link" onclick="showPage('filter')">filter</li>
+<li id="first_link" onclick="showPage('first')">first</li>
+<li id="last_link" onclick="showPage('last')">last</li>
+<li id="length_link" onclick="showPage('length')">length</li>
 <li id="list_link" onclick="showPage('list')">list</li>
 <li id="listf_link" onclick="showPage('listf')">listf</li>
-<li id="range_link" onclick="showPage('range')">range</li>
-<li id="length_link" onclick="showPage('length')">length</li>
-<li id="elt_link" onclick="showPage('elt')">elt</li>
-<li id="selt_link" onclick="showPage('selt')">selt</li>
-<li id="push_link" onclick="showPage('push')">push</li>
+<li id="map_link" onclick="showPage('map')">map</li>
 <li id="pop_link" onclick="showPage('pop')">pop</li>
-<li id="unshift_link" onclick="showPage('unshift')">unshift</li>
+<li id="push_link" onclick="showPage('push')">push</li>
+<li id="range_link" onclick="showPage('range')">range</li>
+<li id="reduce_link" onclick="showPage('reduce')">reduce</li>
+<li id="reduce-right_link" onclick="showPage('reduce-right')">reduce-right</li>
+<li id="rest_link" onclick="showPage('rest')">rest</li>
+<li id="reverse_link" onclick="showPage('reverse')">reverse</li>
+<li id="selt_link" onclick="showPage('selt')">selt</li>
 <li id="shift_link" onclick="showPage('shift')">shift</li>
 <li id="slice_link" onclick="showPage('slice')">slice</li>
 <li id="splice_link" onclick="showPage('splice')">splice</li>
-<li id="reduce_link" onclick="showPage('reduce')">reduce</li>
-<li id="reduce-right_link" onclick="showPage('reduce-right')">reduce-right</li>
-<li id="map_link" onclick="showPage('map')">map</li>
+<li id="unshift_link" onclick="showPage('unshift')">unshift</li>
         </ul>
 
         <label>Object</label>
         <ul>
-          <li id="has-attr_link" onclick="showPage('has-attr')">has-attr</li>
+          <li id="del-attr_link" onclick="showPage('del-attr')">del-attr</li>
+<li id="entries_link" onclick="showPage('entries')">entries</li>
 <li id="get-attr_link" onclick="showPage('get-attr')">get-attr</li>
-<li id="del-attr_link" onclick="showPage('del-attr')">del-attr</li>
+<li id="has-attr_link" onclick="showPage('has-attr')">has-attr</li>
+<li id="keys_link" onclick="showPage('keys')">keys</li>
+<li id="merge_link" onclick="showPage('merge')">merge</li>
+<li id="object_link" onclick="showPage('object')">object</li>
 <li id="set-attr_link" onclick="showPage('set-attr')">set-attr</li>
+<li id="values_link" onclick="showPage('values')">values</li>
+        </ul>
+
+        <label>String</label>
+        <ul>
+          <li id="aref_link" onclick="showPage('aref')">aref</li>
+<li id="capitalize_link" onclick="showPage('capitalize')">capitalize</li>
+<li id="concat_link" onclick="showPage('concat')">concat</li>
+<li id="lower-case_link" onclick="showPage('lower-case')">lower-case</li>
+<li id="number-to-string_link" onclick="showPage('number-to-string')">number-to-string</li>
+<li id="string-length_link" onclick="showPage('string-length')">string-length</li>
+<li id="string-reverse_link" onclick="showPage('string-reverse')">string-reverse</li>
+<li id="string-to-number_link" onclick="showPage('string-to-number')">string-to-number</li>
+<li id="string_lt_link" onclick="showPage('string_lt')">string&lt;</li>
+<li id="string_lte_link" onclick="showPage('string_lte')">string&lt;=</li>
+<li id="string_gt_link" onclick="showPage('string_gt')">string&gt;</li>
+<li id="string_gte_link" onclick="showPage('string_gte')">string&gt;=</li>
+<li id="substring_link" onclick="showPage('substring')">substring</li>
+<li id="trim_link" onclick="showPage('trim')">trim</li>
+<li id="upper-case_link" onclick="showPage('upper-case')">upper-case</li>
+        </ul>
+
+        <label>Math</label>
+        <ul>
+          <li id="_percent_link" onclick="showPage('_percent')">%</li>
+<li id="_star_link" onclick="showPage('_star')">*</li>
+<li id="_plus_link" onclick="showPage('_plus')">+</li>
+<li id="_minus_link" onclick="showPage('_minus')">-</li>
+<li id="_slash_link" onclick="showPage('_slash')">/</li>
+<li id="1_plus_link" onclick="showPage('1_plus')">1+</li>
+<li id="1_minus_link" onclick="showPage('1_minus')">1-</li>
+<li id="_lt_link" onclick="showPage('_lt')">&lt;</li>
+<li id="_lte_link" onclick="showPage('_lte')">&lt;=</li>
+<li id="_gt_link" onclick="showPage('_gt')">&gt;</li>
+<li id="_gte_link" onclick="showPage('_gte')">&gt;=</li>
+<li id="ceil_link" onclick="showPage('ceil')">ceil</li>
+<li id="expt_link" onclick="showPage('expt')">expt</li>
+<li id="floor_link" onclick="showPage('floor')">floor</li>
+<li id="random_link" onclick="showPage('random')">random</li>
+<li id="round_link" onclick="showPage('round')">round</li>
+<li id="sqrt_link" onclick="showPage('sqrt')">sqrt</li>
+        </ul>
+
+        <label>Regular expression</label>
+        <ul>
+          <li id="match_link" onclick="showPage('match')">match</li>
+<li id="regexp_link" onclick="showPage('regexp')">regexp</li>
         </ul>
 
         <label>Misc</label>
         <ul>
           <li id="_notequal_link" onclick="showPage('_notequal')">!=</li>
 <li id="_equal_link" onclick="showPage('_equal')">=</li>
+<li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="not_link" onclick="showPage('not')">not</li>
+<li id="now_link" onclick="showPage('now')">now</li>
 <li id="write_link" onclick="showPage('write')">write</li>
         </ul>
 </nav>
@@ -1622,7 +2276,12 @@
 <div id="playground">
   <div class="header row">
     <div class="column">Playground</span></div>
-    <div class="column"><center><span id="play-button" onclick="play()">Run [Ctrl-Enter]</span></center></div>
+    <div class="column">
+      <center>
+      <span class="button" onclick="play()">Run [Ctrl-Enter]</span>
+      <span class="button" onclick="clearOutput()">Clear output</span>
+      </center>
+    </div>
     <div class="column"></div>
   </div>
   <div class="row">
@@ -1630,7 +2289,7 @@
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
       <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
-    <div class="column wide" id="lisp">
+    <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
       <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)
 
@@ -1638,19 +2297,11 @@
 
 (write (* x y))</textarea>
     </div>
-    <div class="column" id="output">
-      <div class="row">
-        <div class="column textarea-header"><label for="output-textarea">Result</label></div>
-        <div class="column small right"><span id="clear-output" class="icon-button" onclick="clearOutput()">✖</span></div>
-      </div>
-      <textarea id="output-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
-    </div>
-    <div class="column" id="log">
-      <div class="row">
-        <div class="column textarea-header"><label for="log-textarea">Console log</label></div>
-        <div class="column small right"><span id="clear-log" class="icon-button" onclick="clearOutput()">✖</span></div>
-      </div>
-      <textarea id="log-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
+    <div class="column wide" id="output">
+      <div class="textarea-header"><label for="output-textarea">Result</label></div>
+      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck=false rows="4"></textarea>
+      <div class="textarea-header"><label for="log-textarea">Console log</label></div>
+      <textarea id="log-textarea" readonly spellcheck=false rows="5"></textarea>
     </div>
   </div>
 </div>

@@ -292,6 +292,13 @@ describe('list functions', () => {
       expect(() => lispish('(reverse (object))')).toThrow()
       expect(() => lispish('(reverse 10)')).toThrow()
     })
+    test('returns a new array instance', () => {
+      const program = `
+        (setq l (list 1 2 3))
+        (!= l (reverse l))
+      `
+      expect(lispish(program)).toBe(true)
+    })
   })
 
   describe('last', () => {

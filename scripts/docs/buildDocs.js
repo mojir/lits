@@ -63,7 +63,12 @@ function getPlayground() {
 <div id="playground">
   <div class="header row">
     <div class="column">Playground</span></div>
-    <div class="column"><center><span id="play-button" onclick="play()">Run [Ctrl-Enter]</span></center></div>
+    <div class="column">
+      <center>
+      <span class="button" onclick="play()">Run [Ctrl-Enter]</span>
+      <span class="button" onclick="clearOutput()">Clear output</span>
+      </center>
+    </div>
     <div class="column"></div>
   </div>
   <div class="row">
@@ -71,23 +76,15 @@ function getPlayground() {
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
       <textarea spellcheck=false rows="12" id="context-textarea">{ "x": 12 }</textarea>
     </div>
-    <div class="column wide" id="lisp">
+    <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
       <textarea spellcheck=false rows="12" id="lisp-textarea">(setq y 5)\n\n(write "y" y)\n\n(write (* x y))</textarea>
     </div>
-    <div class="column" id="output">
-      <div class="row">
-        <div class="column textarea-header"><label for="output-textarea">Result</label></div>
-        <div class="column small right"><span id="clear-output" class="icon-button" onclick="clearOutput()">✖</span></div>
-      </div>
-      <textarea id="output-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
-    </div>
-    <div class="column" id="log">
-      <div class="row">
-        <div class="column textarea-header"><label for="log-textarea">Console log</label></div>
-        <div class="column small right"><span id="clear-log" class="icon-button" onclick="clearOutput()">✖</span></div>
-      </div>
-      <textarea id="log-textarea" readonly spellcheck=false rows="12" id="context"></textarea>
+    <div class="column wide" id="output">
+      <div class="textarea-header"><label for="output-textarea">Result</label></div>
+      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck=false rows="4"></textarea>
+      <div class="textarea-header"><label for="log-textarea">Console log</label></div>
+      <textarea id="log-textarea" readonly spellcheck=false rows="5"></textarea>
     </div>
   </div>
 </div>
@@ -176,6 +173,16 @@ function getDocumentationContent(docObj) {
 }
 
 function stringifyValue(value) {
+  if (lispish.isLispishFunction(value)) {
+    if (value.builtin) {
+      return `&lt;BUILTIN FUNCTION ${value.builtin}&gt;`
+    } else {
+      return `&lt;FUNCTION ${value.name ?? 'λ'} (${value.arguments.join(' ')})&gt;`
+    }
+  }
+  if (typeof value === 'object' && value instanceof RegExp) {
+    return `${value}`
+  }
   return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
     /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
     'undefined',
@@ -199,6 +206,7 @@ function getSideBar() {
           ${
             categoryCollections[categoryKey]
               ? categoryCollections[categoryKey]
+                  .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
                   .map(obj => {
                     const linkName = obj.linkName
                     const name = escape(obj.name)

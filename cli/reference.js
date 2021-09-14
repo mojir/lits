@@ -524,8 +524,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is a `boolean`, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is a `boolean`, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is a `boolean`, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is a `boolean`, otherwise `false`.',
     examples: [
       '(boolean? true)',
       '(boolean? false)',
@@ -550,8 +550,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is `null`, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is `null`, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is `null`, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is `null`, otherwise `false`.',
     examples: ['(null? null)', '(null? false)', '(null? (list 1 2 3))', '(null? 0)', '(null? "A string")', '(null?)'],
     specialExpression: false,
     sideEffects: [],
@@ -569,8 +569,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is `undefined`, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is `undefined`, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is `undefined`, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is `undefined`, otherwise `false`.',
     examples: [
       '(undefined? undefined)',
       '(undefined? false)',
@@ -596,8 +596,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is a number, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is a number, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is a number, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is a number, otherwise `false`.',
     examples: [
       '(number? 0)',
       '(number? 2)',
@@ -623,8 +623,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is a string, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is a string, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is a string, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is a string, otherwise `false`.',
     examples: [
       '(string? "")',
       '(string? "A string")',
@@ -650,8 +650,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is a function, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is a function, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is a function, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is a function, otherwise `false`.',
     examples: [
       `(function? #'+)`,
       '(function? (function /))',
@@ -678,8 +678,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is an integer, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is an integer, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is an integer, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is an integer, otherwise `false`.',
     examples: [
       `(integer? 0)`,
       `(integer? -12)`,
@@ -707,8 +707,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is a list, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is a list, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is a list, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is a list, otherwise `false`.',
     examples: [
       `(list? (list))`,
       `(list? (list 1 2 3))`,
@@ -734,8 +734,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is an object, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is an object, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is an object, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is an object, otherwise `false`.',
     examples: [
       `(object? (object "a" 10))`,
       `(object? (object))`,
@@ -763,8 +763,8 @@ const functionReference = {
         type: 'any',
       },
     ],
-    shortDescription: 'Returns `true` if `value` is a regexp, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `value` is a regexp, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `value` is a regexp, otherwise `false`.',
+    longDescription: 'Returns `true` if `value` is a regexp, otherwise `false`.',
     examples: [
       '(regexp? (regexp "^start"))',
       `(regexp? -12)`,
@@ -792,8 +792,8 @@ const functionReference = {
         type: 'number',
       },
     ],
-    shortDescription: 'Returns `true` if `number` is `0`, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `number` is `0`, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `number` is `0`, otherwise `false`.',
+    longDescription: 'Returns `true` if `number` is `0`, otherwise `false`.',
     examples: ['(zero? 0)', `(zero? -0.0)`, '(zero? 1)', `(zero? 0.1)`, '(zero? "10")', '(zero?)'],
     specialExpression: false,
     sideEffects: [],
@@ -811,8 +811,8 @@ const functionReference = {
         type: 'number',
       },
     ],
-    shortDescription: 'Returns `true` if `number` is even, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `number` is even, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `number` is even, otherwise `false`.',
+    longDescription: 'Returns `true` if `number` is even, otherwise `false`.',
     examples: ['(even? 0)', `(even? -0.0)`, '(even? -1)', `(even? 2.1)`, '(even? "10")', '(even?)'],
     specialExpression: false,
     sideEffects: [],
@@ -830,9 +830,28 @@ const functionReference = {
         type: 'number',
       },
     ],
-    shortDescription: 'Returns `true` if `number` is odd, otherwise it returns `false`.',
-    longDescription: 'Returns `true` if `number` is odd, otherwise it returns `false`.',
+    shortDescription: 'Returns `true` if `number` is odd, otherwise `false`.',
+    longDescription: 'Returns `true` if `number` is odd, otherwise `false`.',
     examples: ['(odd? 1.0)', `(odd? 1.001)`, '(odd? -1)', `(odd? 2.1)`, '(odd? "10")', '(odd?)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'empty?': {
+    name: 'empty?',
+    category: 'Predicate',
+    linkName: 'empty_question',
+    returns: {
+      type: 'boolean',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Returns `true` if `list` is empty, otherwise `false`.',
+    longDescription: 'Returns `true` if `list` is empty, otherwise `false`.',
+    examples: ['(empty? (list))', `(empty? (list 1 2 3))`],
     specialExpression: false,
     sideEffects: [],
   },
@@ -1026,6 +1045,144 @@ const functionReference = {
       '(string<= "Albert" "Albert")',
       '(string<= "Albert" "albert")',
     ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string-to-number': {
+    name: 'string-to-number',
+    category: 'String',
+    linkName: 'string-to-number',
+    returns: {
+      type: 'number',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Parses `string` to a number.',
+    longDescription: 'Parses `string` to a number.',
+    examples: [
+      '(string-to-number "10")',
+      '(string-to-number "010")',
+      '(string-to-number "-1.01")',
+      '(string-to-number "a10")',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'number-to-string': {
+    name: 'number-to-string',
+    category: 'String',
+    linkName: 'number-to-string',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'number',
+        type: 'number',
+      },
+    ],
+    shortDescription: 'Converts `number` to a string.',
+    longDescription: 'Converts `number` to a string.',
+    examples: ['(number-to-string 10)', '(number-to-string -1.01)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'string-reverse': {
+    name: 'string-reverse',
+    category: 'String',
+    linkName: 'string-reverse',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Reverses a string.',
+    longDescription: 'Reverses a string.',
+    examples: ['(string-reverse "Albert")', '(string-reverse "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'lower-case': {
+    name: 'lower-case',
+    category: 'String',
+    linkName: 'lower-case',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns `string` converted to lower case.',
+    longDescription: 'Returns `string` converted to lower case.',
+    examples: ['(lower-case "Albert")', '(lower-case "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'upper-case': {
+    name: 'upper-case',
+    category: 'String',
+    linkName: 'upper-case',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns `string` converted to upper case.',
+    longDescription: 'Returns `string` converted to upper case.',
+    examples: ['(upper-case "Albert")', '(upper-case "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  capitalize: {
+    name: 'capitalize',
+    category: 'String',
+    linkName: 'capitalize',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: "Returns copy of `string` with `string`'s first character converted to upper case.",
+    longDescription: "Returns copy of `string` with `string`'s first character converted to upper case.",
+    examples: ['(capitalize "albert")', '(capitalize " albert")', '(capitalize "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  trim: {
+    name: 'trim',
+    category: 'String',
+    linkName: 'trim',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns a new string with leading and trailing whitespaces removed.',
+    longDescription: 'Returns a new string with leading and trailing whitespaces removed.',
+    examples: ['(trim "  albert  ")', '(trim "   ")', '(trim "")'],
     specialExpression: false,
     sideEffects: [],
   },
@@ -1566,15 +1723,502 @@ const functionReference = {
     specialExpression: false,
     sideEffects: [],
   },
+  filter: {
+    name: 'filter',
+    category: 'List',
+    linkName: 'filter',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'filter',
+        type: 'function',
+      },
+    ],
+    shortDescription: 'Creates a new list with all elements that pass the test implemented by `filter`.',
+    longDescription: 'Creates a new list with all elements that pass the test implemented by `filter`.',
+    examples: [
+      `(filter #'string? (list "Albert" "Mojir" 160 (list 1 2)))`,
+      `(filter (lambda (x) (> x 10)) (list 5 10 15 20))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  reverse: {
+    name: 'reverse',
+    category: 'List',
+    linkName: 'reverse',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'reverse',
+        type: 'function',
+      },
+    ],
+    shortDescription: 'Creates a new list with the elements from `list` in reversed order.',
+    longDescription: 'Creates a new list with the elements from `list` in reversed order.',
+    examples: [`(reverse (list "Albert" "Mojir" 160 (list 1 2)))`, `(reverse (list))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  first: {
+    name: 'first',
+    category: 'List',
+    linkName: 'first',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Returns the first element of `list`.',
+    longDescription: 'Returns the first element of `list`. If `list` is empty, `undefined` is returned.',
+    examples: [`(first (list "Albert" "Mojir" 160 (list 1 2)))`, `(first (list))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  last: {
+    name: 'last',
+    category: 'List',
+    linkName: 'last',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Returns the last element of `list`.',
+    longDescription: 'Returns the last element of `list`. If `list` is empty, `undefined` is returned.',
+    examples: [`(last (list "Albert" "Mojir" 160 (list 1 2)))`, `(last (list))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  rest: {
+    name: 'rest',
+    category: 'List',
+    linkName: 'rest',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Returns a new list with all but the first element from `list`.',
+    longDescription:
+      'Returns a new list with all but the first element from `list`. If `list` has less than two elements, an empty list is returned.',
+    examples: [`(rest (list "Albert" "Mojir" 160 (list 1 2)))`, `(rest (list "Albert"))`, `(rest (list))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  cons: {
+    name: 'cons',
+    category: 'List',
+    linkName: 'cons',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Constructs a new list with `element` as first element and `rest` as the rest.',
+    longDescription: 'Constructs a new list with `element` as first element and `rest` as the rest.',
+    examples: [`(cons "Hi" (list "Albert" "Mojir" 160 (list 1 2)))`, `(cons "Hi" (list))`, `(cons "Hi")`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  object: {
+    name: 'object',
+    category: 'Object',
+    linkName: 'object',
+    returns: {
+      type: 'object',
+    },
+    arguments: [
+      {
+        name: '[key value]',
+        type: '[string any]',
+        description: 'zero or more',
+      },
+    ],
+    shortDescription: 'Constructs a new object. Object members are created from `key` - `value` pairs.',
+    longDescription:
+      'Constructs a new object. Object members are created from `key` - `value` pairs. Requires an even number of arguments.',
+    examples: [`(object)`, `(object "x" 10 "y" true "z" "A string")`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  keys: {
+    name: 'keys',
+    category: 'Object',
+    linkName: 'keys',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+      },
+    ],
+    shortDescription: 'Returns list of all keys in `object`.',
+    longDescription: 'Returns list of all keys in `object`.',
+    examples: [`(keys (object))`, `(keys (object "x" 10 "y" true "z" "A string"))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  values: {
+    name: 'values',
+    category: 'Object',
+    linkName: 'values',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+      },
+    ],
+    shortDescription: 'Returns list of all values in `object`.',
+    longDescription: 'Returns list of all values in `object`.',
+    examples: [`(values (object))`, `(values (object "x" 10 "y" true "z" "A string"))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  entries: {
+    name: 'entries',
+    category: 'Object',
+    linkName: 'entries',
+    returns: {
+      type: 'list of [key value] - paris',
+    },
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+      },
+    ],
+    shortDescription: 'Returns nested list of all key - value pairs in `object`.',
+    longDescription: 'Returns nested list of all key - value pairs in `object`.',
+    examples: [`(entries (object))`, `(entries (object "x" 10 "y" true "z" "A string"))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  merge: {
+    name: 'merge',
+    category: 'Object',
+    linkName: 'merge',
+    returns: {
+      type: 'object',
+    },
+    arguments: [
+      {
+        name: 'object',
+        type: 'object',
+        description: 'one or many',
+      },
+    ],
+    shortDescription: 'Returns a new object created by merging together all arguments.',
+    longDescription: 'Returns a new object created by merging together all arguments.',
+    examples: [`(merge (object "x" 10) (object "y" 20))`, `(merge (object "x" 10) (object "x" 15 "y" 20))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  setq: {
+    name: 'setq',
+    category: 'Special expression',
+    linkName: 'setq',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'variable',
+        type: 'name',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Bind `value` to `variable`. If a variable name is not know, A global variable is created.',
+    longDescription: 'Bind `value` to `variable`. If a variable name is not know, A global variable is created.',
+    examples: [`(setq (object))`, `(setq (object "x" 10 "y" true "z" "A string"))`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  let: {
+    name: 'let',
+    category: 'Special expression',
+    linkName: 'let',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'bindings',
+        type: 'bindings',
+      },
+      {
+        name: 'body',
+        type: 'lisp expressions',
+      },
+    ],
+    shortDescription: 'Binds local variables. The variables lives only within the body.',
+    longDescription:
+      'Binds local variables. The variables lives only within the body. It returns evaluation of the last expression in the body.',
+    examples: [`(let ((a (+ 1 2 3 4)) (b (* 1 2 3 4))) (write a b))`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  lambda: {
+    name: 'lambda',
+    category: 'Special expression',
+    linkName: 'lambda',
+    returns: {
+      type: 'function',
+    },
+    arguments: [
+      {
+        name: 'arguments',
+        type: 'arguments',
+      },
+      {
+        name: 'body',
+        type: 'lisp expressions',
+      },
+    ],
+    shortDescription: 'Creates a function. When called, evaluation of the last expression in the body is returned.',
+    longDescription: 'Creates a function. When called, evaluation of the last expression in the body is returned.',
+    examples: [`(lambda (a b) (sqrt (+ (* a a) (* b b))))`, `((lambda (a b) (sqrt (+ (* a a) (* b b)))) 3 4)`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  defun: {
+    name: 'defun',
+    category: 'Special expression',
+    linkName: 'defun',
+    returns: {
+      type: 'function',
+    },
+    arguments: [
+      {
+        name: 'name',
+        type: 'name',
+      },
+      {
+        name: 'arguments',
+        type: 'arguments',
+      },
+      {
+        name: 'body',
+        type: 'lisp expressions',
+      },
+    ],
+    shortDescription:
+      'Creates a named global function. When called, evaluation of the last expression in the body is returned.',
+    longDescription:
+      'Creates a named global function. When called, evaluation of the last expression in the body is returned.',
+    examples: [
+      `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #'hyp`,
+      `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  function: {
+    name: 'function',
+    category: 'Special expression',
+    linkName: 'function',
+    returns: {
+      type: 'function',
+    },
+    arguments: [
+      {
+        name: 'name',
+        type: 'name',
+      },
+      {
+        name: 'arguments',
+        type: 'arguments',
+      },
+      {
+        name: 'body',
+        type: 'lisp expressions',
+      },
+    ],
+    shortDescription: "Accessing namespace of functions. Shortform `#'` is equivalent.",
+    longDescription: "Accessing namespace of functions. Shortform `#'` is equivalent.",
+    examples: [`(function +)`, `#'+`, `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp)`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  if: {
+    name: 'if',
+    category: 'Special expression',
+    linkName: 'if',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'test',
+        type: 'any',
+      },
+      {
+        name: 'then',
+        type: 'any',
+      },
+      {
+        name: 'else',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Either `then` or `else` branch is taken. Then branch is selected when `test` result is truthy.',
+    longDescription: 'Either `then` or `else` branch is taken. Then branch is selected when `test` result is truthy.',
+    examples: [`(if true (write "TRUE") (write "FALSE"))`, `(if false (write "TRUE") (write "FALSE"))`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  cond: {
+    name: 'cond',
+    category: 'Special expression',
+    linkName: 'cond',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'variants',
+        type: 'variants',
+      },
+    ],
+    shortDescription: 'Used for branching. Variants are tested sequentially from the top.',
+    longDescription:
+      'Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, `undefined` is returned.',
+    examples: [
+      `(cond (false (write "FALSE")) (null (write "NULL")) (true (write "TRUE")))`,
+      `(cond (false (write "FALSE")) (null (write "NULL")))`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  regexp: {
+    name: 'regexp',
+    category: 'Regular expression',
+    linkName: 'regexp',
+    returns: {
+      type: 'RegExp',
+    },
+    arguments: [
+      {
+        name: 'regexp-string',
+        type: 'string',
+      },
+      {
+        name: 'flags',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Creates a RegExp from `regexp-string` and `flags`.',
+    longDescription: 'Creates a RegExp from `regexp-string` and `flags`.',
+    examples: [`(regexp "^\\s*(.*)$")`, `(regexp "albert" "i")`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  match: {
+    name: 'match',
+    category: 'Regular expression',
+    linkName: 'match',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'regexp',
+        type: 'RegExp',
+      },
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription:
+      'Matches `string` against `regexp`. If `string` matches, a *match*-list is returned, otherwise `undefined`.',
+    longDescription:
+      'Matches `string` against `regexp`. If `string` matches, a *match*-list is returned, otherwise `undefined`.',
+    examples: [
+      `(match (regexp "^\\s*(.*)$") "  A string")`,
+      `(match (regexp "albert" "i") "My name is Albert")`,
+      `(match (regexp "albert" "i") "My name is Ben")`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  now: {
+    name: 'now',
+    category: 'Misc',
+    linkName: 'now',
+    returns: {
+      type: 'number',
+    },
+    arguments: [],
+    shortDescription: 'Returns milliseconds elapsed since the UNIX epoch.',
+    longDescription: 'Returns milliseconds elapsed since the UNIX epoch.',
+    examples: [`(now)`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'get-path': {
+    name: 'get-path',
+    category: 'Misc',
+    linkName: 'get-path',
+    returns: {
+      type: 'number',
+    },
+    arguments: [],
+    shortDescription: 'Is used to get the value at path of object or list.',
+    longDescription: 'Is used to get the value at path of object or list.',
+    examples: [
+      `(get-path (write (object "a" (object "x" (list 1 2 3)))) "a.x[2]")`,
+      `(get-path (write (object "a" (object "x" (list 1 2 3)))) "b.z[10]")`,
+      `(get-path (write (list (object "x" (list 1 2 3)) (object "x" (list 4 5 6)))) "[1].x[2]")`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
 }
 
 const categoryOrder = [
   'Special expression',
-  'Math',
   'Predicate',
-  'String',
   'List',
   'Object',
+  'String',
+  'Math',
   'Regular expression',
   'Misc',
 ]
