@@ -154,11 +154,11 @@ function getDocumentationContent(docObj) {
         var result
         try {
           result = lispish.lispish(example)
-          return `<pre class="example" onclick="runPlayground('${escapeExample(
+          return `<pre><span class="example" onclick="runPlayground('${escapeExample(
             example,
           )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifyValue(
             result,
-          )}</span></pre>`
+          )}</span></span></pre>`
         } catch (error) {
           return `<pre class="example" onclick="runPlayground('${escapeExample(
             example,
