@@ -84,7 +84,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .column {
-  flex: 1;
+  flex: 15;
 }
 
 .column.scoll {
@@ -100,11 +100,11 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .column.wide {
-  flex: 2;
+  flex: 20;
 }
 
 .column.wider {
-  flex: 3;
+  flex: 45;
 }
 
 .column.right {
@@ -174,11 +174,51 @@ input[type="submit"]:hover{
   background-color: #222222;
 }
 
+/************ EXAMPLE PAGE **********/
+
+#example-page ul {
+  list-style-type: none;
+  list-style-position: inside;
+  padding: 0;
+  margin: 0;
+  margin-left: 0.25rem;
+}
+
+#example-page li {
+  font-size: 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+#example-page .column:last-child {
+  align-self: center;
+}
+
+#example-page li:nth-child(odd) {
+  background-color: #333333;
+}
+
+#example-page li:nth-child(even) {
+  background-color: #444444;
+}
+
+#example-page .example-name {
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+
+#example-page .example-description {
+  font-size: 1rem;
+  font-style: italic;
+}
+
 /************ SIDEBAR **********/
 
 #sidebar {
   position: fixed;
-  bottom: 350px;
+  bottom: 395px;
   left: 0;
   width: 250px;
   top: 95px;
@@ -202,17 +242,15 @@ input[type="submit"]:hover{
   list-style-type: none;
   list-style-position: inside;
   padding: 0;
-  margin: 0 0 0 0.25rem;
+  margin: 0;
+  margin-left: 0.25rem;
   margin-bottom: 1.5rem;
 }
 
-#sidebar ul li {
+#sidebar li {
   font-family: monospace;
   font-size: 1rem;
   cursor: pointer;
-}
-
-#sidebar li {
   white-space: nowrap;
 }
 
@@ -240,7 +278,7 @@ input[type="submit"]:hover{
   position: fixed;
   left: 290px;
   top: 95px;
-  bottom: 350px;
+  bottom: 395px;
   right: 1rem;
   overflow-y: auto;
 }
@@ -312,7 +350,7 @@ h4, h2, h1 {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 325px;
+  height: 370px;
   background-color: #333333;
   border-top: 2px solid #444444;
   padding: 0.5rem 0.5rem;

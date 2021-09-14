@@ -41,6 +41,53 @@
 </div>
 
     
+<div id="example-page" class="content">
+  <h1>Examples</h1>
+  <br />
+  <ul>
+  
+      <li>
+        <div class="row example-item">
+          <div class="column wide">
+            <div class="example-name">Simple Lisp expression</div>
+            <div class="example-description">A super simple example.</div>
+          </div>
+          <div class="column right">
+            <span class="button" onclick="setPlayground('default')">Show in playground</span>
+          </div>
+        </div>
+      </li>
+    
+
+      <li>
+        <div class="row example-item">
+          <div class="column wide">
+            <div class="example-name">Context in use</div>
+            <div class="example-description">Simple example using context.</div>
+          </div>
+          <div class="column right">
+            <span class="button" onclick="setPlayground('simple-context-example')">Show in playground</span>
+          </div>
+        </div>
+      </li>
+    
+
+      <li>
+        <div class="row example-item">
+          <div class="column wide">
+            <div class="example-name">Phone number formatter</div>
+            <div class="example-description">Pretty prints a US phone number.</div>
+          </div>
+          <div class="column right">
+            <span class="button" onclick="setPlayground('phone-number-formatter')">Show in playground</span>
+          </div>
+        </div>
+      </li>
+    
+  </ul>
+</div>
+
+    
 <div id="_plus" class="content function">
   <div class="function-header">+</div>
   
@@ -402,9 +449,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.8870161106150785</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.006409391123678949</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.2255705931700902</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.7847779664842176</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.001256321722914704</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 2.296675746201036</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -936,8 +983,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(empty? (list))')"><span class="icon-button">▶</span> (empty? (list)) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(empty? (list 1 2 3))')"><span class="icon-button">▶</span> (empty? (list 1 2 3)) <span class="gray">=> false</span></span></pre>
+    <pre class="example" onclick="runPlayground('(empty? (list))')"><span class="icon-button">▶</span> (empty? (list)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(empty? (list 1 2 3))')"><span class="icon-button">▶</span> (empty? (list 1 2 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1176,8 +1223,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(lower-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (lower-case "Albert") <span class="gray">=> "albert"</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(lower-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (lower-case "") <span class="gray">=> ""</span></span></pre>
+    <pre class="example" onclick="runPlayground('(lower-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (lower-case "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(lower-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (lower-case "") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1196,8 +1243,8 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(upper-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (upper-case "Albert") <span class="gray">=> "ALBERT"</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(upper-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (upper-case "") <span class="gray">=> ""</span></span></pre>
+    <pre class="example" onclick="runPlayground('(upper-case ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (upper-case "Albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(upper-case ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (upper-case "") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1216,9 +1263,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(capitalize ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize "albert") <span class="gray">=> "Albert"</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(capitalize ___double_quote___ albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize " albert") <span class="gray">=> " albert"</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(capitalize ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (capitalize "") <span class="gray">=> ""</span></span></pre>
+    <pre class="example" onclick="runPlayground('(capitalize ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize "albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(capitalize ___double_quote___ albert___double_quote___)')"><span class="icon-button">▶</span> (capitalize " albert") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(capitalize ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (capitalize "") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -1237,9 +1284,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(trim ___double_quote___  albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim "  albert  ") <span class="gray">=> "albert"</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(trim ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim "   ") <span class="gray">=> ""</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(trim ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim "") <span class="gray">=> ""</span></span></pre>
+    <pre class="example" onclick="runPlayground('(trim ___double_quote___  albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim "  albert  ") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(trim ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim "   ") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(trim ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim "") <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -2114,7 +2161,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631626065420</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631655330564</span></span></pre>
   </div>
 </div>
 
@@ -2139,66 +2186,13 @@
   </div>
 </div>
 
-    
-<div id="example_phone-number-formatter" class="content function">
-  <div class="function-header">
-    <div class="row">
-      <div class="column">Phone number formatter</div>
-      <div class="column right" id="example-description">
-        <i>Pretty prints a US phone number</i>
-      </div>
-    </div>
-  </div>
-  <textarea readonly spellcheck="false" class="mt-2 mb-2" id="example_phone-number-formatter_textarea">(defun formatPhoneNumber ($data)
-  (if (string? $data)
-    (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
-      (cond
-        ((> (string-length phoneNumber) 6)
-          (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
-        )
-        ((> (string-length phoneNumber) 3)
-          (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
-        )
-        ((> (string-length phoneNumber) 0)
-          (concat "(" (substring phoneNumber 0))
-        )
-        (true
-          phoneNumber
-        )
-      )
-    )
-    ""
-  )
-)
-
-(write #'formatPhoneNumber)
-(write (formatPhoneNumber "+11232343456"))
-(write (formatPhoneNumber "1232343456"))
-(write (formatPhoneNumber "123234"))</textarea>
-  <div class="row mt-2">
-    <div class="column fancy-scroll mr-1">
-      <div class="sub-header">Result</div>
-      <pre class="big-example-result">"(123) 234"</pre>
-    </div>
-    <div class="column fancy-scroll">
-      <div class="sub-header">Console log</div>
-      <pre>&lt;FUNCTION formatPhoneNumber ($data)&gt;</pre>
-<pre>"(123) 234-3456"</pre>
-<pre>"(123) 234-3456"</pre>
-<pre>"(123) 234"</pre>
-    </div>
-  </div>
-</div>
-
   </main>
   
 <nav id="sidebar" class="fancy-scroll">
   <label class="link" onclick="showPage('index')">Home</label>
   <br />
-  <label>Examples</label>
-  <ul>
-    <li id="example_phone-number-formatter_link" onclick="showPage('example_phone-number-formatter')">Phone number formatter</li>
-  </ul>
+  <label class="link" onclick="showPage('example-page')">Examples</label>
+  <br />
   
         <label>Special expression</label>
         <ul>
@@ -2334,7 +2328,7 @@
     <div class="column">
       <center>
       <span class="button" onclick="play()">Run [Ctrl-Enter]</span>
-      <span class="button" onclick="clearOutput()">Clear output</span>
+      <span class="button" onclick="resetPlayground()">Reset</span>
       </center>
     </div>
     <div class="column"></div>
@@ -2342,27 +2336,24 @@
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
-      <textarea spellcheck="false" rows="12" id="context-textarea">{ "x": 12 }</textarea>
+      <textarea spellcheck="false" rows="15" id="context-textarea"></textarea>
     </div>
     <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
-      <textarea spellcheck="false" rows="12" id="lisp-textarea">(setq y 5)
-
-(write "y" y)
-
-(write (* x y))</textarea>
+      <textarea spellcheck="false" rows="15" id="lisp-textarea"></textarea>
     </div>
     <div class="column wide" id="output">
       <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="4"></textarea>
+      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="6"></textarea>
       <div class="textarea-header"><label for="log-textarea">Console log</label></div>
-      <textarea id="log-textarea" readonly spellcheck="false" rows="5"></textarea>
+      <textarea id="log-textarea" readonly spellcheck="false" rows="6"></textarea>
     </div>
   </div>
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
   <script src="lispish.iife.js"></script>
+  <script src='examples.js'></script>
   <script src='scripts.js'></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 const { version } = require('../../package.json')
-const { functionReference, categories, examples } = require('../../cli/reference')
+const { functionReference, categories } = require('../../cli/reference')
+const examples = require('./examples')
 const lispish = require('../../dist/lispish')
 const path = require('path')
 const fs = require('fs')
@@ -18,18 +19,17 @@ ${getHeader()}
 <body>
   ${getTopBar({ back: false })}
   <main id="main-panel" class="fancy-scroll">
-    ${getIndexContent()}
+    ${getIndexPage()}
+    ${getExamplePage()}
     ${Object.values(functionReference)
       .map(obj => getDocumentationContent(obj))
-      .join('\n')}
-    ${Object.values(examples)
-      .map(obj => getExampleContent(obj))
       .join('\n')}
   </main>
   ${getSideBar()}
   ${getPlayground()}
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
   <script src="lispish.iife.js"></script>
+  <script src='examples.js'></script>
   <script src='scripts.js'></script>
 </body>
 </html>
@@ -67,7 +67,7 @@ function getPlayground() {
     <div class="column">
       <center>
       <span class="button" onclick="play()">Run [Ctrl-Enter]</span>
-      <span class="button" onclick="clearOutput()">Clear output</span>
+      <span class="button" onclick="resetPlayground()">Reset</span>
       </center>
     </div>
     <div class="column"></div>
@@ -75,24 +75,24 @@ function getPlayground() {
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
-      <textarea spellcheck="false" rows="12" id="context-textarea">{ "x": 12 }</textarea>
+      <textarea spellcheck="false" rows="15" id="context-textarea"></textarea>
     </div>
     <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
-      <textarea spellcheck="false" rows="12" id="lisp-textarea">(setq y 5)\n\n(write "y" y)\n\n(write (* x y))</textarea>
+      <textarea spellcheck="false" rows="15" id="lisp-textarea"></textarea>
     </div>
     <div class="column wide" id="output">
       <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="4"></textarea>
+      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="6"></textarea>
       <div class="textarea-header"><label for="log-textarea">Console log</label></div>
-      <textarea id="log-textarea" readonly spellcheck="false" rows="5"></textarea>
+      <textarea id="log-textarea" readonly spellcheck="false" rows="6"></textarea>
     </div>
   </div>
 </div>
 `
 }
 
-function getIndexContent() {
+function getIndexPage() {
   return `
 <div id="index" class="content">
   <h1>Welcome to Lispish!</h1>
@@ -113,6 +113,34 @@ function getIndexContent() {
   <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
   <p/>
   <p>Happy coding!</p>
+</div>
+`
+}
+
+function getExamplePage() {
+  return `
+<div id="example-page" class="content">
+  <h1>Examples</h1>
+  <br />
+  <ul>
+  ${examples
+    .map(example => {
+      return `
+      <li>
+        <div class="row example-item">
+          <div class="column wide">
+            <div class="example-name">${example.name}</div>
+            <div class="example-description">${example.description}</div>
+          </div>
+          <div class="column right">
+            <span class="button" onclick="setPlayground('${example.id}')">Show in playground</span>
+          </div>
+        </div>
+      </li>
+    `
+    })
+    .join('\n')}
+  </ul>
 </div>
 `
 }
@@ -173,67 +201,6 @@ function getDocumentationContent(docObj) {
 `
 }
 
-function getExampleContent(example) {
-  const { name, linkName, description, code } = example
-  const formattedDescription = formatDescription(description)
-  var oldLog = console.log
-  const log = []
-  console.log = function () {
-    var args = Array.from(arguments)
-    var logRow = args.map(arg => `<pre>${stringifyValue(arg)}</pre>`).join(' ')
-    log.push(logRow)
-  }
-  var result
-  try {
-    result = `<pre class="big-example-result">${stringifyValue(lispish.lispish(code))}</pre>`
-  } catch (error) {
-    return `<pre class="big-example-result">Error!</pre>`
-  } finally {
-    console.log = oldLog
-  }
-
-  return `
-<div id="example_${linkName}" class="content function">
-  <div class="function-header">
-    <div class="row">
-      <div class="column">${name}</div>
-      <div class="column right" id="example-description">
-        <i>${formattedDescription}</i>
-      </div>
-    </div>
-  </div>
-  <textarea readonly spellcheck="false" class="mt-2 mb-2" id="example_${linkName}_textarea">${code}</textarea>
-  <div class="row mt-2">
-    <div class="column fancy-scroll mr-1">
-      <div class="sub-header">Result</div>
-      ${result}
-    </div>
-    <div class="column fancy-scroll">
-      <div class="sub-header">Console log</div>
-      ${log.join('\n')}
-    </div>
-  </div>
-</div>
-`
-}
-
-function stringifyValue(value) {
-  if (lispish.isLispishFunction(value)) {
-    if (value.builtin) {
-      return `&lt;BUILTIN FUNCTION ${value.builtin}&gt;`
-    } else {
-      return `&lt;FUNCTION ${value.name ?? 'λ'} (${value.arguments.join(' ')})&gt;`
-    }
-  }
-  if (typeof value === 'object' && value instanceof RegExp) {
-    return `${value}`
-  }
-  return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
-    /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
-    'undefined',
-  )
-}
-
 function getSideBar() {
   const categoryCollections = Object.values(functionReference).reduce((result, obj) => {
     result[obj.category] = result[obj.category] || []
@@ -245,16 +212,8 @@ function getSideBar() {
 <nav id="sidebar" class="fancy-scroll">
   <label class="link" onclick="showPage('index')">Home</label>
   <br />
-  <label>Examples</label>
-  <ul>
-    ${examples
-      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-      .map(
-        example =>
-          `<li id="example_${example.linkName}_link" onclick="showPage('example_${example.linkName}')">${example.name}</li>`,
-      )
-      .join('\n')}
-  </ul>
+  <label class="link" onclick="showPage('example-page')">Examples</label>
+  <br />
   ${categories
     .map(categoryKey => {
       return `
@@ -287,10 +246,29 @@ function setupDocDir() {
 function copyScripts() {
   fs.copyFileSync(path.join(__dirname, '../../dist/lispish.iife.js'), path.join(DOC_DIR, 'lispish.iife.js'))
   fs.copyFileSync(path.join(__dirname, `scripts.js`), path.join(DOC_DIR, `scripts.js`))
+  const examplesContent = fs.readFileSync(path.join(__dirname, `examples.js`), { encoding: 'utf-8' })
+  fs.writeFileSync(path.join(DOC_DIR, `examples.js`), examplesContent.replace('module.exports =', 'var examples ='))
 }
 
 function copyStyles() {
   fs.copyFileSync(path.join(__dirname, `styles.css`), path.join(DOC_DIR, `styles.css`))
+}
+
+function stringifyValue(value) {
+  if (lispish.isLispishFunction(value)) {
+    if (value.builtin) {
+      return `&lt;BUILTIN FUNCTION ${value.builtin}&gt;`
+    } else {
+      return `&lt;FUNCTION ${value.name ?? 'λ'} (${value.arguments.join(' ')})&gt;`
+    }
+  }
+  if (typeof value === 'object' && value instanceof RegExp) {
+    return `${value}`
+  }
+  return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
+    /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
+    'undefined',
+  )
 }
 
 function escape(str) {

@@ -6,6 +6,7 @@
   })
   var id = location.hash.substring(1) || 'index'
   showPage(id, 'replace')
+  setPlayground('default')
 })()
 
 window.addEventListener('popstate', () => {
@@ -51,6 +52,31 @@ function play() {
   output.value = content
 }
 function showPage(id, historyEvent) {
+  inactivateAll()
+
+  const page = document.getElementById(id)
+  const link = document.getElementById(id + '_link')
+
+  if (page) {
+    page.classList.add('active-content')
+    if (link) {
+      link.classList.add('active-sidebar-entry')
+    }
+  } else {
+    showPage('index', 'replace')
+    return
+  }
+
+  if (historyEvent === 'none') {
+    return
+  } else if (historyEvent === 'replace') {
+    history.replaceState(null, '', '#' + id)
+  } else {
+    history.pushState(null, '', '#' + id)
+  }
+}
+
+function inactivateAll() {
   var els = document.getElementsByClassName('active-content')
   while (els[0]) {
     els[0].classList.remove('active-content')
@@ -58,31 +84,6 @@ function showPage(id, historyEvent) {
   els = document.getElementsByClassName('active-sidebar-entry')
   while (els[0]) {
     els[0].classList.remove('active-sidebar-entry')
-  }
-
-  if (id === 'index') {
-    document.getElementById('index').classList.add('active-content')
-  } else {
-    var docPage = document.getElementById(id)
-    if (docPage) {
-      docPage.classList.add('active-content')
-      document.getElementById(id + '_link').classList.add('active-sidebar-entry')
-    } else {
-      showPage('index', 'replace')
-      return
-    }
-  }
-  if (id.startsWith('example_')) {
-    const textarea = document.getElementById(id + '_textarea')
-    textarea.style.height = '5px'
-    textarea.style.height = textarea.scrollHeight + 10 + 'px'
-  }
-  if (historyEvent === 'none') {
-    return
-  } else if (historyEvent === 'replace') {
-    history.replaceState(null, '', '#' + id)
-  } else {
-    history.pushState(null, '', '#' + id)
   }
 }
 
@@ -103,14 +104,33 @@ function stringifyValue(value) {
   )
 }
 
-function clearOutput() {
+function resetPlayground() {
+  document.getElementById('context-textarea').value = ''
+  document.getElementById('lisp-textarea').value = ''
   document.getElementById('output-textarea').value = ''
   document.getElementById('log-textarea').value = ''
 }
 
 function runPlayground(example) {
+  resetPlayground()
   example = example.replace(/___single_quote___/g, "'").replace(/___double_quote___/g, '"')
   var textarea = document.getElementById('lisp-textarea')
   textarea.value = example
-  play()
+}
+
+function setPlayground(exampleId) {
+  const example = examples.find(ex => ex.id === exampleId)
+  if (!example) {
+    throw Error(`Could not find example '${exampleId}'`)
+  }
+
+  resetPlayground()
+
+  if (example.context) {
+    document.getElementById('context-textarea').value = JSON.stringify(example.context, null, 2)
+  }
+
+  if (example.code) {
+    document.getElementById('lisp-textarea').value = example.code
+  }
 }
