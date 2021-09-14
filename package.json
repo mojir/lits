@@ -1,6 +1,6 @@
 {
   "name": "lispish",
-  "version": "0.0.28",
+  "version": "0.1.0",
   "description": "A lispish implementation in Typescript",
   "main": "dist/lispish.js",
   "module": "dist/lispish.mjs",
