@@ -727,9 +727,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.6587301513287755</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0016024069270747488</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.7457157971768922</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.6363773007207416</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.004617544647798855</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.275354321266848</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -2051,6 +2051,93 @@
 </div>
 
 
+<div id="find" class="content function">
+  <div class="function-header">find</div>
+  
+  <p>Returns the first elements that pass the test implemented by <span class="pre">finder</span>. I no element was found, <span class="pre">undefined</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>find list finder => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>finder: function</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(find #___single_quote___string? (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (find #'string? (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> "Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(find (lambda (x) (> x 10)) (list 5 10 15 20))')"><span class="icon-button">▶</span> (find (lambda (x) (> x 10)) (list 5 10 15 20)) <span class="gray">=> 15</span></span></pre>
+  </div>
+</div>
+
+
+<div id="position" class="content function">
+  <div class="function-header">position</div>
+  
+  <p>Returns the index of the first elements that pass the test implemented by <span class="pre">finder</span>. I no element was found, <span class="pre">undefined</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>position list finder => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>finder: function</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(position #___single_quote___string? (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (position #'string? (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(position (lambda (x) (> x 10)) (list 5 10 15 20))')"><span class="icon-button">▶</span> (position (lambda (x) (> x 10)) (list 5 10 15 20)) <span class="gray">=> 2</span></span></pre>
+  </div>
+</div>
+
+
+<div id="some" class="content function">
+  <div class="function-header">some</div>
+  
+  <p>Returns true if at least one element pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>some list finder => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>finder: function</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(some #___single_quote___string? (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (some #'string? (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(some (lambda (x) (> x 10)) (list 5 10 15 20))')"><span class="icon-button">▶</span> (some (lambda (x) (> x 10)) (list 5 10 15 20)) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(some (lambda (x) (> x 10)) (list 1 2 3 4))')"><span class="icon-button">▶</span> (some (lambda (x) (> x 10)) (list 1 2 3 4)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(some (lambda (x) (> x 10)) (list))')"><span class="icon-button">▶</span> (some (lambda (x) (> x 10)) (list)) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="every" class="content function">
+  <div class="function-header">every</div>
+  
+  <p>Returns true if all elements pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>every list finder => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>finder: function</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(every #___single_quote___string? (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (every #'string? (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(every (lambda (x) (> x 10)) (list 50 100 150 200))')"><span class="icon-button">▶</span> (every (lambda (x) (> x 10)) (list 50 100 150 200)) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(every (lambda (x) (> x 10)) (list))')"><span class="icon-button">▶</span> (every (lambda (x) (> x 10)) (list)) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
 <div id="reverse" class="content function">
   <div class="function-header">reverse</div>
   
@@ -2355,6 +2442,7 @@
   <div class="indent">
     <pre><span class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #___single_quote___hyp')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #'hyp <span class="gray">=> &lt;FUNCTION hyp (a b)&gt;</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(defun sumOfSquares (&rest s) (apply #___single_quote___+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"><span class="icon-button">▶</span> (defun sumOfSquares (&rest s) (apply #'+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55</span></span></pre>
   </div>
 </div>
 
@@ -2502,7 +2590,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631736368174</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631738610922</span></span></pre>
   </div>
 </div>
 
@@ -2848,7 +2936,9 @@
           <li id="append_link" onclick="showPage('append')">append</li>
 <li id="cons_link" onclick="showPage('cons')">cons</li>
 <li id="elt_link" onclick="showPage('elt')">elt</li>
+<li id="every_link" onclick="showPage('every')">every</li>
 <li id="filter_link" onclick="showPage('filter')">filter</li>
+<li id="find_link" onclick="showPage('find')">find</li>
 <li id="first_link" onclick="showPage('first')">first</li>
 <li id="last_link" onclick="showPage('last')">last</li>
 <li id="length_link" onclick="showPage('length')">length</li>
@@ -2856,6 +2946,7 @@
 <li id="listf_link" onclick="showPage('listf')">listf</li>
 <li id="map_link" onclick="showPage('map')">map</li>
 <li id="pop_link" onclick="showPage('pop')">pop</li>
+<li id="position_link" onclick="showPage('position')">position</li>
 <li id="push_link" onclick="showPage('push')">push</li>
 <li id="range_link" onclick="showPage('range')">range</li>
 <li id="reduce_link" onclick="showPage('reduce')">reduce</li>
@@ -2866,6 +2957,7 @@
 <li id="selt_link" onclick="showPage('selt')">selt</li>
 <li id="shift_link" onclick="showPage('shift')">shift</li>
 <li id="slice_link" onclick="showPage('slice')">slice</li>
+<li id="some_link" onclick="showPage('some')">some</li>
 <li id="splice_link" onclick="showPage('splice')">splice</li>
 <li id="unshift_link" onclick="showPage('unshift')">unshift</li>
         </ul>

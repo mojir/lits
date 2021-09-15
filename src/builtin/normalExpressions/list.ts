@@ -227,6 +227,49 @@ export const list: BuiltinNormalExpressions = {
     validate: ({ params }) => assertLengthTwo(params),
   },
 
+  find: {
+    evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+      assertLispishFunction(first)
+      assertArray(second)
+      return second.find(elem => evaluateLispishFunction(first, [elem], contextStack))
+    },
+    validate: ({ params }) => assertLengthTwo(params),
+  },
+
+  position: {
+    evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): number | undefined => {
+      assertLispishFunction(first)
+      assertArray(second)
+      const index = second.findIndex(elem => evaluateLispishFunction(first, [elem], contextStack))
+      return index !== -1 ? index : undefined
+    },
+    validate: ({ params }) => assertLengthTwo(params),
+  },
+
+  some: {
+    evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): boolean => {
+      assertLispishFunction(first)
+      assertArray(second)
+      if (second.length === 0) {
+        return false
+      }
+      return second.some(elem => evaluateLispishFunction(first, [elem], contextStack))
+    },
+    validate: ({ params }) => assertLengthTwo(params),
+  },
+
+  every: {
+    evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): boolean => {
+      assertLispishFunction(first)
+      assertArray(second)
+      if (second.length === 0) {
+        return false
+      }
+      return second.every(elem => evaluateLispishFunction(first, [elem], contextStack))
+    },
+    validate: ({ params }) => assertLengthTwo(params),
+  },
+
   reverse: {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)

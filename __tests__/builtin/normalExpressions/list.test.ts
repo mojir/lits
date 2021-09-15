@@ -239,6 +239,54 @@ describe('list functions', () => {
     })
   })
 
+  describe('find', () => {
+    test('samples', () => {
+      expect(lispish(`(find (function number?) (list "1" "2" 3))`)).toEqual(3)
+      expect(lispish(`(find (function number?) (list "1" "2" "3"))`)).toBeUndefined()
+      expect(lispish(`(find (function number?) (list))`)).toBeUndefined()
+      expect(lispish(`(find (lambda (x) (zero? (% x 3))) (list 1 2 3 4 5 6 7))`)).toEqual(3)
+      expect(() => lispish(`(find (function +))`)).toThrow()
+      expect(() => lispish(`(find)`)).toThrow()
+      expect(() => lispish(`(find (function number?) (list 1) 2)`)).toThrow()
+    })
+  })
+
+  describe('position', () => {
+    test('samples', () => {
+      expect(lispish(`(position (function number?) (list "1" "2" 3))`)).toEqual(2)
+      expect(lispish(`(position (function number?) (list "1" "2" "3"))`)).toBeUndefined()
+      expect(lispish(`(position (function number?) (list))`)).toBeUndefined()
+      expect(lispish(`(position (lambda (x) (zero? (% x 3))) (list 1 2 3 4 5 6 7))`)).toEqual(2)
+      expect(() => lispish(`(position (function +))`)).toThrow()
+      expect(() => lispish(`(position)`)).toThrow()
+      expect(() => lispish(`(position (function number?) (list 1) 2)`)).toThrow()
+    })
+  })
+
+  describe('some', () => {
+    test('samples', () => {
+      expect(lispish(`(some (function number?) (list "1" "2" 3))`)).toBe(true)
+      expect(lispish(`(some (function number?) (list "1" "2" "3"))`)).toBe(false)
+      expect(lispish(`(some (function number?) (list))`)).toBe(false)
+      expect(lispish(`(some (lambda (x) (zero? (% x 3))) (list 1 2 3 4 5 6 7))`)).toBe(true)
+      expect(() => lispish(`(some (function +))`)).toThrow()
+      expect(() => lispish(`(some)`)).toThrow()
+      expect(() => lispish(`(some (function number?) (list 1) 2)`)).toThrow()
+    })
+  })
+
+  describe('every', () => {
+    test('samples', () => {
+      expect(lispish(`(every (function number?) (list 1 2 3))`)).toBe(true)
+      expect(lispish(`(every (function number?) (list "1" "2" "3"))`)).toBe(false)
+      expect(lispish(`(every (function number?) (list))`)).toBe(false)
+      expect(lispish(`(every (lambda (x) (zero? (% x 2))) (list 2 4 6))`)).toBe(true)
+      expect(() => lispish(`(every (function +))`)).toThrow()
+      expect(() => lispish(`(every)`)).toThrow()
+      expect(() => lispish(`(every (function number?) (list 1) 2)`)).toThrow()
+    })
+  })
+
   describe('map', () => {
     test('samples', () => {
       expect(lispish(`(map (function number?) (list 1 "2" 3))`)).toEqual([true, false, true])

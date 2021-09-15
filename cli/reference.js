@@ -2029,6 +2029,117 @@ const functionReference = {
     specialExpression: false,
     sideEffects: [],
   },
+  find: {
+    name: 'find',
+    category: 'List',
+    linkName: 'find',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'finder',
+        type: 'function',
+      },
+    ],
+    shortDescription: 'Returns the first elements that pass the test implemented by `finder`.',
+    longDescription:
+      'Returns the first elements that pass the test implemented by `finder`. I no element was found, `undefined` is returned.',
+    examples: [
+      `(find #'string? (list "Albert" "Mojir" 160 (list 1 2)))`,
+      `(find (lambda (x) (> x 10)) (list 5 10 15 20))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  position: {
+    name: 'position',
+    category: 'List',
+    linkName: 'position',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'finder',
+        type: 'function',
+      },
+    ],
+    shortDescription: 'Returns the index of the first elements that pass the test implemented by `finder`.',
+    longDescription:
+      'Returns the index of the first elements that pass the test implemented by `finder`. I no element was found, `undefined` is returned.',
+    examples: [
+      `(position #'string? (list "Albert" "Mojir" 160 (list 1 2)))`,
+      `(position (lambda (x) (> x 10)) (list 5 10 15 20))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  some: {
+    name: 'some',
+    category: 'List',
+    linkName: 'some',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'finder',
+        type: 'function',
+      },
+    ],
+    shortDescription:
+      'Returns true if at least one element pass the test implemented by `finder`, otherwise returns false.',
+    longDescription:
+      'Returns true if at least one element pass the test implemented by `finder`, otherwise returns false.',
+    examples: [
+      `(some #'string? (list "Albert" "Mojir" 160 (list 1 2)))`,
+      `(some (lambda (x) (> x 10)) (list 5 10 15 20))`,
+      `(some (lambda (x) (> x 10)) (list 1 2 3 4))`,
+      `(some (lambda (x) (> x 10)) (list))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  every: {
+    name: 'every',
+    category: 'List',
+    linkName: 'every',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'finder',
+        type: 'function',
+      },
+    ],
+    shortDescription: 'Returns true if all elements pass the test implemented by `finder`, otherwise returns false.',
+    longDescription: 'Returns true if all elements pass the test implemented by `finder`, otherwise returns false.',
+    examples: [
+      `(every #'string? (list "Albert" "Mojir" 160 (list 1 2)))`,
+      `(every (lambda (x) (> x 10)) (list 50 100 150 200))`,
+      `(every (lambda (x) (> x 10)) (list))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
   reverse: {
     name: 'reverse',
     category: 'List',
@@ -2345,6 +2456,7 @@ const functionReference = {
     examples: [
       `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #'hyp`,
       `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
+      `(defun sumOfSquares (&rest s) (apply #'+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
     sideEffects: [],
