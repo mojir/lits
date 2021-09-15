@@ -134,3 +134,10 @@ function setPlayground(exampleId) {
     document.getElementById('lisp-textarea').value = example.code
   }
 }
+
+function maximizePlayground() {
+  document.body.classList.add('maximized-playground')
+}
+function minimizePlayground() {
+  document.body.classList.remove('maximized-playground')
+}

@@ -1,6 +1,6 @@
 import { assertArray, isLispishFunction } from '../../utils'
 import { NormalExpressionNode } from '../../parser/interface'
-import { assertLengthOne, assertNumber } from '../../utils'
+import { assertLengthOne, assertFiniteNumber } from '../../utils'
 import { BuiltinNormalExpressions } from './interface'
 
 export const predicates: BuiltinNormalExpressions = {
@@ -41,7 +41,7 @@ export const predicates: BuiltinNormalExpressions = {
 
   'zero?': {
     evaluate: ([first]: unknown[]): boolean => {
-      assertNumber(first)
+      assertFiniteNumber(first)
       return first === 0
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
@@ -49,7 +49,7 @@ export const predicates: BuiltinNormalExpressions = {
 
   'even?': {
     evaluate: ([first]: unknown[]): boolean => {
-      assertNumber(first)
+      assertFiniteNumber(first)
       return first % 2 === 0
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
@@ -57,7 +57,7 @@ export const predicates: BuiltinNormalExpressions = {
 
   'odd?': {
     evaluate: ([first]: unknown[]): boolean => {
-      assertNumber(first)
+      assertFiniteNumber(first)
       return Number.isInteger(first) && first % 2 !== 0
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),

@@ -22,22 +22,24 @@
 <div id="index" class="content">
   <h1>Welcome to Lispish!</h1>
   <br />
-  <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
-  <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
-  <ul>
-    <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
-    <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
-    <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
-    <li>No macros.</li>
-    <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
-    <li>No tail call optimization (yet).</li>
-    <li>No dotted pairs.</li>
-    <li>100% test coverage</li>
-  </ul>
-  <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
-  <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
-  <p/>
-  <p>Happy coding!</p>
+    <div class="text">
+    <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
+    <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
+    <ul>
+      <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
+      <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
+      <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
+      <li>No macros.</li>
+      <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
+      <li>No tail call optimization (yet).</li>
+      <li>No dotted pairs.</li>
+      <li>100% test coverage</li>
+    </ul>
+    <p>You can see some examples and find documentation of all built-in function to the left.</p>
+    <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+    <p/>
+    <p>Happy coding!</p>
+  </div>
 </div>
 
     
@@ -274,6 +276,27 @@
 </div>
 
 
+<div id="apply" class="content function">
+  <div class="function-header">apply</div>
+  
+  <p>Call supplied function with specified arguments.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>apply fn args => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>fn: function</pre>
+<pre>args: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(apply #___single_quote___+ (list 1 2 3))')"><span class="icon-button">▶</span> (apply #'+ (list 1 2 3)) <span class="gray">=> 6</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(apply (lambda (x y) (sqrt (+ (* x x) (* y y)))) (list 3 4))')"><span class="icon-button">▶</span> (apply (lambda (x y) (sqrt (+ (* x x) (* y y)))) (list 3 4)) <span class="gray">=> 5</span></span></pre>
+  </div>
+</div>
+
+
 <div id="1_plus" class="content function">
   <div class="function-header">1+</div>
   
@@ -338,13 +361,35 @@
 </div>
 
 
-<div id="expt" class="content function">
-  <div class="function-header">expt</div>
+<div id="cbrt" class="content function">
+  <div class="function-header">cbrt</div>
+  
+  <p>Computes cube root of <span class="pre">number</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>cbrt number => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(cbrt 0)')"><span class="icon-button">▶</span> (cbrt 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(cbrt 27)')"><span class="icon-button">▶</span> (cbrt 27) <span class="gray">=> 3</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(cbrt 2)')"><span class="icon-button">▶</span> (cbrt 2) <span class="gray">=> 1.2599210498948732</span></span></pre>
+<pre class="example" onclick="runPlayground('(cbrt -1)')"><span class="icon-button">▶</span> (cbrt -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="pow" class="content function">
+  <div class="function-header">pow</div>
   
   <p>Computes returns <span class="pre">base-number</span> raised to the <span class="pre">power-number</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>expt base-number power-number => number</pre>
+    <pre>pow base-number power-number => number</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>base-number: number</pre>
@@ -353,12 +398,33 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(expt 2 3)')"><span class="icon-button">▶</span> (expt 2 3) <span class="gray">=> 8</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(expt 2 0)')"><span class="icon-button">▶</span> (expt 2 0) <span class="gray">=> 1</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(expt 2 -3)')"><span class="icon-button">▶</span> (expt 2 -3) <span class="gray">=> 0.125</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(expt -2 3)')"><span class="icon-button">▶</span> (expt -2 3) <span class="gray">=> -8</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(expt -2 -3)')"><span class="icon-button">▶</span> (expt -2 -3) <span class="gray">=> -0.125</span></span></pre>
-<pre class="example" onclick="runPlayground('(expt -2)')"><span class="icon-button">▶</span> (expt -2) <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="runPlayground('(pow 2 3)')"><span class="icon-button">▶</span> (pow 2 3) <span class="gray">=> 8</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pow 2 0)')"><span class="icon-button">▶</span> (pow 2 0) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pow 2 -3)')"><span class="icon-button">▶</span> (pow 2 -3) <span class="gray">=> 0.125</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pow -2 3)')"><span class="icon-button">▶</span> (pow -2 3) <span class="gray">=> -8</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pow -2 -3)')"><span class="icon-button">▶</span> (pow -2 -3) <span class="gray">=> -0.125</span></span></pre>
+  </div>
+</div>
+
+
+<div id="exp" class="content function">
+  <div class="function-header">exp</div>
+  
+  <p>Computes <span class="pre">e</span> rasied to the <span class="pre">power-number</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>exp power-number => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>power-number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(exp 3)')"><span class="icon-button">▶</span> (exp 3) <span class="gray">=> 20.085536923187668</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(exp 0)')"><span class="icon-button">▶</span> (exp 0) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(exp -3)')"><span class="icon-button">▶</span> (exp -3) <span class="gray">=> 0.049787068367863944</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(exp 3)')"><span class="icon-button">▶</span> (exp 3) <span class="gray">=> 20.085536923187668</span></span></pre>
   </div>
 </div>
 
@@ -366,13 +432,14 @@
 <div id="round" class="content function">
   <div class="function-header">round</div>
   
-  <p>Returns <span class="pre">number</span> rounded to the nearest <span class="pre">integer</span>.</p>
+  <p>Returns rounded <span class="pre">number</span>. If <span class="pre">decimals</span> is provided it return a number with that many decimals.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>round number => integer</pre>
+    <pre>round number decimals(optional) => number</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+  <label>Arguments</label><div class="indent"><pre>number: number</pre>
+<pre>decimals: integer</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -383,6 +450,31 @@
 <pre><span class="example" onclick="runPlayground('(round -2.49)')"><span class="icon-button">▶</span> (round -2.49) <span class="gray">=> -2</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(round -2.5)')"><span class="icon-button">▶</span> (round -2.5) <span class="gray">=> -2</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(round -2.501)')"><span class="icon-button">▶</span> (round -2.501) <span class="gray">=> -3</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(round 1.23456789 4)')"><span class="icon-button">▶</span> (round 1.23456789 4) <span class="gray">=> 1.2346</span></span></pre>
+  </div>
+</div>
+
+
+<div id="trunc" class="content function">
+  <div class="function-header">trunc</div>
+  
+  <p>Returns the integer part of <span class="pre">number</span> by removing any fractional digits.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>trunc number => integer</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(trunc 2)')"><span class="icon-button">▶</span> (trunc 2) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trunc 2.49)')"><span class="icon-button">▶</span> (trunc 2.49) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trunc 2.5)')"><span class="icon-button">▶</span> (trunc 2.5) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trunc -2.49)')"><span class="icon-button">▶</span> (trunc -2.49) <span class="gray">=> -2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trunc -2.5)')"><span class="icon-button">▶</span> (trunc -2.5) <span class="gray">=> -2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trunc -2.501)')"><span class="icon-button">▶</span> (trunc -2.501) <span class="gray">=> -2</span></span></pre>
   </div>
 </div>
 
@@ -435,6 +527,192 @@
 </div>
 
 
+<div id="min" class="content function">
+  <div class="function-header">min</div>
+  
+  <p>Returns the smallest number of the arguments.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>min numbers((one or many)) => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>numbers: number[]</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(min 2 0 1)')"><span class="icon-button">▶</span> (min 2 0 1) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(min 2 -1 1)')"><span class="icon-button">▶</span> (min 2 -1 1) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(min 2.5)')"><span class="icon-button">▶</span> (min 2.5) <span class="gray">=> 2.5</span></span></pre>
+  </div>
+</div>
+
+
+<div id="max" class="content function">
+  <div class="function-header">max</div>
+  
+  <p>Returns the largest number of the arguments.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>max numbers((one or many)) => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>numbers: number[]</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(max 2 0 1)')"><span class="icon-button">▶</span> (max 2 0 1) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(max 2 -1 1)')"><span class="icon-button">▶</span> (max 2 -1 1) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(max 2.5)')"><span class="icon-button">▶</span> (max 2.5) <span class="gray">=> 2.5</span></span></pre>
+  </div>
+</div>
+
+
+<div id="abs" class="content function">
+  <div class="function-header">abs</div>
+  
+  <p>Returns the absolute value of <span class="pre">number</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>abs number => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(abs -2.3)')"><span class="icon-button">▶</span> (abs -2.3) <span class="gray">=> 2.3</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(abs 0)')"><span class="icon-button">▶</span> (abs 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(abs 2.5)')"><span class="icon-button">▶</span> (abs 2.5) <span class="gray">=> 2.5</span></span></pre>
+  </div>
+</div>
+
+
+<div id="sign" class="content function">
+  <div class="function-header">sign</div>
+  
+  <p>Returns <span class="pre">1</span> if <span class="pre">number > 0</span>, <span class="pre">-1</span> if <span class="pre">number < 0</span>, <span class="pre">0</span> if <span class="pre">number = 0</span> or <span class="pre">-0</span> if <span class="pre">number = -0</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>sign number => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(sign -2.3)')"><span class="icon-button">▶</span> (sign -2.3) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sign -0)')"><span class="icon-button">▶</span> (sign -0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sign 0)')"><span class="icon-button">▶</span> (sign 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sign 12312)')"><span class="icon-button">▶</span> (sign 12312) <span class="gray">=> 1</span></span></pre>
+  </div>
+</div>
+
+
+<div id="e" class="content function">
+  <div class="function-header">e</div>
+  
+  <p>Returns Euler's number, the base of natural logarithms, e.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>e => number</pre>
+  </div>
+
+  <label>No arguments</label>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(e)')"><span class="icon-button">▶</span> (e) <span class="gray">=> 2.718281828459045</span></span></pre>
+  </div>
+</div>
+
+
+<div id="pi" class="content function">
+  <div class="function-header">pi</div>
+  
+  <p>Returns Pi, the ratio of the circumference of a circle to its diameter.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>pi => number</pre>
+  </div>
+
+  <label>No arguments</label>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(pi)')"><span class="icon-button">▶</span> (pi) <span class="gray">=> 3.141592653589793</span></span></pre>
+  </div>
+</div>
+
+
+<div id="log" class="content function">
+  <div class="function-header">log</div>
+  
+  <p>Returns the natural logarithm (base e) of <span class="pre">number</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>log number => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(log 0.01)')"><span class="icon-button">▶</span> (log 0.01) <span class="gray">=> -4.605170185988091</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(log (exp 12))')"><span class="icon-button">▶</span> (log (exp 12)) <span class="gray">=> 12</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(log 2.5)')"><span class="icon-button">▶</span> (log 2.5) <span class="gray">=> 0.9162907318741551</span></span></pre>
+  </div>
+</div>
+
+
+<div id="log2" class="content function">
+  <div class="function-header">log2</div>
+  
+  <p>Returns the base 2 logarithm of a number.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>log2 number => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(log2 0.01)')"><span class="icon-button">▶</span> (log2 0.01) <span class="gray">=> -6.643856189774724</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(log2 (pow 2 12))')"><span class="icon-button">▶</span> (log2 (pow 2 12)) <span class="gray">=> 12</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(log2 2.5)')"><span class="icon-button">▶</span> (log2 2.5) <span class="gray">=> 1.3219280948873624</span></span></pre>
+  </div>
+</div>
+
+
+<div id="log10" class="content function">
+  <div class="function-header">log10</div>
+  
+  <p>Returns the base 2 logarithm of a number.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>log10 number => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(log10 0.01)')"><span class="icon-button">▶</span> (log10 0.01) <span class="gray">=> -2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(log10 (pow 10 12))')"><span class="icon-button">▶</span> (log10 (pow 10 12)) <span class="gray">=> 12</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(log10 2.5)')"><span class="icon-button">▶</span> (log10 2.5) <span class="gray">=> 0.3979400086720376</span></span></pre>
+  </div>
+</div>
+
+
 <div id="random" class="content function">
   <div class="function-header">random</div>
   
@@ -449,9 +727,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.8668572624854838</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0019627271009821823</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.7871017302015964</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.4023010964103195</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.007050079816812607</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.7789829949322733</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1030,6 +1308,27 @@
   <div class="indent">
     <pre><span class="example" onclick="runPlayground('(string-length ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (string-length "A string") <span class="gray">=> 8</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(string-length ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (string-length "") <span class="gray">=> 0</span></span></pre>
+  </div>
+</div>
+
+
+<div id="string-repeat" class="content function">
+  <div class="function-header">string-repeat</div>
+  
+  <p>Repeates <span class="pre">string</span> <span class="pre">count</span> times.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>string-repeat string count => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre>
+<pre>count: integer</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(string-repeat ___double_quote___*___double_quote___ 10)')"><span class="icon-button">▶</span> (string-repeat "*" 10) <span class="gray">=> "**********"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(string-repeat ___double_quote___***___double_quote___ 0)')"><span class="icon-button">▶</span> (string-repeat "***" 0) <span class="gray">=> ""</span></span></pre>
   </div>
 </div>
 
@@ -1793,6 +2092,27 @@
 </div>
 
 
+<div id="second" class="content function">
+  <div class="function-header">second</div>
+  
+  <p>Returns the second element of <span class="pre">list</span>. If <span class="pre">list</span> has less than two elements, <span class="pre">undefined</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>second list => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(second (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (second (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> "Mojir"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(second (list 1))')"><span class="icon-button">▶</span> (second (list 1)) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(second (list))')"><span class="icon-button">▶</span> (second (list)) <span class="gray">=> undefined</span></span></pre>
+  </div>
+</div>
+
+
 <div id="last" class="content function">
   <div class="function-header">last</div>
   
@@ -2147,6 +2467,27 @@
 </div>
 
 
+<div id="replace" class="content function">
+  <div class="function-header">replace</div>
+  
+  <p>Returns a new string with some or all matches of a pattern replaced by a replacement.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>replace regexp string => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>regexp: RegExp</pre>
+<pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(replace ___double_quote___Duck___double_quote___ (regexp ___double_quote___u___double_quote___) ___double_quote___i___double_quote___)')"><span class="icon-button">▶</span> (replace "Duck" (regexp "u") "i") <span class="gray">=> "Dick"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(replace ___double_quote___abcABC___double_quote___ (regexp ___double_quote___a___double_quote___ ___double_quote___gi___double_quote___) ___double_quote___-___double_quote___)')"><span class="icon-button">▶</span> (replace "abcABC" (regexp "a" "gi") "-") <span class="gray">=> "-bc-BC"</span></span></pre>
+  </div>
+</div>
+
+
 <div id="now" class="content function">
   <div class="function-header">now</div>
   
@@ -2161,7 +2502,27 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631655520116</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631727872479</span></span></pre>
+  </div>
+</div>
+
+
+<div id="progn" class="content function">
+  <div class="function-header">progn</div>
+  
+  <p>Calls <span class="pre">forms</span> in the order they have been written. Resulting value is the value of the last form.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>progn forms => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>forms: form[]</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(progn (write ___double_quote___Hi___double_quote___) (write ___double_quote___Albert___double_quote___))')"><span class="icon-button">▶</span> (progn (write "Hi") (write "Albert")) <span class="gray">=> "Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(progn)')"><span class="icon-button">▶</span> (progn) <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
@@ -2169,13 +2530,14 @@
 <div id="get-path" class="content function">
   <div class="function-header">get-path</div>
   
-  <p>Is used to get the value at path of object or list.</p>
+  <p>Is used to get the value at <span class="pre">path</span> of object or list.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>get-path => number</pre>
+    <pre>get-path object path => number</pre>
   </div>
 
-  <label>No arguments</label>
+  <label>Arguments</label><div class="indent"><pre>object: object | list</pre>
+<pre>path: string</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -2183,6 +2545,262 @@
     <pre><span class="example" onclick="runPlayground('(get-path (write (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ (list 1 2 3)))) ___double_quote___a.x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (object "a" (object "x" (list 1 2 3)))) "a.x[2]") <span class="gray">=> 3</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(get-path (write (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ (list 1 2 3)))) ___double_quote___b.z[10]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (object "a" (object "x" (list 1 2 3)))) "b.z[10]") <span class="gray">=> undefined</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(get-path (write (list (object ___double_quote___x___double_quote___ (list 1 2 3)) (object ___double_quote___x___double_quote___ (list 4 5 6)))) ___double_quote___[1].x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (list (object "x" (list 1 2 3)) (object "x" (list 4 5 6)))) "[1].x[2]") <span class="gray">=> 6</span></span></pre>
+  </div>
+</div>
+
+
+<div id="sin" class="content function">
+  <div class="function-header">sin</div>
+  
+  <p>Returns the sine of <span class="pre">angle</span>. <span class="pre">angle</span> must be specified in radians.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>sin angle => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>angle: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(sin 0)')"><span class="icon-button">▶</span> (sin 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sin 1)')"><span class="icon-button">▶</span> (sin 1) <span class="gray">=> 0.8414709848078965</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sin (pi))')"><span class="icon-button">▶</span> (sin (pi)) <span class="gray">=> 1.2246467991473532e-16</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sin -0.5)')"><span class="icon-button">▶</span> (sin -0.5) <span class="gray">=> -0.479425538604203</span></span></pre>
+  </div>
+</div>
+
+
+<div id="cos" class="content function">
+  <div class="function-header">cos</div>
+  
+  <p>Returns the cosine of <span class="pre">angle</span>. <span class="pre">angle</span> must be specified in radians.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>cos angle => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>angle: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(cos 0)')"><span class="icon-button">▶</span> (cos 0) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(cos 1)')"><span class="icon-button">▶</span> (cos 1) <span class="gray">=> 0.5403023058681398</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(cos (pi))')"><span class="icon-button">▶</span> (cos (pi)) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(cos -0.5)')"><span class="icon-button">▶</span> (cos -0.5) <span class="gray">=> 0.8775825618903728</span></span></pre>
+  </div>
+</div>
+
+
+<div id="tan" class="content function">
+  <div class="function-header">tan</div>
+  
+  <p>Returns the tangent of <span class="pre">angle</span>. <span class="pre">angle</span> must be specified in radians.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>tan angle => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>angle: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(tan 0)')"><span class="icon-button">▶</span> (tan 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(tan 1)')"><span class="icon-button">▶</span> (tan 1) <span class="gray">=> 1.5574077246549023</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(tan (pi))')"><span class="icon-button">▶</span> (tan (pi)) <span class="gray">=> -1.2246467991473532e-16</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(tan -0.5)')"><span class="icon-button">▶</span> (tan -0.5) <span class="gray">=> -0.5463024898437905</span></span></pre>
+  </div>
+</div>
+
+
+<div id="asin" class="content function">
+  <div class="function-header">asin</div>
+  
+  <p>Returns the arcsine (in radians) of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>asin value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(asin 0)')"><span class="icon-button">▶</span> (asin 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(asin 1)')"><span class="icon-button">▶</span> (asin 1) <span class="gray">=> 1.5707963267948966</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(asin -0.5)')"><span class="icon-button">▶</span> (asin -0.5) <span class="gray">=> -0.5235987755982989</span></span></pre>
+  </div>
+</div>
+
+
+<div id="acos" class="content function">
+  <div class="function-header">acos</div>
+  
+  <p>Returns the arccosine (in radians) of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>acos value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(acos 0)')"><span class="icon-button">▶</span> (acos 0) <span class="gray">=> 1.5707963267948966</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(acos 1)')"><span class="icon-button">▶</span> (acos 1) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(acos -0.5)')"><span class="icon-button">▶</span> (acos -0.5) <span class="gray">=> 2.0943951023931957</span></span></pre>
+  </div>
+</div>
+
+
+<div id="atan" class="content function">
+  <div class="function-header">atan</div>
+  
+  <p>Returns the arctangent (in radians) of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>atan value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(atan 0)')"><span class="icon-button">▶</span> (atan 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(atan 1)')"><span class="icon-button">▶</span> (atan 1) <span class="gray">=> 0.7853981633974483</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(atan -0.5)')"><span class="icon-button">▶</span> (atan -0.5) <span class="gray">=> -0.4636476090008061</span></span></pre>
+  </div>
+</div>
+
+
+<div id="sinh" class="content function">
+  <div class="function-header">sinh</div>
+  
+  <p>Returns the hyperbolic sine of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>sinh value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(sinh 0)')"><span class="icon-button">▶</span> (sinh 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sinh 1)')"><span class="icon-button">▶</span> (sinh 1) <span class="gray">=> 1.1752011936438014</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sinh -0.5)')"><span class="icon-button">▶</span> (sinh -0.5) <span class="gray">=> -0.5210953054937474</span></span></pre>
+  </div>
+</div>
+
+
+<div id="cosh" class="content function">
+  <div class="function-header">cosh</div>
+  
+  <p>Returns the hyperbolic cosine of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>cosh value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(cosh 0)')"><span class="icon-button">▶</span> (cosh 0) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(cosh 1)')"><span class="icon-button">▶</span> (cosh 1) <span class="gray">=> 1.5430806348152437</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(cosh -0.5)')"><span class="icon-button">▶</span> (cosh -0.5) <span class="gray">=> 1.1276259652063807</span></span></pre>
+  </div>
+</div>
+
+
+<div id="tanh" class="content function">
+  <div class="function-header">tanh</div>
+  
+  <p>Returns the hyperbolic tangent of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>tanh value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(tanh 0)')"><span class="icon-button">▶</span> (tanh 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(tanh 1)')"><span class="icon-button">▶</span> (tanh 1) <span class="gray">=> 0.7615941559557649</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(tanh -0.5)')"><span class="icon-button">▶</span> (tanh -0.5) <span class="gray">=> -0.46211715726000974</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(tanh 50)')"><span class="icon-button">▶</span> (tanh 50) <span class="gray">=> 1</span></span></pre>
+  </div>
+</div>
+
+
+<div id="asinh" class="content function">
+  <div class="function-header">asinh</div>
+  
+  <p>Returns the hyperbolic arcsine of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>asinh value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(asinh 0)')"><span class="icon-button">▶</span> (asinh 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(asinh 0.9)')"><span class="icon-button">▶</span> (asinh 0.9) <span class="gray">=> 0.8088669356527824</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(asinh -0.5)')"><span class="icon-button">▶</span> (asinh -0.5) <span class="gray">=> -0.48121182505960347</span></span></pre>
+  </div>
+</div>
+
+
+<div id="acosh" class="content function">
+  <div class="function-header">acosh</div>
+  
+  <p>Returns the hyperbolic arccosine of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>acosh value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(acosh 1)')"><span class="icon-button">▶</span> (acosh 1) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(acosh 2)')"><span class="icon-button">▶</span> (acosh 2) <span class="gray">=> 1.3169578969248166</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(acosh 100)')"><span class="icon-button">▶</span> (acosh 100) <span class="gray">=> 5.298292365610484</span></span></pre>
+  </div>
+</div>
+
+
+<div id="atanh" class="content function">
+  <div class="function-header">atanh</div>
+  
+  <p>Returns the hyperbolic arctangent of <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>atanh value => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: number</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(atanh 0)')"><span class="icon-button">▶</span> (atanh 0) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(atanh 0.9)')"><span class="icon-button">▶</span> (atanh 0.9) <span class="gray">=> 1.4722194895832204</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(atanh -0.5)')"><span class="icon-button">▶</span> (atanh -0.5) <span class="gray">=> -0.5493061443340548</span></span></pre>
   </div>
 </div>
 
@@ -2244,6 +2862,7 @@
 <li id="reduce-right_link" onclick="showPage('reduce-right')">reduce-right</li>
 <li id="rest_link" onclick="showPage('rest')">rest</li>
 <li id="reverse_link" onclick="showPage('reverse')">reverse</li>
+<li id="second_link" onclick="showPage('second')">second</li>
 <li id="selt_link" onclick="showPage('selt')">selt</li>
 <li id="shift_link" onclick="showPage('shift')">shift</li>
 <li id="slice_link" onclick="showPage('slice')">slice</li>
@@ -2272,6 +2891,7 @@
 <li id="lower-case_link" onclick="showPage('lower-case')">lower-case</li>
 <li id="number-to-string_link" onclick="showPage('number-to-string')">number-to-string</li>
 <li id="string-length_link" onclick="showPage('string-length')">string-length</li>
+<li id="string-repeat_link" onclick="showPage('string-repeat')">string-repeat</li>
 <li id="string-reverse_link" onclick="showPage('string-reverse')">string-reverse</li>
 <li id="string-to-number_link" onclick="showPage('string-to-number')">string-to-number</li>
 <li id="string_lt_link" onclick="showPage('string_lt')">string&lt;</li>
@@ -2296,27 +2916,54 @@
 <li id="_lte_link" onclick="showPage('_lte')">&lt;=</li>
 <li id="_gt_link" onclick="showPage('_gt')">&gt;</li>
 <li id="_gte_link" onclick="showPage('_gte')">&gt;=</li>
+<li id="abs_link" onclick="showPage('abs')">abs</li>
+<li id="acos_link" onclick="showPage('acos')">acos</li>
+<li id="acosh_link" onclick="showPage('acosh')">acosh</li>
+<li id="asin_link" onclick="showPage('asin')">asin</li>
+<li id="asinh_link" onclick="showPage('asinh')">asinh</li>
+<li id="atan_link" onclick="showPage('atan')">atan</li>
+<li id="atanh_link" onclick="showPage('atanh')">atanh</li>
+<li id="cbrt_link" onclick="showPage('cbrt')">cbrt</li>
 <li id="ceil_link" onclick="showPage('ceil')">ceil</li>
-<li id="expt_link" onclick="showPage('expt')">expt</li>
+<li id="cos_link" onclick="showPage('cos')">cos</li>
+<li id="cosh_link" onclick="showPage('cosh')">cosh</li>
+<li id="e_link" onclick="showPage('e')">e</li>
+<li id="exp_link" onclick="showPage('exp')">exp</li>
 <li id="floor_link" onclick="showPage('floor')">floor</li>
+<li id="log_link" onclick="showPage('log')">log</li>
+<li id="log10_link" onclick="showPage('log10')">log10</li>
+<li id="log2_link" onclick="showPage('log2')">log2</li>
+<li id="max_link" onclick="showPage('max')">max</li>
+<li id="min_link" onclick="showPage('min')">min</li>
+<li id="pi_link" onclick="showPage('pi')">pi</li>
+<li id="pow_link" onclick="showPage('pow')">pow</li>
 <li id="random_link" onclick="showPage('random')">random</li>
 <li id="round_link" onclick="showPage('round')">round</li>
+<li id="sign_link" onclick="showPage('sign')">sign</li>
+<li id="sin_link" onclick="showPage('sin')">sin</li>
+<li id="sinh_link" onclick="showPage('sinh')">sinh</li>
 <li id="sqrt_link" onclick="showPage('sqrt')">sqrt</li>
+<li id="tan_link" onclick="showPage('tan')">tan</li>
+<li id="tanh_link" onclick="showPage('tanh')">tanh</li>
+<li id="trunc_link" onclick="showPage('trunc')">trunc</li>
         </ul>
 
         <label>Regular expression</label>
         <ul>
           <li id="match_link" onclick="showPage('match')">match</li>
 <li id="regexp_link" onclick="showPage('regexp')">regexp</li>
+<li id="replace_link" onclick="showPage('replace')">replace</li>
         </ul>
 
         <label>Misc</label>
         <ul>
           <li id="_notequal_link" onclick="showPage('_notequal')">!=</li>
 <li id="_equal_link" onclick="showPage('_equal')">=</li>
+<li id="apply_link" onclick="showPage('apply')">apply</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="not_link" onclick="showPage('not')">not</li>
 <li id="now_link" onclick="showPage('now')">now</li>
+<li id="progn_link" onclick="showPage('progn')">progn</li>
 <li id="write_link" onclick="showPage('write')">write</li>
         </ul>
 </nav>
@@ -2331,22 +2978,25 @@
       <span class="button" onclick="resetPlayground()">Reset</span>
       </center>
     </div>
-    <div class="column"></div>
+    <div class="column right">
+      <span id="maximize-playground" class="icon-button" onclick="maximizePlayground()">▲</span>
+      <span id="minimize-playground" class="icon-button" onclick="minimizePlayground()">▼</span>
+    </div>
   </div>
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
-      <textarea spellcheck="false" rows="15" id="context-textarea"></textarea>
+      <textarea id="context-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
     <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
-      <textarea spellcheck="false" rows="15" id="lisp-textarea"></textarea>
+      <textarea id="lisp-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
     <div class="column wide" id="output">
       <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="6"></textarea>
+      <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
       <div class="textarea-header"><label for="log-textarea">Console log</label></div>
-      <textarea id="log-textarea" readonly spellcheck="false" rows="6"></textarea>
+      <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>
   </div>
 </div>

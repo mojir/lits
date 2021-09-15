@@ -225,4 +225,17 @@ describe('string functions', () => {
       expect(() => lispish('(trim "First" "Second")')).toThrow()
     })
   })
+
+  describe('string-repeat', () => {
+    test('samples', () => {
+      expect(lispish('(string-repeat "*" 10)')).toBe('**********')
+      expect(lispish('(string-repeat "*" 0)')).toBe('')
+      expect(lispish('(string-repeat "Hello, " 3)')).toBe('Hello, Hello, Hello, ')
+      expect(() => lispish('(string-repeat)')).toThrow()
+      expect(() => lispish('(string-repeat "Hello, ")')).toThrow()
+      expect(() => lispish('(string-repeat "Hello, " 3 3)')).toThrow()
+      expect(() => lispish('(string-repeat "Hello, " "3")')).toThrow()
+      expect(() => lispish('(string-repeat true, 1)')).toThrow()
+    })
+  })
 })

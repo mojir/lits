@@ -4,9 +4,10 @@ import {
   assertLengthTwo,
   assertLengthTwoOrThree,
   assertNonNegativeNumber,
-  assertNumber,
+  assertFiniteNumber,
   assertNumberGte,
   assertString,
+  assertInteger,
 } from '../../utils'
 import { BuiltinNormalExpressions } from './interface'
 
@@ -14,7 +15,7 @@ export const string: BuiltinNormalExpressions = {
   substring: {
     evaluate: ([first, second, third]: unknown[]): unknown => {
       assertString(first)
-      assertNumber(second)
+      assertFiniteNumber(second)
       assertNonNegativeNumber(second)
 
       if (third === undefined) {
@@ -33,6 +34,17 @@ export const string: BuiltinNormalExpressions = {
       return first.length
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+  },
+
+  'string-repeat': {
+    evaluate: ([string, count]: unknown[]): string => {
+      assertString(string)
+      assertNonNegativeNumber(count)
+      assertInteger(count)
+
+      return string.repeat(count)
+    },
+    validate: ({ params }) => assertLengthTwo(params),
   },
 
   concat: {
@@ -111,7 +123,7 @@ export const string: BuiltinNormalExpressions = {
 
   'number-to-string': {
     evaluate: ([nbr]: unknown[]): string => {
-      assertNumber(nbr)
+      assertFiniteNumber(nbr)
       return `${nbr}`
     },
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),

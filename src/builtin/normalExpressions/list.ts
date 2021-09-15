@@ -10,7 +10,7 @@ import {
   assertLispishFunction,
   assertNegativeNumber,
   assertNonNegativeNumber,
-  assertNumber,
+  assertFiniteNumber,
   assertNumberLt,
   assertNumberNotZero,
   assertPositiveNumber,
@@ -41,20 +41,20 @@ export const list: BuiltinNormalExpressions = {
       let from: number
       let to: number
       let step: number
-      assertNumber(first)
+      assertFiniteNumber(first)
 
       if (params.length === 1) {
         from = 0
         to = first
         step = to >= 0 ? 1 : -1
       } else if (params.length === 2) {
-        assertNumber(second)
+        assertFiniteNumber(second)
         from = first
         to = second
         step = to >= from ? 1 : -1
       } else {
-        assertNumber(second)
-        assertNumber(third)
+        assertFiniteNumber(second)
+        assertFiniteNumber(third)
         from = first
         to = second
         step = third
@@ -236,9 +236,17 @@ export const list: BuiltinNormalExpressions = {
   },
 
   first: {
-    evaluate: ([first]: unknown[]): unknown => {
-      assertArray(first)
-      return first[0]
+    evaluate: ([list]: unknown[]): unknown => {
+      assertArray(list)
+      return list[0]
+    },
+    validate: ({ params }) => assertLengthOne(params),
+  },
+
+  second: {
+    evaluate: ([list]: unknown[]): unknown => {
+      assertArray(list)
+      return list[1]
     },
     validate: ({ params }) => assertLengthOne(params),
   },

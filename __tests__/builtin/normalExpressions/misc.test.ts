@@ -138,4 +138,21 @@ describe('misc functions', () => {
       expect(() => lispish('(get-path (regexp "abc" "a")')).toThrow()
     })
   })
+
+  describe('progn', () => {
+    test('samples', () => {
+      expect(lispish('(progn (list 1 2 3) "[1]" (+ 1 2))')).toBe(3)
+      expect(lispish('(progn (object "a" 1) "a")')).toBe('a')
+      expect(lispish('(progn)')).toBeUndefined()
+    })
+  })
+
+  describe('apply', () => {
+    test('samples', () => {
+      expect(lispish("(apply #'+ (list 1 2 3 4))")).toBe(10)
+      expect(() => lispish("(apply #'+)")).toThrow()
+      expect(() => lispish("(apply #'+ 2 3)")).toThrow()
+      expect(() => lispish("(apply #'+ (list 1 2) (list 3 4))")).toThrow()
+    })
+  })
 })

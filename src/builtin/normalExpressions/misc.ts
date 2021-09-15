@@ -1,9 +1,11 @@
 import get from 'lodash/get'
 import {
+  assertArray,
   assertLengthOne,
   assertLengthOneOrMore,
   assertLengthTwo,
   assertLengthZero,
+  assertLispishFunction,
   assertObjectOrArray,
   assertString,
 } from '../../utils'
@@ -64,6 +66,21 @@ export const misc: BuiltinNormalExpressions = {
       assertObjectOrArray(first)
       assertString(second)
       return get(first, second)
+    },
+    validate: ({ params }) => assertLengthTwo(params),
+  },
+
+  progn: {
+    evaluate: (params: unknown[]): unknown => {
+      return params[params.length - 1]
+    },
+  },
+
+  apply: {
+    evaluate: ([func, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+      assertLispishFunction(func)
+      assertArray(list)
+      return evaluateLispishFunction(func, list, contextStack)
     },
     validate: ({ params }) => assertLengthTwo(params),
   },

@@ -36,4 +36,20 @@ describe('regexp functions', () => {
       expect(() => lispish(`(match (regexp "^abc$") (object))`)).toThrow()
     })
   })
+
+  describe('replace', () => {
+    test('samples', () => {
+      expect(lispish(`(replace "abcabcABCABC" (regexp "^abc") "ABC")`)).toEqual('ABCabcABCABC')
+      expect(lispish(`(replace "abcabcABCABC" (regexp "a") "A")`)).toEqual('AbcabcABCABC')
+      expect(lispish(`(replace "abcabcABCABC" (regexp "a" "g") "A")`)).toEqual('AbcAbcABCABC')
+      expect(lispish(`(replace "abcabcABCABC" (regexp "a" "gi") "-")`)).toEqual('-bc-bc-BC-BC')
+      expect(() => lispish(`(replace "abcabcABCABC" (regexp "^abc$") 1)`)).toThrow()
+      expect(() => lispish(`(replace "abcabcABCABC" (regexp "^abc$") null)`)).toThrow()
+      expect(() => lispish(`(replace "abcabcABCABC" (regexp "^abc$") undefined)`)).toThrow()
+      expect(() => lispish(`(replace "abcabcABCABC" (regexp "^abc$") true)`)).toThrow()
+      expect(() => lispish(`(replace "abcabcABCABC" (regexp "^abc$") false)`)).toThrow()
+      expect(() => lispish(`(replace "abcabcABCABC" (regexp "^abc$") (list))`)).toThrow()
+      expect(() => lispish(`(replace "abcabcABCABC" (regexp "^abc$") (object))`)).toThrow()
+    })
+  })
 })

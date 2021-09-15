@@ -25,9 +25,9 @@ const commands = [
   '`resetGlobalVariables',
   '`resetTopScope',
 ]
-const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
-const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]*)$/
-const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]+)\s*$/
+const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
+const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
+const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]+)\s*$/
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const historyDir = path.join(homeDir, '.config')

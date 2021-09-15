@@ -70,22 +70,25 @@ function getPlayground() {
       <span class="button" onclick="resetPlayground()">Reset</span>
       </center>
     </div>
-    <div class="column"></div>
+    <div class="column right">
+      <span id="maximize-playground" class="icon-button" onclick="maximizePlayground()">▲</span>
+      <span id="minimize-playground" class="icon-button" onclick="minimizePlayground()">▼</span>
+    </div>
   </div>
   <div class="row">
     <div class="column" id="context">
       <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
-      <textarea spellcheck="false" rows="15" id="context-textarea"></textarea>
+      <textarea id="context-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
     <div class="column wider" id="lisp">
       <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
-      <textarea spellcheck="false" rows="15" id="lisp-textarea"></textarea>
+      <textarea id="lisp-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
     <div class="column wide" id="output">
       <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea class="fancy-scroll" id="output-textarea" readonly spellcheck="false" rows="6"></textarea>
+      <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
       <div class="textarea-header"><label for="log-textarea">Console log</label></div>
-      <textarea id="log-textarea" readonly spellcheck="false" rows="6"></textarea>
+      <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>
   </div>
 </div>
@@ -97,22 +100,24 @@ function getIndexPage() {
 <div id="index" class="content">
   <h1>Welcome to Lispish!</h1>
   <br />
-  <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
-  <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
-  <ul>
-    <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
-    <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
-    <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
-    <li>No macros.</li>
-    <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
-    <li>No tail call optimization (yet).</li>
-    <li>No dotted pairs.</li>
-    <li>100% test coverage</li>
-  </ul>
-  <p>Have a look at the list of functions to the left. These are what is available in terms of special- and normal expressions.</p>
-  <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
-  <p/>
-  <p>Happy coding!</p>
+    <div class="text">
+    <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
+    <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
+    <ul>
+      <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
+      <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
+      <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
+      <li>No macros.</li>
+      <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
+      <li>No tail call optimization (yet).</li>
+      <li>No dotted pairs.</li>
+      <li>100% test coverage</li>
+    </ul>
+    <p>You can see some examples and find documentation of all built-in function to the left.</p>
+    <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+    <p/>
+    <p>Happy coding!</p>
+  </div>
 </div>
 `
 }

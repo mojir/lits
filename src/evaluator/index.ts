@@ -96,19 +96,50 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
   }
 
   if (isUserDefinedLispishFunction(lispishFunction)) {
-    if (lispishFunction.arguments.length !== params.length) {
-      throw Error(
-        `Function "${lispishFunction.name}" requires ${lispishFunction.arguments.length} arguments. Got ${params.length}`,
-      )
+    const args = lispishFunction.arguments
+    if (lispishFunction.varArgs) {
+      if (params.length < args.length - 1) {
+        throw Error(
+          `Function "${lispishFunction.name}" requires at least ${args.length - 1} arguments. Got ${params.length}`,
+        )
+      }
+    } else {
+      if (args.length !== params.length) {
+        throw Error(`Function "${lispishFunction.name}" requires ${args.length} arguments. Got ${params.length}`)
+      }
     }
 
-    for (let i = 0; i < params.length; i += 1) {
+    for (let i = 0; i < args.length - 1; i += 1) {
       const param = params[i]
-      const key = asNotUndefined(lispishFunction.arguments[i])
+      const key = asNotUndefined(args[i])
       if (isLispishFunction(param)) {
         newContext.functions[key] = param
       } else {
         newContext.variables[key] = param
+      }
+    }
+
+    const lastIndex = args.length - 1
+    if (lastIndex >= 0) {
+      if (lispishFunction.varArgs) {
+        const rest: unknown[] = []
+        for (let i = lastIndex; i < params.length; i += 1) {
+          const param = params[i]
+          if (isLispishFunction(param)) {
+            throw Error('A function cannot be a &rest parameter')
+          }
+          rest.push(param)
+        }
+        const key = asNotUndefined(args[lastIndex])
+        newContext.variables[key] = rest
+      } else {
+        const param = params[lastIndex]
+        const key = asNotUndefined(args[lastIndex])
+        if (isLispishFunction(param)) {
+          newContext.functions[key] = param
+        } else {
+          newContext.variables[key] = param
+        }
       }
     }
 

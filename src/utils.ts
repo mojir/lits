@@ -34,70 +34,75 @@ export function asNotUndefined<T>(value: T | undefined): T {
   return value
 }
 
-export function assertNumber(value: unknown): asserts value is number {
-  if (typeof value !== 'number') {
+export function assertFiniteNumber(value: unknown): asserts value is number {
+  if (typeof value !== 'number' || !isFinite(value)) {
     throw TypeError(`Expected number, got: ${value} type="${typeof value}"`)
   }
 }
 
+export function asFiniteNumber(value: unknown): number {
+  assertFiniteNumber(value)
+  return value
+}
+
 export function assertPositiveNumber(value: unknown): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value <= 0) {
     throw TypeError(`Expected positive number, got ${value}`)
   }
 }
 
 export function assertNegativeNumber(value: unknown): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value >= 0) {
     throw TypeError(`Expected negative number, got ${value}`)
   }
 }
 
 export function assertNonNegativeNumber(value: unknown): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value < 0) {
     throw TypeError(`Expected non negative number, got ${value}`)
   }
 }
 
 export function assertNonPositiveNumber(value: unknown): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value > 0) {
     throw TypeError(`Expected non positive number, got ${value}`)
   }
 }
 
 export function assertInteger(value: unknown): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (!Number.isInteger(value)) {
     throw TypeError(`Expected integer, got ${value}`)
   }
 }
 
 export function assertNumberGte(value: unknown, x: number): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value < x) {
     throw TypeError(`Expected parameter (${value}) to be a number equal or grater than ${x}`)
   }
 }
 
 export function assertNumberGt(value: unknown, x: number): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value <= x) {
     throw TypeError(`Expected parameter (${value}) to be a number grater than ${x}`)
   }
 }
 
 export function assertNumberLte(value: unknown, x: number): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value > x) {
     throw TypeError(`Expected parameter (${value}) to be a number equal or less than ${x}`)
   }
 }
 
 export function assertNumberLt(value: unknown, x: number): asserts value is number {
-  assertNumber(value)
+  assertFiniteNumber(value)
   if (value >= x) {
     throw TypeError(`Expected parameter (${value}) to be a number less than ${x}`)
   }
@@ -147,9 +152,7 @@ export function assertObjectOrArray(value: unknown): asserts value is Record<str
 }
 
 export function assertNumberNotZero(value: unknown): asserts value is number {
-  if (typeof value !== 'number') {
-    throw TypeError(`Expected number, got: ${value} type="${typeof value}"`)
-  }
+  assertFiniteNumber(value)
   if (value === 0) {
     throw TypeError(`Expected non zero value, got: ${value}"`)
   }

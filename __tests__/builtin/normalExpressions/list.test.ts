@@ -277,6 +277,23 @@ describe('list functions', () => {
     })
   })
 
+  describe('second', () => {
+    test('samples', () => {
+      expect(lispish('(second (list 1 2 3))')).toEqual(2)
+      expect(lispish('(second (list "1"))')).toBeUndefined()
+      expect(lispish('(second (list))')).toBeUndefined()
+
+      expect(() => lispish('(second')).toThrow()
+      expect(() => lispish('(second "1")')).toThrow()
+      expect(() => lispish('(second true)')).toThrow()
+      expect(() => lispish('(second false)')).toThrow()
+      expect(() => lispish('(second null)')).toThrow()
+      expect(() => lispish('(second undefined)')).toThrow()
+      expect(() => lispish('(second (object))')).toThrow()
+      expect(() => lispish('(second 10)')).toThrow()
+    })
+  })
+
   describe('reverse', () => {
     test('samples', () => {
       expect(lispish('(reverse (list 1 2 3))')).toEqual([3, 2, 1])

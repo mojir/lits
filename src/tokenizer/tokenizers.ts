@@ -3,7 +3,7 @@ import { asNotUndefined } from '../utils'
 import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
-const nameRegExp = /[0-9a-zA-Z_^?=!$%&<>.+*/\-[\]]/
+const nameRegExp = /[0-9a-zA-Z_^?=!$%<>.+*/\-[\]]/
 const fullNumberRegExp = /^-?\d+(\.\d+)?$/
 
 export const skipWhiteSpace: Tokenizer = (input, current) =>
@@ -103,6 +103,13 @@ export const tokenizeName: Tokenizer = (input: string, position: number) =>
 export const tokenizeShorthand: Tokenizer = (input: string, position: number) => {
   if (input.substr(position, 2) === `#'`) {
     return [2, { type: 'shorthand', value: `#'` }]
+  }
+  return [0, undefined]
+}
+
+export const tokenizeRest: Tokenizer = (input: string, position: number) => {
+  if (input.substr(position, 5) === `&rest`) {
+    return [5, { type: 'rest', value: `&rest` }]
   }
   return [0, undefined]
 }

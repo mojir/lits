@@ -20,7 +20,7 @@ import {
   assertNegativeNumber,
   assertNonNegativeNumber,
   assertNonPositiveNumber,
-  assertNumber,
+  assertFiniteNumber,
   assertNumberGt,
   assertNumberGte,
   assertNumberLt,
@@ -34,6 +34,7 @@ import {
   isBuiltinLispishFunction,
   isLispishFunction,
   isUserDefinedLispishFunction,
+  asFiniteNumber,
 } from '../src/utils'
 describe('utils', () => {
   test('asAstNode', () => {
@@ -46,6 +47,7 @@ describe('utils', () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      varArgs: false,
       body: [],
     }
     expect(asLispishFunction(lf)).toBe(lf)
@@ -218,6 +220,7 @@ describe('utils', () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      varArgs: false,
       body: [],
     }
     expect(() => assertLispishFunction(lf)).not.toThrow()
@@ -282,20 +285,40 @@ describe('utils', () => {
     expect(() => assertNonPositiveNumber(null)).toThrow()
     expect(() => assertNonPositiveNumber(undefined)).toThrow()
   })
-  test('assertNumber', () => {
-    expect(() => assertNumber(-1)).not.toThrow()
-    expect(() => assertNumber(-1.1)).not.toThrow()
-    expect(() => assertNumber(0)).not.toThrow()
-    expect(() => assertNumber(0.1)).not.toThrow()
-    expect(() => assertNumber(1)).not.toThrow()
-    expect(() => assertNumber(1.1)).not.toThrow()
-    expect(() => assertNumber('1')).toThrow()
-    expect(() => assertNumber([])).toThrow()
-    expect(() => assertNumber({})).toThrow()
-    expect(() => assertNumber(true)).toThrow()
-    expect(() => assertNumber(false)).toThrow()
-    expect(() => assertNumber(null)).toThrow()
-    expect(() => assertNumber(undefined)).toThrow()
+  test('assertFiniteNumber', () => {
+    expect(() => assertFiniteNumber(-1)).not.toThrow()
+    expect(() => assertFiniteNumber(-1.1)).not.toThrow()
+    expect(() => assertFiniteNumber(0)).not.toThrow()
+    expect(() => assertFiniteNumber(0.1)).not.toThrow()
+    expect(() => assertFiniteNumber(1)).not.toThrow()
+    expect(() => assertFiniteNumber(1.1)).not.toThrow()
+    expect(() => assertFiniteNumber(Math.asin(2))).toThrow()
+    expect(() => assertFiniteNumber(1 / 0)).toThrow()
+    expect(() => assertFiniteNumber('1')).toThrow()
+    expect(() => assertFiniteNumber([])).toThrow()
+    expect(() => assertFiniteNumber({})).toThrow()
+    expect(() => assertFiniteNumber(true)).toThrow()
+    expect(() => assertFiniteNumber(false)).toThrow()
+    expect(() => assertFiniteNumber(null)).toThrow()
+    expect(() => assertFiniteNumber(undefined)).toThrow()
+  })
+  test('asFiniteNumber', () => {
+    expect(asFiniteNumber(-1)).toBe(-1)
+    expect(asFiniteNumber(-1.1)).toBe(-1.1)
+    expect(asFiniteNumber(0)).toBe(0)
+    expect(asFiniteNumber(0.1)).toBe(0.1)
+    expect(asFiniteNumber(1)).toBe(1)
+    expect(asFiniteNumber(1.1)).toBe(1.1)
+    expect(() => asFiniteNumber(Math.asin(2))).toThrow()
+    expect(() => asFiniteNumber(1 / 0)).toThrow()
+    expect(() => asFiniteNumber('1')).toThrow()
+    expect(() => asFiniteNumber('1')).toThrow()
+    expect(() => asFiniteNumber([])).toThrow()
+    expect(() => asFiniteNumber({})).toThrow()
+    expect(() => asFiniteNumber(true)).toThrow()
+    expect(() => asFiniteNumber(false)).toThrow()
+    expect(() => asFiniteNumber(null)).toThrow()
+    expect(() => asFiniteNumber(undefined)).toThrow()
   })
   test('assertNumberGt', () => {
     expect(() => assertNumberGt(0, 1)).toThrow()
@@ -367,6 +390,7 @@ describe('utils', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      varArgs: false,
       body: [],
     }
     const lf2: LispishFunction = {
@@ -391,6 +415,7 @@ describe('utils', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      varArgs: false,
       body: [],
     }
     const lf2: LispishFunction = {
@@ -415,6 +440,7 @@ describe('utils', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      varArgs: false,
       body: [],
     }
     const lf2: LispishFunction = {

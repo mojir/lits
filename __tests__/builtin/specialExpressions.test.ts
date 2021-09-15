@@ -218,6 +218,7 @@ describe('evaluator', () => {
       lispish('(defun add (a b) (+ a b))', {}, { variables: {}, functions })
       expect(functions.add).toBeTruthy()
       expect(() => lispish('(defun add () 10)')).not.toThrow()
+      expect(() => lispish('(defun x (a a) 10)')).toThrow()
       expect(() => lispish('(defun true () 10)')).toThrow()
       expect(() => lispish('(defun false () 10)')).toThrow()
       expect(() => lispish('(defun null () 10)')).toThrow()
@@ -228,7 +229,23 @@ describe('evaluator', () => {
       expect(() => lispish('(defun add (a b))')).toThrow()
     })
     test('call defun function', () => {
-      expect(lispish('(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
+      // expect(lispish('(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
+      expect(lispish("(defun applyWithVal (fn val) (fn val)) (applyWithVal #'1+ 10)")).toBe(11)
+    })
+    test('&rest params', () => {
+      expect(() => lispish('(defun test (&rest a) a)')).not.toThrow()
+      expect(() => lispish('(defun test (&rest 1) a)')).toThrow()
+      expect(() => lispish('(defun test (x &rest a) a)')).not.toThrow()
+      expect(() => lispish('(defun test (x &rest) a)')).toThrow()
+      expect(() => lispish('(defun test (x &rest a b) a)')).toThrow()
+      expect(() => lispish('(defun test (x &rest a) a) (test 1)')).not.toThrow()
+      expect(() => lispish('(defun test (x &rest a) a) (test)')).toThrow()
+      expect(() => lispish("(defun test (&rest a) a) (test #'+)")).toThrow()
+      const program = `
+        (defun test (first &rest rest) rest)
+        (test 1 2 3)
+      `
+      expect(lispish(program)).toEqual([2, 3])
     })
   })
 

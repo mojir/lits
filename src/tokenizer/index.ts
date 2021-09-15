@@ -9,6 +9,7 @@ import {
   tokenizeRightParen,
   tokenizeString,
   tokenizeShorthand,
+  tokenizeRest,
 } from './tokenizers'
 
 // All tokenizers, order matters!
@@ -22,6 +23,7 @@ const tokenizers: Tokenizer[] = [
   tokenizeReservedName,
   tokenizeName,
   tokenizeShorthand,
+  tokenizeRest,
 ]
 
 export function tokenize(input: string): Token[] {
