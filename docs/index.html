@@ -86,6 +86,19 @@
         </div>
       </li>
     
+
+      <li>
+        <div class="row example-item">
+          <div class="column wide">
+            <div class="example-name">Factorial</div>
+            <div class="example-description">A recursive implementation of the factorial function.</div>
+          </div>
+          <div class="column right">
+            <span class="button" onclick="setPlayground('factorial')">Show in playground</span>
+          </div>
+        </div>
+      </li>
+    
   </ul>
 </div>
 
@@ -727,9 +740,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.8366581605594372</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.009000731602345607</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.5910984793010075</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.39583953276318384</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0006775454153959726</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.3170228987951057</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -2447,6 +2460,45 @@
 </div>
 
 
+<div id="return-from" class="content function">
+  <div class="function-header">return-from</div>
+  <h3>Special Expression</h3>
+  <p>Returns control and value from a named enclosing block.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>return-from blockName value => nothing</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>blockName: name</pre>
+<pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(defun fn () (write ___double_quote___Alpha___double_quote___) (return-from fn ___double_quote___Beta___double_quote___) (write ___double_quote___Gamma___double_quote___)) (fn)')"><span class="icon-button">▶</span> (defun fn () (write "Alpha") (return-from fn "Beta") (write "Gamma")) (fn) <span class="gray">=> "Beta"</span></span></pre>
+  </div>
+</div>
+
+
+<div id="return" class="content function">
+  <div class="function-header">return</div>
+  <h3>Special Expression</h3>
+  <p>Returns control and value from the enclosing block.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>return value => nothing</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(defun fn () (write ___double_quote___Alpha___double_quote___) (return ___double_quote___Beta___double_quote___) (write ___double_quote___Gamma___double_quote___)) (fn)')"><span class="icon-button">▶</span> (defun fn () (write "Alpha") (return "Beta") (write "Gamma")) (fn) <span class="gray">=> "Beta"</span></span></pre>
+  </div>
+</div>
+
+
 <div id="function" class="content function">
   <div class="function-header">function</div>
   <h3>Special Expression</h3>
@@ -2590,7 +2642,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631790568527</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631808142662</span></span></pre>
   </div>
 </div>
 
@@ -2910,6 +2962,8 @@
 <li id="lambda_link" onclick="showPage('lambda')">lambda</li>
 <li id="let_link" onclick="showPage('let')">let</li>
 <li id="or_link" onclick="showPage('or')">or</li>
+<li id="return_link" onclick="showPage('return')">return</li>
+<li id="return-from_link" onclick="showPage('return-from')">return-from</li>
 <li id="setq_link" onclick="showPage('setq')">setq</li>
         </ul>
 

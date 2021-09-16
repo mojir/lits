@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { lispish } from '../../src'
+import { ReturnFromSignal, ReturnSignal } from '../../src/errors'
 import { FunctionScope } from '../../src/evaluator/interface'
 
 describe('evaluator', () => {
@@ -268,6 +269,7 @@ describe('evaluator', () => {
     test('samples', () => {
       lispish('(lambda (x) (+ x 1))')
       lispish('(lambda () 1)')
+      expect(() => lispish('((lambda (x) (+ y 1)) 10)')).toThrow()
       expect(() => lispish('(lambda (false) 1)')).toThrow()
       expect(() => lispish('(lambda (true) 1)')).toThrow()
       expect(() => lispish('(lambda (null) 1)')).toThrow()
@@ -277,6 +279,57 @@ describe('evaluator', () => {
       expect(() => lispish('(lambda "k")')).toThrow()
       expect(() => lispish('(lambda k s)')).toThrow()
       expect(() => lispish('(lambda add)')).toThrow()
+    })
+  })
+
+  describe('return-from', () => {
+    test('samples', () => {
+      expect(() => lispish('(return-from x (* 2 4))')).toThrowError(ReturnFromSignal)
+      expect(() => lispish('(return-from x)')).not.toThrowError(ReturnFromSignal)
+      expect(() => lispish('(return-from x)')).toThrow()
+      expect(() => lispish('(return-from)')).not.toThrowError(ReturnFromSignal)
+      expect(() => lispish('(return-from)')).toThrow()
+      expect(() => lispish('(return-from "x" 10)')).not.toThrowError(ReturnFromSignal)
+      expect(() => lispish('(return-from "x" 10)')).toThrow()
+      try {
+        lispish('(return-from x (* 2 4))')
+        throw "Not expecting this"
+      } catch (e) {
+        expect(e).toBeInstanceOf(ReturnFromSignal)
+        expect((e as ReturnFromSignal).name).toBe('ReturnFromSignal')
+        expect((e as ReturnFromSignal).value).toBe(8)
+        expect((e as ReturnFromSignal).blockName).toBe('x')
+      }
+    })
+    test('in action', () => {
+      const program = `
+      (defun x () (write "Hej") (return-from x "Kalle") (write "san"))
+      (x)
+      `
+      expect(lispish(program)).toBe('Kalle')
+    })
+  })
+
+  describe('return', () => {
+    test('samples', () => {
+      expect(() => lispish('(return (* 2 4))')).toThrowError(ReturnSignal)
+      expect(() => lispish('(return)')).not.toThrowError(ReturnFromSignal)
+      expect(() => lispish('(return)')).toThrow()
+      try {
+        lispish('(return (* 2 4))')
+        throw "Not expecting this"
+      } catch (e) {
+        expect(e).toBeInstanceOf(ReturnSignal)
+        expect((e as ReturnSignal).name).toBe('ReturnSignal')
+        expect((e as ReturnSignal).value).toBe(8)
+      }
+    })
+    test('in action', () => {
+      const program = `
+      (defun x () (write "Hej") (return "Kalle") (write "san"))
+      (x)
+      `
+      expect(lispish(program)).toBe('Kalle')
     })
   })
 })

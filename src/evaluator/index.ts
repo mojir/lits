@@ -14,6 +14,7 @@ import { reservedNamesRecord } from '../reservedNames'
 import { asLispishFunction, asNotUndefined, isLispishFunction, isUserDefinedLispishFunction } from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction, VariableScope } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
+import { ReturnFromSignal, ReturnSignal } from '../errors'
 
 export function evaluate(ast: Ast, globalVariables: VariableScope, topScope: Context): unknown {
   // First element is the global context. E.g. setq will assign to this if no local variable is available
@@ -143,11 +144,21 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       }
     }
 
-    let result: unknown = undefined
-    for (const node of lispishFunction.body) {
-      result = evaluateAstNode(node, [newContext, ...contextStack])
+    try {
+      let result: unknown = undefined
+      for (const node of lispishFunction.body) {
+        result = evaluateAstNode(node, [newContext, ...contextStack])
+      }
+      return result
+    } catch (error) {
+      if (error instanceof ReturnSignal) {
+        return error.value
+      }
+      if (error instanceof ReturnFromSignal && lispishFunction.name === error.blockName) {
+        return error.value
+      }
+      throw error
     }
-    return result
   } else {
     const normalExpression = asNotUndefined(normalExpressions[lispishFunction.builtin])
     return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
@@ -161,11 +172,7 @@ function evaluateBuiltinNormalExpression(
 ): unknown {
   const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
 
-  try {
-    return normalExpressionEvaluator(params, contextStack, { evaluateLispishFunction })
-  } catch (e) {
-    throw Error((e as Error).message + '\n' + JSON.stringify(node, null, 2))
-  }
+  return normalExpressionEvaluator(params, contextStack, { evaluateLispishFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {

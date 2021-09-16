@@ -55,4 +55,19 @@ module.exports = [
 (write (formatPhoneNumber "123234"))
 `.trim(),
   },
+  {
+    id: 'factorial',
+    name: 'Factorial',
+    description: 'A recursive implementation of the factorial function.',
+    code: `
+(defun factorial (x)
+  (if (= x 1)
+    1
+    (* x (factorial (1- x)))
+  )
+)
+  
+(factorial 4) 
+`.trim(),
+  },
 ]

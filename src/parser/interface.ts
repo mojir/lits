@@ -4,7 +4,7 @@ import { Token } from '../tokenizer/interface'
 export const functionSymbol = Symbol('function')
 export type UserDefinedLispishFunction = {
   [functionSymbol]: true
-  name?: string
+  name: string | undefined
   arguments: string[]
   varArgs: boolean
   body: AstNode[]
@@ -27,7 +27,7 @@ type NodeType =
   | 'Rest'
   | 'ReservedName'
   | 'Binding'
-type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'defun' | 'function' | 'lambda'
+type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'defun' | 'function' | 'lambda' | 'return-from' | 'return' 
 
 interface GenericNode {
   type: NodeType

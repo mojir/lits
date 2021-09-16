@@ -47,6 +47,7 @@ describe('utils', () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      name: undefined,
       varArgs: false,
       body: [],
     }
@@ -220,6 +221,7 @@ describe('utils', () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      name: undefined,
       varArgs: false,
       body: [],
     }
@@ -390,6 +392,7 @@ describe('utils', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      name: undefined,
       varArgs: false,
       body: [],
     }
@@ -415,6 +418,7 @@ describe('utils', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      name: undefined,
       varArgs: false,
       body: [],
     }
@@ -440,6 +444,7 @@ describe('utils', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: [],
+      name: undefined,
       varArgs: false,
       body: [],
     }

@@ -10,6 +10,8 @@ import { condSpecialExpression } from './cond'
 import { defunSpecialExpression } from './defun'
 import { functionSpecialExpression } from './function'
 import { lambdaSpecialExpression } from './lambda'
+import { returnFromSpecialExpression } from './return-from'
+import { returnSpecialExpression } from './return'
 
 type SpecialExpressions = Record<string, SpecialExpression>
 
@@ -23,4 +25,6 @@ export const specialExpressions: SpecialExpressions = {
   defun: defunSpecialExpression,
   function: functionSpecialExpression,
   lambda: lambdaSpecialExpression,
+  'return-from': returnFromSpecialExpression,
+  return: returnSpecialExpression,
 }

@@ -2461,6 +2461,54 @@ const functionReference = {
     specialExpression: true,
     sideEffects: [],
   },
+  'return-from': {
+    name: 'return-from',
+    category: 'Special expression',
+    linkName: 'return-from',
+    returns: {
+      type: 'nothing',
+    },
+    arguments: [
+      {
+        name: 'blockName',
+        type: 'name',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription:
+      'Returns control and value from a named enclosing block.',
+    longDescription: 'Returns control and value from a named enclosing block.',
+    examples: [
+      `(defun fn () (write "Alpha") (return-from fn "Beta") (write "Gamma")) (fn)`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  return: {
+    name: 'return',
+    category: 'Special expression',
+    linkName: 'return',
+    returns: {
+      type: 'nothing',
+    },
+    arguments: [
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription:
+      'Returns control and value from the enclosing block.',
+    longDescription: 'Returns control and value from the enclosing block.',
+    examples: [
+      `(defun fn () (write "Alpha") (return "Beta") (write "Gamma")) (fn)`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
   function: {
     name: 'function',
     category: 'Special expression',
