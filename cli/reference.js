@@ -2509,6 +2509,32 @@ const functionReference = {
     specialExpression: true,
     sideEffects: [],
   },
+  block: {
+    name: 'block',
+    category: 'Special expression',
+    linkName: 'block',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'blockName',
+        type: 'name',
+      },
+      {
+        name: 'forms',
+        type: 'form[]',
+      },
+    ],
+    shortDescription: 'Establishes a block named `blockName` and then evaluates forms as an implicit progn.',
+    longDescription: 'Establishes a block named `blockName` and then evaluates forms as an implicit progn.',
+    examples: [
+      `(block b (write "Alpha") (write "Gamma"))`,
+      `(block b (write "Alpha") (return-from b undefined) (write "Gamma"))`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
   function: {
     name: 'function',
     category: 'Special expression',

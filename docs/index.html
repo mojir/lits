@@ -740,9 +740,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.39583953276318384</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0006775454153959726</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.3170228987951057</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.5453825664686063</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.00743433032722421</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.8850090969222792</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -2499,6 +2499,27 @@
 </div>
 
 
+<div id="block" class="content function">
+  <div class="function-header">block</div>
+  <h3>Special Expression</h3>
+  <p>Establishes a block named <span class="pre">blockName</span> and then evaluates forms as an implicit progn.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>block blockName forms => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>blockName: name</pre>
+<pre>forms: form[]</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(block b (write ___double_quote___Alpha___double_quote___) (write ___double_quote___Gamma___double_quote___))')"><span class="icon-button">▶</span> (block b (write "Alpha") (write "Gamma")) <span class="gray">=> "Gamma"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(block b (write ___double_quote___Alpha___double_quote___) (return-from b undefined) (write ___double_quote___Gamma___double_quote___))')"><span class="icon-button">▶</span> (block b (write "Alpha") (return-from b undefined) (write "Gamma")) <span class="gray">=> undefined</span></span></pre>
+  </div>
+</div>
+
+
 <div id="function" class="content function">
   <div class="function-header">function</div>
   <h3>Special Expression</h3>
@@ -2642,7 +2663,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631808142662</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631825518171</span></span></pre>
   </div>
 </div>
 
@@ -2955,6 +2976,7 @@
         <label>Special expression</label>
         <ul>
           <li id="and_link" onclick="showPage('and')">and</li>
+<li id="block_link" onclick="showPage('block')">block</li>
 <li id="cond_link" onclick="showPage('cond')">cond</li>
 <li id="defun_link" onclick="showPage('defun')">defun</li>
 <li id="function_link" onclick="showPage('function')">function</li>

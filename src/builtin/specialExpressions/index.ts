@@ -12,6 +12,7 @@ import { functionSpecialExpression } from './function'
 import { lambdaSpecialExpression } from './lambda'
 import { returnFromSpecialExpression } from './return-from'
 import { returnSpecialExpression } from './return'
+import { blockSpecialExpression } from './block'
 
 type SpecialExpressions = Record<string, SpecialExpression>
 
@@ -27,4 +28,5 @@ export const specialExpressions: SpecialExpressions = {
   lambda: lambdaSpecialExpression,
   'return-from': returnFromSpecialExpression,
   return: returnSpecialExpression,
+  block: blockSpecialExpression,
 }

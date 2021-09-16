@@ -332,4 +332,33 @@ describe('evaluator', () => {
       expect(lispish(program)).toBe('Kalle')
     })
   })
+  describe('block', () => {
+    test('samples', () => {
+      expect(lispish(`(block x
+        (write "hej")
+        (return-from x 10)
+        (write "XXX")
+      )`)).toBe(10)
+      expect(lispish(`(block x
+        (write "hej")
+        (write "XXX")
+      )`)).toBe('XXX')
+      expect(() => lispish(`(block x
+        (write "hej")
+        (return-from "x" 10)
+        (write "XXX")
+      )`)).toThrow()
+      expect(() => lispish(`(block "x"
+        (write "hej")
+        (return-from x 10)
+        (write "XXX")
+      )`)).toThrow()
+      expect(() => lispish(`(block x
+        (write hej)
+        (return-from x 10)
+        (write "XXX")
+      )`)).toThrow()
+    })
+  })
+
 })

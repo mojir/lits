@@ -27,7 +27,7 @@ type NodeType =
   | 'Rest'
   | 'ReservedName'
   | 'Binding'
-type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'defun' | 'function' | 'lambda' | 'return-from' | 'return' 
+type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'defun' | 'function' | 'lambda' | 'return-from' | 'return' | 'block'
 
 interface GenericNode {
   type: NodeType
