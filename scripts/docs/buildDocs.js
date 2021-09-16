@@ -27,7 +27,7 @@ ${getHeader()}
   </main>
   ${getSideBar()}
   ${getPlayground()}
-  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js" ></script>
+  <script src="lodash.js"></script>
   <script src="lispish.iife.js"></script>
   <script src='examples.js'></script>
   <script src='scripts.js'></script>
@@ -251,6 +251,7 @@ function setupDocDir() {
 function copyScripts() {
   fs.copyFileSync(path.join(__dirname, '../../dist/lispish.iife.js'), path.join(DOC_DIR, 'lispish.iife.js'))
   fs.copyFileSync(path.join(__dirname, `scripts.js`), path.join(DOC_DIR, `scripts.js`))
+  fs.copyFileSync(path.join(__dirname, `lodash.custom.min.js`), path.join(DOC_DIR, `lodash.js`))
   const examplesContent = fs.readFileSync(path.join(__dirname, `examples.js`), { encoding: 'utf-8' })
   fs.writeFileSync(path.join(DOC_DIR, `examples.js`), examplesContent.replace('module.exports =', 'var examples ='))
 }
