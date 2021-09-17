@@ -3,7 +3,7 @@ import {
   functionSymbol,
   LispishFunction,
   NameNode,
-  RestNode,
+  ModifierNode,
   SpecialExpressionNode,
   UserDefinedLispishFunction,
 } from '../../parser/interface'
@@ -13,7 +13,8 @@ import { parseFunctionArguments } from './utils'
 
 interface LambdaSpecialExpressionNode extends SpecialExpressionNode {
   name: 'lambda'
-  arguments: Array<NameNode | RestNode>
+  arguments: Array<NameNode | ModifierNode>
+  optionalParamsIndex: number | undefined
   body: AstNode[]
 }
 
@@ -26,7 +27,7 @@ export const lambdaSpecialExpression: SpecialExpression = {
 
     position += 1
 
-    const [nextPosition, functionArguments] = parseFunctionArguments(tokens, position, parseToken)
+    const [nextPosition, functionArguments, optionalParamsIndex] = parseFunctionArguments(tokens, position, parseToken)
     position = nextPosition
 
     token = asNotUndefined(tokens[position])
@@ -47,6 +48,7 @@ export const lambdaSpecialExpression: SpecialExpression = {
       name: 'lambda',
       params: [],
       arguments: functionArguments,
+      optionalParamsIndex,
       body,
     }
 
@@ -54,11 +56,16 @@ export const lambdaSpecialExpression: SpecialExpression = {
   },
   evaluate: (node): UserDefinedLispishFunction => {
     castLambdaExpressionNode(node)
+    const restParams =
+      node.arguments[node.arguments.length - 1]?.type === 'Modifier' &&
+      node.arguments[node.arguments.length - 1]?.value === '&rest'
+
     const lispishFunction: LispishFunction = {
       [functionSymbol]: true,
       name: undefined,
       arguments: node.arguments.map(arg => arg.value),
-      varArgs: node.arguments[node.arguments.length - 1]?.type === 'Rest',
+      restParams,
+      optionalParamsIndex: node.optionalParamsIndex,
       body: node.body,
     }
 

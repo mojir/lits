@@ -5,7 +5,7 @@ import { SpecialExpression } from '../interface'
 
 interface BlockSpecialExpressionNode extends SpecialExpressionNode {
   name: 'block'
-  blockName: string,
+  blockName: string
 }
 
 export const blockSpecialExpression: SpecialExpression = {
@@ -45,6 +45,7 @@ export const blockSpecialExpression: SpecialExpression = {
       if (error instanceof ReturnFromSignal && node.blockName === error.blockName) {
         return error.value
       }
+      throw error
     }
   },
   validate: node => assertLengthOneOrMore(node.params),

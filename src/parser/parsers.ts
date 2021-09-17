@@ -16,7 +16,7 @@ import {
   ExpressionExpressionNode,
   ParseBinding,
   BindingNode,
-  RestNode,
+  ModifierNode,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -40,13 +40,13 @@ export const parseName: ParseName = (tokens: Token[], position: number) => {
   return [position + 1, { type: 'Name', value: token.value }]
 }
 
-type ParseRest = (tokens: Token[], position: number) => [number, RestNode]
-export const parseRest: ParseRest = (tokens: Token[], position: number) => {
+type ParseRest = (tokens: Token[], position: number) => [number, ModifierNode]
+export const parseModifier: ParseRest = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position + 1])
   if (token.type !== 'name') {
     throw Error('Expected a name node')
   }
-  return [position + 2, { type: 'Rest', value: token.value }]
+  return [position + 2, { type: 'Modifier', value: token.value }]
 }
 
 type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
@@ -208,8 +208,8 @@ export const parseToken: ParseToken = (tokens, position) => {
     case 'shorthand':
       nodeDescriptor = parseFunctionShorthand(tokens, position)
       break
-    case 'rest':
-      nodeDescriptor = parseRest(tokens, position)
+    case 'modifier':
+      nodeDescriptor = parseModifier(tokens, position)
       break
   }
   if (!nodeDescriptor) {

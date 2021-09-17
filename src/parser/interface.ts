@@ -6,7 +6,8 @@ export type UserDefinedLispishFunction = {
   [functionSymbol]: true
   name: string | undefined
   arguments: string[]
-  varArgs: boolean
+  restParams: boolean
+  optionalParamsIndex: number | undefined
   body: AstNode[]
 }
 
@@ -24,10 +25,22 @@ type NodeType =
   | 'SpecialExpression'
   | 'ExpressionExpression'
   | 'Name'
-  | 'Rest'
+  | 'Modifier'
   | 'ReservedName'
   | 'Binding'
-type SpecialExpressionName = 'let' | 'if' | 'setq' | 'and' | 'or' | 'cond' | 'defun' | 'function' | 'lambda' | 'return-from' | 'return' | 'block'
+type SpecialExpressionName =
+  | 'let'
+  | 'if'
+  | 'setq'
+  | 'and'
+  | 'or'
+  | 'cond'
+  | 'defun'
+  | 'function'
+  | 'lambda'
+  | 'return-from'
+  | 'return'
+  | 'block'
 
 interface GenericNode {
   type: NodeType
@@ -54,8 +67,8 @@ export interface NameNode extends GenericNode {
   type: 'Name'
   value: string
 }
-export interface RestNode extends GenericNode {
-  type: 'Rest'
+export interface ModifierNode extends GenericNode {
+  type: 'Modifier'
   value: string
 }
 export interface ReservedNameNode extends GenericNode {
@@ -94,7 +107,7 @@ export type AstNode =
   | NormalExpressionNode
   | SpecialExpressionNode
   | ExpressionExpressionNode
-  | RestNode
+  | ModifierNode
 
 export type Ast = {
   type: 'Program'

@@ -359,6 +359,13 @@ describe('evaluator', () => {
         (write "XXX")
       )`)).toThrow()
     })
+    test('asd', () => {
+      expect(() => lispish(`(block x
+        (write hej)
+        (return-from x 10)
+        (write "XXX")
+      )`)).toThrow()
+    })
   })
 
 })

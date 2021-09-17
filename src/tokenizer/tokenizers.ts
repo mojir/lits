@@ -107,9 +107,12 @@ export const tokenizeShorthand: Tokenizer = (input: string, position: number) =>
   return [0, undefined]
 }
 
-export const tokenizeRest: Tokenizer = (input: string, position: number) => {
+export const tokenizeModifier: Tokenizer = (input: string, position: number) => {
   if (input.substr(position, 5) === `&rest`) {
-    return [5, { type: 'rest', value: `&rest` }]
+    return [5, { type: 'modifier', value: `&rest` }]
+  }
+  if (input.substr(position, 9) === `&optional`) {
+    return [9, { type: 'modifier', value: `&optional` }]
   }
   return [0, undefined]
 }

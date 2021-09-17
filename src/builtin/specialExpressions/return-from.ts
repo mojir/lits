@@ -5,12 +5,12 @@ import { SpecialExpression } from '../interface'
 
 interface ReturnFromSpecialExpressionNode extends SpecialExpressionNode {
   name: 'return-from'
-  blockName: string,
+  blockName: string
 }
 
 export const returnFromSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
-    let token = asNotUndefined(tokens[position])
+    const token = asNotUndefined(tokens[position])
     if (token.type !== 'name') {
       throw Error(`Expected a name node, got ${token.type}: ${token.value}`)
     }
