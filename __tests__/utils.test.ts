@@ -46,9 +46,11 @@ describe('utils', () => {
     expect(() => asLispishFunction(undefined)).toThrow()
     const lf: LispishFunction = {
       [functionSymbol]: true,
-      arguments: [],
+      arguments: {
+        mandatoryArguments: [],
+        optionalArguments: [],
+      },
       name: undefined,
-      varArgs: false,
       body: [],
     }
     expect(asLispishFunction(lf)).toBe(lf)
@@ -220,9 +222,11 @@ describe('utils', () => {
   test('assertLispishFunction', () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,
-      arguments: [],
+      arguments: {
+        mandatoryArguments: [],
+        optionalArguments: [],
+      },
       name: undefined,
-      varArgs: false,
       body: [],
     }
     expect(() => assertLispishFunction(lf)).not.toThrow()
@@ -391,9 +395,11 @@ describe('utils', () => {
   test('isLispishFunction', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
-      arguments: [],
+      arguments: {
+        mandatoryArguments: [],
+        optionalArguments: [],
+      },
       name: undefined,
-      varArgs: false,
       body: [],
     }
     const lf2: LispishFunction = {
@@ -417,9 +423,11 @@ describe('utils', () => {
   test('isUserDefinedLispishFunction', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
-      arguments: [],
+      arguments: {
+        mandatoryArguments: [],
+        optionalArguments: [],
+      },
       name: undefined,
-      varArgs: false,
       body: [],
     }
     const lf2: LispishFunction = {
@@ -443,9 +451,11 @@ describe('utils', () => {
   test('isBuiltinLispishFunction', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
-      arguments: [],
+      arguments: {
+        mandatoryArguments: [],
+        optionalArguments: [],
+      },
       name: undefined,
-      varArgs: false,
       body: [],
     }
     const lf2: LispishFunction = {

@@ -2,24 +2,21 @@ import {
   AstNode,
   functionSymbol,
   LispishFunction,
-  NameNode,
-  ModifierNode,
   SpecialExpressionNode,
   UserDefinedLispishFunction,
 } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
-import { parseFunctionArguments } from './utils'
+import { FunctionArguments, parseFunctionArguments } from './utils'
 
 interface LambdaSpecialExpressionNode extends SpecialExpressionNode {
   name: 'lambda'
-  arguments: Array<NameNode | ModifierNode>
-  optionalParamsIndex: number | undefined
+  arguments: FunctionArguments
   body: AstNode[]
 }
 
 export const lambdaSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseToken }) => {
+  parse: (tokens, position, { parseToken, parseArgument }) => {
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
       throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected list of arguments`)
@@ -27,7 +24,7 @@ export const lambdaSpecialExpression: SpecialExpression = {
 
     position += 1
 
-    const [nextPosition, functionArguments, optionalParamsIndex] = parseFunctionArguments(tokens, position, parseToken)
+    const [nextPosition, functionArguments] = parseFunctionArguments(tokens, position, parseArgument)
     position = nextPosition
 
     token = asNotUndefined(tokens[position])
@@ -48,7 +45,6 @@ export const lambdaSpecialExpression: SpecialExpression = {
       name: 'lambda',
       params: [],
       arguments: functionArguments,
-      optionalParamsIndex,
       body,
     }
 
@@ -56,16 +52,11 @@ export const lambdaSpecialExpression: SpecialExpression = {
   },
   evaluate: (node): UserDefinedLispishFunction => {
     castLambdaExpressionNode(node)
-    const restParams =
-      node.arguments[node.arguments.length - 1]?.type === 'Modifier' &&
-      node.arguments[node.arguments.length - 1]?.value === '&rest'
 
     const lispishFunction: LispishFunction = {
       [functionSymbol]: true,
       name: undefined,
-      arguments: node.arguments.map(arg => arg.value),
-      restParams,
-      optionalParamsIndex: node.optionalParamsIndex,
+      arguments: node.arguments,
       body: node.body,
     }
 

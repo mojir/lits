@@ -15,7 +15,6 @@ import { asLispishFunction, asNotUndefined, isLispishFunction, isUserDefinedLisp
 import { Context, EvaluateAstNode, EvaluateLispishFunction, VariableScope } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { ReturnFromSignal, ReturnSignal } from '../errors'
-import { isArguments } from 'lodash'
 
 export function evaluate(ast: Ast, globalVariables: VariableScope, topScope: Context): unknown {
   // First element is the global context. E.g. setq will assign to this if no local variable is available
@@ -99,31 +98,49 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
 
   if (isUserDefinedLispishFunction(lispishFunction)) {
     const args = lispishFunction.arguments
-    const optionalParamsIndex = lispishFunction.optionalParamsIndex
-    const hasRestParams = lispishFunction.restParams
+    const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
+    const nbrOfOptionalArgs: number = args.optionalArguments.length
+    const maxNbrOfParameters: null | number = args.restArgument ? null : nbrOfMandatoryArgs + nbrOfOptionalArgs
 
-    const minimumArgs =
-      optionalParamsIndex !== undefined ? optionalParamsIndex : hasRestParams ? args.length - 1 : args.length
-
-    if (params.length < minimumArgs) {
-      throw Error(`Function "${lispishFunction.name}" requires at least ${minimumArgs} arguments. Got ${params.length}`)
+    if (params.length < args.mandatoryArguments.length) {
+      throw Error(
+        `Function "${lispishFunction.name}" requires at least ${args.mandatoryArguments.length} arguments. Got ${params.length}`,
+      )
     }
 
-    if (!lispishFunction.restParams && params.length > isArguments.length) {
-      throw Error(`Function "${lispishFunction.name}" requires at most ${args.length} arguments. Got ${params.length}`)
+    if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
+      throw Error(
+        `Function "${lispishFunction.name}" requires at most ${maxNbrOfParameters} arguments. Got ${params.length}`,
+      )
     }
 
+    const length = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length)
     const rest: unknown[] = []
-    for (let i = 0; i < params.length; i += 1) {
-      const param = params[i]
-      if (i <= minimumArgs) {
-        const key = asNotUndefined(args[i])
+    for (let i = 0; i < length; i += 1) {
+      if (i < nbrOfMandatoryArgs) {
+        const param = params[i]
+        const key = asNotUndefined(args.mandatoryArguments[i])
         if (isLispishFunction(param)) {
           newContext.functions[key] = param
         } else {
           newContext.variables[key] = param
         }
-      } else if (hasRestParams && i >= args.length - 1) {
+      } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
+        const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs])
+        const param =
+          i < params.length
+            ? params[i]
+            : arg.defaultValue !== undefined
+            ? evaluateAstNode(arg.defaultValue, contextStack)
+            : undefined
+        const key = arg.name
+        if (isLispishFunction(param)) {
+          newContext.functions[key] = param
+        } else {
+          newContext.variables[key] = param
+        }
+      } else {
+        const param = params[i]
         if (isLispishFunction(param)) {
           throw Error('A function cannot be a &rest parameter TODO, is this a fact?')
         }
@@ -131,12 +148,9 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       }
     }
 
-    if (hasRestParams) {
-      const key = asNotUndefined(args[args.length - 1])
-      newContext.variables[key] = rest
+    if (args.restArgument) {
+      newContext.variables[args.restArgument] = rest
     }
-
-    // TODO fix optional parameters and set them to undefined if necessary
 
     try {
       let result: unknown = undefined

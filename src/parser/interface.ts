@@ -1,3 +1,4 @@
+import { FunctionArguments } from '../builtin/specialExpressions/utils'
 import { ReservedName } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 
@@ -5,9 +6,7 @@ export const functionSymbol = Symbol('function')
 export type UserDefinedLispishFunction = {
   [functionSymbol]: true
   name: string | undefined
-  arguments: string[]
-  restParams: boolean
-  optionalParamsIndex: number | undefined
+  arguments: FunctionArguments
   body: AstNode[]
 }
 
@@ -28,6 +27,7 @@ type NodeType =
   | 'Modifier'
   | 'ReservedName'
   | 'Binding'
+  | 'Argument'
 type SpecialExpressionName =
   | 'let'
   | 'if'
@@ -41,6 +41,7 @@ type SpecialExpressionName =
   | 'return-from'
   | 'return'
   | 'block'
+export type ModifierName = '&rest' | '&optional'
 
 interface GenericNode {
   type: NodeType
@@ -48,6 +49,7 @@ interface GenericNode {
 
 type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | ExpressionExpressionNode
 export type ParseBinding = (tokens: Token[], position: number) => [number, BindingNode]
+export type ParseArgument = (tokens: Token[], position: number) => [number, ArgumentNode | ModifierNode]
 export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
 export type ParseNormalExpression = (tokens: Token[], position: number) => [number, NormalExpressionNode]
 export type ParseSpecialExpression = (tokens: Token[], position: number) => [number, SpecialExpressionNode]
@@ -69,7 +71,7 @@ export interface NameNode extends GenericNode {
 }
 export interface ModifierNode extends GenericNode {
   type: 'Modifier'
-  value: string
+  value: ModifierName
 }
 export interface ReservedNameNode extends GenericNode {
   type: 'ReservedName'
@@ -85,6 +87,12 @@ export interface BindingNode extends GenericNode {
   type: 'Binding'
   name: string
   value: AstNode
+}
+
+export interface ArgumentNode extends GenericNode {
+  type: 'Argument'
+  name: string
+  defaultValue?: AstNode
 }
 
 export interface ExpressionExpressionNode extends GenericNode {

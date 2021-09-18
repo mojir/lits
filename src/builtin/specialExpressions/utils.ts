@@ -1,51 +1,97 @@
-import { NameNode, ParseToken, ModifierNode } from '../../parser/interface'
+import { AstNode, ParseArgument } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
 import { asNotUndefined } from '../../utils'
 
+export type FunctionArguments = {
+  mandatoryArguments: string[]
+  optionalArguments: Array<{
+    name: string
+    defaultValue?: AstNode
+  }>
+  restArgument?: string
+}
 export function parseFunctionArguments(
   tokens: Token[],
   position: number,
-  parseToken: ParseToken,
-): [number, Array<NameNode | ModifierNode>, number | undefined] {
-  let token = asNotUndefined(tokens[position])
-  const functionArguments: Array<NameNode | ModifierNode> = []
-  let restIsUsed = false
+  parseArgument: ParseArgument,
+): [number, FunctionArguments] {
+  const args: FunctionArguments = {
+    mandatoryArguments: [],
+    optionalArguments: [],
+  }
   const argNames: Record<string, true> = {}
-  let optionalParamsIndex: number | undefined = undefined
-  let index = -1
+  let state: 'mandatory' | 'optional' | 'rest' = 'mandatory'
+  let token = asNotUndefined(tokens[position])
   while (!(token.type === 'paren' && token.value === ')')) {
-    index += 1
-    const [newPosition, argumentNode] = parseToken(tokens, position)
-
-    if (restIsUsed) {
-      throw Error('&rest must be the last argument')
-    } else {
-      if (argumentNode.type !== 'Name' && argumentNode.type !== 'Modifier') {
-        throw Error('Expected a name node or a modifier node')
-      }
-    }
-
-    if (argNames[argumentNode.value]) {
-      throw Error(`Duplicate argument name '${argumentNode.value}'`)
-    } else {
-      argNames[argumentNode.value] = true
-    }
-
-    if (argumentNode.type === 'Modifier') {
-      if (argumentNode.value === '&rest') {
-        restIsUsed = true
-      }
-      if (argumentNode.value === '&optional') {
-        if (optionalParamsIndex !== undefined) {
-          throw Error('Only one &optional modifier allowed')
-        }
-        optionalParamsIndex = index
-      }
-    }
-    functionArguments.push(argumentNode)
+    const [newPosition, node] = parseArgument(tokens, position)
     position = newPosition
     token = asNotUndefined(tokens[position])
+
+    if (node.type === 'Modifier') {
+      switch (node.value) {
+        case '&optional':
+          if (state === 'rest') {
+            throw Error('&optional cannot appear after &rest')
+          }
+          if (state === 'optional') {
+            throw Error('&optional can only appear once')
+          }
+          state = 'optional'
+          break
+        case '&rest':
+          if (state === 'rest') {
+            throw Error('&rest can only appear once')
+          }
+          if (state === 'optional' && args.optionalArguments.length === 0) {
+            throw Error('No optional arguments where spcified')
+          }
+          state = 'rest'
+          break
+      }
+    } else {
+      if (argNames[node.name]) {
+        throw Error(`Duplicate argument "${node.name}"`)
+      } else {
+        argNames[node.name] = true
+      }
+
+      if (Object.getOwnPropertyDescriptor(node, 'defaultValue')) {
+        if (state !== 'optional') {
+          throw Error('Cannot specify default value if not an optional argument')
+        }
+        args.optionalArguments.push({
+          name: node.name,
+          defaultValue: node.defaultValue,
+        })
+      } else {
+        switch (state) {
+          case 'mandatory':
+            args.mandatoryArguments.push(node.name)
+            break
+          case 'optional':
+            args.optionalArguments.push({
+              name: node.name,
+              defaultValue: undefined,
+            })
+            break
+          case 'rest':
+            if (args.restArgument) {
+              throw Error('Can only specify one rest argument')
+            }
+            args.restArgument = node.name
+            break
+        }
+      }
+    }
   }
+
+  if (state === 'rest' && !Object.getOwnPropertyDescriptor(args, 'restArgument')) {
+    throw Error('Missing rest argument name')
+  }
+  if (state === 'optional' && args.optionalArguments.length === 0) {
+    throw Error('No optional arguments where spcified')
+  }
+
   position += 1
-  return [position, functionArguments, optionalParamsIndex]
+  return [position, args]
 }

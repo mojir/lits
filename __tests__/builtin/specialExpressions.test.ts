@@ -248,6 +248,21 @@ describe('evaluator', () => {
       `
       expect(lispish(program)).toEqual([2, 3])
     })
+    test('&optional params', () => {
+      expect(() => lispish('(defun test (&optional a) a)')).not.toThrow()
+      expect(() => lispish('(defun test (&optional (a 10)) a)')).not.toThrow()
+      expect(() => lispish('(defun test (x &optional a) a)')).not.toThrow()
+      expect(() => lispish('(defun test (x &optional) a)')).toThrow()
+      expect(() => lispish('(defun test (x &optional a b) a)')).not.toThrow()
+      expect(() => lispish('(defun test (x &optional a) a) (test 1)')).not.toThrow()
+      expect(() => lispish('(defun test (x &optional a) a) (test 1 2)')).not.toThrow()
+      expect(() => lispish('(defun test (x &optional a) a) (test 1 2 3)')).toThrow()
+      expect(() => lispish('(defun test (x &optional a) a) (test)')).toThrow()
+      expect(() => lispish("(defun test (&optional a) #'a) (test #'+)")).not.toThrow()
+      expect(lispish(`(defun test (first &optional o) o) (test 1 2)`)).toEqual(2)
+      expect(lispish(`(defun test (first &optional o) o) (test 1)`)).toEqual(undefined)
+      expect(lispish(`(defun test (first &optional (o 10)) o) (test 1)`)).toEqual(10)
+    })
   })
 
   describe('function', () => {
@@ -293,7 +308,7 @@ describe('evaluator', () => {
       expect(() => lispish('(return-from "x" 10)')).toThrow()
       try {
         lispish('(return-from x (* 2 4))')
-        throw "Not expecting this"
+        throw 'Not expecting this'
       } catch (e) {
         expect(e).toBeInstanceOf(ReturnFromSignal)
         expect((e as ReturnFromSignal).name).toBe('ReturnFromSignal')
@@ -317,7 +332,7 @@ describe('evaluator', () => {
       expect(() => lispish('(return)')).toThrow()
       try {
         lispish('(return (* 2 4))')
-        throw "Not expecting this"
+        throw 'Not expecting this'
       } catch (e) {
         expect(e).toBeInstanceOf(ReturnSignal)
         expect((e as ReturnSignal).name).toBe('ReturnSignal')
@@ -334,38 +349,49 @@ describe('evaluator', () => {
   })
   describe('block', () => {
     test('samples', () => {
-      expect(lispish(`(block x
+      expect(
+        lispish(`(block x
         (write "hej")
         (return-from x 10)
         (write "XXX")
-      )`)).toBe(10)
-      expect(lispish(`(block x
+      )`),
+      ).toBe(10)
+      expect(
+        lispish(`(block x
         (write "hej")
         (write "XXX")
-      )`)).toBe('XXX')
-      expect(() => lispish(`(block x
+      )`),
+      ).toBe('XXX')
+      expect(() =>
+        lispish(`(block x
         (write "hej")
         (return-from "x" 10)
         (write "XXX")
-      )`)).toThrow()
-      expect(() => lispish(`(block "x"
+      )`),
+      ).toThrow()
+      expect(() =>
+        lispish(`(block "x"
         (write "hej")
         (return-from x 10)
         (write "XXX")
-      )`)).toThrow()
-      expect(() => lispish(`(block x
+      )`),
+      ).toThrow()
+      expect(() =>
+        lispish(`(block x
         (write hej)
         (return-from x 10)
         (write "XXX")
-      )`)).toThrow()
+      )`),
+      ).toThrow()
     })
     test('asd', () => {
-      expect(() => lispish(`(block x
+      expect(() =>
+        lispish(`(block x
         (write hej)
         (return-from x 10)
         (write "XXX")
-      )`)).toThrow()
+      )`),
+      ).toThrow()
     })
   })
-
 })

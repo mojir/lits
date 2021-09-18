@@ -15,8 +15,10 @@ import {
   ParseExpressionExpression,
   ExpressionExpressionNode,
   ParseBinding,
+  ParseArgument,
   BindingNode,
   ModifierNode,
+  ModifierName,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -40,13 +42,13 @@ export const parseName: ParseName = (tokens: Token[], position: number) => {
   return [position + 1, { type: 'Name', value: token.value }]
 }
 
-type ParseRest = (tokens: Token[], position: number) => [number, ModifierNode]
-export const parseModifier: ParseRest = (tokens: Token[], position: number) => {
+type ParseModifier = (tokens: Token[], position: number) => [number, ModifierNode]
+export const parseModifier: ParseModifier = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position + 1])
   if (token.type !== 'name') {
     throw Error('Expected a name node')
   }
-  return [position + 2, { type: 'Modifier', value: token.value }]
+  return [position + 1, { type: 'Modifier', value: token.value as ModifierName }]
 }
 
 type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
@@ -94,6 +96,35 @@ export const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position)
     params: [innerNode],
   }
   return [newPosition, node]
+}
+
+const parseArgument: ParseArgument = (tokens, position) => {
+  let token = asNotUndefined(tokens[position])
+  if (token.type === 'name') {
+    return [position + 1, { type: 'Argument', name: token.value }]
+  } else if (token.type === 'paren' && token.value === '(') {
+    position += 1
+    token = asNotUndefined(tokens[position])
+    if (token.type !== 'name') {
+      throw Error(`Expected name node got: ${token.type}: ${token.value}`)
+    }
+    const name = token.value
+    position += 1
+    const [newPosition, defaultValue] = parseToken(tokens, position)
+    token = asNotUndefined(tokens[newPosition])
+    if (!(token.type === 'paren' && token.value === ')')) {
+      throw Error('Expected ")"')
+    }
+    return [newPosition + 1, { type: 'Argument', name, defaultValue }]
+  } else if (token.type === 'modifier') {
+    const { value } = token
+    if (value !== '&rest' && value !== '&optional') {
+      throw Error(`Unexpected modifier: "${value}"`)
+    }
+    return [position + 1, { type: 'Modifier', value }]
+  } else {
+    throw Error(`Unexpected token: ${token.type}: ${token.value}`)
+  }
 }
 
 const parseBinding: ParseBinding = (tokens, position) => {
@@ -173,6 +204,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
     parseParams,
     parseToken,
     parseBinding,
+    parseArgument,
   })
 
   try {

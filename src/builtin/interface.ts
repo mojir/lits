@@ -1,5 +1,12 @@
 import { Context, EvaluateAstNode } from '../evaluator/interface'
-import { ParseBinding, ParseExpression, ParseParams, ParseToken, SpecialExpressionNode } from '../parser/interface'
+import {
+  ParseArgument,
+  ParseBinding,
+  ParseExpression,
+  ParseParams,
+  ParseToken,
+  SpecialExpressionNode,
+} from '../parser/interface'
 import { Token } from '../tokenizer/interface'
 
 type Parsers = {
@@ -7,6 +14,7 @@ type Parsers = {
   parseParams: ParseParams
   parseToken: ParseToken
   parseBinding: ParseBinding
+  parseArgument: ParseArgument
 }
 
 export type SpecialExpression = {

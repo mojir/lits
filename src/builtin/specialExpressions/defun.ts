@@ -1,25 +1,17 @@
-import {
-  AstNode,
-  functionSymbol,
-  LispishFunction,
-  NameNode,
-  ModifierNode,
-  SpecialExpressionNode,
-} from '../../parser/interface'
+import { AstNode, functionSymbol, LispishFunction, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
-import { parseFunctionArguments } from './utils'
+import { FunctionArguments, parseFunctionArguments } from './utils'
 
 interface DefunSpecialExpressionNode extends SpecialExpressionNode {
   name: 'defun'
   functionName: NameNode
-  arguments: Array<NameNode | ModifierNode>
-  optionalParamsIndex: number | undefined
+  arguments: FunctionArguments
   body: AstNode[]
 }
 
 export const defunSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseToken }) => {
+  parse: (tokens, position, { parseToken, parseArgument }) => {
     const [newPosition, functionName] = parseToken(tokens, position)
     if (functionName.type !== 'Name') {
       throw Error('Expected a name node')
@@ -34,7 +26,7 @@ export const defunSpecialExpression: SpecialExpression = {
 
     position += 1
 
-    const [nextPosition, functionArguments, optionalParamsIndex] = parseFunctionArguments(tokens, position, parseToken)
+    const [nextPosition, functionArguments] = parseFunctionArguments(tokens, position, parseArgument)
     position = nextPosition
 
     token = asNotUndefined(tokens[position])
@@ -55,7 +47,6 @@ export const defunSpecialExpression: SpecialExpression = {
       functionName,
       params: [],
       arguments: functionArguments,
-      optionalParamsIndex,
       body,
     }
 
@@ -63,15 +54,10 @@ export const defunSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, _evaluateAstNode): undefined => {
     castDefunExpressionNode(node)
-    const restParams =
-      node.arguments[node.arguments.length - 1]?.type === 'Modifier' &&
-      node.arguments[node.arguments.length - 1]?.value === '&rest'
     const lispishFunction: LispishFunction = {
       [functionSymbol]: true,
       name: node.functionName.value,
-      arguments: node.arguments.map(arg => arg.value),
-      restParams,
-      optionalParamsIndex: node.optionalParamsIndex,
+      arguments: node.arguments,
       body: node.body,
     }
 
