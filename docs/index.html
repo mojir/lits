@@ -740,9 +740,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.4895431658677374</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0010417765406884395</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.5485166234708166</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.7635271976352915</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.004491583940316175</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.487182587866713</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -2431,7 +2431,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(lambda (a b) (sqrt (+ (* a a) (* b b))))')"><span class="icon-button">▶</span> (lambda (a b) (sqrt (+ (* a a) (* b b)))) <span class="gray">=> &lt;FUNCTION λ (a b)&gt;</span></span></pre>
+    <pre class="example" onclick="runPlayground('(lambda (a b) (sqrt (+ (* a a) (* b b))))')"><span class="icon-button">▶</span> (lambda (a b) (sqrt (+ (* a a) (* b b)))) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="runPlayground('((lambda (a b) (sqrt (+ (* a a) (* b b)))) 3 4)')"><span class="icon-button">▶</span> ((lambda (a b) (sqrt (+ (* a a) (* b b)))) 3 4) <span class="gray">=> 5</span></span></pre>
   </div>
 </div>
@@ -2453,7 +2453,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #___single_quote___hyp')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #'hyp <span class="gray">=> &lt;FUNCTION hyp (a b)&gt;</span></span></pre>
+    <pre class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #___single_quote___hyp')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #'hyp <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(defun sumOfSquares (&rest s) (apply #___single_quote___+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"><span class="icon-button">▶</span> (defun sumOfSquares (&rest s) (apply #'+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55</span></span></pre>
   </div>
@@ -2538,7 +2538,7 @@
   <div class="indent">
     <pre><span class="example" onclick="runPlayground('(function +)')"><span class="icon-button">▶</span> (function +) <span class="gray">=> &lt;BUILTIN FUNCTION +&gt;</span></span></pre>
 <pre><span class="example" onclick="runPlayground('#___single_quote___+')"><span class="icon-button">▶</span> #'+ <span class="gray">=> &lt;BUILTIN FUNCTION +&gt;</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp) <span class="gray">=> &lt;FUNCTION hyp (a b)&gt;</span></span></pre>
+<pre class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -2663,7 +2663,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631825696028</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631982705779</span></span></pre>
   </div>
 </div>
 
