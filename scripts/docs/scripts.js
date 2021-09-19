@@ -1,4 +1,4 @@
-;(function () {
+; (function () {
   window.addEventListener('keyup', function (evt) {
     if (evt.key === 'Enter' && evt.ctrlKey === true) {
       play()
@@ -97,6 +97,9 @@ function stringifyValue(value) {
   }
   if (typeof value === 'object' && value instanceof RegExp) {
     return `${value}`
+  }
+  if (typeof value === 'object' && value instanceof Error) {
+    return value.toString()
   }
   return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
     /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,

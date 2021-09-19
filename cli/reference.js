@@ -2562,6 +2562,29 @@ const functionReference = {
     specialExpression: true,
     sideEffects: [],
   },
+  throw: {
+    name: 'throw',
+    category: 'Special expression',
+    linkName: 'throw',
+    returns: {
+      type: 'nothing',
+    },
+    arguments: [
+      {
+        name: 'message',
+        type: 'form',
+      },
+    ],
+    shortDescription: 'Throws `UserDefinedError` with message set to `message` evaluated.',
+    longDescription: 'Throws `UserDefinedError` with message set to `message` evaluated. `message` must evaluate to a `string`.',
+    examples: [
+      `(throw "You shall not pass!")`,
+      `(throw (substring "You shall not pass!" 0 3))`,
+      `(try (throw "You shall not pass!") ((error) error))`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
   function: {
     name: 'function',
     category: 'Special expression',

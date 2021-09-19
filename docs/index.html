@@ -740,9 +740,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.42172656091601923</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0023751188978716263</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 2.0911426855035002</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.2511883833169528</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.004254949090952658</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.9768130485873976</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -2542,6 +2542,27 @@
 </div>
 
 
+<div id="throw" class="content function">
+  <div class="function-header">throw</div>
+  <h3>Special Expression</h3>
+  <p>Throws <span class="pre">UserDefinedError</span> with message set to <span class="pre">message</span> evaluated. <span class="pre">message</span> must evaluate to a <span class="pre">string</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>throw message => nothing</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>message: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="runPlayground('(throw ___double_quote___You shall not pass!___double_quote___)')"><span class="icon-button">▶</span> (throw "You shall not pass!") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="runPlayground('(throw (substring ___double_quote___You shall not pass!___double_quote___ 0 3))')"><span class="icon-button">▶</span> (throw (substring "You shall not pass!" 0 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre><span class="example" onclick="runPlayground('(try (throw ___double_quote___You shall not pass!___double_quote___) ((error) error))')"><span class="icon-button">▶</span> (try (throw "You shall not pass!") ((error) error)) <span class="gray">=> UserDefinedError: You shall not pass!</span></span></pre>
+  </div>
+</div>
+
+
 <div id="function" class="content function">
   <div class="function-header">function</div>
   <h3>Special Expression</h3>
@@ -2685,7 +2706,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632068243738</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632074199716</span></span></pre>
   </div>
 </div>
 
@@ -3009,6 +3030,7 @@
 <li id="return_link" onclick="showPage('return')">return</li>
 <li id="return-from_link" onclick="showPage('return-from')">return-from</li>
 <li id="setq_link" onclick="showPage('setq')">setq</li>
+<li id="throw_link" onclick="showPage('throw')">throw</li>
 <li id="try_link" onclick="showPage('try')">try</li>
         </ul>
 

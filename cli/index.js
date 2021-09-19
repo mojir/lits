@@ -93,6 +93,10 @@ function formatValue(value, noColors) {
       return functionToString(value)
     }
 
+    if (typeof value === 'object' && value instanceof Error) {
+      return value.toString()
+    }
+
     if (
       typeof value === 'string' ||
       Array.isArray(value) ||
@@ -124,6 +128,9 @@ function formatValue(value, noColors) {
     }
     if (Array.isArray(value)) {
       return `${stringifyValue(value)}`.cyan
+    }
+    if (typeof value === 'object' && value instanceof Error) {
+      return value.toString().red
     }
     if (typeof value === 'object') {
       if (value instanceof RegExp) {
@@ -335,20 +342,18 @@ ${'Side effects'.underline}
 ${doc.sideEffects.length === 0 ? '  None'.italic : doc.sideEffects.map(sideEffect => `  ${sideEffect}`).join('\n')}
 
 ${'Examples'.underline}
-${
-  doc.examples.length === 0
-    ? '[no examples]'
-    : doc.examples.map(example => `  ${example} ${'=>'.gray} ${executeExample(example)}`).join('\n')
-}
+${doc.examples.length === 0
+      ? '[no examples]'
+      : doc.examples.map(example => `  ${example} ${'=>'.gray} ${executeExample(example)}`).join('\n')
+    }
 `
 }
 
 function getSyntax(doc) {
-  return `${doc.name}${
-    doc.arguments.length
+  return `${doc.name}${doc.arguments.length
       ? ' ' + doc.arguments.map(arg => `${arg.name}${arg.description ? `(${arg.description})` : ''}`).join(' ')
       : ''
-  } => ${doc.returns.type}`
+    } => ${doc.returns.type}`
 }
 
 function printHelp() {

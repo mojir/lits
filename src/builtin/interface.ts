@@ -22,3 +22,20 @@ export type SpecialExpression = {
   evaluate: (node: SpecialExpressionNode, contextStack: Context[], evaluateAstNode: EvaluateAstNode) => unknown
   validate?: (node: SpecialExpressionNode) => void
 }
+
+export type SpecialExpressionName =
+  | 'let'
+  | 'if'
+  | 'setq'
+  | 'and'
+  | 'or'
+  | 'cond'
+  | 'defun'
+  | 'function'
+  | 'lambda'
+  | 'return-from'
+  | 'return'
+  | 'block'
+  | 'try'
+  | 'throw'
+

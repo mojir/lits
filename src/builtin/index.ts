@@ -11,6 +11,7 @@ import { returnFromSpecialExpression } from './specialExpressions/return-from'
 import { returnSpecialExpression } from './specialExpressions/return'
 import { blockSpecialExpression } from './specialExpressions/block'
 import { trySpecialExpression } from './specialExpressions/try'
+import { throwSpecialExpression } from './specialExpressions/throw'
 import { normalExpressions } from './normalExpressions'
 import { SpecialExpression } from './interface'
 
@@ -30,6 +31,7 @@ export const specialExpressions: SpecialExpressions = {
   return: returnSpecialExpression,
   block: blockSpecialExpression,
   try: trySpecialExpression,
+  throw: throwSpecialExpression,
 }
 
 

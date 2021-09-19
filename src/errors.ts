@@ -25,3 +25,11 @@ export class ReturnSignal extends Error {
     this.value = value
   }
 }
+
+export class UserDefinedError extends Error {
+  constructor(message: string) {
+    super(message)
+    Object.setPrototypeOf(this, UserDefinedError.prototype)
+    this.name = 'UserDefinedError'
+  }
+}

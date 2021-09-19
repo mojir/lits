@@ -1,3 +1,4 @@
+import { SpecialExpressionName } from '../builtin/interface'
 import { FunctionArguments } from '../builtin/utils'
 import { ReservedName } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
@@ -28,20 +29,7 @@ type NodeType =
   | 'ReservedName'
   | 'Binding'
   | 'Argument'
-type SpecialExpressionName =
-  | 'let'
-  | 'if'
-  | 'setq'
-  | 'and'
-  | 'or'
-  | 'cond'
-  | 'defun'
-  | 'function'
-  | 'lambda'
-  | 'return-from'
-  | 'return'
-  | 'block'
-  | 'try'
+
 export type ModifierName = '&rest' | '&optional'
 
 interface GenericNode {

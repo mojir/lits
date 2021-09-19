@@ -31,6 +31,7 @@ import {
   assertPositiveNumber,
   assertRegExp,
   assertString,
+  asNonEmptyString,
   isBuiltinLispishFunction,
   isLispishFunction,
   isUserDefinedLispishFunction,
@@ -40,6 +41,7 @@ describe('utils', () => {
   test('asAstNode', () => {
     expect(() => asAstNode(undefined)).toThrow()
     const node: AstNode = { type: 'Name', value: 'test' }
+
     expect(asAstNode(node)).toBe(node)
   })
   test('asLispishFunction', () => {
@@ -81,6 +83,19 @@ describe('utils', () => {
     const obj = {}
     expect(asNotUndefined(obj)).toBe(obj)
   })
+  test('asNonEmptyString', () => {
+    expect(asNonEmptyString('1')).toBe('1')
+    expect(() => asNonEmptyString('')).toThrow()
+    expect(() => asNonEmptyString(0)).toThrow()
+    expect(() => asNonEmptyString(1)).toThrow()
+    expect(() => asNonEmptyString(true)).toThrow()
+    expect(() => asNonEmptyString(false)).toThrow()
+    expect(() => asNonEmptyString(null)).toThrow()
+    expect(() => asNonEmptyString(undefined)).toThrow()
+    expect(() => asNonEmptyString([])).toThrow()
+    expect(() => asNonEmptyString({})).toThrow()
+  })
+
   test('assertArray', () => {
     expect(() => assertArray(0)).toThrow()
     expect(() => assertArray({})).toThrow()
@@ -392,6 +407,7 @@ describe('utils', () => {
     expect(() => assertString([])).toThrow()
     expect(() => assertString({})).toThrow()
   })
+
   test('isLispishFunction', () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,

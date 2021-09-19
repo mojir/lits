@@ -114,6 +114,13 @@ export function assertString(value: unknown): asserts value is string {
   }
 }
 
+export function asNonEmptyString(value: unknown): string {
+  if (typeof value !== 'string' || value.length === 0) {
+    throw TypeError(`Expected non empty string, got: ${value} type="${typeof value}"`)
+  }
+  return value
+}
+
 export function assertRegExp(value: unknown): asserts value is RegExp {
   if (!(value instanceof RegExp)) {
     throw TypeError(`Expected RegExp, got: ${value} type="${typeof value}"`)

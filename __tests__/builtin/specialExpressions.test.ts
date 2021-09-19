@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { lispish } from '../../src'
-import { ReturnFromSignal, ReturnSignal } from '../../src/errors'
+import { ReturnFromSignal, ReturnSignal, UserDefinedError } from '../../src/errors'
 import { FunctionScope } from '../../src/evaluator/interface'
 
 describe('specialExpressions', () => {
@@ -443,6 +443,21 @@ describe('specialExpressions', () => {
         (fn)
       `
       expect(lispish(program)).toBe('Two')
+    })
+  })
+
+  describe('throw', () => {
+    test('samples', () => {
+      expect(() => lispish('(throw "An error")')).toThrowError(UserDefinedError)
+      expect(() => lispish('(throw (substring "An error" 3))')).toThrowError(UserDefinedError)
+      expect(() => lispish('(throw "An error" 10)')).not.toThrowError(UserDefinedError)
+      expect(() => lispish('(throw "An error" 10)')).toThrow()
+      try {
+        lispish('(throw (substring "An error" 3))')
+        throw Error()
+      } catch (error) {
+        expect((error as UserDefinedError).message).toBe('error')
+      }
     })
   })
 })
