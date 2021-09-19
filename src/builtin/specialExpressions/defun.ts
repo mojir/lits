@@ -1,7 +1,7 @@
 import { AstNode, functionSymbol, LispishFunction, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
-import { FunctionArguments, parseFunctionArguments } from './utils'
+import { FunctionArguments, parseFunctionArguments } from '../utils'
 
 interface DefunSpecialExpressionNode extends SpecialExpressionNode {
   name: 'defun'

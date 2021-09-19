@@ -1,6 +1,6 @@
-import { AstNode, ParseArgument } from '../../parser/interface'
-import { Token } from '../../tokenizer/interface'
-import { asNotUndefined } from '../../utils'
+import { AstNode, ParseArgument } from '../parser/interface'
+import { Token } from '../tokenizer/interface'
+import { asNotUndefined } from '../utils'
 
 export type FunctionArguments = {
   mandatoryArguments: string[]

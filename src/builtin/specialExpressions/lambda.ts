@@ -7,7 +7,7 @@ import {
 } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
-import { FunctionArguments, parseFunctionArguments } from './utils'
+import { FunctionArguments, parseFunctionArguments } from '../utils'
 
 interface LambdaSpecialExpressionNode extends SpecialExpressionNode {
   name: 'lambda'

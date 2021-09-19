@@ -1,4 +1,4 @@
-import { FunctionArguments } from '../builtin/specialExpressions/utils'
+import { FunctionArguments } from '../builtin/utils'
 import { ReservedName } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 
