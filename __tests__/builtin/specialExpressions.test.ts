@@ -293,6 +293,42 @@ describe('specialExpressions', () => {
       `
       expect(lispish(program)).toBe('Kalle')
     })
+    test('nested block 1', () => {
+      const program = `
+        (block x
+          (setq val 1)
+          (block y
+            (return-from y undefined)
+          )
+          (setq val 2)
+        )
+        val
+      `
+      expect(lispish(program)).toBe(2)
+    })
+
+    test('nested block 2', () => {
+      const program = `
+        (block x
+          (setq val 1)
+          (block y
+            (return-from x undefined)
+          )
+          (setq val 2)
+        )
+        val
+      `
+      expect(lispish(program)).toBe(1)
+    })
+    test('return from lambda', () => {
+      const program = `
+        ((lambda () 
+          (return "A")
+          "B"
+        ))
+      `
+      expect(lispish(program)).toBe("A")
+    })
   })
 
   describe('return', () => {
@@ -362,6 +398,51 @@ describe('specialExpressions', () => {
         (write "XXX")
       )`),
       ).toThrow()
+    })
+  })
+
+  describe('try', () => {
+    test('samples', () => {
+      expect(lispish('(try (/ 2 4) ((error) 1))')).toBe(0.5)
+      expect(lispish('(try (/ 2 0) ((error) 1))')).toBe(1)
+      expect(lispish('(try (/ 2 0) ((error) error))')).toBeInstanceOf(Error)
+      expect(() => lispish('(try (/ 2 4) 1)')).toThrow()
+      expect(() => lispish('(try (/ 2 4) (1))')).toThrow()
+      expect(() => lispish('(try (/ 2 4) (("error") 1))')).toThrow()
+      expect(() => lispish('(try (/ 2 4) ((error1 error2) 1))')).toThrow()
+      expect(() => lispish('(try (/ 2 4) ((error) 1 2))')).toThrow()
+      expect(() => lispish('(try (/ 2 4) ((error) 1 )2)')).toThrow()
+    })
+    test('return-from should not trigger catchBlock', () => {
+      const program = `
+        (block b 
+          (try 
+            (progn
+              (write "One")
+              (return-from b "Two")
+              (write "Three")
+            )
+            ((error) "Four")
+          )
+        )
+      `
+      expect(lispish(program)).toBe('Two')
+    })
+    test('return-from should not trigger catchBlock', () => {
+      const program = `
+        (defun fn ()
+          (try 
+            (progn
+              (write "One")
+              (return "Two")
+              (write "Three")
+            )
+            ((error) "Four")
+          )
+        )
+        (fn)
+      `
+      expect(lispish(program)).toBe('Two')
     })
   })
 })

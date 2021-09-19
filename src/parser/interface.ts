@@ -41,6 +41,7 @@ type SpecialExpressionName =
   | 'return-from'
   | 'return'
   | 'block'
+  | 'try'
 export type ModifierName = '&rest' | '&optional'
 
 interface GenericNode {

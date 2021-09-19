@@ -2535,6 +2535,33 @@ const functionReference = {
     specialExpression: true,
     sideEffects: [],
   },
+  try: {
+    name: 'try',
+    category: 'Special expression',
+    linkName: 'try',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'tryExpression',
+        type: 'form',
+      },
+      {
+        name: 'catchBlock',
+        type: 'catchBlock',
+      },
+    ],
+    shortDescription: 'Executes tryExpression. If that throws, the catchBlock gets executed.',
+    longDescription: 'Executes tryExpression. If that throws, the catchBlock gets executed. See examples for details.',
+    examples: [
+      `(try (/ 2 4) ((error) (/ 2 1)))`,
+      `(try (/ 2 0) ((error) (/ 2 1)))`,
+      `(try (/ 2 0) ((error) error))`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
   function: {
     name: 'function',
     category: 'Special expression',

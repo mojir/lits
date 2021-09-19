@@ -740,9 +740,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.7635271976352915</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.004491583940316175</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.487182587866713</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.0554693169889362</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.008498516751110954</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.3029366684221879</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -2520,6 +2520,28 @@
 </div>
 
 
+<div id="try" class="content function">
+  <div class="function-header">try</div>
+  <h3>Special Expression</h3>
+  <p>Executes tryExpression. If that throws, the catchBlock gets executed. See examples for details.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>try tryExpression catchBlock => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>tryExpression: form</pre>
+<pre>catchBlock: catchBlock</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(try (/ 2 4) ((error) (/ 2 1)))')"><span class="icon-button">▶</span> (try (/ 2 4) ((error) (/ 2 1))) <span class="gray">=> 0.5</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(try (/ 2 0) ((error) (/ 2 1)))')"><span class="icon-button">▶</span> (try (/ 2 0) ((error) (/ 2 1))) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(try (/ 2 0) ((error) error))')"><span class="icon-button">▶</span> (try (/ 2 0) ((error) error)) <span class="gray">=> TypeError: Expected non zero value</span></span></pre>
+  </div>
+</div>
+
+
 <div id="function" class="content function">
   <div class="function-header">function</div>
   <h3>Special Expression</h3>
@@ -2663,7 +2685,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1631982705779</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632066119840</span></span></pre>
   </div>
 </div>
 
@@ -2987,6 +3009,7 @@
 <li id="return_link" onclick="showPage('return')">return</li>
 <li id="return-from_link" onclick="showPage('return-from')">return-from</li>
 <li id="setq_link" onclick="showPage('setq')">setq</li>
+<li id="try_link" onclick="showPage('try')">try</li>
         </ul>
 
         <label>Predicate</label>

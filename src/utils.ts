@@ -154,7 +154,7 @@ export function assertObjectOrArray(value: unknown): asserts value is Record<str
 export function assertNumberNotZero(value: unknown): asserts value is number {
   assertFiniteNumber(value)
   if (value === 0) {
-    throw TypeError(`Expected non zero value, got: ${value}"`)
+    throw TypeError(`Expected non zero value`)
   }
 }
 

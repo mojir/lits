@@ -129,8 +129,8 @@ function getExamplePage() {
   <br />
   <ul>
   ${examples
-    .map(example => {
-      return `
+      .map(example => {
+        return `
       <li>
         <div class="row example-item">
           <div class="column wide">
@@ -143,8 +143,8 @@ function getExamplePage() {
         </div>
       </li>
     `
-    })
-    .join('\n')}
+      })
+      .join('\n')}
   </ul>
 </div>
 `
@@ -163,27 +163,25 @@ function getDocumentationContent(docObj) {
     <pre>${getSyntax(name, args, returns)}</pre>
   </div>
 
-  ${
-    args.length === 0
+  ${args.length === 0
       ? '<label>No arguments</label>'
       : `<label>Arguments</label><div class="indent">${args
-          .map(arg => `<pre>${arg.name}: ${arg.type}</pre>`)
-          .join('\n')}</div>`
-  }
+        .map(arg => `<pre>${arg.name}: ${arg.type}</pre>`)
+        .join('\n')}</div>`
+    }
 
-  ${
-    sideEffects.length === 0
+  ${sideEffects.length === 0
       ? '<label>No side effects</label>'
       : `<label>Side effects</label><div class="indent">${sideEffects
-          .map(effect => `<pre>${effect}</pre>`)
-          .join('\n')}</div>`
-  }
+        .map(effect => `<pre>${effect}</pre>`)
+        .join('\n')}</div>`
+    }
   <label>Examples</label>
   <div class="indent">
     ${examples
       .map(example => {
         var oldLog = console.log
-        console.log = function () {}
+        console.log = function () { }
         var result
         try {
           result = lispish.lispish(example)
@@ -220,25 +218,24 @@ function getSideBar() {
   <label class="link" onclick="showPage('example-page')">Examples</label>
   <br />
   ${categories
-    .map(categoryKey => {
-      return `
+      .map(categoryKey => {
+        return `
         <label>${categoryKey}</label>
         <ul>
-          ${
-            categoryCollections[categoryKey]
-              ? categoryCollections[categoryKey]
-                  .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-                  .map(obj => {
-                    const linkName = obj.linkName
-                    const name = escape(obj.name)
-                    return `<li id="${linkName}_link" onclick="showPage('${linkName}')">${name}</li>`
-                  })
-                  .join('\n')
-              : ''
+          ${categoryCollections[categoryKey]
+            ? categoryCollections[categoryKey]
+              .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+              .map(obj => {
+                const linkName = obj.linkName
+                const name = escape(obj.name)
+                return `<li id="${linkName}_link" onclick="showPage('${linkName}')">${name}</li>`
+              })
+              .join('\n')
+            : ''
           }
         </ul>`
-    })
-    .join('\n')}
+      })
+      .join('\n')}
 </nav>
 `
 }
@@ -268,6 +265,9 @@ function stringifyValue(value) {
       return `&lt;FUNCTION ${value.name ?? 'λ'} (${value.arguments.join(' ')})&gt;`
     }
   }
+  if (typeof value === 'object' && value instanceof Error) {
+    return value.toString()
+  }
   if (typeof value === 'object' && value instanceof RegExp) {
     return `${value}`
   }
@@ -296,9 +296,8 @@ function formatDescription(value) {
 }
 
 function getSyntax(name, args, returns) {
-  return `${name}${
-    args.length ? ' ' + args.map(arg => `${arg.name}${arg.description ? `(${arg.description})` : ''}`).join(' ') : ''
-  } => ${returns.type}`
+  return `${name}${args.length ? ' ' + args.map(arg => `${arg.name}${arg.description ? `(${arg.description})` : ''}`).join(' ') : ''
+    } => ${returns.type}`
 }
 
 function escapeExample(example) {
