@@ -2671,7 +2671,7 @@ const functionReference = {
     },
     arguments: [
       {
-        name: 'regexp-string',
+        name: 'pattern',
         type: 'string',
       },
       {
@@ -2679,8 +2679,8 @@ const functionReference = {
         type: 'string',
       },
     ],
-    shortDescription: 'Creates a RegExp from `regexp-string` and `flags`.',
-    longDescription: 'Creates a RegExp from `regexp-string` and `flags`.',
+    shortDescription: 'Creates a RegExp from `pattern` and `flags`.',
+    longDescription: 'Creates a RegExp from `pattern` and `flags`.',
     examples: [`(regexp "^\\s*(.*)$")`, `(regexp "albert" "i")`],
     specialExpression: false,
     sideEffects: [],
@@ -2694,7 +2694,7 @@ const functionReference = {
     },
     arguments: [
       {
-        name: 'regexp',
+        name: 'pattern',
         type: 'RegExp',
       },
       {
@@ -2703,9 +2703,9 @@ const functionReference = {
       },
     ],
     shortDescription:
-      'Matches `string` against `regexp`. If `string` matches, a *match*-list is returned, otherwise `undefined`.',
+      'Matches `string` against `pattern`. If `string` matches, a *match*-list is returned, otherwise `undefined`.',
     longDescription:
-      'Matches `string` against `regexp`. If `string` matches, a *match*-list is returned, otherwise `undefined`.',
+      'Matches `string` against `pattern`. If `string` matches, a *match*-list is returned, otherwise `undefined`.',
     examples: [
       `(match (regexp "^\\s*(.*)$") "  A string")`,
       `(match (regexp "albert" "i") "My name is Albert")`,
@@ -2723,16 +2723,20 @@ const functionReference = {
     },
     arguments: [
       {
-        name: 'regexp',
-        type: 'RegExp',
-      },
-      {
         name: 'string',
         type: 'string',
       },
+      {
+        name: 'pattern',
+        type: 'RegExp',
+      },
+      {
+        name: 'replacement',
+        type: 'string',
+      },
     ],
-    shortDescription: 'Returns a new string with some or all matches of a pattern replaced by a replacement.',
-    longDescription: 'Returns a new string with some or all matches of a pattern replaced by a replacement.',
+    shortDescription: 'Returns a new string with some or all matches of `pattern` replaced by `replacement`.',
+    longDescription: 'Returns a new string with some or all matches of `pattern` replaced by `replacement`.',
     examples: [`(replace "Duck" (regexp "u") "i")`, `(replace "abcABC" (regexp "a" "gi") "-")`],
     specialExpression: false,
     sideEffects: [],
