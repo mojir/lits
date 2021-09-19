@@ -4,7 +4,7 @@ import { lispish } from '../../src'
 import { ReturnFromSignal, ReturnSignal } from '../../src/errors'
 import { FunctionScope } from '../../src/evaluator/interface'
 
-describe('evaluator', () => {
+describe('specialExpressions', () => {
   let oldLog: () => void
   let logSpy: jest.Mock<any, any>
   beforeEach(() => {
@@ -232,36 +232,6 @@ describe('evaluator', () => {
     test('call defun function', () => {
       // expect(lispish('(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
       expect(lispish("(defun applyWithVal (fn val) (fn val)) (applyWithVal #'1+ 10)")).toBe(11)
-    })
-    test('&rest params', () => {
-      expect(() => lispish('(defun test (&rest a) a)')).not.toThrow()
-      expect(() => lispish('(defun test (&rest 1) a)')).toThrow()
-      expect(() => lispish('(defun test (x &rest a) a)')).not.toThrow()
-      expect(() => lispish('(defun test (x &rest) a)')).toThrow()
-      expect(() => lispish('(defun test (x &rest a b) a)')).toThrow()
-      expect(() => lispish('(defun test (x &rest a) a) (test 1)')).not.toThrow()
-      expect(() => lispish('(defun test (x &rest a) a) (test)')).toThrow()
-      expect(() => lispish("(defun test (&rest a) a) (test #'+)")).toThrow()
-      const program = `
-        (defun test (first &rest rest) rest)
-        (test 1 2 3)
-      `
-      expect(lispish(program)).toEqual([2, 3])
-    })
-    test('&optional params', () => {
-      expect(() => lispish('(defun test (&optional a) a)')).not.toThrow()
-      expect(() => lispish('(defun test (&optional (a 10)) a)')).not.toThrow()
-      expect(() => lispish('(defun test (x &optional a) a)')).not.toThrow()
-      expect(() => lispish('(defun test (x &optional) a)')).toThrow()
-      expect(() => lispish('(defun test (x &optional a b) a)')).not.toThrow()
-      expect(() => lispish('(defun test (x &optional a) a) (test 1)')).not.toThrow()
-      expect(() => lispish('(defun test (x &optional a) a) (test 1 2)')).not.toThrow()
-      expect(() => lispish('(defun test (x &optional a) a) (test 1 2 3)')).toThrow()
-      expect(() => lispish('(defun test (x &optional a) a) (test)')).toThrow()
-      expect(() => lispish("(defun test (&optional a) #'a) (test #'+)")).not.toThrow()
-      expect(lispish(`(defun test (first &optional o) o) (test 1 2)`)).toEqual(2)
-      expect(lispish(`(defun test (first &optional o) o) (test 1)`)).toEqual(undefined)
-      expect(lispish(`(defun test (first &optional (o 10)) o) (test 1)`)).toEqual(10)
     })
   })
 

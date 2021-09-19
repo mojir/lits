@@ -17,7 +17,6 @@ import {
   ParseBinding,
   ParseArgument,
   BindingNode,
-  ModifierNode,
   ModifierName,
 } from './interface'
 import { builtin } from '../builtin'
@@ -40,15 +39,6 @@ type ParseName = (tokens: Token[], position: number) => [number, NameNode]
 export const parseName: ParseName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
   return [position + 1, { type: 'Name', value: token.value }]
-}
-
-type ParseModifier = (tokens: Token[], position: number) => [number, ModifierNode]
-export const parseModifier: ParseModifier = (tokens: Token[], position: number) => {
-  const token = asNotUndefined(tokens[position + 1])
-  if (token.type !== 'name') {
-    throw Error('Expected a name node')
-  }
-  return [position + 1, { type: 'Modifier', value: token.value as ModifierName }]
 }
 
 type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
@@ -117,10 +107,7 @@ const parseArgument: ParseArgument = (tokens, position) => {
     }
     return [newPosition + 1, { type: 'Argument', name, defaultValue }]
   } else if (token.type === 'modifier') {
-    const { value } = token
-    if (value !== '&rest' && value !== '&optional') {
-      throw Error(`Unexpected modifier: "${value}"`)
-    }
+    const value = token.value as ModifierName
     return [position + 1, { type: 'Modifier', value }]
   } else {
     throw Error(`Unexpected token: ${token.type}: ${token.value}`)
@@ -239,9 +226,6 @@ export const parseToken: ParseToken = (tokens, position) => {
       break
     case 'shorthand':
       nodeDescriptor = parseFunctionShorthand(tokens, position)
-      break
-    case 'modifier':
-      nodeDescriptor = parseModifier(tokens, position)
       break
   }
   if (!nodeDescriptor) {
