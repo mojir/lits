@@ -5,24 +5,35 @@
     }
   })
   document.getElementById('lisp-textarea').addEventListener('keydown', keydownHandler)
+  document
+    .getElementById('lisp-textarea')
+    .addEventListener('input', e => localStorage.setItem('lisp-textarea', e.target.value))
   document.getElementById('context-textarea').addEventListener('keydown', keydownHandler)
+  document
+    .getElementById('context-textarea')
+    .addEventListener('input', e => localStorage.setItem('context-textarea', e.target.value))
+
   var id = location.hash.substring(1) || 'index'
   showPage(id, 'replace')
-  setPlayground('default')
+
+  document.getElementById('lisp-textarea').value = localStorage.getItem('lisp-textarea') || ''
+  document.getElementById('context-textarea').value = localStorage.getItem('context-textarea') || ''
 })()
 
 function keydownHandler(e) {
-  if (['Tab', 'Backspace'].includes(e.key)) {
+  if (['Tab', 'Backspace', 'Enter'].includes(e.key)) {
     var start = this.selectionStart
     var end = this.selectionEnd
 
-    const indexOfReturn = this.value.lastIndexOf('\n', start)
-    const rowLength = start - (indexOfReturn !== -1 ? indexOfReturn : 0)
+    let indexOfReturn = this.value.lastIndexOf('\n', start)
+    const rowLength = start - indexOfReturn - 1
     var onTabStop = rowLength % 2 === 0
     if (e.key == 'Tab') {
       e.preventDefault()
-      this.value = this.value.substring(0, start) + (onTabStop ? '  ' : ' ') + this.value.substring(end)
-      this.selectionStart = this.selectionEnd = start + (onTabStop ? 2 : 1)
+      if (!e.shiftKey) {
+        this.value = this.value.substring(0, start) + (onTabStop ? '  ' : ' ') + this.value.substring(end)
+        this.selectionStart = this.selectionEnd = start + (onTabStop ? 2 : 1)
+      }
     }
     if (e.key == 'Backspace') {
       if (onTabStop && this.value.substr(start - 2, 2) === '  ') {
@@ -30,6 +41,12 @@ function keydownHandler(e) {
         this.value = this.value.substring(0, start - 2) + this.value.substring(end)
         this.selectionStart = this.selectionEnd = start - 2
       }
+    }
+    if (e.key == 'Enter') {
+      e.preventDefault()
+      const spaceCount = this.value.substring(indexOfReturn + 1, start).replace(/^( *).*/, '$1').length
+      this.value = this.value.substring(0, start) + `\n${' '.repeat(spaceCount)}` + this.value.substring(end)
+      this.selectionStart = this.selectionEnd = start + 1 + spaceCount
     }
   }
 }
@@ -137,6 +154,8 @@ function resetPlayground() {
   document.getElementById('lisp-textarea').value = ''
   document.getElementById('output-textarea').value = ''
   document.getElementById('log-textarea').value = ''
+  localStorage.setItem('lisp-textarea', '')
+  localStorage.setItem('context-textarea', '')
 }
 
 function runPlayground(example) {
@@ -155,11 +174,14 @@ function setPlayground(exampleId) {
   resetPlayground()
 
   if (example.context) {
-    document.getElementById('context-textarea').value = JSON.stringify(example.context, null, 2)
+    const value = JSON.stringify(example.context, null, 2)
+    document.getElementById('context-textarea').value = value
+    localStorage.setItem('context-textarea', value)
   }
 
   if (example.code) {
     document.getElementById('lisp-textarea').value = example.code
+    localStorage.setItem('lisp-textarea', example.code)
   }
 }
 
