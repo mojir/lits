@@ -12,8 +12,8 @@ import { returnSpecialExpression } from './specialExpressions/return'
 import { blockSpecialExpression } from './specialExpressions/block'
 import { trySpecialExpression } from './specialExpressions/try'
 import { throwSpecialExpression } from './specialExpressions/throw'
-import { normalExpressions } from './normalExpressions'
 import { SpecialExpression } from './interface'
+import { normalExpressions } from './normalExpressions'
 
 type SpecialExpressions = Record<string, SpecialExpression>
 
@@ -33,7 +33,6 @@ export const specialExpressions: SpecialExpressions = {
   try: trySpecialExpression,
   throw: throwSpecialExpression,
 }
-
 
 Object.keys(specialExpressions).forEach(key => {
   /* istanbul ignore next */

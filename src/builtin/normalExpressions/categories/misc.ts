@@ -8,10 +8,10 @@ import {
   assertLispishFunction,
   assertObjectOrArray,
   assertString,
-} from '../../utils'
-import { BuiltinNormalExpressions } from './interface'
+} from '../../../utils'
+import { BuiltinNormalExpressions } from '../../interface'
 
-export const misc: BuiltinNormalExpressions = {
+export const miscNormalExpression: BuiltinNormalExpressions = {
   write: {
     evaluate: (params: unknown[]): unknown => {
       // eslint-disable-next-line no-console

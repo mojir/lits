@@ -4,7 +4,6 @@ import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
 const nameRegExp = /[0-9a-zA-Z_^?=!$%<>.+*/\-[\]]/
-const fullNumberRegExp = /^-?\d+(\.\d+)?$/
 
 export const skipWhiteSpace: Tokenizer = (input, current) =>
   /\s/.test(input[current] ?? '') ? [1, undefined] : [0, undefined]
@@ -63,24 +62,77 @@ export const tokenizeString: Tokenizer = (input, position) => {
   return [length + 1, { type: 'string', value }]
 }
 
+const endOfNumberRegExp = /\s|\)/
+const decimalNumberRegExp = /[0-9]/
+const octalNumberRegExp = /[0-7]/
+const hexNumberRegExp = /[0-9a-fA-F]/
+const binaryNumberRegExp = /[0-1]/
+const firstCharRegExp = /[0-9.-]/
 export const tokenizeNumber: Tokenizer = (input: string, position: number) => {
-  const result = tokenizePattern('number', /[0-9.-]/, input, position)
-  const [length, token] = result
-  if (length === 0) {
-    return result
-  }
-
-  const nextPosition = position + length
-  const nextChar = input[nextPosition]
-  if (nextChar && nameRegExp.test(nextChar)) {
+  let type: 'decimal' | 'octal' | 'hex' | 'binary' = 'decimal'
+  const firstChar = input[position]
+  if (firstChar === undefined) {
     return [0, undefined]
   }
-  const value = asNotUndefined(token).value
-
-  if (!fullNumberRegExp.test(value)) {
+  let hasDecimals = firstChar === '.'
+  if (!firstCharRegExp.test(firstChar)) {
     return [0, undefined]
   }
-  return result
+
+  let i: number
+  for (i = position + 1; i < input.length; i += 1) {
+    const char = asNotUndefined(input[i])
+    if (endOfNumberRegExp.test(char)) {
+      break
+    }
+    if (i === position + 1 && firstChar === '0') {
+      if (char === 'b' || char === 'B') {
+        type = 'binary'
+        continue
+      }
+      if (char === 'o' || char === 'O') {
+        type = 'octal'
+        continue
+      }
+      if (char === 'x' || char === 'X') {
+        type = 'hex'
+        continue
+      }
+    }
+    if (type === 'decimal' && hasDecimals) {
+      if (!decimalNumberRegExp.test(char)) {
+        return [0, undefined]
+      }
+    } else if (type === 'binary') {
+      if (!binaryNumberRegExp.test(char)) {
+        return [0, undefined]
+      }
+    } else if (type === 'octal') {
+      if (!octalNumberRegExp.test(char)) {
+        return [0, undefined]
+      }
+    } else if (type === 'hex') {
+      if (!hexNumberRegExp.test(char)) {
+        return [0, undefined]
+      }
+    } else {
+      if (char === '.') {
+        hasDecimals = true
+        continue
+      }
+      if (!decimalNumberRegExp.test(char)) {
+        return [0, undefined]
+      }
+    }
+  }
+
+  const length = i - position
+  const value = input.substring(position, i)
+  if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-') {
+    return [0, undefined]
+  }
+
+  return [length, { type: 'number', value }]
 }
 
 export function tokenizeReservedName(input: string, position: number): TokenDescriptor {

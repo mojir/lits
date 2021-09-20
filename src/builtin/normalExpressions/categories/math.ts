@@ -1,4 +1,4 @@
-import { NormalExpressionNode } from '../../parser/interface'
+import { NormalExpressionNode } from '../../../parser/interface'
 import {
   asFiniteNumber,
   assertInteger,
@@ -11,10 +11,10 @@ import {
   assertFiniteNumber,
   assertNumberNotZero,
   assertPositiveNumber,
-} from '../../utils'
-import { BuiltinNormalExpressions } from './interface'
+} from '../../../utils'
+import { BuiltinNormalExpressions } from '../../interface'
 
-export const math: BuiltinNormalExpressions = {
+export const mathNormalExpression: BuiltinNormalExpressions = {
   '1+': {
     evaluate: ([first]: unknown[]): number => {
       assertFiniteNumber(first)

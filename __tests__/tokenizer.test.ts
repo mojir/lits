@@ -15,10 +15,10 @@ describe('Tokenizer', () => {
   })
 
   test('comments', () => {
-    expect(tokenize('"Hej" ;This is a string')).toEqual([{ type: 'string', value: 'Hej' }])
-    expect(tokenize('"Hej" ;This is a string\n"då"')).toEqual([
-      { type: 'string', value: 'Hej' },
-      { type: 'string', value: 'då' },
+    expect(tokenize('"Hi" ;This is a string')).toEqual([{ type: 'string', value: 'Hi' }])
+    expect(tokenize('"Hi" ;This is a string\n"there"')).toEqual([
+      { type: 'string', value: 'Hi' },
+      { type: 'string', value: 'there' },
     ])
   })
 

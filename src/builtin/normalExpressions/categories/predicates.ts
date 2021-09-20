@@ -1,9 +1,9 @@
-import { assertArray, isLispishFunction } from '../../utils'
-import { NormalExpressionNode } from '../../parser/interface'
-import { assertLengthOne, assertFiniteNumber } from '../../utils'
-import { BuiltinNormalExpressions } from './interface'
+import { assertArray, isLispishFunction } from '../../../utils'
+import { NormalExpressionNode } from '../../../parser/interface'
+import { assertLengthOne, assertFiniteNumber } from '../../../utils'
+import { BuiltinNormalExpressions } from '../../interface'
 
-export const predicates: BuiltinNormalExpressions = {
+export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'function?': {
     evaluate: ([first]: unknown[]): boolean => isLispishFunction(first),
     validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),

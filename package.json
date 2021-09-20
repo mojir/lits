@@ -1,6 +1,6 @@
 {
   "name": "lispish",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A lispish implementation in Typescript",
   "main": "dist/lispish.js",
   "module": "dist/lispish.mjs",
@@ -18,8 +18,7 @@
   },
   "files": [
     "dist",
-    "cli/index.js",
-    "cli/reference.js"
+    "cli/**/*"
   ],
   "jest": {
     "testResultsProcessor": "jest-junit",

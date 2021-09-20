@@ -6,10 +6,10 @@ import {
   assertLengthTwo,
   assertObject,
   assertString,
-} from '../../utils'
-import { BuiltinNormalExpressions } from './interface'
+} from '../../../utils'
+import { BuiltinNormalExpressions } from '../../interface'
 
-export const object: BuiltinNormalExpressions = {
+export const objectNormalExpression: BuiltinNormalExpressions = {
   object: {
     evaluate: (params: unknown[]): Record<string, unknown> => {
       const result: Record<string, unknown> = {}

@@ -1,4 +1,4 @@
-import { NormalExpressionNode } from '../../parser/interface'
+import { NormalExpressionNode } from '../../../parser/interface'
 import {
   assertLengthOne,
   assertLengthTwo,
@@ -8,10 +8,10 @@ import {
   assertNumberGte,
   assertString,
   assertInteger,
-} from '../../utils'
-import { BuiltinNormalExpressions } from './interface'
+} from '../../../utils'
+import { BuiltinNormalExpressions } from '../../interface'
 
-export const string: BuiltinNormalExpressions = {
+export const stringNormalExpression: BuiltinNormalExpressions = {
   substring: {
     evaluate: ([first, second, third]: unknown[]): unknown => {
       assertString(first)

@@ -14,10 +14,10 @@ import {
   assertNumberLt,
   assertNumberNotZero,
   assertPositiveNumber,
-} from '../../utils'
-import { BuiltinNormalExpressions } from './interface'
+} from '../../../utils'
+import { BuiltinNormalExpressions } from '../../interface'
 
-export const list: BuiltinNormalExpressions = {
+export const listNormalExpression: BuiltinNormalExpressions = {
   list: {
     evaluate: (params: unknown[]): unknown[] => params,
   },

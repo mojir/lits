@@ -1,7 +1,7 @@
-import { assertLengthOneOrTwo, assertLengthThree, assertLengthTwo, assertRegExp, assertString } from '../../utils'
-import { BuiltinNormalExpressions } from './interface'
+import { assertLengthOneOrTwo, assertLengthThree, assertLengthTwo, assertRegExp, assertString } from '../../../utils'
+import { BuiltinNormalExpressions } from '../../interface'
 
-export const regexp: BuiltinNormalExpressions = {
+export const regexpNormalExpression: BuiltinNormalExpressions = {
   regexp: {
     evaluate: (params: unknown[]): RegExp => {
       const [first, second] = params
