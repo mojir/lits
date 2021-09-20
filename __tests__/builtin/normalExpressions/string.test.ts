@@ -173,6 +173,9 @@ describe('string functions', () => {
   describe('string-to-number', () => {
     test('samples', () => {
       expect(lispish('(string-to-number "123.25")')).toBe(123.25)
+      expect(lispish('(string-to-number "0b1111")')).toBe(15)
+      expect(lispish('(string-to-number "0Xf")')).toBe(15)
+      expect(lispish('(string-to-number "0o17")')).toBe(15)
       expect(lispish('(string-to-number "-0.125")')).toBe(-0.125)
       expect(() => lispish('(string-to-number)')).toThrow()
       expect(() => lispish('(string-to-number "987" "65")')).toThrow()
@@ -184,7 +187,18 @@ describe('string functions', () => {
     test('samples', () => {
       expect(lispish('(number-to-string 10.25)')).toBe('10.25')
       expect(lispish('(number-to-string -11)')).toBe('-11')
+      expect(lispish('(number-to-string 11 2)')).toBe('1011')
+      expect(lispish('(number-to-string 11 8)')).toBe('13')
+      expect(lispish('(number-to-string 11.11 10)')).toBe('11.11')
       expect(() => lispish('(number-to-string)')).toThrow()
+      expect(() => lispish('(number-to-string -1 2)')).toThrow()
+      expect(() => lispish('(number-to-string 1.5 2)')).toThrow()
+      expect(() => lispish('(number-to-string 1.5 8)')).toThrow()
+      expect(() => lispish('(number-to-string 1.5 16)')).toThrow()
+      expect(() => lispish('(number-to-string -1 2)')).toThrow()
+      expect(() => lispish('(number-to-string -1 8)')).toThrow()
+      expect(() => lispish('(number-to-string -1 16)')).toThrow()
+      expect(() => lispish('(number-to-string 10 7)')).toThrow()
       expect(() => lispish('(number-to-string 10 20)')).toThrow()
     })
   })

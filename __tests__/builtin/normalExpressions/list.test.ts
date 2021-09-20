@@ -522,4 +522,69 @@ describe('list functions', () => {
       expect(() => lispish('(shift)')).toThrow()
     })
   })
+
+  describe('take', () => {
+    test('samples', () => {
+      expect(lispish('(take (list 1 2 3) 2)')).toEqual([1, 2])
+      expect(lispish('(take (list 1 2 3) 20)')).toEqual([1, 2, 3])
+      expect(lispish('(take (list 1 2 3) 0)')).toEqual([])
+
+      expect(() => lispish('(take (list 1 2 3) 0.5)')).toThrow()
+      expect(() => lispish('(take (object))')).toThrow()
+      expect(() => lispish('(take null)')).toThrow()
+      expect(() => lispish('(take undefined)')).toThrow()
+      expect(() => lispish('(take true)')).toThrow()
+      expect(() => lispish('(take false)')).toThrow()
+      expect(() => lispish('(take "1")')).toThrow()
+      expect(() => lispish('(take)')).toThrow()
+      expect(() => lispish('(take (list 1 2 3))')).toThrow()
+      expect(() => lispish('(take (list 1 2 3) 1 2)')).toThrow()
+    })
+    test('new list created', () => {
+      const program = `
+        (setq l1 (list 1 2 3))
+        (setq l2 (take l1 2))
+        (= l1 l2)
+      `
+      expect(lispish(program)).toBe(false)
+    })
+  })
+
+  describe('take-while', () => {
+    test('samples', () => {
+      expect(lispish('(take-while (lambda (x) (< x 3)) (list 1 2 3 2 1))')).toEqual([1, 2])
+      expect(lispish('(take-while (lambda (x) (> x 3)) (list 1 2 3 2 1))')).toEqual([])
+
+      expect(() => lispish('(take-while (lambda (x) (< x 3)) (object))')).toThrow()
+      expect(() => lispish('(take-while (lambda (x) (< x 3)) null)')).toThrow()
+      expect(() => lispish('(take-while (lambda (x) (< x 3)) undefined)')).toThrow()
+      expect(() => lispish('(take-while (lambda (x) (< x 3)) true)')).toThrow()
+      expect(() => lispish('(take-while (lambda (x) (< x 3)) false)')).toThrow()
+      expect(() => lispish('(take-while (lambda (x) (< x 3)) "1")')).toThrow()
+      expect(() => lispish('(take-while 10 (list 1 2 3))')).toThrow()
+      expect(() => lispish('(take-while)')).toThrow()
+      expect(() => lispish('(take-while (list 1 2 3))')).toThrow()
+      expect(() => lispish('(take-while (lambda (x) (< x 3)) (list 1 2 3) 1)')).toThrow()
+    })
+    test('new list created', () => {
+      const program = `
+        (setq l1 (list 1 2 3))
+        (setq l2 (take-while (lambda (x) (< x 3)) l1)) 
+        (= l1 l2)
+      `
+      expect(lispish(program)).toBe(false)
+    })
+  })
+
+  describe('sort', () => {
+    test('samples', () => {
+      expect(lispish('(sort (lambda (a b) (cond ((< a b) -1) ((> a b) 1) (true -1))) (list 3 1 2))')).toEqual([1, 2, 3])
+      expect(lispish('(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) (list 3 1 2))')).toEqual([3, 2, 1])
+      expect(lispish('(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) (list))')).toEqual([])
+      expect(() => lispish('(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) 10)')).toThrow()
+      expect(() => lispish('(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))))')).toThrow()
+      expect(() => lispish('(sort (list 10))')).toThrow()
+      expect(() => lispish('(sort)')).toThrow()
+    })
+  })
 })

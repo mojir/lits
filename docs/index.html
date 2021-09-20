@@ -14,7 +14,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.7</span></div>
+    <div class="column right version"><span>v0.1.8</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -698,6 +698,69 @@
 </div>
 
 
+<div id="take" class="content function">
+  <div class="function-header">take</div>
+  
+  <p>Constructs a new list with the <span class="pre">count</span> first elements from <span class="pre">list</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>take list count => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+<pre>count: integer</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(take (list 1 2 3 4 5) 3)')"><span class="icon-button">▶</span> (take (list 1 2 3 4 5) 3) <span class="gray">=> [1,2,3]</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(take (list 1 2 3 4 5) 0)')"><span class="icon-button">▶</span> (take (list 1 2 3 4 5) 0) <span class="gray">=> []</span></span></pre>
+  </div>
+</div>
+
+
+<div id="take-while" class="content function">
+  <div class="function-header">take-while</div>
+  
+  <p>Returns the members of <span class="pre">list</span> in order, stopping before the first one for which <span class="pre">predicate</span> returns a falsy value.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>take-while predicate list => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>predicate: function</pre>
+<pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(take-while (lambda (x) (< x 3)) (list 1 2 3 2 1))')"><span class="icon-button">▶</span> (take-while (lambda (x) (< x 3)) (list 1 2 3 2 1)) <span class="gray">=> [1,2]</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(take-while (lambda (x) (> x 3)) (list 1 2 3 2 1))')"><span class="icon-button">▶</span> (take-while (lambda (x) (> x 3)) (list 1 2 3 2 1)) <span class="gray">=> []</span></span></pre>
+  </div>
+</div>
+
+
+<div id="sort" class="content function">
+  <div class="function-header">sort</div>
+  
+  <p>Returns a new list with the elements from <span class="pre">list</span> sorted according to <span class="pre">comparer</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>sort comparer list => list</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>comparer: function</pre>
+<pre>list: list</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(sort (lambda (a b) (cond ((< a b) -1) ((> a b) 1) (true -1))) (list 3 1 2))')"><span class="icon-button">▶</span> (sort (lambda (a b) (cond ((< a b) -1) ((> a b) 1) (true -1))) (list 3 1 2)) <span class="gray">=> [1,2,3]</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) (list 3 1 2))')"><span class="icon-button">▶</span> (sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) (list 3 1 2)) <span class="gray">=> [3,2,1]</span></span></pre>
+  </div>
+</div>
+
+
 <div id="_plus" class="content function">
   <div class="function-header">+</div>
   
@@ -1241,9 +1304,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.45375329167503065</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0033970448812442643</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.9785495033973141</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.6325193089418741</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0036493454040293673</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.9560363336869293</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1730,7 +1793,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632154732126</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632169455514</span></span></pre>
   </div>
 </div>
 
@@ -2905,19 +2968,24 @@
 <div id="number-to-string" class="content function">
   <div class="function-header">number-to-string</div>
   
-  <p>Converts <span class="pre">number</span> to a string.</p>
+  <p>Converts <span class="pre">number</span> to a string. If <span class="pre">base</span> is not equal to <span class="pre">10</span> nu mber must be a non negative integer.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>number-to-string number => string</pre>
+    <pre>number-to-string number base => string</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+  <label>Arguments</label><div class="indent"><pre>number: number</pre>
+<pre>base: number: 2, 8, 10 or 16</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="runPlayground('(number-to-string 10)')"><span class="icon-button">▶</span> (number-to-string 10) <span class="gray">=> "10"</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(number-to-string -1.01)')"><span class="icon-button">▶</span> (number-to-string -1.01) <span class="gray">=> "-1.01"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(number-to-string -.01)')"><span class="icon-button">▶</span> (number-to-string -.01) <span class="gray">=> "-0.01"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(number-to-string 15 2)')"><span class="icon-button">▶</span> (number-to-string 15 2) <span class="gray">=> "1111"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(number-to-string 15 8)')"><span class="icon-button">▶</span> (number-to-string 15 8) <span class="gray">=> "17"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(number-to-string 15 16)')"><span class="icon-button">▶</span> (number-to-string 15 16) <span class="gray">=> "f"</span></span></pre>
   </div>
 </div>
 
@@ -3178,7 +3246,10 @@
 <li id="shift_link" onclick="showPage('shift')">shift</li>
 <li id="slice_link" onclick="showPage('slice')">slice</li>
 <li id="some_link" onclick="showPage('some')">some</li>
+<li id="sort_link" onclick="showPage('sort')">sort</li>
 <li id="splice_link" onclick="showPage('splice')">splice</li>
+<li id="take_link" onclick="showPage('take')">take</li>
+<li id="take-while_link" onclick="showPage('take-while')">take-while</li>
 <li id="unshift_link" onclick="showPage('unshift')">unshift</li>
         </ul>
 

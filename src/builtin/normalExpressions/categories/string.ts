@@ -8,6 +8,7 @@ import {
   assertNumberGte,
   assertString,
   assertInteger,
+  assertLengthOneOrTwo,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -112,7 +113,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'string-to-number': {
     evaluate: ([str]: unknown[]): number => {
       assertString(str)
-      const number = parseFloat(str)
+      const number = Number(str)
       if (Number.isNaN(number)) {
         throw Error(`Could not convert '${str}' to a number`)
       }
@@ -122,11 +123,25 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'number-to-string': {
-    evaluate: ([nbr]: unknown[]): string => {
-      assertFiniteNumber(nbr)
-      return `${nbr}`
+    evaluate: (params: unknown[]): string => {
+      const [number, base] = params
+      assertFiniteNumber(number)
+      if (params.length === 1) {
+        return Number(number).toString()
+      } else {
+        assertFiniteNumber(base)
+        if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
+          throw Error(`Expected base 2, 8, 10 or 16, got: ${base}`)
+        }
+        if (base === 10) {
+          return Number(number).toString(base)
+        }
+        assertNonNegativeNumber(number)
+        assertInteger(number)
+        return Number(number).toString(base)
+      }
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLengthOne(params),
+    validate: ({ params }: NormalExpressionNode): void => assertLengthOneOrTwo(params),
   },
 
   'lower-case': {

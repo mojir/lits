@@ -12,7 +12,7 @@ const {
   reservedNames,
   isLispishFunction,
 } = require('../dist/lispish.js')
-const { functionReference } = require('./reference.js')
+const { functionReference } = require('./reference')
 
 const commands = [
   '`help',
@@ -342,18 +342,20 @@ ${'Side effects'.underline}
 ${doc.sideEffects.length === 0 ? '  None'.italic : doc.sideEffects.map(sideEffect => `  ${sideEffect}`).join('\n')}
 
 ${'Examples'.underline}
-${doc.examples.length === 0
-      ? '[no examples]'
-      : doc.examples.map(example => `  ${example} ${'=>'.gray} ${executeExample(example)}`).join('\n')
-    }
+${
+  doc.examples.length === 0
+    ? '[no examples]'
+    : doc.examples.map(example => `  ${example} ${'=>'.gray} ${executeExample(example)}`).join('\n')
+}
 `
 }
 
 function getSyntax(doc) {
-  return `${doc.name}${doc.arguments.length
+  return `${doc.name}${
+    doc.arguments.length
       ? ' ' + doc.arguments.map(arg => `${arg.name}${arg.description ? `(${arg.description})` : ''}`).join(' ')
       : ''
-    } => ${doc.returns.type}`
+  } => ${doc.returns.type}`
 }
 
 function printHelp() {

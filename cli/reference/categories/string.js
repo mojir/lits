@@ -275,10 +275,23 @@ module.exports = {
         name: 'number',
         type: 'number',
       },
+      {
+        name: 'base',
+        type: 'number: 2, 8, 10 or 16',
+      },
     ],
-    shortDescription: 'Converts `number` to a string.',
-    longDescription: 'Converts `number` to a string.',
-    examples: ['(number-to-string 10)', '(number-to-string -1.01)'],
+    shortDescription:
+      'Converts `number` to a string. If `base` is not equal to `10` number must be a non negative integer.',
+    longDescription:
+      'Converts `number` to a string. If `base` is not equal to `10` nu mber must be a non negative integer.',
+    examples: [
+      '(number-to-string 10)',
+      '(number-to-string -1.01)',
+      '(number-to-string -.01)',
+      '(number-to-string 15 2)',
+      '(number-to-string 15 8)',
+      '(number-to-string 15 16)',
+    ],
     specialExpression: false,
     sideEffects: [],
   },

@@ -678,4 +678,83 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
+  take: {
+    name: 'take',
+    category: 'List',
+    linkName: 'take',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list',
+      },
+      {
+        name: 'count',
+        type: 'integer',
+      },
+    ],
+    shortDescription: 'Constructs a new list with the `count` first elements from `list`.',
+    longDescription: 'Constructs a new list with the `count` first elements from `list`.',
+    examples: [`(take (list 1 2 3 4 5) 3)`, `(take (list 1 2 3 4 5) 0)`],
+    specialExpression: false,
+    sideEffects: [],
+  },
+
+  'take-while': {
+    name: 'take-while',
+    category: 'List',
+    linkName: 'take-while',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'predicate',
+        type: 'function',
+      },
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription:
+      'Returns the members of `list` in order, stopping before the first one for which `predicate` returns a falsy value.',
+    longDescription:
+      'Returns the members of `list` in order, stopping before the first one for which `predicate` returns a falsy value.',
+    examples: [
+      `(take-while (lambda (x) (< x 3)) (list 1 2 3 2 1))`,
+      `(take-while (lambda (x) (> x 3)) (list 1 2 3 2 1))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+
+  sort: {
+    name: 'sort',
+    category: 'List',
+    linkName: 'sort',
+    returns: {
+      type: 'list',
+    },
+    arguments: [
+      {
+        name: 'comparer',
+        type: 'function',
+      },
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Returns a new list with the elements from `list` sorted according to `comparer`.',
+    longDescription: 'Returns a new list with the elements from `list` sorted according to `comparer`.',
+    examples: [
+      `(sort (lambda (a b) (cond ((< a b) -1) ((> a b) 1) (true -1))) (list 3 1 2))`,
+      `(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) (list 3 1 2))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
 }
