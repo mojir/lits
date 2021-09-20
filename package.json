@@ -13,8 +13,8 @@
     "test": "jest --collect-coverage",
     "compile": "tsc -p ./tsconfig.json --noEmit",
     "lispish": "node ./cli/index.js",
-    "docs": "node ./scripts/docs/buildDocs.js",
-    "build-and-publish": "npm run lint && npm run test && npm run build && npm run docs && npm publish"
+    "build-docs": "node ./scripts/docs/buildDocs.js",
+    "open-docs": "open-cli ./docs/index.html"
   },
   "files": [
     "dist",
@@ -47,6 +47,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.1.1",
     "jest-junit": "^12.0.0",
+    "open-cli": "^7.0.1",
     "prettier": "^2.4.0",
     "rollup": "^2.38.2",
     "rollup-plugin-gzip": "^2.5.0",
