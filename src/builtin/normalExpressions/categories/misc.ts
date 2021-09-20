@@ -10,38 +10,7 @@ import {
   assertString,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
-
 export const miscNormalExpression: BuiltinNormalExpressions = {
-  write: {
-    evaluate: (params: unknown[]): unknown => {
-      // eslint-disable-next-line no-console
-      console.log(...params)
-      if (params.length > 0) {
-        return params[params.length - 1]
-      }
-      return undefined
-    },
-  },
-
-  now: {
-    evaluate: (): number => {
-      return Date.now()
-    },
-    validate: ({ params }) => assertLengthZero(params),
-  },
-
-  '=': {
-    evaluate: ([first, ...rest]: unknown[]): boolean => {
-      for (const param of rest) {
-        if (param !== first) {
-          return false
-        }
-      }
-      return true
-    },
-    validate: ({ params }) => assertLengthOneOrMore(params),
-  },
-
   '!=': {
     evaluate: (params: unknown[]): boolean => {
       for (let i = 0; i < params.length - 1; i += 1) {
@@ -51,16 +20,31 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
           }
         }
       }
+
       return true
     },
     validate: ({ params }) => assertLengthOneOrMore(params),
   },
+  '=': {
+    evaluate: ([first, ...rest]: unknown[]): boolean => {
+      for (const param of rest) {
+        if (param !== first) {
+          return false
+        }
+      }
 
-  not: {
-    evaluate: ([first]: unknown[]): boolean => !first,
-    validate: ({ params }) => assertLengthOne(params),
+      return true
+    },
+    validate: ({ params }) => assertLengthOneOrMore(params),
   },
-
+  apply: {
+    evaluate: ([func, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+      assertLispishFunction(func)
+      assertArray(list)
+      return evaluateLispishFunction(func, list, contextStack)
+    },
+    validate: ({ params }) => assertLengthTwo(params),
+  },
   'get-path': {
     evaluate: ([first, second]: unknown[]): unknown => {
       assertObjectOrArray(first)
@@ -69,19 +53,31 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: ({ params }) => assertLengthTwo(params),
   },
-
+  not: {
+    evaluate: ([first]: unknown[]): boolean => !first,
+    validate: ({ params }) => assertLengthOne(params),
+  },
+  now: {
+    evaluate: (): number => {
+      return Date.now()
+    },
+    validate: ({ params }) => assertLengthZero(params),
+  },
   progn: {
     evaluate: (params: unknown[]): unknown => {
       return params[params.length - 1]
     },
   },
+  write: {
+    evaluate: (params: unknown[]): unknown => {
+      // eslint-disable-next-line no-console
+      console.log(...params)
 
-  apply: {
-    evaluate: ([func, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
-      assertLispishFunction(func)
-      assertArray(list)
-      return evaluateLispishFunction(func, list, contextStack)
+      if (params.length > 0) {
+        return params[params.length - 1]
+      }
+
+      return undefined
     },
-    validate: ({ params }) => assertLengthTwo(params),
   },
 }

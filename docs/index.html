@@ -99,6 +99,19 @@
         </div>
       </li>
     
+
+      <li>
+        <div class="row example-item">
+          <div class="column wide">
+            <div class="example-name">Sort</div>
+            <div class="example-description">Sort a list of numbers.</div>
+          </div>
+          <div class="column right">
+            <span class="button" onclick="setPlayground('sort')">Show in playground</span>
+          </div>
+        </div>
+      </li>
+    
   </ul>
 </div>
 
@@ -511,6 +524,7 @@
   <div class="indent">
     <pre><span class="example" onclick="runPlayground('(position #___single_quote___string? (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (position #'string? (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> 0</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(position (lambda (x) (> x 10)) (list 5 10 15 20))')"><span class="icon-button">▶</span> (position (lambda (x) (> x 10)) (list 5 10 15 20)) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(position (lambda (x) (> x 100)) (list 5 10 15 20))')"><span class="icon-button">▶</span> (position (lambda (x) (> x 100)) (list 5 10 15 20)) <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
@@ -1227,9 +1241,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.6133749811898814</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.007060342034752825</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.1179928059714435</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.45375329167503065</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0033970448812442643</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.9785495033973141</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1716,7 +1730,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632138413205</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632154732126</span></span></pre>
   </div>
 </div>
 

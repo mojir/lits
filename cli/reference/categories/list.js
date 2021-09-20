@@ -496,6 +496,7 @@ module.exports = {
     examples: [
       `(position #'string? (list "Albert" "Mojir" 160 (list 1 2)))`,
       `(position (lambda (x) (> x 10)) (list 5 10 15 20))`,
+      `(position (lambda (x) (> x 100)) (list 5 10 15 20))`,
     ],
     specialExpression: false,
     sideEffects: [],

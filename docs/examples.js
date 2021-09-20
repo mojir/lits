@@ -66,8 +66,25 @@ var examples = [
     (* x (factorial (1- x)))
   )
 )
-  
-(factorial 4) 
+
+(factorial 4)
 `.trim(),
+  },
+  {
+    id: 'sort',
+    name: 'Sort',
+    description: 'Sort a list of numbers.',
+    code: `
+(setq l (list 7 39 45 0 23 1 50 100 12 -5))
+(defun numberComparer (a b)
+  (cond
+    ((< a b) -1)
+    ((> a b) 1)
+    (true 0)
+  )
+)
+
+(sort #'numberComparer l)
+    `.trim(),
   },
 ]

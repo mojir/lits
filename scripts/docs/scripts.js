@@ -1,13 +1,38 @@
-; (function () {
+;(function () {
   window.addEventListener('keyup', function (evt) {
     if (evt.key === 'Enter' && evt.ctrlKey === true) {
       play()
     }
   })
+  document.getElementById('lisp-textarea').addEventListener('keydown', keydownHandler)
+  document.getElementById('context-textarea').addEventListener('keydown', keydownHandler)
   var id = location.hash.substring(1) || 'index'
   showPage(id, 'replace')
   setPlayground('default')
 })()
+
+function keydownHandler(e) {
+  if (['Tab', 'Backspace'].includes(e.key)) {
+    var start = this.selectionStart
+    var end = this.selectionEnd
+
+    const indexOfReturn = this.value.lastIndexOf('\n', start)
+    const rowLength = start - (indexOfReturn !== -1 ? indexOfReturn : 0)
+    var onTabStop = rowLength % 2 === 0
+    if (e.key == 'Tab') {
+      e.preventDefault()
+      this.value = this.value.substring(0, start) + (onTabStop ? '  ' : ' ') + this.value.substring(end)
+      this.selectionStart = this.selectionEnd = start + (onTabStop ? 2 : 1)
+    }
+    if (e.key == 'Backspace') {
+      if (onTabStop && this.value.substr(start - 2, 2) === '  ') {
+        e.preventDefault()
+        this.value = this.value.substring(0, start - 2) + this.value.substring(end)
+        this.selectionStart = this.selectionEnd = start - 2
+      }
+    }
+  }
+}
 
 window.addEventListener('popstate', () => {
   var id = location.hash.substring(1) || 'index'
