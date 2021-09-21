@@ -13,7 +13,7 @@ export const throwSpecialExpression: SpecialExpression = {
     const [newPosition, messageNode] = parseToken(tokens, position)
     position = newPosition
 
-    let token = asNotUndefined(tokens[position])
+    const token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === ')')) {
       throw Error('Expected ")"')
     }
@@ -23,7 +23,7 @@ export const throwSpecialExpression: SpecialExpression = {
       type: 'SpecialExpression',
       name: 'throw',
       params: [],
-      messageNode: messageNode
+      messageNode,
     }
     return [position, node]
   },

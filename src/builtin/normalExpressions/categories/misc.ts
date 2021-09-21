@@ -1,14 +1,5 @@
 import get from 'lodash/get'
-import {
-  assertArray,
-  assertLengthOne,
-  assertLengthOneOrMore,
-  assertLengthTwo,
-  assertLengthZero,
-  assertLispishFunction,
-  assertObjectOrArray,
-  assertString,
-} from '../../../utils'
+import { assertArray, assertLength, assertLispishFunction, assertObjectOrArray, assertString } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const miscNormalExpression: BuiltinNormalExpressions = {
   '!=': {
@@ -23,7 +14,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: ({ params }) => assertLengthOneOrMore(params),
+    validate: ({ params }) => assertLength({ min: 1 }, params),
   },
   '=': {
     evaluate: ([first, ...rest]: unknown[]): boolean => {
@@ -35,7 +26,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: ({ params }) => assertLengthOneOrMore(params),
+    validate: ({ params }) => assertLength({ min: 1 }, params),
   },
   apply: {
     evaluate: ([func, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -43,7 +34,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       assertArray(list)
       return evaluateLispishFunction(func, list, contextStack)
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   'get-path': {
     evaluate: ([first, second]: unknown[]): unknown => {
@@ -51,17 +42,17 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       assertString(second)
       return get(first, second)
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   now: {
     evaluate: (): number => {
       return Date.now()
     },
-    validate: ({ params }) => assertLengthZero(params),
+    validate: ({ params }) => assertLength(0, params),
   },
   progn: {
     evaluate: (params: unknown[]): unknown => {
@@ -95,6 +86,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return undefined
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
 }

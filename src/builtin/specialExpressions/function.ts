@@ -1,6 +1,6 @@
 import { normalExpressions } from '../normalExpressions'
 import { functionSymbol, LispishFunction, SpecialExpressionNode } from '../../parser/interface'
-import { asNameNode, asNotUndefined, assertLengthOne } from '../../utils'
+import { asNameNode, asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 export interface FunctionSpecialExpressionNode extends SpecialExpressionNode {
@@ -53,9 +53,7 @@ export const functionSpecialExpression: SpecialExpression = {
       builtin: parameter.value,
     }
   },
-  validate: node => {
-    assertLengthOne(node.params)
-  },
+  validate: node => assertLength(1, node.params),
 }
 
 function castFunctionExpressionNode(_node: SpecialExpressionNode): asserts _node is FunctionSpecialExpressionNode {

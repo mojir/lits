@@ -1,12 +1,7 @@
 import {
   assertArray,
   assertInteger,
-  assertLengthOne,
-  assertLengthOneOrMore,
-  assertLengthOneOrTwoOrThree,
-  assertLengthThree,
-  assertLengthTwo,
-  assertLengthTwoOrMore,
+  assertLength,
   assertLispishFunction,
   assertNegativeNumber,
   assertNonNegativeNumber,
@@ -26,14 +21,14 @@ export const listNormalExpression: BuiltinNormalExpressions = {
         return result.concat(arr)
       }, first)
     },
-    validate: ({ params }) => assertLengthOneOrMore(params),
+    validate: ({ params }) => assertLength({ min: 1 }, params),
   },
   cons: {
     evaluate: ([first, second]: unknown[]): unknown => {
       assertArray(second)
       return [first, ...second]
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   elt: {
     evaluate: ([arr, index]: unknown[]): unknown => {
@@ -41,7 +36,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       assertNonNegativeNumber(index)
       return arr[index]
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   every: {
     evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): boolean => {
@@ -54,7 +49,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
 
       return second.every(elem => evaluateLispishFunction(first, [elem], contextStack))
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   filter: {
     evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -62,7 +57,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       assertArray(second)
       return second.filter(elem => evaluateLispishFunction(first, [elem], contextStack))
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   find: {
     evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -70,28 +65,28 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       assertArray(second)
       return second.find(elem => evaluateLispishFunction(first, [elem], contextStack))
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   first: {
     evaluate: ([list]: unknown[]): unknown => {
       assertArray(list)
       return list[0]
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   last: {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)
       return first[first.length - 1]
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   length: {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)
       return first.length
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   list: {
     evaluate: (params: unknown[]): unknown[] => params,
@@ -106,7 +101,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   map: {
     evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -114,14 +109,14 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       assertArray(second)
       return second.map(elem => evaluateLispishFunction(first, [elem], contextStack))
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   pop: {
     evaluate: ([arr]: unknown[]): unknown => {
       assertArray(arr)
       return arr.pop()
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   position: {
     evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): number | undefined => {
@@ -130,7 +125,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       const index = second.findIndex(elem => evaluateLispishFunction(first, [elem], contextStack))
       return index !== -1 ? index : undefined
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   push: {
     evaluate: ([arr, ...values]: unknown[]): unknown[] => {
@@ -138,7 +133,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       arr.push(...values)
       return arr
     },
-    validate: ({ params }) => assertLengthTwoOrMore(params),
+    validate: ({ params }) => assertLength({ min: 2 }, params),
   },
   range: {
     evaluate: (params: unknown[]): unknown[] => {
@@ -180,7 +175,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    validate: ({ params }) => assertLengthOneOrTwoOrThree(params),
+    validate: ({ params }) => assertLength({ min: 1, max: 3 }, params),
   },
   reduce: {
     evaluate: ([first, second, third]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -190,7 +185,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
         return evaluateLispishFunction(first, [result, elem], contextStack)
       }, third)
     },
-    validate: ({ params }) => assertLengthThree(params),
+    validate: ({ params }) => assertLength(3, params),
   },
   'reduce-right': {
     evaluate: ([first, second, third]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -200,7 +195,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
         return evaluateLispishFunction(first, [result, elem], contextStack)
       }, third)
     },
-    validate: ({ params }) => assertLengthThree(params),
+    validate: ({ params }) => assertLength(3, params),
   },
   rest: {
     evaluate: ([first]: unknown[]): unknown => {
@@ -212,21 +207,21 @@ export const listNormalExpression: BuiltinNormalExpressions = {
 
       return first.slice(1)
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   reverse: {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)
       return [...first].reverse()
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   second: {
     evaluate: ([list]: unknown[]): unknown => {
       assertArray(list)
       return list[1]
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   selt: {
     evaluate: ([arr, index, value]: unknown[]): unknown => {
@@ -236,14 +231,14 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       arr[index] = value
       return arr
     },
-    validate: ({ params }) => assertLengthThree(params),
+    validate: ({ params }) => assertLength(3, params),
   },
   shift: {
     evaluate: ([arr]: unknown[]): unknown => {
       assertArray(arr)
       return arr.shift()
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   slice: {
     evaluate: (params: unknown[]): unknown => {
@@ -263,7 +258,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       assertInteger(third)
       return first.slice(second, third)
     },
-    validate: ({ params }) => assertLengthOneOrTwoOrThree(params),
+    validate: ({ params }) => assertLength({ min: 1, max: 3 }, params),
   },
   some: {
     evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): boolean => {
@@ -276,7 +271,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
 
       return second.some(elem => evaluateLispishFunction(first, [elem], contextStack))
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   sort: {
     evaluate: ([sorter, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown[] => {
@@ -291,7 +286,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       })
       return result
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   splice: {
     evaluate: (params: unknown[]): unknown => {
@@ -306,7 +301,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       assertInteger(deleteCount)
       return list.splice(start, deleteCount, ...values)
     },
-    validate: ({ params }) => assertLengthTwoOrMore(params),
+    validate: ({ params }) => assertLength({ min: 2 }, params),
   },
   take: {
     evaluate: ([list, n]: unknown[]): unknown => {
@@ -316,7 +311,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
 
       return list.slice(0, n)
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   'take-while': {
     evaluate: ([predicate, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -333,7 +328,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   unshift: {
     evaluate: ([arr, ...values]: unknown[]): unknown[] => {
@@ -341,6 +336,6 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       arr.unshift(...values)
       return arr
     },
-    validate: ({ params }) => assertLengthTwoOrMore(params),
+    validate: ({ params }) => assertLength({ min: 2 }, params),
   },
 }

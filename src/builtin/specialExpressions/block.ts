@@ -1,6 +1,6 @@
 import { ReturnFromSignal } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLengthOneOrMore } from '../../utils'
+import { asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface BlockSpecialExpressionNode extends SpecialExpressionNode {
@@ -48,7 +48,7 @@ export const blockSpecialExpression: SpecialExpression = {
       throw error
     }
   },
-  validate: node => assertLengthOneOrMore(node.params),
+  validate: node => assertLength({ min: 1 }, node.params),
 }
 
 function castBlockExpressionNode(_node: SpecialExpressionNode): asserts _node is BlockSpecialExpressionNode {

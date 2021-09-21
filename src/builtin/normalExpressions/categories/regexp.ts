@@ -1,4 +1,4 @@
-import { assertLengthOneOrTwo, assertLengthThree, assertLengthTwo, assertRegExp, assertString } from '../../../utils'
+import { assertLength, assertRegExp, assertString } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const regexpNormalExpression: BuiltinNormalExpressions = {
@@ -14,7 +14,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       assertString(second)
       return new RegExp(first, second)
     },
-    validate: ({ params }) => assertLengthOneOrTwo(params),
+    validate: ({ params }) => assertLength({ min: 1, max: 2 }, params),
   },
   match: {
     evaluate: ([first, second]: unknown[]): string[] | undefined => {
@@ -27,7 +27,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       }
       return undefined
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
   replace: {
     evaluate: ([string, regexp, value]: unknown[]): string => {
@@ -37,6 +37,6 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
 
       return string.replace(regexp, value)
     },
-    validate: ({ params }) => assertLengthThree(params),
+    validate: ({ params }) => assertLength(3, params),
   },
 }

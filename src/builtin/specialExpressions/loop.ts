@@ -1,6 +1,6 @@
 import { ReturnSignal } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLengthOneOrMore } from '../../utils'
+import { asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface LoopSpecialExpressionNode extends SpecialExpressionNode {
@@ -39,7 +39,7 @@ export const loopSpecialExpression: SpecialExpression = {
       throw error
     }
   },
-  validate: node => assertLengthOneOrMore(node.params),
+  validate: node => assertLength({ min: 1 }, node.params),
 }
 
 function castLoopExpressionNode(_node: SpecialExpressionNode): asserts _node is LoopSpecialExpressionNode {

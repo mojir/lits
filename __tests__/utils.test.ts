@@ -7,14 +7,6 @@ import {
   assertArray,
   assertInteger,
   assertLengthEven,
-  assertLengthOne,
-  assertLengthOneOrMore,
-  assertLengthOneOrTwoOrThree,
-  assertLengthThree,
-  assertLengthTwo,
-  assertLengthTwoOrMore,
-  assertLengthTwoOrThree,
-  assertLengthZero,
   assertLispishFunction,
   assertNameNode,
   assertNegativeNumber,
@@ -171,78 +163,10 @@ describe('utils', () => {
     expect(() => assertLengthEven([0, 1, 2, 3, 4])).toThrow()
     expect(() => assertLengthEven([0, 1, 2, 3, 4, 5])).not.toThrow()
   })
-  test('assertLengthOne', () => {
-    expect(() => assertLengthOne([])).toThrow()
-    expect(() => assertLengthOne([0])).not.toThrow()
-    expect(() => assertLengthOne([0, 1])).toThrow()
-    expect(() => assertLengthOne([0, 1, 2])).toThrow()
-    expect(() => assertLengthOne([0, 1, 2, 3])).toThrow()
-    expect(() => assertLengthOne([0, 1, 2, 3, 4])).toThrow()
-    expect(() => assertLengthOne([0, 1, 2, 3, 4, 5])).toThrow()
+  test('assertLength', () => {
+    //TODO
   })
-  test('assertLengthOneOrMore', () => {
-    expect(() => assertLengthOneOrMore([])).toThrow()
-    expect(() => assertLengthOneOrMore([0])).not.toThrow()
-    expect(() => assertLengthOneOrMore([0, 1])).not.toThrow()
-    expect(() => assertLengthOneOrMore([0, 1, 2])).not.toThrow()
-    expect(() => assertLengthOneOrMore([0, 1, 2, 3])).not.toThrow()
-    expect(() => assertLengthOneOrMore([0, 1, 2, 3, 4])).not.toThrow()
-    expect(() => assertLengthOneOrMore([0, 1, 2, 3, 4, 5])).not.toThrow()
-  })
-  test('assertLengthTwoOrMore', () => {
-    expect(() => assertLengthTwoOrMore([])).toThrow()
-    expect(() => assertLengthTwoOrMore([0])).toThrow()
-    expect(() => assertLengthTwoOrMore([0, 1])).not.toThrow()
-    expect(() => assertLengthTwoOrMore([0, 1, 2])).not.toThrow()
-    expect(() => assertLengthTwoOrMore([0, 1, 2, 3])).not.toThrow()
-    expect(() => assertLengthTwoOrMore([0, 1, 2, 3, 4])).not.toThrow()
-    expect(() => assertLengthTwoOrMore([0, 1, 2, 3, 4, 5])).not.toThrow()
-  })
-  test('assertLengthOneOrTwoOrThree', () => {
-    expect(() => assertLengthOneOrTwoOrThree([])).toThrow()
-    expect(() => assertLengthOneOrTwoOrThree([0])).not.toThrow()
-    expect(() => assertLengthOneOrTwoOrThree([0, 1])).not.toThrow()
-    expect(() => assertLengthOneOrTwoOrThree([0, 1, 2])).not.toThrow()
-    expect(() => assertLengthOneOrTwoOrThree([0, 1, 2, 3])).toThrow()
-    expect(() => assertLengthOneOrTwoOrThree([0, 1, 2, 3, 4])).toThrow()
-    expect(() => assertLengthOneOrTwoOrThree([0, 1, 2, 3, 4, 5])).toThrow()
-  })
-  test('assertLengthThree', () => {
-    expect(() => assertLengthThree([])).toThrow()
-    expect(() => assertLengthThree([0])).toThrow()
-    expect(() => assertLengthThree([0, 1])).toThrow()
-    expect(() => assertLengthThree([0, 1, 2])).not.toThrow()
-    expect(() => assertLengthThree([0, 1, 2, 3])).toThrow()
-    expect(() => assertLengthThree([0, 1, 2, 3, 4])).toThrow()
-    expect(() => assertLengthThree([0, 1, 2, 3, 4, 5])).toThrow()
-  })
-  test('assertLengthTwo', () => {
-    expect(() => assertLengthTwo([])).toThrow()
-    expect(() => assertLengthTwo([0])).toThrow()
-    expect(() => assertLengthTwo([0, 1])).not.toThrow()
-    expect(() => assertLengthTwo([0, 1, 2])).toThrow()
-    expect(() => assertLengthTwo([0, 1, 2, 3])).toThrow()
-    expect(() => assertLengthTwo([0, 1, 2, 3, 4])).toThrow()
-    expect(() => assertLengthTwo([0, 1, 2, 3, 4, 5])).toThrow()
-  })
-  test('assertLengthTwoOrThree', () => {
-    expect(() => assertLengthTwoOrThree([])).toThrow()
-    expect(() => assertLengthTwoOrThree([0])).toThrow()
-    expect(() => assertLengthTwoOrThree([0, 1])).not.toThrow()
-    expect(() => assertLengthTwoOrThree([0, 1, 2])).not.toThrow()
-    expect(() => assertLengthTwoOrThree([0, 1, 2, 3])).toThrow()
-    expect(() => assertLengthTwoOrThree([0, 1, 2, 3, 4])).toThrow()
-    expect(() => assertLengthTwoOrThree([0, 1, 2, 3, 4, 5])).toThrow()
-  })
-  test('assertLengthZero', () => {
-    expect(() => assertLengthZero([])).not.toThrow()
-    expect(() => assertLengthZero([0])).toThrow()
-    expect(() => assertLengthZero([0, 1])).toThrow()
-    expect(() => assertLengthZero([0, 1, 2])).toThrow()
-    expect(() => assertLengthZero([0, 1, 2, 3])).toThrow()
-    expect(() => assertLengthZero([0, 1, 2, 3, 4])).toThrow()
-    expect(() => assertLengthZero([0, 1, 2, 3, 4, 5])).toThrow()
-  })
+
   test('assertLispishFunction', () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,

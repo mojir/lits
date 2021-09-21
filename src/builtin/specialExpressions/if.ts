@@ -1,5 +1,5 @@
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asAstNode, assertLengthThree } from '../../utils'
+import { asAstNode, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface IfSpecialExpressionNode extends SpecialExpressionNode {
@@ -25,9 +25,7 @@ export const ifSpecialExpression: SpecialExpression = {
     const ifNode = evaluateAstNode(asAstNode(conditionNode), contextStack) ? asAstNode(trueNode) : asAstNode(falseNode)
     return evaluateAstNode(ifNode, contextStack)
   },
-  validate: node => {
-    assertLengthThree(node.params)
-  },
+  validate: node => assertLength(3, node.params),
 }
 
 function castIfExpressionNode(_node: SpecialExpressionNode): asserts _node is IfSpecialExpressionNode {

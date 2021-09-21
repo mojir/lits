@@ -1,5 +1,5 @@
 import { SpecialExpressionNode } from '../../parser/interface'
-import { assertLengthOneOrMore, assertNotUndefined } from '../../utils'
+import { assertLength, assertNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface WhenSpecialExpressionNode extends SpecialExpressionNode {
@@ -33,7 +33,7 @@ export const whenSpecialExpression: SpecialExpression = {
     }
     return result
   },
-  validate: node => assertLengthOneOrMore(node.params),
+  validate: node => assertLength({ min: 1 }, node.params),
 }
 
 function castWhenExpressionNode(_node: SpecialExpressionNode): asserts _node is WhenSpecialExpressionNode {

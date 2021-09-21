@@ -1,5 +1,5 @@
 import { SpecialExpressionNode } from '../../parser/interface'
-import { assertLengthOneOrMore, assertNotUndefined } from '../../utils'
+import { assertLength, assertNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface UnlessSpecialExpressionNode extends SpecialExpressionNode {
@@ -33,7 +33,7 @@ export const unlessSpecialExpression: SpecialExpression = {
     }
     return result
   },
-  validate: node => assertLengthOneOrMore(node.params),
+  validate: node => assertLength({ min: 1 }, node.params),
 }
 
 function castUnlessExpressionNode(_node: SpecialExpressionNode): asserts _node is UnlessSpecialExpressionNode {

@@ -1,4 +1,4 @@
-import { assertInteger, assertLengthOne, assertLengthTwo } from '../../../utils'
+import { assertInteger, assertLength } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const bitwiseNormalExpression: BuiltinNormalExpressions = {
@@ -7,7 +7,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       assertInteger(int32)
       return ~int32
     },
-    validate: ({ params }) => assertLengthOne(params),
+    validate: ({ params }) => assertLength(1, params),
   },
   logand: {
     evaluate: (params: unknown[]): unknown => {
@@ -43,6 +43,6 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       assertInteger(second)
       return first ^ second
     },
-    validate: ({ params }) => assertLengthTwo(params),
+    validate: ({ params }) => assertLength(2, params),
   },
 }

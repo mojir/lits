@@ -58,7 +58,7 @@ export const trySpecialExpression: SpecialExpression = {
       params: [],
       tryExpression,
       catchExpression,
-      error
+      error,
     }
 
     return [position, node]

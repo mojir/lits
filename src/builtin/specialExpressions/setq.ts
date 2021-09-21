@@ -1,6 +1,6 @@
 import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asAstNode, asNameNode, asNotUndefined, assertLengthTwo, assertNameNode } from '../../utils'
+import { asAstNode, asNameNode, asNotUndefined, assertLength, assertNameNode } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface SetqSpecialExpressionNode extends SpecialExpressionNode {
@@ -44,7 +44,7 @@ export const setqSpecialExpression: SpecialExpression = {
     return value
   },
   validate: node => {
-    assertLengthTwo(node.params)
+    assertLength(2, node.params)
   },
 }
 

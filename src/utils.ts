@@ -171,57 +171,24 @@ export function assertNumberNotZero(value: unknown): asserts value is number {
   }
 }
 
-export function assertLengthZero(params: unknown[]): void {
-  if (params.length !== 0) {
-    throw Error(`Wrong number of arguments, expected 0, got ${params.length}`)
-  }
-}
+export function assertLength(count: number | { min?: number; max?: number }, params: unknown[]): void {
+  if (typeof count === 'number') {
+    if (params.length !== count) {
+      throw Error(`Wrong number of arguments, expected ${count}, got ${params.length}`)
+    }
+  } else {
+    const { min, max } = count
+    if (min === undefined && max === undefined) {
+      throw Error('Min or max must be specified')
+    }
 
-export function assertLengthOne(params: unknown[]): void {
-  if (params.length !== 1) {
-    throw Error(`Wrong number of arguments, expected 1, got ${params.length}`)
-  }
-}
+    if (typeof min === 'number' && params.length < min) {
+      throw Error(`Wrong number of arguments, expected at least ${min}, got ${params.length}`)
+    }
 
-export function assertLengthTwo(params: unknown[]): void {
-  if (params.length !== 2) {
-    throw Error(`Wrong number of arguments, expected 2, got ${params.length}`)
-  }
-}
-
-export function assertLengthThree(params: unknown[]): void {
-  if (params.length !== 3) {
-    throw Error(`Wrong number of arguments, expected 3, got ${params.length}`)
-  }
-}
-
-export function assertLengthOneOrMore(params: unknown[]): void {
-  if (params.length < 1) {
-    throw Error(`Wrong number of arguments, expected 1 or more, got ${params.length}`)
-  }
-}
-
-export function assertLengthTwoOrMore(params: unknown[]): void {
-  if (params.length < 2) {
-    throw Error(`Wrong number of arguments, expected 2 or more, got ${params.length}`)
-  }
-}
-
-export function assertLengthTwoOrThree(params: unknown[]): void {
-  if (params.length !== 2 && params.length !== 3) {
-    throw Error(`Wrong number of arguments, expected 2 or 3, got ${params.length}`)
-  }
-}
-
-export function assertLengthOneOrTwo(params: unknown[]): void {
-  if (params.length !== 1 && params.length !== 2) {
-    throw Error(`Wrong number of arguments, expected 1 or 2, got ${params.length}`)
-  }
-}
-
-export function assertLengthOneOrTwoOrThree(params: unknown[]): void {
-  if (params.length !== 1 && params.length !== 2 && params.length !== 3) {
-    throw Error(`Wrong number of arguments, expected 1, 2 or 3, got ${params.length}`)
+    if (typeof max === 'number' && params.length > max) {
+      throw Error(`Wrong number of arguments, expected at most ${max}, got ${params.length}`)
+    }
   }
 }
 
