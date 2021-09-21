@@ -29,6 +29,7 @@ import {
   isUserDefinedLispishFunction,
   asFiniteNumber,
   assertNotUndefined,
+  assertLength,
 } from '../src/utils'
 describe('utils', () => {
   test('asAstNode', () => {
@@ -164,7 +165,40 @@ describe('utils', () => {
     expect(() => assertLengthEven([0, 1, 2, 3, 4, 5])).not.toThrow()
   })
   test('assertLength', () => {
-    //TODO
+    expect(() => assertLength(0, [])).not.toThrow()
+    expect(() => assertLength(0, [1])).toThrow()
+    expect(() => assertLength(1, [1])).not.toThrow()
+    expect(() => assertLength(1, [])).toThrow()
+    expect(() => assertLength(1, [1, 2])).toThrow()
+    expect(() => assertLength(2, [1, 2])).not.toThrow()
+    expect(() => assertLength(2, [1])).toThrow()
+    expect(() => assertLength(2, [1, 2, 3])).toThrow()
+    expect(() => assertLength({ min: 1 }, [1, 2, 3, 4, 5])).not.toThrow()
+    expect(() => assertLength({ min: 1 }, [1, 2, 3, 4])).not.toThrow()
+    expect(() => assertLength({ min: 1 }, [1, 2, 3])).not.toThrow()
+    expect(() => assertLength({ min: 1 }, [1, 2])).not.toThrow()
+    expect(() => assertLength({ min: 1 }, [1])).not.toThrow()
+    expect(() => assertLength({ min: 1 }, [])).toThrow()
+    expect(() => assertLength({ max: 3 }, [1, 2, 3, 4, 5])).toThrow()
+    expect(() => assertLength({ max: 3 }, [1, 2, 3, 4])).toThrow()
+    expect(() => assertLength({ max: 3 }, [1, 2, 3])).not.toThrow()
+    expect(() => assertLength({ max: 3 }, [1, 2])).not.toThrow()
+    expect(() => assertLength({ max: 3 }, [1])).not.toThrow()
+    expect(() => assertLength({ max: 3 }, [])).not.toThrow()
+    expect(() => assertLength({ min: 1, max: 3 }, [])).toThrow()
+    expect(() => assertLength({ min: 1, max: 3 }, [1])).not.toThrow()
+    expect(() => assertLength({ min: 1, max: 3 }, [1, 2])).not.toThrow()
+    expect(() => assertLength({ min: 1, max: 3 }, [1, 2, 3])).not.toThrow()
+    expect(() => assertLength({ min: 1, max: 3 }, [1, 2, 3, 4])).toThrow()
+    expect(() => assertLength({ min: 1, max: 3 }, [1, 2, 3, 4, 5])).toThrow()
+    expect(() => assertLength({ min: 1, max: 3 }, [1, 2, 3, 4, 5, 6])).toThrow()
+    expect(() => assertLength({ min: 3, max: 1 }, [])).toThrow()
+    expect(() => assertLength({ min: 3, max: 1 }, [1])).toThrow()
+    expect(() => assertLength({ min: 3, max: 1 }, [1, 2])).toThrow()
+    expect(() => assertLength({ min: 3, max: 1 }, [1, 2, 3])).toThrow()
+    expect(() => assertLength({ min: 3, max: 1 }, [1, 2, 3, 4])).toThrow()
+    expect(() => assertLength({ min: 3, max: 1 }, [1, 2, 3, 4, 5])).toThrow()
+    expect(() => assertLength({ min: 3, max: 1 }, [1, 2, 3, 4, 5, 6])).toThrow()
   })
 
   test('assertLispishFunction', () => {
