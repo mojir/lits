@@ -67,15 +67,18 @@ function execute(expression) {
 function executeExample(expression) {
   const outputs = []
   const oldLog = console.log
+  const oldError = console.error
   console.log = (...values) => outputs.push(values.map(value => formatValue(value, true)))
+  console.error = (...values) => outputs.push(values.map(value => formatValue(value, true).red))
   try {
     const result = lispish(expression, config.globalVariables, config.topScope)
-    const outputString = outputs.map(output => `console.log(${output.join(', ')})`).join('  ').gray
-    return `${formatValue(result)}    ${outputString}`
+    const outputString = 'Console: '.gray + outputs.map(output => output.join(', '.gray)).join('  ')
+    return `${formatValue(result)}    ${outputs.length > 0 ? outputString : ''}`
   } catch (error) {
     return 'ERROR!'.brightRed
   } finally {
     console.log = oldLog
+    console.error = oldError
   }
 }
 
