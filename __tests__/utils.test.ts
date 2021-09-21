@@ -173,6 +173,7 @@ describe('utils', () => {
     expect(() => assertLength(2, [1, 2])).not.toThrow()
     expect(() => assertLength(2, [1])).toThrow()
     expect(() => assertLength(2, [1, 2, 3])).toThrow()
+    expect(() => assertLength({}, [])).toThrow()
     expect(() => assertLength({ min: 1 }, [1, 2, 3, 4, 5])).not.toThrow()
     expect(() => assertLength({ min: 1 }, [1, 2, 3, 4])).not.toThrow()
     expect(() => assertLength({ min: 1 }, [1, 2, 3])).not.toThrow()

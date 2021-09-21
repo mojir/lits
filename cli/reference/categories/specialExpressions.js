@@ -346,4 +346,170 @@ module.exports = {
     specialExpression: true,
     sideEffects: [],
   },
+  when: {
+    name: 'when',
+    category: 'Special expression',
+    linkName: 'when',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'test',
+        type: 'form',
+      },
+      {
+        name: 'form',
+        type: 'form',
+        description: 'zero or more',
+      },
+    ],
+    shortDescription:
+      'If `test` yields a truthy value, the forms are evaluated in order from left to right and the value returned by the last `form` is returned.',
+    longDescription:
+      'If `test` yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last `form` is returned. Otherwise, if `test` yields a falsy value, the forms are not evaluated, and `undefined` is returned. If no `form` is provided, undefined is returned.',
+    examples: [
+      `(when true (write "Hi") (write "There"))`,
+      `(when false (write "Hi") (write "There"))`,
+      `(when true)`,
+      `(when false)`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  unless: {
+    name: 'unless',
+    category: 'Special expression',
+    linkName: 'unless',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'test',
+        type: 'form',
+      },
+      {
+        name: 'form',
+        type: 'form',
+        description: 'zero or more',
+      },
+    ],
+    shortDescription:
+      'If `test` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last `form` is returned.',
+    longDescription:
+      'If `test` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last `form` is returned. Otherwise, if `test` yields a truthy value, the forms are not evaluated, and `undefined` is returned. If no `form` is provided, undefined is returned.',
+    examples: [
+      `(unless true (write "Hi") (write "There"))`,
+      `(unless false (write "Hi") (write "There"))`,
+      `(unless true)`,
+      `(unless false)`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  loop: {
+    name: 'loop',
+    category: 'Special expression',
+    linkName: 'loop',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'form',
+        type: 'form',
+        description: 'zero or more',
+      },
+    ],
+    shortDescription: 'Runs the `form`s repeatedly until `return` or `throw`.',
+    longDescription: 'Runs the `form`s repeatedly until `return` or `throw`.',
+    examples: [`(setq i 0) (loop (write "Hi") (setq i (1+ i)) (when (> i 3) (return i)))`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  while: {
+    name: 'while',
+    category: 'Special expression',
+    linkName: 'while',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'form',
+        type: 'form',
+        description: 'zero or more',
+      },
+    ],
+    shortDescription: 'Runs the `form`s repeatedly until `test` yields a falsy value.',
+    longDescription: 'Runs the `form`s repeatedly until `test` yields a falsy value.',
+    examples: [`(setq i 0) (while (<= i 3) (write "Hi") (setq i (1+ i)))`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  dolist: {
+    name: 'dolist',
+    category: 'Special expression',
+    linkName: 'dolist',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: '(var list [result])',
+        type: 'dolist form',
+      },
+      {
+        name: 'form',
+        type: 'form',
+        description: 'zero or more',
+      },
+    ],
+    shortDescription:
+      'Runs the `form`s once for each element in the list. if `result` is present, it will be evaluated after all iterations and its value will be returned.',
+    longDescription:
+      'Runs the `form`s once for each element in the list. if `result` is present, it will be evaluated after all iterations and its value will be returned.',
+    examples: [
+      `(setq l (list 1 2 3)) (setq x 0) (dolist (el l) (setq x (+ x el))) x`,
+      `(setq l (list 1 2 3)) (dolist (el l))`,
+      `(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el))))`,
+      `(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x)))`,
+      `(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw "Oops")))`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  dotimes: {
+    name: 'dotimes',
+    category: 'Special expression',
+    linkName: 'dotimes',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: '(var integer [result])',
+        type: 'dotimes form',
+      },
+      {
+        name: 'form',
+        type: 'form',
+        description: 'zero or more',
+      },
+    ],
+    shortDescription:
+      'Runs the `form`s `integer` times, setting var to 0, 1, ... `integer - 1`. if `result` is present, it will be evaluated after all iterations and its value will be returned.',
+    longDescription:
+      'Runs the `form`s `integer` times, setting var to 0, 1, ... `integer - 1`. if `result` is present, it will be evaluated after all iterations and its value will be returned.',
+    examples: [
+      `(setq x 0) (dotimes (i 4) (setq x (+ x i))) x`,
+      `(dotimes (el 5))`,
+      `(let ((x 0)) (dotimes (i (+ 1 2 3) x) (setq x (+ x i))))`,
+      `(let ((x 0)) (dotimes (i 5 x) (setq x (+ x i)) (return 10)))`,
+      `(let ((x 0)) (dotimes (i 100 x) (setq x (+ x i)) (throw "Oops")))`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
 }

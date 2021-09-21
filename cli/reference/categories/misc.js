@@ -180,4 +180,23 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
+  debug: {
+    name: 'debug',
+    category: 'Misc',
+    linkName: 'debug',
+    returns: {
+      type: 'undefined',
+    },
+    arguments: [
+      {
+        name: 'label',
+        type: 'form',
+      },
+    ],
+    shortDescription: 'Console.error context stack.',
+    longDescription: 'Console.error context stack.',
+    examples: [`(debug "A label")`, `(debug (concat "A" " " "label"))`],
+    specialExpression: false,
+    sideEffects: [],
+  },
 }

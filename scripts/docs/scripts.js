@@ -88,6 +88,16 @@ function play() {
     logTextarea.value = newContent
     logTextarea.scrollTop = logTextarea.scrollHeight
   }
+  var oldError = console.error
+  console.error = function () {
+    var args = Array.from(arguments)
+    oldError.apply(console, args)
+    var logRow = args.map(arg => stringifyValue(arg)).join(' ')
+    var oldContent = logTextarea.value
+    var newContent = oldContent ? oldContent + '\n' + logRow : logRow
+    logTextarea.value = newContent
+    logTextarea.scrollTop = logTextarea.scrollHeight
+  }
   try {
     result = lispish.lispish(code, context)
   } catch (error) {
@@ -96,6 +106,7 @@ function play() {
     return
   } finally {
     console.log = oldLog
+    console.error = oldError
   }
   output.classList.remove('error')
   var content = stringifyValue(result)

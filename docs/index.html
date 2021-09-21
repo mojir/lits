@@ -14,7 +14,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.8</span></div>
+    <div class="column right version"><span>v0.1.9</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1304,9 +1304,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.8712434380236382</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.006353357285537014</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.20737511171595613</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.48271162421917513</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.003035875238701478</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.36681445742426655</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1793,7 +1793,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632240952636</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632254639229</span></span></pre>
   </div>
 </div>
 
@@ -1836,6 +1836,26 @@
     <pre><span class="example" onclick="runPlayground('(get-path (write (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ (list 1 2 3)))) ___double_quote___a.x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (object "a" (object "x" (list 1 2 3)))) "a.x[2]") <span class="gray">=> 3</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(get-path (write (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ (list 1 2 3)))) ___double_quote___b.z[10]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (object "a" (object "x" (list 1 2 3)))) "b.z[10]") <span class="gray">=> undefined</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(get-path (write (list (object ___double_quote___x___double_quote___ (list 1 2 3)) (object ___double_quote___x___double_quote___ (list 4 5 6)))) ___double_quote___[1].x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write (list (object "x" (list 1 2 3)) (object "x" (list 4 5 6)))) "[1].x[2]") <span class="gray">=> 6</span></span></pre>
+  </div>
+</div>
+
+
+<div id="debug" class="content function">
+  <div class="function-header">debug</div>
+  
+  <p>Console.error context stack.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>debug label => undefined</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>label: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(debug ___double_quote___A label___double_quote___)')"><span class="icon-button">▶</span> (debug "A label") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(debug (concat ___double_quote___A___double_quote___ ___double_quote___ ___double_quote___ ___double_quote___label___double_quote___))')"><span class="icon-button">▶</span> (debug (concat "A" " " "label")) <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
@@ -2741,6 +2761,138 @@
 </div>
 
 
+<div id="when" class="content function">
+  <div class="function-header">when</div>
+  <h3>Special Expression</h3>
+  <p>If <span class="pre">test</span> yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last <span class="pre">form</span> is returned. Otherwise, if <span class="pre">test</span> yields a falsy value, the forms are not evaluated, and <span class="pre">undefined</span> is returned. If no <span class="pre">form</span> is provided, undefined is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>when test form(zero or more) => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>test: form</pre>
+<pre>form: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(when true (write ___double_quote___Hi___double_quote___) (write ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when true (write "Hi") (write "There")) <span class="gray">=> "There"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(when false (write ___double_quote___Hi___double_quote___) (write ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when false (write "Hi") (write "There")) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(when true)')"><span class="icon-button">▶</span> (when true) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(when false)')"><span class="icon-button">▶</span> (when false) <span class="gray">=> undefined</span></span></pre>
+  </div>
+</div>
+
+
+<div id="unless" class="content function">
+  <div class="function-header">unless</div>
+  <h3>Special Expression</h3>
+  <p>If <span class="pre">test</span> yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last <span class="pre">form</span> is returned. Otherwise, if <span class="pre">test</span> yields a truthy value, the forms are not evaluated, and <span class="pre">undefined</span> is returned. If no <span class="pre">form</span> is provided, undefined is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>unless test form(zero or more) => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>test: form</pre>
+<pre>form: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(unless true (write ___double_quote___Hi___double_quote___) (write ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (unless true (write "Hi") (write "There")) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(unless false (write ___double_quote___Hi___double_quote___) (write ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (unless false (write "Hi") (write "There")) <span class="gray">=> "There"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(unless true)')"><span class="icon-button">▶</span> (unless true) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(unless false)')"><span class="icon-button">▶</span> (unless false) <span class="gray">=> undefined</span></span></pre>
+  </div>
+</div>
+
+
+<div id="loop" class="content function">
+  <div class="function-header">loop</div>
+  <h3>Special Expression</h3>
+  <p>Runs the <span class="pre">form</span>s repeatedly until <span class="pre">return</span> or <span class="pre">throw</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>loop form(zero or more) => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>form: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(setq i 0) (loop (write ___double_quote___Hi___double_quote___) (setq i (1+ i)) (when (> i 3) (return i)))')"><span class="icon-button">▶</span> (setq i 0) (loop (write "Hi") (setq i (1+ i)) (when (> i 3) (return i))) <span class="gray">=> 4</span></span></pre>
+  </div>
+</div>
+
+
+<div id="while" class="content function">
+  <div class="function-header">while</div>
+  <h3>Special Expression</h3>
+  <p>Runs the <span class="pre">form</span>s repeatedly until <span class="pre">test</span> yields a falsy value.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>while form(zero or more) => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>form: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(setq i 0) (while (<= i 3) (write ___double_quote___Hi___double_quote___) (setq i (1+ i)))')"><span class="icon-button">▶</span> (setq i 0) (while (<= i 3) (write "Hi") (setq i (1+ i))) <span class="gray">=> undefined</span></span></pre>
+  </div>
+</div>
+
+
+<div id="dolist" class="content function">
+  <div class="function-header">dolist</div>
+  <h3>Special Expression</h3>
+  <p>Runs the <span class="pre">form</span>s once for each element in the list. if <span class="pre">result</span> is present, it will be evaluated after all iterations and its value will be returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>dolist (var list [result]) form(zero or more) => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>(var list [result]): dolist form</pre>
+<pre>form: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(setq l (list 1 2 3)) (setq x 0) (dolist (el l) (setq x (+ x el))) x')"><span class="icon-button">▶</span> (setq l (list 1 2 3)) (setq x 0) (dolist (el l) (setq x (+ x el))) x <span class="gray">=> 6</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq l (list 1 2 3)) (dolist (el l))')"><span class="icon-button">▶</span> (setq l (list 1 2 3)) (dolist (el l)) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el))))')"><span class="icon-button">▶</span> (setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)))) <span class="gray">=> 6</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x)))')"><span class="icon-button">▶</span> (setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x))) <span class="gray">=> 1</span></span></pre>
+<pre class="example" onclick="runPlayground('(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw ___double_quote___Oops___double_quote___)))')"><span class="icon-button">▶</span> (setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw "Oops"))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="dotimes" class="content function">
+  <div class="function-header">dotimes</div>
+  <h3>Special Expression</h3>
+  <p>Runs the <span class="pre">form</span>s <span class="pre">integer</span> times, setting var to 0, 1, ... <span class="pre">integer - 1</span>. if <span class="pre">result</span> is present, it will be evaluated after all iterations and its value will be returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>dotimes (var integer [result]) form(zero or more) => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>(var integer [result]): dotimes form</pre>
+<pre>form: form</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(setq x 0) (dotimes (i 4) (setq x (+ x i))) x')"><span class="icon-button">▶</span> (setq x 0) (dotimes (i 4) (setq x (+ x i))) x <span class="gray">=> 6</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(dotimes (el 5))')"><span class="icon-button">▶</span> (dotimes (el 5)) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(let ((x 0)) (dotimes (i (+ 1 2 3) x) (setq x (+ x i))))')"><span class="icon-button">▶</span> (let ((x 0)) (dotimes (i (+ 1 2 3) x) (setq x (+ x i)))) <span class="gray">=> 15</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(let ((x 0)) (dotimes (i 5 x) (setq x (+ x i)) (return 10)))')"><span class="icon-button">▶</span> (let ((x 0)) (dotimes (i 5 x) (setq x (+ x i)) (return 10))) <span class="gray">=> 10</span></span></pre>
+<pre class="example" onclick="runPlayground('(let ((x 0)) (dotimes (i 100 x) (setq x (+ x i)) (throw ___double_quote___Oops___double_quote___)))')"><span class="icon-button">▶</span> (let ((x 0)) (dotimes (i 100 x) (setq x (+ x i)) (throw "Oops"))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
 <div id="aref" class="content function">
   <div class="function-header">aref</div>
   
@@ -3189,16 +3341,22 @@
 <li id="block_link" onclick="showPage('block')">block</li>
 <li id="cond_link" onclick="showPage('cond')">cond</li>
 <li id="defun_link" onclick="showPage('defun')">defun</li>
+<li id="dolist_link" onclick="showPage('dolist')">dolist</li>
+<li id="dotimes_link" onclick="showPage('dotimes')">dotimes</li>
 <li id="function_link" onclick="showPage('function')">function</li>
 <li id="if_link" onclick="showPage('if')">if</li>
 <li id="lambda_link" onclick="showPage('lambda')">lambda</li>
 <li id="let_link" onclick="showPage('let')">let</li>
+<li id="loop_link" onclick="showPage('loop')">loop</li>
 <li id="or_link" onclick="showPage('or')">or</li>
 <li id="return_link" onclick="showPage('return')">return</li>
 <li id="return-from_link" onclick="showPage('return-from')">return-from</li>
 <li id="setq_link" onclick="showPage('setq')">setq</li>
 <li id="throw_link" onclick="showPage('throw')">throw</li>
 <li id="try_link" onclick="showPage('try')">try</li>
+<li id="unless_link" onclick="showPage('unless')">unless</li>
+<li id="when_link" onclick="showPage('when')">when</li>
+<li id="while_link" onclick="showPage('while')">while</li>
         </ul>
 
         <label>Predicate</label>
@@ -3351,6 +3509,7 @@
           <li id="_notequal_link" onclick="showPage('_notequal')">!=</li>
 <li id="_equal_link" onclick="showPage('_equal')">=</li>
 <li id="apply_link" onclick="showPage('apply')">apply</li>
+<li id="debug_link" onclick="showPage('debug')">debug</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="not_link" onclick="showPage('not')">not</li>
 <li id="now_link" onclick="showPage('now')">now</li>
@@ -3386,7 +3545,7 @@
     <div class="column wide" id="output">
       <div class="textarea-header"><label for="output-textarea">Result</label></div>
       <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
-      <div class="textarea-header"><label for="log-textarea">Console log</label></div>
+      <div class="textarea-header"><label for="log-textarea">Console</label></div>
       <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>
   </div>
