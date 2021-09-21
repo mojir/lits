@@ -654,7 +654,7 @@ module.exports = {
     ],
     shortDescription: 'Returns a new list with all but the first element from `list`.',
     longDescription:
-      'Returns a new list with all but the first element from `list`. If `list` has less than two elements, an empty list is returned.',
+      'Returns a new list with all but the first element from `list`. If `list` has less than two elements, undefined is returned.',
     examples: [`(rest (list "Albert" "Mojir" 160 (list 1 2)))`, `(rest (list "Albert"))`, `(rest (list))`],
     specialExpression: false,
     sideEffects: [],

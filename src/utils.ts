@@ -34,6 +34,12 @@ export function asNotUndefined<T>(value: T | undefined): T {
   return value
 }
 
+export function assertNotUndefined<T>(value: T | undefined): asserts value is T {
+  if (value === undefined) {
+    throw Error(`Expected anything but undefined, got undefined`)
+  }
+}
+
 export function assertFiniteNumber(value: unknown): asserts value is number {
   if (typeof value !== 'number' || !isFinite(value)) {
     throw TypeError(`Expected number, got: ${value} type="${typeof value}"`)

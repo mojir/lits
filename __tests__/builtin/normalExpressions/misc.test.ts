@@ -155,4 +155,27 @@ describe('misc functions', () => {
       expect(() => lispish("(apply #'+ (list 1 2) (list 3 4))")).toThrow()
     })
   })
+
+  describe('debug', () => {
+    let oldError: () => void
+    beforeEach(() => {
+      oldError = console.error
+      console.error = () => undefined
+    })
+    afterEach(() => {
+      console.error = oldError
+    })
+    test('samples', () => {
+      expect(lispish('(debug "Stopping here")')).toBeUndefined()
+      expect(() => lispish('(debug)')).toThrow()
+      expect(() => lispish('(debug 0)')).toThrow()
+      expect(() => lispish('(debug undefined)')).toThrow()
+      expect(() => lispish('(debug null)')).toThrow()
+      expect(() => lispish('(debug true)')).toThrow()
+      expect(() => lispish('(debug false)')).toThrow()
+      expect(() => lispish('(debug (list 1 2 3))')).toThrow()
+      expect(() => lispish('(debug (object "a" 1))')).toThrow()
+      expect(() => lispish('(debug "" 0)')).toThrow()
+    })
+  })
 })

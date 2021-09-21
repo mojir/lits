@@ -12,6 +12,12 @@ import { returnSpecialExpression } from './specialExpressions/return'
 import { blockSpecialExpression } from './specialExpressions/block'
 import { trySpecialExpression } from './specialExpressions/try'
 import { throwSpecialExpression } from './specialExpressions/throw'
+import { whenSpecialExpression } from './specialExpressions/when'
+import { unlessSpecialExpression } from './specialExpressions/unless'
+import { loopSpecialExpression } from './specialExpressions/loop'
+import { dolistSpecialExpression } from './specialExpressions/dolist'
+import { dotimesSpecialExpression } from './specialExpressions/dotimes'
+import { whileSpecialExpression } from './specialExpressions/while'
 import { SpecialExpression } from './interface'
 import { normalExpressions } from './normalExpressions'
 
@@ -32,6 +38,12 @@ export const specialExpressions: SpecialExpressions = {
   block: blockSpecialExpression,
   try: trySpecialExpression,
   throw: throwSpecialExpression,
+  when: whenSpecialExpression,
+  unless: unlessSpecialExpression,
+  loop: loopSpecialExpression,
+  dolist: dolistSpecialExpression,
+  dotimes: dotimesSpecialExpression,
+  while: whileSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {

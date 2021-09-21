@@ -207,7 +207,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       assertArray(first)
 
       if (first.length <= 1) {
-        return []
+        return undefined
       }
 
       return first.slice(1)

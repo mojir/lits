@@ -21,11 +21,11 @@
 })()
 
 function keydownHandler(e) {
-  if (['Tab', 'Backspace', 'Enter'].includes(e.key)) {
+  if (['Tab', 'Backspace', 'Enter', 'Delete'].includes(e.key)) {
     var start = this.selectionStart
     var end = this.selectionEnd
 
-    let indexOfReturn = this.value.lastIndexOf('\n', start)
+    let indexOfReturn = this.value.lastIndexOf('\n', start - 1)
     const rowLength = start - indexOfReturn - 1
     var onTabStop = rowLength % 2 === 0
     if (e.key == 'Tab') {
@@ -36,7 +36,7 @@ function keydownHandler(e) {
       }
     }
     if (e.key == 'Backspace') {
-      if (onTabStop && this.value.substr(start - 2, 2) === '  ') {
+      if (onTabStop && start === end && this.value.substr(start - 2, 2) === '  ') {
         e.preventDefault()
         this.value = this.value.substring(0, start - 2) + this.value.substring(end)
         this.selectionStart = this.selectionEnd = start - 2
@@ -47,6 +47,13 @@ function keydownHandler(e) {
       const spaceCount = this.value.substring(indexOfReturn + 1, start).replace(/^( *).*/, '$1').length
       this.value = this.value.substring(0, start) + `\n${' '.repeat(spaceCount)}` + this.value.substring(end)
       this.selectionStart = this.selectionEnd = start + 1 + spaceCount
+    }
+    if (e.key == 'Delete') {
+      if (onTabStop && start === end && this.value.substr(start, 2) === '  ') {
+        e.preventDefault()
+        this.value = this.value.substring(0, start) + this.value.substring(end + 2)
+        this.selectionStart = this.selectionEnd = start
+      }
     }
   }
 }
@@ -74,6 +81,7 @@ function play() {
   var oldLog = console.log
   console.log = function () {
     var args = Array.from(arguments)
+    oldLog.apply(console, args)
     var logRow = args.map(arg => stringifyValue(arg)).join(' ')
     var oldContent = logTextarea.value
     var newContent = oldContent ? oldContent + '\n' + logRow : logRow
@@ -134,7 +142,7 @@ function stringifyValue(value) {
     if (value.builtin) {
       return `<BUILTIN FUNCTION ${value.builtin}>`
     } else {
-      return `<FUNCTION ${value.name ?? 'λ'} (${value.arguments.join(' ')})>`
+      return `<FUNCTION ${value.name || 'λ'} (${value.arguments.join(' ')})>`
     }
   }
   if (typeof value === 'object' && value instanceof RegExp) {

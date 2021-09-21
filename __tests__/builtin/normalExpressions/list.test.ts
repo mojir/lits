@@ -387,8 +387,8 @@ describe('list functions', () => {
     test('samples', () => {
       expect(lispish('(rest (list 1 2 3))')).toEqual([2, 3])
       expect(lispish('(rest (list 1 2))')).toEqual([2])
-      expect(lispish('(rest (list "1"))')).toEqual([])
-      expect(lispish('(rest (list))')).toEqual([])
+      expect(lispish('(rest (list "1"))')).toEqual(undefined)
+      expect(lispish('(rest (list))')).toEqual(undefined)
 
       expect(() => lispish('(rest')).toThrow()
       expect(() => lispish('(rest "1")')).toThrow()

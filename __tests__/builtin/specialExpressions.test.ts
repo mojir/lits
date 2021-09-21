@@ -322,12 +322,12 @@ describe('specialExpressions', () => {
     })
     test('return from lambda', () => {
       const program = `
-        ((lambda () 
+        ((lambda ()
           (return "A")
           "B"
         ))
       `
-      expect(lispish(program)).toBe("A")
+      expect(lispish(program)).toBe('A')
     })
   })
 
@@ -415,8 +415,8 @@ describe('specialExpressions', () => {
     })
     test('return-from should not trigger catchBlock', () => {
       const program = `
-        (block b 
-          (try 
+        (block b
+          (try
             (progn
               (write "One")
               (return-from b "Two")
@@ -431,7 +431,7 @@ describe('specialExpressions', () => {
     test('return-from should not trigger catchBlock', () => {
       const program = `
         (defun fn ()
-          (try 
+          (try
             (progn
               (write "One")
               (return "Two")
@@ -458,6 +458,208 @@ describe('specialExpressions', () => {
       } catch (error) {
         expect((error as UserDefinedError).message).toBe('error')
       }
+    })
+  })
+
+  describe('when', () => {
+    test('samples', () => {
+      expect(lispish('(when true (write 10) (write 20))')).toBe(20)
+      expect(lispish('(when "Charles" (write 10) (write 20))')).toBe(20)
+      expect(lispish('(when (> 10 20) (write 10) (write 20))')).toBe(undefined)
+      expect(lispish('(when false)')).toBe(undefined)
+      expect(lispish('(when true)')).toBe(undefined)
+      expect(() => lispish('(when)')).toThrow()
+    })
+  })
+
+  describe('unless', () => {
+    test('samples', () => {
+      expect(lispish('(unless true (write 10) (write 20))')).toBeUndefined()
+      expect(lispish('(unless (> 10 20) (write 10) (write 20))')).toBe(20)
+      expect(lispish('(unless null (write 10) (write 20))')).toBe(20)
+      expect(lispish('(unless false)')).toBe(undefined)
+      expect(lispish('(unless true)')).toBe(undefined)
+      expect(() => lispish('(unless)')).toThrow()
+    })
+  })
+
+  describe('loop', () => {
+    test('simple loop', () => {
+      expect(
+        lispish(`
+        (let ((x 0))
+          (loop
+            (setq x (1+ x))
+            (when (> x 5) (return x))
+          )
+        )`),
+      ).toBe(6)
+    })
+    test('simple loop with throw', () => {
+      expect(
+        lispish(`
+        (try
+          (let ((x 0))
+            (loop
+              (setq x (1+ x))
+              (when (> x 5) (throw "x is bigger than 5"))
+            )
+          )
+          ((error) 10)
+        )`),
+      ).toBe(10)
+    })
+  })
+
+  describe('dolist', () => {
+    test('samples', () => {
+      expect(() => lispish('(setq l (list 1 2 3)) (dolist el l)')).toThrow()
+    })
+
+    test('dolist without result value', () => {
+      expect(
+        lispish(`
+          (setq l (list 1 2 3))
+          (setq x 0)
+
+          (dolist (el l)
+            (setq x (+ x el))
+          )
+
+          x
+        `),
+      ).toBe(6)
+    })
+
+    test('dolist returns undefined if no return expression', () => {
+      expect(
+        lispish(`
+          (setq l (list 1 2 3))
+          (dolist (el l))
+        `),
+      ).toBeUndefined()
+    })
+
+    test('dolist with result value', () => {
+      expect(
+        lispish(`
+          (setq l (list 1 2 3))
+
+          (let ((x 0))
+            (dolist (el l x)
+              (setq x (+ x el))
+            )
+          )
+        `),
+      ).toBe(6)
+    })
+
+    test('dolist with return', () => {
+      expect(
+        lispish(`
+          (setq l (list 1 2 3))
+
+          (let ((x 0))
+            (dolist (el l x)
+              (setq x (+ x el))
+              (return x)
+            )
+          )
+        `),
+      ).toBe(1)
+    })
+
+    test('dolist with throw', () => {
+      expect(() =>
+        lispish(`
+          (setq l (list 1 2 3))
+
+          (let ((x 0))
+            (dolist (el l x)
+              (setq x (+ x el))
+              (throw "Oops")
+            )
+          )
+        `),
+      ).toThrow()
+    })
+  })
+
+  describe('dotimes', () => {
+    test('samples', () => {
+      expect(() => lispish('(dotimes x 5 x)')).toThrow()
+    })
+
+    test('dotimes without result value', () => {
+      expect(
+        lispish(`
+          (setq x 0)
+
+          (dotimes (i 4)
+            (setq x (+ x i))
+          )
+
+          x
+        `),
+      ).toBe(6)
+    })
+
+    test('dotimes returns undefined if no return expression', () => {
+      expect(
+        lispish(`
+          (dotimes (el 5))
+        `),
+      ).toBeUndefined()
+    })
+
+    test('dotimes with result value', () => {
+      expect(
+        lispish(`
+          (let ((x 0))
+            (dotimes (i (+ 1 2 3) x)
+              (setq x (+ x i))
+            )
+          )
+        `),
+      ).toBe(15)
+    })
+
+    test('dotimes with return', () => {
+      expect(
+        lispish(`
+          (let ((x 0))
+            (dotimes (i 5 x)
+              (setq x (+ x i))
+              (return 10)
+            )
+          )
+        `),
+      ).toBe(10)
+    })
+
+    test('dotimes with throw', () => {
+      expect(() =>
+        lispish(`
+          (let ((x 0))
+            (dotimes (i 100 x)
+              (setq x (+ x i))
+              (throw "Oops")
+            )
+          )
+        `),
+      ).toThrow()
+    })
+  })
+
+  describe('while', () => {
+    test('simple while', () => {
+      expect(
+        lispish(`
+          (setq x 0)
+          (while (<= x 10) (setq x (1+ x)))
+          x
+        `),
+      ).toBe(11)
     })
   })
 })

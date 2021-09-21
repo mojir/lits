@@ -80,4 +80,21 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return undefined
     },
   },
+  debug: {
+    evaluate: ([label], contextStack): undefined => {
+      assertString(label)
+
+      // eslint-disable-next-line no-console
+      console.error(
+        `LISPISH: ${label}.`,
+        `Context stack (${contextStack
+          .map(stack => `${Object.keys(stack.variables).length}:${Object.keys(stack.functions).length}`)
+          .join(' ')})`,
+        contextStack,
+      )
+
+      return undefined
+    },
+    validate: ({ params }) => assertLengthOne(params),
+  },
 }

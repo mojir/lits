@@ -36,6 +36,7 @@ import {
   isLispishFunction,
   isUserDefinedLispishFunction,
   asFiniteNumber,
+  assertNotUndefined,
 } from '../src/utils'
 describe('utils', () => {
   test('asAstNode', () => {
@@ -82,6 +83,14 @@ describe('utils', () => {
     expect(asNotUndefined(0)).toBe(0)
     const obj = {}
     expect(asNotUndefined(obj)).toBe(obj)
+  })
+  test('assertNotUndefined', () => {
+    expect(() => assertNotUndefined(undefined)).toThrow()
+    expect(() => assertNotUndefined(null)).not.toThrow()
+    expect(() => assertNotUndefined(false)).not.toThrow()
+    expect(() => assertNotUndefined(true)).not.toThrow()
+    expect(() => assertNotUndefined(0)).not.toThrow()
+    expect(() => assertNotUndefined({})).not.toThrow()
   })
   test('asNonEmptyString', () => {
     expect(asNonEmptyString('1')).toBe('1')

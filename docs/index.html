@@ -659,7 +659,7 @@
 <div id="rest" class="content function">
   <div class="function-header">rest</div>
   
-  <p>Returns a new list with all but the first element from <span class="pre">list</span>. If <span class="pre">list</span> has less than two elements, an empty list is returned.</p>
+  <p>Returns a new list with all but the first element from <span class="pre">list</span>. If <span class="pre">list</span> has less than two elements, undefined is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>rest list => list</pre>
@@ -671,8 +671,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="runPlayground('(rest (list ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 (list 1 2)))')"><span class="icon-button">▶</span> (rest (list "Albert" "Mojir" 160 (list 1 2))) <span class="gray">=> ["Mojir",160,[1,2]]</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(rest (list ___double_quote___Albert___double_quote___))')"><span class="icon-button">▶</span> (rest (list "Albert")) <span class="gray">=> []</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(rest (list))')"><span class="icon-button">▶</span> (rest (list)) <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(rest (list ___double_quote___Albert___double_quote___))')"><span class="icon-button">▶</span> (rest (list "Albert")) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(rest (list))')"><span class="icon-button">▶</span> (rest (list)) <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
@@ -1304,9 +1304,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.9219414392507825</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.008920849205722016</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.8769110794685536</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.8712434380236382</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.006353357285537014</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.20737511171595613</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1793,7 +1793,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632171482853</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632240952636</span></span></pre>
   </div>
 </div>
 
