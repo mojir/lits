@@ -30,6 +30,8 @@ import {
   asFiniteNumber,
   assertNotUndefined,
   assertLength,
+  assertStringOrArray,
+  assertStringOrRegExp,
 } from '../src/utils'
 describe('utils', () => {
   test('asAstNode', () => {
@@ -70,6 +72,7 @@ describe('utils', () => {
   })
   test('asNotUndefined', () => {
     expect(() => asNotUndefined(undefined)).toThrow()
+    expect(() => asNotUndefined(undefined, 'XXX')).toThrow()
     expect(asNotUndefined(null)).toBe(null)
     expect(asNotUndefined(false)).toBe(false)
     expect(asNotUndefined(true)).toBe(true)
@@ -79,6 +82,7 @@ describe('utils', () => {
   })
   test('assertNotUndefined', () => {
     expect(() => assertNotUndefined(undefined)).toThrow()
+    expect(() => assertNotUndefined(undefined, 'XXX')).toThrow()
     expect(() => assertNotUndefined(null)).not.toThrow()
     expect(() => assertNotUndefined(false)).not.toThrow()
     expect(() => assertNotUndefined(true)).not.toThrow()
@@ -385,6 +389,35 @@ describe('utils', () => {
     expect(() => assertString(undefined)).toThrow()
     expect(() => assertString([])).toThrow()
     expect(() => assertString({})).toThrow()
+  })
+
+  test('assertStringOrArray', () => {
+    expect(() => assertStringOrArray(``)).not.toThrow()
+    expect(() => assertStringOrArray(`1`)).not.toThrow()
+    expect(() => assertStringOrArray([])).not.toThrow()
+    expect(() => assertStringOrArray([1, 2, 3])).not.toThrow()
+    expect(() => assertStringOrArray(0)).toThrow()
+    expect(() => assertStringOrArray(1)).toThrow()
+    expect(() => assertStringOrArray(true)).toThrow()
+    expect(() => assertStringOrArray(false)).toThrow()
+    expect(() => assertStringOrArray(null)).toThrow()
+    expect(() => assertStringOrArray(undefined)).toThrow()
+    expect(() => assertStringOrArray({})).toThrow()
+  })
+
+  test('assertStringOrRegExp', () => {
+    expect(() => assertStringOrRegExp(``)).not.toThrow()
+    expect(() => assertStringOrRegExp(`1`)).not.toThrow()
+    expect(() => assertStringOrRegExp(/^a/)).not.toThrow()
+    expect(() => assertStringOrRegExp([])).toThrow()
+    expect(() => assertStringOrRegExp([1, 2, 3])).toThrow()
+    expect(() => assertStringOrRegExp(0)).toThrow()
+    expect(() => assertStringOrRegExp(1)).toThrow()
+    expect(() => assertStringOrRegExp(true)).toThrow()
+    expect(() => assertStringOrRegExp(false)).toThrow()
+    expect(() => assertStringOrRegExp(null)).toThrow()
+    expect(() => assertStringOrRegExp(undefined)).toThrow()
+    expect(() => assertStringOrRegExp({})).toThrow()
   })
 
   test('isLispishFunction', () => {

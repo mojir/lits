@@ -190,13 +190,14 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertStringOrRegExp(delimiter)
       if (limit !== undefined) {
         assertInteger(limit)
+        assertNonNegativeNumber(limit)
       }
       return str.split(delimiter, limit)
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
   },
 
-  'pad-start': {
+  'pad-left': {
     evaluate: ([str, length, padString]: unknown[]): string => {
       assertString(str)
       assertInteger(length)
@@ -210,7 +211,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
   },
 
-  'pad-end': {
+  'pad-right': {
     evaluate: ([str, length, padString]: unknown[]): string => {
       assertString(str)
       assertInteger(length)

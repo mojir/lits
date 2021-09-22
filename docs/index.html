@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.10</span></div>
+    <div class="column right version"><span>v0.1.11</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -776,6 +776,27 @@
 </div>
 
 
+<div id="join" class="content function">
+  <div class="function-header">join</div>
+  
+  <p>Returns a new string by concatenating all of the elements in <span class="pre">list</span>, separated by <span class="pre">delimiter</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>join list delimiter => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>list: list of strings</pre>
+<pre>delimiter: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(join ___single_quote___(___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___) ___double_quote___ ___double_quote___)')"><span class="icon-button">▶</span> (join '("Albert" "Mojir") " ") <span class="gray">=> "Albert Mojir"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(join (map #___single_quote___number-to-string ___single_quote___(0 1 2 3 4 5 6 7 8 9)) ___double_quote___, ___double_quote___)')"><span class="icon-button">▶</span> (join (map #'number-to-string '(0 1 2 3 4 5 6 7 8 9)) ", ") <span class="gray">=> "0, 1, 2, 3, 4, 5, 6, 7, 8, 9"</span></span></pre>
+  </div>
+</div>
+
+
 <div id="_plus" class="content function">
   <div class="function-header">+</div>
   
@@ -1319,9 +1340,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.3218993639853398</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0013248601475232148</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.8109541514254883</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.14087179261789973</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0036657804171073183</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 2.3474179320702393</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1808,7 +1829,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632329129112</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632335508231</span></span></pre>
   </div>
 </div>
 
@@ -3208,9 +3229,123 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(trim ___double_quote___  albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim "  albert  ") <span class="gray">=> "albert"</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(trim ___double_quote___  Albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim "  Albert  ") <span class="gray">=> "Albert"</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(trim ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim "   ") <span class="gray">=> ""</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(trim ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim "") <span class="gray">=> ""</span></span></pre>
+  </div>
+</div>
+
+
+<div id="trim-left" class="content function">
+  <div class="function-header">trim-left</div>
+  
+  <p>Returns a new string with leading whitespaces removed.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>trim-left string => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(trim-left ___double_quote___  Albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim-left "  Albert  ") <span class="gray">=> "Albert  "</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trim-left ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim-left "   ") <span class="gray">=> ""</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trim-left ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim-left "") <span class="gray">=> ""</span></span></pre>
+  </div>
+</div>
+
+
+<div id="trim-right" class="content function">
+  <div class="function-header">trim-right</div>
+  
+  <p>Returns a new string with trailing whitespaces removed.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>trim-right string => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(trim-right ___double_quote___  Albert  ___double_quote___)')"><span class="icon-button">▶</span> (trim-right "  Albert  ") <span class="gray">=> "  Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trim-right ___double_quote___   ___double_quote___)')"><span class="icon-button">▶</span> (trim-right "   ") <span class="gray">=> ""</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(trim-right ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (trim-right "") <span class="gray">=> ""</span></span></pre>
+  </div>
+</div>
+
+
+<div id="pad-left" class="content function">
+  <div class="function-header">pad-left</div>
+  
+  <p>Pads from the start of <span class="pre">string</span> with <span class="pre">padString</span> (multiple times, if needed) until the resulting string reaches the given <span class="pre">length</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>pad-left string length padString(optional) => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre>
+<pre>length: integer</pre>
+<pre>padString: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(pad-left ___double_quote___Albert___double_quote___ 20)')"><span class="icon-button">▶</span> (pad-left "Albert" 20) <span class="gray">=> "              Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pad-left ___double_quote___Albert___double_quote___ 20 ___double_quote___-*-___double_quote___)')"><span class="icon-button">▶</span> (pad-left "Albert" 20 "-*-") <span class="gray">=> "-*--*--*--*--*Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pad-left ___double_quote___Albert___double_quote___ 5)')"><span class="icon-button">▶</span> (pad-left "Albert" 5) <span class="gray">=> "Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pad-left ___double_quote___Albert___double_quote___ -1)')"><span class="icon-button">▶</span> (pad-left "Albert" -1) <span class="gray">=> "Albert"</span></span></pre>
+  </div>
+</div>
+
+
+<div id="pad-right" class="content function">
+  <div class="function-header">pad-right</div>
+  
+  <p>Pads from the start of <span class="pre">string</span> with <span class="pre">padString</span> (multiple times, if needed) until the resulting string reaches the given <span class="pre">length</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>pad-right string length padString(optional) => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre>
+<pre>length: integer</pre>
+<pre>padString: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(pad-right ___double_quote___Albert___double_quote___ 20)')"><span class="icon-button">▶</span> (pad-right "Albert" 20) <span class="gray">=> "Albert              "</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pad-right ___double_quote___Albert___double_quote___ 20 ___double_quote___-*-___double_quote___)')"><span class="icon-button">▶</span> (pad-right "Albert" 20 "-*-") <span class="gray">=> "Albert-*--*--*--*--*"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pad-right ___double_quote___Albert___double_quote___ 5)')"><span class="icon-button">▶</span> (pad-right "Albert" 5) <span class="gray">=> "Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(pad-right ___double_quote___Albert___double_quote___ -1)')"><span class="icon-button">▶</span> (pad-right "Albert" -1) <span class="gray">=> "Albert"</span></span></pre>
+  </div>
+</div>
+
+
+<div id="split" class="content function">
+  <div class="function-header">split</div>
+  
+  <p>Divides <span class="pre">string</span> into a list of substrings. The division is done by searching for <span class="pre">delimiter</span>. If <span class="pre">limit</span> as provided, at most <span class="pre">limit</span> number of substrings are returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>split string delimiter limit(optional) => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>string: string</pre>
+<pre>delimiter: string</pre>
+<pre>limit: non negative integer</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(split ___double_quote___Albert Mojir___double_quote___ ___double_quote___ ___double_quote___)')"><span class="icon-button">▶</span> (split "Albert Mojir" " ") <span class="gray">=> ["Albert","Mojir"]</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(split ___double_quote___abcdefghijklmnopqrstuvw___double_quote___ (regexp ___double_quote___[aoueiy]___double_quote___))')"><span class="icon-button">▶</span> (split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]")) <span class="gray">=> ["","bcd","fgh","jklmn","pqrst","vw"]</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(split ___double_quote___0123456789___double_quote___ ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (split "0123456789" "") <span class="gray">=> ["0","1","2","3","4","5","6","7","8","9"]</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(map #___single_quote___string-to-number (split ___double_quote___0123456789___double_quote___ ___double_quote______double_quote___ 5))')"><span class="icon-button">▶</span> (map #'string-to-number (split "0123456789" "" 5)) <span class="gray">=> [0,1,2,3,4]</span></span></pre>
   </div>
 </div>
 
@@ -3357,6 +3492,7 @@
 <li id="filter_link" onclick="showPage('filter')">filter</li>
 <li id="find_link" onclick="showPage('find')">find</li>
 <li id="first_link" onclick="showPage('first')">first</li>
+<li id="join_link" onclick="showPage('join')">join</li>
 <li id="last_link" onclick="showPage('last')">last</li>
 <li id="length_link" onclick="showPage('length')">length</li>
 <li id="list_link" onclick="showPage('list')">list</li>
@@ -3400,6 +3536,9 @@
           <li id="concat_link" onclick="showPage('concat')">concat</li>
 <li id="lower-case_link" onclick="showPage('lower-case')">lower-case</li>
 <li id="number-to-string_link" onclick="showPage('number-to-string')">number-to-string</li>
+<li id="pad-left_link" onclick="showPage('pad-left')">pad-left</li>
+<li id="pad-right_link" onclick="showPage('pad-right')">pad-right</li>
+<li id="split_link" onclick="showPage('split')">split</li>
 <li id="string-length_link" onclick="showPage('string-length')">string-length</li>
 <li id="string-repeat_link" onclick="showPage('string-repeat')">string-repeat</li>
 <li id="string-reverse_link" onclick="showPage('string-reverse')">string-reverse</li>
@@ -3410,6 +3549,8 @@
 <li id="string_gte_link" onclick="showPage('string_gte')">string&gt;=</li>
 <li id="substring_link" onclick="showPage('substring')">substring</li>
 <li id="trim_link" onclick="showPage('trim')">trim</li>
+<li id="trim-left_link" onclick="showPage('trim-left')">trim-left</li>
+<li id="trim-right_link" onclick="showPage('trim-right')">trim-right</li>
 <li id="upper-case_link" onclick="showPage('upper-case')">upper-case</li>
         </ul>
 

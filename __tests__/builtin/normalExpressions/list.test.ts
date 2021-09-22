@@ -615,4 +615,17 @@ describe('list functions', () => {
       expect(() => lispish(`(sort)`)).toThrow()
     })
   })
+
+  describe('join', () => {
+    test('samples', () => {
+      expect(lispish(`(join '("Albert" "Mojir") " ")`)).toBe('Albert Mojir')
+      expect(lispish(`(join (map #'number-to-string '(0 1 2 3 4 5 6 7 8 9)) ", ")`)).toBe(
+        '0, 1, 2, 3, 4, 5, 6, 7, 8, 9',
+      )
+      expect(() => lispish(`(join (map #'number-to-string '(0 1 2 3 4 5 6 7 8 9)) ", " 5)`)).toThrow()
+      expect(() => lispish(`(join '("Albert" "Mojir") " " -1)`)).toThrow()
+      expect(() => lispish(`(join '("Albert" "Mojir"))`)).toThrow()
+      expect(() => lispish(`(join '("Albert" 10) " ")`)).toThrow()
+    })
+  })
 })

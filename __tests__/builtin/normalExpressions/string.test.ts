@@ -217,6 +217,69 @@ describe('string functions', () => {
     })
   })
 
+  describe('trim-left', () => {
+    test('samples', () => {
+      expect(lispish(`(trim-left "  Albert!  ")`)).toBe('Albert!  ')
+      expect(lispish(`(trim-left " ")`)).toBe('')
+      expect(lispish(`(trim-left "")`)).toBe('')
+      expect(() => lispish(`(trim-left)`)).toThrow()
+      expect(() => lispish(`(trim-left "First" "Second")`)).toThrow()
+    })
+  })
+
+  describe('trim-right', () => {
+    test('samples', () => {
+      expect(lispish(`(trim-right "  Albert!  ")`)).toBe('  Albert!')
+      expect(lispish(`(trim-right " ")`)).toBe('')
+      expect(lispish(`(trim-right "")`)).toBe('')
+      expect(() => lispish(`(trim-right)`)).toThrow()
+      expect(() => lispish(`(trim-right "First" "Second")`)).toThrow()
+    })
+  })
+
+  describe('pad-left', () => {
+    test('samples', () => {
+      expect(lispish(`(pad-left "Albert" 10)`)).toBe('    Albert')
+      expect(lispish(`(pad-left "Albert" 10 "*")`)).toBe('****Albert')
+      expect(lispish(`(pad-left "Albert" 10 "123")`)).toBe('1231Albert')
+      expect(lispish(`(pad-left "Albert" 5)`)).toBe('Albert')
+      expect(lispish(`(pad-left "Albert" -1)`)).toBe('Albert')
+      expect(() => lispish(`(pad-left)`)).toThrow()
+      expect(() => lispish(`(pad-left "First" "Second")`)).toThrow()
+    })
+  })
+
+  describe('pad-right', () => {
+    test('samples', () => {
+      expect(lispish(`(pad-right "Albert" 10)`)).toBe('Albert    ')
+      expect(lispish(`(pad-right "Albert" 10 "*")`)).toBe('Albert****')
+      expect(lispish(`(pad-right "Albert" 10 "123")`)).toBe('Albert1231')
+      expect(lispish(`(pad-right "Albert" 5)`)).toBe('Albert')
+      expect(lispish(`(pad-right "Albert" -1)`)).toBe('Albert')
+      expect(() => lispish(`(pad-right)`)).toThrow()
+      expect(() => lispish(`(pad-right "First" "Second")`)).toThrow()
+    })
+  })
+
+  describe('split', () => {
+    test('samples', () => {
+      expect(lispish(`(split "Albert Mojir" " ")`)).toEqual(['Albert', 'Mojir'])
+      expect(lispish(`(split "0123456789" "")`)).toEqual(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+      expect(lispish(`(split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]"))`)).toEqual([
+        '',
+        'bcd',
+        'fgh',
+        'jklmn',
+        'pqrst',
+        'vw',
+      ])
+      expect(lispish(`(map #'string-to-number (split "0123456789" "" 5))`)).toEqual([0, 1, 2, 3, 4])
+      expect(() => lispish(`(split "0123456789")`)).toThrow()
+      expect(() => lispish(`(split "0123456789" "5" -1)`)).toThrow()
+      expect(() => lispish(`(split 23456789 "5")`)).toThrow()
+    })
+  })
+
   describe('string-repeat', () => {
     test('samples', () => {
       expect(lispish(`(string-repeat "*" 10)`)).toBe('**********')

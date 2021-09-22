@@ -343,7 +343,149 @@ module.exports = {
     ],
     shortDescription: 'Returns a new string with leading and trailing whitespaces removed.',
     longDescription: 'Returns a new string with leading and trailing whitespaces removed.',
-    examples: ['(trim "  albert  ")', '(trim "   ")', '(trim "")'],
+    examples: ['(trim "  Albert  ")', '(trim "   ")', '(trim "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'trim-left': {
+    name: 'trim-left',
+    category: 'String',
+    linkName: 'trim-left',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns a new string with leading whitespaces removed.',
+    longDescription: 'Returns a new string with leading whitespaces removed.',
+    examples: ['(trim-left "  Albert  ")', '(trim-left "   ")', '(trim-left "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'trim-right': {
+    name: 'trim-right',
+    category: 'String',
+    linkName: 'trim-right',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns a new string with trailing whitespaces removed.',
+    longDescription: 'Returns a new string with trailing whitespaces removed.',
+    examples: ['(trim-right "  Albert  ")', '(trim-right "   ")', '(trim-right "")'],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'pad-left': {
+    name: 'pad-left',
+    category: 'String',
+    linkName: 'pad-left',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+      {
+        name: 'length',
+        type: 'integer',
+      },
+      {
+        name: 'padString',
+        type: 'string',
+        description: 'optional',
+      },
+    ],
+    shortDescription:
+      'Pads from the start of `string` with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+    longDescription:
+      'Pads from the start of `string` with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+    examples: [
+      '(pad-left "Albert" 20)',
+      '(pad-left "Albert" 20 "-*-")',
+      '(pad-left "Albert" 5)',
+      '(pad-left "Albert" -1)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  'pad-right': {
+    name: 'pad-right',
+    category: 'String',
+    linkName: 'pad-right',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+      {
+        name: 'length',
+        type: 'integer',
+      },
+      {
+        name: 'padString',
+        type: 'string',
+        description: 'optional',
+      },
+    ],
+    shortDescription:
+      'Pads at the end of `string` with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+    longDescription:
+      'Pads from the start of `string` with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+    examples: [
+      '(pad-right "Albert" 20)',
+      '(pad-right "Albert" 20 "-*-")',
+      '(pad-right "Albert" 5)',
+      '(pad-right "Albert" -1)',
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
+  split: {
+    name: 'split',
+    category: 'String',
+    linkName: 'split',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'string',
+        type: 'string',
+      },
+      {
+        name: 'delimiter',
+        type: 'string',
+      },
+      {
+        name: 'limit',
+        type: 'non negative integer',
+        description: 'optional',
+      },
+    ],
+    shortDescription: 'Divides `string` into a list of substrings. The division is done by searching for `delimiter`.',
+    longDescription:
+      'Divides `string` into a list of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
+    examples: [
+      `(split "Albert Mojir" " ")`,
+      `(split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]"))`,
+      `(split "0123456789" "")`,
+      `(map #'string-to-number (split "0123456789" "" 5))`,
+    ],
     specialExpression: false,
     sideEffects: [],
   },

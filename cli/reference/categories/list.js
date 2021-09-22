@@ -771,4 +771,27 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
+  join: {
+    name: 'join',
+    category: 'List',
+    linkName: 'join',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'list',
+        type: 'list of strings',
+      },
+      {
+        name: 'delimiter',
+        type: 'string',
+      },
+    ],
+    shortDescription: 'Returns a new string by concatenating all of the elements in `list`, separated by `delimiter`.',
+    longDescription: 'Returns a new string by concatenating all of the elements in `list`, separated by `delimiter`.',
+    examples: [`(join '("Albert" "Mojir") " ")`, `(join (map #'number-to-string '(0 1 2 3 4 5 6 7 8 9)) ", ")`],
+    specialExpression: false,
+    sideEffects: [],
+  },
 }
