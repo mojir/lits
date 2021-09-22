@@ -10,12 +10,13 @@ const DOC_DIR = path.resolve(__dirname, '../../docs')
 setupDocDir()
 copyScripts()
 copyStyles()
+copyFavicon()
 writeIndexPage()
 
 function writeIndexPage() {
   const page = `<!DOCTYPE html>
 <html lang="en">
-${getHeader()}
+${getHtmlHeader()}
 <body>
   ${getTopBar({ back: false })}
   <main id="main-panel" class="fancy-scroll">
@@ -48,10 +49,11 @@ function getTopBar() {
 </header>`
 }
 
-function getHeader() {
+function getHtmlHeader() {
   return `
 <head>
   <title>Lispish</title>
+  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
   <meta name="description" content="A reference and a playground for Lispish - a Typescript Lisp implementation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
@@ -261,6 +263,10 @@ function copyScripts() {
 
 function copyStyles() {
   fs.copyFileSync(path.join(__dirname, `styles.css`), path.join(DOC_DIR, `styles.css`))
+}
+
+function copyFavicon() {
+  fs.copyFileSync(path.join(__dirname, `favicon.ico`), path.join(DOC_DIR, `favicon.ico`))
 }
 
 function stringifyValue(value) {
