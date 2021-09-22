@@ -53,7 +53,7 @@ function getHtmlHeader() {
   return `
 <head>
   <title>Lispish</title>
-  <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
+  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
   <meta name="description" content="A reference and a playground for Lispish - a Typescript Lisp implementation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
