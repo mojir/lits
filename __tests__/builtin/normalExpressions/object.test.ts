@@ -9,7 +9,7 @@ describe('object functions', () => {
       expect(lispish(`(object "x" 1)`)).toEqual({ x: 1 })
       expect(lispish(`(object "x" undefined)`)).toEqual({ x: undefined })
       expect(lispish(`(object "x" 1 "x" 2)`)).toEqual({ x: 2 })
-      expect(lispish(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" (list)))`)).toEqual({
+      expect(lispish(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" '()))`)).toEqual({
         a: null,
         b: true,
         c: false,
@@ -25,7 +25,7 @@ describe('object functions', () => {
       expect(() => lispish(`(object false 1)`)).toThrow()
       expect(() => lispish(`(object null 1)`)).toThrow()
       expect(() => lispish(`(object undefined 1)`)).toThrow()
-      expect(() => lispish(`(object (list) 1)`)).toThrow()
+      expect(() => lispish(`(object '() 1)`)).toThrow()
       expect(() => lispish(`(object (object) 1)`)).toThrow()
     })
   })
@@ -42,7 +42,7 @@ describe('object functions', () => {
       expect(() => lispish(`(keys false)`)).toThrow()
       expect(() => lispish(`(keys null)`)).toThrow()
       expect(() => lispish(`(keys undefined)`)).toThrow()
-      expect(() => lispish(`(keys (list 1))`)).toThrow()
+      expect(() => lispish(`(keys '(1))`)).toThrow()
     })
   })
 
@@ -58,7 +58,7 @@ describe('object functions', () => {
       expect(() => lispish(`(values false)`)).toThrow()
       expect(() => lispish(`(values null)`)).toThrow()
       expect(() => lispish(`(values undefined)`)).toThrow()
-      expect(() => lispish(`(values (list 1))`)).toThrow()
+      expect(() => lispish(`(values '(1))`)).toThrow()
     })
   })
 
@@ -77,7 +77,7 @@ describe('object functions', () => {
       expect(() => lispish(`(entries false)`)).toThrow()
       expect(() => lispish(`(entries null)`)).toThrow()
       expect(() => lispish(`(entries undefined)`)).toThrow()
-      expect(() => lispish(`(entries (list 1))`)).toThrow()
+      expect(() => lispish(`(entries '(1))`)).toThrow()
     })
   })
 
@@ -97,7 +97,7 @@ describe('object functions', () => {
       expect(() => lispish(`(has-attr false "x")`)).toThrow()
       expect(() => lispish(`(has-attr null "x")`)).toThrow()
       expect(() => lispish(`(has-attr undefined "x")`)).toThrow()
-      expect(() => lispish(`(has-attr (list 1) "x")`)).toThrow()
+      expect(() => lispish(`(has-attr '(1) "x")`)).toThrow()
     })
   })
 
@@ -117,7 +117,7 @@ describe('object functions', () => {
       expect(() => lispish(`(get-attr false "x")`)).toThrow()
       expect(() => lispish(`(get-attr null "x")`)).toThrow()
       expect(() => lispish(`(get-attr undefined "x")`)).toThrow()
-      expect(() => lispish(`(get-attr (list 1) "x")`)).toThrow()
+      expect(() => lispish(`(get-attr '(1) "x")`)).toThrow()
     })
   })
 
@@ -136,7 +136,7 @@ describe('object functions', () => {
       expect(() => lispish(`(set-attr false "x")`)).toThrow()
       expect(() => lispish(`(set-attr null "x")`)).toThrow()
       expect(() => lispish(`(set-attr undefined "x")`)).toThrow()
-      expect(() => lispish(`(set-attr (list 1) "x")`)).toThrow()
+      expect(() => lispish(`(set-attr '(1) "x")`)).toThrow()
     })
     test('set new value', () => {
       const program = `
@@ -170,7 +170,7 @@ describe('object functions', () => {
       expect(() => lispish(`(del-attr false "x")`)).toThrow()
       expect(() => lispish(`(del-attr null "x")`)).toThrow()
       expect(() => lispish(`(del-attr undefined "x")`)).toThrow()
-      expect(() => lispish(`(del-attr (list 1) "x")`)).toThrow()
+      expect(() => lispish(`(del-attr '(1) "x")`)).toThrow()
     })
     test('delete atribute', () => {
       const program = `

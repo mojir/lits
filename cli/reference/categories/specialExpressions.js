@@ -471,11 +471,11 @@ module.exports = {
     longDescription:
       'Runs the `form`s once for each element in the list. if `result` is present, it will be evaluated after all iterations and its value will be returned.',
     examples: [
-      `(setq l (list 1 2 3)) (setq x 0) (dolist (el l) (setq x (+ x el))) x`,
-      `(setq l (list 1 2 3)) (dolist (el l))`,
-      `(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el))))`,
-      `(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x)))`,
-      `(setq l (list 1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw "Oops")))`,
+      `(setq l '(1 2 3)) (setq x 0) (dolist (el l) (setq x (+ x el))) x`,
+      `(setq l '(1 2 3)) (dolist (el l))`,
+      `(setq l '(1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el))))`,
+      `(setq l '(1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x)))`,
+      `(setq l '(1 2 3)) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw "Oops")))`,
     ],
     specialExpression: true,
     sideEffects: [],

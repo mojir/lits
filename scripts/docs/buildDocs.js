@@ -108,7 +108,7 @@ function getIndexPage() {
     <ul>
       <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
       <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
-      <li>No quotes! <pre>'(1 2 3)</pre> is no more... Use <pre>(list 1 2 3)</pre> instead.</li>
+      <li>Quotes behave differently! <pre>'</pre> is simply a short hand for <pre>(list ...)</pre>.</li>
       <li>No macros.</li>
       <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
       <li>No tail call optimization (yet).</li>

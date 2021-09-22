@@ -88,6 +88,23 @@ export const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position)
   return [newPosition, node]
 }
 
+type ParseListShorthand = (tokens: Token[], position: number) => [number, AstNode]
+export const parseListShorthand: ParseListShorthand = (tokens, position) => {
+  position = position + 2
+  let params: AstNode[]
+  ;[position, params] = parseParams(tokens, position)
+
+  position = position + 1
+
+  const node: NormalExpressionNode = {
+    type: 'NormalExpression',
+    name: 'list',
+    params,
+  }
+
+  return [position, node]
+}
+
 const parseArgument: ParseArgument = (tokens, position) => {
   let token = asNotUndefined(tokens[position])
   if (token.type === 'name') {
@@ -225,7 +242,11 @@ export const parseToken: ParseToken = (tokens, position) => {
       }
       break
     case 'shorthand':
-      nodeDescriptor = parseFunctionShorthand(tokens, position)
+      if (token.value === "#'") {
+        nodeDescriptor = parseFunctionShorthand(tokens, position)
+      } else {
+        nodeDescriptor = parseListShorthand(tokens, position)
+      }
       break
   }
   if (!nodeDescriptor) {

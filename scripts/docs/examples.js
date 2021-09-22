@@ -75,7 +75,7 @@ module.exports = [
     name: 'Sort',
     description: 'Sort a list of numbers.',
     code: `
-(setq l (list 7 39 45 0 23 1 50 100 12 -5))
+(setq l '(7 39 45 0 23 1 50 100 12 -5))
 (defun numberComparer (a b)
   (cond
     ((< a b) -1)

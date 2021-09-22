@@ -84,7 +84,7 @@ describe('Evaluator', () => {
   })
   test('!= statement 1', () => {
     const tokens = tokenize(`
-      (list (!= 0 -1) (!= 1 1))
+      '((!= 0 -1) (!= 1 1))
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, { variables: {}, functions: {} })
@@ -92,7 +92,7 @@ describe('Evaluator', () => {
   })
 
   test('expressionExpression', () => {
-    expect(lispish('((lambda (x) (* x x)) 10)')).toBe(100)
+    expect(lispish(`((lambda (x) (* x x)) 10)`)).toBe(100)
   })
 
   test('lispishFunction', () => {
