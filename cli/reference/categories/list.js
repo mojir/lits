@@ -636,7 +636,7 @@ module.exports = {
     ],
     shortDescription: 'Returns the last element of `list`.',
     longDescription: 'Returns the last element of `list`. If `list` is empty, `undefined` is returned.',
-    examples: [`(last '("Albert" "Mojir" 160 '(1 2)))`, `(last '())`],
+    examples: [`(last '("Albert" "Mojir" 160 '(1 2)))`, `(last '(1 2))`, `(last '(1))`, `(last '())`],
     specialExpression: false,
     sideEffects: [],
   },
