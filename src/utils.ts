@@ -1,4 +1,13 @@
-import { AstNode, functionSymbol, LispishFunction, NameNode, UserDefinedLispishFunction } from './parser/interface'
+import { UnexpectedNodeTypeError } from './errors'
+import {
+  AstNode,
+  functionSymbol,
+  LispishFunction,
+  NameNode,
+  NormalExpressionNode,
+  SpecialExpressionNode,
+  UserDefinedLispishFunction,
+} from './parser/interface'
 
 export function asAstNode(node: AstNode | undefined): AstNode {
   if (node === undefined) {
@@ -16,27 +25,27 @@ export function asLispishFunction(value: unknown): LispishFunction {
 
 export function asNameNode(node: AstNode | undefined): NameNode {
   if (node === undefined || node.type !== 'Name') {
-    throw Error(`Expected a Name node, got ${node ? `${node.type} node` : 'undefined'}.`)
+    throw new UnexpectedNodeTypeError('Name', node)
   }
   return node
 }
 
 export function assertNameNode(node: AstNode | undefined): asserts node is NameNode {
   if (node === undefined || node.type !== 'Name') {
-    throw Error(`Expected a Name node, got ${node ? `${node.type} node` : 'undefined'}.`)
+    throw new UnexpectedNodeTypeError('Name', node)
   }
 }
 
-export function asNotUndefined<T>(value: T | undefined): T {
+export function asNotUndefined<T>(value: T | undefined, message = 'Unexpected end of input'): T {
   if (value === undefined) {
-    throw Error(`Expected anything but undefined, got undefined`)
+    throw Error(message)
   }
   return value
 }
 
-export function assertNotUndefined<T>(value: T | undefined): asserts value is T {
+export function assertNotUndefined<T>(value: T | undefined, message = 'Unexpected end of input'): asserts value is T {
   if (value === undefined) {
-    throw Error(`Expected anything but undefined, got undefined`)
+    throw Error(message)
   }
 }
 
@@ -133,9 +142,21 @@ export function assertRegExp(value: unknown): asserts value is RegExp {
   }
 }
 
+export function assertStringOrRegExp(value: unknown): asserts value is RegExp | string {
+  if (!(value instanceof RegExp || typeof value === 'string')) {
+    throw TypeError(`Expected RegExp or string, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function assertArray(value: unknown): asserts value is Array<unknown> {
   if (!Array.isArray(value)) {
     throw TypeError(`Expected list, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function assertStringOrArray(value: unknown): asserts value is Array<unknown> | string {
+  if (!(Array.isArray(value) || typeof value === 'string')) {
+    throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
   }
 }
 
@@ -171,10 +192,14 @@ export function assertNumberNotZero(value: unknown): asserts value is number {
   }
 }
 
-export function assertLength(count: number | { min?: number; max?: number }, params: unknown[]): void {
+export function assertLength(
+  count: number | { min?: number; max?: number },
+  node: NormalExpressionNode | SpecialExpressionNode,
+): void {
+  const length = node.params.length
   if (typeof count === 'number') {
-    if (params.length !== count) {
-      throw Error(`Wrong number of arguments, expected ${count}, got ${params.length}`)
+    if (length !== count) {
+      throw Error(`Wrong number of arguments to "${node.name}", expected ${count}, got ${length}`)
     }
   } else {
     const { min, max } = count
@@ -182,19 +207,20 @@ export function assertLength(count: number | { min?: number; max?: number }, par
       throw Error('Min or max must be specified')
     }
 
-    if (typeof min === 'number' && params.length < min) {
-      throw Error(`Wrong number of arguments, expected at least ${min}, got ${params.length}`)
+    if (typeof min === 'number' && length < min) {
+      throw Error(`Wrong number of arguments to "${node.name}", expected at least ${min}, got ${length}`)
     }
 
-    if (typeof max === 'number' && params.length > max) {
-      throw Error(`Wrong number of arguments, expected at most ${max}, got ${params.length}`)
+    if (typeof max === 'number' && length > max) {
+      throw Error(`Wrong number of arguments to "${node.name}", expected at most ${max}, got ${length}`)
     }
   }
 }
 
-export function assertLengthEven(params: unknown[]): void {
-  if (params.length % 2 !== 0) {
-    throw Error(`Wrong number of arguments, expected an even number, got ${params.length}`)
+export function assertLengthEven(node: NormalExpressionNode): void {
+  const length = node.params.length
+  if (length % 2 !== 0) {
+    throw Error(`Wrong number of arguments, expected an even number, got ${length}`)
   }
 }
 
@@ -207,10 +233,10 @@ export function isLispishFunction(func: unknown): func is LispishFunction {
 
 export function assertLispishFunction(func: unknown): asserts func is LispishFunction {
   if (func === null || typeof func !== 'object') {
-    throw Error('Not a lispish function')
+    throw Error(`Expected lispish function, got ${func}`)
   }
   if (!(func as LispishFunction)[functionSymbol]) {
-    throw Error('Not a lispish function')
+    throw Error(`Expected lispish function, got ${JSON.stringify(func)}`)
   }
 }
 

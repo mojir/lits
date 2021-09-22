@@ -1,3 +1,4 @@
+import { UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
 import { AstNode, functionSymbol, LispishFunction, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
@@ -14,14 +15,14 @@ export const defunSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken, parseArgument }) => {
     const [newPosition, functionName] = parseToken(tokens, position)
     if (functionName.type !== 'Name') {
-      throw Error('Expected a name node')
+      throw new UnexpectedNodeTypeError('Name', functionName)
     }
 
     position = newPosition
 
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
-      throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected list of arguments`)
+      throw new UnexpectedTokenError(')', token)
     }
 
     position += 1
@@ -38,7 +39,7 @@ export const defunSpecialExpression: SpecialExpression = {
       token = asNotUndefined(tokens[position])
     }
     if (body.length === 0) {
-      throw Error('Missing defun body')
+      throw Error('Missing body in special expression "defun"')
     }
 
     const node: DefunSpecialExpressionNode = {
@@ -62,7 +63,7 @@ export const defunSpecialExpression: SpecialExpression = {
     }
 
     // The second last stack entry is the "global" scope
-    const context = asNotUndefined(contextStack[contextStack.length - 2])
+    const context = asNotUndefined(contextStack[contextStack.length - 2], 'Could not find global scope')
 
     context.functions[node.functionName.value] = lispishFunction
     return undefined

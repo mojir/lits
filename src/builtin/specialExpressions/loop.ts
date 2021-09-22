@@ -39,7 +39,7 @@ export const loopSpecialExpression: SpecialExpression = {
       throw error
     }
   },
-  validate: node => assertLength({ min: 1 }, node.params),
+  validate: node => assertLength({ min: 1 }, node),
 }
 
 function castLoopExpressionNode(_node: SpecialExpressionNode): asserts _node is LoopSpecialExpressionNode {

@@ -18,6 +18,9 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
   let token = asNotUndefined(tokens[position])
   while (!(token.type === 'paren' && token.value === ')')) {
+    if (!(token.type === 'paren' && token.value === '(')) {
+      throw Error(`Expected a condition starting with "(", got ${token.type}:${token.value}`)
+    }
     const [positionAfterTest, testNode] = parseToken(tokens, position + 1)
     position = positionAfterTest
 

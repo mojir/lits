@@ -1,4 +1,4 @@
-import { ReturnSignal } from '../../errors'
+import { ReturnSignal, UnexpectedTokenError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined, assertArray, assertNameNode } from '../../utils'
@@ -15,7 +15,7 @@ export const dolistSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
-      throw Error(`Expected "(", got ${token.type}: ${token.value}`)
+      throw new UnexpectedTokenError('(', token)
     }
     position += 1
 

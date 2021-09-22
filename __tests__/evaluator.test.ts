@@ -17,7 +17,7 @@ const simpleProgram = `
 
 const formatPhoneNumber = `
 (if (string? $data)
-  (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
+  (let ((phoneNumber (if (= "+" (at $data 0)) (substring $data 2) $data)))
     (cond
       ((> (string-length phoneNumber) 6)
         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))

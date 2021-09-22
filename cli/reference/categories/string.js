@@ -1,28 +1,4 @@
 module.exports = {
-  aref: {
-    name: 'aref',
-    category: 'String',
-    linkName: 'aref',
-    returns: {
-      type: 'string',
-    },
-    arguments: [
-      {
-        name: 'string',
-        type: 'string',
-      },
-      {
-        name: 'index',
-        type: 'integer',
-      },
-    ],
-    shortDescription: 'Accesses specified element of a string.',
-    longDescription:
-      'Accesses specified element of a string. `index` is counted from `0`. Accessing out-of-bounds indices returns `undefined`.',
-    examples: ['(aref "A string" 0)', '(aref "A string" 2)', '(aref "A string" 20)', '(aref "A string" -1)'],
-    specialExpression: false,
-    sideEffects: [],
-  },
   substring: {
     name: 'substring',
     category: 'String',
@@ -349,25 +325,6 @@ module.exports = {
     shortDescription: 'Returns `string` converted to upper case.',
     longDescription: 'Returns `string` converted to upper case.',
     examples: ['(upper-case "Albert")', '(upper-case "")'],
-    specialExpression: false,
-    sideEffects: [],
-  },
-  capitalize: {
-    name: 'capitalize',
-    category: 'String',
-    linkName: 'capitalize',
-    returns: {
-      type: 'string',
-    },
-    arguments: [
-      {
-        name: 'string',
-        type: 'string',
-      },
-    ],
-    shortDescription: "Returns copy of `string` with `string`'s first character converted to upper case.",
-    longDescription: "Returns copy of `string` with `string`'s first character converted to upper case.",
-    examples: ['(capitalize "albert")', '(capitalize " albert")', '(capitalize "")'],
     specialExpression: false,
     sideEffects: [],
   },

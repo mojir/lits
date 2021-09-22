@@ -1,6 +1,6 @@
-import { ReturnFromSignal } from '../../errors'
+import { ReturnFromSignal, UnexpectedTokenError } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength } from '../../utils'
+import { asAstNode, asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface ReturnFromSpecialExpressionNode extends SpecialExpressionNode {
@@ -12,7 +12,7 @@ export const returnFromSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const token = asNotUndefined(tokens[position])
     if (token.type !== 'name') {
-      throw Error(`Expected a name node, got ${token.type}: ${token.value}`)
+      throw new UnexpectedTokenError('name', token)
     }
 
     const node: ReturnFromSpecialExpressionNode = {
@@ -29,10 +29,10 @@ export const returnFromSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     castReturnFromExpressionNode(node)
-    const value = evaluateAstNode(asNotUndefined(node.params[0]), contextStack)
+    const value = evaluateAstNode(asAstNode(node.params[0]), contextStack)
     throw new ReturnFromSignal(node.blockName, value)
   },
-  validate: node => assertLength(1, node.params),
+  validate: node => assertLength(1, node),
 }
 
 function castReturnFromExpressionNode(_node: SpecialExpressionNode): asserts _node is ReturnFromSpecialExpressionNode {

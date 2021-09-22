@@ -1,4 +1,4 @@
-import { ReturnFromSignal } from '../../errors'
+import { ReturnFromSignal, UnexpectedTokenError } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
@@ -12,7 +12,7 @@ export const blockSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     let token = asNotUndefined(tokens[position])
     if (token.type !== 'name') {
-      throw Error(`Expected a name node, got ${token.type}: ${token.value}`)
+      throw new UnexpectedTokenError('name', token)
     }
 
     position += 1
@@ -48,7 +48,7 @@ export const blockSpecialExpression: SpecialExpression = {
       throw error
     }
   },
-  validate: node => assertLength({ min: 1 }, node.params),
+  validate: node => assertLength({ min: 1 }, node),
 }
 
 function castBlockExpressionNode(_node: SpecialExpressionNode): asserts _node is BlockSpecialExpressionNode {

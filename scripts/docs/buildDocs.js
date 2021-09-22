@@ -274,7 +274,7 @@ function stringifyValue(value) {
     if (value.builtin) {
       return `&lt;BUILTIN FUNCTION ${value.builtin}&gt;`
     } else {
-      return `&lt;FUNCTION ${value.name ?? 'λ'} (${value.arguments.join(' ')})&gt;`
+      return `&lt;FUNCTION ${value.name ?? 'λ'}&gt;`
     }
   }
   if (typeof value === 'object' && value instanceof Error) {

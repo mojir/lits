@@ -23,7 +23,7 @@ module.exports = [
     code: `
 (defun formatPhoneNumber ($data)
   (if (string? $data)
-    (let ((phoneNumber (if (= "+" (aref $data 0)) (substring $data 2) $data)))
+    (let ((phoneNumber (if (= "+" (at $data 0)) (substring $data 2) $data)))
       (cond
         ((> (string-length phoneNumber) 6)
           (concat
@@ -50,9 +50,11 @@ module.exports = [
 )
 
 (write #'formatPhoneNumber)
-(write (formatPhoneNumber "+11232343456"))
-(write (formatPhoneNumber "1232343456"))
+(write (formatPhoneNumber 123234))
 (write (formatPhoneNumber "123234"))
+(write (formatPhoneNumber "1232343456"))
+(write (formatPhoneNumber "+11232343456789"))
+(write (formatPhoneNumber "+11232343456"))
 `.trim(),
   },
   {

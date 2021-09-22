@@ -13,7 +13,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: ({ params }) => assertLengthEven(params),
+    validate: node => assertLengthEven(node),
   },
 
   keys: {
@@ -21,7 +21,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObject(first)
       return Object.keys(first)
     },
-    validate: ({ params }) => assertLength(1, params),
+    validate: node => assertLength(1, node),
   },
 
   values: {
@@ -29,7 +29,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObject(first)
       return Object.values(first)
     },
-    validate: ({ params }) => assertLength(1, params),
+    validate: node => assertLength(1, node),
   },
 
   entries: {
@@ -37,7 +37,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObject(first)
       return Object.entries(first)
     },
-    validate: ({ params }) => assertLength(1, params),
+    validate: node => assertLength(1, node),
   },
 
   'has-attr': {
@@ -46,7 +46,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertString(key)
       return !!Object.getOwnPropertyDescriptor(obj, key)
     },
-    validate: ({ params }) => assertLength(2, params),
+    validate: node => assertLength(2, node),
   },
 
   'get-attr': {
@@ -55,7 +55,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertString(key)
       return obj[key]
     },
-    validate: ({ params }) => assertLength(2, params),
+    validate: node => assertLength(2, node),
   },
 
   'set-attr': {
@@ -65,7 +65,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       obj[key] = value
       return value
     },
-    validate: ({ params }) => assertLength(3, params),
+    validate: node => assertLength(3, node),
   },
 
   'del-attr': {
@@ -76,7 +76,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       delete obj[key]
       return result
     },
-    validate: ({ params }) => assertLength(2, params),
+    validate: node => assertLength(2, node),
   },
 
   merge: {
@@ -91,6 +91,6 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         { ...first },
       )
     },
-    validate: ({ params }) => assertLength({ min: 1 }, params),
+    validate: node => assertLength({ min: 1 }, node),
   },
 }

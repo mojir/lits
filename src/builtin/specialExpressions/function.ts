@@ -2,6 +2,7 @@ import { normalExpressions } from '../normalExpressions'
 import { functionSymbol, LispishFunction, SpecialExpressionNode } from '../../parser/interface'
 import { asNameNode, asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
+import { UnexpectedNodeTypeError } from '../../errors'
 
 export interface FunctionSpecialExpressionNode extends SpecialExpressionNode {
   name: 'function'
@@ -11,7 +12,7 @@ export const functionSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const [newPosition, parameter] = parseToken(tokens, position)
     if (parameter.type !== 'Name') {
-      throw Error('Expected a name node')
+      throw new UnexpectedNodeTypeError('Name', parameter)
     }
 
     position = newPosition
@@ -53,7 +54,7 @@ export const functionSpecialExpression: SpecialExpression = {
       builtin: parameter.value,
     }
   },
-  validate: node => assertLength(1, node.params),
+  validate: node => assertLength(1, node),
 }
 
 function castFunctionExpressionNode(_node: SpecialExpressionNode): asserts _node is FunctionSpecialExpressionNode {

@@ -6,37 +6,37 @@ import { BuiltinNormalExpressions } from '../../interface'
 export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'function?': {
     evaluate: ([first]: unknown[]): boolean => isLispishFunction(first),
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'string?': {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'string',
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'number?': {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'number',
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'integer?': {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'number' && Number.isInteger(first),
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'boolean?': {
     evaluate: ([first]: unknown[]): boolean => typeof first === 'boolean',
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'undefined?': {
     evaluate: ([first]: unknown[]): boolean => first === undefined,
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'null?': {
     evaluate: ([first]: unknown[]): boolean => first === null,
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'zero?': {
@@ -44,7 +44,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertFiniteNumber(first)
       return first === 0
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'even?': {
@@ -52,7 +52,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertFiniteNumber(first)
       return first % 2 === 0
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'odd?': {
@@ -60,14 +60,14 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertFiniteNumber(first)
       return Number.isInteger(first) && first % 2 !== 0
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'list?': {
     evaluate: ([first]: unknown[]): boolean => {
       return Array.isArray(first)
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'object?': {
@@ -77,13 +77,13 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       typeof first === 'object' &&
       !(first instanceof RegExp) &&
       !isLispishFunction(first),
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'regexp?': {
     evaluate: ([first]: unknown[]): boolean =>
       first !== null && !Array.isArray(first) && typeof first === 'object' && first instanceof RegExp,
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'empty?': {
@@ -91,6 +91,6 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
       assertArray(first)
       return first.length === 0
     },
-    validate: ({ params }: NormalExpressionNode): void => assertLength(1, params),
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 }

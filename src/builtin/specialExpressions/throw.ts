@@ -1,4 +1,4 @@
-import { UserDefinedError } from '../../errors'
+import { UnexpectedTokenError, UserDefinedError } from '../../errors'
 import { AstNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNonEmptyString, asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
@@ -15,7 +15,7 @@ export const throwSpecialExpression: SpecialExpression = {
 
     const token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === ')')) {
-      throw Error('Expected ")"')
+      throw new UnexpectedTokenError(')', token)
     }
     position += 1
 

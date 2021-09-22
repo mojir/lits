@@ -7,7 +7,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       assertInteger(int32)
       return ~int32
     },
-    validate: ({ params }) => assertLength(1, params),
+    validate: node => assertLength(1, node),
   },
   logand: {
     evaluate: (params: unknown[]): unknown => {
@@ -43,6 +43,6 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       assertInteger(second)
       return first ^ second
     },
-    validate: ({ params }) => assertLength(2, params),
+    validate: node => assertLength(2, node),
   },
 }

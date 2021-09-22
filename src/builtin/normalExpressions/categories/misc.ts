@@ -14,7 +14,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: ({ params }) => assertLength({ min: 1 }, params),
+    validate: node => assertLength({ min: 1 }, node),
   },
   '=': {
     evaluate: ([first, ...rest]: unknown[]): boolean => {
@@ -26,7 +26,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: ({ params }) => assertLength({ min: 1 }, params),
+    validate: node => assertLength({ min: 1 }, node),
   },
   apply: {
     evaluate: ([func, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
@@ -34,7 +34,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       assertArray(list)
       return evaluateLispishFunction(func, list, contextStack)
     },
-    validate: ({ params }) => assertLength(2, params),
+    validate: node => assertLength(2, node),
   },
   'get-path': {
     evaluate: ([first, second]: unknown[]): unknown => {
@@ -42,17 +42,17 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       assertString(second)
       return get(first, second)
     },
-    validate: ({ params }) => assertLength(2, params),
+    validate: node => assertLength(2, node),
   },
   not: {
     evaluate: ([first]: unknown[]): boolean => !first,
-    validate: ({ params }) => assertLength(1, params),
+    validate: node => assertLength(1, node),
   },
   now: {
     evaluate: (): number => {
       return Date.now()
     },
-    validate: ({ params }) => assertLength(0, params),
+    validate: node => assertLength(0, node),
   },
   progn: {
     evaluate: (params: unknown[]): unknown => {
@@ -86,6 +86,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return undefined
     },
-    validate: ({ params }) => assertLength(1, params),
+    validate: node => assertLength(1, node),
   },
 }

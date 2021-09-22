@@ -204,6 +204,8 @@ describe('specialExpressions', () => {
       expect(
         lispish(`(cond ((> 5 10) 20) ((> 10 10) (write "Hej") (+ 5 5)) ((>= 10 10) "This will work" (+ 5 5 5)))`),
       ).toBe(15)
+      expect(() => lispish(`(cond (true 123) )`)).not.toThrow()
+      expect(() => lispish(`(cond true 123) )`)).toThrow()
     })
     test('middle condition true', () => {
       expect(

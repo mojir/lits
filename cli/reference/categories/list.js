@@ -123,27 +123,37 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
-  elt: {
-    name: 'elt',
+  at: {
+    name: 'at',
     category: 'List',
-    linkName: 'elt',
+    linkName: 'at',
     returns: {
       type: 'any',
     },
     arguments: [
       {
-        name: 'list',
-        type: 'list',
+        name: 'input',
+        type: 'string | list',
       },
       {
         name: 'index',
-        type: 'non negative integer',
+        type: 'integer',
       },
     ],
-    shortDescription: 'Accesses specified element of `list`.',
+    shortDescription: 'Accesses element `index` of `input`. Negative `index` counts backwards.',
     longDescription:
-      'Accesses specified element of `list`. The `index` is counted from `0`. Accessing out-of-bounds indices returns `undefined`.',
-    examples: [`(elt '(1 2 3) 1)`, `(elt '(1 2 3) 3)`],
+      'Accesses element `index` of `input`. Negative `index` counts backwards. Accessing out-of-bounds indices returns `undefined`.',
+    examples: [
+      `(at '(1 2 3) 1)`,
+      `(at '(1 2 3) 3)`,
+      `(at '(1 2 3) -1)`,
+      `(at '(1 2 3) -1)`,
+      `(at "A string" 1)`,
+      `(at "A string" 3)`,
+      `(at "A string" -3)`,
+      `(at "A string" 30)`,
+      `(at "A string" -30)`,
+    ],
     specialExpression: false,
     sideEffects: [],
   },
@@ -411,19 +421,25 @@ module.exports = {
     },
     arguments: [
       {
-        name: 'list',
-        type: 'list',
-      },
-      {
         name: 'mapper',
         type: 'function',
       },
+      {
+        name: 'list',
+        type: 'list',
+        description: 'one or many',
+      },
     ],
     shortDescription:
-      'Creates a new list populated with the results of calling `mapper` on every element in the calling list.',
+      'Creates a new list populated with the results of calling `mapper` on every elements in the calling `list`s.',
     longDescription:
-      'Creates a new list populated with the results of calling `mapper` on every element in the calling list.',
-    examples: [`(map #'string-reverse '("Albert" "Mojir"))`, `(map #'string-reverse '())`],
+      'Creates a new list populated with the results of calling `mapper` on every elements in the calling `list`s.',
+    examples: [
+      `(map #'string-reverse '("Albert" "Mojir"))`,
+      `(map #'string-reverse '())`,
+      `(map #'+ '(1 2 3) '(1 2 3))`,
+      `(map #'max '(2 6 3) '(2 4 7) '(1 6 2))`,
+    ],
     specialExpression: false,
     sideEffects: [],
   },

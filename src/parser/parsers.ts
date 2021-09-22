@@ -22,6 +22,7 @@ import {
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
 import { FunctionSpecialExpressionNode } from '../builtin/specialExpressions/function'
+import { UnexpectedTokenError } from '../errors'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
@@ -59,7 +60,7 @@ const parseParams: ParseParams = (tokens, position) => {
   return [position, params]
 }
 
-export const parseExpression: ParseExpression = (tokens, position) => {
+const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
   const token = asNotUndefined(tokens[position])
@@ -72,12 +73,12 @@ export const parseExpression: ParseExpression = (tokens, position) => {
   } else if (token.type === 'paren' && token.value === '(') {
     return parseExpressionExpression(tokens, position)
   } else {
-    throw Error('Could not parse expression')
+    throw Error(`Could not parse expression, expected name or "(", got ${token.type}:${token.value}`)
   }
 }
 
 type ParseFunctionShorthand = (tokens: Token[], position: number) => [number, FunctionSpecialExpressionNode]
-export const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position) => {
+const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position) => {
   const [newPosition, innerNode] = parseToken(tokens, position + 1)
 
   const node: FunctionSpecialExpressionNode = {
@@ -89,7 +90,7 @@ export const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position)
 }
 
 type ParseListShorthand = (tokens: Token[], position: number) => [number, AstNode]
-export const parseListShorthand: ParseListShorthand = (tokens, position) => {
+const parseListShorthand: ParseListShorthand = (tokens, position) => {
   position = position + 2
   let params: AstNode[]
   ;[position, params] = parseParams(tokens, position)
@@ -113,21 +114,21 @@ const parseArgument: ParseArgument = (tokens, position) => {
     position += 1
     token = asNotUndefined(tokens[position])
     if (token.type !== 'name') {
-      throw Error(`Expected name node got: ${token.type}: ${token.value}`)
+      throw new UnexpectedTokenError('name', token)
     }
     const name = token.value
     position += 1
     const [newPosition, defaultValue] = parseToken(tokens, position)
     token = asNotUndefined(tokens[newPosition])
     if (!(token.type === 'paren' && token.value === ')')) {
-      throw Error('Expected ")"')
+      throw new UnexpectedTokenError(')', token)
     }
     return [newPosition + 1, { type: 'Argument', name, defaultValue }]
   } else if (token.type === 'modifier') {
     const value = token.value as ModifierName
     return [position + 1, { type: 'Modifier', value }]
   } else {
-    throw Error(`Unexpected token: ${token.type}: ${token.value}`)
+    throw new UnexpectedTokenError('"(", name or modifier', token)
   }
 }
 
@@ -147,7 +148,7 @@ const parseBinding: ParseBinding = (tokens, position) => {
 
   token = asNotUndefined(tokens[position])
   if (!(token.type === 'paren' && token.value === ')')) {
-    throw Error(`Expected paren ')'node in binding, got ${token.type} value=${token.value}`)
+    throw new UnexpectedTokenError(')', token)
   }
 
   const node: BindingNode = {
@@ -187,11 +188,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
   const builtinExpression = builtin.normalExpressions[node.name]
 
   if (builtinExpression) {
-    try {
-      builtinExpression.validate?.(node)
-    } catch (e) {
-      throw Error((e as Error).message + '\n' + JSON.stringify(node, null, 2))
-    }
+    builtinExpression.validate?.(node)
   }
 
   return [position, node]
@@ -201,7 +198,10 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
   position += 1
 
-  const { parse, validate } = asNotUndefined(builtin.specialExpressions[expressionName])
+  const { parse, validate } = asNotUndefined(
+    builtin.specialExpressions[expressionName],
+    `${expressionName} is not a built in special expression`,
+  )
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
@@ -211,11 +211,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
     parseArgument,
   })
 
-  try {
-    validate?.(node)
-  } catch (e) {
-    throw Error((e as Error).message + '\n' + JSON.stringify(node, null, 2))
-  }
+  validate?.(node)
 
   return [positionAfterParse, node]
 }

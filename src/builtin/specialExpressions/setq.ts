@@ -29,7 +29,7 @@ export const setqSpecialExpression: SpecialExpression = {
     // The second last stack entry is the "global" scope
     let context: Context | undefined = undefined
     for (let i = 0; i < contextStack.length - 1; i += 1) {
-      if (Object.getOwnPropertyDescriptor(asNotUndefined(contextStack[i]).variables, name)) {
+      if (Object.getOwnPropertyDescriptor(asNotUndefined(contextStack[i], 'This cannot be').variables, name)) {
         context = contextStack[i]
         break
       }
@@ -37,14 +37,14 @@ export const setqSpecialExpression: SpecialExpression = {
 
     if (!context) {
       // The second last stack entry is the "global" scope
-      context = asNotUndefined(contextStack[contextStack.length - 2])
+      context = asNotUndefined(contextStack[contextStack.length - 2], 'This cannot be')
     }
     context.variables[name] = value
 
     return value
   },
   validate: node => {
-    assertLength(2, node.params)
+    assertLength(2, node)
   },
 }
 

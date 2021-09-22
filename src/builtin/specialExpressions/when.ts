@@ -33,7 +33,7 @@ export const whenSpecialExpression: SpecialExpression = {
     }
     return result
   },
-  validate: node => assertLength({ min: 1 }, node.params),
+  validate: node => assertLength({ min: 1 }, node),
 }
 
 function castWhenExpressionNode(_node: SpecialExpressionNode): asserts _node is WhenSpecialExpressionNode {

@@ -111,17 +111,27 @@ describe('list functions', () => {
     })
   })
 
-  describe('elt', () => {
-    test('samples', () => {
-      expect(lispish(`(elt '(1 2 3) 1)`)).toBe(2)
-      expect(lispish(`(elt '(1 2 3) 3)`)).toBeUndefined()
-      expect(() => lispish(`(elt '(1 2 3) -1)`)).toThrow()
-      expect(() => lispish(`(elt "Albert" 1)`)).toThrow()
-      expect(() => lispish(`(elt)`)).toThrow()
-      expect(() => lispish(`(elt (object) 1)`)).toThrow()
-      expect(() => lispish(`(elt null 2)`)).toThrow()
-      expect(() => lispish(`(elt '(1 2 3))`)).toThrow()
-      expect(() => lispish(`(elt '(1 2 3) 1 2)`)).toThrow()
+  describe('at', () => {
+    test('array samples', () => {
+      expect(lispish(`(at '(1 2 3) 1)`)).toBe(2)
+      expect(lispish(`(at '(1 2 3) 3)`)).toBeUndefined()
+      expect(lispish(`(at '(1 2 3) -1)`)).toBe(3)
+      expect(lispish(`(at '(1 2 3) -4)`)).toBeUndefined()
+      expect(() => lispish(`(at)`)).toThrow()
+      expect(() => lispish(`(at (object) 1)`)).toThrow()
+      expect(() => lispish(`(at null 2)`)).toThrow()
+      expect(() => lispish(`(at '(1 2 3))`)).toThrow()
+      expect(() => lispish(`(at '(1 2 3) 1 2)`)).toThrow()
+    })
+
+    test('string samples', () => {
+      expect(lispish(`(at "A string" 1)`)).toBe(' ')
+      expect(lispish(`(at "A string" 3)`)).toBe('t')
+      expect(lispish(`(at "A string" -3)`)).toBe('i')
+      expect(lispish(`(at "A string" 30)`)).toBeUndefined()
+      expect(lispish(`(at "A string" -30)`)).toBeUndefined()
+      expect(() => lispish(`(at "A string")`)).toThrow()
+      expect(() => lispish(`(at "A string" 1 2)`)).toThrow()
     })
   })
 
@@ -306,6 +316,8 @@ describe('list functions', () => {
     test('samples', () => {
       expect(lispish(`(map (function number?) '(1 "2" 3))`)).toEqual([true, false, true])
       expect(lispish(`(map (function number?) '())`)).toEqual([])
+      expect(lispish(`(map #'+ '(1 2 3) '(1 2 3))`)).toEqual([2, 4, 6])
+      expect(lispish(`(map #'max '(2 6 3) '(2 4 7) '(1 6 2))`)).toEqual([2, 6, 7])
       expect(lispish(`(map (function null?) '(1 "2" 3))`)).toEqual([false, false, false])
       expect(lispish(`(map (lambda (x) (zero? (% x 3))) '(0 1 2 3 4 5 6 7))`)).toEqual([
         true,
@@ -318,6 +330,7 @@ describe('list functions', () => {
         false,
       ])
       expect(lispish(`(map (function 1+) '(0 1 2 3 4 5 6 7))`)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+      expect(() => lispish(`(map #'+ '(1 2 3) '(1 2))`)).toThrow()
       expect(() => lispish(`(map (function +))`)).toThrow()
       expect(() => lispish(`(map)`)).toThrow()
       expect(() => lispish(`(map (function number?) '(1) 2)`)).toThrow()

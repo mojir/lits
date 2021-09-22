@@ -33,7 +33,7 @@ export const unlessSpecialExpression: SpecialExpression = {
     }
     return result
   },
-  validate: node => assertLength({ min: 1 }, node.params),
+  validate: node => assertLength({ min: 1 }, node),
 }
 
 function castUnlessExpressionNode(_node: SpecialExpressionNode): asserts _node is UnlessSpecialExpressionNode {

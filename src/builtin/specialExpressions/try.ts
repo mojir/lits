@@ -1,4 +1,4 @@
-import { ReturnFromSignal, ReturnSignal } from '../../errors'
+import { ReturnFromSignal, ReturnSignal, UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
@@ -13,42 +13,45 @@ interface TrySpecialExpressionNode extends SpecialExpressionNode {
 
 export const trySpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
-    const [newPosition1, tryExpression] = parseToken(tokens, position)
-    position = newPosition1
+    let tryExpression: AstNode
+    ;[position, tryExpression] = parseToken(tokens, position)
 
     let token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
-      throw Error('Expected "("')
+      throw new UnexpectedTokenError('(', token)
     }
     position += 1
+
     token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === '(')) {
-      throw Error('Expected "("')
+      throw new UnexpectedTokenError('(', token)
     }
+
     position += 1
-    const [newPosition2, error] = parseToken(tokens, position)
+    let error: AstNode
+    ;[position, error] = parseToken(tokens, position)
     if (error.type !== 'Name') {
-      throw Error(`Expected name node, got: ${error.type}`)
+      throw new UnexpectedNodeTypeError('Name', error)
     }
-    position = newPosition2
-    token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === ')')) {
-      throw Error('Expected ")"')
-    }
-    position += 1
-
-    const [newPosition3, catchExpression] = parseToken(tokens, position)
-    position = newPosition3
 
     token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === ')')) {
-      throw Error('Expected ")"')
+      throw new UnexpectedTokenError(')', token)
     }
     position += 1
 
+    let catchExpression: AstNode
+    ;[position, catchExpression] = parseToken(tokens, position)
+
     token = asNotUndefined(tokens[position])
     if (!(token.type === 'paren' && token.value === ')')) {
-      throw Error('Expected ")"')
+      throw new UnexpectedTokenError(')', token)
+    }
+    position += 1
+
+    token = asNotUndefined(tokens[position])
+    if (!(token.type === 'paren' && token.value === ')')) {
+      throw new UnexpectedTokenError(')', token)
     }
     position += 1
 

@@ -18,7 +18,7 @@ export type BuiltinLispishFunction = {
 
 export type LispishFunction = UserDefinedLispishFunction | BuiltinLispishFunction
 
-type NodeType =
+export type NodeType =
   | 'Number'
   | 'String'
   | 'NormalExpression'

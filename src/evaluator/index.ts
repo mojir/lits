@@ -56,7 +56,7 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedNameNode): unknown {
-  return asNotUndefined(reservedNamesRecord[node.value]).value
+  return asNotUndefined(reservedNamesRecord[node.value], `${node.value} is not a reserved name`).value
 }
 
 function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
@@ -119,14 +119,14 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
     for (let i = 0; i < length; i += 1) {
       if (i < nbrOfMandatoryArgs) {
         const param = params[i]
-        const key = asNotUndefined(args.mandatoryArguments[i])
+        const key = asNotUndefined(args.mandatoryArguments[i], '')
         if (isLispishFunction(param)) {
           newContext.functions[key] = param
         } else {
           newContext.variables[key] = param
         }
       } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
-        const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs])
+        const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], '')
         const param =
           i < params.length
             ? params[i]
@@ -142,7 +142,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       } else {
         const param = params[i]
         if (isLispishFunction(param)) {
-          throw Error('A function cannot be a &rest parameter TODO, is this a fact?')
+          throw Error('A function cannot be a &rest parameter') //  TODO, is this a fact?
         }
         rest.push(param)
       }
@@ -168,7 +168,10 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       throw error
     }
   } else {
-    const normalExpression = asNotUndefined(normalExpressions[lispishFunction.builtin])
+    const normalExpression = asNotUndefined(
+      normalExpressions[lispishFunction.builtin],
+      `${lispishFunction.builtin} is not a function`,
+    )
     return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
   }
 }
@@ -178,13 +181,19 @@ function evaluateBuiltinNormalExpression(
   params: unknown[],
   contextStack: Context[],
 ): unknown {
-  const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
+  const normalExpressionEvaluator = asNotUndefined(
+    builtin.normalExpressions[node.name],
+    `${node.name} is not a function`,
+  ).evaluate
 
   return normalExpressionEvaluator(params, contextStack, { evaluateLispishFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {
-  const specialExpressionEvaluator = asNotUndefined(builtin.specialExpressions[node.name]).evaluate
+  const specialExpressionEvaluator = asNotUndefined(
+    builtin.specialExpressions[node.name],
+    `${node.name} is not a built in special expression`,
+  ).evaluate
   return specialExpressionEvaluator(node, contextStack, evaluateAstNode)
 }
 

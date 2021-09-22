@@ -153,7 +153,7 @@ function stringifyValue(value) {
     if (value.builtin) {
       return `<BUILTIN FUNCTION ${value.builtin}>`
     } else {
-      return `<FUNCTION ${value.name || 'λ'} (${value.arguments.join(' ')})>`
+      return `<FUNCTION ${value.name || 'λ'}>`
     }
   }
   if (typeof value === 'object' && value instanceof RegExp) {

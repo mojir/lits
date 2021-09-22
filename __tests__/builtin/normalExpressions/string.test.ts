@@ -58,20 +58,6 @@ describe('string functions', () => {
     })
   })
 
-  describe('aref', () => {
-    test('samples', () => {
-      expect(lispish(`(aref "Albert" 1)`)).toBe('l')
-      expect(lispish(`(aref "Albert" 6)`)).toBeUndefined()
-      expect(() => lispish(`(aref "Albert" -1)`)).toThrow()
-      expect(() => lispish(`(aref '(1 2 3) 1)`)).toThrow()
-      expect(() => lispish(`(aref '(1 2 3) 3)`)).toThrow()
-      expect(() => lispish(`(aref)`)).toThrow()
-      expect(() => lispish(`(aref (object) 1)`)).toThrow()
-      expect(() => lispish(`(aref null 2)`)).toThrow()
-      expect(() => lispish(`(aref '(1 2 3) 1 2)`)).toThrow()
-    })
-  })
-
   describe('string>', () => {
     test('samples', () => {
       expect(lispish(`(string> "albert" "ALBERT")`)).toBe(true)
@@ -218,15 +204,6 @@ describe('string functions', () => {
       expect(lispish(`(upper-case "")`)).toBe('')
       expect(() => lispish(`(upper-case)`)).toThrow()
       expect(() => lispish(`(upper-case "First" "Second")`)).toThrow()
-    })
-  })
-
-  describe('capitalize', () => {
-    test('samples', () => {
-      expect(lispish(`(capitalize "albert!")`)).toBe('Albert!')
-      expect(lispish(`(capitalize "")`)).toBe('')
-      expect(() => lispish(`(capitalize)`)).toThrow()
-      expect(() => lispish(`(capitalize "First" "Second")`)).toThrow()
     })
   })
 

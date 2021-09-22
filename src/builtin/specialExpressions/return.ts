@@ -1,6 +1,6 @@
 import { ReturnSignal } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength } from '../../utils'
+import { assertLength, asAstNode } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface ReturnSpecialExpressionNode extends SpecialExpressionNode {
@@ -21,10 +21,10 @@ export const returnSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     castReturnExpressionNode(node)
-    const value = evaluateAstNode(asNotUndefined(node.params[0]), contextStack)
+    const value = evaluateAstNode(asAstNode(node.params[0]), contextStack)
     throw new ReturnSignal(value)
   },
-  validate: node => assertLength(1, node.params),
+  validate: node => assertLength(1, node),
 }
 
 function castReturnExpressionNode(_node: SpecialExpressionNode): asserts _node is ReturnSpecialExpressionNode {

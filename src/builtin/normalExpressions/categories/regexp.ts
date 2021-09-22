@@ -14,7 +14,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       assertString(second)
       return new RegExp(first, second)
     },
-    validate: ({ params }) => assertLength({ min: 1, max: 2 }, params),
+    validate: node => assertLength({ min: 1, max: 2 }, node),
   },
   match: {
     evaluate: ([first, second]: unknown[]): string[] | undefined => {
@@ -27,7 +27,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       }
       return undefined
     },
-    validate: ({ params }) => assertLength(2, params),
+    validate: node => assertLength(2, node),
   },
   replace: {
     evaluate: ([string, regexp, value]: unknown[]): string => {
@@ -37,6 +37,6 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
 
       return string.replace(regexp, value)
     },
-    validate: ({ params }) => assertLength(3, params),
+    validate: node => assertLength(3, node),
   },
 }
