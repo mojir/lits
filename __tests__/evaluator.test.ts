@@ -1,7 +1,9 @@
 import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
 import { evaluate } from '../src/evaluator'
-import { lispish } from '../src'
+import { Lispish } from '../src'
+
+const lispish = new Lispish()
 
 const simpleProgram = `
 (let
@@ -92,44 +94,44 @@ describe('Evaluator', () => {
   })
 
   test('expressionExpression', () => {
-    expect(lispish(`((lambda (x) (* x x)) 10)`)).toBe(100)
+    expect(lispish.run(`((lambda (x) (* x x)) 10)`)).toBe(100)
   })
 
   test('lispishFunction', () => {
-    expect(lispish(`((lambda () 10))`)).toBe(10)
-    expect(lispish(`((lambda (x) (x 10)) (lambda (x) (* x x)))`)).toBe(100)
-    expect(lispish(`((lambda (x) (x 10)) (function 1+))`)).toBe(11)
-    expect(() => lispish(`((lambda (x) (x 10)) (function 1++))`)).toThrow()
-    expect(() => lispish(`((lambda (x) (* x x)) 10 20)`)).toThrow()
-    expect(() => lispish(`((lambda (x) (* x x)))`)).toThrow()
+    expect(lispish.run(`((lambda () 10))`)).toBe(10)
+    expect(lispish.run(`((lambda (x) (x 10)) (lambda (x) (* x x)))`)).toBe(100)
+    expect(lispish.run(`((lambda (x) (x 10)) (function 1+))`)).toBe(11)
+    expect(() => lispish.run(`((lambda (x) (x 10)) (function 1++))`)).toThrow()
+    expect(() => lispish.run(`((lambda (x) (* x x)) 10 20)`)).toThrow()
+    expect(() => lispish.run(`((lambda (x) (* x x)))`)).toThrow()
   })
 
   test('formatPhoneNumber', () => {
-    expect(lispish(formatPhoneNumber, { $data: null })).toBe('')
-    expect(lispish(formatPhoneNumber, { $data: '' })).toBe('')
-    expect(lispish(formatPhoneNumber, { $data: '+' })).toBe('')
-    expect(lispish(formatPhoneNumber, { $data: '+1' })).toBe('')
-    expect(lispish(formatPhoneNumber, { $data: '+12' })).toBe('(2')
-    expect(lispish(formatPhoneNumber, { $data: '+123' })).toBe('(23')
-    expect(lispish(formatPhoneNumber, { $data: '+1234' })).toBe('(234')
-    expect(lispish(formatPhoneNumber, { $data: '+12345' })).toBe('(234) 5')
-    expect(lispish(formatPhoneNumber, { $data: '+123456' })).toBe('(234) 56')
-    expect(lispish(formatPhoneNumber, { $data: '+1234567' })).toBe('(234) 567')
-    expect(lispish(formatPhoneNumber, { $data: '+12345678' })).toBe('(234) 567-8')
-    expect(lispish(formatPhoneNumber, { $data: '+123456789' })).toBe('(234) 567-89')
-    expect(lispish(formatPhoneNumber, { $data: '+1234567890' })).toBe('(234) 567-890')
-    expect(lispish(formatPhoneNumber, { $data: '+12345678901' })).toBe('(234) 567-8901')
-    expect(lispish(formatPhoneNumber, { $data: '+123456789012' })).toBe('(234) 567-89012')
-    expect(lispish(formatPhoneNumber, { $data: '2' })).toBe('(2')
-    expect(lispish(formatPhoneNumber, { $data: '23' })).toBe('(23')
-    expect(lispish(formatPhoneNumber, { $data: '234' })).toBe('(234')
-    expect(lispish(formatPhoneNumber, { $data: '2345' })).toBe('(234) 5')
-    expect(lispish(formatPhoneNumber, { $data: '23456' })).toBe('(234) 56')
-    expect(lispish(formatPhoneNumber, { $data: '234567' })).toBe('(234) 567')
-    expect(lispish(formatPhoneNumber, { $data: '2345678' })).toBe('(234) 567-8')
-    expect(lispish(formatPhoneNumber, { $data: '23456789' })).toBe('(234) 567-89')
-    expect(lispish(formatPhoneNumber, { $data: '234567890' })).toBe('(234) 567-890')
-    expect(lispish(formatPhoneNumber, { $data: '2345678901' })).toBe('(234) 567-8901')
-    expect(lispish(formatPhoneNumber, { $data: '23456789012' })).toBe('(234) 567-89012')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: null } })).toBe('')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '' } })).toBe('')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+' } })).toBe('')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+1' } })).toBe('')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+12' } })).toBe('(2')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+123' } })).toBe('(23')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+1234' } })).toBe('(234')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+12345' } })).toBe('(234) 5')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+123456' } })).toBe('(234) 56')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+1234567' } })).toBe('(234) 567')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+12345678' } })).toBe('(234) 567-8')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+123456789' } })).toBe('(234) 567-89')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+1234567890' } })).toBe('(234) 567-890')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+12345678901' } })).toBe('(234) 567-8901')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '+123456789012' } })).toBe('(234) 567-89012')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '2' } })).toBe('(2')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '23' } })).toBe('(23')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '234' } })).toBe('(234')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '2345' } })).toBe('(234) 5')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '23456' } })).toBe('(234) 56')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '234567' } })).toBe('(234) 567')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '2345678' } })).toBe('(234) 567-8')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '23456789' } })).toBe('(234) 567-89')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '234567890' } })).toBe('(234) 567-890')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '2345678901' } })).toBe('(234) 567-8901')
+    expect(lispish.run(formatPhoneNumber, { globalVariables: { $data: '23456789012' } })).toBe('(234) 567-89012')
   })
 })

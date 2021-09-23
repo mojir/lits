@@ -1,4 +1,6 @@
-;(function () {
+; (function () {
+  lispish = new Lispish.Lispish()
+
   window.addEventListener('keyup', function (evt) {
     if (evt.key === 'Enter' && evt.ctrlKey === true) {
       play()
@@ -99,7 +101,7 @@ function play() {
     logTextarea.scrollTop = logTextarea.scrollHeight
   }
   try {
-    result = lispish.lispish(code, context)
+    result = lispish.run(code, { globalVariables: context })
   } catch (error) {
     output.value = error
     output.classList.add('error')
@@ -149,7 +151,7 @@ function inactivateAll() {
 }
 
 function stringifyValue(value) {
-  if (lispish.isLispishFunction(value)) {
+  if (Lispish.isLispishFunction(value)) {
     if (value.builtin) {
       return `<BUILTIN FUNCTION ${value.builtin}>`
     } else {

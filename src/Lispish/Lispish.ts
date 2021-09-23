@@ -25,7 +25,7 @@ export class Lispish {
     return evaluate(ast, globalVariables, topScope)
   }
 
-  public run(program: string, evaluationParams: EvaluationParams = {}): unknown {
+  public run(program: string, evaluationParams?: EvaluationParams): unknown {
     const tokens: Token[] = this.tokenize(program)
     const ast: Ast = this.parse(tokens)
     const result = this.evaluate(ast, evaluationParams)
