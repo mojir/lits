@@ -54,6 +54,7 @@ export type SpecialExpressionName =
   | 'return-from'
   | 'return'
   | 'setq'
+  | 'setq-constant'
   | 'throw'
   | 'try'
   | 'unless'

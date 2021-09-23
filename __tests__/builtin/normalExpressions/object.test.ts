@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Lispish } from '../../../src'
 
-const lispish = new Lispish()
+let lispish: Lispish
+
+beforeEach(() => {
+  lispish = new Lispish()
+})
 
 describe('object functions', () => {
   describe('object', () => {

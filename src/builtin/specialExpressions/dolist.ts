@@ -60,7 +60,7 @@ export const dolistSpecialExpression: SpecialExpression = {
 
     const newContext: Context = {
       functions: {},
-      variables: { [varName]: undefined },
+      variables: { [varName]: { value: undefined, const: false } },
     }
 
     const newContextStack = [newContext, ...contextStack]
@@ -68,7 +68,7 @@ export const dolistSpecialExpression: SpecialExpression = {
     try {
       while (list.length > 0) {
         const variable = list.shift()
-        newContext.variables[varName] = variable
+        newContext.variables[varName] = { value: variable, const: false }
         for (const form of node.params) {
           evaluateAstNode(form, newContextStack)
         }
@@ -82,7 +82,7 @@ export const dolistSpecialExpression: SpecialExpression = {
     if (!node.result) {
       return undefined
     }
-    newContext.variables[varName] = undefined
+    newContext.variables[varName] = { value: undefined, const: false }
     return evaluateAstNode(node.result, newContextStack)
   },
 }

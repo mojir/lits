@@ -61,8 +61,9 @@ function evaluateReservedName(node: ReservedNameNode): unknown {
 
 function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
   for (const context of contextStack) {
-    if (Object.getOwnPropertyDescriptor(context.variables, value)) {
-      return context.variables[value]
+    const variable = context.variables[value]
+    if (variable) {
+      return variable.value
     }
   }
   throw Error(`Undefined identifier ${value}`)
@@ -73,7 +74,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 
   let lispishFunction: LispishFunction | undefined = undefined
   for (const context of contextStack) {
-    lispishFunction = context.functions[node.name]
+    lispishFunction = context.functions[node.name]?.fun
     if (lispishFunction) {
       break
     }
@@ -121,9 +122,9 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         const param = params[i]
         const key = asNotUndefined(args.mandatoryArguments[i], '')
         if (isLispishFunction(param)) {
-          newContext.functions[key] = param
+          newContext.functions[key] = { fun: param, const: false }
         } else {
-          newContext.variables[key] = param
+          newContext.variables[key] = { value: param, const: false }
         }
       } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
         const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], '')
@@ -135,9 +136,9 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
             : undefined
         const key = arg.name
         if (isLispishFunction(param)) {
-          newContext.functions[key] = param
+          newContext.functions[key] = { fun: param, const: false }
         } else {
-          newContext.variables[key] = param
+          newContext.variables[key] = { value: param, const: false }
         }
       } else {
         const param = params[i]
@@ -149,7 +150,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
     }
 
     if (args.restArgument) {
-      newContext.variables[args.restArgument] = rest
+      newContext.variables[args.restArgument] = { value: rest, const: false }
     }
 
     try {

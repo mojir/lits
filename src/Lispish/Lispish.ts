@@ -23,10 +23,17 @@ export class Lispish {
   }
 
   public evaluate(ast: Ast, globalVariables: Record<string, unknown> = {}): unknown {
-    return evaluate(ast, globalVariables, this.importScope)
+    const variableScope: VariableScope = Object.keys(globalVariables).reduce((result: VariableScope, key) => {
+      result[key] = {
+        value: globalVariables[key],
+        const: true,
+      }
+      return result
+    }, {})
+    return evaluate(ast, variableScope, this.importScope)
   }
 
-  public run(program: string, globalVariables?: VariableScope): unknown {
+  public run(program: string, globalVariables?: Record<string, unknown>): unknown {
     const tokens: Token[] = this.tokenize(program)
     const ast: Ast = this.parse(tokens)
     const result = this.evaluate(ast, globalVariables)

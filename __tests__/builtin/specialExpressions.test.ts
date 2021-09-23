@@ -2,9 +2,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Lispish } from '../../src'
 import { ReturnFromSignal, ReturnSignal, UserDefinedError } from '../../src/errors'
-import { FunctionScope } from '../../src/evaluator/interface'
 
-const lispish = new Lispish()
+let lispish: Lispish
+
+beforeEach(() => {
+  lispish = new Lispish()
+})
 
 describe('specialExpressions', () => {
   let oldLog: () => void
@@ -221,9 +224,7 @@ describe('specialExpressions', () => {
 
   describe('defun', () => {
     test('samples', () => {
-      const functions: FunctionScope = {}
-      lispish.run('(defun add (a b) (+ a b))', { topScope: { variables: {}, functions } })
-      expect(functions.add).toBeTruthy()
+      expect(lispish.run('(defun add (a b) (+ a b)) (add 1 2)')).toBe(3)
       expect(() => lispish.run(`(defun add () 10)`)).not.toThrow()
       expect(() => lispish.run(`(defun x (a a) 10)`)).toThrow()
       expect(() => lispish.run(`(defun true () 10)`)).toThrow()

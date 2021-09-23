@@ -3,11 +3,11 @@ import { SpecialExpressionNode } from '../../parser/interface'
 import { asAstNode, asNameNode, asNotUndefined, assertLength, assertNameNode } from '../../utils'
 import { SpecialExpression } from '../interface'
 
-interface SetqSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'setq'
+interface SetqConstantSpecialExpressionNode extends SpecialExpressionNode {
+  name: 'setq-constant'
 }
 
-export const setqSpecialExpression: SpecialExpression = {
+export const setqConstantSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseParams }) => {
     const [newPosition, params] = parseParams(tokens, position)
     assertNameNode(params[0])
@@ -15,13 +15,13 @@ export const setqSpecialExpression: SpecialExpression = {
       newPosition + 1,
       {
         type: 'SpecialExpression',
-        name: 'setq',
+        name: 'setq-constant',
         params,
       },
     ]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    castSetqExpressionNode(node)
+    castSetqConstantExpressionNode(node)
     const name = asNameNode(node.params[0]).value
 
     const value = evaluateAstNode(asAstNode(node.params[1]), contextStack)
@@ -43,7 +43,7 @@ export const setqSpecialExpression: SpecialExpression = {
     if (context.variables[name]?.const) {
       throw Error(`Cannot change constant variable "${name}"`)
     }
-    context.variables[name] = { value, const: false }
+    context.variables[name] = { value, const: true }
 
     return value
   },
@@ -52,6 +52,8 @@ export const setqSpecialExpression: SpecialExpression = {
   },
 }
 
-function castSetqExpressionNode(_node: SpecialExpressionNode): asserts _node is SetqSpecialExpressionNode {
+function castSetqConstantExpressionNode(
+  _node: SpecialExpressionNode,
+): asserts _node is SetqConstantSpecialExpressionNode {
   return
 }

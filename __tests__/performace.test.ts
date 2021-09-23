@@ -4,12 +4,17 @@ import { Lispish } from '../src'
 import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
 import { evaluate } from '../src/evaluator'
+import { VariableScope } from '../src/evaluator/interface'
 
-const lispish = new Lispish()
+let lispish: Lispish
+
+beforeEach(() => {
+  lispish = new Lispish()
+})
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
-const context = { x: 20, y: 30 }
+const context: VariableScope = { x: { value: 20, const: false }, y: { value: 30, const: false } }
 const jsExpression = `((x - y) * (y - x)) + ((x / y) * (y / x))`
 
 // Some baseline values for javascript eval to compare with

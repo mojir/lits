@@ -61,7 +61,7 @@ export const dotimesSpecialExpression: SpecialExpression = {
 
     const newContext: Context = {
       functions: {},
-      variables: { [varName]: undefined },
+      variables: { [varName]: { value: undefined, const: false } },
     }
 
     const newContextStack = [newContext, ...contextStack]
@@ -69,7 +69,7 @@ export const dotimesSpecialExpression: SpecialExpression = {
     try {
       let i
       for (i = 0; i < count; i += 1) {
-        newContext.variables[varName] = i
+        newContext.variables[varName] = { value: i, const: false }
         for (const form of node.params) {
           evaluateAstNode(form, newContextStack)
         }
@@ -77,7 +77,7 @@ export const dotimesSpecialExpression: SpecialExpression = {
       if (!node.result) {
         return undefined
       }
-      newContext.variables[varName] = i
+      newContext.variables[varName] = { value: i, const: false }
       return evaluateAstNode(node.result, newContextStack)
     } catch (error) {
       if (error instanceof ReturnSignal) {

@@ -1,7 +1,11 @@
 import { Lispish } from '../src/'
 import { tokenizeNumber } from '../src/tokenizer/tokenizers'
 
-const lispish = new Lispish()
+let lispish: Lispish
+
+beforeEach(() => {
+  lispish = new Lispish()
+})
 
 describe('parse numbers', () => {
   describe('valid numbers', () => {

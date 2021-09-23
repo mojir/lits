@@ -2,8 +2,13 @@ import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
 import { evaluate } from '../src/evaluator'
 import { Lispish } from '../src'
+import { VariableScope } from '../src/evaluator/interface'
 
-const lispish = new Lispish()
+let lispish: Lispish
+
+beforeEach(() => {
+  lispish = new Lispish()
+})
 
 const simpleProgram = `
 (let
@@ -39,11 +44,14 @@ const formatPhoneNumber = `
 )
 `
 
-const context = {
-  kalle: 5,
+const context: VariableScope = {
+  kalle: { value: 5, const: false },
   info: {
-    days: [10, 13],
-    gender: 'male',
+    value: {
+      days: [10, 13],
+      gender: 'male',
+    },
+    const: false,
   },
 }
 

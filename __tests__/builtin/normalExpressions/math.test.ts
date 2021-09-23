@@ -1,6 +1,10 @@
 import { Lispish } from '../../../src'
 
-const lispish = new Lispish()
+let lispish: Lispish
+
+beforeEach(() => {
+  lispish = new Lispish()
+})
 
 describe('math functions', () => {
   describe('1+', () => {
