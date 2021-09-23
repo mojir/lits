@@ -1,9 +1,11 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { lispish } from '../src'
+import { Lispish } from '../src'
 import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
 import { evaluate } from '../src/evaluator'
+
+const lispish = new Lispish()
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
@@ -68,7 +70,7 @@ xdescribe('performace', () => {
   test('lispish tokenize - parse - evaluate', () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish(program, context)
+      lispish.run(program, { globalVariables: context })
     }
     logPerformace('Execute program (tokenize, parse and evaluate)', Date.now() - startTime)
   })

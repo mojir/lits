@@ -1,11 +1,13 @@
 const { version } = require('../../package.json')
 const { functionReference, categories } = require('../../cli/reference')
 const examples = require('./examples')
-const lispish = require('../../dist/lispish')
+const Lispish = require('../../dist/lispish')
 const path = require('path')
 const fs = require('fs')
 
 const DOC_DIR = path.resolve(__dirname, '../../docs')
+const lispish = new Lispish.Lispish()
+
 
 setupDocDir()
 copyScripts()
@@ -190,7 +192,8 @@ function getDocumentationContent(docObj) {
         console.error = function () {}
         var result
         try {
-          result = lispish.lispish(example)
+          result = lispish.run(example)
+
           return `<pre><span class="example" onclick="runPlayground('${escapeExample(
             example,
           )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifyValue(
@@ -270,7 +273,7 @@ function copyFavicon() {
 }
 
 function stringifyValue(value) {
-  if (lispish.isLispishFunction(value)) {
+  if (Lispish.isLispishFunction(value)) {
     if (value.builtin) {
       return `&lt;BUILTIN FUNCTION ${value.builtin}&gt;`
     } else {

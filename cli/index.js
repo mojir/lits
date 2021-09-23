@@ -6,12 +6,14 @@ const path = require('path')
 const fs = require('fs')
 const homeDir = require('os').homedir()
 const {
-  lispish,
+  Lispish,
   normalExpressionKeys,
   specialExpressionKeys,
   reservedNames,
   isLispishFunction,
 } = require('../dist/lispish.js')
+
+const lispish = new Lispish()
 const { functionReference } = require('./reference')
 
 const commands = [
@@ -57,7 +59,7 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    const result = lispish(expression, config.globalVariables, config.topScope)
+    const result = lispish.run(expression, config.globalVariables, config.topScope)
     console.log(formatValue(result))
   } catch (error) {
     console.log(error.message ? error.message.brightRed : 'ERROR!'.brightRed)
@@ -71,7 +73,7 @@ function executeExample(expression) {
   console.log = (...values) => outputs.push(values.map(value => formatValue(value, true)))
   console.error = (...values) => outputs.push(values.map(value => formatValue(value, true).red))
   try {
-    const result = lispish(expression, config.globalVariables, config.topScope)
+    const result = lispish.run(expression, config.globalVariables, config.topScope)
     const outputString = 'Console: '.gray + outputs.map(output => output.join(', '.gray)).join('  ')
     return `${formatValue(result)}    ${outputs.length > 0 ? outputString : ''}`
   } catch (error) {

@@ -1,5 +1,7 @@
-import { lispish } from '../src/'
+import { Lispish } from '../src/'
 import { tokenizeNumber } from '../src/tokenizer/tokenizers'
+
+const lispish = new Lispish()
 
 describe('parse numbers', () => {
   describe('valid numbers', () => {
@@ -27,7 +29,7 @@ describe('parse numbers', () => {
     numberSamples.forEach(sample => {
       test(`number sample: ${sample}`, () => {
         expect(tokenizeNumber(sample, 0)).toEqual([sample.length, { type: 'number', value: sample }])
-        expect(lispish(sample)).toEqual(Number(sample))
+        expect(lispish.run(sample)).toEqual(Number(sample))
       })
     })
   })

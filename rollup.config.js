@@ -31,7 +31,7 @@ export default [
         file: pkg.iife,
         format: 'iife',
         sourcemap: true,
-        name: 'lispish',
+        name: 'Lispish',
         globals: {
           'lodash/get': '_.get',
         },
