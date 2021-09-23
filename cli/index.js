@@ -16,19 +16,9 @@ const {
 const lispish = new Lispish()
 const { functionReference } = require('./reference')
 
-const commands = [
-  '`help',
-  '`quit',
-  '`builtins',
-  '`globalVariables',
-  '`GlobalVariables',
-  '`topScope',
-  '`TopScope',
-  '`resetGlobalVariables',
-  '`resetTopScope',
-]
+const commands = ['`help', '`quit', '`builtins', '`globalVariables', '`GlobalVariables', '`resetGlobalVariables']
 const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
-const nameRegExp = /^(.*)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
+const nameRegExp = /^(.*?)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
 const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]+)\s*$/
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
@@ -59,7 +49,7 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    const result = lispish.run(expression, config.globalVariables, config.topScope)
+    const result = lispish.run(expression, config.globalVariables)
     console.log(formatValue(result))
   } catch (error) {
     console.log(error.message ? error.message.brightRed : 'ERROR!'.brightRed)
@@ -73,7 +63,7 @@ function executeExample(expression) {
   console.log = (...values) => outputs.push(values.map(value => formatValue(value, true)))
   console.error = (...values) => outputs.push(values.map(value => formatValue(value, true).red))
   try {
-    const result = lispish.run(expression, config.globalVariables, config.topScope)
+    const result = lispish.run(expression, config.globalVariables)
     const outputString = 'Console: '.gray + outputs.map(output => output.join(', '.gray)).join('  ')
     return `${formatValue(result)}    ${outputs.length > 0 ? outputString : ''}`
   } catch (error) {
@@ -87,7 +77,7 @@ function executeExample(expression) {
 function stringifyValue(value, indent) {
   return JSON.stringify(
     value,
-    (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v),
+    (_, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v),
     indent ? 2 : undefined,
   ).replace(/"b234ca78-ccc4-5749-9384-1d3415d29423"/g, 'undefined')
 }
@@ -152,7 +142,6 @@ function processArguments(args) {
     colors: true,
     filename: '',
     globalVariables: {},
-    topScope: { variables: {}, functions: {} },
     expression: '',
     help: undefined,
   }
@@ -257,21 +246,9 @@ function runREPL() {
             case '`GlobalVariables':
               printObj('Global variables', config.globalVariables, true)
               break
-            case '`topScope':
-              printObj('Top scope variables', config.topScope.variables, false)
-              printObj('Top scope functions', config.topScope.functions, false)
-              break
-            case '`TopScope':
-              printObj('Top scope variables', config.topScope.variables, true)
-              printObj('Top scope functions', config.topScope.functions, true)
-              break
             case '`resetGlobalVariables':
               config.globalVariables = {}
               console.log('Global variables is now empty\n')
-              break
-            case '`resetTopScope':
-              config.topScope = {}
-              console.log('Top scope is now empty\n')
               break
             case '`quit':
               rl.close()
@@ -367,10 +344,7 @@ function printHelp() {
   console.log(`\`builtins                 Print all builtin functions
 \`globalVariables          Print all global variables
 \`GlobalVariables          Print all global variables (JSON.stringify)
-\`topScope                 Print top scope
-\`TopScope                 Print top scope (JSON.stringify)
 \`resetGlobalVariables     Reset global variables
-\`resetTopScope            Reset top scope
 \`help                     Print this help message
 \`help [builtin function]  Print help for [builtin function]
 \`quit                     Quit
@@ -429,19 +403,15 @@ function completer(line) {
   }
 
   const expressionMatch = expressionRegExp.exec(line)
+  console.log(expressionMatch)
   if (expressionMatch) {
-    return [
-      [...expressions, ...Object.keys(config.topScope.functions)]
-        .filter(c => c.startsWith(expressionMatch[2]))
-        .map(c => `${expressionMatch[1]}${c} `),
-      line,
-    ]
+    return [expressions.filter(c => c.startsWith(expressionMatch[2])).map(c => `${expressionMatch[1]}${c} `), line]
   }
 
-  const names = Array.from(
-    new Set([...reservedNames, ...Object.keys(config.topScope), ...Object.keys(config.globalVariables)]),
-  )
+  const names = Array.from(new Set([...reservedNames, ...Object.keys(config.globalVariables)]))
   const nameMatch = nameRegExp.exec(line)
+
+  console.log(nameMatch)
   if (nameMatch) {
     return [names.filter(c => c.startsWith(nameMatch[2])).map(c => `${nameMatch[1]}${c} `), line]
   }

@@ -1,4 +1,4 @@
-; (function () {
+;(function () {
   lispish = new Lispish.Lispish()
 
   window.addEventListener('keyup', function (evt) {
@@ -101,7 +101,7 @@ function play() {
     logTextarea.scrollTop = logTextarea.scrollHeight
   }
   try {
-    result = lispish.run(code, { globalVariables: context })
+    result = lispish.run(code, context)
   } catch (error) {
     output.value = error
     output.classList.add('error')
