@@ -1,15 +1,24 @@
 import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import { evaluate } from '../evaluator'
-import { Context, VariableScope } from '../evaluator/interface'
+import { Context } from '../evaluator/interface'
 import { parse } from '../parser'
 import { Ast } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import { Token } from '../tokenizer/interface'
 
-export type EvaluationParams = {
-  globalVariables?: VariableScope
-  topScope?: Context
-}
+type EvaluateParams =
+  | {
+      globalContext: Context
+      vars?: never
+    }
+  | {
+      globalContext?: never
+      vars: Record<string, unknown>
+    }
+  | {
+      globalContext?: never
+      vars?: never
+    }
 
 export class Lispish {
   private importScope: Context = { functions: {}, variables: {} }
@@ -22,21 +31,22 @@ export class Lispish {
     return parse(tokens)
   }
 
-  public evaluate(ast: Ast, globalVariables: Record<string, unknown> = {}): unknown {
-    const variableScope: VariableScope = Object.keys(globalVariables).reduce((result: VariableScope, key) => {
-      result[key] = {
-        value: globalVariables[key],
-        const: true,
-      }
-      return result
-    }, {})
-    return evaluate(ast, variableScope, this.importScope)
+  public evaluate(ast: Ast, params: EvaluateParams = {}): unknown {
+    const globalContext: Context = params.globalContext || { functions: {}, variables: {} }
+
+    if (params.vars) {
+      Object.entries(params.vars).forEach(([key, value]) => {
+        globalContext.variables[key] = { constant: true, value }
+      })
+    }
+
+    return evaluate(ast, globalContext, this.importScope)
   }
 
-  public run(program: string, globalVariables?: Record<string, unknown>): unknown {
+  public run(program: string, params?: EvaluateParams): unknown {
     const tokens: Token[] = this.tokenize(program)
     const ast: Ast = this.parse(tokens)
-    const result = this.evaluate(ast, globalVariables)
+    const result = this.evaluate(ast, params)
     return result
   }
 
@@ -44,7 +54,7 @@ export class Lispish {
     const tokens: Token[] = this.tokenize(program)
     const ast: Ast = this.parse(tokens)
     const scope: Context = { functions: {}, variables: {} }
-    evaluate(ast, {}, scope)
+    evaluate(ast, scope, { functions: {}, variables: {} })
 
     const importFunctionKeys = Object.keys(this.importScope.functions)
     for (const key of Object.keys(scope.functions)) {

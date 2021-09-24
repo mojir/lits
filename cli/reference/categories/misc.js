@@ -132,27 +132,6 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
-  progn: {
-    name: 'progn',
-    category: 'Misc',
-    linkName: 'progn',
-    returns: {
-      type: 'any',
-    },
-    arguments: [
-      {
-        name: 'forms',
-        type: 'form[]',
-      },
-    ],
-    shortDescription:
-      'Calls `forms` in the order they have been written. Resulting value is the value of the last form.',
-    longDescription:
-      'Calls `forms` in the order they have been written. Resulting value is the value of the last form.',
-    examples: [`(progn (write "Hi") (write "Albert"))`, `(progn)`],
-    specialExpression: false,
-    sideEffects: [],
-  },
   'get-path': {
     name: 'get-path',
     category: 'Misc',

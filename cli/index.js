@@ -16,7 +16,7 @@ const {
 const lispish = new Lispish()
 const { functionReference } = require('./reference')
 
-const commands = ['`help', '`quit', '`builtins', '`globalVariables', '`GlobalVariables', '`resetGlobalVariables']
+const commands = ['`help', '`quit', '`builtins', '`globalContext', '`GlobalContext', '`resetGlobalVariables']
 const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
 const nameRegExp = /^(.*?)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
 const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]+)\s*$/
@@ -49,7 +49,8 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    const result = lispish.run(expression, config.globalVariables)
+    const result = lispish.run(expression, { globalContext: config.globalContext })
+
     console.log(formatValue(result))
   } catch (error) {
     console.log(error.message ? error.message.brightRed : 'ERROR!'.brightRed)
@@ -63,7 +64,7 @@ function executeExample(expression) {
   console.log = (...values) => outputs.push(values.map(value => formatValue(value, true)))
   console.error = (...values) => outputs.push(values.map(value => formatValue(value, true).red))
   try {
-    const result = lispish.run(expression, config.globalVariables)
+    const result = lispish.run(expression)
     const outputString = 'Console: '.gray + outputs.map(output => output.join(', '.gray)).join('  ')
     return `${formatValue(result)}    ${outputs.length > 0 ? outputString : ''}`
   } catch (error) {
@@ -141,7 +142,7 @@ function processArguments(args) {
   const config = {
     colors: true,
     filename: '',
-    globalVariables: {},
+    globalContext: { variables: {}, functions: {} },
     expression: '',
     help: undefined,
   }
@@ -166,7 +167,9 @@ function processArguments(args) {
           process.exit(1)
         }
         try {
-          config.globalVariables = JSON.parse(argument)
+          Object.entries(JSON.parse(argument)).forEach(([key, value]) => {
+            config.globalContext.variables[key] = { value, constant: true }
+          })
         } catch (e) {
           console.error(`Couldn't parse global variables: ${e?.message}`)
           process.exit(1)
@@ -179,7 +182,9 @@ function processArguments(args) {
         }
         try {
           const contextString = fs.readFileSync(argument, { encoding: 'utf-8' })
-          config.globalVariables = JSON.parse(contextString)
+          Object.entries(JSON.parse(contextString)).forEach(([key, value]) => {
+            config.globalContext.variables[key] = { value, constant: true }
+          })
         } catch (e) {
           console.error(`Couldn't parse global variables: ${e?.message}`)
           process.exit(1)
@@ -240,14 +245,14 @@ function runREPL() {
             case '`help':
               printHelp()
               break
-            case '`globalVariables':
-              printObj('Global variables', config.globalVariables, false)
+            case '`globalContext':
+              printGlobalContext(false)
               break
-            case '`GlobalVariables':
-              printObj('Global variables', config.globalVariables, true)
+            case '`GlobalContext':
+              printGlobalContext(true)
               break
             case '`resetGlobalVariables':
-              config.globalVariables = {}
+              config.globalContext = { functions: {}, variables: {} }
               console.log('Global variables is now empty\n')
               break
             case '`quit':
@@ -342,8 +347,8 @@ function getSyntax(doc) {
 
 function printHelp() {
   console.log(`\`builtins                 Print all builtin functions
-\`globalVariables          Print all global variables
-\`GlobalVariables          Print all global variables (JSON.stringify)
+\`globalContext          Print all global variables
+\`GlobalContext          Print all global variables (JSON.stringify)
 \`resetGlobalVariables     Reset global variables
 \`help                     Print this help message
 \`help [builtin function]  Print help for [builtin function]
@@ -365,19 +370,37 @@ Options:
 `)
 }
 
-function printObj(label, obj, stringify) {
-  console.log(`${label}:`)
-  if (Object.keys(obj).length === 0) {
+function printGlobalContext(stringify) {
+  console.log(`Variables:`.underline)
+  const variables = config.globalContext.variables
+  if (Object.keys(variables).length === 0) {
     console.log('[empty]\n')
     return
   } else {
-    Object.keys(obj)
+    Object.keys(variables)
       .sort()
       .forEach(x => {
         if (stringify) {
-          console.log(`${x} = ${stringifyValue(obj[x], true)}`)
+          console.log(`${x} = ${stringifyValue(variables[x], true)}`)
         } else {
-          console.log(`${x} =`, isLispishFunction(obj[x]) ? functionToString(obj[x]) : obj[x])
+          console.log(`${variables[x].constant ? 'const ' : ''}${x} = ${variables[x].value}`)
+        }
+      })
+    console.log()
+  }
+  console.log(`Functions:`.underline)
+  const functions = config.globalContext.functions
+  if (Object.keys(functions).length === 0) {
+    console.log('[empty]\n')
+    return
+  } else {
+    Object.keys(functions)
+      .sort()
+      .forEach(x => {
+        if (stringify) {
+          console.log(`${x} = ${stringifyValue(functions[x], true)}`)
+        } else {
+          console.log(`${functionToString(functions[x].fun)}`)
         }
       })
     console.log()
@@ -388,7 +411,7 @@ function functionToString(fun) {
   if (fun.builtin) {
     return `<BUILTIN FUNCTION ${fun.builtin}>`
   } else {
-    return `<FUNCTION ${fun.name ?? 'λ'} (${fun.arguments.join(' ')})>`
+    return `<FUNCTION ${fun.name ?? 'λ'}>`
   }
 }
 
@@ -403,15 +426,14 @@ function completer(line) {
   }
 
   const expressionMatch = expressionRegExp.exec(line)
-  console.log(expressionMatch)
+
   if (expressionMatch) {
     return [expressions.filter(c => c.startsWith(expressionMatch[2])).map(c => `${expressionMatch[1]}${c} `), line]
   }
 
-  const names = Array.from(new Set([...reservedNames, ...Object.keys(config.globalVariables)]))
+  const names = Array.from(new Set([...reservedNames, ...Object.keys(config.globalContext.variables)]))
   const nameMatch = nameRegExp.exec(line)
 
-  console.log(nameMatch)
   if (nameMatch) {
     return [names.filter(c => c.startsWith(nameMatch[2])).map(c => `${nameMatch[1]}${c} `), line]
   }

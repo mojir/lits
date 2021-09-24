@@ -56,6 +56,64 @@ describe('specialExpressions', () => {
       expect(logSpy).toHaveBeenNthCalledWith(4, 'A')
     })
   })
+  describe('setq-constant', () => {
+    test('samples', () => {
+      expect(lispish.run(`(setq-constant a 10) a`)).toBe(10)
+      expect(() => lispish.run(`(setq a 10) (setq-constant a 20)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant a 10) (setq-constant a 20)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant a 10) (setq a 20)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant true false)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant a)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant a 10 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant 1 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant null 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant undefined 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant false 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant true 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant '() 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant (object) 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant "a" 10)`)).toThrow()
+    })
+  })
+
+  describe('setq-local.', () => {
+    test('samples', () => {
+      expect(lispish.run(`(setq a 10) (progn (setq-local a 20)) a`)).toBe(10)
+      expect(lispish.run(`(setq a 10) (setq-local a 20)`)).toBe(20)
+      expect(lispish.run(`(setq-local a 10) (setq-local a 20) a`)).toBe(20)
+      expect(() => lispish.run(`(setq-local true false)`)).toThrow()
+      expect(() => lispish.run(`(setq-local a)`)).toThrow()
+      expect(() => lispish.run(`(setq-local a 10 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local 1 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local null 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local undefined 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local false 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local true 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local '() 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local (object) 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local "a" 10)`)).toThrow()
+    })
+  })
+
+  describe('setq-local-constant.', () => {
+    test('samples', () => {
+      expect(lispish.run(`(setq a 10) (progn (setq-local-constant a 20)) (setq a 30) a`)).toBe(30)
+      expect(() => lispish.run(`(setq a 10) (setq-local-constant a 20)`)).toThrow()
+      expect(() => lispish.run(`(setq a 10) (progn (setq-local-constant a 20) (setq a 30))`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant a 10) (setq a 20) a`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant true false)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant a)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant a 10 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant 1 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant null 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant undefined 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant false 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant true 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant '() 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant (object) 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant "a" 10)`)).toThrow()
+    })
+  })
   describe('if', () => {
     test('samples', () => {
       expect(lispish.run(`(if true "A" "B")`)).toBe('A')
@@ -667,6 +725,13 @@ describe('specialExpressions', () => {
           x
         `),
       ).toBe(11)
+    })
+  })
+  describe('progn', () => {
+    test('samples', () => {
+      expect(lispish.run(`(progn '(1 2 3) "[1]" (+ 1 2))`)).toBe(3)
+      expect(lispish.run(`(progn (object "a" 1) "a")`)).toBe('a')
+      expect(lispish.run(`(progn)`)).toBeUndefined()
     })
   })
 })

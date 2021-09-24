@@ -10,10 +10,15 @@ import { lambdaSpecialExpression } from './specialExpressions/lambda'
 import { letSpecialExpression } from './specialExpressions/let'
 import { loopSpecialExpression } from './specialExpressions/loop'
 import { orSpecialExpression } from './specialExpressions/or'
+import { prognSpecialExpression } from './specialExpressions/progn'
 import { returnFromSpecialExpression } from './specialExpressions/return-from'
 import { returnSpecialExpression } from './specialExpressions/return'
-import { setqSpecialExpression } from './specialExpressions/setq'
-import { setqConstantSpecialExpression } from './specialExpressions/setq-constant'
+import {
+  setqSpecialExpression,
+  setqConstantSpecialExpression,
+  setqLocalConstantSpecialExpression,
+  setqLocalSpecialExpression,
+} from './specialExpressions/setq'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
 import { unlessSpecialExpression } from './specialExpressions/unless'
@@ -25,26 +30,29 @@ import { normalExpressions } from './normalExpressions'
 type SpecialExpressions = Record<string, SpecialExpression>
 
 export const specialExpressions: SpecialExpressions = {
-  let: letSpecialExpression,
-  if: ifSpecialExpression,
-  setq: setqSpecialExpression,
+  'return-from': returnFromSpecialExpression,
   'setq-constant': setqConstantSpecialExpression,
+  'setq-local-constant': setqLocalConstantSpecialExpression,
+  'setq-local': setqLocalSpecialExpression,
   and: andSpecialExpression,
-  or: orSpecialExpression,
+  block: blockSpecialExpression,
   cond: condSpecialExpression,
   defun: defunSpecialExpression,
-  function: functionSpecialExpression,
-  lambda: lambdaSpecialExpression,
-  'return-from': returnFromSpecialExpression,
-  return: returnSpecialExpression,
-  block: blockSpecialExpression,
-  try: trySpecialExpression,
-  throw: throwSpecialExpression,
-  when: whenSpecialExpression,
-  unless: unlessSpecialExpression,
-  loop: loopSpecialExpression,
   dolist: dolistSpecialExpression,
   dotimes: dotimesSpecialExpression,
+  function: functionSpecialExpression,
+  if: ifSpecialExpression,
+  lambda: lambdaSpecialExpression,
+  let: letSpecialExpression,
+  loop: loopSpecialExpression,
+  or: orSpecialExpression,
+  progn: prognSpecialExpression,
+  return: returnSpecialExpression,
+  setq: setqSpecialExpression,
+  throw: throwSpecialExpression,
+  try: trySpecialExpression,
+  unless: unlessSpecialExpression,
+  when: whenSpecialExpression,
   while: whileSpecialExpression,
 }
 

@@ -1,8 +1,8 @@
 import { LispishFunction } from '../parser/interface'
 import { AstNode } from '../parser/interface'
 
-export type VariableScope = Record<string, { value: unknown; const: boolean }>
-export type FunctionScope = Record<string, { fun: LispishFunction; const: boolean }>
+type VariableScope = Record<string, { value: unknown; constant: boolean }>
+type FunctionScope = Record<string, { fun: LispishFunction; constant: boolean }>
 export type Context = {
   variables: VariableScope
   functions: FunctionScope

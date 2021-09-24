@@ -4,7 +4,7 @@ import { Lispish } from '../src'
 import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
 import { evaluate } from '../src/evaluator'
-import { VariableScope } from '../src/evaluator/interface'
+import { Context } from '../src/evaluator/interface'
 
 let lispish: Lispish
 
@@ -14,19 +14,22 @@ beforeEach(() => {
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
-const context: VariableScope = { x: { value: 20, const: false }, y: { value: 30, const: false } }
+const globalContext: Context = {
+  variables: { x: { value: 20, constant: false }, y: { value: 30, constant: false } },
+  functions: {},
+}
 const jsExpression = `((x - y) * (y - x)) + ((x / y) * (y / x))`
 
 // Some baseline values for javascript eval to compare with
 const startRefTime = Date.now()
 for (let i = 0; i < ITERATIONS; i += 1) {
-  const jsProgram = createJsProgram(jsExpression, context)
+  const jsProgram = createJsProgram(jsExpression, globalContext)
   eval(jsProgram)
 }
 const averageRefTime = Math.round((100000 * (Date.now() - startRefTime)) / ITERATIONS) / 100
 
-function createJsProgram(expression: string, context: any) {
-  const vars = Object.entries(context)
+function createJsProgram(expression: string, globalContext: any) {
+  const vars = Object.entries(globalContext.variables)
     .map(entry => `  var ${entry[0]} = ${JSON.stringify(entry[1])};`)
     .join('\n')
   return `
@@ -67,7 +70,7 @@ xdescribe('performace', () => {
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      evaluate(ast, context, { variables: {}, functions: {} })
+      evaluate(ast, globalContext, { variables: {}, functions: {} })
     }
     logPerformace('Evaluate AST', Date.now() - startTime)
   })
@@ -75,7 +78,7 @@ xdescribe('performace', () => {
   test('lispish tokenize - parse - evaluate', () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish.run(program, { globalVariables: context })
+      lispish.run(program, { globalContext })
     }
     logPerformace('Execute program (tokenize, parse and evaluate)', Date.now() - startTime)
   })

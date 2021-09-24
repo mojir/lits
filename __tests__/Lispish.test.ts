@@ -1,5 +1,13 @@
 import { Lispish } from '../src'
 
+describe('avaluate', () => {
+  const lispish = new Lispish()
+  const tokens = lispish.tokenize('(+ 1 2)')
+  const ast = lispish.parse(tokens)
+  const result = lispish.evaluate(ast)
+  expect(result).toBe(3)
+})
+
 describe('import', () => {
   let lispish: Lispish
   beforeEach(() => {
@@ -11,6 +19,11 @@ describe('import', () => {
   })
 
   test('import a variable', () => {
+    lispish.import(`(setq magicNumber 42)`)
+    expect(lispish.run(`magicNumber`)).toBe(42)
+  })
+
+  test('change imported variable', () => {
     lispish.import(`(setq magicNumber 42)`)
     expect(lispish.run(`magicNumber`)).toBe(42)
   })

@@ -65,7 +65,7 @@ export const defunSpecialExpression: SpecialExpression = {
     // The second last stack entry is the "global" scope
     const context = asNotUndefined(contextStack[contextStack.length - 2], 'Could not find global scope')
 
-    context.functions[node.functionName.value] = { fun: lispishFunction, const: false }
+    context.functions[node.functionName.value] = { fun: lispishFunction, constant: false }
     return undefined
   },
 }

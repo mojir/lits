@@ -135,21 +135,13 @@ describe('misc functions', () => {
       expect(lispish.run(`(get-path '(1 2 3) "[1]")`)).toBe(2)
       expect(lispish.run(`(get-path (object "a" 1) "a")`)).toBe(1)
       expect(lispish.run(`(get-path (object "a" (object "b" '(1 2 3))) "a.b[1]")`)).toBe(2)
-      expect(lispish.run(`(get-path O "a.b[1]")`, { O: { a: { b: [1, 2, 3] } } })).toBe(2)
-      expect(lispish.run(`(get-path O "a.c[1]")`, { O: { a: { b: [1, 2, 3] } } })).toBeUndefined()
-      expect(lispish.run(`(get-path O "")`, { O: { a: { b: [1, 2, 3] } } })).toBeUndefined()
-      expect(() => lispish.run(`(get-path O)`, { O: { a: { b: [1, 2, 3] } } })).toThrow()
-      expect(() => lispish.run(`(get-path)`, { O: { a: { b: [1, 2, 3] } } })).toThrow()
-      expect(() => lispish.run(`(get-path O "a" "b")`, { O: { a: { b: [1, 2, 3] } } })).toThrow()
+      expect(lispish.run(`(get-path O "a.b[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBe(2)
+      expect(lispish.run(`(get-path O "a.c[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBeUndefined()
+      expect(lispish.run(`(get-path O "")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBeUndefined()
+      expect(() => lispish.run(`(get-path O)`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
+      expect(() => lispish.run(`(get-path)`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
+      expect(() => lispish.run(`(get-path O "a" "b")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
       expect(() => lispish.run(`(get-path (regexp "abc" "a")`)).toThrow()
-    })
-  })
-
-  describe('progn', () => {
-    test('samples', () => {
-      expect(lispish.run(`(progn '(1 2 3) "[1]" (+ 1 2))`)).toBe(3)
-      expect(lispish.run(`(progn (object "a" 1) "a")`)).toBe('a')
-      expect(lispish.run(`(progn)`)).toBeUndefined()
     })
   })
 
@@ -173,7 +165,7 @@ describe('misc functions', () => {
     })
     test('samples', () => {
       expect(lispish.run(`(debug "Stopping here")`)).toBeUndefined()
-      expect(() => lispish.run(`(debug)`)).toThrow()
+      expect(lispish.run(`(debug)`)).toBeUndefined()
       expect(() => lispish.run(`(debug 0)`)).toThrow()
       expect(() => lispish.run(`(debug undefined)`)).toThrow()
       expect(() => lispish.run(`(debug null)`)).toThrow()

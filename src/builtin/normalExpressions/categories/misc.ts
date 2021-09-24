@@ -54,11 +54,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(0, node),
   },
-  progn: {
-    evaluate: (params: unknown[]): unknown => {
-      return params[params.length - 1]
-    },
-  },
   write: {
     evaluate: (params: unknown[]): unknown => {
       // eslint-disable-next-line no-console
@@ -72,12 +67,15 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
   },
   debug: {
-    evaluate: ([label], contextStack): undefined => {
-      assertString(label)
+    evaluate: (params, contextStack): undefined => {
+      const label = params[0] ?? ''
+      if (params.length === 1) {
+        assertString(params[0])
+      }
 
       // eslint-disable-next-line no-console
       console.error(
-        `LISPISH: ${label}.`,
+        `LISPISH${label ? `: ${label}.` : ''}`,
         `Context stack (${contextStack
           .map(stack => `${Object.keys(stack.variables).length}:${Object.keys(stack.functions).length}`)
           .join(' ')})`,
@@ -86,6 +84,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return undefined
     },
-    validate: node => assertLength(1, node),
+    validate: node => assertLength({ min: 0, max: 1 }, node),
   },
 }

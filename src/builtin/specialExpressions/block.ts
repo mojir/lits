@@ -1,4 +1,5 @@
 import { ReturnFromSignal, UnexpectedTokenError } from '../../errors'
+import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
@@ -35,10 +36,16 @@ export const blockSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     castBlockExpressionNode(node)
+    const newContext: Context = {
+      functions: {},
+      variables: {},
+    }
+
+    const newContextStack = [newContext, ...contextStack]
     let result: unknown
     try {
       for (const form of node.params) {
-        result = evaluateAstNode(form, contextStack)
+        result = evaluateAstNode(form, newContextStack)
       }
       return result
     } catch (error) {

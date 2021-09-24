@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.13</span></div>
+    <div class="column right version"><span>v0.1.14</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1340,9 +1340,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.7771824359335526</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.002475570276650565</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.6029080647120721</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.4870435776378197</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.003490338016729551</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.43005348414764166</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1829,27 +1829,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632430057383</span></span></pre>
-  </div>
-</div>
-
-
-<div id="progn" class="content function">
-  <div class="function-header">progn</div>
-  
-  <p>Calls <span class="pre">forms</span> in the order they have been written. Resulting value is the value of the last form.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>progn forms => any</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>forms: form[]</pre></div>
-
-  <label>No side effects</label>
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(progn (write ___double_quote___Hi___double_quote___) (write ___double_quote___Albert___double_quote___))')"><span class="icon-button">▶</span> (progn (write "Hi") (write "Albert")) <span class="gray">=> "Albert"</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(progn)')"><span class="icon-button">▶</span> (progn) <span class="gray">=> undefined</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632495620590</span></span></pre>
   </div>
 </div>
 
@@ -2547,7 +2527,7 @@
 <div id="setq" class="content function">
   <div class="function-header">setq</div>
   <h3>Special Expression</h3>
-  <p>Bind <span class="pre">value</span> to <span class="pre">variable</span>. If a variable name is not know, A global variable is created.</p>
+  <p>Bind <span class="pre">value</span> to <span class="pre">variable</span>. If <span class="pre">variable</span> isn't defined, a new global variable is created.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>setq variable value => any</pre>
@@ -2559,8 +2539,71 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="runPlayground('(setq (object))')"><span class="icon-button">▶</span> (setq (object)) <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="runPlayground('(setq (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (setq (object "x" 10 "y" true "z" "A string")) <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="runPlayground('(setq a (object))')"><span class="icon-button">▶</span> (setq a (object)) <span class="gray">=> {}</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq a (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (setq a (object "x" 10 "y" true "z" "A string")) <span class="gray">=> {"x":10,"y":true,"z":"A string"}</span></span></pre>
+  </div>
+</div>
+
+
+<div id="setq-constant" class="content function">
+  <div class="function-header">setq-constant</div>
+  <h3>Special Expression</h3>
+  <p>Bind <span class="pre">value</span> to <span class="pre">variable</span> and makes it constant. Throws if <span class="pre">variable</span> exists.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>setq-constant variable value => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>variable: name</pre>
+<pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(setq-constant x 10)')"><span class="icon-button">▶</span> (setq-constant x 10) <span class="gray">=> 10</span></span></pre>
+<pre class="example" onclick="runPlayground('(setq-constant x 10) (setq x 20)')"><span class="icon-button">▶</span> (setq-constant x 10) (setq x 20) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="setq-local" class="content function">
+  <div class="function-header">setq-local</div>
+  <h3>Special Expression</h3>
+  <p>Bind <span class="pre">value</span> to local <span class="pre">variable</span>. If local <span class="pre">variable</span> isn't defined, a new local variable is created.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>setq-local variable value => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>variable: name</pre>
+<pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(setq-local x (object))')"><span class="icon-button">▶</span> (setq-local x (object)) <span class="gray">=> {}</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq x 10) (progn (setq-local x 20)) x')"><span class="icon-button">▶</span> (setq x 10) (progn (setq-local x 20)) x <span class="gray">=> 10</span></span></pre>
+  </div>
+</div>
+
+
+<div id="setq-local-constant" class="content function">
+  <div class="function-header">setq-local-constant</div>
+  <h3>Special Expression</h3>
+  <p>Bind <span class="pre">value</span> to new local <span class="pre">variable</span> and makes it constant. Throws if local <span class="pre">variable</span> exists.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>setq-local-constant variable value => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>variable: name</pre>
+<pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(setq-local-constant x (object))')"><span class="icon-button">▶</span> (setq-local-constant x (object)) <span class="gray">=> {}</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq x 10) (progn (setq-local-constant x 20)) x')"><span class="icon-button">▶</span> (setq x 10) (progn (setq-local-constant x 20)) x <span class="gray">=> 10</span></span></pre>
   </div>
 </div>
 
@@ -2925,6 +2968,26 @@
 <pre><span class="example" onclick="runPlayground('(let ((x 0)) (dotimes (i (+ 1 2 3) x) (setq x (+ x i))))')"><span class="icon-button">▶</span> (let ((x 0)) (dotimes (i (+ 1 2 3) x) (setq x (+ x i)))) <span class="gray">=> 15</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(let ((x 0)) (dotimes (i 5 x) (setq x (+ x i)) (return 10)))')"><span class="icon-button">▶</span> (let ((x 0)) (dotimes (i 5 x) (setq x (+ x i)) (return 10))) <span class="gray">=> 10</span></span></pre>
 <pre class="example" onclick="runPlayground('(let ((x 0)) (dotimes (i 100 x) (setq x (+ x i)) (throw ___double_quote___Oops___double_quote___)))')"><span class="icon-button">▶</span> (let ((x 0)) (dotimes (i 100 x) (setq x (+ x i)) (throw "Oops"))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="progn" class="content function">
+  <div class="function-header">progn</div>
+  <h3>Special Expression</h3>
+  <p>Calls <span class="pre">forms</span> in the order they have been written. Resulting value is the value of the last form.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>progn forms => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>forms: form[]</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(progn (write ___double_quote___Hi___double_quote___) (write ___double_quote___Albert___double_quote___))')"><span class="icon-button">▶</span> (progn (write "Hi") (write "Albert")) <span class="gray">=> "Albert"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(progn)')"><span class="icon-button">▶</span> (progn) <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
@@ -3455,9 +3518,13 @@
 <li id="let_link" onclick="showPage('let')">let</li>
 <li id="loop_link" onclick="showPage('loop')">loop</li>
 <li id="or_link" onclick="showPage('or')">or</li>
+<li id="progn_link" onclick="showPage('progn')">progn</li>
 <li id="return_link" onclick="showPage('return')">return</li>
 <li id="return-from_link" onclick="showPage('return-from')">return-from</li>
 <li id="setq_link" onclick="showPage('setq')">setq</li>
+<li id="setq-constant_link" onclick="showPage('setq-constant')">setq-constant</li>
+<li id="setq-local_link" onclick="showPage('setq-local')">setq-local</li>
+<li id="setq-local-constant_link" onclick="showPage('setq-local-constant')">setq-local-constant</li>
 <li id="throw_link" onclick="showPage('throw')">throw</li>
 <li id="try_link" onclick="showPage('try')">try</li>
 <li id="unless_link" onclick="showPage('unless')">unless</li>
@@ -3623,7 +3690,6 @@
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="not_link" onclick="showPage('not')">not</li>
 <li id="now_link" onclick="showPage('now')">now</li>
-<li id="progn_link" onclick="showPage('progn')">progn</li>
 <li id="write_link" onclick="showPage('write')">write</li>
         </ul>
 </nav>

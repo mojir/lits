@@ -101,7 +101,7 @@ function play() {
     logTextarea.scrollTop = logTextarea.scrollHeight
   }
   try {
-    result = lispish.run(code, context)
+    result = lispish.run(code, { vars: context })
   } catch (error) {
     output.value = error
     output.classList.add('error')

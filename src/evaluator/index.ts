@@ -12,14 +12,14 @@ import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
 import { asLispishFunction, asNotUndefined, isLispishFunction, isUserDefinedLispishFunction } from '../utils'
-import { Context, EvaluateAstNode, EvaluateLispishFunction, VariableScope } from './interface'
+import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { ReturnFromSignal, ReturnSignal } from '../errors'
 
-export function evaluate(ast: Ast, globalVariables: VariableScope, topScope: Context): unknown {
+export function evaluate(ast: Ast, globalScope: Context, importScope: Context): unknown {
   // First element is the global context. E.g. setq will assign to this if no local variable is available
   // Second element is the context sent in from outside (this should never be mutated)
-  const contextStack: Context[] = [topScope, { variables: globalVariables, functions: {} }]
+  const contextStack: Context[] = [globalScope, importScope]
 
   let result: unknown
   for (const node of ast.body) {
@@ -122,9 +122,9 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         const param = params[i]
         const key = asNotUndefined(args.mandatoryArguments[i], '')
         if (isLispishFunction(param)) {
-          newContext.functions[key] = { fun: param, const: false }
+          newContext.functions[key] = { fun: param, constant: false }
         } else {
-          newContext.variables[key] = { value: param, const: false }
+          newContext.variables[key] = { value: param, constant: false }
         }
       } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
         const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], '')
@@ -136,9 +136,9 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
             : undefined
         const key = arg.name
         if (isLispishFunction(param)) {
-          newContext.functions[key] = { fun: param, const: false }
+          newContext.functions[key] = { fun: param, constant: false }
         } else {
-          newContext.variables[key] = { value: param, const: false }
+          newContext.variables[key] = { value: param, constant: false }
         }
       } else {
         const param = params[i]
@@ -150,7 +150,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
     }
 
     if (args.restArgument) {
-      newContext.variables[args.restArgument] = { value: rest, const: false }
+      newContext.variables[args.restArgument] = { value: rest, constant: false }
     }
 
     try {

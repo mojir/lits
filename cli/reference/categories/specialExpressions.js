@@ -68,9 +68,80 @@ module.exports = {
         type: 'any',
       },
     ],
-    shortDescription: 'Bind `value` to `variable`. If a variable name is not know, A global variable is created.',
-    longDescription: 'Bind `value` to `variable`. If a variable name is not know, A global variable is created.',
-    examples: [`(setq (object))`, `(setq (object "x" 10 "y" true "z" "A string"))`],
+    shortDescription: "Bind `value` to `variable`. If `variable` isn't defined, a new global variable is created.",
+    longDescription: "Bind `value` to `variable`. If `variable` isn't defined, a new global variable is created.",
+    examples: [`(setq a (object))`, `(setq a (object "x" 10 "y" true "z" "A string"))`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  'setq-constant': {
+    name: 'setq-constant',
+    category: 'Special expression',
+    linkName: 'setq-constant',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'variable',
+        type: 'name',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Bind `value` to `variable` and makes it constant. Throws if `variable` exists.',
+    longDescription: 'Bind `value` to `variable` and makes it constant. Throws if `variable` exists.',
+    examples: [`(setq-constant x 10)`, `(setq-constant x 10) (setq x 20)`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  'setq-local': {
+    name: 'setq-local',
+    category: 'Special expression',
+    linkName: 'setq-local',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'variable',
+        type: 'name',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription:
+      "Bind `value` to local `variable`. If local `variable` isn't defined, a new local variable is created.",
+    longDescription:
+      "Bind `value` to local `variable`. If local `variable` isn't defined, a new local variable is created.",
+    examples: [`(setq-local x (object))`, `(setq x 10) (progn (setq-local x 20)) x`],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  'setq-local-constant': {
+    name: 'setq-local-constant',
+    category: 'Special expression',
+    linkName: 'setq-local-constant',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'variable',
+        type: 'name',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Bind `value` to new local `variable` and makes it constant. Throws if local `variable` exists.',
+    longDescription: 'Bind `value` to new local `variable` and makes it constant. Throws if local `variable` exists.',
+    examples: [`(setq-local-constant x (object))`, `(setq x 10) (progn (setq-local-constant x 20)) x`],
     specialExpression: true,
     sideEffects: [],
   },
@@ -509,6 +580,27 @@ module.exports = {
       `(let ((x 0)) (dotimes (i 5 x) (setq x (+ x i)) (return 10)))`,
       `(let ((x 0)) (dotimes (i 100 x) (setq x (+ x i)) (throw "Oops")))`,
     ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  progn: {
+    name: 'progn',
+    category: 'Special expression',
+    linkName: 'progn',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'forms',
+        type: 'form[]',
+      },
+    ],
+    shortDescription:
+      'Calls `forms` in the order they have been written. Resulting value is the value of the last form.',
+    longDescription:
+      'Calls `forms` in the order they have been written. Resulting value is the value of the last form.',
+    examples: [`(progn (write "Hi") (write "Albert"))`, `(progn)`],
     specialExpression: true,
     sideEffects: [],
   },

@@ -133,7 +133,7 @@ describe('object functions', () => {
       expect(lispish.run(`(set-attr (object "x" 1) "x" 2)`)).toBe(2)
       expect(lispish.run(`(set-attr (object "x" 1) "" 3)`)).toBe(3)
       expect(lispish.run(`(set-attr (object "x" 1) "y" (object))`)).toEqual({})
-      expect(lispish.run(`(set-attr O "x" 1) O`, { O: {} })).toEqual({ x: 1 })
+      expect(lispish.run(`(set-attr O "x" 1) O`, { vars: { O: {} } })).toEqual({ x: 1 })
       expect(() => lispish.run(`(set-attr (object "x" 1) 1)`)).toThrow()
       expect(() => lispish.run(`(set-attr)`)).toThrow()
       expect(() => lispish.run(`(set-attr (object "x") (object "x"))`)).toThrow()
