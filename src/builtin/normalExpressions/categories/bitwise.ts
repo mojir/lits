@@ -2,6 +2,19 @@ import { assertInteger, assertLength } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const bitwiseNormalExpression: BuiltinNormalExpressions = {
+  ash: {
+    evaluate: ([int32, count]: unknown[]): unknown => {
+      assertInteger(int32)
+      assertInteger(count)
+
+      if (count >= 0) {
+        return int32 << count
+      } else {
+        return int32 >> -count
+      }
+    },
+    validate: node => assertLength(2, node),
+  },
   lognot: {
     evaluate: ([int32]: unknown[]): unknown => {
       assertInteger(int32)

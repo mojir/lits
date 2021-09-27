@@ -1,4 +1,29 @@
 module.exports = {
+  ash: {
+    name: 'ash',
+    category: 'Bitwise',
+    linkName: 'ash',
+    returns: {
+      type: 'integer',
+    },
+    arguments: [
+      {
+        name: 'int32',
+        type: 'integer',
+      },
+      {
+        name: 'count',
+        type: 'integer',
+      },
+    ],
+    shortDescription:
+      'Shifts `int32` arithmetically left by `count` bit positions if `count` is positive, or right `count` bit positions if `count` is negative.',
+    longDescription:
+      'Shifts `int32` arithmetically left by `count` bit positions if `count` is positive, or right `count` bit positions if `count` is negative. The shifted value of the same sign as `int32` is returned.',
+    examples: ['(ash 1 10)', '(ash 4 -2)'],
+    specialExpression: false,
+    sideEffects: [],
+  },
   lognot: {
     name: 'lognot',
     category: 'Bitwise',

@@ -17,6 +17,24 @@ describe('predicates', () => {
       expect(() => lispish.run(`(lognot 1 2)`)).toThrow()
     })
   })
+  describe('ash', () => {
+    test('samples', () => {
+      expect(lispish.run(`(ash 16 2)`)).toBe(64)
+      expect(lispish.run(`(ash 16 -2)`)).toBe(4)
+      expect(lispish.run(`(ash -16 2)`)).toBe(-64)
+      expect(lispish.run(`(ash -16 -2)`)).toBe(-4)
+      expect(lispish.run(`(ash 16 -5)`)).toBe(0)
+      expect(lispish.run(`(ash 16 -50)`)).toBe(0)
+      expect(lispish.run(`(ash -16 -4)`)).toBe(-1)
+      expect(lispish.run(`(ash -16 -5)`)).toBe(-1)
+      expect(lispish.run(`(ash -16 -50)`)).toBe(-1)
+      expect(lispish.run(`(ash 256 -4)`)).toBe(16)
+      expect(lispish.run(`(ash 0b1000 -1)`)).toBe(Number('0b0100'))
+      expect(() => lispish.run(`(ash)`)).toThrow()
+      expect(() => lispish.run(`(ash 1)`)).toThrow()
+      expect(() => lispish.run(`(ash 1 2 3)`)).toThrow()
+    })
+  })
   describe('logand', () => {
     test('samples', () => {
       expect(lispish.run(`(logand)`)).toBe(-1)

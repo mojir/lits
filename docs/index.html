@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.16</span></div>
+    <div class="column right version"><span>v0.1.17</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1340,9 +1340,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.6716316400319489</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0033689358982383457</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.5811559482230577</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.4055533181937454</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.009081628475981658</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.8541613361381817</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1829,7 +1829,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632752173037</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632764840353</span></span></pre>
   </div>
 </div>
 
@@ -3435,6 +3435,27 @@
 </div>
 
 
+<div id="ash" class="content function">
+  <div class="function-header">ash</div>
+  
+  <p>Shifts <span class="pre">int32</span> arithmetically left by <span class="pre">count</span> bit positions if <span class="pre">count</span> is positive, or right <span class="pre">count</span> bit positions if <span class="pre">count</span> is negative. The shifted value of the same sign as <span class="pre">int32</span> is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>ash int32 count => integer</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>int32: integer</pre>
+<pre>count: integer</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(ash 1 10)')"><span class="icon-button">▶</span> (ash 1 10) <span class="gray">=> 1024</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(ash 4 -2)')"><span class="icon-button">▶</span> (ash 4 -2) <span class="gray">=> 1</span></span></pre>
+  </div>
+</div>
+
+
 <div id="lognot" class="content function">
   <div class="function-header">lognot</div>
   
@@ -3698,7 +3719,8 @@
 
         <label>Bitwise</label>
         <ul>
-          <li id="logand_link" onclick="showPage('logand')">logand</li>
+          <li id="ash_link" onclick="showPage('ash')">ash</li>
+<li id="logand_link" onclick="showPage('logand')">logand</li>
 <li id="lognot_link" onclick="showPage('lognot')">lognot</li>
 <li id="logor_link" onclick="showPage('logor')">logor</li>
 <li id="logxor_link" onclick="showPage('logxor')">logxor</li>
