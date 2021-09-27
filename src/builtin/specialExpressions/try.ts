@@ -74,7 +74,10 @@ export const trySpecialExpression: SpecialExpression = {
       if (error instanceof ReturnFromSignal || error instanceof ReturnSignal) {
         throw error
       }
-      const newContext: Context = { functions: {}, variables: { [node.error.value]: { value: error, constant: false } } }
+      const newContext: Context = {
+        functions: {},
+        variables: { [node.error.value]: { value: error, constant: false } },
+      }
       return evaluateAstNode(node.catchExpression, [newContext, ...contextStack])
     }
   },
