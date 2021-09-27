@@ -29,6 +29,15 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
+  test: {
+    evaluate: ([regexp, str]: unknown[]): boolean => {
+      assertRegExp(regexp)
+      assertString(str)
+
+      return regexp.test(str)
+    },
+    validate: node => assertLength(2, node),
+  },
   replace: {
     evaluate: ([string, regexp, value]: unknown[]): string => {
       assertString(string)
