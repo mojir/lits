@@ -72,5 +72,5 @@
   },
   "include": ["src/**/*", "types/**/*", "__tests__/**/*.test.ts"],
   // "exclude": ["cli/**/*"]
-  "exclude": ["__tests__", "cli/**/*",]
+  "exclude": ["__tests__", "cli",]
 }

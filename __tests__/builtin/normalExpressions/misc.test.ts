@@ -137,7 +137,7 @@ describe('misc functions', () => {
       expect(lispish.run(`(get-path (object "a" (object "b" '(1 2 3))) "a.b[1]")`)).toBe(2)
       expect(lispish.run(`(get-path O "a.b[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBe(2)
       expect(lispish.run(`(get-path O "a.c[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBeUndefined()
-      expect(lispish.run(`(get-path O "")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBeUndefined()
+      expect(lispish.run(`(get-path O "")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toEqual({ a: { b: [1, 2, 3] } })
       expect(() => lispish.run(`(get-path O)`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
       expect(() => lispish.run(`(get-path)`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
       expect(() => lispish.run(`(get-path O "a" "b")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()

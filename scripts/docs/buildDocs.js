@@ -1,7 +1,7 @@
 const { version } = require('../../package.json')
 const { functionReference, categories } = require('../../cli/reference')
 const examples = require('./examples')
-const Lispish = require('../../dist/lispish')
+const Lispish = require('../../dist/index')
 const path = require('path')
 const fs = require('fs')
 
@@ -30,7 +30,6 @@ ${getHtmlHeader()}
   </main>
   ${getSideBar()}
   ${getPlayground()}
-  <script src="lodash.js"></script>
   <script src="lispish.iife.js"></script>
   <script src='examples.js'></script>
   <script src='scripts.js'></script>
@@ -259,7 +258,6 @@ function setupDocDir() {
 function copyScripts() {
   fs.copyFileSync(path.join(__dirname, '../../dist/lispish.iife.js'), path.join(DOC_DIR, 'lispish.iife.js'))
   fs.copyFileSync(path.join(__dirname, `scripts.js`), path.join(DOC_DIR, `scripts.js`))
-  fs.copyFileSync(path.join(__dirname, `lodash.custom.min.js`), path.join(DOC_DIR, `lodash.js`))
   const examplesContent = fs.readFileSync(path.join(__dirname, `examples.js`), { encoding: 'utf-8' })
   fs.writeFileSync(path.join(DOC_DIR, `examples.js`), examplesContent.replace('module.exports =', 'var examples ='))
 }

@@ -32,12 +32,8 @@ export default [
         format: 'iife',
         sourcemap: true,
         name: 'Lispish',
-        globals: {
-          'lodash/get': '_.get',
-        },
       },
     ],
     plugins,
-    external: ['lodash/get'],
   },
 ]

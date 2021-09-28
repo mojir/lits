@@ -1,5 +1,5 @@
-import get from 'lodash/get'
 import { assertArray, assertLength, assertLispishFunction, assertObjectOrArray, assertString } from '../../../utils'
+import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
 export const miscNormalExpression: BuiltinNormalExpressions = {
   '!=': {
@@ -40,7 +40,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first, second]: unknown[]): unknown => {
       assertObjectOrArray(first)
       assertString(second)
-      return get(first, second)
+      return getPath(first, second)
     },
     validate: node => assertLength(2, node),
   },

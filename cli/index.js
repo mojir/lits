@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const colors = require('colors')
 const { version } = require('../package.json')
 const readline = require('readline')
 const path = require('path')
@@ -11,7 +10,7 @@ const {
   specialExpressionKeys,
   reservedNames,
   isLispishFunction,
-} = require('../dist/lispish.js')
+} = require('../dist/index')
 
 const lispish = new Lispish()
 const { functionReference } = require('./reference')
@@ -53,7 +52,7 @@ function execute(expression) {
 
     console.log(formatValue(result))
   } catch (error) {
-    console.log(error.message ? error.message.brightRed : 'ERROR!'.brightRed)
+    console.log(error.message ? error.message.brightRed : 'ERROR!')
   }
 }
 
@@ -65,7 +64,7 @@ function executeExample(expression) {
   console.error = (...values) => outputs.push(values.map(value => formatValue(value, true).red))
   try {
     const result = lispish.run(expression)
-    const outputString = 'Console: '.gray + outputs.map(output => output.join(', '.gray)).join('  ')
+    const outputString = 'Console: ' + outputs.map(output => output.join(', ')).join('  ')
     return `${formatValue(result)}    ${outputs.length > 0 ? outputString : ''}`
   } catch (error) {
     return 'ERROR!'.brightRed
@@ -84,58 +83,23 @@ function stringifyValue(value, indent) {
 }
 
 function formatValue(value, noColors) {
-  if (noColors) {
-    if (isLispishFunction(value)) {
-      return functionToString(value)
-    }
-
-    if (typeof value === 'object' && value instanceof Error) {
-      return value.toString()
-    }
-
-    if (
-      typeof value === 'string' ||
-      Array.isArray(value) ||
-      (value !== null && typeof value === 'object' && !(value instanceof RegExp))
-    ) {
-      return `${stringifyValue(value)}`
-    }
-
-    return `${value}`
-  } else {
-    if (isLispishFunction(value)) {
-      return functionToString(value).white
-    }
-
-    if (value === null || value === undefined) {
-      return `${value}`.blue
-    }
-    if (value === true) {
-      return `${value}`.green
-    }
-    if (value === false) {
-      return `${value}`.red
-    }
-    if (typeof value === 'string') {
-      return `${stringifyValue(value)}`.yellow
-    }
-    if (typeof value === 'number') {
-      return `${value}`.brightMagenta
-    }
-    if (Array.isArray(value)) {
-      return `${stringifyValue(value)}`.cyan
-    }
-    if (typeof value === 'object' && value instanceof Error) {
-      return value.toString().red
-    }
-    if (typeof value === 'object') {
-      if (value instanceof RegExp) {
-        return `${value}`.yellow
-      } else {
-        return `${stringifyValue(value)}`.brightGreen
-      }
-    }
+  if (isLispishFunction(value)) {
+    return functionToString(value)
   }
+
+  if (typeof value === 'object' && value instanceof Error) {
+    return value.toString()
+  }
+
+  if (
+    typeof value === 'string' ||
+    Array.isArray(value) ||
+    (value !== null && typeof value === 'object' && !(value instanceof RegExp))
+  ) {
+    return `${stringifyValue(value)}`
+  }
+
+  return `${value}`
 }
 
 function processArguments(args) {
@@ -224,7 +188,7 @@ function runREPL() {
   createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: 'LISPISH> '.brightWhite.bold,
+    prompt: 'LISPISH> ',
     completer,
     next: function (rl) {
       console.log('Type "`help" for more information.')
@@ -304,35 +268,35 @@ function getDocString(name) {
     return ''
   }
 
-  return `${getSyntax(doc)}   ${doc.shortDescription.gray.italic}`
+  return `${getSyntax(doc)}   ${doc.shortDescription.gray}`
 }
 
 function getFullDocumentation(name) {
   const doc = functionReference[name]
   if (!doc) {
-    return `No documentation available for ${name.bold}`
+    return `No documentation available for ${name}`
   }
 
-  const header = `${doc.specialExpression ? 'Special expression' : 'Function'} ${name.bold}`.underline.brightWhite
+  const header = `${doc.specialExpression ? 'Special expression' : 'Function'} ${name}`
 
   return `${header}
 
-${doc.longDescription.italic}
+${doc.longDescription}
 
-${'Syntax'.underline}
-  ${getSyntax(doc).bold}
+Syntax
+  ${getSyntax(doc)}
 
 ${'Arguments'.underline}
-${doc.arguments.length === 0 ? '  None'.italic : doc.arguments.map(arg => `  ${arg.name.bold}: ${arg.type}`).join('\n')}
+${doc.arguments.length === 0 ? '  None' : doc.arguments.map(arg => `  ${arg.name.bold}: ${arg.type}`).join('\n')}
 
 ${'Side effects'.underline}
-${doc.sideEffects.length === 0 ? '  None'.italic : doc.sideEffects.map(sideEffect => `  ${sideEffect}`).join('\n')}
+${doc.sideEffects.length === 0 ? '  None' : doc.sideEffects.map(sideEffect => `  ${sideEffect}`).join('\n')}
 
 ${'Examples'.underline}
 ${
   doc.examples.length === 0
     ? '[no examples]'
-    : doc.examples.map(example => `  ${example} ${'=>'.gray} ${executeExample(example)}`).join('\n')
+    : doc.examples.map(example => `  ${example} => ${executeExample(example)}`).join('\n')
 }
 `
 }
@@ -347,8 +311,8 @@ function getSyntax(doc) {
 
 function printHelp() {
   console.log(`\`builtins                 Print all builtin functions
-\`globalContext          Print all global variables
-\`GlobalContext          Print all global variables (JSON.stringify)
+\`globalContext            Print all global variables
+\`GlobalContext            Print all global variables (JSON.stringify)
 \`resetGlobalVariables     Reset global variables
 \`help                     Print this help message
 \`help [builtin function]  Print help for [builtin function]
