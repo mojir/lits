@@ -634,4 +634,17 @@ describe('list functions', () => {
       expect(() => lispish.run(`(join '("Albert" 10) " ")`)).toThrow()
     })
   })
+
+  describe('includes', () => {
+    test('samples', () => {
+      expect(lispish.run(`(includes "Mojir" '("Albert" "Mojir"))`)).toBe(true)
+      expect(lispish.run(`(includes 42 '("Albert" "Mojir" 42))`)).toBe(true)
+      expect(lispish.run(`(includes 43 '("Albert" "Mojir" 42))`)).toBe(false)
+      expect(lispish.run(`(includes undefined '("Albert" "Mojir" 42))`)).toBe(false)
+      expect(lispish.run(`(includes undefined '("Albert" "Mojir" 42 undefined))`)).toBe(true)
+      expect(() => lispish.run(`(includes "Albert")`)).toThrow()
+      expect(() => lispish.run(`(includes '("Albert"))`)).toThrow()
+      expect(() => lispish.run(`(includes "Albert" '("Albert") 0)`)).toThrow()
+    })
+  })
 })

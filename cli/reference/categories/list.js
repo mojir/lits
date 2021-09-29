@@ -794,4 +794,31 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
+  includes: {
+    name: 'includes',
+    category: 'List',
+    linkName: 'includes',
+    returns: {
+      type: 'true | false',
+    },
+    arguments: [
+      {
+        name: 'elem',
+        type: 'any',
+      },
+      {
+        name: 'list',
+        type: 'list',
+      },
+    ],
+    shortDescription: 'Returns `true` if `list` contains `elem`, otherwise returns `false`.',
+    longDescription: 'Returns `true` if `list` contains `elem`, otherwise returns `false`.',
+    examples: [
+      `(includes "Mojir" '("Albert" "Mojir"))`,
+      `(includes 42 '("Albert" "Mojir" 42))`,
+      `(includes 43 '("Albert" "Mojir" 42))`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
 }

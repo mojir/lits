@@ -64,10 +64,10 @@ export const listNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   find: {
-    evaluate: ([first, second]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
-      assertLispishFunction(first)
-      assertArray(second)
-      return second.find(elem => evaluateLispishFunction(first, [elem], contextStack))
+    evaluate: ([predicate, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+      assertLispishFunction(predicate)
+      assertArray(list)
+      return list.find(elem => evaluateLispishFunction(predicate, [elem], contextStack))
     },
     validate: node => assertLength(2, node),
   },
@@ -77,6 +77,13 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       return list[0]
     },
     validate: node => assertLength(1, node),
+  },
+  includes: {
+    evaluate: ([elem, list]: unknown[]): boolean => {
+      assertArray(list)
+      return list.includes(elem)
+    },
+    validate: node => assertLength(2, node),
   },
   last: {
     evaluate: ([first]: unknown[]): unknown => {
