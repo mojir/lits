@@ -26,10 +26,6 @@ const historyFile = path.join(historyDir, 'lispish_history.txt')
 
 const config = processArguments(process.argv.slice(2))
 
-if (!config.colors) {
-  colors.disable()
-}
-
 if (config.help) {
   console.log(getFullDocumentation(config.help))
   process.exit(0)
@@ -60,8 +56,8 @@ function executeExample(expression) {
   const outputs = []
   const oldLog = console.log
   const oldError = console.error
-  console.log = (...values) => outputs.push(values.map(value => formatValue(value, true)))
-  console.error = (...values) => outputs.push(values.map(value => formatValue(value, true).red))
+  console.log = (...values) => outputs.push(values.map(value => formatValue(value)))
+  console.error = (...values) => outputs.push(values.map(value => formatValue(value)))
   try {
     const result = lispish.run(expression)
     const outputString = 'Console: ' + outputs.map(output => output.join(', ')).join('  ')
@@ -82,7 +78,7 @@ function stringifyValue(value, indent) {
   ).replace(/"b234ca78-ccc4-5749-9384-1d3415d29423"/g, 'undefined')
 }
 
-function formatValue(value, noColors) {
+function formatValue(value) {
   if (isLispishFunction(value)) {
     return functionToString(value)
   }
@@ -104,7 +100,6 @@ function formatValue(value, noColors) {
 
 function processArguments(args) {
   const config = {
-    colors: true,
     filename: '',
     globalContext: { variables: {}, functions: {} },
     expression: '',
@@ -114,10 +109,6 @@ function processArguments(args) {
     const option = args[i]
     const argument = args[i + 1]
     switch (option) {
-      case '--no-colors':
-        i -= 1 // no argument
-        config.colors = false
-        break
       case '-f':
         if (!argument) {
           console.error('Missing filename after -f')
@@ -268,7 +259,7 @@ function getDocString(name) {
     return ''
   }
 
-  return `${getSyntax(doc)}   ${doc.shortDescription.gray}`
+  return `${getSyntax(doc)}   ${doc.shortDescription}`
 }
 
 function getFullDocumentation(name) {
