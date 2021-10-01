@@ -507,7 +507,7 @@ module.exports = {
         description: 'zero to nine',
       },
     ],
-    shortDescription: 'Applies placeholders to a string. Support for basic pluralization - see examples',
+    shortDescription: 'Applies placeholders to a string. Support for basic pluralization - see examples.',
     longDescription:
       'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
     examples: [

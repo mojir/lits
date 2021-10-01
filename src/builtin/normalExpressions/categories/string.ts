@@ -251,21 +251,10 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 }
 
-const placeholderRegexps = [
-  /(?<=^|[^$]|\$\$)\$1/g,
-  /(?<=^|[^$]|\$\$)\$2/g,
-  /(?<=^|[^$]|\$\$)\$3/g,
-  /(?<=^|[^$]|\$\$)\$4/g,
-  /(?<=^|[^$]|\$\$)\$5/g,
-  /(?<=^|[^$]|\$\$)\$6/g,
-  /(?<=^|[^$]|\$\$)\$7/g,
-  /(?<=^|[^$]|\$\$)\$8/g,
-  /(?<=^|[^$]|\$\$)\$9/g,
-]
 const doubleDollarRegexp = /\$\$/g
 function applyPlaceholders(templateString: string, placeholders: string[]): string {
   for (let i = 0; i < 9; i += 1) {
-    const re = placeholderRegexps[i] as RegExp
+    const re = new RegExp(`(?<=^|[^$]|\\$\\$)\\$${i + 1}`, 'g')
     if (re.test(templateString)) {
       const placeholder = placeholders[i]
       assertString(placeholder)
