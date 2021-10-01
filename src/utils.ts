@@ -250,3 +250,9 @@ export function isUserDefinedLispishFunction(func: unknown): func is UserDefined
 export function isBuiltinLispishFunction(func: unknown): func is UserDefinedLispishFunction {
   return isLispishFunction(func) && !isUserDefinedLispishFunction(func)
 }
+
+export function assertStringArray(value: unknown): asserts value is string[] {
+  if (!Array.isArray(value) || value.some(v => typeof v !== 'string')) {
+    throw Error(`Expected an array of strings, got ${value}`)
+  }
+}

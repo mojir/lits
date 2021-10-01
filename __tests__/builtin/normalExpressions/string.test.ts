@@ -298,4 +298,52 @@ describe('string functions', () => {
       expect(() => lispish.run(`(string-repeat true, 1)`)).toThrow()
     })
   })
+
+  describe('template', () => {
+    test('samples', () => {
+      // expect(lispish.run(`(template "Hi")`)).toBe('Hi')
+      // expect(lispish.run(`(template "Hi" "Carl")`)).toBe('Hi')
+      // expect(() => lispish.run(`(template "Hi, $1", "Carl")`)).toThrow()
+      // expect(lispish.run(`(template "Hi, $1" "Carl")`)).toBe('Hi, Carl')
+      // expect(lispish.run(`(template "Hi, $1" "Carl" "Larry")`)).toBe('Hi, Carl')
+      // expect(lispish.run(`(template "Hi, $1 and $2" "Carl" "Larry")`)).toBe('Hi, Carl and Larry')
+      // expect(
+      //   lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" "A" "B" "C" "D" "E" "F" "G" "H" "I")`),
+      // ).toBe('Hi A, B, C, D, E, F, G, H and I')
+      // expect(() =>
+      //   lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" "A" "B" "C" "D" "E" "F" "G" "H")`),
+      // ).toThrow()
+      expect(
+        lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 and $10" "A" "B" "C" "D" "E" "F" "G" "H" "I")`),
+      ).toBe('Hi A, B, C, D, E, F, G, H, I and A0')
+      // expect(() =>
+      //   lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 $10" "A" "B" "C" "D" "E" "F" "G" "H" "I" "J")`),
+      // ).toThrow()
+      // expect(() => lispish.run(`(template)`)).toThrow()
+      // expect(() => lispish.run(`(template "$1", 0)`)).toThrow()
+      // expect(() => lispish.run(`(template "$1", true)`)).toThrow()
+      // expect(() => lispish.run(`(template "$1", false)`)).toThrow()
+      // expect(() => lispish.run(`(template "$1", null)`)).toThrow()
+      // expect(() => lispish.run(`(template "$1", undefined)`)).toThrow()
+      // expect(() => lispish.run(`(template "$1", '())`)).toThrow()
+      // expect(() => lispish.run(`(template "$1", (object))`)).toThrow()
+      // expect(() => lispish.run(`(template true)`)).toThrow()
+      // expect(() => lispish.run(`(template false)`)).toThrow()
+      // expect(() => lispish.run(`(template null)`)).toThrow()
+      // expect(() => lispish.run(`(template undefined)`)).toThrow()
+      // expect(() => lispish.run(`(template 1)`)).toThrow()
+      // expect(() => lispish.run(`(template '()`)).toThrow()
+      // expect(() => lispish.run(`(template (object))`)).toThrow()
+    })
+    test('Pluralization samples', () => {
+      expect(lispish.run(`(template "$1 book||||$1 books" 0)`)).toBe('0 books')
+      expect(lispish.run(`(template "$1 book||||$1 books" 1)`)).toBe('1 book')
+      expect(lispish.run(`(template "$1 book||||$1 books" 2)`)).toBe('2 books')
+      expect(() => lispish.run(`(template "$1 book||||$1 books")`)).toThrow()
+      expect(() => lispish.run(`(template "$1 book||||$1 books" "1")`)).toThrow()
+      expect(() => lispish.run(`(template "$1 book||||$1 books||||$1 chairs" )`)).toThrow()
+      expect(lispish.run(`(template "$2 got $1 book||||$2 got $1 books" 1 "Carl")`)).toBe('Carl got 1 book')
+      expect(lispish.run(`(template "$2 got $1 book||||$2 got $1 books" 2 "Carl")`)).toBe('Carl got 2 books')
+    })
+  })
 })

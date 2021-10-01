@@ -1362,9 +1362,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.06688349261579729</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.00145723263784866</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.4487628043230252</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.4563460100511041</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.00872934297039491</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.00793894227059111</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1851,7 +1851,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633089209298</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633107806579</span></span></pre>
   </div>
 </div>
 
@@ -3524,6 +3524,30 @@
 </div>
 
 
+<div id="template" class="content function">
+  <div class="function-header">template</div>
+  
+  <p>Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>template templateString placeholder(zero to nine) => string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>templateString: string</pre>
+<pre>placeholder: string</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(template ___double_quote___Hi, $1 and $2___double_quote___ ___double_quote___Carl___double_quote___ ___double_quote___Larry___double_quote___)')"><span class="icon-button">▶</span> (template "Hi, $1 and $2" "Carl" "Larry") <span class="gray">=> "Hi, Carl and Larry"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(template ___double_quote___Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9___double_quote___ ___double_quote___A___double_quote___ ___double_quote___B___double_quote___ ___double_quote___C___double_quote___ ___double_quote___D___double_quote___ ___double_quote___E___double_quote___ ___double_quote___F___double_quote___ ___double_quote___G___double_quote___ ___double_quote___H___double_quote___ ___double_quote___I___double_quote___)')"><span class="icon-button">▶</span> (template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" "A" "B" "C" "D" "E" "F" "G" "H" "I") <span class="gray">=> "Hi A, B, C, D, E, F, G, H and I"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(template ___double_quote___$1 book||||$1 books___double_quote___ 0)')"><span class="icon-button">▶</span> (template "$1 book||||$1 books" 0) <span class="gray">=> "0 books"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(template ___double_quote___$1 book||||$1 books___double_quote___ 1)')"><span class="icon-button">▶</span> (template "$1 book||||$1 books" 1) <span class="gray">=> "1 book"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(template ___double_quote___$1 book||||$1 books___double_quote___ 2)')"><span class="icon-button">▶</span> (template "$1 book||||$1 books" 2) <span class="gray">=> "2 books"</span></span></pre>
+  </div>
+</div>
+
+
 <div id="ash" class="content function">
   <div class="function-header">ash</div>
   
@@ -3751,6 +3775,7 @@
 <li id="string_gt_link" onclick="showPage('string_gt')">string&gt;</li>
 <li id="string_gte_link" onclick="showPage('string_gte')">string&gt;=</li>
 <li id="substring_link" onclick="showPage('substring')">substring</li>
+<li id="template_link" onclick="showPage('template')">template</li>
 <li id="trim_link" onclick="showPage('trim')">trim</li>
 <li id="trim-left_link" onclick="showPage('trim-left')">trim-left</li>
 <li id="trim-right_link" onclick="showPage('trim-right')">trim-right</li>

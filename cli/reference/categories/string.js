@@ -489,4 +489,35 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
+  template: {
+    name: 'template',
+    category: 'String',
+    linkName: 'template',
+    returns: {
+      type: 'string',
+    },
+    arguments: [
+      {
+        name: 'templateString',
+        type: 'string',
+      },
+      {
+        name: 'placeholder',
+        type: 'string',
+        description: 'zero to nine',
+      },
+    ],
+    shortDescription: 'Applies placeholders to a string. Support for basic pluralization - see examples',
+    longDescription:
+      'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
+    examples: [
+      `(template "Hi, $1 and $2" "Carl" "Larry")`,
+      `(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" "A" "B" "C" "D" "E" "F" "G" "H" "I")`,
+      `(template "$1 book||||$1 books" 0)`,
+      `(template "$1 book||||$1 books" 1)`,
+      `(template "$1 book||||$1 books" 2)`,
+    ],
+    specialExpression: false,
+    sideEffects: [],
+  },
 }

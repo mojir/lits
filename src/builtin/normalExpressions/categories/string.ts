@@ -8,6 +8,7 @@ import {
   assertInteger,
   assertArray,
   assertStringOrRegExp,
+  assertStringArray,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -224,4 +225,52 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
   },
+
+  template: {
+    evaluate: ([templateString, ...placeholders]: unknown[]): string => {
+      assertString(templateString)
+      const templateStrings = templateString.split('||||')
+      if (templateStrings.length === 1) {
+        assertStringArray(placeholders)
+        return applyPlaceholders(templateStrings[0] as string, placeholders)
+      } else if (templateStrings.length === 2) {
+        const firstPlaceholder = placeholders[0]
+        assertNonNegativeNumber(firstPlaceholder)
+        assertInteger(firstPlaceholder)
+        const stringPlaceholders = [`${firstPlaceholder}`, ...placeholders.slice(1)] as string[]
+        if (firstPlaceholder === 1) {
+          return applyPlaceholders(templateStrings[0] as string, stringPlaceholders)
+        } else {
+          return applyPlaceholders(templateStrings[1] as string, stringPlaceholders)
+        }
+      } else {
+        throw Error('Invalid template string, only one "||||" separator allowed')
+      }
+    },
+    validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 10 }, node),
+  },
+}
+
+const placeholderRegexps = [
+  /(?<=^|[^$]|\$\$)\$1/g,
+  /(?<=^|[^$]|\$\$)\$2/g,
+  /(?<=^|[^$]|\$\$)\$3/g,
+  /(?<=^|[^$]|\$\$)\$4/g,
+  /(?<=^|[^$]|\$\$)\$5/g,
+  /(?<=^|[^$]|\$\$)\$6/g,
+  /(?<=^|[^$]|\$\$)\$7/g,
+  /(?<=^|[^$]|\$\$)\$8/g,
+  /(?<=^|[^$]|\$\$)\$9/g,
+]
+const doubleDollarRegexp = /\$\$/g
+function applyPlaceholders(templateString: string, placeholders: string[]): string {
+  for (let i = 0; i < 9; i += 1) {
+    const re = placeholderRegexps[i] as RegExp
+    if (re.test(templateString)) {
+      const placeholder = placeholders[i]
+      assertString(placeholder)
+      templateString = templateString.replace(re, placeholder)
+    }
+  }
+  return templateString.replace(doubleDollarRegexp, '$')
 }

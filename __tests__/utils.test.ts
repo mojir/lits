@@ -32,6 +32,7 @@ import {
   assertLength,
   assertStringOrArray,
   assertStringOrRegExp,
+  assertStringArray,
 } from '../src/utils'
 describe('utils', () => {
   test('asAstNode', () => {
@@ -502,5 +503,12 @@ describe('utils', () => {
     expect(isBuiltinLispishFunction(undefined)).toBe(false)
     expect(isBuiltinLispishFunction([])).toBe(false)
     expect(isBuiltinLispishFunction({})).toBe(false)
+  })
+  test('assertStringArray', () => {
+    expect(() => assertStringArray(undefined)).toThrow()
+    expect(() => assertStringArray('undefined')).toThrow()
+    expect(() => assertStringArray([])).not.toThrow()
+    expect(() => assertStringArray(['1', '2'])).not.toThrow()
+    expect(() => assertStringArray(['1', '2', 3])).toThrow()
   })
 })
