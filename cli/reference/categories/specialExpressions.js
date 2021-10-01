@@ -145,6 +145,62 @@ module.exports = {
     specialExpression: true,
     sideEffects: [],
   },
+  'create-variable': {
+    name: 'create-variable',
+    category: 'Special expression',
+    linkName: 'create-variable',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'variable',
+        type: 'form',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription: 'Creates a global variable with name set to `variable` evaluated and value set to `value`.',
+    longDescription: 'Creates a global variable with name set to `variable` evaluated and value set to `value`.',
+    examples: [
+      `(create-variable "a" "b")`,
+      `(create-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
+      `(create-variable "a" "b") (create-variable a "c") b`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
+  'create-constant-variable': {
+    name: 'create-constant-variable',
+    category: 'Special expression',
+    linkName: 'create-constant-variable',
+    returns: {
+      type: 'any',
+    },
+    arguments: [
+      {
+        name: 'variable',
+        type: 'form',
+      },
+      {
+        name: 'value',
+        type: 'any',
+      },
+    ],
+    shortDescription:
+      'Creates a constant global variable with name set to `variable` evaluated and value set to `value`.',
+    longDescription:
+      'Creates a constant global variable with name set to `variable` evaluated and value set to `value`.',
+    examples: [
+      `(create-constant-variable "a" "b")`,
+      `(create-constant-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
+      `(create-constant-variable "a" "b") (create-constant-variable a "c") b`,
+    ],
+    specialExpression: true,
+    sideEffects: [],
+  },
   let: {
     name: 'let',
     category: 'Special expression',
@@ -223,7 +279,40 @@ module.exports = {
       `(defun sumOfSquares (&rest s) (apply #'+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
-    sideEffects: [],
+    sideEffects: ['Creates a new function'],
+  },
+  'create-function': {
+    name: 'create-function',
+    category: 'Special expression',
+    linkName: 'create-function',
+    returns: {
+      type: 'function',
+    },
+    arguments: [
+      {
+        name: 'name',
+        type: 'form',
+      },
+      {
+        name: 'arguments',
+        type: 'arguments',
+      },
+      {
+        name: 'body',
+        type: 'lisp expressions',
+      },
+    ],
+    shortDescription:
+      'Creates a named global function with its name set to `name` evaluated. When called, evaluation of the last expression in the body is returned.',
+    longDescription:
+      'Creates a named global function with its name set to `name` evaluated. When called, evaluation of the last expression in the body is returned.',
+    examples: [
+      `(create-function "hyp" (a b) (sqrt (+ (* a a) (* b b)))) #'hyp`,
+      `(create-function (concat "h" "y" "p") (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
+      `(create-function "sumOfSquares" (&rest s) (apply #'+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
+    ],
+    specialExpression: true,
+    sideEffects: ['Creates a new function'],
   },
   'return-from': {
     name: 'return-from',

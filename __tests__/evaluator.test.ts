@@ -73,7 +73,7 @@ describe('Evaluator', () => {
   })
   test('if statement (true)', () => {
     const tokens = tokenize(`
-      (if (= (get-attr info "gender") "male") "It's a boy" "It's not a girl")
+      (if (= (oget info "gender") "male") "It's a boy" "It's not a girl")
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, { variables: {}, functions: {} })
@@ -81,7 +81,7 @@ describe('Evaluator', () => {
   })
   test('if statement (false)', () => {
     const tokens = tokenize(`
-      (if (= (get-attr info "gender") "female") "It's a girl" "It's not a girl")
+      (if (= (oget info "gender") "female") "It's a girl" "It's not a girl")
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, { variables: {}, functions: {} })

@@ -1,8 +1,8 @@
 module.exports = {
-  'has-attr': {
-    name: 'has-attr',
+  ohas: {
+    name: 'ohas',
     category: 'Object',
-    linkName: 'has-attr',
+    linkName: 'ohas',
     returns: {
       type: 'boolean',
     },
@@ -19,17 +19,17 @@ module.exports = {
     shortDescription: 'Returns `true` if `object` has an attribute named `attr`, otherwise returns `false`.',
     longDescription: 'Returns `true` if `object` has an attribute named `attr`, otherwise returns `false`.',
     examples: [
-      '(has-attr (object "a" 10 "b" 20) "a")',
-      '(has-attr (object "a" 10 "b" undefined) "b")',
-      '(has-attr (object "a" 10 "b" undefined) "c")',
+      '(ohas (object "a" 10 "b" 20) "a")',
+      '(ohas (object "a" 10 "b" undefined) "b")',
+      '(ohas (object "a" 10 "b" undefined) "c")',
     ],
     specialExpression: false,
     sideEffects: [],
   },
-  'get-attr': {
-    name: 'get-attr',
+  oget: {
+    name: 'oget',
     category: 'Object',
-    linkName: 'get-attr',
+    linkName: 'oget',
     returns: {
       type: 'value',
     },
@@ -48,17 +48,17 @@ module.exports = {
     longDescription:
       "Returns the value of `object`'s attribute `attr`. Returns `undefined` if `object` has no attribute named `attr`.",
     examples: [
-      '(get-attr (object "a" 10 "b" 20) "a")',
-      '(get-attr (object "a" 10 "b" undefined) "b")',
-      '(get-attr (object "a" 10 "b" undefined) "c")',
+      '(oget (object "a" 10 "b" 20) "a")',
+      '(oget (object "a" 10 "b" undefined) "b")',
+      '(oget (object "a" 10 "b" undefined) "c")',
     ],
     specialExpression: false,
     sideEffects: [],
   },
-  'del-attr': {
-    name: 'del-attr',
+  odel: {
+    name: 'odel',
     category: 'Object',
-    linkName: 'del-attr',
+    linkName: 'odel',
     returns: {
       type: 'value',
     },
@@ -75,18 +75,18 @@ module.exports = {
     shortDescription: 'Deletes the attribute `attr` from `object`.',
     longDescription: 'Deletes the attribute `attr` from `object`.',
     examples: [
-      '(del-attr (object "x" 10) "x")',
-      '(del-attr (object "x" 10) "y")',
-      '(setq o (object "a" 5)) (del-attr o "a") o',
-      '(setq o (object "a" 5)) (del-attr o "b") o',
+      '(odel (object "x" 10) "x")',
+      '(odel (object "x" 10) "y")',
+      '(setq o (object "a" 5)) (odel o "a") o',
+      '(setq o (object "a" 5)) (odel o "b") o',
     ],
     specialExpression: false,
     sideEffects: [],
   },
-  'set-attr': {
-    name: 'set-attr',
+  oset: {
+    name: 'oset',
     category: 'Object',
-    linkName: 'set-attr',
+    linkName: 'oset',
     returns: {
       type: 'value',
     },
@@ -107,9 +107,9 @@ module.exports = {
     shortDescription: 'Sets an attribute on `object`. Returns `value`.',
     longDescription: 'Sets an attribute on `object`. Returns `value`.',
     examples: [
-      '(set-attr (object "x" 10) "a" 10)',
-      '(setq o (object)) (set-attr o "a" 10) o',
-      '(setq o (object "a" 5)) (set-attr o "a" 10) o',
+      '(oset (object "x" 10) "a" 10)',
+      '(setq o (object)) (oset o "a" 10) o',
+      '(setq o (object "a" 5)) (oset o "a" 10) o',
     ],
     specialExpression: false,
     sideEffects: [],

@@ -63,3 +63,6 @@ export type SpecialExpressionName =
   | 'unless'
   | 'when'
   | 'while'
+  | 'create-variable'
+  | 'create-constant-variable'
+  | 'create-function'

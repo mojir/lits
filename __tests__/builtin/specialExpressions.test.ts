@@ -21,6 +21,44 @@ describe('specialExpressions', () => {
     console.log = oldLog
   })
 
+  describe('create-variable', () => {
+    test('samples', () => {
+      expect(lispish.run(`(create-variable "a" 10) a`)).toBe(10)
+      expect(lispish.run(`(create-variable "a" "b") (create-variable a "c") b`)).toBe('c')
+      expect(lispish.run(`(create-variable (concat "a" "1") 20) a1`)).toBe(20)
+      expect(() => lispish.run(`(create-variable true false)`)).toThrow()
+      expect(() => lispish.run(`(create-variable a)`)).toThrow()
+      expect(() => lispish.run(`(create-variable a 10 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable 1 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable null 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable undefined 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable false 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable true 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable '() 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable (object) 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable a 10)`)).toThrow()
+    })
+  })
+
+  describe('create-constant-variable', () => {
+    test('samples', () => {
+      expect(lispish.run(`(create-constant-variable "a" 10) a`)).toBe(10)
+      expect(() => lispish.run(`(setq a 10) (create-constant-variable "a" 20)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable "a" 10) (create-constant-variable "a" 20)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable "a" 10) (setq a 20)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable true false)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable "a")`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable "a" 10 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable 1 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable null 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable undefined 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable false 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable true 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable '() 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable (object) 10)`)).toThrow()
+    })
+  })
+
   describe('setq', () => {
     test('samples', () => {
       expect(lispish.run(`(setq a 10) a`)).toBe(10)
@@ -295,8 +333,29 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(defun add (a b))`)).toThrow()
     })
     test('call defun function', () => {
-      // expect(lispish.run(`(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
+      expect(lispish.run(`(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
       expect(lispish.run("(defun applyWithVal (fn val) (fn val)) (applyWithVal #'1+ 10)")).toBe(11)
+    })
+  })
+
+  describe('create-function', () => {
+    test('samples', () => {
+      expect(lispish.run('(create-function (concat "a" "d" "d") (a b) (+ a b)) (add 1 2)')).toBe(3)
+      expect(() => lispish.run(`(create-function "add" () 10)`)).not.toThrow()
+      expect(() => lispish.run(`(create-function "x" (a a) 10)`)).toThrow()
+      expect(() => lispish.run(`(create-function true () 10)`)).toThrow()
+      expect(() => lispish.run(`(create-function false () 10)`)).toThrow()
+      expect(() => lispish.run(`(create-function null () 10)`)).toThrow()
+      expect(() => lispish.run(`(create-function undefined () 10)`)).toThrow()
+      expect(() => lispish.run(`(create-function add ("s") 10)`)).toThrow()
+      expect(() => lispish.run(`(create-function add 1 (+ a b))`)).toThrow()
+      expect(() => lispish.run(`(create-function add (a b))`)).toThrow()
+    })
+    test('call create-function function', () => {
+      expect(
+        lispish.run(`(create-function "sumOneToN" (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`),
+      ).toBe(55)
+      expect(lispish.run(`(create-function "applyWithVal" (fn val) (fn val)) (applyWithVal #'1+ 10)`)).toBe(11)
     })
   })
 

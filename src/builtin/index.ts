@@ -1,7 +1,8 @@
 import { andSpecialExpression } from './specialExpressions/and'
 import { blockSpecialExpression } from './specialExpressions/block'
 import { condSpecialExpression } from './specialExpressions/cond'
-import { defunSpecialExpression } from './specialExpressions/defun'
+import { defunSpecialExpression } from './specialExpressions/functions'
+import { createFunctionSpecialExpression } from './specialExpressions/functions'
 import { dolistSpecialExpression } from './specialExpressions/dolist'
 import { dotimesSpecialExpression } from './specialExpressions/dotimes'
 import { functionSpecialExpression } from './specialExpressions/function'
@@ -18,7 +19,9 @@ import {
   setqConstantSpecialExpression,
   setqLocalConstantSpecialExpression,
   setqLocalSpecialExpression,
-} from './specialExpressions/setq'
+  createConstantVariableSpecialExpression,
+  createVariableSpecialExpression,
+} from './specialExpressions/variables'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
 import { unlessSpecialExpression } from './specialExpressions/unless'
@@ -38,6 +41,7 @@ export const specialExpressions: SpecialExpressions = {
   block: blockSpecialExpression,
   cond: condSpecialExpression,
   defun: defunSpecialExpression,
+  'create-function': createFunctionSpecialExpression,
   dolist: dolistSpecialExpression,
   dotimes: dotimesSpecialExpression,
   function: functionSpecialExpression,
@@ -54,6 +58,8 @@ export const specialExpressions: SpecialExpressions = {
   unless: unlessSpecialExpression,
   when: whenSpecialExpression,
   while: whileSpecialExpression,
+  'create-variable': createVariableSpecialExpression,
+  'create-constant-variable': createConstantVariableSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {

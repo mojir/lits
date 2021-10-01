@@ -87,67 +87,67 @@ describe('object functions', () => {
     })
   })
 
-  describe('has-attr', () => {
+  describe('ohas', () => {
     test('samples', () => {
-      expect(lispish.run(`(has-attr (object) "x")`)).toBe(false)
-      expect(lispish.run(`(has-attr (object "x" 1) "x")`)).toBe(true)
-      expect(lispish.run(`(has-attr (object "x" 1) "")`)).toBe(false)
-      expect(lispish.run(`(has-attr (object "x" 1) "y")`)).toBe(false)
-      expect(lispish.run(`(has-attr (object "" 1) "")`)).toBe(true)
-      expect(lispish.run(`(has-attr (object "x" undefined "y" 2) "x")`)).toBe(true)
-      expect(() => lispish.run(`(has-attr (object "x" 1) 1)`)).toThrow()
-      expect(() => lispish.run(`(has-attr)`)).toThrow()
-      expect(() => lispish.run(`(has-attr (object "x") (object "x"))`)).toThrow()
-      expect(() => lispish.run(`(has-attr 0 "x")`)).toThrow()
-      expect(() => lispish.run(`(has-attr true "x")`)).toThrow()
-      expect(() => lispish.run(`(has-attr false "x")`)).toThrow()
-      expect(() => lispish.run(`(has-attr null "x")`)).toThrow()
-      expect(() => lispish.run(`(has-attr undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(has-attr '(1) "x")`)).toThrow()
+      expect(lispish.run(`(ohas (object) "x")`)).toBe(false)
+      expect(lispish.run(`(ohas (object "x" 1) "x")`)).toBe(true)
+      expect(lispish.run(`(ohas (object "x" 1) "")`)).toBe(false)
+      expect(lispish.run(`(ohas (object "x" 1) "y")`)).toBe(false)
+      expect(lispish.run(`(ohas (object "" 1) "")`)).toBe(true)
+      expect(lispish.run(`(ohas (object "x" undefined "y" 2) "x")`)).toBe(true)
+      expect(() => lispish.run(`(ohas (object "x" 1) 1)`)).toThrow()
+      expect(() => lispish.run(`(ohas)`)).toThrow()
+      expect(() => lispish.run(`(ohas (object "x") (object "x"))`)).toThrow()
+      expect(() => lispish.run(`(ohas 0 "x")`)).toThrow()
+      expect(() => lispish.run(`(ohas true "x")`)).toThrow()
+      expect(() => lispish.run(`(ohas false "x")`)).toThrow()
+      expect(() => lispish.run(`(ohas null "x")`)).toThrow()
+      expect(() => lispish.run(`(ohas undefined "x")`)).toThrow()
+      expect(() => lispish.run(`(ohas '(1) "x")`)).toThrow()
     })
   })
 
-  describe('get-attr', () => {
+  describe('oget', () => {
     test('samples', () => {
-      expect(lispish.run(`(get-attr (object) "x")`)).toBeUndefined()
-      expect(lispish.run(`(get-attr (object "x" 1) "x")`)).toBe(1)
-      expect(lispish.run(`(get-attr (object "x" 1) "")`)).toBeUndefined()
-      expect(lispish.run(`(get-attr (object "x" 1) "y")`)).toBeUndefined()
-      expect(lispish.run(`(get-attr (object "" 1) "")`)).toBe(1)
-      expect(lispish.run(`(get-attr (object "x" undefined "y" 2) "x")`)).toBeUndefined()
-      expect(() => lispish.run(`(get-attr (object "x" 1) 1)`)).toThrow()
-      expect(() => lispish.run(`(get-attr)`)).toThrow()
-      expect(() => lispish.run(`(get-attr (object "x") (object "x"))`)).toThrow()
-      expect(() => lispish.run(`(get-attr 0 "x")`)).toThrow()
-      expect(() => lispish.run(`(get-attr true "x")`)).toThrow()
-      expect(() => lispish.run(`(get-attr false "x")`)).toThrow()
-      expect(() => lispish.run(`(get-attr null "x")`)).toThrow()
-      expect(() => lispish.run(`(get-attr undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(get-attr '(1) "x")`)).toThrow()
+      expect(lispish.run(`(oget (object) "x")`)).toBeUndefined()
+      expect(lispish.run(`(oget (object "x" 1) "x")`)).toBe(1)
+      expect(lispish.run(`(oget (object "x" 1) "")`)).toBeUndefined()
+      expect(lispish.run(`(oget (object "x" 1) "y")`)).toBeUndefined()
+      expect(lispish.run(`(oget (object "" 1) "")`)).toBe(1)
+      expect(lispish.run(`(oget (object "x" undefined "y" 2) "x")`)).toBeUndefined()
+      expect(() => lispish.run(`(oget (object "x" 1) 1)`)).toThrow()
+      expect(() => lispish.run(`(oget)`)).toThrow()
+      expect(() => lispish.run(`(oget (object "x") (object "x"))`)).toThrow()
+      expect(() => lispish.run(`(oget 0 "x")`)).toThrow()
+      expect(() => lispish.run(`(oget true "x")`)).toThrow()
+      expect(() => lispish.run(`(oget false "x")`)).toThrow()
+      expect(() => lispish.run(`(oget null "x")`)).toThrow()
+      expect(() => lispish.run(`(oget undefined "x")`)).toThrow()
+      expect(() => lispish.run(`(oget '(1) "x")`)).toThrow()
     })
   })
 
-  describe('set-attr', () => {
+  describe('oset', () => {
     test('samples', () => {
-      expect(lispish.run(`(set-attr (object) "x" 1)`)).toBe(1)
-      expect(lispish.run(`(set-attr (object "x" 1) "x" 2)`)).toBe(2)
-      expect(lispish.run(`(set-attr (object "x" 1) "" 3)`)).toBe(3)
-      expect(lispish.run(`(set-attr (object "x" 1) "y" (object))`)).toEqual({})
-      expect(lispish.run(`(set-attr O "x" 1) O`, { vars: { O: {} } })).toEqual({ x: 1 })
-      expect(() => lispish.run(`(set-attr (object "x" 1) 1)`)).toThrow()
-      expect(() => lispish.run(`(set-attr)`)).toThrow()
-      expect(() => lispish.run(`(set-attr (object "x") (object "x"))`)).toThrow()
-      expect(() => lispish.run(`(set-attr 0 "x")`)).toThrow()
-      expect(() => lispish.run(`(set-attr true "x")`)).toThrow()
-      expect(() => lispish.run(`(set-attr false "x")`)).toThrow()
-      expect(() => lispish.run(`(set-attr null "x")`)).toThrow()
-      expect(() => lispish.run(`(set-attr undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(set-attr '(1) "x")`)).toThrow()
+      expect(lispish.run(`(oset (object) "x" 1)`)).toBe(1)
+      expect(lispish.run(`(oset (object "x" 1) "x" 2)`)).toBe(2)
+      expect(lispish.run(`(oset (object "x" 1) "" 3)`)).toBe(3)
+      expect(lispish.run(`(oset (object "x" 1) "y" (object))`)).toEqual({})
+      expect(lispish.run(`(oset O "x" 1) O`, { vars: { O: {} } })).toEqual({ x: 1 })
+      expect(() => lispish.run(`(oset (object "x" 1) 1)`)).toThrow()
+      expect(() => lispish.run(`(oset)`)).toThrow()
+      expect(() => lispish.run(`(oset (object "x") (object "x"))`)).toThrow()
+      expect(() => lispish.run(`(oset 0 "x")`)).toThrow()
+      expect(() => lispish.run(`(oset true "x")`)).toThrow()
+      expect(() => lispish.run(`(oset false "x")`)).toThrow()
+      expect(() => lispish.run(`(oset null "x")`)).toThrow()
+      expect(() => lispish.run(`(oset undefined "x")`)).toThrow()
+      expect(() => lispish.run(`(oset '(1) "x")`)).toThrow()
     })
     test('set new value', () => {
       const program = `
         (setq obj (object "x" 10))
-        (set-attr obj "y" 20)
+        (oset obj "y" 20)
         obj
       `
       expect(lispish.run(program)).toEqual({ x: 10, y: 20 })
@@ -155,33 +155,33 @@ describe('object functions', () => {
     test('update value', () => {
       const program = `
         (setq obj (object "x" 10))
-        (set-attr obj "x" 20)
+        (oset obj "x" 20)
         obj
       `
       expect(lispish.run(program)).toEqual({ x: 20 })
     })
   })
 
-  describe('del-attr', () => {
+  describe('odel', () => {
     test('samples', () => {
-      expect(lispish.run(`(del-attr (object) "x")`)).toBeUndefined()
-      expect(lispish.run(`(del-attr (object "x" 1) "x")`)).toBe(1)
-      expect(lispish.run(`(del-attr (object "x" 1) "")`)).toBeUndefined()
-      expect(lispish.run(`(del-attr (object "x" (object)) "x")`)).toEqual({})
-      expect(() => lispish.run(`(del-attr (object "x" 1) 1)`)).toThrow()
-      expect(() => lispish.run(`(del-attr)`)).toThrow()
-      expect(() => lispish.run(`(del-attr (object "x") (object "x"))`)).toThrow()
-      expect(() => lispish.run(`(del-attr 0 "x")`)).toThrow()
-      expect(() => lispish.run(`(del-attr true "x")`)).toThrow()
-      expect(() => lispish.run(`(del-attr false "x")`)).toThrow()
-      expect(() => lispish.run(`(del-attr null "x")`)).toThrow()
-      expect(() => lispish.run(`(del-attr undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(del-attr '(1) "x")`)).toThrow()
+      expect(lispish.run(`(odel (object) "x")`)).toBeUndefined()
+      expect(lispish.run(`(odel (object "x" 1) "x")`)).toBe(1)
+      expect(lispish.run(`(odel (object "x" 1) "")`)).toBeUndefined()
+      expect(lispish.run(`(odel (object "x" (object)) "x")`)).toEqual({})
+      expect(() => lispish.run(`(odel (object "x" 1) 1)`)).toThrow()
+      expect(() => lispish.run(`(odel)`)).toThrow()
+      expect(() => lispish.run(`(odel (object "x") (object "x"))`)).toThrow()
+      expect(() => lispish.run(`(odel 0 "x")`)).toThrow()
+      expect(() => lispish.run(`(odel true "x")`)).toThrow()
+      expect(() => lispish.run(`(odel false "x")`)).toThrow()
+      expect(() => lispish.run(`(odel null "x")`)).toThrow()
+      expect(() => lispish.run(`(odel undefined "x")`)).toThrow()
+      expect(() => lispish.run(`(odel '(1) "x")`)).toThrow()
     })
     test('delete atribute', () => {
       const program = `
         (setq obj (object "x" 10))
-        (del-attr obj "x")
+        (odel obj "x")
         obj
       `
       expect(lispish.run(program)).toEqual({})
@@ -190,7 +190,7 @@ describe('object functions', () => {
     test('delete unexisting attribute', () => {
       const program = `
         (setq obj (object "x" 10))
-        (del-attr obj "y")
+        (odel obj "y")
         obj
       `
       expect(lispish.run(program)).toEqual({ x: 10 })

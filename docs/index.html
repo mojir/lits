@@ -1362,9 +1362,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.7091692557294582</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.004632669069086108</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.31339254581186193</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.9859930128352434</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.005670480250900731</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 2.0438020630228064</span></span></pre>
 <pre class="example" onclick="runPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="runPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1851,7 +1851,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1632924810757</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633089100762</span></span></pre>
   </div>
 </div>
 
@@ -1898,13 +1898,13 @@
 </div>
 
 
-<div id="has-attr" class="content function">
-  <div class="function-header">has-attr</div>
+<div id="ohas" class="content function">
+  <div class="function-header">ohas</div>
   
   <p>Returns <span class="pre">true</span> if <span class="pre">object</span> has an attribute named <span class="pre">attr</span>, otherwise returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>has-attr object attr => boolean</pre>
+    <pre>ohas object attr => boolean</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre>
@@ -1913,20 +1913,20 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(has-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20) ___double_quote___a___double_quote___)')"><span class="icon-button">▶</span> (has-attr (object "a" 10 "b" 20) "a") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(has-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (has-attr (object "a" 10 "b" undefined) "b") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(has-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (has-attr (object "a" 10 "b" undefined) "c") <span class="gray">=> false</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(ohas (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20) ___double_quote___a___double_quote___)')"><span class="icon-button">▶</span> (ohas (object "a" 10 "b" 20) "a") <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(ohas (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (ohas (object "a" 10 "b" undefined) "b") <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(ohas (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (ohas (object "a" 10 "b" undefined) "c") <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
 
-<div id="get-attr" class="content function">
-  <div class="function-header">get-attr</div>
+<div id="oget" class="content function">
+  <div class="function-header">oget</div>
   
   <p>Returns the value of <span class="pre">object</span>'s attribute <span class="pre">attr</span>. Returns <span class="pre">undefined</span> if <span class="pre">object</span> has no attribute named <span class="pre">attr</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>get-attr object attr => value</pre>
+    <pre>oget object attr => value</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre>
@@ -1935,20 +1935,20 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(get-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20) ___double_quote___a___double_quote___)')"><span class="icon-button">▶</span> (get-attr (object "a" 10 "b" 20) "a") <span class="gray">=> 10</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(get-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (get-attr (object "a" 10 "b" undefined) "b") <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(get-attr (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (get-attr (object "a" 10 "b" undefined) "c") <span class="gray">=> undefined</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(oget (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20) ___double_quote___a___double_quote___)')"><span class="icon-button">▶</span> (oget (object "a" 10 "b" 20) "a") <span class="gray">=> 10</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(oget (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (oget (object "a" 10 "b" undefined) "b") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(oget (object ___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ undefined) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (oget (object "a" 10 "b" undefined) "c") <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
 
-<div id="del-attr" class="content function">
-  <div class="function-header">del-attr</div>
+<div id="odel" class="content function">
+  <div class="function-header">odel</div>
   
   <p>Deletes the attribute <span class="pre">attr</span> from <span class="pre">object</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>del-attr object attr => value</pre>
+    <pre>odel object attr => value</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre>
@@ -1957,21 +1957,21 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(del-attr (object ___double_quote___x___double_quote___ 10) ___double_quote___x___double_quote___)')"><span class="icon-button">▶</span> (del-attr (object "x" 10) "x") <span class="gray">=> 10</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(del-attr (object ___double_quote___x___double_quote___ 10) ___double_quote___y___double_quote___)')"><span class="icon-button">▶</span> (del-attr (object "x" 10) "y") <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (del-attr o ___double_quote___a___double_quote___) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (del-attr o "a") o <span class="gray">=> {}</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (del-attr o ___double_quote___b___double_quote___) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (del-attr o "b") o <span class="gray">=> {"a":5}</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(odel (object ___double_quote___x___double_quote___ 10) ___double_quote___x___double_quote___)')"><span class="icon-button">▶</span> (odel (object "x" 10) "x") <span class="gray">=> 10</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(odel (object ___double_quote___x___double_quote___ 10) ___double_quote___y___double_quote___)')"><span class="icon-button">▶</span> (odel (object "x" 10) "y") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (odel o ___double_quote___a___double_quote___) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (odel o "a") o <span class="gray">=> {}</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (odel o ___double_quote___b___double_quote___) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (odel o "b") o <span class="gray">=> {"a":5}</span></span></pre>
   </div>
 </div>
 
 
-<div id="set-attr" class="content function">
-  <div class="function-header">set-attr</div>
+<div id="oset" class="content function">
+  <div class="function-header">oset</div>
   
   <p>Sets an attribute on <span class="pre">object</span>. Returns <span class="pre">value</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>set-attr object attr value => value</pre>
+    <pre>oset object attr value => value</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre>
@@ -1981,9 +1981,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="runPlayground('(set-attr (object ___double_quote___x___double_quote___ 10) ___double_quote___a___double_quote___ 10)')"><span class="icon-button">▶</span> (set-attr (object "x" 10) "a" 10) <span class="gray">=> 10</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(setq o (object)) (set-attr o ___double_quote___a___double_quote___ 10) o')"><span class="icon-button">▶</span> (setq o (object)) (set-attr o "a" 10) o <span class="gray">=> {"a":10}</span></span></pre>
-<pre><span class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (set-attr o ___double_quote___a___double_quote___ 10) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (set-attr o "a" 10) o <span class="gray">=> {"a":10}</span></span></pre>
+    <pre><span class="example" onclick="runPlayground('(oset (object ___double_quote___x___double_quote___ 10) ___double_quote___a___double_quote___ 10)')"><span class="icon-button">▶</span> (oset (object "x" 10) "a" 10) <span class="gray">=> 10</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq o (object)) (oset o ___double_quote___a___double_quote___ 10) o')"><span class="icon-button">▶</span> (setq o (object)) (oset o "a" 10) o <span class="gray">=> {"a":10}</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(setq o (object ___double_quote___a___double_quote___ 5)) (oset o ___double_quote___a___double_quote___ 10) o')"><span class="icon-button">▶</span> (setq o (object "a" 5)) (oset o "a" 10) o <span class="gray">=> {"a":10}</span></span></pre>
   </div>
 </div>
 
@@ -2652,6 +2652,50 @@
 </div>
 
 
+<div id="create-variable" class="content function">
+  <div class="function-header">create-variable</div>
+  <h3>Special Expression</h3>
+  <p>Creates a global variable with name set to <span class="pre">variable</span> evaluated and value set to <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>create-variable variable value => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>variable: form</pre>
+<pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(create-variable ___double_quote___a___double_quote___ ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (create-variable "a" "b") <span class="gray">=> "b"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(create-variable (concat ___double_quote___a___double_quote___ ___double_quote___1___double_quote___) (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___)) a1')"><span class="icon-button">▶</span> (create-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1 <span class="gray">=> {"x":10,"y":true,"z":"A string"}</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(create-variable ___double_quote___a___double_quote___ ___double_quote___b___double_quote___) (create-variable a ___double_quote___c___double_quote___) b')"><span class="icon-button">▶</span> (create-variable "a" "b") (create-variable a "c") b <span class="gray">=> "c"</span></span></pre>
+  </div>
+</div>
+
+
+<div id="create-constant-variable" class="content function">
+  <div class="function-header">create-constant-variable</div>
+  <h3>Special Expression</h3>
+  <p>Creates a constant global variable with name set to <span class="pre">variable</span> evaluated and value set to <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>create-constant-variable variable value => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>variable: form</pre>
+<pre>value: any</pre></div>
+
+  <label>No side effects</label>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(create-constant-variable ___double_quote___a___double_quote___ ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (create-constant-variable "a" "b") <span class="gray">=> "b"</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(create-constant-variable (concat ___double_quote___a___double_quote___ ___double_quote___1___double_quote___) (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___)) a1')"><span class="icon-button">▶</span> (create-constant-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1 <span class="gray">=> {"x":10,"y":true,"z":"A string"}</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(create-constant-variable ___double_quote___a___double_quote___ ___double_quote___b___double_quote___) (create-constant-variable a ___double_quote___c___double_quote___) b')"><span class="icon-button">▶</span> (create-constant-variable "a" "b") (create-constant-variable a "c") b <span class="gray">=> "c"</span></span></pre>
+  </div>
+</div>
+
+
 <div id="let" class="content function">
   <div class="function-header">let</div>
   <h3>Special Expression</h3>
@@ -2706,12 +2750,35 @@
 <pre>arguments: arguments</pre>
 <pre>body: lisp expressions</pre></div>
 
-  <label>No side effects</label>
+  <label>Side effects</label><div class="indent"><pre>Creates a new function</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #___single_quote___hyp')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) #'hyp <span class="gray">=> &lt;FUNCTION hyp&gt;</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5</span></span></pre>
 <pre><span class="example" onclick="runPlayground('(defun sumOfSquares (&rest s) (apply #___single_quote___+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"><span class="icon-button">▶</span> (defun sumOfSquares (&rest s) (apply #'+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55</span></span></pre>
+  </div>
+</div>
+
+
+<div id="create-function" class="content function">
+  <div class="function-header">create-function</div>
+  <h3>Special Expression</h3>
+  <p>Creates a named global function with its name set to <span class="pre">name</span> evaluated. When called, evaluation of the last expression in the body is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>create-function name arguments body => function</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>name: form</pre>
+<pre>arguments: arguments</pre>
+<pre>body: lisp expressions</pre></div>
+
+  <label>Side effects</label><div class="indent"><pre>Creates a new function</pre></div>
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="runPlayground('(create-function ___double_quote___hyp___double_quote___ (a b) (sqrt (+ (* a a) (* b b)))) #___single_quote___hyp')"><span class="icon-button">▶</span> (create-function "hyp" (a b) (sqrt (+ (* a a) (* b b)))) #'hyp <span class="gray">=> &lt;FUNCTION hyp&gt;</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(create-function (concat ___double_quote___h___double_quote___ ___double_quote___y___double_quote___ ___double_quote___p___double_quote___) (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"><span class="icon-button">▶</span> (create-function (concat "h" "y" "p") (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5</span></span></pre>
+<pre><span class="example" onclick="runPlayground('(create-function ___double_quote___sumOfSquares___double_quote___ (&rest s) (apply #___single_quote___+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"><span class="icon-button">▶</span> (create-function "sumOfSquares" (&rest s) (apply #'+ (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55</span></span></pre>
   </div>
 </div>
 
@@ -3574,6 +3641,9 @@
           <li id="and_link" onclick="showPage('and')">and</li>
 <li id="block_link" onclick="showPage('block')">block</li>
 <li id="cond_link" onclick="showPage('cond')">cond</li>
+<li id="create-constant-variable_link" onclick="showPage('create-constant-variable')">create-constant-variable</li>
+<li id="create-function_link" onclick="showPage('create-function')">create-function</li>
+<li id="create-variable_link" onclick="showPage('create-variable')">create-variable</li>
 <li id="defun_link" onclick="showPage('defun')">defun</li>
 <li id="dolist_link" onclick="showPage('dolist')">dolist</li>
 <li id="dotimes_link" onclick="showPage('dotimes')">dotimes</li>
@@ -3653,14 +3723,14 @@
 
         <label>Object</label>
         <ul>
-          <li id="del-attr_link" onclick="showPage('del-attr')">del-attr</li>
-<li id="entries_link" onclick="showPage('entries')">entries</li>
-<li id="get-attr_link" onclick="showPage('get-attr')">get-attr</li>
-<li id="has-attr_link" onclick="showPage('has-attr')">has-attr</li>
+          <li id="entries_link" onclick="showPage('entries')">entries</li>
 <li id="keys_link" onclick="showPage('keys')">keys</li>
 <li id="merge_link" onclick="showPage('merge')">merge</li>
 <li id="object_link" onclick="showPage('object')">object</li>
-<li id="set-attr_link" onclick="showPage('set-attr')">set-attr</li>
+<li id="odel_link" onclick="showPage('odel')">odel</li>
+<li id="oget_link" onclick="showPage('oget')">oget</li>
+<li id="ohas_link" onclick="showPage('ohas')">ohas</li>
+<li id="oset_link" onclick="showPage('oset')">oset</li>
 <li id="values_link" onclick="showPage('values')">values</li>
         </ul>
 
