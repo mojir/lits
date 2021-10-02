@@ -92,12 +92,8 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
   params: unknown[],
   contextStack: Context[],
 ) => {
-  const newContext: Context = {
-    functions: {},
-    variables: {},
-  }
-
   if (isUserDefinedLispishFunction(lispishFunction)) {
+    const newContext: Context = lispishFunction.functionContext
     const args = lispishFunction.arguments
     const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
     const nbrOfOptionalArgs: number = args.optionalArguments.length
@@ -128,12 +124,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         }
       } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
         const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], '')
-        const param =
-          i < params.length
-            ? params[i]
-            : arg.defaultValue !== undefined
-            ? evaluateAstNode(arg.defaultValue, contextStack)
-            : undefined
+        const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
         const key = arg.name
         if (isLispishFunction(param)) {
           newContext.functions[key] = { fun: param, constant: false }

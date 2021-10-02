@@ -1,14 +1,25 @@
 import { SpecialExpressionName } from '../builtin/interface'
-import { FunctionArguments } from '../builtin/utils'
+import { Context } from '../evaluator/interface'
 import { ReservedName } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 
 export const functionSymbol = Symbol('function')
+
+export type EvaluatedFunctionArguments = {
+  mandatoryArguments: string[]
+  optionalArguments: Array<{
+    name: string
+    defaultValue?: unknown
+  }>
+  restArgument?: string
+}
+
 export type UserDefinedLispishFunction = {
   [functionSymbol]: true
   name: string | undefined
-  arguments: FunctionArguments
+  arguments: EvaluatedFunctionArguments
   body: AstNode[]
+  functionContext: Context
 }
 
 export type BuiltinLispishFunction = {
@@ -30,7 +41,7 @@ export type NodeType =
   | 'Binding'
   | 'Argument'
 
-export type ModifierName = '&rest' | '&optional'
+export type ModifierName = '&rest' | '&optional' | '&bind'
 
 interface GenericNode {
   type: NodeType

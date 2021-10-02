@@ -40,7 +40,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
 
-  'ohas': {
+  ohas: {
     evaluate: ([obj, key]: unknown[]): boolean => {
       assertObject(obj)
       assertString(key)
@@ -49,7 +49,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
 
-  'oget': {
+  oget: {
     evaluate: ([obj, key]: unknown[]): unknown => {
       assertObject(obj)
       assertString(key)
@@ -58,7 +58,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
 
-  'oset': {
+  oset: {
     evaluate: ([obj, key, value]: unknown[]): unknown => {
       assertObject(obj)
       assertString(key)
@@ -68,7 +68,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(3, node),
   },
 
-  'odel': {
+  odel: {
     evaluate: ([obj, key]: unknown[]): unknown => {
       assertObject(obj)
       assertString(key)

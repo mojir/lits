@@ -8,7 +8,6 @@ const fs = require('fs')
 const DOC_DIR = path.resolve(__dirname, '../../docs')
 const lispish = new Lispish.Lispish()
 
-
 setupDocDir()
 copyScripts()
 copyStyles()
@@ -297,14 +296,10 @@ function escape(str) {
 }
 
 function formatDescription(value) {
-  const logThis = value.indexOf('***') >= 0
   value = value.replace(/`(.*?)`/g, '<span class="pre">$1</span>')
   value = value.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
   value = value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
   value = value.replace(/\*(.*?)\*/g, '<em>$1</em>')
-  if (logThis) {
-    console.log(value)
-  }
   return value
 }
 

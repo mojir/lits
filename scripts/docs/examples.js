@@ -89,4 +89,26 @@ module.exports = [
 (sort #'numberComparer l)
     `.trim(),
   },
+  {
+    id: 'translations-lib',
+    name: 'Translations lib',
+    description: 'A Lispish take on i18n.',
+    context: {
+      TRANSLATIONS: {
+        'welcome-message': 'Welcome, $1',
+        'count-chairs': '$1 chair||||$1 chairs',
+      },
+    },
+    code: `
+(dolist (entry (entries TRANSLATIONS))
+  (create-function (at entry 0) (&rest params &bind ((templateString (at entry 1))))
+    (apply #'template (cons templateString params))
+  )
+)
+
+(write (welcome-message "Albert"))
+(write (count-chairs 12))
+(write (count-chairs 1))
+`.trim(),
+  },
 ]

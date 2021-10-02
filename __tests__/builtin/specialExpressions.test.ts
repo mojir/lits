@@ -321,6 +321,7 @@ describe('specialExpressions', () => {
   describe('defun', () => {
     test('samples', () => {
       expect(lispish.run('(defun add (a b) (+ a b)) (add 1 2)')).toBe(3)
+      expect(lispish.run('(defun add (a b &bind ((x 10))) (+ a b x)) (add 1 2)')).toBe(13)
       expect(() => lispish.run(`(defun add () 10)`)).not.toThrow()
       expect(() => lispish.run(`(defun x (a a) 10)`)).toThrow()
       expect(() => lispish.run(`(defun true () 10)`)).toThrow()

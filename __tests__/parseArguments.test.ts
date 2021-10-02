@@ -43,7 +43,7 @@ describe('parseArguments', () => {
       expect(lispish.run(`(defun foo (first &optional o) o) (foo 1)`)).toEqual(undefined)
       expect(lispish.run(`(defun foo (first &optional (o 10)) o) (foo 1)`)).toEqual(10)
     })
-    // TODO spread ...x ?
+
     test('modifier combinations', () => {
       expect(lispish.run("((lambda (&optional a &rest b) '(a b)))")).toEqual([undefined, []])
       expect(lispish.run("((lambda (&optional a &rest b) '(a b)) 1)")).toEqual([1, []])
@@ -54,6 +54,56 @@ describe('parseArguments', () => {
       expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1 2 3)")).toEqual([1, 2, 3, []])
       expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1 2 3 4)")).toEqual([1, 2, 3, [4]])
       expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1 2 3 4 5)")).toEqual([1, 2, 3, [4, 5]])
+      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)))")).toEqual([undefined, [], 10])
+      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)) 1)")).toEqual([1, [], 10])
+      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)) 1 2)")).toEqual([1, [2], 10])
+      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)) 1 2 3)")).toEqual([
+        1,
+        [2, 3],
+        10,
+      ])
+      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1)")).toEqual([
+        1,
+        undefined,
+        undefined,
+        [],
+        10,
+      ])
+      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2)")).toEqual([
+        1,
+        2,
+        undefined,
+        [],
+        10,
+      ])
+      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2 3)")).toEqual([
+        1,
+        2,
+        3,
+        [],
+        10,
+      ])
+      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2 3 4)")).toEqual([
+        1,
+        2,
+        3,
+        [4],
+        10,
+      ])
+      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2 3 4 5)")).toEqual([
+        1,
+        2,
+        3,
+        [4, 5],
+        10,
+      ])
+      expect(() => lispish.run(`(lambda (&optional a &rest b &bind ()) a)`)).not.toThrow()
+      expect(() => lispish.run(`(lambda (&bind (a 1)) a)`)).toThrow()
+      expect(() => lispish.run(`(lambda (&optional a &rest b &bind () &bind ()) a)`)).toThrow()
+      expect(() => lispish.run(`(lambda (&optional a &bind () &rest b) a)`)).toThrow()
+      expect(() => lispish.run(`(lambda (&optional &bind ()) null)`)).toThrow()
+      expect(() => lispish.run(`(lambda (&rest &bind ()) null)`)).toThrow()
+      expect(() => lispish.run(`(lambda (&bind () &optional a &rest b) a)`)).toThrow()
       expect(() => lispish.run(`(lambda (&optional &rest a) a)`)).toThrow()
       expect(() => lispish.run(`(lambda (&optional &optional a) a)`)).toThrow()
       expect(() => lispish.run(`(lambda (&rest &rest a) a)`)).toThrow()
@@ -62,7 +112,6 @@ describe('parseArguments', () => {
       expect(() => lispish.run(`(lambda (&rest &optional a) a)`)).toThrow()
       expect(() => lispish.run(`(lambda (&rest a &optional b) a)`)).toThrow()
       expect(() => lispish.run(`(lambda (&rst a) a)`)).toThrow()
-      // expect(lispish.run(`(lambda (first &rest &optional (o 10)) o) (test 1)`)).toEqual(10)
     })
   })
 })

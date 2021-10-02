@@ -10,7 +10,6 @@ describe('Tokenizer', () => {
   })
   test('another simple expressions', () => {
     const tokens = tokenize(`(do-me)`)
-    // console.log(JSON.stringify(tokens, null, 2))
     expect(tokens.length).toBeGreaterThan(0)
   })
 

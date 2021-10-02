@@ -1,13 +1,15 @@
 import { andSpecialExpression } from './specialExpressions/and'
 import { blockSpecialExpression } from './specialExpressions/block'
 import { condSpecialExpression } from './specialExpressions/cond'
-import { defunSpecialExpression } from './specialExpressions/functions'
-import { createFunctionSpecialExpression } from './specialExpressions/functions'
+import {
+  defunSpecialExpression,
+  createFunctionSpecialExpression,
+  lambdaSpecialExpression,
+} from './specialExpressions/functions'
 import { dolistSpecialExpression } from './specialExpressions/dolist'
 import { dotimesSpecialExpression } from './specialExpressions/dotimes'
 import { functionSpecialExpression } from './specialExpressions/function'
 import { ifSpecialExpression } from './specialExpressions/if'
-import { lambdaSpecialExpression } from './specialExpressions/lambda'
 import { letSpecialExpression } from './specialExpressions/let'
 import { loopSpecialExpression } from './specialExpressions/loop'
 import { orSpecialExpression } from './specialExpressions/or'

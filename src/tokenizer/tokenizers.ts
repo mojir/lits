@@ -1,3 +1,4 @@
+import { ModifierName } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
 import { asNotUndefined } from '../utils'
 import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
@@ -164,10 +165,16 @@ export const tokenizeShorthand: Tokenizer = (input: string, position: number) =>
 
 export const tokenizeModifier: Tokenizer = (input: string, position: number) => {
   if (input.substr(position, 5) === `&rest`) {
-    return [5, { type: 'modifier', value: `&rest` }]
+    const value: ModifierName = '&rest'
+    return [5, { type: 'modifier', value }]
   }
   if (input.substr(position, 9) === `&optional`) {
-    return [9, { type: 'modifier', value: `&optional` }]
+    const value: ModifierName = '&optional'
+    return [9, { type: 'modifier', value }]
+  }
+  if (input.substr(position, 5) === `&bind`) {
+    const value: ModifierName = '&bind'
+    return [5, { type: 'modifier', value }]
   }
   return [0, undefined]
 }

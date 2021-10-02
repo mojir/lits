@@ -15,7 +15,6 @@ describe('Parser', () => {
   test('simple program', () => {
     const tokens = tokenize(program)
     const ast = parse(tokens)
-    // console.log(JSON.stringify(ast, null, 4))
     expect(ast.body.length).toBe(1)
   })
   test('empty program', () => {
