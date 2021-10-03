@@ -3,15 +3,15 @@ import { assertLength, assertNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface WhenSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'when'
+  name: `when`
 }
 
 export const whenSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseParams }) => {
     const [newPosition, params] = parseParams(tokens, position)
     const node: WhenSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'when',
+      type: `SpecialExpression`,
+      name: `when`,
       params,
     }
 

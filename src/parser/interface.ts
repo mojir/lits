@@ -3,7 +3,7 @@ import { Context } from '../evaluator/interface'
 import { ReservedName } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 
-export const functionSymbol = Symbol('function')
+export const functionSymbol = Symbol(`function`)
 
 export type EvaluatedFunctionArguments = {
   mandatoryArguments: string[]
@@ -30,18 +30,18 @@ export type BuiltinLispishFunction = {
 export type LispishFunction = UserDefinedLispishFunction | BuiltinLispishFunction
 
 export type NodeType =
-  | 'Number'
-  | 'String'
-  | 'NormalExpression'
-  | 'SpecialExpression'
-  | 'ExpressionExpression'
-  | 'Name'
-  | 'Modifier'
-  | 'ReservedName'
-  | 'Binding'
-  | 'Argument'
+  | `Number`
+  | `String`
+  | `NormalExpression`
+  | `SpecialExpression`
+  | `ExpressionExpression`
+  | `Name`
+  | `Modifier`
+  | `ReservedName`
+  | `Binding`
+  | `Argument`
 
-export type ModifierName = '&rest' | '&optional' | '&bind'
+export type ModifierName = `&rest` | `&optional` | `&bind`
 
 interface GenericNode {
   type: NodeType
@@ -58,51 +58,51 @@ export type ParseParams = (tokens: Token[], position: number) => [number, AstNod
 export type ParseToken = (tokens: Token[], position: number) => [number, AstNode]
 
 export interface NumberNode extends GenericNode {
-  type: 'Number'
+  type: `Number`
   value: number
 }
 export interface StringNode extends GenericNode {
-  type: 'String'
+  type: `String`
   value: string
 }
 export interface NameNode extends GenericNode {
-  type: 'Name'
+  type: `Name`
   value: string
 }
 export interface ModifierNode extends GenericNode {
-  type: 'Modifier'
+  type: `Modifier`
   value: ModifierName
 }
 export interface ReservedNameNode extends GenericNode {
-  type: 'ReservedName'
+  type: `ReservedName`
   value: ReservedName
 }
 export interface NormalExpressionNode extends GenericNode {
-  type: 'NormalExpression'
+  type: `NormalExpression`
   name: string
   params: AstNode[]
 }
 
 export interface BindingNode extends GenericNode {
-  type: 'Binding'
+  type: `Binding`
   name: string
   value: AstNode
 }
 
 export interface ArgumentNode extends GenericNode {
-  type: 'Argument'
+  type: `Argument`
   name: string
   defaultValue?: AstNode
 }
 
 export interface ExpressionExpressionNode extends GenericNode {
-  type: 'ExpressionExpression'
+  type: `ExpressionExpression`
   expression: ExpressionNode
   params: AstNode[]
 }
 
 export interface SpecialExpressionNode extends GenericNode {
-  type: 'SpecialExpression'
+  type: `SpecialExpression`
   name: SpecialExpressionName
   params: AstNode[]
 }
@@ -118,6 +118,6 @@ export type AstNode =
   | ModifierNode
 
 export type Ast = {
-  type: 'Program'
+  type: `Program`
   body: AstNode[]
 }

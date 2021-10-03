@@ -34,14 +34,14 @@ import {
   assertStringOrRegExp,
   assertStringArray,
 } from '../src/utils'
-describe('utils', () => {
-  test('asAstNode', () => {
+describe(`utils`, () => {
+  test(`asAstNode`, () => {
     expect(() => asAstNode(undefined)).toThrow()
-    const node: AstNode = { type: 'Name', value: 'test' }
+    const node: AstNode = { type: `Name`, value: `test` }
 
     expect(asAstNode(node)).toBe(node)
   })
-  test('asLispishFunction', () => {
+  test(`asLispishFunction`, () => {
     expect(() => asLispishFunction(undefined)).toThrow()
     const lf: LispishFunction = {
       [functionSymbol]: true,
@@ -55,26 +55,26 @@ describe('utils', () => {
     }
     expect(asLispishFunction(lf)).toBe(lf)
   })
-  test('asNameNode', () => {
+  test(`asNameNode`, () => {
     expect(() => asNameNode(undefined)).toThrow()
-    expect(() => asNameNode({ type: 'Number', value: 12 })).toThrow()
+    expect(() => asNameNode({ type: `Number`, value: 12 })).toThrow()
     const nameNode: NameNode = {
-      type: 'Name',
-      value: 'a-name',
+      type: `Name`,
+      value: `a-name`,
     }
     expect(asNameNode(nameNode)).toBe(nameNode)
   })
-  test('assertNameNode', () => {
+  test(`assertNameNode`, () => {
     expect(() => assertNameNode(undefined)).toThrow()
     const nameNode: NameNode = {
-      type: 'Name',
-      value: 'a-name',
+      type: `Name`,
+      value: `a-name`,
     }
     asNameNode(nameNode)
   })
-  test('asNotUndefined', () => {
+  test(`asNotUndefined`, () => {
     expect(() => asNotUndefined(undefined)).toThrow()
-    expect(() => asNotUndefined(undefined, 'XXX')).toThrow()
+    expect(() => asNotUndefined(undefined, `XXX`)).toThrow()
     expect(asNotUndefined(null)).toBe(null)
     expect(asNotUndefined(false)).toBe(false)
     expect(asNotUndefined(true)).toBe(true)
@@ -82,17 +82,17 @@ describe('utils', () => {
     const obj = {}
     expect(asNotUndefined(obj)).toBe(obj)
   })
-  test('assertNotUndefined', () => {
+  test(`assertNotUndefined`, () => {
     expect(() => assertNotUndefined(undefined)).toThrow()
-    expect(() => assertNotUndefined(undefined, 'XXX')).toThrow()
+    expect(() => assertNotUndefined(undefined, `XXX`)).toThrow()
     expect(() => assertNotUndefined(null)).not.toThrow()
     expect(() => assertNotUndefined(false)).not.toThrow()
     expect(() => assertNotUndefined(true)).not.toThrow()
     expect(() => assertNotUndefined(0)).not.toThrow()
     expect(() => assertNotUndefined({})).not.toThrow()
   })
-  test('asNonEmptyString', () => {
-    expect(asNonEmptyString(`1`)).toBe('1')
+  test(`asNonEmptyString`, () => {
+    expect(asNonEmptyString(`1`)).toBe(`1`)
     expect(() => asNonEmptyString(``)).toThrow()
     expect(() => asNonEmptyString(0)).toThrow()
     expect(() => asNonEmptyString(1)).toThrow()
@@ -104,7 +104,7 @@ describe('utils', () => {
     expect(() => asNonEmptyString({})).toThrow()
   })
 
-  test('assertArray', () => {
+  test(`assertArray`, () => {
     expect(() => assertArray(0)).toThrow()
     expect(() => assertArray({})).toThrow()
     expect(() => assertArray([])).not.toThrow()
@@ -113,7 +113,7 @@ describe('utils', () => {
     expect(() => assertArray(null)).toThrow()
     expect(() => assertArray(undefined)).toThrow()
   })
-  test('assertObject', () => {
+  test(`assertObject`, () => {
     expect(() => assertObject(0)).toThrow()
     expect(() => assertObject({})).not.toThrow()
     expect(() => assertObject({ [functionSymbol]: true })).toThrow()
@@ -125,7 +125,7 @@ describe('utils', () => {
     expect(() => assertObject(null)).toThrow()
     expect(() => assertObject(undefined)).toThrow()
   })
-  test('assertObjectOrArray', () => {
+  test(`assertObjectOrArray`, () => {
     expect(() => assertObjectOrArray(0)).toThrow()
     expect(() => assertObjectOrArray({})).not.toThrow()
     expect(() => assertObjectOrArray({ [functionSymbol]: true })).toThrow()
@@ -137,7 +137,7 @@ describe('utils', () => {
     expect(() => assertObjectOrArray(null)).toThrow()
     expect(() => assertObjectOrArray(undefined)).toThrow()
   })
-  test('assertInteger', () => {
+  test(`assertInteger`, () => {
     expect(() => assertInteger(-0)).not.toThrow()
     expect(() => assertInteger(-1)).not.toThrow()
     expect(() => assertInteger(1)).not.toThrow()
@@ -149,9 +149,9 @@ describe('utils', () => {
     expect(() => assertInteger(null)).toThrow()
     expect(() => assertInteger([])).toThrow()
   })
-  test('assertRegExp', () => {
+  test(`assertRegExp`, () => {
     expect(() => assertRegExp(/a/)).not.toThrow()
-    expect(() => assertRegExp(new RegExp('a'))).not.toThrow()
+    expect(() => assertRegExp(new RegExp(`a`))).not.toThrow()
     expect(() => assertRegExp(0)).toThrow()
     expect(() => assertRegExp(`0`)).toThrow()
     expect(() => assertRegExp(null)).toThrow()
@@ -163,15 +163,15 @@ describe('utils', () => {
   })
 
   function node(arr: number[]): NormalExpressionNode {
-    const astNodes: AstNode[] = arr.map(n => ({ type: 'Number', value: n }))
+    const astNodes: AstNode[] = arr.map(n => ({ type: `Number`, value: n }))
     return {
-      name: 'let',
+      name: `let`,
       params: astNodes,
-      type: 'NormalExpression',
+      type: `NormalExpression`,
     }
   }
 
-  test('assertLengthEven', () => {
+  test(`assertLengthEven`, () => {
     expect(() => assertLengthEven(node([]))).not.toThrow()
     expect(() => assertLengthEven(node([0]))).toThrow()
     expect(() => assertLengthEven(node([0, 1]))).not.toThrow()
@@ -181,7 +181,7 @@ describe('utils', () => {
     expect(() => assertLengthEven(node([0, 1, 2, 3, 4, 5]))).not.toThrow()
   })
 
-  test('assertLength', () => {
+  test(`assertLength`, () => {
     expect(() => assertLength(0, node([]))).not.toThrow()
     expect(() => assertLength(0, node([1]))).toThrow()
     expect(() => assertLength(1, node([1]))).not.toThrow()
@@ -219,7 +219,7 @@ describe('utils', () => {
     expect(() => assertLength({ min: 3, max: 1 }, node([1, 2, 3, 4, 5, 6]))).toThrow()
   })
 
-  test('assertLispishFunction', () => {
+  test(`assertLispishFunction`, () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,
       arguments: {
@@ -234,7 +234,7 @@ describe('utils', () => {
     expect(() => assertLispishFunction(1)).toThrow()
     expect(() => assertLispishFunction({})).toThrow()
   })
-  test('assertPositiveNumber', () => {
+  test(`assertPositiveNumber`, () => {
     expect(() => assertPositiveNumber(-1)).toThrow()
     expect(() => assertPositiveNumber(-0.5)).toThrow()
     expect(() => assertPositiveNumber(0)).toThrow()
@@ -248,7 +248,7 @@ describe('utils', () => {
     expect(() => assertPositiveNumber(null)).toThrow()
     expect(() => assertPositiveNumber(undefined)).toThrow()
   })
-  test('assertNegativeNumber', () => {
+  test(`assertNegativeNumber`, () => {
     expect(() => assertNegativeNumber(-1)).not.toThrow()
     expect(() => assertNegativeNumber(-0.5)).not.toThrow()
     expect(() => assertNegativeNumber(0)).toThrow()
@@ -262,7 +262,7 @@ describe('utils', () => {
     expect(() => assertNegativeNumber(null)).toThrow()
     expect(() => assertNegativeNumber(undefined)).toThrow()
   })
-  test('assertNonNegativeNumber', () => {
+  test(`assertNonNegativeNumber`, () => {
     expect(() => assertNonNegativeNumber(-1)).toThrow()
     expect(() => assertNonNegativeNumber(-1.1)).toThrow()
     expect(() => assertNonNegativeNumber(0)).not.toThrow()
@@ -277,7 +277,7 @@ describe('utils', () => {
     expect(() => assertNonNegativeNumber(null)).toThrow()
     expect(() => assertNonNegativeNumber(undefined)).toThrow()
   })
-  test('assertNonPositiveNumber', () => {
+  test(`assertNonPositiveNumber`, () => {
     expect(() => assertNonPositiveNumber(-1)).not.toThrow()
     expect(() => assertNonPositiveNumber(-1.1)).not.toThrow()
     expect(() => assertNonPositiveNumber(0)).not.toThrow()
@@ -292,7 +292,7 @@ describe('utils', () => {
     expect(() => assertNonPositiveNumber(null)).toThrow()
     expect(() => assertNonPositiveNumber(undefined)).toThrow()
   })
-  test('assertFiniteNumber', () => {
+  test(`assertFiniteNumber`, () => {
     expect(() => assertFiniteNumber(-1)).not.toThrow()
     expect(() => assertFiniteNumber(-1.1)).not.toThrow()
     expect(() => assertFiniteNumber(0)).not.toThrow()
@@ -309,7 +309,7 @@ describe('utils', () => {
     expect(() => assertFiniteNumber(null)).toThrow()
     expect(() => assertFiniteNumber(undefined)).toThrow()
   })
-  test('asFiniteNumber', () => {
+  test(`asFiniteNumber`, () => {
     expect(asFiniteNumber(-1)).toBe(-1)
     expect(asFiniteNumber(-1.1)).toBe(-1.1)
     expect(asFiniteNumber(0)).toBe(0)
@@ -327,47 +327,47 @@ describe('utils', () => {
     expect(() => asFiniteNumber(null)).toThrow()
     expect(() => asFiniteNumber(undefined)).toThrow()
   })
-  test('assertNumberGt', () => {
+  test(`assertNumberGt`, () => {
     expect(() => assertNumberGt(0, 1)).toThrow()
     expect(() => assertNumberGt(0.5, 1)).toThrow()
     expect(() => assertNumberGt(1, 1)).toThrow()
     expect(() => assertNumberGt(1.5, 1)).not.toThrow()
     expect(() => assertNumberGt(2, 1)).not.toThrow()
-    expect(() => assertNumberGt('2', 1)).toThrow()
+    expect(() => assertNumberGt(`2`, 1)).toThrow()
     expect(() => assertNumberGt([], 1)).toThrow()
     expect(() => assertNumberGt(false, 1)).toThrow()
   })
-  test('assertNumberGte', () => {
+  test(`assertNumberGte`, () => {
     expect(() => assertNumberGte(0, 1)).toThrow()
     expect(() => assertNumberGte(0.5, 1)).toThrow()
     expect(() => assertNumberGte(1, 1)).not.toThrow()
     expect(() => assertNumberGte(1.5, 1)).not.toThrow()
     expect(() => assertNumberGte(2, 1)).not.toThrow()
-    expect(() => assertNumberGte('2', 1)).toThrow()
+    expect(() => assertNumberGte(`2`, 1)).toThrow()
     expect(() => assertNumberGte([], 1)).toThrow()
     expect(() => assertNumberGte(false, 1)).toThrow()
   })
-  test('assertNumberLt', () => {
+  test(`assertNumberLt`, () => {
     expect(() => assertNumberLt(0, 1)).not.toThrow()
     expect(() => assertNumberLt(0.5, 1)).not.toThrow()
     expect(() => assertNumberLt(1, 1)).toThrow()
     expect(() => assertNumberLt(1.5, 1)).toThrow()
     expect(() => assertNumberLt(2, 1)).toThrow()
-    expect(() => assertNumberLt('2', 1)).toThrow()
+    expect(() => assertNumberLt(`2`, 1)).toThrow()
     expect(() => assertNumberLt([], 1)).toThrow()
     expect(() => assertNumberLt(false, 1)).toThrow()
   })
-  test('assertNumberLte', () => {
+  test(`assertNumberLte`, () => {
     expect(() => assertNumberLte(0, 1)).not.toThrow()
     expect(() => assertNumberLte(0.5, 1)).not.toThrow()
     expect(() => assertNumberLte(1, 1)).not.toThrow()
     expect(() => assertNumberLte(1.5, 1)).toThrow()
     expect(() => assertNumberLte(2, 1)).toThrow()
-    expect(() => assertNumberLte('2', 1)).toThrow()
+    expect(() => assertNumberLte(`2`, 1)).toThrow()
     expect(() => assertNumberLte([], 1)).toThrow()
     expect(() => assertNumberLte(false, 1)).toThrow()
   })
-  test('assertNumberNotZero', () => {
+  test(`assertNumberNotZero`, () => {
     expect(() => assertNumberNotZero(-1)).not.toThrow()
     expect(() => assertNumberNotZero(-0.5)).not.toThrow()
     expect(() => assertNumberNotZero(0)).toThrow()
@@ -381,7 +381,7 @@ describe('utils', () => {
     expect(() => assertNumberNotZero(null)).toThrow()
     expect(() => assertNumberNotZero(undefined)).toThrow()
   })
-  test('assertString', () => {
+  test(`assertString`, () => {
     expect(() => assertString(``)).not.toThrow()
     expect(() => assertString(`1`)).not.toThrow()
     expect(() => assertString(0)).toThrow()
@@ -394,7 +394,7 @@ describe('utils', () => {
     expect(() => assertString({})).toThrow()
   })
 
-  test('assertStringOrArray', () => {
+  test(`assertStringOrArray`, () => {
     expect(() => assertStringOrArray(``)).not.toThrow()
     expect(() => assertStringOrArray(`1`)).not.toThrow()
     expect(() => assertStringOrArray([])).not.toThrow()
@@ -408,7 +408,7 @@ describe('utils', () => {
     expect(() => assertStringOrArray({})).toThrow()
   })
 
-  test('assertStringOrRegExp', () => {
+  test(`assertStringOrRegExp`, () => {
     expect(() => assertStringOrRegExp(``)).not.toThrow()
     expect(() => assertStringOrRegExp(`1`)).not.toThrow()
     expect(() => assertStringOrRegExp(/^a/)).not.toThrow()
@@ -423,7 +423,7 @@ describe('utils', () => {
     expect(() => assertStringOrRegExp({})).toThrow()
   })
 
-  test('isLispishFunction', () => {
+  test(`isLispishFunction`, () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: {
@@ -436,7 +436,7 @@ describe('utils', () => {
     }
     const lf2: LispishFunction = {
       [functionSymbol]: true,
-      builtin: '+',
+      builtin: `+`,
     }
     expect(isLispishFunction(lf1)).toBe(true)
     expect(isLispishFunction(lf2)).toBe(true)
@@ -452,7 +452,7 @@ describe('utils', () => {
     expect(isLispishFunction({})).toBe(false)
   })
 
-  test('isUserDefinedLispishFunction', () => {
+  test(`isUserDefinedLispishFunction`, () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: {
@@ -465,7 +465,7 @@ describe('utils', () => {
     }
     const lf2: LispishFunction = {
       [functionSymbol]: true,
-      builtin: '+',
+      builtin: `+`,
     }
     expect(isUserDefinedLispishFunction(lf1)).toBe(true)
     expect(isUserDefinedLispishFunction(lf2)).toBe(false)
@@ -481,7 +481,7 @@ describe('utils', () => {
     expect(isUserDefinedLispishFunction({})).toBe(false)
   })
 
-  test('isBuiltinLispishFunction', () => {
+  test(`isBuiltinLispishFunction`, () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
       arguments: {
@@ -494,7 +494,7 @@ describe('utils', () => {
     }
     const lf2: LispishFunction = {
       [functionSymbol]: true,
-      builtin: '+',
+      builtin: `+`,
     }
     expect(isBuiltinLispishFunction(lf1)).toBe(false)
     expect(isBuiltinLispishFunction(lf2)).toBe(true)
@@ -509,11 +509,11 @@ describe('utils', () => {
     expect(isBuiltinLispishFunction([])).toBe(false)
     expect(isBuiltinLispishFunction({})).toBe(false)
   })
-  test('assertStringArray', () => {
+  test(`assertStringArray`, () => {
     expect(() => assertStringArray(undefined)).toThrow()
-    expect(() => assertStringArray('undefined')).toThrow()
+    expect(() => assertStringArray(`undefined`)).toThrow()
     expect(() => assertStringArray([])).not.toThrow()
-    expect(() => assertStringArray(['1', '2'])).not.toThrow()
-    expect(() => assertStringArray(['1', '2', 3])).toThrow()
+    expect(() => assertStringArray([`1`, `2`])).not.toThrow()
+    expect(() => assertStringArray([`1`, `2`, 3])).toThrow()
   })
 })

@@ -6,9 +6,9 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('predicates', () => {
-  describe('function?', () => {
-    test('samples', () => {
+describe(`predicates`, () => {
+  describe(`function?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(function? "")`)).toBe(false)
       expect(lispish.run(`(function? "x")`)).toBe(false)
       expect(lispish.run(`(function? 1)`)).toBe(false)
@@ -26,8 +26,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('string?', () => {
-    test('samples', () => {
+  describe(`string?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(string? "")`)).toBe(true)
       expect(lispish.run(`(string? "x")`)).toBe(true)
       expect(lispish.run(`(string? 1)`)).toBe(false)
@@ -45,8 +45,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('number?', () => {
-    test('samples', () => {
+  describe(`number?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(number? 1)`)).toBe(true)
       expect(lispish.run(`(number? 0)`)).toBe(true)
       expect(lispish.run(`(number? -1)`)).toBe(true)
@@ -67,8 +67,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('integer?', () => {
-    test('samples', () => {
+  describe(`integer?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(integer? 1)`)).toBe(true)
       expect(lispish.run(`(integer? 0)`)).toBe(true)
       expect(lispish.run(`(integer? -1)`)).toBe(true)
@@ -89,8 +89,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('boolean?', () => {
-    test('samples', () => {
+  describe(`boolean?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(boolean? 1)`)).toBe(false)
       expect(lispish.run(`(boolean? 0)`)).toBe(false)
       expect(lispish.run(`(boolean? -1)`)).toBe(false)
@@ -111,8 +111,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('undefined?', () => {
-    test('samples', () => {
+  describe(`undefined?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(undefined? 1)`)).toBe(false)
       expect(lispish.run(`(undefined? 0)`)).toBe(false)
       expect(lispish.run(`(undefined? -1)`)).toBe(false)
@@ -133,8 +133,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('null?', () => {
-    test('samples', () => {
+  describe(`null?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(null? 1)`)).toBe(false)
       expect(lispish.run(`(null? 0)`)).toBe(false)
       expect(lispish.run(`(null? -1)`)).toBe(false)
@@ -155,8 +155,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('zero?', () => {
-    test('samples', () => {
+  describe(`zero?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(zero? 1)`)).toBe(false)
       expect(lispish.run(`(zero? 0)`)).toBe(true)
       expect(lispish.run(`(zero? -0)`)).toBe(true)
@@ -173,8 +173,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('even?', () => {
-    test('samples', () => {
+  describe(`even?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(even? 1)`)).toBe(false)
       expect(lispish.run(`(even? 0)`)).toBe(true)
       expect(lispish.run(`(even? -0)`)).toBe(true)
@@ -194,8 +194,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('odd?', () => {
-    test('samples', () => {
+  describe(`odd?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(odd? 1)`)).toBe(true)
       expect(lispish.run(`(odd? 0)`)).toBe(false)
       expect(lispish.run(`(odd? -0)`)).toBe(false)
@@ -216,8 +216,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('list?', () => {
-    test('samples', () => {
+  describe(`list?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(list? 1)`)).toBe(false)
       expect(lispish.run(`(list? 0)`)).toBe(false)
       expect(lispish.run(`(list? -1)`)).toBe(false)
@@ -238,8 +238,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('object?', () => {
-    test('samples', () => {
+  describe(`object?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(object? 1)`)).toBe(false)
       expect(lispish.run(`(object? 0)`)).toBe(false)
       expect(lispish.run(`(object? -1)`)).toBe(false)
@@ -261,8 +261,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('regexp?', () => {
-    test('samples', () => {
+  describe(`regexp?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(regexp? 1)`)).toBe(false)
       expect(lispish.run(`(regexp? 0)`)).toBe(false)
       expect(lispish.run(`(regexp? -1)`)).toBe(false)
@@ -284,8 +284,8 @@ describe('predicates', () => {
     })
   })
 
-  describe('empty?', () => {
-    test('samples', () => {
+  describe(`empty?`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(empty? [])`)).toBe(true)
       expect(lispish.run(`(empty? [0])`)).toBe(false)
       expect(() => lispish.run(`(empty?)`)).toThrow()

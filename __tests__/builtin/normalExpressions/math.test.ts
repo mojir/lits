@@ -6,9 +6,9 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('math functions', () => {
-  describe('1+', () => {
-    test('samples', () => {
+describe(`math functions`, () => {
+  describe(`1+`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(1+ 2.5)`)).toBe(3.5)
       expect(lispish.run(`(1+ 1)`)).toBe(2)
       expect(lispish.run(`(1+ 0)`)).toBe(1)
@@ -26,8 +26,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('1+', () => {
-    test('samples', () => {
+  describe(`1+`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(1- 2.5)`)).toBe(1.5)
       expect(lispish.run(`(1- 1)`)).toBe(0)
       expect(lispish.run(`(1- 0)`)).toBe(-1)
@@ -45,8 +45,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('+', () => {
-    test('samples', () => {
+  describe(`+`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(+)`)).toBe(0)
       expect(lispish.run(`(+ 2)`)).toBe(2)
       expect(lispish.run(`(+ 2 2)`)).toBe(4)
@@ -56,8 +56,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('*', () => {
-    test('samples', () => {
+  describe(`*`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(*)`)).toBe(1)
       expect(lispish.run(`(* 2)`)).toBe(2)
       expect(lispish.run(`(* 2 2)`)).toBe(4)
@@ -67,8 +67,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('/', () => {
-    test('samples', () => {
+  describe(`/`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(/)`)).toBe(1)
       expect(lispish.run(`(/ 2)`)).toBe(1 / 2)
       expect(lispish.run(`(/ 2 2)`)).toBe(2 / 2)
@@ -78,8 +78,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('-', () => {
-    test('samples', () => {
+  describe(`-`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(-)`)).toBe(0)
       expect(lispish.run(`(- 2)`)).toBe(-2)
       expect(lispish.run(`(- 2 2)`)).toBe(2 - 2)
@@ -89,8 +89,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('%', () => {
-    test('samples', () => {
+  describe(`%`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(%)`)).toThrow()
       expect(() => lispish.run(`(% 3)`)).toThrow()
       expect(() => lispish.run(`(% 3 4 5)`)).toThrow()
@@ -104,8 +104,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('sqrt', () => {
-    test('samples', () => {
+  describe(`sqrt`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(sqrt)`)).toThrow()
       expect(() => lispish.run(`(sqrt 3 4)`)).toThrow()
       expect(() => lispish.run(`(sqrt -3)`)).toThrow()
@@ -115,8 +115,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('cbrt', () => {
-    test('samples', () => {
+  describe(`cbrt`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(cbrt)`)).toThrow()
       expect(() => lispish.run(`(cbrt 3 4)`)).toThrow()
       expect(() => lispish.run(`(cbrt -3)`)).toThrow()
@@ -127,8 +127,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('pow', () => {
-    test('samples', () => {
+  describe(`pow`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(pow)`)).toThrow()
       expect(() => lispish.run(`(pow 3)`)).toThrow()
       expect(() => lispish.run(`(pow 3 4 5)`)).toThrow()
@@ -144,8 +144,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('round', () => {
-    test('samples', () => {
+  describe(`round`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(round)`)).toThrow()
       expect(() => lispish.run(`(round 3 4 5)`)).toThrow()
       expect(lispish.run(`(round 0)`)).toBe(0)
@@ -161,8 +161,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('floor', () => {
-    test('samples', () => {
+  describe(`floor`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(floor)`)).toThrow()
       expect(() => lispish.run(`(floor 3 4)`)).toThrow()
       expect(lispish.run(`(floor 0)`)).toBe(0)
@@ -176,8 +176,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('ceil', () => {
-    test('samples', () => {
+  describe(`ceil`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(ceil)`)).toThrow()
       expect(() => lispish.run(`(ceil 3 4)`)).toThrow()
       expect(lispish.run(`(ceil 0)`)).toBe(0)
@@ -191,8 +191,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('random', () => {
-    test('samples', () => {
+  describe(`random`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(random)`)).toThrow()
       expect(() => lispish.run(`(random "x")`)).toThrow()
       expect(() => lispish.run(`(random 1 2)`)).toThrow()
@@ -201,8 +201,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('>', () => {
-    test('samples', () => {
+  describe(`>`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(>)`)).toThrow()
       expect(lispish.run(`(> 1)`)).toBe(true)
       expect(lispish.run(`(> 1 2)`)).toBe(false)
@@ -215,8 +215,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('<', () => {
-    test('samples', () => {
+  describe(`<`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(<)`)).toThrow()
       expect(lispish.run(`(< 1)`)).toBe(true)
       expect(lispish.run(`(< 1 2)`)).toBe(true)
@@ -229,8 +229,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('>=', () => {
-    test('samples', () => {
+  describe(`>=`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(>=)`)).toThrow()
       expect(lispish.run(`(>= 1)`)).toBe(true)
       expect(lispish.run(`(>= 1 2)`)).toBe(false)
@@ -243,8 +243,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('<=', () => {
-    test('samples', () => {
+  describe(`<=`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(<=)`)).toThrow()
       expect(lispish.run(`(<= 1)`)).toBe(true)
       expect(lispish.run(`(<= 1 2)`)).toBe(true)
@@ -257,8 +257,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('min', () => {
-    test('samples', () => {
+  describe(`min`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(min 1)`)).toBe(1)
       expect(lispish.run(`(min 1 -2)`)).toBe(-2)
       expect(lispish.run(`(min 3 1 2 )`)).toBe(1)
@@ -268,8 +268,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('max', () => {
-    test('samples', () => {
+  describe(`max`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(max 1)`)).toBe(1)
       expect(lispish.run(`(max 1 -2)`)).toBe(1)
       expect(lispish.run(`(max 3 1 2 )`)).toBe(3)
@@ -279,22 +279,22 @@ describe('math functions', () => {
     })
   })
 
-  describe('e', () => {
-    test('samples', () => {
+  describe(`e`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(e)`)).toBe(Math.E)
       expect(() => lispish.run(`(e "1")`)).toThrow()
     })
   })
 
-  describe('pi', () => {
-    test('samples', () => {
+  describe(`pi`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(pi)`)).toBe(Math.PI)
       expect(() => lispish.run(`(pi 1)`)).toThrow()
     })
   })
 
-  describe('abs', () => {
-    test('samples', () => {
+  describe(`abs`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(abs 2)`)).toBe(2)
       expect(lispish.run(`(abs -2)`)).toBe(2)
       expect(lispish.run(`(abs -0)`)).toBe(0)
@@ -303,8 +303,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('sign', () => {
-    test('samples', () => {
+  describe(`sign`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(sign 2)`)).toBe(1)
       expect(lispish.run(`(sign -2)`)).toBe(-1)
       expect(lispish.run(`(sign -0)`)).toBe(-0)
@@ -314,8 +314,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('exp', () => {
-    test('samples', () => {
+  describe(`exp`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(exp 1)`)).toBe(Math.exp(1))
       expect(lispish.run(`(exp -2)`)).toBe(Math.exp(-2))
       expect(lispish.run(`(exp -0)`)).toBe(Math.exp(-0))
@@ -325,8 +325,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('log', () => {
-    test('samples', () => {
+  describe(`log`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(log 0.1)`)).toBe(Math.log(0.1))
       expect(lispish.run(`(log 1)`)).toBe(Math.log(1))
       expect(lispish.run(`(log 100)`)).toBe(Math.log(100))
@@ -338,8 +338,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('log2', () => {
-    test('samples', () => {
+  describe(`log2`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(log2 0.1)`)).toBe(Math.log2(0.1))
       expect(lispish.run(`(log2 1)`)).toBe(Math.log2(1))
       expect(lispish.run(`(log2 100)`)).toBe(Math.log2(100))
@@ -351,8 +351,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('log10', () => {
-    test('samples', () => {
+  describe(`log10`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(log10 0.1)`)).toBe(Math.log10(0.1))
       expect(lispish.run(`(log10 1)`)).toBe(Math.log10(1))
       expect(lispish.run(`(log10 100)`)).toBe(Math.log10(100))
@@ -364,8 +364,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('trunc', () => {
-    test('samples', () => {
+  describe(`trunc`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(trunc 0)`)).toBe(0)
       expect(lispish.run(`(trunc 0.123)`)).toBe(0)
       expect(lispish.run(`(trunc 0.999)`)).toBe(0)
@@ -376,8 +376,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('sin', () => {
-    test('samples', () => {
+  describe(`sin`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(sin 0)`)).toBe(Math.sin(0))
       expect(lispish.run(`(sin 0.1)`)).toBe(Math.sin(0.1))
       expect(lispish.run(`(sin -0.1)`)).toBe(Math.sin(-0.1))
@@ -387,8 +387,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(sin 1 2)`)).toThrow()
     })
   })
-  describe('cos', () => {
-    test('samples', () => {
+  describe(`cos`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(cos 0)`)).toBe(Math.cos(0))
       expect(lispish.run(`(cos 0.1)`)).toBe(Math.cos(0.1))
       expect(lispish.run(`(cos -0.1)`)).toBe(Math.cos(-0.1))
@@ -398,8 +398,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(cos 1 2)`)).toThrow()
     })
   })
-  describe('tan', () => {
-    test('samples', () => {
+  describe(`tan`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(tan 0)`)).toBe(Math.tan(0))
       expect(lispish.run(`(tan 0.1)`)).toBe(Math.tan(0.1))
       expect(lispish.run(`(tan -0.1)`)).toBe(Math.tan(-0.1))
@@ -410,8 +410,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('sinh', () => {
-    test('samples', () => {
+  describe(`sinh`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(sinh 0)`)).toBe(Math.sinh(0))
       expect(lispish.run(`(sinh 0.1)`)).toBe(Math.sinh(0.1))
       expect(lispish.run(`(sinh -0.1)`)).toBe(Math.sinh(-0.1))
@@ -421,8 +421,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(sinh 1 2)`)).toThrow()
     })
   })
-  describe('cosh', () => {
-    test('samples', () => {
+  describe(`cosh`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(cosh 0)`)).toBe(Math.cosh(0))
       expect(lispish.run(`(cosh 0.1)`)).toBe(Math.cosh(0.1))
       expect(lispish.run(`(cosh -0.1)`)).toBe(Math.cosh(-0.1))
@@ -432,8 +432,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(cosh 1 2)`)).toThrow()
     })
   })
-  describe('tanh', () => {
-    test('samples', () => {
+  describe(`tanh`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(tanh 0)`)).toBe(Math.tanh(0))
       expect(lispish.run(`(tanh 0.1)`)).toBe(Math.tanh(0.1))
       expect(lispish.run(`(tanh -0.1)`)).toBe(Math.tanh(-0.1))
@@ -444,8 +444,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('asin', () => {
-    test('samples', () => {
+  describe(`asin`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(asin 0)`)).toBe(Math.asin(0))
       expect(lispish.run(`(asin 0.1)`)).toBe(Math.asin(0.1))
       expect(lispish.run(`(asin -0.1)`)).toBe(Math.asin(-0.1))
@@ -455,8 +455,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(asin 1 2)`)).toThrow()
     })
   })
-  describe('acos', () => {
-    test('samples', () => {
+  describe(`acos`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(acos 0)`)).toBe(Math.acos(0))
       expect(lispish.run(`(acos 0.1)`)).toBe(Math.acos(0.1))
       expect(lispish.run(`(acos -0.1)`)).toBe(Math.acos(-0.1))
@@ -466,8 +466,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(acos 1 2)`)).toThrow()
     })
   })
-  describe('atan', () => {
-    test('samples', () => {
+  describe(`atan`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(atan 0)`)).toBe(Math.atan(0))
       expect(lispish.run(`(atan 0.1)`)).toBe(Math.atan(0.1))
       expect(lispish.run(`(atan -0.1)`)).toBe(Math.atan(-0.1))
@@ -478,8 +478,8 @@ describe('math functions', () => {
     })
   })
 
-  describe('asinh', () => {
-    test('samples', () => {
+  describe(`asinh`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(asinh 0)`)).toBe(Math.asinh(0))
       expect(lispish.run(`(asinh 0.1)`)).toBe(Math.asinh(0.1))
       expect(lispish.run(`(asinh -0.1)`)).toBe(Math.asinh(-0.1))
@@ -489,8 +489,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(asinh 1 2)`)).toThrow()
     })
   })
-  describe('acosh', () => {
-    test('samples', () => {
+  describe(`acosh`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(acosh 1)`)).toBe(Math.acosh(1))
       expect(lispish.run(`(acosh 100)`)).toBe(Math.acosh(100))
       expect(() => lispish.run(`(acosh 0.1)`)).toThrow()
@@ -500,8 +500,8 @@ describe('math functions', () => {
       expect(() => lispish.run(`(acosh 1 2)`)).toThrow()
     })
   })
-  describe('atanh', () => {
-    test('samples', () => {
+  describe(`atanh`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(atanh 0)`)).toBe(Math.atanh(0))
       expect(lispish.run(`(atanh 0.1)`)).toBe(Math.atanh(0.1))
       expect(lispish.run(`(atanh -0.1)`)).toBe(Math.atanh(-0.1))

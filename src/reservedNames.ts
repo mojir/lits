@@ -1,4 +1,4 @@
-export type ReservedName = 'true' | 'false' | 'null' | 'undefined'
+export type ReservedName = `true` | `false` | `null` | `undefined`
 export const reservedNamesRecord: Record<ReservedName, { value: unknown }> = {
   true: { value: true },
   false: { value: false },

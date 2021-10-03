@@ -4,19 +4,19 @@ import { asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface LoopSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'loop'
+  name: `loop`
 }
 
 export const loopSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const node: LoopSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'loop',
+      type: `SpecialExpression`,
+      name: `loop`,
       params: [],
     }
 
     let token = asNotUndefined(tokens[position])
-    while (!(token.type === 'paren' && token.value === ')')) {
+    while (!(token.type === `paren` && token.value === `)`)) {
       const [newPosition, bodyNode] = parseToken(tokens, position)
       node.params.push(bodyNode)
       position = newPosition

@@ -7,6 +7,7 @@ module.exports = {
     'object-shorthand': 'error',
     'no-console': 'warn',
     'no-debugger': 'error',
+    quotes: ['error', 'backtick'],
   },
   parserOptions: {
     sourceType: 'module',

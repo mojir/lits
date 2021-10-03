@@ -4,7 +4,7 @@ import { parseToken } from './parsers'
 
 export function parse(tokens: Token[]): Ast {
   const ast: Ast = {
-    type: 'Program',
+    type: `Program`,
     body: [],
   }
 

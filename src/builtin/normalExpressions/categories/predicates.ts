@@ -10,22 +10,22 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string?': {
-    evaluate: ([first]: unknown[]): boolean => typeof first === 'string',
+    evaluate: ([first]: unknown[]): boolean => typeof first === `string`,
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'number?': {
-    evaluate: ([first]: unknown[]): boolean => typeof first === 'number',
+    evaluate: ([first]: unknown[]): boolean => typeof first === `number`,
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'integer?': {
-    evaluate: ([first]: unknown[]): boolean => typeof first === 'number' && Number.isInteger(first),
+    evaluate: ([first]: unknown[]): boolean => typeof first === `number` && Number.isInteger(first),
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'boolean?': {
-    evaluate: ([first]: unknown[]): boolean => typeof first === 'boolean',
+    evaluate: ([first]: unknown[]): boolean => typeof first === `boolean`,
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
@@ -74,7 +74,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]: unknown[]): boolean =>
       first !== null &&
       !Array.isArray(first) &&
-      typeof first === 'object' &&
+      typeof first === `object` &&
       !(first instanceof RegExp) &&
       !isLispishFunction(first),
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -82,7 +82,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'regexp?': {
     evaluate: ([first]: unknown[]): boolean =>
-      first !== null && !Array.isArray(first) && typeof first === 'object' && first instanceof RegExp,
+      first !== null && !Array.isArray(first) && typeof first === `object` && first instanceof RegExp,
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 

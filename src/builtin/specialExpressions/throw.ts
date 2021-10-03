@@ -4,7 +4,7 @@ import { asNonEmptyString, asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface ThrowSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'throw'
+  name: `throw`
   messageNode: AstNode
 }
 
@@ -14,14 +14,14 @@ export const throwSpecialExpression: SpecialExpression = {
     position = newPosition
 
     const token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === ')')) {
-      throw new UnexpectedTokenError(')', token)
+    if (!(token.type === `paren` && token.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, token)
     }
     position += 1
 
     const node: ThrowSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'throw',
+      type: `SpecialExpression`,
+      name: `throw`,
       params: [],
       messageNode,
     }

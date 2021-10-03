@@ -4,20 +4,20 @@ import { asAstNode, asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface ReturnFromSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'return-from'
+  name: `return-from`
   blockName: string
 }
 
 export const returnFromSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const token = asNotUndefined(tokens[position])
-    if (token.type !== 'name') {
-      throw new UnexpectedTokenError('name', token)
+    if (token.type !== `name`) {
+      throw new UnexpectedTokenError(`name`, token)
     }
 
     const node: ReturnFromSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'return-from',
+      type: `SpecialExpression`,
+      name: `return-from`,
       blockName: token.value,
       params: [],
     }

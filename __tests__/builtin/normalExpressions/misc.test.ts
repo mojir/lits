@@ -8,7 +8,7 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('misc functions', () => {
+describe(`misc functions`, () => {
   let oldLog: () => void
   let logSpy: jest.Mock<any, any>
   beforeEach(() => {
@@ -19,8 +19,8 @@ describe('misc functions', () => {
   afterEach(() => {
     console.log = oldLog
   })
-  describe('now', () => {
-    test('samples', () => {
+  describe(`now`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(now 1)`)).toThrow()
       expect(() => lispish.run(`(now "x")`)).toThrow()
       expect(() => lispish.run(`(now undefined)`)).toThrow()
@@ -28,8 +28,8 @@ describe('misc functions', () => {
     })
   })
 
-  describe('!=', () => {
-    test('samples', () => {
+  describe(`!=`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(!=)`)).toThrow()
       expect(lispish.run(`(!= 1)`)).toBe(true)
       expect(lispish.run(`(!= 1 1)`)).toBe(false)
@@ -49,8 +49,8 @@ describe('misc functions', () => {
     })
   })
 
-  describe('=', () => {
-    test('samples', () => {
+  describe(`=`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(=)`)).toThrow()
       expect(lispish.run(`(= 1)`)).toBe(true)
       expect(lispish.run(`(= 1 1)`)).toBe(true)
@@ -75,7 +75,7 @@ describe('misc functions', () => {
       expect(lispish.run(`(= null undefined)`)).toBe(false)
     })
 
-    test('Object equality', () => {
+    test(`Object equality`, () => {
       const program = `
         (setq obj1 (object "x" 10))
         (setq obj2 (object "x" 10))
@@ -84,7 +84,7 @@ describe('misc functions', () => {
       expect(lispish.run(program)).toEqual([true, false])
     })
 
-    test('List equality', () => {
+    test(`List equality`, () => {
       const program = `
         (setq list1 [1 2 3])
         (setq list2 [1 2 3])
@@ -94,8 +94,8 @@ describe('misc functions', () => {
     })
   })
 
-  describe('not', () => {
-    test('samples', () => {
+  describe(`not`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(not)`)).toThrow()
       expect(lispish.run(`(not 0)`)).toBe(true)
       expect(lispish.run(`(not "")`)).toBe(true)
@@ -111,12 +111,12 @@ describe('misc functions', () => {
     })
   })
 
-  describe('write', () => {
-    test('samples', () => {
+  describe(`write`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(write)`)).toBeUndefined()
       expect(lispish.run(`(write 1)`)).toBe(1)
-      expect(lispish.run(`(write "1")`)).toBe('1')
-      expect(lispish.run(`(write 100 [] "1")`)).toBe('1')
+      expect(lispish.run(`(write "1")`)).toBe(`1`)
+      expect(lispish.run(`(write 100 [] "1")`)).toBe(`1`)
       expect(lispish.run(`(write [])`)).toEqual([])
       expect(lispish.run(`(write (object))`)).toEqual({})
       expect(lispish.run(`(write null)`)).toBe(null)
@@ -124,14 +124,14 @@ describe('misc functions', () => {
       expect(lispish.run(`(write true)`)).toBe(true)
       expect(lispish.run(`(write false)`)).toBe(false)
     })
-    test('that it does console.log', () => {
+    test(`that it does console.log`, () => {
       lispish.run(`(write 1)`)
       expect(logSpy).toHaveBeenCalledWith(1)
     })
   })
 
-  describe('get-path', () => {
-    test('samples', () => {
+  describe(`get-path`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(get-path [1 2 3] "[1]")`)).toBe(2)
       expect(lispish.run(`(get-path (object "a" 1) "a")`)).toBe(1)
       expect(lispish.run(`(get-path (object "a" (object "b" [1 2 3])) "a.b[1]")`)).toBe(2)
@@ -145,16 +145,16 @@ describe('misc functions', () => {
     })
   })
 
-  describe('apply', () => {
-    test('samples', () => {
-      expect(lispish.run("(apply #'+ [1 2 3 4])")).toBe(10)
-      expect(() => lispish.run("(apply #'+)")).toThrow()
-      expect(() => lispish.run("(apply #'+ 2 3)")).toThrow()
-      expect(() => lispish.run("(apply #'+ [1 2] [3 4])")).toThrow()
+  describe(`apply`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(apply #'+ [1 2 3 4])`)).toBe(10)
+      expect(() => lispish.run(`(apply #'+)`)).toThrow()
+      expect(() => lispish.run(`(apply #'+ 2 3)`)).toThrow()
+      expect(() => lispish.run(`(apply #'+ [1 2] [3 4])`)).toThrow()
     })
   })
 
-  describe('debug', () => {
+  describe(`debug`, () => {
     let oldError: () => void
     beforeEach(() => {
       oldError = console.error
@@ -163,7 +163,7 @@ describe('misc functions', () => {
     afterEach(() => {
       console.error = oldError
     })
-    test('samples', () => {
+    test(`samples`, () => {
       expect(lispish.run(`(debug "Stopping here")`)).toBeUndefined()
       expect(lispish.run(`(debug)`)).toBeUndefined()
       expect(() => lispish.run(`(debug 0)`)).toThrow()

@@ -13,41 +13,41 @@ import { SpecialExpression } from '../interface'
 import { FunctionArguments, parseFunctionArguments } from '../utils'
 
 interface DefunSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'defun'
+  name: `defun`
   functionName: AstNode
   arguments: FunctionArguments
   body: AstNode[]
 }
 
 interface CreateFunctionSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'create-function'
+  name: `create-function`
   functionName: AstNode
   arguments: FunctionArguments
   body: AstNode[]
 }
 
 interface LambdaSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'lambda'
+  name: `lambda`
   arguments: FunctionArguments
   body: AstNode[]
 }
 
 type ExpressionNode = DefunSpecialExpressionNode | CreateFunctionSpecialExpressionNode | LambdaSpecialExpressionNode
-type ExpressionsName = 'defun' | 'create-function' | 'lambda'
+type ExpressionsName = `defun` | `create-function` | `lambda`
 
-function createParser(expressionName: ExpressionsName): SpecialExpression['parse'] {
+function createParser(expressionName: ExpressionsName): SpecialExpression[`parse`] {
   return (tokens, position, { parseToken, parseArgument, parseBinding }) => {
     let functionName = undefined
-    if (expressionName === 'defun' || expressionName === 'create-function') {
+    if (expressionName === `defun` || expressionName === `create-function`) {
       ;[position, functionName] = parseToken(tokens, position)
-      if (expressionName === 'defun' && functionName.type !== 'Name') {
-        throw new UnexpectedNodeTypeError('Name', functionName)
+      if (expressionName === `defun` && functionName.type !== `Name`) {
+        throw new UnexpectedNodeTypeError(`Name`, functionName)
       }
     }
 
     let token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === '(')) {
-      throw new UnexpectedTokenError(')', token)
+    if (!(token.type === `paren` && token.value === `(`)) {
+      throw new UnexpectedTokenError(`)`, token)
     }
 
     position += 1
@@ -57,23 +57,23 @@ function createParser(expressionName: ExpressionsName): SpecialExpression['parse
 
     token = asNotUndefined(tokens[position])
     const body: AstNode[] = []
-    while (!(token.type === 'paren' && token.value === ')')) {
+    while (!(token.type === `paren` && token.value === `)`)) {
       const [newPosition, bodyNode] = parseToken(tokens, position)
       body.push(bodyNode)
       position = newPosition
       token = asNotUndefined(tokens[position])
     }
     if (body.length === 0) {
-      throw Error('Missing body in special expression "defun"')
+      throw Error(`Missing body in special expression "defun"`)
     }
 
     position += 1
 
-    if (expressionName === 'defun' || expressionName === 'create-function') {
+    if (expressionName === `defun` || expressionName === `create-function`) {
       return [
         position,
         {
-          type: 'SpecialExpression',
+          type: `SpecialExpression`,
           name: expressionName,
           functionName,
           params: [],
@@ -86,7 +86,7 @@ function createParser(expressionName: ExpressionsName): SpecialExpression['parse
     return [
       position,
       {
-        type: 'SpecialExpression',
+        type: `SpecialExpression`,
         name: expressionName,
         params: [],
         arguments: functionArguments,
@@ -102,12 +102,12 @@ function getFunctionName(
   contextStack: Context[],
   evaluateAstNode: EvaluateAstNode,
 ): string | undefined {
-  if (expressionName === 'defun') {
+  if (expressionName === `defun`) {
     const name = ((node as DefunSpecialExpressionNode).functionName as NameNode).value
     assertString(name)
     return name
   }
-  if (expressionName === 'create-function') {
+  if (expressionName === `create-function`) {
     const name = evaluateAstNode((node as CreateFunctionSpecialExpressionNode).functionName, contextStack)
     assertString(name)
     return name
@@ -115,7 +115,7 @@ function getFunctionName(
   return undefined
 }
 
-function createEvaluator(expressionName: ExpressionsName): SpecialExpression['evaluate'] {
+function createEvaluator(expressionName: ExpressionsName): SpecialExpression[`evaluate`] {
   return (node, contextStack, evaluateAstNode): LispishFunction | undefined => {
     castExpressionNode(node)
     const name = getFunctionName(expressionName, node, contextStack, evaluateAstNode)
@@ -127,7 +127,7 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression['ev
       functionContext.variables[binding.name] = { value: bindingValue, constant: false }
     }
 
-    const optionalArguments: EvaluatedFunctionArguments['optionalArguments'] = node.arguments.optionalArguments.map(
+    const optionalArguments: EvaluatedFunctionArguments[`optionalArguments`] = node.arguments.optionalArguments.map(
       optArg => {
         const name = optArg.name
         const defaultValue = optArg.defaultValue
@@ -153,12 +153,12 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression['ev
       functionContext,
     }
 
-    if (expressionName === 'lambda') {
+    if (expressionName === `lambda`) {
       return lispishFunction
     }
 
     // The second last stack entry is the "global" scope
-    const context = asNotUndefined(contextStack[contextStack.length - 2], 'Could not find global scope')
+    const context = asNotUndefined(contextStack[contextStack.length - 2], `Could not find global scope`)
 
     context.functions[name as string] = { fun: lispishFunction, constant: false }
     return undefined
@@ -166,18 +166,18 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression['ev
 }
 
 export const defunSpecialExpression: SpecialExpression = {
-  parse: createParser('defun'),
-  evaluate: createEvaluator('defun'),
+  parse: createParser(`defun`),
+  evaluate: createEvaluator(`defun`),
 }
 
 export const createFunctionSpecialExpression: SpecialExpression = {
-  parse: createParser('create-function'),
-  evaluate: createEvaluator('create-function'),
+  parse: createParser(`create-function`),
+  evaluate: createEvaluator(`create-function`),
 }
 
 export const lambdaSpecialExpression: SpecialExpression = {
-  parse: createParser('lambda'),
-  evaluate: createEvaluator('lambda'),
+  parse: createParser(`lambda`),
+  evaluate: createEvaluator(`lambda`),
 }
 
 function castExpressionNode(

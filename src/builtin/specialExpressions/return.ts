@@ -4,14 +4,14 @@ import { assertLength, asAstNode } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface ReturnSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'return'
+  name: `return`
 }
 
 export const returnSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const node: ReturnSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'return',
+      type: `SpecialExpression`,
+      name: `return`,
       params: [],
     }
 

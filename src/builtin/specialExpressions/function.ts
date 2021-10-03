@@ -5,26 +5,26 @@ import { SpecialExpression } from '../interface'
 import { UnexpectedNodeTypeError } from '../../errors'
 
 export interface FunctionSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'function'
+  name: `function`
 }
 
 export const functionSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const [newPosition, parameter] = parseToken(tokens, position)
-    if (parameter.type !== 'Name') {
-      throw new UnexpectedNodeTypeError('Name', parameter)
+    if (parameter.type !== `Name`) {
+      throw new UnexpectedNodeTypeError(`Name`, parameter)
     }
 
     position = newPosition
 
     const token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === ')')) {
+    if (!(token.type === `paren` && token.value === `)`)) {
       throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected ')'`)
     }
 
     const node: FunctionSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'function',
+      type: `SpecialExpression`,
+      name: `function`,
       params: [parameter],
     }
 

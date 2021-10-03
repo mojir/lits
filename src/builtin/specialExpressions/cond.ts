@@ -9,7 +9,7 @@ type Condition = {
 }
 
 interface CondSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'cond'
+  name: `cond`
   conditions: Condition[]
 }
 
@@ -17,8 +17,8 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
   const conditions: Condition[] = []
 
   let token = asNotUndefined(tokens[position])
-  while (!(token.type === 'paren' && token.value === ')')) {
-    if (!(token.type === 'paren' && token.value === '(')) {
+  while (!(token.type === `paren` && token.value === `)`)) {
+    if (!(token.type === `paren` && token.value === `(`)) {
       throw Error(`Expected a condition starting with "(", got ${token.type}:${token.value}`)
     }
     const [positionAfterTest, testNode] = parseToken(tokens, position + 1)
@@ -26,7 +26,7 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
     const body: AstNode[] = []
     token = asNotUndefined(tokens[position])
-    while (!(token.type === 'paren' && token.value === ')')) {
+    while (!(token.type === `paren` && token.value === `)`)) {
       const [newPosition, node] = parseToken(tokens, position)
       body.push(node)
       position = newPosition
@@ -45,8 +45,8 @@ export const condSpecialExpression: SpecialExpression = {
     return [
       newPosition + 1,
       {
-        type: 'SpecialExpression',
-        name: 'cond',
+        type: `SpecialExpression`,
+        name: `cond`,
         conditions,
         params: [],
       },

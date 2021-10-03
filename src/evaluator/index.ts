@@ -30,19 +30,19 @@ export function evaluate(ast: Ast, globalScope: Context, importScope: Context): 
 
 export const evaluateAstNode: EvaluateAstNode = (node, contextStack) => {
   switch (node.type) {
-    case 'Number':
+    case `Number`:
       return evaluateNumber(node)
-    case 'String':
+    case `String`:
       return evaluateString(node)
-    case 'Name':
+    case `Name`:
       return evaluateName(node, contextStack)
-    case 'ReservedName':
+    case `ReservedName`:
       return evaluateReservedName(node)
-    case 'NormalExpression':
+    case `NormalExpression`:
       return evaluateNormalExpression(node, contextStack)
-    case 'SpecialExpression':
+    case `SpecialExpression`:
       return evaluateSpecialExpression(node, contextStack)
-    case 'ExpressionExpression':
+    case `ExpressionExpression`:
       return evaluateExpressionExpression(node, contextStack)
   }
 }
@@ -116,14 +116,14 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
     for (let i = 0; i < length; i += 1) {
       if (i < nbrOfMandatoryArgs) {
         const param = params[i]
-        const key = asNotUndefined(args.mandatoryArguments[i], '')
+        const key = asNotUndefined(args.mandatoryArguments[i], ``)
         if (isLispishFunction(param)) {
           newContext.functions[key] = { fun: param, constant: false }
         } else {
           newContext.variables[key] = { value: param, constant: false }
         }
       } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
-        const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], '')
+        const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
         const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
         const key = arg.name
         if (isLispishFunction(param)) {
@@ -134,7 +134,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       } else {
         const param = params[i]
         if (isLispishFunction(param)) {
-          throw Error('A function cannot be a &rest parameter') //  TODO, is this a fact?
+          throw Error(`A function cannot be a &rest parameter`) //  TODO, is this a fact?
         }
         rest.push(param)
       }

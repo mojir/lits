@@ -4,19 +4,19 @@ import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface PrognSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'progn'
+  name: `progn`
 }
 
 export const prognSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const node: PrognSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'progn',
+      type: `SpecialExpression`,
+      name: `progn`,
       params: [],
     }
 
     let token = asNotUndefined(tokens[position])
-    while (!(token.type === 'paren' && token.value === ')')) {
+    while (!(token.type === `paren` && token.value === `)`)) {
       const [newPosition, bodyNode] = parseToken(tokens, position)
       node.params.push(bodyNode)
       position = newPosition

@@ -3,7 +3,7 @@ import { asAstNode, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface IfSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'if'
+  name: `if`
 }
 
 export const ifSpecialExpression: SpecialExpression = {
@@ -12,8 +12,8 @@ export const ifSpecialExpression: SpecialExpression = {
     return [
       newPosition + 1,
       {
-        type: 'SpecialExpression',
-        name: 'if',
+        type: `SpecialExpression`,
+        name: `if`,
         params,
       },
     ]

@@ -53,7 +53,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       return params.reduce((result: string, param) => {
         assertString(param)
         return result + param
-      }, '')
+      }, ``)
     },
   },
 
@@ -96,7 +96,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'string-reverse': {
     evaluate: ([str]: unknown[]): string => {
       assertString(str)
-      return str.split('').reverse().join('')
+      return str.split(``).reverse().join(``)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
@@ -162,7 +162,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'trim-left': {
     evaluate: ([str]: unknown[]): string => {
       assertString(str)
-      return str.replace(/^\s+/, '')
+      return str.replace(/^\s+/, ``)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
@@ -170,7 +170,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'trim-right': {
     evaluate: ([str]: unknown[]): string => {
       assertString(str)
-      return str.replace(/\s+$/, '')
+      return str.replace(/\s+$/, ``)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
@@ -229,7 +229,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   template: {
     evaluate: ([templateString, ...placeholders]: unknown[]): string => {
       assertString(templateString)
-      const templateStrings = templateString.split('||||')
+      const templateStrings = templateString.split(`||||`)
       if (templateStrings.length === 1) {
         assertStringArray(placeholders)
         return applyPlaceholders(templateStrings[0] as string, placeholders)
@@ -244,7 +244,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
           return applyPlaceholders(templateStrings[1] as string, stringPlaceholders)
         }
       } else {
-        throw Error('Invalid template string, only one "||||" separator allowed')
+        throw Error(`Invalid template string, only one "||||" separator allowed`)
       }
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 10 }, node),
@@ -254,12 +254,12 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 const doubleDollarRegexp = /\$\$/g
 function applyPlaceholders(templateString: string, placeholders: string[]): string {
   for (let i = 0; i < 9; i += 1) {
-    const re = new RegExp(`(?<=^|[^$]|\\$\\$)\\$${i + 1}`, 'g')
+    const re = new RegExp(`(?<=^|[^$]|\\$\\$)\\$${i + 1}`, `g`)
     if (re.test(templateString)) {
       const placeholder = placeholders[i]
       assertString(placeholder)
       templateString = templateString.replace(re, placeholder)
     }
   }
-  return templateString.replace(doubleDollarRegexp, '$')
+  return templateString.replace(doubleDollarRegexp, `$`)
 }

@@ -5,28 +5,28 @@ import { asNotUndefined, assertLength } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface BlockSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'block'
+  name: `block`
   blockName: string
 }
 
 export const blockSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     let token = asNotUndefined(tokens[position])
-    if (token.type !== 'name') {
-      throw new UnexpectedTokenError('name', token)
+    if (token.type !== `name`) {
+      throw new UnexpectedTokenError(`name`, token)
     }
 
     position += 1
 
     const node: BlockSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'block',
+      type: `SpecialExpression`,
+      name: `block`,
       blockName: token.value,
       params: [],
     }
 
     token = asNotUndefined(tokens[position])
-    while (!(token.type === 'paren' && token.value === ')')) {
+    while (!(token.type === `paren` && token.value === `)`)) {
       const [newPosition, bodyNode] = parseToken(tokens, position)
       node.params.push(bodyNode)
       position = newPosition

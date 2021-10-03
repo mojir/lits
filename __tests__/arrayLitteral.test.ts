@@ -8,8 +8,8 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('array litterals', () => {
-  test('samples', () => {
+describe(`array litterals`, () => {
+  test(`samples`, () => {
     expect(lispish.run(`[1 2 3]`)).toEqual([1, 2, 3])
   })
 })

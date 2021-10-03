@@ -6,9 +6,9 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('regexp functions', () => {
-  describe('regexp', () => {
-    test('samples', () => {
+describe(`regexp functions`, () => {
+  describe(`regexp`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(regexp "^abc$")`)).toEqual(/^abc$/)
       expect(lispish.run(`(regexp "^abc$" "gi")`)).toEqual(/^abc$/gi)
       expect(lispish.run(`(regexp "^abc$" "ig")`)).toEqual(/^abc$/gi)
@@ -27,12 +27,12 @@ describe('regexp functions', () => {
     })
   })
 
-  describe('match', () => {
-    test('samples', () => {
-      expect(lispish.run(`(match (regexp "^abc$") "abc")`)).toEqual(['abc'])
+  describe(`match`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(match (regexp "^abc$") "abc")`)).toEqual([`abc`])
       expect(lispish.run(`(match (regexp "^abc$") "abx")`)).toBeUndefined()
-      expect(lispish.run(`(match (regexp "^(a)bc$") "abc")`)).toEqual(['abc', 'a'])
-      expect(lispish.run(`(match (regexp "^(A)BC$" "i") "abc")`)).toEqual(['abc', 'a'])
+      expect(lispish.run(`(match (regexp "^(a)bc$") "abc")`)).toEqual([`abc`, `a`])
+      expect(lispish.run(`(match (regexp "^(A)BC$" "i") "abc")`)).toEqual([`abc`, `a`])
       expect(() => lispish.run(`(match (regexp "^abc$") 1)`)).toThrow()
       expect(() => lispish.run(`(match (regexp "^abc$") null)`)).toThrow()
       expect(() => lispish.run(`(match (regexp "^abc$") undefined)`)).toThrow()
@@ -43,8 +43,8 @@ describe('regexp functions', () => {
     })
   })
 
-  describe('test', () => {
-    test('samples', () => {
+  describe(`test`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(test (regexp "^abc$") "abc")`)).toBe(true)
       expect(lispish.run(`(test (regexp "^abc$") "abx")`)).toBe(false)
       expect(lispish.run(`(test (regexp "^(a)bc$") "abc")`)).toBe(true)
@@ -59,12 +59,12 @@ describe('regexp functions', () => {
     })
   })
 
-  describe('replace', () => {
-    test('samples', () => {
-      expect(lispish.run(`(replace "abcabcABCABC" (regexp "^abc") "ABC")`)).toEqual('ABCabcABCABC')
-      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a") "A")`)).toEqual('AbcabcABCABC')
-      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a" "g") "A")`)).toEqual('AbcAbcABCABC')
-      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a" "gi") "-")`)).toEqual('-bc-bc-BC-BC')
+  describe(`replace`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(replace "abcabcABCABC" (regexp "^abc") "ABC")`)).toEqual(`ABCabcABCABC`)
+      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a") "A")`)).toEqual(`AbcabcABCABC`)
+      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a" "g") "A")`)).toEqual(`AbcAbcABCABC`)
+      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a" "gi") "-")`)).toEqual(`-bc-bc-BC-BC`)
       expect(() => lispish.run(`(replace "abcabcABCABC" (regexp "^abc$") 1)`)).toThrow()
       expect(() => lispish.run(`(replace "abcabcABCABC" (regexp "^abc$") null)`)).toThrow()
       expect(() => lispish.run(`(replace "abcabcABCABC" (regexp "^abc$") undefined)`)).toThrow()

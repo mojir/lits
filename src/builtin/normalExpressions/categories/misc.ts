@@ -68,17 +68,17 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
   debug: {
     evaluate: (params, contextStack): undefined => {
-      const label = params[0] ?? ''
+      const label = params[0] ?? ``
       if (params.length === 1) {
         assertString(params[0])
       }
 
       // eslint-disable-next-line no-console
       console.error(
-        `LISPISH${label ? `: ${label}.` : ''}`,
+        `LISPISH${label ? `: ${label}.` : ``}`,
         `Context stack (${contextStack
           .map(stack => `${Object.keys(stack.variables).length}:${Object.keys(stack.functions).length}`)
-          .join(' ')})`,
+          .join(` `)})`,
         contextStack,
       )
 

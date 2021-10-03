@@ -8,9 +8,9 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('object functions', () => {
-  describe('object', () => {
-    test('samples', () => {
+describe(`object functions`, () => {
+  describe(`object`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(object)`)).toEqual({})
       expect(lispish.run(`(object "x" 1)`)).toEqual({ x: 1 })
       expect(lispish.run(`(object "x" undefined)`)).toEqual({ x: undefined })
@@ -36,11 +36,11 @@ describe('object functions', () => {
     })
   })
 
-  describe('keys', () => {
-    test('samples', () => {
+  describe(`keys`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(keys (object))`)).toEqual([])
-      expect(lispish.run(`(keys (object "x" 1))`)).toEqual(['x'])
-      expect(lispish.run(`(keys (object "x" undefined "y" 2))`)).toEqual(['x', 'y'])
+      expect(lispish.run(`(keys (object "x" 1))`)).toEqual([`x`])
+      expect(lispish.run(`(keys (object "x" undefined "y" 2))`)).toEqual([`x`, `y`])
       expect(() => lispish.run(`(keys)`)).toThrow()
       expect(() => lispish.run(`(keys (object "x") (object "x"))`)).toThrow()
       expect(() => lispish.run(`(keys 0)`)).toThrow()
@@ -52,8 +52,8 @@ describe('object functions', () => {
     })
   })
 
-  describe('values', () => {
-    test('samples', () => {
+  describe(`values`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(values (object))`)).toEqual([])
       expect(lispish.run(`(values (object "x" 1))`)).toEqual([1])
       expect(lispish.run(`(values (object "x" undefined "y" 2))`)).toEqual([undefined, 2])
@@ -68,13 +68,13 @@ describe('object functions', () => {
     })
   })
 
-  describe('entries', () => {
-    test('samples', () => {
+  describe(`entries`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(entries (object))`)).toEqual([])
-      expect(lispish.run(`(entries (object "x" 1))`)).toEqual([['x', 1]])
+      expect(lispish.run(`(entries (object "x" 1))`)).toEqual([[`x`, 1]])
       expect(lispish.run(`(entries (object "x" undefined "y" 2))`)).toEqual([
-        ['x', undefined],
-        ['y', 2],
+        [`x`, undefined],
+        [`y`, 2],
       ])
       expect(() => lispish.run(`(entries)`)).toThrow()
       expect(() => lispish.run(`(entries (object "x") (object "x"))`)).toThrow()
@@ -87,8 +87,8 @@ describe('object functions', () => {
     })
   })
 
-  describe('ohas', () => {
-    test('samples', () => {
+  describe(`ohas`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(ohas (object) "x")`)).toBe(false)
       expect(lispish.run(`(ohas (object "x" 1) "x")`)).toBe(true)
       expect(lispish.run(`(ohas (object "x" 1) "")`)).toBe(false)
@@ -107,8 +107,8 @@ describe('object functions', () => {
     })
   })
 
-  describe('oget', () => {
-    test('samples', () => {
+  describe(`oget`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(oget (object) "x")`)).toBeUndefined()
       expect(lispish.run(`(oget (object "x" 1) "x")`)).toBe(1)
       expect(lispish.run(`(oget (object "x" 1) "")`)).toBeUndefined()
@@ -127,8 +127,8 @@ describe('object functions', () => {
     })
   })
 
-  describe('oset', () => {
-    test('samples', () => {
+  describe(`oset`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(oset (object) "x" 1)`)).toBe(1)
       expect(lispish.run(`(oset (object "x" 1) "x" 2)`)).toBe(2)
       expect(lispish.run(`(oset (object "x" 1) "" 3)`)).toBe(3)
@@ -144,7 +144,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(oset undefined "x")`)).toThrow()
       expect(() => lispish.run(`(oset [1] "x")`)).toThrow()
     })
-    test('set new value', () => {
+    test(`set new value`, () => {
       const program = `
         (setq obj (object "x" 10))
         (oset obj "y" 20)
@@ -152,7 +152,7 @@ describe('object functions', () => {
       `
       expect(lispish.run(program)).toEqual({ x: 10, y: 20 })
     })
-    test('update value', () => {
+    test(`update value`, () => {
       const program = `
         (setq obj (object "x" 10))
         (oset obj "x" 20)
@@ -162,8 +162,8 @@ describe('object functions', () => {
     })
   })
 
-  describe('odel', () => {
-    test('samples', () => {
+  describe(`odel`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(odel (object) "x")`)).toBeUndefined()
       expect(lispish.run(`(odel (object "x" 1) "x")`)).toBe(1)
       expect(lispish.run(`(odel (object "x" 1) "")`)).toBeUndefined()
@@ -178,7 +178,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(odel undefined "x")`)).toThrow()
       expect(() => lispish.run(`(odel [1] "x")`)).toThrow()
     })
-    test('delete atribute', () => {
+    test(`delete atribute`, () => {
       const program = `
         (setq obj (object "x" 10))
         (odel obj "x")
@@ -187,7 +187,7 @@ describe('object functions', () => {
       expect(lispish.run(program)).toEqual({})
     })
 
-    test('delete unexisting attribute', () => {
+    test(`delete unexisting attribute`, () => {
       const program = `
         (setq obj (object "x" 10))
         (odel obj "y")
@@ -197,8 +197,8 @@ describe('object functions', () => {
     })
   })
 
-  describe('merge', () => {
-    test('samples', () => {
+  describe(`merge`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(merge (object "x" 10))`)).toEqual({ x: 10 })
       expect(lispish.run(`(merge (object "x" 10) (object "y" 20))`)).toEqual({ x: 10, y: 20 })
       expect(lispish.run(`(merge (object "x" 10) (object "x" 5))`)).toEqual({ x: 5 })
@@ -217,7 +217,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(merge (array))`)).toThrow()
     })
 
-    test('merge returns new object', () => {
+    test(`merge returns new object`, () => {
       const program = `
         (setq obj1 (object "x" 10))
         (setq obj2 (merge obj1))

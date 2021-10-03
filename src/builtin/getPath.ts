@@ -24,7 +24,7 @@ export function destructPath(path: string): Array<string | number> {
   if (match.index > 0) {
     return [path.substring(0, match.index), ...destructPath(path.substring(match.index))]
   }
-  if (path[0] === '.') {
+  if (path[0] === `.`) {
     if (path.length < 2) {
       throw Error(`Ill formed path: ${path}`)
     }
@@ -32,7 +32,7 @@ export function destructPath(path: string): Array<string | number> {
   }
 
   const [length, value] = parseBracketNotation(path)
-  if (path.length > length && path[length] !== '.' && path[length] !== '[') {
+  if (path.length > length && path[length] !== `.` && path[length] !== `[`) {
     throw Error(`Ill formed path: ${path}`)
   }
   return [value, ...destructPath(path.substring(length))]

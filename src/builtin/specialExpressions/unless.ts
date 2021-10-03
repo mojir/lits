@@ -3,15 +3,15 @@ import { assertLength, assertNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface UnlessSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'unless'
+  name: `unless`
 }
 
 export const unlessSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseParams }) => {
     const [newPosition, params] = parseParams(tokens, position)
     const node: UnlessSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'unless',
+      type: `SpecialExpression`,
+      name: `unless`,
       params,
     }
 

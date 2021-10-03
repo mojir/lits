@@ -5,7 +5,7 @@ import { asNotUndefined, assertArray, assertNameNode } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface DolistSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'dolist'
+  name: `dolist`
   varName: NameNode
   result: AstNode | undefined
   list: AstNode
@@ -14,8 +14,8 @@ interface DolistSpecialExpressionNode extends SpecialExpressionNode {
 export const dolistSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     let token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === '(')) {
-      throw new UnexpectedTokenError('(', token)
+    if (!(token.type === `paren` && token.value === `(`)) {
+      throw new UnexpectedTokenError(`(`, token)
     }
     position += 1
 
@@ -28,13 +28,13 @@ export const dolistSpecialExpression: SpecialExpression = {
 
     token = asNotUndefined(tokens[position])
     let result = undefined
-    if (!(token.type === 'paren' && token.value === ')')) {
+    if (!(token.type === `paren` && token.value === `)`)) {
       ;[position, result] = parseToken(tokens, position)
     }
 
     const node: DolistSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'dolist',
+      type: `SpecialExpression`,
+      name: `dolist`,
       params: [],
       varName,
       result,
@@ -43,7 +43,7 @@ export const dolistSpecialExpression: SpecialExpression = {
 
     position += 1
     token = asNotUndefined(tokens[position])
-    while (!(token.type === 'paren' && token.value === ')')) {
+    while (!(token.type === `paren` && token.value === `)`)) {
       let bodyNode: AstNode
       ;[position, bodyNode] = parseToken(tokens, position)
       node.params.push(bodyNode)

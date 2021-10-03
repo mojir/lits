@@ -2,7 +2,7 @@ import { SpecialExpressionNode } from '../../parser/interface'
 import { SpecialExpression } from '../interface'
 
 interface OrSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'and'
+  name: `and`
 }
 
 export const orSpecialExpression: SpecialExpression = {
@@ -11,8 +11,8 @@ export const orSpecialExpression: SpecialExpression = {
     return [
       newPosition + 1,
       {
-        type: 'SpecialExpression',
-        name: 'or',
+        type: `SpecialExpression`,
+        name: `or`,
         params,
       },
     ]

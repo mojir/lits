@@ -9,7 +9,7 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('specialExpressions', () => {
+describe(`specialExpressions`, () => {
   let oldLog: () => void
   let logSpy: jest.Mock<any, any>
   beforeEach(() => {
@@ -21,10 +21,10 @@ describe('specialExpressions', () => {
     console.log = oldLog
   })
 
-  describe('create-variable', () => {
-    test('samples', () => {
+  describe(`create-variable`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(create-variable "a" 10) a`)).toBe(10)
-      expect(lispish.run(`(create-variable "a" "b") (create-variable a "c") b`)).toBe('c')
+      expect(lispish.run(`(create-variable "a" "b") (create-variable a "c") b`)).toBe(`c`)
       expect(lispish.run(`(create-variable (concat "a" "1") 20) a1`)).toBe(20)
       expect(() => lispish.run(`(create-variable true false)`)).toThrow()
       expect(() => lispish.run(`(create-variable a)`)).toThrow()
@@ -40,8 +40,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('create-constant-variable', () => {
-    test('samples', () => {
+  describe(`create-constant-variable`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(create-constant-variable "a" 10) a`)).toBe(10)
       expect(() => lispish.run(`(setq a 10) (create-constant-variable "a" 20)`)).toThrow()
       expect(() => lispish.run(`(create-constant-variable "a" 10) (create-constant-variable "a" 20)`)).toThrow()
@@ -59,8 +59,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('setq', () => {
-    test('samples', () => {
+  describe(`setq`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(setq a 10) a`)).toBe(10)
       expect(lispish.run(`(setq a 10) (setq a 20) a`)).toBe(20)
       expect(() => lispish.run(`(setq true false)`)).toThrow()
@@ -76,7 +76,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(setq "a" 10)`)).toThrow()
     })
 
-    test('local variable', () => {
+    test(`local variable`, () => {
       const program = `
         (setq x "A")     ;Global variable x
         (write x)        ;"A"
@@ -88,14 +88,14 @@ describe('specialExpressions', () => {
         (write x)        ;"A" - global variable x
       `
       lispish.run(program)
-      expect(logSpy).toHaveBeenNthCalledWith(1, 'A')
-      expect(logSpy).toHaveBeenNthCalledWith(2, 'B')
-      expect(logSpy).toHaveBeenNthCalledWith(3, 'C')
-      expect(logSpy).toHaveBeenNthCalledWith(4, 'A')
+      expect(logSpy).toHaveBeenNthCalledWith(1, `A`)
+      expect(logSpy).toHaveBeenNthCalledWith(2, `B`)
+      expect(logSpy).toHaveBeenNthCalledWith(3, `C`)
+      expect(logSpy).toHaveBeenNthCalledWith(4, `A`)
     })
   })
-  describe('setq-constant', () => {
-    test('samples', () => {
+  describe(`setq-constant`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(setq-constant a 10) a`)).toBe(10)
       expect(() => lispish.run(`(setq a 10) (setq-constant a 20)`)).toThrow()
       expect(() => lispish.run(`(setq-constant a 10) (setq-constant a 20)`)).toThrow()
@@ -114,8 +114,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('setq-local.', () => {
-    test('samples', () => {
+  describe(`setq-local.`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(setq a 10) (progn (setq-local a 20)) a`)).toBe(10)
       expect(lispish.run(`(setq a 10) (setq-local a 20)`)).toBe(20)
       expect(lispish.run(`(setq-local a 10) (setq-local a 20) a`)).toBe(20)
@@ -133,8 +133,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('setq-local-constant.', () => {
-    test('samples', () => {
+  describe(`setq-local-constant.`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(setq a 10) (progn (setq-local-constant a 20)) (setq a 30) a`)).toBe(30)
       expect(() => lispish.run(`(setq a 10) (setq-local-constant a 20)`)).toThrow()
       expect(() => lispish.run(`(setq a 10) (progn (setq-local-constant a 20) (setq a 30))`)).toThrow()
@@ -152,41 +152,41 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(setq-local-constant "a" 10)`)).toThrow()
     })
   })
-  describe('if', () => {
-    test('samples', () => {
-      expect(lispish.run(`(if true "A" "B")`)).toBe('A')
-      expect(lispish.run(`(if false "A" "B")`)).toBe('B')
-      expect(lispish.run(`(if null "A" "B")`)).toBe('B')
-      expect(lispish.run(`(if undefined "A" "B")`)).toBe('B')
-      expect(lispish.run(`(if "" "A" "B")`)).toBe('B')
-      expect(lispish.run(`(if "x" "A" "B")`)).toBe('A')
-      expect(lispish.run(`(if 0 "A" "B")`)).toBe('B')
-      expect(lispish.run(`(if 1 "A" "B")`)).toBe('A')
-      expect(lispish.run(`(if -1 "A" "B")`)).toBe('A')
-      expect(lispish.run(`(if [] "A" "B")`)).toBe('A')
-      expect(lispish.run(`(if (object) "A" "B")`)).toBe('A')
+  describe(`if`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(if true "A" "B")`)).toBe(`A`)
+      expect(lispish.run(`(if false "A" "B")`)).toBe(`B`)
+      expect(lispish.run(`(if null "A" "B")`)).toBe(`B`)
+      expect(lispish.run(`(if undefined "A" "B")`)).toBe(`B`)
+      expect(lispish.run(`(if "" "A" "B")`)).toBe(`B`)
+      expect(lispish.run(`(if "x" "A" "B")`)).toBe(`A`)
+      expect(lispish.run(`(if 0 "A" "B")`)).toBe(`B`)
+      expect(lispish.run(`(if 1 "A" "B")`)).toBe(`A`)
+      expect(lispish.run(`(if -1 "A" "B")`)).toBe(`A`)
+      expect(lispish.run(`(if [] "A" "B")`)).toBe(`A`)
+      expect(lispish.run(`(if (object) "A" "B")`)).toBe(`A`)
       expect(() => lispish.run(`(if)`)).toThrow()
       expect(() => lispish.run(`(if true)`)).toThrow()
       expect(() => lispish.run(`(if true "A")`)).toThrow()
       expect(() => lispish.run(`(if true "A" "B" "Q")`)).toThrow()
     })
-    test('That special form "if" only evaluate the correct path (true)', () => {
+    test(`That special form "if" only evaluate the correct path (true)`, () => {
       lispish.run(`(if true (write "A") (write "B"))`)
-      expect(logSpy).toHaveBeenCalledWith('A')
-      expect(logSpy).not.toHaveBeenCalledWith('B')
+      expect(logSpy).toHaveBeenCalledWith(`A`)
+      expect(logSpy).not.toHaveBeenCalledWith(`B`)
     })
-    test('That special form "if" only evaluate the correct path (false)', () => {
+    test(`That special form "if" only evaluate the correct path (false)`, () => {
       lispish.run(`(if false (write "A") (write "B"))`)
-      expect(logSpy).not.toHaveBeenCalledWith('A')
-      expect(logSpy).toHaveBeenCalledWith('B')
+      expect(logSpy).not.toHaveBeenCalledWith(`A`)
+      expect(logSpy).toHaveBeenCalledWith(`B`)
     })
   })
 
-  describe('let', () => {
-    test('samples', () => {
-      expect(lispish.run(`(let ((a "A")) a)`)).toBe('A')
-      expect(lispish.run(`(let ((a "A") (b "B")) a b)`)).toBe('B')
-      expect(lispish.run(`(let ((a "A") (b "B")) a b)`)).toBe('B')
+  describe(`let`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(let ((a "A")) a)`)).toBe(`A`)
+      expect(lispish.run(`(let ((a "A") (b "B")) a b)`)).toBe(`B`)
+      expect(lispish.run(`(let ((a "A") (b "B")) a b)`)).toBe(`B`)
       expect(lispish.run(`(let ((a (+ 10 20)) (b "B")) b a)`)).toBe(30)
       expect(() => lispish.run(`(let)`)).toThrow()
       expect(() => lispish.run(`(let ())`)).toThrow()
@@ -197,7 +197,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(let (a "A") a)`)).toThrow()
       expect(() => lispish.run(`(let ((a (lambda () 1))) a)`)).toThrow()
     })
-    test('local and global variables', () => {
+    test(`local and global variables`, () => {
       expect(() =>
         lispish.run(`
           (let (
@@ -218,20 +218,20 @@ describe('specialExpressions', () => {
             b
           )
         `),
-      ).toBe('X')
+      ).toBe(`X`)
     })
   })
 
-  describe('and', () => {
-    test('samples', () => {
+  describe(`and`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(and)`)).toBe(true)
       expect(lispish.run(`(and 0)`)).toBe(0)
       expect(lispish.run(`(and 0 1)`)).toBe(0)
       expect(lispish.run(`(and 2 0)`)).toBe(0)
       expect(lispish.run(`(and 2 0 1)`)).toBe(0)
       expect(lispish.run(`(and 2 3 0)`)).toBe(0)
-      expect(lispish.run(`(and 2 3 "")`)).toBe('')
-      expect(lispish.run(`(and 2 3 "x")`)).toBe('x')
+      expect(lispish.run(`(and 2 3 "")`)).toBe(``)
+      expect(lispish.run(`(and 2 3 "x")`)).toBe(`x`)
       expect(lispish.run(`(and false 1)`)).toBe(false)
       expect(lispish.run(`(and 1 false)`)).toBe(false)
       expect(lispish.run(`(and 1 undefined)`)).toBe(undefined)
@@ -239,23 +239,23 @@ describe('specialExpressions', () => {
       expect(lispish.run(`(and 2 2 false)`)).toBe(false)
       expect(lispish.run(`(and 3 true 3)`)).toBe(3)
     })
-    describe('short circuit', () => {
-      test('true, false', () => {
+    describe(`short circuit`, () => {
+      test(`true, false`, () => {
         expect(lispish.run(`(and (write true) (write false))`)).toBe(false)
         expect(logSpy).toHaveBeenNthCalledWith(1, true)
         expect(logSpy).toHaveBeenNthCalledWith(2, false)
       })
-      test('true, 1', () => {
+      test(`true, 1`, () => {
         expect(lispish.run(`(and (write true) (write 1))`)).toBe(1)
         expect(logSpy).toHaveBeenNthCalledWith(1, true)
         expect(logSpy).toHaveBeenNthCalledWith(2, 1)
       })
-      test('false, true', () => {
+      test(`false, true`, () => {
         expect(lispish.run(`(and (write false) (write true))`)).toBe(false)
         expect(logSpy).toHaveBeenCalledWith(false)
         expect(logSpy).not.toHaveBeenCalledWith(true)
       })
-      test('false, true', () => {
+      test(`false, true`, () => {
         expect(lispish.run(`(and (write false) (write 0))`)).toBe(false)
         expect(logSpy).toHaveBeenCalledWith(false)
         expect(logSpy).not.toHaveBeenCalledWith(0)
@@ -263,8 +263,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('or', () => {
-    test('samples', () => {
+  describe(`or`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(or)`)).toBe(false)
       expect(lispish.run(`(or 0)`)).toBe(0)
       expect(lispish.run(`(or 0 1)`)).toBe(1)
@@ -272,23 +272,23 @@ describe('specialExpressions', () => {
       expect(lispish.run(`(or null 0 false undefined)`)).toBe(undefined)
       expect(lispish.run(`(or null 0 1 undefined)`)).toBe(1)
     })
-    describe('short circuit', () => {
-      test('true, false', () => {
+    describe(`short circuit`, () => {
+      test(`true, false`, () => {
         expect(lispish.run(`(or (write true) (write false))`)).toBe(true)
         expect(logSpy).toHaveBeenCalledWith(true)
         expect(logSpy).not.toHaveBeenCalledWith(false)
       })
-      test('true, 1', () => {
+      test(`true, 1`, () => {
         expect(lispish.run(`(or (write true) (write 1))`)).toBe(true)
         expect(logSpy).toHaveBeenCalledWith(true)
         expect(logSpy).not.toHaveBeenCalledWith(1)
       })
-      test('false, true', () => {
+      test(`false, true`, () => {
         expect(lispish.run(`(or (write false) (write true))`)).toBe(true)
         expect(logSpy).toHaveBeenNthCalledWith(1, false)
         expect(logSpy).toHaveBeenNthCalledWith(2, true)
       })
-      test('false, true', () => {
+      test(`false, true`, () => {
         expect(lispish.run(`(or (write false) (write 0))`)).toBe(0)
         expect(logSpy).toHaveBeenNthCalledWith(1, false)
         expect(logSpy).toHaveBeenNthCalledWith(2, 0)
@@ -296,8 +296,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('cond', () => {
-    test('samples', () => {
+  describe(`cond`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(cond)`)).toBeUndefined()
       expect(lispish.run(`(cond (true 10) (true 20))`)).toBe(10)
       expect(lispish.run(`(cond (true 10))`)).toBe(10)
@@ -308,20 +308,20 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(cond (true 123) )`)).not.toThrow()
       expect(() => lispish.run(`(cond true 123) )`)).toThrow()
     })
-    test('middle condition true', () => {
+    test(`middle condition true`, () => {
       expect(
         lispish.run(
-          '(cond ((> 5 10) (write 20)) ((>= 10 10) (+ 5 5)) ((write (>= 10 10)) "This will work" (+ 5 5 5)))',
+          `(cond ((> 5 10) (write 20)) ((>= 10 10) (+ 5 5)) ((write (>= 10 10)) "This will work" (+ 5 5 5)))`,
         ),
       ).toBe(10)
       expect(logSpy).not.toHaveBeenCalled()
     })
   })
 
-  describe('defun', () => {
-    test('samples', () => {
-      expect(lispish.run('(defun add (a b) (+ a b)) (add 1 2)')).toBe(3)
-      expect(lispish.run('(defun add (a b &bind ((x 10))) (+ a b x)) (add 1 2)')).toBe(13)
+  describe(`defun`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(defun add (a b) (+ a b)) (add 1 2)`)).toBe(3)
+      expect(lispish.run(`(defun add (a b &bind ((x 10))) (+ a b x)) (add 1 2)`)).toBe(13)
       expect(() => lispish.run(`(defun add () 10)`)).not.toThrow()
       expect(() => lispish.run(`(defun x (a a) 10)`)).toThrow()
       expect(() => lispish.run(`(defun true () 10)`)).toThrow()
@@ -333,15 +333,15 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(defun add 1 (+ a b))`)).toThrow()
       expect(() => lispish.run(`(defun add (a b))`)).toThrow()
     })
-    test('call defun function', () => {
+    test(`call defun function`, () => {
       expect(lispish.run(`(defun sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
-      expect(lispish.run("(defun applyWithVal (fn val) (fn val)) (applyWithVal #'1+ 10)")).toBe(11)
+      expect(lispish.run(`(defun applyWithVal (fn val) (fn val)) (applyWithVal #'1+ 10)`)).toBe(11)
     })
   })
 
-  describe('create-function', () => {
-    test('samples', () => {
-      expect(lispish.run('(create-function (concat "a" "d" "d") (a b) (+ a b)) (add 1 2)')).toBe(3)
+  describe(`create-function`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(create-function (concat "a" "d" "d") (a b) (+ a b)) (add 1 2)`)).toBe(3)
       expect(() => lispish.run(`(create-function "add" () 10)`)).not.toThrow()
       expect(() => lispish.run(`(create-function "x" (a a) 10)`)).toThrow()
       expect(() => lispish.run(`(create-function true () 10)`)).toThrow()
@@ -352,7 +352,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(create-function add 1 (+ a b))`)).toThrow()
       expect(() => lispish.run(`(create-function add (a b))`)).toThrow()
     })
-    test('call create-function function', () => {
+    test(`call create-function function`, () => {
       expect(
         lispish.run(`(create-function "sumOneToN" (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`),
       ).toBe(55)
@@ -360,9 +360,9 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('function', () => {
-    test('samples', () => {
-      lispish.run('(function +)')
+  describe(`function`, () => {
+    test(`samples`, () => {
+      lispish.run(`(function +)`)
       expect(() => lispish.run(`(function)`)).toThrow()
       expect(() => lispish.run(`(function "k")`)).toThrow()
       expect(() => lispish.run(`(function k s)`)).toThrow()
@@ -375,10 +375,10 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('lambda', () => {
-    test('samples', () => {
-      lispish.run('(lambda (x) (+ x 1))')
-      lispish.run('(lambda () 1)')
+  describe(`lambda`, () => {
+    test(`samples`, () => {
+      lispish.run(`(lambda (x) (+ x 1))`)
+      lispish.run(`(lambda () 1)`)
       expect(() => lispish.run(`((lambda (x) (+ y 1)) 10)`)).toThrow()
       expect(() => lispish.run(`(lambda (false) 1)`)).toThrow()
       expect(() => lispish.run(`(lambda (true) 1)`)).toThrow()
@@ -392,8 +392,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('return-from', () => {
-    test('samples', () => {
+  describe(`return-from`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(return-from x (* 2 4))`)).toThrowError(ReturnFromSignal)
       expect(() => lispish.run(`(return-from x)`)).not.toThrowError(ReturnFromSignal)
       expect(() => lispish.run(`(return-from x)`)).toThrow()
@@ -402,23 +402,23 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(return-from "x" 10)`)).not.toThrowError(ReturnFromSignal)
       expect(() => lispish.run(`(return-from "x" 10)`)).toThrow()
       try {
-        lispish.run('(return-from x (* 2 4))')
-        throw 'Not expecting this'
+        lispish.run(`(return-from x (* 2 4))`)
+        throw `Not expecting this`
       } catch (e) {
         expect(e).toBeInstanceOf(ReturnFromSignal)
-        expect((e as ReturnFromSignal).name).toBe('ReturnFromSignal')
+        expect((e as ReturnFromSignal).name).toBe(`ReturnFromSignal`)
         expect((e as ReturnFromSignal).value).toBe(8)
-        expect((e as ReturnFromSignal).blockName).toBe('x')
+        expect((e as ReturnFromSignal).blockName).toBe(`x`)
       }
     })
-    test('in action', () => {
+    test(`in action`, () => {
       const program = `
       (defun x () (write "Hej") (return-from x "Kalle") (write "san"))
       (x)
       `
-      expect(lispish.run(program)).toBe('Kalle')
+      expect(lispish.run(program)).toBe(`Kalle`)
     })
-    test('nested block 1', () => {
+    test(`nested block 1`, () => {
       const program = `
         (block x
           (setq val 1)
@@ -432,7 +432,7 @@ describe('specialExpressions', () => {
       expect(lispish.run(program)).toBe(2)
     })
 
-    test('nested block 2', () => {
+    test(`nested block 2`, () => {
       const program = `
         (block x
           (setq val 1)
@@ -445,41 +445,41 @@ describe('specialExpressions', () => {
       `
       expect(lispish.run(program)).toBe(1)
     })
-    test('return from lambda', () => {
+    test(`return from lambda`, () => {
       const program = `
         ((lambda ()
           (return "A")
           "B"
         ))
       `
-      expect(lispish.run(program)).toBe('A')
+      expect(lispish.run(program)).toBe(`A`)
     })
   })
 
-  describe('return', () => {
-    test('samples', () => {
+  describe(`return`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(return (* 2 4))`)).toThrowError(ReturnSignal)
       expect(() => lispish.run(`(return)`)).not.toThrowError(ReturnFromSignal)
       expect(() => lispish.run(`(return)`)).toThrow()
       try {
-        lispish.run('(return (* 2 4))')
-        throw 'Not expecting this'
+        lispish.run(`(return (* 2 4))`)
+        throw `Not expecting this`
       } catch (e) {
         expect(e).toBeInstanceOf(ReturnSignal)
-        expect((e as ReturnSignal).name).toBe('ReturnSignal')
+        expect((e as ReturnSignal).name).toBe(`ReturnSignal`)
         expect((e as ReturnSignal).value).toBe(8)
       }
     })
-    test('in action', () => {
+    test(`in action`, () => {
       const program = `
       (defun x () (write "Hej") (return "Kalle") (write "san"))
       (x)
       `
-      expect(lispish.run(program)).toBe('Kalle')
+      expect(lispish.run(program)).toBe(`Kalle`)
     })
   })
-  describe('block', () => {
-    test('samples', () => {
+  describe(`block`, () => {
+    test(`samples`, () => {
       expect(
         lispish.run(`(block x
         (write "hej")
@@ -492,7 +492,7 @@ describe('specialExpressions', () => {
         (write "hej")
         (write "XXX")
       )`),
-      ).toBe('XXX')
+      ).toBe(`XXX`)
       expect(() =>
         lispish.run(`(block x
         (write "hej")
@@ -515,7 +515,7 @@ describe('specialExpressions', () => {
       )`),
       ).toThrow()
     })
-    test('asd', () => {
+    test(`asd`, () => {
       expect(() =>
         lispish.run(`(block x
         (write hej)
@@ -526,8 +526,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('try', () => {
-    test('samples', () => {
+  describe(`try`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(try (/ 2 4) ((error) 1))`)).toBe(0.5)
       expect(lispish.run(`(try (/ 2 0) ((error) 1))`)).toBe(1)
       expect(lispish.run(`(try (/ 2 0) ((error) error))`)).toBeInstanceOf(Error)
@@ -538,7 +538,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(try (/ 2 4) ((error) 1 2))`)).toThrow()
       expect(() => lispish.run(`(try (/ 2 4) ((error) 1 )2)`)).toThrow()
     })
-    test('return-from should not trigger catchBlock', () => {
+    test(`return-from should not trigger catchBlock`, () => {
       const program = `
         (block b
           (try
@@ -551,9 +551,9 @@ describe('specialExpressions', () => {
           )
         )
       `
-      expect(lispish.run(program)).toBe('Two')
+      expect(lispish.run(program)).toBe(`Two`)
     })
-    test('return-from should not trigger catchBlock', () => {
+    test(`return-from should not trigger catchBlock`, () => {
       const program = `
         (defun fn ()
           (try
@@ -567,27 +567,27 @@ describe('specialExpressions', () => {
         )
         (fn)
       `
-      expect(lispish.run(program)).toBe('Two')
+      expect(lispish.run(program)).toBe(`Two`)
     })
   })
 
-  describe('throw', () => {
-    test('samples', () => {
+  describe(`throw`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(throw "An error")`)).toThrowError(UserDefinedError)
       expect(() => lispish.run(`(throw (substring "An error" 3))`)).toThrowError(UserDefinedError)
       expect(() => lispish.run(`(throw "An error" 10)`)).not.toThrowError(UserDefinedError)
       expect(() => lispish.run(`(throw "An error" 10)`)).toThrow()
       try {
-        lispish.run('(throw (substring "An error" 3))')
+        lispish.run(`(throw (substring "An error" 3))`)
         throw Error()
       } catch (error) {
-        expect((error as UserDefinedError).message).toBe('error')
+        expect((error as UserDefinedError).message).toBe(`error`)
       }
     })
   })
 
-  describe('when', () => {
-    test('samples', () => {
+  describe(`when`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(when true (write 10) (write 20))`)).toBe(20)
       expect(lispish.run(`(when "Charles" (write 10) (write 20))`)).toBe(20)
       expect(lispish.run(`(when (> 10 20) (write 10) (write 20))`)).toBe(undefined)
@@ -597,8 +597,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('unless', () => {
-    test('samples', () => {
+  describe(`unless`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(unless true (write 10) (write 20))`)).toBeUndefined()
       expect(lispish.run(`(unless (> 10 20) (write 10) (write 20))`)).toBe(20)
       expect(lispish.run(`(unless null (write 10) (write 20))`)).toBe(20)
@@ -608,8 +608,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('loop', () => {
-    test('simple loop', () => {
+  describe(`loop`, () => {
+    test(`simple loop`, () => {
       expect(
         lispish.run(`
         (let ((x 0))
@@ -620,7 +620,7 @@ describe('specialExpressions', () => {
         )`),
       ).toBe(6)
     })
-    test('simple loop with throw', () => {
+    test(`simple loop with throw`, () => {
       expect(
         lispish.run(`
         (try
@@ -636,12 +636,12 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('dolist', () => {
-    test('samples', () => {
+  describe(`dolist`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(setq l [1 2 3]) (dolist el l)`)).toThrow()
     })
 
-    test('dolist without result value', () => {
+    test(`dolist without result value`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
@@ -656,7 +656,7 @@ describe('specialExpressions', () => {
       ).toBe(6)
     })
 
-    test('dolist returns undefined if no return expression', () => {
+    test(`dolist returns undefined if no return expression`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
@@ -665,7 +665,7 @@ describe('specialExpressions', () => {
       ).toBeUndefined()
     })
 
-    test('dolist with result value', () => {
+    test(`dolist with result value`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
@@ -679,7 +679,7 @@ describe('specialExpressions', () => {
       ).toBe(6)
     })
 
-    test('dolist with return', () => {
+    test(`dolist with return`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
@@ -694,7 +694,7 @@ describe('specialExpressions', () => {
       ).toBe(1)
     })
 
-    test('dolist with throw', () => {
+    test(`dolist with throw`, () => {
       expect(() =>
         lispish.run(`
           (setq l [1 2 3])
@@ -710,12 +710,12 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('dotimes', () => {
-    test('samples', () => {
+  describe(`dotimes`, () => {
+    test(`samples`, () => {
       expect(() => lispish.run(`(dotimes x 5 x)`)).toThrow()
     })
 
-    test('dotimes without result value', () => {
+    test(`dotimes without result value`, () => {
       expect(
         lispish.run(`
           (setq x 0)
@@ -729,7 +729,7 @@ describe('specialExpressions', () => {
       ).toBe(6)
     })
 
-    test('dotimes returns undefined if no return expression', () => {
+    test(`dotimes returns undefined if no return expression`, () => {
       expect(
         lispish.run(`
           (dotimes (el 5))
@@ -737,7 +737,7 @@ describe('specialExpressions', () => {
       ).toBeUndefined()
     })
 
-    test('dotimes with result value', () => {
+    test(`dotimes with result value`, () => {
       expect(
         lispish.run(`
           (let ((x 0))
@@ -749,7 +749,7 @@ describe('specialExpressions', () => {
       ).toBe(15)
     })
 
-    test('dotimes with return', () => {
+    test(`dotimes with return`, () => {
       expect(
         lispish.run(`
           (let ((x 0))
@@ -762,7 +762,7 @@ describe('specialExpressions', () => {
       ).toBe(10)
     })
 
-    test('dotimes with throw', () => {
+    test(`dotimes with throw`, () => {
       expect(() =>
         lispish.run(`
           (let ((x 0))
@@ -776,8 +776,8 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('while', () => {
-    test('simple while', () => {
+  describe(`while`, () => {
+    test(`simple while`, () => {
       expect(
         lispish.run(`
           (setq x 0)
@@ -787,10 +787,10 @@ describe('specialExpressions', () => {
       ).toBe(11)
     })
   })
-  describe('progn', () => {
-    test('samples', () => {
+  describe(`progn`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(progn [1 2 3] "[1]" (+ 1 2))`)).toBe(3)
-      expect(lispish.run(`(progn (object "a" 1) "a")`)).toBe('a')
+      expect(lispish.run(`(progn (object "a" 1) "a")`)).toBe(`a`)
       expect(lispish.run(`(progn)`)).toBeUndefined()
     })
   })

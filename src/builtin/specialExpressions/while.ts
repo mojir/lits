@@ -3,7 +3,7 @@ import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface WhileSpecialExpressionNode extends SpecialExpressionNode {
-  name: 'while'
+  name: `while`
   whileExpression: AstNode
 }
 
@@ -13,14 +13,14 @@ export const whileSpecialExpression: SpecialExpression = {
     ;[position, whileExpression] = parseToken(tokens, position)
 
     const node: WhileSpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'while',
+      type: `SpecialExpression`,
+      name: `while`,
       params: [],
       whileExpression,
     }
 
     let token = asNotUndefined(tokens[position])
-    while (!(token.type === 'paren' && token.value === ')')) {
+    while (!(token.type === `paren` && token.value === `)`)) {
       const [newPosition, bodyNode] = parseToken(tokens, position)
       node.params.push(bodyNode)
       position = newPosition

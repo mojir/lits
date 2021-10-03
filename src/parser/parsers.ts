@@ -27,31 +27,31 @@ import { UnexpectedTokenError } from '../errors'
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'Number', value: Number(token.value) }]
+  return [position + 1, { type: `Number`, value: Number(token.value) }]
 }
 
 type ParseString = (tokens: Token[], position: number) => [number, StringNode]
 export const parseString: ParseString = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'String', value: token.value }]
+  return [position + 1, { type: `String`, value: token.value }]
 }
 
 type ParseName = (tokens: Token[], position: number) => [number, NameNode]
 export const parseName: ParseName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'Name', value: token.value }]
+  return [position + 1, { type: `Name`, value: token.value }]
 }
 
 type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
 export const parseReservedName: ParseReservedName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: 'ReservedName', value: token.value as ReservedName }]
+  return [position + 1, { type: `ReservedName`, value: token.value as ReservedName }]
 }
 
 const parseParams: ParseParams = (tokens, position) => {
   let token = asNotUndefined(tokens[position])
   const params: AstNode[] = []
-  while (!(token.type === 'paren' && token.value === ')')) {
+  while (!(token.type === `paren` && token.value === `)`)) {
     const [newPosition, param] = parseToken(tokens, position)
     position = newPosition
     params.push(param)
@@ -64,13 +64,13 @@ const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
   const token = asNotUndefined(tokens[position])
-  if (token.type === 'name') {
+  if (token.type === `name`) {
     const expressionName = token.value
     if (builtin.specialExpressions[expressionName]) {
       return parseSpecialExpression(tokens, position)
     }
     return parseNormalExpression(tokens, position)
-  } else if (token.type === 'paren' && token.value === '(') {
+  } else if (token.type === `paren` && token.value === `(`) {
     return parseExpressionExpression(tokens, position)
   } else {
     throw Error(`Could not parse expression, expected name or "(", got ${token.type}:${token.value}`)
@@ -84,7 +84,7 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
   let token = asNotUndefined(tokens[position])
   const params: AstNode[] = []
   let param: AstNode
-  while (!(token.type === 'paren' && token.value === ']')) {
+  while (!(token.type === `paren` && token.value === `]`)) {
     ;[position, param] = parseToken(tokens, position)
     params.push(param)
     token = asNotUndefined(tokens[position])
@@ -93,8 +93,8 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
   position = position + 1
 
   const node: NormalExpressionNode = {
-    type: 'NormalExpression',
-    name: 'list',
+    type: `NormalExpression`,
+    name: `list`,
     params,
   }
 
@@ -106,8 +106,8 @@ const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position) => {
   const [newPosition, innerNode] = parseToken(tokens, position + 1)
 
   const node: FunctionSpecialExpressionNode = {
-    type: 'SpecialExpression',
-    name: 'function',
+    type: `SpecialExpression`,
+    name: `function`,
     params: [innerNode],
   }
   return [newPosition, node]
@@ -122,8 +122,8 @@ const parseListShorthand: ParseListShorthand = (tokens, position) => {
   position = position + 1
 
   const node: NormalExpressionNode = {
-    type: 'NormalExpression',
-    name: 'list',
+    type: `NormalExpression`,
+    name: `list`,
     params,
   }
 
@@ -132,27 +132,27 @@ const parseListShorthand: ParseListShorthand = (tokens, position) => {
 
 const parseArgument: ParseArgument = (tokens, position) => {
   let token = asNotUndefined(tokens[position])
-  if (token.type === 'name') {
-    return [position + 1, { type: 'Argument', name: token.value }]
-  } else if (token.type === 'paren' && token.value === '(') {
+  if (token.type === `name`) {
+    return [position + 1, { type: `Argument`, name: token.value }]
+  } else if (token.type === `paren` && token.value === `(`) {
     position += 1
     token = asNotUndefined(tokens[position])
-    if (token.type !== 'name') {
-      throw new UnexpectedTokenError('name', token)
+    if (token.type !== `name`) {
+      throw new UnexpectedTokenError(`name`, token)
     }
     const name = token.value
     position += 1
     const [newPosition, defaultValue] = parseToken(tokens, position)
     token = asNotUndefined(tokens[newPosition])
-    if (!(token.type === 'paren' && token.value === ')')) {
-      throw new UnexpectedTokenError(')', token)
+    if (!(token.type === `paren` && token.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, token)
     }
-    return [newPosition + 1, { type: 'Argument', name, defaultValue }]
-  } else if (token.type === 'modifier') {
+    return [newPosition + 1, { type: `Argument`, name, defaultValue }]
+  } else if (token.type === `modifier`) {
     const value = token.value as ModifierName
-    return [position + 1, { type: 'Modifier', value }]
+    return [position + 1, { type: `Modifier`, value }]
   } else {
-    throw new UnexpectedTokenError('"(", name or modifier', token)
+    throw new UnexpectedTokenError(`"(", name or modifier`, token)
   }
 }
 
@@ -160,7 +160,7 @@ const parseBinding: ParseBinding = (tokens, position) => {
   position += 1 // Skip parenthesis
 
   let token = asNotUndefined(tokens[position])
-  if (token.type !== 'name') {
+  if (token.type !== `name`) {
     throw Error(`Expected name node in binding, got ${token.type} value=${token.value}`)
   }
   const name = token.value
@@ -171,12 +171,12 @@ const parseBinding: ParseBinding = (tokens, position) => {
   position = newPosition
 
   token = asNotUndefined(tokens[position])
-  if (!(token.type === 'paren' && token.value === ')')) {
-    throw new UnexpectedTokenError(')', token)
+  if (!(token.type === `paren` && token.value === `)`)) {
+    throw new UnexpectedTokenError(`)`, token)
   }
 
   const node: BindingNode = {
-    type: 'Binding',
+    type: `Binding`,
     name,
     value,
   }
@@ -189,7 +189,7 @@ const parseExpressionExpression: ParseExpressionExpression = (tokens, position) 
   const [newPosition2, params] = parseParams(tokens, newPosition1)
 
   const node: ExpressionExpressionNode = {
-    type: 'ExpressionExpression',
+    type: `ExpressionExpression`,
     expression,
     params,
   }
@@ -204,7 +204,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
   position = newPosition + 1
 
   const node: NormalExpressionNode = {
-    type: 'NormalExpression',
+    type: `NormalExpression`,
     name: expressionName,
     params,
   }
@@ -244,27 +244,27 @@ export const parseToken: ParseToken = (tokens, position) => {
   const token = asNotUndefined(tokens[position])
   let nodeDescriptor: [number, AstNode] | undefined = undefined
   switch (token.type) {
-    case 'number':
+    case `number`:
       nodeDescriptor = parseNumber(tokens, position)
       break
-    case 'string':
+    case `string`:
       nodeDescriptor = parseString(tokens, position)
       break
-    case 'name':
+    case `name`:
       nodeDescriptor = parseName(tokens, position)
       break
-    case 'reservedName':
+    case `reservedName`:
       nodeDescriptor = parseReservedName(tokens, position)
       break
-    case 'paren':
-      if (token.value === '(') {
+    case `paren`:
+      if (token.value === `(`) {
         nodeDescriptor = parseExpression(tokens, position)
-      } else if (token.value === '[') {
+      } else if (token.value === `[`) {
         nodeDescriptor = parseArrayLitteral(tokens, position)
       }
       break
-    case 'shorthand':
-      if (token.value === "#'") {
+    case `shorthand`:
+      if (token.value === `#'`) {
         nodeDescriptor = parseFunctionShorthand(tokens, position)
       } else {
         nodeDescriptor = parseListShorthand(tokens, position)

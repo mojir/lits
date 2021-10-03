@@ -31,7 +31,7 @@ const averageRefTime = Math.round((100000 * (Date.now() - startRefTime)) / ITERA
 function createJsProgram(expression: string, globalContext: any) {
   const vars = Object.entries(globalContext.variables)
     .map(entry => `  var ${entry[0]} = ${JSON.stringify(entry[1])};`)
-    .join('\n')
+    .join(`\n`)
   return `
 (function () {
 ${vars}
@@ -47,39 +47,39 @@ ${label}: ${averageTime} µs
 Factor: ${Math.round((100 * averageTime) / averageRefTime) / 100} (${averageRefTime} µs)`)
 }
 
-xdescribe('performace', () => {
-  test('tokenise', () => {
+xdescribe(`performace`, () => {
+  test(`tokenise`, () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
       tokenize(program)
     }
-    logPerformace('Tokenise', Date.now() - startTime)
+    logPerformace(`Tokenise`, Date.now() - startTime)
   })
 
-  test('parse', () => {
+  test(`parse`, () => {
     const tokens = tokenize(program)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
       parse(tokens)
     }
-    logPerformace('Parse tokens', Date.now() - startTime)
+    logPerformace(`Parse tokens`, Date.now() - startTime)
   })
 
-  test('evaluate', () => {
+  test(`evaluate`, () => {
     const tokens = tokenize(program)
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
       evaluate(ast, globalContext, { variables: {}, functions: {} })
     }
-    logPerformace('Evaluate AST', Date.now() - startTime)
+    logPerformace(`Evaluate AST`, Date.now() - startTime)
   })
 
-  test('lispish tokenize - parse - evaluate', () => {
+  test(`lispish tokenize - parse - evaluate`, () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
       lispish.run(program, { globalContext })
     }
-    logPerformace('Execute program (tokenize, parse and evaluate)', Date.now() - startTime)
+    logPerformace(`Execute program (tokenize, parse and evaluate)`, Date.now() - startTime)
   })
 })

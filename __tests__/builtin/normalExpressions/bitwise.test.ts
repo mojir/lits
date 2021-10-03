@@ -6,19 +6,19 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('predicates', () => {
-  describe('lognot', () => {
-    test('samples', () => {
+describe(`predicates`, () => {
+  describe(`lognot`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(lognot 0)`)).toBe(-1)
       expect(lispish.run(`(lognot 255)`)).toBe(-256)
-      expect(lispish.run(`(lognot 0b1111)`)).toBe(~Number('0b1111'))
-      expect(lispish.run(`(lognot 0xffff)`)).toBe(~Number('0xffff'))
+      expect(lispish.run(`(lognot 0b1111)`)).toBe(~Number(`0b1111`))
+      expect(lispish.run(`(lognot 0xffff)`)).toBe(~Number(`0xffff`))
       expect(() => lispish.run(`(lognot)`)).toThrow()
       expect(() => lispish.run(`(lognot 1 2)`)).toThrow()
     })
   })
-  describe('ash', () => {
-    test('samples', () => {
+  describe(`ash`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(ash 16 2)`)).toBe(64)
       expect(lispish.run(`(ash 16 -2)`)).toBe(4)
       expect(lispish.run(`(ash -16 2)`)).toBe(-64)
@@ -29,14 +29,14 @@ describe('predicates', () => {
       expect(lispish.run(`(ash -16 -5)`)).toBe(-1)
       expect(lispish.run(`(ash -16 -50)`)).toBe(-1)
       expect(lispish.run(`(ash 256 -4)`)).toBe(16)
-      expect(lispish.run(`(ash 0b1000 -1)`)).toBe(Number('0b0100'))
+      expect(lispish.run(`(ash 0b1000 -1)`)).toBe(Number(`0b0100`))
       expect(() => lispish.run(`(ash)`)).toThrow()
       expect(() => lispish.run(`(ash 1)`)).toThrow()
       expect(() => lispish.run(`(ash 1 2 3)`)).toThrow()
     })
   })
-  describe('logand', () => {
-    test('samples', () => {
+  describe(`logand`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(logand)`)).toBe(-1)
       expect(lispish.run(`(logand 12)`)).toBe(12)
       expect(lispish.run(`(logand 0b0011 0b1010)`)).toBe(0b0010)
@@ -45,8 +45,8 @@ describe('predicates', () => {
       expect(() => lispish.run(`(logand 1 2.1)`)).toThrow()
     })
   })
-  describe('logor', () => {
-    test('samples', () => {
+  describe(`logor`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(logor)`)).toBe(0)
       expect(lispish.run(`(logor 12)`)).toBe(12)
       expect(lispish.run(`(logor 0b0011 0b1010)`)).toBe(0b1011)
@@ -55,8 +55,8 @@ describe('predicates', () => {
       expect(() => lispish.run(`(logor 1 2.1)`)).toThrow()
     })
   })
-  describe('logxor', () => {
-    test('samples', () => {
+  describe(`logxor`, () => {
+    test(`samples`, () => {
       expect(lispish.run(`(logxor 0b0011 0b1010)`)).toBe(0b1001)
       expect(() => lispish.run(`(logxor)`)).toThrow()
       expect(() => lispish.run(`(logxor 1)`)).toThrow()

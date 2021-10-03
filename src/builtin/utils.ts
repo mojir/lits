@@ -26,10 +26,10 @@ export function parseFunctionArguments(
     defaultValue?: AstNode
   }> = []
   const argNames: Record<string, true> = {}
-  let state: 'mandatory' | 'optional' | 'rest' | 'bind' = 'mandatory'
+  let state: `mandatory` | `optional` | `rest` | `bind` = `mandatory`
   let token = asNotUndefined(tokens[position])
-  while (!(token.type === 'paren' && token.value === ')')) {
-    if (state === 'bind') {
+  while (!(token.type === `paren` && token.value === `)`)) {
+    if (state === `bind`) {
       ;[position, bindings] = parseBindings(tokens, position, parseBinding)
       break
     } else {
@@ -37,34 +37,34 @@ export function parseFunctionArguments(
       position = newPosition
       token = asNotUndefined(tokens[position])
 
-      if (node.type === 'Modifier') {
+      if (node.type === `Modifier`) {
         switch (node.value) {
-          case '&optional':
-            if (state === 'rest') {
-              throw Error('&optional cannot appear after &rest')
+          case `&optional`:
+            if (state === `rest`) {
+              throw Error(`&optional cannot appear after &rest`)
             }
-            if (state === 'optional') {
-              throw Error('&optional can only appear once')
+            if (state === `optional`) {
+              throw Error(`&optional can only appear once`)
             }
-            state = 'optional'
+            state = `optional`
             break
-          case '&rest':
-            if (state === 'rest') {
-              throw Error('&rest can only appear once')
+          case `&rest`:
+            if (state === `rest`) {
+              throw Error(`&rest can only appear once`)
             }
-            if (state === 'optional' && optionalArguments.length === 0) {
-              throw Error('No optional arguments where spcified')
+            if (state === `optional` && optionalArguments.length === 0) {
+              throw Error(`No optional arguments where spcified`)
             }
-            state = 'rest'
+            state = `rest`
             break
-          case '&bind':
-            if (state === 'optional' && optionalArguments.length === 0) {
-              throw Error('No optional arguments where spcified')
+          case `&bind`:
+            if (state === `optional` && optionalArguments.length === 0) {
+              throw Error(`No optional arguments where spcified`)
             }
-            if (state === 'rest' && !restArgument) {
-              throw Error('No rest argument was spcified')
+            if (state === `rest` && !restArgument) {
+              throw Error(`No rest argument was spcified`)
             }
-            state = 'bind'
+            state = `bind`
             break
         }
       } else {
@@ -74,9 +74,9 @@ export function parseFunctionArguments(
           argNames[node.name] = true
         }
 
-        if (Object.getOwnPropertyDescriptor(node, 'defaultValue')) {
-          if (state !== 'optional') {
-            throw Error('Cannot specify default value if not an optional argument')
+        if (Object.getOwnPropertyDescriptor(node, `defaultValue`)) {
+          if (state !== `optional`) {
+            throw Error(`Cannot specify default value if not an optional argument`)
           }
           optionalArguments.push({
             name: node.name,
@@ -84,18 +84,18 @@ export function parseFunctionArguments(
           })
         } else {
           switch (state) {
-            case 'mandatory':
+            case `mandatory`:
               mandatoryArguments.push(node.name)
               break
-            case 'optional':
+            case `optional`:
               optionalArguments.push({
                 name: node.name,
                 defaultValue: undefined,
               })
               break
-            case 'rest':
+            case `rest`:
               if (restArgument !== undefined) {
-                throw Error('Can only specify one rest argument')
+                throw Error(`Can only specify one rest argument`)
               }
               restArgument = node.name
               break
@@ -105,11 +105,11 @@ export function parseFunctionArguments(
     }
   }
 
-  if (state === 'rest' && restArgument === undefined) {
-    throw Error('Missing rest argument name')
+  if (state === `rest` && restArgument === undefined) {
+    throw Error(`Missing rest argument name`)
   }
-  if (state === 'optional' && optionalArguments.length === 0) {
-    throw Error('No optional arguments where spcified')
+  if (state === `optional` && optionalArguments.length === 0) {
+    throw Error(`No optional arguments where spcified`)
   }
 
   position += 1
@@ -128,8 +128,8 @@ function parseBindings(tokens: Token[], position: number, parseBinding: ParseBin
   const bindings: BindingNode[] = []
   position += 1
   let token = asNotUndefined(tokens[position])
-  while (!(token.type === 'paren' && token.value === ')')) {
-    if (!(token.type === 'paren' && token.value === '(')) {
+  while (!(token.type === `paren` && token.value === `)`)) {
+    if (!(token.type === `paren` && token.value === `(`)) {
       throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected an expression`)
     }
     const [newPosition, binding] = parseBinding(tokens, position)

@@ -5,7 +5,7 @@ import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface TrySpecialExpressionNode extends SpecialExpressionNode {
-  name: 'try'
+  name: `try`
   tryExpression: AstNode
   error: NameNode
   catchExpression: AstNode
@@ -17,26 +17,26 @@ export const trySpecialExpression: SpecialExpression = {
     ;[position, tryExpression] = parseToken(tokens, position)
 
     let token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === '(')) {
-      throw new UnexpectedTokenError('(', token)
+    if (!(token.type === `paren` && token.value === `(`)) {
+      throw new UnexpectedTokenError(`(`, token)
     }
     position += 1
 
     token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === '(')) {
-      throw new UnexpectedTokenError('(', token)
+    if (!(token.type === `paren` && token.value === `(`)) {
+      throw new UnexpectedTokenError(`(`, token)
     }
 
     position += 1
     let error: AstNode
     ;[position, error] = parseToken(tokens, position)
-    if (error.type !== 'Name') {
-      throw new UnexpectedNodeTypeError('Name', error)
+    if (error.type !== `Name`) {
+      throw new UnexpectedNodeTypeError(`Name`, error)
     }
 
     token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === ')')) {
-      throw new UnexpectedTokenError(')', token)
+    if (!(token.type === `paren` && token.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, token)
     }
     position += 1
 
@@ -44,20 +44,20 @@ export const trySpecialExpression: SpecialExpression = {
     ;[position, catchExpression] = parseToken(tokens, position)
 
     token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === ')')) {
-      throw new UnexpectedTokenError(')', token)
+    if (!(token.type === `paren` && token.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, token)
     }
     position += 1
 
     token = asNotUndefined(tokens[position])
-    if (!(token.type === 'paren' && token.value === ')')) {
-      throw new UnexpectedTokenError(')', token)
+    if (!(token.type === `paren` && token.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, token)
     }
     position += 1
 
     const node: TrySpecialExpressionNode = {
-      type: 'SpecialExpression',
-      name: 'try',
+      type: `SpecialExpression`,
+      name: `try`,
       params: [],
       tryExpression,
       catchExpression,

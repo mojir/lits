@@ -6,9 +6,9 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe('shorthand', () => {
-  describe('function shorthand ', () => {
-    test('samples', () => {
+describe(`shorthand`, () => {
+  describe(`function shorthand `, () => {
+    test(`samples`, () => {
       lispish.run(`#'+`)
       expect(() => lispish.run(`#'`)).toThrow()
       expect(() => lispish.run(`#'"k"`)).toThrow()
@@ -22,11 +22,11 @@ describe('shorthand', () => {
     })
   })
 
-  describe('list shorthand ', () => {
-    test('samples', () => {
+  describe(`list shorthand `, () => {
+    test(`samples`, () => {
       expect(lispish.run(`[1 2 3]`)).toEqual([1, 2, 3])
       expect(lispish.run(`[]`)).toEqual([])
-      expect(lispish.run(`[(+ 1 2) "Text" null false undefined]`)).toEqual([3, 'Text', null, false, undefined])
+      expect(lispish.run(`[(+ 1 2) "Text" null false undefined]`)).toEqual([3, `Text`, null, false, undefined])
     })
   })
 })
