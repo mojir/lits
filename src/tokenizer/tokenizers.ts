@@ -165,13 +165,6 @@ export function tokenizeReservedName(input: string, position: number): TokenDesc
 export const tokenizeName: Tokenizer = (input: string, position: number) =>
   tokenizePattern(`name`, nameRegExp, input, position)
 
-export const tokenizeShorthand: Tokenizer = (input: string, position: number) => {
-  if (input.substr(position, 2) === `#'`) {
-    return [2, { type: `shorthand`, value: `#'` }]
-  }
-  return [0, undefined]
-}
-
 export const tokenizeModifier: Tokenizer = (input: string, position: number) => {
   if (input.substr(position, 5) === `&rest`) {
     const value: ModifierName = `&rest`

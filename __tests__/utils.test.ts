@@ -49,7 +49,7 @@ describe(`utils`, () => {
         mandatoryArguments: [],
         optionalArguments: [],
       },
-      functionContext: { variables: {}, functions: {} },
+      functionContext: {},
       name: undefined,
       body: [],
     }
@@ -226,7 +226,7 @@ describe(`utils`, () => {
         mandatoryArguments: [],
         optionalArguments: [],
       },
-      functionContext: { variables: {}, functions: {} },
+      functionContext: {},
       name: undefined,
       body: [],
     }
@@ -430,7 +430,7 @@ describe(`utils`, () => {
         mandatoryArguments: [],
         optionalArguments: [],
       },
-      functionContext: { variables: {}, functions: {} },
+      functionContext: {},
       name: undefined,
       body: [],
     }
@@ -459,7 +459,7 @@ describe(`utils`, () => {
         mandatoryArguments: [],
         optionalArguments: [],
       },
-      functionContext: { variables: {}, functions: {} },
+      functionContext: {},
       name: undefined,
       body: [],
     }
@@ -488,7 +488,7 @@ describe(`utils`, () => {
         mandatoryArguments: [],
         optionalArguments: [],
       },
-      functionContext: { variables: {}, functions: {} },
+      functionContext: {},
       name: undefined,
       body: [],
     }

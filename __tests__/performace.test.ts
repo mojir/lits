@@ -14,10 +14,7 @@ beforeEach(() => {
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
-const globalContext: Context = {
-  variables: { x: { value: 20, constant: false }, y: { value: 30, constant: false } },
-  functions: {},
-}
+const globalContext: Context = { x: { value: 20, constant: false }, y: { value: 30, constant: false } }
 const jsExpression = `((x - y) * (y - x)) + ((x / y) * (y / x))`
 
 // Some baseline values for javascript eval to compare with
@@ -29,7 +26,7 @@ for (let i = 0; i < ITERATIONS; i += 1) {
 const averageRefTime = Math.round((100000 * (Date.now() - startRefTime)) / ITERATIONS) / 100
 
 function createJsProgram(expression: string, globalContext: any) {
-  const vars = Object.entries(globalContext.variables)
+  const vars = Object.entries(globalContext)
     .map(entry => `  var ${entry[0]} = ${JSON.stringify(entry[1])};`)
     .join(`\n`)
   return `
@@ -70,7 +67,7 @@ xdescribe(`performace`, () => {
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      evaluate(ast, globalContext, { variables: {}, functions: {} })
+      evaluate(ast, globalContext, {})
     }
     logPerformace(`Evaluate AST`, Date.now() - startTime)
   })

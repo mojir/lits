@@ -37,14 +37,14 @@ export const letSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     castLetExpressionNode(node)
-    const locals: Context = { variables: {}, functions: {} }
+    const locals: Context = {}
     for (const binding of node.bindings) {
       const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
       if (isLispishFunction(bindingValue)) {
         throw Error(`Cannot bind function in let expression`)
       }
-      locals.variables[binding.name] = { value: bindingValue, constant: false }
+      locals[binding.name] = { value: bindingValue, constant: false }
     }
     const newContextStack = [locals, ...contextStack]
 

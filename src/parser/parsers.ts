@@ -21,7 +21,6 @@ import {
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
-import { FunctionSpecialExpressionNode } from '../builtin/specialExpressions/function'
 import { UnexpectedTokenError } from '../errors'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
@@ -99,18 +98,6 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
   }
 
   return [position, node]
-}
-
-type ParseFunctionShorthand = (tokens: Token[], position: number) => [number, FunctionSpecialExpressionNode]
-const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position) => {
-  const [newPosition, innerNode] = parseToken(tokens, position + 1)
-
-  const node: FunctionSpecialExpressionNode = {
-    type: `SpecialExpression`,
-    name: `function`,
-    params: [innerNode],
-  }
-  return [newPosition, node]
 }
 
 const parseArgument: ParseArgument = (tokens, position) => {
@@ -245,9 +232,6 @@ export const parseToken: ParseToken = (tokens, position) => {
       } else if (token.value === `[`) {
         nodeDescriptor = parseArrayLitteral(tokens, position)
       }
-      break
-    case `shorthand`:
-      nodeDescriptor = parseFunctionShorthand(tokens, position)
       break
   }
   if (!nodeDescriptor) {

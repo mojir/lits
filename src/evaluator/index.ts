@@ -7,6 +7,7 @@ import {
   ReservedNameNode,
   LispishFunction,
   ExpressionExpressionNode,
+  functionSymbol,
 } from '../parser/interface'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
@@ -61,9 +62,15 @@ function evaluateReservedName(node: ReservedNameNode): unknown {
 
 function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
   for (const context of contextStack) {
-    const variable = context.variables[value]
+    const variable = context[value]
     if (variable) {
       return variable.value
+    }
+  }
+  if (builtin.normalExpressions[value]) {
+    return {
+      [functionSymbol]: true,
+      builtin: value,
     }
   }
   throw Error(`Undefined identifier ${value}`)
@@ -74,8 +81,9 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 
   let lispishFunction: LispishFunction | undefined = undefined
   for (const context of contextStack) {
-    lispishFunction = context.functions[node.name]?.fun
-    if (lispishFunction) {
+    const candidate = context[node.name]?.value
+    if (isLispishFunction(candidate)) {
+      lispishFunction = candidate
       break
     }
   }
@@ -117,31 +125,23 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       if (i < nbrOfMandatoryArgs) {
         const param = params[i]
         const key = asNotUndefined(args.mandatoryArguments[i], ``)
-        if (isLispishFunction(param)) {
-          newContext.functions[key] = { fun: param, constant: false }
-        } else {
-          newContext.variables[key] = { value: param, constant: false }
-        }
+        newContext[key] = { value: param, constant: false }
       } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
         const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
         const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
         const key = arg.name
-        if (isLispishFunction(param)) {
-          newContext.functions[key] = { fun: param, constant: false }
-        } else {
-          newContext.variables[key] = { value: param, constant: false }
-        }
+        newContext[key] = { value: param, constant: false }
       } else {
         const param = params[i]
         if (isLispishFunction(param)) {
           throw Error(`A function cannot be a &rest parameter`) //  TODO, is this a fact?
         }
-        rest.push(param)
+        rest.push(params[i])
       }
     }
 
     if (args.restArgument) {
-      newContext.variables[args.restArgument] = { value: rest, constant: false }
+      newContext[args.restArgument] = { value: rest, constant: false }
     }
 
     try {

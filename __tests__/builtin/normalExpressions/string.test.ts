@@ -279,7 +279,7 @@ describe(`string functions`, () => {
         `pqrst`,
         `vw`,
       ])
-      expect(lispish.run(`(map #'string-to-number (split "0123456789" "" 5))`)).toEqual([0, 1, 2, 3, 4])
+      expect(lispish.run(`(map string-to-number (split "0123456789" "" 5))`)).toEqual([0, 1, 2, 3, 4])
       expect(() => lispish.run(`(split "0123456789")`)).toThrow()
       expect(() => lispish.run(`(split "0123456789" "5" -1)`)).toThrow()
       expect(() => lispish.run(`(split 23456789 "5")`)).toThrow()

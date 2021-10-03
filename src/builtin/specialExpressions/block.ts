@@ -36,10 +36,7 @@ export const blockSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     castBlockExpressionNode(node)
-    const newContext: Context = {
-      functions: {},
-      variables: {},
-    }
+    const newContext: Context = {}
 
     const newContextStack = [newContext, ...contextStack]
     let result: unknown

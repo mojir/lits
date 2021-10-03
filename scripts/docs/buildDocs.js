@@ -192,13 +192,13 @@ function getDocumentationContent(docObj) {
         try {
           result = lispish.run(example)
 
-          return `<pre><span class="example" onclick="runPlayground('${escapeExample(
+          return `<pre><span class="example" onclick="addToPlayground('${escapeExample(
             example,
           )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifyValue(
             result,
           )}</span></span></pre>`
         } catch (error) {
-          return `<pre class="example" onclick="runPlayground('${escapeExample(
+          return `<pre class="example" onclick="addToPlayground('${escapeExample(
             example,
           )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
         } finally {
@@ -272,9 +272,9 @@ function copyFavicon() {
 function stringifyValue(value) {
   if (Lispish.isLispishFunction(value)) {
     if (value.builtin) {
-      return `&lt;BUILTIN FUNCTION ${value.builtin}&gt;`
+      return `&lt;builtin function ${value.builtin}&gt;`
     } else {
-      return `&lt;FUNCTION ${value.name ?? 'λ'}&gt;`
+      return `&lt;function ${value.name ?? 'λ'}&gt;`
     }
   }
   if (typeof value === 'object' && value instanceof Error) {

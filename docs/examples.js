@@ -49,7 +49,7 @@ var examples = [
   )
 )
 
-(write #'formatPhoneNumber)
+(write formatPhoneNumber)
 (write (formatPhoneNumber 123234))
 (write (formatPhoneNumber "123234"))
 (write (formatPhoneNumber "1232343456"))
@@ -77,7 +77,7 @@ var examples = [
     name: 'Sort',
     description: 'Sort a list of numbers.',
     code: `
-(setq l '(7 39 45 0 23 1 50 100 12 -5))
+(setq l [7 39 45 0 23 1 50 100 12 -5])
 (defun numberComparer (a b)
   (cond
     ((< a b) -1)
@@ -86,7 +86,7 @@ var examples = [
   )
 )
 
-(sort #'numberComparer l)
+(sort numberComparer l)
     `.trim(),
   },
   {
@@ -102,7 +102,7 @@ var examples = [
     code: `
 (dolist (entry (entries TRANSLATIONS))
   (create-function (at entry 0) (&rest params &bind ((templateString (at entry 1))))
-    (apply #'template (cons templateString params))
+    (apply template (cons templateString params))
   )
 )
 

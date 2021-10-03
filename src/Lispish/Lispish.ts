@@ -21,7 +21,7 @@ type EvaluateParams =
     }
 
 export class Lispish {
-  private importScope: Context = { functions: {}, variables: {} }
+  private importScope: Context = {}
 
   public tokenize(program: string): Token[] {
     return tokenize(program)
@@ -32,11 +32,11 @@ export class Lispish {
   }
 
   public evaluate(ast: Ast, params: EvaluateParams = {}): unknown {
-    const globalContext: Context = params.globalContext || { functions: {}, variables: {} }
+    const globalContext: Context = params.globalContext || {}
 
     if (params.vars) {
       Object.entries(params.vars).forEach(([key, value]) => {
-        globalContext.variables[key] = { constant: true, value }
+        globalContext[key] = { constant: true, value }
       })
     }
 
@@ -53,13 +53,13 @@ export class Lispish {
   public import(program: string): void {
     const tokens: Token[] = this.tokenize(program)
     const ast: Ast = this.parse(tokens)
-    const scope: Context = { functions: {}, variables: {} }
-    evaluate(ast, scope, { functions: {}, variables: {} })
+    const scope: Context = {}
+    evaluate(ast, scope, {})
 
-    const importFunctionKeys = Object.keys(this.importScope.functions)
-    for (const key of Object.keys(scope.functions)) {
-      if (importFunctionKeys.includes(key)) {
-        throw Error(`Import faild, imported function already exists: "${key}"`)
+    const importKeys = Object.keys(this.importScope)
+    for (const key of Object.keys(scope)) {
+      if (importKeys.includes(key)) {
+        throw Error(`Import faild, imported function/variable already exists: "${key}"`)
       }
       if (normalExpressionKeys.includes(key)) {
         throw Error(`Import faild, cannot shadow builtin normal expression: "${key}"`)
@@ -69,14 +69,6 @@ export class Lispish {
       }
     }
 
-    const importVariableKeys = Object.keys(this.importScope.variables)
-    for (const key of Object.keys(scope.variables)) {
-      if (importVariableKeys.includes(key)) {
-        throw Error(`Import faild, imported variable already exists "${key}"`)
-      }
-    }
-
-    Object.assign(this.importScope.functions, scope.functions)
-    Object.assign(this.importScope.variables, scope.variables)
+    Object.assign(this.importScope, scope)
   }
 }

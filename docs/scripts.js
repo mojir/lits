@@ -90,16 +90,6 @@ function play() {
     logTextarea.value = newContent
     logTextarea.scrollTop = logTextarea.scrollHeight
   }
-  var oldError = console.error
-  console.error = function () {
-    var args = Array.from(arguments)
-    oldError.apply(console, args)
-    var logRow = args.map(arg => stringifyValue(arg)).join(' ')
-    var oldContent = logTextarea.value
-    var newContent = oldContent ? oldContent + '\n' + logRow : logRow
-    logTextarea.value = newContent
-    logTextarea.scrollTop = logTextarea.scrollHeight
-  }
   try {
     result = lispish.run(code, { vars: context })
   } catch (error) {
@@ -108,7 +98,6 @@ function play() {
     return
   } finally {
     console.log = oldLog
-    console.error = oldError
   }
   output.classList.remove('error')
   var content = stringifyValue(result)
@@ -133,9 +122,9 @@ function showPage(id, historyEvent) {
   if (historyEvent === 'none') {
     return
   } else if (historyEvent === 'replace') {
-    history.replaceState(null, '', '#' + id)
+    history.replaceState(null, '', ' + id)
   } else {
-    history.pushState(null, '', '#' + id)
+    history.pushState(null, '', ' + id)
   }
 }
 
@@ -153,9 +142,9 @@ function inactivateAll() {
 function stringifyValue(value) {
   if (Lispish.isLispishFunction(value)) {
     if (value.builtin) {
-      return `<BUILTIN FUNCTION ${value.builtin}>`
+      return `<builtin function ${value.builtin}>`
     } else {
-      return `<FUNCTION ${value.name || 'λ'}>`
+      return `<function ${value.name || 'λ'}>`
     }
   }
   if (typeof value === 'object' && value instanceof RegExp) {
@@ -179,11 +168,17 @@ function resetPlayground() {
   localStorage.setItem('context-textarea', '')
 }
 
-function runPlayground(example) {
-  resetPlayground()
+function addToPlayground(example) {
   example = example.replace(/___single_quote___/g, "'").replace(/___double_quote___/g, '"')
   var textarea = document.getElementById('lisp-textarea')
-  textarea.value = example
+
+  if (textarea.value) {
+    textarea.value = textarea.value + `\n\n${example}`
+  } else {
+    textarea.value = example
+  }
+
+  localStorage.setItem('lisp-textarea', textarea.value)
 }
 
 function setPlayground(exampleId) {

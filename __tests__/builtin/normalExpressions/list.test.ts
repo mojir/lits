@@ -322,8 +322,8 @@ describe(`list functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(map (function number?) [1 "2" 3])`)).toEqual([true, false, true])
       expect(lispish.run(`(map (function number?) [])`)).toEqual([])
-      expect(lispish.run(`(map #'+ [1 2 3] [1 2 3])`)).toEqual([2, 4, 6])
-      expect(lispish.run(`(map #'max [2 6 3] [2 4 7] [1 6 2])`)).toEqual([2, 6, 7])
+      expect(lispish.run(`(map + [1 2 3] [1 2 3])`)).toEqual([2, 4, 6])
+      expect(lispish.run(`(map max [2 6 3] [2 4 7] [1 6 2])`)).toEqual([2, 6, 7])
       expect(lispish.run(`(map (function null?) [1 "2" 3])`)).toEqual([false, false, false])
       expect(lispish.run(`(map (lambda (x) (zero? (% x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([
         true,
@@ -336,7 +336,7 @@ describe(`list functions`, () => {
         false,
       ])
       expect(lispish.run(`(map (function 1+) [0 1 2 3 4 5 6 7])`)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-      expect(() => lispish.run(`(map #'+ [1 2 3] [1 2])`)).toThrow()
+      expect(() => lispish.run(`(map + [1 2 3] [1 2])`)).toThrow()
       expect(() => lispish.run(`(map (function +))`)).toThrow()
       expect(() => lispish.run(`(map)`)).toThrow()
       expect(() => lispish.run(`(map (function number?) [1] 2)`)).toThrow()
@@ -625,10 +625,10 @@ describe(`list functions`, () => {
   describe(`join`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(join ["Albert" "Mojir"] " ")`)).toBe(`Albert Mojir`)
-      expect(lispish.run(`(join (map #'number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")`)).toBe(
+      expect(lispish.run(`(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")`)).toBe(
         `0, 1, 2, 3, 4, 5, 6, 7, 8, 9`,
       )
-      expect(() => lispish.run(`(join (map #'number-to-string [0 1 2 3 4 5 6 7 8 9]) ", " 5)`)).toThrow()
+      expect(() => lispish.run(`(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", " 5)`)).toThrow()
       expect(() => lispish.run(`(join ["Albert" "Mojir"] " " -1)`)).toThrow()
       expect(() => lispish.run(`(join ["Albert" "Mojir"])`)).toThrow()
       expect(() => lispish.run(`(join ["Albert" 10] " ")`)).toThrow()

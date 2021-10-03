@@ -26,10 +26,7 @@ export const prognSpecialExpression: SpecialExpression = {
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     castPrognExpressionNode(node)
-    const newContext: Context = {
-      functions: {},
-      variables: {},
-    }
+    const newContext: Context = {}
 
     const newContextStack = [newContext, ...contextStack]
     let result: unknown

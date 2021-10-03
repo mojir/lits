@@ -147,10 +147,10 @@ describe(`misc functions`, () => {
 
   describe(`apply`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(apply #'+ [1 2 3 4])`)).toBe(10)
-      expect(() => lispish.run(`(apply #'+)`)).toThrow()
-      expect(() => lispish.run(`(apply #'+ 2 3)`)).toThrow()
-      expect(() => lispish.run(`(apply #'+ [1 2] [3 4])`)).toThrow()
+      expect(lispish.run(`(apply + [1 2 3 4])`)).toBe(10)
+      expect(() => lispish.run(`(apply +)`)).toThrow()
+      expect(() => lispish.run(`(apply + 2 3)`)).toThrow()
+      expect(() => lispish.run(`(apply + [1 2] [3 4])`)).toThrow()
     })
   })
 
@@ -164,7 +164,6 @@ describe(`misc functions`, () => {
       console.error = oldError
     })
     test(`samples`, () => {
-      expect(lispish.run(`(debug "Stopping here")`)).toBeUndefined()
       expect(lispish.run(`(debug)`)).toBeUndefined()
       expect(() => lispish.run(`(debug 0)`)).toThrow()
       expect(() => lispish.run(`(debug undefined)`)).toThrow()
@@ -173,6 +172,7 @@ describe(`misc functions`, () => {
       expect(() => lispish.run(`(debug false)`)).toThrow()
       expect(() => lispish.run(`(debug [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(debug (object "a" 1))`)).toThrow()
+      expect(() => lispish.run(`(debug "label")`)).toThrow()
       expect(() => lispish.run(`(debug "" 0)`)).toThrow()
     })
   })

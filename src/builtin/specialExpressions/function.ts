@@ -1,6 +1,6 @@
 import { normalExpressions } from '../normalExpressions'
 import { functionSymbol, LispishFunction, SpecialExpressionNode } from '../../parser/interface'
-import { asNameNode, asNotUndefined, assertLength } from '../../utils'
+import { asNameNode, asNotUndefined, assertLength, isLispishFunction } from '../../utils'
 import { SpecialExpression } from '../interface'
 import { UnexpectedNodeTypeError } from '../../errors'
 
@@ -36,8 +36,9 @@ export const functionSpecialExpression: SpecialExpression = {
     const parameter = asNameNode(node.params[0])
     let lispishFunction: LispishFunction | undefined = undefined
     for (const context of contextStack) {
-      lispishFunction = context.functions[parameter.value]?.fun
-      if (lispishFunction) {
+      const candidate = context[parameter.value]?.value
+      if (isLispishFunction(candidate)) {
+        lispishFunction = candidate
         break
       }
     }

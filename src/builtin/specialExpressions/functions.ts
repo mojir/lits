@@ -120,11 +120,11 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression[`ev
     castExpressionNode(node)
     const name = getFunctionName(expressionName, node, contextStack, evaluateAstNode)
 
-    const functionContext: Context = { variables: {}, functions: {} }
+    const functionContext: Context = {}
     for (const binding of node.arguments.bindings) {
       const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-      functionContext.variables[binding.name] = { value: bindingValue, constant: false }
+      functionContext[binding.name] = { value: bindingValue, constant: false }
     }
 
     const optionalArguments: EvaluatedFunctionArguments[`optionalArguments`] = node.arguments.optionalArguments.map(
@@ -160,7 +160,7 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression[`ev
     // The second last stack entry is the "global" scope
     const context = asNotUndefined(contextStack[contextStack.length - 2], `Could not find global scope`)
 
-    context.functions[name as string] = { fun: lispishFunction, constant: false }
+    context[name as string] = { value: lispishFunction, constant: false }
     return undefined
   }
 }

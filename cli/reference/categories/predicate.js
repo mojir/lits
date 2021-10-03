@@ -141,7 +141,7 @@ module.exports = {
     shortDescription: `Returns \`true\` if \`value\` is a function, otherwise \`false\`.`,
     longDescription: `Returns \`true\` if \`value\` is a function, otherwise \`false\`.`,
     examples: [
-      `(function? #'+)`,
+      `(function? +)`,
       `(function? (function /))`,
       `(function? (lambda (x y) (+ x y)))`,
       `(function? false)`,

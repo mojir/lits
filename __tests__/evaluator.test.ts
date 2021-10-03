@@ -45,30 +45,27 @@ const formatPhoneNumber = `
 `
 
 const context: Context = {
-  variables: {
-    kalle: { value: 5, constant: false },
-    info: {
-      value: {
-        days: [10, 13],
-        gender: `male`,
-      },
-      constant: false,
+  kalle: { value: 5, constant: false },
+  info: {
+    value: {
+      days: [10, 13],
+      gender: `male`,
     },
+    constant: false,
   },
-  functions: {},
 }
 
 describe(`Evaluator`, () => {
   test(`super simple program`, () => {
     const tokens = tokenize(`(+ 10 kalle)`)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {}, functions: {} })
+    const result = evaluate(ast, context, {})
     expect(result).toBe(15)
   })
   test(`simple program`, () => {
     const tokens = tokenize(simpleProgram)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {}, functions: {} })
+    const result = evaluate(ast, context, {})
     expect(result).toBe(13 * 24 * 60 * 60 * 1000)
   })
   test(`if statement (true)`, () => {
@@ -76,7 +73,7 @@ describe(`Evaluator`, () => {
       (if (= (oget info "gender") "male") "It's a boy" "It's not a girl")
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {}, functions: {} })
+    const result = evaluate(ast, context, {})
     expect(result).toBe(`It's a boy`)
   })
   test(`if statement (false)`, () => {
@@ -84,7 +81,7 @@ describe(`Evaluator`, () => {
       (if (= (oget info "gender") "female") "It's a girl" "It's not a girl")
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {}, functions: {} })
+    const result = evaluate(ast, context, {})
     expect(result).toBe(`It's not a girl`)
   })
   test(`> statement`, () => {
@@ -92,7 +89,7 @@ describe(`Evaluator`, () => {
       (> 0 -1)
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {}, functions: {} })
+    const result = evaluate(ast, context, {})
     expect(result).toBe(true)
   })
   test(`!= statement 1`, () => {
@@ -100,7 +97,7 @@ describe(`Evaluator`, () => {
       [(!= 0 -1) (!= 1 1)]
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, { variables: {}, functions: {} })
+    const result = evaluate(ast, context, {})
     expect(result).toEqual([true, false])
   })
 

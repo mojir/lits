@@ -69,7 +69,7 @@ function createSetqEvaluator(name: SetqName): SpecialExpression[`evaluate`] {
 
     const [context, exisitingVariable] = findContext(name, contextStack, findContextType)
 
-    if (context.variables[name]?.constant) {
+    if (context[name]?.constant) {
       throw Error(`Cannot change constant variable "${name}"`)
     }
 
@@ -77,7 +77,7 @@ function createSetqEvaluator(name: SetqName): SpecialExpression[`evaluate`] {
       throw Error(`Cannot change a non constant variable to constant: "${name}"`)
     }
 
-    context.variables[name] = { value, constant }
+    context[name] = { value, constant }
 
     return value
   }
@@ -94,7 +94,7 @@ function createVariableEvaluator(name: CreateVariableName): SpecialExpression[`e
 
     const [context, exisitingVariable] = findContext(name, contextStack, `global`)
 
-    if (context.variables[name]?.constant) {
+    if (context[name]?.constant) {
       throw Error(`Cannot change constant variable "${name}"`)
     }
 
@@ -102,7 +102,7 @@ function createVariableEvaluator(name: CreateVariableName): SpecialExpression[`e
       throw Error(`Cannot change a non constant variable to constant: "${name}"`)
     }
 
-    context.variables[name] = { value, constant }
+    context[name] = { value, constant }
 
     return value
   }
@@ -110,18 +110,17 @@ function createVariableEvaluator(name: CreateVariableName): SpecialExpression[`e
 }
 
 function findContext(name: string, contextStack: Context[], scope: `default` | `local` | `global`): [Context, boolean] {
-  // The second last stack entry is the "global" scope
   let exisitingVariable = false
   let context: Context | undefined = undefined
   if (scope === `local`) {
     context = asNotUndefined(contextStack[0])
-    exisitingVariable = !!context.variables[name]
+    exisitingVariable = !!context[name]
   } else if (scope === `global`) {
     context = asNotUndefined(contextStack[contextStack.length - 2])
-    exisitingVariable = !!context.variables[name]
+    exisitingVariable = !!context[name]
   } else {
     for (let i = 0; i < contextStack.length - 1; i += 1) {
-      if (asNotUndefined(contextStack[i]).variables[name]) {
+      if (asNotUndefined(contextStack[i])[name]) {
         exisitingVariable = true
         context = contextStack[i]
         break

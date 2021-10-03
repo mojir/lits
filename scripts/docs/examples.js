@@ -49,7 +49,7 @@ module.exports = [
   )
 )
 
-(write #'formatPhoneNumber)
+(write formatPhoneNumber)
 (write (formatPhoneNumber 123234))
 (write (formatPhoneNumber "123234"))
 (write (formatPhoneNumber "1232343456"))
@@ -86,7 +86,7 @@ module.exports = [
   )
 )
 
-(sort #'numberComparer l)
+(sort numberComparer l)
     `.trim(),
   },
   {
@@ -102,7 +102,7 @@ module.exports = [
     code: `
 (dolist (entry (entries TRANSLATIONS))
   (create-function (at entry 0) (&rest params &bind ((templateString (at entry 1))))
-    (apply #'template (cons templateString params))
+    (apply template (cons templateString params))
   )
 )
 

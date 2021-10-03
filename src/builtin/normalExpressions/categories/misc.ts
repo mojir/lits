@@ -1,4 +1,13 @@
-import { assertArray, assertLength, assertLispishFunction, assertObjectOrArray, assertString } from '../../../utils'
+import { Context, ContextEntry } from '../../../evaluator/interface'
+import {
+  assertArray,
+  assertLength,
+  assertLispishFunction,
+  assertObjectOrArray,
+  assertString,
+  isBuiltinLispishFunction,
+  isUserDefinedLispishFunction,
+} from '../../../utils'
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
 export const miscNormalExpression: BuiltinNormalExpressions = {
@@ -67,23 +76,43 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
   },
   debug: {
-    evaluate: (params, contextStack): undefined => {
-      const label = params[0] ?? ``
-      if (params.length === 1) {
-        assertString(params[0])
-      }
-
+    evaluate: (_, contextStack): undefined => {
       // eslint-disable-next-line no-console
-      console.error(
-        `LISPISH${label ? `: ${label}.` : ``}`,
-        `Context stack (${contextStack
-          .map(stack => `${Object.keys(stack.variables).length}:${Object.keys(stack.functions).length}`)
-          .join(` `)})`,
-        contextStack,
-      )
-
+      console.error(`*** LISPISH DEBUG ***\n\n${contextstackToString(contextStack)}`)
       return undefined
     },
-    validate: node => assertLength({ min: 0, max: 1 }, node),
+    validate: node => assertLength(0, node),
   },
+}
+
+function contextstackToString(contextStack: Context[]): string {
+  return contextStack.reverse().reduce((result, context, index) => {
+    return `${result}Context ${index}${
+      index === 0 ? ` - Import context` : index === 1 ? ` - Global context` : ``
+    }\n${contextToString(context)}\n`
+  }, ``)
+}
+
+function contextToString(context: Context) {
+  if (Object.keys(context).length === 0) {
+    return `  <empty>\n`
+  }
+  const maxKeyLength = Math.max(...Object.keys(context).map(key => key.length))
+  return Object.entries(context).reduce((result, entry) => {
+    const key = `${entry[0]}`.padEnd(maxKeyLength + 2, ` `)
+    return `${result}${entry[1].constant ? `* ` : `  `}${key}${valueToString(entry[1])}\n`
+  }, ``)
+}
+
+function valueToString(contextEntry: ContextEntry): string {
+  if (isBuiltinLispishFunction(contextEntry.value)) {
+    return `<builtin function ${contextEntry.value.name}>`
+  } else if (isUserDefinedLispishFunction(contextEntry.value)) {
+    if (contextEntry.value.name) {
+      return `<function ${contextEntry.value.name}>`
+    } else {
+      return `<function λ>`
+    }
+  }
+  return JSON.stringify(contextEntry.value)
 }

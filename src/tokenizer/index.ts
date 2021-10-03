@@ -12,7 +12,6 @@ import {
   tokenizeRightBracket,
   tokenizeRightCurly,
   tokenizeRightParen,
-  tokenizeShorthand,
   tokenizeString,
 } from './tokenizers'
 
@@ -30,7 +29,6 @@ const tokenizers: Tokenizer[] = [
   tokenizeNumber,
   tokenizeReservedName,
   tokenizeName,
-  tokenizeShorthand,
   tokenizeModifier,
 ]
 

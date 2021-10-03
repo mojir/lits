@@ -101,7 +101,7 @@ function formatValue(value) {
 function processArguments(args) {
   const config = {
     filename: '',
-    globalContext: { variables: {}, functions: {} },
+    globalContext: {},
     expression: '',
     help: undefined,
   }

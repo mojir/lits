@@ -469,7 +469,7 @@ module.exports = {
       `(split "Albert Mojir" " ")`,
       `(split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]"))`,
       `(split "0123456789" "")`,
-      `(map #'string-to-number (split "0123456789" "" 5))`,
+      `(map string-to-number (split "0123456789" "" 5))`,
     ],
     specialExpression: false,
     sideEffects: [],

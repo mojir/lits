@@ -18,7 +18,7 @@ describe(`parseArguments`, () => {
       expect(() => lispish.run(`(defun foo (x &rest a b) a)`)).toThrow()
       expect(() => lispish.run(`(defun foo (x &rest a) a) (foo 1)`)).not.toThrow()
       expect(() => lispish.run(`(defun foo (x &rest a) a) (foo)`)).toThrow()
-      expect(() => lispish.run(`(defun foo (&rest a) a) (foo #'+)`)).toThrow()
+      expect(() => lispish.run(`(defun foo (&rest a) a) (foo +)`)).toThrow()
       const program = `
         (defun foo (first &rest rest) rest)
         (foo 1 2 3)
@@ -38,7 +38,7 @@ describe(`parseArguments`, () => {
       expect(() => lispish.run(`(defun foo (x &optional a) a) (foo 1 2)`)).not.toThrow()
       expect(() => lispish.run(`(defun foo (x &optional a) a) (foo 1 2 3)`)).toThrow()
       expect(() => lispish.run(`(defun foo (x &optional a) a) (foo)`)).toThrow()
-      expect(() => lispish.run(`(defun foo (&optional a) #'a) (foo #'+)`)).not.toThrow()
+      expect(() => lispish.run(`(defun foo (&optional a) a) (foo +)`)).not.toThrow()
       expect(lispish.run(`(defun foo (first &optional o) o) (foo 1 2)`)).toEqual(2)
       expect(lispish.run(`(defun foo (first &optional o) o) (foo 1)`)).toEqual(undefined)
       expect(lispish.run(`(defun foo (first &optional (o 10)) o) (foo 1)`)).toEqual(10)
