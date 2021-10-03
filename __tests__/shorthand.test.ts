@@ -24,9 +24,9 @@ describe('shorthand', () => {
 
   describe('list shorthand ', () => {
     test('samples', () => {
-      expect(lispish.run(`'(1 2 3)`)).toEqual([1, 2, 3])
-      expect(lispish.run(`'()`)).toEqual([])
-      expect(lispish.run(`'((+ 1 2) "Text" null false undefined)`)).toEqual([3, 'Text', null, false, undefined])
+      expect(lispish.run(`[1 2 3]`)).toEqual([1, 2, 3])
+      expect(lispish.run(`[]`)).toEqual([])
+      expect(lispish.run(`[(+ 1 2) "Text" null false undefined]`)).toEqual([3, 'Text', null, false, undefined])
     })
   })
 })

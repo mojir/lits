@@ -34,7 +34,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(create-variable undefined 10)`)).toThrow()
       expect(() => lispish.run(`(create-variable false 10)`)).toThrow()
       expect(() => lispish.run(`(create-variable true 10)`)).toThrow()
-      expect(() => lispish.run(`(create-variable '() 10)`)).toThrow()
+      expect(() => lispish.run(`(create-variable [] 10)`)).toThrow()
       expect(() => lispish.run(`(create-variable (object) 10)`)).toThrow()
       expect(() => lispish.run(`(create-variable a 10)`)).toThrow()
     })
@@ -54,7 +54,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(create-constant-variable undefined 10)`)).toThrow()
       expect(() => lispish.run(`(create-constant-variable false 10)`)).toThrow()
       expect(() => lispish.run(`(create-constant-variable true 10)`)).toThrow()
-      expect(() => lispish.run(`(create-constant-variable '() 10)`)).toThrow()
+      expect(() => lispish.run(`(create-constant-variable [] 10)`)).toThrow()
       expect(() => lispish.run(`(create-constant-variable (object) 10)`)).toThrow()
     })
   })
@@ -71,7 +71,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(setq undefined 10)`)).toThrow()
       expect(() => lispish.run(`(setq false 10)`)).toThrow()
       expect(() => lispish.run(`(setq true 10)`)).toThrow()
-      expect(() => lispish.run(`(setq '() 10)`)).toThrow()
+      expect(() => lispish.run(`(setq [] 10)`)).toThrow()
       expect(() => lispish.run(`(setq (object) 10)`)).toThrow()
       expect(() => lispish.run(`(setq "a" 10)`)).toThrow()
     })
@@ -108,7 +108,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(setq-constant undefined 10)`)).toThrow()
       expect(() => lispish.run(`(setq-constant false 10)`)).toThrow()
       expect(() => lispish.run(`(setq-constant true 10)`)).toThrow()
-      expect(() => lispish.run(`(setq-constant '() 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-constant [] 10)`)).toThrow()
       expect(() => lispish.run(`(setq-constant (object) 10)`)).toThrow()
       expect(() => lispish.run(`(setq-constant "a" 10)`)).toThrow()
     })
@@ -127,7 +127,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(setq-local undefined 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local false 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local true 10)`)).toThrow()
-      expect(() => lispish.run(`(setq-local '() 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local [] 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local (object) 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local "a" 10)`)).toThrow()
     })
@@ -147,7 +147,7 @@ describe('specialExpressions', () => {
       expect(() => lispish.run(`(setq-local-constant undefined 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local-constant false 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local-constant true 10)`)).toThrow()
-      expect(() => lispish.run(`(setq-local-constant '() 10)`)).toThrow()
+      expect(() => lispish.run(`(setq-local-constant [] 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local-constant (object) 10)`)).toThrow()
       expect(() => lispish.run(`(setq-local-constant "a" 10)`)).toThrow()
     })
@@ -163,7 +163,7 @@ describe('specialExpressions', () => {
       expect(lispish.run(`(if 0 "A" "B")`)).toBe('B')
       expect(lispish.run(`(if 1 "A" "B")`)).toBe('A')
       expect(lispish.run(`(if -1 "A" "B")`)).toBe('A')
-      expect(lispish.run(`(if '() "A" "B")`)).toBe('A')
+      expect(lispish.run(`(if [] "A" "B")`)).toBe('A')
       expect(lispish.run(`(if (object) "A" "B")`)).toBe('A')
       expect(() => lispish.run(`(if)`)).toThrow()
       expect(() => lispish.run(`(if true)`)).toThrow()
@@ -638,13 +638,13 @@ describe('specialExpressions', () => {
 
   describe('dolist', () => {
     test('samples', () => {
-      expect(() => lispish.run(`(setq l '(1 2 3)) (dolist el l)`)).toThrow()
+      expect(() => lispish.run(`(setq l [1 2 3]) (dolist el l)`)).toThrow()
     })
 
     test('dolist without result value', () => {
       expect(
         lispish.run(`
-          (setq l '(1 2 3))
+          (setq l [1 2 3])
           (setq x 0)
 
           (dolist (el l)
@@ -659,7 +659,7 @@ describe('specialExpressions', () => {
     test('dolist returns undefined if no return expression', () => {
       expect(
         lispish.run(`
-          (setq l '(1 2 3))
+          (setq l [1 2 3])
           (dolist (el l))
         `),
       ).toBeUndefined()
@@ -668,7 +668,7 @@ describe('specialExpressions', () => {
     test('dolist with result value', () => {
       expect(
         lispish.run(`
-          (setq l '(1 2 3))
+          (setq l [1 2 3])
 
           (let ((x 0))
             (dolist (el l x)
@@ -682,7 +682,7 @@ describe('specialExpressions', () => {
     test('dolist with return', () => {
       expect(
         lispish.run(`
-          (setq l '(1 2 3))
+          (setq l [1 2 3])
 
           (let ((x 0))
             (dolist (el l x)
@@ -697,7 +697,7 @@ describe('specialExpressions', () => {
     test('dolist with throw', () => {
       expect(() =>
         lispish.run(`
-          (setq l '(1 2 3))
+          (setq l [1 2 3])
 
           (let ((x 0))
             (dolist (el l x)
@@ -789,7 +789,7 @@ describe('specialExpressions', () => {
   })
   describe('progn', () => {
     test('samples', () => {
-      expect(lispish.run(`(progn '(1 2 3) "[1]" (+ 1 2))`)).toBe(3)
+      expect(lispish.run(`(progn [1 2 3] "[1]" (+ 1 2))`)).toBe(3)
       expect(lispish.run(`(progn (object "a" 1) "a")`)).toBe('a')
       expect(lispish.run(`(progn)`)).toBeUndefined()
     })

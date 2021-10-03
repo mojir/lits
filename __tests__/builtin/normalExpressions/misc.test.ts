@@ -79,16 +79,16 @@ describe('misc functions', () => {
       const program = `
         (setq obj1 (object "x" 10))
         (setq obj2 (object "x" 10))
-        '((= obj1 obj1) (= obj1 obj2))
+        [(= obj1 obj1) (= obj1 obj2)]
       `
       expect(lispish.run(program)).toEqual([true, false])
     })
 
     test('List equality', () => {
       const program = `
-        (setq list1 '(1 2 3))
-        (setq list2 '(1 2 3))
-        '((= list1 list1) (= list1 list2))
+        (setq list1 [1 2 3])
+        (setq list2 [1 2 3])
+        [(= list1 list1) (= list1 list2)]
       `
       expect(lispish.run(program)).toEqual([true, false])
     })
@@ -102,7 +102,7 @@ describe('misc functions', () => {
       expect(lispish.run(`(not "0")`)).toBe(false)
       expect(lispish.run(`(not 1)`)).toBe(false)
       expect(lispish.run(`(not -1)`)).toBe(false)
-      expect(lispish.run(`(not '())`)).toBe(false)
+      expect(lispish.run(`(not [])`)).toBe(false)
       expect(lispish.run(`(not false)`)).toBe(true)
       expect(lispish.run(`(not true)`)).toBe(false)
       expect(lispish.run(`(not null)`)).toBe(true)
@@ -116,8 +116,8 @@ describe('misc functions', () => {
       expect(lispish.run(`(write)`)).toBeUndefined()
       expect(lispish.run(`(write 1)`)).toBe(1)
       expect(lispish.run(`(write "1")`)).toBe('1')
-      expect(lispish.run(`(write 100 '() "1")`)).toBe('1')
-      expect(lispish.run(`(write '())`)).toEqual([])
+      expect(lispish.run(`(write 100 [] "1")`)).toBe('1')
+      expect(lispish.run(`(write [])`)).toEqual([])
       expect(lispish.run(`(write (object))`)).toEqual({})
       expect(lispish.run(`(write null)`)).toBe(null)
       expect(lispish.run(`(write undefined)`)).toBe(undefined)
@@ -132,9 +132,9 @@ describe('misc functions', () => {
 
   describe('get-path', () => {
     test('samples', () => {
-      expect(lispish.run(`(get-path '(1 2 3) "[1]")`)).toBe(2)
+      expect(lispish.run(`(get-path [1 2 3] "[1]")`)).toBe(2)
       expect(lispish.run(`(get-path (object "a" 1) "a")`)).toBe(1)
-      expect(lispish.run(`(get-path (object "a" (object "b" '(1 2 3))) "a.b[1]")`)).toBe(2)
+      expect(lispish.run(`(get-path (object "a" (object "b" [1 2 3])) "a.b[1]")`)).toBe(2)
       expect(lispish.run(`(get-path O "a.b[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBe(2)
       expect(lispish.run(`(get-path O "a.c[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBeUndefined()
       expect(lispish.run(`(get-path O "")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toEqual({ a: { b: [1, 2, 3] } })
@@ -147,10 +147,10 @@ describe('misc functions', () => {
 
   describe('apply', () => {
     test('samples', () => {
-      expect(lispish.run("(apply #'+ '(1 2 3 4))")).toBe(10)
+      expect(lispish.run("(apply #'+ [1 2 3 4])")).toBe(10)
       expect(() => lispish.run("(apply #'+)")).toThrow()
       expect(() => lispish.run("(apply #'+ 2 3)")).toThrow()
-      expect(() => lispish.run("(apply #'+ '(1 2) '(3 4))")).toThrow()
+      expect(() => lispish.run("(apply #'+ [1 2] [3 4])")).toThrow()
     })
   })
 
@@ -171,7 +171,7 @@ describe('misc functions', () => {
       expect(() => lispish.run(`(debug null)`)).toThrow()
       expect(() => lispish.run(`(debug true)`)).toThrow()
       expect(() => lispish.run(`(debug false)`)).toThrow()
-      expect(() => lispish.run(`(debug '(1 2 3))`)).toThrow()
+      expect(() => lispish.run(`(debug [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(debug (object "a" 1))`)).toThrow()
       expect(() => lispish.run(`(debug "" 0)`)).toThrow()
     })

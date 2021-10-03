@@ -15,7 +15,7 @@ describe('object functions', () => {
       expect(lispish.run(`(object "x" 1)`)).toEqual({ x: 1 })
       expect(lispish.run(`(object "x" undefined)`)).toEqual({ x: undefined })
       expect(lispish.run(`(object "x" 1 "x" 2)`)).toEqual({ x: 2 })
-      expect(lispish.run(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" '()))`)).toEqual({
+      expect(lispish.run(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" []))`)).toEqual({
         a: null,
         b: true,
         c: false,
@@ -31,7 +31,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(object false 1)`)).toThrow()
       expect(() => lispish.run(`(object null 1)`)).toThrow()
       expect(() => lispish.run(`(object undefined 1)`)).toThrow()
-      expect(() => lispish.run(`(object '() 1)`)).toThrow()
+      expect(() => lispish.run(`(object [] 1)`)).toThrow()
       expect(() => lispish.run(`(object (object) 1)`)).toThrow()
     })
   })
@@ -48,7 +48,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(keys false)`)).toThrow()
       expect(() => lispish.run(`(keys null)`)).toThrow()
       expect(() => lispish.run(`(keys undefined)`)).toThrow()
-      expect(() => lispish.run(`(keys '(1))`)).toThrow()
+      expect(() => lispish.run(`(keys [1])`)).toThrow()
     })
   })
 
@@ -64,7 +64,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(values false)`)).toThrow()
       expect(() => lispish.run(`(values null)`)).toThrow()
       expect(() => lispish.run(`(values undefined)`)).toThrow()
-      expect(() => lispish.run(`(values '(1))`)).toThrow()
+      expect(() => lispish.run(`(values [1])`)).toThrow()
     })
   })
 
@@ -83,7 +83,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(entries false)`)).toThrow()
       expect(() => lispish.run(`(entries null)`)).toThrow()
       expect(() => lispish.run(`(entries undefined)`)).toThrow()
-      expect(() => lispish.run(`(entries '(1))`)).toThrow()
+      expect(() => lispish.run(`(entries [1])`)).toThrow()
     })
   })
 
@@ -103,7 +103,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(ohas false "x")`)).toThrow()
       expect(() => lispish.run(`(ohas null "x")`)).toThrow()
       expect(() => lispish.run(`(ohas undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(ohas '(1) "x")`)).toThrow()
+      expect(() => lispish.run(`(ohas [1] "x")`)).toThrow()
     })
   })
 
@@ -123,7 +123,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(oget false "x")`)).toThrow()
       expect(() => lispish.run(`(oget null "x")`)).toThrow()
       expect(() => lispish.run(`(oget undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(oget '(1) "x")`)).toThrow()
+      expect(() => lispish.run(`(oget [1] "x")`)).toThrow()
     })
   })
 
@@ -142,7 +142,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(oset false "x")`)).toThrow()
       expect(() => lispish.run(`(oset null "x")`)).toThrow()
       expect(() => lispish.run(`(oset undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(oset '(1) "x")`)).toThrow()
+      expect(() => lispish.run(`(oset [1] "x")`)).toThrow()
     })
     test('set new value', () => {
       const program = `
@@ -176,7 +176,7 @@ describe('object functions', () => {
       expect(() => lispish.run(`(odel false "x")`)).toThrow()
       expect(() => lispish.run(`(odel null "x")`)).toThrow()
       expect(() => lispish.run(`(odel undefined "x")`)).toThrow()
-      expect(() => lispish.run(`(odel '(1) "x")`)).toThrow()
+      expect(() => lispish.run(`(odel [1] "x")`)).toThrow()
     })
     test('delete atribute', () => {
       const program = `

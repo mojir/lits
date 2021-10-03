@@ -4,7 +4,7 @@ import { asNotUndefined } from '../utils'
 import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
-const nameRegExp = /[0-9a-zA-Z_^?=!$%<>.+*/\-[\]]/
+const nameRegExp = /[0-9a-zA-Z_^?=!$%<>.+*/-]/
 
 export const skipWhiteSpace: Tokenizer = (input, current) =>
   /\s/.test(input[current] ?? '') ? [1, undefined] : [0, undefined]
@@ -28,6 +28,18 @@ export const tokenizeLeftParen: Tokenizer = (input: string, position: number) =>
 
 export const tokenizeRightParen: Tokenizer = (input: string, position: number) =>
   tokenizeCharacter('paren', ')', input, position)
+
+export const tokenizeLeftBracket: Tokenizer = (input: string, position: number) =>
+  tokenizeCharacter('paren', '[', input, position)
+
+export const tokenizeRightBracket: Tokenizer = (input: string, position: number) =>
+  tokenizeCharacter('paren', ']', input, position)
+
+export const tokenizeLeftCurly: Tokenizer = (input: string, position: number) =>
+  tokenizeCharacter('paren', '{', input, position)
+
+export const tokenizeRightCurly: Tokenizer = (input: string, position: number) =>
+  tokenizeCharacter('paren', '}', input, position)
 
 export const tokenizeString: Tokenizer = (input, position) => {
   if (input[position] !== '"') {
@@ -63,7 +75,7 @@ export const tokenizeString: Tokenizer = (input, position) => {
   return [length + 1, { type: 'string', value }]
 }
 
-const endOfNumberRegExp = /\s|\)/
+const endOfNumberRegExp = /\s|[)\]}]/
 const decimalNumberRegExp = /[0-9]/
 const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-fA-F]/
@@ -157,9 +169,9 @@ export const tokenizeShorthand: Tokenizer = (input: string, position: number) =>
   if (input.substr(position, 2) === `#'`) {
     return [2, { type: 'shorthand', value: `#'` }]
   }
-  if (input.substr(position, 2) === `'(`) {
-    return [1, { type: 'shorthand', value: `'` }]
-  }
+  // if (input.substr(position, 2) === `'(`) {
+  //   return [1, { type: 'shorthand', value: `'` }]
+  // }
   return [0, undefined]
 }
 

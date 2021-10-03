@@ -1,15 +1,19 @@
 import { Token, Tokenizer } from './interface'
 import {
-  skipWhiteSpace,
   skipComment,
+  skipWhiteSpace,
+  tokenizeLeftBracket,
+  tokenizeLeftCurly,
   tokenizeLeftParen,
-  tokenizeReservedName,
+  tokenizeModifier,
   tokenizeName,
   tokenizeNumber,
+  tokenizeReservedName,
+  tokenizeRightBracket,
+  tokenizeRightCurly,
   tokenizeRightParen,
-  tokenizeString,
   tokenizeShorthand,
-  tokenizeModifier,
+  tokenizeString,
 } from './tokenizers'
 
 // All tokenizers, order matters!
@@ -18,6 +22,10 @@ const tokenizers: Tokenizer[] = [
   skipWhiteSpace,
   tokenizeLeftParen,
   tokenizeRightParen,
+  tokenizeLeftBracket,
+  tokenizeRightBracket,
+  tokenizeLeftCurly,
+  tokenizeRightCurly,
   tokenizeString,
   tokenizeNumber,
   tokenizeReservedName,

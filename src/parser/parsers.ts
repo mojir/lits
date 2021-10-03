@@ -77,6 +77,30 @@ const parseExpression: ParseExpression = (tokens, position) => {
   }
 }
 
+type ParseArrayLitteral = (tokens: Token[], position: number) => [number, AstNode]
+const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
+  position = position + 1
+
+  let token = asNotUndefined(tokens[position])
+  const params: AstNode[] = []
+  let param: AstNode
+  while (!(token.type === 'paren' && token.value === ']')) {
+    ;[position, param] = parseToken(tokens, position)
+    params.push(param)
+    token = asNotUndefined(tokens[position])
+  }
+
+  position = position + 1
+
+  const node: NormalExpressionNode = {
+    type: 'NormalExpression',
+    name: 'list',
+    params,
+  }
+
+  return [position, node]
+}
+
 type ParseFunctionShorthand = (tokens: Token[], position: number) => [number, FunctionSpecialExpressionNode]
 const parseFunctionShorthand: ParseFunctionShorthand = (tokens, position) => {
   const [newPosition, innerNode] = parseToken(tokens, position + 1)
@@ -235,6 +259,8 @@ export const parseToken: ParseToken = (tokens, position) => {
     case 'paren':
       if (token.value === '(') {
         nodeDescriptor = parseExpression(tokens, position)
+      } else if (token.value === '[') {
+        nodeDescriptor = parseArrayLitteral(tokens, position)
       }
       break
     case 'shorthand':

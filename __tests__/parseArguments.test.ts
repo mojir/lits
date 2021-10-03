@@ -45,52 +45,48 @@ describe('parseArguments', () => {
     })
 
     test('modifier combinations', () => {
-      expect(lispish.run("((lambda (&optional a &rest b) '(a b)))")).toEqual([undefined, []])
-      expect(lispish.run("((lambda (&optional a &rest b) '(a b)) 1)")).toEqual([1, []])
-      expect(lispish.run("((lambda (&optional a &rest b) '(a b)) 1 2)")).toEqual([1, [2]])
-      expect(lispish.run("((lambda (&optional a &rest b) '(a b)) 1 2 3)")).toEqual([1, [2, 3]])
-      expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1)")).toEqual([1, undefined, undefined, []])
-      expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1 2)")).toEqual([1, 2, undefined, []])
-      expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1 2 3)")).toEqual([1, 2, 3, []])
-      expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1 2 3 4)")).toEqual([1, 2, 3, [4]])
-      expect(lispish.run("((lambda (a &optional b c &rest d) '(a b c d)) 1 2 3 4 5)")).toEqual([1, 2, 3, [4, 5]])
-      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)))")).toEqual([undefined, [], 10])
-      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)) 1)")).toEqual([1, [], 10])
-      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)) 1 2)")).toEqual([1, [2], 10])
-      expect(lispish.run("((lambda (&optional a &rest b &bind ((x (+ 5 5)))) '(a b x)) 1 2 3)")).toEqual([
-        1,
-        [2, 3],
-        10,
-      ])
-      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1)")).toEqual([
+      expect(lispish.run('((lambda (&optional a &rest b) [a b]))')).toEqual([undefined, []])
+      expect(lispish.run('((lambda (&optional a &rest b) [a b]) 1)')).toEqual([1, []])
+      expect(lispish.run('((lambda (&optional a &rest b) [a b]) 1 2)')).toEqual([1, [2]])
+      expect(lispish.run('((lambda (&optional a &rest b) [a b]) 1 2 3)')).toEqual([1, [2, 3]])
+      expect(lispish.run('((lambda (a &optional b c &rest d) [a b c d]) 1)')).toEqual([1, undefined, undefined, []])
+      expect(lispish.run('((lambda (a &optional b c &rest d) [a b c d]) 1 2)')).toEqual([1, 2, undefined, []])
+      expect(lispish.run('((lambda (a &optional b c &rest d) [a b c d]) 1 2 3)')).toEqual([1, 2, 3, []])
+      expect(lispish.run('((lambda (a &optional b c &rest d) [a b c d]) 1 2 3 4)')).toEqual([1, 2, 3, [4]])
+      expect(lispish.run('((lambda (a &optional b c &rest d) [a b c d]) 1 2 3 4 5)')).toEqual([1, 2, 3, [4, 5]])
+      expect(lispish.run('((lambda (&optional a &rest b &bind ((x (+ 5 5)))) [a b x]))')).toEqual([undefined, [], 10])
+      expect(lispish.run('((lambda (&optional a &rest b &bind ((x (+ 5 5)))) [a b x]) 1)')).toEqual([1, [], 10])
+      expect(lispish.run('((lambda (&optional a &rest b &bind ((x (+ 5 5)))) [a b x]) 1 2)')).toEqual([1, [2], 10])
+      expect(lispish.run('((lambda (&optional a &rest b &bind ((x (+ 5 5)))) [a b x]) 1 2 3)')).toEqual([1, [2, 3], 10])
+      expect(lispish.run('((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) [a b c d x]) 1)')).toEqual([
         1,
         undefined,
         undefined,
         [],
         10,
       ])
-      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2)")).toEqual([
+      expect(lispish.run('((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) [a b c d x]) 1 2)')).toEqual([
         1,
         2,
         undefined,
         [],
         10,
       ])
-      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2 3)")).toEqual([
+      expect(lispish.run('((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) [a b c d x]) 1 2 3)')).toEqual([
         1,
         2,
         3,
         [],
         10,
       ])
-      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2 3 4)")).toEqual([
+      expect(lispish.run('((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) [a b c d x]) 1 2 3 4)')).toEqual([
         1,
         2,
         3,
         [4],
         10,
       ])
-      expect(lispish.run("((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) '(a b c d x)) 1 2 3 4 5)")).toEqual([
+      expect(lispish.run('((lambda (a &optional b c &rest d &bind ((x (+ 5 5)))) [a b c d x]) 1 2 3 4 5)')).toEqual([
         1,
         2,
         3,

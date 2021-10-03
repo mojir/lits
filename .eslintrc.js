@@ -14,6 +14,7 @@ module.exports = {
     'no-console': 'warn',
     'no-debugger': 'error',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', ignoreRestSiblings: true }],
+    quotes: ['error', 'backtick'],
   },
   parserOptions: {
     sourceType: 'module',
