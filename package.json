@@ -13,7 +13,8 @@
     "compile": "tsc -p ./tsconfig.json --noEmit",
     "lispish": "node ./cli/index.js",
     "build-docs": "node ./scripts/docs/buildDocs.js",
-    "open-docs": "open-cli ./docs/index.html"
+    "open-docs": "open-cli ./docs/index.html",
+    "open-lcov": "open-cli ./coverage/lcov-report/index.html"
   },
   "files": [
     "dist",
