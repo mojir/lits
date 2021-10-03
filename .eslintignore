@@ -3,4 +3,3 @@ dist
 prettier.config.js
 rollup.config.js
 .eslintrc.js
-cli

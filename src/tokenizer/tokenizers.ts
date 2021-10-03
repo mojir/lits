@@ -169,9 +169,6 @@ export const tokenizeShorthand: Tokenizer = (input: string, position: number) =>
   if (input.substr(position, 2) === `#'`) {
     return [2, { type: `shorthand`, value: `#'` }]
   }
-  // if (input.substr(position, 2) === `'(`) {
-  //   return [1, { type: 'shorthand', value: `'` }]
-  // }
   return [0, undefined]
 }
 
