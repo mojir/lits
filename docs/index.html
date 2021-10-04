@@ -1375,9 +1375,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.34297820512287225</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.00321236710360423</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 2.1432089415934206</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.3551640615837506</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0005454863491244488</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.0699851002380338</span></span></pre>
 <pre class="example" onclick="addToPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="addToPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1864,7 +1864,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633339659036</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633369040638</span></span></pre>
   </div>
 </div>
 
@@ -2239,7 +2239,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(function? +)')"><span class="icon-button">▶</span> (function? +) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(function? (function /))')"><span class="icon-button">▶</span> (function? (function /)) <span class="gray">=> true</span></span></pre>
+<pre class="example" onclick="addToPlayground('(function? (function /))')"><span class="icon-button">▶</span> (function? (function /)) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (function? (lambda (x y) (+ x y))) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? false)')"><span class="icon-button">▶</span> (function? false) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? ___double_quote___false___double_quote___)')"><span class="icon-button">▶</span> (function? "false") <span class="gray">=> false</span></span></pre>
@@ -2895,29 +2895,6 @@
     <pre class="example" onclick="addToPlayground('(throw ___double_quote___You shall not pass!___double_quote___)')"><span class="icon-button">▶</span> (throw "You shall not pass!") <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="addToPlayground('(throw (substring ___double_quote___You shall not pass!___double_quote___ 0 3))')"><span class="icon-button">▶</span> (throw (substring "You shall not pass!" 0 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="addToPlayground('(try (throw ___double_quote___You shall not pass!___double_quote___) ((error) error))')"><span class="icon-button">▶</span> (try (throw "You shall not pass!") ((error) error)) <span class="gray">=> UserDefinedError: You shall not pass!</span></span></pre>
-  </div>
-</div>
-
-
-<div id="function" class="content function">
-  <div class="function-header">function</div>
-  <h3>Special Expression</h3>
-  <p>Accessing namespace of functions. Shortform <span class="pre"></span> is equivalent.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>function name arguments body => function</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>name: name</pre>
-<pre>arguments: arguments</pre>
-<pre>body: lisp expressions</pre></div>
-
-  <label>No side effects</label>
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(function +)')"><span class="icon-button">▶</span> (function +) <span class="gray">=> &lt;builtin function +&gt;</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('+')"><span class="icon-button">▶</span> + <span class="gray">=> &lt;builtin function +&gt;</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp)')"><span class="icon-button">▶</span> (defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp) <span class="gray">=> &lt;function hyp&gt;</span></span></pre>
   </div>
 </div>
 
@@ -3684,7 +3661,6 @@
 <li id="defun_link" onclick="showPage('defun')">defun</li>
 <li id="dolist_link" onclick="showPage('dolist')">dolist</li>
 <li id="dotimes_link" onclick="showPage('dotimes')">dotimes</li>
-<li id="function_link" onclick="showPage('function')">function</li>
 <li id="if_link" onclick="showPage('if')">if</li>
 <li id="lambda_link" onclick="showPage('lambda')">lambda</li>
 <li id="let_link" onclick="showPage('let')">let</li>

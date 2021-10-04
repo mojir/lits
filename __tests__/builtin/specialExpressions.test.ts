@@ -360,21 +360,6 @@ describe(`specialExpressions`, () => {
     })
   })
 
-  describe(`function`, () => {
-    test(`samples`, () => {
-      lispish.run(`(function +)`)
-      expect(() => lispish.run(`(function)`)).toThrow()
-      expect(() => lispish.run(`(function "k")`)).toThrow()
-      expect(() => lispish.run(`(function k s)`)).toThrow()
-      expect(() => lispish.run(`(function add)`)).toThrow()
-      expect(() => lispish.run(`(function true)`)).toThrow()
-      expect(() => lispish.run(`(function false)`)).toThrow()
-      expect(() => lispish.run(`(function null)`)).toThrow()
-      expect(() => lispish.run(`(function undefined)`)).toThrow()
-      expect(() => lispish.run(`(defun add (x y) (+ x y)) (function add)`)).not.toThrow()
-    })
-  })
-
   describe(`lambda`, () => {
     test(`samples`, () => {
       lispish.run(`(lambda (x) (+ x 1))`)

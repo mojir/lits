@@ -8,7 +8,6 @@ import {
 } from './specialExpressions/functions'
 import { dolistSpecialExpression } from './specialExpressions/dolist'
 import { dotimesSpecialExpression } from './specialExpressions/dotimes'
-import { functionSpecialExpression } from './specialExpressions/function'
 import { ifSpecialExpression } from './specialExpressions/if'
 import { letSpecialExpression } from './specialExpressions/let'
 import { loopSpecialExpression } from './specialExpressions/loop'
@@ -46,7 +45,6 @@ export const specialExpressions: SpecialExpressions = {
   'create-function': createFunctionSpecialExpression,
   dolist: dolistSpecialExpression,
   dotimes: dotimesSpecialExpression,
-  function: functionSpecialExpression,
   if: ifSpecialExpression,
   lambda: lambdaSpecialExpression,
   let: letSpecialExpression,

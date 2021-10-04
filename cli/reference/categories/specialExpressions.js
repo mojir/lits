@@ -417,33 +417,6 @@ module.exports = {
     specialExpression: true,
     sideEffects: [],
   },
-  function: {
-    name: `function`,
-    category: `Special expression`,
-    linkName: `function`,
-    returns: {
-      type: `function`,
-    },
-    arguments: [
-      {
-        name: `name`,
-        type: `name`,
-      },
-      {
-        name: `arguments`,
-        type: `arguments`,
-      },
-      {
-        name: `body`,
-        type: `lisp expressions`,
-      },
-    ],
-    shortDescription: `Accessing namespace of functions. Shortform \`\` is equivalent.`,
-    longDescription: `Accessing namespace of functions. Shortform \`\` is equivalent.`,
-    examples: [`(function +)`, `+`, `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (function hyp)`],
-    specialExpression: true,
-    sideEffects: [],
-  },
   if: {
     name: `if`,
     category: `Special expression`,
