@@ -1377,9 +1377,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.2420032550064004</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0052177435236973315</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.8241396909801707</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.5674629481541384</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.004742951310443635</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 1.2829203664327238</span></span></pre>
 <pre class="example" onclick="addToPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="addToPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1866,7 +1866,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633375999593</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633376661938</span></span></pre>
   </div>
 </div>
 
@@ -2241,13 +2241,12 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(function? +)')"><span class="icon-button">▶</span> (function? +) <span class="gray">=> true</span></span></pre>
-<pre class="example" onclick="addToPlayground('(function? (function /))')"><span class="icon-button">▶</span> (function? (function /)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre><span class="example" onclick="addToPlayground('(function? /)')"><span class="icon-button">▶</span> (function? /) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (function? (lambda (x y) (+ x y))) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? false)')"><span class="icon-button">▶</span> (function? false) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? ___double_quote___false___double_quote___)')"><span class="icon-button">▶</span> (function? "false") <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? [1 2 3])')"><span class="icon-button">▶</span> (function? [1 2 3]) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(function? 100)')"><span class="icon-button">▶</span> (function? 100) <span class="gray">=> false</span></span></pre>
-<pre class="example" onclick="addToPlayground('(function?)')"><span class="icon-button">▶</span> (function?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
