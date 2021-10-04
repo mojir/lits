@@ -1,20 +1,20 @@
 module.exports = {
   append: {
     name: `append`,
-    category: `List`,
+    category: `Array`,
     linkName: `append`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
         name: `lists`,
-        type: `list[]`,
+        type: `array[]`,
         description: `zero or more`,
       },
     ],
-    shortDescription: `Concatenates list arguments into one list.`,
-    longDescription: `Concatenates list arguments into one list. Resulting list is shallow copy of specified \`lists\`.`,
+    shortDescription: `Concatenates array arguments into one array.`,
+    longDescription: `Concatenates array arguments into one array. Resulting array is shallow copy of specified \`lists\`.`,
     examples: [
       `(append [1 2] [3 4])`,
       `(append [] [3 4])`,
@@ -25,38 +25,40 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
-  list: {
-    name: `list`,
-    category: `List`,
-    linkName: `list`,
+  array: {
+    name: `array`,
+    category: `Array`,
+    linkName: `array`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
         name: `values`,
-        type: `list`,
+        type: `array`,
       },
     ],
-    shortDescription: `Makes new list from \`values\`.`,
-    longDescription: `Makes new list from \`values\`.`,
+    shortDescription: `Makes new array from \`values\`.`,
+    longDescription: `Makes new array from \`values\`.`,
     examples: [
-      `(list 1 2 3)`,
-      `(list (list null undefined false true))`,
+      `(array 1 2 3)`,
+      `(array (array null undefined false true))`,
       `[]`,
       `[1 2 3]`,
       `[[null undefined false true]]`,
       `[]`,
+      `([1 2 3] 1)`,
+      `([1 2 3 4 5 6 7 8 9] 3)`,
     ],
     specialExpression: false,
     sideEffects: [],
   },
   listf: {
     name: `listf`,
-    category: `List`,
+    category: `Array`,
     linkName: `listf`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -68,18 +70,18 @@ module.exports = {
         type: `any`,
       },
     ],
-    shortDescription: `Creates a list with \`length\` number of elements and sets all elements to "value".`,
-    longDescription: `Creates a list with \`length\` number of elements and sets all elements to "value".`,
+    shortDescription: `Creates an array with \`length\` number of elements and sets all elements to "value".`,
+    longDescription: `Creates an array with \`length\` number of elements and sets all elements to "value".`,
     examples: [`(listf 10 null)`, `(listf 0 100)`],
     specialExpression: false,
     sideEffects: [],
   },
   range: {
     name: `range`,
-    category: `List`,
+    category: `Array`,
     linkName: `range`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -97,34 +99,34 @@ module.exports = {
         description: `optional`,
       },
     ],
-    shortDescription: `Create a list with a range of numbers.`,
-    longDescription: `Create a list with a range of numbers. If only one argument: \`0...a\`, otherwise: \`a...b\`. \`step\` defaults to \`1\`.`,
+    shortDescription: `Create an array with a range of numbers.`,
+    longDescription: `Create an array with a range of numbers. If only one argument: \`0...a\`, otherwise: \`a...b\`. \`step\` defaults to \`1\`.`,
     examples: [`(range 4)`, `(range 1 4)`, `(range 0.4 4.9)`, `(range 0.25 1 0.25)`],
     specialExpression: false,
     sideEffects: [],
   },
   length: {
     name: `length`,
-    category: `List`,
+    category: `Array`,
     linkName: `length`,
     returns: {
       type: `number`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns length of \`list\`.`,
-    longDescription: `Returns length of \`list\`.`,
+    shortDescription: `Returns length of \`array\`.`,
+    longDescription: `Returns length of \`array\`.`,
     examples: [`(length [1 2 3])`, `(length [])`],
     specialExpression: false,
     sideEffects: [],
   },
   at: {
     name: `at`,
-    category: `List`,
+    category: `Array`,
     linkName: `at`,
     returns: {
       type: `any`,
@@ -132,7 +134,7 @@ module.exports = {
     arguments: [
       {
         name: `input`,
-        type: `string | list`,
+        type: `string | array`,
       },
       {
         name: `index`,
@@ -157,15 +159,15 @@ module.exports = {
   },
   selt: {
     name: `selt`,
-    category: `List`,
+    category: `Array`,
     linkName: `selt`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `index`,
@@ -176,117 +178,117 @@ module.exports = {
         type: `any`,
       },
     ],
-    shortDescription: `Sets \`value\` on specified element of \`list\`.`,
-    longDescription: `Sets \`value\` on specified element of \`list\`. The \`index\` is counted from \`0\`. Accessing out-of-bounds indices returns throws \`Error\`.`,
+    shortDescription: `Sets \`value\` on specified element of \`array\`.`,
+    longDescription: `Sets \`value\` on specified element of \`array\`. The \`index\` is counted from \`0\`. Accessing out-of-bounds indices returns throws \`Error\`.`,
     examples: [`(selt [1 2 3] 1 "two")`, `(selt [1 2 3] 3 "Four")`],
     specialExpression: false,
-    sideEffects: [`Mutates list`],
+    sideEffects: [`Mutates array`],
   },
   push: {
     name: `push`,
-    category: `List`,
+    category: `Array`,
     linkName: `push`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `values`,
-        type: `list`,
+        type: `array`,
         description: `one or more`,
       },
     ],
-    shortDescription: `Pushes \`values\` to the end of \`list\`.`,
-    longDescription: `Pushes \`values\` to the end of \`list\`.`,
+    shortDescription: `Pushes \`values\` to the end of \`array\`.`,
+    longDescription: `Pushes \`values\` to the end of \`array\`.`,
     examples: [`(push [1 2 3] 4)`, `(push [1 2 3] 4 5 6)`, `(setq l [1 2 3]) (push l 4) l`],
     specialExpression: false,
-    sideEffects: [`Mutates list`],
+    sideEffects: [`Mutates array`],
   },
   pop: {
     name: `pop`,
-    category: `List`,
+    category: `Array`,
     linkName: `pop`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `value`,
         type: `any`,
       },
     ],
-    shortDescription: `Removes and returns the last item of \`list\`.`,
-    longDescription: `Removes and returns then last item of \`list\`. If \`list\` is empty, \`undefined\` is returned.`,
+    shortDescription: `Removes and returns the last item of \`array\`.`,
+    longDescription: `Removes and returns then last item of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(pop [1 2 3])`, `(pop [])`],
     specialExpression: false,
-    sideEffects: [`Mutates list`],
+    sideEffects: [`Mutates array`],
   },
   unshift: {
     name: `unshift`,
-    category: `List`,
+    category: `Array`,
     linkName: `unshift`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `values`,
-        type: `list`,
+        type: `array`,
         description: `one or more`,
       },
     ],
-    shortDescription: `Inserts \`values\` at the beginning of \`list\`.`,
-    longDescription: `Inserts \`values\` at the beginning of \`list\`.`,
+    shortDescription: `Inserts \`values\` at the beginning of \`array\`.`,
+    longDescription: `Inserts \`values\` at the beginning of \`array\`.`,
     examples: [`(unshift [1 2 3] 4)`, `(unshift [1 2 3] 4 5 6)`, `(setq l [1 2 3]) (unshift l 4) l`],
     specialExpression: false,
-    sideEffects: [`Mutates list`],
+    sideEffects: [`Mutates array`],
   },
   shift: {
     name: `shift`,
-    category: `List`,
+    category: `Array`,
     linkName: `shift`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `value`,
         type: `any`,
       },
     ],
-    shortDescription: `Removes and returns the first item of \`list\`.`,
-    longDescription: `Removes and returns the first item of \`list\`. If \`list\` is empty, \`undefined\` is returned.`,
+    shortDescription: `Removes and returns the first item of \`array\`.`,
+    longDescription: `Removes and returns the first item of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(shift [1 2 3])`, `(shift [])`],
     specialExpression: false,
-    sideEffects: [`Mutates list`],
+    sideEffects: [`Mutates array`],
   },
   slice: {
     name: `slice`,
-    category: `List`,
+    category: `Array`,
     linkName: `slice`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `start`,
@@ -299,23 +301,23 @@ module.exports = {
         description: `optional`,
       },
     ],
-    shortDescription: `Returns a shallow copy of a portion of \`list\` into a new list selected from index \`start\` (inclusive) to index \`end\` (exclusive).`,
-    longDescription: `Returns a shallow copy of a portion of \`list\` into a new list selected from index \`start\` (inclusive) to index \`end\` (exclusive). If \`start\` is not provided it defaults to \`0\`. If \`end\` is not provided, the rest of the list will be copied.`,
+    shortDescription: `Returns a shallow copy of a portion of \`array\` into a new array selected from index \`start\` (inclusive) to index \`end\` (exclusive).`,
+    longDescription: `Returns a shallow copy of a portion of \`array\` into a new array selected from index \`start\` (inclusive) to index \`end\` (exclusive). If \`start\` is not provided it defaults to \`0\`. If \`end\` is not provided, the rest of the array will be copied.`,
     examples: [`(slice [1 2 3 4 5] 2 4)`, `(slice [1 2 3 4 5] 2)`],
     specialExpression: false,
     sideEffects: [],
   },
   splice: {
     name: `splice`,
-    category: `List`,
+    category: `Array`,
     linkName: `splice`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `start`,
@@ -333,27 +335,27 @@ module.exports = {
         description: `optional`,
       },
     ],
-    shortDescription: `Changes the contents of a list by removing or replacing existing elements and/or adding new elements.`,
-    longDescription: `Changes the contents of a list by removing or replacing existing elements and/or adding new elements. Returns a list of the removed values.`,
+    shortDescription: `Changes the contents of an array by removing or replacing existing elements and/or adding new elements.`,
+    longDescription: `Changes the contents of an array by removing or replacing existing elements and/or adding new elements. Returns an array of the removed values.`,
     examples: [
       `(splice [1 2 3 4 5] 2 2)`,
       `(splice [1 2 3 4 5] 1 4 "3" "4")`,
       `(setq l [1 2 3 4 5]) (splice l 2 2 "3" "4") l`,
     ],
     specialExpression: false,
-    sideEffects: [`Mutating list`],
+    sideEffects: [`Mutating array`],
   },
   reduce: {
     name: `reduce`,
-    category: `List`,
+    category: `Array`,
     linkName: `reduce`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `reducer`,
@@ -364,8 +366,8 @@ module.exports = {
         type: `any`,
       },
     ],
-    shortDescription: `Runs \`reducer\` function on each element of the \`list\`, passing in the return value from the calculation on the preceding element.`,
-    longDescription: `Runs \`reducer\` function on each element of the \`list\`, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
+    shortDescription: `Runs \`reducer\` function on each element of the \`array\`, passing in the return value from the calculation on the preceding element.`,
+    longDescription: `Runs \`reducer\` function on each element of the \`array\`, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
     examples: [
       `(reduce + [1 2 3] 0)`,
       `(reduce + [] 0)`,
@@ -376,15 +378,15 @@ module.exports = {
   },
   'reduce-right': {
     name: `reduce-right`,
-    category: `List`,
+    category: `Array`,
     linkName: `reduce-right`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `reducer`,
@@ -395,18 +397,18 @@ module.exports = {
         type: `any`,
       },
     ],
-    shortDescription: `Runs \`reducer\` function on each element of the \`list\` (starting from the last item), passing in the return value from the calculation on the preceding element.`,
-    longDescription: `Runs \`reducer\` function on each element of the \`list\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
+    shortDescription: `Runs \`reducer\` function on each element of the \`array\` (starting from the last item), passing in the return value from the calculation on the preceding element.`,
+    longDescription: `Runs \`reducer\` function on each element of the \`array\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
     examples: [`(reduce-right concat ["A" "B" "C"] "")`],
     specialExpression: false,
     sideEffects: [],
   },
   map: {
     name: `map`,
-    category: `List`,
+    category: `Array`,
     linkName: `map`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -414,13 +416,13 @@ module.exports = {
         type: `function`,
       },
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
         description: `one or many`,
       },
     ],
-    shortDescription: `Creates a new list populated with the results of calling \`mapper\` on every elements in the calling \`list\`s.`,
-    longDescription: `Creates a new list populated with the results of calling \`mapper\` on every elements in the calling \`list\`s.`,
+    shortDescription: `Creates a new array populated with the results of calling \`mapper\` on every elements in the calling \`array\`s.`,
+    longDescription: `Creates a new array populated with the results of calling \`mapper\` on every elements in the calling \`array\`s.`,
     examples: [
       `(map string-reverse ["Albert" "Mojir"])`,
       `(map string-reverse [])`,
@@ -432,38 +434,38 @@ module.exports = {
   },
   filter: {
     name: `filter`,
-    category: `List`,
+    category: `Array`,
     linkName: `filter`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `filter`,
         type: `function`,
       },
     ],
-    shortDescription: `Creates a new list with all elements that pass the test implemented by \`filter\`.`,
-    longDescription: `Creates a new list with all elements that pass the test implemented by \`filter\`.`,
+    shortDescription: `Creates a new array with all elements that pass the test implemented by \`filter\`.`,
+    longDescription: `Creates a new array with all elements that pass the test implemented by \`filter\`.`,
     examples: [`(filter string? ["Albert" "Mojir" 160 [1 2]])`, `(filter (lambda (x) (> x 10)) [5 10 15 20])`],
     specialExpression: false,
     sideEffects: [],
   },
   find: {
     name: `find`,
-    category: `List`,
+    category: `Array`,
     linkName: `find`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `finder`,
@@ -478,15 +480,15 @@ module.exports = {
   },
   position: {
     name: `position`,
-    category: `List`,
+    category: `Array`,
     linkName: `position`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `finder`,
@@ -505,15 +507,15 @@ module.exports = {
   },
   some: {
     name: `some`,
-    category: `List`,
+    category: `Array`,
     linkName: `some`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `finder`,
@@ -533,15 +535,15 @@ module.exports = {
   },
   every: {
     name: `every`,
-    category: `List`,
+    category: `Array`,
     linkName: `every`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `finder`,
@@ -560,141 +562,141 @@ module.exports = {
   },
   reverse: {
     name: `reverse`,
-    category: `List`,
+    category: `Array`,
     linkName: `reverse`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `reverse`,
         type: `function`,
       },
     ],
-    shortDescription: `Creates a new list with the elements from \`list\` in reversed order.`,
-    longDescription: `Creates a new list with the elements from \`list\` in reversed order.`,
+    shortDescription: `Creates a new array with the elements from \`array\` in reversed order.`,
+    longDescription: `Creates a new array with the elements from \`array\` in reversed order.`,
     examples: [`(reverse ["Albert" "Mojir" 160 [1 2]])`, `(reverse [])`],
     specialExpression: false,
     sideEffects: [],
   },
   first: {
     name: `first`,
-    category: `List`,
+    category: `Array`,
     linkName: `first`,
     returns: {
       type: `any`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns the first element of \`list\`.`,
-    longDescription: `Returns the first element of \`list\`. If \`list\` is empty, \`undefined\` is returned.`,
+    shortDescription: `Returns the first element of \`array\`.`,
+    longDescription: `Returns the first element of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(first ["Albert" "Mojir" 160 [1 2]])`, `(first [])`],
     specialExpression: false,
     sideEffects: [],
   },
   second: {
     name: `second`,
-    category: `List`,
+    category: `Array`,
     linkName: `second`,
     returns: {
       type: `any`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns the second element of \`list\`.`,
-    longDescription: `Returns the second element of \`list\`. If \`list\` has less than two elements, \`undefined\` is returned.`,
+    shortDescription: `Returns the second element of \`array\`.`,
+    longDescription: `Returns the second element of \`array\`. If \`array\` has less than two elements, \`undefined\` is returned.`,
     examples: [`(second ["Albert" "Mojir" 160 [1 2]])`, `(second [1])`, `(second [])`],
     specialExpression: false,
     sideEffects: [],
   },
   last: {
     name: `last`,
-    category: `List`,
+    category: `Array`,
     linkName: `last`,
     returns: {
       type: `any`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns the last element of \`list\`.`,
-    longDescription: `Returns the last element of \`list\`. If \`list\` is empty, \`undefined\` is returned.`,
+    shortDescription: `Returns the last element of \`array\`.`,
+    longDescription: `Returns the last element of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(last ["Albert" "Mojir" 160 [1 2]])`, `(last [1 2])`, `(last [1])`, `(last [])`],
     specialExpression: false,
     sideEffects: [],
   },
   rest: {
     name: `rest`,
-    category: `List`,
+    category: `Array`,
     linkName: `rest`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns a new list with all but the first element from \`list\`.`,
-    longDescription: `Returns a new list with all but the first element from \`list\`. If \`list\` has less than two elements, undefined is returned.`,
+    shortDescription: `Returns a new array with all but the first element from \`array\`.`,
+    longDescription: `Returns a new array with all but the first element from \`array\`. If \`array\` has less than two elements, undefined is returned.`,
     examples: [`(rest ["Albert" "Mojir" 160 [1 2]])`, `(rest ["Albert"])`, `(rest [])`],
     specialExpression: false,
     sideEffects: [],
   },
   cons: {
     name: `cons`,
-    category: `List`,
+    category: `Array`,
     linkName: `cons`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Constructs a new list with \`element\` as first element and \`rest\` as the rest.`,
-    longDescription: `Constructs a new list with \`element\` as first element and \`rest\` as the rest.`,
+    shortDescription: `Constructs a new array with \`element\` as first element and \`rest\` as the rest.`,
+    longDescription: `Constructs a new array with \`element\` as first element and \`rest\` as the rest.`,
     examples: [`(cons "Hi" ["Albert" "Mojir" 160 [1 2]])`, `(cons "Hi" [])`, `(cons "Hi")`],
     specialExpression: false,
     sideEffects: [],
   },
   take: {
     name: `take`,
-    category: `List`,
+    category: `Array`,
     linkName: `take`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
       {
         name: `count`,
         type: `integer`,
       },
     ],
-    shortDescription: `Constructs a new list with the \`count\` first elements from \`list\`.`,
-    longDescription: `Constructs a new list with the \`count\` first elements from \`list\`.`,
+    shortDescription: `Constructs a new array with the \`count\` first elements from \`array\`.`,
+    longDescription: `Constructs a new array with the \`count\` first elements from \`array\`.`,
     examples: [`(take [1 2 3 4 5] 3)`, `(take [1 2 3 4 5] 0)`],
     specialExpression: false,
     sideEffects: [],
@@ -702,10 +704,10 @@ module.exports = {
 
   'take-while': {
     name: `take-while`,
-    category: `List`,
+    category: `Array`,
     linkName: `take-while`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -713,12 +715,12 @@ module.exports = {
         type: `function`,
       },
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns the members of \`list\` in order, stopping before the first one for which \`predicate\` returns a falsy value.`,
-    longDescription: `Returns the members of \`list\` in order, stopping before the first one for which \`predicate\` returns a falsy value.`,
+    shortDescription: `Returns the members of \`array\` in order, stopping before the first one for which \`predicate\` returns a falsy value.`,
+    longDescription: `Returns the members of \`array\` in order, stopping before the first one for which \`predicate\` returns a falsy value.`,
     examples: [`(take-while (lambda (x) (< x 3)) [1 2 3 2 1])`, `(take-while (lambda (x) (> x 3)) [1 2 3 2 1])`],
     specialExpression: false,
     sideEffects: [],
@@ -726,10 +728,10 @@ module.exports = {
 
   sort: {
     name: `sort`,
-    category: `List`,
+    category: `Array`,
     linkName: `sort`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -737,12 +739,12 @@ module.exports = {
         type: `function`,
       },
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns a new list with the elements from \`list\` sorted according to \`comparer\`.`,
-    longDescription: `Returns a new list with the elements from \`list\` sorted according to \`comparer\`.`,
+    shortDescription: `Returns a new array with the elements from \`array\` sorted according to \`comparer\`.`,
+    longDescription: `Returns a new array with the elements from \`array\` sorted according to \`comparer\`.`,
     examples: [
       `(sort (lambda (a b) (cond ((< a b) -1) ((> a b) 1) (true -1))) [3 1 2])`,
       `(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) [3 1 2])`,
@@ -752,30 +754,30 @@ module.exports = {
   },
   join: {
     name: `join`,
-    category: `List`,
+    category: `Array`,
     linkName: `join`,
     returns: {
       type: `string`,
     },
     arguments: [
       {
-        name: `list`,
-        type: `list of strings`,
+        name: `array`,
+        type: `array of strings`,
       },
       {
         name: `delimiter`,
         type: `string`,
       },
     ],
-    shortDescription: `Returns a new string by concatenating all of the elements in \`list\`, separated by \`delimiter\`.`,
-    longDescription: `Returns a new string by concatenating all of the elements in \`list\`, separated by \`delimiter\`.`,
+    shortDescription: `Returns a new string by concatenating all of the elements in \`array\`, separated by \`delimiter\`.`,
+    longDescription: `Returns a new string by concatenating all of the elements in \`array\`, separated by \`delimiter\`.`,
     examples: [`(join ["Albert" "Mojir"] " ")`, `(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")`],
     specialExpression: false,
     sideEffects: [],
   },
   includes: {
     name: `includes`,
-    category: `List`,
+    category: `Array`,
     linkName: `includes`,
     returns: {
       type: `true | false`,
@@ -786,12 +788,12 @@ module.exports = {
         type: `any`,
       },
       {
-        name: `list`,
-        type: `list`,
+        name: `array`,
+        type: `array`,
       },
     ],
-    shortDescription: `Returns \`true\` if \`list\` contains \`elem\`, otherwise returns \`false\`.`,
-    longDescription: `Returns \`true\` if \`list\` contains \`elem\`, otherwise returns \`false\`.`,
+    shortDescription: `Returns \`true\` if \`array\` contains \`elem\`, otherwise returns \`false\`.`,
+    longDescription: `Returns \`true\` if \`array\` contains \`elem\`, otherwise returns \`false\`.`,
     examples: [
       `(includes "Mojir" ["Albert" "Mojir"])`,
       `(includes 42 ["Albert" "Mojir" 42])`,

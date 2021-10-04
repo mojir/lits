@@ -137,7 +137,7 @@ module.exports = {
     category: `Object`,
     linkName: `keys`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -145,8 +145,8 @@ module.exports = {
         type: `object`,
       },
     ],
-    shortDescription: `Returns list of all keys in \`object\`.`,
-    longDescription: `Returns list of all keys in \`object\`.`,
+    shortDescription: `Returns array of all keys in \`object\`.`,
+    longDescription: `Returns array of all keys in \`object\`.`,
     examples: [`(keys (object))`, `(keys (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: false,
     sideEffects: [],
@@ -156,7 +156,7 @@ module.exports = {
     category: `Object`,
     linkName: `values`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -164,8 +164,8 @@ module.exports = {
         type: `object`,
       },
     ],
-    shortDescription: `Returns list of all values in \`object\`.`,
-    longDescription: `Returns list of all values in \`object\`.`,
+    shortDescription: `Returns array of all values in \`object\`.`,
+    longDescription: `Returns array of all values in \`object\`.`,
     examples: [`(values (object))`, `(values (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: false,
     sideEffects: [],
@@ -175,7 +175,7 @@ module.exports = {
     category: `Object`,
     linkName: `entries`,
     returns: {
-      type: `list of [key value] - paris`,
+      type: `array of [key value] - paris`,
     },
     arguments: [
       {
@@ -183,8 +183,8 @@ module.exports = {
         type: `object`,
       },
     ],
-    shortDescription: `Returns nested list of all key - value pairs in \`object\`.`,
-    longDescription: `Returns nested list of all key - value pairs in \`object\`.`,
+    shortDescription: `Returns nested array of all key - value pairs in \`object\`.`,
+    longDescription: `Returns nested array of all key - value pairs in \`object\`.`,
     examples: [`(entries (object))`, `(entries (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: false,
     sideEffects: [],

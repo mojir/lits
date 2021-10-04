@@ -621,18 +621,18 @@ describe(`specialExpressions`, () => {
     })
   })
 
-  describe(`dolist`, () => {
+  describe(`doarray`, () => {
     test(`samples`, () => {
-      expect(() => lispish.run(`(setq l [1 2 3]) (dolist el l)`)).toThrow()
+      expect(() => lispish.run(`(setq l [1 2 3]) (doarray el l)`)).toThrow()
     })
 
-    test(`dolist without result value`, () => {
+    test(`doarray without result value`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
           (setq x 0)
 
-          (dolist (el l)
+          (doarray (el l)
             (setq x (+ x el))
           )
 
@@ -641,22 +641,22 @@ describe(`specialExpressions`, () => {
       ).toBe(6)
     })
 
-    test(`dolist returns undefined if no return expression`, () => {
+    test(`doarray returns undefined if no return expression`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
-          (dolist (el l))
+          (doarray (el l))
         `),
       ).toBeUndefined()
     })
 
-    test(`dolist with result value`, () => {
+    test(`doarray with result value`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
 
           (let ((x 0))
-            (dolist (el l x)
+            (doarray (el l x)
               (setq x (+ x el))
             )
           )
@@ -664,13 +664,13 @@ describe(`specialExpressions`, () => {
       ).toBe(6)
     })
 
-    test(`dolist with return`, () => {
+    test(`doarray with return`, () => {
       expect(
         lispish.run(`
           (setq l [1 2 3])
 
           (let ((x 0))
-            (dolist (el l x)
+            (doarray (el l x)
               (setq x (+ x el))
               (return x)
             )
@@ -679,13 +679,13 @@ describe(`specialExpressions`, () => {
       ).toBe(1)
     })
 
-    test(`dolist with throw`, () => {
+    test(`doarray with throw`, () => {
       expect(() =>
         lispish.run(`
           (setq l [1 2 3])
 
           (let ((x 0))
-            (dolist (el l x)
+            (doarray (el l x)
               (setq x (+ x el))
               (throw "Oops")
             )

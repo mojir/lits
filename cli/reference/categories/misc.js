@@ -9,7 +9,7 @@ module.exports = {
     arguments: [
       {
         name: `values`,
-        type: `list`,
+        type: `array`,
       },
     ],
     shortDescription: `Result is \`true\` if no two \`values\` are equal to each other.`,
@@ -28,7 +28,7 @@ module.exports = {
     arguments: [
       {
         name: `values`,
-        type: `list`,
+        type: `array`,
       },
     ],
     shortDescription: `Compares \`values\` according to "equal" predicate.`,
@@ -79,7 +79,7 @@ module.exports = {
       },
       {
         name: `args`,
-        type: `list`,
+        type: `array`,
       },
     ],
     shortDescription: `Call supplied function with specified arguments.`,
@@ -98,11 +98,11 @@ module.exports = {
     arguments: [
       {
         name: `values`,
-        type: `list`,
+        type: `array`,
       },
     ],
-    shortDescription: `It console.log the \`values\` and then returns the last element of the \`values\` list.`,
-    longDescription: `It console.log the \`values\` and then returns the last element of the \`values\` list.. If called with no arguments \`undefined\` is returned.`,
+    shortDescription: `It console.log the \`values\` and then returns the last element of the \`values\` array.`,
+    longDescription: `It console.log the \`values\` and then returns the last element of the \`values\` array.. If called with no arguments \`undefined\` is returned.`,
     examples: [
       `(write "A string")`,
       `(write 100 "items")`,
@@ -138,15 +138,15 @@ module.exports = {
     arguments: [
       {
         name: `object`,
-        type: `object | list`,
+        type: `object | array`,
       },
       {
         name: `path`,
         type: `string`,
       },
     ],
-    shortDescription: `Is used to get the value at \`path\` of object or list.`,
-    longDescription: `Is used to get the value at \`path\` of object or list.`,
+    shortDescription: `Is used to get the value at \`path\` of object or array.`,
+    longDescription: `Is used to get the value at \`path\` of object or array.`,
     examples: [
       `(get-path (write (object "a" (object "x" [1 2 3]))) "a.x[2]")`,
       `(get-path (write (object "a" (object "x" [1 2 3]))) "b.z[10]")`,

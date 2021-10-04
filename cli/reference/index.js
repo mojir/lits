@@ -1,4 +1,4 @@
-const listReference = require('./categories/list')
+const listReference = require('./categories/array')
 const mathReference = require('./categories/math')
 const miscReference = require('./categories/misc')
 const objectReference = require('./categories/object')
@@ -23,7 +23,7 @@ const functionReference = {
 const categoryNames = [
   'Special expression',
   'Predicate',
-  'List',
+  'Array',
   'Object',
   'String',
   'Math',

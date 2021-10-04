@@ -13,7 +13,7 @@ module.exports = {
       },
     ],
     shortDescription: `Computes logical "and" function.`,
-    longDescription: `Computes logical "and" function. \`forms\` evaluation starts from left. Value from the first form that decides result is returned so \`forms\` at end of argument list may not evaluated.`,
+    longDescription: `Computes logical "and" function. \`forms\` evaluation starts from left. Value from the first form that decides result is returned so \`forms\` at end of argument array may not evaluated.`,
     examples: [
       `(and 1 1)`,
       `(and (> 3 2) "string")`,
@@ -38,7 +38,7 @@ module.exports = {
       },
     ],
     shortDescription: `Computes logical "or" function.`,
-    longDescription: `Computes logical "or" function. \`forms\` evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.`,
+    longDescription: `Computes logical "or" function. \`forms\` evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument array may not evaluated.`,
     examples: [
       `(or 1 1)`,
       `(or (> 3 2) "string")`,
@@ -564,17 +564,17 @@ module.exports = {
     specialExpression: true,
     sideEffects: [],
   },
-  dolist: {
-    name: `dolist`,
+  doarray: {
+    name: `doarray`,
     category: `Special expression`,
-    linkName: `dolist`,
+    linkName: `doarray`,
     returns: {
       type: `any`,
     },
     arguments: [
       {
-        name: `(var list [result])`,
-        type: `dolist form`,
+        name: `(var array [result])`,
+        type: `doarray form`,
       },
       {
         name: `form`,
@@ -582,14 +582,14 @@ module.exports = {
         description: `zero or more`,
       },
     ],
-    shortDescription: `Runs the \`form\`s once for each element in the list. if \`result\` is present, it will be evaluated after all iterations and its value will be returned.`,
-    longDescription: `Runs the \`form\`s once for each element in the list. if \`result\` is present, it will be evaluated after all iterations and its value will be returned.`,
+    shortDescription: `Runs the \`form\`s once for each element in the array. if \`result\` is present, it will be evaluated after all iterations and its value will be returned.`,
+    longDescription: `Runs the \`form\`s once for each element in the array. if \`result\` is present, it will be evaluated after all iterations and its value will be returned.`,
     examples: [
-      `(setq l [1 2 3]) (setq x 0) (dolist (el l) (setq x (+ x el))) x`,
-      `(setq l [1 2 3]) (dolist (el l))`,
-      `(setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el))))`,
-      `(setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x)))`,
-      `(setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw "Oops")))`,
+      `(setq l [1 2 3]) (setq x 0) (doarray (el l) (setq x (+ x el))) x`,
+      `(setq l [1 2 3]) (doarray (el l))`,
+      `(setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el))))`,
+      `(setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el)) (return x)))`,
+      `(setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el)) (throw "Oops")))`,
     ],
     specialExpression: true,
     sideEffects: [],

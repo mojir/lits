@@ -27,7 +27,7 @@ module.exports = {
     category: `Regular expression`,
     linkName: `match`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {
@@ -39,8 +39,8 @@ module.exports = {
         type: `string`,
       },
     ],
-    shortDescription: `Matches \`string\` against \`pattern\`. If \`string\` matches, a *match*-list is returned, otherwise \`undefined\`.`,
-    longDescription: `Matches \`string\` against \`pattern\`. If \`string\` matches, a *match*-list is returned, otherwise \`undefined\`.`,
+    shortDescription: `Matches \`string\` against \`pattern\`. If \`string\` matches, a *match*-array is returned, otherwise \`undefined\`.`,
+    longDescription: `Matches \`string\` against \`pattern\`. If \`string\` matches, a *match*-array is returned, otherwise \`undefined\`.`,
     examples: [
       `(match (regexp "^\\s*(.*)$") "  A string")`,
       `(match (regexp "albert" "i") "My name is Albert")`,
@@ -81,7 +81,7 @@ module.exports = {
     category: `Regular expression`,
     linkName: `replace`,
     returns: {
-      type: `list`,
+      type: `array`,
     },
     arguments: [
       {

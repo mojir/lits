@@ -6,13 +6,13 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe(`list functions`, () => {
-  describe(`list`, () => {
+describe(`array functions`, () => {
+  describe(`array`, () => {
     test(`samples`, () => {
       expect(lispish.run(`[]`)).toEqual([])
-      expect(lispish.run(`(list 1)`)).toEqual([1])
-      expect((lispish.run(`(list undefined)`) as unknown[])[0]).toEqual(undefined)
-      expect(lispish.run(`(list 0 "1" null true false undefined (list []) (object))`)).toEqual([
+      expect(lispish.run(`(array 1)`)).toEqual([1])
+      expect((lispish.run(`(array undefined)`) as unknown[])[0]).toEqual(undefined)
+      expect(lispish.run(`(array 0 "1" null true false undefined (array []) (object))`)).toEqual([
         0,
         `1`,
         null,
@@ -574,7 +574,7 @@ describe(`list functions`, () => {
       expect(() => lispish.run(`(take [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take [1 2 3] 1 2)`)).toThrow()
     })
-    test(`new list created`, () => {
+    test(`new array created`, () => {
       const program = `
         (setq l1 [1 2 3])
         (setq l2 (take l1 2))
@@ -600,7 +600,7 @@ describe(`list functions`, () => {
       expect(() => lispish.run(`(take-while [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) [1 2 3] 1)`)).toThrow()
     })
-    test(`new list created`, () => {
+    test(`new array created`, () => {
       const program = `
         (setq l1 [1 2 3])
         (setq l2 (take-while (lambda (x) (< x 3)) l1))
@@ -648,7 +648,7 @@ describe(`list functions`, () => {
     })
   })
 
-  describe(`list as function`, () => {
+  describe(`array as function`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(["Albert" "Mojir"] 0)`)).toBe(`Albert`)
       expect(lispish.run(`((cons 1 [2 3]) 1)`)).toBe(2)

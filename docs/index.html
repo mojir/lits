@@ -28,8 +28,8 @@
     <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
     <ul>
       <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
-      <li>Only one sequence type exists: <pre>list</pre>. And its undelaying data structure is a javascript array.</li>
-      <li>Quotes behave differently! <pre>'</pre> is simply a short hand for <pre>(list ...)</pre>.</li>
+      <li>Only one sequence type exists: <pre>array</pre>. And its undelaying data structure is a javascript array.</li>
+      <li>Quotes behave differently! <pre>'</pre> is simply a short hand for <pre>(array ...)</pre>.</li>
       <li>No macros.</li>
       <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
       <li>No tail call optimization (yet).</li>
@@ -105,7 +105,7 @@
         <div class="row example-item">
           <div class="column wide">
             <div class="example-name">Sort</div>
-            <div class="example-description">Sort a list of numbers.</div>
+            <div class="example-description">Sort an array of numbers.</div>
           </div>
           <div class="column right">
             <span class="button" onclick="setPlayground('sort')">Show in playground</span>
@@ -133,13 +133,13 @@
 <div id="append" class="content function">
   <div class="function-header">append</div>
   
-  <p>Concatenates list arguments into one list. Resulting list is shallow copy of specified <span class="pre">lists</span>.</p>
+  <p>Concatenates array arguments into one array. Resulting array is shallow copy of specified <span class="pre">lists</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>append lists(zero or more) => list</pre>
+    <pre>append lists(zero or more) => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>lists: list[]</pre></div>
+  <label>Arguments</label><div class="indent"><pre>lists: array[]</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -153,26 +153,28 @@
 </div>
 
 
-<div id="list" class="content function">
-  <div class="function-header">list</div>
+<div id="array" class="content function">
+  <div class="function-header">array</div>
   
-  <p>Makes new list from <span class="pre">values</span>.</p>
+  <p>Makes new array from <span class="pre">values</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>list values => list</pre>
+    <pre>array values => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>values: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(list 1 2 3)')"><span class="icon-button">▶</span> (list 1 2 3) <span class="gray">=> [1,2,3]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(list (list null undefined false true))')"><span class="icon-button">▶</span> (list (list null undefined false true)) <span class="gray">=> [[null,undefined,false,true]]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(array 1 2 3)')"><span class="icon-button">▶</span> (array 1 2 3) <span class="gray">=> [1,2,3]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array (array null undefined false true))')"><span class="icon-button">▶</span> (array (array null undefined false true)) <span class="gray">=> [[null,undefined,false,true]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[]')"><span class="icon-button">▶</span> [] <span class="gray">=> []</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[1 2 3]')"><span class="icon-button">▶</span> [1 2 3] <span class="gray">=> [1,2,3]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[[null undefined false true]]')"><span class="icon-button">▶</span> [[null undefined false true]] <span class="gray">=> [[null,undefined,false,true]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[]')"><span class="icon-button">▶</span> [] <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('([1 2 3] 1)')"><span class="icon-button">▶</span> ([1 2 3] 1) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('([1 2 3 4 5 6 7 8 9] 3)')"><span class="icon-button">▶</span> ([1 2 3 4 5 6 7 8 9] 3) <span class="gray">=> 4</span></span></pre>
   </div>
 </div>
 
@@ -180,10 +182,10 @@
 <div id="listf" class="content function">
   <div class="function-header">listf</div>
   
-  <p>Creates a list with <span class="pre">length</span> number of elements and sets all elements to "value".</p>
+  <p>Creates an array with <span class="pre">length</span> number of elements and sets all elements to "value".</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>listf length value => list</pre>
+    <pre>listf length value => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>length: number</pre>
@@ -201,10 +203,10 @@
 <div id="range" class="content function">
   <div class="function-header">range</div>
   
-  <p>Create a list with a range of numbers. If only one argument: <span class="pre">0...a</span>, otherwise: <span class="pre">a...b</span>. <span class="pre">step</span> defaults to <span class="pre">1</span>.</p>
+  <p>Create an array with a range of numbers. If only one argument: <span class="pre">0...a</span>, otherwise: <span class="pre">a...b</span>. <span class="pre">step</span> defaults to <span class="pre">1</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>range a length(optional) length(optional) => list</pre>
+    <pre>range a length(optional) length(optional) => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>a: number</pre>
@@ -225,13 +227,13 @@
 <div id="length" class="content function">
   <div class="function-header">length</div>
   
-  <p>Returns length of <span class="pre">list</span>.</p>
+  <p>Returns length of <span class="pre">array</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>length list => number</pre>
+    <pre>length array => number</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -251,7 +253,7 @@
     <pre>at input index => any</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>input: string | list</pre>
+  <label>Arguments</label><div class="indent"><pre>input: string | array</pre>
 <pre>index: integer</pre></div>
 
   <label>No side effects</label>
@@ -273,17 +275,17 @@
 <div id="selt" class="content function">
   <div class="function-header">selt</div>
   
-  <p>Sets <span class="pre">value</span> on specified element of <span class="pre">list</span>. The <span class="pre">index</span> is counted from <span class="pre">0</span>. Accessing out-of-bounds indices returns throws <span class="pre">Error</span>.</p>
+  <p>Sets <span class="pre">value</span> on specified element of <span class="pre">array</span>. The <span class="pre">index</span> is counted from <span class="pre">0</span>. Accessing out-of-bounds indices returns throws <span class="pre">Error</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>selt list index value => list</pre>
+    <pre>selt array index value => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>index: non negative integer</pre>
 <pre>value: any</pre></div>
 
-  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Side effects</label><div class="indent"><pre>Mutates array</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(selt [1 2 3] 1 ___double_quote___two___double_quote___)')"><span class="icon-button">▶</span> (selt [1 2 3] 1 "two") <span class="gray">=> [1,"two",3]</span></span></pre>
@@ -295,16 +297,16 @@
 <div id="push" class="content function">
   <div class="function-header">push</div>
   
-  <p>Pushes <span class="pre">values</span> to the end of <span class="pre">list</span>.</p>
+  <p>Pushes <span class="pre">values</span> to the end of <span class="pre">array</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>push list values(one or more) => list</pre>
+    <pre>push array values(one or more) => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
-<pre>values: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
+<pre>values: array</pre></div>
 
-  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Side effects</label><div class="indent"><pre>Mutates array</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(push [1 2 3] 4)')"><span class="icon-button">▶</span> (push [1 2 3] 4) <span class="gray">=> [1,2,3,4]</span></span></pre>
@@ -317,16 +319,16 @@
 <div id="pop" class="content function">
   <div class="function-header">pop</div>
   
-  <p>Removes and returns then last item of <span class="pre">list</span>. If <span class="pre">list</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Removes and returns then last item of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>pop list value => list</pre>
+    <pre>pop array value => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>value: any</pre></div>
 
-  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Side effects</label><div class="indent"><pre>Mutates array</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(pop [1 2 3])')"><span class="icon-button">▶</span> (pop [1 2 3]) <span class="gray">=> 3</span></span></pre>
@@ -338,16 +340,16 @@
 <div id="unshift" class="content function">
   <div class="function-header">unshift</div>
   
-  <p>Inserts <span class="pre">values</span> at the beginning of <span class="pre">list</span>.</p>
+  <p>Inserts <span class="pre">values</span> at the beginning of <span class="pre">array</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>unshift list values(one or more) => list</pre>
+    <pre>unshift array values(one or more) => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
-<pre>values: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
+<pre>values: array</pre></div>
 
-  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Side effects</label><div class="indent"><pre>Mutates array</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(unshift [1 2 3] 4)')"><span class="icon-button">▶</span> (unshift [1 2 3] 4) <span class="gray">=> [4,1,2,3]</span></span></pre>
@@ -360,16 +362,16 @@
 <div id="shift" class="content function">
   <div class="function-header">shift</div>
   
-  <p>Removes and returns the first item of <span class="pre">list</span>. If <span class="pre">list</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Removes and returns the first item of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>shift list value => list</pre>
+    <pre>shift array value => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>value: any</pre></div>
 
-  <label>Side effects</label><div class="indent"><pre>Mutates list</pre></div>
+  <label>Side effects</label><div class="indent"><pre>Mutates array</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(shift [1 2 3])')"><span class="icon-button">▶</span> (shift [1 2 3]) <span class="gray">=> 1</span></span></pre>
@@ -381,13 +383,13 @@
 <div id="slice" class="content function">
   <div class="function-header">slice</div>
   
-  <p>Returns a shallow copy of a portion of <span class="pre">list</span> into a new list selected from index <span class="pre">start</span> (inclusive) to index <span class="pre">end</span> (exclusive). If <span class="pre">start</span> is not provided it defaults to <span class="pre">0</span>. If <span class="pre">end</span> is not provided, the rest of the list will be copied.</p>
+  <p>Returns a shallow copy of a portion of <span class="pre">array</span> into a new array selected from index <span class="pre">start</span> (inclusive) to index <span class="pre">end</span> (exclusive). If <span class="pre">start</span> is not provided it defaults to <span class="pre">0</span>. If <span class="pre">end</span> is not provided, the rest of the array will be copied.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>slice list start(optional) end(optional) => list</pre>
+    <pre>slice array start(optional) end(optional) => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>start: number</pre>
 <pre>end: number</pre></div>
 
@@ -403,18 +405,18 @@
 <div id="splice" class="content function">
   <div class="function-header">splice</div>
   
-  <p>Changes the contents of a list by removing or replacing existing elements and/or adding new elements. Returns a list of the removed values.</p>
+  <p>Changes the contents of an array by removing or replacing existing elements and/or adding new elements. Returns an array of the removed values.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>splice list start(optional) deleteCount(optional) ...values(optional) => list</pre>
+    <pre>splice array start(optional) deleteCount(optional) ...values(optional) => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>start: number</pre>
 <pre>deleteCount: number</pre>
 <pre>...values: any[]</pre></div>
 
-  <label>Side effects</label><div class="indent"><pre>Mutating list</pre></div>
+  <label>Side effects</label><div class="indent"><pre>Mutating array</pre></div>
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(splice [1 2 3 4 5] 2 2)')"><span class="icon-button">▶</span> (splice [1 2 3 4 5] 2 2) <span class="gray">=> [3,4]</span></span></pre>
@@ -427,13 +429,13 @@
 <div id="reduce" class="content function">
   <div class="function-header">reduce</div>
   
-  <p>Runs <span class="pre">reducer</span> function on each element of the <span class="pre">list</span>, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.</p>
+  <p>Runs <span class="pre">reducer</span> function on each element of the <span class="pre">array</span>, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>reduce list reducer startValue => list</pre>
+    <pre>reduce array reducer startValue => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>reducer: function</pre>
 <pre>startValue: any</pre></div>
 
@@ -450,13 +452,13 @@
 <div id="reduce-right" class="content function">
   <div class="function-header">reduce-right</div>
   
-  <p>Runs <span class="pre">reducer</span> function on each element of the <span class="pre">list</span> (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.</p>
+  <p>Runs <span class="pre">reducer</span> function on each element of the <span class="pre">array</span> (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>reduce-right list reducer startValue => list</pre>
+    <pre>reduce-right array reducer startValue => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>reducer: function</pre>
 <pre>startValue: any</pre></div>
 
@@ -471,14 +473,14 @@
 <div id="map" class="content function">
   <div class="function-header">map</div>
   
-  <p>Creates a new list populated with the results of calling <span class="pre">mapper</span> on every elements in the calling <span class="pre">list</span>s.</p>
+  <p>Creates a new array populated with the results of calling <span class="pre">mapper</span> on every elements in the calling <span class="pre">array</span>s.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>map mapper list(one or many) => list</pre>
+    <pre>map mapper array(one or many) => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>mapper: function</pre>
-<pre>list: list</pre></div>
+<pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -494,13 +496,13 @@
 <div id="filter" class="content function">
   <div class="function-header">filter</div>
   
-  <p>Creates a new list with all elements that pass the test implemented by <span class="pre">filter</span>.</p>
+  <p>Creates a new array with all elements that pass the test implemented by <span class="pre">filter</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>filter list filter => list</pre>
+    <pre>filter array filter => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>filter: function</pre></div>
 
   <label>No side effects</label>
@@ -518,10 +520,10 @@
   <p>Returns the first elements that pass the test implemented by <span class="pre">finder</span>. I no element was found, <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>find list finder => list</pre>
+    <pre>find array finder => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>finder: function</pre></div>
 
   <label>No side effects</label>
@@ -539,10 +541,10 @@
   <p>Returns the index of the first elements that pass the test implemented by <span class="pre">finder</span>. I no element was found, <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>position list finder => list</pre>
+    <pre>position array finder => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>finder: function</pre></div>
 
   <label>No side effects</label>
@@ -561,10 +563,10 @@
   <p>Returns true if at least one element pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>some list finder => list</pre>
+    <pre>some array finder => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>finder: function</pre></div>
 
   <label>No side effects</label>
@@ -584,10 +586,10 @@
   <p>Returns true if all elements pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>every list finder => list</pre>
+    <pre>every array finder => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>finder: function</pre></div>
 
   <label>No side effects</label>
@@ -603,13 +605,13 @@
 <div id="reverse" class="content function">
   <div class="function-header">reverse</div>
   
-  <p>Creates a new list with the elements from <span class="pre">list</span> in reversed order.</p>
+  <p>Creates a new array with the elements from <span class="pre">array</span> in reversed order.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>reverse list reverse => list</pre>
+    <pre>reverse array reverse => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>reverse: function</pre></div>
 
   <label>No side effects</label>
@@ -624,13 +626,13 @@
 <div id="first" class="content function">
   <div class="function-header">first</div>
   
-  <p>Returns the first element of <span class="pre">list</span>. If <span class="pre">list</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the first element of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>first list => any</pre>
+    <pre>first array => any</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -644,13 +646,13 @@
 <div id="second" class="content function">
   <div class="function-header">second</div>
   
-  <p>Returns the second element of <span class="pre">list</span>. If <span class="pre">list</span> has less than two elements, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the second element of <span class="pre">array</span>. If <span class="pre">array</span> has less than two elements, <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>second list => any</pre>
+    <pre>second array => any</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -665,13 +667,13 @@
 <div id="last" class="content function">
   <div class="function-header">last</div>
   
-  <p>Returns the last element of <span class="pre">list</span>. If <span class="pre">list</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the last element of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>last list => any</pre>
+    <pre>last array => any</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -687,13 +689,13 @@
 <div id="rest" class="content function">
   <div class="function-header">rest</div>
   
-  <p>Returns a new list with all but the first element from <span class="pre">list</span>. If <span class="pre">list</span> has less than two elements, undefined is returned.</p>
+  <p>Returns a new array with all but the first element from <span class="pre">array</span>. If <span class="pre">array</span> has less than two elements, undefined is returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>rest list => list</pre>
+    <pre>rest array => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -708,13 +710,13 @@
 <div id="cons" class="content function">
   <div class="function-header">cons</div>
   
-  <p>Constructs a new list with <span class="pre">element</span> as first element and <span class="pre">rest</span> as the rest.</p>
+  <p>Constructs a new array with <span class="pre">element</span> as first element and <span class="pre">rest</span> as the rest.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>cons list => list</pre>
+    <pre>cons array => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -729,13 +731,13 @@
 <div id="take" class="content function">
   <div class="function-header">take</div>
   
-  <p>Constructs a new list with the <span class="pre">count</span> first elements from <span class="pre">list</span>.</p>
+  <p>Constructs a new array with the <span class="pre">count</span> first elements from <span class="pre">array</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>take list count => list</pre>
+    <pre>take array count => array</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
 <pre>count: integer</pre></div>
 
   <label>No side effects</label>
@@ -750,14 +752,14 @@
 <div id="take-while" class="content function">
   <div class="function-header">take-while</div>
   
-  <p>Returns the members of <span class="pre">list</span> in order, stopping before the first one for which <span class="pre">predicate</span> returns a falsy value.</p>
+  <p>Returns the members of <span class="pre">array</span> in order, stopping before the first one for which <span class="pre">predicate</span> returns a falsy value.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>take-while predicate list => list</pre>
+    <pre>take-while predicate array => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>predicate: function</pre>
-<pre>list: list</pre></div>
+<pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -771,14 +773,14 @@
 <div id="sort" class="content function">
   <div class="function-header">sort</div>
   
-  <p>Returns a new list with the elements from <span class="pre">list</span> sorted according to <span class="pre">comparer</span>.</p>
+  <p>Returns a new array with the elements from <span class="pre">array</span> sorted according to <span class="pre">comparer</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>sort comparer list => list</pre>
+    <pre>sort comparer array => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>comparer: function</pre>
-<pre>list: list</pre></div>
+<pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -792,13 +794,13 @@
 <div id="join" class="content function">
   <div class="function-header">join</div>
   
-  <p>Returns a new string by concatenating all of the elements in <span class="pre">list</span>, separated by <span class="pre">delimiter</span>.</p>
+  <p>Returns a new string by concatenating all of the elements in <span class="pre">array</span>, separated by <span class="pre">delimiter</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>join list delimiter => string</pre>
+    <pre>join array delimiter => string</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list of strings</pre>
+  <label>Arguments</label><div class="indent"><pre>array: array of strings</pre>
 <pre>delimiter: string</pre></div>
 
   <label>No side effects</label>
@@ -813,14 +815,14 @@
 <div id="includes" class="content function">
   <div class="function-header">includes</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">list</span> contains <span class="pre">elem</span>, otherwise returns <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">array</span> contains <span class="pre">elem</span>, otherwise returns <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>includes elem list => true | false</pre>
+    <pre>includes elem array => true | false</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>elem: any</pre>
-<pre>list: list</pre></div>
+<pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -1375,9 +1377,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.05347841836037692</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0014242471050134142</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 2.172951390128792</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.2420032550064004</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0052177435236973315</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.8241396909801707</span></span></pre>
 <pre class="example" onclick="addToPlayground('(random 0)')"><span class="icon-button">▶</span> (random 0) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="addToPlayground('(random -1)')"><span class="icon-button">▶</span> (random -1) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
@@ -1741,7 +1743,7 @@
     <pre>!= values => boolean</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>values: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -1765,7 +1767,7 @@
     <pre>= values => boolean</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>values: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -1815,7 +1817,7 @@
   </div>
 
   <label>Arguments</label><div class="indent"><pre>fn: function</pre>
-<pre>args: list</pre></div>
+<pre>args: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -1829,13 +1831,13 @@
 <div id="write" class="content function">
   <div class="function-header">write</div>
   
-  <p>It console.log the <span class="pre">values</span> and then returns the last element of the <span class="pre">values</span> list.. If called with no arguments <span class="pre">undefined</span> is returned.</p>
+  <p>It console.log the <span class="pre">values</span> and then returns the last element of the <span class="pre">values</span> array.. If called with no arguments <span class="pre">undefined</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>write values => value</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>values: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>values: array</pre></div>
 
   <label>Side effects</label><div class="indent"><pre>Does a console.log</pre></div>
   <label>Examples</label>
@@ -1864,7 +1866,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633369528678</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633375999593</span></span></pre>
   </div>
 </div>
 
@@ -1872,13 +1874,13 @@
 <div id="get-path" class="content function">
   <div class="function-header">get-path</div>
   
-  <p>Is used to get the value at <span class="pre">path</span> of object or list.</p>
+  <p>Is used to get the value at <span class="pre">path</span> of object or array.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>get-path object path => number</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>object: object | list</pre>
+  <label>Arguments</label><div class="indent"><pre>object: object | array</pre>
 <pre>path: string</pre></div>
 
   <label>No side effects</label>
@@ -2024,10 +2026,10 @@
 <div id="keys" class="content function">
   <div class="function-header">keys</div>
   
-  <p>Returns list of all keys in <span class="pre">object</span>.</p>
+  <p>Returns array of all keys in <span class="pre">object</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>keys object => list</pre>
+    <pre>keys object => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
@@ -2044,10 +2046,10 @@
 <div id="values" class="content function">
   <div class="function-header">values</div>
   
-  <p>Returns list of all values in <span class="pre">object</span>.</p>
+  <p>Returns array of all values in <span class="pre">object</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>values object => list</pre>
+    <pre>values object => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
@@ -2064,10 +2066,10 @@
 <div id="entries" class="content function">
   <div class="function-header">entries</div>
   
-  <p>Returns nested list of all key - value pairs in <span class="pre">object</span>.</p>
+  <p>Returns nested array of all key - value pairs in <span class="pre">object</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>entries object => list of [key value] - paris</pre>
+    <pre>entries object => array of [key value] - paris</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
@@ -2277,13 +2279,13 @@
 </div>
 
 
-<div id="list_question" class="content function">
-  <div class="function-header">list?</div>
+<div id="array_question" class="content function">
+  <div class="function-header">array?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a list, otherwise <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is an array, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>list? value => boolean</pre>
+    <pre>array? value => boolean</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
@@ -2291,13 +2293,13 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(list? [])')"><span class="icon-button">▶</span> (list? []) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(list? [1 2 3])')"><span class="icon-button">▶</span> (list? [1 2 3]) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(list? (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (list? (object "a" 10)) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(list? 42)')"><span class="icon-button">▶</span> (list? 42) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(list? 10.1)')"><span class="icon-button">▶</span> (list? 10.1) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(list? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (list? (lambda (x y) (+ x y))) <span class="gray">=> false</span></span></pre>
-<pre class="example" onclick="addToPlayground('(list?)')"><span class="icon-button">▶</span> (list?) <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="addToPlayground('(array? [])')"><span class="icon-button">▶</span> (array? []) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array? [1 2 3])')"><span class="icon-button">▶</span> (array? [1 2 3]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array? (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (array? (object "a" 10)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array? 42)')"><span class="icon-button">▶</span> (array? 42) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array? 10.1)')"><span class="icon-button">▶</span> (array? 10.1) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array? (lambda (x y) (+ x y)))')"><span class="icon-button">▶</span> (array? (lambda (x y) (+ x y))) <span class="gray">=> false</span></span></pre>
+<pre class="example" onclick="addToPlayground('(array?)')"><span class="icon-button">▶</span> (array?) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -2431,13 +2433,13 @@
 <div id="empty_question" class="content function">
   <div class="function-header">empty?</div>
   
-  <p>Returns <span class="pre">true</span> if <span class="pre">list</span> is empty, otherwise <span class="pre">false</span>.</p>
+  <p>Returns <span class="pre">true</span> if <span class="pre">array</span> is empty, otherwise <span class="pre">false</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>empty? list => boolean</pre>
+    <pre>empty? array => boolean</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>list: list</pre></div>
+  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
@@ -2472,10 +2474,10 @@
 <div id="match" class="content function">
   <div class="function-header">match</div>
   
-  <p>Matches <span class="pre">string</span> against <span class="pre">pattern</span>. If <span class="pre">string</span> matches, a <em>match</em>-list is returned, otherwise <span class="pre">undefined</span>.</p>
+  <p>Matches <span class="pre">string</span> against <span class="pre">pattern</span>. If <span class="pre">string</span> matches, a <em>match</em>-array is returned, otherwise <span class="pre">undefined</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>match pattern string => list</pre>
+    <pre>match pattern string => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>pattern: RegExp</pre>
@@ -2519,7 +2521,7 @@
   <p>Returns a new string with some or all matches of <span class="pre">pattern</span> replaced by <span class="pre">replacement</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>replace string pattern replacement => list</pre>
+    <pre>replace string pattern replacement => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>string: string</pre>
@@ -2538,7 +2540,7 @@
 <div id="and" class="content function">
   <div class="function-header">and</div>
   <h3>Special Expression</h3>
-  <p>Computes logical "and" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so <span class="pre">forms</span> at end of argument list may not evaluated.</p>
+  <p>Computes logical "and" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so <span class="pre">forms</span> at end of argument array may not evaluated.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>and forms => boolean</pre>
@@ -2561,7 +2563,7 @@
 <div id="or" class="content function">
   <div class="function-header">or</div>
   <h3>Special Expression</h3>
-  <p>Computes logical "or" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument list may not evaluated.</p>
+  <p>Computes logical "or" function. <span class="pre">forms</span> evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument array may not evaluated.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>or forms => boolean</pre>
@@ -3025,26 +3027,26 @@
 </div>
 
 
-<div id="dolist" class="content function">
-  <div class="function-header">dolist</div>
+<div id="doarray" class="content function">
+  <div class="function-header">doarray</div>
   <h3>Special Expression</h3>
-  <p>Runs the <span class="pre">form</span>s once for each element in the list. if <span class="pre">result</span> is present, it will be evaluated after all iterations and its value will be returned.</p>
+  <p>Runs the <span class="pre">form</span>s once for each element in the array. if <span class="pre">result</span> is present, it will be evaluated after all iterations and its value will be returned.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>dolist (var list [result]) form(zero or more) => any</pre>
+    <pre>doarray (var array [result]) form(zero or more) => any</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>(var list [result]): dolist form</pre>
+  <label>Arguments</label><div class="indent"><pre>(var array [result]): doarray form</pre>
 <pre>form: form</pre></div>
 
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (setq x 0) (dolist (el l) (setq x (+ x el))) x')"><span class="icon-button">▶</span> (setq l [1 2 3]) (setq x 0) (dolist (el l) (setq x (+ x el))) x <span class="gray">=> 6</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (dolist (el l))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (dolist (el l)) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el))))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el)))) <span class="gray">=> 6</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x)))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (return x))) <span class="gray">=> 1</span></span></pre>
-<pre class="example" onclick="addToPlayground('(setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw ___double_quote___Oops___double_quote___)))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (let ((x 0)) (dolist (el l x) (setq x (+ x el)) (throw "Oops"))) <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (setq x 0) (doarray (el l) (setq x (+ x el))) x')"><span class="icon-button">▶</span> (setq l [1 2 3]) (setq x 0) (doarray (el l) (setq x (+ x el))) x <span class="gray">=> 6</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (doarray (el l))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (doarray (el l)) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el))))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el)))) <span class="gray">=> 6</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el)) (return x)))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el)) (return x))) <span class="gray">=> 1</span></span></pre>
+<pre class="example" onclick="addToPlayground('(setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el)) (throw ___double_quote___Oops___double_quote___)))')"><span class="icon-button">▶</span> (setq l [1 2 3]) (let ((x 0)) (doarray (el l x) (setq x (+ x el)) (throw "Oops"))) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -3493,7 +3495,7 @@
 <div id="split" class="content function">
   <div class="function-header">split</div>
   
-  <p>Divides <span class="pre">string</span> into a list of substrings. The division is done by searching for <span class="pre">delimiter</span>. If <span class="pre">limit</span> as provided, at most <span class="pre">limit</span> number of substrings are returned.</p>
+  <p>Divides <span class="pre">string</span> into an array of substrings. The division is done by searching for <span class="pre">delimiter</span>. If <span class="pre">limit</span> as provided, at most <span class="pre">limit</span> number of substrings are returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>split string delimiter limit(optional) => string</pre>
@@ -3659,7 +3661,7 @@
 <li id="create-function_link" onclick="showPage('create-function')">create-function</li>
 <li id="create-variable_link" onclick="showPage('create-variable')">create-variable</li>
 <li id="defun_link" onclick="showPage('defun')">defun</li>
-<li id="dolist_link" onclick="showPage('dolist')">dolist</li>
+<li id="doarray_link" onclick="showPage('doarray')">doarray</li>
 <li id="dotimes_link" onclick="showPage('dotimes')">dotimes</li>
 <li id="if_link" onclick="showPage('if')">if</li>
 <li id="lambda_link" onclick="showPage('lambda')">lambda</li>
@@ -3682,12 +3684,12 @@
 
         <label>Predicate</label>
         <ul>
-          <li id="boolean_question_link" onclick="showPage('boolean_question')">boolean?</li>
+          <li id="array_question_link" onclick="showPage('array_question')">array?</li>
+<li id="boolean_question_link" onclick="showPage('boolean_question')">boolean?</li>
 <li id="empty_question_link" onclick="showPage('empty_question')">empty?</li>
 <li id="even_question_link" onclick="showPage('even_question')">even?</li>
 <li id="function_question_link" onclick="showPage('function_question')">function?</li>
 <li id="integer_question_link" onclick="showPage('integer_question')">integer?</li>
-<li id="list_question_link" onclick="showPage('list_question')">list?</li>
 <li id="null_question_link" onclick="showPage('null_question')">null?</li>
 <li id="number_question_link" onclick="showPage('number_question')">number?</li>
 <li id="object_question_link" onclick="showPage('object_question')">object?</li>
@@ -3698,9 +3700,10 @@
 <li id="zero_question_link" onclick="showPage('zero_question')">zero?</li>
         </ul>
 
-        <label>List</label>
+        <label>Array</label>
         <ul>
           <li id="append_link" onclick="showPage('append')">append</li>
+<li id="array_link" onclick="showPage('array')">array</li>
 <li id="at_link" onclick="showPage('at')">at</li>
 <li id="cons_link" onclick="showPage('cons')">cons</li>
 <li id="every_link" onclick="showPage('every')">every</li>
@@ -3711,7 +3714,6 @@
 <li id="join_link" onclick="showPage('join')">join</li>
 <li id="last_link" onclick="showPage('last')">last</li>
 <li id="length_link" onclick="showPage('length')">length</li>
-<li id="list_link" onclick="showPage('list')">list</li>
 <li id="listf_link" onclick="showPage('listf')">listf</li>
 <li id="map_link" onclick="showPage('map')">map</li>
 <li id="pop_link" onclick="showPage('pop')">pop</li>

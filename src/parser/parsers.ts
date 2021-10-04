@@ -90,7 +90,7 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
 
   const node: NormalExpressionNode = {
     type: `NormalExpression`,
-    name: `list`,
+    name: `array`,
     params,
   }
 

@@ -4,14 +4,14 @@ import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface
 import { asNotUndefined, assertArray, assertNameNode } from '../../utils'
 import { SpecialExpression } from '../interface'
 
-interface DolistSpecialExpressionNode extends SpecialExpressionNode {
-  name: `dolist`
+interface DoarraySpecialExpressionNode extends SpecialExpressionNode {
+  name: `doarray`
   varName: NameNode
   result: AstNode | undefined
-  list: AstNode
+  array: AstNode
 }
 
-export const dolistSpecialExpression: SpecialExpression = {
+export const doarraySpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     let token = asNotUndefined(tokens[position])
     if (!(token.type === `paren` && token.value === `(`)) {
@@ -23,8 +23,8 @@ export const dolistSpecialExpression: SpecialExpression = {
     ;[position, varName] = parseToken(tokens, position)
     assertNameNode(varName)
 
-    let list: AstNode
-    ;[position, list] = parseToken(tokens, position)
+    let array: AstNode
+    ;[position, array] = parseToken(tokens, position)
 
     token = asNotUndefined(tokens[position])
     let result = undefined
@@ -32,13 +32,13 @@ export const dolistSpecialExpression: SpecialExpression = {
       ;[position, result] = parseToken(tokens, position)
     }
 
-    const node: DolistSpecialExpressionNode = {
+    const node: DoarraySpecialExpressionNode = {
       type: `SpecialExpression`,
-      name: `dolist`,
+      name: `doarray`,
       params: [],
       varName,
       result,
-      list,
+      array,
     }
 
     position += 1
@@ -52,9 +52,9 @@ export const dolistSpecialExpression: SpecialExpression = {
     return [position + 1, node]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    castDolistExpressionNode(node)
-    const list = evaluateAstNode(node.list, contextStack)
-    assertArray(list)
+    castDoarrayExpressionNode(node)
+    const array = evaluateAstNode(node.array, contextStack)
+    assertArray(array)
 
     const varName = node.varName.value
 
@@ -63,8 +63,8 @@ export const dolistSpecialExpression: SpecialExpression = {
     const newContextStack = [newContext, ...contextStack]
 
     try {
-      while (list.length > 0) {
-        const variable = list.shift()
+      while (array.length > 0) {
+        const variable = array.shift()
         newContext[varName] = { value: variable, constant: false }
         for (const form of node.params) {
           evaluateAstNode(form, newContextStack)
@@ -84,6 +84,6 @@ export const dolistSpecialExpression: SpecialExpression = {
   },
 }
 
-function castDolistExpressionNode(_node: SpecialExpressionNode): asserts _node is DolistSpecialExpressionNode {
+function castDoarrayExpressionNode(_node: SpecialExpressionNode): asserts _node is DoarraySpecialExpressionNode {
   return
 }

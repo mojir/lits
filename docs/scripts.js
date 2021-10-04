@@ -124,7 +124,7 @@ function showPage(id, historyEvent) {
   } else if (historyEvent === 'replace') {
     history.replaceState(null, '', '#' + id)
   } else {
-    history.pushState(null, '', '*' + id)
+    history.pushState(null, '', '#' + id)
   }
 }
 

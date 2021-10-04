@@ -75,7 +75,7 @@ var examples = [
   {
     id: 'sort',
     name: 'Sort',
-    description: 'Sort a list of numbers.',
+    description: 'Sort an array of numbers.',
     code: `
 (setq l [7 39 45 0 23 1 50 100 12 -5])
 (defun numberComparer (a b)
@@ -100,7 +100,7 @@ var examples = [
       },
     },
     code: `
-(dolist (entry (entries TRANSLATIONS))
+(doarray (entry (entries TRANSLATIONS))
   (create-function (at entry 0) (&rest params &bind ((templateString (at entry 1))))
     (apply template (cons templateString params))
   )

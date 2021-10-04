@@ -463,8 +463,8 @@ module.exports = {
         description: `optional`,
       },
     ],
-    shortDescription: `Divides \`string\` into a list of substrings. The division is done by searching for \`delimiter\`.`,
-    longDescription: `Divides \`string\` into a list of substrings. The division is done by searching for \`delimiter\`. If \`limit\` as provided, at most \`limit\` number of substrings are returned.`,
+    shortDescription: `Divides \`string\` into an array of substrings. The division is done by searching for \`delimiter\`.`,
+    longDescription: `Divides \`string\` into an array of substrings. The division is done by searching for \`delimiter\`. If \`limit\` as provided, at most \`limit\` number of substrings are returned.`,
     examples: [
       `(split "Albert Mojir" " ")`,
       `(split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]"))`,

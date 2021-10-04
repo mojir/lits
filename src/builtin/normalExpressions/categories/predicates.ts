@@ -63,7 +63,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
-  'list?': {
+  'array?': {
     evaluate: ([first]: unknown[]): boolean => {
       return Array.isArray(first)
     },

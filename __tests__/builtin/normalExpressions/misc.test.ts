@@ -84,11 +84,11 @@ describe(`misc functions`, () => {
       expect(lispish.run(program)).toEqual([true, false])
     })
 
-    test(`List equality`, () => {
+    test(`Array equality`, () => {
       const program = `
-        (setq list1 [1 2 3])
-        (setq list2 [1 2 3])
-        [(= list1 list1) (= list1 list2)]
+        (setq array1 [1 2 3])
+        (setq array2 [1 2 3])
+        [(= array1 array1) (= array1 array2)]
       `
       expect(lispish.run(program)).toEqual([true, false])
     })

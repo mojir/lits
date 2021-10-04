@@ -18,7 +18,7 @@ export const letSpecialExpression: SpecialExpression = {
     }
     let token = asNotUndefined(tokens[position])
     if (!(token.type === `paren` && token.value === `(`)) {
-      throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected list of bindings`)
+      throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected array of bindings`)
     }
     position += 1
     while (!(token.type === `paren` && token.value === `)`)) {

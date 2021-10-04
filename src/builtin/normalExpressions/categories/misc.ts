@@ -38,10 +38,10 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   apply: {
-    evaluate: ([func, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+    evaluate: ([func, array]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
       assertLispishFunction(func)
-      assertArray(list)
-      return evaluateLispishFunction(func, list, contextStack)
+      assertArray(array)
+      return evaluateLispishFunction(func, array, contextStack)
     },
     validate: node => assertLength(2, node),
   },

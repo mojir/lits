@@ -43,7 +43,7 @@ export type SpecialExpressionName =
   | `block`
   | `cond`
   | `defun`
-  | `dolist`
+  | `doarray`
   | `dotimes`
   | `function`
   | `if`

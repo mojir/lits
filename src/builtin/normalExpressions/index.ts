@@ -1,6 +1,6 @@
 import { BuiltinNormalExpressions } from '../interface'
 import { bitwiseNormalExpression } from './categories/bitwise'
-import { listNormalExpression } from './categories/list'
+import { listNormalExpression } from './categories/array'
 import { mathNormalExpression } from './categories/math'
 import { miscNormalExpression } from './categories/misc'
 import { objectNormalExpression } from './categories/object'

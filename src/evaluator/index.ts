@@ -206,7 +206,7 @@ function evaluateExpressionExpression(node: ExpressionExpressionNode, contextSta
   }
   if (Array.isArray(fn)) {
     if (node.params.length !== 1) {
-      throw Error(`List as function requires one non negative integer parameter`)
+      throw Error(`Array as function requires one non negative integer parameter`)
     }
     const index = evaluateAstNode(node.params[0] as AstNode, contextStack)
     assertNonNegativeNumber(index)

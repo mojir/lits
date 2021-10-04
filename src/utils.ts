@@ -151,7 +151,7 @@ export function assertStringOrRegExp(value: unknown): asserts value is RegExp | 
 
 export function assertArray(value: unknown): asserts value is Array<unknown> {
   if (!Array.isArray(value)) {
-    throw TypeError(`Expected list, got: ${value} type="${typeof value}"`)
+    throw TypeError(`Expected array, got: ${value} type="${typeof value}"`)
   }
 }
 

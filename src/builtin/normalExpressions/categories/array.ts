@@ -64,24 +64,24 @@ export const listNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   find: {
-    evaluate: ([predicate, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+    evaluate: ([predicate, array]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
       assertLispishFunction(predicate)
-      assertArray(list)
-      return list.find(elem => evaluateLispishFunction(predicate, [elem], contextStack))
+      assertArray(array)
+      return array.find(elem => evaluateLispishFunction(predicate, [elem], contextStack))
     },
     validate: node => assertLength(2, node),
   },
   first: {
-    evaluate: ([list]: unknown[]): unknown => {
-      assertArray(list)
-      return list[0]
+    evaluate: ([array]: unknown[]): unknown => {
+      assertArray(array)
+      return array[0]
     },
     validate: node => assertLength(1, node),
   },
   includes: {
-    evaluate: ([elem, list]: unknown[]): boolean => {
-      assertArray(list)
-      return list.includes(elem)
+    evaluate: ([elem, array]: unknown[]): boolean => {
+      assertArray(array)
+      return array.includes(elem)
     },
     validate: node => assertLength(2, node),
   },
@@ -99,7 +99,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(1, node),
   },
-  list: {
+  array: {
     evaluate: (params: unknown[]): unknown[] => params,
   },
   listf: {
@@ -126,7 +126,7 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       params.slice(2).forEach(listParam => {
         assertArray(listParam)
         if (length !== listParam.length) {
-          throw Error(`All list arguments to "map" must have the same length`)
+          throw Error(`All array arguments to "map" must have the same length`)
         }
       })
 
@@ -245,9 +245,9 @@ export const listNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   second: {
-    evaluate: ([list]: unknown[]): unknown => {
-      assertArray(list)
-      return list[1]
+    evaluate: ([array]: unknown[]): unknown => {
+      assertArray(array)
+      return array[1]
     },
     validate: node => assertLength(1, node),
   },
@@ -302,11 +302,11 @@ export const listNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   sort: {
-    evaluate: ([sorter, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown[] => {
+    evaluate: ([sorter, array]: unknown[], contextStack, { evaluateLispishFunction }): unknown[] => {
       assertLispishFunction(sorter)
-      assertArray(list)
+      assertArray(array)
 
-      const result = [...list]
+      const result = [...array]
       result.sort((a, b) => {
         const compareValue = evaluateLispishFunction(sorter, [a, b], contextStack)
         assertFiniteNumber(compareValue)
@@ -318,36 +318,36 @@ export const listNormalExpression: BuiltinNormalExpressions = {
   },
   splice: {
     evaluate: (params: unknown[]): unknown => {
-      const [list, start, deleteCount, ...values] = params
-      assertArray(list)
+      const [array, start, deleteCount, ...values] = params
+      assertArray(array)
       assertInteger(start)
 
       if (params.length === 2) {
-        return list.splice(start)
+        return array.splice(start)
       }
 
       assertInteger(deleteCount)
-      return list.splice(start, deleteCount, ...values)
+      return array.splice(start, deleteCount, ...values)
     },
     validate: node => assertLength({ min: 2 }, node),
   },
   take: {
-    evaluate: ([list, n]: unknown[]): unknown => {
-      assertArray(list)
+    evaluate: ([array, n]: unknown[]): unknown => {
+      assertArray(array)
       assertNonNegativeNumber(n)
       assertInteger(n)
 
-      return list.slice(0, n)
+      return array.slice(0, n)
     },
     validate: node => assertLength(2, node),
   },
   'take-while': {
-    evaluate: ([predicate, list]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
-      assertArray(list)
+    evaluate: ([predicate, array]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+      assertArray(array)
       assertLispishFunction(predicate)
 
       const result: unknown[] = []
-      for (const item of list) {
+      for (const item of array) {
         if (evaluateLispishFunction(predicate, [item], contextStack)) {
           result.push(item)
         } else {
