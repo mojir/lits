@@ -122,9 +122,9 @@ function showPage(id, historyEvent) {
   if (historyEvent === 'none') {
     return
   } else if (historyEvent === 'replace') {
-    history.replaceState(null, '', ' + id)
+    history.replaceState(null, '', '#' + id)
   } else {
-    history.pushState(null, '', ' + id)
+    history.pushState(null, '', '*' + id)
   }
 }
 

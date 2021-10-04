@@ -156,9 +156,12 @@ describe(`misc functions`, () => {
 
   describe(`debug`, () => {
     let oldError: () => void
+    let lastErrorLog = ``
     beforeEach(() => {
       oldError = console.error
-      console.error = () => undefined
+      console.error = message => {
+        lastErrorLog = message
+      }
     })
     afterEach(() => {
       console.error = oldError
@@ -174,6 +177,11 @@ describe(`misc functions`, () => {
       expect(() => lispish.run(`(debug (object "a" 1))`)).toThrow()
       expect(() => lispish.run(`(debug "label")`)).toThrow()
       expect(() => lispish.run(`(debug "" 0)`)).toThrow()
+    })
+    test(`multiple contexts`, () => {
+      lispish.import(`(setq x 10) (defun foo () "foo") (setq bar (lambda () "bar")) (setq plus +)`)
+      lispish.run(`((lambda (z) (debug) (+ z 1)) 10)`, { vars: { y: 20 } })
+      expect(lastErrorLog).toMatchSnapshot()
     })
   })
 })

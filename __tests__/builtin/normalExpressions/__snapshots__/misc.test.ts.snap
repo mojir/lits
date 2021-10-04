@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`misc functions debug multiple contexts 1`] = `
+"*** LISPISH DEBUG ***
+
+Context 0 - Import context
+  x     10
+  foo   <function foo>
+  bar   <function λ>
+  plus  <builtin function undefined>
+
+Context 1 - Global context
+* y  20
+
+Context 2
+  z  10
+
+"
+`;
