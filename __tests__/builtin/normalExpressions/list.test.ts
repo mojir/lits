@@ -647,4 +647,15 @@ describe(`list functions`, () => {
       expect(() => lispish.run(`(includes "Albert" ["Albert"] 0)`)).toThrow()
     })
   })
+
+  describe(`list as function`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(["Albert" "Mojir"] 0)`)).toBe(`Albert`)
+      expect(lispish.run(`((cons 1 [2 3]) 1)`)).toBe(2)
+      expect(() => lispish.run(`(["Albert" "Mojir"] "0")`)).toThrow()
+      expect(() => lispish.run(`(["Albert" "Mojir"] 0 1)`)).toThrow()
+      expect(() => lispish.run(`("Albert" 0)`)).toThrow()
+      expect(() => lispish.run(`((+ 1 2) 0)`)).toThrow()
+    })
+  })
 })

@@ -8,11 +8,18 @@ import {
   LispishFunction,
   ExpressionExpressionNode,
   functionSymbol,
+  AstNode,
 } from '../parser/interface'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
-import { asLispishFunction, asNotUndefined, isLispishFunction, isUserDefinedLispishFunction } from '../utils'
+import {
+  asNotUndefined,
+  assertInteger,
+  assertNonNegativeNumber,
+  isLispishFunction,
+  isUserDefinedLispishFunction,
+} from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { ReturnFromSignal, ReturnSignal } from '../errors'
@@ -190,9 +197,21 @@ function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Co
 }
 
 function evaluateExpressionExpression(node: ExpressionExpressionNode, contextStack: Context[]): unknown {
-  const lispishFunction = asLispishFunction(evaluateAstNode(node.expression, contextStack))
+  const fn = evaluateAstNode(node.expression, contextStack)
 
-  const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
+  if (isLispishFunction(fn)) {
+    const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
 
-  return evaluateLispishFunction(lispishFunction, params, contextStack)
+    return evaluateLispishFunction(fn, params, contextStack)
+  }
+  if (Array.isArray(fn)) {
+    if (node.params.length !== 1) {
+      throw Error(`List as function requires one non negative integer parameter`)
+    }
+    const index = evaluateAstNode(node.params[0] as AstNode, contextStack)
+    assertNonNegativeNumber(index)
+    assertInteger(index)
+    return fn[index]
+  }
+  throw Error(`Expected function, got ${fn}`)
 }

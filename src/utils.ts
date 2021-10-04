@@ -1,6 +1,7 @@
 import { UnexpectedNodeTypeError } from './errors'
 import {
   AstNode,
+  ExpressionNode,
   functionSymbol,
   LispishFunction,
   NameNode,
@@ -254,5 +255,13 @@ export function isBuiltinLispishFunction(func: unknown): func is UserDefinedLisp
 export function assertStringArray(value: unknown): asserts value is string[] {
   if (!Array.isArray(value) || value.some(v => typeof v !== `string`)) {
     throw Error(`Expected an array of strings, got ${value}`)
+  }
+}
+
+export function assertExpressionNode(node: AstNode): asserts node is ExpressionNode {
+  if (
+    !(node.type === `NormalExpression` || node.type === `SpecialExpression` || node.type === `ExpressionExpression`)
+  ) {
+    throw new UnexpectedNodeTypeError(`ExpressionNode`, node)
   }
 }

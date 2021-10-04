@@ -46,7 +46,7 @@ export class UnexpectedTokenError extends Error {
 }
 
 export class UnexpectedNodeTypeError extends Error {
-  constructor(expectedNodeType: NodeType, actualNode: AstNode | undefined) {
+  constructor(expectedNodeType: NodeType | `ExpressionNode`, actualNode: AstNode | undefined) {
     super(`Expected a ${expectedNodeType} node, got ${actualNode ? `a ${actualNode.type} node` : `undefined`}`)
     Object.setPrototypeOf(this, UnexpectedNodeTypeError.prototype)
     this.name = `UnexpectedNodeTypeError`

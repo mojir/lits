@@ -1,5 +1,5 @@
 import { Token } from '../tokenizer/interface'
-import { asNotUndefined } from '../utils'
+import { asNotUndefined, assertExpressionNode } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
@@ -13,11 +13,11 @@ import {
   ParseSpecialExpression,
   ParseNormalExpression,
   ParseExpressionExpression,
-  ExpressionExpressionNode,
   ParseBinding,
   ParseArgument,
   BindingNode,
   ModifierName,
+  ExpressionExpressionNode,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -69,11 +69,8 @@ const parseExpression: ParseExpression = (tokens, position) => {
       return parseSpecialExpression(tokens, position)
     }
     return parseNormalExpression(tokens, position)
-  } else if (token.type === `paren` && token.value === `(`) {
-    return parseExpressionExpression(tokens, position)
-  } else {
-    throw Error(`Could not parse expression, expected name or "(", got ${token.type}:${token.value}`)
   }
+  return parseExpressionExpression(tokens, position)
 }
 
 type ParseArrayLitteral = (tokens: Token[], position: number) => [number, AstNode]
@@ -154,7 +151,9 @@ const parseBinding: ParseBinding = (tokens, position) => {
 }
 
 const parseExpressionExpression: ParseExpressionExpression = (tokens, position) => {
-  const [newPosition1, expression] = parseExpression(tokens, position)
+  const [newPosition1, expression] = parseToken(tokens, position)
+
+  assertExpressionNode(expression)
 
   const [newPosition2, params] = parseParams(tokens, newPosition1)
 
