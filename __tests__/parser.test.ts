@@ -2,12 +2,12 @@ import { parse } from '../src/parser'
 import { tokenize } from '../src/tokenizer'
 
 const program = `
-(let ((day (* 24 60 60 1000)))
+(let [day (* 24 60 60 1000)]
   (* days day)
 )`
 
 const optimizableProgram = `
-(let ((day (* 24 60 60 1000)))
+(let [day (* 24 60 60 1000)]
   (* 11 day)
 )`
 

@@ -1,7 +1,7 @@
-import { builtin } from '..'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { asAstNode, asNotUndefined, assertLength, assertString } from '../../utils'
 import { SpecialExpression } from '../interface'
+import { assertNameNotDefined } from '../utils'
 
 interface DefsSpecialExpressionNode extends SpecialExpressionNode {
   name: `defs`
@@ -24,21 +24,10 @@ export const defsSpecialExpression: SpecialExpression = {
     const name = evaluateAstNode(asAstNode(node.params[0]), contextStack)
     assertString(name)
 
-    if (builtin.specialExpressions[name]) {
-      throw Error(`Cannot define variable ${name}, it's a special expression`)
-    }
-
-    if (builtin.normalExpressions[name]) {
-      throw Error(`Cannot define variable ${name}, it's a builtin function`)
-    }
+    assertNameNotDefined(name, contextStack)
 
     const value = evaluateAstNode(asAstNode(node.params[1]), contextStack)
-
     const context = asNotUndefined(contextStack[contextStack.length - 2])
-
-    if (context[name]) {
-      throw Error(`Variable already exists "${name}"`)
-    }
 
     context[name] = { value }
 

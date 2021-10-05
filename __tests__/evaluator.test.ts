@@ -12,19 +12,15 @@ beforeEach(() => {
 
 const simpleProgram = `
 (let
-  (
-    (day
-      (let ((sec 1000))
-        (* 24 60 60 sec)
-      )
-    )
-  )
+  [
+    day (let [sec 1000] (* 24 60 60 sec))
+  ]
   (* (get-path info "days[1]") day)
 )`
 
 const formatPhoneNumber = `
 (if (string? $data)
-  (let ((phoneNumber (if (= "+" (at $data 0)) (substring $data 2) $data)))
+  (let [phoneNumber (if (= "+" (at $data 0)) (substring $data 2) $data)]
     (cond
       ((> (string-length phoneNumber) 6)
         (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
@@ -101,16 +97,16 @@ describe(`Evaluator`, () => {
   })
 
   test(`expressionExpression`, () => {
-    expect(lispish.run(`((fn (x) (* x x)) 10)`)).toBe(100)
+    expect(lispish.run(`((fn [x] (* x x)) 10)`)).toBe(100)
   })
 
   test(`lispishFunction`, () => {
-    expect(lispish.run(`((fn () 10))`)).toBe(10)
-    expect(lispish.run(`((fn (x) (x 10)) (fn (x) (* x x)))`)).toBe(100)
-    expect(lispish.run(`((fn (x) (x 10)) 1+)`)).toBe(11)
-    expect(() => lispish.run(`((fn (x) (x 10)) 1++)`)).toThrow()
-    expect(() => lispish.run(`((fn (x) (* x x)) 10 20)`)).toThrow()
-    expect(() => lispish.run(`((fn (x) (* x x)))`)).toThrow()
+    expect(lispish.run(`((fn [] 10))`)).toBe(10)
+    expect(lispish.run(`((fn [x] (x 10)) (fn [x] (* x x)))`)).toBe(100)
+    expect(lispish.run(`((fn [x] (x 10)) 1+)`)).toBe(11)
+    expect(() => lispish.run(`((fn [x] (x 10)) 1++)`)).toThrow()
+    expect(() => lispish.run(`((fn [x] (* x x)) 10 20)`)).toThrow()
+    expect(() => lispish.run(`((fn [x] (* x x)))`)).toThrow()
   })
 
   test(`formatPhoneNumber`, () => {

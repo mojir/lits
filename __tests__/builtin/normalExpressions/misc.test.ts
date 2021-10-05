@@ -179,8 +179,8 @@ describe(`misc functions`, () => {
       expect(() => lispish.run(`(debug "" 0)`)).toThrow()
     })
     test(`multiple contexts`, () => {
-      lispish.import(`(def x 10) (defn foo () "foo") (def bar (fn () "bar")) (def plus +)`)
-      lispish.run(`((fn (z) (debug) (+ z 1)) 10)`, { vars: { y: 20 } })
+      lispish.import(`(def x 10) (defn foo [] "foo") (def bar (fn [] "bar")) (def plus +)`)
+      lispish.run(`((fn [z] (debug) (+ z 1)) 10)`, { vars: { y: 20 } })
       expect(lastErrorLog).toMatchSnapshot()
     })
   })

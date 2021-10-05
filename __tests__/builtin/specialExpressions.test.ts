@@ -61,11 +61,11 @@ describe(`specialExpressions`, () => {
     test(`local variable`, () => {
       const program = `
         (def x "A")     ;Global variable x
-        (write x)        ;"A"
-        (let ((x "B"))   ;Local variable x
-          (write x)      ;"B"
+        (write x)       ;"A"
+        (let [x "B"]    ;Local variable x
+          (write x)     ;"B"
         )
-        (write x)        ;"A" - global variable x
+        (write x)       ;"A" - global variable x
       `
       lispish.run(program)
       expect(logSpy).toHaveBeenNthCalledWith(1, `A`)
@@ -106,18 +106,18 @@ describe(`specialExpressions`, () => {
 
   describe(`let`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(let ((a "A")) a)`)).toBe(`A`)
-      expect(lispish.run(`(let ((a "A") (b "B")) a b)`)).toBe(`B`)
-      expect(lispish.run(`(let ((a "A") (b "B")) a b)`)).toBe(`B`)
-      expect(lispish.run(`(let ((a (+ 10 20)) (b "B")) b a)`)).toBe(30)
+      expect(lispish.run(`(let [a "A"] a)`)).toBe(`A`)
+      expect(lispish.run(`(let [a "A" b "B"] a b)`)).toBe(`B`)
+      expect(lispish.run(`(let [a "A" b "B"] a b)`)).toBe(`B`)
+      expect(lispish.run(`(let [a (+ 10 20) b "B"] b a)`)).toBe(30)
       expect(() => lispish.run(`(let)`)).toThrow()
       expect(() => lispish.run(`(let ())`)).toThrow()
-      expect(() => lispish.run(`(let (()))`)).toThrow()
-      expect(() => lispish.run(`(let ((let ((b "B")) b)))`)).toThrow()
-      expect(() => lispish.run(`(let ((a "A") b) a`)).toThrow()
-      expect(() => lispish.run(`(let (a "A"))`)).toThrow()
+      expect(() => lispish.run(`(let [)))`)).toThrow()
+      expect(() => lispish.run(`(let [let [b "B"] b])`)).toThrow()
+      expect(() => lispish.run(`(let [a "A") b) a`)).toThrow()
+      expect(() => lispish.run(`(let (a "A"]`)).toThrow()
       expect(() => lispish.run(`(let (a "A") a)`)).toThrow()
-      expect(() => lispish.run(`(let ((a (fn () 1))) a)`)).toThrow()
+      expect(() => lispish.run(`(let [a (fn [] 1)] a)`)).toThrow()
     })
     test(`local and global variables`, () => {
       expect(() =>
@@ -133,10 +133,10 @@ describe(`specialExpressions`, () => {
       expect(
         lispish.run(`
           (def a "X")
-          (let (
-            (a "A")
-            (b a)     ;a is the global variable
-          )
+          (let [
+            a "A"
+            b a     ;a is the global variable
+          ]
             b
           )
         `),
@@ -242,56 +242,56 @@ describe(`specialExpressions`, () => {
 
   describe(`defn`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(defn add (a b) (+ a b)) (add 1 2)`)).toBe(3)
-      expect(lispish.run(`(defn add (a b &bind ((x 10))) (+ a b x)) (add 1 2)`)).toBe(13)
-      expect(() => lispish.run(`(defn add () 10)`)).not.toThrow()
-      expect(() => lispish.run(`(defn x (a a) 10)`)).toThrow()
-      expect(() => lispish.run(`(defn true () 10)`)).toThrow()
-      expect(() => lispish.run(`(defn false () 10)`)).toThrow()
-      expect(() => lispish.run(`(defn null () 10)`)).toThrow()
-      expect(() => lispish.run(`(defn undefined () 10)`)).toThrow()
-      expect(() => lispish.run(`(defn add ("s") 10)`)).toThrow()
-      expect(() => lispish.run(`(defn "add" (a b) (+ a b))`)).toThrow()
+      expect(lispish.run(`(defn add [a b] (+ a b)) (add 1 2)`)).toBe(3)
+      expect(lispish.run(`(defn add [a b &bind [x 10]] (+ a b x)) (add 1 2)`)).toBe(13)
+      expect(() => lispish.run(`(defn add [] 10)`)).not.toThrow()
+      expect(() => lispish.run(`(defn x [a a] 10)`)).toThrow()
+      expect(() => lispish.run(`(defn true [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defn false [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defn null [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defn undefined [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defn add ["s"] 10)`)).toThrow()
+      expect(() => lispish.run(`(defn "add" [a b] (+ a b))`)).toThrow()
       expect(() => lispish.run(`(defn add 1 (+ a b))`)).toThrow()
-      expect(() => lispish.run(`(defn add (a b))`)).toThrow()
+      expect(() => lispish.run(`(defn add [a b])`)).toThrow()
     })
     test(`call defn function`, () => {
-      expect(lispish.run(`(defn sumOneToN (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
-      expect(lispish.run(`(defn applyWithVal (fun val) (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
-      expect(lispish.run(`(defn applyWithVal (fun val) (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
+      expect(lispish.run(`(defn sumOneToN [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
+      expect(lispish.run(`(defn applyWithVal [fun val] (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
+      expect(lispish.run(`(defn applyWithVal [fun val] (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
     })
   })
 
   describe(`defns`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(defns (concat "a" "d" "d") (a b) (+ a b)) (add 1 2)`)).toBe(3)
-      expect(() => lispish.run(`(defns "add" () 10)`)).not.toThrow()
-      expect(() => lispish.run(`(defns "x" (a a) 10)`)).toThrow()
-      expect(() => lispish.run(`(defns true () 10)`)).toThrow()
-      expect(() => lispish.run(`(defns false () 10)`)).toThrow()
-      expect(() => lispish.run(`(defns null () 10)`)).toThrow()
-      expect(() => lispish.run(`(defns undefined () 10)`)).toThrow()
-      expect(() => lispish.run(`(defns add ("s") 10)`)).toThrow()
+      expect(lispish.run(`(defns (concat "a" "d" "d") [a b] (+ a b)) (add 1 2)`)).toBe(3)
+      expect(() => lispish.run(`(defns "add" [] 10)`)).not.toThrow()
+      expect(() => lispish.run(`(defns "x" [a a] 10)`)).toThrow()
+      expect(() => lispish.run(`(defns true [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defns false [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defns null [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defns undefined [] 10)`)).toThrow()
+      expect(() => lispish.run(`(defns add ["s"] 10)`)).toThrow()
       expect(() => lispish.run(`(defns add 1 (+ a b))`)).toThrow()
       expect(() => lispish.run(`(defns add (a b))`)).toThrow()
     })
     test(`call defns function`, () => {
-      expect(lispish.run(`(defns "sumOneToN" (n) (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
-      expect(lispish.run(`(defns "applyWithVal" (fun val) (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
+      expect(lispish.run(`(defns "sumOneToN" [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
+      expect(lispish.run(`(defns "applyWithVal" [fun val] (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
     })
   })
 
   describe(`fn`, () => {
     test(`samples`, () => {
-      lispish.run(`(fn (x) (+ x 1))`)
-      lispish.run(`(fn () 1)`)
-      expect(() => lispish.run(`((fn (x) (+ y 1)) 10)`)).toThrow()
+      lispish.run(`(fn [x] (+ x 1))`)
+      lispish.run(`(fn [] 1)`)
+      expect(() => lispish.run(`((fn [x] (+ y 1)) 10)`)).toThrow()
       expect(() => lispish.run(`(fn (false) 1)`)).toThrow()
       expect(() => lispish.run(`(fn (true) 1)`)).toThrow()
       expect(() => lispish.run(`(fn (null) 1)`)).toThrow()
       expect(() => lispish.run(`(fn (undefined) 1)`)).toThrow()
       expect(() => lispish.run(`(fn)`)).toThrow()
-      expect(() => lispish.run(`(fn (x))`)).toThrow()
+      expect(() => lispish.run(`(fn [x])`)).toThrow()
       expect(() => lispish.run(`(fn "k")`)).toThrow()
       expect(() => lispish.run(`(fn k s)`)).toThrow()
       expect(() => lispish.run(`(fn add)`)).toThrow()
@@ -319,7 +319,7 @@ describe(`specialExpressions`, () => {
     })
     test(`in action`, () => {
       const program = `
-      (defn x () (write "Hej") (return-from x "Kalle") (write "san"))
+      (defn x [] (write "Hej") (return-from x "Kalle") (write "san"))
       (x)
       `
       expect(lispish.run(program)).toBe(`Kalle`)
@@ -349,7 +349,7 @@ describe(`specialExpressions`, () => {
     })
     test(`return from fn`, () => {
       const program = `
-        ((fn ()
+        ((fn []
           (return "A")
           "B"
         ))
@@ -374,7 +374,7 @@ describe(`specialExpressions`, () => {
     })
     test(`in action`, () => {
       const program = `
-      (defn x () (write "Hej") (return "Kalle") (write "san"))
+      (defn x [] (write "Hej") (return "Kalle") (write "san"))
       (x)
       `
       expect(lispish.run(program)).toBe(`Kalle`)
@@ -457,7 +457,7 @@ describe(`specialExpressions`, () => {
     })
     test(`return-from should not trigger catchBlock`, () => {
       const program = `
-        (defn fun ()
+        (defn fun []
           (try
             (do
               (write "One")

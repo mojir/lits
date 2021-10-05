@@ -14,7 +14,7 @@ describe(`import`, () => {
     lispish = new Lispish()
   })
   test(`import a function`, () => {
-    lispish.import(`(defn tripple (x) (* x 3))`)
+    lispish.import(`(defn tripple [x] (* x 3))`)
     expect(lispish.run(`(tripple 10)`)).toBe(30)
   })
 
@@ -29,8 +29,8 @@ describe(`import`, () => {
   })
 
   test(`import a function twice`, () => {
-    lispish.import(`(defn tripple (x) (* x 3))`)
-    expect(() => lispish.import(`(defn tripple (x) (* x 3))`)).toThrow()
+    lispish.import(`(defn tripple [x] (* x 3))`)
+    expect(() => lispish.import(`(defn tripple [x] (* x 3))`)).toThrow()
   })
 
   test(`import a function with a built in normal expression name`, () => {
@@ -47,7 +47,7 @@ describe(`import`, () => {
   })
 
   test(`import more than once`, () => {
-    lispish.import(`(defn tripple (x) (* x 3))`)
+    lispish.import(`(defn tripple [x] (* x 3))`)
     lispish.import(`(def magicNumber 42)`)
     expect(lispish.run(`(tripple magicNumber)`)).toBe(126)
   })

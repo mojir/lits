@@ -1,6 +1,6 @@
 import { Context } from '../../evaluator/interface'
-import { BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, isLispishFunction } from '../../utils'
+import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
+import { isLispishFunction } from '../../utils'
 import { SpecialExpression } from '../interface'
 
 interface LetSpecialExpressionNode extends SpecialExpressionNode {
@@ -9,31 +9,20 @@ interface LetSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const letSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseBinding, parseParams }) => {
+  parse: (tokens, position, { parseBindings, parseParams }) => {
+    let bindings: BindingNode[]
+    ;[position, bindings] = parseBindings(tokens, position)
+
+    let params: AstNode[]
+    ;[position, params] = parseParams(tokens, position)
+
     const node: LetSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `let`,
-      params: [],
-      bindings: [],
+      params,
+      bindings,
     }
-    let token = asNotUndefined(tokens[position])
-    if (!(token.type === `paren` && token.value === `(`)) {
-      throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected array of bindings`)
-    }
-    position += 1
-    while (!(token.type === `paren` && token.value === `)`)) {
-      if (!(token.type === `paren` && token.value === `(`)) {
-        throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected an expression`)
-      }
-      const [newPosition, binding] = parseBinding(tokens, position)
-      position = newPosition
-      node.bindings.push(binding)
-      token = asNotUndefined(tokens[position])
-    }
-    position += 1 // skip right parenthesis - end of let bindings
-    const [newPosition, params] = parseParams(tokens, position)
-    node.params = params
-    return [newPosition + 1, node]
+    return [position + 1, node]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
     castLetExpressionNode(node)

@@ -1,4 +1,4 @@
-import { normalExpressionKeys, specialExpressionKeys } from '../builtin'
+import { assertNameNotDefined } from '../builtin/utils'
 import { evaluate } from '../evaluator'
 import { Context } from '../evaluator/interface'
 import { parse } from '../parser'
@@ -61,12 +61,7 @@ export class Lispish {
       if (importKeys.includes(key)) {
         throw Error(`Import faild, imported function/variable already exists: "${key}"`)
       }
-      if (normalExpressionKeys.includes(key)) {
-        throw Error(`Import faild, cannot shadow builtin normal expression: "${key}"`)
-      }
-      if (specialExpressionKeys.includes(key)) {
-        throw Error(`Import faild, cannot shadow builtin special expression: "${key}"`)
-      }
+      assertNameNotDefined(key, [{}, {}])
     }
 
     Object.assign(this.importScope, scope)

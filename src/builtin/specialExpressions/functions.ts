@@ -1,5 +1,4 @@
-import { builtin } from '..'
-import { UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
+import { UnexpectedNodeTypeError } from '../../errors'
 import { Context, EvaluateAstNode } from '../../evaluator/interface'
 import {
   AstNode,
@@ -11,7 +10,7 @@ import {
 } from '../../parser/interface'
 import { asNotUndefined, assertString } from '../../utils'
 import { SpecialExpression } from '../interface'
-import { FunctionArguments, parseFunctionArguments } from '../utils'
+import { assertNameNotDefined, FunctionArguments, parseFunctionArguments } from '../utils'
 
 interface DefnSpecialExpressionNode extends SpecialExpressionNode {
   name: `defn`
@@ -37,7 +36,7 @@ type ExpressionNode = DefnSpecialExpressionNode | DefnsSpecialExpressionNode | F
 type ExpressionsName = `defn` | `defns` | `fn`
 
 function createParser(expressionName: ExpressionsName): SpecialExpression[`parse`] {
-  return (tokens, position, { parseToken, parseArgument, parseBinding }) => {
+  return (tokens, position, { parseToken, parseArgument, parseBindings }) => {
     let functionName = undefined
     if (expressionName === `defn` || expressionName === `defns`) {
       ;[position, functionName] = parseToken(tokens, position)
@@ -46,17 +45,10 @@ function createParser(expressionName: ExpressionsName): SpecialExpression[`parse
       }
     }
 
-    let token = asNotUndefined(tokens[position])
-    if (!(token.type === `paren` && token.value === `(`)) {
-      throw new UnexpectedTokenError(`)`, token)
-    }
-
-    position += 1
-
-    const [nextPosition, functionArguments] = parseFunctionArguments(tokens, position, parseArgument, parseBinding)
+    const [nextPosition, functionArguments] = parseFunctionArguments(tokens, position, parseArgument, parseBindings)
     position = nextPosition
 
-    token = asNotUndefined(tokens[position])
+    let token = asNotUndefined(tokens[position])
     const body: AstNode[] = []
     while (!(token.type === `paren` && token.value === `)`)) {
       const [newPosition, bodyNode] = parseToken(tokens, position)
@@ -121,13 +113,7 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression[`ev
     castExpressionNode(node)
     const name = getFunctionName(expressionName, node, contextStack, evaluateAstNode)
 
-    if (name && builtin.specialExpressions[name]) {
-      throw Error(`Cannot define function ${name}, it's a special expression`)
-    }
-
-    if (name && builtin.normalExpressions[name]) {
-      throw Error(`Cannot define function ${name}, it's a builtin function`)
-    }
+    assertNameNotDefined(name, contextStack)
 
     const functionContext: Context = {}
     for (const binding of node.arguments.bindings) {
@@ -166,10 +152,9 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression[`ev
       return lispishFunction
     }
 
-    // The second last stack entry is the "global" scope
-    const context = asNotUndefined(contextStack[contextStack.length - 2], `Could not find global scope`)
+    const globalContext = asNotUndefined(contextStack[contextStack.length - 2], `Could not find global scope`)
 
-    context[name as string] = { value: lispishFunction }
+    globalContext[name as string] = { value: lispishFunction }
     return undefined
   }
 }

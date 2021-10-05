@@ -170,9 +170,9 @@ export const tokenizeModifier: Tokenizer = (input: string, position: number) => 
     const value: ModifierName = `&rest`
     return [5, { type: `modifier`, value }]
   }
-  if (input.substr(position, 9) === `&optional`) {
-    const value: ModifierName = `&optional`
-    return [9, { type: `modifier`, value }]
+  if (input.substr(position, 4) === `&opt`) {
+    const value: ModifierName = `&opt`
+    return [4, { type: `modifier`, value }]
   }
   if (input.substr(position, 5) === `&bind`) {
     const value: ModifierName = `&bind`

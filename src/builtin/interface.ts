@@ -1,7 +1,7 @@
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from '../evaluator/interface'
 import {
   ParseArgument,
-  ParseBinding,
+  ParseBindings,
   ParseExpression,
   ParseParams,
   ParseToken,
@@ -26,7 +26,7 @@ type Parsers = {
   parseExpression: ParseExpression
   parseParams: ParseParams
   parseToken: ParseToken
-  parseBinding: ParseBinding
+  parseBindings: ParseBindings
   parseArgument: ParseArgument
 }
 

@@ -1,4 +1,8 @@
-import { AstNode, BindingNode, ParseArgument, ParseBinding } from '../parser/interface'
+import { builtin } from '.'
+import { UnexpectedTokenError } from '../errors'
+import { Context } from '../evaluator/interface'
+import { AstNode, BindingNode, ParseArgument, ParseBindings } from '../parser/interface'
+import { reservedNamesRecord } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 import { asNotUndefined } from '../utils'
 
@@ -16,7 +20,7 @@ export function parseFunctionArguments(
   tokens: Token[],
   position: number,
   parseArgument: ParseArgument,
-  parseBinding: ParseBinding,
+  parseBindings: ParseBindings,
 ): [number, FunctionArguments] {
   let bindings: BindingNode[] = []
   let restArgument: string | undefined = undefined
@@ -28,9 +32,15 @@ export function parseFunctionArguments(
   const argNames: Record<string, true> = {}
   let state: `mandatory` | `optional` | `rest` | `bind` = `mandatory`
   let token = asNotUndefined(tokens[position])
-  while (!(token.type === `paren` && token.value === `)`)) {
+  if (!(token.type === `paren` && token.value === `[`)) {
+    throw new UnexpectedTokenError(`[`, token)
+  }
+
+  position += 1
+  token = asNotUndefined(tokens[position])
+  while (!(token.type === `paren` && token.value === `]`)) {
     if (state === `bind`) {
-      ;[position, bindings] = parseBindings(tokens, position, parseBinding)
+      ;[position, bindings] = parseBindings(tokens, position)
       break
     } else {
       const [newPosition, node] = parseArgument(tokens, position)
@@ -39,12 +49,12 @@ export function parseFunctionArguments(
 
       if (node.type === `Modifier`) {
         switch (node.value) {
-          case `&optional`:
+          case `&opt`:
             if (state === `rest`) {
-              throw Error(`&optional cannot appear after &rest`)
+              throw Error(`&opt cannot appear after &rest`)
             }
             if (state === `optional`) {
-              throw Error(`&optional can only appear once`)
+              throw Error(`&opt can only appear once`)
             }
             state = `optional`
             break
@@ -124,19 +134,26 @@ export function parseFunctionArguments(
   return [position, args]
 }
 
-function parseBindings(tokens: Token[], position: number, parseBinding: ParseBinding): [number, BindingNode[]] {
-  const bindings: BindingNode[] = []
-  position += 1
-  let token = asNotUndefined(tokens[position])
-  while (!(token.type === `paren` && token.value === `)`)) {
-    if (!(token.type === `paren` && token.value === `(`)) {
-      throw SyntaxError(`Invalid token "${token.type}" value=${token.value}, expected an expression`)
-    }
-    const [newPosition, binding] = parseBinding(tokens, position)
-    position = newPosition
-    bindings.push(binding)
-    token = asNotUndefined(tokens[position])
+export function assertNameNotDefined<T>(name: T, contextStack: Context[]): asserts name is T {
+  if (typeof name !== `string`) {
+    return
   }
-  position += 1 // skip right parenthesis - end of bindings
-  return [position, bindings]
+  if (builtin.specialExpressions[name]) {
+    throw Error(`Cannot define variable ${name}, it's a special expression`)
+  }
+
+  if (builtin.normalExpressions[name]) {
+    throw Error(`Cannot define variable ${name}, it's a builtin function`)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((reservedNamesRecord as any)[name]) {
+    throw Error(`Cannot define variable ${name}, it's a reserved name`)
+  }
+
+  const globalContext = asNotUndefined(contextStack[contextStack.length - 2])
+
+  if (globalContext[name]) {
+    throw Error(`Name already defined "${name}"`)
+  }
 }

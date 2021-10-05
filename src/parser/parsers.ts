@@ -13,11 +13,11 @@ import {
   ParseSpecialExpression,
   ParseNormalExpression,
   ParseExpressionExpression,
-  ParseBinding,
   ParseArgument,
   BindingNode,
   ModifierName,
   ExpressionExpressionNode,
+  ParseBindings,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -123,9 +123,26 @@ const parseArgument: ParseArgument = (tokens, position) => {
   }
 }
 
-const parseBinding: ParseBinding = (tokens, position) => {
-  position += 1 // Skip parenthesis
+const parseBindings: ParseBindings = (tokens, position) => {
+  let token = asNotUndefined(tokens[position])
+  if (!(token.type === `paren` && token.value === `[`)) {
+    throw new UnexpectedTokenError(`[`, token)
+  }
+  position += 1
+  token = asNotUndefined(tokens[position])
+  const bindings: BindingNode[] = []
+  let binding: BindingNode
+  while (!(token.type === `paren` && token.value === `]`)) {
+    ;[position, binding] = parseBinding(tokens, position)
+    bindings.push(binding)
+    token = asNotUndefined(tokens[position])
+  }
+  position += 1
 
+  return [position, bindings]
+}
+
+function parseBinding(tokens: Token[], position: number): [number, BindingNode] {
   let token = asNotUndefined(tokens[position])
   if (token.type !== `name`) {
     throw Error(`Expected name node in binding, got ${token.type} value=${token.value}`)
@@ -134,20 +151,15 @@ const parseBinding: ParseBinding = (tokens, position) => {
 
   position += 1
   token = asNotUndefined(tokens[position])
-  const [newPosition, value] = parseToken(tokens, position)
-  position = newPosition
-
-  token = asNotUndefined(tokens[position])
-  if (!(token.type === `paren` && token.value === `)`)) {
-    throw new UnexpectedTokenError(`)`, token)
-  }
+  let value: AstNode
+  ;[position, value] = parseToken(tokens, position)
 
   const node: BindingNode = {
     type: `Binding`,
     name,
     value,
   }
-  return [position + 1, node]
+  return [position, node]
 }
 
 const parseExpressionExpression: ParseExpressionExpression = (tokens, position) => {
@@ -200,7 +212,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
     parseExpression,
     parseParams,
     parseToken,
-    parseBinding,
+    parseBindings,
     parseArgument,
   })
 

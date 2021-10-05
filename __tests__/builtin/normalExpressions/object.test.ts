@@ -22,7 +22,7 @@ describe(`object functions`, () => {
         d: undefined,
         e: { x: [] },
       })
-      expect(lispish.run(`(let ((a "a")) (object a 1))`)).toEqual({ a: 1 })
+      expect(lispish.run(`(let [a "a"] (object a 1))`)).toEqual({ a: 1 })
       expect(() => lispish.run(`(object "x")`)).toThrow()
       expect(() => lispish.run(`(object "x")`)).toThrow()
       expect(() => lispish.run(`(object "x" 1 "y")`)).toThrow()
