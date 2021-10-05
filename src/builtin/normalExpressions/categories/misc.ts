@@ -100,7 +100,7 @@ function contextToString(context: Context) {
   const maxKeyLength = Math.max(...Object.keys(context).map(key => key.length))
   return Object.entries(context).reduce((result, entry) => {
     const key = `${entry[0]}`.padEnd(maxKeyLength + 2, ` `)
-    return `${result}${entry[1].constant ? `* ` : `  `}${key}${valueToString(entry[1])}\n`
+    return `${result}  ${key}${valueToString(entry[1])}\n`
   }, ``)
 }
 

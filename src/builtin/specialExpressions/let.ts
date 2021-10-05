@@ -44,7 +44,7 @@ export const letSpecialExpression: SpecialExpression = {
       if (isLispishFunction(bindingValue)) {
         throw Error(`Cannot bind function in let expression`)
       }
-      locals[binding.name] = { value: bindingValue, constant: false }
+      locals[binding.name] = { value: bindingValue }
     }
     const newContextStack = [locals, ...contextStack]
 

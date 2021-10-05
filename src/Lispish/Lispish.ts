@@ -36,7 +36,7 @@ export class Lispish {
 
     if (params.vars) {
       Object.entries(params.vars).forEach(([key, value]) => {
-        globalContext[key] = { constant: true, value }
+        globalContext[key] = { value }
       })
     }
 

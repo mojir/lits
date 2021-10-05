@@ -19,12 +19,12 @@ describe(`import`, () => {
   })
 
   test(`import a variable`, () => {
-    lispish.import(`(setq magicNumber 42)`)
+    lispish.import(`(def magicNumber 42)`)
     expect(lispish.run(`magicNumber`)).toBe(42)
   })
 
   test(`change imported variable`, () => {
-    lispish.import(`(setq magicNumber 42)`)
+    lispish.import(`(def magicNumber 42)`)
     expect(lispish.run(`magicNumber`)).toBe(42)
   })
 
@@ -42,13 +42,13 @@ describe(`import`, () => {
   })
 
   test(`import a variable twice`, () => {
-    lispish.import(`(setq magicNumber 42)`)
-    expect(() => lispish.import(`(setq magicNumber 42)`)).toThrow()
+    lispish.import(`(def magicNumber 42)`)
+    expect(() => lispish.import(`(def magicNumber 42)`)).toThrow()
   })
 
   test(`import more than once`, () => {
     lispish.import(`(defun tripple (x) (* x 3))`)
-    lispish.import(`(setq magicNumber 42)`)
+    lispish.import(`(def magicNumber 42)`)
     expect(lispish.run(`(tripple magicNumber)`)).toBe(126)
   })
 })

@@ -77,8 +77,8 @@ describe(`misc functions`, () => {
 
     test(`Object equality`, () => {
       const program = `
-        (setq obj1 (object "x" 10))
-        (setq obj2 (object "x" 10))
+        (def obj1 (object "x" 10))
+        (def obj2 (object "x" 10))
         [(= obj1 obj1) (= obj1 obj2)]
       `
       expect(lispish.run(program)).toEqual([true, false])
@@ -86,8 +86,8 @@ describe(`misc functions`, () => {
 
     test(`Array equality`, () => {
       const program = `
-        (setq array1 [1 2 3])
-        (setq array2 [1 2 3])
+        (def array1 [1 2 3])
+        (def array2 [1 2 3])
         [(= array1 array1) (= array1 array2)]
       `
       expect(lispish.run(program)).toEqual([true, false])
@@ -179,7 +179,7 @@ describe(`misc functions`, () => {
       expect(() => lispish.run(`(debug "" 0)`)).toThrow()
     })
     test(`multiple contexts`, () => {
-      lispish.import(`(setq x 10) (defun foo () "foo") (setq bar (lambda () "bar")) (setq plus +)`)
+      lispish.import(`(def x 10) (defun foo () "foo") (def bar (lambda () "bar")) (def plus +)`)
       lispish.run(`((lambda (z) (debug) (+ z 1)) 10)`, { vars: { y: 20 } })
       expect(lastErrorLog).toMatchSnapshot()
     })

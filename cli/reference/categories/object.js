@@ -75,8 +75,8 @@ module.exports = {
     examples: [
       `(odel (object "x" 10) "x")`,
       `(odel (object "x" 10) "y")`,
-      `(setq o (object "a" 5)) (odel o "a") o`,
-      `(setq o (object "a" 5)) (odel o "b") o`,
+      `(def o (object "a" 5)) (odel o "a") o`,
+      `(def o (object "a" 5)) (odel o "b") o`,
     ],
     specialExpression: false,
     sideEffects: [],
@@ -106,8 +106,8 @@ module.exports = {
     longDescription: `Sets an attribute on \`object\`. Returns \`value\`.`,
     examples: [
       `(oset (object "x" 10) "a" 10)`,
-      `(setq o (object)) (oset o "a" 10) o`,
-      `(setq o (object "a" 5)) (oset o "a" 10) o`,
+      `(def o (object)) (oset o "a" 10) o`,
+      `(def o (object "a" 5)) (oset o "a" 10) o`,
     ],
     specialExpression: false,
     sideEffects: [],

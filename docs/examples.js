@@ -77,7 +77,7 @@ var examples = [
     name: 'Sort',
     description: 'Sort an array of numbers.',
     code: `
-(setq l [7 39 45 0 23 1 50 100 12 -5])
+(def l [7 39 45 0 23 1 50 100 12 -5])
 (defun numberComparer (a b)
   (cond
     ((< a b) -1)

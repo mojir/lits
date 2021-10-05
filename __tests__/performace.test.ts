@@ -14,7 +14,7 @@ beforeEach(() => {
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
-const globalContext: Context = { x: { value: 20, constant: false }, y: { value: 30, constant: false } }
+const globalContext: Context = { x: { value: 20 }, y: { value: 30 } }
 const jsExpression = `((x - y) * (y - x)) + ((x / y) * (y / x))`
 
 // Some baseline values for javascript eval to compare with

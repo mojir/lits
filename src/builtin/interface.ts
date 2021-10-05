@@ -44,7 +44,6 @@ export type SpecialExpressionName =
   | `cond`
   | `defun`
   | `doarray`
-  | `dotimes`
   | `function`
   | `if`
   | `lambda`
@@ -54,15 +53,11 @@ export type SpecialExpressionName =
   | `progn`
   | `return-from`
   | `return`
-  | `setq-constant`
-  | `setq-local-constant`
-  | `setq-local`
-  | `setq`
+  | `def`
   | `throw`
   | `try`
   | `unless`
   | `when`
-  | `while`
   | `create-variable`
-  | `create-constant-variable`
+  | `create-global-variable`
   | `create-function`

@@ -45,13 +45,12 @@ const formatPhoneNumber = `
 `
 
 const context: Context = {
-  kalle: { value: 5, constant: false },
+  kalle: { value: 5 },
   info: {
     value: {
       days: [10, 13],
       gender: `male`,
     },
-    constant: false,
   },
 }
 

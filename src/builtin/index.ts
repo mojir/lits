@@ -7,7 +7,6 @@ import {
   lambdaSpecialExpression,
 } from './specialExpressions/functions'
 import { doarraySpecialExpression } from './specialExpressions/doarray'
-import { dotimesSpecialExpression } from './specialExpressions/dotimes'
 import { ifSpecialExpression } from './specialExpressions/if'
 import { letSpecialExpression } from './specialExpressions/let'
 import { loopSpecialExpression } from './specialExpressions/loop'
@@ -16,18 +15,14 @@ import { prognSpecialExpression } from './specialExpressions/progn'
 import { returnFromSpecialExpression } from './specialExpressions/return-from'
 import { returnSpecialExpression } from './specialExpressions/return'
 import {
-  setqSpecialExpression,
-  setqConstantSpecialExpression,
-  setqLocalConstantSpecialExpression,
-  setqLocalSpecialExpression,
-  createConstantVariableSpecialExpression,
+  createGlobalVariableSpecialExpression,
   createVariableSpecialExpression,
+  defSpecialExpression,
 } from './specialExpressions/variables'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
 import { unlessSpecialExpression } from './specialExpressions/unless'
 import { whenSpecialExpression } from './specialExpressions/when'
-import { whileSpecialExpression } from './specialExpressions/while'
 import { SpecialExpression } from './interface'
 import { normalExpressions } from './normalExpressions'
 
@@ -35,16 +30,13 @@ type SpecialExpressions = Record<string, SpecialExpression>
 
 export const specialExpressions: SpecialExpressions = {
   'return-from': returnFromSpecialExpression,
-  'setq-constant': setqConstantSpecialExpression,
-  'setq-local-constant': setqLocalConstantSpecialExpression,
-  'setq-local': setqLocalSpecialExpression,
+  def: defSpecialExpression,
   and: andSpecialExpression,
   block: blockSpecialExpression,
   cond: condSpecialExpression,
   defun: defunSpecialExpression,
   'create-function': createFunctionSpecialExpression,
   doarray: doarraySpecialExpression,
-  dotimes: dotimesSpecialExpression,
   if: ifSpecialExpression,
   lambda: lambdaSpecialExpression,
   let: letSpecialExpression,
@@ -52,14 +44,12 @@ export const specialExpressions: SpecialExpressions = {
   or: orSpecialExpression,
   progn: prognSpecialExpression,
   return: returnSpecialExpression,
-  setq: setqSpecialExpression,
   throw: throwSpecialExpression,
   try: trySpecialExpression,
   unless: unlessSpecialExpression,
   when: whenSpecialExpression,
-  while: whileSpecialExpression,
   'create-variable': createVariableSpecialExpression,
-  'create-constant-variable': createConstantVariableSpecialExpression,
+  'create-global-variable': createGlobalVariableSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {

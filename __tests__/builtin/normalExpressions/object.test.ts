@@ -146,7 +146,7 @@ describe(`object functions`, () => {
     })
     test(`set new value`, () => {
       const program = `
-        (setq obj (object "x" 10))
+        (def obj (object "x" 10))
         (oset obj "y" 20)
         obj
       `
@@ -154,7 +154,7 @@ describe(`object functions`, () => {
     })
     test(`update value`, () => {
       const program = `
-        (setq obj (object "x" 10))
+        (def obj (object "x" 10))
         (oset obj "x" 20)
         obj
       `
@@ -180,7 +180,7 @@ describe(`object functions`, () => {
     })
     test(`delete atribute`, () => {
       const program = `
-        (setq obj (object "x" 10))
+        (def obj (object "x" 10))
         (odel obj "x")
         obj
       `
@@ -189,7 +189,7 @@ describe(`object functions`, () => {
 
     test(`delete unexisting attribute`, () => {
       const program = `
-        (setq obj (object "x" 10))
+        (def obj (object "x" 10))
         (odel obj "y")
         obj
       `
@@ -219,8 +219,8 @@ describe(`object functions`, () => {
 
     test(`merge returns new object`, () => {
       const program = `
-        (setq obj1 (object "x" 10))
-        (setq obj2 (merge obj1))
+        (def obj1 (object "x" 10))
+        (def obj2 (merge obj1))
         (!= obj1 obj2)
       `
       expect(lispish.run(program)).toBe(true)

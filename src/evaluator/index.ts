@@ -25,7 +25,7 @@ import { normalExpressions } from '../builtin/normalExpressions'
 import { ReturnFromSignal, ReturnSignal } from '../errors'
 
 export function evaluate(ast: Ast, globalScope: Context, importScope: Context): unknown {
-  // First element is the global context. E.g. setq will assign to this if no local variable is available
+  // First element is the global context. E.g. def will assign to this if no local variable is available
   // Second element is the context sent in from outside (this should never be mutated)
   const contextStack: Context[] = [globalScope, importScope]
 
@@ -132,12 +132,12 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       if (i < nbrOfMandatoryArgs) {
         const param = params[i]
         const key = asNotUndefined(args.mandatoryArguments[i], ``)
-        newContext[key] = { value: param, constant: false }
+        newContext[key] = { value: param }
       } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
         const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
         const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
         const key = arg.name
-        newContext[key] = { value: param, constant: false }
+        newContext[key] = { value: param }
       } else {
         const param = params[i]
         if (isLispishFunction(param)) {
@@ -148,7 +148,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
     }
 
     if (args.restArgument) {
-      newContext[args.restArgument] = { value: rest, constant: false }
+      newContext[args.restArgument] = { value: rest }
     }
 
     try {

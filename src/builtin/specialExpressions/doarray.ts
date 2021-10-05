@@ -58,14 +58,14 @@ export const doarraySpecialExpression: SpecialExpression = {
 
     const varName = node.varName.value
 
-    const newContext: Context = { [varName]: { value: undefined, constant: false } }
+    const newContext: Context = { [varName]: { value: undefined } }
 
     const newContextStack = [newContext, ...contextStack]
 
     try {
       while (array.length > 0) {
         const variable = array.shift()
-        newContext[varName] = { value: variable, constant: false }
+        newContext[varName] = { value: variable }
         for (const form of node.params) {
           evaluateAstNode(form, newContextStack)
         }
@@ -79,7 +79,7 @@ export const doarraySpecialExpression: SpecialExpression = {
     if (!node.result) {
       return undefined
     }
-    newContext[varName] = { value: undefined, constant: false }
+    newContext[varName] = { value: undefined }
     return evaluateAstNode(node.result, newContextStack)
   },
 }
