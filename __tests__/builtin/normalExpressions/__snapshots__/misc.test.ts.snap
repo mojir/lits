@@ -10,7 +10,7 @@ Context 0 - Import context
   plus  <builtin function undefined>
 
 Context 1 - Global context
-* y  20
+  y  20
 
 Context 2
   z  10

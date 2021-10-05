@@ -21,7 +21,7 @@ module.exports = [
     name: 'Phone number formatter',
     description: 'Pretty prints a US phone number.',
     code: `
-(defun formatPhoneNumber ($data)
+(defn formatPhoneNumber ($data)
   (if (string? $data)
     (let ((phoneNumber (if (= "+" (at $data 0)) (substring $data 2) $data)))
       (cond
@@ -62,7 +62,7 @@ module.exports = [
     name: 'Factorial',
     description: 'A recursive implementation of the factorial function.',
     code: `
-(defun factorial (x)
+(defn factorial (x)
   (if (= x 1)
     1
     (* x (factorial (1- x)))
@@ -78,7 +78,7 @@ module.exports = [
     description: 'Sort an array of numbers.',
     code: `
 (def l [7 39 45 0 23 1 50 100 12 -5])
-(defun numberComparer (a b)
+(defn numberComparer (a b)
   (cond
     ((< a b) -1)
     ((> a b) 1)
@@ -100,15 +100,15 @@ module.exports = [
       },
     },
     code: `
-(doarray (entry (entries TRANSLATIONS))
-  (create-function (at entry 0) (&rest params &bind ((templateString (at entry 1))))
-    (apply template (cons templateString params))
-  )
-)
-
-(write (welcome-message "Albert"))
-(write (count-chairs 12))
-(write (count-chairs 1))
+;(doarray (entry (entries TRANSLATIONS))
+;  (defns (at entry 0) (&rest params &bind ((templateString (at entry 1))))
+;    (apply template (cons templateString params))
+;  )
+;)
+;
+;(write (welcome-message "Albert"))
+;(write (count-chairs 12))
+;(write (count-chairs 1))
 `.trim(),
   },
 ]

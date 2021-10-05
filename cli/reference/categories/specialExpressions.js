@@ -72,79 +72,10 @@ module.exports = {
     specialExpression: true,
     sideEffects: [],
   },
-  const: {
-    name: `const`,
+  defs: {
+    name: `defs`,
     category: `Special expression`,
-    linkName: `const`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `variable`,
-        type: `name`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Bind \`value\` to \`variable\` and makes it constant. Throws if \`variable\` exists.`,
-    longDescription: `Bind \`value\` to \`variable\` and makes it constant. Throws if \`variable\` exists.`,
-    examples: [`(const x 10)`, `(const x 10) (def x 20)`],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  'def-local': {
-    name: `def-local`,
-    category: `Special expression`,
-    linkName: `def-local`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `variable`,
-        type: `name`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Bind \`value\` to local \`variable\`. If local \`variable\` isn't defined, a new local variable is created.`,
-    longDescription: `Bind \`value\` to local \`variable\`. If local \`variable\` isn't defined, a new local variable is created.`,
-    examples: [`(def-local x (object))`, `(def x 10) (progn (def-local x 20)) x`],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  'def-local-constant': {
-    name: `def-local-constant`,
-    category: `Special expression`,
-    linkName: `def-local-constant`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `variable`,
-        type: `name`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Bind \`value\` to new local \`variable\` and makes it constant. Throws if local \`variable\` exists.`,
-    longDescription: `Bind \`value\` to new local \`variable\` and makes it constant. Throws if local \`variable\` exists.`,
-    examples: [`(def-local-constant x (object))`, `(def x 10) (progn (def-local-constant x 20)) x`],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  'create-variable': {
-    name: `create-variable`,
-    category: `Special expression`,
-    linkName: `create-variable`,
+    linkName: `defs`,
     returns: {
       type: `any`,
     },
@@ -161,91 +92,9 @@ module.exports = {
     shortDescription: `Creates a variable with name set to \`variable\` evaluated and value set to \`value\`.`,
     longDescription: `Creates a variable with name set to \`variable\` evaluated and value set to \`value\`. If a variable with name \`variable\` isn't found a new global variable is created.`,
     examples: [
-      `(create-variable "a" "b")`,
-      `(create-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
-      `(create-variable "a" "b") (create-variable a "c") b`,
-    ],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  'create-local-variable': {
-    name: `create-local-variable`,
-    category: `Special expression`,
-    linkName: `create-local-variable`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `variable`,
-        type: `form`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Creates a local variable with name set to \`variable\` evaluated and value set to \`value\`.`,
-    longDescription: `Creates a local variable with name set to \`variable\` evaluated and value set to \`value\`.`,
-    examples: [
-      `(create-local-variable "a" "b")`,
-      `(create-local-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
-      `(create-local-variable "a" "b") (create-local-variable a "c") b`,
-    ],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  'create-global-variable': {
-    name: `create-global-variable`,
-    category: `Special expression`,
-    linkName: `create-global-variable`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `variable`,
-        type: `form`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Creates a global variable with name set to \`variable\` evaluated and value set to \`value\`.`,
-    longDescription: `Creates a global variable with name set to \`variable\` evaluated and value set to \`value\`.`,
-    examples: [
-      `(create-global-variable "a" "b")`,
-      `(progn (create-global-variable "a" 20) (create-local-variable "a" 10)) a`,
-      `(create-global-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
-      `(create-global-variable "a" "b") (create-global-variable a "c") b`,
-    ],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  'create-constant-variable': {
-    name: `create-constant-variable`,
-    category: `Special expression`,
-    linkName: `create-constant-variable`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `variable`,
-        type: `form`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Creates a constant global variable with name set to \`variable\` evaluated and value set to \`value\`.`,
-    longDescription: `Creates a constant global variable with name set to \`variable\` evaluated and value set to \`value\`.`,
-    examples: [
-      `(create-constant-variable "a" "b")`,
-      `(create-constant-variable (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
-      `(create-constant-variable "a" "b") (create-constant-variable a "c") b`,
+      `(defs "a" "b")`,
+      `(defs (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
+      `(defs "a" "b") (defs a "c") b`,
     ],
     specialExpression: true,
     sideEffects: [],
@@ -273,10 +122,10 @@ module.exports = {
     specialExpression: true,
     sideEffects: [],
   },
-  lambda: {
-    name: `lambda`,
+  fn: {
+    name: `fn`,
     category: `Special expression`,
-    linkName: `lambda`,
+    linkName: `fn`,
     returns: {
       type: `function`,
     },
@@ -292,14 +141,14 @@ module.exports = {
     ],
     shortDescription: `Creates a function. When called, evaluation of the last expression in the body is returned.`,
     longDescription: `Creates a function. When called, evaluation of the last expression in the body is returned.`,
-    examples: [`(lambda (a b) (sqrt (+ (* a a) (* b b))))`, `((lambda (a b) (sqrt (+ (* a a) (* b b)))) 3 4)`],
+    examples: [`(fn (a b) (sqrt (+ (* a a) (* b b))))`, `((fn (a b) (sqrt (+ (* a a) (* b b)))) 3 4)`],
     specialExpression: true,
     sideEffects: [],
   },
-  defun: {
-    name: `defun`,
+  defn: {
+    name: `defn`,
     category: `Special expression`,
-    linkName: `defun`,
+    linkName: `defn`,
     returns: {
       type: `function`,
     },
@@ -320,17 +169,17 @@ module.exports = {
     shortDescription: `Creates a named global function. When called, evaluation of the last expression in the body is returned.`,
     longDescription: `Creates a named global function. When called, evaluation of the last expression in the body is returned.`,
     examples: [
-      `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) hyp`,
-      `(defun hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
-      `(defun sumOfSquares (&rest s) (apply + (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
+      `(defn hyp (a b) (sqrt (+ (* a a) (* b b)))) hyp`,
+      `(defn hyp (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
+      `(defn sumOfSquares (&rest s) (apply + (map (fn (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
     sideEffects: [`Creates a new function`],
   },
-  'create-function': {
-    name: `create-function`,
+  defns: {
+    name: `defns`,
     category: `Special expression`,
-    linkName: `create-function`,
+    linkName: `defns`,
     returns: {
       type: `function`,
     },
@@ -351,9 +200,9 @@ module.exports = {
     shortDescription: `Creates a named global function with its name set to \`name\` evaluated. When called, evaluation of the last expression in the body is returned.`,
     longDescription: `Creates a named global function with its name set to \`name\` evaluated. When called, evaluation of the last expression in the body is returned.`,
     examples: [
-      `(create-function "hyp" (a b) (sqrt (+ (* a a) (* b b)))) hyp`,
-      `(create-function (concat "h" "y" "p") (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
-      `(create-function "sumOfSquares" (&rest s) (apply + (map (lambda (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
+      `(defns "hyp" (a b) (sqrt (+ (* a a) (* b b)))) hyp`,
+      `(defns (concat "h" "y" "p") (a b) (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
+      `(defns "sumOfSquares" (&rest s) (apply + (map (fn (x) (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
     sideEffects: [`Creates a new function`],
@@ -377,7 +226,7 @@ module.exports = {
     ],
     shortDescription: `Returns control and value from a named enclosing block.`,
     longDescription: `Returns control and value from a named enclosing block.`,
-    examples: [`(defun fn () (write "Alpha") (return-from fn "Beta") (write "Gamma")) (fn)`],
+    examples: [`(defn fn () (write "Alpha") (return-from fn "Beta") (write "Gamma")) (fn)`],
     specialExpression: true,
     sideEffects: [],
   },
@@ -396,7 +245,7 @@ module.exports = {
     ],
     shortDescription: `Returns control and value from the enclosing block.`,
     longDescription: `Returns control and value from the enclosing block.`,
-    examples: [`(defun fn () (write "Alpha") (return "Beta") (write "Gamma")) (fn)`],
+    examples: [`(defn fn () (write "Alpha") (return "Beta") (write "Gamma")) (fn)`],
     specialExpression: true,
     sideEffects: [],
   },
@@ -417,8 +266,8 @@ module.exports = {
         type: `form[]`,
       },
     ],
-    shortDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit progn.`,
-    longDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit progn.`,
+    shortDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit do.`,
+    longDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit do.`,
     examples: [
       `(block b (write "Alpha") (write "Gamma"))`,
       `(block b (write "Alpha") (return-from b undefined) (write "Gamma"))`,
@@ -579,60 +428,10 @@ module.exports = {
     specialExpression: true,
     sideEffects: [],
   },
-  loop: {
-    name: `loop`,
+  do: {
+    name: `do`,
     category: `Special expression`,
-    linkName: `loop`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `form`,
-        type: `form`,
-        description: `zero or more`,
-      },
-    ],
-    shortDescription: `Runs the \`form\`s repeatedly until \`return\` or \`throw\`.`,
-    longDescription: `Runs the \`form\`s repeatedly until \`return\` or \`throw\`.`,
-    examples: [`(def i 0) (loop (write "Hi") (def i (1+ i)) (when (> i 3) (return i)))`],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  doarray: {
-    name: `doarray`,
-    category: `Special expression`,
-    linkName: `doarray`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `(var array [result])`,
-        type: `doarray form`,
-      },
-      {
-        name: `form`,
-        type: `form`,
-        description: `zero or more`,
-      },
-    ],
-    shortDescription: `Runs the \`form\`s once for each element in the array. if \`result\` is present, it will be evaluated after all iterations and its value will be returned.`,
-    longDescription: `Runs the \`form\`s once for each element in the array. if \`result\` is present, it will be evaluated after all iterations and its value will be returned.`,
-    examples: [
-      `(def l [1 2 3]) (def x 0) (doarray (el l) (def x (+ x el))) x`,
-      `(def l [1 2 3]) (doarray (el l))`,
-      `(def l [1 2 3]) (let ((x 0)) (doarray (el l x) (def x (+ x el))))`,
-      `(def l [1 2 3]) (let ((x 0)) (doarray (el l x) (def x (+ x el)) (return x)))`,
-      `(def l [1 2 3]) (let ((x 0)) (doarray (el l x) (def x (+ x el)) (throw "Oops")))`,
-    ],
-    specialExpression: true,
-    sideEffects: [],
-  },
-  progn: {
-    name: `progn`,
-    category: `Special expression`,
-    linkName: `progn`,
+    linkName: `do`,
     returns: {
       type: `any`,
     },
@@ -644,7 +443,7 @@ module.exports = {
     ],
     shortDescription: `Calls \`forms\` in the order they have been written. Resulting value is the value of the last form.`,
     longDescription: `Calls \`forms\` in the order they have been written. Resulting value is the value of the last form.`,
-    examples: [`(progn (write "Hi") (write "Albert"))`, `(progn)`],
+    examples: [`(do (write "Hi") (write "Albert"))`, `(do)`],
     specialExpression: true,
     sideEffects: [],
   },

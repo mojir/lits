@@ -84,7 +84,7 @@ module.exports = {
     ],
     shortDescription: `Call supplied function with specified arguments.`,
     longDescription: `Call supplied function with specified arguments.`,
-    examples: [`(apply + [1 2 3])`, `(apply (lambda (x y) (sqrt (+ (* x x) (* y y)))) [3 4])`],
+    examples: [`(apply + [1 2 3])`, `(apply (fn (x y) (sqrt (+ (* x x) (* y y)))) [3 4])`],
     specialExpression: false,
     sideEffects: [],
   },

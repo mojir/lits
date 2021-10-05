@@ -101,16 +101,16 @@ describe(`Evaluator`, () => {
   })
 
   test(`expressionExpression`, () => {
-    expect(lispish.run(`((lambda (x) (* x x)) 10)`)).toBe(100)
+    expect(lispish.run(`((fn (x) (* x x)) 10)`)).toBe(100)
   })
 
   test(`lispishFunction`, () => {
-    expect(lispish.run(`((lambda () 10))`)).toBe(10)
-    expect(lispish.run(`((lambda (x) (x 10)) (lambda (x) (* x x)))`)).toBe(100)
-    expect(lispish.run(`((lambda (x) (x 10)) 1+)`)).toBe(11)
-    expect(() => lispish.run(`((lambda (x) (x 10)) 1++)`)).toThrow()
-    expect(() => lispish.run(`((lambda (x) (* x x)) 10 20)`)).toThrow()
-    expect(() => lispish.run(`((lambda (x) (* x x)))`)).toThrow()
+    expect(lispish.run(`((fn () 10))`)).toBe(10)
+    expect(lispish.run(`((fn (x) (x 10)) (fn (x) (* x x)))`)).toBe(100)
+    expect(lispish.run(`((fn (x) (x 10)) 1+)`)).toBe(11)
+    expect(() => lispish.run(`((fn (x) (x 10)) 1++)`)).toThrow()
+    expect(() => lispish.run(`((fn (x) (* x x)) 10 20)`)).toThrow()
+    expect(() => lispish.run(`((fn (x) (* x x)))`)).toThrow()
   })
 
   test(`formatPhoneNumber`, () => {

@@ -207,9 +207,9 @@ describe(`array functions`, () => {
   describe(`reduce`, () => {
     test(`samples`, () => {
       let program = `
-      (defun countChars (stringArray)
+      (defn countChars (stringArray)
         (reduce
-          (lambda (sum str) (+ sum (string-length str)))
+          (fn (sum str) (+ sum (string-length str)))
           stringArray
           0
         )
@@ -220,9 +220,9 @@ describe(`array functions`, () => {
       expect(lispish.run(program)).toBe(16)
 
       program = `
-      (defun longestLength (stringArray)
+      (defn longestLength (stringArray)
         (reduce
-          (lambda (sum str)
+          (fn (sum str)
             (if (> sum (string-length str))
               sum
               (string-length str)
@@ -263,7 +263,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(filter number? [1 "2" 3])`)).toEqual([1, 3])
       expect(lispish.run(`(filter number? [])`)).toEqual([])
       expect(lispish.run(`(filter null? [1 "2" 3])`)).toEqual([])
-      expect(lispish.run(`(filter (lambda (x) (zero? (% x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([0, 3, 6])
+      expect(lispish.run(`(filter (fn (x) (zero? (% x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([0, 3, 6])
       expect(() => lispish.run(`(filter +)`)).toThrow()
       expect(() => lispish.run(`(filter)`)).toThrow()
       expect(() => lispish.run(`(filter number? [1] 2)`)).toThrow()
@@ -275,7 +275,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(find number? ["1" "2" 3])`)).toEqual(3)
       expect(lispish.run(`(find number? ["1" "2" "3"])`)).toBeUndefined()
       expect(lispish.run(`(find number? [])`)).toBeUndefined()
-      expect(lispish.run(`(find (lambda (x) (zero? (% x 3))) [1 2 3 4 5 6 7])`)).toEqual(3)
+      expect(lispish.run(`(find (fn (x) (zero? (% x 3))) [1 2 3 4 5 6 7])`)).toEqual(3)
       expect(() => lispish.run(`(find +)`)).toThrow()
       expect(() => lispish.run(`(find)`)).toThrow()
       expect(() => lispish.run(`(find number? [1] 2)`)).toThrow()
@@ -287,7 +287,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(position number? ["1" "2" 3])`)).toEqual(2)
       expect(lispish.run(`(position number? ["1" "2" "3"])`)).toBeUndefined()
       expect(lispish.run(`(position number? [])`)).toBeUndefined()
-      expect(lispish.run(`(position (lambda (x) (zero? (% x 3))) [1 2 3 4 5 6 7])`)).toEqual(2)
+      expect(lispish.run(`(position (fn (x) (zero? (% x 3))) [1 2 3 4 5 6 7])`)).toEqual(2)
       expect(() => lispish.run(`(position +)`)).toThrow()
       expect(() => lispish.run(`(position)`)).toThrow()
       expect(() => lispish.run(`(position number? [1] 2)`)).toThrow()
@@ -299,7 +299,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(some number? ["1" "2" 3])`)).toBe(true)
       expect(lispish.run(`(some number? ["1" "2" "3"])`)).toBe(false)
       expect(lispish.run(`(some number? [])`)).toBe(false)
-      expect(lispish.run(`(some (lambda (x) (zero? (% x 3))) [1 2 3 4 5 6 7])`)).toBe(true)
+      expect(lispish.run(`(some (fn (x) (zero? (% x 3))) [1 2 3 4 5 6 7])`)).toBe(true)
       expect(() => lispish.run(`(some +)`)).toThrow()
       expect(() => lispish.run(`(some)`)).toThrow()
       expect(() => lispish.run(`(some number? [1] 2)`)).toThrow()
@@ -311,7 +311,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(every number? [1 2 3])`)).toBe(true)
       expect(lispish.run(`(every number? ["1" "2" "3"])`)).toBe(false)
       expect(lispish.run(`(every number? [])`)).toBe(false)
-      expect(lispish.run(`(every (lambda (x) (zero? (% x 2))) [2 4 6])`)).toBe(true)
+      expect(lispish.run(`(every (fn (x) (zero? (% x 2))) [2 4 6])`)).toBe(true)
       expect(() => lispish.run(`(every +)`)).toThrow()
       expect(() => lispish.run(`(every)`)).toThrow()
       expect(() => lispish.run(`(every number? [1] 2)`)).toThrow()
@@ -325,7 +325,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(map + [1 2 3] [1 2 3])`)).toEqual([2, 4, 6])
       expect(lispish.run(`(map max [2 6 3] [2 4 7] [1 6 2])`)).toEqual([2, 6, 7])
       expect(lispish.run(`(map null? [1 "2" 3])`)).toEqual([false, false, false])
-      expect(lispish.run(`(map (lambda (x) (zero? (% x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([
+      expect(lispish.run(`(map (fn (x) (zero? (% x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([
         true,
         false,
         false,
@@ -586,24 +586,24 @@ describe(`array functions`, () => {
 
   describe(`take-while`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(take-while (lambda (x) (< x 3)) [1 2 3 2 1])`)).toEqual([1, 2])
-      expect(lispish.run(`(take-while (lambda (x) (> x 3)) [1 2 3 2 1])`)).toEqual([])
+      expect(lispish.run(`(take-while (fn (x) (< x 3)) [1 2 3 2 1])`)).toEqual([1, 2])
+      expect(lispish.run(`(take-while (fn (x) (> x 3)) [1 2 3 2 1])`)).toEqual([])
 
-      expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) (object))`)).toThrow()
-      expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) null)`)).toThrow()
-      expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) undefined)`)).toThrow()
-      expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) true)`)).toThrow()
-      expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) false)`)).toThrow()
-      expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) "1")`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn (x) (< x 3)) (object))`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn (x) (< x 3)) null)`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn (x) (< x 3)) undefined)`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn (x) (< x 3)) true)`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn (x) (< x 3)) false)`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn (x) (< x 3)) "1")`)).toThrow()
       expect(() => lispish.run(`(take-while 10 [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take-while)`)).toThrow()
       expect(() => lispish.run(`(take-while [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(take-while (lambda (x) (< x 3)) [1 2 3] 1)`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn (x) (< x 3)) [1 2 3] 1)`)).toThrow()
     })
     test(`new array created`, () => {
       const program = `
         (def l1 [1 2 3])
-        (def l2 (take-while (lambda (x) (< x 3)) l1))
+        (def l2 (take-while (fn (x) (< x 3)) l1))
         (= l1 l2)
       `
       expect(lispish.run(program)).toBe(false)
@@ -612,11 +612,11 @@ describe(`array functions`, () => {
 
   describe(`sort`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(sort (lambda (a b) (cond ((< a b) -1) ((> a b) 1) (true -1))) [3 1 2])`)).toEqual([1, 2, 3])
-      expect(lispish.run(`(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) [3 1 2])`)).toEqual([3, 2, 1])
-      expect(lispish.run(`(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) [])`)).toEqual([])
-      expect(() => lispish.run(`(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) 10)`)).toThrow()
-      expect(() => lispish.run(`(sort (lambda (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))))`)).toThrow()
+      expect(lispish.run(`(sort (fn (a b) (cond ((< a b) -1) ((> a b) 1) (true -1))) [3 1 2])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(sort (fn (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) [3 1 2])`)).toEqual([3, 2, 1])
+      expect(lispish.run(`(sort (fn (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) [])`)).toEqual([])
+      expect(() => lispish.run(`(sort (fn (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))) 10)`)).toThrow()
+      expect(() => lispish.run(`(sort (fn (a b) (cond ((> a b) -1) ((< a b) 1) (true -1))))`)).toThrow()
       expect(() => lispish.run(`(sort [10])`)).toThrow()
       expect(() => lispish.run(`(sort)`)).toThrow()
     })

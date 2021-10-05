@@ -42,22 +42,19 @@ export type SpecialExpressionName =
   | `and`
   | `block`
   | `cond`
-  | `defun`
-  | `doarray`
+  | `defn`
+  | `defns`
+  | `fn`
   | `function`
   | `if`
-  | `lambda`
   | `let`
-  | `loop`
   | `or`
-  | `progn`
+  | `do`
   | `return-from`
   | `return`
   | `def`
+  | `defs`
   | `throw`
   | `try`
   | `unless`
   | `when`
-  | `create-variable`
-  | `create-global-variable`
-  | `create-function`

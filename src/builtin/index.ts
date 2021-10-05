@@ -1,24 +1,15 @@
 import { andSpecialExpression } from './specialExpressions/and'
 import { blockSpecialExpression } from './specialExpressions/block'
 import { condSpecialExpression } from './specialExpressions/cond'
-import {
-  defunSpecialExpression,
-  createFunctionSpecialExpression,
-  lambdaSpecialExpression,
-} from './specialExpressions/functions'
-import { doarraySpecialExpression } from './specialExpressions/doarray'
+import { defnSpecialExpression, defnsSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
 import { letSpecialExpression } from './specialExpressions/let'
-import { loopSpecialExpression } from './specialExpressions/loop'
 import { orSpecialExpression } from './specialExpressions/or'
-import { prognSpecialExpression } from './specialExpressions/progn'
+import { doSpecialExpression } from './specialExpressions/do'
 import { returnFromSpecialExpression } from './specialExpressions/return-from'
 import { returnSpecialExpression } from './specialExpressions/return'
-import {
-  createGlobalVariableSpecialExpression,
-  createVariableSpecialExpression,
-  defSpecialExpression,
-} from './specialExpressions/variables'
+import { defSpecialExpression } from './specialExpressions/def'
+import { defsSpecialExpression } from './specialExpressions/defs'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
 import { unlessSpecialExpression } from './specialExpressions/unless'
@@ -31,25 +22,22 @@ type SpecialExpressions = Record<string, SpecialExpression>
 export const specialExpressions: SpecialExpressions = {
   'return-from': returnFromSpecialExpression,
   def: defSpecialExpression,
+  defs: defsSpecialExpression,
   and: andSpecialExpression,
   block: blockSpecialExpression,
   cond: condSpecialExpression,
-  defun: defunSpecialExpression,
-  'create-function': createFunctionSpecialExpression,
-  doarray: doarraySpecialExpression,
+  defn: defnSpecialExpression,
+  defns: defnsSpecialExpression,
   if: ifSpecialExpression,
-  lambda: lambdaSpecialExpression,
+  fn: fnSpecialExpression,
   let: letSpecialExpression,
-  loop: loopSpecialExpression,
   or: orSpecialExpression,
-  progn: prognSpecialExpression,
+  do: doSpecialExpression,
   return: returnSpecialExpression,
   throw: throwSpecialExpression,
   try: trySpecialExpression,
   unless: unlessSpecialExpression,
   when: whenSpecialExpression,
-  'create-variable': createVariableSpecialExpression,
-  'create-global-variable': createGlobalVariableSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {

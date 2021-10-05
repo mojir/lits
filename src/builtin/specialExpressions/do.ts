@@ -3,15 +3,15 @@ import { SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { SpecialExpression } from '../interface'
 
-interface PrognSpecialExpressionNode extends SpecialExpressionNode {
-  name: `progn`
+interface doSpecialExpressionNode extends SpecialExpressionNode {
+  name: `do`
 }
 
-export const prognSpecialExpression: SpecialExpression = {
+export const doSpecialExpression: SpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
-    const node: PrognSpecialExpressionNode = {
+    const node: doSpecialExpressionNode = {
       type: `SpecialExpression`,
-      name: `progn`,
+      name: `do`,
       params: [],
     }
 
@@ -25,7 +25,7 @@ export const prognSpecialExpression: SpecialExpression = {
     return [position + 1, node]
   },
   evaluate: (node, contextStack, evaluateAstNode) => {
-    castPrognExpressionNode(node)
+    castDoExpressionNode(node)
     const newContext: Context = {}
 
     const newContextStack = [newContext, ...contextStack]
@@ -37,6 +37,6 @@ export const prognSpecialExpression: SpecialExpression = {
   },
 }
 
-function castPrognExpressionNode(_node: SpecialExpressionNode): asserts _node is PrognSpecialExpressionNode {
+function castDoExpressionNode(_node: SpecialExpressionNode): asserts _node is doSpecialExpressionNode {
   return
 }
