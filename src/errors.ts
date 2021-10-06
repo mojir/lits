@@ -29,6 +29,16 @@ export class ReturnSignal extends Error {
   }
 }
 
+export class RecurSignal extends Error {
+  public params: unknown[]
+  constructor(params: unknown[]) {
+    super(`recur, params: ${params}`)
+    Object.setPrototypeOf(this, RecurSignal.prototype)
+    this.name = `RecurSignal`
+    this.params = params
+  }
+}
+
 export class UserDefinedError extends Error {
   constructor(message: string) {
     super(message)

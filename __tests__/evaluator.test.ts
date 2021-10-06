@@ -103,8 +103,8 @@ describe(`Evaluator`, () => {
   test(`lispishFunction`, () => {
     expect(lispish.run(`((fn [] 10))`)).toBe(10)
     expect(lispish.run(`((fn [x] (x 10)) (fn [x] (* x x)))`)).toBe(100)
-    expect(lispish.run(`((fn [x] (x 10)) 1+)`)).toBe(11)
-    expect(() => lispish.run(`((fn [x] (x 10)) 1++)`)).toThrow()
+    expect(lispish.run(`((fn [x] (x 10)) inc)`)).toBe(11)
+    expect(() => lispish.run(`((fn [x] (x 10)) inc+)`)).toThrow()
     expect(() => lispish.run(`((fn [x] (* x x)) 10 20)`)).toThrow()
     expect(() => lispish.run(`((fn [x] (* x x)))`)).toThrow()
   })

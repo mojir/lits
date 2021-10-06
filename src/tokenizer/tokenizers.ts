@@ -5,9 +5,10 @@ import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
 const nameRegExp = /[0-9a-zA-Z_^?=!$%<>.+*/-]/
+const whitespaceRegExp = /\s|,/
 
 export const skipWhiteSpace: Tokenizer = (input, current) =>
-  /\s/.test(input[current] ?? ``) ? [1, undefined] : [0, undefined]
+  whitespaceRegExp.test(input[current] ?? ``) ? [1, undefined] : [0, undefined]
 
 export const skipComment: Tokenizer = (input, current) => {
   if (input[current] === `;`) {
@@ -75,7 +76,7 @@ export const tokenizeString: Tokenizer = (input, position) => {
   return [length + 1, { type: `string`, value }]
 }
 
-const endOfNumberRegExp = /\s|[)\]}]/
+const endOfNumberRegExp = /\s|[)\]},]/
 const decimalNumberRegExp = /[0-9]/
 const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-fA-F]/

@@ -14,6 +14,8 @@ import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
 import { unlessSpecialExpression } from './specialExpressions/unless'
 import { whenSpecialExpression } from './specialExpressions/when'
+import { recurSpecialExpression } from './specialExpressions/recur'
+import { loopSpecialExpression } from './specialExpressions/loop'
 import { SpecialExpression } from './interface'
 import { normalExpressions } from './normalExpressions'
 
@@ -38,6 +40,8 @@ export const specialExpressions: SpecialExpressions = {
   try: trySpecialExpression,
   unless: unlessSpecialExpression,
   when: whenSpecialExpression,
+  recur: recurSpecialExpression,
+  loop: loopSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {

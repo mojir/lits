@@ -86,7 +86,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 }
 
 function contextstackToString(contextStack: Context[]): string {
-  return contextStack.reverse().reduce((result, context, index) => {
+  return [...contextStack].reverse().reduce((result, context, index) => {
     return `${result}Context ${index}${
       index === 0 ? ` - Import context` : index === 1 ? ` - Global context` : ``
     }\n${contextToString(context)}\n`

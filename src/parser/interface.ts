@@ -54,7 +54,7 @@ export type ParseExpression = (tokens: Token[], position: number) => [number, Ex
 export type ParseNormalExpression = (tokens: Token[], position: number) => [number, NormalExpressionNode]
 export type ParseSpecialExpression = (tokens: Token[], position: number) => [number, SpecialExpressionNode]
 export type ParseExpressionExpression = (tokens: Token[], position: number) => [number, ExpressionExpressionNode]
-export type ParseParams = (tokens: Token[], position: number) => [number, AstNode[]]
+export type ParseTokens = (tokens: Token[], position: number) => [number, AstNode[]]
 export type ParseToken = (tokens: Token[], position: number) => [number, AstNode]
 
 export interface NumberNode extends GenericNode {

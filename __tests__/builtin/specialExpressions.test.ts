@@ -257,8 +257,8 @@ describe(`specialExpressions`, () => {
     })
     test(`call defn function`, () => {
       expect(lispish.run(`(defn sumOneToN [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
-      expect(lispish.run(`(defn applyWithVal [fun val] (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
-      expect(lispish.run(`(defn applyWithVal [fun val] (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
+      expect(lispish.run(`(defn applyWithVal [fun val] (fun val)) (applyWithVal inc 10)`)).toBe(11)
+      expect(lispish.run(`(defn applyWithVal [fun val] (fun val)) (applyWithVal inc 10)`)).toBe(11)
     })
   })
 
@@ -277,7 +277,7 @@ describe(`specialExpressions`, () => {
     })
     test(`call defns function`, () => {
       expect(lispish.run(`(defns "sumOneToN" [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
-      expect(lispish.run(`(defns "applyWithVal" [fun val] (fun val)) (applyWithVal 1+ 10)`)).toBe(11)
+      expect(lispish.run(`(defns "applyWithVal" [fun val] (fun val)) (applyWithVal inc 10)`)).toBe(11)
     })
   })
 

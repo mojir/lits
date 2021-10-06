@@ -11,7 +11,7 @@ import {
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const mathNormalExpression: BuiltinNormalExpressions = {
-  '1+': {
+  inc: {
     evaluate: ([first]: unknown[]): number => {
       assertFiniteNumber(first)
       return asFiniteNumber(first + 1)
@@ -19,7 +19,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
 
-  '1-': {
+  dec: {
     evaluate: ([first]: unknown[]): number => {
       assertFiniteNumber(first)
       return asFiniteNumber(first - 1)

@@ -3,7 +3,7 @@ import {
   ParseArgument,
   ParseBindings,
   ParseExpression,
-  ParseParams,
+  ParseTokens,
   ParseToken,
   SpecialExpressionNode,
 } from '../parser/interface'
@@ -24,7 +24,7 @@ type BuiltinNormalExpression = {
 
 type Parsers = {
   parseExpression: ParseExpression
-  parseParams: ParseParams
+  parseTokens: ParseTokens
   parseToken: ParseToken
   parseBindings: ParseBindings
   parseArgument: ParseArgument
@@ -50,6 +50,8 @@ export type SpecialExpressionName =
   | `let`
   | `or`
   | `do`
+  | `loop`
+  | `recur`
   | `return-from`
   | `return`
   | `def`

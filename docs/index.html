@@ -946,13 +946,13 @@
 </div>
 
 
-<div id="1_plus" class="content function">
-  <div class="function-header">1+</div>
+<div id="inc" class="content function">
+  <div class="function-header">inc</div>
   
   <p>Adds one to <span class="pre">number</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>1+ number => number</pre>
+    <pre>inc number => number</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
@@ -960,20 +960,20 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(1+ 0)')"><span class="icon-button">▶</span> (1+ 0) <span class="gray">=> 1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(1+ 1)')"><span class="icon-button">▶</span> (1+ 1) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(1+ 100.1)')"><span class="icon-button">▶</span> (1+ 100.1) <span class="gray">=> 101.1</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inc 0)')"><span class="icon-button">▶</span> (inc 0) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(inc 1)')"><span class="icon-button">▶</span> (inc 1) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(inc 100.1)')"><span class="icon-button">▶</span> (inc 100.1) <span class="gray">=> 101.1</span></span></pre>
   </div>
 </div>
 
 
-<div id="1_minus" class="content function">
-  <div class="function-header">1-</div>
+<div id="dec" class="content function">
+  <div class="function-header">dec</div>
   
   <p>Subtracts one from <span class="pre">number</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>1- number => number</pre>
+    <pre>dec number => number</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
@@ -981,9 +981,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(1- 0)')"><span class="icon-button">▶</span> (1- 0) <span class="gray">=> -1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(1- 1)')"><span class="icon-button">▶</span> (1- 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(1- 100.1)')"><span class="icon-button">▶</span> (1- 100.1) <span class="gray">=> 99.1</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(dec 0)')"><span class="icon-button">▶</span> (dec 0) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(dec 1)')"><span class="icon-button">▶</span> (dec 1) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(dec 100.1)')"><span class="icon-button">▶</span> (dec 100.1) <span class="gray">=> 99.1</span></span></pre>
   </div>
 </div>
 
@@ -1375,9 +1375,9 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.7615364015558177</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0008583863782092749</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.7132210186923393</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random 1)')"><span class="icon-button">▶</span> (random 1) <span class="gray">=> 0.13227177055759753</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 0.01)')"><span class="icon-button">▶</span> (random 0.01) <span class="gray">=> 0.0052074405192889415</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random 2.5)')"><span class="icon-button">▶</span> (random 2.5) <span class="gray">=> 0.714944877719873</span></span></pre>
   </div>
 </div>
 
@@ -1862,7 +1862,7 @@
   <label>No side effects</label>
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633463137912</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633542964635</span></span></pre>
   </div>
 </div>
 
@@ -3577,8 +3577,6 @@
 <li id="_plus_link" onclick="showPage('_plus')">+</li>
 <li id="_minus_link" onclick="showPage('_minus')">-</li>
 <li id="_slash_link" onclick="showPage('_slash')">/</li>
-<li id="1_plus_link" onclick="showPage('1_plus')">1+</li>
-<li id="1_minus_link" onclick="showPage('1_minus')">1-</li>
 <li id="_lt_link" onclick="showPage('_lt')">&lt;</li>
 <li id="_lte_link" onclick="showPage('_lte')">&lt;=</li>
 <li id="_gt_link" onclick="showPage('_gt')">&gt;</li>
@@ -3594,9 +3592,11 @@
 <li id="ceil_link" onclick="showPage('ceil')">ceil</li>
 <li id="cos_link" onclick="showPage('cos')">cos</li>
 <li id="cosh_link" onclick="showPage('cosh')">cosh</li>
+<li id="dec_link" onclick="showPage('dec')">dec</li>
 <li id="e_link" onclick="showPage('e')">e</li>
 <li id="exp_link" onclick="showPage('exp')">exp</li>
 <li id="floor_link" onclick="showPage('floor')">floor</li>
+<li id="inc_link" onclick="showPage('inc')">inc</li>
 <li id="log_link" onclick="showPage('log')">log</li>
 <li id="log10_link" onclick="showPage('log10')">log10</li>
 <li id="log2_link" onclick="showPage('log2')">log2</li>

@@ -34,7 +34,7 @@ describe(`import`, () => {
   })
 
   test(`import a function with a built in normal expression name`, () => {
-    expect(() => lispish.import(`(defn 1+ (x) (+ x 1))`)).toThrow()
+    expect(() => lispish.import(`(defn inc (x) (+ x 1))`)).toThrow()
   })
 
   test(`import a function with a built in special expression name`, () => {

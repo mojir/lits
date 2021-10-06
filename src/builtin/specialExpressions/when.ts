@@ -7,8 +7,8 @@ interface WhenSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const whenSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseParams }) => {
-    const [newPosition, params] = parseParams(tokens, position)
+  parse: (tokens, position, { parseTokens }) => {
+    const [newPosition, params] = parseTokens(tokens, position)
     const node: WhenSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `when`,

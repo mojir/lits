@@ -8,8 +8,8 @@ interface DefsSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const defsSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseParams }) => {
-    const [newPosition, params] = parseParams(tokens, position)
+  parse: (tokens, position, { parseTokens }) => {
+    const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,
       {

@@ -7,8 +7,8 @@ interface IfSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const ifSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseParams }) => {
-    const [newPosition, params] = parseParams(tokens, position)
+  parse: (tokens, position, { parseTokens }) => {
+    const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,
       {

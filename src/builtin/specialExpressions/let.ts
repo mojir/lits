@@ -9,12 +9,12 @@ interface LetSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const letSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseBindings, parseParams }) => {
+  parse: (tokens, position, { parseBindings, parseTokens }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
     let params: AstNode[]
-    ;[position, params] = parseParams(tokens, position)
+    ;[position, params] = parseTokens(tokens, position)
 
     const node: LetSpecialExpressionNode = {
       type: `SpecialExpression`,

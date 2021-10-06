@@ -8,7 +8,7 @@ import {
   StringNode,
   ReservedNameNode,
   ParseExpression,
-  ParseParams,
+  ParseTokens,
   ParseToken,
   ParseSpecialExpression,
   ParseNormalExpression,
@@ -47,16 +47,16 @@ export const parseReservedName: ParseReservedName = (tokens: Token[], position: 
   return [position + 1, { type: `ReservedName`, value: token.value as ReservedName }]
 }
 
-const parseParams: ParseParams = (tokens, position) => {
+const parseTokens: ParseTokens = (tokens, position) => {
   let token = asNotUndefined(tokens[position])
-  const params: AstNode[] = []
-  while (!(token.type === `paren` && token.value === `)`)) {
-    const [newPosition, param] = parseToken(tokens, position)
-    position = newPosition
-    params.push(param)
+  const astNodes: AstNode[] = []
+  let astNode: AstNode
+  while (!(token.type === `paren` && (token.value === `)` || token.value === `]`))) {
+    ;[position, astNode] = parseToken(tokens, position)
+    astNodes.push(astNode)
     token = asNotUndefined(tokens[position])
   }
-  return [position, params]
+  return [position, astNodes]
 }
 
 const parseExpression: ParseExpression = (tokens, position) => {
@@ -167,7 +167,7 @@ const parseExpressionExpression: ParseExpressionExpression = (tokens, position) 
 
   assertExpressionNode(expression)
 
-  const [newPosition2, params] = parseParams(tokens, newPosition1)
+  const [newPosition2, params] = parseTokens(tokens, newPosition1)
 
   const node: ExpressionExpressionNode = {
     type: `ExpressionExpression`,
@@ -181,7 +181,7 @@ const parseExpressionExpression: ParseExpressionExpression = (tokens, position) 
 const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
 
-  const [newPosition, params] = parseParams(tokens, position + 1)
+  const [newPosition, params] = parseTokens(tokens, position + 1)
   position = newPosition + 1
 
   const node: NormalExpressionNode = {
@@ -210,7 +210,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
-    parseParams,
+    parseTokens: parseTokens,
     parseToken,
     parseBindings,
     parseArgument,

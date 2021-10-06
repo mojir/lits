@@ -22,7 +22,7 @@ import {
 } from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
-import { ReturnFromSignal, ReturnSignal } from '../errors'
+import { RecurSignal, ReturnFromSignal, ReturnSignal } from '../errors'
 
 export function evaluate(ast: Ast, globalScope: Context, importScope: Context): unknown {
   // First element is the global context. E.g. def will assign to this if no local variable is available
@@ -108,63 +108,70 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
   contextStack: Context[],
 ) => {
   if (isUserDefinedLispishFunction(lispishFunction)) {
-    const newContext: Context = lispishFunction.functionContext
     const args = lispishFunction.arguments
     const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
     const nbrOfOptionalArgs: number = args.optionalArguments.length
     const maxNbrOfParameters: null | number = args.restArgument ? null : nbrOfMandatoryArgs + nbrOfOptionalArgs
 
-    if (params.length < args.mandatoryArguments.length) {
-      throw Error(
-        `Function "${lispishFunction.name}" requires at least ${args.mandatoryArguments.length} arguments. Got ${params.length}`,
-      )
-    }
+    for (;;) {
+      const newContext: Context = { ...lispishFunction.functionContext }
+      if (params.length < args.mandatoryArguments.length) {
+        throw Error(
+          `Function "${lispishFunction.name}" requires at least ${args.mandatoryArguments.length} arguments. Got ${params.length}`,
+        )
+      }
 
-    if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
-      throw Error(
-        `Function "${lispishFunction.name}" requires at most ${maxNbrOfParameters} arguments. Got ${params.length}`,
-      )
-    }
+      if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
+        throw Error(
+          `Function "${lispishFunction.name}" requires at most ${maxNbrOfParameters} arguments. Got ${params.length}`,
+        )
+      }
 
-    const length = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length)
-    const rest: unknown[] = []
-    for (let i = 0; i < length; i += 1) {
-      if (i < nbrOfMandatoryArgs) {
-        const param = params[i]
-        const key = asNotUndefined(args.mandatoryArguments[i], ``)
-        newContext[key] = { value: param }
-      } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
-        const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
-        const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
-        const key = arg.name
-        newContext[key] = { value: param }
-      } else {
-        const param = params[i]
-        if (isLispishFunction(param)) {
-          throw Error(`A function cannot be a &rest parameter`) //  TODO, is this a fact?
+      const length = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length)
+      const rest: unknown[] = []
+      for (let i = 0; i < length; i += 1) {
+        if (i < nbrOfMandatoryArgs) {
+          const param = params[i]
+          const key = asNotUndefined(args.mandatoryArguments[i], ``)
+          newContext[key] = { value: param }
+        } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
+          const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
+          const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
+          const key = arg.name
+          newContext[key] = { value: param }
+        } else {
+          const param = params[i]
+          if (isLispishFunction(param)) {
+            throw Error(`A function cannot be a &rest parameter`) //  TODO, is this a fact?
+          }
+          rest.push(params[i])
         }
-        rest.push(params[i])
       }
-    }
 
-    if (args.restArgument) {
-      newContext[args.restArgument] = { value: rest }
-    }
+      if (args.restArgument) {
+        newContext[args.restArgument] = { value: rest }
+      }
 
-    try {
-      let result: unknown = undefined
-      for (const node of lispishFunction.body) {
-        result = evaluateAstNode(node, [newContext, ...contextStack])
+      try {
+        let result: unknown = undefined
+        for (const node of lispishFunction.body) {
+          result = evaluateAstNode(node, [newContext, ...contextStack])
+        }
+        return result
+      } catch (error) {
+        if (error instanceof RecurSignal) {
+          params = error.params
+          continue
+        }
+        if (error instanceof ReturnSignal) {
+          return error.value
+        }
+        if (error instanceof ReturnFromSignal && lispishFunction.name === error.blockName) {
+          return error.value
+        }
+        throw error
       }
-      return result
-    } catch (error) {
-      if (error instanceof ReturnSignal) {
-        return error.value
-      }
-      if (error instanceof ReturnFromSignal && lispishFunction.name === error.blockName) {
-        return error.value
-      }
-      throw error
+      break
     }
   } else {
     const normalExpression = asNotUndefined(

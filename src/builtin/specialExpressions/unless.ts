@@ -7,8 +7,8 @@ interface UnlessSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const unlessSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseParams }) => {
-    const [newPosition, params] = parseParams(tokens, position)
+  parse: (tokens, position, { parseTokens }) => {
+    const [newPosition, params] = parseTokens(tokens, position)
     const node: UnlessSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `unless`,

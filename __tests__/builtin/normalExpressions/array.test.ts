@@ -335,7 +335,7 @@ describe(`array functions`, () => {
         true,
         false,
       ])
-      expect(lispish.run(`(map 1+ [0 1 2 3 4 5 6 7])`)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+      expect(lispish.run(`(map inc [0 1 2 3 4 5 6 7])`)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
       expect(() => lispish.run(`(map + [1 2 3] [1 2])`)).toThrow()
       expect(() => lispish.run(`(map +)`)).toThrow()
       expect(() => lispish.run(`(map)`)).toThrow()

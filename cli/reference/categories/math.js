@@ -102,10 +102,10 @@ module.exports = {
     specialExpression: false,
     sideEffects: [],
   },
-  '1+': {
-    name: `1+`,
+  inc: {
+    name: `inc`,
     category: `Math`,
-    linkName: `1_plus`,
+    linkName: `inc`,
     returns: {
       type: `number`,
     },
@@ -117,14 +117,14 @@ module.exports = {
     ],
     shortDescription: `Adds one to \`number\`.`,
     longDescription: `Adds one to \`number\`.`,
-    examples: [`(1+ 0)`, `(1+ 1)`, `(1+ 100.1)`],
+    examples: [`(inc 0)`, `(inc 1)`, `(inc 100.1)`],
     specialExpression: false,
     sideEffects: [],
   },
-  '1-': {
-    name: `1-`,
+  dec: {
+    name: `dec`,
     category: `Math`,
-    linkName: `1_minus`,
+    linkName: `dec`,
     returns: {
       type: `number`,
     },
@@ -136,7 +136,7 @@ module.exports = {
     ],
     shortDescription: `Subtracts one from \`number\`.`,
     longDescription: `Subtracts one from \`number\`.`,
-    examples: [`(1- 0)`, `(1- 1)`, `(1- 100.1)`],
+    examples: [`(dec 0)`, `(dec 1)`, `(dec 100.1)`],
     specialExpression: false,
     sideEffects: [],
   },

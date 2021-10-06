@@ -8,8 +8,8 @@ interface DefSpecialExpressionNode extends SpecialExpressionNode {
 }
 
 export const defSpecialExpression: SpecialExpression = {
-  parse: (tokens, position, { parseParams }) => {
-    const [newPosition, params] = parseParams(tokens, position)
+  parse: (tokens, position, { parseTokens }) => {
+    const [newPosition, params] = parseTokens(tokens, position)
     assertNameNode(params[0])
     return [
       newPosition + 1,
