@@ -9,7 +9,7 @@ import {
   SpecialExpressionNode,
 } from '../../parser/interface'
 import { asNotUndefined, assertString } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined, FunctionArguments, parseFunctionArguments } from '../utils'
 
 interface DefnSpecialExpressionNode extends SpecialExpressionNode {
@@ -35,7 +35,7 @@ interface FnSpecialExpressionNode extends SpecialExpressionNode {
 type ExpressionNode = DefnSpecialExpressionNode | DefnsSpecialExpressionNode | FnSpecialExpressionNode
 type ExpressionsName = `defn` | `defns` | `fn`
 
-function createParser(expressionName: ExpressionsName): SpecialExpression[`parse`] {
+function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression[`parse`] {
   return (tokens, position, { parseToken, parseArgument, parseBindings }) => {
     let functionName = undefined
     if (expressionName === `defn` || expressionName === `defns`) {
@@ -108,12 +108,12 @@ function getFunctionName(
   return undefined
 }
 
-function createEvaluator(expressionName: ExpressionsName): SpecialExpression[`evaluate`] {
-  return (node, contextStack, evaluateAstNode): LispishFunction | undefined => {
+function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpression[`evaluate`] {
+  return (node, contextStack, { evaluateAstNode, builtin }): LispishFunction | undefined => {
     castExpressionNode(node)
     const name = getFunctionName(expressionName, node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack)
+    assertNameNotDefined(name, contextStack, builtin)
 
     const functionContext: Context = {}
     for (const binding of node.arguments.bindings) {
@@ -159,17 +159,17 @@ function createEvaluator(expressionName: ExpressionsName): SpecialExpression[`ev
   }
 }
 
-export const defnSpecialExpression: SpecialExpression = {
+export const defnSpecialExpression: BuiltinSpecialExpression = {
   parse: createParser(`defn`),
   evaluate: createEvaluator(`defn`),
 }
 
-export const defnsSpecialExpression: SpecialExpression = {
+export const defnsSpecialExpression: BuiltinSpecialExpression = {
   parse: createParser(`defns`),
   evaluate: createEvaluator(`defns`),
 }
 
-export const fnSpecialExpression: SpecialExpression = {
+export const fnSpecialExpression: BuiltinSpecialExpression = {
   parse: createParser(`fn`),
   evaluate: createEvaluator(`fn`),
 }

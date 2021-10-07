@@ -2,14 +2,14 @@ import { RecurSignal } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface LoopSpecialExpressionNode extends SpecialExpressionNode {
   name: `loop`
   bindings: BindingNode[]
 }
 
-export const loopSpecialExpression: SpecialExpression = {
+export const loopSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseTokens, parseBindings }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
@@ -25,7 +25,7 @@ export const loopSpecialExpression: SpecialExpression = {
     }
     return [position + 1, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castLoopExpressionNode(node)
     const bindingContext: Context = node.bindings.reduce((result: Context, binding) => {
       result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }

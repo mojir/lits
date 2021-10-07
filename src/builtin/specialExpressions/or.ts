@@ -1,11 +1,11 @@
 import { SpecialExpressionNode } from '../../parser/interface'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface OrSpecialExpressionNode extends SpecialExpressionNode {
   name: `and`
 }
 
-export const orSpecialExpression: SpecialExpression = {
+export const orSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseTokens }) => {
     const [newPosition, params] = parseTokens(tokens, position)
     return [
@@ -17,7 +17,7 @@ export const orSpecialExpression: SpecialExpression = {
       },
     ]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castOrExpressionNode(node)
     let value: unknown = false
 

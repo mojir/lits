@@ -1,14 +1,14 @@
 import { Context } from '../../evaluator/interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { isLispishFunction } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface LetSpecialExpressionNode extends SpecialExpressionNode {
   name: `let`
   bindings: BindingNode[]
 }
 
-export const letSpecialExpression: SpecialExpression = {
+export const letSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
@@ -24,7 +24,7 @@ export const letSpecialExpression: SpecialExpression = {
     }
     return [position + 1, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castLetExpressionNode(node)
     const locals: Context = {}
     for (const binding of node.bindings) {

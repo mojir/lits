@@ -1,12 +1,12 @@
 import { SpecialExpressionNode } from '../../parser/interface'
 import { assertLength, assertNotUndefined } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface WhenSpecialExpressionNode extends SpecialExpressionNode {
   name: `when`
 }
 
-export const whenSpecialExpression: SpecialExpression = {
+export const whenSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseTokens }) => {
     const [newPosition, params] = parseTokens(tokens, position)
     const node: WhenSpecialExpressionNode = {
@@ -17,7 +17,7 @@ export const whenSpecialExpression: SpecialExpression = {
 
     return [newPosition + 1, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castWhenExpressionNode(node)
 
     const [whenExpression, ...body] = node.params

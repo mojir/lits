@@ -1,7 +1,7 @@
 import { AstNode, ParseToken, SpecialExpressionNode } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
 import { asNotUndefined } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 type Condition = {
   test: AstNode
@@ -39,7 +39,7 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
   return [position, conditions]
 }
 
-export const condSpecialExpression: SpecialExpression = {
+export const condSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const [newPosition, conditions] = parseConditions(tokens, position, parseToken)
     return [
@@ -52,7 +52,7 @@ export const condSpecialExpression: SpecialExpression = {
       },
     ]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castCondExpressionNode(node)
     let value: unknown
 

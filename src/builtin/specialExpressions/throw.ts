@@ -1,14 +1,14 @@
 import { UnexpectedTokenError, UserDefinedError } from '../../errors'
 import { AstNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNonEmptyString, asNotUndefined } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface ThrowSpecialExpressionNode extends SpecialExpressionNode {
   name: `throw`
   messageNode: AstNode
 }
 
-export const throwSpecialExpression: SpecialExpression = {
+export const throwSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const [newPosition, messageNode] = parseToken(tokens, position)
     position = newPosition
@@ -27,7 +27,7 @@ export const throwSpecialExpression: SpecialExpression = {
     }
     return [position, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castThrowExpressionNode(node)
     const message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack))
     throw new UserDefinedError(message)

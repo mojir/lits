@@ -1,12 +1,12 @@
 import { SpecialExpressionNode } from '../../parser/interface'
 import { asAstNode, assertLength } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface IfSpecialExpressionNode extends SpecialExpressionNode {
   name: `if`
 }
 
-export const ifSpecialExpression: SpecialExpression = {
+export const ifSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseTokens }) => {
     const [newPosition, params] = parseTokens(tokens, position)
     return [
@@ -18,7 +18,7 @@ export const ifSpecialExpression: SpecialExpression = {
       },
     ]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castIfExpressionNode(node)
 
     const [conditionNode, trueNode, falseNode] = node.params

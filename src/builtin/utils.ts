@@ -1,10 +1,10 @@
-import { builtin } from '.'
 import { UnexpectedTokenError } from '../errors'
 import { Context } from '../evaluator/interface'
 import { AstNode, BindingNode, ParseArgument, ParseBindings } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 import { asNotUndefined } from '../utils'
+import { Builtin } from './interface'
 
 export type FunctionArguments = {
   mandatoryArguments: string[]
@@ -134,7 +134,7 @@ export function parseFunctionArguments(
   return [position, args]
 }
 
-export function assertNameNotDefined<T>(name: T, contextStack: Context[]): asserts name is T {
+export function assertNameNotDefined<T>(name: T, contextStack: Context[], builtin: Builtin): asserts name is T {
   if (typeof name !== `string`) {
     return
   }

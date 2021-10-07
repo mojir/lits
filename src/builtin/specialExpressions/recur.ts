@@ -1,13 +1,13 @@
 import { RecurSignal } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { assertLength } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface RecurSpecialExpressionNode extends SpecialExpressionNode {
   name: `recur`
 }
 
-export const recurSpecialExpression: SpecialExpression = {
+export const recurSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseTokens }) => {
     let params
     ;[position, params] = parseTokens(tokens, position)
@@ -20,7 +20,7 @@ export const recurSpecialExpression: SpecialExpression = {
 
     return [position + 1, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castReturnExpressionNode(node)
     const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
     throw new RecurSignal(params)

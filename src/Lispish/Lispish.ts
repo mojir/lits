@@ -1,3 +1,4 @@
+import { builtin } from '../builtin'
 import { assertNameNotDefined } from '../builtin/utils'
 import { evaluate } from '../evaluator'
 import { Context } from '../evaluator/interface'
@@ -61,7 +62,7 @@ export class Lispish {
       if (importKeys.includes(key)) {
         throw Error(`Import faild, imported function/variable already exists: "${key}"`)
       }
-      assertNameNotDefined(key, [{}, {}])
+      assertNameNotDefined(key, [{}, {}], builtin)
     }
 
     Object.assign(this.importScope, scope)

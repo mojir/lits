@@ -200,7 +200,7 @@ function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Co
     builtin.specialExpressions[node.name],
     `${node.name} is not a built in special expression`,
   ).evaluate
-  return specialExpressionEvaluator(node, contextStack, evaluateAstNode)
+  return specialExpressionEvaluator(node, contextStack, { evaluateAstNode, builtin })
 }
 
 function evaluateExpressionExpression(node: ExpressionExpressionNode, contextStack: Context[]): unknown {

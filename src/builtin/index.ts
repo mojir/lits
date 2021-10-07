@@ -16,12 +16,10 @@ import { unlessSpecialExpression } from './specialExpressions/unless'
 import { whenSpecialExpression } from './specialExpressions/when'
 import { recurSpecialExpression } from './specialExpressions/recur'
 import { loopSpecialExpression } from './specialExpressions/loop'
-import { SpecialExpression } from './interface'
+import { Builtin, BuiltinSpecialExpressions } from './interface'
 import { normalExpressions } from './normalExpressions'
 
-type SpecialExpressions = Record<string, SpecialExpression>
-
-export const specialExpressions: SpecialExpressions = {
+export const specialExpressions: BuiltinSpecialExpressions = {
   'return-from': returnFromSpecialExpression,
   def: defSpecialExpression,
   defs: defsSpecialExpression,
@@ -51,7 +49,7 @@ Object.keys(specialExpressions).forEach(key => {
   }
 })
 
-export const builtin = {
+export const builtin: Builtin = {
   normalExpressions,
   specialExpressions,
 }

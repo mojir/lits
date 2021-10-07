@@ -2,7 +2,7 @@ import { ReturnFromSignal, ReturnSignal, UnexpectedNodeTypeError, UnexpectedToke
 import { Context } from '../../evaluator/interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface TrySpecialExpressionNode extends SpecialExpressionNode {
   name: `try`
@@ -11,7 +11,7 @@ interface TrySpecialExpressionNode extends SpecialExpressionNode {
   catchExpression: AstNode
 }
 
-export const trySpecialExpression: SpecialExpression = {
+export const trySpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokens, position)
@@ -66,7 +66,7 @@ export const trySpecialExpression: SpecialExpression = {
 
     return [position, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castTryExpressionNode(node)
     try {
       return evaluateAstNode(node.tryExpression, contextStack)

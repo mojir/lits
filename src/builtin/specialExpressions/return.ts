@@ -1,13 +1,13 @@
 import { ReturnSignal } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { assertLength, asAstNode } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface ReturnSpecialExpressionNode extends SpecialExpressionNode {
   name: `return`
 }
 
-export const returnSpecialExpression: SpecialExpression = {
+export const returnSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     const node: ReturnSpecialExpressionNode = {
       type: `SpecialExpression`,
@@ -19,7 +19,7 @@ export const returnSpecialExpression: SpecialExpression = {
     node.params.push(valueNode)
     return [newPosition + 1, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castReturnExpressionNode(node)
     const value = evaluateAstNode(asAstNode(node.params[0]), contextStack)
     throw new ReturnSignal(value)

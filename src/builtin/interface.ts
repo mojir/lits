@@ -31,10 +31,15 @@ type Parsers = {
 }
 
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression>
+export type BuiltinSpecialExpressions = Record<string, BuiltinSpecialExpression>
 
-export type SpecialExpression = {
+type EvaluateHelpers = {
+  evaluateAstNode: EvaluateAstNode
+  builtin: Builtin
+}
+export type BuiltinSpecialExpression = {
   parse: (tokens: Token[], position: number, parsers: Parsers) => [number, SpecialExpressionNode]
-  evaluate: (node: SpecialExpressionNode, contextStack: Context[], evaluateAstNode: EvaluateAstNode) => unknown
+  evaluate: (node: SpecialExpressionNode, contextStack: Context[], helpers: EvaluateHelpers) => unknown
   validate?: (node: SpecialExpressionNode) => void
 }
 
@@ -60,3 +65,8 @@ export type SpecialExpressionName =
   | `try`
   | `unless`
   | `when`
+
+export type Builtin = {
+  normalExpressions: BuiltinNormalExpressions
+  specialExpressions: BuiltinSpecialExpressions
+}

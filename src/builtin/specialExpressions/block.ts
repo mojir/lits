@@ -2,14 +2,14 @@ import { ReturnFromSignal, UnexpectedTokenError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined, assertLength } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface BlockSpecialExpressionNode extends SpecialExpressionNode {
   name: `block`
   blockName: string
 }
 
-export const blockSpecialExpression: SpecialExpression = {
+export const blockSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
     let token = asNotUndefined(tokens[position])
     if (token.type !== `name`) {
@@ -34,7 +34,7 @@ export const blockSpecialExpression: SpecialExpression = {
     }
     return [position + 1, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castBlockExpressionNode(node)
     const newContext: Context = {}
 

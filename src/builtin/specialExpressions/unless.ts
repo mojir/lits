@@ -1,12 +1,12 @@
 import { SpecialExpressionNode } from '../../parser/interface'
 import { assertLength, assertNotUndefined } from '../../utils'
-import { SpecialExpression } from '../interface'
+import { BuiltinSpecialExpression } from '../interface'
 
 interface UnlessSpecialExpressionNode extends SpecialExpressionNode {
   name: `unless`
 }
 
-export const unlessSpecialExpression: SpecialExpression = {
+export const unlessSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseTokens }) => {
     const [newPosition, params] = parseTokens(tokens, position)
     const node: UnlessSpecialExpressionNode = {
@@ -17,7 +17,7 @@ export const unlessSpecialExpression: SpecialExpression = {
 
     return [newPosition + 1, node]
   },
-  evaluate: (node, contextStack, evaluateAstNode) => {
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
     castUnlessExpressionNode(node)
 
     const [unlessExpression, ...body] = node.params
