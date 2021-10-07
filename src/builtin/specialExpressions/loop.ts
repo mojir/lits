@@ -50,6 +50,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression = {
           })
           continue
         }
+        throw error
       }
       return result
     }

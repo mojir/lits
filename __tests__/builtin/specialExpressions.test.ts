@@ -517,4 +517,30 @@ describe(`specialExpressions`, () => {
       expect(lispish.run(`(do)`)).toBeUndefined()
     })
   })
+
+  describe(`recur`, () => {
+    test(`samples`, () => {
+      lispish.run(`(defn foo [n] (write n) (when (not (zero? n)) (recur (dec n)))) (foo 3)`)
+      expect(logSpy).toHaveBeenNthCalledWith(1, 3)
+      expect(logSpy).toHaveBeenNthCalledWith(2, 2)
+      expect(logSpy).toHaveBeenNthCalledWith(3, 1)
+      expect(logSpy).toHaveBeenNthCalledWith(4, 0)
+    })
+  })
+
+  describe(`loop`, () => {
+    test(`should work with recur`, () => {
+      lispish.run(`(loop [n 3] (write n) (when (not (zero? n)) (recur (dec n))))`)
+      expect(logSpy).toHaveBeenNthCalledWith(1, 3)
+      expect(logSpy).toHaveBeenNthCalledWith(2, 2)
+      expect(logSpy).toHaveBeenNthCalledWith(3, 1)
+      expect(logSpy).toHaveBeenNthCalledWith(4, 0)
+    })
+    test(`recur must be called with right number of parameters`, () => {
+      expect(() => lispish.run(`(loop [n 3] (write n) (when (not (zero? n)) (recur (dec n))))`)).toThrow()
+    })
+    test(`throw should work`, () => {
+      expect(() => lispish.run(`(loop [n 3] (write n) (when (not (zero? n)) (throw (dec n))))`)).toThrow()
+    })
+  })
 })
