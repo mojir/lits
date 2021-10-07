@@ -12,7 +12,7 @@ import {
   assertStringOrArray,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
-export const listNormalExpression: BuiltinNormalExpressions = {
+export const arrayNormalExpression: BuiltinNormalExpressions = {
   append: {
     evaluate: (params: unknown[]): unknown => {
       const [first, ...rest] = params
@@ -89,13 +89,6 @@ export const listNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)
       return first[first.length - 1]
-    },
-    validate: node => assertLength(1, node),
-  },
-  length: {
-    evaluate: ([first]: unknown[]): unknown => {
-      assertArray(first)
-      return first.length
     },
     validate: node => assertLength(1, node),
   },
@@ -365,5 +358,13 @@ export const listNormalExpression: BuiltinNormalExpressions = {
       return arr
     },
     validate: node => assertLength({ min: 2 }, node),
+  },
+  'random-sample': {
+    evaluate: ([prob, arr]: unknown[]): unknown[] => {
+      assertFiniteNumber(prob)
+      assertArray(arr)
+      return arr.filter(() => Math.random() < prob)
+    },
+    validate: node => assertLength(2, node),
   },
 }

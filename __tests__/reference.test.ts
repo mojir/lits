@@ -17,6 +17,7 @@ function getLinkName(name: string): string {
   name = name.replace(/\*/g, `_star`)
   name = name.replace(/\//g, `_slash`)
   name = name.replace(/\?/g, `_question`)
+  name = name.replace(/!/g, `_exclamation`)
   return name
 }
 
@@ -33,7 +34,6 @@ describe(`functionReference`, () => {
       expect(obj.longDescription[obj.longDescription.length - 1]).toBe(`.`)
 
       expect(obj.examples.length).toBeGreaterThan(0)
-      expect(Array.isArray(obj.sideEffects)).toBe(true)
       expect(Array.isArray(obj.arguments)).toBe(true)
       if (normalExpressionKeys.includes(key)) {
         expect(obj.specialExpression).toBeFalsy()

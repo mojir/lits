@@ -117,7 +117,9 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       const newContext: Context = { ...lispishFunction.functionContext }
       if (params.length < args.mandatoryArguments.length) {
         throw Error(
-          `Function "${lispishFunction.name}" requires at least ${args.mandatoryArguments.length} arguments. Got ${params.length}`,
+          `Function ${lispishFunction.name ?? `(fn)`} requires at least ${
+            args.mandatoryArguments.length
+          } arguments. Got ${params.length}`,
         )
       }
 
@@ -171,7 +173,6 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         }
         throw error
       }
-      break
     }
   } else {
     const normalExpression = asNotUndefined(

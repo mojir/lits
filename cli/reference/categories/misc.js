@@ -16,7 +16,6 @@ module.exports = {
     longDescription: `Result is \`true\` if no two \`values\` are equal to each other, otherwise result is \`false\`. Note that only two argument version result is negation of \`=\` function, that is \`(!= a b)\` is same as \`(not (= a b))\`.`,
     examples: [`(!= 3)`, `(!= 3 2)`, `(!= "3" 3)`, `(!= 3 3 2)`, `(!= "3" "2" "1" "0")`, `(!= 0 -0)`],
     specialExpression: false,
-    sideEffects: [],
   },
   '=': {
     name: `=`,
@@ -35,7 +34,6 @@ module.exports = {
     longDescription: `Compares \`values\` according to "equal" predicate. Result is \`true\` if every specified value is equal to each other, otherwise result is \`false\`.`,
     examples: [`(= 1 1)`, `(= 1.01 1)`, `(= "1" 1)`, `(= "2" "2" "2" "2")`, `(= 2 2 1 2)`],
     specialExpression: false,
-    sideEffects: [],
   },
   not: {
     name: `not`,
@@ -63,7 +61,6 @@ module.exports = {
       `(not "")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   apply: {
     name: `apply`,
@@ -86,12 +83,11 @@ module.exports = {
     longDescription: `Call supplied function with specified arguments.`,
     examples: [`(apply + [1 2 3])`, `(apply (fn [x y] (sqrt (+ (* x x) (* y y)))) [3 4])`],
     specialExpression: false,
-    sideEffects: [],
   },
-  write: {
-    name: `write`,
+  'write!': {
+    name: `write!`,
     category: `Misc`,
-    linkName: `write`,
+    linkName: `write_exclamation`,
     returns: {
       type: `value`,
     },
@@ -104,15 +100,14 @@ module.exports = {
     shortDescription: `It console.log the \`values\` and then returns the last element of the \`values\` array.`,
     longDescription: `It console.log the \`values\` and then returns the last element of the \`values\` array.. If called with no arguments \`undefined\` is returned.`,
     examples: [
-      `(write "A string")`,
-      `(write 100 "items")`,
-      `(write (object "a" 10))`,
-      `(write ["a" "b" "c"])`,
-      `(write (regexp "^start"))`,
-      `(write null undefined true false)`,
+      `(write! "A string")`,
+      `(write! 100 "items")`,
+      `(write! (object "a" 10))`,
+      `(write! ["a" "b" "c"])`,
+      `(write! (regexp "^start"))`,
+      `(write! null undefined true false)`,
     ],
     specialExpression: false,
-    sideEffects: [`Does a console.log`],
   },
   now: {
     name: `now`,
@@ -126,7 +121,6 @@ module.exports = {
     longDescription: `Returns milliseconds elapsed since the UNIX epoch.`,
     examples: [`(now)`],
     specialExpression: false,
-    sideEffects: [],
   },
   'get-path': {
     name: `get-path`,
@@ -148,17 +142,16 @@ module.exports = {
     shortDescription: `Is used to get the value at \`path\` of object or array.`,
     longDescription: `Is used to get the value at \`path\` of object or array.`,
     examples: [
-      `(get-path (write (object "a" (object "x" [1 2 3]))) "a.x[2]")`,
-      `(get-path (write (object "a" (object "x" [1 2 3]))) "b.z[10]")`,
-      `(get-path (write [(object "x" [1 2 3])]) "[1].x[2]")`,
+      `(get-path (write! (object "a" (object "x" [1 2 3]))) "a.x[2]")`,
+      `(get-path (write! (object "a" (object "x" [1 2 3]))) "b.z[10]")`,
+      `(get-path (write! [(object "x" [1 2 3])]) "[1].x[2]")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
-  debug: {
-    name: `debug`,
+  'debug!': {
+    name: `debug!`,
     category: `Misc`,
-    linkName: `debug`,
+    linkName: `debug_exclamation`,
     returns: {
       type: `undefined`,
     },
@@ -170,8 +163,7 @@ module.exports = {
     ],
     shortDescription: `Console.error context stack.`,
     longDescription: `Console.error context stack.`,
-    examples: [`(debug)`],
+    examples: [`(debug!)`],
     specialExpression: false,
-    sideEffects: [],
   },
 }

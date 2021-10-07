@@ -79,25 +79,6 @@ describe(`array functions`, () => {
     })
   })
 
-  describe(`lenght`, () => {
-    test(`samples`, () => {
-      expect(lispish.run(`(length [])`)).toBe(0)
-      expect(lispish.run(`(length [1])`)).toBe(1)
-      expect(lispish.run(`(length [1 2 3])`)).toBe(3)
-      expect(() => lispish.run(`(length "")`)).toThrow()
-      expect(() => lispish.run(`(length "1")`)).toThrow()
-      expect(() => lispish.run(`(length "123")`)).toThrow()
-      expect(() => lispish.run(`(length)`)).toThrow()
-      expect(() => lispish.run(`(length [] [])`)).toThrow()
-      expect(() => lispish.run(`(length 12)`)).toThrow()
-      expect(() => lispish.run(`(length false)`)).toThrow()
-      expect(() => lispish.run(`(length true)`)).toThrow()
-      expect(() => lispish.run(`(length null)`)).toThrow()
-      expect(() => lispish.run(`(length undefined)`)).toThrow()
-      expect(() => lispish.run(`(length (object))`)).toThrow()
-    })
-  })
-
   describe(`append`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(append [])`)).toEqual([])
@@ -656,6 +637,18 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(["Albert" "Mojir"] 0 1)`)).toThrow()
       expect(() => lispish.run(`("Albert" 0)`)).toThrow()
       expect(() => lispish.run(`((+ 1 2) 0)`)).toThrow()
+    })
+  })
+
+  describe(`random-sample`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(random-sample 1 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(random-sample 1.9 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(random-sample 0 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(random-sample -1.9 [1 2 3])`)).toEqual([])
+      expect(() => lispish.run(`(random-sample [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(random-sample "1" [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(random-sample 1)`)).toThrow()
     })
   })
 })

@@ -153,7 +153,7 @@ function getExamplePage() {
 }
 
 function getDocumentationContent(docObj) {
-  const { name, longDescription, returns, linkName, specialExpression, examples, sideEffects, arguments: args } = docObj
+  const { name, longDescription, returns, linkName, specialExpression, examples, arguments: args } = docObj
   const formattedDescription = formatDescription(longDescription)
   return `
 <div id="${linkName}" class="content function">
@@ -173,13 +173,6 @@ function getDocumentationContent(docObj) {
           .join('\n')}</div>`
   }
 
-  ${
-    sideEffects.length === 0
-      ? '<label>No side effects</label>'
-      : `<label>Side effects</label><div class="indent">${sideEffects
-          .map(effect => `<pre>${effect}</pre>`)
-          .join('\n')}</div>`
-  }
   <label>Examples</label>
   <div class="indent">
     ${examples

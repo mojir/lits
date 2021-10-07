@@ -155,6 +155,12 @@ export function assertArray(value: unknown): asserts value is Array<unknown> {
   }
 }
 
+export function assertCollection(value: unknown): asserts value is Array<unknown> | Record<string, unknown> {
+  if (!Array.isArray(value) && !isObject(value)) {
+    throw TypeError(`Expected collection, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function assertStringOrArray(value: unknown): asserts value is Array<unknown> | string {
   if (!(Array.isArray(value) || typeof value === `string`)) {
     throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
@@ -162,13 +168,7 @@ export function assertStringOrArray(value: unknown): asserts value is Array<unkn
 }
 
 export function assertObject(value: unknown): asserts value is Record<string, unknown> {
-  if (
-    value === null ||
-    typeof value !== `object` ||
-    Array.isArray(value) ||
-    value instanceof RegExp ||
-    isLispishFunction(value)
-  ) {
+  if (!isObject(value)) {
     throw TypeError(`Expected object, got: ${value} type="${typeof value}"`)
   }
 }
@@ -264,4 +264,14 @@ export function assertExpressionNode(node: AstNode): asserts node is ExpressionN
   ) {
     throw new UnexpectedNodeTypeError(`ExpressionNode`, node)
   }
+}
+
+function isObject(value: unknown): boolean {
+  return !(
+    value === null ||
+    typeof value !== `object` ||
+    Array.isArray(value) ||
+    value instanceof RegExp ||
+    isLispishFunction(value)
+  )
 }

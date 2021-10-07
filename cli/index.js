@@ -280,9 +280,6 @@ Syntax
 ${'Arguments'.underline}
 ${doc.arguments.length === 0 ? '  None' : doc.arguments.map(arg => `  ${arg.name.bold}: ${arg.type}`).join('\n')}
 
-${'Side effects'.underline}
-${doc.sideEffects.length === 0 ? '  None' : doc.sideEffects.map(sideEffect => `  ${sideEffect}`).join('\n')}
-
 ${'Examples'.underline}
 ${
   doc.examples.length === 0

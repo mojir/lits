@@ -22,7 +22,6 @@ module.exports = {
       `(and true true 0 true)`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   or: {
     name: `or`,
@@ -47,7 +46,6 @@ module.exports = {
       `(or 1 2 3 4)`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   def: {
     name: `def`,
@@ -70,7 +68,6 @@ module.exports = {
     longDescription: `Bind \`value\` to \`variable\`. If \`variable\` isn't defined, a new global variable is created.`,
     examples: [`(def a (object))`, `(def a (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: true,
-    sideEffects: [],
   },
   defs: {
     name: `defs`,
@@ -97,7 +94,6 @@ module.exports = {
       `(defs "a" "b") (defs a "c") b`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   let: {
     name: `let`,
@@ -118,9 +114,8 @@ module.exports = {
     ],
     shortDescription: `Binds local variables. The variables lives only within the body.`,
     longDescription: `Binds local variables. The variables lives only within the body. It returns evaluation of the last expression in the body.`,
-    examples: [`(let [a (+ 1 2 3 4) b (* 1 2 3 4)] (write a b))`],
+    examples: [`(let [a (+ 1 2 3 4) b (* 1 2 3 4)] (write! a b))`],
     specialExpression: true,
-    sideEffects: [],
   },
   fn: {
     name: `fn`,
@@ -143,7 +138,6 @@ module.exports = {
     longDescription: `Creates a function. When called, evaluation of the last expression in the body is returned.`,
     examples: [`(fn [a b] (sqrt (+ (* a a) (* b b))))`, `((fn [a b] (sqrt (+ (* a a) (* b b)))) 3 4)`],
     specialExpression: true,
-    sideEffects: [],
   },
   defn: {
     name: `defn`,
@@ -174,7 +168,6 @@ module.exports = {
       `(defn sumOfSquares [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
-    sideEffects: [`Creates a new function`],
   },
   defns: {
     name: `defns`,
@@ -205,7 +198,6 @@ module.exports = {
       `(defns "sumOfSquares" [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
-    sideEffects: [`Creates a new function`],
   },
   'return-from': {
     name: `return-from`,
@@ -226,9 +218,8 @@ module.exports = {
     ],
     shortDescription: `Returns control and value from a named enclosing block.`,
     longDescription: `Returns control and value from a named enclosing block.`,
-    examples: [`(defn foo [] (write "Alpha") (return-from foo "Beta") (write "Gamma")) (foo)`],
+    examples: [`(defn foo [] (write! "Alpha") (return-from foo "Beta") (write! "Gamma")) (foo)`],
     specialExpression: true,
-    sideEffects: [],
   },
   return: {
     name: `return`,
@@ -245,9 +236,8 @@ module.exports = {
     ],
     shortDescription: `Returns control and value from the enclosing block.`,
     longDescription: `Returns control and value from the enclosing block.`,
-    examples: [`(defn foo [] (write "Alpha") (return "Beta") (write "Gamma")) (foo)`],
+    examples: [`(defn foo [] (write! "Alpha") (return "Beta") (write! "Gamma")) (foo)`],
     specialExpression: true,
-    sideEffects: [],
   },
   block: {
     name: `block`,
@@ -269,11 +259,10 @@ module.exports = {
     shortDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit do.`,
     longDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit do.`,
     examples: [
-      `(block b (write "Alpha") (write "Gamma"))`,
-      `(block b (write "Alpha") (return-from b undefined) (write "Gamma"))`,
+      `(block b (write! "Alpha") (write! "Gamma"))`,
+      `(block b (write! "Alpha") (return-from b undefined) (write! "Gamma"))`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   try: {
     name: `try`,
@@ -296,7 +285,6 @@ module.exports = {
     longDescription: `Executes tryExpression. If that throws, the catchBlock gets executed. See examples for details.`,
     examples: [`(try (/ 2 4) ((error) (/ 2 1)))`, `(try (/ 2 0) ((error) (/ 2 1)))`, `(try (/ 2 0) ((error) error))`],
     specialExpression: true,
-    sideEffects: [],
   },
   throw: {
     name: `throw`,
@@ -319,7 +307,6 @@ module.exports = {
       `(try (throw "You shall not pass!") ((error) error))`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   if: {
     name: `if`,
@@ -344,9 +331,8 @@ module.exports = {
     ],
     shortDescription: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy.`,
     longDescription: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy.`,
-    examples: [`(if true (write "TRUE") (write "FALSE"))`, `(if false (write "TRUE") (write "FALSE"))`],
+    examples: [`(if true (write! "TRUE") (write! "FALSE"))`, `(if false (write! "TRUE") (write! "FALSE"))`],
     specialExpression: true,
-    sideEffects: [],
   },
   cond: {
     name: `cond`,
@@ -364,11 +350,10 @@ module.exports = {
     shortDescription: `Used for branching. Variants are tested sequentially from the top.`,
     longDescription: `Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, \`undefined\` is returned.`,
     examples: [
-      `(cond (false (write "FALSE")) (null (write "NULL")) (true (write "TRUE")))`,
-      `(cond (false (write "FALSE")) (null (write "NULL")))`,
+      `(cond (false (write! "FALSE")) (null (write! "NULL")) (true (write! "TRUE")))`,
+      `(cond (false (write! "FALSE")) (null (write! "NULL")))`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   when: {
     name: `when`,
@@ -391,13 +376,12 @@ module.exports = {
     shortDescription: `If \`test\` yields a truthy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned.`,
     longDescription: `If \`test\` yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a falsy value, the forms are not evaluated, and \`undefined\` is returned. If no \`form\` is provided, undefined is returned.`,
     examples: [
-      `(when true (write "Hi") (write "There"))`,
-      `(when false (write "Hi") (write "There"))`,
+      `(when true (write! "Hi") (write! "There"))`,
+      `(when false (write! "Hi") (write! "There"))`,
       `(when true)`,
       `(when false)`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   unless: {
     name: `unless`,
@@ -420,13 +404,12 @@ module.exports = {
     shortDescription: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned.`,
     longDescription: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a truthy value, the forms are not evaluated, and \`undefined\` is returned. If no \`form\` is provided, undefined is returned.`,
     examples: [
-      `(unless true (write "Hi") (write "There"))`,
-      `(unless false (write "Hi") (write "There"))`,
+      `(unless true (write! "Hi") (write! "There"))`,
+      `(unless false (write! "Hi") (write! "There"))`,
       `(unless true)`,
       `(unless false)`,
     ],
     specialExpression: true,
-    sideEffects: [],
   },
   do: {
     name: `do`,
@@ -443,8 +426,54 @@ module.exports = {
     ],
     shortDescription: `Calls \`forms\` in the order they have been written. Resulting value is the value of the last form.`,
     longDescription: `Calls \`forms\` in the order they have been written. Resulting value is the value of the last form.`,
-    examples: [`(do (write "Hi") (write "Albert"))`, `(do)`],
+    examples: [`(do (write! "Hi") (write! "Albert"))`, `(do)`],
     specialExpression: true,
-    sideEffects: [],
+  },
+  recur: {
+    name: `recur`,
+    category: `Special expression`,
+    linkName: `recur`,
+    returns: {
+      type: `undefined`,
+    },
+    arguments: [
+      {
+        name: `forms`,
+        type: `form[]`,
+      },
+    ],
+    shortDescription: `Recursevly calls enclosing function or loop with its evaluated \`forms\`.`,
+    longDescription: `Recursevly calls enclosing function or loop with its evaluated \`forms\`.`,
+    examples: [
+      `(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3)`,
+      `((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)`,
+      `(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))`,
+    ],
+    specialExpression: true,
+  },
+  loop: {
+    name: `loop`,
+    category: `Special expression`,
+    linkName: `loop`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `bindings`,
+        type: `bindings`,
+      },
+      {
+        name: `body`,
+        type: `lisp expressions`,
+      },
+    ],
+    shortDescription: `Executes body with initial \`bindings\`. The \`bindings\` will be replaced with the recur parameters for subsequent recursions.`,
+    longDescription: `Executes body with initial \`bindings\`. The \`bindings\` will be replaced with the recur parameters for subsequent recursions.`,
+    examples: [
+      `(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))`,
+      `(loop [n 3] (write! n) (if (not (zero? n)) (recur (dec n)) n))`,
+    ],
+    specialExpression: true,
   },
 }

@@ -49,12 +49,12 @@ module.exports = [
   )
 )
 
-(write formatPhoneNumber)
-(write (formatPhoneNumber 123234))
-(write (formatPhoneNumber "123234"))
-(write (formatPhoneNumber "1232343456"))
-(write (formatPhoneNumber "+11232343456789"))
-(write (formatPhoneNumber "+11232343456"))
+(write! formatPhoneNumber)
+(write! (formatPhoneNumber 123234))
+(write! (formatPhoneNumber "123234"))
+(write! (formatPhoneNumber "1232343456"))
+(write! (formatPhoneNumber "+11232343456789"))
+(write! (formatPhoneNumber "+11232343456"))
 `.trim(),
   },
   {
@@ -106,9 +106,9 @@ module.exports = [
 ;  )
 ;)
 ;
-;(write (welcome-message "Albert"))
-;(write (count-chairs 12))
-;(write (count-chairs 1))
+;(write! (welcome-message "Albert"))
+;(write! (count-chairs 12))
+;(write! (count-chairs 1))
 `.trim(),
   },
 ]

@@ -160,10 +160,19 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
-  random: {
+  rand: {
+    evaluate: (parameters: unknown[]): number => {
+      const number = parameters.length === 1 ? parameters[0] : 1
+      assertPositiveNumber(number)
+      return asFiniteNumber(Math.random() * number)
+    },
+    validate: (node: NormalExpressionNode): void => assertLength({ min: 0, max: 1 }, node),
+  },
+
+  'rand-int': {
     evaluate: ([first]: unknown[]): number => {
       assertPositiveNumber(first)
-      return asFiniteNumber(Math.random() * first)
+      return asFiniteNumber(Math.floor(Math.random() * first))
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },

@@ -16,7 +16,6 @@ module.exports = {
     longDescription: `Returns \`true\` if \`value\` is a \`boolean\`, otherwise \`false\`.`,
     examples: [`(boolean? true)`, `(boolean? false)`, `(boolean? [1 2 3])`, `(boolean? 0)`, `(boolean? "A string")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'null?': {
     name: `null?`,
@@ -35,7 +34,6 @@ module.exports = {
     longDescription: `Returns \`true\` if \`value\` is \`null\`, otherwise \`false\`.`,
     examples: [`(null? null)`, `(null? false)`, `(null? [1 2 3])`, `(null? 0)`, `(null? "A string")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'undefined?': {
     name: `undefined?`,
@@ -61,7 +59,6 @@ module.exports = {
       `(undefined? "A string")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'number?': {
     name: `number?`,
@@ -87,7 +84,6 @@ module.exports = {
       `(number? "A string")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'string?': {
     name: `string?`,
@@ -113,7 +109,6 @@ module.exports = {
       `(string? 100)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'function?': {
     name: `function?`,
@@ -139,7 +134,6 @@ module.exports = {
       `(function? [1 2 3])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'integer?': {
     name: `integer?`,
@@ -167,7 +161,6 @@ module.exports = {
       `(integer? [1 2 3])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'array?': {
     name: `array?`,
@@ -193,7 +186,6 @@ module.exports = {
       `(array? (fn [x y] (+ x y)))`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'object?': {
     name: `object?`,
@@ -221,7 +213,6 @@ module.exports = {
       `(object? [1 2 3])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'regexp?': {
     name: `regexp?`,
@@ -249,7 +240,6 @@ module.exports = {
       `(regexp? [1 2 3])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'zero?': {
     name: `zero?`,
@@ -268,7 +258,6 @@ module.exports = {
     longDescription: `Returns \`true\` if \`number\` is \`0\`, otherwise \`false\`.`,
     examples: [`(zero? 0)`, `(zero? -0.0)`, `(zero? 1)`, `(zero? 0.1)`],
     specialExpression: false,
-    sideEffects: [],
   },
   'even?': {
     name: `even?`,
@@ -287,7 +276,6 @@ module.exports = {
     longDescription: `Returns \`true\` if \`number\` is even, otherwise \`false\`.`,
     examples: [`(even? 0)`, `(even? -0.0)`, `(even? -1)`, `(even? 2.1)`],
     specialExpression: false,
-    sideEffects: [],
   },
   'odd?': {
     name: `odd?`,
@@ -306,7 +294,6 @@ module.exports = {
     longDescription: `Returns \`true\` if \`number\` is odd, otherwise \`false\`.`,
     examples: [`(odd? 1.0)`, `(odd? 1.001)`, `(odd? -1)`, `(odd? 2.1)`],
     specialExpression: false,
-    sideEffects: [],
   },
   'empty?': {
     name: `empty?`,
@@ -325,6 +312,5 @@ module.exports = {
     longDescription: `Returns \`true\` if \`array\` is empty, otherwise \`false\`.`,
     examples: [`(empty? [])`, `(empty? [1 2 3])`],
     specialExpression: false,
-    sideEffects: [],
   },
 }

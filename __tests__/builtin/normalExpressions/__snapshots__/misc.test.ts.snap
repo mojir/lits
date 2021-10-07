@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`misc functions debug multiple contexts 1`] = `
+exports[`misc functions debug! multiple contexts 1`] = `
 "*** LISPISH DEBUG ***
 
 Context 0 - Import context

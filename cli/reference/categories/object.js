@@ -24,7 +24,6 @@ module.exports = {
       `(ohas (object "a" 10 "b" undefined) "c")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   oget: {
     name: `oget`,
@@ -51,7 +50,6 @@ module.exports = {
       `(oget (object "a" 10 "b" undefined) "c")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   odel: {
     name: `odel`,
@@ -79,7 +77,6 @@ module.exports = {
       `(def o (object "a" 5)) (odel o "b") o`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   oset: {
     name: `oset`,
@@ -110,7 +107,6 @@ module.exports = {
       `(def o (object "a" 5)) (oset o "a" 10) o`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   object: {
     name: `object`,
@@ -130,7 +126,6 @@ module.exports = {
     longDescription: `Constructs a new object. Object members are created from \`key\` - \`value\` pairs. Requires an even number of arguments.`,
     examples: [`(object)`, `(object "x" 10 "y" true "z" "A string")`],
     specialExpression: false,
-    sideEffects: [],
   },
   keys: {
     name: `keys`,
@@ -149,7 +144,6 @@ module.exports = {
     longDescription: `Returns array of all keys in \`object\`.`,
     examples: [`(keys (object))`, `(keys (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: false,
-    sideEffects: [],
   },
   values: {
     name: `values`,
@@ -168,7 +162,6 @@ module.exports = {
     longDescription: `Returns array of all values in \`object\`.`,
     examples: [`(values (object))`, `(values (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: false,
-    sideEffects: [],
   },
   entries: {
     name: `entries`,
@@ -187,7 +180,6 @@ module.exports = {
     longDescription: `Returns nested array of all key - value pairs in \`object\`.`,
     examples: [`(entries (object))`, `(entries (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: false,
-    sideEffects: [],
   },
   merge: {
     name: `merge`,
@@ -207,6 +199,5 @@ module.exports = {
     longDescription: `Returns a new object created by merging together all arguments.`,
     examples: [`(merge (object "x" 10) (object "y" 20))`, `(merge (object "x" 10) (object "x" 15 "y" 20))`],
     specialExpression: false,
-    sideEffects: [],
   },
 }

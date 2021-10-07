@@ -111,21 +111,21 @@ describe(`misc functions`, () => {
     })
   })
 
-  describe(`write`, () => {
+  describe(`write!`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(write)`)).toBeUndefined()
-      expect(lispish.run(`(write 1)`)).toBe(1)
-      expect(lispish.run(`(write "1")`)).toBe(`1`)
-      expect(lispish.run(`(write 100 [] "1")`)).toBe(`1`)
-      expect(lispish.run(`(write [])`)).toEqual([])
-      expect(lispish.run(`(write (object))`)).toEqual({})
-      expect(lispish.run(`(write null)`)).toBe(null)
-      expect(lispish.run(`(write undefined)`)).toBe(undefined)
-      expect(lispish.run(`(write true)`)).toBe(true)
-      expect(lispish.run(`(write false)`)).toBe(false)
+      expect(lispish.run(`(write!)`)).toBeUndefined()
+      expect(lispish.run(`(write! 1)`)).toBe(1)
+      expect(lispish.run(`(write! "1")`)).toBe(`1`)
+      expect(lispish.run(`(write! 100 [] "1")`)).toBe(`1`)
+      expect(lispish.run(`(write! [])`)).toEqual([])
+      expect(lispish.run(`(write! (object))`)).toEqual({})
+      expect(lispish.run(`(write! null)`)).toBe(null)
+      expect(lispish.run(`(write! undefined)`)).toBe(undefined)
+      expect(lispish.run(`(write! true)`)).toBe(true)
+      expect(lispish.run(`(write! false)`)).toBe(false)
     })
     test(`that it does console.log`, () => {
-      lispish.run(`(write 1)`)
+      lispish.run(`(write! 1)`)
       expect(logSpy).toHaveBeenCalledWith(1)
     })
   })
@@ -154,7 +154,7 @@ describe(`misc functions`, () => {
     })
   })
 
-  describe(`debug`, () => {
+  describe(`debug!`, () => {
     let oldError: () => void
     let lastErrorLog = ``
     beforeEach(() => {
@@ -167,20 +167,20 @@ describe(`misc functions`, () => {
       console.error = oldError
     })
     test(`samples`, () => {
-      expect(lispish.run(`(debug)`)).toBeUndefined()
-      expect(() => lispish.run(`(debug 0)`)).toThrow()
-      expect(() => lispish.run(`(debug undefined)`)).toThrow()
-      expect(() => lispish.run(`(debug null)`)).toThrow()
-      expect(() => lispish.run(`(debug true)`)).toThrow()
-      expect(() => lispish.run(`(debug false)`)).toThrow()
-      expect(() => lispish.run(`(debug [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(debug (object "a" 1))`)).toThrow()
-      expect(() => lispish.run(`(debug "label")`)).toThrow()
-      expect(() => lispish.run(`(debug "" 0)`)).toThrow()
+      expect(lispish.run(`(debug!)`)).toBeUndefined()
+      expect(() => lispish.run(`(debug! 0)`)).toThrow()
+      expect(() => lispish.run(`(debug! undefined)`)).toThrow()
+      expect(() => lispish.run(`(debug! null)`)).toThrow()
+      expect(() => lispish.run(`(debug! true)`)).toThrow()
+      expect(() => lispish.run(`(debug! false)`)).toThrow()
+      expect(() => lispish.run(`(debug! [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(debug! (object "a" 1))`)).toThrow()
+      expect(() => lispish.run(`(debug! "label")`)).toThrow()
+      expect(() => lispish.run(`(debug! "" 0)`)).toThrow()
     })
     test(`multiple contexts`, () => {
       lispish.import(`(def x 10) (defn foo [] "foo") (def bar (fn [] "bar")) (def plus +)`)
-      lispish.run(`((fn [z] (debug) (+ z 1)) 10)`, { vars: { y: 20 } })
+      lispish.run(`((fn [z] (debug!) (+ z 1)) 10)`, { vars: { y: 20 } })
       expect(lastErrorLog).toMatchSnapshot()
     })
   })

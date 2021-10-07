@@ -30,7 +30,6 @@ module.exports = {
       `(substring "A string" 100)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'string-length': {
     name: `string-length`,
@@ -49,7 +48,6 @@ module.exports = {
     longDescription: `Returns length of \`string\`.`,
     examples: [`(string-length "A string")`, `(string-length "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'string-repeat': {
     name: `string-repeat`,
@@ -72,7 +70,6 @@ module.exports = {
     longDescription: `Repeates \`string\` \`count\` times.`,
     examples: [`(string-repeat "*" 10)`, `(string-repeat "***" 0)`],
     specialExpression: false,
-    sideEffects: [],
   },
   concat: {
     name: `concat`,
@@ -92,7 +89,6 @@ module.exports = {
     longDescription: `Concatenats \`strings\` into one \`string\`.`,
     examples: [`(concat "A string" ", and another string" " ...and more")`, `(concat "Just one string")`, `(concat)`],
     specialExpression: false,
-    sideEffects: [],
   },
   'string>': {
     name: `string>`,
@@ -120,7 +116,6 @@ module.exports = {
       `(string> "Albert" "albert")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'string>=': {
     name: `string>=`,
@@ -148,7 +143,6 @@ module.exports = {
       `(string>= "Albert" "albert")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'string<': {
     name: `string<`,
@@ -176,7 +170,6 @@ module.exports = {
       `(string< "Albert" "albert")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'string<=': {
     name: `string<=`,
@@ -204,7 +197,6 @@ module.exports = {
       `(string<= "Albert" "albert")`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'string-to-number': {
     name: `string-to-number`,
@@ -223,7 +215,6 @@ module.exports = {
     longDescription: `Parses \`string\` to a number.`,
     examples: [`(string-to-number "10")`, `(string-to-number "010")`, `(string-to-number "-1.01")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'number-to-string': {
     name: `number-to-string`,
@@ -253,7 +244,6 @@ module.exports = {
       `(number-to-string 15 16)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'string-reverse': {
     name: `string-reverse`,
@@ -272,7 +262,6 @@ module.exports = {
     longDescription: `Reverses a string.`,
     examples: [`(string-reverse "Albert")`, `(string-reverse "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'lower-case': {
     name: `lower-case`,
@@ -291,7 +280,6 @@ module.exports = {
     longDescription: `Returns \`string\` converted to lower case.`,
     examples: [`(lower-case "Albert")`, `(lower-case "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'upper-case': {
     name: `upper-case`,
@@ -310,7 +298,6 @@ module.exports = {
     longDescription: `Returns \`string\` converted to upper case.`,
     examples: [`(upper-case "Albert")`, `(upper-case "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   trim: {
     name: `trim`,
@@ -329,7 +316,6 @@ module.exports = {
     longDescription: `Returns a new string with leading and trailing whitespaces removed.`,
     examples: [`(trim "  Albert  ")`, `(trim "   ")`, `(trim "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'trim-left': {
     name: `trim-left`,
@@ -348,7 +334,6 @@ module.exports = {
     longDescription: `Returns a new string with leading whitespaces removed.`,
     examples: [`(trim-left "  Albert  ")`, `(trim-left "   ")`, `(trim-left "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'trim-right': {
     name: `trim-right`,
@@ -367,7 +352,6 @@ module.exports = {
     longDescription: `Returns a new string with trailing whitespaces removed.`,
     examples: [`(trim-right "  Albert  ")`, `(trim-right "   ")`, `(trim-right "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   'pad-left': {
     name: `pad-left`,
@@ -400,7 +384,6 @@ module.exports = {
       `(pad-left "Albert" -1)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'pad-right': {
     name: `pad-right`,
@@ -433,7 +416,6 @@ module.exports = {
       `(pad-right "Albert" -1)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   split: {
     name: `split`,
@@ -466,7 +448,6 @@ module.exports = {
       `(map string-to-number (split "0123456789" "" 5))`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   template: {
     name: `template`,
@@ -496,6 +477,5 @@ module.exports = {
       `(template "$1 book||||$1 books" 2)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
 }

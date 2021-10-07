@@ -1,6 +1,7 @@
 import { BuiltinNormalExpressions } from '../interface'
 import { bitwiseNormalExpression } from './categories/bitwise'
-import { listNormalExpression } from './categories/array'
+import { collectionNormalExpression } from './categories/collection'
+import { arrayNormalExpression } from './categories/array'
 import { mathNormalExpression } from './categories/math'
 import { miscNormalExpression } from './categories/misc'
 import { objectNormalExpression } from './categories/object'
@@ -10,7 +11,8 @@ import { stringNormalExpression } from './categories/string'
 
 export const normalExpressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,
-  ...listNormalExpression,
+  ...collectionNormalExpression,
+  ...arrayNormalExpression,
   ...mathNormalExpression,
   ...miscNormalExpression,
   ...objectNormalExpression,

@@ -23,7 +23,6 @@ module.exports = {
       `(append [])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   array: {
     name: `array`,
@@ -51,7 +50,6 @@ module.exports = {
       `([1 2 3 4 5 6 7 8 9] 3)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   listf: {
     name: `listf`,
@@ -74,7 +72,6 @@ module.exports = {
     longDescription: `Creates an array with \`length\` number of elements and sets all elements to "value".`,
     examples: [`(listf 10 null)`, `(listf 5 100)`],
     specialExpression: false,
-    sideEffects: [],
   },
   range: {
     name: `range`,
@@ -103,26 +100,6 @@ module.exports = {
     longDescription: `Create an array with a range of numbers. If only one argument: \`0...a\`, otherwise: \`a...b\`. \`step\` defaults to \`1\`.`,
     examples: [`(range 4)`, `(range 1 4)`, `(range 0.4 4.9)`, `(range 0.25 1 0.25)`],
     specialExpression: false,
-    sideEffects: [],
-  },
-  length: {
-    name: `length`,
-    category: `Array`,
-    linkName: `length`,
-    returns: {
-      type: `number`,
-    },
-    arguments: [
-      {
-        name: `array`,
-        type: `array`,
-      },
-    ],
-    shortDescription: `Returns length of \`array\`.`,
-    longDescription: `Returns length of \`array\`.`,
-    examples: [`(length [1 2 3])`, `(length [])`],
-    specialExpression: false,
-    sideEffects: [],
   },
   at: {
     name: `at`,
@@ -155,7 +132,6 @@ module.exports = {
       `(at "A string" -30)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   selt: {
     name: `selt`,
@@ -182,7 +158,6 @@ module.exports = {
     longDescription: `Sets \`value\` on specified element of \`array\`. The \`index\` is counted from \`0\`. Accessing out-of-bounds indices returns throws \`Error\`.`,
     examples: [`(selt [1 2 3] 1 "two")`, `(selt [1 2 3] 2 "Four")`],
     specialExpression: false,
-    sideEffects: [`Mutates array`],
   },
   push: {
     name: `push`,
@@ -206,7 +181,6 @@ module.exports = {
     longDescription: `Pushes \`values\` to the end of \`array\`.`,
     examples: [`(push [1 2 3] 4)`, `(push [1 2 3] 4 5 6)`, `(def l [1 2 3]) (push l 4) l`],
     specialExpression: false,
-    sideEffects: [`Mutates array`],
   },
   pop: {
     name: `pop`,
@@ -229,7 +203,6 @@ module.exports = {
     longDescription: `Removes and returns then last item of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(pop [1 2 3])`, `(pop [])`],
     specialExpression: false,
-    sideEffects: [`Mutates array`],
   },
   unshift: {
     name: `unshift`,
@@ -253,7 +226,6 @@ module.exports = {
     longDescription: `Inserts \`values\` at the beginning of \`array\`.`,
     examples: [`(unshift [1 2 3] 4)`, `(unshift [1 2 3] 4 5 6)`, `(def l [1 2 3]) (unshift l 4) l`],
     specialExpression: false,
-    sideEffects: [`Mutates array`],
   },
   shift: {
     name: `shift`,
@@ -276,7 +248,6 @@ module.exports = {
     longDescription: `Removes and returns the first item of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(shift [1 2 3])`, `(shift [])`],
     specialExpression: false,
-    sideEffects: [`Mutates array`],
   },
   slice: {
     name: `slice`,
@@ -305,7 +276,6 @@ module.exports = {
     longDescription: `Returns a shallow copy of a portion of \`array\` into a new array selected from index \`start\` (inclusive) to index \`end\` (exclusive). If \`start\` is not provided it defaults to \`0\`. If \`end\` is not provided, the rest of the array will be copied.`,
     examples: [`(slice [1 2 3 4 5] 2 4)`, `(slice [1 2 3 4 5] 2)`],
     specialExpression: false,
-    sideEffects: [],
   },
   splice: {
     name: `splice`,
@@ -343,7 +313,6 @@ module.exports = {
       `(def l [1 2 3 4 5]) (splice l 2 2 "3" "4") l`,
     ],
     specialExpression: false,
-    sideEffects: [`Mutating array`],
   },
   reduce: {
     name: `reduce`,
@@ -374,7 +343,6 @@ module.exports = {
       `(reduce (fn [result value] (+ result (if (even? value) value 0))) [1 2 3 4 5 6 7 8 9] 0)`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   'reduce-right': {
     name: `reduce-right`,
@@ -401,7 +369,6 @@ module.exports = {
     longDescription: `Runs \`reducer\` function on each element of the \`array\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
     examples: [`(reduce-right concat ["A" "B" "C"] "")`],
     specialExpression: false,
-    sideEffects: [],
   },
   map: {
     name: `map`,
@@ -430,7 +397,6 @@ module.exports = {
       `(map max [2 6 3] [2 4 7] [1 6 2])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   filter: {
     name: `filter`,
@@ -453,7 +419,6 @@ module.exports = {
     longDescription: `Creates a new array with all elements that pass the test implemented by \`filter\`.`,
     examples: [`(filter string? ["Albert" "Mojir" 160 [1 2]])`, `(filter (fn [x] (> x 10)) [5 10 15 20])`],
     specialExpression: false,
-    sideEffects: [],
   },
   find: {
     name: `find`,
@@ -476,7 +441,6 @@ module.exports = {
     longDescription: `Returns the first elements that pass the test implemented by \`finder\`. I no element was found, \`undefined\` is returned.`,
     examples: [`(find string? ["Albert" "Mojir" 160 [1 2]])`, `(find (fn [x] (> x 10)) [5 10 15 20])`],
     specialExpression: false,
-    sideEffects: [],
   },
   position: {
     name: `position`,
@@ -503,7 +467,6 @@ module.exports = {
       `(position (fn [x] (> x 100)) [5 10 15 20])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   some: {
     name: `some`,
@@ -531,7 +494,6 @@ module.exports = {
       `(some (fn [x] (> x 10)) [])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   every: {
     name: `every`,
@@ -558,7 +520,6 @@ module.exports = {
       `(every (fn [x] (> x 10)) [])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   reverse: {
     name: `reverse`,
@@ -581,7 +542,6 @@ module.exports = {
     longDescription: `Creates a new array with the elements from \`array\` in reversed order.`,
     examples: [`(reverse ["Albert" "Mojir" 160 [1 2]])`, `(reverse [])`],
     specialExpression: false,
-    sideEffects: [],
   },
   first: {
     name: `first`,
@@ -600,7 +560,6 @@ module.exports = {
     longDescription: `Returns the first element of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(first ["Albert" "Mojir" 160 [1 2]])`, `(first [])`],
     specialExpression: false,
-    sideEffects: [],
   },
   second: {
     name: `second`,
@@ -619,7 +578,6 @@ module.exports = {
     longDescription: `Returns the second element of \`array\`. If \`array\` has less than two elements, \`undefined\` is returned.`,
     examples: [`(second ["Albert" "Mojir" 160 [1 2]])`, `(second [1])`, `(second [])`],
     specialExpression: false,
-    sideEffects: [],
   },
   last: {
     name: `last`,
@@ -638,7 +596,6 @@ module.exports = {
     longDescription: `Returns the last element of \`array\`. If \`array\` is empty, \`undefined\` is returned.`,
     examples: [`(last ["Albert" "Mojir" 160 [1 2]])`, `(last [1 2])`, `(last [1])`, `(last [])`],
     specialExpression: false,
-    sideEffects: [],
   },
   rest: {
     name: `rest`,
@@ -657,7 +614,6 @@ module.exports = {
     longDescription: `Returns a new array with all but the first element from \`array\`. If \`array\` has less than two elements, undefined is returned.`,
     examples: [`(rest ["Albert" "Mojir" 160 [1 2]])`, `(rest ["Albert"])`, `(rest [])`],
     specialExpression: false,
-    sideEffects: [],
   },
   cons: {
     name: `cons`,
@@ -676,7 +632,6 @@ module.exports = {
     longDescription: `Constructs a new array with \`element\` as first element and \`rest\` as the rest.`,
     examples: [`(cons "Hi" ["Albert" "Mojir" 160 [1 2]])`, `(cons "Hi" [])`],
     specialExpression: false,
-    sideEffects: [],
   },
   take: {
     name: `take`,
@@ -699,7 +654,6 @@ module.exports = {
     longDescription: `Constructs a new array with the \`count\` first elements from \`array\`.`,
     examples: [`(take [1 2 3 4 5] 3)`, `(take [1 2 3 4 5] 0)`],
     specialExpression: false,
-    sideEffects: [],
   },
 
   'take-while': {
@@ -723,7 +677,6 @@ module.exports = {
     longDescription: `Returns the members of \`array\` in order, stopping before the first one for which \`predicate\` returns a falsy value.`,
     examples: [`(take-while (fn [x] (< x 3)) [1 2 3 2 1])`, `(take-while (fn [x] (> x 3)) [1 2 3 2 1])`],
     specialExpression: false,
-    sideEffects: [],
   },
 
   sort: {
@@ -750,7 +703,6 @@ module.exports = {
       `(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true -1))) [3 1 2])`,
     ],
     specialExpression: false,
-    sideEffects: [],
   },
   join: {
     name: `join`,
@@ -773,7 +725,6 @@ module.exports = {
     longDescription: `Returns a new string by concatenating all of the elements in \`array\`, separated by \`delimiter\`.`,
     examples: [`(join ["Albert" "Mojir"] " ")`, `(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")`],
     specialExpression: false,
-    sideEffects: [],
   },
   includes: {
     name: `includes`,
@@ -800,6 +751,28 @@ module.exports = {
       `(includes 43 ["Albert" "Mojir" 42])`,
     ],
     specialExpression: false,
-    sideEffects: [],
+  },
+  'random-sample': {
+    name: `random-sample`,
+    category: `Array`,
+    linkName: `random-sample`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `prob`,
+        type: `number`,
+        description: `between 0 and 1`,
+      },
+      {
+        name: `array`,
+        type: `array`,
+      },
+    ],
+    shortDescription: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
+    longDescription: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
+    examples: [`(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])`],
+    specialExpression: false,
   },
 }

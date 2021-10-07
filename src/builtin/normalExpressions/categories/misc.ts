@@ -63,7 +63,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(0, node),
   },
-  write: {
+  'write!': {
     evaluate: (params: unknown[]): unknown => {
       // eslint-disable-next-line no-console
       console.log(...params)
@@ -75,7 +75,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return undefined
     },
   },
-  debug: {
+  'debug!': {
     evaluate: (_, contextStack): undefined => {
       // eslint-disable-next-line no-console
       console.error(`*** LISPISH DEBUG ***\n\n${contextstackToString(contextStack)}`)
