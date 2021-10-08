@@ -166,4 +166,22 @@ module.exports = {
     examples: [`(debug!)`],
     specialExpression: false,
   },
+  boolean: {
+    name: `boolean`,
+    category: `Misc`,
+    linkName: `boolean`,
+    returns: {
+      type: `true | false`,
+    },
+    arguments: [
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    shortDescription: `Coerces \`value\` to boolean.`,
+    longDescription: `Coerces \`value\` to boolean.`,
+    examples: [`(boolean 0)`, `(boolean 1)`, `(boolean null)`, `(boolean "Albert")`],
+    specialExpression: false,
+  },
 }

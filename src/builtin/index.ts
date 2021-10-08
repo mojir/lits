@@ -1,18 +1,15 @@
 import { andSpecialExpression } from './specialExpressions/and'
-import { blockSpecialExpression } from './specialExpressions/block'
 import { condSpecialExpression } from './specialExpressions/cond'
 import { defnSpecialExpression, defnsSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
+import { ifNotSpecialExpression } from './specialExpressions/if-not'
 import { letSpecialExpression } from './specialExpressions/let'
 import { orSpecialExpression } from './specialExpressions/or'
 import { doSpecialExpression } from './specialExpressions/do'
-import { returnFromSpecialExpression } from './specialExpressions/return-from'
-import { returnSpecialExpression } from './specialExpressions/return'
 import { defSpecialExpression } from './specialExpressions/def'
 import { defsSpecialExpression } from './specialExpressions/defs'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
-import { unlessSpecialExpression } from './specialExpressions/unless'
 import { whenSpecialExpression } from './specialExpressions/when'
 import { recurSpecialExpression } from './specialExpressions/recur'
 import { loopSpecialExpression } from './specialExpressions/loop'
@@ -20,23 +17,20 @@ import { Builtin, BuiltinSpecialExpressions } from './interface'
 import { normalExpressions } from './normalExpressions'
 
 export const specialExpressions: BuiltinSpecialExpressions = {
-  'return-from': returnFromSpecialExpression,
   def: defSpecialExpression,
   defs: defsSpecialExpression,
   and: andSpecialExpression,
-  block: blockSpecialExpression,
   cond: condSpecialExpression,
   defn: defnSpecialExpression,
   defns: defnsSpecialExpression,
   if: ifSpecialExpression,
+  'if-not': ifNotSpecialExpression,
   fn: fnSpecialExpression,
   let: letSpecialExpression,
   or: orSpecialExpression,
   do: doSpecialExpression,
-  return: returnSpecialExpression,
   throw: throwSpecialExpression,
   try: trySpecialExpression,
-  unless: unlessSpecialExpression,
   when: whenSpecialExpression,
   recur: recurSpecialExpression,
   loop: loopSpecialExpression,

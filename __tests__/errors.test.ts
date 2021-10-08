@@ -1,25 +1,12 @@
-import {
-  ReturnFromSignal,
-  ReturnSignal,
-  UnexpectedNodeTypeError,
-  UnexpectedTokenError,
-  UserDefinedError,
-} from '../src/errors'
+import { RecurSignal, UnexpectedNodeTypeError, UnexpectedTokenError, UserDefinedError } from '../src/errors'
 import { AstNode } from '../src/parser/interface'
 import { Token } from '../src/tokenizer/interface'
 describe(`errors`, () => {
-  test(`ReturnFromSignal`, () => {
-    const err = new ReturnFromSignal(`block name`, 100)
-    expect(err).toBeInstanceOf(ReturnFromSignal)
-    expect(err.name).toBe(`ReturnFromSignal`)
-    expect(err.blockName).toBe(`block name`)
-    expect(err.value).toBe(100)
-  })
-  test(`ReturnSignal`, () => {
-    const err = new ReturnSignal(100)
-    expect(err).toBeInstanceOf(ReturnSignal)
-    expect(err.name).toBe(`ReturnSignal`)
-    expect(err.value).toBe(100)
+  test(`RecurSignal`, () => {
+    const err = new RecurSignal([100])
+    expect(err).toBeInstanceOf(RecurSignal)
+    expect(err.name).toBe(`RecurSignal`)
+    expect(err.params).toEqual([100])
   })
   test(`UserDefinedError`, () => {
     const err = new UserDefinedError(`A message`)

@@ -184,4 +184,21 @@ describe(`misc functions`, () => {
       expect(lastErrorLog).toMatchSnapshot()
     })
   })
+
+  describe(`boolean`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(boolean 0)`)).toBe(false)
+      expect(lispish.run(`(boolean 1)`)).toBe(true)
+      expect(lispish.run(`(boolean "Albert")`)).toBe(true)
+      expect(lispish.run(`(boolean "")`)).toBe(false)
+      expect(lispish.run(`(boolean true)`)).toBe(true)
+      expect(lispish.run(`(boolean false)`)).toBe(false)
+      expect(lispish.run(`(boolean null)`)).toBe(false)
+      expect(lispish.run(`(boolean undefined)`)).toBe(false)
+      expect(lispish.run(`(boolean [])`)).toBe(true)
+      expect(lispish.run(`(boolean {})`)).toBe(true)
+      expect(() => lispish.run(`(boolean)`)).toThrow()
+      expect(() => lispish.run(`(boolean 2 3)`)).toThrow()
+    })
+  })
 })

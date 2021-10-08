@@ -1,4 +1,4 @@
-import { ReturnFromSignal, ReturnSignal, UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
+import { UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
@@ -71,9 +71,6 @@ export const trySpecialExpression: BuiltinSpecialExpression = {
     try {
       return evaluateAstNode(node.tryExpression, contextStack)
     } catch (error) {
-      if (error instanceof ReturnFromSignal || error instanceof ReturnSignal) {
-        throw error
-      }
       const newContext: Context = { [node.error.value]: { value: error } }
       return evaluateAstNode(node.catchExpression, [newContext, ...contextStack])
     }

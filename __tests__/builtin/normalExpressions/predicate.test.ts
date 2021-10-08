@@ -173,6 +173,42 @@ describe(`predicates`, () => {
     })
   })
 
+  describe(`pos?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(pos? 1)`)).toBe(true)
+      expect(lispish.run(`(pos? 0)`)).toBe(false)
+      expect(lispish.run(`(pos? -0)`)).toBe(false)
+      expect(lispish.run(`(pos? (/ 0 -1))`)).toBe(false)
+      expect(lispish.run(`(pos? -1)`)).toBe(false)
+      expect(() => lispish.run(`(pos?)`)).toThrow()
+      expect(() => lispish.run(`(pos? "")`)).toThrow()
+      expect(() => lispish.run(`(pos? true)`)).toThrow()
+      expect(() => lispish.run(`(pos? false)`)).toThrow()
+      expect(() => lispish.run(`(pos? null)`)).toThrow()
+      expect(() => lispish.run(`(pos? undefined)`)).toThrow()
+      expect(() => lispish.run(`(pos? (object))`)).toThrow()
+      expect(() => lispish.run(`(pos? [])`)).toThrow()
+    })
+  })
+
+  describe(`neg?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(neg? 1)`)).toBe(false)
+      expect(lispish.run(`(neg? 0)`)).toBe(false)
+      expect(lispish.run(`(neg? -0)`)).toBe(false)
+      expect(lispish.run(`(neg? (/ 0 -1))`)).toBe(false)
+      expect(lispish.run(`(neg? -1)`)).toBe(true)
+      expect(() => lispish.run(`(neg?)`)).toThrow()
+      expect(() => lispish.run(`(neg? "")`)).toThrow()
+      expect(() => lispish.run(`(neg? true)`)).toThrow()
+      expect(() => lispish.run(`(neg? false)`)).toThrow()
+      expect(() => lispish.run(`(neg? null)`)).toThrow()
+      expect(() => lispish.run(`(neg? undefined)`)).toThrow()
+      expect(() => lispish.run(`(neg? (object))`)).toThrow()
+      expect(() => lispish.run(`(neg? [])`)).toThrow()
+    })
+  })
+
   describe(`even?`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(even? 1)`)).toBe(false)

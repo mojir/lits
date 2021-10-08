@@ -43,22 +43,6 @@ describe(`regexp functions`, () => {
     })
   })
 
-  describe(`test`, () => {
-    test(`samples`, () => {
-      expect(lispish.run(`(test (regexp "^abc$") "abc")`)).toBe(true)
-      expect(lispish.run(`(test (regexp "^abc$") "abx")`)).toBe(false)
-      expect(lispish.run(`(test (regexp "^(a)bc$") "abc")`)).toBe(true)
-      expect(lispish.run(`(test (regexp "^(A)BC$" "i") "abc")`)).toBe(true)
-      expect(() => lispish.run(`(test (regexp "^abc$") 1)`)).toThrow()
-      expect(() => lispish.run(`(test (regexp "^abc$") null)`)).toThrow()
-      expect(() => lispish.run(`(test (regexp "^abc$") undefined)`)).toThrow()
-      expect(() => lispish.run(`(test (regexp "^abc$") true)`)).toThrow()
-      expect(() => lispish.run(`(test (regexp "^abc$") false)`)).toThrow()
-      expect(() => lispish.run(`(test (regexp "^abc$") [])`)).toThrow()
-      expect(() => lispish.run(`(test (regexp "^abc$") (object))`)).toThrow()
-    })
-  })
-
   describe(`replace`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(replace "abcabcABCABC" (regexp "^abc") "ABC")`)).toEqual(`ABCabcABCABC`)

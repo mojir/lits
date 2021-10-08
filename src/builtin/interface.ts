@@ -52,6 +52,7 @@ export type SpecialExpressionName =
   | `fn`
   | `function`
   | `if`
+  | `if-not`
   | `let`
   | `or`
   | `do`
@@ -63,7 +64,6 @@ export type SpecialExpressionName =
   | `defs`
   | `throw`
   | `try`
-  | `unless`
   | `when`
 
 export type Builtin = {

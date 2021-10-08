@@ -9,6 +9,7 @@ import {
   assertArray,
   assertStringOrRegExp,
   assertStringArray,
+  isObject,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -29,14 +30,6 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
   },
 
-  'string-length': {
-    evaluate: ([first]: unknown[]): unknown => {
-      assertString(first)
-      return first.length
-    },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
-  },
-
   'string-repeat': {
     evaluate: ([string, count]: unknown[]): string => {
       assertString(string)
@@ -48,11 +41,20 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
 
-  concat: {
+  str: {
     evaluate: (params: unknown[]): unknown => {
       return params.reduce((result: string, param) => {
-        assertString(param)
-        return result + param
+        const paramStr =
+          param === undefined
+            ? ``
+            : param === null
+            ? `null`
+            : isObject(param)
+            ? JSON.stringify(param)
+            : Array.isArray(param)
+            ? JSON.stringify(param)
+            : `${param}`
+        return result + paramStr
       }, ``)
     },
   },

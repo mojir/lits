@@ -1,16 +1,46 @@
 import {
+  assertArray,
   assertCollection,
   assertInteger,
   assertLength,
+  assertNonNegativeNumber,
   assertNumberGte,
   assertNumberLte,
+  assertObject,
   assertString,
   assertStringOrNumber,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const collectionNormalExpression: BuiltinNormalExpressions = {
+  get: {
+    evaluate: (params: unknown[]): unknown => {
+      const [coll, key, defaultValue] = params
+      const hasDefault = params.length === 3
+      assertCollection(coll)
+      if (Array.isArray(coll)) {
+        assertInteger(key)
+        assertNonNegativeNumber(key)
+        if (coll.length > key) {
+          return coll[key]
+        }
+      } else {
+        assertString(key)
+        if (Object.getOwnPropertyDescriptor(coll, key)) {
+          return coll[key]
+        }
+      }
+      if (hasDefault) {
+        return defaultValue
+      }
+      return undefined
+    },
+    validate: node => assertLength({ min: 2, max: 3 }, node),
+  },
   count: {
     evaluate: ([coll]: unknown[]): number => {
+      if (typeof coll === `string`) {
+        return coll.length
+      }
       assertCollection(coll)
       if (Array.isArray(coll)) {
         return coll.length
@@ -55,5 +85,21 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       return copy
     },
     validate: node => assertLength(3, node),
+  },
+  concat: {
+    evaluate: (params: unknown[]): unknown => {
+      if (Array.isArray(params[0])) {
+        return params.reduce((result: unknown[], arr) => {
+          assertArray(arr)
+          return result.concat(arr)
+        }, [])
+      } else {
+        return params.reduce((result: Record<string, unknown>, obj) => {
+          assertObject(obj)
+          return Object.assign(result, obj)
+        }, {})
+      }
+    },
+    validate: node => assertLength({ min: 1 }, node),
   },
 }

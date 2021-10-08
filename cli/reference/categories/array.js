@@ -1,29 +1,4 @@
 module.exports = {
-  append: {
-    name: `append`,
-    category: `Array`,
-    linkName: `append`,
-    returns: {
-      type: `array`,
-    },
-    arguments: [
-      {
-        name: `lists`,
-        type: `array[]`,
-        description: `zero or more`,
-      },
-    ],
-    shortDescription: `Concatenates array arguments into one array.`,
-    longDescription: `Concatenates array arguments into one array. Resulting array is shallow copy of specified \`lists\`.`,
-    examples: [
-      `(append [1 2] [3 4])`,
-      `(append [] [3 4])`,
-      `(append [1 2] [])`,
-      `(append [1 2] [3 4] [5 6])`,
-      `(append [])`,
-    ],
-    specialExpression: false,
-  },
   array: {
     name: `array`,
     category: `Array`,
@@ -49,28 +24,6 @@ module.exports = {
       `([1 2 3] 1)`,
       `([1 2 3 4 5 6 7 8 9] 3)`,
     ],
-    specialExpression: false,
-  },
-  listf: {
-    name: `listf`,
-    category: `Array`,
-    linkName: `listf`,
-    returns: {
-      type: `array`,
-    },
-    arguments: [
-      {
-        name: `length`,
-        type: `number`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Creates an array with \`length\` number of elements and sets all elements to "value".`,
-    longDescription: `Creates an array with \`length\` number of elements and sets all elements to "value".`,
-    examples: [`(listf 10 null)`, `(listf 5 100)`],
     specialExpression: false,
   },
   range: {
@@ -101,10 +54,10 @@ module.exports = {
     examples: [`(range 4)`, `(range 1 4)`, `(range 0.4 4.9)`, `(range 0.25 1 0.25)`],
     specialExpression: false,
   },
-  at: {
-    name: `at`,
+  nth: {
+    name: `nth`,
     category: `Array`,
-    linkName: `at`,
+    linkName: `nth`,
     returns: {
       type: `any`,
     },
@@ -121,15 +74,15 @@ module.exports = {
     shortDescription: `Accesses element \`index\` of \`input\`. Negative \`index\` counts backwards.`,
     longDescription: `Accesses element \`index\` of \`input\`. Negative \`index\` counts backwards. Accessing out-of-bounds indices returns \`undefined\`.`,
     examples: [
-      `(at [1 2 3] 1)`,
-      `(at [1 2 3] 3)`,
-      `(at [1 2 3] -1)`,
-      `(at [1 2 3] -1)`,
-      `(at "A string" 1)`,
-      `(at "A string" 3)`,
-      `(at "A string" -3)`,
-      `(at "A string" 30)`,
-      `(at "A string" -30)`,
+      `(nth [1 2 3] 1)`,
+      `(nth [1 2 3] 3)`,
+      `(nth [1 2 3] -1)`,
+      `(nth [1 2 3] -1)`,
+      `(nth "A string" 1)`,
+      `(nth "A string" 3)`,
+      `(nth "A string" -3)`,
+      `(nth "A string" 30)`,
+      `(nth "A string" -30)`,
     ],
     specialExpression: false,
   },
@@ -304,7 +257,7 @@ module.exports = {
     ],
     shortDescription: `Runs \`reducer\` function on each element of the \`array\` (starting from the last item), passing in the return value from the calculation on the preceding element.`,
     longDescription: `Runs \`reducer\` function on each element of the \`array\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
-    examples: [`(reduce-right concat ["A" "B" "C"] "")`],
+    examples: [`(reduce-right str ["A" "B" "C"] "")`],
     specialExpression: false,
   },
   map: {
@@ -357,34 +310,12 @@ module.exports = {
     examples: [`(filter string? ["Albert" "Mojir" 160 [1 2]])`, `(filter (fn [x] (> x 10)) [5 10 15 20])`],
     specialExpression: false,
   },
-  find: {
-    name: `find`,
-    category: `Array`,
-    linkName: `find`,
-    returns: {
-      type: `array`,
-    },
-    arguments: [
-      {
-        name: `array`,
-        type: `array`,
-      },
-      {
-        name: `finder`,
-        type: `function`,
-      },
-    ],
-    shortDescription: `Returns the first elements that pass the test implemented by \`finder\`.`,
-    longDescription: `Returns the first elements that pass the test implemented by \`finder\`. I no element was found, \`undefined\` is returned.`,
-    examples: [`(find string? ["Albert" "Mojir" 160 [1 2]])`, `(find (fn [x] (> x 10)) [5 10 15 20])`],
-    specialExpression: false,
-  },
   position: {
     name: `position`,
     category: `Array`,
     linkName: `position`,
     returns: {
-      type: `array`,
+      type: `number`,
     },
     arguments: [
       {
@@ -397,11 +328,37 @@ module.exports = {
       },
     ],
     shortDescription: `Returns the index of the first elements that pass the test implemented by \`finder\`.`,
-    longDescription: `Returns the index of the first elements that pass the test implemented by \`finder\`. I no element was found, \`undefined\` is returned.`,
+    longDescription: `Returns the index of the first elements that pass the test implemented by \`finder\`. If no element was found, \`undefined\` is returned.`,
     examples: [
       `(position string? ["Albert" "Mojir" 160 [1 2]])`,
       `(position (fn [x] (> x 10)) [5 10 15 20])`,
       `(position (fn [x] (> x 100)) [5 10 15 20])`,
+    ],
+    specialExpression: false,
+  },
+  'index-of': {
+    name: `index-of`,
+    category: `Array`,
+    linkName: `index-of`,
+    returns: {
+      type: `number`,
+    },
+    arguments: [
+      {
+        name: `array`,
+        type: `array`,
+      },
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    shortDescription: `Returns the index of \`value\` in array.`,
+    longDescription: `Returns the index of \`value\` in array. If element is not present in \`array\` \`undefined\` is returned.`,
+    examples: [
+      `(index-of "Mojir" ["Albert" "Mojir" 160 [1 2]])`,
+      `(index-of 15 [5 10 15 20])`,
+      `(index-of 1 [5 10 15 20])`,
     ],
     specialExpression: false,
   },
@@ -422,8 +379,8 @@ module.exports = {
         type: `function`,
       },
     ],
-    shortDescription: `Returns true if at least one element pass the test implemented by \`finder\`, otherwise returns false.`,
-    longDescription: `Returns true if at least one element pass the test implemented by \`finder\`, otherwise returns false.`,
+    shortDescription: `Returns the first elements that pass the test implemented by \`finder\`.`,
+    longDescription: `Returns the first elements that pass the test implemented by \`finder\`. I no element was found, \`undefined\` is returned.`,
     examples: [
       `(some string? ["Albert" "Mojir" 160 [1 2]])`,
       `(some (fn [x] (> x 10)) [5 10 15 20])`,
@@ -432,10 +389,10 @@ module.exports = {
     ],
     specialExpression: false,
   },
-  every: {
-    name: `every`,
+  'every?': {
+    name: `every?`,
     category: `Array`,
-    linkName: `every`,
+    linkName: `every_question`,
     returns: {
       type: `array`,
     },
@@ -452,9 +409,9 @@ module.exports = {
     shortDescription: `Returns true if all elements pass the test implemented by \`finder\`, otherwise returns false.`,
     longDescription: `Returns true if all elements pass the test implemented by \`finder\`, otherwise returns false.`,
     examples: [
-      `(every string? ["Albert" "Mojir" 160 [1 2]])`,
-      `(every (fn [x] (> x 10)) [50 100 150 200])`,
-      `(every (fn [x] (> x 10)) [])`,
+      `(every? string? ["Albert" "Mojir" 160 [1 2]])`,
+      `(every? (fn [x] (> x 10)) [50 100 150 200])`,
+      `(every? (fn [x] (> x 10)) [])`,
     ],
     specialExpression: false,
   },
@@ -593,6 +550,29 @@ module.exports = {
     specialExpression: false,
   },
 
+  'take-last': {
+    name: `take-last`,
+    category: `Array`,
+    linkName: `take-last`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `array`,
+        type: `array`,
+      },
+      {
+        name: `count`,
+        type: `integer`,
+      },
+    ],
+    shortDescription: `Constructs a new array with the \`count\` last elements from \`array\`.`,
+    longDescription: `Constructs a new array with the \`count\` last elements from \`array\`.`,
+    examples: [`(take-last [1 2 3 4 5] 3)`, `(take-last [1 2 3 4 5] 0)`],
+    specialExpression: false,
+  },
+
   'take-while': {
     name: `take-while`,
     category: `Array`,
@@ -684,6 +664,28 @@ module.exports = {
     shortDescription: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
     longDescription: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
     examples: [`(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])`],
+    specialExpression: false,
+  },
+  repeat: {
+    name: `repeat`,
+    category: `Array`,
+    linkName: `repeat`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `count`,
+        type: `non negative integer`,
+      },
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    shortDescription: `Returns an array with \`value\` repeated \`count\` times.`,
+    longDescription: `Returns an array with \`value\` repeated \`count\` times.`,
+    examples: [`(repeat 3 10)`, `(repeat 0 10)`, `(repeat 5 "Albert")`],
     specialExpression: false,
   },
 }

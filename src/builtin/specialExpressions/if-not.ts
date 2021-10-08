@@ -2,27 +2,27 @@ import { SpecialExpressionNode } from '../../parser/interface'
 import { asAstNode, assertLength } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
 
-interface IfSpecialExpressionNode extends SpecialExpressionNode {
-  name: `if`
+interface IfNotSpecialExpressionNode extends SpecialExpressionNode {
+  name: `if-not`
 }
 
-export const ifSpecialExpression: BuiltinSpecialExpression = {
+export const ifNotSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseTokens }) => {
     const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,
       {
         type: `SpecialExpression`,
-        name: `if`,
+        name: `if-not`,
         params,
       },
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castIfExpressionNode(node)
+    castIfNotExpressionNode(node)
 
     const [conditionNode, trueNode, falseNode] = node.params
-    if (evaluateAstNode(asAstNode(conditionNode), contextStack)) {
+    if (!evaluateAstNode(asAstNode(conditionNode), contextStack)) {
       return evaluateAstNode(asAstNode(trueNode), contextStack)
     } else {
       if (node.params.length === 3) {
@@ -35,6 +35,6 @@ export const ifSpecialExpression: BuiltinSpecialExpression = {
   validate: node => assertLength({ min: 2, max: 3 }, node),
 }
 
-function castIfExpressionNode(_node: SpecialExpressionNode): asserts _node is IfSpecialExpressionNode {
+function castIfNotExpressionNode(_node: SpecialExpressionNode): asserts _node is IfNotSpecialExpressionNode {
   return
 }

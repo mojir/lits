@@ -25,7 +25,7 @@ import {
 } from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
-import { RecurSignal, ReturnFromSignal, ReturnSignal } from '../errors'
+import { RecurSignal } from '../errors'
 
 export function evaluate(ast: Ast, globalScope: Context, importScope: Context): unknown {
   // First element is the global context. E.g. def will assign to this if no local variable is available
@@ -163,12 +163,6 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         if (error instanceof RecurSignal) {
           params = error.params
           continue
-        }
-        if (error instanceof ReturnSignal) {
-          return error.value
-        }
-        if (error instanceof ReturnFromSignal && lispishFunction.name === error.blockName) {
-          return error.value
         }
         throw error
       }

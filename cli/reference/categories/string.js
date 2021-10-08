@@ -31,24 +31,6 @@ module.exports = {
     ],
     specialExpression: false,
   },
-  'string-length': {
-    name: `string-length`,
-    category: `String`,
-    linkName: `string-length`,
-    returns: {
-      type: `number`,
-    },
-    arguments: [
-      {
-        name: `string`,
-        type: `string`,
-      },
-    ],
-    shortDescription: `Returns length of \`string\`.`,
-    longDescription: `Returns length of \`string\`.`,
-    examples: [`(string-length "A string")`, `(string-length "")`],
-    specialExpression: false,
-  },
   'string-repeat': {
     name: `string-repeat`,
     category: `String`,
@@ -71,23 +53,28 @@ module.exports = {
     examples: [`(string-repeat "*" 10)`, `(string-repeat "***" 0)`],
     specialExpression: false,
   },
-  concat: {
-    name: `concat`,
+  str: {
+    name: `str`,
     category: `String`,
-    linkName: `concat`,
+    linkName: `str`,
     returns: {
       type: `number`,
     },
     arguments: [
       {
-        name: `strings`,
-        type: `string[]`,
+        name: `value`,
+        type: `any`,
         description: `zero or more`,
       },
     ],
-    shortDescription: `Concatenats \`strings\` into one \`string\`.`,
-    longDescription: `Concatenats \`strings\` into one \`string\`.`,
-    examples: [`(concat "A string" ", and another string" " ...and more")`, `(concat "Just one string")`, `(concat)`],
+    shortDescription: `Concatenats \`values\` into one \`string\`. If \`value\` equals \`undefined\` empty string is returned.`,
+    longDescription: `Concatenats \`values\` into one \`string\`. If \`value\` equals \`undefined\` empty string is returned.`,
+    examples: [
+      `(str "A string" ", and another string" " ...and more")`,
+      `(str "Just one string")`,
+      `(str)`,
+      `(str 0 false true null (regexp "^kalle") [1 2 3] {"a" "a"} undefined)`,
+    ],
     specialExpression: false,
   },
   'string>': {

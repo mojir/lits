@@ -47,6 +47,22 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
+  'pos?': {
+    evaluate: ([first]: unknown[]): boolean => {
+      assertFiniteNumber(first)
+      return first > 0
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'neg?': {
+    evaluate: ([first]: unknown[]): boolean => {
+      assertFiniteNumber(first)
+      return first < 0
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
   'even?': {
     evaluate: ([first]: unknown[]): boolean => {
       assertFiniteNumber(first)

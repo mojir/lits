@@ -259,6 +259,42 @@ module.exports = {
     examples: [`(zero? 0)`, `(zero? -0.0)`, `(zero? 1)`, `(zero? 0.1)`],
     specialExpression: false,
   },
+  'pos?': {
+    name: `pos?`,
+    category: `Predicate`,
+    linkName: `pos_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    shortDescription: `Returns \`true\` if \`number\` is greater than \`0\`, otherwise \`false\`.`,
+    longDescription: `Returns \`true\` if \`number\` is greater than \`0\`, otherwise \`false\`.`,
+    examples: [`(pos? 0)`, `(pos? -0.0)`, `(pos? 1)`, `(pos? -0.1)`],
+    specialExpression: false,
+  },
+  'neg?': {
+    name: `neg?`,
+    category: `Predicate`,
+    linkName: `neg_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    shortDescription: `Returns \`true\` if \`number\` is less than \`0\`, otherwise \`false\`.`,
+    longDescription: `Returns \`true\` if \`number\` is less than \`0\`, otherwise \`false\`.`,
+    examples: [`(neg? 0)`, `(neg? -0.0)`, `(neg? 1)`, `(neg? -0.1)`],
+    specialExpression: false,
+  },
   'even?': {
     name: `even?`,
     category: `Predicate`,

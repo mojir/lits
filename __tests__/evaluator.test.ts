@@ -20,16 +20,16 @@ const simpleProgram = `
 
 const formatPhoneNumber = `
 (if (string? $data)
-  (let [phoneNumber (if (= "+" (at $data 0)) (substring $data 2) $data)]
+  (let [phoneNumber (if (= "+" (nth $data 0)) (substring $data 2) $data)]
     (cond
-      ((> (string-length phoneNumber) 6)
-        (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
+      ((> (count phoneNumber) 6)
+        (str "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
       )
-      ((> (string-length phoneNumber) 3)
-        (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
+      ((> (count phoneNumber) 3)
+        (str "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
       )
-      ((> (string-length phoneNumber) 0)
-        (concat "(" (substring phoneNumber 0))
+      ((> (count phoneNumber) 0)
+        (str "(" (substring phoneNumber 0))
       )
       (true
         phoneNumber
@@ -65,7 +65,7 @@ describe(`Evaluator`, () => {
   })
   test(`if statement (true)`, () => {
     const tokens = tokenize(`
-      (if (= (oget info "gender") "male") "It's a boy" "It's not a girl")
+      (if (= (get info "gender") "male") "It's a boy" "It's not a girl")
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, {})
@@ -73,7 +73,7 @@ describe(`Evaluator`, () => {
   })
   test(`if statement (false)`, () => {
     const tokens = tokenize(`
-      (if (= (oget info "gender") "female") "It's a girl" "It's not a girl")
+      (if (= (get info "gender") "female") "It's a girl" "It's not a girl")
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, {})

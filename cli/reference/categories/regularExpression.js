@@ -47,32 +47,6 @@ module.exports = {
     ],
     specialExpression: false,
   },
-  test: {
-    name: `test`,
-    category: `Regular expression`,
-    linkName: `test`,
-    returns: {
-      type: `true | false`,
-    },
-    arguments: [
-      {
-        name: `pattern`,
-        type: `RegExp`,
-      },
-      {
-        name: `string`,
-        type: `string`,
-      },
-    ],
-    shortDescription: `Matches \`string\` against \`pattern\`. If \`string\` matches, \`true\` is returned, otherwise \`false\`.`,
-    longDescription: `Matches \`string\` against \`pattern\`. If \`string\` matches, \`true\` is returned, otherwise \`false\`.`,
-    examples: [
-      `(test (regexp "^\\s*(.*)$") "  A string")`,
-      `(test (regexp "albert" "i") "My name is Albert")`,
-      `(test (regexp "albert" "i") "My name is Ben")`,
-    ],
-    specialExpression: false,
-  },
   replace: {
     name: `replace`,
     category: `Regular expression`,

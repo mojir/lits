@@ -1,60 +1,8 @@
 module.exports = {
-  ohas: {
-    name: `ohas`,
+  dissoc: {
+    name: `dissoc`,
     category: `Object`,
-    linkName: `ohas`,
-    returns: {
-      type: `boolean`,
-    },
-    arguments: [
-      {
-        name: `object`,
-        type: `object`,
-      },
-      {
-        name: `attr`,
-        type: `string`,
-      },
-    ],
-    shortDescription: `Returns \`true\` if \`object\` has an attribute named \`attr\`, otherwise returns \`false\`.`,
-    longDescription: `Returns \`true\` if \`object\` has an attribute named \`attr\`, otherwise returns \`false\`.`,
-    examples: [
-      `(ohas (object "a" 10 "b" 20) "a")`,
-      `(ohas (object "a" 10 "b" undefined) "b")`,
-      `(ohas (object "a" 10 "b" undefined) "c")`,
-    ],
-    specialExpression: false,
-  },
-  oget: {
-    name: `oget`,
-    category: `Object`,
-    linkName: `oget`,
-    returns: {
-      type: `value`,
-    },
-    arguments: [
-      {
-        name: `object`,
-        type: `object`,
-      },
-      {
-        name: `attr`,
-        type: `string`,
-      },
-    ],
-    shortDescription: `Returns the value of \`object\`'s attribute \`attr\`. Returns \`undefined\` if \`object\` has no attribute named \`attr\`.`,
-    longDescription: `Returns the value of \`object\`'s attribute \`attr\`. Returns \`undefined\` if \`object\` has no attribute named \`attr\`.`,
-    examples: [
-      `(oget (object "a" 10 "b" 20) "a")`,
-      `(oget (object "a" 10 "b" undefined) "b")`,
-      `(oget (object "a" 10 "b" undefined) "c")`,
-    ],
-    specialExpression: false,
-  },
-  odel: {
-    name: `odel`,
-    category: `Object`,
-    linkName: `odel`,
+    linkName: `dissoc`,
     returns: {
       type: `value`,
     },
@@ -71,40 +19,10 @@ module.exports = {
     shortDescription: `Deletes the attribute \`attr\` from \`object\`.`,
     longDescription: `Deletes the attribute \`attr\` from \`object\`.`,
     examples: [
-      `(odel (object "x" 10) "x")`,
-      `(odel (object "x" 10) "y")`,
-      `(def o (object "a" 5)) (odel o "a") o`,
-      `(def o (object "a" 5)) (odel o "b") o`,
-    ],
-    specialExpression: false,
-  },
-  oset: {
-    name: `oset`,
-    category: `Object`,
-    linkName: `oset`,
-    returns: {
-      type: `value`,
-    },
-    arguments: [
-      {
-        name: `object`,
-        type: `object`,
-      },
-      {
-        name: `attr`,
-        type: `string`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Sets an attribute on \`object\`. Returns \`value\`.`,
-    longDescription: `Sets an attribute on \`object\`. Returns \`value\`.`,
-    examples: [
-      `(oset (object "x" 10) "a" 10)`,
-      `(def o (object)) (oset o "a" 10) o`,
-      `(def o (object "a" 5)) (oset o "a" 10) o`,
+      `(dissoc (object "x" 10) "x")`,
+      `(dissoc (object "x" 10) "y")`,
+      `(def o (object "a" 5)) (dissoc o "a") o`,
+      `(def o (object "a" 5)) (dissoc o "b") o`,
     ],
     specialExpression: false,
   },

@@ -23,10 +23,10 @@ module.exports = [
     code: `
 (defn formatPhoneNumber [$data]
   (if (string? $data)
-    (let [phoneNumber (if (= "+" (at $data 0)) (substring $data 2) $data)]
+    (let [phoneNumber (if (= "+" (nth $data 0)) (substring $data 2) $data)]
       (cond
-        ((> (string-length phoneNumber) 6)
-          (concat
+        ((> (count phoneNumber) 6)
+          (str
             "("
             (substring phoneNumber 0 3)
             ") "
@@ -34,11 +34,11 @@ module.exports = [
             "-"
             (substring phoneNumber 6))
         )
-        ((> (string-length phoneNumber) 3)
-          (concat "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
+        ((> (count phoneNumber) 3)
+          (str "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
         )
-        ((> (string-length phoneNumber) 0)
-          (concat "(" (substring phoneNumber 0))
+        ((> (count phoneNumber) 0)
+          (str "(" (substring phoneNumber 0))
         )
         (true
           phoneNumber
@@ -101,7 +101,7 @@ module.exports = [
     },
     code: `
 ;(doarray (entry (entries TRANSLATIONS))
-;  (defns (at entry 0) (&rest params &bind ((templateString (at entry 1))))
+;  (defns (nth entry 0) (&rest params &bind ((templateString (nth entry 1))))
 ;    (apply template (cons templateString params))
 ;  )
 ;)

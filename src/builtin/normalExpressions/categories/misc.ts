@@ -83,6 +83,12 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(0, node),
   },
+  boolean: {
+    evaluate: ([value]): boolean => {
+      return !!value
+    },
+    validate: node => assertLength(1, node),
+  },
 }
 
 function contextstackToString(contextStack: Context[]): string {

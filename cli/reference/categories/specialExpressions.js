@@ -90,7 +90,7 @@ module.exports = {
     longDescription: `Creates a variable with name set to \`variable\` evaluated and value set to \`value\`. If a variable with name \`variable\` isn't found a new global variable is created.`,
     examples: [
       `(defs "a" "b")`,
-      `(defs (concat "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
+      `(defs (str "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
       `(defs "a" "b") (defs a "c") b`,
     ],
     specialExpression: true,
@@ -194,73 +194,8 @@ module.exports = {
     longDescription: `Creates a named global function with its name set to \`name\` evaluated. When called, evaluation of the last expression in the body is returned.`,
     examples: [
       `(defns "hyp" [a b] (sqrt (+ (* a a) (* b b)))) hyp`,
-      `(defns (concat "h" "y" "p") [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
+      `(defns (str "h" "y" "p") [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
       `(defns "sumOfSquares" [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
-    ],
-    specialExpression: true,
-  },
-  'return-from': {
-    name: `return-from`,
-    category: `Special expression`,
-    linkName: `return-from`,
-    returns: {
-      type: `nothing`,
-    },
-    arguments: [
-      {
-        name: `blockName`,
-        type: `name`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Returns control and value from a named enclosing block.`,
-    longDescription: `Returns control and value from a named enclosing block.`,
-    examples: [`(defn foo [] (write! "Alpha") (return-from foo "Beta") (write! "Gamma")) (foo)`],
-    specialExpression: true,
-  },
-  return: {
-    name: `return`,
-    category: `Special expression`,
-    linkName: `return`,
-    returns: {
-      type: `nothing`,
-    },
-    arguments: [
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Returns control and value from the enclosing block.`,
-    longDescription: `Returns control and value from the enclosing block.`,
-    examples: [`(defn foo [] (write! "Alpha") (return "Beta") (write! "Gamma")) (foo)`],
-    specialExpression: true,
-  },
-  block: {
-    name: `block`,
-    category: `Special expression`,
-    linkName: `block`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `blockName`,
-        type: `name`,
-      },
-      {
-        name: `forms`,
-        type: `form[]`,
-      },
-    ],
-    shortDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit do.`,
-    longDescription: `Establishes a block named \`blockName\` and then evaluates forms as an implicit do.`,
-    examples: [
-      `(block b (write! "Alpha") (write! "Gamma"))`,
-      `(block b (write! "Alpha") (return-from b undefined) (write! "Gamma"))`,
     ],
     specialExpression: true,
   },
@@ -327,11 +262,49 @@ module.exports = {
       {
         name: `else`,
         type: `any`,
+        description: `optional`,
       },
     ],
     shortDescription: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy.`,
-    longDescription: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy.`,
-    examples: [`(if true (write! "TRUE") (write! "FALSE"))`, `(if false (write! "TRUE") (write! "FALSE"))`],
+    longDescription: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy. I test is falsy and no \`else\` branch exists, undefined is returned.`,
+    examples: [
+      `(if true (write! "TRUE") (write! "FALSE"))`,
+      `(if false (write! "TRUE") (write! "FALSE"))`,
+      `(if true (write! "TRUE"))`,
+      `(if false (write! "TRUE"))`,
+    ],
+    specialExpression: true,
+  },
+  'if-not': {
+    name: `if-not`,
+    category: `Special expression`,
+    linkName: `if-not`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `test`,
+        type: `any`,
+      },
+      {
+        name: `then`,
+        type: `any`,
+      },
+      {
+        name: `else`,
+        type: `any`,
+        description: `optional`,
+      },
+    ],
+    shortDescription: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is falsy.`,
+    longDescription: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is falsy. I test is falsy and no \`else\` branch exists, undefined is returned.`,
+    examples: [
+      `(if-not true (write! "TRUE") (write! "FALSE"))`,
+      `(if-not false (write! "TRUE") (write! "FALSE"))`,
+      `(if-not true (write! "TRUE"))`,
+      `(if-not false (write! "TRUE"))`,
+    ],
     specialExpression: true,
   },
   cond: {
@@ -380,34 +353,6 @@ module.exports = {
       `(when false (write! "Hi") (write! "There"))`,
       `(when true)`,
       `(when false)`,
-    ],
-    specialExpression: true,
-  },
-  unless: {
-    name: `unless`,
-    category: `Special expression`,
-    linkName: `unless`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `test`,
-        type: `form`,
-      },
-      {
-        name: `form`,
-        type: `form`,
-        description: `zero or more`,
-      },
-    ],
-    shortDescription: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned.`,
-    longDescription: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a truthy value, the forms are not evaluated, and \`undefined\` is returned. If no \`form\` is provided, undefined is returned.`,
-    examples: [
-      `(unless true (write! "Hi") (write! "There"))`,
-      `(unless false (write! "Hi") (write! "There"))`,
-      `(unless true)`,
-      `(unless false)`,
     ],
     specialExpression: true,
   },
