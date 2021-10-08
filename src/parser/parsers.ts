@@ -1,5 +1,5 @@
 import { Token } from '../tokenizer/interface'
-import { asNotUndefined, assertExpressionNode } from '../utils'
+import { asNotUndefined, assertExpressionNode, assertLengthEven } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
@@ -93,6 +93,32 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
     name: `array`,
     params,
   }
+
+  return [position, node]
+}
+
+type ParseObjectLitteral = (tokens: Token[], position: number) => [number, AstNode]
+const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
+  position = position + 1
+
+  let token = asNotUndefined(tokens[position])
+  const params: AstNode[] = []
+  let param: AstNode
+  while (!(token.type === `paren` && token.value === `}`)) {
+    ;[position, param] = parseToken(tokens, position)
+    params.push(param)
+    token = asNotUndefined(tokens[position])
+  }
+
+  position = position + 1
+
+  const node: NormalExpressionNode = {
+    type: `NormalExpression`,
+    name: `object`,
+    params,
+  }
+
+  assertLengthEven(node)
 
   return [position, node]
 }
@@ -210,7 +236,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
-    parseTokens: parseTokens,
+    parseTokens,
     parseToken,
     parseBindings,
     parseArgument,
@@ -242,6 +268,8 @@ export const parseToken: ParseToken = (tokens, position) => {
         nodeDescriptor = parseExpression(tokens, position)
       } else if (token.value === `[`) {
         nodeDescriptor = parseArrayLitteral(tokens, position)
+      } else if (token.value === `{`) {
+        nodeDescriptor = parseObjectLitteral(tokens, position)
       }
       break
   }

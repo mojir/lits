@@ -6,7 +6,6 @@ import {
   assertNegativeNumber,
   assertNonNegativeNumber,
   assertFiniteNumber,
-  assertNumberLt,
   assertNumberNotZero,
   assertPositiveNumber,
   assertStringOrArray,
@@ -78,13 +77,6 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(1, node),
   },
-  includes: {
-    evaluate: ([elem, array]: unknown[]): boolean => {
-      assertArray(array)
-      return array.includes(elem)
-    },
-    validate: node => assertLength(2, node),
-  },
   last: {
     evaluate: ([first]: unknown[]): unknown => {
       assertArray(first)
@@ -133,9 +125,11 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2 }, node),
   },
   pop: {
-    evaluate: ([arr]: unknown[]): unknown => {
+    evaluate: ([arr]: unknown[]): unknown[] => {
       assertArray(arr)
-      return arr.pop()
+      const copy = [...arr]
+      copy.pop()
+      return copy
     },
     validate: node => assertLength(1, node),
   },
@@ -151,8 +145,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   push: {
     evaluate: ([arr, ...values]: unknown[]): unknown[] => {
       assertArray(arr)
-      arr.push(...values)
-      return arr
+      return [...arr, ...values]
     },
     validate: node => assertLength({ min: 2 }, node),
   },
@@ -244,20 +237,12 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(1, node),
   },
-  selt: {
-    evaluate: ([arr, index, value]: unknown[]): unknown => {
-      assertArray(arr)
-      assertNonNegativeNumber(index)
-      assertNumberLt(index, arr.length)
-      arr[index] = value
-      return arr
-    },
-    validate: node => assertLength(3, node),
-  },
   shift: {
     evaluate: ([arr]: unknown[]): unknown => {
       assertArray(arr)
-      return arr.shift()
+      const copy = [...arr]
+      copy.shift()
+      return copy
     },
     validate: node => assertLength(1, node),
   },
@@ -309,21 +294,6 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
-  splice: {
-    evaluate: (params: unknown[]): unknown => {
-      const [array, start, deleteCount, ...values] = params
-      assertArray(array)
-      assertInteger(start)
-
-      if (params.length === 2) {
-        return array.splice(start)
-      }
-
-      assertInteger(deleteCount)
-      return array.splice(start, deleteCount, ...values)
-    },
-    validate: node => assertLength({ min: 2 }, node),
-  },
   take: {
     evaluate: ([array, n]: unknown[]): unknown => {
       assertArray(array)
@@ -354,8 +324,9 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   unshift: {
     evaluate: ([arr, ...values]: unknown[]): unknown[] => {
       assertArray(arr)
-      arr.unshift(...values)
-      return arr
+      const copy = [...arr]
+      copy.unshift(...values)
+      return copy
     },
     validate: node => assertLength({ min: 2 }, node),
   },

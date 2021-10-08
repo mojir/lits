@@ -17,7 +17,10 @@ import {
   asNotUndefined,
   assertInteger,
   assertNonNegativeNumber,
+  assertObject,
+  assertString,
   isLispishFunction,
+  isObject,
   isUserDefinedLispishFunction,
 } from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
@@ -142,10 +145,6 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
           const key = arg.name
           newContext[key] = { value: param }
         } else {
-          const param = params[i]
-          if (isLispishFunction(param)) {
-            throw Error(`A function cannot be a &rest parameter`) //  TODO, is this a fact?
-          }
           rest.push(params[i])
         }
       }
@@ -220,6 +219,15 @@ function evaluateExpressionExpression(node: ExpressionExpressionNode, contextSta
     assertNonNegativeNumber(index)
     assertInteger(index)
     return fn[index]
+  }
+  if (isObject(fn)) {
+    assertObject(fn)
+    if (node.params.length !== 1) {
+      throw Error(`Object as function requires one string parameter`)
+    }
+    const key = evaluateAstNode(node.params[0] as AstNode, contextStack)
+    assertString(key)
+    return fn[key]
   }
   throw Error(`Expected function, got ${fn}`)
 }
