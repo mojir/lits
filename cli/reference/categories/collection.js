@@ -137,4 +137,29 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  'empty?': {
+    name: `empty?`,
+    category: `Collection`,
+    linkName: `empty_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection or string`,
+      },
+    ],
+    shortDescription: `Returns \`true\` if \`coll\` is empty, otherwise \`false\`.`,
+    longDescription: `Returns \`true\` if \`coll\` is empty, otherwise \`false\`.`,
+    examples: [
+      `(empty? [])`,
+      `(empty? [1 2 3])`,
+      `(empty? {})`,
+      `(empty? {"a" 2})`,
+      `(empty? "")`,
+      `(empty? "Albert")`,
+    ],
+    specialExpression: false,
+  },
 }

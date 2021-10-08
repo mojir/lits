@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.25</span></div>
+    <div class="column right version"><span>v0.1.26</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -243,6 +243,29 @@
 <pre><span class="example" onclick="addToPlayground('(concat [])')"><span class="icon-button">▶</span> (concat []) <span class="gray">=> []</span></span></pre>
 <pre class="example" onclick="addToPlayground('(concat {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} [___double_quote___b___double_quote___ 1 ___double_quote___c___double_quote___ 2})')"><span class="icon-button">▶</span> (concat {"a" 1 "b" 2} ["b" 1 "c" 2}) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="addToPlayground('(concat {} [___double_quote___a___double_quote___ 1})')"><span class="icon-button">▶</span> (concat {} ["a" 1}) <span class="gray">=></span> <span class="error">Error!</span></pre>
+  </div>
+</div>
+
+
+<div id="empty_question" class="content function">
+  <div class="function-header">empty?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">coll</span> is empty, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>empty? coll => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>coll: collection or string</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(empty? [])')"><span class="icon-button">▶</span> (empty? []) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(empty? [1 2 3])')"><span class="icon-button">▶</span> (empty? [1 2 3]) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(empty? {})')"><span class="icon-button">▶</span> (empty? {}) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(empty? {___double_quote___a___double_quote___ 2})')"><span class="icon-button">▶</span> (empty? {"a" 2}) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(empty? ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (empty? "") <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(empty? ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (empty? "Albert") <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -827,7 +850,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,3,8,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,3,5,6,7,8,10]</span></span></pre>
   </div>
 </div>
 
@@ -1370,9 +1393,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.22796161763297929</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0028980898557286272</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.04739655727964087</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.27614636011587623</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.009114998341714305</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.982928333912279</span></span></pre>
   </div>
 </div>
 
@@ -1391,8 +1414,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 119</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 6</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 5</span></span></pre>
   </div>
 </div>
 
@@ -1855,7 +1878,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633730505483</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633731095202</span></span></pre>
   </div>
 </div>
 
@@ -2372,25 +2395,6 @@
 <pre><span class="example" onclick="addToPlayground('(odd? 1.001)')"><span class="icon-button">▶</span> (odd? 1.001) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(odd? -1)')"><span class="icon-button">▶</span> (odd? -1) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(odd? 2.1)')"><span class="icon-button">▶</span> (odd? 2.1) <span class="gray">=> false</span></span></pre>
-  </div>
-</div>
-
-
-<div id="empty_question" class="content function">
-  <div class="function-header">empty?</div>
-  
-  <p>Returns <span class="pre">true</span> if <span class="pre">array</span> is empty, otherwise <span class="pre">false</span>.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>empty? array => boolean</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(empty? [])')"><span class="icon-button">▶</span> (empty? []) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(empty? [1 2 3])')"><span class="icon-button">▶</span> (empty? [1 2 3]) <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -3466,7 +3470,6 @@
         <ul>
           <li id="array_question_link" onclick="showPage('array_question')">array?</li>
 <li id="boolean_question_link" onclick="showPage('boolean_question')">boolean?</li>
-<li id="empty_question_link" onclick="showPage('empty_question')">empty?</li>
 <li id="even_question_link" onclick="showPage('even_question')">even?</li>
 <li id="function_question_link" onclick="showPage('function_question')">function?</li>
 <li id="integer_question_link" onclick="showPage('integer_question')">integer?</li>
@@ -3488,6 +3491,7 @@
 <li id="concat_link" onclick="showPage('concat')">concat</li>
 <li id="contains_question_link" onclick="showPage('contains_question')">contains?</li>
 <li id="count_link" onclick="showPage('count')">count</li>
+<li id="empty_question_link" onclick="showPage('empty_question')">empty?</li>
 <li id="get_link" onclick="showPage('get')">get</li>
         </ul>
 

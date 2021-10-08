@@ -102,4 +102,17 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength({ min: 1 }, node),
   },
+  'empty?': {
+    evaluate: ([first]: unknown[]): boolean => {
+      if (typeof first === `string`) {
+        return first.length === 0
+      }
+      assertCollection(first)
+      if (Array.isArray(first)) {
+        return first.length === 0
+      }
+      return Object.keys(first).length === 0
+    },
+    validate: node => assertLength(1, node),
+  },
 }

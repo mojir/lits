@@ -331,22 +331,4 @@ module.exports = {
     examples: [`(odd? 1.0)`, `(odd? 1.001)`, `(odd? -1)`, `(odd? 2.1)`],
     specialExpression: false,
   },
-  'empty?': {
-    name: `empty?`,
-    category: `Predicate`,
-    linkName: `empty_question`,
-    returns: {
-      type: `boolean`,
-    },
-    arguments: [
-      {
-        name: `array`,
-        type: `array`,
-      },
-    ],
-    shortDescription: `Returns \`true\` if \`array\` is empty, otherwise \`false\`.`,
-    longDescription: `Returns \`true\` if \`array\` is empty, otherwise \`false\`.`,
-    examples: [`(empty? [])`, `(empty? [1 2 3])`],
-    specialExpression: false,
-  },
 }

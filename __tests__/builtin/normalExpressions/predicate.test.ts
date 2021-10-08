@@ -319,21 +319,4 @@ describe(`predicates`, () => {
       expect(() => lispish.run(`(regexp? true false)`)).toThrow()
     })
   })
-
-  describe(`empty?`, () => {
-    test(`samples`, () => {
-      expect(lispish.run(`(empty? [])`)).toBe(true)
-      expect(lispish.run(`(empty? [0])`)).toBe(false)
-      expect(() => lispish.run(`(empty?)`)).toThrow()
-      expect(() => lispish.run(`(empty?)`)).toThrow()
-      expect(() => lispish.run(`(empty? true)`)).toThrow()
-      expect(() => lispish.run(`(empty? false)`)).toThrow()
-      expect(() => lispish.run(`(empty? null)`)).toThrow()
-      expect(() => lispish.run(`(empty? undefined)`)).toThrow()
-      expect(() => lispish.run(`(empty? "A string")`)).toThrow()
-      expect(() => lispish.run(`(empty? 10)`)).toThrow()
-      expect(() => lispish.run(`(empty? (object))`)).toThrow()
-      expect(() => lispish.run(`(empty? (regexp "^start"))`)).toThrow()
-    })
-  })
 })
