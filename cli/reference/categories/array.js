@@ -133,32 +133,6 @@ module.exports = {
     ],
     specialExpression: false,
   },
-  selt: {
-    name: `selt`,
-    category: `Array`,
-    linkName: `selt`,
-    returns: {
-      type: `array`,
-    },
-    arguments: [
-      {
-        name: `array`,
-        type: `array`,
-      },
-      {
-        name: `index`,
-        type: `non negative integer`,
-      },
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    shortDescription: `Sets \`value\` on specified element of \`array\`.`,
-    longDescription: `Sets \`value\` on specified element of \`array\`. The \`index\` is counted from \`0\`. Accessing out-of-bounds indices returns throws \`Error\`.`,
-    examples: [`(selt [1 2 3] 1 "two")`, `(selt [1 2 3] 2 "Four")`],
-    specialExpression: false,
-  },
   push: {
     name: `push`,
     category: `Array`,
@@ -275,43 +249,6 @@ module.exports = {
     shortDescription: `Returns a shallow copy of a portion of \`array\` into a new array selected from index \`start\` (inclusive) to index \`end\` (exclusive).`,
     longDescription: `Returns a shallow copy of a portion of \`array\` into a new array selected from index \`start\` (inclusive) to index \`end\` (exclusive). If \`start\` is not provided it defaults to \`0\`. If \`end\` is not provided, the rest of the array will be copied.`,
     examples: [`(slice [1 2 3 4 5] 2 4)`, `(slice [1 2 3 4 5] 2)`],
-    specialExpression: false,
-  },
-  splice: {
-    name: `splice`,
-    category: `Array`,
-    linkName: `splice`,
-    returns: {
-      type: `array`,
-    },
-    arguments: [
-      {
-        name: `array`,
-        type: `array`,
-      },
-      {
-        name: `start`,
-        type: `number`,
-        description: `optional`,
-      },
-      {
-        name: `deleteCount`,
-        type: `number`,
-        description: `optional`,
-      },
-      {
-        name: `...values`,
-        type: `any[]`,
-        description: `optional`,
-      },
-    ],
-    shortDescription: `Changes the contents of an array by removing or replacing existing elements and/or adding new elements.`,
-    longDescription: `Changes the contents of an array by removing or replacing existing elements and/or adding new elements. Returns an array of the removed values.`,
-    examples: [
-      `(splice [1 2 3 4 5] 2 2)`,
-      `(splice [1 2 3 4 5] 1 4 "3" "4")`,
-      `(def l [1 2 3 4 5]) (splice l 2 2 "3" "4") l`,
-    ],
     specialExpression: false,
   },
   reduce: {
@@ -724,32 +661,6 @@ module.exports = {
     shortDescription: `Returns a new string by concatenating all of the elements in \`array\`, separated by \`delimiter\`.`,
     longDescription: `Returns a new string by concatenating all of the elements in \`array\`, separated by \`delimiter\`.`,
     examples: [`(join ["Albert" "Mojir"] " ")`, `(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")`],
-    specialExpression: false,
-  },
-  includes: {
-    name: `includes`,
-    category: `Array`,
-    linkName: `includes`,
-    returns: {
-      type: `true | false`,
-    },
-    arguments: [
-      {
-        name: `elem`,
-        type: `any`,
-      },
-      {
-        name: `array`,
-        type: `array`,
-      },
-    ],
-    shortDescription: `Returns \`true\` if \`array\` contains \`elem\`, otherwise returns \`false\`.`,
-    longDescription: `Returns \`true\` if \`array\` contains \`elem\`, otherwise returns \`false\`.`,
-    examples: [
-      `(includes "Mojir" ["Albert" "Mojir"])`,
-      `(includes 42 ["Albert" "Mojir" 42])`,
-      `(includes 43 ["Albert" "Mojir" 42])`,
-    ],
     specialExpression: false,
   },
   'random-sample': {

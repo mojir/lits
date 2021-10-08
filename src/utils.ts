@@ -130,6 +130,12 @@ export function assertString(value: unknown): asserts value is string {
   }
 }
 
+export function assertStringOrNumber(value: unknown): asserts value is string {
+  if (!(typeof value === `string` || typeof value === `number`)) {
+    throw TypeError(`Expected string or number, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function asNonEmptyString(value: unknown): string {
   if (typeof value !== `string` || value.length === 0) {
     throw TypeError(`Expected non empty string, got: ${value} type="${typeof value}"`)
@@ -266,7 +272,7 @@ export function assertExpressionNode(node: AstNode): asserts node is ExpressionN
   }
 }
 
-function isObject(value: unknown): boolean {
+export function isObject(value: unknown): boolean {
   return !(
     value === null ||
     typeof value !== `object` ||
