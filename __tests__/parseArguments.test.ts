@@ -18,7 +18,7 @@ describe(`parseArguments`, () => {
       expect(() => lispish.run(`(defn foo [x &rest a b] a)`)).toThrow()
       expect(() => lispish.run(`(defn foo [x &rest a] a) (foo 1)`)).not.toThrow()
       expect(() => lispish.run(`(defn foo [x &rest a] a) (foo)`)).toThrow()
-      expect(() => lispish.run(`(defn foo [&rest a] a) (foo +)`)).toThrow()
+      expect(() => lispish.run(`(defn foo [&rest a] a) (foo +)`)).not.toThrow()
       const program = `
         (defn foo [first &rest rest] rest)
         (foo 1 2 3)

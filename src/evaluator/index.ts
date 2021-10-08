@@ -142,10 +142,6 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
           const key = arg.name
           newContext[key] = { value: param }
         } else {
-          const param = params[i]
-          if (isLispishFunction(param)) {
-            throw Error(`A function cannot be a &rest parameter`) //  TODO, is this a fact?
-          }
           rest.push(params[i])
         }
       }
