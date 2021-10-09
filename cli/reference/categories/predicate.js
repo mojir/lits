@@ -214,6 +214,31 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  'collection?': {
+    name: `collection?`,
+    category: `Predicate`,
+    linkName: `collection_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    shortDescription: `Returns \`true\` if \`value\` is a collection i.e. an array or an object, otherwise \`false\`.`,
+    longDescription: `Returns \`true\` if \`value\` is a collection i.e. an array or an object, otherwise \`false\`.`,
+    examples: [
+      `(collection? [])`,
+      `(collection? [1 2 3])`,
+      `(collection? (object "a" 10))`,
+      `(collection? 42)`,
+      `(collection? 10.1)`,
+      `(collection? (fn [x y] (+ x y)))`,
+    ],
+    specialExpression: false,
+  },
   'regexp?': {
     name: `regexp?`,
     category: `Predicate`,

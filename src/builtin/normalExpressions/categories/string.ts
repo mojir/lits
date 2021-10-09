@@ -112,14 +112,14 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       const [number, base] = params
       assertFiniteNumber(number)
       if (params.length === 1) {
-        return Number(number).toString()
+        return `${number}`
       } else {
         assertFiniteNumber(base)
         if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
           throw Error(`Expected "number-to-string" base argument to be 2, 8, 10 or 16, got: ${base}`)
         }
         if (base === 10) {
-          return Number(number).toString(base)
+          return `${number}`
         }
         assertNonNegativeNumber(number)
         assertInteger(number)

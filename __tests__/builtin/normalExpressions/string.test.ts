@@ -277,6 +277,7 @@ describe(`string functions`, () => {
       expect(lispish.run(`(template "Hi")`)).toBe(`Hi`)
       expect(lispish.run(`(template "Hi" "Carl")`)).toBe(`Hi`)
       expect(lispish.run(`(template "Hi, $1", "Carl")`)).toBe(`Hi, Carl`)
+      expect(lispish.run(`(template "Hi, $$$1", "Carl")`)).toBe(`Hi, $Carl`)
       expect(lispish.run(`(template "Hi, $1" "Carl")`)).toBe(`Hi, Carl`)
       expect(lispish.run(`(template "Hi, $1" "Carl" "Larry")`)).toBe(`Hi, Carl`)
       expect(lispish.run(`(template "Hi, $1 and $2" "Carl" "Larry")`)).toBe(`Hi, Carl and Larry`)

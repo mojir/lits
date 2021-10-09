@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.27</span></div>
+    <div class="column right version"><span>v0.1.28</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -850,7 +850,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,4,6,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,5,6,8,9]</span></span></pre>
   </div>
 </div>
 
@@ -1393,9 +1393,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.4390714857271565</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0018687674291754065</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.7345094473281064</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.2742515481548473</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0029780648411713373</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.3690091331420847</span></span></pre>
   </div>
 </div>
 
@@ -1414,8 +1414,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 6</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 70</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 9</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 81</span></span></pre>
   </div>
 </div>
 
@@ -1878,7 +1878,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633768127154</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633768792354</span></span></pre>
   </div>
 </div>
 
@@ -2265,6 +2265,29 @@
 <pre><span class="example" onclick="addToPlayground('(object? (regexp ___double_quote___^start___double_quote___))')"><span class="icon-button">▶</span> (object? (regexp "^start")) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(object? ___double_quote___false___double_quote___)')"><span class="icon-button">▶</span> (object? "false") <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(object? [1 2 3])')"><span class="icon-button">▶</span> (object? [1 2 3]) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="collection_question" class="content function">
+  <div class="function-header">collection?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is a collection i.e. an array or an object, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>collection? value => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(collection? [])')"><span class="icon-button">▶</span> (collection? []) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(collection? [1 2 3])')"><span class="icon-button">▶</span> (collection? [1 2 3]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(collection? (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (collection? (object "a" 10)) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(collection? 42)')"><span class="icon-button">▶</span> (collection? 42) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(collection? 10.1)')"><span class="icon-button">▶</span> (collection? 10.1) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(collection? (fn [x y] (+ x y)))')"><span class="icon-button">▶</span> (collection? (fn [x y] (+ x y))) <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -3451,6 +3474,7 @@
         <ul>
           <li id="array_question_link" onclick="showPage('array_question')">array?</li>
 <li id="boolean_question_link" onclick="showPage('boolean_question')">boolean?</li>
+<li id="collection_question_link" onclick="showPage('collection_question')">collection?</li>
 <li id="even_question_link" onclick="showPage('even_question')">even?</li>
 <li id="function_question_link" onclick="showPage('function_question')">function?</li>
 <li id="integer_question_link" onclick="showPage('integer_question')">integer?</li>
