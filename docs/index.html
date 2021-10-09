@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.26</span></div>
+    <div class="column right version"><span>v0.1.27</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -504,8 +504,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(map string-reverse [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___])')"><span class="icon-button">▶</span> (map string-reverse ["Albert" "Mojir"]) <span class="gray">=> ["treblA","rijoM"]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(map string-reverse [])')"><span class="icon-button">▶</span> (map string-reverse []) <span class="gray">=> []</span></span></pre>
+    <pre class="example" onclick="addToPlayground('(map string [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___])')"><span class="icon-button">▶</span> (map string ["Albert" "Mojir"]) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="addToPlayground('(map string [])')"><span class="icon-button">▶</span> (map string []) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="addToPlayground('(map + [1 2 3] [1 2 3])')"><span class="icon-button">▶</span> (map + [1 2 3] [1 2 3]) <span class="gray">=> [2,4,6]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(map max [2 6 3] [2 4 7] [1 6 2])')"><span class="icon-button">▶</span> (map max [2 6 3] [2 4 7] [1 6 2]) <span class="gray">=> [2,6,7]</span></span></pre>
   </div>
@@ -620,19 +620,19 @@
 <div id="reverse" class="content function">
   <div class="function-header">reverse</div>
   
-  <p>Creates a new array with the elements from <span class="pre">array</span> in reversed order.</p>
+  <p>If <span class="pre">input</span> is an array, creates a new array with the elements from <span class="pre">input</span> in reversed order. If <span class="pre">input</span> is a string, returns new reversed string.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>reverse array reverse => array</pre>
+    <pre>reverse input => array or string</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>array: array</pre>
-<pre>reverse: function</pre></div>
+  <label>Arguments</label><div class="indent"><pre>input: input or string</pre></div>
 
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(reverse [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (reverse ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> [[1,2],160,"Mojir","Albert"]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(reverse [])')"><span class="icon-button">▶</span> (reverse []) <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(reverse ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (reverse "Albert") <span class="gray">=> "treblA"</span></span></pre>
   </div>
 </div>
 
@@ -850,7 +850,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,3,5,6,7,8,10]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,4,6,9]</span></span></pre>
   </div>
 </div>
 
@@ -1393,9 +1393,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.27614636011587623</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.009114998341714305</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.982928333912279</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.4390714857271565</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0018687674291754065</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.7345094473281064</span></span></pre>
   </div>
 </div>
 
@@ -1415,7 +1415,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 6</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 5</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 70</span></span></pre>
   </div>
 </div>
 
@@ -1878,7 +1878,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633731095202</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633768127154</span></span></pre>
   </div>
 </div>
 
@@ -3012,25 +3012,6 @@
 </div>
 
 
-<div id="string-reverse" class="content function">
-  <div class="function-header">string-reverse</div>
-  
-  <p>Reverses a string.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>string-reverse string => string</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>string: string</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(string-reverse ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string-reverse "Albert") <span class="gray">=> "treblA"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string-reverse ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (string-reverse "") <span class="gray">=> ""</span></span></pre>
-  </div>
-</div>
-
-
 <div id="lower-case" class="content function">
   <div class="function-header">lower-case</div>
   
@@ -3547,7 +3528,6 @@
 <li id="split_link" onclick="showPage('split')">split</li>
 <li id="str_link" onclick="showPage('str')">str</li>
 <li id="string-repeat_link" onclick="showPage('string-repeat')">string-repeat</li>
-<li id="string-reverse_link" onclick="showPage('string-reverse')">string-reverse</li>
 <li id="string-to-number_link" onclick="showPage('string-to-number')">string-to-number</li>
 <li id="string_lt_link" onclick="showPage('string_lt')">string&lt;</li>
 <li id="string_lte_link" onclick="showPage('string_lte')">string&lt;=</li>

@@ -95,14 +95,6 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength(2, node),
   },
 
-  'string-reverse': {
-    evaluate: ([str]: unknown[]): string => {
-      assertString(str)
-      return str.split(``).reverse().join(``)
-    },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
-  },
-
   'string-to-number': {
     evaluate: ([str]: unknown[]): number => {
       assertString(str)

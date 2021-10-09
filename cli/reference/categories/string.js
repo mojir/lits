@@ -232,24 +232,6 @@ module.exports = {
     ],
     specialExpression: false,
   },
-  'string-reverse': {
-    name: `string-reverse`,
-    category: `String`,
-    linkName: `string-reverse`,
-    returns: {
-      type: `string`,
-    },
-    arguments: [
-      {
-        name: `string`,
-        type: `string`,
-      },
-    ],
-    shortDescription: `Reverses a string.`,
-    longDescription: `Reverses a string.`,
-    examples: [`(string-reverse "Albert")`, `(string-reverse "")`],
-    specialExpression: false,
-  },
   'lower-case': {
     name: `lower-case`,
     category: `String`,

@@ -240,8 +240,12 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   },
   reverse: {
     evaluate: ([first]: unknown[]): unknown => {
-      assertArray(first)
-      return [...first].reverse()
+      assertStringOrArray(first)
+      if (Array.isArray(first)) {
+        return [...first].reverse()
+      }
+      return first.split(``).reverse().join(``)
+
     },
     validate: node => assertLength(1, node),
   },

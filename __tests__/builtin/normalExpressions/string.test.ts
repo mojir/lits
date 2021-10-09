@@ -135,16 +135,6 @@ describe(`string functions`, () => {
     })
   })
 
-  describe(`string-reverse`, () => {
-    test(`samples`, () => {
-      expect(lispish.run(`(string-reverse "albert")`)).toBe(`trebla`)
-      expect(lispish.run(`(string-reverse "A 1")`)).toBe(`1 A`)
-      expect(lispish.run(`(string-reverse "")`)).toBe(``)
-      expect(() => lispish.run(`(string-reverse)`)).toThrow()
-      expect(() => lispish.run(`(string-reverse "word1" "word2")`)).toThrow()
-    })
-  })
-
   describe(`string-to-number`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(string-to-number "123.25")`)).toBe(123.25)

@@ -281,8 +281,8 @@ module.exports = {
     shortDescription: `Creates a new array populated with the results of calling \`mapper\` on every elements in the calling \`array\`s.`,
     longDescription: `Creates a new array populated with the results of calling \`mapper\` on every elements in the calling \`array\`s.`,
     examples: [
-      `(map string-reverse ["Albert" "Mojir"])`,
-      `(map string-reverse [])`,
+      `(map string ["Albert" "Mojir"])`,
+      `(map string [])`,
       `(map + [1 2 3] [1 2 3])`,
       `(map max [2 6 3] [2 4 7] [1 6 2])`,
     ],
@@ -420,21 +420,17 @@ module.exports = {
     category: `Array`,
     linkName: `reverse`,
     returns: {
-      type: `array`,
+      type: `array or string`,
     },
     arguments: [
       {
-        name: `array`,
-        type: `array`,
-      },
-      {
-        name: `reverse`,
-        type: `function`,
+        name: `input`,
+        type: `input or string`,
       },
     ],
-    shortDescription: `Creates a new array with the elements from \`array\` in reversed order.`,
-    longDescription: `Creates a new array with the elements from \`array\` in reversed order.`,
-    examples: [`(reverse ["Albert" "Mojir" 160 [1 2]])`, `(reverse [])`],
+    shortDescription: `If \`input\` is an array, creates a new array with the elements from \`input\` in reversed order. If \`input\` is a string, returns new reversed string.`,
+    longDescription: `If \`input\` is an array, creates a new array with the elements from \`input\` in reversed order. If \`input\` is a string, returns new reversed string.`,
+    examples: [`(reverse ["Albert" "Mojir" 160 [1 2]])`, `(reverse [])`, `(reverse "Albert")`],
     specialExpression: false,
   },
   first: {
