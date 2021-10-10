@@ -1,9 +1,14 @@
 ;(function () {
   lispish = new Lispish.Lispish()
 
-  window.addEventListener('keyup', function (evt) {
-    if (evt.key === 'Enter' && evt.ctrlKey === true) {
+  window.addEventListener('keydown', function (evt) {
+    if (evt.key === 'F2') {
+      evt.preventDefault()
       play()
+    }
+    if (evt.key === 'Escape') {
+      evt.preventDefault()
+      minimizeAll()
     }
   })
   document.getElementById('lisp-textarea').addEventListener('keydown', keydownHandler)
@@ -23,7 +28,13 @@
 })()
 
 function keydownHandler(e) {
+  if (e.key === 'F3') {
+    toggleMaximized(this)
+    e.preventDefault()
+    return
+  }
   if (['Tab', 'Backspace', 'Enter', 'Delete'].includes(e.key)) {
+    console.log('accepted', e.key)
     var start = this.selectionStart
     var end = this.selectionEnd
 
@@ -201,9 +212,45 @@ function setPlayground(exampleId) {
   }
 }
 
-function maximizePlayground() {
-  document.body.classList.add('maximized-playground')
+function maximizeContext() {
+  minimizeAll()
+  document.body.classList.add('maximized-context')
 }
-function minimizePlayground() {
-  document.body.classList.remove('maximized-playground')
+
+function maximizeLisp() {
+  minimizeAll()
+  document.body.classList.add('maximized-lisp')
+}
+
+function maximizeOutput() {
+  minimizeAll()
+  document.body.classList.add('maximized-output')
+}
+
+function maximizeLog() {
+  minimizeAll()
+  document.body.classList.add('maximized-log')
+}
+
+function minimizeAll() {
+  document.body.classList.remove('maximized-context')
+  document.body.classList.remove('maximized-lisp')
+  document.body.classList.remove('maximized-output')
+  document.body.classList.remove('maximized-log')
+}
+
+function toggleMaximized(textArea) {
+  if (textArea.id === 'lisp-textarea') {
+    if (document.body.classList.contains('maximized-lisp')) {
+      minimizeAll()
+    } else {
+      maximizeLisp()
+    }
+  } else if (textArea.id === 'context-textarea') {
+    if (document.body.classList.contains('maximized-context')) {
+      minimizeAll()
+    } else {
+      maximizeContext()
+    }
+  }
 }

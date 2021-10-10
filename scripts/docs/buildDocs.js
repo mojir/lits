@@ -68,29 +68,60 @@ function getPlayground() {
     <div class="column">Playground</span></div>
     <div class="column">
       <center>
-      <span class="button" onclick="play()">Run [Ctrl-Enter]</span>
+      <span class="button" onclick="play()">Run [F2]</span>
       <span class="button" onclick="resetPlayground()">Reset</span>
       </center>
     </div>
     <div class="column right">
-      <span id="maximize-playground" class="icon-button" onclick="maximizePlayground()">▲</span>
-      <span id="minimize-playground" class="icon-button" onclick="minimizePlayground()">▼</span>
     </div>
   </div>
   <div class="row">
     <div class="column" id="context">
-      <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
+      <div class="row">
+        <div class="column textarea-header"><label for="context-textarea">Context (JSON)</label></div>
+        <div class="column right">
+          <span id="maximize-context" class="icon-button" onclick="maximizeContext()">▲</span>
+          <span id="minimize-context" class="icon-button" onclick="minimizeAll()">▼</span>
+        </div>
+      </div>
       <textarea id="context-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
+
     <div class="column wider" id="lisp">
-      <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
+      <div class="row">
+        <div class="column textarea-header"><label for="lisp-textarea">Lisp</label></div>
+        <div class="column right">
+          <span id="maximize-lisp" class="icon-button" onclick="maximizeLisp()">▲</span>
+          <span id="minimize-lisp" class="icon-button" onclick="minimizeAll()">▼</span>
+        </div>
+      </div>
       <textarea id="lisp-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
-    <div class="column wide" id="output">
-      <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
-      <div class="textarea-header"><label for="log-textarea">Console</label></div>
-      <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
+
+    <div class="column wide" id="outputs">
+
+      <div id="output">
+        <div class="row">
+          <div class="column textarea-header"><label for="output-textarea">Result</label></div>
+          <div class="column right">
+            <span id="maximize-output" class="icon-button" onclick="maximizeOutput()">▲</span>
+            <span id="minimize-output" class="icon-button" onclick="minimizeAll()">▼</span>
+          </div>
+        </div>
+        <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
+      </div>
+
+      <div id="log">
+        <div class="row">
+        <div class="column textarea-header"><label for="log-textarea">Console</label></div>
+          <div class="column right">
+            <span id="maximize-log" class="icon-button" onclick="maximizeLog()">▲</span>
+            <span id="minimize-log" class="icon-button" onclick="minimizeAll()">▼</span>
+          </div>
+        </div>
+        <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
+      </div>
+
     </div>
   </div>
 </div>

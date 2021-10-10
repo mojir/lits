@@ -876,7 +876,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,3,5,7,8,10]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,4,5,6,9,10]</span></span></pre>
   </div>
 </div>
 
@@ -1419,9 +1419,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.45960075778335563</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0035784188207728107</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.206098083208822</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.01888956587531121</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.008660068256573386</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.298291682088076</span></span></pre>
   </div>
 </div>
 
@@ -1440,8 +1440,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 7</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 25</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 9</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 22</span></span></pre>
   </div>
 </div>
 
@@ -1904,7 +1904,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633882286907</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633898366486</span></span></pre>
   </div>
 </div>
 
@@ -3680,29 +3680,60 @@
     <div class="column">Playground</span></div>
     <div class="column">
       <center>
-      <span class="button" onclick="play()">Run [Ctrl-Enter]</span>
+      <span class="button" onclick="play()">Run [F2]</span>
       <span class="button" onclick="resetPlayground()">Reset</span>
       </center>
     </div>
     <div class="column right">
-      <span id="maximize-playground" class="icon-button" onclick="maximizePlayground()">▲</span>
-      <span id="minimize-playground" class="icon-button" onclick="minimizePlayground()">▼</span>
     </div>
   </div>
   <div class="row">
     <div class="column" id="context">
-      <div class="textarea-header"><label for="context-textarea">Context (JSON)</label></div>
+      <div class="row">
+        <div class="column textarea-header"><label for="context-textarea">Context (JSON)</label></div>
+        <div class="column right">
+          <span id="maximize-context" class="icon-button" onclick="maximizeContext()">▲</span>
+          <span id="minimize-context" class="icon-button" onclick="minimizeAll()">▼</span>
+        </div>
+      </div>
       <textarea id="context-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
+
     <div class="column wider" id="lisp">
-      <div class="textarea-header"><label for="lisp-textarea">Lisp</label></div>
+      <div class="row">
+        <div class="column textarea-header"><label for="lisp-textarea">Lisp</label></div>
+        <div class="column right">
+          <span id="maximize-lisp" class="icon-button" onclick="maximizeLisp()">▲</span>
+          <span id="minimize-lisp" class="icon-button" onclick="minimizeAll()">▼</span>
+        </div>
+      </div>
       <textarea id="lisp-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
-    <div class="column wide" id="output">
-      <div class="textarea-header"><label for="output-textarea">Result</label></div>
-      <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
-      <div class="textarea-header"><label for="log-textarea">Console</label></div>
-      <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
+
+    <div class="column wide" id="outputs">
+
+      <div id="output">
+        <div class="row">
+          <div class="column textarea-header"><label for="output-textarea">Result</label></div>
+          <div class="column right">
+            <span id="maximize-output" class="icon-button" onclick="maximizeOutput()">▲</span>
+            <span id="minimize-output" class="icon-button" onclick="minimizeAll()">▼</span>
+          </div>
+        </div>
+        <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
+      </div>
+
+      <div id="log">
+        <div class="row">
+        <div class="column textarea-header"><label for="log-textarea">Console</label></div>
+          <div class="column right">
+            <span id="maximize-log" class="icon-button" onclick="maximizeLog()">▲</span>
+            <span id="minimize-log" class="icon-button" onclick="minimizeAll()">▼</span>
+          </div>
+        </div>
+        <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
+      </div>
+
     </div>
   </div>
 </div>

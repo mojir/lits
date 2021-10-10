@@ -65,7 +65,7 @@ var examples = [
 (defn factorial [x]
   (if (= x 1)
     1
-    (* x (factorial (1- x)))
+    (* x (factorial (dec x)))
   )
 )
 
@@ -100,15 +100,20 @@ var examples = [
       },
     },
     code: `
-;(doarray (entry (entries TRANSLATIONS))
-;  (defns (nth entry 0) (&rest params &bind ((templateString (nth entry 1))))
-;    (apply template (cons templateString params))
-;  )
-;)
-;
-;(write! (welcome-message "Albert"))
-;(write! (count-chairs 12))
-;(write! (count-chairs 1))
+(loop [list (entries TRANSLATIONS)]
+  (when (count list)
+    (let [entry (first list)]
+      (defns (nth entry 0) [&rest params &bind [templateString (nth entry 1)]]
+        (apply template (cons templateString params))
+      )
+      (recur (rest list))
+    )
+  )
+)
+
+(write! (welcome-message "Albert"))
+(write! (count-chairs 12))
+(write! (count-chairs 1))
 `.trim(),
   },
 ]

@@ -213,10 +213,6 @@ input[type="submit"]:hover{
   overflow-y: auto;
 }
 
-.maximized-playground #main-panel {
-  bottom: 795px;
-}
-
 #sidebar {
   position: fixed;
   bottom: 275px;
@@ -227,10 +223,6 @@ input[type="submit"]:hover{
   white-space: nowrap;
   overflow-y: scroll;
   padding-right: 1rem;
-}
-
-.maximized-playground #sidebar {
-  bottom: 795px;
 }
 
 #playground {
@@ -270,21 +262,83 @@ input[type="submit"]:hover{
   height: 339px;
 }
 
-#maximize-playground {
+#maximize-context {
   display: inline;
 }
-
-#minimize-playground {
+#minimize-context {
   display: none;
 }
 
-.maximized-playground #maximize-playground {
+#maximize-lisp {
+  display: inline;
+}
+#minimize-lisp {
   display: none;
 }
 
-.maximized-playground #minimize-playground {
+#maximize-output {
   display: inline;
 }
+#minimize-output {
+  display: none;
+}
+
+#maximize-log {
+  display: inline;
+}
+#minimize-log {
+  display: none;
+}
+
+.maximized-context #maximize-context {
+  display: none;
+}
+.maximized-context #minimize-context {
+  display: inline;
+}
+
+.maximized-lisp #maximize-lisp {
+  display: none;
+}
+.maximized-lisp #minimize-lisp {
+  display: inline;
+}
+
+.maximized-output #maximize-output {
+  display: none;
+}
+.maximized-output #minimize-output {
+  display: inline;
+}
+
+.maximized-log #maximize-log {
+  display: none;
+}
+.maximized-log #minimize-log {
+  display: inline;
+}
+
+.maximized-context #context,
+.maximized-lisp #lisp,
+.maximized-output #output,
+.maximized-log #log {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  margin: 0;
+  background-color: #333333;
+}
+.maximized-context #context textarea,
+.maximized-lisp #lisp textarea,
+.maximized-output #output textarea,
+.maximized-log #log textarea {
+  height: calc(100% - 20px);
+  margin-bottom: 1rem;
+}
+
 
 .text {
   font-family: Georgia, 'Times New Roman', Times, serif;
@@ -436,13 +490,12 @@ h4, h2, h1 {
   background-color: #222222;
 }
 
-#output {
+#outputs {
   height: 400px;
 }
 
-#lisp, #output {
+#lisp, #outputs {
   margin-left: 0.5rem;
-  margin-right: 0.5rem;
 }
 
 #output-textarea {
