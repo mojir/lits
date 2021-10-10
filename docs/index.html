@@ -700,19 +700,45 @@
 <div id="rest" class="content function">
   <div class="function-header">rest</div>
   
-  <p>Returns a new array with all but the first element from <span class="pre">array</span>. If <span class="pre">array</span> has less than two elements, undefined is returned.</p>
+  <p>If <span class="pre">input</span> is an array, returns a new array with all but the first element from <span class="pre">input</span>. If <span class="pre">input</span> has less than two elements, an empty array is returned. For string <span class="pre">input</span> returns all but the first characters in <span class="pre">input</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>rest array => array</pre>
+    <pre>rest input => array | string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>input: array | string</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(rest [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (rest ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> ["Mojir",160,[1,2]]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rest [___double_quote___Albert___double_quote___])')"><span class="icon-button">▶</span> (rest ["Albert"]) <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rest [])')"><span class="icon-button">▶</span> (rest []) <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rest ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (rest "Albert") <span class="gray">=> "lbert"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rest ___double_quote___A___double_quote___)')"><span class="icon-button">▶</span> (rest "A") <span class="gray">=> ""</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rest ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (rest "") <span class="gray">=> ""</span></span></pre>
+  </div>
+</div>
+
+
+<div id="next" class="content function">
+  <div class="function-header">next</div>
+  
+  <p>If <span class="pre">input</span> is an array, returns a new array with all but the first element from <span class="pre">input</span>. If <span class="pre">input</span> has less than two elements, an empty array is returned. For string <span class="pre">input</span> returns all but the first characters in <span class="pre">input</span>. If length of string <span class="pre">input</span> is less than two, undefined is returned.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>next array => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>array: array</pre></div>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rest [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (rest ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> ["Mojir",160,[1,2]]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rest [___double_quote___Albert___double_quote___])')"><span class="icon-button">▶</span> (rest ["Albert"]) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rest [])')"><span class="icon-button">▶</span> (rest []) <span class="gray">=> undefined</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(next [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (next ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> ["Mojir",160,[1,2]]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next [___double_quote___Albert___double_quote___])')"><span class="icon-button">▶</span> (next ["Albert"]) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next [])')"><span class="icon-button">▶</span> (next []) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (next "Albert") <span class="gray">=> "lbert"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next ___double_quote___A___double_quote___)')"><span class="icon-button">▶</span> (next "A") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (next "") <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
@@ -850,7 +876,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,5,6,8,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,3,5,7,8,10]</span></span></pre>
   </div>
 </div>
 
@@ -961,13 +987,13 @@
 </div>
 
 
-<div id="_percent" class="content function">
-  <div class="function-header">%</div>
+<div id="mod" class="content function">
+  <div class="function-header">mod</div>
   
   <p>Returns modulus of two number arguments.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>% number divisor => number</pre>
+    <pre>mod number divisor => number</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>number: number</pre>
@@ -975,11 +1001,11 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(% 5 3)')"><span class="icon-button">▶</span> (% 5 3) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(% 5.2 3.1)')"><span class="icon-button">▶</span> (% 5.2 3.1) <span class="gray">=> 2.1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(% -5 3)')"><span class="icon-button">▶</span> (% -5 3) <span class="gray">=> -2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(% 5 -3)')"><span class="icon-button">▶</span> (% 5 -3) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(% -5 -3)')"><span class="icon-button">▶</span> (% -5 -3) <span class="gray">=> -2</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(mod 5 3)')"><span class="icon-button">▶</span> (mod 5 3) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mod 5.2 3.1)')"><span class="icon-button">▶</span> (mod 5.2 3.1) <span class="gray">=> 2.1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mod -5 3)')"><span class="icon-button">▶</span> (mod -5 3) <span class="gray">=> -2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mod 5 -3)')"><span class="icon-button">▶</span> (mod 5 -3) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mod -5 -3)')"><span class="icon-button">▶</span> (mod -5 -3) <span class="gray">=> -2</span></span></pre>
   </div>
 </div>
 
@@ -1393,9 +1419,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.2742515481548473</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0029780648411713373</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.3690091331420847</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.45960075778335563</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0035784188207728107</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.206098083208822</span></span></pre>
   </div>
 </div>
 
@@ -1414,8 +1440,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 9</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 81</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 7</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 25</span></span></pre>
   </div>
 </div>
 
@@ -1752,25 +1778,25 @@
 </div>
 
 
-<div id="_notequal" class="content function">
-  <div class="function-header">!=</div>
+<div id="not_equal" class="content function">
+  <div class="function-header">not=</div>
   
-  <p>Result is <span class="pre">true</span> if no two <span class="pre">values</span> are equal to each other, otherwise result is <span class="pre">false</span>. Note that only two argument version result is negation of <span class="pre">=</span> function, that is <span class="pre">(!= a b)</span> is same as <span class="pre">(not (= a b))</span>.</p>
+  <p>Result is <span class="pre">true</span> if no two <span class="pre">values</span> are equal to each other, otherwise result is <span class="pre">false</span>. Note that only two argument version result is negation of <span class="pre">=</span> function, that is <span class="pre">(not= a b)</span> is same as <span class="pre">(not (= a b))</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>!= values => boolean</pre>
+    <pre>not= values => boolean</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>values: array</pre></div>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(!= 3)')"><span class="icon-button">▶</span> (!= 3) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(!= 3 2)')"><span class="icon-button">▶</span> (!= 3 2) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(!= ___double_quote___3___double_quote___ 3)')"><span class="icon-button">▶</span> (!= "3" 3) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(!= 3 3 2)')"><span class="icon-button">▶</span> (!= 3 3 2) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(!= ___double_quote___3___double_quote___ ___double_quote___2___double_quote___ ___double_quote___1___double_quote___ ___double_quote___0___double_quote___)')"><span class="icon-button">▶</span> (!= "3" "2" "1" "0") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(!= 0 -0)')"><span class="icon-button">▶</span> (!= 0 -0) <span class="gray">=> false</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(not= 3)')"><span class="icon-button">▶</span> (not= 3) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not= 3 2)')"><span class="icon-button">▶</span> (not= 3 2) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not= ___double_quote___3___double_quote___ 3)')"><span class="icon-button">▶</span> (not= "3" 3) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not= 3 3 2)')"><span class="icon-button">▶</span> (not= 3 3 2) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not= ___double_quote___3___double_quote___ ___double_quote___2___double_quote___ ___double_quote___1___double_quote___ ___double_quote___0___double_quote___)')"><span class="icon-button">▶</span> (not= "3" "2" "1" "0") <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not= 0 -0)')"><span class="icon-button">▶</span> (not= 0 -0) <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -1865,20 +1891,20 @@
 </div>
 
 
-<div id="now" class="content function">
-  <div class="function-header">now</div>
+<div id="inst-ms" class="content function">
+  <div class="function-header">inst-ms</div>
   
   <p>Returns milliseconds elapsed since the UNIX epoch.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>now => number</pre>
+    <pre>inst-ms => number</pre>
   </div>
 
   <label>No arguments</label>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(now)')"><span class="icon-button">▶</span> (now) <span class="gray">=> 1633768792354</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633882286907</span></span></pre>
   </div>
 </div>
 
@@ -2003,21 +2029,21 @@
 </div>
 
 
-<div id="values" class="content function">
-  <div class="function-header">values</div>
+<div id="vals" class="content function">
+  <div class="function-header">vals</div>
   
   <p>Returns array of all values in <span class="pre">object</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>values object => array</pre>
+    <pre>vals object => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>object: object</pre></div>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(values (object))')"><span class="icon-button">▶</span> (values (object)) <span class="gray">=> []</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(values (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (values (object "x" 10 "y" true "z" "A string")) <span class="gray">=> [10,true,"A string"]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(vals (object))')"><span class="icon-button">▶</span> (vals (object)) <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(vals (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (vals (object "x" 10 "y" true "z" "A string")) <span class="gray">=> [10,true,"A string"]</span></span></pre>
   </div>
 </div>
 
@@ -2687,7 +2713,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre class="example" onclick="addToPlayground('(throw ___double_quote___You shall not pass!___double_quote___)')"><span class="icon-button">▶</span> (throw "You shall not pass!") <span class="gray">=></span> <span class="error">Error!</span></pre>
-<pre class="example" onclick="addToPlayground('(throw (substring ___double_quote___You shall not pass!___double_quote___ 0 3))')"><span class="icon-button">▶</span> (throw (substring "You shall not pass!" 0 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="addToPlayground('(throw (subs ___double_quote___You shall not pass!___double_quote___ 0 3))')"><span class="icon-button">▶</span> (throw (subs "You shall not pass!" 0 3)) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="addToPlayground('(try (throw ___double_quote___You shall not pass!___double_quote___) ((error) error))')"><span class="icon-button">▶</span> (try (throw "You shall not pass!") ((error) error)) <span class="gray">=> UserDefinedError: You shall not pass!</span></span></pre>
   </div>
 </div>
@@ -2839,13 +2865,13 @@
 </div>
 
 
-<div id="substring" class="content function">
-  <div class="function-header">substring</div>
+<div id="subs" class="content function">
+  <div class="function-header">subs</div>
   
   <p>Extracts characters from <span class="pre">indexStart</span> up to but not including <span class="pre">indexEnd</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>substring string indexStart indexEnd(optional) => string</pre>
+    <pre>subs string indexStart indexEnd(optional) => string</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>string: string</pre>
@@ -2854,10 +2880,10 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(substring ___double_quote___A string___double_quote___ 2)')"><span class="icon-button">▶</span> (substring "A string" 2) <span class="gray">=> "string"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(substring ___double_quote___A string___double_quote___ 2 5)')"><span class="icon-button">▶</span> (substring "A string" 2 5) <span class="gray">=> "str"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(substring ___double_quote___A string___double_quote___ 2 100)')"><span class="icon-button">▶</span> (substring "A string" 2 100) <span class="gray">=> "string"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(substring ___double_quote___A string___double_quote___ 100)')"><span class="icon-button">▶</span> (substring "A string" 100) <span class="gray">=> ""</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(subs ___double_quote___A string___double_quote___ 2)')"><span class="icon-button">▶</span> (subs "A string" 2) <span class="gray">=> "string"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(subs ___double_quote___A string___double_quote___ 2 5)')"><span class="icon-button">▶</span> (subs "A string" 2 5) <span class="gray">=> "str"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(subs ___double_quote___A string___double_quote___ 2 100)')"><span class="icon-button">▶</span> (subs "A string" 2 100) <span class="gray">=> "string"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(subs ___double_quote___A string___double_quote___ 100)')"><span class="icon-button">▶</span> (subs "A string" 100) <span class="gray">=> ""</span></span></pre>
   </div>
 </div>
 
@@ -3511,6 +3537,7 @@
 <li id="join_link" onclick="showPage('join')">join</li>
 <li id="last_link" onclick="showPage('last')">last</li>
 <li id="map_link" onclick="showPage('map')">map</li>
+<li id="next_link" onclick="showPage('next')">next</li>
 <li id="nth_link" onclick="showPage('nth')">nth</li>
 <li id="pop_link" onclick="showPage('pop')">pop</li>
 <li id="position_link" onclick="showPage('position')">position</li>
@@ -3540,7 +3567,7 @@
 <li id="keys_link" onclick="showPage('keys')">keys</li>
 <li id="merge_link" onclick="showPage('merge')">merge</li>
 <li id="object_link" onclick="showPage('object')">object</li>
-<li id="values_link" onclick="showPage('values')">values</li>
+<li id="vals_link" onclick="showPage('vals')">vals</li>
         </ul>
 
         <label>String</label>
@@ -3557,7 +3584,7 @@
 <li id="string_lte_link" onclick="showPage('string_lte')">string&lt;=</li>
 <li id="string_gt_link" onclick="showPage('string_gt')">string&gt;</li>
 <li id="string_gte_link" onclick="showPage('string_gte')">string&gt;=</li>
-<li id="substring_link" onclick="showPage('substring')">substring</li>
+<li id="subs_link" onclick="showPage('subs')">subs</li>
 <li id="template_link" onclick="showPage('template')">template</li>
 <li id="trim_link" onclick="showPage('trim')">trim</li>
 <li id="trim-left_link" onclick="showPage('trim-left')">trim-left</li>
@@ -3567,8 +3594,7 @@
 
         <label>Math</label>
         <ul>
-          <li id="_percent_link" onclick="showPage('_percent')">%</li>
-<li id="_star_link" onclick="showPage('_star')">*</li>
+          <li id="_star_link" onclick="showPage('_star')">*</li>
 <li id="_plus_link" onclick="showPage('_plus')">+</li>
 <li id="_minus_link" onclick="showPage('_minus')">-</li>
 <li id="_slash_link" onclick="showPage('_slash')">/</li>
@@ -3597,6 +3623,7 @@
 <li id="log2_link" onclick="showPage('log2')">log2</li>
 <li id="max_link" onclick="showPage('max')">max</li>
 <li id="min_link" onclick="showPage('min')">min</li>
+<li id="mod_link" onclick="showPage('mod')">mod</li>
 <li id="pi_link" onclick="showPage('pi')">pi</li>
 <li id="pow_link" onclick="showPage('pow')">pow</li>
 <li id="rand_link" onclick="showPage('rand')">rand</li>
@@ -3635,14 +3662,14 @@
 
         <label>Misc</label>
         <ul>
-          <li id="_notequal_link" onclick="showPage('_notequal')">!=</li>
-<li id="_equal_link" onclick="showPage('_equal')">=</li>
+          <li id="_equal_link" onclick="showPage('_equal')">=</li>
 <li id="apply_link" onclick="showPage('apply')">apply</li>
 <li id="boolean_link" onclick="showPage('boolean')">boolean</li>
 <li id="debug_exclamation_link" onclick="showPage('debug_exclamation')">debug!</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
+<li id="inst-ms_link" onclick="showPage('inst-ms')">inst-ms</li>
 <li id="not_link" onclick="showPage('not')">not</li>
-<li id="now_link" onclick="showPage('now')">now</li>
+<li id="not_equal_link" onclick="showPage('not_equal')">not=</li>
 <li id="write_exclamation_link" onclick="showPage('write_exclamation')">write!</li>
         </ul>
 </nav>

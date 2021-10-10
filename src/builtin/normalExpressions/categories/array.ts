@@ -227,14 +227,33 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },
   rest: {
-    evaluate: ([first]: unknown[]): unknown => {
-      assertArray(first)
+    evaluate: ([first]: unknown[]): unknown[] | string => {
+      assertStringOrArray(first)
+      if (Array.isArray(first)) {
+        if (first.length <= 1) {
+          return []
+        }
 
+        return first.slice(1)
+      }
+      return first.substr(1)
+    },
+    validate: node => assertLength(1, node),
+  },
+  next: {
+    evaluate: ([first]: unknown[]): unknown[] | string | undefined => {
+      assertStringOrArray(first)
+      if (Array.isArray(first)) {
+        if (first.length <= 1) {
+          return undefined
+        }
+
+        return first.slice(1)
+      }
       if (first.length <= 1) {
         return undefined
       }
-
-      return first.slice(1)
+      return first.substr(1)
     },
     validate: node => assertLength(1, node),
   },
@@ -245,7 +264,6 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
         return [...first].reverse()
       }
       return first.split(``).reverse().join(``)
-
     },
     validate: node => assertLength(1, node),
   },

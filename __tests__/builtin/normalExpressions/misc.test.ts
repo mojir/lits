@@ -19,33 +19,33 @@ describe(`misc functions`, () => {
   afterEach(() => {
     console.log = oldLog
   })
-  describe(`now`, () => {
+  describe(`inst-ms`, () => {
     test(`samples`, () => {
-      expect(() => lispish.run(`(now 1)`)).toThrow()
-      expect(() => lispish.run(`(now "x")`)).toThrow()
-      expect(() => lispish.run(`(now undefined)`)).toThrow()
-      expect(lispish.run(`(now)`)).toBeLessThanOrEqual(Date.now())
+      expect(() => lispish.run(`(inst-ms 1)`)).toThrow()
+      expect(() => lispish.run(`(inst-ms "x")`)).toThrow()
+      expect(() => lispish.run(`(inst-ms undefined)`)).toThrow()
+      expect(lispish.run(`(inst-ms)`)).toBeLessThanOrEqual(Date.now())
     })
   })
 
-  describe(`!=`, () => {
+  describe(`not=`, () => {
     test(`samples`, () => {
-      expect(() => lispish.run(`(!=)`)).toThrow()
-      expect(lispish.run(`(!= 1)`)).toBe(true)
-      expect(lispish.run(`(!= 1 1)`)).toBe(false)
-      expect(lispish.run(`(!= 1 2)`)).toBe(true)
-      expect(lispish.run(`(!= 1 2 1)`)).toBe(false)
-      expect(lispish.run(`(!= 1 2 3)`)).toBe(true)
-      expect(lispish.run(`(!= "1")`)).toBe(true)
-      expect(lispish.run(`(!= "1" "1")`)).toBe(false)
-      expect(lispish.run(`(!= "1" "2")`)).toBe(true)
-      expect(lispish.run(`(!= "1" "2" "1")`)).toBe(false)
-      expect(lispish.run(`(!= "1" "2" 3)`)).toBe(true)
-      expect(lispish.run(`(!= null undefined)`)).toBe(true)
-      expect(lispish.run(`(!= null 0)`)).toBe(true)
-      expect(lispish.run(`(!= 1 undefined 1)`)).toBe(false)
-      expect(lispish.run(`(!= 1 true 3)`)).toBe(true)
-      expect(lispish.run(`(!= 1 false 3)`)).toBe(true)
+      expect(() => lispish.run(`(not=)`)).toThrow()
+      expect(lispish.run(`(not= 1)`)).toBe(true)
+      expect(lispish.run(`(not= 1 1)`)).toBe(false)
+      expect(lispish.run(`(not= 1 2)`)).toBe(true)
+      expect(lispish.run(`(not= 1 2 1)`)).toBe(false)
+      expect(lispish.run(`(not= 1 2 3)`)).toBe(true)
+      expect(lispish.run(`(not= "1")`)).toBe(true)
+      expect(lispish.run(`(not= "1" "1")`)).toBe(false)
+      expect(lispish.run(`(not= "1" "2")`)).toBe(true)
+      expect(lispish.run(`(not= "1" "2" "1")`)).toBe(false)
+      expect(lispish.run(`(not= "1" "2" 3)`)).toBe(true)
+      expect(lispish.run(`(not= null undefined)`)).toBe(true)
+      expect(lispish.run(`(not= null 0)`)).toBe(true)
+      expect(lispish.run(`(not= 1 undefined 1)`)).toBe(false)
+      expect(lispish.run(`(not= 1 true 3)`)).toBe(true)
+      expect(lispish.run(`(not= 1 false 3)`)).toBe(true)
     })
   })
 

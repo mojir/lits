@@ -259,7 +259,7 @@ function getDocString(name) {
     return ''
   }
 
-  return `${getSyntax(doc)}   ${doc.shortDescription}`
+  return `${getSyntax(doc)}   ${doc.description}`
 }
 
 function getFullDocumentation(name) {
@@ -272,7 +272,7 @@ function getFullDocumentation(name) {
 
   return `${header}
 
-${doc.longDescription}
+${doc.description}
 
 Syntax
   ${getSyntax(doc)}

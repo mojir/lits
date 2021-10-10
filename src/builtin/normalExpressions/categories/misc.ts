@@ -11,7 +11,7 @@ import {
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
 export const miscNormalExpression: BuiltinNormalExpressions = {
-  '!=': {
+  'not=': {
     evaluate: (params: unknown[]): boolean => {
       for (let i = 0; i < params.length - 1; i += 1) {
         for (let j = i + 1; j < params.length; j += 1) {
@@ -57,7 +57,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]: unknown[]): boolean => !first,
     validate: node => assertLength(1, node),
   },
-  now: {
+  'inst-ms': {
     evaluate: (): number => {
       return Date.now()
     },

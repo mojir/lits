@@ -20,16 +20,16 @@ const simpleProgram = `
 
 const formatPhoneNumber = `
 (if (string? $data)
-  (let [phoneNumber (if (= "+" (nth $data 0)) (substring $data 2) $data)]
+  (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)]
     (cond
       ((> (count phoneNumber) 6)
-        (str "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3 6) "-" (substring phoneNumber 6))
+        (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3 6) "-" (subs phoneNumber 6))
       )
       ((> (count phoneNumber) 3)
-        (str "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
+        (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))
       )
       ((> (count phoneNumber) 0)
-        (str "(" (substring phoneNumber 0))
+        (str "(" (subs phoneNumber 0))
       )
       (true
         phoneNumber
@@ -87,9 +87,9 @@ describe(`Evaluator`, () => {
     const result = evaluate(ast, context, {})
     expect(result).toBe(true)
   })
-  test(`!= statement 1`, () => {
+  test(`not= statement 1`, () => {
     const tokens = tokenize(`
-      [(!= 0 -1) (!= 1 1)]
+      [(not= 0 -1) (not= 1 1)]
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, context, {})

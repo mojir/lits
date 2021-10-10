@@ -24,7 +24,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
 
-  values: {
+  vals: {
     evaluate: ([first]: unknown[]): unknown[] => {
       assertObject(first)
       return Object.values(first)

@@ -87,7 +87,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
 
-  '%': {
+  mod: {
     evaluate: ([first, second]: unknown[]): number => {
       assertFiniteNumber(first)
       assertNumberNotZero(second)

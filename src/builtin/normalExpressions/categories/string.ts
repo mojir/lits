@@ -14,7 +14,7 @@ import {
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
-  substring: {
+  subs: {
     evaluate: ([first, second, third]: unknown[]): unknown => {
       assertString(first)
       assertFiniteNumber(second)

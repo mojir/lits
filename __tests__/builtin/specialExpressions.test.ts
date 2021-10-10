@@ -349,11 +349,11 @@ describe(`specialExpressions`, () => {
   describe(`throw`, () => {
     test(`samples`, () => {
       expect(() => lispish.run(`(throw "An error")`)).toThrowError(UserDefinedError)
-      expect(() => lispish.run(`(throw (substring "An error" 3))`)).toThrowError(UserDefinedError)
+      expect(() => lispish.run(`(throw (subs "An error" 3))`)).toThrowError(UserDefinedError)
       expect(() => lispish.run(`(throw "An error" 10)`)).not.toThrowError(UserDefinedError)
       expect(() => lispish.run(`(throw "An error" 10)`)).toThrow()
       try {
-        lispish.run(`(throw (substring "An error" 3))`)
+        lispish.run(`(throw (subs "An error" 3))`)
         throw Error()
       } catch (error) {
         expect((error as UserDefinedError).message).toBe(`error`)

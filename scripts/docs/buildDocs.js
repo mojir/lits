@@ -153,8 +153,8 @@ function getExamplePage() {
 }
 
 function getDocumentationContent(docObj) {
-  const { name, longDescription, returns, linkName, specialExpression, examples, arguments: args } = docObj
-  const formattedDescription = formatDescription(longDescription)
+  const { name, description, returns, linkName, specialExpression, examples, arguments: args } = docObj
+  const formattedDescription = formatDescription(description)
   return `
 <div id="${linkName}" class="content function">
   <div class="function-header">${name}</div>

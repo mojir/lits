@@ -23,22 +23,22 @@ module.exports = [
     code: `
 (defn formatPhoneNumber [$data]
   (if (string? $data)
-    (let [phoneNumber (if (= "+" (nth $data 0)) (substring $data 2) $data)]
+    (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)]
       (cond
         ((> (count phoneNumber) 6)
           (str
             "("
-            (substring phoneNumber 0 3)
+            (subs phoneNumber 0 3)
             ") "
-            (substring phoneNumber 3 6)
+            (subs phoneNumber 3 6)
             "-"
-            (substring phoneNumber 6))
+            (subs phoneNumber 6))
         )
         ((> (count phoneNumber) 3)
-          (str "(" (substring phoneNumber 0 3) ") " (substring phoneNumber 3))
+          (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))
         )
         ((> (count phoneNumber) 0)
-          (str "(" (substring phoneNumber 0))
+          (str "(" (subs phoneNumber 0))
         )
         (true
           phoneNumber

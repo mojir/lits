@@ -52,19 +52,19 @@ describe(`object functions`, () => {
     })
   })
 
-  describe(`values`, () => {
+  describe(`vals`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(values (object))`)).toEqual([])
-      expect(lispish.run(`(values (object "x" 1))`)).toEqual([1])
-      expect(lispish.run(`(values (object "x" undefined "y" 2))`)).toEqual([undefined, 2])
-      expect(() => lispish.run(`(values)`)).toThrow()
-      expect(() => lispish.run(`(values (object "x") (object "x"))`)).toThrow()
-      expect(() => lispish.run(`(values 0)`)).toThrow()
-      expect(() => lispish.run(`(values true)`)).toThrow()
-      expect(() => lispish.run(`(values false)`)).toThrow()
-      expect(() => lispish.run(`(values null)`)).toThrow()
-      expect(() => lispish.run(`(values undefined)`)).toThrow()
-      expect(() => lispish.run(`(values [1])`)).toThrow()
+      expect(lispish.run(`(vals (object))`)).toEqual([])
+      expect(lispish.run(`(vals (object "x" 1))`)).toEqual([1])
+      expect(lispish.run(`(vals (object "x" undefined "y" 2))`)).toEqual([undefined, 2])
+      expect(() => lispish.run(`(vals)`)).toThrow()
+      expect(() => lispish.run(`(vals (object "x") (object "x"))`)).toThrow()
+      expect(() => lispish.run(`(vals 0)`)).toThrow()
+      expect(() => lispish.run(`(vals true)`)).toThrow()
+      expect(() => lispish.run(`(vals false)`)).toThrow()
+      expect(() => lispish.run(`(vals null)`)).toThrow()
+      expect(() => lispish.run(`(vals undefined)`)).toThrow()
+      expect(() => lispish.run(`(vals [1])`)).toThrow()
     })
   })
 
@@ -146,7 +146,7 @@ describe(`object functions`, () => {
       const program = `
         (def obj1 (object "x" 10))
         (def obj2 (merge obj1))
-        (!= obj1 obj2)
+        (not= obj1 obj2)
       `
       expect(lispish.run(program)).toBe(true)
     })

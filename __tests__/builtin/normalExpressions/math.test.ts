@@ -89,18 +89,18 @@ describe(`math functions`, () => {
     })
   })
 
-  describe(`%`, () => {
+  describe(`mod`, () => {
     test(`samples`, () => {
-      expect(() => lispish.run(`(%)`)).toThrow()
-      expect(() => lispish.run(`(% 3)`)).toThrow()
-      expect(() => lispish.run(`(% 3 4 5)`)).toThrow()
-      expect(lispish.run(`(% 2 1)`)).toBe(0)
-      expect(lispish.run(`(% 2 2)`)).toBe(0)
-      expect(lispish.run(`(% 3 2)`)).toBe(1)
-      expect(lispish.run(`(% 3 -2)`)).toBe(1)
-      expect(lispish.run(`(% -3 -2)`)).toBe(-1)
-      expect(lispish.run(`(% -3 2)`)).toBe(-1)
-      expect(() => lispish.run(`(% 4 0)`)).toThrow()
+      expect(() => lispish.run(`(mod)`)).toThrow()
+      expect(() => lispish.run(`(mod 3)`)).toThrow()
+      expect(() => lispish.run(`(mod 3 4 5)`)).toThrow()
+      expect(lispish.run(`(mod 2 1)`)).toBe(0)
+      expect(lispish.run(`(mod 2 2)`)).toBe(0)
+      expect(lispish.run(`(mod 3 2)`)).toBe(1)
+      expect(lispish.run(`(mod 3 -2)`)).toBe(1)
+      expect(lispish.run(`(mod -3 -2)`)).toBe(-1)
+      expect(lispish.run(`(mod -3 2)`)).toBe(-1)
+      expect(() => lispish.run(`(mod 4 0)`)).toThrow()
     })
   })
 
