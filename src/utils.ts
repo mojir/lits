@@ -272,7 +272,7 @@ export function assertExpressionNode(node: AstNode): asserts node is ExpressionN
   }
 }
 
-export function isObject(value: unknown): boolean {
+export function isObject(value: unknown): value is Record<string, unknown> {
   return !(
     value === null ||
     typeof value !== `object` ||

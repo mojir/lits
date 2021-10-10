@@ -189,11 +189,13 @@ function parseBinding(tokens: Token[], position: number): [number, BindingNode] 
 }
 
 const parseExpressionExpression: ParseExpressionExpression = (tokens, position) => {
-  const [newPosition1, expression] = parseToken(tokens, position)
+  let expression: AstNode
+  ;[position, expression] = parseToken(tokens, position)
 
   assertExpressionNode(expression)
 
-  const [newPosition2, params] = parseTokens(tokens, newPosition1)
+  let params: AstNode[]
+  ;[position, params] = parseTokens(tokens, position)
 
   const node: ExpressionExpressionNode = {
     type: `ExpressionExpression`,
@@ -201,7 +203,7 @@ const parseExpressionExpression: ParseExpressionExpression = (tokens, position) 
     params,
   }
 
-  return [newPosition2 + 1, node]
+  return [position + 1, node]
 }
 
 const parseNormalExpression: ParseNormalExpression = (tokens, position) => {

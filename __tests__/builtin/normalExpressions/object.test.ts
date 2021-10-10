@@ -153,6 +153,9 @@ describe(`object functions`, () => {
   })
   describe(`object as function`, () => {
     test(`samples`, () => {
+      expect(lispish.run(`(def person {"firstName" "Albert", "lastName", "Mojir"}) (person "firstName")`)).toBe(
+        `Albert`,
+      )
       expect(lispish.run(`({"firstName" "Albert", "lastName", "Mojir"} "firstName")`)).toBe(`Albert`)
       expect(lispish.run(`({"firstName" "Albert", "lastName", "Mojir"} "lastName")`)).toBe(`Mojir`)
       expect(lispish.run(`({"firstName" "Albert", "lastName", "Mojir"} "x")`)).toBeUndefined()

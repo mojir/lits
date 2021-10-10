@@ -89,20 +89,20 @@ function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
 
-  let lispishFunction: LispishFunction | undefined = undefined
   for (const context of contextStack) {
     const candidate = context[node.name]?.value
     if (isLispishFunction(candidate)) {
-      lispishFunction = candidate
-      break
+      return evaluateLispishFunction(candidate, params, contextStack)
+    }
+    if (Array.isArray(candidate)) {
+      return evaluateArrayAsFunction(candidate, node, contextStack)
+    }
+    if (isObject(candidate)) {
+      return evalueateObjectAsFunction(candidate, node, contextStack)
     }
   }
 
-  if (lispishFunction) {
-    return evaluateLispishFunction(lispishFunction, params, contextStack)
-  } else {
-    return evaluateBuiltinNormalExpression(node, params, contextStack)
-  }
+  return evaluateBuiltinNormalExpression(node, params, contextStack)
 }
 
 const evaluateLispishFunction: EvaluateLispishFunction = (
@@ -206,22 +206,38 @@ function evaluateExpressionExpression(node: ExpressionExpressionNode, contextSta
     return evaluateLispishFunction(fn, params, contextStack)
   }
   if (Array.isArray(fn)) {
-    if (node.params.length !== 1) {
-      throw Error(`Array as function requires one non negative integer parameter`)
-    }
-    const index = evaluateAstNode(node.params[0] as AstNode, contextStack)
-    assertNonNegativeNumber(index)
-    assertInteger(index)
-    return fn[index]
+    return evaluateArrayAsFunction(fn, node, contextStack)
   }
   if (isObject(fn)) {
-    assertObject(fn)
-    if (node.params.length !== 1) {
-      throw Error(`Object as function requires one string parameter`)
-    }
-    const key = evaluateAstNode(node.params[0] as AstNode, contextStack)
-    assertString(key)
-    return fn[key]
+    return evalueateObjectAsFunction(fn, node, contextStack)
   }
   throw Error(`Expected function, got ${fn}`)
+}
+
+function evalueateObjectAsFunction(
+  fn: Record<string, unknown>,
+  node: ExpressionExpressionNode | NormalExpressionNode,
+  contextStack: Context[],
+) {
+  assertObject(fn)
+  if (node.params.length !== 1) {
+    throw Error(`Object as function requires one string parameter`)
+  }
+  const key = evaluateAstNode(node.params[0] as AstNode, contextStack)
+  assertString(key)
+  return fn[key]
+}
+
+function evaluateArrayAsFunction(
+  fn: unknown[],
+  node: ExpressionExpressionNode | NormalExpressionNode,
+  contextStack: Context[],
+) {
+  if (node.params.length !== 1) {
+    throw Error(`Array as function requires one non negative integer parameter`)
+  }
+  const index = evaluateAstNode(node.params[0] as AstNode, contextStack)
+  assertNonNegativeNumber(index)
+  assertInteger(index)
+  return fn[index]
 }
