@@ -585,13 +585,19 @@ describe(`array functions`, () => {
       expect(lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true 0))) [3 1 2])`)).toEqual([3, 2, 1])
       expect(lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true 0))) [])`)).toEqual([])
 
-      expect(lispish.run(`(sort (fn [a b] (cond ((string> a b) 1) ((string< a b) -1) (true 0))) "Albert")`)).toBe(
-        `Abelrt`,
+      expect(lispish.run(`(sort (fn [a b] (cond ((string< a b) 1) ((string> a b) -1) (true 0))) "Albert")`)).toBe(
+        `trlebA`,
       )
+
+      expect(lispish.run(`(sort "Albert")`)).toBe(`Abelrt`)
+      expect(
+        lispish.run(
+          `(sort [1 true 2 false  -100 null undefined (regexp "abc") (regexp "ABC") [] [1 2 3] [0 1 2] [0 0 0 0] {"a" 1} {} "Albert" "albert"])`,
+        ),
+      ).toMatchSnapshot()
 
       expect(() => lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true -1))) 10)`)).toThrow()
       expect(() => lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true -1))))`)).toThrow()
-      expect(() => lispish.run(`(sort [10])`)).toThrow()
       expect(() => lispish.run(`(sort)`)).toThrow()
     })
   })

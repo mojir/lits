@@ -175,4 +175,34 @@ module.exports = {
     examples: [`(boolean 0)`, `(boolean 1)`, `(boolean null)`, `(boolean "Albert")`],
     specialExpression: false,
   },
+  compare: {
+    name: `compare`,
+    category: `Misc`,
+    linkName: `compare`,
+    returns: {
+      type: `1 | -1 | 0`,
+    },
+    arguments: [
+      {
+        name: `a`,
+        type: `any`,
+      },
+      {
+        name: `b`,
+        type: `any`,
+      },
+    ],
+    description: `Compares two values. Returns -1 if a < b, 1 if a > b and 0 if a and b have the same sort order.`,
+    examples: [
+      `(compare 0 1)`,
+      `(compare "Albert" "Mojir")`,
+      `(compare 1 "1")`,
+      `(compare [1 2 3] [2 3])`,
+      `(compare [1 2 3] [2 3 4])`,
+      `(compare {"a" 1 "b" 2} {"a" 1})`,
+      `(compare {"a" 1} [2 3])`,
+      `(compare + -)`,
+    ],
+    specialExpression: false,
+  },
 }

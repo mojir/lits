@@ -156,6 +156,10 @@ export function asNonEmptyString(value: unknown): string {
   return value
 }
 
+export function isRegExp(value: unknown): value is RegExp {
+  return value instanceof RegExp
+}
+
 export function assertRegExp(value: unknown): asserts value is RegExp {
   if (!(value instanceof RegExp)) {
     throw TypeError(`Expected RegExp, got: ${value} type="${typeof value}"`)
@@ -342,8 +346,93 @@ export function hasKey(coll: Coll, key: string | number): boolean {
 }
 
 // TODO make it into enum or record with sort number as value
-type Type = `string` | `number` | `NaN` | `-Infinity` | `+Infinity`
+type Type = `undefined` | `null` | `boolean` | `number` | `string` | `object` | `array` | `regexp` | `unknown`
 
-function getType(value: unknown): Type {}
+const sortOrderByType: Record<Type, number> = {
+  boolean: 0,
+  number: 1,
+  string: 2,
+  array: 3,
+  object: 4,
+  regexp: 5,
+  unknown: 6,
+  null: 7,
+  undefined: 8,
+}
 
-export function compare(a: unknown, b: unknown) {}
+function getType(value: unknown): Type {
+  if (value === undefined) {
+    return `undefined`
+  } else if (value === null) {
+    return `null`
+  } else if (typeof value === `boolean`) {
+    return `boolean`
+  } else if (typeof value === `number`) {
+    return `number`
+  } else if (typeof value === `string`) {
+    return `string`
+  } else if (isArr(value)) {
+    return `array`
+  } else if (isObj(value)) {
+    return `object`
+  } else if (isRegExp(value)) {
+    return `regexp`
+  } else {
+    return `unknown`
+  }
+}
+
+export function compare(a: unknown, b: unknown): number {
+  const aType = getType(a)
+  const bType = getType(b)
+  if (aType !== bType) {
+    return Math.sign(sortOrderByType[aType] - sortOrderByType[bType])
+  }
+
+  switch (aType) {
+    case `undefined`:
+      return 0
+    case `null`:
+      return 0
+    case `boolean`:
+      if (a === b) {
+        return 0
+      }
+      return a === false ? -1 : 1
+    case `number`:
+      return Math.sign((a as number) - (b as number))
+    case `string`: {
+      const aString = a as string
+      const bString = b as string
+      return aString < bString ? -1 : aString > bString ? 1 : 0
+    }
+    case `array`: {
+      const aArray = a as Arr
+      const bArray = b as Arr
+      if (aArray.length < bArray.length) {
+        return -1
+      } else if (aArray.length > bArray.length) {
+        return 1
+      }
+      for (let i = 0; i < aArray.length; i += 1) {
+        const innerComp = compare(aArray[i], bArray[i])
+        if (innerComp !== 0) {
+          return innerComp
+        }
+      }
+      return 0
+    }
+    case `object`: {
+      const aObj = a as Obj
+      const bObj = b as Obj
+      return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length)
+    }
+    case `regexp`: {
+      const aString = (a as RegExp).source
+      const bString = (b as RegExp).source
+      return aString < bString ? -1 : aString > bString ? 1 : 0
+    }
+    case `unknown`:
+      return 0
+  }
+}

@@ -37,6 +37,7 @@ import {
   assertNumber,
   isInteger,
   hasKey,
+  isRegExp,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -567,5 +568,11 @@ describe(`utils`, () => {
     expect(() => assertNumber(undefined)).toThrow()
     expect(() => assertNumber(`undefined`)).toThrow()
     expect(() => assertNumber([])).toThrow()
+  })
+
+  test(`isRegexp`, () => {
+    expect(isRegExp(`Hej`)).toBe(false)
+    expect(isRegExp({})).toBe(false)
+    expect(isRegExp(/^a/)).toBe(true)
   })
 })

@@ -12,6 +12,7 @@ import {
   isString,
   assertString,
   assertCharArray,
+  compare,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
@@ -377,29 +378,41 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   sort: {
-    evaluate: ([comparer, seq]: Arr, contextStack, { evaluateLispishFunction }): Seq => {
-      assertLispishFunction(comparer)
+    evaluate: (params: Arr, contextStack, { evaluateLispishFunction }): Seq => {
+      const defaultComparer = params.length === 1
+      const seq = defaultComparer ? params[0] : params[1]
+      const comparer = defaultComparer ? null : params[0]
       assertSeq(seq)
 
       if (isString(seq)) {
         const result = seq.split(``)
-        result.sort((a, b) => {
-          const compareValue = evaluateLispishFunction(comparer, [a, b], contextStack)
-          assertFiniteNumber(compareValue)
-          return compareValue
-        })
+        if (defaultComparer) {
+          result.sort(compare)
+        } else {
+          assertLispishFunction(comparer)
+          result.sort((a, b) => {
+            const compareValue = evaluateLispishFunction(comparer, [a, b], contextStack)
+            assertFiniteNumber(compareValue)
+            return compareValue
+          })
+        }
         return result.join(``)
       }
 
       const result = [...seq]
-      result.sort((a, b) => {
-        const compareValue = evaluateLispishFunction(comparer, [a, b], contextStack)
-        assertFiniteNumber(compareValue)
-        return compareValue
-      })
+      if (defaultComparer) {
+        result.sort(compare)
+      } else {
+        result.sort((a, b) => {
+          assertLispishFunction(comparer)
+          const compareValue = evaluateLispishFunction(comparer, [a, b], contextStack)
+          assertFiniteNumber(compareValue)
+          return compareValue
+        })
+      }
       return result
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertLength({ min: 1, max: 2 }, node),
   },
   take: {
     evaluate: ([n, input]: Arr): Seq => {

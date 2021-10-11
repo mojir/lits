@@ -6,6 +6,7 @@ import {
   assertLispishFunction,
   assertObjectOrArray,
   assertString,
+  compare,
   isBuiltinLispishFunction,
   isUserDefinedLispishFunction,
 } from '../../../utils'
@@ -89,6 +90,12 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return !!value
     },
     validate: node => assertLength(1, node),
+  },
+  compare: {
+    evaluate: ([a, b]): number => {
+      return compare(a, b)
+    },
+    validate: node => assertLength(2, node),
   },
 }
 

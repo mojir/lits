@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`array functions sort samples 1`] = `
+Array [
+  false,
+  true,
+  -100,
+  1,
+  2,
+  "Albert",
+  "albert",
+  Array [],
+  Array [
+    0,
+    1,
+    2,
+  ],
+  Array [
+    1,
+    2,
+    3,
+  ],
+  Array [
+    0,
+    0,
+    0,
+    0,
+  ],
+  Object {},
+  Object {
+    "a": 1,
+  },
+  /ABC/,
+  /abc/,
+  null,
+  undefined,
+]
+`;
