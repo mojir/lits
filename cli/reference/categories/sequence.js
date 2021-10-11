@@ -519,7 +519,7 @@ module.exports = {
       },
     ],
     description: `Constructs a new array with the \`count\` last elements from \`array\`.`,
-    examples: [`(take-last [1 2 3 4 5] 3)`, `(take-last [1 2 3 4 5] 0)`],
+    examples: [`(take-last 3 [1 2 3 4 5])`, `(take-last 0 [1 2 3 4 5])`],
     specialExpression: false,
   },
 

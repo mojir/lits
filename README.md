@@ -74,8 +74,6 @@ const result = evaluate(ast, context) // returns 10
 * **drop**
 * **eq?** (collection) recursevly compares two or more collections (deep-equal)
 * **every-pred**
-* **false?**
-* **finite?**
 * **find**
 * **flatten**
 * **fn shorthand** 
@@ -111,15 +109,11 @@ const result = evaluate(ast, context) // returns 10
 * **shuffle** (array)
 * **sort-by**
 * **special-symbol?**
-* **split** ? should work for both strings and arrays ?
 * **split-at**
 * **split-with**
 * **symbol**
 * **symbol?**
-* **take** reorder arguments to follow clojure's signature
-* **take-last** reorder arguments to follow clojure's signature
 * **time!**
-* **true?**
 * **update**
 * **update-in**
 * **when-first**

@@ -424,7 +424,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'take-last': {
-    evaluate: ([array, n]: Arr): Seq => {
+    evaluate: ([n, array]: Arr): Seq => {
       assertSeq(array)
       assertNonNegativeInteger(n)
 

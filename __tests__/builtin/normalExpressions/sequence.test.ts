@@ -526,11 +526,11 @@ describe(`array functions`, () => {
 
   describe(`take-last`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(take-last [1 2 3] 2)`)).toEqual([2, 3])
-      expect(lispish.run(`(take-last [1 2 3] 20)`)).toEqual([1, 2, 3])
-      expect(lispish.run(`(take-last [1 2 3] 0)`)).toEqual([])
+      expect(lispish.run(`(take-last 2 [1 2 3])`)).toEqual([2, 3])
+      expect(lispish.run(`(take-last 20 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(take-last 0 [1 2 3])`)).toEqual([])
 
-      expect(() => lispish.run(`(take-last [1 2 3] 0.5)`)).toThrow()
+      expect(() => lispish.run(`(take-last 0.5 [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take-last (object))`)).toThrow()
       expect(() => lispish.run(`(take-last null)`)).toThrow()
       expect(() => lispish.run(`(take-last undefined)`)).toThrow()
@@ -539,13 +539,13 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(take-last "1")`)).toThrow()
       expect(() => lispish.run(`(take-last)`)).toThrow()
       expect(() => lispish.run(`(take-last [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(take-last [1 2 3] 1 2)`)).toThrow()
+      expect(() => lispish.run(`(take-last 1 2 [1 2 3])`)).toThrow()
     })
 
     test(`new array created`, () => {
       const program = `
         (def l1 [1 2 3])
-        (def l2 (take-last l1 2))
+        (def l2 (take-last 2 l1))
         (= l1 l2)
       `
       expect(lispish.run(program)).toBe(false)

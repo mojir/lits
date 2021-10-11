@@ -418,4 +418,38 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  'false?': {
+    name: `false?`,
+    category: `Predicate`,
+    linkName: `false_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    description: `Returns \`true\` if \`value\` is \`true\`, otherwise \`false\`.`,
+    examples: [`(false? false)`, `(false? true)`, `(false? 1)`, `(false? 0)`],
+    specialExpression: false,
+  },
+  'true?': {
+    name: `true?`,
+    category: `Predicate`,
+    linkName: `true_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    description: `Returns \`true\` if \`value\` is \`true\`, otherwise \`false\`.`,
+    examples: [`(true? false)`, `(true? true)`, `(true? 1)`, `(true? 0)`],
+    specialExpression: false,
+  },
 }

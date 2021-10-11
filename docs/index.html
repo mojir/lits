@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.29</span></div>
+    <div class="column right version"><span>v0.1.30</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -819,8 +819,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(take-last [1 2 3 4 5] 3)')"><span class="icon-button">▶</span> (take-last [1 2 3 4 5] 3) <span class="gray">=> [3,4,5]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(take-last [1 2 3 4 5] 0)')"><span class="icon-button">▶</span> (take-last [1 2 3 4 5] 0) <span class="gray">=> []</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(take-last 3 [1 2 3 4 5])')"><span class="icon-button">▶</span> (take-last 3 [1 2 3 4 5]) <span class="gray">=> [3,4,5]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(take-last 0 [1 2 3 4 5])')"><span class="icon-button">▶</span> (take-last 0 [1 2 3 4 5]) <span class="gray">=> []</span></span></pre>
   </div>
 </div>
 
@@ -899,7 +899,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,5,8,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,3,9,10]</span></span></pre>
   </div>
 </div>
 
@@ -1421,9 +1421,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.9685061553826761</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.007330782345487355</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.163967957950458</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.4522099532774475</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.008851549169463546</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.8270215312318674</span></span></pre>
   </div>
 </div>
 
@@ -1442,8 +1442,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 49</span></span></pre>
   </div>
 </div>
 
@@ -1906,7 +1906,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633967594591</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633987316049</span></span></pre>
   </div>
 </div>
 
@@ -1967,6 +1967,53 @@
 <pre><span class="example" onclick="addToPlayground('(boolean 1)')"><span class="icon-button">▶</span> (boolean 1) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(boolean null)')"><span class="icon-button">▶</span> (boolean null) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(boolean ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (boolean "Albert") <span class="gray">=> true</span></span></pre>
+  </div>
+</div>
+
+
+<div id="compare" class="content function">
+  <div class="function-header">compare</div>
+  
+  <p>Compares two values. Returns -1 if a < b, 1 if a > b and 0 if a and b have the same sort order.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>compare a b => 1 | -1 | 0</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>a: any</pre>
+<pre>b: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(compare 0 1)')"><span class="icon-button">▶</span> (compare 0 1) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___)')"><span class="icon-button">▶</span> (compare "Albert" "Mojir") <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare 1 ___double_quote___1___double_quote___)')"><span class="icon-button">▶</span> (compare 1 "1") <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare [1 2 3] [2 3])')"><span class="icon-button">▶</span> (compare [1 2 3] [2 3]) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare [1 2 3] [2 3 4])')"><span class="icon-button">▶</span> (compare [1 2 3] [2 3 4]) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} {___double_quote___a___double_quote___ 1})')"><span class="icon-button">▶</span> (compare {"a" 1 "b" 2} {"a" 1}) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare {___double_quote___a___double_quote___ 1} [2 3])')"><span class="icon-button">▶</span> (compare {"a" 1} [2 3]) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare + -)')"><span class="icon-button">▶</span> (compare + -) <span class="gray">=> 0</span></span></pre>
+  </div>
+</div>
+
+
+<div id="assert" class="content function">
+  <div class="function-header">assert</div>
+  
+  <p>If <span class="pre">value</span> is falsy it throws AssertionError with <span class="pre">message</span>. If no <span class="pre">message</span> is provided, message is set to <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>assert value message(optional) => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre>
+<pre>message: string</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="addToPlayground('(assert 0 ___double_quote___Expected a positive value___double_quote___)')"><span class="icon-button">▶</span> (assert 0 "Expected a positive value") <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="addToPlayground('(assert false)')"><span class="icon-button">▶</span> (assert false) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre><span class="example" onclick="addToPlayground('(assert 1)')"><span class="icon-button">▶</span> (assert 1) <span class="gray">=> 1</span></span></pre>
   </div>
 </div>
 
@@ -2450,6 +2497,132 @@
 </div>
 
 
+<div id="finite_question" class="content function">
+  <div class="function-header">finite?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is finite, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>finite? number => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(finite? 1.0)')"><span class="icon-button">▶</span> (finite? 1.0) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(finite? (/ 1 0))')"><span class="icon-button">▶</span> (finite? (/ 1 0)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(finite? (/ -1 0))')"><span class="icon-button">▶</span> (finite? (/ -1 0)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(finite? (sqrt -1))')"><span class="icon-button">▶</span> (finite? (sqrt -1)) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="nan_question" class="content function">
+  <div class="function-header">nan?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> is NaN (not a number), otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>nan? number => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(nan? 1.0)')"><span class="icon-button">▶</span> (nan? 1.0) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nan? (/ 1 0))')"><span class="icon-button">▶</span> (nan? (/ 1 0)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nan? (/ -1 0))')"><span class="icon-button">▶</span> (nan? (/ -1 0)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nan? (sqrt -1))')"><span class="icon-button">▶</span> (nan? (sqrt -1)) <span class="gray">=> true</span></span></pre>
+  </div>
+</div>
+
+
+<div id="negative-infinity_question" class="content function">
+  <div class="function-header">negative-infinity?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> equals negative infinity, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>negative-infinity? number => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(negative-infinity? 1.0)')"><span class="icon-button">▶</span> (negative-infinity? 1.0) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(negative-infinity? (/ 1 0))')"><span class="icon-button">▶</span> (negative-infinity? (/ 1 0)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(negative-infinity? (/ -1 0))')"><span class="icon-button">▶</span> (negative-infinity? (/ -1 0)) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(negative-infinity? (sqrt -1))')"><span class="icon-button">▶</span> (negative-infinity? (sqrt -1)) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="positive-infinity_question" class="content function">
+  <div class="function-header">positive-infinity?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">number</span> equals positive infinity, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>positive-infinity? number => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(positive-infinity? 1.0)')"><span class="icon-button">▶</span> (positive-infinity? 1.0) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(positive-infinity? (/ 1 0))')"><span class="icon-button">▶</span> (positive-infinity? (/ 1 0)) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(positive-infinity? (/ -1 0))')"><span class="icon-button">▶</span> (positive-infinity? (/ -1 0)) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(positive-infinity? (sqrt -1))')"><span class="icon-button">▶</span> (positive-infinity? (sqrt -1)) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="false_question" class="content function">
+  <div class="function-header">false?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">true</span>, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>false? value => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(false? false)')"><span class="icon-button">▶</span> (false? false) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(false? true)')"><span class="icon-button">▶</span> (false? true) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(false? 1)')"><span class="icon-button">▶</span> (false? 1) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(false? 0)')"><span class="icon-button">▶</span> (false? 0) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="true_question" class="content function">
+  <div class="function-header">true?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">true</span>, otherwise <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>true? value => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(true? false)')"><span class="icon-button">▶</span> (true? false) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(true? true)')"><span class="icon-button">▶</span> (true? true) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(true? 1)')"><span class="icon-button">▶</span> (true? 1) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(true? 0)')"><span class="icon-button">▶</span> (true? 0) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
 <div id="regexp" class="content function">
   <div class="function-header">regexp</div>
   
@@ -2695,8 +2868,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(try (/ 2 4) ((error) (/ 2 1)))')"><span class="icon-button">▶</span> (try (/ 2 4) ((error) (/ 2 1))) <span class="gray">=> 0.5</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(try (/ 2 0) ((error) (/ 2 1)))')"><span class="icon-button">▶</span> (try (/ 2 0) ((error) (/ 2 1))) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(try (/ 2 0) ((error) error))')"><span class="icon-button">▶</span> (try (/ 2 0) ((error) error)) <span class="gray">=> TypeError: Expected non zero value</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(try (/ 2 0) ((error) (/ 2 1)))')"><span class="icon-button">▶</span> (try (/ 2 0) ((error) (/ 2 1))) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(try (/ 2 0) ((error) error))')"><span class="icon-button">▶</span> (try (/ 2 0) ((error) error)) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3504,16 +3677,22 @@
 <li id="boolean_question_link" onclick="showPage('boolean_question')">boolean?</li>
 <li id="collection_question_link" onclick="showPage('collection_question')">collection?</li>
 <li id="even_question_link" onclick="showPage('even_question')">even?</li>
+<li id="false_question_link" onclick="showPage('false_question')">false?</li>
+<li id="finite_question_link" onclick="showPage('finite_question')">finite?</li>
 <li id="function_question_link" onclick="showPage('function_question')">function?</li>
 <li id="integer_question_link" onclick="showPage('integer_question')">integer?</li>
+<li id="nan_question_link" onclick="showPage('nan_question')">nan?</li>
 <li id="neg_question_link" onclick="showPage('neg_question')">neg?</li>
+<li id="negative-infinity_question_link" onclick="showPage('negative-infinity_question')">negative-infinity?</li>
 <li id="null_question_link" onclick="showPage('null_question')">null?</li>
 <li id="number_question_link" onclick="showPage('number_question')">number?</li>
 <li id="object_question_link" onclick="showPage('object_question')">object?</li>
 <li id="odd_question_link" onclick="showPage('odd_question')">odd?</li>
 <li id="pos_question_link" onclick="showPage('pos_question')">pos?</li>
+<li id="positive-infinity_question_link" onclick="showPage('positive-infinity_question')">positive-infinity?</li>
 <li id="regexp_question_link" onclick="showPage('regexp_question')">regexp?</li>
 <li id="string_question_link" onclick="showPage('string_question')">string?</li>
+<li id="true_question_link" onclick="showPage('true_question')">true?</li>
 <li id="undefined_question_link" onclick="showPage('undefined_question')">undefined?</li>
 <li id="zero_question_link" onclick="showPage('zero_question')">zero?</li>
         </ul>
@@ -3670,7 +3849,9 @@
         <ul>
           <li id="_equal_link" onclick="showPage('_equal')">=</li>
 <li id="apply_link" onclick="showPage('apply')">apply</li>
+<li id="assert_link" onclick="showPage('assert')">assert</li>
 <li id="boolean_link" onclick="showPage('boolean')">boolean</li>
+<li id="compare_link" onclick="showPage('compare')">compare</li>
 <li id="debug_exclamation_link" onclick="showPage('debug_exclamation')">debug!</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="inst-ms_link" onclick="showPage('inst-ms')">inst-ms</li>

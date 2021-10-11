@@ -384,4 +384,24 @@ describe(`predicates`, () => {
       expect(lispish.run(`(negative-infinity? (sqrt -1))`)).toBe(false)
     })
   })
+
+  describe(`true?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(true? false)`)).toBe(false)
+      expect(lispish.run(`(true? true)`)).toBe(true)
+      expect(lispish.run(`(true? 1)`)).toBe(false)
+      expect(lispish.run(`(true? 0)`)).toBe(false)
+      expect(lispish.run(`(true? "Mojir")`)).toBe(false)
+    })
+  })
+
+  describe(`false?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(false? false)`)).toBe(true)
+      expect(lispish.run(`(false? true)`)).toBe(false)
+      expect(lispish.run(`(false? 1)`)).toBe(false)
+      expect(lispish.run(`(false? 0)`)).toBe(false)
+      expect(lispish.run(`(false? "Mojir")`)).toBe(false)
+    })
+  })
 })

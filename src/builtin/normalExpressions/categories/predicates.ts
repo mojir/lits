@@ -136,4 +136,18 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
+
+  'true?': {
+    evaluate: ([value]: Arr): boolean => {
+      return value === true
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'false?': {
+    evaluate: ([value]: Arr): boolean => {
+      return value === false
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
 }
