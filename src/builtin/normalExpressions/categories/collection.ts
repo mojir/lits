@@ -1,33 +1,41 @@
+import { Arr, Coll, Obj } from '../../../interface'
 import {
-  assertArray,
-  assertCollection,
+  assertArr,
+  assertChar,
+  assertColl,
   assertInteger,
   assertLength,
-  assertNonNegativeNumber,
   assertNumberGte,
   assertNumberLte,
-  assertObject,
+  assertObj,
   assertString,
   assertStringOrNumber,
+  isArr,
+  isObj,
+  isString,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const collectionNormalExpression: BuiltinNormalExpressions = {
   get: {
-    evaluate: (params: unknown[]): unknown => {
+    evaluate: (params: Arr): unknown => {
       const [coll, key, defaultValue] = params
       const hasDefault = params.length === 3
-      assertCollection(coll)
-      if (Array.isArray(coll)) {
+
+      assertColl(coll)
+
+      if (isArr(coll)) {
         assertInteger(key)
-        assertNonNegativeNumber(key)
-        if (coll.length > key) {
+        if (key < coll.length) {
           return coll[key]
         }
-      } else {
+      } else if (isObj(coll)) {
         assertString(key)
         if (Object.getOwnPropertyDescriptor(coll, key)) {
           return coll[key]
         }
+      } else {
+        assertInteger(key)
+        return coll[key]
       }
       if (hasDefault) {
         return defaultValue
@@ -37,11 +45,11 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },
   count: {
-    evaluate: ([coll]: unknown[]): number => {
+    evaluate: ([coll]: Arr): number => {
       if (typeof coll === `string`) {
         return coll.length
       }
-      assertCollection(coll)
+      assertColl(coll)
       if (Array.isArray(coll)) {
         return coll.length
       }
@@ -50,8 +58,8 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   'contains?': {
-    evaluate: ([coll, key]: unknown[]): boolean => {
-      assertCollection(coll)
+    evaluate: ([coll, key]: Arr): boolean => {
+      assertColl(coll)
       assertStringOrNumber(key)
       if (Array.isArray(coll)) {
         if (!Number.isInteger(key)) {
@@ -68,13 +76,17 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   assoc: {
-    evaluate: ([coll, key, value]: unknown[]): unknown => {
-      assertCollection(coll)
+    evaluate: ([coll, key, value]: Arr): Coll => {
+      assertColl(coll)
       assertStringOrNumber(key)
-      if (Array.isArray(coll)) {
+      if (Array.isArray(coll) || typeof coll === `string`) {
         assertInteger(key)
         assertNumberGte(key, 0)
         assertNumberLte(key, coll.length)
+        if (typeof coll === `string`) {
+          assertChar(value)
+          return `${coll.slice(0, key)}${value}${coll.slice(key + 1)}`
+        }
         const copy = [...coll]
         copy[key] = value
         return copy
@@ -87,15 +99,21 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(3, node),
   },
   concat: {
-    evaluate: (params: unknown[]): unknown => {
-      if (Array.isArray(params[0])) {
-        return params.reduce((result: unknown[], arr) => {
-          assertArray(arr)
+    evaluate: (params: Arr): unknown => {
+      assertColl(params[0])
+      if (isArr(params[0])) {
+        return params.reduce((result: Arr, arr) => {
+          assertArr(arr)
           return result.concat(arr)
         }, [])
+      } else if (isString(params[0])) {
+        return params.reduce((result: string, s) => {
+          assertString(s)
+          return `${result}${s}`
+        }, ``)
       } else {
-        return params.reduce((result: Record<string, unknown>, obj) => {
-          assertObject(obj)
+        return params.reduce((result: Obj, obj) => {
+          assertObj(obj)
           return Object.assign(result, obj)
         }, {})
       }
@@ -103,11 +121,11 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   'empty?': {
-    evaluate: ([first]: unknown[]): boolean => {
-      if (typeof first === `string`) {
+    evaluate: ([first]: Arr): boolean => {
+      assertColl(first)
+      if (isString(first)) {
         return first.length === 0
       }
-      assertCollection(first)
       if (Array.isArray(first)) {
         return first.length === 0
       }

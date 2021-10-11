@@ -2,6 +2,7 @@ import { builtin } from '../builtin'
 import { assertNameNotDefined } from '../builtin/utils'
 import { evaluate } from '../evaluator'
 import { Context } from '../evaluator/interface'
+import { Obj } from '../interface'
 import { parse } from '../parser'
 import { Ast } from '../parser/interface'
 import { tokenize } from '../tokenizer'
@@ -14,7 +15,7 @@ type EvaluateParams =
     }
   | {
       globalContext?: never
-      vars: Record<string, unknown>
+      vars: Obj
     }
   | {
       globalContext?: never

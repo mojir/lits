@@ -1,36 +1,35 @@
-import { assertInteger, assertLength, assertNonNegativeNumber } from '../../../utils'
+import { Arr } from '../../../interface'
+import { assertInteger, assertLength, assertNonNegativeInteger } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const bitwiseNormalExpression: BuiltinNormalExpressions = {
   'bit-shift-left': {
-    evaluate: ([number, count]: unknown[]): number => {
+    evaluate: ([number, count]: Arr): number => {
       assertInteger(number)
-      assertInteger(count)
-      assertNonNegativeNumber(count)
+      assertNonNegativeInteger(count)
 
       return number << count
     },
     validate: node => assertLength(2, node),
   },
   'bit-shift-right': {
-    evaluate: ([number, count]: unknown[]): number => {
+    evaluate: ([number, count]: Arr): number => {
       assertInteger(number)
-      assertInteger(count)
-      assertNonNegativeNumber(count)
+      assertNonNegativeInteger(count)
 
       return number >> count
     },
     validate: node => assertLength(2, node),
   },
   'bit-not': {
-    evaluate: ([number]: unknown[]): number => {
+    evaluate: ([number]: Arr): number => {
       assertInteger(number)
       return ~number
     },
     validate: node => assertLength(1, node),
   },
   'bit-and': {
-    evaluate: ([first, ...rest]: unknown[]): number => {
+    evaluate: ([first, ...rest]: Arr): number => {
       assertInteger(first)
 
       return rest.reduce((result: number, value) => {
@@ -41,7 +40,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-and-not': {
-    evaluate: ([first, ...rest]: unknown[]): number => {
+    evaluate: ([first, ...rest]: Arr): number => {
       assertInteger(first)
 
       return rest.reduce((result: number, value) => {
@@ -52,7 +51,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-or': {
-    evaluate: ([first, ...rest]: unknown[]): number => {
+    evaluate: ([first, ...rest]: Arr): number => {
       assertInteger(first)
 
       return rest.reduce((result: number, value) => {
@@ -63,7 +62,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-xor': {
-    evaluate: ([first, ...rest]: unknown[]): number => {
+    evaluate: ([first, ...rest]: Arr): number => {
       assertInteger(first)
 
       return rest.reduce((result: number, value) => {
@@ -74,10 +73,9 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-flip': {
-    evaluate: ([number, index]: unknown[]): number => {
+    evaluate: ([number, index]: Arr): number => {
       assertInteger(number)
-      assertInteger(index)
-      assertNonNegativeNumber(index)
+      assertNonNegativeInteger(index)
 
       const mask = 1 << index
       return (number ^= mask)
@@ -85,10 +83,9 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'bit-set': {
-    evaluate: ([number, index]: unknown[]): number => {
+    evaluate: ([number, index]: Arr): number => {
       assertInteger(number)
-      assertInteger(index)
-      assertNonNegativeNumber(index)
+      assertNonNegativeInteger(index)
 
       const mask = 1 << index
       return (number |= mask)
@@ -96,10 +93,9 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'bit-clear': {
-    evaluate: ([number, index]: unknown[]): number => {
+    evaluate: ([number, index]: Arr): number => {
       assertInteger(number)
-      assertInteger(index)
-      assertNonNegativeNumber(index)
+      assertNonNegativeInteger(index)
 
       const mask = 1 << index
       return (number &= ~mask)
@@ -107,10 +103,9 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'bit-test': {
-    evaluate: ([number, index]: unknown[]): boolean => {
+    evaluate: ([number, index]: Arr): boolean => {
       assertInteger(number)
-      assertInteger(index)
-      assertNonNegativeNumber(index)
+      assertNonNegativeInteger(index)
 
       const mask = 1 << index
       return !!(number & mask)

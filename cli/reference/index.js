@@ -1,5 +1,6 @@
 const collectionReference = require('./categories/collection')
-const listReference = require('./categories/array')
+const arrayReference = require('./categories/array')
+const sequenceReference = require('./categories/sequence')
 const mathReference = require('./categories/math')
 const miscReference = require('./categories/misc')
 const objectReference = require('./categories/object')
@@ -11,7 +12,8 @@ const bitwiseReference = require('./categories/bitwise')
 
 const functionReference = {
   ...collectionReference,
-  ...listReference,
+  ...arrayReference,
+  ...sequenceReference,
   ...mathReference,
   ...miscReference,
   ...objectReference,
@@ -25,6 +27,7 @@ const functionReference = {
 const categoryNames = [
   'Special expression',
   'Predicate',
+  'Sequence',
   'Collection',
   'Array',
   'Object',

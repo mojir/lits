@@ -1,24 +1,24 @@
+import { Arr } from '../../../interface'
 import { NormalExpressionNode } from '../../../parser/interface'
 import {
   assertLength,
-  assertNonNegativeNumber,
+  assertNonNegativeInteger,
   assertFiniteNumber,
   assertNumberGte,
   assertString,
   assertInteger,
-  assertArray,
+  assertArr,
   assertStringOrRegExp,
   assertStringArray,
-  isObject,
+  isObj,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
   subs: {
-    evaluate: ([first, second, third]: unknown[]): unknown => {
+    evaluate: ([first, second, third]: Arr): unknown => {
       assertString(first)
-      assertFiniteNumber(second)
-      assertNonNegativeNumber(second)
+      assertNonNegativeInteger(second)
 
       if (third === undefined) {
         return (first as string).substring(second)
@@ -31,10 +31,9 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string-repeat': {
-    evaluate: ([string, count]: unknown[]): string => {
+    evaluate: ([string, count]: Arr): string => {
       assertString(string)
-      assertNonNegativeNumber(count)
-      assertInteger(count)
+      assertNonNegativeInteger(count)
 
       return string.repeat(count)
     },
@@ -42,14 +41,14 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   str: {
-    evaluate: (params: unknown[]): unknown => {
+    evaluate: (params: Arr): unknown => {
       return params.reduce((result: string, param) => {
         const paramStr =
           param === undefined
             ? ``
             : param === null
             ? `null`
-            : isObject(param)
+            : isObj(param)
             ? JSON.stringify(param)
             : Array.isArray(param)
             ? JSON.stringify(param)
@@ -60,7 +59,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string>': {
-    evaluate: ([first, second]: unknown[]): unknown => {
+    evaluate: ([first, second]: Arr): unknown => {
       assertString(first)
       assertString(second)
       return first > second
@@ -69,7 +68,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string<': {
-    evaluate: ([first, second]: unknown[]): unknown => {
+    evaluate: ([first, second]: Arr): unknown => {
       assertString(first)
       assertString(second)
       return first < second
@@ -78,7 +77,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string>=': {
-    evaluate: ([first, second]: unknown[]): unknown => {
+    evaluate: ([first, second]: Arr): unknown => {
       assertString(first)
       assertString(second)
       return first >= second
@@ -87,7 +86,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string<=': {
-    evaluate: ([first, second]: unknown[]): unknown => {
+    evaluate: ([first, second]: Arr): unknown => {
       assertString(first)
       assertString(second)
       return first <= second
@@ -96,7 +95,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string-to-number': {
-    evaluate: ([str]: unknown[]): number => {
+    evaluate: ([str]: Arr): number => {
       assertString(str)
       const number = Number(str)
       if (Number.isNaN(number)) {
@@ -108,7 +107,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'number-to-string': {
-    evaluate: (params: unknown[]): string => {
+    evaluate: (params: Arr): string => {
       const [number, base] = params
       assertFiniteNumber(number)
       if (params.length === 1) {
@@ -121,8 +120,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         if (base === 10) {
           return `${number}`
         }
-        assertNonNegativeNumber(number)
-        assertInteger(number)
+        assertNonNegativeInteger(number)
         return Number(number).toString(base)
       }
     },
@@ -130,7 +128,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'lower-case': {
-    evaluate: ([str]: unknown[]): string => {
+    evaluate: ([str]: Arr): string => {
       assertString(str)
       return str.toLowerCase()
     },
@@ -138,7 +136,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'upper-case': {
-    evaluate: ([str]: unknown[]): string => {
+    evaluate: ([str]: Arr): string => {
       assertString(str)
       return str.toUpperCase()
     },
@@ -146,7 +144,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   trim: {
-    evaluate: ([str]: unknown[]): string => {
+    evaluate: ([str]: Arr): string => {
       assertString(str)
       return str.trim()
     },
@@ -154,7 +152,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'trim-left': {
-    evaluate: ([str]: unknown[]): string => {
+    evaluate: ([str]: Arr): string => {
       assertString(str)
       return str.replace(/^\s+/, ``)
     },
@@ -162,7 +160,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'trim-right': {
-    evaluate: ([str]: unknown[]): string => {
+    evaluate: ([str]: Arr): string => {
       assertString(str)
       return str.replace(/\s+$/, ``)
     },
@@ -170,8 +168,8 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   join: {
-    evaluate: ([stringList, delimiter]: unknown[]): string => {
-      assertArray(stringList)
+    evaluate: ([stringList, delimiter]: Arr): string => {
+      assertArr(stringList)
       stringList.forEach(str => assertString(str))
       assertString(delimiter)
       return stringList.join(delimiter)
@@ -180,12 +178,11 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   split: {
-    evaluate: ([str, delimiter, limit]: unknown[]): string[] => {
+    evaluate: ([str, delimiter, limit]: Arr): string[] => {
       assertString(str)
       assertStringOrRegExp(delimiter)
       if (limit !== undefined) {
-        assertInteger(limit)
-        assertNonNegativeNumber(limit)
+        assertNonNegativeInteger(limit)
       }
       return str.split(delimiter, limit)
     },
@@ -193,7 +190,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'pad-left': {
-    evaluate: ([str, length, padString]: unknown[]): string => {
+    evaluate: ([str, length, padString]: Arr): string => {
       assertString(str)
       assertInteger(length)
 
@@ -207,7 +204,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'pad-right': {
-    evaluate: ([str, length, padString]: unknown[]): string => {
+    evaluate: ([str, length, padString]: Arr): string => {
       assertString(str)
       assertInteger(length)
 
@@ -221,7 +218,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   template: {
-    evaluate: ([templateString, ...placeholders]: unknown[]): string => {
+    evaluate: ([templateString, ...placeholders]: Arr): string => {
       assertString(templateString)
       const templateStrings = templateString.split(`||||`)
       if (templateStrings.length === 1) {
@@ -229,8 +226,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         return applyPlaceholders(templateStrings[0] as string, placeholders)
       } else if (templateStrings.length === 2) {
         const firstPlaceholder = placeholders[0]
-        assertNonNegativeNumber(firstPlaceholder)
-        assertInteger(firstPlaceholder)
+        assertNonNegativeInteger(firstPlaceholder)
         const stringPlaceholders = [`${firstPlaceholder}`, ...placeholders.slice(1)] as string[]
         if (firstPlaceholder === 1) {
           return applyPlaceholders(templateStrings[0] as string, stringPlaceholders)

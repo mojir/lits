@@ -1,4 +1,5 @@
 import { UnexpectedNodeTypeError } from './errors'
+import { Arr, Coll, Obj, Seq } from './interface'
 import {
   AstNode,
   ExpressionNode,
@@ -82,6 +83,11 @@ export function assertNonNegativeNumber(value: unknown): asserts value is number
   }
 }
 
+export function assertNonNegativeInteger(value: unknown): asserts value is number {
+  assertNonNegativeNumber(value)
+  assertInteger(value)
+}
+
 export function assertNonPositiveNumber(value: unknown): asserts value is number {
   assertFiniteNumber(value)
   if (value > 0) {
@@ -130,6 +136,13 @@ export function assertString(value: unknown): asserts value is string {
   }
 }
 
+export function assertChar(value: unknown): asserts value is string {
+  assertString(value)
+  if (value.length !== 1) {
+    throw TypeError(`Expected char, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function assertStringOrNumber(value: unknown): asserts value is string {
   if (!(typeof value === `string` || typeof value === `number`)) {
     throw TypeError(`Expected string or number, got: ${value} type="${typeof value}"`)
@@ -155,31 +168,7 @@ export function assertStringOrRegExp(value: unknown): asserts value is RegExp | 
   }
 }
 
-export function assertArray(value: unknown): asserts value is Array<unknown> {
-  if (!Array.isArray(value)) {
-    throw TypeError(`Expected array, got: ${value} type="${typeof value}"`)
-  }
-}
-
-export function assertCollection(value: unknown): asserts value is Array<unknown> | Record<string, unknown> {
-  if (!Array.isArray(value) && !isObject(value)) {
-    throw TypeError(`Expected collection, got: ${value} type="${typeof value}"`)
-  }
-}
-
-export function assertStringOrArray(value: unknown): asserts value is Array<unknown> | string {
-  if (!(Array.isArray(value) || typeof value === `string`)) {
-    throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
-  }
-}
-
-export function assertObject(value: unknown): asserts value is Record<string, unknown> {
-  if (!isObject(value)) {
-    throw TypeError(`Expected object, got: ${value} type="${typeof value}"`)
-  }
-}
-
-export function assertObjectOrArray(value: unknown): asserts value is Record<string, unknown> | unknown[] {
+export function assertObjectOrArray(value: unknown): asserts value is Obj | Arr {
   if (
     (value === null ||
       typeof value !== `object` ||
@@ -264,6 +253,12 @@ export function assertStringArray(value: unknown): asserts value is string[] {
   }
 }
 
+export function assertCharArray(arr: unknown): asserts arr is string[] {
+  if (!Array.isArray(arr) || arr.some(v => typeof v !== `string` || v.length !== 1)) {
+    throw Error(`Expected an array of chars, got ${arr}`)
+  }
+}
+
 export function assertExpressionNode(node: AstNode): asserts node is ExpressionNode {
   if (
     !(node.type === `NormalExpression` || node.type === `SpecialExpression` || node.type === `ExpressionExpression`)
@@ -272,7 +267,37 @@ export function assertExpressionNode(node: AstNode): asserts node is ExpressionN
   }
 }
 
-export function isObject(value: unknown): value is Record<string, unknown> {
+export function assertNumber(value: unknown): asserts value is number {
+  if (!isNumber(value)) {
+    throw TypeError(`Expected a number, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function assertArr(value: unknown): asserts value is Arr {
+  if (!isArr(value)) {
+    throw TypeError(`Expected Arr, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function assertColl(value: unknown): asserts value is Coll {
+  if (!isColl(value)) {
+    throw TypeError(`Expected collection, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function assertSeq(value: unknown): asserts value is Array<unknown> | string {
+  if (!isSeq(value)) {
+    throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function assertObj(value: unknown): asserts value is Obj {
+  if (!isObj(value)) {
+    throw TypeError(`Expected object, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function isObj(value: unknown): value is Obj {
   return !(
     value === null ||
     typeof value !== `object` ||
@@ -280,4 +305,38 @@ export function isObject(value: unknown): value is Record<string, unknown> {
     value instanceof RegExp ||
     isLispishFunction(value)
   )
+}
+
+export function isArr(value: unknown): value is Arr {
+  return Array.isArray(value)
+}
+
+export function isSeq(value: unknown): value is Seq {
+  return Array.isArray(value) || isString(value)
+}
+
+export function isColl(value: unknown): value is Coll {
+  return isSeq(value) || isObj(value)
+}
+
+export function isString(value: unknown): value is string {
+  return typeof value === `string`
+}
+
+export function isNumber(value: unknown): value is number {
+  return typeof value === `number`
+}
+
+export function isInteger(value: unknown): value is number {
+  return Number.isInteger(value)
+}
+
+export function hasKey(coll: Coll, key: string | number): boolean {
+  if (isString(coll) || isArr(coll)) {
+    if (!isInteger(key)) {
+      return false
+    }
+    return key >= 0 && key < coll.length
+  }
+  return !!Object.getOwnPropertyDescriptor(coll, key)
 }

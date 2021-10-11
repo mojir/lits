@@ -1,6 +1,7 @@
 import { Context, ContextEntry } from '../../../evaluator/interface'
+import { Arr } from '../../../interface'
 import {
-  assertArray,
+  assertArr,
   assertLength,
   assertLispishFunction,
   assertObjectOrArray,
@@ -12,7 +13,7 @@ import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
 export const miscNormalExpression: BuiltinNormalExpressions = {
   'not=': {
-    evaluate: (params: unknown[]): boolean => {
+    evaluate: (params: Arr): boolean => {
       for (let i = 0; i < params.length - 1; i += 1) {
         for (let j = i + 1; j < params.length; j += 1) {
           if (params[i] === params[j]) {
@@ -26,7 +27,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   '=': {
-    evaluate: ([first, ...rest]: unknown[]): boolean => {
+    evaluate: ([first, ...rest]: Arr): boolean => {
       for (const param of rest) {
         if (param !== first) {
           return false
@@ -38,15 +39,15 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   apply: {
-    evaluate: ([func, array]: unknown[], contextStack, { evaluateLispishFunction }): unknown => {
+    evaluate: ([func, array]: Arr, contextStack, { evaluateLispishFunction }): unknown => {
       assertLispishFunction(func)
-      assertArray(array)
+      assertArr(array)
       return evaluateLispishFunction(func, array, contextStack)
     },
     validate: node => assertLength(2, node),
   },
   'get-path': {
-    evaluate: ([first, second]: unknown[]): unknown => {
+    evaluate: ([first, second]: Arr): unknown => {
       assertObjectOrArray(first)
       assertString(second)
       return getPath(first, second)
@@ -54,7 +55,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   not: {
-    evaluate: ([first]: unknown[]): boolean => !first,
+    evaluate: ([first]: Arr): boolean => !first,
     validate: node => assertLength(1, node),
   },
   'inst-ms': {
@@ -64,7 +65,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(0, node),
   },
   'write!': {
-    evaluate: (params: unknown[]): unknown => {
+    evaluate: (params: Arr): unknown => {
       // eslint-disable-next-line no-console
       console.log(...params)
 

@@ -1,3 +1,4 @@
+import { Arr } from '../../../interface'
 import { NormalExpressionNode } from '../../../parser/interface'
 import {
   asFiniteNumber,
@@ -12,7 +13,7 @@ import { BuiltinNormalExpressions } from '../../interface'
 
 export const mathNormalExpression: BuiltinNormalExpressions = {
   inc: {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertFiniteNumber(first)
       return asFiniteNumber(first + 1)
     },
@@ -20,7 +21,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   dec: {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertFiniteNumber(first)
       return asFiniteNumber(first - 1)
     },
@@ -28,7 +29,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '+': {
-    evaluate: (params: unknown[]): number => {
+    evaluate: (params: Arr): number => {
       return asFiniteNumber(
         params.reduce((result: number, param) => {
           assertFiniteNumber(param)
@@ -39,7 +40,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '*': {
-    evaluate: (params: unknown[]): number => {
+    evaluate: (params: Arr): number => {
       return asFiniteNumber(
         params.reduce((result: number, param) => {
           assertFiniteNumber(param)
@@ -50,7 +51,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '/': {
-    evaluate: (params: unknown[]): number => {
+    evaluate: (params: Arr): number => {
       if (params.length === 0) {
         return 1
       }
@@ -70,7 +71,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '-': {
-    evaluate: ([first, ...rest]: unknown[]): number => {
+    evaluate: ([first, ...rest]: Arr): number => {
       if (!first) {
         return 0
       }
@@ -88,7 +89,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   mod: {
-    evaluate: ([first, second]: unknown[]): number => {
+    evaluate: ([first, second]: Arr): number => {
       assertFiniteNumber(first)
       assertNumberNotZero(second)
       return asFiniteNumber(first % second)
@@ -97,7 +98,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   sqrt: {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertNonNegativeNumber(first)
       return asFiniteNumber(Math.sqrt(first))
     },
@@ -105,7 +106,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   cbrt: {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertNonNegativeNumber(first)
       return asFiniteNumber(Math.cbrt(first))
     },
@@ -113,7 +114,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   pow: {
-    evaluate: ([first, second]: unknown[]): number => {
+    evaluate: ([first, second]: Arr): number => {
       assertFiniteNumber(first)
       assertFiniteNumber(second)
       return asFiniteNumber(Math.pow(first, second))
@@ -122,7 +123,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   round: {
-    evaluate: (params: unknown[]): number => {
+    evaluate: (params: Arr): number => {
       const [value, decimals] = params
       assertFiniteNumber(value)
       if (params.length === 1 || decimals === 0) {
@@ -137,7 +138,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   trunc: {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertFiniteNumber(first)
       return asFiniteNumber(Math.trunc(first))
     },
@@ -145,7 +146,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   floor: {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertFiniteNumber(first)
       return asFiniteNumber(Math.floor(first))
     },
@@ -153,7 +154,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   ceil: {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertFiniteNumber(first)
       return asFiniteNumber(Math.ceil(first))
     },
@@ -161,7 +162,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   rand: {
-    evaluate: (parameters: unknown[]): number => {
+    evaluate: (parameters: Arr): number => {
       const number = parameters.length === 1 ? parameters[0] : 1
       assertPositiveNumber(number)
       return asFiniteNumber(Math.random() * number)
@@ -170,7 +171,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   'rand-int': {
-    evaluate: ([first]: unknown[]): number => {
+    evaluate: ([first]: Arr): number => {
       assertPositiveNumber(first)
       return asFiniteNumber(Math.floor(Math.random() * first))
     },
@@ -178,7 +179,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '>': {
-    evaluate: ([first, ...rest]: unknown[]): boolean => {
+    evaluate: ([first, ...rest]: Arr): boolean => {
       assertFiniteNumber(first)
 
       if (rest.length === 0) {
@@ -199,7 +200,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '<': {
-    evaluate: ([first, ...rest]: unknown[]): boolean => {
+    evaluate: ([first, ...rest]: Arr): boolean => {
       assertFiniteNumber(first)
 
       if (rest.length === 0) {
@@ -220,7 +221,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '>=': {
-    evaluate: ([first, ...rest]: unknown[]): boolean => {
+    evaluate: ([first, ...rest]: Arr): boolean => {
       assertFiniteNumber(first)
       if (rest.length === 0) {
         return true
@@ -240,7 +241,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   '<=': {
-    evaluate: ([first, ...rest]: unknown[]): boolean => {
+    evaluate: ([first, ...rest]: Arr): boolean => {
       assertFiniteNumber(first)
       if (rest.length === 0) {
         return true
@@ -260,7 +261,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   min: {
-    evaluate: ([first, ...rest]: unknown[]): number => {
+    evaluate: ([first, ...rest]: Arr): number => {
       assertFiniteNumber(first)
       if (rest.length === 0) {
         return first
@@ -275,7 +276,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   max: {
-    evaluate: ([first, ...rest]: unknown[]): number => {
+    evaluate: ([first, ...rest]: Arr): number => {
       assertFiniteNumber(first)
       if (rest.length === 0) {
         return first
@@ -290,7 +291,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   abs: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return Math.abs(value)
     },
@@ -298,7 +299,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   sign: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return Math.sign(value)
     },
@@ -320,7 +321,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   exp: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.exp(value))
     },
@@ -328,7 +329,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   log: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertPositiveNumber(value)
       return asFiniteNumber(Math.log(value))
     },
@@ -336,7 +337,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   log2: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.log2(value))
     },
@@ -344,7 +345,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   log10: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.log10(value))
     },
@@ -352,7 +353,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   sin: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.sin(value))
     },
@@ -360,7 +361,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   asin: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.asin(value))
     },
@@ -368,7 +369,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   sinh: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.sinh(value))
     },
@@ -376,7 +377,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   asinh: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.asinh(value))
     },
@@ -384,7 +385,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   cos: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.cos(value))
     },
@@ -392,7 +393,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   acos: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.acos(value))
     },
@@ -400,7 +401,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   cosh: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.cosh(value))
     },
@@ -408,7 +409,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   acosh: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.acosh(value))
     },
@@ -416,7 +417,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   tan: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.tan(value))
     },
@@ -424,7 +425,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   atan: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.atan(value))
     },
@@ -432,7 +433,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   tanh: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.tanh(value))
     },
@@ -440,7 +441,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   atanh: {
-    evaluate: ([value]: unknown[]): number => {
+    evaluate: ([value]: Arr): number => {
       assertFiniteNumber(value)
       return asFiniteNumber(Math.atanh(value))
     },

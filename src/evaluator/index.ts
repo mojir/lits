@@ -15,17 +15,17 @@ import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
 import {
   asNotUndefined,
-  assertInteger,
-  assertNonNegativeNumber,
-  assertObject,
+  assertNonNegativeInteger,
+  assertObj,
   assertString,
   isLispishFunction,
-  isObject,
+  isObj,
   isUserDefinedLispishFunction,
 } from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { RecurSignal } from '../errors'
+import { Arr, Obj } from '../interface'
 
 export function evaluate(ast: Ast, globalScope: Context, importScope: Context): unknown {
   // First element is the global context. E.g. def will assign to this if no local variable is available
@@ -97,7 +97,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     if (Array.isArray(candidate)) {
       return evaluateArrayAsFunction(candidate, node, contextStack)
     }
-    if (isObject(candidate)) {
+    if (isObj(candidate)) {
       return evalueateObjectAsFunction(candidate, node, contextStack)
     }
   }
@@ -107,7 +107,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 
 const evaluateLispishFunction: EvaluateLispishFunction = (
   lispishFunction: LispishFunction,
-  params: unknown[],
+  params: Arr,
   contextStack: Context[],
 ) => {
   if (isUserDefinedLispishFunction(lispishFunction)) {
@@ -128,12 +128,14 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
 
       if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
         throw Error(
-          `Function "${lispishFunction.name}" requires at most ${maxNbrOfParameters} arguments. Got ${params.length}`,
+          `Function "${lispishFunction.name ?? `λ`}" requires at most ${maxNbrOfParameters} arguments. Got ${
+            params.length
+          }`,
         )
       }
 
       const length = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length)
-      const rest: unknown[] = []
+      const rest: Arr = []
       for (let i = 0; i < length; i += 1) {
         if (i < nbrOfMandatoryArgs) {
           const param = params[i]
@@ -176,11 +178,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
   }
 }
 
-function evaluateBuiltinNormalExpression(
-  node: NormalExpressionNode,
-  params: unknown[],
-  contextStack: Context[],
-): unknown {
+function evaluateBuiltinNormalExpression(node: NormalExpressionNode, params: Arr, contextStack: Context[]): unknown {
   const normalExpressionEvaluator = asNotUndefined(
     builtin.normalExpressions[node.name],
     `${node.name} is not a function`,
@@ -208,18 +206,18 @@ function evaluateExpressionExpression(node: ExpressionExpressionNode, contextSta
   if (Array.isArray(fn)) {
     return evaluateArrayAsFunction(fn, node, contextStack)
   }
-  if (isObject(fn)) {
+  if (isObj(fn)) {
     return evalueateObjectAsFunction(fn, node, contextStack)
   }
   throw Error(`Expected function, got ${fn}`)
 }
 
 function evalueateObjectAsFunction(
-  fn: Record<string, unknown>,
+  fn: Obj,
   node: ExpressionExpressionNode | NormalExpressionNode,
   contextStack: Context[],
 ) {
-  assertObject(fn)
+  assertObj(fn)
   if (node.params.length !== 1) {
     throw Error(`Object as function requires one string parameter`)
   }
@@ -229,7 +227,7 @@ function evalueateObjectAsFunction(
 }
 
 function evaluateArrayAsFunction(
-  fn: unknown[],
+  fn: Arr,
   node: ExpressionExpressionNode | NormalExpressionNode,
   contextStack: Context[],
 ) {
@@ -237,7 +235,6 @@ function evaluateArrayAsFunction(
     throw Error(`Array as function requires one non negative integer parameter`)
   }
   const index = evaluateAstNode(node.params[0] as AstNode, contextStack)
-  assertNonNegativeNumber(index)
-  assertInteger(index)
+  assertNonNegativeInteger(index)
   return fn[index]
 }

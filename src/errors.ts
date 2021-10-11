@@ -1,11 +1,12 @@
 /* istanbul ignore file */
 
+import { Arr } from './interface'
 import { AstNode, NodeType } from './parser/interface'
 import { Token } from './tokenizer/interface'
 
 export class RecurSignal extends Error {
-  public params: unknown[]
-  constructor(params: unknown[]) {
+  public params: Arr
+  constructor(params: Arr) {
     super(`recur, params: ${params}`)
     Object.setPrototypeOf(this, RecurSignal.prototype)
     this.name = `RecurSignal`

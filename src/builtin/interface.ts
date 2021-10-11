@@ -9,9 +9,10 @@ import {
 } from '../parser/interface'
 import { Token } from '../tokenizer/interface'
 import { NormalExpressionNode } from '../parser/interface'
+import { Arr } from '../interface'
 
 type Evaluate = (
-  params: unknown[],
+  params: Arr,
   contextStack: Context[],
   { evaluateLispishFunction }: { evaluateLispishFunction: EvaluateLispishFunction },
 ) => unknown

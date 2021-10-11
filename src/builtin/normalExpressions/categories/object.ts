@@ -1,10 +1,11 @@
-import { assertLengthEven, assertLength, assertObject, assertString } from '../../../utils'
+import { Arr, Obj } from '../../../interface'
+import { assertLengthEven, assertLength, assertObj, assertString } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
   object: {
-    evaluate: (params: unknown[]): Record<string, unknown> => {
-      const result: Record<string, unknown> = {}
+    evaluate: (params: Arr): Obj => {
+      const result: Obj = {}
       for (let i = 0; i < params.length; i += 2) {
         const key = params[i]
         const value = params[i + 1]
@@ -17,32 +18,32 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   keys: {
-    evaluate: ([first]: unknown[]): string[] => {
-      assertObject(first)
+    evaluate: ([first]: Arr): string[] => {
+      assertObj(first)
       return Object.keys(first)
     },
     validate: node => assertLength(1, node),
   },
 
   vals: {
-    evaluate: ([first]: unknown[]): unknown[] => {
-      assertObject(first)
+    evaluate: ([first]: Arr): Arr => {
+      assertObj(first)
       return Object.values(first)
     },
     validate: node => assertLength(1, node),
   },
 
   entries: {
-    evaluate: ([first]: unknown[]): Array<[string, unknown]> => {
-      assertObject(first)
+    evaluate: ([first]: Arr): Array<[string, unknown]> => {
+      assertObj(first)
       return Object.entries(first)
     },
     validate: node => assertLength(1, node),
   },
 
   dissoc: {
-    evaluate: ([obj, key]: unknown[]): unknown => {
-      assertObject(obj)
+    evaluate: ([obj, key]: Arr): unknown => {
+      assertObj(obj)
       assertString(key)
       const result = obj[key]
       delete obj[key]
@@ -52,12 +53,12 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   merge: {
-    evaluate: ([first, ...rest]: unknown[]): unknown => {
-      assertObject(first)
+    evaluate: ([first, ...rest]: Arr): unknown => {
+      assertObj(first)
 
       return rest.reduce(
-        (result: Record<string, unknown>, obj) => {
-          assertObject(obj)
+        (result: Obj, obj) => {
+          assertObj(obj)
           return { ...result, ...obj }
         },
         { ...first },

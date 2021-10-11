@@ -1,3 +1,4 @@
+import { Arr } from '../interface'
 import { LispishFunction } from '../parser/interface'
 import { AstNode } from '../parser/interface'
 
@@ -7,6 +8,6 @@ export type Context = Record<string, ContextEntry>
 export type EvaluateAstNode = (node: AstNode, contextStack: Context[]) => unknown
 export type EvaluateLispishFunction = (
   lispishFunction: LispishFunction,
-  params: unknown[],
+  params: Arr,
   contextStack: Context[],
 ) => unknown

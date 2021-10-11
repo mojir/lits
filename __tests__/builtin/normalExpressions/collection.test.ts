@@ -34,10 +34,17 @@ describe(`collection functions`, () => {
       expect(lispish.run(`(get [] 1 "x")`)).toBe(`x`)
       expect(lispish.run(`(get [1] 1 "x")`)).toBe(`x`)
       expect(lispish.run(`(get [1 2 3] 1 "x")`)).toBe(2)
+
+      expect(lispish.run(`(get "Albert" 1)`)).toBe(`l`)
+      expect(lispish.run(`(get "Albert" 7)`)).toBeUndefined()
+      expect(lispish.run(`(get "Albert" -1)`)).toBeUndefined()
+      expect(lispish.run(`(get "" 0)`)).toBeUndefined()
+
       expect(lispish.run(`(get (object) "a")`)).toBeUndefined()
       expect(lispish.run(`(get (object "a" 1 "b" 2) "a")`)).toBe(1)
       expect(lispish.run(`(get (object) "a" "x")`)).toBe(`x`)
       expect(lispish.run(`(get (object "a" 1 "b" 2) "a")`)).toBe(1)
+
       expect(() => lispish.run(`(get)`)).toThrow()
       expect(() => lispish.run(`(get [])`)).toThrow()
       expect(() => lispish.run(`(get 12)`)).toThrow()
@@ -86,6 +93,10 @@ describe(`collection functions`, () => {
       expect(lispish.run(`(def o {"a" 1 "b" 2}) (assoc o "a" "1")`)).toEqual({ a: `1`, b: 2 })
       expect(lispish.run(`(def o {"a" 1 "b" 2}) (assoc o "a" "1") o`)).toEqual({ a: 1, b: 2 })
 
+      expect(lispish.run(`(assoc "1" 0 "2")`)).toBe(`2`)
+      expect(lispish.run(`(assoc "Albert" 6 "!")`)).toBe(`Albert!`)
+
+      expect(() => lispish.run(`(assoc "Albert" 7 "!")`)).toThrow()
       expect(() => lispish.run(`(assoc [1 2 3] 4 "4")`)).toThrow()
       expect(() => lispish.run(`(assoc (object) 0 "2")`)).toThrow()
       expect(() => lispish.run(`(assoc null 0 "2")`)).toThrow()
@@ -93,7 +104,7 @@ describe(`collection functions`, () => {
       expect(() => lispish.run(`(assoc true 0 "2")`)).toThrow()
       expect(() => lispish.run(`(assoc false 0 "2")`)).toThrow()
       expect(() => lispish.run(`(assoc 1 0 "2")`)).toThrow()
-      expect(() => lispish.run(`(assoc "1" 0 "2")`)).toThrow()
+      expect(() => lispish.run(`(assoc "1" 0 "22")`)).toThrow()
       expect(() => lispish.run(`(assoc [1] "0" "2")`)).toThrow()
       expect(() => lispish.run(`(assoc [1] true "2")`)).toThrow()
       expect(() => lispish.run(`(assoc [1] false "2")`)).toThrow()
@@ -115,11 +126,16 @@ describe(`collection functions`, () => {
       expect(lispish.run(`(concat [1])`)).toEqual([1])
       expect(lispish.run(`(concat [1] [2] [3 4])`)).toEqual([1, 2, 3, 4])
       expect(lispish.run(`(concat [1 2 3] [])`)).toEqual([1, 2, 3])
+
       expect(lispish.run(`(concat {"a" 1 "b" 2} {"b" 1 "c" 2})`)).toEqual({ a: 1, b: 1, c: 2 })
       expect(lispish.run(`(concat {} {"a" 1 "b" 2})`)).toEqual({ a: 1, b: 2 })
+
+      expect(lispish.run(`(concat "1" "23")`)).toBe(`123`)
+      expect(lispish.run(`(concat "1" "")`)).toBe(`1`)
+      expect(lispish.run(`(concat "1")`)).toBe(`1`)
+
       expect(() => lispish.run(`(concat)`)).toThrow()
       expect(() => lispish.run(`(concat [1] "2")`)).toThrow()
-      expect(() => lispish.run(`(concat "1")`)).toThrow()
       expect(() => lispish.run(`(concat "1" ["2"])`)).toThrow()
       expect(() => lispish.run(`(concat 0)`)).toThrow()
       expect(() => lispish.run(`(concat true)`)).toThrow()
