@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Lispish } from '../../../src'
+import { AssertionError } from '../../../src/errors'
 
 let lispish: Lispish
 
@@ -227,6 +228,20 @@ describe(`misc functions`, () => {
       expect(lispish.run(`(compare {"a" 1 "b" 2} {"a" 2})`)).toBe(1)
       expect(lispish.run(`(compare + {"a" 2})`)).toBe(1)
       expect(lispish.run(`(compare + -)`)).toBe(0)
+    })
+  })
+  describe(`assert`, () => {
+    test(`samples`, () => {
+      expect(() => lispish.run(`(assert false)`)).toThrowError(AssertionError)
+      expect(() => lispish.run(`(assert false "Expected true")`)).toThrowError(AssertionError)
+      expect(() => lispish.run(`(assert null)`)).toThrowError(AssertionError)
+      expect(() => lispish.run(`(assert undefined)`)).toThrowError(AssertionError)
+      expect(() => lispish.run(`(assert 0)`)).toThrowError(AssertionError)
+      expect(() => lispish.run(`(assert "")`)).toThrowError(AssertionError)
+      expect(lispish.run(`(assert [])`)).toEqual([])
+      expect(lispish.run(`(assert true)`)).toBe(true)
+      expect(lispish.run(`(assert 1)`)).toBe(1)
+      expect(lispish.run(`(assert "0")`)).toBe(`0`)
     })
   })
 })

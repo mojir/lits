@@ -1,3 +1,4 @@
+import { AssertionError } from '../../../errors'
 import { Context, ContextEntry } from '../../../evaluator/interface'
 import { Arr } from '../../../interface'
 import {
@@ -96,6 +97,18 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return compare(a, b)
     },
     validate: node => assertLength(2, node),
+  },
+  assert: {
+    evaluate: (params): unknown => {
+      const value = params[0]
+      const message = params.length === 2 ? params[1] : `${value}`
+      assertString(message)
+      if (!value) {
+        throw new AssertionError(message)
+      }
+      return value
+    },
+    validate: node => assertLength({ min: 1, max: 2 }, node),
   },
 }
 

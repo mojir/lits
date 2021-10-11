@@ -22,6 +22,14 @@ export class UserDefinedError extends Error {
   }
 }
 
+export class AssertionError extends Error {
+  constructor(message: string) {
+    super(`Assertion error: ${message}`)
+    Object.setPrototypeOf(this, AssertionError.prototype)
+    this.name = `AssertionError`
+  }
+}
+
 export class UnexpectedTokenError extends Error {
   constructor(expectedToken: string, actualToken: Token) {
     super(`Expected a "${expectedToken}" token, got Token[${actualToken.type}:"${actualToken.value}"]`)

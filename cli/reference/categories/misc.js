@@ -205,4 +205,26 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  assert: {
+    name: `assert`,
+    category: `Misc`,
+    linkName: `assert`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `value`,
+        type: `any`,
+      },
+      {
+        name: `message`,
+        type: `string`,
+        description: `optional`,
+      },
+    ],
+    description: `If \`value\` is falsy it throws AssertionError with \`message\`. If no \`message\` is provided, message is set to \`value\`.`,
+    examples: [`(assert 0 "Expected a positive value")`, `(assert false)`, `(assert 1)`],
+    specialExpression: false,
+  },
 }

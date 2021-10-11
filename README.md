@@ -62,13 +62,10 @@ const result = evaluate(ast, context) // returns 10
 # Missing features
 * ***1**, ***1**, ***1**, ..., ***9** repl previous results
 * ***e** cli most recent error caught by repl
-* **any?**
-* **assert**
 * **assoc-in**
-* **char** return charachter from code (charachter = string)
-* **char-code** return charachter code from string 
+* **char-from-code** return charachter from code (charachter = string)
+* **code-from-char** return charachter code from string 
 * **comp** (composing functions)
-* **compare**
 * **complement**
 * **conj** ? is this needed
 * **distinct** (array) return array with duplicates removed (js === used to check for equallity)
