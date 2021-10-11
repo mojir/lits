@@ -318,6 +318,27 @@
 </div>
 
 
+<div id="repeat" class="content function">
+  <div class="function-header">repeat</div>
+  
+  <p>Returns an array with <span class="pre">value</span> repeated <span class="pre">count</span> times.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>repeat count value => array</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>count: non negative integer</pre>
+<pre>value: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(repeat 3 10)')"><span class="icon-button">▶</span> (repeat 3 10) <span class="gray">=> [10,10,10]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(repeat 0 10)')"><span class="icon-button">▶</span> (repeat 0 10) <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(repeat 5 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (repeat 5 "Albert") <span class="gray">=> ["Albert","Albert","Albert","Albert","Albert"]</span></span></pre>
+  </div>
+</div>
+
+
 <div id="nth" class="content function">
   <div class="function-header">nth</div>
   
@@ -485,7 +506,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre class="example" onclick="addToPlayground('(reduce-right str [___double_quote___A___double_quote___ ___double_quote___B___double_quote___ ___double_quote___C___double_quote___] ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (reduce-right str ["A" "B" "C"] "") <span class="gray">=></span> <span class="error">Error!</span></pre>
+    <pre><span class="example" onclick="addToPlayground('(reduce-right str [___double_quote___A___double_quote___ ___double_quote___B___double_quote___ ___double_quote___C___double_quote___] ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (reduce-right str ["A" "B" "C"] "") <span class="gray">=> ["A","B","C"]</span></span></pre>
   </div>
 </div>
 
@@ -567,9 +588,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(index-of ___double_quote___Mojir___double_quote___ [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (index-of "Mojir" ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> 1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(index-of 15 [5 10 15 20])')"><span class="icon-button">▶</span> (index-of 15 [5 10 15 20]) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(index-of 1 [5 10 15 20])')"><span class="icon-button">▶</span> (index-of 1 [5 10 15 20]) <span class="gray">=> undefined</span></span></pre>
+    <pre class="example" onclick="addToPlayground('(index-of ___double_quote___Mojir___double_quote___ [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (index-of "Mojir" ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="addToPlayground('(index-of 15 [5 10 15 20])')"><span class="icon-button">▶</span> (index-of 15 [5 10 15 20]) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre class="example" onclick="addToPlayground('(index-of 1 [5 10 15 20])')"><span class="icon-button">▶</span> (index-of 1 [5 10 15 20]) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -878,28 +899,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,5,8,9]</span></span></pre>
-  </div>
-</div>
-
-
-<div id="repeat" class="content function">
-  <div class="function-header">repeat</div>
-  
-  <p>Returns an array with <span class="pre">value</span> repeated <span class="pre">count</span> times.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>repeat count value => array</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>count: non negative integer</pre>
-<pre>value: any</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(repeat 3 10)')"><span class="icon-button">▶</span> (repeat 3 10) <span class="gray">=> [10,10,10]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(repeat 0 10)')"><span class="icon-button">▶</span> (repeat 0 10) <span class="gray">=> []</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(repeat 5 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (repeat 5 "Albert") <span class="gray">=> ["Albert","Albert","Albert","Albert","Albert"]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,5,8,9]</span></span></pre>
   </div>
 </div>
 
@@ -1421,9 +1421,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.06082233000665749</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.006774182897640677</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.9403843259128135</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.9685061553826761</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.007330782345487355</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.163967957950458</span></span></pre>
   </div>
 </div>
 
@@ -1442,8 +1442,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 57</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 0</span></span></pre>
   </div>
 </div>
 
@@ -1906,7 +1906,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633954596604</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633967594591</span></span></pre>
   </div>
 </div>
 
@@ -3518,20 +3518,9 @@
 <li id="zero_question_link" onclick="showPage('zero_question')">zero?</li>
         </ul>
 
-        <label>Collection</label>
+        <label>Sequence</label>
         <ul>
-          <li id="assoc_link" onclick="showPage('assoc')">assoc</li>
-<li id="concat_link" onclick="showPage('concat')">concat</li>
-<li id="contains_question_link" onclick="showPage('contains_question')">contains?</li>
-<li id="count_link" onclick="showPage('count')">count</li>
-<li id="empty_question_link" onclick="showPage('empty_question')">empty?</li>
-<li id="get_link" onclick="showPage('get')">get</li>
-        </ul>
-
-        <label>Array</label>
-        <ul>
-          <li id="array_link" onclick="showPage('array')">array</li>
-<li id="cons_link" onclick="showPage('cons')">cons</li>
+          <li id="cons_link" onclick="showPage('cons')">cons</li>
 <li id="every_question_link" onclick="showPage('every_question')">every?</li>
 <li id="filter_link" onclick="showPage('filter')">filter</li>
 <li id="first_link" onclick="showPage('first')">first</li>
@@ -3545,10 +3534,8 @@
 <li id="position_link" onclick="showPage('position')">position</li>
 <li id="push_link" onclick="showPage('push')">push</li>
 <li id="random-sample_link" onclick="showPage('random-sample')">random-sample</li>
-<li id="range_link" onclick="showPage('range')">range</li>
 <li id="reduce_link" onclick="showPage('reduce')">reduce</li>
 <li id="reduce-right_link" onclick="showPage('reduce-right')">reduce-right</li>
-<li id="repeat_link" onclick="showPage('repeat')">repeat</li>
 <li id="rest_link" onclick="showPage('rest')">rest</li>
 <li id="reverse_link" onclick="showPage('reverse')">reverse</li>
 <li id="second_link" onclick="showPage('second')">second</li>
@@ -3560,6 +3547,23 @@
 <li id="take-last_link" onclick="showPage('take-last')">take-last</li>
 <li id="take-while_link" onclick="showPage('take-while')">take-while</li>
 <li id="unshift_link" onclick="showPage('unshift')">unshift</li>
+        </ul>
+
+        <label>Collection</label>
+        <ul>
+          <li id="assoc_link" onclick="showPage('assoc')">assoc</li>
+<li id="concat_link" onclick="showPage('concat')">concat</li>
+<li id="contains_question_link" onclick="showPage('contains_question')">contains?</li>
+<li id="count_link" onclick="showPage('count')">count</li>
+<li id="empty_question_link" onclick="showPage('empty_question')">empty?</li>
+<li id="get_link" onclick="showPage('get')">get</li>
+        </ul>
+
+        <label>Array</label>
+        <ul>
+          <li id="array_link" onclick="showPage('array')">array</li>
+<li id="range_link" onclick="showPage('range')">range</li>
+<li id="repeat_link" onclick="showPage('repeat')">repeat</li>
         </ul>
 
         <label>Object</label>

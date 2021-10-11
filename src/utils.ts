@@ -340,3 +340,10 @@ export function hasKey(coll: Coll, key: string | number): boolean {
   }
   return !!Object.getOwnPropertyDescriptor(coll, key)
 }
+
+// TODO make it into enum or record with sort number as value
+type Type = `string` | `number` | `NaN` | `-Infinity` | `+Infinity`
+
+function getType(value: unknown): Type {}
+
+export function compare(a: unknown, b: unknown) {}
