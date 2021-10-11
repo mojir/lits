@@ -1,4 +1,4 @@
-import { isLispishFunction, isObj } from '../../../utils'
+import { assertNumber, isLispishFunction, isObj } from '../../../utils'
 import { NormalExpressionNode } from '../../../parser/interface'
 import { assertLength, assertFiniteNumber } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -102,6 +102,38 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'regexp?': {
     evaluate: ([first]: Arr): boolean =>
       first !== null && !Array.isArray(first) && typeof first === `object` && first instanceof RegExp,
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'finite?': {
+    evaluate: ([value]: Arr): boolean => {
+      assertNumber(value)
+      return Number.isFinite(value)
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'nan?': {
+    evaluate: ([value]: Arr): boolean => {
+      assertNumber(value)
+      return Number.isNaN(value)
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'positive-infinity?': {
+    evaluate: ([value]: Arr): boolean => {
+      assertNumber(value)
+      return value === Number.POSITIVE_INFINITY
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'negative-infinity?': {
+    evaluate: ([value]: Arr): boolean => {
+      assertNumber(value)
+      return value === Number.NEGATIVE_INFINITY
+    },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 }

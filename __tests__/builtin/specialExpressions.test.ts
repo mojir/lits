@@ -335,8 +335,8 @@ describe(`specialExpressions`, () => {
   describe(`try`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(try (/ 2 4) ((error) 1))`)).toBe(0.5)
-      expect(lispish.run(`(try (/ 2 0) ((error) 1))`)).toBe(1)
-      expect(lispish.run(`(try (/ 2 0) ((error) error))`)).toBeInstanceOf(Error)
+      expect(lispish.run(`(try (throw "oops") ((error) 1))`)).toBe(1)
+      expect(lispish.run(`(try (throw "oops") ((error) error))`)).toBeInstanceOf(Error)
       expect(() => lispish.run(`(try (/ 2 4) 1)`)).toThrow()
       expect(() => lispish.run(`(try (/ 2 4) (1))`)).toThrow()
       expect(() => lispish.run(`(try (/ 2 4) (("error") 1))`)).toThrow()

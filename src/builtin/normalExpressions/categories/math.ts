@@ -1,52 +1,40 @@
 import { Arr } from '../../../interface'
 import { NormalExpressionNode } from '../../../parser/interface'
-import {
-  asFiniteNumber,
-  assertInteger,
-  assertNonNegativeNumber,
-  assertFiniteNumber,
-  assertNumberNotZero,
-  assertPositiveNumber,
-  assertLength,
-} from '../../../utils'
+import { assertLength, assertNumber, assertNonNegativeInteger } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const mathNormalExpression: BuiltinNormalExpressions = {
   inc: {
     evaluate: ([first]: Arr): number => {
-      assertFiniteNumber(first)
-      return asFiniteNumber(first + 1)
+      assertNumber(first)
+      return first + 1
     },
     validate: node => assertLength(1, node),
   },
 
   dec: {
     evaluate: ([first]: Arr): number => {
-      assertFiniteNumber(first)
-      return asFiniteNumber(first - 1)
+      assertNumber(first)
+      return first - 1
     },
     validate: node => assertLength(1, node),
   },
 
   '+': {
     evaluate: (params: Arr): number => {
-      return asFiniteNumber(
-        params.reduce((result: number, param) => {
-          assertFiniteNumber(param)
-          return result + param
-        }, 0),
-      )
+      return params.reduce((result: number, param) => {
+        assertNumber(param)
+        return result + param
+      }, 0)
     },
   },
 
   '*': {
     evaluate: (params: Arr): number => {
-      return asFiniteNumber(
-        params.reduce((result: number, param) => {
-          assertFiniteNumber(param)
-          return result * param
-        }, 1),
-      )
+      return params.reduce((result: number, param) => {
+        assertNumber(param)
+        return result * param
+      }, 1)
     },
   },
 
@@ -56,17 +44,15 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return 1
       }
       const [first, ...rest] = params
-      assertFiniteNumber(first)
+      assertNumber(first)
       if (rest.length === 0) {
-        assertNumberNotZero(first)
+        assertNumber(first)
         return 1 / first
       }
-      return asFiniteNumber(
-        rest.reduce((result: number, param) => {
-          assertNumberNotZero(param)
-          return result / param
-        }, first),
-      )
+      return rest.reduce((result: number, param) => {
+        assertNumber(param)
+        return result / param
+      }, first)
     },
   },
 
@@ -75,49 +61,47 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       if (!first) {
         return 0
       }
-      assertFiniteNumber(first)
+      assertNumber(first)
       if (rest.length === 0) {
         return -first
       }
-      return asFiniteNumber(
-        rest.reduce((result: number, param) => {
-          assertFiniteNumber(param)
-          return result - param
-        }, first),
-      )
+      return rest.reduce((result: number, param) => {
+        assertNumber(param)
+        return result - param
+      }, first)
     },
   },
 
   mod: {
     evaluate: ([first, second]: Arr): number => {
-      assertFiniteNumber(first)
-      assertNumberNotZero(second)
-      return asFiniteNumber(first % second)
+      assertNumber(first)
+      assertNumber(second)
+      return first % second
     },
     validate: (node: NormalExpressionNode): void => assertLength(2, node),
   },
 
   sqrt: {
     evaluate: ([first]: Arr): number => {
-      assertNonNegativeNumber(first)
-      return asFiniteNumber(Math.sqrt(first))
+      assertNumber(first)
+      return Math.sqrt(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   cbrt: {
     evaluate: ([first]: Arr): number => {
-      assertNonNegativeNumber(first)
-      return asFiniteNumber(Math.cbrt(first))
+      assertNumber(first)
+      return Math.cbrt(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   pow: {
     evaluate: ([first, second]: Arr): number => {
-      assertFiniteNumber(first)
-      assertFiniteNumber(second)
-      return asFiniteNumber(Math.pow(first, second))
+      assertNumber(first)
+      assertNumber(second)
+      return Math.pow(first, second)
     },
     validate: (node: NormalExpressionNode): void => assertLength(2, node),
   },
@@ -125,38 +109,37 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   round: {
     evaluate: (params: Arr): number => {
       const [value, decimals] = params
-      assertFiniteNumber(value)
+      assertNumber(value)
       if (params.length === 1 || decimals === 0) {
-        return asFiniteNumber(Math.round(value))
+        return Math.round(value)
       }
-      assertPositiveNumber(decimals)
-      assertInteger(decimals)
+      assertNonNegativeInteger(decimals)
       const factor = Math.pow(10, decimals)
-      return asFiniteNumber(Math.round(value * factor) / factor)
+      return Math.round(value * factor) / factor
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 2 }, node),
   },
 
   trunc: {
     evaluate: ([first]: Arr): number => {
-      assertFiniteNumber(first)
-      return asFiniteNumber(Math.trunc(first))
+      assertNumber(first)
+      return Math.trunc(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   floor: {
     evaluate: ([first]: Arr): number => {
-      assertFiniteNumber(first)
-      return asFiniteNumber(Math.floor(first))
+      assertNumber(first)
+      return Math.floor(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   ceil: {
     evaluate: ([first]: Arr): number => {
-      assertFiniteNumber(first)
-      return asFiniteNumber(Math.ceil(first))
+      assertNumber(first)
+      return Math.ceil(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
@@ -164,23 +147,23 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   rand: {
     evaluate: (parameters: Arr): number => {
       const number = parameters.length === 1 ? parameters[0] : 1
-      assertPositiveNumber(number)
-      return asFiniteNumber(Math.random() * number)
+      assertNumber(number)
+      return Math.random() * number
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 0, max: 1 }, node),
   },
 
   'rand-int': {
     evaluate: ([first]: Arr): number => {
-      assertPositiveNumber(first)
-      return asFiniteNumber(Math.floor(Math.random() * first))
+      assertNumber(first)
+      return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   '>': {
     evaluate: ([first, ...rest]: Arr): boolean => {
-      assertFiniteNumber(first)
+      assertNumber(first)
 
       if (rest.length === 0) {
         return true
@@ -188,7 +171,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
       let currentValue = first
       for (const param of rest) {
-        assertFiniteNumber(param)
+        assertNumber(param)
         if (currentValue <= param) {
           return false
         }
@@ -201,7 +184,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   '<': {
     evaluate: ([first, ...rest]: Arr): boolean => {
-      assertFiniteNumber(first)
+      assertNumber(first)
 
       if (rest.length === 0) {
         return true
@@ -209,7 +192,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
       let currentValue = first
       for (const param of rest) {
-        assertFiniteNumber(param)
+        assertNumber(param)
         if (currentValue >= param) {
           return false
         }
@@ -222,14 +205,14 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   '>=': {
     evaluate: ([first, ...rest]: Arr): boolean => {
-      assertFiniteNumber(first)
+      assertNumber(first)
       if (rest.length === 0) {
         return true
       }
 
       let currentValue = first
       for (const param of rest) {
-        assertFiniteNumber(param)
+        assertNumber(param)
         if (currentValue < param) {
           return false
         }
@@ -242,14 +225,14 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   '<=': {
     evaluate: ([first, ...rest]: Arr): boolean => {
-      assertFiniteNumber(first)
+      assertNumber(first)
       if (rest.length === 0) {
         return true
       }
 
       let currentValue = first
       for (const param of rest) {
-        assertFiniteNumber(param)
+        assertNumber(param)
         if (currentValue > param) {
           return false
         }
@@ -262,13 +245,13 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   min: {
     evaluate: ([first, ...rest]: Arr): number => {
-      assertFiniteNumber(first)
+      assertNumber(first)
       if (rest.length === 0) {
         return first
       }
 
       return rest.reduce((min: number, value) => {
-        assertFiniteNumber(value)
+        assertNumber(value)
         return Math.min(min, value)
       }, first)
     },
@@ -277,13 +260,13 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   max: {
     evaluate: ([first, ...rest]: Arr): number => {
-      assertFiniteNumber(first)
+      assertNumber(first)
       if (rest.length === 0) {
         return first
       }
 
       return rest.reduce((min: number, value) => {
-        assertFiniteNumber(value)
+        assertNumber(value)
         return Math.max(min, value)
       }, first)
     },
@@ -292,7 +275,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   abs: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
+      assertNumber(value)
       return Math.abs(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -300,7 +283,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   sign: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
+      assertNumber(value)
       return Math.sign(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -322,128 +305,128 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   exp: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.exp(value))
+      assertNumber(value)
+      return Math.exp(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   log: {
     evaluate: ([value]: Arr): number => {
-      assertPositiveNumber(value)
-      return asFiniteNumber(Math.log(value))
+      assertNumber(value)
+      return Math.log(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   log2: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.log2(value))
+      assertNumber(value)
+      return Math.log2(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   log10: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.log10(value))
+      assertNumber(value)
+      return Math.log10(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   sin: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.sin(value))
+      assertNumber(value)
+      return Math.sin(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   asin: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.asin(value))
+      assertNumber(value)
+      return Math.asin(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   sinh: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.sinh(value))
+      assertNumber(value)
+      return Math.sinh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   asinh: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.asinh(value))
+      assertNumber(value)
+      return Math.asinh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   cos: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.cos(value))
+      assertNumber(value)
+      return Math.cos(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   acos: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.acos(value))
+      assertNumber(value)
+      return Math.acos(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   cosh: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.cosh(value))
+      assertNumber(value)
+      return Math.cosh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   acosh: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.acosh(value))
+      assertNumber(value)
+      return Math.acosh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   tan: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.tan(value))
+      assertNumber(value)
+      return Math.tan(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   atan: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.atan(value))
+      assertNumber(value)
+      return Math.atan(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   tanh: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.tanh(value))
+      assertNumber(value)
+      return Math.tanh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   atanh: {
     evaluate: ([value]: Arr): number => {
-      assertFiniteNumber(value)
-      return asFiniteNumber(Math.atanh(value))
+      assertNumber(value)
+      return Math.atanh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },

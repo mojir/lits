@@ -340,4 +340,82 @@ module.exports = {
     examples: [`(odd? 1.0)`, `(odd? 1.001)`, `(odd? -1)`, `(odd? 2.1)`],
     specialExpression: false,
   },
+  'finite?': {
+    name: `finite?`,
+    category: `Predicate`,
+    linkName: `finite_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    description: `Returns \`true\` if \`number\` is finite, otherwise \`false\`.`,
+    examples: [`(finite? 1.0)`, `(finite? (/ 1 0))`, `(finite? (/ -1 0))`, `(finite? (sqrt -1))`],
+    specialExpression: false,
+  },
+  'nan?': {
+    name: `nan?`,
+    category: `Predicate`,
+    linkName: `nan_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    description: `Returns \`true\` if \`number\` is NaN (not a number), otherwise \`false\`.`,
+    examples: [`(nan? 1.0)`, `(nan? (/ 1 0))`, `(nan? (/ -1 0))`, `(nan? (sqrt -1))`],
+    specialExpression: false,
+  },
+  'negative-infinity?': {
+    name: `negative-infinity?`,
+    category: `Predicate`,
+    linkName: `negative-infinity_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    description: `Returns \`true\` if \`number\` equals negative infinity, otherwise \`false\`.`,
+    examples: [
+      `(negative-infinity? 1.0)`,
+      `(negative-infinity? (/ 1 0))`,
+      `(negative-infinity? (/ -1 0))`,
+      `(negative-infinity? (sqrt -1))`,
+    ],
+    specialExpression: false,
+  },
+  'positive-infinity?': {
+    name: `positive-infinity?`,
+    category: `Predicate`,
+    linkName: `positive-infinity_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    description: `Returns \`true\` if \`number\` equals positive infinity, otherwise \`false\`.`,
+    examples: [
+      `(positive-infinity? 1.0)`,
+      `(positive-infinity? (/ 1 0))`,
+      `(positive-infinity? (/ -1 0))`,
+      `(positive-infinity? (sqrt -1))`,
+    ],
+    specialExpression: false,
+  },
 }

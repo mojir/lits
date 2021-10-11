@@ -344,4 +344,44 @@ describe(`predicates`, () => {
       expect(() => lispish.run(`(regexp? true false)`)).toThrow()
     })
   })
+
+  describe(`finite?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(finite? 1)`)).toBe(true)
+      expect(lispish.run(`(finite? 0)`)).toBe(true)
+      expect(lispish.run(`(finite? (/ 1 0))`)).toBe(false)
+      expect(lispish.run(`(finite? (/ -1 0))`)).toBe(false)
+      expect(lispish.run(`(finite? (sqrt -1))`)).toBe(false)
+    })
+  })
+
+  describe(`nan?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(nan? 1)`)).toBe(false)
+      expect(lispish.run(`(nan? 0)`)).toBe(false)
+      expect(lispish.run(`(nan? (/ 1 0))`)).toBe(false)
+      expect(lispish.run(`(nan? (/ -1 0))`)).toBe(false)
+      expect(lispish.run(`(nan? (sqrt -1))`)).toBe(true)
+    })
+  })
+
+  describe(`positive-infinity?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(positive-infinity? 1)`)).toBe(false)
+      expect(lispish.run(`(positive-infinity? 0)`)).toBe(false)
+      expect(lispish.run(`(positive-infinity? (/ 1 0))`)).toBe(true)
+      expect(lispish.run(`(positive-infinity? (/ -1 0))`)).toBe(false)
+      expect(lispish.run(`(positive-infinity? (sqrt -1))`)).toBe(false)
+    })
+  })
+
+  describe(`negative-infinity?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(negative-infinity? 1)`)).toBe(false)
+      expect(lispish.run(`(negative-infinity? 0)`)).toBe(false)
+      expect(lispish.run(`(negative-infinity? (/ 1 0))`)).toBe(false)
+      expect(lispish.run(`(negative-infinity? (/ -1 0))`)).toBe(true)
+      expect(lispish.run(`(negative-infinity? (sqrt -1))`)).toBe(false)
+    })
+  })
 })
