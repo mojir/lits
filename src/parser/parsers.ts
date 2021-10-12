@@ -16,10 +16,13 @@ import {
   BindingNode,
   ModifierName,
   ParseBindings,
+  NormalExpressionNodeName,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
 import { UnexpectedTokenError } from '../errors'
+import { FnSpecialExpressionNode } from '../builtin/specialExpressions/functions'
+import { FunctionArguments } from '../builtin/utils'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
@@ -91,7 +94,7 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
   return [position, node]
 }
 
-type ParseObjectLitteral = (tokens: Token[], position: number) => [number, AstNode]
+type ParseObjectLitteral = (tokens: Token[], position: number) => [number, NormalExpressionNodeName]
 const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
   position = position + 1
 
@@ -115,6 +118,66 @@ const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
   assertLengthEven(node)
 
   return [position, node]
+}
+
+type ParseRegexpShorthand = (tokens: Token[], position: number) => [number, NormalExpressionNodeName]
+const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
+  const token = asNotUndefined(tokens[position])
+  const stringNode: StringNode = {
+    type: `String`,
+    value: token.value,
+  }
+
+  const node: NormalExpressionNode = {
+    type: `NormalExpression`,
+    name: `regexp`,
+    params: [stringNode],
+  }
+
+  return [position + 1, node]
+}
+
+const placeholderRegexp = /%([1-9])/
+type ParseFnShorthand = (tokens: Token[], position: number) => [number, FnSpecialExpressionNode]
+const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
+  position += 2
+  const [newPosition, normalExpressionNode] = parseNormalExpression(tokens, position)
+
+  let arity = 0
+  for (let pos = position + 1; pos < newPosition - 1; pos += 1) {
+    const token = asNotUndefined(tokens[pos])
+    if (token.type === `name`) {
+      const match = placeholderRegexp.exec(token.value)
+      if (match) {
+        arity = Math.max(arity, Number(match[1]))
+      }
+    }
+    if (token.type === `fnShorthand`) {
+      throw Error(`Nested shortcut functions are not allowed`)
+    }
+  }
+
+  const mandatoryArguments: string[] = []
+
+  for (let i = 1; i <= arity; i += 1) {
+    mandatoryArguments.push(`%${i}`)
+  }
+
+  const args: FunctionArguments = {
+    bindings: [],
+    mandatoryArguments,
+    optionalArguments: [],
+  }
+
+  const node: FnSpecialExpressionNode = {
+    type: `SpecialExpression`,
+    name: `fn`,
+    params: [],
+    arguments: args,
+    body: [normalExpressionNode],
+  }
+
+  return [newPosition, node]
 }
 
 const parseArgument: ParseArgument = (tokens, position) => {
@@ -262,6 +325,12 @@ export const parseToken: ParseToken = (tokens, position) => {
       } else if (token.value === `{`) {
         nodeDescriptor = parseObjectLitteral(tokens, position)
       }
+      break
+    case `regexpShorthand`:
+      nodeDescriptor = parseRegexpShorthand(tokens, position)
+      break
+    case `fnShorthand`:
+      nodeDescriptor = parseFnShorthand(tokens, position)
       break
   }
   if (!nodeDescriptor) {

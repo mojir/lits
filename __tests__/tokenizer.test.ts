@@ -31,4 +31,21 @@ describe(`Tokenizer`, () => {
       expect(tokenize(`"H\\ej"`)[0]).toEqual({ type: `string`, value: `H\\ej` })
     })
   })
+
+  describe(`regexpShorthand`, () => {
+    test(`samples`, () => {
+      expect(tokenize(`#"Hej"`)).toEqual([{ type: `regexpShorthand`, value: `Hej` }])
+      expect(() => tokenize(`#1`)).toThrow()
+    })
+  })
+
+  describe(`fnShorthand`, () => {
+    test(`samples`, () => {
+      expect(tokenize(`#(`)).toEqual([
+        { type: `fnShorthand`, value: `#` },
+        { type: `paren`, value: `(` },
+      ])
+      expect(() => tokenize(`#`)).toThrow()
+    })
+  })
 })

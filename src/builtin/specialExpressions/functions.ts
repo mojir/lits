@@ -26,7 +26,7 @@ interface DefnsSpecialExpressionNode extends SpecialExpressionNode {
   body: AstNode[]
 }
 
-interface FnSpecialExpressionNode extends SpecialExpressionNode {
+export interface FnSpecialExpressionNode extends SpecialExpressionNode {
   name: `fn`
   arguments: FunctionArguments
   body: AstNode[]

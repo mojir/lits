@@ -76,9 +76,6 @@ const result = evaluate(ast, context) // returns 10
 * **every-pred**
 * **find**
 * **flatten**
-* **fn shorthand** 
-  1. #(* 10 %) <==> (fn [x] (* 10 x)
-  2. #(* %1 %2) <==> (fn [x y] (* x y)
 * **for**
 * **get-in**
 * **group-by**
@@ -92,7 +89,6 @@ const result = evaluate(ast, context) // returns 10
 * **memoize**
 * **merge-with**
 * **name**
-* **nan?**
 * **not-any?**
 * **not-every?**
 * **nthnext**
