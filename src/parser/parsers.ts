@@ -1,5 +1,5 @@
 import { Token } from '../tokenizer/interface'
-import { asNotUndefined, assertExpressionNode, assertLengthEven } from '../utils'
+import { asNotUndefined, assertLengthEven, assertNameNode, isExpressionNode } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
@@ -12,11 +12,9 @@ import {
   ParseToken,
   ParseSpecialExpression,
   ParseNormalExpression,
-  ParseExpressionExpression,
   ParseArgument,
   BindingNode,
   ModifierName,
-  ExpressionExpressionNode,
   ParseBindings,
 } from './interface'
 import { builtin } from '../builtin'
@@ -63,14 +61,10 @@ const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
   const token = asNotUndefined(tokens[position])
-  if (token.type === `name`) {
-    const expressionName = token.value
-    if (builtin.specialExpressions[expressionName]) {
-      return parseSpecialExpression(tokens, position)
-    }
-    return parseNormalExpression(tokens, position)
+  if (token.type === `name` && builtin.specialExpressions[token.value]) {
+    return parseSpecialExpression(tokens, position)
   }
-  return parseExpressionExpression(tokens, position)
+  return parseNormalExpression(tokens, position)
 }
 
 type ParseArrayLitteral = (tokens: Token[], position: number) => [number, AstNode]
@@ -188,33 +182,28 @@ function parseBinding(tokens: Token[], position: number): [number, BindingNode] 
   return [position, node]
 }
 
-const parseExpressionExpression: ParseExpressionExpression = (tokens, position) => {
-  let expression: AstNode
-  ;[position, expression] = parseToken(tokens, position)
-
-  assertExpressionNode(expression)
+const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
+  let fnNode: AstNode
+  ;[position, fnNode] = parseToken(tokens, position)
 
   let params: AstNode[]
   ;[position, params] = parseTokens(tokens, position)
+  position += 1
 
-  const node: ExpressionExpressionNode = {
-    type: `ExpressionExpression`,
-    expression,
-    params,
+  if (isExpressionNode(fnNode)) {
+    const node: NormalExpressionNode = {
+      type: `NormalExpression`,
+      expression: fnNode,
+      params,
+    }
+
+    return [position + 1, node]
   }
 
-  return [position + 1, node]
-}
-
-const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
-  const expressionName = asNotUndefined(tokens[position]).value
-
-  const [newPosition, params] = parseTokens(tokens, position + 1)
-  position = newPosition + 1
-
+  assertNameNode(fnNode)
   const node: NormalExpressionNode = {
     type: `NormalExpression`,
-    name: expressionName,
+    name: fnNode.value,
     params,
   }
 

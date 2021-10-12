@@ -7,6 +7,7 @@ import {
   LispishFunction,
   NameNode,
   NormalExpressionNode,
+  NormalExpressionNodeName,
   SpecialExpressionNode,
   UserDefinedLispishFunction,
 } from './parser/interface'
@@ -263,12 +264,8 @@ export function assertCharArray(arr: unknown): asserts arr is string[] {
   }
 }
 
-export function assertExpressionNode(node: AstNode): asserts node is ExpressionNode {
-  if (
-    !(node.type === `NormalExpression` || node.type === `SpecialExpression` || node.type === `ExpressionExpression`)
-  ) {
-    throw new UnexpectedNodeTypeError(`ExpressionNode`, node)
-  }
+export function isExpressionNode(node: AstNode): node is ExpressionNode {
+  return node.type === `NormalExpression` || node.type === `SpecialExpression`
 }
 
 export function assertNumber(value: unknown): asserts value is number {
@@ -335,7 +332,10 @@ export function isInteger(value: unknown): value is number {
   return Number.isInteger(value)
 }
 
-export function hasKey(coll: Coll, key: string | number): boolean {
+export function hasKey(coll: unknown, key: string | number): coll is Coll {
+  if (!isColl(coll)) {
+    return false
+  }
   if (isString(coll) || isArr(coll)) {
     if (!isInteger(key)) {
       return false
@@ -435,4 +435,8 @@ export function compare(a: unknown, b: unknown): number {
     case `unknown`:
       return 0
   }
+}
+
+export function isNormalExpressionNodeName(node: NormalExpressionNode): node is NormalExpressionNodeName {
+  return typeof node.name === `string`
 }

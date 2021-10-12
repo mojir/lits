@@ -96,7 +96,7 @@ describe(`Evaluator`, () => {
     expect(result).toEqual([true, false])
   })
 
-  test(`expressionExpression`, () => {
+  test(`normal expression with lambda`, () => {
     expect(lispish.run(`((fn [x] (* x x)) 10)`)).toBe(100)
   })
 

@@ -34,7 +34,6 @@ export type NodeType =
   | `String`
   | `NormalExpression`
   | `SpecialExpression`
-  | `ExpressionExpression`
   | `Name`
   | `Modifier`
   | `ReservedName`
@@ -47,13 +46,12 @@ interface GenericNode {
   type: NodeType
 }
 
-export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | ExpressionExpressionNode
+export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
 export type ParseBindings = (tokens: Token[], position: number) => [number, BindingNode[]]
 export type ParseArgument = (tokens: Token[], position: number) => [number, ArgumentNode | ModifierNode]
 export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
 export type ParseNormalExpression = (tokens: Token[], position: number) => [number, NormalExpressionNode]
 export type ParseSpecialExpression = (tokens: Token[], position: number) => [number, SpecialExpressionNode]
-export type ParseExpressionExpression = (tokens: Token[], position: number) => [number, ExpressionExpressionNode]
 export type ParseTokens = (tokens: Token[], position: number) => [number, AstNode[]]
 export type ParseToken = (tokens: Token[], position: number) => [number, AstNode]
 
@@ -77,11 +75,23 @@ export interface ReservedNameNode extends GenericNode {
   type: `ReservedName`
   value: ReservedName
 }
-export interface NormalExpressionNode extends GenericNode {
+
+interface NormalExpressionNodeBase extends GenericNode {
   type: `NormalExpression`
-  name: string
   params: AstNode[]
 }
+
+export interface NormalExpressionNodeName extends NormalExpressionNodeBase {
+  name: string
+  expression?: ExpressionNode
+}
+
+interface NormalExpressionNodeExpression extends NormalExpressionNodeBase {
+  name?: never
+  expression: ExpressionNode
+}
+
+export type NormalExpressionNode = NormalExpressionNodeName | NormalExpressionNodeExpression
 
 export interface BindingNode extends GenericNode {
   type: `Binding`
@@ -93,12 +103,6 @@ export interface ArgumentNode extends GenericNode {
   type: `Argument`
   name: string
   defaultValue?: AstNode
-}
-
-export interface ExpressionExpressionNode extends GenericNode {
-  type: `ExpressionExpression`
-  expression: ExpressionNode
-  params: AstNode[]
 }
 
 export interface SpecialExpressionNode extends GenericNode {
@@ -114,7 +118,6 @@ export type AstNode =
   | NameNode
   | NormalExpressionNode
   | SpecialExpressionNode
-  | ExpressionExpressionNode
   | ModifierNode
 
 export type Ast = {

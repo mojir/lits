@@ -38,6 +38,7 @@ import {
   isInteger,
   hasKey,
   isRegExp,
+  isNormalExpressionNodeName,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -574,5 +575,16 @@ describe(`utils`, () => {
     expect(isRegExp(`Hej`)).toBe(false)
     expect(isRegExp({})).toBe(false)
     expect(isRegExp(/^a/)).toBe(true)
+  })
+
+  test(`isNormalExpressionNodeName`, () => {
+    expect(isNormalExpressionNodeName({ type: `NormalExpression`, params: [], name: `object` })).toBe(true)
+    expect(
+      isNormalExpressionNodeName({
+        type: `NormalExpression`,
+        params: [],
+        expression: { type: `NormalExpression`, name: `+`, params: [{ type: `Number`, value: 2 }] },
+      }),
+    ).toBe(false)
   })
 })

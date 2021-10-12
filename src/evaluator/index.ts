@@ -6,9 +6,8 @@ import {
   StringNode,
   ReservedNameNode,
   LispishFunction,
-  ExpressionExpressionNode,
   functionSymbol,
-  AstNode,
+  NormalExpressionNodeName,
 } from '../parser/interface'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
@@ -18,7 +17,9 @@ import {
   assertNonNegativeInteger,
   assertObj,
   assertString,
+  hasKey,
   isLispishFunction,
+  isNormalExpressionNodeName,
   isObj,
   isUserDefinedLispishFunction,
 } from '../utils'
@@ -53,8 +54,6 @@ export const evaluateAstNode: EvaluateAstNode = (node, contextStack) => {
       return evaluateNormalExpression(node, contextStack)
     case `SpecialExpression`:
       return evaluateSpecialExpression(node, contextStack)
-    case `ExpressionExpression`:
-      return evaluateExpressionExpression(node, contextStack)
   }
 }
 
@@ -88,21 +87,37 @@ function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
+  if (isNormalExpressionNodeName(node)) {
+    for (const context of contextStack) {
+      const fn = context[node.name]?.value
+      const result = evaluateFunction(fn, params, contextStack)
+      if (hasKey(result, `value`)) {
+        return result.value
+      }
+    }
 
-  for (const context of contextStack) {
-    const candidate = context[node.name]?.value
-    if (isLispishFunction(candidate)) {
-      return evaluateLispishFunction(candidate, params, contextStack)
+    return evaluateBuiltinNormalExpression(node, params, contextStack)
+  } else {
+    const fn = evaluateAstNode(node.expression, contextStack)
+    const result = evaluateFunction(fn, params, contextStack)
+    if (hasKey(result, `value`)) {
+      return result.value
     }
-    if (Array.isArray(candidate)) {
-      return evaluateArrayAsFunction(candidate, node, contextStack)
-    }
-    if (isObj(candidate)) {
-      return evalueateObjectAsFunction(candidate, node, contextStack)
-    }
+    throw Error(`Expected function, got ${fn}`)
   }
+}
 
-  return evaluateBuiltinNormalExpression(node, params, contextStack)
+function evaluateFunction(fn: unknown, params: unknown[], contextStack: Context[]): { value: unknown } | null {
+  if (isLispishFunction(fn)) {
+    return { value: evaluateLispishFunction(fn, params, contextStack) }
+  }
+  if (Array.isArray(fn)) {
+    return { value: evaluateArrayAsFunction(fn, params) }
+  }
+  if (isObj(fn)) {
+    return { value: evalueateObjectAsFunction(fn, params) }
+  }
+  return null
 }
 
 const evaluateLispishFunction: EvaluateLispishFunction = (
@@ -178,7 +193,11 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
   }
 }
 
-function evaluateBuiltinNormalExpression(node: NormalExpressionNode, params: Arr, contextStack: Context[]): unknown {
+function evaluateBuiltinNormalExpression(
+  node: NormalExpressionNodeName,
+  params: Arr,
+  contextStack: Context[],
+): unknown {
   const normalExpressionEvaluator = asNotUndefined(
     builtin.normalExpressions[node.name],
     `${node.name} is not a function`,
@@ -195,46 +214,21 @@ function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Co
   return specialExpressionEvaluator(node, contextStack, { evaluateAstNode, builtin })
 }
 
-function evaluateExpressionExpression(node: ExpressionExpressionNode, contextStack: Context[]): unknown {
-  const fn = evaluateAstNode(node.expression, contextStack)
-
-  if (isLispishFunction(fn)) {
-    const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
-
-    return evaluateLispishFunction(fn, params, contextStack)
-  }
-  if (Array.isArray(fn)) {
-    return evaluateArrayAsFunction(fn, node, contextStack)
-  }
-  if (isObj(fn)) {
-    return evalueateObjectAsFunction(fn, node, contextStack)
-  }
-  throw Error(`Expected function, got ${fn}`)
-}
-
-function evalueateObjectAsFunction(
-  fn: Obj,
-  node: ExpressionExpressionNode | NormalExpressionNode,
-  contextStack: Context[],
-) {
+function evalueateObjectAsFunction(fn: Obj, params: unknown[]) {
   assertObj(fn)
-  if (node.params.length !== 1) {
+  if (params.length !== 1) {
     throw Error(`Object as function requires one string parameter`)
   }
-  const key = evaluateAstNode(node.params[0] as AstNode, contextStack)
+  const key = params[0]
   assertString(key)
   return fn[key]
 }
 
-function evaluateArrayAsFunction(
-  fn: Arr,
-  node: ExpressionExpressionNode | NormalExpressionNode,
-  contextStack: Context[],
-) {
-  if (node.params.length !== 1) {
+function evaluateArrayAsFunction(fn: Arr, params: unknown[]) {
+  if (params.length !== 1) {
     throw Error(`Array as function requires one non negative integer parameter`)
   }
-  const index = evaluateAstNode(node.params[0] as AstNode, contextStack)
+  const index = params[0]
   assertNonNegativeInteger(index)
   return fn[index]
 }
