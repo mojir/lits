@@ -265,7 +265,12 @@ export function assertCharArray(arr: unknown): asserts arr is string[] {
 }
 
 export function isExpressionNode(node: AstNode): node is ExpressionNode {
-  return node.type === `NormalExpression` || node.type === `SpecialExpression`
+  return (
+    node.type === `NormalExpression` ||
+    node.type === `SpecialExpression` ||
+    node.type === `Number` ||
+    node.type === `String`
+  )
 }
 
 export function assertNumber(value: unknown): asserts value is number {

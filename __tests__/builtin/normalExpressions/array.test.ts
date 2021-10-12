@@ -74,17 +74,4 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(repeat)`)).toThrow()
     })
   })
-
-  describe(`array as function`, () => {
-    test(`samples`, () => {
-      expect(lispish.run(`(def nameArray ["Albert" "Mojir"]) (nameArray 0)`)).toBe(`Albert`)
-      expect(lispish.run(`(["Albert" "Mojir"] 0)`)).toBe(`Albert`)
-      expect(lispish.run(`((cons 1 [2 3]) 1)`)).toBe(2)
-      expect(() => lispish.run(`(["Albert" "Mojir"])`)).toThrow()
-      expect(() => lispish.run(`(["Albert" "Mojir"] "0")`)).toThrow()
-      expect(() => lispish.run(`(["Albert" "Mojir"] 0 1)`)).toThrow()
-      expect(() => lispish.run(`("Albert" 0)`)).toThrow()
-      expect(() => lispish.run(`((+ 1 2) 0)`)).toThrow()
-    })
-  })
 })

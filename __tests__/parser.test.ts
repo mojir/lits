@@ -30,7 +30,7 @@ describe(`Parser`, () => {
   })
 
   test(`Unparsable expression`, () => {
-    const tokens = tokenize(`("s")`)
+    const tokens = tokenize(`(`)
     expect(() => parse(tokens)).toThrow()
   })
 })

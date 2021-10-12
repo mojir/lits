@@ -14,13 +14,17 @@ import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
 import {
   asNotUndefined,
+  assertInteger,
   assertNonNegativeInteger,
-  assertObj,
+  assertSeq,
   assertString,
   hasKey,
+  isInteger,
   isLispishFunction,
   isNormalExpressionNodeName,
+  isNumber,
   isObj,
+  isString,
   isUserDefinedLispishFunction,
 } from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
@@ -116,6 +120,12 @@ function evaluateFunction(fn: unknown, params: unknown[], contextStack: Context[
   }
   if (isObj(fn)) {
     return { value: evalueateObjectAsFunction(fn, params) }
+  }
+  if (isString(fn)) {
+    return { value: evaluateStringAsFunction(fn, params) }
+  }
+  if (isNumber(fn)) {
+    return { value: evaluateNumberAsFunction(fn, params) }
   }
   return null
 }
@@ -215,7 +225,6 @@ function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Co
 }
 
 function evalueateObjectAsFunction(fn: Obj, params: unknown[]) {
-  assertObj(fn)
   if (params.length !== 1) {
     throw Error(`Object as function requires one string parameter`)
   }
@@ -231,4 +240,28 @@ function evaluateArrayAsFunction(fn: Arr, params: unknown[]) {
   const index = params[0]
   assertNonNegativeInteger(index)
   return fn[index]
+}
+
+function evaluateStringAsFunction(fn: string, params: unknown[]) {
+  if (params.length !== 1) {
+    throw Error(`String as function requires one Obj parameter`)
+  }
+  const param = params[0]
+  if (isObj(param)) {
+    return param[fn]
+  }
+  if (isInteger(param)) {
+    return fn[param]
+  }
+  throw Error(`string as function expects Obj or integer parameter, got ${param}`)
+}
+
+function evaluateNumberAsFunction(fn: number, params: unknown[]) {
+  assertInteger(fn)
+  if (params.length !== 1) {
+    throw Error(`String as function requires one Arr parameter`)
+  }
+  const param = params[0]
+  assertSeq(param)
+  return param[fn]
 }

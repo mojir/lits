@@ -46,7 +46,7 @@ interface GenericNode {
   type: NodeType
 }
 
-export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode
+export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
 export type ParseBindings = (tokens: Token[], position: number) => [number, BindingNode[]]
 export type ParseArgument = (tokens: Token[], position: number) => [number, ArgumentNode | ModifierNode]
 export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]
