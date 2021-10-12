@@ -33,6 +33,78 @@ module.exports = {
     examples: [`(= 1 1)`, `(= 1.01 1)`, `(= "1" 1)`, `(= "2" "2" "2" "2")`, `(= 2 2 1 2)`],
     specialExpression: false,
   },
+  '<': {
+    name: `<`,
+    category: `Misc`,
+    linkName: `_lt`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `a`,
+        type: `any`,
+      },
+      {
+        name: `b`,
+        type: `any`,
+      },
+    ],
+    description: `Compares \`numbers\` according to "less than" predicate. Each (overlapping) pair of the \`numbers\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    examples: [`(< 0 1)`, `(< 1 1.01)`, `(< 1 1)`, `(< 1 2 3 4)`, `(< 1 2 2 3)`],
+    specialExpression: false,
+  },
+  '>': {
+    name: `>`,
+    category: `Misc`,
+    linkName: `_gt`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    description: `Compares \`numbers\` according to "greater than" predicate. Each (overlapping) pair of the \`numbers\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    examples: [`(> 1 0)`, `(> 1.01 1)`, `(> 1 1)`, `(> 4 3 2 1)`, `(> 3 2 2 1)`],
+    specialExpression: false,
+  },
+  '<=': {
+    name: `<=`,
+    category: `Misc`,
+    linkName: `_lte`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    description: `Compares \`numbers\` according to "less than or equal" predicate. Each (overlapping) pair of the \`numbers\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    examples: [`(<= 0 1)`, `(<= 1 1.01)`, `(<= 1 1)`, `(<= 1 2 3 4)`, `(<= 1 2 2 3)`],
+    specialExpression: false,
+  },
+  '>=': {
+    name: `>=`,
+    category: `Misc`,
+    linkName: `_gte`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `number`,
+        type: `number`,
+      },
+    ],
+    description: `Compares \`numbers\` according to "greater than or equal" predicate. Each (overlapping) pair of the \`numbers\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    examples: [`(>= 1 0)`, `(>= 1.01 1)`, `(>= 1 1)`, `(>= 4 3 2 1)`, `(>= 3 2 2 1)`],
+    specialExpression: false,
+  },
   not: {
     name: `not`,
     category: `Misc`,

@@ -150,7 +150,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(filter number? [])`)).toEqual([])
       expect(lispish.run(`(filter null? [1 "2" 3])`)).toEqual([])
       expect(lispish.run(`(filter (fn [x] (zero? (mod x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([0, 3, 6])
-      expect(lispish.run(`(filter (fn [x] (string>= x "a")) "aAbBcC")`)).toBe(`abc`)
+      expect(lispish.run(`(filter (fn [x] (>= x "a")) "aAbBcC")`)).toBe(`abc`)
       expect(() => lispish.run(`(filter +)`)).toThrow()
       expect(() => lispish.run(`(filter)`)).toThrow()
       expect(() => lispish.run(`(filter number? [1] 2)`)).toThrow()
@@ -163,7 +163,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(position number? ["1" "2" "3"])`)).toBeUndefined()
       expect(lispish.run(`(position number? [])`)).toBeUndefined()
       expect(lispish.run(`(position (fn [x] (zero? (mod x 3))) [1 2 3 4 5 6 7])`)).toEqual(2)
-      expect(lispish.run(`(position (fn [x] (string>= x "a")) "Aa")`)).toBe(1)
+      expect(lispish.run(`(position (fn [x] (>= x "a")) "Aa")`)).toBe(1)
       expect(lispish.run(`(position (fn [x] (= x "z")) "Aa")`)).toBeUndefined()
       expect(() => lispish.run(`(position +)`)).toThrow()
       expect(() => lispish.run(`(position)`)).toThrow()
@@ -192,8 +192,8 @@ describe(`array functions`, () => {
       expect(lispish.run(`(some number? [])`)).toBeUndefined()
       expect(lispish.run(`(some (fn [x] (zero? (mod x 3))) [1 2 3 4 5 6 7])`)).toBe(3)
 
-      expect(lispish.run(`(some (fn [x] (string>= x "a")) "Aa")`)).toBe(`a`)
-      expect(lispish.run(`(some (fn [x] (string>= x "z")) "Aa")`)).toBeUndefined()
+      expect(lispish.run(`(some (fn [x] (>= x "a")) "Aa")`)).toBe(`a`)
+      expect(lispish.run(`(some (fn [x] (>= x "z")) "Aa")`)).toBeUndefined()
 
       expect(() => lispish.run(`(some +)`)).toThrow()
       expect(() => lispish.run(`(some)`)).toThrow()
@@ -207,8 +207,8 @@ describe(`array functions`, () => {
       expect(lispish.run(`(every? number? ["1" "2" "3"])`)).toBe(false)
       expect(lispish.run(`(every? number? [])`)).toBe(false)
       expect(lispish.run(`(every? (fn [x] (zero? (mod x 2))) [2 4 6])`)).toBe(true)
-      expect(lispish.run(`(every? (fn [x] (string>= x "a")) "abc")`)).toBe(true)
-      expect(lispish.run(`(every? (fn [x] (string>= x "a")) "abC")`)).toBe(false)
+      expect(lispish.run(`(every? (fn [x] (>= x "a")) "abc")`)).toBe(true)
+      expect(lispish.run(`(every? (fn [x] (>= x "a")) "abC")`)).toBe(false)
       expect(() => lispish.run(`(every? +)`)).toThrow()
       expect(() => lispish.run(`(every?)`)).toThrow()
       expect(() => lispish.run(`(every? number? [1] 2)`)).toThrow()
@@ -221,8 +221,8 @@ describe(`array functions`, () => {
       expect(lispish.run(`(map number? [])`)).toEqual([])
       expect(lispish.run(`(map + [1 2 3] [1 2 3])`)).toEqual([2, 4, 6])
       expect(lispish.run(`(map max [2 6 3] [2 4 7] [1 6 2])`)).toEqual([2, 6, 7])
-      expect(lispish.run(`(map (fn [x] (if (string>= x "a") "-" "+")) "AaBbCc")`)).toBe(`+-+-+-`)
-      expect(() => lispish.run(`(map (fn [x] (if (string>= x "a") 0 1)) "AaBbCc")`)).toThrow()
+      expect(lispish.run(`(map (fn [x] (if (>= x "a") "-" "+")) "AaBbCc")`)).toBe(`+-+-+-`)
+      expect(() => lispish.run(`(map (fn [x] (if (>= x "a") 0 1)) "AaBbCc")`)).toThrow()
       expect(
         lispish.run(
           `
@@ -232,7 +232,7 @@ describe(`array functions`, () => {
                 result
                 (recur
                   (rest cs)
-                  (if (string> (chars 0) result) (chars 0) result)
+                  (if (> (chars 0) result) (chars 0) result)
                 )
               )
             )
@@ -556,14 +556,13 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(take-while (fn [x] (< x 3)) [1 2 3 2 1])`)).toEqual([1, 2])
       expect(lispish.run(`(take-while (fn [x] (> x 3)) [1 2 3 2 1])`)).toEqual([])
-      expect(lispish.run(`(take-while (fn [x] (string<= x "c")) "abcdabcd")`)).toEqual(`abc`)
+      expect(lispish.run(`(take-while (fn [x] (<= x "c")) "abcdabcd")`)).toEqual(`abc`)
 
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) (object))`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) null)`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) undefined)`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) true)`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) false)`)).toThrow()
-      expect(() => lispish.run(`(take-while (fn [x] (< x 3)) "1")`)).toThrow()
       expect(() => lispish.run(`(take-while 10 [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take-while)`)).toThrow()
       expect(() => lispish.run(`(take-while [1 2 3])`)).toThrow()
@@ -585,9 +584,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true 0))) [3 1 2])`)).toEqual([3, 2, 1])
       expect(lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true 0))) [])`)).toEqual([])
 
-      expect(lispish.run(`(sort (fn [a b] (cond ((string< a b) 1) ((string> a b) -1) (true 0))) "Albert")`)).toBe(
-        `trlebA`,
-      )
+      expect(lispish.run(`(sort (fn [a b] (cond ((< a b) 1) ((> a b) -1) (true 0))) "Albert")`)).toBe(`trlebA`)
 
       expect(lispish.run(`(sort "Albert")`)).toBe(`Abelrt`)
       expect(

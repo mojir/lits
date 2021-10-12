@@ -213,62 +213,6 @@ describe(`math functions`, () => {
     })
   })
 
-  describe(`>`, () => {
-    test(`samples`, () => {
-      expect(() => lispish.run(`(>)`)).toThrow()
-      expect(lispish.run(`(> 1)`)).toBe(true)
-      expect(lispish.run(`(> 1 2)`)).toBe(false)
-      expect(lispish.run(`(> 1 1)`)).toBe(false)
-      expect(lispish.run(`(> 2 1)`)).toBe(true)
-      expect(lispish.run(`(> 2 1 2)`)).toBe(false)
-      expect(lispish.run(`(> 2 1 0)`)).toBe(true)
-      expect(() => lispish.run(`(> "1")`)).toThrow()
-      expect(() => lispish.run(`(> "1" "3")`)).toThrow()
-    })
-  })
-
-  describe(`<`, () => {
-    test(`samples`, () => {
-      expect(() => lispish.run(`(<)`)).toThrow()
-      expect(lispish.run(`(< 1)`)).toBe(true)
-      expect(lispish.run(`(< 1 2)`)).toBe(true)
-      expect(lispish.run(`(< 1 1)`)).toBe(false)
-      expect(lispish.run(`(< 2 1)`)).toBe(false)
-      expect(lispish.run(`(< 1 2 1)`)).toBe(false)
-      expect(lispish.run(`(< 0 1 2)`)).toBe(true)
-      expect(() => lispish.run(`(< "1")`)).toThrow()
-      expect(() => lispish.run(`(< "1" "3")`)).toThrow()
-    })
-  })
-
-  describe(`>=`, () => {
-    test(`samples`, () => {
-      expect(() => lispish.run(`(>=)`)).toThrow()
-      expect(lispish.run(`(>= 1)`)).toBe(true)
-      expect(lispish.run(`(>= 1 2)`)).toBe(false)
-      expect(lispish.run(`(>= 1 1)`)).toBe(true)
-      expect(lispish.run(`(>= 2 1)`)).toBe(true)
-      expect(lispish.run(`(>= 2 1 2)`)).toBe(false)
-      expect(lispish.run(`(>= 2 1 1)`)).toBe(true)
-      expect(() => lispish.run(`(>= "1")`)).toThrow()
-      expect(() => lispish.run(`(>= "1" "3")`)).toThrow()
-    })
-  })
-
-  describe(`<=`, () => {
-    test(`samples`, () => {
-      expect(() => lispish.run(`(<=)`)).toThrow()
-      expect(lispish.run(`(<= 1)`)).toBe(true)
-      expect(lispish.run(`(<= 1 2)`)).toBe(true)
-      expect(lispish.run(`(<= 1 1)`)).toBe(true)
-      expect(lispish.run(`(<= 2 1)`)).toBe(false)
-      expect(lispish.run(`(<= 1 2 1)`)).toBe(false)
-      expect(lispish.run(`(<= 1 2 2)`)).toBe(true)
-      expect(() => lispish.run(`(<= "1")`)).toThrow()
-      expect(() => lispish.run(`(<= "1" "3")`)).toThrow()
-    })
-  })
-
   describe(`min`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(min 1)`)).toBe(1)

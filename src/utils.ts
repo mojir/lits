@@ -357,7 +357,7 @@ const sortOrderByType: Record<Type, number> = {
   regexp: 5,
   unknown: 6,
   null: 7,
-  undefined: 8,
+  undefined: 8, // Must be last, sinse javascript sort always adds these last
 }
 
 function getType(value: unknown): Type {

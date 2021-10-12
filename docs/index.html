@@ -899,7 +899,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,3,9,10]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,4,5,7,10]</span></span></pre>
   </div>
 </div>
 
@@ -1421,9 +1421,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.4522099532774475</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.008851549169463546</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.8270215312318674</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.9981483724763478</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0005414243640766925</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.918193064132885</span></span></pre>
   </div>
 </div>
 
@@ -1442,96 +1442,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 49</span></span></pre>
-  </div>
-</div>
-
-
-<div id="_lt" class="content function">
-  <div class="function-header"><</div>
-  
-  <p>Compares <span class="pre">numbers</span> according to "less than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>< number => boolean</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(< 0 1)')"><span class="icon-button">▶</span> (< 0 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(< 1 1.01)')"><span class="icon-button">▶</span> (< 1 1.01) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(< 1 1)')"><span class="icon-button">▶</span> (< 1 1) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(< 1 2 3 4)')"><span class="icon-button">▶</span> (< 1 2 3 4) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(< 1 2 2 3)')"><span class="icon-button">▶</span> (< 1 2 2 3) <span class="gray">=> false</span></span></pre>
-  </div>
-</div>
-
-
-<div id="_gt" class="content function">
-  <div class="function-header">></div>
-  
-  <p>Compares <span class="pre">numbers</span> according to "greater than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>> number => boolean</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(> 1 0)')"><span class="icon-button">▶</span> (> 1 0) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(> 1.01 1)')"><span class="icon-button">▶</span> (> 1.01 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(> 1 1)')"><span class="icon-button">▶</span> (> 1 1) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(> 4 3 2 1)')"><span class="icon-button">▶</span> (> 4 3 2 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(> 3 2 2 1)')"><span class="icon-button">▶</span> (> 3 2 2 1) <span class="gray">=> false</span></span></pre>
-  </div>
-</div>
-
-
-<div id="_lte" class="content function">
-  <div class="function-header"><=</div>
-  
-  <p>Compares <span class="pre">numbers</span> according to "less than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre><= number => boolean</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(<= 0 1)')"><span class="icon-button">▶</span> (<= 0 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(<= 1 1.01)')"><span class="icon-button">▶</span> (<= 1 1.01) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(<= 1 1)')"><span class="icon-button">▶</span> (<= 1 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(<= 1 2 3 4)')"><span class="icon-button">▶</span> (<= 1 2 3 4) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(<= 1 2 2 3)')"><span class="icon-button">▶</span> (<= 1 2 2 3) <span class="gray">=> true</span></span></pre>
-  </div>
-</div>
-
-
-<div id="_gte" class="content function">
-  <div class="function-header">>=</div>
-  
-  <p>Compares <span class="pre">numbers</span> according to "greater than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>>= number => boolean</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(>= 1 0)')"><span class="icon-button">▶</span> (>= 1 0) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(>= 1.01 1)')"><span class="icon-button">▶</span> (>= 1.01 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(>= 1 1)')"><span class="icon-button">▶</span> (>= 1 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(>= 4 3 2 1)')"><span class="icon-button">▶</span> (>= 4 3 2 1) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(>= 3 2 2 1)')"><span class="icon-button">▶</span> (>= 3 2 2 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 3</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 99</span></span></pre>
   </div>
 </div>
 
@@ -1825,6 +1737,95 @@
 </div>
 
 
+<div id="_lt" class="content function">
+  <div class="function-header"><</div>
+  
+  <p>Compares <span class="pre">numbers</span> according to "less than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>< a b => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>a: any</pre>
+<pre>b: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(< 0 1)')"><span class="icon-button">▶</span> (< 0 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(< 1 1.01)')"><span class="icon-button">▶</span> (< 1 1.01) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(< 1 1)')"><span class="icon-button">▶</span> (< 1 1) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(< 1 2 3 4)')"><span class="icon-button">▶</span> (< 1 2 3 4) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(< 1 2 2 3)')"><span class="icon-button">▶</span> (< 1 2 2 3) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="_gt" class="content function">
+  <div class="function-header">></div>
+  
+  <p>Compares <span class="pre">numbers</span> according to "greater than" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>> number => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(> 1 0)')"><span class="icon-button">▶</span> (> 1 0) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(> 1.01 1)')"><span class="icon-button">▶</span> (> 1.01 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(> 1 1)')"><span class="icon-button">▶</span> (> 1 1) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(> 4 3 2 1)')"><span class="icon-button">▶</span> (> 4 3 2 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(> 3 2 2 1)')"><span class="icon-button">▶</span> (> 3 2 2 1) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="_lte" class="content function">
+  <div class="function-header"><=</div>
+  
+  <p>Compares <span class="pre">numbers</span> according to "less than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre><= number => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(<= 0 1)')"><span class="icon-button">▶</span> (<= 0 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(<= 1 1.01)')"><span class="icon-button">▶</span> (<= 1 1.01) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(<= 1 1)')"><span class="icon-button">▶</span> (<= 1 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(<= 1 2 3 4)')"><span class="icon-button">▶</span> (<= 1 2 3 4) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(<= 1 2 2 3)')"><span class="icon-button">▶</span> (<= 1 2 2 3) <span class="gray">=> true</span></span></pre>
+  </div>
+</div>
+
+
+<div id="_gte" class="content function">
+  <div class="function-header">>=</div>
+  
+  <p>Compares <span class="pre">numbers</span> according to "greater than or equal" predicate. Each (overlapping) pair of the <span class="pre">numbers</span> is compared by it. The result is <span class="pre">true</span> if all compared pairs satisfy comparison.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>>= number => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>number: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(>= 1 0)')"><span class="icon-button">▶</span> (>= 1 0) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(>= 1.01 1)')"><span class="icon-button">▶</span> (>= 1.01 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(>= 1 1)')"><span class="icon-button">▶</span> (>= 1 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(>= 4 3 2 1)')"><span class="icon-button">▶</span> (>= 4 3 2 1) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(>= 3 2 2 1)')"><span class="icon-button">▶</span> (>= 3 2 2 1) <span class="gray">=> true</span></span></pre>
+  </div>
+</div>
+
+
 <div id="not" class="content function">
   <div class="function-header">not</div>
   
@@ -1906,7 +1907,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1633987316049</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634051185436</span></span></pre>
   </div>
 </div>
 
@@ -3104,94 +3105,6 @@
 </div>
 
 
-<div id="string_gt" class="content function">
-  <div class="function-header">string></div>
-  
-  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is greater than <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>string> string1 string2 => number</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
-<pre>string2: string</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(string> ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string> "A string" "Another string") <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string> ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string> "Albert Mojir" "Albert") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string> ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string> "Albert" "Albert") <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string> ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string> "Albert" "albert") <span class="gray">=> false</span></span></pre>
-  </div>
-</div>
-
-
-<div id="string_gte" class="content function">
-  <div class="function-header">string>=</div>
-  
-  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is greater than or equal to <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>string>= string1 string2 => number</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
-<pre>string2: string</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(string>= ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string>= "A string" "Another string") <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string>= ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string>= "Albert Mojir" "Albert") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string>= ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string>= "Albert" "Albert") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string>= ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string>= "Albert" "albert") <span class="gray">=> false</span></span></pre>
-  </div>
-</div>
-
-
-<div id="string_lt" class="content function">
-  <div class="function-header">string<</div>
-  
-  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is less than <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>string< string1 string2 => number</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
-<pre>string2: string</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(string< ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string< "A string" "Another string") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string< ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string< "Albert Mojir" "Albert") <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string< ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string< "Albert" "Albert") <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string< ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string< "Albert" "albert") <span class="gray">=> true</span></span></pre>
-  </div>
-</div>
-
-
-<div id="string_lte" class="content function">
-  <div class="function-header">string<=</div>
-  
-  <p>Compares the two string arguments lexicographically, and the result is <span class="pre">true</span> if <span class="pre">string1</span> is less than or equal to <span class="pre">string2</span>, otherwise result is <span class="pre">false</span>.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>string<= string1 string2 => number</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>string1: string</pre>
-<pre>string2: string</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(string<= ___double_quote___A string___double_quote___ ___double_quote___Another string___double_quote___)')"><span class="icon-button">▶</span> (string<= "A string" "Another string") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string<= ___double_quote___Albert Mojir___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string<= "Albert Mojir" "Albert") <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string<= ___double_quote___Albert___double_quote___ ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (string<= "Albert" "Albert") <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(string<= ___double_quote___Albert___double_quote___ ___double_quote___albert___double_quote___)')"><span class="icon-button">▶</span> (string<= "Albert" "albert") <span class="gray">=> true</span></span></pre>
-  </div>
-</div>
-
-
 <div id="string-to-number" class="content function">
   <div class="function-header">string-to-number</div>
   
@@ -3765,10 +3678,6 @@
 <li id="str_link" onclick="showPage('str')">str</li>
 <li id="string-repeat_link" onclick="showPage('string-repeat')">string-repeat</li>
 <li id="string-to-number_link" onclick="showPage('string-to-number')">string-to-number</li>
-<li id="string_lt_link" onclick="showPage('string_lt')">string&lt;</li>
-<li id="string_lte_link" onclick="showPage('string_lte')">string&lt;=</li>
-<li id="string_gt_link" onclick="showPage('string_gt')">string&gt;</li>
-<li id="string_gte_link" onclick="showPage('string_gte')">string&gt;=</li>
 <li id="subs_link" onclick="showPage('subs')">subs</li>
 <li id="template_link" onclick="showPage('template')">template</li>
 <li id="trim_link" onclick="showPage('trim')">trim</li>
@@ -3783,10 +3692,6 @@
 <li id="_plus_link" onclick="showPage('_plus')">+</li>
 <li id="_minus_link" onclick="showPage('_minus')">-</li>
 <li id="_slash_link" onclick="showPage('_slash')">/</li>
-<li id="_lt_link" onclick="showPage('_lt')">&lt;</li>
-<li id="_lte_link" onclick="showPage('_lte')">&lt;=</li>
-<li id="_gt_link" onclick="showPage('_gt')">&gt;</li>
-<li id="_gte_link" onclick="showPage('_gte')">&gt;=</li>
 <li id="abs_link" onclick="showPage('abs')">abs</li>
 <li id="acos_link" onclick="showPage('acos')">acos</li>
 <li id="acosh_link" onclick="showPage('acosh')">acosh</li>
@@ -3847,7 +3752,11 @@
 
         <label>Misc</label>
         <ul>
-          <li id="_equal_link" onclick="showPage('_equal')">=</li>
+          <li id="_lt_link" onclick="showPage('_lt')">&lt;</li>
+<li id="_lte_link" onclick="showPage('_lte')">&lt;=</li>
+<li id="_equal_link" onclick="showPage('_equal')">=</li>
+<li id="_gt_link" onclick="showPage('_gt')">&gt;</li>
+<li id="_gte_link" onclick="showPage('_gte')">&gt;=</li>
 <li id="apply_link" onclick="showPage('apply')">apply</li>
 <li id="assert_link" onclick="showPage('assert')">assert</li>
 <li id="boolean_link" onclick="showPage('boolean')">boolean</li>

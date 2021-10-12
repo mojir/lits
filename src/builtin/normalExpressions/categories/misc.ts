@@ -40,6 +40,61 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength({ min: 1 }, node),
   },
+  '>': {
+    evaluate: ([first, ...rest]: Arr): boolean => {
+      let currentValue = first
+      for (const param of rest) {
+        if (compare(currentValue, param) <= 0) {
+          return false
+        }
+        currentValue = param
+      }
+      return true
+    },
+    validate: node => assertLength({ min: 1 }, node),
+  },
+
+  '<': {
+    evaluate: ([first, ...rest]: Arr): boolean => {
+      let currentValue = first
+      for (const param of rest) {
+        if (compare(currentValue, param) >= 0) {
+          return false
+        }
+        currentValue = param
+      }
+      return true
+    },
+    validate: node => assertLength({ min: 1 }, node),
+  },
+
+  '>=': {
+    evaluate: ([first, ...rest]: Arr): boolean => {
+      let currentValue = first
+      for (const param of rest) {
+        if (compare(currentValue, param) < 0) {
+          return false
+        }
+        currentValue = param
+      }
+      return true
+    },
+    validate: node => assertLength({ min: 1 }, node),
+  },
+
+  '<=': {
+    evaluate: ([first, ...rest]: Arr): boolean => {
+      let currentValue = first
+      for (const param of rest) {
+        if (compare(currentValue, param) > 0) {
+          return false
+        }
+        currentValue = param
+      }
+      return true
+    },
+    validate: node => assertLength({ min: 1 }, node),
+  },
   apply: {
     evaluate: ([func, array]: Arr, contextStack, { evaluateLispishFunction }): unknown => {
       assertLispishFunction(func)

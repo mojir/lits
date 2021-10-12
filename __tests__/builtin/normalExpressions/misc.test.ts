@@ -95,6 +95,102 @@ describe(`misc functions`, () => {
     })
   })
 
+  describe(`>`, () => {
+    test(`samples`, () => {
+      expect(() => lispish.run(`(>)`)).toThrow()
+      expect(lispish.run(`(> 1)`)).toBe(true)
+      expect(lispish.run(`(> 1 2)`)).toBe(false)
+      expect(lispish.run(`(> 1 1)`)).toBe(false)
+      expect(lispish.run(`(> 2 1)`)).toBe(true)
+      expect(lispish.run(`(> 2 1 2)`)).toBe(false)
+      expect(lispish.run(`(> 2 1 0)`)).toBe(true)
+      expect(lispish.run(`(> "albert" "ALBERT")`)).toBe(true)
+      expect(lispish.run(`(> "ALBERT" "albert")`)).toBe(false)
+      expect(lispish.run(`(> "albert" "alber")`)).toBe(true)
+      expect(lispish.run(`(> "albert" "albert")`)).toBe(false)
+      expect(lispish.run(`(> "alber" "albert")`)).toBe(false)
+
+      expect(lispish.run(`(> "1")`)).toBe(true)
+      expect(lispish.run(`(> "1" "2")`)).toBe(false)
+      expect(lispish.run(`(> "1" "1")`)).toBe(false)
+      expect(lispish.run(`(> "2" "1")`)).toBe(true)
+      expect(lispish.run(`(> "2" "1" "2")`)).toBe(false)
+      expect(lispish.run(`(> "2" "1" 0)`)).toBe(true)
+    })
+  })
+
+  describe(`<`, () => {
+    test(`samples`, () => {
+      expect(() => lispish.run(`(<)`)).toThrow()
+      expect(lispish.run(`(< 1)`)).toBe(true)
+      expect(lispish.run(`(< 1 2)`)).toBe(true)
+      expect(lispish.run(`(< 1 1)`)).toBe(false)
+      expect(lispish.run(`(< 2 1)`)).toBe(false)
+      expect(lispish.run(`(< 1 2 1)`)).toBe(false)
+      expect(lispish.run(`(< 0 1 2)`)).toBe(true)
+      expect(lispish.run(`(< "albert" "ALBERT")`)).toBe(false)
+      expect(lispish.run(`(< "ALBERT" "albert")`)).toBe(true)
+      expect(lispish.run(`(< "albert" "alber")`)).toBe(false)
+      expect(lispish.run(`(< "albert" "albert")`)).toBe(false)
+      expect(lispish.run(`(< "alber" "albert")`)).toBe(true)
+
+      expect(lispish.run(`(< "1")`)).toBe(true)
+      expect(lispish.run(`(< "1" "2")`)).toBe(true)
+      expect(lispish.run(`(< "1" "1")`)).toBe(false)
+      expect(lispish.run(`(< "2" "1")`)).toBe(false)
+      expect(lispish.run(`(< "1" "2" "1")`)).toBe(false)
+      expect(lispish.run(`(< 0 "1" "2")`)).toBe(true)
+    })
+  })
+
+  describe(`>=`, () => {
+    test(`samples`, () => {
+      expect(() => lispish.run(`(>=)`)).toThrow()
+      expect(lispish.run(`(>= 1)`)).toBe(true)
+      expect(lispish.run(`(>= 1 2)`)).toBe(false)
+      expect(lispish.run(`(>= 1 1)`)).toBe(true)
+      expect(lispish.run(`(>= 2 1)`)).toBe(true)
+      expect(lispish.run(`(>= 2 1 2)`)).toBe(false)
+      expect(lispish.run(`(>= 2 1 1)`)).toBe(true)
+      expect(lispish.run(`(>= "albert" "ALBERT")`)).toBe(true)
+      expect(lispish.run(`(>= "ALBERT" "albert")`)).toBe(false)
+      expect(lispish.run(`(>= "albert" "alber")`)).toBe(true)
+      expect(lispish.run(`(>= "albert" "albert")`)).toBe(true)
+      expect(lispish.run(`(>= "alber" "albert")`)).toBe(false)
+
+      expect(lispish.run(`(>= "1")`)).toBe(true)
+      expect(lispish.run(`(>= "1" "2")`)).toBe(false)
+      expect(lispish.run(`(>= "1" "1")`)).toBe(true)
+      expect(lispish.run(`(>= "2" "1")`)).toBe(true)
+      expect(lispish.run(`(>= "2" "1" "2")`)).toBe(false)
+      expect(lispish.run(`(>= "2" "1" "1")`)).toBe(true)
+    })
+  })
+
+  describe(`<=`, () => {
+    test(`samples`, () => {
+      expect(() => lispish.run(`(<=)`)).toThrow()
+      expect(lispish.run(`(<= 1)`)).toBe(true)
+      expect(lispish.run(`(<= 1 2)`)).toBe(true)
+      expect(lispish.run(`(<= 1 1)`)).toBe(true)
+      expect(lispish.run(`(<= 2 1)`)).toBe(false)
+      expect(lispish.run(`(<= 1 2 1)`)).toBe(false)
+      expect(lispish.run(`(<= 1 2 2)`)).toBe(true)
+      expect(lispish.run(`(<= "albert" "ALBERT")`)).toBe(false)
+      expect(lispish.run(`(<= "ALBERT" "albert")`)).toBe(true)
+      expect(lispish.run(`(<= "albert" "alber")`)).toBe(false)
+      expect(lispish.run(`(<= "albert" "albert")`)).toBe(true)
+      expect(lispish.run(`(<= "alber" "albert")`)).toBe(true)
+
+      expect(lispish.run(`(<= "1")`)).toBe(true)
+      expect(lispish.run(`(<= "1" "2")`)).toBe(true)
+      expect(lispish.run(`(<= "1" "1")`)).toBe(true)
+      expect(lispish.run(`(<= "2" "1")`)).toBe(false)
+      expect(lispish.run(`(<= "1" "2" "1")`)).toBe(false)
+      expect(lispish.run(`(<= "1" "2" "2")`)).toBe(true)
+    })
+  })
+
   describe(`not`, () => {
     test(`samples`, () => {
       expect(() => lispish.run(`(not)`)).toThrow()

@@ -58,42 +58,6 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     },
   },
 
-  'string>': {
-    evaluate: ([first, second]: Arr): unknown => {
-      assertString(first)
-      assertString(second)
-      return first > second
-    },
-    validate: (node: NormalExpressionNode): void => assertLength(2, node),
-  },
-
-  'string<': {
-    evaluate: ([first, second]: Arr): unknown => {
-      assertString(first)
-      assertString(second)
-      return first < second
-    },
-    validate: (node: NormalExpressionNode): void => assertLength(2, node),
-  },
-
-  'string>=': {
-    evaluate: ([first, second]: Arr): unknown => {
-      assertString(first)
-      assertString(second)
-      return first >= second
-    },
-    validate: (node: NormalExpressionNode): void => assertLength(2, node),
-  },
-
-  'string<=': {
-    evaluate: ([first, second]: Arr): unknown => {
-      assertString(first)
-      assertString(second)
-      return first <= second
-    },
-    validate: (node: NormalExpressionNode): void => assertLength(2, node),
-  },
-
   'string-to-number': {
     evaluate: ([str]: Arr): number => {
       assertString(str)
