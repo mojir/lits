@@ -12,10 +12,11 @@ const {
   isLispishFunction,
 } = require('../dist/index')
 
+const historyResults = []
 const lispish = new Lispish()
 const { functionReference } = require('./reference')
 
-const commands = ['`help', '`quit', '`builtins', '`globalContext', '`GlobalContext', '`resetGlobalVariables']
+const commands = ['`help', '`quit', '`builtins', '`globalContext', '`GlobalContext', '`resetGlobalContext']
 const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
 const nameRegExp = /^(.*?)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
 const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]+)\s*$/
@@ -45,10 +46,30 @@ if (config.expression) {
 function execute(expression) {
   try {
     const result = lispish.run(expression, { globalContext: config.globalContext })
-
+    historyResults.unshift(result)
+    if (historyResults.length > 9) {
+      historyResults.length = 9
+    }
+    setReplHistoryVariables()
     console.log(formatValue(result))
   } catch (error) {
-    console.log(error.message ? error.message.brightRed : 'ERROR!')
+    console.log(`${error}`)
+    config.globalContext[`*e*`] = { value: error }
+  }
+}
+
+function setReplHistoryVariables() {
+  delete config.globalContext['*1*']
+  delete config.globalContext['*2*']
+  delete config.globalContext['*3*']
+  delete config.globalContext['*4*']
+  delete config.globalContext['*5*']
+  delete config.globalContext['*6*']
+  delete config.globalContext['*7*']
+  delete config.globalContext['*8*']
+  delete config.globalContext['*9*']
+  for (i = 0; i < historyResults.length; i += 1) {
+    config.globalContext[`*${i + 1}*`] = { value: historyResults[i] }
   }
 }
 
@@ -123,7 +144,7 @@ function processArguments(args) {
         }
         try {
           Object.entries(JSON.parse(argument)).forEach(([key, value]) => {
-            config.globalContext.variables[key] = { value, constant: true }
+            config.globalContext[key] = { value }
           })
         } catch (e) {
           console.error(`Couldn't parse global variables: ${e?.message}`)
@@ -138,7 +159,7 @@ function processArguments(args) {
         try {
           const contextString = fs.readFileSync(argument, { encoding: 'utf-8' })
           Object.entries(JSON.parse(contextString)).forEach(([key, value]) => {
-            config.globalContext.variables[key] = { value, constant: true }
+            config.globalContext[key] = { value }
           })
         } catch (e) {
           console.error(`Couldn't parse global variables: ${e?.message}`)
@@ -206,9 +227,9 @@ function runREPL() {
             case '`GlobalContext':
               printGlobalContext(true)
               break
-            case '`resetGlobalVariables':
-              config.globalContext = { functions: {}, variables: {} }
-              console.log('Global variables is now empty\n')
+            case '`resetGlobalContext':
+              config.globalContext = {}
+              console.log('Global context is now empty\n')
               break
             case '`quit':
               rl.close()
@@ -243,7 +264,7 @@ function printBuiltins() {
   }, 0)
 
   console.log(
-    `${'Builtins (* = special expression):'.underline}\n${all
+    `${'Builtins (* = special expression):'}\n${all
       .map(entry => {
         const prefix = entry.special ? '* ' : '  '
         const name = entry.name.padEnd(maxLength + 2, ' ')
@@ -277,10 +298,10 @@ ${doc.description}
 Syntax
   ${getSyntax(doc)}
 
-${'Arguments'.underline}
+${'Arguments'}
 ${doc.arguments.length === 0 ? '  None' : doc.arguments.map(arg => `  ${arg.name.bold}: ${arg.type}`).join('\n')}
 
-${'Examples'.underline}
+${'Examples'}
 ${
   doc.examples.length === 0
     ? '[no examples]'
@@ -301,7 +322,7 @@ function printHelp() {
   console.log(`\`builtins                 Print all builtin functions
 \`globalContext            Print all global variables
 \`GlobalContext            Print all global variables (JSON.stringify)
-\`resetGlobalVariables     Reset global variables
+\`resetGlobalContext     Reset global variables
 \`help                     Print this help message
 \`help [builtin function]  Print help for [builtin function]
 \`quit                     Quit
@@ -323,38 +344,20 @@ Options:
 }
 
 function printGlobalContext(stringify) {
-  console.log(`Variables:`.underline)
-  const variables = config.globalContext.variables
-  if (Object.keys(variables).length === 0) {
+  // console.log(config.globalContext)
+  const context = config.globalContext
+  const keys = Object.keys(context)
+  if (keys.length === 0) {
     console.log('[empty]\n')
     return
   } else {
-    Object.keys(variables)
-      .sort()
-      .forEach(x => {
-        if (stringify) {
-          console.log(`${x} = ${stringifyValue(variables[x], true)}`)
-        } else {
-          console.log(`${variables[x].constant ? 'const ' : ''}${x} = ${variables[x].value}`)
-        }
-      })
-    console.log()
-  }
-  console.log(`Functions:`.underline)
-  const functions = config.globalContext.functions
-  if (Object.keys(functions).length === 0) {
-    console.log('[empty]\n')
-    return
-  } else {
-    Object.keys(functions)
-      .sort()
-      .forEach(x => {
-        if (stringify) {
-          console.log(`${x} = ${stringifyValue(functions[x], true)}`)
-        } else {
-          console.log(`${functionToString(functions[x].fun)}`)
-        }
-      })
+    keys.sort().forEach(x => {
+      if (stringify) {
+        console.log(`${x} = ${stringifyValue(context[x], true)}`)
+      } else {
+        console.log(`${x} = ${formatValue(context[x].value)}`)
+      }
+    })
     console.log()
   }
 }
@@ -383,7 +386,7 @@ function completer(line) {
     return [expressions.filter(c => c.startsWith(expressionMatch[2])).map(c => `${expressionMatch[1]}${c} `), line]
   }
 
-  const names = Array.from(new Set([...reservedNames, ...Object.keys(config.globalContext.variables)]))
+  const names = Array.from(new Set([...reservedNames, ...Object.keys(config.globalContext)]))
   const nameMatch = nameRegExp.exec(line)
 
   if (nameMatch) {

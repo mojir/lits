@@ -60,11 +60,9 @@ const result = evaluate(ast, context) // returns 10
 ```
 
 # Missing features
-* ***1**, ***1**, ***1**, ..., ***9** repl previous results
-* ***e** cli most recent error caught by repl
 * **assoc-in**
 * **char-from-code** return charachter from code (charachter = string)
-* **code-from-char** return charachter code from string 
+* **code-from-char** return charachter code from string
 * **comp** (composing functions)
 * **complement**
 * **conj** ? is this needed
@@ -116,4 +114,3 @@ const result = evaluate(ast, context) // returns 10
 * **when-let**
 * **when-not**
 * **zipmap**
-   
