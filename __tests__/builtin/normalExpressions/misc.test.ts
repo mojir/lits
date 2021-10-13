@@ -340,4 +340,19 @@ describe(`misc functions`, () => {
       expect(lispish.run(`(assert "0")`)).toBe(`0`)
     })
   })
+
+  describe(`identity`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(identity "Albert")`)).toBe(`Albert`)
+      expect(lispish.run(`(identity "")`)).toBe(``)
+      expect(lispish.run(`(identity undefined)`)).toBeUndefined()
+      expect(lispish.run(`(identity null)`)).toBe(null)
+      expect(lispish.run(`(identity false)`)).toBe(false)
+      expect(lispish.run(`(identity true)`)).toBe(true)
+      expect(lispish.run(`(identity {"a" 1})`)).toEqual({ a: 1 })
+      expect(lispish.run(`(identity [1 2 3])`)).toEqual([1, 2, 3])
+      expect(() => lispish.run(`(identity)`)).toThrow()
+      expect(() => lispish.run(`(identity 1 2)`)).toThrow()
+    })
+  })
 })

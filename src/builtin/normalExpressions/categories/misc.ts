@@ -165,6 +165,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },
+
+  identity: {
+    evaluate: ([value]): unknown => {
+      return value
+    },
+    validate: node => assertLength(1, node),
+  },
 }
 
 function contextstackToString(contextStack: Context[]): string {

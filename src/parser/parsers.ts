@@ -137,7 +137,7 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
   return [position + 1, node]
 }
 
-const placeholderRegexp = /%([1-9])/
+const placeholderRegexp = /^%([1-9][0-9]?$)/
 type ParseFnShorthand = (tokens: Token[], position: number) => [number, FnSpecialExpressionNode]
 const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
   position += 2
@@ -150,6 +150,9 @@ const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
       const match = placeholderRegexp.exec(token.value)
       if (match) {
         arity = Math.max(arity, Number(match[1]))
+        if (arity > 20) {
+          throw Error(`Can't specify more than 20 arguments`)
+        }
       }
     }
     if (token.type === `fnShorthand`) {

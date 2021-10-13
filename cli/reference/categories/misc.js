@@ -299,4 +299,21 @@ module.exports = {
     examples: [`(assert 0 "Expected a positive value")`, `(assert false)`, `(assert 1)`],
     specialExpression: false,
   },
+  identity: {
+    name: `identity`,
+    category: `Misc`,
+    linkName: `identity`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    description: `Returns \`value\`.`,
+    examples: [`(identity 1)`, `(identity "Albert")`, `(identity {"a" 1})`, `(identity null)`],
+    specialExpression: false,
+  },
 }

@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.31</span></div>
+    <div class="column right version"><span>v0.1.32</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -899,7 +899,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,4,7,8,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,5,8]</span></span></pre>
   </div>
 </div>
 
@@ -1421,9 +1421,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.32635291229424324</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.001339098813369679</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.8540331116961402</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.6312394741576777</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.009675408082950119</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.8770604093060705</span></span></pre>
   </div>
 </div>
 
@@ -1442,8 +1442,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 7</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 106</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 3</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 31</span></span></pre>
   </div>
 </div>
 
@@ -1907,7 +1907,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634141801301</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634166185454</span></span></pre>
   </div>
 </div>
 
@@ -2015,6 +2015,27 @@
     <pre class="example" onclick="addToPlayground('(assert 0 ___double_quote___Expected a positive value___double_quote___)')"><span class="icon-button">▶</span> (assert 0 "Expected a positive value") <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="addToPlayground('(assert false)')"><span class="icon-button">▶</span> (assert false) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="addToPlayground('(assert 1)')"><span class="icon-button">▶</span> (assert 1) <span class="gray">=> 1</span></span></pre>
+  </div>
+</div>
+
+
+<div id="identity" class="content function">
+  <div class="function-header">identity</div>
+  
+  <p>Returns <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>identity value => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(identity 1)')"><span class="icon-button">▶</span> (identity 1) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(identity ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (identity "Albert") <span class="gray">=> "Albert"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(identity {___double_quote___a___double_quote___ 1})')"><span class="icon-button">▶</span> (identity {"a" 1}) <span class="gray">=> {"a":1}</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(identity null)')"><span class="icon-button">▶</span> (identity null) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3763,6 +3784,7 @@
 <li id="compare_link" onclick="showPage('compare')">compare</li>
 <li id="debug_exclamation_link" onclick="showPage('debug_exclamation')">debug!</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
+<li id="identity_link" onclick="showPage('identity')">identity</li>
 <li id="inst-ms_link" onclick="showPage('inst-ms')">inst-ms</li>
 <li id="not_link" onclick="showPage('not')">not</li>
 <li id="not_equal_link" onclick="showPage('not_equal')">not=</li>

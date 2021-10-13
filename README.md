@@ -77,7 +77,6 @@ const result = evaluate(ast, context) // returns 10
 * **for**
 * **get-in**
 * **group-by**
-* **identity**
 * **if-let**
 * **infinity?**
 * **integer?**
