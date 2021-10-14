@@ -9,10 +9,10 @@ import {
   assertSeq,
   assertChar,
   isArr,
-  isString,
   assertString,
   assertCharArray,
   compare,
+  isString,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
@@ -478,5 +478,30 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
     },
     validate: node => assertLength(2, node),
+  },
+  shuffle: {
+    evaluate: ([input]: Arr): Seq => {
+      assertSeq(input)
+      const array: Arr = isString(input) ? [...input.split(``)] : [...input]
+      let remainingLength = array.length
+      let arrayElement: unknown
+      let pickedIndex: number
+
+      // Fisher–Yates Shuffle
+      while (remainingLength) {
+        remainingLength -= 1
+
+        // Pick a remaining element
+        pickedIndex = Math.floor(Math.random() * remainingLength)
+
+        // And swap it with the current element.
+        arrayElement = array[remainingLength]
+        array[remainingLength] = array[pickedIndex]
+        array[pickedIndex] = arrayElement
+      }
+
+      return isString(input) ? array.join(``) : array
+    },
+    validate: node => assertLength(1, node),
   },
 }

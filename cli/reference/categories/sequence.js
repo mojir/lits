@@ -612,4 +612,27 @@ module.exports = {
     examples: [`(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])`],
     specialExpression: false,
   },
+  shuffle: {
+    name: `shuffle`,
+    category: `Sequence`,
+    linkName: `shuffle`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        input: `input`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns a shuffled copy of \`input\`.`,
+    examples: [
+      `(shuffle [1 2 3 4 5 6 7 8 9 10])`,
+      `(shuffle "Albert Mojir")`,
+      `(shuffle [1 2])`,
+      `(shuffle [1])`,
+      `(shuffle [])`,
+    ],
+    specialExpression: false,
+  },
 }

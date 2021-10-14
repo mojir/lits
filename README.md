@@ -90,7 +90,6 @@ const result = evaluate(ast, context) // returns 10
 * **not-every?**
 * **nthnext**
 * **nthrest**
-* **partial**
 * **partition**
 * **partition-by**
 * **partition-all**

@@ -627,4 +627,14 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(random-sample 1)`)).toThrow()
     })
   })
+
+  describe(`shuffle`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(shuffle [1 2 3])`)).not.toEqual([1, 2, 3])
+      expect(lispish.run(`(shuffle "Albert")`)).not.toBe(`Albert`)
+      expect(lispish.run(`(shuffle [1 2])`)).toEqual([2, 1]) // Due to a the shuffle algorithm, first element connot be the same after shuffle
+      expect(lispish.run(`(shuffle [1])`)).toEqual([1])
+      expect(lispish.run(`(shuffle [])`)).toEqual([])
+    })
+  })
 })
