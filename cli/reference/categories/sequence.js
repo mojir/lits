@@ -564,8 +564,8 @@ module.exports = {
     ],
     description: `Returns a new array with the elements from \`array\` sorted according to \`comparer\`.`,
     examples: [
-      `(sort (fn [a b] (cond ((< a b) -1) ((> a b) 1) (true -1))) [3 1 2])`,
-      `(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true -1))) [3 1 2])`,
+      `(sort (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)) [3 1 2])`,
+      `(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)) [3 1 2])`,
     ],
     specialExpression: false,
   },

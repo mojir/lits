@@ -24,6 +24,7 @@ import {
   isNormalExpressionNodeName,
   isNumber,
   isObj,
+  isPartialLispishFunction,
   isString,
   isUserDefinedLispishFunction,
 } from '../utils'
@@ -194,6 +195,12 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         throw error
       }
     }
+  } else if (isPartialLispishFunction(lispishFunction)) {
+    const result = evaluateFunction(lispishFunction.fn, [...lispishFunction.params, ...params], contextStack)
+    if (hasKey(result, `value`)) {
+      return result.value
+    }
+    throw Error(`Expected function, got ${lispishFunction.fn}`)
   } else {
     const normalExpression = asNotUndefined(
       normalExpressions[lispishFunction.builtin],

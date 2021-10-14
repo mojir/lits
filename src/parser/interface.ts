@@ -22,12 +22,18 @@ export type UserDefinedLispishFunction = {
   functionContext: Context
 }
 
+export type PartialLispishFunction = {
+  [functionSymbol]: true
+  fn: unknown
+  params: unknown[]
+}
+
 export type BuiltinLispishFunction = {
   [functionSymbol]: true
   builtin: string
 }
 
-export type LispishFunction = UserDefinedLispishFunction | BuiltinLispishFunction
+export type LispishFunction = UserDefinedLispishFunction | BuiltinLispishFunction | PartialLispishFunction
 
 export type NodeType =
   | `Number`
@@ -39,6 +45,7 @@ export type NodeType =
   | `ReservedName`
   | `Binding`
   | `Argument`
+  | `Partial`
 
 export type ModifierName = `&rest` | `&opt` | `&bind`
 

@@ -5,7 +5,7 @@ import { BuiltinSpecialExpression } from '../interface'
 
 type Condition = {
   test: AstNode
-  body: AstNode[]
+  form: AstNode
 }
 
 interface CondSpecialExpressionNode extends SpecialExpressionNode {
@@ -18,22 +18,14 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
   let token = asNotUndefined(tokens[position])
   while (!(token.type === `paren` && token.value === `)`)) {
-    if (!(token.type === `paren` && token.value === `(`)) {
-      throw Error(`Expected a condition starting with "(", got ${token.type}:${token.value}`)
-    }
-    const [positionAfterTest, testNode] = parseToken(tokens, position + 1)
-    position = positionAfterTest
+    let test: AstNode
+    ;[position, test] = parseToken(tokens, position)
 
-    const body: AstNode[] = []
-    token = asNotUndefined(tokens[position])
-    while (!(token.type === `paren` && token.value === `)`)) {
-      const [newPosition, node] = parseToken(tokens, position)
-      body.push(node)
-      position = newPosition
-      token = asNotUndefined(tokens[position])
-    }
-    conditions.push({ test: testNode, body })
-    position += 1
+    let form: AstNode
+    ;[position, form] = parseToken(tokens, position)
+
+    conditions.push({ test, form })
+
     token = asNotUndefined(tokens[position])
   }
   return [position, conditions]
@@ -41,9 +33,11 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
 export const condSpecialExpression: BuiltinSpecialExpression = {
   parse: (tokens, position, { parseToken }) => {
-    const [newPosition, conditions] = parseConditions(tokens, position, parseToken)
+    let conditions: Condition[]
+    ;[position, conditions] = parseConditions(tokens, position, parseToken)
+
     return [
-      newPosition + 1,
+      position + 1,
       {
         type: `SpecialExpression`,
         name: `cond`,
@@ -61,10 +55,7 @@ export const condSpecialExpression: BuiltinSpecialExpression = {
       if (!value) {
         continue
       }
-      for (const bodyNode of condition.body) {
-        value = evaluateAstNode(bodyNode, contextStack)
-      }
-      return value
+      return evaluateAstNode(condition.form, contextStack)
     }
   },
 }

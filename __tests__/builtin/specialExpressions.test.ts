@@ -255,19 +255,21 @@ describe(`specialExpressions`, () => {
   describe(`cond`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(cond)`)).toBeUndefined()
-      expect(lispish.run(`(cond (true 10) (true 20))`)).toBe(10)
-      expect(lispish.run(`(cond (true 10))`)).toBe(10)
-      expect(lispish.run(`(cond (false 20) (true (+ 5 5)) )`)).toBe(10)
+      expect(lispish.run(`(cond true 10 true 20)`)).toBe(10)
+      expect(lispish.run(`(cond true 10)`)).toBe(10)
+      expect(lispish.run(`(cond false 20 true (+ 5 5))`)).toBe(10)
       expect(
-        lispish.run(`(cond ((> 5 10) 20) ((> 10 10) (write! "Hej") (+ 5 5)) ((>= 10 10) "This will work" (+ 5 5 5)))`),
+        lispish.run(
+          `(cond (> 5 10) 20 (> 10 10) (do (write! "Hej") (+ 5 5)) (>= 10 10) (do "This will work" (+ 5 5 5)))`,
+        ),
       ).toBe(15)
-      expect(() => lispish.run(`(cond (true 123) )`)).not.toThrow()
-      expect(() => lispish.run(`(cond true 123) )`)).toThrow()
+      expect(() => lispish.run(`(cond true 123)`)).not.toThrow()
+      expect(() => lispish.run(`(cond (true 123))`)).toThrow()
     })
     test(`middle condition true`, () => {
       expect(
         lispish.run(
-          `(cond ((> 5 10) (write! 20)) ((>= 10 10) (+ 5 5)) ((write! (>= 10 10)) "This will work" (+ 5 5 5)))`,
+          `(cond (> 5 10) (write! 20) (>= 10 10) (+ 5 5) (write! (>= 10 10)) (do "This will work" (+ 5 5 5)))`,
         ),
       ).toBe(10)
       expect(logSpy).not.toHaveBeenCalled()

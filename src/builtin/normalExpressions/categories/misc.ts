@@ -1,6 +1,7 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry } from '../../../evaluator/interface'
 import { Arr } from '../../../interface'
+import { functionSymbol, PartialLispishFunction } from '../../../parser/interface'
 import {
   assertArr,
   assertLength,
@@ -171,6 +172,17 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return value
     },
     validate: node => assertLength(1, node),
+  },
+
+  partial: {
+    evaluate: ([fn, ...params]): PartialLispishFunction => {
+      return {
+        [functionSymbol]: true,
+        fn,
+        params,
+      }
+    },
+    validate: node => assertLength({ min: 1 }, node),
   },
 }
 

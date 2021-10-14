@@ -580,11 +580,11 @@ describe(`array functions`, () => {
 
   describe(`sort`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(sort (fn [a b] (cond ((< a b) -1) ((> a b) 1) (true 0))) [3 1 2])`)).toEqual([1, 2, 3])
-      expect(lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true 0))) [3 1 2])`)).toEqual([3, 2, 1])
-      expect(lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true 0))) [])`)).toEqual([])
+      expect(lispish.run(`(sort (fn [a b] (cond (< a b) -1 (> a b) 1 true 0)) [3 1 2])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true 0)) [3 1 2])`)).toEqual([3, 2, 1])
+      expect(lispish.run(`(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true 0)) [])`)).toEqual([])
 
-      expect(lispish.run(`(sort (fn [a b] (cond ((< a b) 1) ((> a b) -1) (true 0))) "Albert")`)).toBe(`trlebA`)
+      expect(lispish.run(`(sort (fn [a b] (cond (< a b) 1 (> a b) -1 true 0)) "Albert")`)).toBe(`trlebA`)
 
       expect(lispish.run(`(sort "Albert")`)).toBe(`Abelrt`)
       expect(
@@ -593,8 +593,8 @@ describe(`array functions`, () => {
         ),
       ).toMatchSnapshot()
 
-      expect(() => lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true -1))) 10)`)).toThrow()
-      expect(() => lispish.run(`(sort (fn [a b] (cond ((> a b) -1) ((< a b) 1) (true -1))))`)).toThrow()
+      expect(() => lispish.run(`(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)) 10)`)).toThrow()
+      expect(() => lispish.run(`(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))`)).toThrow()
       expect(() => lispish.run(`(sort)`)).toThrow()
     })
   })

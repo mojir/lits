@@ -39,6 +39,7 @@ import {
   hasKey,
   isRegExp,
   isNormalExpressionNodeName,
+  isPartialLispishFunction,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -515,6 +516,43 @@ describe(`utils`, () => {
     expect(isBuiltinLispishFunction([])).toBe(false)
     expect(isBuiltinLispishFunction({})).toBe(false)
   })
+
+  test(`isPartialLispishFunction`, () => {
+    const lf1: LispishFunction = {
+      [functionSymbol]: true,
+      arguments: {
+        mandatoryArguments: [],
+        optionalArguments: [],
+      },
+      functionContext: {},
+      name: undefined,
+      body: [],
+    }
+    const lf2: LispishFunction = {
+      [functionSymbol]: true,
+      builtin: `+`,
+    }
+    const lf3: LispishFunction = {
+      [functionSymbol]: true,
+      fn: { a: 10, b: 20 },
+      params: [],
+    }
+
+    expect(isPartialLispishFunction(lf1)).toBe(false)
+    expect(isPartialLispishFunction(lf2)).toBe(false)
+    expect(isPartialLispishFunction(lf3)).toBe(true)
+    expect(isPartialLispishFunction(``)).toBe(false)
+    expect(isPartialLispishFunction(`1`)).toBe(false)
+    expect(isPartialLispishFunction(0)).toBe(false)
+    expect(isPartialLispishFunction(1)).toBe(false)
+    expect(isPartialLispishFunction(true)).toBe(false)
+    expect(isPartialLispishFunction(false)).toBe(false)
+    expect(isPartialLispishFunction(null)).toBe(false)
+    expect(isPartialLispishFunction(undefined)).toBe(false)
+    expect(isPartialLispishFunction([])).toBe(false)
+    expect(isPartialLispishFunction({})).toBe(false)
+  })
+
   test(`assertStringArray`, () => {
     expect(() => assertStringArray(undefined)).toThrow()
     expect(() => assertStringArray(`undefined`)).toThrow()

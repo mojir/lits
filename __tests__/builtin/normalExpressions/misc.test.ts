@@ -355,4 +355,13 @@ describe(`misc functions`, () => {
       expect(() => lispish.run(`(identity 1 2)`)).toThrow()
     })
   })
+
+  describe(`partial`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`((partial + 1) 2)`)).toBe(3)
+      expect(lispish.run(`((partial (partial + 1) 2) 2)`)).toBe(5)
+      expect(() => lispish.run(`((partial true))`)).toThrow()
+      expect(() => lispish.run(`((partial mod 1))`)).toThrow()
+    })
+  })
 })

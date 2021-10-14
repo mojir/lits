@@ -8,6 +8,7 @@ import {
   NameNode,
   NormalExpressionNode,
   NormalExpressionNodeName,
+  PartialLispishFunction,
   SpecialExpressionNode,
   UserDefinedLispishFunction,
 } from './parser/interface'
@@ -244,6 +245,13 @@ export function assertLispishFunction(func: unknown): asserts func is LispishFun
 export function isUserDefinedLispishFunction(func: unknown): func is UserDefinedLispishFunction {
   if (isLispishFunction(func)) {
     return !!(func as UserDefinedLispishFunction).arguments
+  }
+  return false
+}
+
+export function isPartialLispishFunction(func: unknown): func is PartialLispishFunction {
+  if (isLispishFunction(func)) {
+    return !!Object.getOwnPropertyDescriptor(func, `fn`)
   }
   return false
 }

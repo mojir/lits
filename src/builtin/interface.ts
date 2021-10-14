@@ -38,10 +38,10 @@ type EvaluateHelpers = {
   evaluateAstNode: EvaluateAstNode
   builtin: Builtin
 }
-export type BuiltinSpecialExpression = {
-  parse: (tokens: Token[], position: number, parsers: Parsers) => [number, SpecialExpressionNode]
-  evaluate: (node: SpecialExpressionNode, contextStack: Context[], helpers: EvaluateHelpers) => unknown
-  validate?: (node: SpecialExpressionNode) => void
+export type BuiltinSpecialExpression<T extends SpecialExpressionNode = SpecialExpressionNode> = {
+  parse: (tokens: Token[], position: number, parsers: Parsers) => [number, T]
+  evaluate: (node: T, contextStack: Context[], helpers: EvaluateHelpers) => unknown
+  validate?: (node: T) => void
 }
 
 export type SpecialExpressionName =
@@ -66,6 +66,7 @@ export type SpecialExpressionName =
   | `throw`
   | `try`
   | `when`
+  | `partial`
 
 export type Builtin = {
   normalExpressions: BuiltinNormalExpressions

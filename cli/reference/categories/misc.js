@@ -316,4 +316,26 @@ module.exports = {
     examples: [`(identity 1)`, `(identity "Albert")`, `(identity {"a" 1})`, `(identity null)`],
     specialExpression: false,
   },
+  partial: {
+    name: `partial`,
+    category: `Misc`,
+    linkName: `partial`,
+    returns: {
+      type: `function`,
+    },
+    arguments: [
+      {
+        name: `fn`,
+        type: `function`,
+      },
+      {
+        name: `args`,
+        type: `any`,
+        description: `zero or more`,
+      },
+    ],
+    description: `Takes a function \`fn\` and fewer (or equal) than the normal arguments to \`fn\`, and returns a function that takes a variable number of additional args. When called, the returned function calls f with \`args\` + additional args.`,
+    examples: [`(partial + 100)`, `(def addHundred (partial + 100)) (addHundred 10)`],
+    specialExpression: false,
+  },
 }

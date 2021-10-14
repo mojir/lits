@@ -32,10 +32,11 @@ export interface FnSpecialExpressionNode extends SpecialExpressionNode {
   body: AstNode[]
 }
 
-type ExpressionNode = DefnSpecialExpressionNode | DefnsSpecialExpressionNode | FnSpecialExpressionNode
+type FunctionNode = DefnSpecialExpressionNode | DefnsSpecialExpressionNode | FnSpecialExpressionNode
+
 type ExpressionsName = `defn` | `defns` | `fn`
 
-function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression[`parse`] {
+function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression<FunctionNode>[`parse`] {
   return (tokens, position, { parseToken, parseArgument, parseBindings }) => {
     let functionName = undefined
     if (expressionName === `defn` || expressionName === `defns`) {
@@ -68,7 +69,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
         {
           type: `SpecialExpression`,
           name: expressionName,
-          functionName,
+          functionName: functionName as AstNode,
           params: [],
           arguments: functionArguments,
           body,
@@ -80,7 +81,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
       position,
       {
         type: `SpecialExpression`,
-        name: `fn`,
+        name: expressionName,
         params: [],
         arguments: functionArguments,
         body,
@@ -91,7 +92,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
 
 function getFunctionName(
   expressionName: ExpressionsName,
-  node: ExpressionNode,
+  node: FunctionNode,
   contextStack: Context[],
   evaluateAstNode: EvaluateAstNode,
 ): string | undefined {

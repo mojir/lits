@@ -310,8 +310,8 @@ module.exports = {
     ],
     description: `Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, \`undefined\` is returned.`,
     examples: [
-      `(cond (false (write! "FALSE")) (null (write! "NULL")) (true (write! "TRUE")))`,
-      `(cond (false (write! "FALSE")) (null (write! "NULL")))`,
+      `(cond false (write! "FALSE") null (write! "NULL") true (write! "TRUE"))`,
+      `(cond false (write! "FALSE") null (write! "NULL"))`,
     ],
     specialExpression: true,
   },
