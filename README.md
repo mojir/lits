@@ -95,7 +95,6 @@ const result = evaluate(ast, context) // returns 10
 * **partition-all**
 * **quot**
 * **rand-nth**
-* **rem**
 * **remove**
 * **select-keys**
 * **shuffle** (array)

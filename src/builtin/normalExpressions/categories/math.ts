@@ -72,11 +72,32 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     },
   },
 
+  quot: {
+    evaluate: ([dividend, divisor]: Arr): number => {
+      assertNumber(dividend)
+      assertNumber(divisor)
+      const quotient = Math.trunc(dividend / divisor)
+      return quotient
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(2, node),
+  },
+
   mod: {
-    evaluate: ([first, second]: Arr): number => {
-      assertNumber(first)
-      assertNumber(second)
-      return first % second
+    evaluate: ([dividend, divisor]: Arr): number => {
+      assertNumber(dividend)
+      assertNumber(divisor)
+      const quotient = Math.floor(dividend / divisor)
+      return dividend - divisor * quotient
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(2, node),
+  },
+
+  rem: {
+    evaluate: ([dividend, divisor]: Arr): number => {
+      assertNumber(dividend)
+      assertNumber(divisor)
+      const quotient = Math.trunc(dividend / divisor)
+      return dividend - divisor * quotient
     },
     validate: (node: NormalExpressionNode): void => assertLength(2, node),
   },

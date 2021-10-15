@@ -89,22 +89,6 @@ describe(`math functions`, () => {
     })
   })
 
-  describe(`mod`, () => {
-    test(`samples`, () => {
-      expect(() => lispish.run(`(mod)`)).toThrow()
-      expect(() => lispish.run(`(mod 3)`)).toThrow()
-      expect(() => lispish.run(`(mod 3 4 5)`)).toThrow()
-      expect(lispish.run(`(mod 2 1)`)).toBe(0)
-      expect(lispish.run(`(mod 2 2)`)).toBe(0)
-      expect(lispish.run(`(mod 3 2)`)).toBe(1)
-      expect(lispish.run(`(mod 3 -2)`)).toBe(1)
-      expect(lispish.run(`(mod -3 -2)`)).toBe(-1)
-      expect(lispish.run(`(mod -3 2)`)).toBe(-1)
-      expect(lispish.run(`(mod 4 0)`)).toBeNaN()
-      expect(() => lispish.run(`(mod 4 0 3)`)).toThrow()
-    })
-  })
-
   describe(`sqrt`, () => {
     test(`samples`, () => {
       expect(() => lispish.run(`(sqrt)`)).toThrow()
@@ -465,6 +449,50 @@ describe(`math functions`, () => {
       expect(lispish.run(`(atanh 100)`)).toBeNaN()
       expect(() => lispish.run(`(atanh)`)).toThrow()
       expect(() => lispish.run(`(atanh 1 2)`)).toThrow()
+    })
+  })
+
+  describe(`quot`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(quot 13.75 3.25)`)).toBe(4)
+      expect(lispish.run(`(quot -13.75 3.25)`)).toBe(-4)
+      expect(lispish.run(`(quot 13.75 -3.25)`)).toBe(-4)
+      expect(lispish.run(`(quot -13.75 -3.25)`)).toBe(4)
+      expect(() => lispish.run(`(quot)`)).toThrow()
+      expect(() => lispish.run(`(quot 1)`)).toThrow()
+      expect(() => lispish.run(`(quot 1 2 3)`)).toThrow()
+    })
+  })
+
+  describe(`mod`, () => {
+    test(`samples`, () => {
+      expect(() => lispish.run(`(mod)`)).toThrow()
+      expect(() => lispish.run(`(mod 3)`)).toThrow()
+      expect(() => lispish.run(`(mod 3 4 5)`)).toThrow()
+      expect(lispish.run(`(mod 13.75 3.25)`)).toBe(0.75)
+      expect(lispish.run(`(mod -13.75 3.25)`)).toBe(2.5)
+      expect(lispish.run(`(mod 13.75 -3.25)`)).toBe(-2.5)
+      expect(lispish.run(`(mod -13.75 -3.25)`)).toBe(-0.75)
+      expect(lispish.run(`(mod 2 1)`)).toBe(0)
+      expect(lispish.run(`(mod 2 2)`)).toBe(0)
+      expect(lispish.run(`(mod 3 2)`)).toBe(1)
+      expect(lispish.run(`(mod 3 -2)`)).toBe(-1)
+      expect(lispish.run(`(mod -3 -2)`)).toBe(-1)
+      expect(lispish.run(`(mod -3 2)`)).toBe(1)
+      expect(lispish.run(`(mod 4 0)`)).toBeNaN()
+      expect(() => lispish.run(`(mod 4 0 3)`)).toThrow()
+    })
+  })
+
+  describe(`rem`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(rem 13.75 3.25)`)).toBe(0.75)
+      expect(lispish.run(`(rem -13.75 3.25)`)).toBe(-0.75)
+      expect(lispish.run(`(rem 13.75 -3.25)`)).toBe(0.75)
+      expect(lispish.run(`(rem -13.75 -3.25)`)).toBe(-0.75)
+      expect(() => lispish.run(`(rem)`)).toThrow()
+      expect(() => lispish.run(`(rem 1)`)).toThrow()
+      expect(() => lispish.run(`(rem 1 2 3)`)).toThrow()
     })
   })
 })
