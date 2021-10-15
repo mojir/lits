@@ -12,10 +12,14 @@ beforeEach(() => {
 describe(`specialExpressions`, () => {
   let oldLog: () => void
   let logSpy: jest.Mock<any, any>
+  let lastLog: unknown
   beforeEach(() => {
     oldLog = console.log
     logSpy = jest.fn()
-    console.log = logSpy
+    console.log = (...args: unknown[]) => {
+      logSpy(...args)
+      lastLog = args[0]
+    }
   })
   afterEach(() => {
     console.log = oldLog
@@ -424,6 +428,12 @@ describe(`specialExpressions`, () => {
     })
     test(`throw should work`, () => {
       expect(() => lispish.run(`(loop [n 3] (write! n) (when (not (zero? n)) (throw (dec n))))`)).toThrow()
+    })
+  })
+  describe(`time!`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(time! (+ 1 2)`)).toBe(3)
+      expect(lastLog).toMatch(/Elapsed time: \d+ ms/)
     })
   })
 })

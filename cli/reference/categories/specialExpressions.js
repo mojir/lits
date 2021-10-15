@@ -417,7 +417,7 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Prints the time it took to evaluate \`form\`, the results \`form\` evaluated.`,
+    description: `Prints the time it took to evaluate \`form\`. Returns \`form\` evaluated.`,
     examples: [`(defn fib [x] (if (<= x 2) 1 (+ (fib (dec x)) (fib (- x 2))))) (time! (fib 10))`],
     specialExpression: true,
   },

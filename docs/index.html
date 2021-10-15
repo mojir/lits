@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.37</span></div>
+    <div class="column right version"><span>v0.1.38</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1040,7 +1040,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,10]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,3,4,7]</span></span></pre>
   </div>
 </div>
 
@@ -1058,8 +1058,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,8,9,10,7,1,6,5,2,3]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "rAiot erMblj"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,6,9,1,7,5,10,4,2,8]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "iolrMAjetbr "</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1651,9 +1651,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.7635842982494436</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.004195300898127094</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.26775150397002</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.2371358943206876</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.00641923225895293</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.9200390507973089</span></span></pre>
   </div>
 </div>
 
@@ -1673,7 +1673,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 9</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 34</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 48</span></span></pre>
   </div>
 </div>
 
@@ -2137,7 +2137,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634312508174</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634318735041</span></span></pre>
   </div>
 </div>
 
@@ -3312,6 +3312,24 @@
 </div>
 
 
+<div id="time_exclamation" class="content function">
+  <div class="function-header">time!</div>
+  <h3>Special Expression</h3>
+  <p>Prints the time it took to evaluate <span class="pre">form</span>. Returns <span class="pre">form</span> evaluated.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>time! form => any</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>form: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(defn fib [x] (if (<= x 2) 1 (+ (fib (dec x)) (fib (- x 2))))) (time! (fib 10))')"><span class="icon-button">▶</span> (defn fib [x] (if (<= x 2) 1 (+ (fib (dec x)) (fib (- x 2))))) (time! (fib 10)) <span class="gray">=> 55</span></span></pre>
+  </div>
+</div>
+
+
 <div id="subs" class="content function">
   <div class="function-header">subs</div>
   
@@ -3851,6 +3869,7 @@
 <li id="or_link" onclick="showPage('or')">or</li>
 <li id="recur_link" onclick="showPage('recur')">recur</li>
 <li id="throw_link" onclick="showPage('throw')">throw</li>
+<li id="time_exclamation_link" onclick="showPage('time_exclamation')">time!</li>
 <li id="try_link" onclick="showPage('try')">try</li>
 <li id="when_link" onclick="showPage('when')">when</li>
         </ul>

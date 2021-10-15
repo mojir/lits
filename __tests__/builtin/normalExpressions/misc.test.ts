@@ -11,11 +11,15 @@ beforeEach(() => {
 
 describe(`misc functions`, () => {
   let oldLog: () => void
-  let logSpy: jest.Mock<any, any>
+  let lastLog: unknown
+  let logSpy: (...args: unknown[]) => void
   beforeEach(() => {
     oldLog = console.log
     logSpy = jest.fn()
-    console.log = logSpy
+    console.log = (...args) => {
+      logSpy(...args)
+      lastLog = args[0]
+    }
   })
   afterEach(() => {
     console.log = oldLog
@@ -252,17 +256,6 @@ describe(`misc functions`, () => {
   })
 
   describe(`debug!`, () => {
-    let oldError: () => void
-    let lastErrorLog = ``
-    beforeEach(() => {
-      oldError = console.error
-      console.error = message => {
-        lastErrorLog = message
-      }
-    })
-    afterEach(() => {
-      console.error = oldError
-    })
     test(`samples`, () => {
       expect(lispish.run(`(debug!)`)).toBeUndefined()
       expect(() => lispish.run(`(debug! 0)`)).toThrow()
@@ -278,7 +271,7 @@ describe(`misc functions`, () => {
     test(`multiple contexts`, () => {
       lispish.import(`(def x 10) (defn foo [] "foo") (def bar (fn [] "bar")) (def plus +)`)
       lispish.run(`((fn [z] (debug!) (+ z 1)) 10)`, { vars: { y: 20 } })
-      expect(lastErrorLog).toMatchSnapshot()
+      expect(lastLog).toMatchSnapshot()
     })
   })
 
