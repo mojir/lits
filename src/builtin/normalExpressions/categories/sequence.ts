@@ -4,7 +4,6 @@ import {
   assertInteger,
   assertLength,
   assertLispishFunction,
-  assertNonNegativeInteger,
   assertFiniteNumber,
   assertSeq,
   assertChar,
@@ -13,6 +12,7 @@ import {
   assertCharArray,
   compare,
   isString,
+  assertNumber,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
@@ -401,19 +401,19 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   },
   take: {
     evaluate: ([n, input]: Arr): Seq => {
-      assertInteger(n)
+      assertNumber(n)
       assertSeq(input)
-      const nonNegativeCount = Math.max(0, n)
-      return input.slice(0, nonNegativeCount)
+      const number = Math.max(Math.ceil(n), 0)
+      return input.slice(0, number)
     },
     validate: node => assertLength(2, node),
   },
   'take-last': {
     evaluate: ([n, array]: Arr): Seq => {
       assertSeq(array)
-      assertNonNegativeInteger(n)
-
-      const from = array.length - n
+      assertNumber(n)
+      const number = Math.max(Math.ceil(n), 0)
+      const from = array.length - number
       return array.slice(from)
     },
     validate: node => assertLength(2, node),
@@ -432,6 +432,41 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         }
       }
       return isString(seq) ? result.join(``) : result
+    },
+    validate: node => assertLength(2, node),
+  },
+  drop: {
+    evaluate: ([n, input]: Arr): Seq => {
+      assertNumber(n)
+      const number = Math.max(Math.ceil(n), 0)
+      assertSeq(input)
+      return input.slice(number)
+    },
+    validate: node => assertLength(2, node),
+  },
+  'drop-last': {
+    evaluate: ([n, array]: Arr): Seq => {
+      assertSeq(array)
+      assertNumber(n)
+      const number = Math.max(Math.ceil(n), 0)
+
+      const from = array.length - number
+      return array.slice(0, from)
+    },
+    validate: node => assertLength(2, node),
+  },
+  'drop-while': {
+    evaluate: ([fn, seq]: Arr, contextStack, { evaluateLispishFunction }): unknown => {
+      assertSeq(seq)
+      assertLispishFunction(fn)
+
+      if (Array.isArray(seq)) {
+        const from = seq.findIndex(elem => !evaluateLispishFunction(fn, [elem], contextStack))
+        return seq.slice(from)
+      }
+      const charArray = seq.split(``)
+      const from = charArray.findIndex(elem => !evaluateLispishFunction(fn, [elem], contextStack))
+      return charArray.slice(from).join(``)
     },
     validate: node => assertLength(2, node),
   },
@@ -486,6 +521,16 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
 
       return isString(input) ? array.join(``) : array
+    },
+    validate: node => assertLength(1, node),
+  },
+  distinct: {
+    evaluate: ([input]: Arr): Seq => {
+      assertSeq(input)
+      if (Array.isArray(input)) {
+        return Array.from(new Set(input))
+      }
+      return Array.from(new Set(input.split(``))).join(``)
     },
     validate: node => assertLength(1, node),
   },

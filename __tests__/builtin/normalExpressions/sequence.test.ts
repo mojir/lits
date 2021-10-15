@@ -487,8 +487,8 @@ describe(`array functions`, () => {
       expect(lispish.run(`(take 20 [1 2 3])`)).toEqual([1, 2, 3])
       expect(lispish.run(`(take 0 [1 2 3])`)).toEqual([])
       expect(lispish.run(`(take 2 "Albert")`)).toEqual(`Al`)
+      expect(lispish.run(`(take 2.01 "Albert")`)).toEqual(`Alb`)
 
-      expect(() => lispish.run(`(take 0.5 [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take 1 (object))`)).toThrow()
       expect(() => lispish.run(`(take 1 null)`)).toThrow()
       expect(() => lispish.run(`(take 1 undefined)`)).toThrow()
@@ -515,8 +515,8 @@ describe(`array functions`, () => {
       expect(lispish.run(`(take-last 2 [1 2 3])`)).toEqual([2, 3])
       expect(lispish.run(`(take-last 20 [1 2 3])`)).toEqual([1, 2, 3])
       expect(lispish.run(`(take-last 0 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(take-last 0.01 [1 2 3])`)).toEqual([3])
 
-      expect(() => lispish.run(`(take-last 0.5 [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take-last (object))`)).toThrow()
       expect(() => lispish.run(`(take-last null)`)).toThrow()
       expect(() => lispish.run(`(take-last undefined)`)).toThrow()
@@ -553,6 +553,83 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(take-while)`)).toThrow()
       expect(() => lispish.run(`(take-while [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) [1 2 3] 1)`)).toThrow()
+    })
+    test(`new array created`, () => {
+      const program = `
+        (def l1 [1 2 3])
+        (def l2 (take-while (fn [x] (< x 3)) l1))
+        (= l1 l2)
+      `
+      expect(lispish.run(program)).toBe(false)
+    })
+  })
+
+  describe(`drop`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(drop 2 [1 2 3])`)).toEqual([3])
+      expect(lispish.run(`(drop 20 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(drop 0 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(drop 2 "Albert")`)).toEqual(`bert`)
+      expect(lispish.run(`(drop 0.5 [1 2 3])`)).toEqual([2, 3])
+      expect(lispish.run(`(drop -2 "Albert")`)).toEqual(`Albert`)
+
+      expect(() => lispish.run(`(drop 1 (object))`)).toThrow()
+      expect(() => lispish.run(`(drop 1 null)`)).toThrow()
+      expect(() => lispish.run(`(drop 1 undefined)`)).toThrow()
+      expect(() => lispish.run(`(drop 1 true)`)).toThrow()
+      expect(() => lispish.run(`(drop 1 false)`)).toThrow()
+      expect(() => lispish.run(`(drop "1" "Hej")`)).toThrow()
+      expect(() => lispish.run(`(drop)`)).toThrow()
+      expect(() => lispish.run(`(drop [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(drop 1 2 [1 2 3])`)).toThrow()
+    })
+
+    test(`new array created`, () => {
+      const program = `
+        (def l1 [1 2 3])
+        (def l2 (drop 2 l1))
+        (= l1 l2)
+      `
+      expect(lispish.run(program)).toBe(false)
+    })
+  })
+
+  describe(`drop-last`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(drop-last 2 [1 2 3])`)).toEqual([1])
+      expect(lispish.run(`(drop-last 20 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(drop-last 0 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(drop-last 2 "Albert")`)).toEqual(`Albe`)
+      expect(lispish.run(`(drop-last 0.5 [1 2 3])`)).toEqual([1, 2])
+      expect(lispish.run(`(drop-last -2 "Albert")`)).toEqual(`Albert`)
+
+      expect(() => lispish.run(`(drop-last 1 (object))`)).toThrow()
+      expect(() => lispish.run(`(drop-last 1 null)`)).toThrow()
+      expect(() => lispish.run(`(drop-last 1 undefined)`)).toThrow()
+      expect(() => lispish.run(`(drop-last 1 true)`)).toThrow()
+      expect(() => lispish.run(`(drop-last 1 false)`)).toThrow()
+      expect(() => lispish.run(`(drop-last "1" "Hej")`)).toThrow()
+      expect(() => lispish.run(`(drop-last)`)).toThrow()
+      expect(() => lispish.run(`(drop-last [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(drop-last 1 2 [1 2 3])`)).toThrow()
+    })
+  })
+
+  describe(`drop-while`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(drop-while (fn [x] (< x 3)) [1 2 3 2 1])`)).toEqual([3, 2, 1])
+      expect(lispish.run(`(drop-while (fn [x] (> x 3)) [1 2 3 2 1])`)).toEqual([1, 2, 3, 2, 1])
+      expect(lispish.run(`(drop-while (fn [x] (<= x "c")) "abcdab")`)).toEqual(`dab`)
+
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) (object))`)).toThrow()
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) null)`)).toThrow()
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) undefined)`)).toThrow()
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) true)`)).toThrow()
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) false)`)).toThrow()
+      expect(() => lispish.run(`(drop-while 10 [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(drop-while)`)).toThrow()
+      expect(() => lispish.run(`(drop-while [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) [1 2 3] 1)`)).toThrow()
     })
     test(`new array created`, () => {
       const program = `
@@ -621,6 +698,19 @@ describe(`array functions`, () => {
       expect(lispish.run(`(shuffle [1 2])`)).toEqual([2, 1]) // Due to a the shuffle algorithm, first element connot be the same after shuffle
       expect(lispish.run(`(shuffle [1])`)).toEqual([1])
       expect(lispish.run(`(shuffle [])`)).toEqual([])
+      expect(() => lispish.run(`(shuffle)`)).toThrow()
+      expect(() => lispish.run(`(shuffle [] [])`)).toThrow()
+    })
+  })
+
+  describe(`distinct`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(distinct [1 2 3 1 3 5])`)).toEqual([1, 2, 3, 5])
+      expect(lispish.run(`(distinct [])`)).toEqual([])
+      expect(lispish.run(`(distinct "Albert Mojir")`)).toBe(`Albert Moji`)
+      expect(lispish.run(`(distinct "")`)).toBe(``)
+      expect(() => lispish.run(`(distinct)`)).toThrow()
+      expect(() => lispish.run(`(distinct [] [])`)).toThrow()
     })
   })
 })

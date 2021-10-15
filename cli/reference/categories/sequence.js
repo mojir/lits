@@ -520,6 +520,72 @@ module.exports = {
     specialExpression: false,
   },
 
+  drop: {
+    name: `drop`,
+    category: `Sequence`,
+    linkName: `drop`,
+    returns: {
+      type: `array | string`,
+    },
+    arguments: [
+      {
+        name: `count`,
+        type: `integer`,
+      },
+      {
+        name: `input`,
+        type: `array | string`,
+      },
+    ],
+    description: `Constructs a new array/string with the \`count\` first elements dropped from \`input\`.`,
+    examples: [`(drop 3 [1 2 3 4 5])`, `(drop 0 [1 2 3 4 5])`, `(drop 2 "Albert")`, `(drop 50 "Albert")`],
+    specialExpression: false,
+  },
+
+  'drop-last': {
+    name: `drop-last`,
+    category: `Sequence`,
+    linkName: `drop-last`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `array`,
+        type: `array`,
+      },
+      {
+        name: `count`,
+        type: `integer`,
+      },
+    ],
+    description: `Constructs a new array with the \`count\` last elements dropped from \`array\`.`,
+    examples: [`(drop-last 3 [1 2 3 4 5])`, `(drop-last 0 [1 2 3 4 5])`],
+    specialExpression: false,
+  },
+
+  'drop-while': {
+    name: `drop-while`,
+    category: `Sequence`,
+    linkName: `drop-while`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `predicate`,
+        type: `function`,
+      },
+      {
+        name: `array`,
+        type: `array`,
+      },
+    ],
+    description: `Returns the members of \`array\` in order, skipping the fist elements for witch the \`predicate\` returns a truethy value.`,
+    examples: [`(drop-while (fn [x] (< x 3)) [1 2 3 2 1])`, `(drop-while (fn [x] (> x 3)) [1 2 3 2 1])`],
+    specialExpression: false,
+  },
+
   sort: {
     name: `sort`,
     category: `Sequence`,
@@ -608,6 +674,23 @@ module.exports = {
       `(shuffle [1])`,
       `(shuffle [])`,
     ],
+    specialExpression: false,
+  },
+  distinct: {
+    name: `distinct`,
+    category: `Sequence`,
+    linkName: `distinct`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        input: `input`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns a copy of \`input\` with no duplicates.`,
+    examples: [`(distinct [1 2 3 1 3 5])`, `(distinct "Albert Mojir")`, `(distinct [])`, `(distinct "")`],
     specialExpression: false,
   },
 }

@@ -66,10 +66,6 @@ const result = evaluate(ast, context) // returns 10
 * **comp** (composing functions)
 * **complement**
 * **conj** ? is this needed
-* **distinct** (array) return array with duplicates removed (js === used to check for equallity)
-* **drop-last**
-* **drop-while**
-* **drop**
 * **eq?** (collection) recursevly compares two or more collections (deep-equal)
 * **every-pred**
 * **find**
