@@ -137,7 +137,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   'debug!': {
     evaluate: (_, contextStack): undefined => {
       // eslint-disable-next-line no-console
-      console.error(`*** LISPISH DEBUG ***\n\n${contextstackToString(contextStack)}`)
+      console.log(`*** LISPISH DEBUG ***\n\n${contextstackToString(contextStack)}`)
       return undefined
     },
     validate: node => assertLength(0, node),

@@ -98,7 +98,6 @@ const result = evaluate(ast, context) // returns 10
 * **rem**
 * **remove**
 * **select-keys**
-* **shuffle** (array)
 * **sort-by**
 * **special-symbol?**
 * **split-at**

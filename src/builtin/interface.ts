@@ -67,6 +67,7 @@ export type SpecialExpressionName =
   | `try`
   | `when`
   | `partial`
+  | `time!`
 
 export type Builtin = {
   normalExpressions: BuiltinNormalExpressions

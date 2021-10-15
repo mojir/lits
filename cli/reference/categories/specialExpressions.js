@@ -404,4 +404,21 @@ module.exports = {
     ],
     specialExpression: true,
   },
+  'time!': {
+    name: `time!`,
+    category: `Special expression`,
+    linkName: `time_exclamation`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `form`,
+        type: `any`,
+      },
+    ],
+    description: `Prints the time it took to evaluate \`form\`, the results \`form\` evaluated.`,
+    examples: [`(defn fib [x] (if (<= x 2) 1 (+ (fib (dec x)) (fib (- x 2))))) (time! (fib 10))`],
+    specialExpression: true,
+  },
 }

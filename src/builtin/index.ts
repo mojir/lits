@@ -13,6 +13,7 @@ import { trySpecialExpression } from './specialExpressions/try'
 import { whenSpecialExpression } from './specialExpressions/when'
 import { recurSpecialExpression } from './specialExpressions/recur'
 import { loopSpecialExpression } from './specialExpressions/loop'
+import { timeSpecialExpression } from './specialExpressions/time'
 import { Builtin, BuiltinSpecialExpressions } from './interface'
 import { normalExpressions } from './normalExpressions'
 
@@ -34,6 +35,7 @@ export const specialExpressions: BuiltinSpecialExpressions = {
   when: whenSpecialExpression,
   recur: recurSpecialExpression,
   loop: loopSpecialExpression,
+  'time!': timeSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {
