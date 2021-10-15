@@ -66,10 +66,6 @@ const result = evaluate(ast, context) // returns 10
 * **comp** (composing functions)
 * **complement**
 * **conj** ? is this needed
-* **distinct** (array) return array with duplicates removed (js === used to check for equallity)
-* **drop-last**
-* **drop-while**
-* **drop**
 * **eq?** (collection) recursevly compares two or more collections (deep-equal)
 * **every-pred**
 * **find**
@@ -78,16 +74,12 @@ const result = evaluate(ast, context) // returns 10
 * **get-in**
 * **group-by**
 * **if-let**
-* **infinity?**
-* **integer?**
 * **juxt**
 * **lispish-version**
 * **mapcat**
 * **memoize**
 * **merge-with**
 * **name**
-* **not-any?**
-* **not-every?**
 * **nthnext**
 * **nthrest**
 * **partition**
@@ -95,7 +87,6 @@ const result = evaluate(ast, context) // returns 10
 * **partition-all**
 * **quot**
 * **rand-nth**
-* **rem**
 * **remove**
 * **select-keys**
 * **sort-by**

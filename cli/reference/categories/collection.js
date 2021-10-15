@@ -156,4 +156,120 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  'every?': {
+    name: `every?`,
+    category: `Collection`,
+    linkName: `every_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `Coll`,
+      },
+      {
+        name: `finder`,
+        type: `function`,
+      },
+    ],
+    description: `Returns true if all entries in \`coll\` pass the test implemented by \`finder\`, otherwise returns false.`,
+    examples: [
+      `(every? string? ["Albert" "Mojir" 160 [1 2]])`,
+      `(every? (fn [x] (> x 10)) [50 100 150 200])`,
+      `(every? number? [])`,
+      `(every? number? "")`,
+      `(every? number? {})`,
+      `(every? #(even? (second %1)) {"a" 2 "b" 4})`,
+      `(every? #(even? (second %1)) {"a" 2 "b" 3})`,
+    ],
+    specialExpression: false,
+  },
+  'not-every?': {
+    name: `not-every?`,
+    category: `Collection`,
+    linkName: `not-every_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `Coll`,
+      },
+      {
+        name: `finder`,
+        type: `function`,
+      },
+    ],
+    description: `Returns true if all entries in \`coll\` pass the test implemented by \`finder\`, otherwise returns false.`,
+    examples: [
+      `(not-every? string? ["Albert" "Mojir" 160 [1 2]])`,
+      `(not-every? (fn [x] (> x 10)) [50 100 150 200])`,
+      `(not-every? number? [])`,
+      `(not-every? number? "")`,
+      `(not-every? number? {})`,
+      `(not-every? #(even? (second %1)) {"a" 2 "b" 4})`,
+      `(not-every? #(even? (second %1)) {"a" 2 "b" 3})`,
+    ],
+    specialExpression: false,
+  },
+  'any?': {
+    name: `any?`,
+    category: `Collection`,
+    linkName: `any_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `Coll`,
+      },
+      {
+        name: `finder`,
+        type: `function`,
+      },
+    ],
+    description: `Returns true if any entry in \`coll\` pass the test implemented by \`finder\`, otherwise returns false.`,
+    examples: [
+      `(any? string? ["Albert" "Mojir" 160 [1 2]])`,
+      `(any? (fn [x] (> x 10)) [50 100 150 200])`,
+      `(any? number? [])`,
+      `(any? number? "")`,
+      `(any? number? {})`,
+      `(any? #(even? (second %1)) {"a" 2 "b" 3})`,
+      `(any? #(even? (second %1)) {"a" 1 "b" 3})`,
+    ],
+    specialExpression: false,
+  },
+  'not-any?': {
+    name: `not-any?`,
+    category: `Collection`,
+    linkName: `not-any_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `Coll`,
+      },
+      {
+        name: `finder`,
+        type: `function`,
+      },
+    ],
+    description: `Returns false if any entry in \`coll\` pass the test implemented by \`finder\`, otherwise returns true.`,
+    examples: [
+      `(not-any? string? ["Albert" "Mojir" 160 [1 2]])`,
+      `(not-any? (fn [x] (> x 10)) [50 100 150 200])`,
+      `(not-any? number? [])`,
+      `(not-any? number? "")`,
+      `(not-any? number? {})`,
+      `(not-any? #(even? (second %1)) {"a" 2 "b" 3})`,
+      `(not-any? #(even? (second %1)) {"a" 1 "b" 3})`,
+    ],
+    specialExpression: false,
+  },
 }

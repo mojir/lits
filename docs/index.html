@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.34</span></div>
+    <div class="column right version"><span>v0.1.37</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -266,6 +266,106 @@
 <pre><span class="example" onclick="addToPlayground('(empty? {___double_quote___a___double_quote___ 2})')"><span class="icon-button">▶</span> (empty? {"a" 2}) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(empty? ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (empty? "") <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(empty? ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (empty? "Albert") <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="every_question" class="content function">
+  <div class="function-header">every?</div>
+  
+  <p>Returns true if all entries in <span class="pre">coll</span> pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>every? coll finder => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>coll: Coll</pre>
+<pre>finder: function</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(every? string? [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (every? string? ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? (fn [x] (> x 10)) [50 100 150 200])')"><span class="icon-button">▶</span> (every? (fn [x] (> x 10)) [50 100 150 200]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? number? [])')"><span class="icon-button">▶</span> (every? number? []) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? number? ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (every? number? "") <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? number? {})')"><span class="icon-button">▶</span> (every? number? {}) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 4})')"><span class="icon-button">▶</span> (every? #(even? (second %1)) {"a" 2 "b" 4}) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"><span class="icon-button">▶</span> (every? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="not-every_question" class="content function">
+  <div class="function-header">not-every?</div>
+  
+  <p>Returns true if all entries in <span class="pre">coll</span> pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>not-every? coll finder => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>coll: Coll</pre>
+<pre>finder: function</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(not-every? string? [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (not-every? string? ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? (fn [x] (> x 10)) [50 100 150 200])')"><span class="icon-button">▶</span> (not-every? (fn [x] (> x 10)) [50 100 150 200]) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? number? [])')"><span class="icon-button">▶</span> (not-every? number? []) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? number? ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (not-every? number? "") <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? number? {})')"><span class="icon-button">▶</span> (not-every? number? {}) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 4})')"><span class="icon-button">▶</span> (not-every? #(even? (second %1)) {"a" 2 "b" 4}) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"><span class="icon-button">▶</span> (not-every? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> true</span></span></pre>
+  </div>
+</div>
+
+
+<div id="any_question" class="content function">
+  <div class="function-header">any?</div>
+  
+  <p>Returns true if any entry in <span class="pre">coll</span> pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>any? coll finder => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>coll: Coll</pre>
+<pre>finder: function</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(any? string? [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (any? string? ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? (fn [x] (> x 10)) [50 100 150 200])')"><span class="icon-button">▶</span> (any? (fn [x] (> x 10)) [50 100 150 200]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? number? [])')"><span class="icon-button">▶</span> (any? number? []) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? number? ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (any? number? "") <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? number? {})')"><span class="icon-button">▶</span> (any? number? {}) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"><span class="icon-button">▶</span> (any? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? #(even? (second %1)) {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 3})')"><span class="icon-button">▶</span> (any? #(even? (second %1)) {"a" 1 "b" 3}) <span class="gray">=> false</span></span></pre>
+  </div>
+</div>
+
+
+<div id="not-any_question" class="content function">
+  <div class="function-header">not-any?</div>
+  
+  <p>Returns false if any entry in <span class="pre">coll</span> pass the test implemented by <span class="pre">finder</span>, otherwise returns true.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>not-any? coll finder => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>coll: Coll</pre>
+<pre>finder: function</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(not-any? string? [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (not-any? string? ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? (fn [x] (> x 10)) [50 100 150 200])')"><span class="icon-button">▶</span> (not-any? (fn [x] (> x 10)) [50 100 150 200]) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? number? [])')"><span class="icon-button">▶</span> (not-any? number? []) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? number? ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (not-any? number? "") <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? number? {})')"><span class="icon-button">▶</span> (not-any? number? {}) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"><span class="icon-button">▶</span> (not-any? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? #(even? (second %1)) {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 3})')"><span class="icon-button">▶</span> (not-any? #(even? (second %1)) {"a" 1 "b" 3}) <span class="gray">=> true</span></span></pre>
   </div>
 </div>
 
@@ -617,27 +717,6 @@
 </div>
 
 
-<div id="every_question" class="content function">
-  <div class="function-header">every?</div>
-  
-  <p>Returns true if all elements pass the test implemented by <span class="pre">finder</span>, otherwise returns false.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>every? array finder => array</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>array: array</pre>
-<pre>finder: function</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(every? string? [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (every? string? ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(every? (fn [x] (> x 10)) [50 100 150 200])')"><span class="icon-button">▶</span> (every? (fn [x] (> x 10)) [50 100 150 200]) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(every? (fn [x] (> x 10)) [])')"><span class="icon-button">▶</span> (every? (fn [x] (> x 10)) []) <span class="gray">=> false</span></span></pre>
-  </div>
-</div>
-
-
 <div id="reverse" class="content function">
   <div class="function-header">reverse</div>
   
@@ -845,6 +924,68 @@
 </div>
 
 
+<div id="drop" class="content function">
+  <div class="function-header">drop</div>
+  
+  <p>Constructs a new array/string with the <span class="pre">count</span> first elements dropped from <span class="pre">input</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>drop count input => array | string</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>count: integer</pre>
+<pre>input: array | string</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(drop 3 [1 2 3 4 5])')"><span class="icon-button">▶</span> (drop 3 [1 2 3 4 5]) <span class="gray">=> [4,5]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(drop 0 [1 2 3 4 5])')"><span class="icon-button">▶</span> (drop 0 [1 2 3 4 5]) <span class="gray">=> [1,2,3,4,5]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(drop 2 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (drop 2 "Albert") <span class="gray">=> "bert"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(drop 50 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (drop 50 "Albert") <span class="gray">=> ""</span></span></pre>
+  </div>
+</div>
+
+
+<div id="drop-last" class="content function">
+  <div class="function-header">drop-last</div>
+  
+  <p>Constructs a new array with the <span class="pre">count</span> last elements dropped from <span class="pre">array</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>drop-last array count => array</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>array: array</pre>
+<pre>count: integer</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(drop-last 3 [1 2 3 4 5])')"><span class="icon-button">▶</span> (drop-last 3 [1 2 3 4 5]) <span class="gray">=> [1,2]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(drop-last 0 [1 2 3 4 5])')"><span class="icon-button">▶</span> (drop-last 0 [1 2 3 4 5]) <span class="gray">=> [1,2,3,4,5]</span></span></pre>
+  </div>
+</div>
+
+
+<div id="drop-while" class="content function">
+  <div class="function-header">drop-while</div>
+  
+  <p>Returns the members of <span class="pre">array</span> in order, skipping the fist elements for witch the <span class="pre">predicate</span> returns a truethy value.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>drop-while predicate array => array</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>predicate: function</pre>
+<pre>array: array</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(drop-while (fn [x] (< x 3)) [1 2 3 2 1])')"><span class="icon-button">▶</span> (drop-while (fn [x] (< x 3)) [1 2 3 2 1]) <span class="gray">=> [3,2,1]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(drop-while (fn [x] (> x 3)) [1 2 3 2 1])')"><span class="icon-button">▶</span> (drop-while (fn [x] (> x 3)) [1 2 3 2 1]) <span class="gray">=> [1,2,3,2,1]</span></span></pre>
+  </div>
+</div>
+
+
 <div id="sort" class="content function">
   <div class="function-header">sort</div>
   
@@ -899,7 +1040,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,3,5,6,8,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,10]</span></span></pre>
   </div>
 </div>
 
@@ -917,11 +1058,32 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [6,9,2,3,1,7,4,10,8,5]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> " MrAiltbroej"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,8,9,10,7,1,6,5,2,3]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "rAiot erMblj"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
+  </div>
+</div>
+
+
+<div id="distinct" class="content function">
+  <div class="function-header">distinct</div>
+  
+  <p>Returns a copy of <span class="pre">input</span> with no duplicates.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>distinct undefined => Seq</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>undefined: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(distinct [1 2 3 1 3 5])')"><span class="icon-button">▶</span> (distinct [1 2 3 1 3 5]) <span class="gray">=> [1,2,3,5]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(distinct ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (distinct "Albert Mojir") <span class="gray">=> "Albert Moji"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(distinct [])')"><span class="icon-button">▶</span> (distinct []) <span class="gray">=> []</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(distinct ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (distinct "") <span class="gray">=> ""</span></span></pre>
   </div>
 </div>
 
@@ -1014,22 +1176,68 @@
 <div id="mod" class="content function">
   <div class="function-header">mod</div>
   
-  <p>Returns modulus of two number arguments.</p>
+  <p>Modulus of <span class="pre">dividend</span> and <span class="pre">divisor</span>. Truncates toward negative infinity.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>mod number divisor => number</pre>
+    <pre>mod dividend divisor => number</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>number: number</pre>
+  <label>Arguments</label><div class="indent"><pre>dividend: number</pre>
 <pre>divisor: number</pre></div>
 
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(mod 5 3)')"><span class="icon-button">▶</span> (mod 5 3) <span class="gray">=> 2</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(mod 5.2 3.1)')"><span class="icon-button">▶</span> (mod 5.2 3.1) <span class="gray">=> 2.1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(mod -5 3)')"><span class="icon-button">▶</span> (mod -5 3) <span class="gray">=> -2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(mod 5 -3)')"><span class="icon-button">▶</span> (mod 5 -3) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mod -5 3)')"><span class="icon-button">▶</span> (mod -5 3) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mod 5 -3)')"><span class="icon-button">▶</span> (mod 5 -3) <span class="gray">=> -1</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(mod -5 -3)')"><span class="icon-button">▶</span> (mod -5 -3) <span class="gray">=> -2</span></span></pre>
+  </div>
+</div>
+
+
+<div id="rem" class="content function">
+  <div class="function-header">rem</div>
+  
+  <p>Remainder of dividing <span class="pre">dividend</span> and <span class="pre">divisor</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>rem dividend divisor => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>dividend: number</pre>
+<pre>divisor: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(rem 5 3)')"><span class="icon-button">▶</span> (rem 5 3) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rem 5.2 3.1)')"><span class="icon-button">▶</span> (rem 5.2 3.1) <span class="gray">=> 2.1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rem -5 3)')"><span class="icon-button">▶</span> (rem -5 3) <span class="gray">=> -2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rem 5 -3)')"><span class="icon-button">▶</span> (rem 5 -3) <span class="gray">=> 2</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rem -5 -3)')"><span class="icon-button">▶</span> (rem -5 -3) <span class="gray">=> -2</span></span></pre>
+  </div>
+</div>
+
+
+<div id="quot" class="content function">
+  <div class="function-header">quot</div>
+  
+  <p>Quotient of dividing <span class="pre">dividend</span> and <span class="pre">divisor</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>quot dividend divisor => number</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>dividend: number</pre>
+<pre>divisor: number</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(quot 5 3)')"><span class="icon-button">▶</span> (quot 5 3) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(quot 5.2 3.1)')"><span class="icon-button">▶</span> (quot 5.2 3.1) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(quot -5 3)')"><span class="icon-button">▶</span> (quot -5 3) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(quot 5 -3)')"><span class="icon-button">▶</span> (quot 5 -3) <span class="gray">=> -1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(quot -5 -3)')"><span class="icon-button">▶</span> (quot -5 -3) <span class="gray">=> 1</span></span></pre>
   </div>
 </div>
 
@@ -1443,9 +1651,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.8814683593806931</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0003868273420489143</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.42010061823102907</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.7635842982494436</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.004195300898127094</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.26775150397002</span></span></pre>
   </div>
 </div>
 
@@ -1464,8 +1672,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 3</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 51</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 9</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 34</span></span></pre>
   </div>
 </div>
 
@@ -1929,7 +2137,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634243812729</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634312508174</span></span></pre>
   </div>
 </div>
 
@@ -3676,7 +3884,10 @@
         <label>Sequence</label>
         <ul>
           <li id="cons_link" onclick="showPage('cons')">cons</li>
-<li id="every_question_link" onclick="showPage('every_question')">every?</li>
+<li id="distinct_link" onclick="showPage('distinct')">distinct</li>
+<li id="drop_link" onclick="showPage('drop')">drop</li>
+<li id="drop-last_link" onclick="showPage('drop-last')">drop-last</li>
+<li id="drop-while_link" onclick="showPage('drop-while')">drop-while</li>
 <li id="filter_link" onclick="showPage('filter')">filter</li>
 <li id="first_link" onclick="showPage('first')">first</li>
 <li id="index-of_link" onclick="showPage('index-of')">index-of</li>
@@ -3707,12 +3918,16 @@
 
         <label>Collection</label>
         <ul>
-          <li id="assoc_link" onclick="showPage('assoc')">assoc</li>
+          <li id="any_question_link" onclick="showPage('any_question')">any?</li>
+<li id="assoc_link" onclick="showPage('assoc')">assoc</li>
 <li id="concat_link" onclick="showPage('concat')">concat</li>
 <li id="contains_question_link" onclick="showPage('contains_question')">contains?</li>
 <li id="count_link" onclick="showPage('count')">count</li>
 <li id="empty_question_link" onclick="showPage('empty_question')">empty?</li>
+<li id="every_question_link" onclick="showPage('every_question')">every?</li>
 <li id="get_link" onclick="showPage('get')">get</li>
+<li id="not-any_question_link" onclick="showPage('not-any_question')">not-any?</li>
+<li id="not-every_question_link" onclick="showPage('not-every_question')">not-every?</li>
         </ul>
 
         <label>Array</label>
@@ -3780,8 +3995,10 @@
 <li id="mod_link" onclick="showPage('mod')">mod</li>
 <li id="pi_link" onclick="showPage('pi')">pi</li>
 <li id="pow_link" onclick="showPage('pow')">pow</li>
+<li id="quot_link" onclick="showPage('quot')">quot</li>
 <li id="rand_link" onclick="showPage('rand')">rand</li>
 <li id="rand-int_link" onclick="showPage('rand-int')">rand-int</li>
+<li id="rem_link" onclick="showPage('rem')">rem</li>
 <li id="round_link" onclick="showPage('round')">round</li>
 <li id="sign_link" onclick="showPage('sign')">sign</li>
 <li id="sin_link" onclick="showPage('sin')">sin</li>

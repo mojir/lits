@@ -80,7 +80,7 @@ module.exports = {
     },
     arguments: [
       {
-        name: `number`,
+        name: `dividend`,
         type: `number`,
       },
       {
@@ -88,8 +88,50 @@ module.exports = {
         type: `number`,
       },
     ],
-    description: `Returns modulus of two number arguments.`,
+    description: `Modulus of \`dividend\` and \`divisor\`. Truncates toward negative infinity.`,
     examples: [`(mod 5 3)`, `(mod 5.2 3.1)`, `(mod -5 3)`, `(mod 5 -3)`, `(mod -5 -3)`],
+    specialExpression: false,
+  },
+  rem: {
+    name: `rem`,
+    category: `Math`,
+    linkName: `rem`,
+    returns: {
+      type: `number`,
+    },
+    arguments: [
+      {
+        name: `dividend`,
+        type: `number`,
+      },
+      {
+        name: `divisor`,
+        type: `number`,
+      },
+    ],
+    description: `Remainder of dividing \`dividend\` and \`divisor\`.`,
+    examples: [`(rem 5 3)`, `(rem 5.2 3.1)`, `(rem -5 3)`, `(rem 5 -3)`, `(rem -5 -3)`],
+    specialExpression: false,
+  },
+  quot: {
+    name: `quot`,
+    category: `Math`,
+    linkName: `quot`,
+    returns: {
+      type: `number`,
+    },
+    arguments: [
+      {
+        name: `dividend`,
+        type: `number`,
+      },
+      {
+        name: `divisor`,
+        type: `number`,
+      },
+    ],
+    description: `Quotient of dividing \`dividend\` and \`divisor\`.`,
+    examples: [`(quot 5 3)`, `(quot 5.2 3.1)`, `(quot -5 3)`, `(quot 5 -3)`, `(quot -5 -3)`],
     specialExpression: false,
   },
   inc: {
