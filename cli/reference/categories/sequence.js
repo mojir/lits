@@ -321,31 +321,6 @@ module.exports = {
     ],
     specialExpression: false,
   },
-  'every?': {
-    name: `every?`,
-    category: `Sequence`,
-    linkName: `every_question`,
-    returns: {
-      type: `array`,
-    },
-    arguments: [
-      {
-        name: `array`,
-        type: `array`,
-      },
-      {
-        name: `finder`,
-        type: `function`,
-      },
-    ],
-    description: `Returns true if all elements pass the test implemented by \`finder\`, otherwise returns false.`,
-    examples: [
-      `(every? string? ["Albert" "Mojir" 160 [1 2]])`,
-      `(every? (fn [x] (> x 10)) [50 100 150 200])`,
-      `(every? (fn [x] (> x 10)) [])`,
-    ],
-    specialExpression: false,
-  },
   reverse: {
     name: `reverse`,
     category: `Sequence`,

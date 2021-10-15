@@ -36,21 +36,6 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
-  'every?': {
-    evaluate: ([fn, seq]: Arr, contextStack, { evaluateLispishFunction }): boolean => {
-      assertLispishFunction(fn)
-      assertSeq(seq)
-
-      if (seq.length === 0) {
-        return false
-      }
-      if (Array.isArray(seq)) {
-        return seq.every(elem => evaluateLispishFunction(fn, [elem], contextStack))
-      }
-      return seq.split(``).every(elem => evaluateLispishFunction(fn, [elem], contextStack))
-    },
-    validate: node => assertLength(2, node),
-  },
   filter: {
     evaluate: ([fn, seq]: Arr, contextStack, { evaluateLispishFunction }): Seq => {
       assertLispishFunction(fn)

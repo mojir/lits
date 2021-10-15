@@ -78,16 +78,12 @@ const result = evaluate(ast, context) // returns 10
 * **get-in**
 * **group-by**
 * **if-let**
-* **infinity?**
-* **integer?**
 * **juxt**
 * **lispish-version**
 * **mapcat**
 * **memoize**
 * **merge-with**
 * **name**
-* **not-any?**
-* **not-every?**
 * **nthnext**
 * **nthrest**
 * **partition**

@@ -201,20 +201,6 @@ describe(`array functions`, () => {
     })
   })
 
-  describe(`every?`, () => {
-    test(`samples`, () => {
-      expect(lispish.run(`(every? number? [1 2 3])`)).toBe(true)
-      expect(lispish.run(`(every? number? ["1" "2" "3"])`)).toBe(false)
-      expect(lispish.run(`(every? number? [])`)).toBe(false)
-      expect(lispish.run(`(every? (fn [x] (zero? (mod x 2))) [2 4 6])`)).toBe(true)
-      expect(lispish.run(`(every? (fn [x] (>= x "a")) "abc")`)).toBe(true)
-      expect(lispish.run(`(every? (fn [x] (>= x "a")) "abC")`)).toBe(false)
-      expect(() => lispish.run(`(every? +)`)).toThrow()
-      expect(() => lispish.run(`(every?)`)).toThrow()
-      expect(() => lispish.run(`(every? number? [1] 2)`)).toThrow()
-    })
-  })
-
   describe(`map`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(map number? [1 "2" 3])`)).toEqual([true, false, true])
