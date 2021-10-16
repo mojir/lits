@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.39</span></div>
+    <div class="column right version"><span>v0.1.40</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1040,7 +1040,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,4,7,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,5,7,8,9]</span></span></pre>
   </div>
 </div>
 
@@ -1058,8 +1058,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,6,2,10,3,7,9,4,8,1]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "jtrro MibleA"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,1,10,7,3,4,2,9,6,8]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "iMtroAlejbr "</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1651,9 +1651,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.5211542590692713</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0077091151860831314</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.021770584125416</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.607047359850333</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.009893322594386847</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.6748223714826684</span></span></pre>
   </div>
 </div>
 
@@ -1672,8 +1672,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 4</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 96</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 9</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 24</span></span></pre>
   </div>
 </div>
 
@@ -2137,7 +2137,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634392799435</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634426924978</span></span></pre>
   </div>
 </div>
 
@@ -2286,6 +2286,47 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(partial + 100)')"><span class="icon-button">▶</span> (partial + 100) <span class="gray">=> &lt;function λ&gt;</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(def addHundred (partial + 100)) (addHundred 10)')"><span class="icon-button">▶</span> (def addHundred (partial + 100)) (addHundred 10) <span class="gray">=> 110</span></span></pre>
+  </div>
+</div>
+
+
+<div id="comp" class="content function">
+  <div class="function-header">comp</div>
+  
+  <p>Takes a set of functions and returns a fn that is the composition of those. The returned functions takes a variable number of arguments, applies the rightmost function to the args, the next function (right-to-left) to the result, etc.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>comp fn(zero or more) fns(optional) => function</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>fn: function</pre>
+<pre>fns: function[]</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(def negative-quotient (comp - /)) (negative-quotient 9 3)')"><span class="icon-button">▶</span> (def negative-quotient (comp - /)) (negative-quotient 9 3) <span class="gray">=> -3</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(#((apply comp first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)')"><span class="icon-button">▶</span> (#((apply comp first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3) <span class="gray">=> 4</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(def x {___double_quote___bar___double_quote___ {___double_quote___foo___double_quote___ 42}}) ((comp ___double_quote___foo___double_quote___ ___double_quote___bar___double_quote___) x)')"><span class="icon-button">▶</span> (def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x) <span class="gray">=> 42</span></span></pre>
+  </div>
+</div>
+
+
+<div id="constantly" class="content function">
+  <div class="function-header">constantly</div>
+  
+  <p>Returns a function that takes any number of arguments and returns <span class="pre">value</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>constantly value => function</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre class="example" onclick="addToPlayground('(def negative-quotient (constantly - /)) (negative-quotient 9 3)')"><span class="icon-button">▶</span> (def negative-quotient (constantly - /)) (negative-quotient 9 3) <span class="gray">=></span> <span class="error">Error!</span></pre>
+<pre><span class="example" onclick="addToPlayground('(#((apply constantly first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)')"><span class="icon-button">▶</span> (#((apply constantly first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3) <span class="gray">=> &lt;builtin function first&gt;</span></span></pre>
+<pre class="example" onclick="addToPlayground('(def x {___double_quote___bar___double_quote___ {___double_quote___foo___double_quote___ 42}}) ((constantly ___double_quote___foo___double_quote___ ___double_quote___bar___double_quote___) x)')"><span class="icon-button">▶</span> (def x {"bar" {"foo" 42}}) ((constantly "foo" "bar") x) <span class="gray">=></span> <span class="error">Error!</span></pre>
   </div>
 </div>
 
@@ -4081,7 +4122,9 @@
 <li id="apply_link" onclick="showPage('apply')">apply</li>
 <li id="assert_link" onclick="showPage('assert')">assert</li>
 <li id="boolean_link" onclick="showPage('boolean')">boolean</li>
+<li id="comp_link" onclick="showPage('comp')">comp</li>
 <li id="compare_link" onclick="showPage('compare')">compare</li>
+<li id="constantly_link" onclick="showPage('constantly')">constantly</li>
 <li id="debug_exclamation_link" onclick="showPage('debug_exclamation')">debug!</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="identity_link" onclick="showPage('identity')">identity</li>

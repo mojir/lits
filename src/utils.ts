@@ -8,9 +8,7 @@ import {
   NameNode,
   NormalExpressionNode,
   NormalExpressionNodeName,
-  PartialLispishFunction,
   SpecialExpressionNode,
-  UserDefinedLispishFunction,
 } from './parser/interface'
 
 export function asAstNode(node: AstNode | undefined): AstNode {
@@ -234,31 +232,35 @@ export function isLispishFunction(func: unknown): func is LispishFunction {
 }
 
 export function assertLispishFunction(func: unknown): asserts func is LispishFunction {
-  if (func === null || typeof func !== `object`) {
-    throw Error(`Expected lispish function, got ${func}`)
-  }
-  if (!(func as LispishFunction)[functionSymbol]) {
+  if (!isLispishFunction(func)) {
     throw Error(`Expected lispish function, got ${JSON.stringify(func)}`)
   }
 }
 
-export function isUserDefinedLispishFunction(func: unknown): func is UserDefinedLispishFunction {
-  if (isLispishFunction(func)) {
-    return !!(func as UserDefinedLispishFunction).arguments
-  }
-  return false
-}
+// export function isUserDefinedLispishFunction(func: unknown): func is UserDefinedLispishFunction {
+//   if (isLispishFunction(func)) {
+//     return !!(func as UserDefinedLispishFunction).arguments
+//   }
+//   return false
+// }
 
-export function isPartialLispishFunction(func: unknown): func is PartialLispishFunction {
-  if (isLispishFunction(func)) {
-    return !!Object.getOwnPropertyDescriptor(func, `fn`)
-  }
-  return false
-}
+// export function isPartialLispishFunction(func: unknown): func is PartialLispishFunction {
+//   if (isLispishFunction(func)) {
+//     return !!Object.getOwnPropertyDescriptor(func, `fn`)
+//   }
+//   return false
+// }
 
-export function isBuiltinLispishFunction(func: unknown): func is UserDefinedLispishFunction {
-  return isLispishFunction(func) && !isUserDefinedLispishFunction(func)
-}
+// export function isCompLispishFunction(func: unknown): func is CompLispishFunction {
+//   if (isLispishFunction(func)) {
+//     return !!Object.getOwnPropertyDescriptor(func, `fns`)
+//   }
+//   return false
+// }
+
+// export function isBuiltinLispishFunction(func: unknown): func is UserDefinedLispishFunction {
+//   return isLispishFunction(func) && !isUserDefinedLispishFunction(func)
+// }
 
 export function assertStringArray(value: unknown): asserts value is string[] {
   if (!Array.isArray(value) || value.some(v => typeof v !== `string`)) {

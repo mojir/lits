@@ -249,11 +249,11 @@ function parseBinding(tokens: Token[], position: number): [number, BindingNode] 
 }
 
 const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
-  let fnNode: AstNode
-  ;[position, fnNode] = parseToken(tokens, position)
+  //  let fnNode: AstNode
+  const [newPosition, fnNode] = parseToken(tokens, position)
 
   let params: AstNode[]
-  ;[position, params] = parseTokens(tokens, position)
+  ;[position, params] = parseTokens(tokens, newPosition)
   position += 1
 
   if (isExpressionNode(fnNode)) {
@@ -263,7 +263,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
       params,
     }
 
-    return [position + 1, node]
+    return [position, node]
   }
 
   assertNameNode(fnNode)

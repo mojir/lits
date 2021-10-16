@@ -24,22 +24,18 @@ import {
   assertRegExp,
   assertString,
   asNonEmptyString,
-  isBuiltinLispishFunction,
   isLispishFunction,
-  isUserDefinedLispishFunction,
   asFiniteNumber,
   assertNotUndefined,
   assertLength,
   assertSeq,
   assertStringOrRegExp,
-  assertStringArray,
   isNumber,
   assertNumber,
   isInteger,
   hasKey,
   isRegExp,
   isNormalExpressionNodeName,
-  isPartialLispishFunction,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -52,6 +48,7 @@ describe(`utils`, () => {
     expect(() => asLispishFunction(undefined)).toThrow()
     const lf: LispishFunction = {
       [functionSymbol]: true,
+      type: `user-defined`,
       arguments: {
         mandatoryArguments: [],
         optionalArguments: [],
@@ -229,6 +226,7 @@ describe(`utils`, () => {
   test(`assertLispishFunction`, () => {
     const lf: LispishFunction = {
       [functionSymbol]: true,
+      type: `user-defined`,
       arguments: {
         mandatoryArguments: [],
         optionalArguments: [],
@@ -433,6 +431,7 @@ describe(`utils`, () => {
   test(`isLispishFunction`, () => {
     const lf1: LispishFunction = {
       [functionSymbol]: true,
+      type: `user-defined`,
       arguments: {
         mandatoryArguments: [],
         optionalArguments: [],
@@ -443,10 +442,30 @@ describe(`utils`, () => {
     }
     const lf2: LispishFunction = {
       [functionSymbol]: true,
+      type: `builtin`,
       builtin: `+`,
+    }
+    const lf3: LispishFunction = {
+      [functionSymbol]: true,
+      type: `partial`,
+      fn: { a: 10, b: 20 },
+      params: [],
+    }
+    const lf4: LispishFunction = {
+      [functionSymbol]: true,
+      type: `comp`,
+      fns: [`x`],
+    }
+    const lf5: LispishFunction = {
+      [functionSymbol]: true,
+      type: `constantly`,
+      value: 10,
     }
     expect(isLispishFunction(lf1)).toBe(true)
     expect(isLispishFunction(lf2)).toBe(true)
+    expect(isLispishFunction(lf3)).toBe(true)
+    expect(isLispishFunction(lf4)).toBe(true)
+    expect(isLispishFunction(lf5)).toBe(true)
     expect(isLispishFunction(``)).toBe(false)
     expect(isLispishFunction(`1`)).toBe(false)
     expect(isLispishFunction(0)).toBe(false)
@@ -457,108 +476,6 @@ describe(`utils`, () => {
     expect(isLispishFunction(undefined)).toBe(false)
     expect(isLispishFunction([])).toBe(false)
     expect(isLispishFunction({})).toBe(false)
-  })
-
-  test(`isUserDefinedLispishFunction`, () => {
-    const lf1: LispishFunction = {
-      [functionSymbol]: true,
-      arguments: {
-        mandatoryArguments: [],
-        optionalArguments: [],
-      },
-      functionContext: {},
-      name: undefined,
-      body: [],
-    }
-    const lf2: LispishFunction = {
-      [functionSymbol]: true,
-      builtin: `+`,
-    }
-    expect(isUserDefinedLispishFunction(lf1)).toBe(true)
-    expect(isUserDefinedLispishFunction(lf2)).toBe(false)
-    expect(isUserDefinedLispishFunction(``)).toBe(false)
-    expect(isUserDefinedLispishFunction(`1`)).toBe(false)
-    expect(isUserDefinedLispishFunction(0)).toBe(false)
-    expect(isUserDefinedLispishFunction(1)).toBe(false)
-    expect(isUserDefinedLispishFunction(true)).toBe(false)
-    expect(isUserDefinedLispishFunction(false)).toBe(false)
-    expect(isUserDefinedLispishFunction(null)).toBe(false)
-    expect(isUserDefinedLispishFunction(undefined)).toBe(false)
-    expect(isUserDefinedLispishFunction([])).toBe(false)
-    expect(isUserDefinedLispishFunction({})).toBe(false)
-  })
-
-  test(`isBuiltinLispishFunction`, () => {
-    const lf1: LispishFunction = {
-      [functionSymbol]: true,
-      arguments: {
-        mandatoryArguments: [],
-        optionalArguments: [],
-      },
-      functionContext: {},
-      name: undefined,
-      body: [],
-    }
-    const lf2: LispishFunction = {
-      [functionSymbol]: true,
-      builtin: `+`,
-    }
-    expect(isBuiltinLispishFunction(lf1)).toBe(false)
-    expect(isBuiltinLispishFunction(lf2)).toBe(true)
-    expect(isBuiltinLispishFunction(``)).toBe(false)
-    expect(isBuiltinLispishFunction(`1`)).toBe(false)
-    expect(isBuiltinLispishFunction(0)).toBe(false)
-    expect(isBuiltinLispishFunction(1)).toBe(false)
-    expect(isBuiltinLispishFunction(true)).toBe(false)
-    expect(isBuiltinLispishFunction(false)).toBe(false)
-    expect(isBuiltinLispishFunction(null)).toBe(false)
-    expect(isBuiltinLispishFunction(undefined)).toBe(false)
-    expect(isBuiltinLispishFunction([])).toBe(false)
-    expect(isBuiltinLispishFunction({})).toBe(false)
-  })
-
-  test(`isPartialLispishFunction`, () => {
-    const lf1: LispishFunction = {
-      [functionSymbol]: true,
-      arguments: {
-        mandatoryArguments: [],
-        optionalArguments: [],
-      },
-      functionContext: {},
-      name: undefined,
-      body: [],
-    }
-    const lf2: LispishFunction = {
-      [functionSymbol]: true,
-      builtin: `+`,
-    }
-    const lf3: LispishFunction = {
-      [functionSymbol]: true,
-      fn: { a: 10, b: 20 },
-      params: [],
-    }
-
-    expect(isPartialLispishFunction(lf1)).toBe(false)
-    expect(isPartialLispishFunction(lf2)).toBe(false)
-    expect(isPartialLispishFunction(lf3)).toBe(true)
-    expect(isPartialLispishFunction(``)).toBe(false)
-    expect(isPartialLispishFunction(`1`)).toBe(false)
-    expect(isPartialLispishFunction(0)).toBe(false)
-    expect(isPartialLispishFunction(1)).toBe(false)
-    expect(isPartialLispishFunction(true)).toBe(false)
-    expect(isPartialLispishFunction(false)).toBe(false)
-    expect(isPartialLispishFunction(null)).toBe(false)
-    expect(isPartialLispishFunction(undefined)).toBe(false)
-    expect(isPartialLispishFunction([])).toBe(false)
-    expect(isPartialLispishFunction({})).toBe(false)
-  })
-
-  test(`assertStringArray`, () => {
-    expect(() => assertStringArray(undefined)).toThrow()
-    expect(() => assertStringArray(`undefined`)).toThrow()
-    expect(() => assertStringArray([])).not.toThrow()
-    expect(() => assertStringArray([`1`, `2`])).not.toThrow()
-    expect(() => assertStringArray([`1`, `2`, 3])).toThrow()
   })
 
   test(`isNumber`, () => {

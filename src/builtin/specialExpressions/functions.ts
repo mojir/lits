@@ -139,6 +139,7 @@ function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpress
 
     const lispishFunction: LispishFunction = {
       [functionSymbol]: true,
+      type: `user-defined`,
       name,
       arguments: {
         mandatoryArguments: node.arguments.mandatoryArguments,

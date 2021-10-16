@@ -8,6 +8,7 @@ import {
   LispishFunction,
   functionSymbol,
   NormalExpressionNodeName,
+  BuiltinLispishFunction,
 } from '../parser/interface'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
@@ -24,9 +25,7 @@ import {
   isNormalExpressionNodeName,
   isNumber,
   isObj,
-  isPartialLispishFunction,
   isString,
-  isUserDefinedLispishFunction,
 } from '../utils'
 import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
@@ -82,10 +81,12 @@ function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
     }
   }
   if (builtin.normalExpressions[value]) {
-    return {
+    const builtinFunction: BuiltinLispishFunction = {
       [functionSymbol]: true,
+      type: `builtin`,
       builtin: value,
     }
+    return builtinFunction
   }
   throw Error(`Undefined identifier ${value}`)
 }
@@ -136,77 +137,100 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
   params: Arr,
   contextStack: Context[],
 ) => {
-  if (isUserDefinedLispishFunction(lispishFunction)) {
-    const args = lispishFunction.arguments
-    const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
-    const nbrOfOptionalArgs: number = args.optionalArguments.length
-    const maxNbrOfParameters: null | number = args.restArgument ? null : nbrOfMandatoryArgs + nbrOfOptionalArgs
+  switch (lispishFunction.type) {
+    case `user-defined`: {
+      const args = lispishFunction.arguments
+      const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
+      const nbrOfOptionalArgs: number = args.optionalArguments.length
+      const maxNbrOfParameters: null | number = args.restArgument ? null : nbrOfMandatoryArgs + nbrOfOptionalArgs
 
-    for (;;) {
-      const newContext: Context = { ...lispishFunction.functionContext }
-      if (params.length < args.mandatoryArguments.length) {
-        throw Error(
-          `Function ${lispishFunction.name ?? `(fn)`} requires at least ${
-            args.mandatoryArguments.length
-          } arguments. Got ${params.length}`,
-        )
-      }
-
-      if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
-        throw Error(
-          `Function "${lispishFunction.name ?? `λ`}" requires at most ${maxNbrOfParameters} arguments. Got ${
-            params.length
-          }`,
-        )
-      }
-
-      const length = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length)
-      const rest: Arr = []
-      for (let i = 0; i < length; i += 1) {
-        if (i < nbrOfMandatoryArgs) {
-          const param = params[i]
-          const key = asNotUndefined(args.mandatoryArguments[i], ``)
-          newContext[key] = { value: param }
-        } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
-          const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
-          const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
-          const key = arg.name
-          newContext[key] = { value: param }
-        } else {
-          rest.push(params[i])
+      for (;;) {
+        const newContext: Context = { ...lispishFunction.functionContext }
+        if (params.length < args.mandatoryArguments.length) {
+          throw Error(
+            `Function ${lispishFunction.name ?? `(fn)`} requires at least ${
+              args.mandatoryArguments.length
+            } arguments. Got ${params.length}`,
+          )
         }
-      }
 
-      if (args.restArgument) {
-        newContext[args.restArgument] = { value: rest }
-      }
+        if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
+          throw Error(
+            `Function "${lispishFunction.name ?? `λ`}" requires at most ${maxNbrOfParameters} arguments. Got ${
+              params.length
+            }`,
+          )
+        }
 
-      try {
-        let result: unknown = undefined
-        for (const node of lispishFunction.body) {
-          result = evaluateAstNode(node, [newContext, ...contextStack])
+        const length = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length)
+        const rest: Arr = []
+        for (let i = 0; i < length; i += 1) {
+          if (i < nbrOfMandatoryArgs) {
+            const param = params[i]
+            const key = asNotUndefined(args.mandatoryArguments[i], ``)
+            newContext[key] = { value: param }
+          } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
+            const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
+            const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
+            const key = arg.name
+            newContext[key] = { value: param }
+          } else {
+            rest.push(params[i])
+          }
         }
-        return result
-      } catch (error) {
-        if (error instanceof RecurSignal) {
-          params = error.params
-          continue
+
+        if (args.restArgument) {
+          newContext[args.restArgument] = { value: rest }
         }
-        throw error
+
+        try {
+          let result: unknown = undefined
+          for (const node of lispishFunction.body) {
+            result = evaluateAstNode(node, [newContext, ...contextStack])
+          }
+          return result
+        } catch (error) {
+          if (error instanceof RecurSignal) {
+            params = error.params
+            continue
+          }
+          throw error
+        }
       }
     }
-  } else if (isPartialLispishFunction(lispishFunction)) {
-    const result = evaluateFunction(lispishFunction.fn, [...lispishFunction.params, ...params], contextStack)
-    if (hasKey(result, `value`)) {
-      return result.value
+    case `partial`: {
+      const result = evaluateFunction(lispishFunction.fn, [...lispishFunction.params, ...params], contextStack)
+      if (hasKey(result, `value`)) {
+        return result.value
+      }
+      throw Error(`Expected function, got ${lispishFunction.fn}`)
     }
-    throw Error(`Expected function, got ${lispishFunction.fn}`)
-  } else {
-    const normalExpression = asNotUndefined(
-      normalExpressions[lispishFunction.builtin],
-      `${lispishFunction.builtin} is not a function`,
-    )
-    return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
+    case `comp`: {
+      const { fns } = lispishFunction
+      if (fns.length === 0) {
+        if (params.length !== 1) {
+          throw Error(`(comp) expects one argument, got ${params.length}`)
+        }
+        return params[0]
+      }
+      return fns.reduceRight((result: unknown[], fn) => {
+        const possibleResult = evaluateFunction(fn, result, contextStack)
+        if (hasKey(possibleResult, `value`)) {
+          return [possibleResult.value]
+        }
+        throw Error(`Expected function, got ${fn}`)
+      }, params)[0]
+    }
+    case `constantly`: {
+      return lispishFunction.value
+    }
+    default: {
+      const normalExpression = asNotUndefined(
+        normalExpressions[lispishFunction.builtin],
+        `${lispishFunction.builtin} is not a function`,
+      )
+      return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
+    }
   }
 }
 

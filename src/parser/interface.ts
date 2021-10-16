@@ -16,6 +16,7 @@ export type EvaluatedFunctionArguments = {
 
 export type UserDefinedLispishFunction = {
   [functionSymbol]: true
+  type: `user-defined`
   name: string | undefined
   arguments: EvaluatedFunctionArguments
   body: AstNode[]
@@ -24,16 +25,35 @@ export type UserDefinedLispishFunction = {
 
 export type PartialLispishFunction = {
   [functionSymbol]: true
+  type: `partial`
   fn: unknown
   params: unknown[]
 }
 
+export type CompLispishFunction = {
+  [functionSymbol]: true
+  type: `comp`
+  fns: unknown[]
+}
+
+export type ConstantlyLispishFunction = {
+  [functionSymbol]: true
+  type: `constantly`
+  value: unknown
+}
+
 export type BuiltinLispishFunction = {
   [functionSymbol]: true
+  type: `builtin`
   builtin: string
 }
 
-export type LispishFunction = UserDefinedLispishFunction | BuiltinLispishFunction | PartialLispishFunction
+export type LispishFunction =
+  | UserDefinedLispishFunction
+  | BuiltinLispishFunction
+  | PartialLispishFunction
+  | CompLispishFunction
+  | ConstantlyLispishFunction
 
 export type NodeType =
   | `Number`

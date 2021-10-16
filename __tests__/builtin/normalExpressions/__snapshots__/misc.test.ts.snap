@@ -5,9 +5,9 @@ exports[`misc functions debug! multiple contexts 1`] = `
 
 Context 0 - Import context
   x     10
-  foo   <function foo>
-  bar   <function λ>
-  plus  <builtin function undefined>
+  foo   <user-defined function foo>
+  bar   <user-defined function λ>
+  plus  <builtin function λ>
 
 Context 1 - Global context
   y  20

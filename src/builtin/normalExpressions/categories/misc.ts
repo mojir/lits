@@ -1,7 +1,12 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry } from '../../../evaluator/interface'
 import { Arr } from '../../../interface'
-import { functionSymbol, PartialLispishFunction } from '../../../parser/interface'
+import {
+  CompLispishFunction,
+  ConstantlyLispishFunction,
+  functionSymbol,
+  PartialLispishFunction,
+} from '../../../parser/interface'
 import {
   assertArr,
   assertLength,
@@ -9,8 +14,8 @@ import {
   assertObjectOrArray,
   assertString,
   compare,
-  isBuiltinLispishFunction,
-  isUserDefinedLispishFunction,
+  isArr,
+  isLispishFunction,
 } from '../../../utils'
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -97,12 +102,15 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   apply: {
-    evaluate: ([func, array]: Arr, contextStack, { evaluateLispishFunction }): unknown => {
+    evaluate: ([func, ...params]: Arr, contextStack, { evaluateLispishFunction }): unknown => {
       assertLispishFunction(func)
-      assertArr(array)
-      return evaluateLispishFunction(func, array, contextStack)
+      const paramsLength = params.length
+      const last = params[paramsLength - 1]
+      assertArr(last)
+      const applyArray = [...params.slice(0, -1), ...last]
+      return evaluateLispishFunction(func, applyArray, contextStack)
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertLength({ min: 2 }, node),
   },
   'get-path': {
     evaluate: ([first, second]: Arr): unknown => {
@@ -178,11 +186,39 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([fn, ...params]): PartialLispishFunction => {
       return {
         [functionSymbol]: true,
+        type: `partial`,
         fn,
         params,
       }
     },
     validate: node => assertLength({ min: 1 }, node),
+  },
+
+  comp: {
+    evaluate: (fns): CompLispishFunction => {
+      if (fns.length > 1) {
+        const last = fns[fns.length - 1]
+        if (isArr(last)) {
+          fns = [...fns.slice(0, -1), ...last]
+        }
+      }
+      return {
+        [functionSymbol]: true,
+        type: `comp`,
+        fns,
+      }
+    },
+  },
+
+  constantly: {
+    evaluate: ([value]): ConstantlyLispishFunction => {
+      return {
+        [functionSymbol]: true,
+        type: `constantly`,
+        value,
+      }
+    },
+    validate: node => assertLength(1, node),
   },
 }
 
@@ -206,13 +242,14 @@ function contextToString(context: Context) {
 }
 
 function valueToString(contextEntry: ContextEntry): string {
-  if (isBuiltinLispishFunction(contextEntry.value)) {
-    return `<builtin function ${contextEntry.value.name}>`
-  } else if (isUserDefinedLispishFunction(contextEntry.value)) {
-    if (contextEntry.value.name) {
-      return `<function ${contextEntry.value.name}>`
+  const { value } = contextEntry
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const name: string | undefined = (value as any).name
+  if (isLispishFunction(value)) {
+    if (name) {
+      return `<${value.type} function ${name}>`
     } else {
-      return `<function λ>`
+      return `<${value.type} function λ>`
     }
   }
   return JSON.stringify(contextEntry.value)
