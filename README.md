@@ -68,7 +68,6 @@ const result = evaluate(ast, context) // returns 10
 * **conj** ? is this needed
 * **eq?** (collection) recursevly compares two or more collections (deep-equal)
 * **every-pred**
-* **find**
 * **flatten**
 * **for**
 * **get-in**
@@ -95,7 +94,6 @@ const result = evaluate(ast, context) // returns 10
 * **split-with**
 * **symbol**
 * **symbol?**
-* **time!**
 * **update**
 * **update-in**
 * **when-first**

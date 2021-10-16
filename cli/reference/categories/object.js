@@ -94,6 +94,27 @@ module.exports = {
     examples: [`(entries (object))`, `(entries (object "x" 10 "y" true "z" "A string"))`],
     specialExpression: false,
   },
+  find: {
+    name: `find`,
+    category: `Object`,
+    linkName: `find`,
+    returns: {
+      type: `Entry`,
+    },
+    arguments: [
+      {
+        name: `object`,
+        type: `object`,
+      },
+      {
+        name: `key`,
+        type: `string`,
+      },
+    ],
+    description: `Returns entry for \`key\`, or undefined if \`key\` not present in \`object\`.`,
+    examples: [`(find (object "a" 1 "b" 2) "b")`, `(find (object "a" 1 "b" 2) "c")`],
+    specialExpression: false,
+  },
   merge: {
     name: `merge`,
     category: `Object`,

@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.38</span></div>
+    <div class="column right version"><span>v0.1.39</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1040,7 +1040,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,3,4,7]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,4,7,9]</span></span></pre>
   </div>
 </div>
 
@@ -1058,8 +1058,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,6,9,1,7,5,10,4,2,8]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "iolrMAjetbr "</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,6,2,10,3,7,9,4,8,1]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "jtrro MibleA"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1651,9 +1651,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.2371358943206876</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.00641923225895293</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.9200390507973089</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.5211542590692713</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0077091151860831314</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.021770584125416</span></span></pre>
   </div>
 </div>
 
@@ -1672,8 +1672,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 9</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 48</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 4</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 96</span></span></pre>
   </div>
 </div>
 
@@ -2137,7 +2137,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634318735041</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634392799435</span></span></pre>
   </div>
 </div>
 
@@ -2384,6 +2384,26 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(entries (object))')"><span class="icon-button">▶</span> (entries (object)) <span class="gray">=> []</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(entries (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"><span class="icon-button">▶</span> (entries (object "x" 10 "y" true "z" "A string")) <span class="gray">=> [["x",10],["y",true],["z","A string"]]</span></span></pre>
+  </div>
+</div>
+
+
+<div id="find" class="content function">
+  <div class="function-header">find</div>
+  
+  <p>Returns entry for <span class="pre">key</span>, or undefined if <span class="pre">key</span> not present in <span class="pre">object</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>find object key => Entry</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>object: object</pre>
+<pre>key: string</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(find (object ___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (find (object "a" 1 "b" 2) "b") <span class="gray">=> ["b",2]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(find (object ___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (find (object "a" 1 "b" 2) "c") <span class="gray">=> undefined</span></span></pre>
   </div>
 </div>
 
@@ -3960,6 +3980,7 @@
         <ul>
           <li id="dissoc_link" onclick="showPage('dissoc')">dissoc</li>
 <li id="entries_link" onclick="showPage('entries')">entries</li>
+<li id="find_link" onclick="showPage('find')">find</li>
 <li id="keys_link" onclick="showPage('keys')">keys</li>
 <li id="merge_link" onclick="showPage('merge')">merge</li>
 <li id="object_link" onclick="showPage('object')">object</li>
