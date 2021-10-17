@@ -6,6 +6,7 @@ import {
   assertFiniteNumber,
   assertNumberNotZero,
   assertPositiveNumber,
+  isArr,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const arrayNormalExpression: BuiltinNormalExpressions = {
@@ -66,5 +67,15 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       return result
     },
     validate: node => assertLength(2, node),
+  },
+
+  flatten: {
+    evaluate: ([seq]: Arr): Arr => {
+      if (!isArr(seq)) {
+        return []
+      }
+      return seq.flat(Number.POSITIVE_INFINITY)
+    },
+    validate: node => assertLength(1, node),
   },
 }

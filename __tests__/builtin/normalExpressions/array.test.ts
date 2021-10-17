@@ -74,4 +74,20 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(repeat)`)).toThrow()
     })
   })
+
+  describe(`flatten`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(flatten [1 2 [3 4] 5])`)).toEqual([1, 2, 3, 4, 5])
+      expect(lispish.run(`(flatten [1 2 [3 [4 [5]]] 6])`)).toEqual([1, 2, 3, 4, 5, 6])
+      expect(lispish.run(`(flatten {})`)).toEqual([])
+      expect(lispish.run(`(flatten 12)`)).toEqual([])
+      expect(lispish.run(`(flatten true)`)).toEqual([])
+      expect(lispish.run(`(flatten false)`)).toEqual([])
+      expect(lispish.run(`(flatten null)`)).toEqual([])
+      expect(lispish.run(`(flatten undefined)`)).toEqual([])
+      expect(lispish.run(`(flatten #"undefined")`)).toEqual([])
+      expect(() => lispish.run(`(flatten [] [])`)).toThrow()
+      expect(() => lispish.run(`(flatten)`)).toThrow()
+    })
+  })
 })

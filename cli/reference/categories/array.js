@@ -73,4 +73,21 @@ module.exports = {
     examples: [`(repeat 3 10)`, `(repeat 0 10)`, `(repeat 5 "Albert")`],
     specialExpression: false,
   },
+  flatten: {
+    name: `flatten`,
+    category: `Array`,
+    linkName: `flatten`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `input`,
+        type: `Array`,
+      },
+    ],
+    description: `Takes a nested array and return a flat array. If \`input\` isn't an array, an empty array is returned.`,
+    examples: [`(flatten [1 2 [3 4] 5])`, `(flatten [1 2 [3 [4 [5]]] 6])`, `(flatten 12)`],
+    specialExpression: false,
+  },
 }
