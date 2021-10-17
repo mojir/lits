@@ -17,13 +17,13 @@ import {
 import { BuiltinNormalExpressions } from '../../interface'
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
   cons: {
-    evaluate: ([seq, second]: Arr): unknown => {
-      assertSeq(second)
-      if (Array.isArray(second)) {
-        return [seq, ...second]
+    evaluate: ([elem, seq]: Arr): unknown => {
+      assertSeq(seq)
+      if (Array.isArray(seq)) {
+        return [elem, ...seq]
       }
-      assertChar(seq)
-      return `${seq}${second}`
+      assertChar(elem)
+      return `${elem}${seq}`
     },
     validate: node => assertLength(2, node),
   },
@@ -279,6 +279,18 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(1, node),
   },
+  nthrest: {
+    evaluate: ([seq, count]: Arr): Arr | string => {
+      assertSeq(seq)
+      assertFiniteNumber(count)
+      const integerCount = Math.max(Math.ceil(count), 0)
+      if (Array.isArray(seq)) {
+        return seq.slice(integerCount)
+      }
+      return seq.substr(integerCount)
+    },
+    validate: node => assertLength(2, node),
+  },
   next: {
     evaluate: ([first]: Arr): Arr | string | undefined => {
       assertSeq(first)
@@ -295,6 +307,21 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return first.substr(1)
     },
     validate: node => assertLength(1, node),
+  },
+  nthnext: {
+    evaluate: ([seq, count]: Arr): Arr | string | undefined => {
+      assertSeq(seq)
+      assertFiniteNumber(count)
+      const integerCount = Math.max(Math.ceil(count), 0)
+      if (seq.length <= count) {
+        return undefined
+      }
+      if (Array.isArray(seq)) {
+        return seq.slice(integerCount)
+      }
+      return seq.substr(integerCount)
+    },
+    validate: node => assertLength(2, node),
   },
   reverse: {
     evaluate: ([first]: Arr): unknown => {

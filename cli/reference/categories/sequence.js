@@ -413,6 +413,29 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  nthrest: {
+    name: `nthrest`,
+    category: `Sequence`,
+    linkName: `nthrest`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `array`,
+        type: `array`,
+      },
+    ],
+    description: `If \`input\` is an array, returns a new array with all but the first \`count\` elements from \`input\`. For string \`input\` returns all but the first \`count\` characters in \`input\`.`,
+    examples: [
+      `(nthrest ["Albert" "Mojir" 160 [1 2]] 2)`,
+      `(nthrest "Albert" 3)`,
+      `(nthrest "Albert" 6)`,
+      `(nthrest [] 0)`,
+      `(nthrest "" 0)`,
+    ],
+    specialExpression: false,
+  },
   next: {
     name: `next`,
     category: `Sequence`,
@@ -426,7 +449,7 @@ module.exports = {
         type: `array`,
       },
     ],
-    description: `If \`input\` is an array, returns a new array with all but the first element from \`input\`. If \`input\` has less than two elements, an empty array is returned. For string \`input\` returns all but the first characters in \`input\`. If length of string \`input\` is less than two, undefined is returned.`,
+    description: `If \`input\` is an array, returns a new array with all but the first element from \`input\`. If \`input\` has less than two elements, undefined is returned. For string \`input\` returns all but the first characters in \`input\`. If length of string \`input\` is less than two, undefined is returned.`,
     examples: [
       `(next ["Albert" "Mojir" 160 [1 2]])`,
       `(next ["Albert"])`,
@@ -434,6 +457,29 @@ module.exports = {
       `(next "Albert")`,
       `(next "A")`,
       `(next "")`,
+    ],
+    specialExpression: false,
+  },
+  nthnext: {
+    name: `nthnext`,
+    category: `Sequence`,
+    linkName: `nthnext`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `array`,
+        type: `array`,
+      },
+    ],
+    description: `If \`input\` is an array, returns a new array with all but the first \`count\` elements from \`input\`. If \`input\` has less or equal than \`count\` elements, undefined returned. For string \`input\` returns all but the first \`count\` characters in \`input\`. If length of string \`input\` is less or equal than \`count\`, undefined is returned.`,
+    examples: [
+      `(nthnext ["Albert" "Mojir" 160 [1 2]] 2)`,
+      `(nthnext "Albert" 3)`,
+      `(nthnext "Albert" 6)`,
+      `(nthnext [] 0)`,
+      `(nthnext "" 0)`,
     ],
     specialExpression: false,
   },

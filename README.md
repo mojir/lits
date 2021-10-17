@@ -64,7 +64,6 @@ const result = evaluate(ast, context) // returns 10
 * **char-from-code** return charachter from code (charachter = string)
 * **code-from-char** return charachter code from string
 * **complement**
-* **conj** ? is this needed
 * **eq?** (collection) recursevly compares two or more collections (deep-equal)
 * **every-pred**
 * **flatten**
@@ -78,8 +77,6 @@ const result = evaluate(ast, context) // returns 10
 * **memoize**
 * **merge-with**
 * **name**
-* **nthnext**
-* **nthrest**
 * **partition**
 * **partition-by**
 * **partition-all**
