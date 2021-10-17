@@ -19,7 +19,6 @@ import {
   assertNonNegativeInteger,
   assertSeq,
   assertString,
-  hasKey,
   isInteger,
   isLispishFunction,
   isNormalExpressionNodeName,
@@ -27,7 +26,7 @@ import {
   isObj,
   isString,
 } from '../utils'
-import { Context, EvaluateAstNode, EvaluateLispishFunction } from './interface'
+import { Context, EvaluateAstNode, EvaluateFunction, EvaluateLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { RecurSignal } from '../errors'
 import { Arr, Obj } from '../interface'
@@ -96,40 +95,37 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
   if (isNormalExpressionNodeName(node)) {
     for (const context of contextStack) {
       const fn = context[node.name]?.value
-      const result = evaluateFunction(fn, params, contextStack)
-      if (hasKey(result, `value`)) {
-        return result.value
+      try {
+        return evaluateFunction(fn, params, contextStack)
+      } catch {
+        continue
       }
     }
 
     return evaluateBuiltinNormalExpression(node, params, contextStack)
   } else {
     const fn = evaluateAstNode(node.expression, contextStack)
-    const result = evaluateFunction(fn, params, contextStack)
-    if (hasKey(result, `value`)) {
-      return result.value
-    }
-    throw Error(`Expected function, got ${fn}`)
+    return evaluateFunction(fn, params, contextStack)
   }
 }
 
-function evaluateFunction(fn: unknown, params: unknown[], contextStack: Context[]): { value: unknown } | null {
+export const evaluateFunction: EvaluateFunction = (fn, params, contextStack) => {
   if (isLispishFunction(fn)) {
-    return { value: evaluateLispishFunction(fn, params, contextStack) }
+    return evaluateLispishFunction(fn, params, contextStack)
   }
   if (Array.isArray(fn)) {
-    return { value: evaluateArrayAsFunction(fn, params) }
+    return evaluateArrayAsFunction(fn, params)
   }
   if (isObj(fn)) {
-    return { value: evalueateObjectAsFunction(fn, params) }
+    return evalueateObjectAsFunction(fn, params)
   }
   if (isString(fn)) {
-    return { value: evaluateStringAsFunction(fn, params) }
+    return evaluateStringAsFunction(fn, params)
   }
   if (isNumber(fn)) {
-    return { value: evaluateNumberAsFunction(fn, params) }
+    return evaluateNumberAsFunction(fn, params)
   }
-  return null
+  throw Error(`Expected function, got ${fn}`)
 }
 
 const evaluateLispishFunction: EvaluateLispishFunction = (
@@ -199,11 +195,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       }
     }
     case `partial`: {
-      const result = evaluateFunction(lispishFunction.fn, [...lispishFunction.params, ...params], contextStack)
-      if (hasKey(result, `value`)) {
-        return result.value
-      }
-      throw Error(`Expected function, got ${lispishFunction.fn}`)
+      return evaluateFunction(lispishFunction.fn, [...lispishFunction.params, ...params], contextStack)
     }
     case `comp`: {
       const { fns } = lispishFunction
@@ -214,22 +206,24 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         return params[0]
       }
       return fns.reduceRight((result: unknown[], fn) => {
-        const possibleResult = evaluateFunction(fn, result, contextStack)
-        if (hasKey(possibleResult, `value`)) {
-          return [possibleResult.value]
-        }
-        throw Error(`Expected function, got ${fn}`)
+        return [evaluateFunction(fn, result, contextStack)]
       }, params)[0]
     }
     case `constantly`: {
       return lispishFunction.value
+    }
+    case `juxt`: {
+      return lispishFunction.fns.map(fn => evaluateFunction(fn, params, contextStack))
+    }
+    case `complement`: {
+      return !evaluateFunction(lispishFunction.fn, params, contextStack)
     }
     default: {
       const normalExpression = asNotUndefined(
         normalExpressions[lispishFunction.builtin],
         `${lispishFunction.builtin} is not a function`,
       )
-      return normalExpression.evaluate(params, contextStack, { evaluateLispishFunction })
+      return normalExpression.evaluate(params, contextStack, { evaluateFunction })
     }
   }
 }
@@ -244,7 +238,7 @@ function evaluateBuiltinNormalExpression(
     `${node.name} is not a function`,
   ).evaluate
 
-  return normalExpressionEvaluator(params, contextStack, { evaluateLispishFunction })
+  return normalExpressionEvaluator(params, contextStack, { evaluateFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {

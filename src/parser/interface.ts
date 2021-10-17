@@ -42,6 +42,18 @@ export type ConstantlyLispishFunction = {
   value: unknown
 }
 
+export type JuxtLispishFunction = {
+  [functionSymbol]: true
+  type: `juxt`
+  fns: unknown[]
+}
+
+export type ComplementLispishFunction = {
+  [functionSymbol]: true
+  type: `complement`
+  fn: unknown
+}
+
 export type BuiltinLispishFunction = {
   [functionSymbol]: true
   type: `builtin`
@@ -54,6 +66,8 @@ export type LispishFunction =
   | PartialLispishFunction
   | CompLispishFunction
   | ConstantlyLispishFunction
+  | JuxtLispishFunction
+  | ComplementLispishFunction
 
 export type NodeType =
   | `Number`

@@ -33,7 +33,7 @@ import {
   isNumber,
   assertNumber,
   isInteger,
-  hasKey,
+  collHasKey,
   isRegExp,
   isNormalExpressionNodeName,
 } from '../src/utils'
@@ -499,22 +499,24 @@ describe(`utils`, () => {
     expect(isInteger([])).toBe(false)
   })
 
-  test(`hasKey`, () => {
-    expect(hasKey(`Albert`, 1)).toBe(true)
-    expect(hasKey(`Albert`, -1)).toBe(false)
-    expect(hasKey(`Albert`, 1.2)).toBe(false)
-    expect(hasKey(`Albert`, 6)).toBe(false)
-    expect(hasKey(``, 0)).toBe(false)
+  test(`collHasKey`, () => {
+    expect(collHasKey(10, 1)).toBe(false)
 
-    expect(hasKey([1, 2, 3], 1)).toBe(true)
-    expect(hasKey([1, 2, 3], 6)).toBe(false)
-    expect(hasKey([], 0)).toBe(false)
+    expect(collHasKey(`Albert`, 1)).toBe(true)
+    expect(collHasKey(`Albert`, -1)).toBe(false)
+    expect(collHasKey(`Albert`, 1.2)).toBe(false)
+    expect(collHasKey(`Albert`, 6)).toBe(false)
+    expect(collHasKey(``, 0)).toBe(false)
 
-    expect(hasKey({ a: 1, b: 2 }, `a`)).toBe(true)
-    expect(hasKey({ a: 1, b: 2 }, `b`)).toBe(true)
-    expect(hasKey({ a: 1, b: 2 }, `c`)).toBe(false)
-    expect(hasKey({}, 0)).toBe(false)
-    expect(hasKey({}, `a`)).toBe(false)
+    expect(collHasKey([1, 2, 3], 1)).toBe(true)
+    expect(collHasKey([1, 2, 3], 6)).toBe(false)
+    expect(collHasKey([], 0)).toBe(false)
+
+    expect(collHasKey({ a: 1, b: 2 }, `a`)).toBe(true)
+    expect(collHasKey({ a: 1, b: 2 }, `b`)).toBe(true)
+    expect(collHasKey({ a: 1, b: 2 }, `c`)).toBe(false)
+    expect(collHasKey({}, 0)).toBe(false)
+    expect(collHasKey({}, `a`)).toBe(false)
   })
 
   test(`assertNumber`, () => {

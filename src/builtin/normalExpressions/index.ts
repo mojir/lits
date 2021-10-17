@@ -9,6 +9,7 @@ import { objectNormalExpression } from './categories/object'
 import { predicatesNormalExpression } from './categories/predicates'
 import { regexpNormalExpression } from './categories/regexp'
 import { stringNormalExpression } from './categories/string'
+import { functionalNormalExpression } from './categories/functional'
 
 export const normalExpressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,
@@ -21,4 +22,5 @@ export const normalExpressions: BuiltinNormalExpressions = {
   ...predicatesNormalExpression,
   ...regexpNormalExpression,
   ...stringNormalExpression,
+  ...functionalNormalExpression,
 }

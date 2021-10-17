@@ -11,3 +11,5 @@ export type EvaluateLispishFunction = (
   params: Arr,
   contextStack: Context[],
 ) => unknown
+
+export type EvaluateFunction = (fn: unknown, params: unknown[], contextStack: Context[]) => unknown

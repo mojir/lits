@@ -131,27 +131,6 @@ module.exports = {
     ],
     specialExpression: false,
   },
-  apply: {
-    name: `apply`,
-    category: `Misc`,
-    linkName: `apply`,
-    returns: {
-      type: `boolean`,
-    },
-    arguments: [
-      {
-        name: `fn`,
-        type: `function`,
-      },
-      {
-        name: `args`,
-        type: `array`,
-      },
-    ],
-    description: `Call supplied function with specified arguments.`,
-    examples: [`(apply + [1 2 3])`, `(apply (fn [x y] (sqrt (+ (* x x) (* y y)))) [3 4])`],
-    specialExpression: false,
-  },
   'write!': {
     name: `write!`,
     category: `Misc`,
@@ -297,93 +276,6 @@ module.exports = {
     ],
     description: `If \`value\` is falsy it throws AssertionError with \`message\`. If no \`message\` is provided, message is set to \`value\`.`,
     examples: [`(assert 0 "Expected a positive value")`, `(assert false)`, `(assert 1)`],
-    specialExpression: false,
-  },
-  identity: {
-    name: `identity`,
-    category: `Misc`,
-    linkName: `identity`,
-    returns: {
-      type: `any`,
-    },
-    arguments: [
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    description: `Returns \`value\`.`,
-    examples: [`(identity 1)`, `(identity "Albert")`, `(identity {"a" 1})`, `(identity null)`],
-    specialExpression: false,
-  },
-  partial: {
-    name: `partial`,
-    category: `Misc`,
-    linkName: `partial`,
-    returns: {
-      type: `function`,
-    },
-    arguments: [
-      {
-        name: `fn`,
-        type: `function`,
-      },
-      {
-        name: `args`,
-        type: `any`,
-        description: `zero or more`,
-      },
-    ],
-    description: `Takes a function \`fn\` and fewer (or equal) than the normal arguments to \`fn\`, and returns a function that takes a variable number of additional args. When called, the returned function calls f with \`args\` + additional args.`,
-    examples: [`(partial + 100)`, `(def addHundred (partial + 100)) (addHundred 10)`],
-    specialExpression: false,
-  },
-  comp: {
-    name: `comp`,
-    category: `Misc`,
-    linkName: `comp`,
-    returns: {
-      type: `function`,
-    },
-    arguments: [
-      {
-        name: `fn`,
-        type: `function`,
-        description: `zero or more`,
-      },
-      {
-        name: `fns`,
-        type: `function[]`,
-        description: `optional`,
-      },
-    ],
-    description: `Takes a set of functions and returns a fn that is the composition of those. The returned functions takes a variable number of arguments, applies the rightmost function to the args, the next function (right-to-left) to the result, etc.`,
-    examples: [
-      `(def negative-quotient (comp - /)) (negative-quotient 9 3)`,
-      `(#((apply comp first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)`,
-      `(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)`,
-    ],
-    specialExpression: false,
-  },
-  constantly: {
-    name: `constantly`,
-    category: `Misc`,
-    linkName: `constantly`,
-    returns: {
-      type: `function`,
-    },
-    arguments: [
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    description: `Returns a function that takes any number of arguments and returns \`value\`.`,
-    examples: [
-      `(def negative-quotient (constantly - /)) (negative-quotient 9 3)`,
-      `(#((apply constantly first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)`,
-      `(def x {"bar" {"foo" 42}}) ((constantly "foo" "bar") x)`,
-    ],
     specialExpression: false,
   },
 }

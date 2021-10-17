@@ -71,7 +71,6 @@ const result = evaluate(ast, context) // returns 10
 * **get-in**
 * **group-by**
 * **if-let**
-* **juxt**
 * **lispish-version**
 * **mapcat**
 * **memoize**

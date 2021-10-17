@@ -1,5 +1,5 @@
 import { Arr, Obj } from '../../../interface'
-import { assertLengthEven, assertLength, assertObj, assertString, hasKey } from '../../../utils'
+import { assertLengthEven, assertLength, assertObj, assertString, collHasKey } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
@@ -45,7 +45,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([obj, key]: Arr): [string, unknown] | undefined => {
       assertObj(obj)
       assertString(key)
-      if (hasKey(obj, key)) {
+      if (collHasKey(obj, key)) {
         return [key, obj[key]]
       }
       return undefined

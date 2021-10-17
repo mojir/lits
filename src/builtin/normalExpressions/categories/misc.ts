@@ -1,22 +1,7 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry } from '../../../evaluator/interface'
 import { Arr } from '../../../interface'
-import {
-  CompLispishFunction,
-  ConstantlyLispishFunction,
-  functionSymbol,
-  PartialLispishFunction,
-} from '../../../parser/interface'
-import {
-  assertArr,
-  assertLength,
-  assertLispishFunction,
-  assertObjectOrArray,
-  assertString,
-  compare,
-  isArr,
-  isLispishFunction,
-} from '../../../utils'
+import { assertLength, assertObjectOrArray, assertString, compare, isLispishFunction } from '../../../utils'
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
 export const miscNormalExpression: BuiltinNormalExpressions = {
@@ -101,17 +86,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength({ min: 1 }, node),
   },
-  apply: {
-    evaluate: ([func, ...params]: Arr, contextStack, { evaluateLispishFunction }): unknown => {
-      assertLispishFunction(func)
-      const paramsLength = params.length
-      const last = params[paramsLength - 1]
-      assertArr(last)
-      const applyArray = [...params.slice(0, -1), ...last]
-      return evaluateLispishFunction(func, applyArray, contextStack)
-    },
-    validate: node => assertLength({ min: 2 }, node),
-  },
   'get-path': {
     evaluate: ([first, second]: Arr): unknown => {
       assertObjectOrArray(first)
@@ -173,52 +147,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return value
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
-  },
-
-  identity: {
-    evaluate: ([value]): unknown => {
-      return value
-    },
-    validate: node => assertLength(1, node),
-  },
-
-  partial: {
-    evaluate: ([fn, ...params]): PartialLispishFunction => {
-      return {
-        [functionSymbol]: true,
-        type: `partial`,
-        fn,
-        params,
-      }
-    },
-    validate: node => assertLength({ min: 1 }, node),
-  },
-
-  comp: {
-    evaluate: (fns): CompLispishFunction => {
-      if (fns.length > 1) {
-        const last = fns[fns.length - 1]
-        if (isArr(last)) {
-          fns = [...fns.slice(0, -1), ...last]
-        }
-      }
-      return {
-        [functionSymbol]: true,
-        type: `comp`,
-        fns,
-      }
-    },
-  },
-
-  constantly: {
-    evaluate: ([value]): ConstantlyLispishFunction => {
-      return {
-        [functionSymbol]: true,
-        type: `constantly`,
-        value,
-      }
-    },
-    validate: node => assertLength(1, node),
   },
 }
 

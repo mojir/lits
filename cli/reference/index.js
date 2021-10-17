@@ -1,4 +1,5 @@
 const collectionReference = require('./categories/collection')
+const functionalReference = require('./categories/functional')
 const arrayReference = require('./categories/array')
 const sequenceReference = require('./categories/sequence')
 const mathReference = require('./categories/math')
@@ -15,6 +16,7 @@ const functionReference = {
   ...arrayReference,
   ...sequenceReference,
   ...mathReference,
+  ...functionalReference,
   ...miscReference,
   ...objectReference,
   ...predicateReference,
@@ -33,6 +35,7 @@ const categoryNames = [
   'Object',
   'String',
   'Math',
+  'Functional',
   'Regular expression',
   'Bitwise',
   'Misc',
