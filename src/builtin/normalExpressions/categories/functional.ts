@@ -13,13 +13,13 @@ import { assertArr, assertLength, assertLispishFunction, isArr } from '../../../
 import { BuiltinNormalExpressions } from '../../interface'
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   apply: {
-    evaluate: ([func, ...params]: Arr, contextStack, { evaluateFunction }): unknown => {
+    evaluate: ([func, ...params]: Arr, contextStack, { executeFunction }): unknown => {
       assertLispishFunction(func)
       const paramsLength = params.length
       const last = params[paramsLength - 1]
       assertArr(last)
       const applyArray = [...params.slice(0, -1), ...last]
-      return evaluateFunction(func, applyArray, contextStack)
+      return executeFunction(func, applyArray, contextStack)
     },
     validate: node => assertLength({ min: 2 }, node),
   },

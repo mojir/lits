@@ -741,11 +741,20 @@ describe(`array functions`, () => {
     })
   })
 
+  describe(`rand-nth`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(rand-nth [])`)).toBeUndefined()
+      expect(lispish.run(`(rand-nth "")`)).toBeUndefined()
+      expect([1, 2, 3].includes(lispish.run(`(rand-nth [1 2 3])`) as number)).toBe(true)
+      expect(typeof lispish.run(`(rand-nth "Albert")`)).toBe(`string`)
+    })
+  })
+
   describe(`shuffle`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(shuffle [1 2 3])`)).not.toEqual([1, 2, 3])
       expect(lispish.run(`(shuffle "Albert")`)).not.toBe(`Albert`)
-      expect(lispish.run(`(shuffle [1 2])`)).toEqual([2, 1]) // Due to a the shuffle algorithm, first element connot be the same after shuffle
+      expect(lispish.run(`(shuffle [1 2])`)).toEqual([2, 1]) // Due to the shuffle algorithm, first element connot be the same after shuffle
       expect(lispish.run(`(shuffle [1])`)).toEqual([1])
       expect(lispish.run(`(shuffle [])`)).toEqual([])
       expect(() => lispish.run(`(shuffle)`)).toThrow()

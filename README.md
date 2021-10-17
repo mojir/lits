@@ -74,8 +74,6 @@ const result = evaluate(ast, context) // returns 10
 * **partition**
 * **partition-by**
 * **partition-all**
-* **rand-nth**
-* **remove**
 * **select-keys**
 * **sort-by**
 * **special-symbol?**

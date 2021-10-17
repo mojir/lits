@@ -245,7 +245,7 @@ const executeLispishFunction: ExecuteLispishFunction = (
         normalExpressions[lispishFunction.builtin],
         `${lispishFunction.builtin} is not a function`,
       )
-      return normalExpression.evaluate(params, contextStack, { evaluateFunction: executeFunction })
+      return normalExpression.evaluate(params, contextStack, { executeFunction })
     }
   }
 }
@@ -260,7 +260,7 @@ function evaluateBuiltinNormalExpression(
     `${node.name} is not a function`,
   ).evaluate
 
-  return normalExpressionEvaluator(params, contextStack, { evaluateFunction: executeFunction })
+  return normalExpressionEvaluator(params, contextStack, { executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {

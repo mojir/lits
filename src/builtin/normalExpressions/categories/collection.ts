@@ -146,62 +146,62 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   'every?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { evaluateFunction }): boolean => {
+    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {
-        return coll.every(elem => evaluateFunction(fn, [elem], contextStack))
+        return coll.every(elem => executeFunction(fn, [elem], contextStack))
       }
       if (isString(coll)) {
-        return coll.split(``).every(elem => evaluateFunction(fn, [elem], contextStack))
+        return coll.split(``).every(elem => executeFunction(fn, [elem], contextStack))
       }
-      return Object.entries(coll).every(elem => evaluateFunction(fn, [elem], contextStack))
+      return Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack))
     },
     validate: node => assertLength(2, node),
   },
   'any?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { evaluateFunction }): boolean => {
+    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {
-        return coll.some(elem => evaluateFunction(fn, [elem], contextStack))
+        return coll.some(elem => executeFunction(fn, [elem], contextStack))
       }
       if (isString(coll)) {
-        return coll.split(``).some(elem => evaluateFunction(fn, [elem], contextStack))
+        return coll.split(``).some(elem => executeFunction(fn, [elem], contextStack))
       }
-      return Object.entries(coll).some(elem => evaluateFunction(fn, [elem], contextStack))
+      return Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack))
     },
     validate: node => assertLength(2, node),
   },
   'not-any?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { evaluateFunction }): boolean => {
+    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {
-        return !coll.some(elem => evaluateFunction(fn, [elem], contextStack))
+        return !coll.some(elem => executeFunction(fn, [elem], contextStack))
       }
       if (isString(coll)) {
-        return !coll.split(``).some(elem => evaluateFunction(fn, [elem], contextStack))
+        return !coll.split(``).some(elem => executeFunction(fn, [elem], contextStack))
       }
-      return !Object.entries(coll).some(elem => evaluateFunction(fn, [elem], contextStack))
+      return !Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack))
     },
     validate: node => assertLength(2, node),
   },
   'not-every?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { evaluateFunction }): boolean => {
+    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {
-        return !coll.every(elem => evaluateFunction(fn, [elem], contextStack))
+        return !coll.every(elem => executeFunction(fn, [elem], contextStack))
       }
       if (isString(coll)) {
-        return !coll.split(``).every(elem => evaluateFunction(fn, [elem], contextStack))
+        return !coll.split(``).every(elem => executeFunction(fn, [elem], contextStack))
       }
-      return !Object.entries(coll).every(elem => evaluateFunction(fn, [elem], contextStack))
+      return !Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack))
     },
     validate: node => assertLength(2, node),
   },

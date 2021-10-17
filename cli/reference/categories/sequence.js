@@ -696,7 +696,24 @@ module.exports = {
       },
     ],
     description: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
-    examples: [`(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])`],
+    examples: [`(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])`, `(random-sample 0.5 "Albert")`],
+    specialExpression: false,
+  },
+  'rand-nth': {
+    name: `rand-nth`,
+    category: `Sequence`,
+    linkName: `rand-nth`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `array`,
+        type: `array`,
+      },
+    ],
+    description: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
+    examples: [`(rand-nth [1 2 3 4 5 6 7 8 9 10])`, `(rand-nth "Albert")`],
     specialExpression: false,
   },
   shuffle: {

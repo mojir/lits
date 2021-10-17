@@ -14,7 +14,7 @@ import { Arr } from '../interface'
 type Evaluate = (
   params: Arr,
   contextStack: Context[],
-  { evaluateFunction }: { evaluateFunction: ExecuteFunction },
+  { executeFunction }: { executeFunction: ExecuteFunction },
 ) => unknown
 type ValidateNode = (node: NormalExpressionNode) => void
 
