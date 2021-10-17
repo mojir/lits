@@ -106,8 +106,18 @@ describe(`functional functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`)).toBe(true)
       expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" "M")`)).toBe(false)
-      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" 10)`)).toBe(false)
+      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`)).toBe(false)
       expect(() => lispish.run(`(every-pred)`)).toThrow()
+    })
+  })
+
+  describe(`some-pred`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "Albert" "M")`)).toBe(true)
+      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "A" "M")`)).toBe(true)
+      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) [10 20] [20 10])`)).toBe(false)
+      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "Albert" [10 20])`)).toBe(true)
+      expect(() => lispish.run(`(some-pred)`)).toThrow()
     })
   })
 })

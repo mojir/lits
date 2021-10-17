@@ -7,6 +7,7 @@ import {
   functionSymbol,
   JuxtLispishFunction,
   PartialLispishFunction,
+  SomePredLispishFunction,
 } from '../../../parser/interface'
 import { assertArr, assertLength, assertLispishFunction, isArr } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -96,6 +97,17 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [functionSymbol]: true,
         type: `every-pred`,
+        fns,
+      }
+    },
+    validate: node => assertLength({ min: 1 }, node),
+  },
+
+  'some-pred': {
+    evaluate: (fns): SomePredLispishFunction => {
+      return {
+        [functionSymbol]: true,
+        type: `some-pred`,
         fns,
       }
     },

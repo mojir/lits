@@ -160,13 +160,34 @@ module.exports = {
         description: `one or more`,
       },
     ],
-    description: `Takes a number of \`predicates\` and returns a function that returns true if all of the
-    \`predicates\` return a truthy true value against all of its arguments, else it returns
-    false.`,
+    description: `Takes a number of \`predicates\` and returns a function that returns true if all of the \`predicates\` return a truthy true value against all of its arguments, else it returns false.`,
     examples: [
       `((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`,
       `((every-pred string? #(> (count %1) 3)) "Albert" "M")`,
-      `((every-pred string? #(> (count %1) 3)) "Albert" 10)`,
+      `((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`,
+    ],
+    specialExpression: false,
+  },
+  'some-pred': {
+    name: `some-pred`,
+    category: `Functional`,
+    linkName: `some-pred`,
+    returns: {
+      type: `Function`,
+    },
+    arguments: [
+      {
+        name: `predicates`,
+        type: `Function`,
+        description: `one or more`,
+      },
+    ],
+    description: `Takes a number of \`predicates\` and returns a function that returns true if at least one of the \`predicates\` return a truthy true value against at least one of its arguments, else it returns false.`,
+    examples: [
+      `((some-pred string? #(> (count %1) 3)) "Albert" "Mojir")`,
+      `((some-pred string? #(> (count %1) 3)) "A" "M")`,
+      `((some-pred string? #(> (count %1) 3)) "A" [1 2 3])`,
+      `((some-pred string? #(> (count %1) 3)) [1 2 3] [2])`,
     ],
     specialExpression: false,
   },

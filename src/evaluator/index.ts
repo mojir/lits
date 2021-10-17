@@ -229,6 +229,17 @@ const executeLispishFunction: ExecuteLispishFunction = (
       }
       return true
     }
+    case `some-pred`: {
+      for (const fn of lispishFunction.fns) {
+        for (const param of params) {
+          const result = executeFunction(fn, [param], contextStack)
+          if (result) {
+            return true
+          }
+        }
+      }
+      return false
+    }
     default: {
       const normalExpression = asNotUndefined(
         normalExpressions[lispishFunction.builtin],
