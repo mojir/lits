@@ -278,4 +278,16 @@ module.exports = {
     examples: [`(assert 0 "Expected a positive value")`, `(assert false)`, `(assert 1)`],
     specialExpression: false,
   },
+  'lispish-version': {
+    name: `lispish-version`,
+    category: `Misc`,
+    linkName: `lispish-version`,
+    returns: {
+      type: `string`,
+    },
+    arguments: [],
+    description: `Returns the lispish version.`,
+    examples: [`(lispish-version)`],
+    specialExpression: false,
+  },
 }

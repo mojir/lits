@@ -323,4 +323,11 @@ describe(`misc functions`, () => {
       expect(lispish.run(`(assert "0")`)).toBe(`0`)
     })
   })
+
+  describe(`lispish-version`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(lispish-version)`)).toMatch(/^\d+\.\d+\.\d+/)
+      expect(() => lispish.run(`(lispish-version 1)`)).toThrow()
+    })
+  })
 })

@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.41</span></div>
+    <div class="column right version"><span>v0.1.42</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1104,7 +1104,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,6,7,8,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,8,9]</span></span></pre>
   </div>
 </div>
 
@@ -1122,8 +1122,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,6,7,1,2,8,9,4,10,5]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "ir toMerAljb"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [10,9,4,7,8,5,1,3,6,2]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "trA oilrbMej"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1715,9 +1715,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.7573321529103139</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.005631926507012806</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.068057807669776</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.7498239283010844</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.008340454477348512</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.264450953305092</span></span></pre>
   </div>
 </div>
 
@@ -1737,7 +1737,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 7</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 46</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 51</span></span></pre>
   </div>
 </div>
 
@@ -2365,7 +2365,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634492976484</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634494215286</span></span></pre>
   </div>
 </div>
 
@@ -2473,6 +2473,24 @@
     <pre class="example" onclick="addToPlayground('(assert 0 ___double_quote___Expected a positive value___double_quote___)')"><span class="icon-button">▶</span> (assert 0 "Expected a positive value") <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre class="example" onclick="addToPlayground('(assert false)')"><span class="icon-button">▶</span> (assert false) <span class="gray">=></span> <span class="error">Error!</span></pre>
 <pre><span class="example" onclick="addToPlayground('(assert 1)')"><span class="icon-button">▶</span> (assert 1) <span class="gray">=> 1</span></span></pre>
+  </div>
+</div>
+
+
+<div id="lispish-version" class="content function">
+  <div class="function-header">lispish-version</div>
+  
+  <p>Returns the lispish version.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>lispish-version => string</pre>
+  </div>
+
+  <label>No arguments</label>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"><span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.42"</span></span></pre>
   </div>
 </div>
 
@@ -4287,6 +4305,7 @@
 <li id="debug_exclamation_link" onclick="showPage('debug_exclamation')">debug!</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="inst-ms_link" onclick="showPage('inst-ms')">inst-ms</li>
+<li id="lispish-version_link" onclick="showPage('lispish-version')">lispish-version</li>
 <li id="not_link" onclick="showPage('not')">not</li>
 <li id="not_equal_link" onclick="showPage('not_equal')">not=</li>
 <li id="write_exclamation_link" onclick="showPage('write_exclamation')">write!</li>

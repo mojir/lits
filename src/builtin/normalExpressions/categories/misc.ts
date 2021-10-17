@@ -4,6 +4,8 @@ import { Arr } from '../../../interface'
 import { assertLength, assertObjectOrArray, assertString, compare, isLispishFunction } from '../../../utils'
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
+import { version } from '../../../version'
+
 export const miscNormalExpression: BuiltinNormalExpressions = {
   'not=': {
     evaluate: (params: Arr): boolean => {
@@ -147,6 +149,12 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return value
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
+  },
+  'lispish-version': {
+    evaluate: (): unknown => {
+      return version
+    },
+    validate: node => assertLength(0, node),
   },
 }
 

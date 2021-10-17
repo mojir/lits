@@ -1,6 +1,6 @@
 {
   "name": "lispish",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "description": "A lispish implementation in Typescript",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -8,7 +8,7 @@
   "bin": "cli/index.js",
   "scripts": {
     "lint": "eslint \"src/**/*.ts\" \"__tests__/**/*.ts\" \"cli/**/*.js\" \"cli/**/*.js\"",
-    "build": "rm -rf dist && rollup -c",
+    "build": "node ./scripts/generateVersion.js && rm -rf dist && rollup -c",
     "test": "jest --collect-coverage",
     "compile": "tsc -p ./tsconfig.json --noEmit",
     "lispish": "node ./cli/index.js",
