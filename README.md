@@ -63,7 +63,6 @@ const result = evaluate(ast, context) // returns 10
 * **assoc-in**
 * **char-from-code** return charachter from code (charachter = string)
 * **code-from-char** return charachter code from string
-* **complement**
 * **eq?** (collection) recursevly compares two or more collections (deep-equal)
 * **every-pred**
 * **flatten**

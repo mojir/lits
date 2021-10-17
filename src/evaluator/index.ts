@@ -26,7 +26,7 @@ import {
   isObj,
   isString,
 } from '../utils'
-import { Context, EvaluateAstNode, EvaluateFunction, EvaluateLispishFunction } from './interface'
+import { Context, EvaluateAstNode, ExecuteFunction, ExecuteLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { RecurSignal } from '../errors'
 import { Arr, Obj } from '../interface'
@@ -96,7 +96,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     for (const context of contextStack) {
       const fn = context[node.name]?.value
       try {
-        return evaluateFunction(fn, params, contextStack)
+        return executeFunction(fn, params, contextStack)
       } catch {
         continue
       }
@@ -105,13 +105,13 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     return evaluateBuiltinNormalExpression(node, params, contextStack)
   } else {
     const fn = evaluateAstNode(node.expression, contextStack)
-    return evaluateFunction(fn, params, contextStack)
+    return executeFunction(fn, params, contextStack)
   }
 }
 
-export const evaluateFunction: EvaluateFunction = (fn, params, contextStack) => {
+export const executeFunction: ExecuteFunction = (fn, params, contextStack) => {
   if (isLispishFunction(fn)) {
-    return evaluateLispishFunction(fn, params, contextStack)
+    return executeLispishFunction(fn, params, contextStack)
   }
   if (Array.isArray(fn)) {
     return evaluateArrayAsFunction(fn, params)
@@ -128,7 +128,7 @@ export const evaluateFunction: EvaluateFunction = (fn, params, contextStack) => 
   throw Error(`Expected function, got ${fn}`)
 }
 
-const evaluateLispishFunction: EvaluateLispishFunction = (
+const executeLispishFunction: ExecuteLispishFunction = (
   lispishFunction: LispishFunction,
   params: Arr,
   contextStack: Context[],
@@ -195,7 +195,7 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
       }
     }
     case `partial`: {
-      return evaluateFunction(lispishFunction.fn, [...lispishFunction.params, ...params], contextStack)
+      return executeFunction(lispishFunction.fn, [...lispishFunction.params, ...params], contextStack)
     }
     case `comp`: {
       const { fns } = lispishFunction
@@ -206,24 +206,35 @@ const evaluateLispishFunction: EvaluateLispishFunction = (
         return params[0]
       }
       return fns.reduceRight((result: unknown[], fn) => {
-        return [evaluateFunction(fn, result, contextStack)]
+        return [executeFunction(fn, result, contextStack)]
       }, params)[0]
     }
     case `constantly`: {
       return lispishFunction.value
     }
     case `juxt`: {
-      return lispishFunction.fns.map(fn => evaluateFunction(fn, params, contextStack))
+      return lispishFunction.fns.map(fn => executeFunction(fn, params, contextStack))
     }
     case `complement`: {
-      return !evaluateFunction(lispishFunction.fn, params, contextStack)
+      return !executeFunction(lispishFunction.fn, params, contextStack)
+    }
+    case `every-pred`: {
+      for (const fn of lispishFunction.fns) {
+        for (const param of params) {
+          const result = executeFunction(fn, [param], contextStack)
+          if (!result) {
+            return false
+          }
+        }
+      }
+      return true
     }
     default: {
       const normalExpression = asNotUndefined(
         normalExpressions[lispishFunction.builtin],
         `${lispishFunction.builtin} is not a function`,
       )
-      return normalExpression.evaluate(params, contextStack, { evaluateFunction })
+      return normalExpression.evaluate(params, contextStack, { evaluateFunction: executeFunction })
     }
   }
 }
@@ -238,7 +249,7 @@ function evaluateBuiltinNormalExpression(
     `${node.name} is not a function`,
   ).evaluate
 
-  return normalExpressionEvaluator(params, contextStack, { evaluateFunction })
+  return normalExpressionEvaluator(params, contextStack, { evaluateFunction: executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {

@@ -1,4 +1,4 @@
-import { Context, EvaluateAstNode, EvaluateFunction } from '../evaluator/interface'
+import { Context, EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
 import {
   ParseArgument,
   ParseBindings,
@@ -14,7 +14,7 @@ import { Arr } from '../interface'
 type Evaluate = (
   params: Arr,
   contextStack: Context[],
-  { evaluateFunction }: { evaluateFunction: EvaluateFunction },
+  { evaluateFunction }: { evaluateFunction: ExecuteFunction },
 ) => unknown
 type ValidateNode = (node: NormalExpressionNode) => void
 

@@ -101,4 +101,13 @@ describe(`functional functions`, () => {
       expect(() => lispish.run(`(complement > <)`)).toThrow()
     })
   })
+
+  describe(`every-pred`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`)).toBe(true)
+      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" "M")`)).toBe(false)
+      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" 10)`)).toBe(false)
+      expect(() => lispish.run(`(every-pred)`)).toThrow()
+    })
+  })
 })

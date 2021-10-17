@@ -3,6 +3,7 @@ import {
   ComplementLispishFunction,
   CompLispishFunction,
   ConstantlyLispishFunction,
+  EveryPredLispishFunction,
   functionSymbol,
   JuxtLispishFunction,
   PartialLispishFunction,
@@ -88,5 +89,16 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       }
     },
     validate: node => assertLength(1, node),
+  },
+
+  'every-pred': {
+    evaluate: (fns): EveryPredLispishFunction => {
+      return {
+        [functionSymbol]: true,
+        type: `every-pred`,
+        fns,
+      }
+    },
+    validate: node => assertLength({ min: 1 }, node),
   },
 }
