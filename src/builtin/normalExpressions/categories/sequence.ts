@@ -1,3 +1,4 @@
+import { executeFunction } from '../../../evaluator'
 import { Arr, Seq } from '../../../interface'
 import {
   assertArr,
@@ -560,5 +561,19 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return Array.from(new Set(input.split(``))).join(``)
     },
     validate: node => assertLength(1, node),
+  },
+  remove: {
+    evaluate: ([fn, input], contextStack): Seq => {
+      assertLispishFunction(fn)
+      assertSeq(input)
+      if (Array.isArray(input)) {
+        return input.filter(elem => !executeFunction(fn, [elem], contextStack))
+      }
+      return input
+        .split(``)
+        .filter(elem => !executeFunction(fn, [elem], contextStack))
+        .join(``)
+    },
+    validate: node => assertLength(2, node),
   },
 }

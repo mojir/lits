@@ -763,4 +763,11 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(distinct [] [])`)).toThrow()
     })
   })
+
+  describe(`remove`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(remove even? [1 2 3 1 3 5])`)).toEqual([1, 3, 1, 3, 5])
+      expect(lispish.run(`(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")`)).toBe(`lbrt Mjr`)
+    })
+  })
 })

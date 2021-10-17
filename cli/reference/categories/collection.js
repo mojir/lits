@@ -54,7 +54,7 @@ module.exports = {
     category: `Collection`,
     linkName: `contains_question`,
     returns: {
-      type: `true | false`,
+      type: `boolean`,
     },
     arguments: [
       {
@@ -73,6 +73,34 @@ module.exports = {
       `(contains? [1 2 3] 1)`,
       `(contains? {} "a")`,
       `(contains? {"a" 1 "b" 2} "a")`,
+    ],
+    specialExpression: false,
+  },
+  'has?': {
+    name: `has?`,
+    category: `Collection`,
+    linkName: `has_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection`,
+      },
+      {
+        name: `key`,
+        type: `string or number`,
+      },
+    ],
+    description: `Returns \`true\` if \`collection\` has \`value\`, otherwise returns \`false\`.`,
+    examples: [
+      `(has? [1 2 3] 1)`,
+      `(has? [1 2 3] 0)`,
+      `(has? {"a" 1 "b" 2} 1)`,
+      `(has? {"a" 1 "b" 2} 0)`,
+      `(has? "Albert" "A")`,
+      `(has? "Albert" "a")`,
     ],
     specialExpression: false,
   },

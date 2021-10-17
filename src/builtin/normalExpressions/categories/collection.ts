@@ -13,6 +13,7 @@ import {
   assertStringOrNumber,
   isArr,
   isObj,
+  isSeq,
   isString,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -62,17 +63,27 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([coll, key]: Arr): boolean => {
       assertColl(coll)
       assertStringOrNumber(key)
-      if (Array.isArray(coll)) {
+      if (isSeq(coll)) {
         if (!Number.isInteger(key)) {
           return false
         }
         assertInteger(key)
         return key >= 0 && key < coll.length
       }
-      if (typeof key !== `string`) {
-        return false
-      }
       return !!Object.getOwnPropertyDescriptor(coll, key)
+    },
+    validate: node => assertLength(2, node),
+  },
+  'has?': {
+    evaluate: ([coll, value]: Arr): boolean => {
+      assertColl(coll)
+      if (isArr(coll)) {
+        return coll.includes(value)
+      }
+      if (isString(coll)) {
+        return isString(value) ? coll.split(``).includes(value) : false
+      }
+      return Object.values(coll).includes(value)
     },
     validate: node => assertLength(2, node),
   },
