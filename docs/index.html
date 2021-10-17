@@ -1104,7 +1104,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,8,9]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,4,7,8,9]</span></span></pre>
   </div>
 </div>
 
@@ -1122,8 +1122,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [10,9,4,7,8,5,1,3,6,2]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "trA oilrbMej"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,4,8,9,7,1,10,6,5,3]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "jor iMAbrtel"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1715,9 +1715,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.7498239283010844</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.008340454477348512</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.264450953305092</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.4008840569072363</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.007399968983133738</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.6397045508690162</span></span></pre>
   </div>
 </div>
 
@@ -1736,8 +1736,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 7</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 51</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 10</span></span></pre>
   </div>
 </div>
 
@@ -2365,7 +2365,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634494215286</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634497129154</span></span></pre>
   </div>
 </div>
 
@@ -2491,6 +2491,28 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(lispish-version)')"><span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.42"</span></span></pre>
+  </div>
+</div>
+
+
+<div id="equals_question" class="content function">
+  <div class="function-header">equal?</div>
+  
+  <p>Returns true if <span class="pre">a</span> and <span class="pre">b</span> are structually equal.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>equal? a b => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>a: any</pre>
+<pre>b: any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20} {___double_quote___b___double_quote___ 20 ___double_quote___a___double_quote___ 10})')"><span class="icon-button">▶</span> (equal? {"a" 10 "b" 20} {"b" 20 "a" 10}) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(equal? [1 true null undefined] [1 true null undefined])')"><span class="icon-button">▶</span> (equal? [1 true null undefined] [1 true null undefined]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}]} {___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}] ___double_quote___a___double_quote___ 10})')"><span class="icon-button">▶</span> (equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10}) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}]} {___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 21}] ___double_quote___a___double_quote___ 10})')"><span class="icon-button">▶</span> (equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10}) <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -4303,6 +4325,7 @@
 <li id="boolean_link" onclick="showPage('boolean')">boolean</li>
 <li id="compare_link" onclick="showPage('compare')">compare</li>
 <li id="debug_exclamation_link" onclick="showPage('debug_exclamation')">debug!</li>
+<li id="equals_question_link" onclick="showPage('equals_question')">equal?</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="inst-ms_link" onclick="showPage('inst-ms')">inst-ms</li>
 <li id="lispish-version_link" onclick="showPage('lispish-version')">lispish-version</li>

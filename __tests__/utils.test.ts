@@ -36,6 +36,7 @@ import {
   collHasKey,
   isRegExp,
   isNormalExpressionNodeName,
+  deepEqual,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -543,5 +544,32 @@ describe(`utils`, () => {
         expression: { type: `NormalExpression`, name: `+`, params: [{ type: `Number`, value: 2 }] },
       }),
     ).toBe(false)
+  })
+
+  const primitives = [0, 1, true, false, null, undefined, `Albert`, `Mojir`, functionSymbol]
+  describe(`deepEqual`, () => {
+    test(`primitives`, () => {
+      for (const a of primitives) {
+        for (const b of primitives) {
+          expect(deepEqual(a, b)).toBe(a === b)
+        }
+      }
+    })
+    test(`RegExp`, () => {
+      expect(deepEqual(/^ab/, /^ab/)).toBe(true)
+      expect(deepEqual(/^ab/, new RegExp(`^ab`))).toBe(true)
+      expect(deepEqual(/^ab/gi, new RegExp(`^ab`, `ig`))).toBe(true)
+      expect(deepEqual(/^ab/g, /^ab/)).toBe(false)
+      expect(deepEqual(/ab/, /^ab/)).toBe(false)
+    })
+    test(`nested structures`, () => {
+      expect(deepEqual([1, 2, 3], [1, 2, 3])).toBe(true)
+      expect(deepEqual({ a: 1, b: 2 }, { a: 1, b: 2 })).toBe(true)
+      expect(deepEqual([1, 2, { a: 1, b: 2 }], [1, 2, { b: 2, a: 1 }])).toBe(true)
+      expect(deepEqual(/^ab/, new RegExp(`^ab`))).toBe(true)
+      expect(deepEqual(/^ab/gi, new RegExp(`^ab`, `ig`))).toBe(true)
+      expect(deepEqual(/^ab/g, /^ab/)).toBe(false)
+      expect(deepEqual(/ab/, /^ab/)).toBe(false)
+    })
   })
 })

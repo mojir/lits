@@ -290,4 +290,30 @@ module.exports = {
     examples: [`(lispish-version)`],
     specialExpression: false,
   },
+  'equal?': {
+    name: `equal?`,
+    category: `Misc`,
+    linkName: `equal_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `a`,
+        type: `any`,
+      },
+      {
+        name: `b`,
+        type: `any`,
+      },
+    ],
+    description: `Returns true if \`a\` and \`b\` are structually equal.`,
+    examples: [
+      `(equal? {"a" 10 "b" 20} {"b" 20 "a" 10})`,
+      `(equal? [1 true null undefined] [1 true null undefined])`,
+      `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10})`,
+      `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10})`,
+    ],
+    specialExpression: false,
+  },
 }

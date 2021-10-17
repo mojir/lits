@@ -53,6 +53,20 @@ describe(`misc functions`, () => {
     })
   })
 
+  describe(`equal?`, () => {
+    test(`samples`, () => {
+      expect(() => lispish.run(`(not=)`)).toThrow()
+      expect(lispish.run(`(equal? 1 1)`)).toBe(true)
+      expect(lispish.run(`(equal? 1 2)`)).toBe(false)
+      expect(lispish.run(`(equal? "1" "1")`)).toBe(true)
+      expect(lispish.run(`(equal? "1" "2")`)).toBe(false)
+      expect(lispish.run(`(equal? null undefined)`)).toBe(false)
+      expect(lispish.run(`(equal? null 0)`)).toBe(false)
+      expect(lispish.run(`(equal? [1 2 {"a" 10 "b" [null]}] [1 2 {"b" [null] "a" 10}])`)).toBe(true)
+      expect(lispish.run(`(equal? [1 2 {"a" 10 "b" [null]}] [1 2 {"b" [undefined] "a" 10}])`)).toBe(false)
+    })
+  })
+
   describe(`=`, () => {
     test(`samples`, () => {
       expect(() => lispish.run(`(=)`)).toThrow()
@@ -328,6 +342,17 @@ describe(`misc functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(lispish-version)`)).toMatch(/^\d+\.\d+\.\d+/)
       expect(() => lispish.run(`(lispish-version 1)`)).toThrow()
+    })
+  })
+
+  describe(`equal?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(equal? {"a" 10 "b" 20} {"b" 20 "a" 10})`)).toBe(true)
+      expect(lispish.run(`(equal? [1 true null undefined] [1 true null undefined])`)).toBe(true)
+      expect(lispish.run(`(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10})`)).toBe(true)
+      expect(lispish.run(`(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10})`)).toBe(false)
+      expect(lispish.run(`(equal? [1, 2, 3] [1, 2, 3, 4])`)).toBe(false)
+      expect(lispish.run(`(equal? {"a" 10} {"a" 10, "b" 20})`)).toBe(false)
     })
   })
 })

@@ -1,7 +1,7 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry } from '../../../evaluator/interface'
 import { Arr } from '../../../interface'
-import { assertLength, assertObjectOrArray, assertString, compare, isLispishFunction } from '../../../utils'
+import { assertLength, assertObjectOrArray, assertString, compare, deepEqual, isLispishFunction } from '../../../utils'
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
@@ -30,6 +30,12 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
 
       return true
+    },
+    validate: node => assertLength({ min: 1 }, node),
+  },
+  'equal?': {
+    evaluate: ([a, b]: Arr): boolean => {
+      return deepEqual(a, b)
     },
     validate: node => assertLength({ min: 1 }, node),
   },

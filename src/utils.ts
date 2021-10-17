@@ -455,3 +455,40 @@ export function compare(a: unknown, b: unknown): number {
 export function isNormalExpressionNodeName(node: NormalExpressionNode): node is NormalExpressionNodeName {
   return typeof node.name === `string`
 }
+
+export function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) {
+    return true
+  }
+  if (isArr(a) && isArr(b)) {
+    if (a.length !== b.length) {
+      return false
+    }
+    for (let i = 0; i < a.length; i += 1) {
+      if (!deepEqual(a[i], b[i])) {
+        return false
+      }
+    }
+    return true
+  }
+  if (a instanceof RegExp && b instanceof RegExp) {
+    return a.toString() === b.toString()
+  }
+  if (typeof a === `object` && a !== null && typeof b === `object` && b !== null) {
+    const aObj = a as Record<string, unknown>
+    const bObj = b as Record<string, unknown>
+    const aKeys = Object.keys(aObj)
+    const bKeys = Object.keys(bObj)
+    if (aKeys.length !== bKeys.length) {
+      return false
+    }
+    for (let i = 0; i < aKeys.length; i += 1) {
+      const key = asNotUndefined(aKeys[i])
+      if (!deepEqual(aObj[key], bObj[key])) {
+        return false
+      }
+    }
+    return true
+  }
+  return false
+}
