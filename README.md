@@ -63,14 +63,13 @@ const result = evaluate(ast, context) // returns 10
 * **assoc-in**
 * **char-from-code** return charachter from code (charachter = string)
 * **code-from-char** return charachter code from string
-* **for**
+* **for** ??
 * **get-in**
 * **group-by**
 * **if-let**
 * **mapcat**
-* **memoize**
+* **memoize** ??
 * **merge-with**
-* **name**
 * **partition**
 * **partition-by**
 * **partition-all**
