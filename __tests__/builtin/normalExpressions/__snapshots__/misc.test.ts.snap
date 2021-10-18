@@ -1,5 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`misc functions debug! debug value 1`] = `
+"*** LISPISH DEBUG ***
+
+{
+  \\"type\\": \\"user-defined\\",
+  \\"arguments\\": {
+    \\"mandatoryArguments\\": [
+      \\"%1\\"
+    ],
+    \\"optionalArguments\\": []
+  },
+  \\"body\\": [
+    {
+      \\"type\\": \\"NormalExpression\\",
+      \\"name\\": \\">\\",
+      \\"params\\": [
+        {
+          \\"type\\": \\"Name\\",
+          \\"value\\": \\"%1\\"
+        },
+        {
+          \\"type\\": \\"Number\\",
+          \\"value\\": 2
+        }
+      ]
+    }
+  ],
+  \\"functionContext\\": {}
+}"
+`;
+
 exports[`misc functions debug! multiple contexts 1`] = `
 "*** LISPISH DEBUG ***
 

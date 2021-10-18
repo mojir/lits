@@ -201,12 +201,12 @@ module.exports = {
     },
     arguments: [
       {
-        name: `label`,
-        type: `form`,
+        name: `value`,
+        type: `any`,
       },
     ],
-    description: `Console.error context stack.`,
-    examples: [`(debug!)`],
+    description: `If no params, prints context stack, otherwise prints \`value\` details.`,
+    examples: [`(debug!), (debug! #(> %1 2))`],
     specialExpression: false,
   },
   boolean: {

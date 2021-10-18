@@ -99,6 +99,16 @@ function play() {
     output.value = newContent
     output.scrollTop = output.scrollHeight
   }
+  var oldWarn = console.warn
+  console.warn = function () {
+    var args = Array.from(arguments)
+    oldWarn.apply(console, args)
+    var logRow = args[0]
+    var oldContent = output.value
+    var newContent = oldContent ? oldContent + '\n' + logRow : logRow
+    output.value = newContent
+    output.scrollTop = output.scrollHeight
+  }
   try {
     result = lispish.run(code, { vars: context })
   } catch (error) {
@@ -107,6 +117,7 @@ function play() {
     return
   } finally {
     console.log = oldLog
+    console.warn = oldWarn
   }
   output.classList.remove('error')
   var content = stringifyValue(result)

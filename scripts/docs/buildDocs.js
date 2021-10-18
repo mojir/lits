@@ -195,6 +195,8 @@ function getDocumentationContent(docObj) {
         console.log = function () {}
         var oldError = console.error
         console.error = function () {}
+        var oldWarn = console.warn
+        console.warn = function () {}
         var result
         try {
           result = lispish.run(example)
@@ -211,6 +213,7 @@ function getDocumentationContent(docObj) {
         } finally {
           console.log = oldLog
           console.error = oldError
+          console.warn = oldWarn
         }
       })
       .join('\n')}

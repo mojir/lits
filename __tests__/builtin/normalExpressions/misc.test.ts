@@ -10,18 +10,24 @@ beforeEach(() => {
 
 describe(`misc functions`, () => {
   let oldLog: () => void
+  let oldWarn: () => void
   let lastLog: unknown
   let logSpy: (...args: unknown[]) => void
   beforeEach(() => {
     oldLog = console.log
+    oldWarn = console.warn
     logSpy = jest.fn()
     console.log = (...args) => {
       logSpy(...args)
       lastLog = args[0]
     }
+    console.warn = (...args) => {
+      lastLog = args[0]
+    }
   })
   afterEach(() => {
     console.log = oldLog
+    console.warn = oldWarn
   })
   describe(`inst-ms`, () => {
     test(`samples`, () => {
@@ -262,19 +268,16 @@ describe(`misc functions`, () => {
   describe(`debug!`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(debug!)`)).toBeUndefined()
-      expect(() => lispish.run(`(debug! 0)`)).toThrow()
-      expect(() => lispish.run(`(debug! undefined)`)).toThrow()
-      expect(() => lispish.run(`(debug! null)`)).toThrow()
-      expect(() => lispish.run(`(debug! true)`)).toThrow()
-      expect(() => lispish.run(`(debug! false)`)).toThrow()
-      expect(() => lispish.run(`(debug! [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(debug! (object "a" 1))`)).toThrow()
-      expect(() => lispish.run(`(debug! "label")`)).toThrow()
+      expect(lispish.run(`(debug! +)`)).toBeUndefined()
       expect(() => lispish.run(`(debug! "" 0)`)).toThrow()
     })
     test(`multiple contexts`, () => {
       lispish.import(`(def x 10) (defn foo [] "foo") (def bar (fn [] "bar")) (def plus +)`)
       lispish.run(`((fn [z] (debug!) (+ z 1)) 10)`, { vars: { y: 20 } })
+      expect(lastLog).toMatchSnapshot()
+    })
+    test(`debug value`, () => {
+      lispish.run(`(debug! #(> %1 2))`)
       expect(lastLog).toMatchSnapshot()
     })
   })
