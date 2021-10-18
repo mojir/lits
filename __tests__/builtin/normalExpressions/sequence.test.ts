@@ -777,6 +777,32 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(remove even? [1 2 3 1 3 5])`)).toEqual([1, 3, 1, 3, 5])
       expect(lispish.run(`(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")`)).toBe(`lbrt Mjr`)
+      expect(() => lispish.run(`(remove)`)).toThrow()
+      expect(() => lispish.run(`(remove "Albert Mojir")`)).toThrow()
+      expect(() => lispish.run(`(remove #(has? "aoueiyAOUEIY" %1))`)).toThrow()
+      expect(() => lispish.run(`(remove #(has? "aoueiyAOUEIY" %1) "Albert" "Mojir")`)).toThrow()
+    })
+  })
+
+  describe(`split-at`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(split-at 2 [1 2 3 4 5])`)).toEqual([
+        [1, 2],
+        [3, 4, 5],
+      ])
+      expect(lispish.run(`(split-at 0.01 [1 2 3 4 5])`)).toEqual([[1], [2, 3, 4, 5]])
+      expect(lispish.run(`(split-at 0 [1 2 3 4 5])`)).toEqual([[], [1, 2, 3, 4, 5]])
+      expect(lispish.run(`(split-at -1 [1 2 3 4 5])`)).toEqual([[], [1, 2, 3, 4, 5]])
+      expect(lispish.run(`(split-at 100 [1 2 3 4 5])`)).toEqual([[1, 2, 3, 4, 5], []])
+      expect(lispish.run(`(split-at 2 "Albert")`)).toEqual([`Al`, `bert`])
+      expect(lispish.run(`(split-at 0.01 "Albert")`)).toEqual([`A`, `lbert`])
+      expect(lispish.run(`(split-at 0 "Albert")`)).toEqual([``, `Albert`])
+      expect(lispish.run(`(split-at -1 "Albert")`)).toEqual([``, `Albert`])
+      expect(lispish.run(`(split-at 100 "Albert")`)).toEqual([`Albert`, ``])
+
+      expect(() => lispish.run(`(split-at)`)).toThrow()
+      expect(() => lispish.run(`(split-at 3)`)).toThrow()
+      expect(() => lispish.run(`(split-at 3 "Albert" "Mojir")`)).toThrow()
     })
   })
 })

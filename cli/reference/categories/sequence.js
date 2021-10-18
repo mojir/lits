@@ -756,6 +756,7 @@ module.exports = {
     examples: [`(distinct [1 2 3 1 3 5])`, `(distinct "Albert Mojir")`, `(distinct [])`, `(distinct "")`],
     specialExpression: false,
   },
+
   remove: {
     name: `remove`,
     category: `Sequence`,
@@ -775,6 +776,28 @@ module.exports = {
     ],
     description: `Returns a new sequence of items in \`input\` for witch \`(pred item)\` returns a falsy value.`,
     examples: [`(remove even? [1 2 3 1 3 5])`, `(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")`],
+    specialExpression: false,
+  },
+
+  'split-at': {
+    name: `split-at`,
+    category: `Sequence`,
+    linkName: `split-at`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        input: `pos`,
+        type: `number`,
+      },
+      {
+        input: `input`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns a new array of \`[(take pos input) (drop pos input)]\`.`,
+    examples: [`(split-at 2 [1 2 3 4 5])`, `(split-at 2 "Albert")`],
     specialExpression: false,
   },
 }

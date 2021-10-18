@@ -591,4 +591,13 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
+  'split-at': {
+    evaluate: ([pos, seq]): Seq => {
+      assertFiniteNumber(pos)
+      const intPos = Math.max(0, Math.ceil(pos))
+      assertSeq(seq)
+      return [seq.slice(0, intPos), seq.slice(intPos)]
+    },
+    validate: node => assertLength(2, node),
+  },
 }
