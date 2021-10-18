@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 body {
   margin: 0;
   padding: 1rem;
-  font-family: Arial;
+  font-family: Roboto;
   font-size: 1.1rem;
   background-color: #222222;
   color: #cccccc;
@@ -242,24 +244,12 @@ input[type="submit"]:hover{
   box-shadow: 6px 3px 8px #111111;
 }
 
-.maximized-playground #playground {
-  height: 770px;
-}
-
 #lisp-textarea, #context-textarea {
-  height: 186px;
+  height: 180px;
 }
 
 #output-textarea, #log-textarea {
-  height: 79px;
-}
-
-.maximized-playground #lisp-textarea, .maximized-playground #context-textarea {
-  height: 706px;
-}
-
-.maximized-playground #output-textarea, .maximized-playground #log-textarea {
-  height: 339px;
+  height: 75px;
 }
 
 #maximize-context {
@@ -341,7 +331,7 @@ input[type="submit"]:hover{
 
 
 .text {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Roboto;
   font-size: 1.2rem;
 }
 
