@@ -460,6 +460,11 @@ export function deepEqual(a: unknown, b: unknown): boolean {
   if (a === b) {
     return true
   }
+
+  if (typeof a === `number` && typeof b === `number`) {
+    return Math.abs(a - b) < Number.EPSILON
+  }
+
   if (isArr(a) && isArr(b)) {
     if (a.length !== b.length) {
       return false

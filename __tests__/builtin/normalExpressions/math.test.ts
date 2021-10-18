@@ -226,6 +226,62 @@ describe(`math functions`, () => {
     })
   })
 
+  describe(`max-safe-integer`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(max-safe-integer)`)).toBe(Number.MAX_SAFE_INTEGER)
+      expect(() => lispish.run(`(max-safe-integer "1")`)).toThrow()
+    })
+  })
+
+  describe(`min-safe-integer`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(min-safe-integer)`)).toBe(Number.MIN_SAFE_INTEGER)
+      expect(() => lispish.run(`(min-safe-integer "1")`)).toThrow()
+    })
+  })
+
+  describe(`max-value`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(max-value)`)).toBe(Number.MAX_VALUE)
+      expect(() => lispish.run(`(max-value "1")`)).toThrow()
+    })
+  })
+
+  describe(`min-value`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(min-value)`)).toBe(Number.MIN_VALUE)
+      expect(() => lispish.run(`(min-value "1")`)).toThrow()
+    })
+  })
+
+  describe(`epsilon`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(epsilon)`)).toBe(Number.EPSILON)
+      expect(() => lispish.run(`(epsilon "1")`)).toThrow()
+    })
+  })
+
+  describe(`nan`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(nan)`)).toBeNaN()
+      expect(() => lispish.run(`(nan "1")`)).toThrow()
+    })
+  })
+
+  describe(`infinity`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(infinity)`)).toBe(Number.POSITIVE_INFINITY)
+      expect(() => lispish.run(`(infinity "1")`)).toThrow()
+    })
+  })
+
+  describe(`-infinity`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(-infinity)`)).toBe(Number.NEGATIVE_INFINITY)
+      expect(() => lispish.run(`(-infinity "1")`)).toThrow()
+    })
+  })
+
   describe(`pi`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(pi)`)).toBe(Math.PI)

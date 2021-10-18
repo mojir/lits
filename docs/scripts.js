@@ -34,7 +34,6 @@ function keydownHandler(e) {
     return
   }
   if (['Tab', 'Backspace', 'Enter', 'Delete'].includes(e.key)) {
-    console.log('accepted', e.key)
     var start = this.selectionStart
     var end = this.selectionEnd
 
@@ -80,8 +79,7 @@ function play() {
   var code = document.getElementById('lisp-textarea').value
   var contextString = document.getElementById('context-textarea').value
   var output = document.getElementById('output-textarea')
-  var logTextarea = document.getElementById('log-textarea')
-  logTextarea.value = ''
+  output.value = ''
   var context
   try {
     context = contextString.trim().length > 0 ? JSON.parse(contextString) : {}
@@ -96,10 +94,10 @@ function play() {
     var args = Array.from(arguments)
     oldLog.apply(console, args)
     var logRow = args.map(arg => stringifyValue(arg)).join(' ')
-    var oldContent = logTextarea.value
+    var oldContent = output.value
     var newContent = oldContent ? oldContent + '\n' + logRow : logRow
-    logTextarea.value = newContent
-    logTextarea.scrollTop = logTextarea.scrollHeight
+    output.value = newContent
+    output.scrollTop = output.scrollHeight
   }
   try {
     result = lispish.run(code, { vars: context })
@@ -112,7 +110,13 @@ function play() {
   }
   output.classList.remove('error')
   var content = stringifyValue(result)
-  output.value = content
+
+  var oldContent = output.value
+  var newContent = oldContent ? oldContent + '\n' + content : content
+  output.value = newContent
+  output.scrollTop = output.scrollHeight
+
+  output.value = newContent
 }
 function showPage(id, historyEvent) {
   inactivateAll()
@@ -174,7 +178,6 @@ function resetPlayground() {
   document.getElementById('context-textarea').value = ''
   document.getElementById('lisp-textarea').value = ''
   document.getElementById('output-textarea').value = ''
-  document.getElementById('log-textarea').value = ''
   localStorage.setItem('lisp-textarea', '')
   localStorage.setItem('context-textarea', '')
 }
@@ -227,16 +230,10 @@ function maximizeOutput() {
   document.body.classList.add('maximized-output')
 }
 
-function maximizeLog() {
-  minimizeAll()
-  document.body.classList.add('maximized-log')
-}
-
 function minimizeAll() {
   document.body.classList.remove('maximized-context')
   document.body.classList.remove('maximized-lisp')
   document.body.classList.remove('maximized-output')
-  document.body.classList.remove('maximized-log')
 }
 
 function toggleMaximized(textArea) {

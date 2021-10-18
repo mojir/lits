@@ -98,30 +98,15 @@ function getPlayground() {
       <textarea id="lisp-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
 
-    <div class="column wide" id="outputs">
-
-      <div id="output">
-        <div class="row">
-          <div class="column textarea-header"><label for="output-textarea">Result</label></div>
-          <div class="column right">
-            <span id="maximize-output" class="icon-button" onclick="maximizeOutput()">▲</span>
-            <span id="minimize-output" class="icon-button" onclick="minimizeAll()">▼</span>
-          </div>
+    <div class="column wide" id="output">
+      <div class="row">
+        <div class="column textarea-header"><label for="output-textarea">Result</label></div>
+        <div class="column right">
+          <span id="maximize-output" class="icon-button" onclick="maximizeOutput()">▲</span>
+          <span id="minimize-output" class="icon-button" onclick="minimizeAll()">▼</span>
         </div>
-        <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
       </div>
-
-      <div id="log">
-        <div class="row">
-        <div class="column textarea-header"><label for="log-textarea">Console</label></div>
-          <div class="column right">
-            <span id="maximize-log" class="icon-button" onclick="maximizeLog()">▲</span>
-            <span id="minimize-log" class="icon-button" onclick="minimizeAll()">▼</span>
-          </div>
-        </div>
-        <textarea id="log-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
-      </div>
-
+      <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>
   </div>
 </div>
@@ -138,12 +123,10 @@ function getIndexPage() {
     <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
     <ul>
       <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
-      <li>Only one sequence type exists: <pre>array</pre>. And its undelaying data structure is a javascript array.</li>
-      <li>Quotes behave differently! <pre>'</pre> is simply a short hand for <pre>(array ...)</pre>.</li>
+      <li>Only two sequence type exists: <pre>array</pre> and <pre>string</pre>.</li>
+      <li>No quotes.</li>
       <li>No macros.</li>
       <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
-      <li>No tail call optimization (yet).</li>
-      <li>No dotted pairs.</li>
       <li>100% test coverage</li>
     </ul>
     <p>You can see some examples and find documentation of all built-in function to the left.</p>

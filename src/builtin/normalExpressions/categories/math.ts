@@ -228,6 +228,62 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
+  'max-safe-integer': {
+    evaluate: (): number => {
+      return Number.MAX_SAFE_INTEGER
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
+  'min-safe-integer': {
+    evaluate: (): number => {
+      return Number.MIN_SAFE_INTEGER
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
+  'max-value': {
+    evaluate: (): number => {
+      return Number.MAX_VALUE
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
+  'min-value': {
+    evaluate: (): number => {
+      return Number.MIN_VALUE
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
+  epsilon: {
+    evaluate: (): number => {
+      return Number.EPSILON
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
+  infinity: {
+    evaluate: (): number => {
+      return Number.POSITIVE_INFINITY
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
+  '-infinity': {
+    evaluate: (): number => {
+      return Number.NEGATIVE_INFINITY
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
+  nan: {
+    evaluate: (): number => {
+      return Number.NaN
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(0, node),
+  },
+
   e: {
     evaluate: (): number => {
       return Math.E

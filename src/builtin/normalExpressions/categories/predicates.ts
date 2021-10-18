@@ -1,4 +1,4 @@
-import { assertNumber, isLispishFunction, isObj } from '../../../utils'
+import { assertNumber, isArr, isColl, isLispishFunction, isObj, isSeq } from '../../../utils'
 import { NormalExpressionNode } from '../../../parser/interface'
 import { assertLength, assertFiniteNumber } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -82,14 +82,21 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'array?': {
     evaluate: ([first]: Arr): boolean => {
-      return Array.isArray(first)
+      return isArr(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
-  'collection?': {
+  'coll?': {
     evaluate: ([first]: Arr): boolean => {
-      return Array.isArray(first) || isObj(first)
+      return isColl(first)
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'seq?': {
+    evaluate: ([first]: Arr): boolean => {
+      return isSeq(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },

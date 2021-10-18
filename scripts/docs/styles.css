@@ -86,7 +86,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .column {
-  flex: 15;
+  flex: 20;
 }
 
 .column.scoll {
@@ -102,11 +102,11 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .column.wide {
-  flex: 20;
+  flex: 25;
 }
 
 .column.wider {
-  flex: 45;
+  flex: 50;
 }
 
 .column.right {
@@ -125,6 +125,10 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .button {
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
   margin: 0 0.5rem;
 	cursor: pointer;
   border:solid 1px #555555;
@@ -210,14 +214,14 @@ input[type="submit"]:hover{
   position: fixed;
   left: 290px;
   top: 95px;
-  bottom: 275px;
+  bottom: 335px;
   right: 1rem;
   overflow-y: auto;
 }
 
 #sidebar {
   position: fixed;
-  bottom: 275px;
+  bottom: 335px;
   left: 0;
   width: 250px;
   top: 95px;
@@ -237,19 +241,15 @@ input[type="submit"]:hover{
   bottom: 0;
   left: 0;
   right: 0;
-  height: 250px;
+  height: 310px;
   background-color: #333333;
   border-top: 2px solid #444444;
   padding: 0.5rem 0.5rem;
   box-shadow: 6px 3px 8px #111111;
 }
 
-#lisp-textarea, #context-textarea {
-  height: 180px;
-}
-
-#output-textarea, #log-textarea {
-  height: 75px;
+#lisp-textarea, #context-textarea, #output-textarea {
+  height: 240px;
 }
 
 #maximize-context {
@@ -270,13 +270,6 @@ input[type="submit"]:hover{
   display: inline;
 }
 #minimize-output {
-  display: none;
-}
-
-#maximize-log {
-  display: inline;
-}
-#minimize-log {
   display: none;
 }
 
@@ -301,17 +294,9 @@ input[type="submit"]:hover{
   display: inline;
 }
 
-.maximized-log #maximize-log {
-  display: none;
-}
-.maximized-log #minimize-log {
-  display: inline;
-}
-
 .maximized-context #context,
 .maximized-lisp #lisp,
-.maximized-output #output,
-.maximized-log #log {
+.maximized-output #output {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -323,8 +308,7 @@ input[type="submit"]:hover{
 }
 .maximized-context #context textarea,
 .maximized-lisp #lisp textarea,
-.maximized-output #output textarea,
-.maximized-log #log textarea {
+.maximized-output #output textarea {
   height: calc(100% - 20px);
   margin-bottom: 1rem;
 }
@@ -480,11 +464,7 @@ h4, h2, h1 {
   background-color: #222222;
 }
 
-#outputs {
-  height: 400px;
-}
-
-#lisp, #outputs {
+#lisp, #output {
   margin-left: 0.5rem;
 }
 
@@ -495,6 +475,7 @@ h4, h2, h1 {
 #playground .textarea-header {
   white-space: nowrap;
   font-weight: bold;
+  padding-left: 0.25rem;
 }
 
 #playground .textarea-header label {
