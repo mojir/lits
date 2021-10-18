@@ -76,7 +76,6 @@ const result = evaluate(ast, context) // returns 10
 * **select-keys**
 * **sort-by**
 * **special-symbol?**
-* **split-at**
 * **split-with**
 * **symbol**
 * **symbol?**
