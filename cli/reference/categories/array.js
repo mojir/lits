@@ -90,4 +90,31 @@ module.exports = {
     examples: [`(flatten [1 2 [3 4] 5])`, `(flatten [1 2 [3 [4 [5]]] 6])`, `(flatten 12)`],
     specialExpression: false,
   },
+  mapcat: {
+    name: `mapcat`,
+    category: `Array`,
+    linkName: `mapcat`,
+    returns: {
+      type: `Array`,
+    },
+    arguments: [
+      {
+        name: `mapper`,
+        type: `function`,
+      },
+      {
+        name: `arrays`,
+        type: `Array`,
+        description: `one or many`,
+      },
+    ],
+    description: `Returns the result of applying concat to the result of applying map to \`mapper\` and \`arrays\`.`,
+    examples: [
+      `(mapcat reverse [[3 2 1 0] [6 5 4] [9 8 7]])`,
+      `(mapcat reverse [[3 2 1 0] [6 [5] 4] [9 8 7]])`,
+      `(defn foo [n] [(- n 1) n (+ n 1)]) (mapcat foo [1 2 3])`,
+      `(mapcat #(remove even? %1) [[1 2] [2 2] [2 3]])`,
+    ],
+    specialExpression: false,
+  },
 }

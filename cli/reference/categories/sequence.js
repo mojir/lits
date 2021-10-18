@@ -210,12 +210,12 @@ module.exports = {
         type: `function`,
       },
       {
-        name: `array`,
-        type: `array`,
+        name: `sequence`,
+        type: `Seq`,
         description: `one or many`,
       },
     ],
-    description: `Creates a new array populated with the results of calling \`mapper\` on every elements in the calling \`array\`s.`,
+    description: `Creates a new array populated with the results of calling \`mapper\` on every elements in the calling \`sequence\`s.`,
     examples: [
       `(map string ["Albert" "Mojir"])`,
       `(map string [])`,
@@ -796,8 +796,30 @@ module.exports = {
         type: `Seq`,
       },
     ],
-    description: `Returns a new array of \`[(take pos input) (drop pos input)]\`.`,
+    description: `Returns a new array/string of \`[(take pos input) (drop pos input)]\`.`,
     examples: [`(split-at 2 [1 2 3 4 5])`, `(split-at 2 "Albert")`],
+    specialExpression: false,
+  },
+
+  'split-with': {
+    name: `split-with`,
+    category: `Sequence`,
+    linkName: `split-with`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        input: `pos`,
+        type: `number`,
+      },
+      {
+        input: `input`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns a new array/string of \`[(take-while pos input) (drop-while pos input)]\`.`,
+    examples: [`(split-with #(> %1 3) [1 2 3 4 5])`, `(split-with #(<= %1 "Z") "Albert")`],
     specialExpression: false,
   },
 }

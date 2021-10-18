@@ -14,7 +14,64 @@ import {
   isString,
   assertNumber,
 } from '../../../utils'
-import { BuiltinNormalExpressions } from '../../interface'
+import { BuiltinNormalExpressions, NormalExpressionEvaluator } from '../../interface'
+
+export const evaluateMap: NormalExpressionEvaluator = (
+  params: Arr,
+  contextStack,
+  { executeFunction },
+): unknown[] | string => {
+  const [fn, firstList] = params
+  assertLispishFunction(fn)
+  assertSeq(firstList)
+  const isStringSeq = isString(firstList)
+
+  const length = firstList.length
+  if (params.length === 2) {
+    if (isArr(firstList)) {
+      return firstList.map(elem => executeFunction(fn, [elem], contextStack))
+    } else {
+      return firstList
+        .split(``)
+        .map(elem => {
+          const newVal = executeFunction(fn, [elem], contextStack)
+          assertChar(newVal)
+          return newVal
+        })
+        .join(``)
+    }
+  } else {
+    params.slice(2).forEach(collParam => {
+      if (isStringSeq) {
+        assertString(collParam)
+      } else {
+        assertArr(collParam)
+      }
+      if (length !== collParam.length) {
+        throw Error(`All arguments to "map" must have the same length`)
+      }
+    })
+
+    if (isStringSeq) {
+      let result = ``
+      for (let i = 0; i < length; i += 1) {
+        const fnParams = params.slice(1).map(l => (l as string)[i]) as string[]
+        const newValue = executeFunction(fn, fnParams, contextStack)
+        assertChar(newValue)
+        result += newValue
+      }
+      return result
+    } else {
+      const result: Arr = []
+      for (let i = 0; i < length; i += 1) {
+        const fnParams = params.slice(1).map(l => (l as Arr)[i])
+        result.push(executeFunction(fn, fnParams, contextStack))
+      }
+      return result
+    }
+  }
+}
+
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
   cons: {
     evaluate: ([elem, seq]: Arr): unknown => {
@@ -65,57 +122,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   map: {
-    evaluate: (params: Arr, contextStack, { executeFunction }): unknown => {
-      const [fn, firstList] = params
-      assertLispishFunction(fn)
-      assertSeq(firstList)
-      const isStringSeq = isString(firstList)
-
-      const length = firstList.length
-      if (params.length === 2) {
-        if (isArr(firstList)) {
-          return firstList.map(elem => executeFunction(fn, [elem], contextStack))
-        } else {
-          return firstList
-            .split(``)
-            .map(elem => {
-              const newVal = executeFunction(fn, [elem], contextStack)
-              assertChar(newVal)
-              return newVal
-            })
-            .join(``)
-        }
-      } else {
-        params.slice(2).forEach(collParam => {
-          if (isStringSeq) {
-            assertString(collParam)
-          } else {
-            assertArr(collParam)
-          }
-          if (length !== collParam.length) {
-            throw Error(`All arguments to "map" must have the same length`)
-          }
-        })
-
-        if (isStringSeq) {
-          let result = ``
-          for (let i = 0; i < length; i += 1) {
-            const fnParams = params.slice(1).map(l => (l as string)[i]) as string[]
-            const newValue = executeFunction(fn, fnParams, contextStack)
-            assertChar(newValue)
-            result += newValue
-          }
-          return result
-        } else {
-          const result: Arr = []
-          for (let i = 0; i < length; i += 1) {
-            const fnParams = params.slice(1).map(l => (l as Arr)[i])
-            result.push(executeFunction(fn, fnParams, contextStack))
-          }
-          return result
-        }
-      }
-    },
+    evaluate: evaluateMap,
     validate: node => assertLength({ min: 2 }, node),
   },
   pop: {
@@ -597,6 +604,20 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const intPos = Math.max(0, Math.ceil(pos))
       assertSeq(seq)
       return [seq.slice(0, intPos), seq.slice(intPos)]
+    },
+    validate: node => assertLength(2, node),
+  },
+  'split-with': {
+    evaluate: ([fn, seq], contextStack, { executeFunction }): Seq => {
+      assertLispishFunction(fn)
+      assertSeq(seq)
+      const seqIsArray = Array.isArray(seq)
+      const arr = seqIsArray ? seq : seq.split(``)
+      const index = arr.findIndex(elem => !executeFunction(fn, [elem], contextStack))
+      if (index === -1) {
+        return [seq, seqIsArray ? [] : ``]
+      }
+      return [seq.slice(0, index), seq.slice(index)]
     },
     validate: node => assertLength(2, node),
   },

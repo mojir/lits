@@ -7,8 +7,10 @@ import {
   assertNumberNotZero,
   assertPositiveNumber,
   isArr,
+  assertArr,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
+import { evaluateMap } from './sequence'
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   array: {
     evaluate: (params: Arr): Arr => params,
@@ -77,5 +79,16 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       return seq.flat(Number.POSITIVE_INFINITY)
     },
     validate: node => assertLength(1, node),
+  },
+  mapcat: {
+    evaluate: (params, contextStack, helpers): unknown[] | string => {
+      params.slice(1).forEach(arr => {
+        assertArr(arr)
+      })
+      const mapResult = evaluateMap(params, contextStack, helpers)
+      assertArr(mapResult)
+      return mapResult.flat(1)
+    },
+    validate: node => assertLength({ min: 2 }, node),
   },
 }

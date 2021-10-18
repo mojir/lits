@@ -11,7 +11,7 @@ import { Token } from '../tokenizer/interface'
 import { NormalExpressionNode } from '../parser/interface'
 import { Arr } from '../interface'
 
-type Evaluate = (
+export type NormalExpressionEvaluator = (
   params: Arr,
   contextStack: Context[],
   { executeFunction }: { executeFunction: ExecuteFunction },
@@ -19,7 +19,7 @@ type Evaluate = (
 type ValidateNode = (node: NormalExpressionNode) => void
 
 type BuiltinNormalExpression = {
-  evaluate: Evaluate
+  evaluate: NormalExpressionEvaluator
   validate?: ValidateNode
 }
 

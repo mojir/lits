@@ -246,6 +246,7 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(map number? [1] 2)`)).toThrow()
     })
   })
+
   describe(`first`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(first [1 2 3])`)).toEqual(1)
@@ -803,6 +804,25 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(split-at)`)).toThrow()
       expect(() => lispish.run(`(split-at 3)`)).toThrow()
       expect(() => lispish.run(`(split-at 3 "Albert" "Mojir")`)).toThrow()
+    })
+  })
+
+  describe(`split-with`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(split-with #(< %1 3) [1 2 3 4 5])`)).toEqual([
+        [1, 2],
+        [3, 4, 5],
+      ])
+      expect(lispish.run(`(split-with #(> %1 3) [1 2 3 4 5])`)).toEqual([[], [1, 2, 3, 4, 5]])
+      expect(lispish.run(`(split-with #(< %1 10) [1 2 3 4 5])`)).toEqual([[1, 2, 3, 4, 5], []])
+
+      expect(lispish.run(`(split-with #(<= %1 "Z") "Albert")`)).toEqual([`A`, `lbert`])
+      expect(lispish.run(`(split-with #(> %1 "Z") "Albert")`)).toEqual([``, `Albert`])
+      expect(lispish.run(`(split-with #(<= %1 "z") "Albert")`)).toEqual([`Albert`, ``])
+
+      expect(() => lispish.run(`(split-with)`)).toThrow()
+      expect(() => lispish.run(`(split-with #(<= %1 "Z"))`)).toThrow()
+      expect(() => lispish.run(`(split-with #(<= %1 "Z") "Albert" "Mojir")`)).toThrow()
     })
   })
 })

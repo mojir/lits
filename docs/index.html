@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.45</span></div>
+    <div class="column right version"><span>v0.1.46</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -483,6 +483,28 @@
 </div>
 
 
+<div id="mapcat" class="content function">
+  <div class="function-header">mapcat</div>
+  
+  <p>Returns the result of applying concat to the result of applying map to <span class="pre">mapper</span> and <span class="pre">arrays</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>mapcat mapper arrays(one or many) => Array</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>mapper: function</pre>
+<pre>arrays: Array</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(mapcat reverse [[3 2 1 0] [6 5 4] [9 8 7]])')"><span class="icon-button">▶</span> (mapcat reverse [[3 2 1 0] [6 5 4] [9 8 7]]) <span class="gray">=> [0,1,2,3,4,5,6,7,8,9]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mapcat reverse [[3 2 1 0] [6 [5] 4] [9 8 7]])')"><span class="icon-button">▶</span> (mapcat reverse [[3 2 1 0] [6 [5] 4] [9 8 7]]) <span class="gray">=> [0,1,2,3,4,[5],6,7,8,9]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(defn foo [n] [(- n 1) n (+ n 1)]) (mapcat foo [1 2 3])')"><span class="icon-button">▶</span> (defn foo [n] [(- n 1) n (+ n 1)]) (mapcat foo [1 2 3]) <span class="gray">=> [0,1,2,1,2,3,2,3,4]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(mapcat #(remove even? %1) [[1 2] [2 2] [2 3]])')"><span class="icon-button">▶</span> (mapcat #(remove even? %1) [[1 2] [2 2] [2 3]]) <span class="gray">=> [1,3]</span></span></pre>
+  </div>
+</div>
+
+
 <div id="nth" class="content function">
   <div class="function-header">nth</div>
   
@@ -658,14 +680,14 @@
 <div id="map" class="content function">
   <div class="function-header">map</div>
   
-  <p>Creates a new array populated with the results of calling <span class="pre">mapper</span> on every elements in the calling <span class="pre">array</span>s.</p>
+  <p>Creates a new array populated with the results of calling <span class="pre">mapper</span> on every elements in the calling <span class="pre">sequence</span>s.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>map mapper array(one or many) => array</pre>
+    <pre>map mapper sequence(one or many) => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>mapper: function</pre>
-<pre>array: array</pre></div>
+<pre>sequence: Seq</pre></div>
 
   <label>Examples</label>
   <div class="indent">
@@ -1128,8 +1150,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,4,5,6,8,9]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample 0.5 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (random-sample 0.5 "Albert") <span class="gray">=> "br"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,3,4,6,7,9,10]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample 0.5 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (random-sample 0.5 "Albert") <span class="gray">=> "lert"</span></span></pre>
   </div>
 </div>
 
@@ -1147,8 +1169,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (rand-nth [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (rand-nth "Albert") <span class="gray">=> "r"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (rand-nth [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 4</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (rand-nth "Albert") <span class="gray">=> "l"</span></span></pre>
   </div>
 </div>
 
@@ -1166,8 +1188,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,3,9,5,6,2,8,1,10,7]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "eotrrjA Milb"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [9,3,1,2,4,10,5,6,8,7]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "ltoA Mrbreji"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1219,7 +1241,7 @@
 <div id="split-at" class="content function">
   <div class="function-header">split-at</div>
   
-  <p>Returns a new array of <span class="pre">[(take pos input) (drop pos input)]</span>.</p>
+  <p>Returns a new array/string of <span class="pre">[(take pos input) (drop pos input)]</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>split-at undefined undefined => Seq</pre>
@@ -1232,6 +1254,26 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(split-at 2 [1 2 3 4 5])')"><span class="icon-button">▶</span> (split-at 2 [1 2 3 4 5]) <span class="gray">=> [[1,2],[3,4,5]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(split-at 2 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (split-at 2 "Albert") <span class="gray">=> ["Al","bert"]</span></span></pre>
+  </div>
+</div>
+
+
+<div id="split-with" class="content function">
+  <div class="function-header">split-with</div>
+  
+  <p>Returns a new array/string of <span class="pre">[(take-while pos input) (drop-while pos input)]</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>split-with undefined undefined => Seq</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>undefined: number</pre>
+<pre>undefined: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(split-with #(> %1 3) [1 2 3 4 5])')"><span class="icon-button">▶</span> (split-with #(> %1 3) [1 2 3 4 5]) <span class="gray">=> [[],[1,2,3,4,5]]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(split-with #(<= %1 ___double_quote___Z___double_quote___) ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (split-with #(<= %1 "Z") "Albert") <span class="gray">=> ["A","lbert"]</span></span></pre>
   </div>
 </div>
 
@@ -1799,9 +1841,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.17194300605835267</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.009263872157045416</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.9043495703069665</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.6943773614225164</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.008976860377890448</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.0197911369387602</span></span></pre>
   </div>
 </div>
 
@@ -1820,8 +1862,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 7</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 121</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 8</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 116</span></span></pre>
   </div>
 </div>
 
@@ -2449,7 +2491,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634561566982</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634573653961</span></span></pre>
   </div>
 </div>
 
@@ -2574,7 +2616,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"><span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.45"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"><span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.46"</span></span></pre>
   </div>
 </div>
 
@@ -4265,6 +4307,7 @@
 <li id="some_link" onclick="showPage('some')">some</li>
 <li id="sort_link" onclick="showPage('sort')">sort</li>
 <li id="split-at_link" onclick="showPage('split-at')">split-at</li>
+<li id="split-with_link" onclick="showPage('split-with')">split-with</li>
 <li id="take_link" onclick="showPage('take')">take</li>
 <li id="take-last_link" onclick="showPage('take-last')">take-last</li>
 <li id="take-while_link" onclick="showPage('take-while')">take-while</li>
@@ -4290,6 +4333,7 @@
         <ul>
           <li id="array_link" onclick="showPage('array')">array</li>
 <li id="flatten_link" onclick="showPage('flatten')">flatten</li>
+<li id="mapcat_link" onclick="showPage('mapcat')">mapcat</li>
 <li id="range_link" onclick="showPage('range')">range</li>
 <li id="repeat_link" onclick="showPage('repeat')">repeat</li>
         </ul>
