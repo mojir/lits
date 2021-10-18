@@ -112,6 +112,85 @@ module.exports = {
     examples: [`(let [a (+ 1 2 3 4) b (* 1 2 3 4)] (write! a b))`],
     specialExpression: true,
   },
+  'if-let': {
+    name: `if-let`,
+    category: `Special expression`,
+    linkName: `if-let`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `bindings`,
+        type: `bindings`,
+      },
+      {
+        name: `then`,
+        type: `any`,
+      },
+      {
+        name: `else`,
+        type: `any`,
+        description: `optional`,
+      },
+    ],
+    description: `Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, the then-form is evaluated (without variable accessable).`,
+    examples: [
+      `(if-let [a (> (count "Albert") 4)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
+      `(if-let [a (> (count "Albert") 10)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
+    ],
+    specialExpression: true,
+  },
+  'when-let': {
+    name: `when-let`,
+    category: `Special expression`,
+    linkName: `when-let`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `bindings`,
+        type: `bindings`,
+      },
+      {
+        name: `then`,
+        type: `any`,
+      },
+    ],
+    description: `Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, undefined is returned.`,
+    examples: [
+      `(when-let [a (> (count "Albert") 4)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
+      `(when-let [a (> (count "Albert") 10)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
+    ],
+    specialExpression: true,
+  },
+  'when-first': {
+    name: `when-first`,
+    category: `Special expression`,
+    linkName: `when-first`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `bindings`,
+        type: `bindings`,
+      },
+      {
+        name: `then`,
+        type: `any`,
+      },
+    ],
+    description: `Roughly the same as \`(when (seq xs) (let [x (first xs)] body))\`.`,
+    examples: [
+      `(when-first [x [1 2 3]] (write! 10) (write! 20) x)`,
+      `(when-first [x "Albert"] x)`,
+      `(when-first [x ""] x)`,
+      `(when-first [x []] x)`,
+    ],
+    specialExpression: true,
+  },
   fn: {
     name: `fn`,
     category: `Special expression`,
@@ -339,6 +418,33 @@ module.exports = {
       `(when false (write! "Hi") (write! "There"))`,
       `(when true)`,
       `(when false)`,
+    ],
+    specialExpression: true,
+  },
+  'when-not': {
+    name: `when-not`,
+    category: `Special expression`,
+    linkName: `when-not`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `test`,
+        type: `form`,
+      },
+      {
+        name: `form`,
+        type: `form`,
+        description: `zero or more`,
+      },
+    ],
+    description: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a truthy value, the forms are not evaluated, and \`undefined\` is returned. If no \`form\` is provided, undefined is returned.`,
+    examples: [
+      `(when-not true (write! "Hi") (write! "There"))`,
+      `(when-not false (write! "Hi") (write! "There"))`,
+      `(when-not true)`,
+      `(when-not false)`,
     ],
     specialExpression: true,
   },

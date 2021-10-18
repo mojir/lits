@@ -1,6 +1,5 @@
 import { Context } from '../../evaluator/interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { isLispishFunction } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface LetSpecialExpressionNode extends SpecialExpressionNode {
@@ -30,9 +29,6 @@ export const letSpecialExpression: BuiltinSpecialExpression = {
     for (const binding of node.bindings) {
       const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-      if (isLispishFunction(bindingValue)) {
-        throw Error(`Cannot bind function in let expression`)
-      }
       locals[binding.name] = { value: bindingValue }
     }
     const newContextStack = [locals, ...contextStack]

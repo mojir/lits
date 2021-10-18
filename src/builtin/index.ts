@@ -3,6 +3,10 @@ import { condSpecialExpression } from './specialExpressions/cond'
 import { defnSpecialExpression, defnsSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
 import { ifNotSpecialExpression } from './specialExpressions/if-not'
+import { ifLetSpecialExpression } from './specialExpressions/if-let'
+import { whenLetSpecialExpression } from './specialExpressions/when-let'
+import { whenNotSpecialExpression } from './specialExpressions/when-not'
+import { whenFirstSpecialExpression } from './specialExpressions/when-first'
 import { letSpecialExpression } from './specialExpressions/let'
 import { orSpecialExpression } from './specialExpressions/or'
 import { doSpecialExpression } from './specialExpressions/do'
@@ -26,6 +30,10 @@ export const specialExpressions: BuiltinSpecialExpressions = {
   defns: defnsSpecialExpression,
   if: ifSpecialExpression,
   'if-not': ifNotSpecialExpression,
+  'if-let': ifLetSpecialExpression,
+  'when-let': whenLetSpecialExpression,
+  'when-not': whenNotSpecialExpression,
+  'when-first': whenFirstSpecialExpression,
   fn: fnSpecialExpression,
   let: letSpecialExpression,
   or: orSpecialExpression,

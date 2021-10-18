@@ -1,0 +1,52 @@
+import { Context } from '../../evaluator/interface'
+import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
+import { asNotUndefined, assertLength } from '../../utils'
+import { BuiltinSpecialExpression } from '../interface'
+
+interface IfLetSpecialExpressionNode extends SpecialExpressionNode {
+  name: `if-let`
+  binding: BindingNode
+}
+
+export const ifLetSpecialExpression: BuiltinSpecialExpression = {
+  parse: (tokens, position, { parseBindings, parseTokens }) => {
+    let bindings: BindingNode[]
+    ;[position, bindings] = parseBindings(tokens, position)
+
+    if (bindings.length !== 1) {
+      throw Error(`Expected exactly one binding, got ${bindings.length}`)
+    }
+
+    let params: AstNode[]
+    ;[position, params] = parseTokens(tokens, position)
+
+    const node: IfLetSpecialExpressionNode = {
+      type: `SpecialExpression`,
+      name: `if-let`,
+      binding: asNotUndefined(bindings[0]),
+      params,
+    }
+    return [position + 1, node]
+  },
+  evaluate: (node, contextStack, { evaluateAstNode }) => {
+    castIfLetExpressionNode(node)
+    const locals: Context = {}
+    const bindingValue = evaluateAstNode(node.binding.value, contextStack)
+    if (bindingValue) {
+      locals[node.binding.name] = { value: bindingValue }
+      const newContextStack = [locals, ...contextStack]
+      const thenForm = asNotUndefined(node.params[0])
+      return evaluateAstNode(thenForm, newContextStack)
+    }
+    if (node.params.length === 2) {
+      const elseForm = asNotUndefined(node.params[1])
+      return evaluateAstNode(elseForm, contextStack)
+    }
+    return undefined
+  },
+  validate: node => assertLength({ min: 1, max: 2 }, node),
+}
+
+function castIfLetExpressionNode(_node: SpecialExpressionNode): asserts _node is IfLetSpecialExpressionNode {
+  return
+}

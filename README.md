@@ -66,9 +66,7 @@ const result = evaluate(ast, context) // returns 10
 * **for** ??
 * **get-in**
 * **group-by**
-* **if-let**
 * **mapcat**
-* **memoize** ??
 * **merge-with**
 * **partition**
 * **partition-by**
@@ -80,7 +78,4 @@ const result = evaluate(ast, context) // returns 10
 * **symbol?**
 * **update**
 * **update-in**
-* **when-first**
-* **when-let**
-* **when-not**
 * **zipmap**

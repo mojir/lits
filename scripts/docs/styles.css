@@ -484,13 +484,14 @@ h4, h2, h1 {
 }
 
 #index pre, span.pre {
- margin: 0;
- display: inline;
- color: #e6e7a0;
- background-color: #333;
- border: 1px solid #444;
- border-radius: 3px;
- padding: 0 2px;
+  font-family: monospace;
+  margin: 0;
+  display: inline;
+  color: #e6e7a0;
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 3px;
+  padding: 0 2px;
 }
 
 

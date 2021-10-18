@@ -142,12 +142,36 @@ describe(`specialExpressions`, () => {
     })
   })
 
+  describe(`if-let`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(if-let [a (> (count "Albert") 4)] a)`)).toBe(true)
+      expect(lispish.run(`(if-let [a (> (count "Albert") 10)] a)`)).toBeUndefined()
+      expect(lispish.run(`(if-let [a (> (count "Albert") 4)] "YES" "NO")`)).toBe(`YES`)
+      expect(lispish.run(`(if-let [a (> (count "Albert") 10)] "YES" "NO")`)).toBe(`NO`)
+      expect(() => lispish.run(`(if-let [a (> (count "Albert") 10)] "YES" a)`)).toThrow()
+      expect(() => lispish.run(`(if-let [a (> (count "Albert") 10)])`)).toThrow()
+      expect(() => lispish.run(`(if-let [a (> (count "Albert") 10) b 20] 1 2)`)).toThrow()
+    })
+  })
+
+  describe(`when-let`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(when-let [a (> (count "Albert") 4)] a)`)).toBe(true)
+      expect(lispish.run(`(when-let [a (> (count "Albert") 10)] a)`)).toBeUndefined()
+      expect(lispish.run(`(when-let [a (> (count "Albert") 10)])`)).toBeUndefined()
+      expect(lispish.run(`(when-let [a (> (count "Albert") 10)] 10 20)`)).toBeUndefined()
+      expect(lispish.run(`(when-let [a (> (count "Albert") 4)] 10 20)`)).toBe(20)
+      expect(() => lispish.run(`(when-let [a (> (count "Albert") 10) b 20] 1)`)).toThrow()
+    })
+  })
+
   describe(`let`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(let [a "A"] a)`)).toBe(`A`)
       expect(lispish.run(`(let [a "A" b "B"] a b)`)).toBe(`B`)
       expect(lispish.run(`(let [a "A" b "B"] a b)`)).toBe(`B`)
       expect(lispish.run(`(let [a (+ 10 20) b "B"] b a)`)).toBe(30)
+      expect(lispish.run(`(let [a (fn [] 1)] (a))`)).toBe(1)
       expect(() => lispish.run(`(let)`)).toThrow()
       expect(() => lispish.run(`(let ())`)).toThrow()
       expect(() => lispish.run(`(let [)))`)).toThrow()
@@ -155,7 +179,6 @@ describe(`specialExpressions`, () => {
       expect(() => lispish.run(`(let [a "A") b) a`)).toThrow()
       expect(() => lispish.run(`(let (a "A"]`)).toThrow()
       expect(() => lispish.run(`(let (a "A") a)`)).toThrow()
-      expect(() => lispish.run(`(let [a (fn [] 1)] a)`)).toThrow()
     })
     test(`local and global variables`, () => {
       expect(() =>
@@ -375,6 +398,30 @@ describe(`specialExpressions`, () => {
       expect(lispish.run(`(when false)`)).toBe(undefined)
       expect(lispish.run(`(when true)`)).toBe(undefined)
       expect(() => lispish.run(`(when)`)).toThrow()
+    })
+  })
+
+  describe(`when-not`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(when-not true (write! 10) (write! 20))`)).toBe(undefined)
+      expect(lispish.run(`(when-not (> 10 20) (write! 10) (write! 20))`)).toBe(20)
+      expect(lispish.run(`(when-not false)`)).toBe(undefined)
+      expect(lispish.run(`(when-not true)`)).toBe(undefined)
+      expect(() => lispish.run(`(when-not)`)).toThrow()
+    })
+  })
+
+  describe(`when-first`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(when-first [x [1 2 3]] (write! 10) (write! 20) x)`)).toBe(1)
+      expect(lispish.run(`(when-first [x []] (write! 10) (write! 20) x)`)).toBeUndefined()
+      expect(lispish.run(`(when-first [x "Albert"] (write! 10) (write! 20) x)`)).toBe(`A`)
+      expect(lispish.run(`(when-first [x ""] (write! 10) (write! 20) x)`)).toBeUndefined()
+      expect(lispish.run(`(when-first [x [0]])`)).toBeUndefined()
+      expect(() => lispish.run(`(when-first [x undefined] x)`)).toThrow()
+      expect(() => lispish.run(`(when-first [x undefined a 2] x)`)).toThrow()
+      expect(() => lispish.run(`(when-first [] x)`)).toThrow()
+      expect(() => lispish.run(`(when-first x 10)`)).toThrow()
     })
   })
 

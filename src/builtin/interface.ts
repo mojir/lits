@@ -68,6 +68,10 @@ export type SpecialExpressionName =
   | `when`
   | `partial`
   | `time!`
+  | `if-let`
+  | `when-let`
+  | `when-not`
+  | `when-first`
 
 export type Builtin = {
   normalExpressions: BuiltinNormalExpressions
