@@ -105,4 +105,19 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
+
+  'select-keys': {
+    evaluate: ([obj, keys]: Arr): unknown => {
+      assertStringArray(keys)
+      assertObj(obj)
+
+      return keys.reduce((result: Obj, key) => {
+        if (collHasKey(obj, key)) {
+          result[key] = obj[key]
+        }
+        return result
+      }, {})
+    },
+    validate: node => assertLength(2, node),
+  },
 }

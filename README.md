@@ -64,12 +64,10 @@ const result = evaluate(ast, context) // returns 10
 * **for** ??
 * **get-in**
 * **group-by**
-* **mapcat**
 * **merge-with**
 * **partition**
 * **partition-by**
 * **partition-all**
-* **select-keys**
 * **sort-by**
 * **special-symbol?**
 * **symbol**

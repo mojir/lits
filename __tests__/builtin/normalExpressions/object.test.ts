@@ -186,4 +186,14 @@ describe(`object functions`, () => {
       expect(() => lispish.run(`(zipmap [] [] [])`)).toThrow()
     })
   })
+
+  describe(`select-keys`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(select-keys {"a" 1 "b" 2 "c" 3} ["a" "b"])`)).toEqual({ a: 1, b: 2 })
+      expect(lispish.run(`(select-keys {"a" 1} ["a" "b"])`)).toEqual({ a: 1 })
+      expect(() => lispish.run(`(select-keys {"a" 1})`)).toThrow()
+      expect(() => lispish.run(`(select-keys {"a" 1} "a")`)).toThrow()
+      expect(() => lispish.run(`(select-keys {"a" 1} ["a"] ["a"])`)).toThrow()
+    })
+  })
 })

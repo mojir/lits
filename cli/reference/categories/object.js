@@ -158,4 +158,25 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  'select-keys': {
+    name: `select-keys`,
+    category: `Object`,
+    linkName: `select-keys`,
+    returns: {
+      type: `object`,
+    },
+    arguments: [
+      {
+        name: `object`,
+        type: `Object`,
+      },
+      {
+        name: `keys`,
+        type: `Array<string>`,
+      },
+    ],
+    description: `Returns an object containing only those entries in \`object\` whose key is in \`keys\`.`,
+    examples: [`(select-keys {"a" 1 "b" 2 "c" 3} ["a" "b"])`, `(select-keys {"a" 1} ["a" "b"])`],
+    specialExpression: false,
+  },
 }
