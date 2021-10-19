@@ -59,10 +59,8 @@ const context = { a: 1, b: 2, c: 3, d: 4}
 const result = evaluate(ast, context) // returns 10
 ```
 
-# Missing features
+# Missing functions
 * **assoc-in**
-* **char-from-code** return charachter from code (charachter = string)
-* **code-from-char** return charachter code from string
 * **for** ??
 * **get-in**
 * **group-by**
@@ -78,4 +76,3 @@ const result = evaluate(ast, context) // returns 10
 * **symbol?**
 * **update**
 * **update-in**
-* **zipmap**

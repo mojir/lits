@@ -133,4 +133,29 @@ module.exports = {
     examples: [`(merge (object "x" 10) (object "y" 20))`, `(merge (object "x" 10) (object "x" 15 "y" 20))`],
     specialExpression: false,
   },
+  zipmap: {
+    name: `zipmap`,
+    category: `Object`,
+    linkName: `zipmap`,
+    returns: {
+      type: `object`,
+    },
+    arguments: [
+      {
+        name: `keys`,
+        type: `Array<string>`,
+      },
+      {
+        name: `values`,
+        type: `Array`,
+      },
+    ],
+    description: `Returns a new object created by mapping \`keys\` to \`values\`.`,
+    examples: [
+      `(zipmap ["a" "b" "c"] [10 null [1 2 3]])`,
+      `(zipmap ["a" "b" "c"] [1])`,
+      `(zipmap [] [10 null [1 2 3]])`,
+    ],
+    specialExpression: false,
+  },
 }

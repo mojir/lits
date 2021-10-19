@@ -37,6 +37,7 @@ import {
   isRegExp,
   isNormalExpressionNodeName,
   deepEqual,
+  assertNonEmptyString,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -398,6 +399,19 @@ describe(`utils`, () => {
     expect(() => assertString(undefined)).toThrow()
     expect(() => assertString([])).toThrow()
     expect(() => assertString({})).toThrow()
+  })
+  test(`assertNonEmptyString`, () => {
+    expect(() => assertNonEmptyString(`1`)).not.toThrow()
+    expect(() => assertNonEmptyString(`abc`)).not.toThrow()
+    expect(() => assertNonEmptyString(``)).toThrow()
+    expect(() => assertNonEmptyString(0)).toThrow()
+    expect(() => assertNonEmptyString(1)).toThrow()
+    expect(() => assertNonEmptyString(true)).toThrow()
+    expect(() => assertNonEmptyString(false)).toThrow()
+    expect(() => assertNonEmptyString(null)).toThrow()
+    expect(() => assertNonEmptyString(undefined)).toThrow()
+    expect(() => assertNonEmptyString([])).toThrow()
+    expect(() => assertNonEmptyString({})).toThrow()
   })
 
   test(`assertStringOrArray`, () => {

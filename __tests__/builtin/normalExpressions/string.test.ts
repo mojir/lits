@@ -233,4 +233,19 @@ describe(`string functions`, () => {
       expect(lispish.run(`(template "$2 got $1 book||||$2 got $1 books" 2 "Carl")`)).toBe(`Carl got 2 books`)
     })
   })
+  describe(`to-char-code`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(to-char-code "a")`)).toBe(97)
+      expect(lispish.run(`(to-char-code "abc")`)).toBe(97)
+      expect(() => lispish.run(`(to-char-code)`)).toThrow()
+      expect(() => lispish.run(`(to-char-code "A" "B")`)).toThrow()
+    })
+  })
+  describe(`from-char-code`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(from-char-code 97)`)).toBe(`a`)
+      expect(() => lispish.run(`(from-char-code)`)).toThrow()
+      expect(() => lispish.run(`(from-char-code 65 66)`)).toThrow()
+    })
+  })
 })

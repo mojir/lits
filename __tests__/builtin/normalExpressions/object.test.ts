@@ -171,4 +171,19 @@ describe(`object functions`, () => {
       expect(lispish.run(program)).toBe(true)
     })
   })
+
+  describe(`zipmap`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(zipmap ["a" "b" "c"] [10 null [1 2 3]])`)).toEqual({ a: 10, b: null, c: [1, 2, 3] })
+      expect(lispish.run(`(zipmap ["a" "b"] [10 null [1 2 3]])`)).toEqual({ a: 10, b: null })
+      expect(lispish.run(`(zipmap ["a" "b" "c"] [10 null])`)).toEqual({ a: 10, b: null })
+      expect(lispish.run(`(zipmap ["a" "b" "c"] [])`)).toEqual({})
+      expect(lispish.run(`(zipmap [] [10 null [1 2 3]])`)).toEqual({})
+      expect(lispish.run(`(zipmap [] [])`)).toEqual({})
+      expect(() => lispish.run(`(zipmap [])`)).toThrow()
+      expect(() => lispish.run(`(zipmap "abc" [])`)).toThrow()
+      expect(() => lispish.run(`(zipmap [] "abc)`)).toThrow()
+      expect(() => lispish.run(`(zipmap [] [] [])`)).toThrow()
+    })
+  })
 })

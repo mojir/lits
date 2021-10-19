@@ -1,5 +1,14 @@
 import { Arr, Obj } from '../../../interface'
-import { assertLengthEven, assertLength, assertObj, assertString, collHasKey } from '../../../utils'
+import {
+  assertLengthEven,
+  assertLength,
+  assertObj,
+  assertString,
+  collHasKey,
+  assertStringArray,
+  assertArr,
+  asNotUndefined,
+} from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
@@ -77,5 +86,23 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       )
     },
     validate: node => assertLength({ min: 1 }, node),
+  },
+
+  zipmap: {
+    evaluate: ([keys, values]: Arr): unknown => {
+      assertStringArray(keys)
+      assertArr(values)
+
+      const length = Math.min(keys.length, values.length)
+
+      const result: Obj = {}
+
+      for (let i = 0; i < length; i += 1) {
+        const key = asNotUndefined(keys[i])
+        result[key] = values[i]
+      }
+      return result
+    },
+    validate: node => assertLength(2, node),
   },
 }

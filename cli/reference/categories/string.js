@@ -320,4 +320,38 @@ module.exports = {
     ],
     specialExpression: false,
   },
+  'to-char-code': {
+    name: `to-char-code`,
+    category: `String`,
+    linkName: `to-char-code`,
+    returns: {
+      type: `number`,
+    },
+    arguments: [
+      {
+        name: `input`,
+        type: `string`,
+      },
+    ],
+    description: `Return code point for first character in \`input\`.`,
+    examples: [`(to-char-code "A")`, `(to-char-code "Albert")`],
+    specialExpression: false,
+  },
+  'from-char-code': {
+    name: `from-char-code`,
+    category: `String`,
+    linkName: `from-char-code`,
+    returns: {
+      type: `string`,
+    },
+    arguments: [
+      {
+        name: `code`,
+        type: `number`,
+      },
+    ],
+    description: `Return character for code point \`code\`.`,
+    examples: [`(from-char-code 65)`, `(from-char-code 0)`],
+    specialExpression: false,
+  },
 }

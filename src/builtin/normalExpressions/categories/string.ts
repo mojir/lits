@@ -11,6 +11,8 @@ import {
   assertStringOrRegExp,
   assertStringArray,
   isObj,
+  assertNonEmptyString,
+  asNotUndefined,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -89,6 +91,24 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       }
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 2 }, node),
+  },
+
+  'from-char-code': {
+    evaluate: ([number]: Arr): string => {
+      assertFiniteNumber(number)
+      const int = Math.max(0, Math.ceil(number))
+
+      return String.fromCodePoint(int)
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+  },
+
+  'to-char-code': {
+    evaluate: ([str]: Arr): number => {
+      assertNonEmptyString(str)
+      return asNotUndefined(str.codePointAt(0))
+    },
+    validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'lower-case': {

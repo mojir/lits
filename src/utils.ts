@@ -136,6 +136,13 @@ export function assertString(value: unknown): asserts value is string {
   }
 }
 
+export function assertNonEmptyString(value: unknown): asserts value is string {
+  assertString(value)
+  if (value.length === 0) {
+    throw TypeError(`Expected non empty string, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function assertChar(value: unknown): asserts value is string {
   assertString(value)
   if (value.length !== 1) {
