@@ -1,11 +1,14 @@
 import { Arr, Coll, Obj } from '../../../interface'
 import {
+  asChar,
   assertArr,
   assertChar,
   assertColl,
   assertInteger,
   assertLength,
   assertLispishFunction,
+  assertMax,
+  assertNumber,
   assertNumberGte,
   assertNumberLte,
   assertObj,
@@ -15,11 +18,12 @@ import {
   isObj,
   isSeq,
   isString,
+  toNonNegativeInteger,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const collectionNormalExpression: BuiltinNormalExpressions = {
   get: {
-    evaluate: (params: Arr): unknown => {
+    evaluate: (params): unknown => {
       const [coll, key, defaultValue] = params
       const hasDefault = params.length === 3
 
@@ -47,7 +51,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },
   count: {
-    evaluate: ([coll]: Arr): number => {
+    evaluate: ([coll]): number => {
       if (typeof coll === `string`) {
         return coll.length
       }
@@ -60,7 +64,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   'contains?': {
-    evaluate: ([coll, key]: Arr): boolean => {
+    evaluate: ([coll, key]): boolean => {
       assertColl(coll)
       assertStringOrNumber(key)
       if (isSeq(coll)) {
@@ -75,7 +79,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'has?': {
-    evaluate: ([coll, value]: Arr): boolean => {
+    evaluate: ([coll, value]): boolean => {
       assertColl(coll)
       if (isArr(coll)) {
         return coll.includes(value)
@@ -88,7 +92,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   assoc: {
-    evaluate: ([coll, key, value]: Arr): Coll => {
+    evaluate: ([coll, key, value]): Coll => {
       assertColl(coll)
       assertStringOrNumber(key)
       if (Array.isArray(coll) || typeof coll === `string`) {
@@ -111,7 +115,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(3, node),
   },
   concat: {
-    evaluate: (params: Arr): unknown => {
+    evaluate: (params): unknown => {
       assertColl(params[0])
       if (isArr(params[0])) {
         return params.reduce((result: Arr, arr) => {
@@ -133,7 +137,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   'empty?': {
-    evaluate: ([first]: Arr): boolean => {
+    evaluate: ([first]): boolean => {
       assertColl(first)
       if (isString(first)) {
         return first.length === 0
@@ -146,7 +150,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   'every?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
+    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
@@ -161,7 +165,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'any?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
+    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
@@ -176,7 +180,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'not-any?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
+    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
@@ -191,7 +195,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'not-every?': {
-    evaluate: ([fn, coll]: Arr, contextStack, { executeFunction }): boolean => {
+    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
       assertLispishFunction(fn)
       assertColl(coll)
 
@@ -204,5 +208,46 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       return !Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack))
     },
     validate: node => assertLength(2, node),
+  },
+  update: {
+    evaluate: ([coll, key, fn, ...params], contextStack, { executeFunction }): Coll => {
+      assertColl(coll)
+      assertStringOrNumber(key)
+      assertLispishFunction(fn)
+      if (isObj(coll)) {
+        assertString(key)
+        const result = { ...coll }
+        result[key] = executeFunction(fn, [result[key], ...params], contextStack)
+        return result
+      } else {
+        assertNumber(key)
+        const intKey = toNonNegativeInteger(key)
+        assertMax(intKey, coll.length)
+        if (Array.isArray(coll)) {
+          const result = coll.map((elem, index) => {
+            if (intKey === index) {
+              return executeFunction(fn, [elem, ...params], contextStack)
+            }
+            return elem
+          })
+          if (intKey === coll.length) {
+            result[intKey] = executeFunction(fn, [undefined, ...params], contextStack)
+          }
+          return result
+        } else {
+          const result = coll.split(``).map((elem, index) => {
+            if (intKey === index) {
+              return asChar(executeFunction(fn, [elem, ...params], contextStack))
+            }
+            return elem
+          })
+          if (intKey === coll.length) {
+            result[intKey] = asChar(executeFunction(fn, [undefined, ...params], contextStack))
+          }
+          return result
+        }
+      }
+    },
+    validate: node => assertLength({ min: 3 }, node),
   },
 }

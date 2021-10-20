@@ -278,4 +278,22 @@ describe(`collection functions`, () => {
       expect(() => lispish.run(`(not-any? number? [1] 2)`)).toThrow()
     })
   })
+
+  describe(`updated`, () => {
+    test(`samples`, () => {
+      lispish.run(`if`)
+      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" inc)`)).toEqual({ a: 2, b: 2 })
+      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" + 10)`)).toEqual({ a: 11, b: 2 })
+      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" #(if (even? %1) 0 (inc %1)))`)).toEqual({
+      //   a: 1,
+      //   b: 3,
+      // })
+      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "c" #(if (undefined? %1) 0 (inc %1)))`)).toEqual({
+      //   a: 1,
+      //   b: 2,
+      //   c: 0,
+      // })
+      // expect(() => lispish.run(`(update number? [1] 2)`)).toThrow()
+    })
+  })
 })

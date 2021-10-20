@@ -143,11 +143,19 @@ export function assertNonEmptyString(value: unknown): asserts value is string {
   }
 }
 
+export function isChar(value: unknown): value is string {
+  return isString(value) && value.length === 1
+}
+
 export function assertChar(value: unknown): asserts value is string {
-  assertString(value)
-  if (value.length !== 1) {
+  if (!isChar(value)) {
     throw TypeError(`Expected char, got: ${value} type="${typeof value}"`)
   }
+}
+
+export function asChar(value: unknown): string {
+  assertChar(value)
+  return value
 }
 
 export function assertStringOrNumber(value: unknown): asserts value is string {
@@ -503,4 +511,14 @@ export function deepEqual(a: unknown, b: unknown): boolean {
     return true
   }
   return false
+}
+
+export function toNonNegativeInteger(number: number): number {
+  return Math.max(0, Math.ceil(number))
+}
+
+export function assertMax(value: number, maxNumber: number): void {
+  if (value > maxNumber) {
+    throw Error(`Expected number less than or equal to ${maxNumber}'`)
+  }
 }
