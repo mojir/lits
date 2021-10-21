@@ -15,15 +15,14 @@ module.exports = {
     description: `Makes new array from \`values\`.`,
     examples: [
       `(array 1 2 3)`,
-      `(array (array null undefined false true))`,
+      `(array (array nil false true))`,
       `[]`,
       `[1 2 3]`,
-      `[[null undefined false true]]`,
+      `[[nil false true]]`,
       `[]`,
       `([1 2 3] 1)`,
       `([1 2 3 4 5 6 7 8 9] 3)`,
     ],
-    specialExpression: false,
   },
   range: {
     name: `range`,
@@ -50,7 +49,6 @@ module.exports = {
     ],
     description: `Create an array with a range of numbers. If only one argument: \`0...a\`, otherwise: \`a...b\`. \`step\` defaults to \`1\`.`,
     examples: [`(range 4)`, `(range 1 4)`, `(range 0.4 4.9)`, `(range 0.25 1 0.25)`],
-    specialExpression: false,
   },
   repeat: {
     name: `repeat`,
@@ -71,7 +69,6 @@ module.exports = {
     ],
     description: `Returns an array with \`value\` repeated \`count\` times.`,
     examples: [`(repeat 3 10)`, `(repeat 0 10)`, `(repeat 5 "Albert")`],
-    specialExpression: false,
   },
   flatten: {
     name: `flatten`,
@@ -88,7 +85,6 @@ module.exports = {
     ],
     description: `Takes a nested array and return a flat array. If \`input\` isn't an array, an empty array is returned.`,
     examples: [`(flatten [1 2 [3 4] 5])`, `(flatten [1 2 [3 [4 [5]]] 6])`, `(flatten 12)`],
-    specialExpression: false,
   },
   mapcat: {
     name: `mapcat`,
@@ -115,6 +111,5 @@ module.exports = {
       `(defn foo [n] [(- n 1) n (+ n 1)]) (mapcat foo [1 2 3])`,
       `(mapcat #(remove even? %1) [[1 2] [2 2] [2 3]])`,
     ],
-    specialExpression: false,
   },
 }

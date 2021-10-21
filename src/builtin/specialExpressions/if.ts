@@ -1,3 +1,4 @@
+import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { asAstNode, assertLength } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
@@ -6,7 +7,7 @@ interface IfSpecialExpressionNode extends SpecialExpressionNode {
   name: `if`
 }
 
-export const ifSpecialExpression: BuiltinSpecialExpression = {
+export const ifSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
     const [newPosition, params] = parseTokens(tokens, position)
     return [
@@ -28,7 +29,7 @@ export const ifSpecialExpression: BuiltinSpecialExpression = {
       if (node.params.length === 3) {
         return evaluateAstNode(asAstNode(falseNode), contextStack)
       } else {
-        return undefined
+        return null
       }
     }
   },

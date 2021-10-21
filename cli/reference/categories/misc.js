@@ -14,7 +14,6 @@ module.exports = {
     ],
     description: `Result is \`true\` if no two \`values\` are equal to each other, otherwise result is \`false\`. Note that only two argument version result is negation of \`=\` function, that is \`(not= a b)\` is same as \`(not (= a b))\`.`,
     examples: [`(not= 3)`, `(not= 3 2)`, `(not= "3" 3)`, `(not= 3 3 2)`, `(not= "3" "2" "1" "0")`, `(not= 0 -0)`],
-    specialExpression: false,
   },
   '=': {
     name: `=`,
@@ -31,7 +30,6 @@ module.exports = {
     ],
     description: `Compares \`values\` according to "equal" predicate. Result is \`true\` if every specified value is equal to each other, otherwise result is \`false\`.`,
     examples: [`(= 1 1)`, `(= 1.01 1)`, `(= "1" 1)`, `(= "2" "2" "2" "2")`, `(= 2 2 1 2)`],
-    specialExpression: false,
   },
   '<': {
     name: `<`,
@@ -49,7 +47,6 @@ module.exports = {
     ],
     description: `Compares \`values\` according to "less than" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(< 0 1)`, `(< 1 1.01)`, `(< 1 1)`, `(< 1 2 2 3)`, `(< "a" "b")`, `(< [9] [1 2])`],
-    specialExpression: false,
   },
   '>': {
     name: `>`,
@@ -67,7 +64,6 @@ module.exports = {
     ],
     description: `Compares \`values\` according to "greater than" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(> 1 0)`, `(> 1.01 1)`, `(> 1 1)`, `(> 4 3 2 1)`, `(> 3 2 2 1)`],
-    specialExpression: false,
   },
   '<=': {
     name: `<=`,
@@ -85,7 +81,6 @@ module.exports = {
     ],
     description: `Compares \`values\` according to "less than or equal" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(<= 0 1)`, `(<= 1 1.01)`, `(<= 1 1)`, `(<= 1 2 3 4)`, `(<= 1 2 2 3)`],
-    specialExpression: false,
   },
   '>=': {
     name: `>=`,
@@ -103,7 +98,6 @@ module.exports = {
     ],
     description: `Compares \`values\` according to "greater than or equal" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(>= 1 0)`, `(>= 1.01 1)`, `(>= 1 1)`, `(>= 4 3 2 1)`, `(>= 3 2 2 1)`],
-    specialExpression: false,
   },
   not: {
     name: `not`,
@@ -118,18 +112,8 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Computes logical negation. Note that any other \`value\` than \`false\`, \`0\`, \`null\`, \`undefined\` and \`""\` is considered as \`true\`.`,
-    examples: [
-      `(not 3)`,
-      `(not true)`,
-      `(not "A string")`,
-      `(not 0)`,
-      `(not false)`,
-      `(not null)`,
-      `(not undefined)`,
-      `(not "")`,
-    ],
-    specialExpression: false,
+    description: `Computes logical negation. Note that any other \`value\` than \`false\`, \`0\`, \`nil\` and \`""\` is considered as \`true\`.`,
+    examples: [`(not 3)`, `(not true)`, `(not "A string")`, `(not 0)`, `(not false)`, `(not nil)`, `(not "")`],
   },
   'write!': {
     name: `write!`,
@@ -144,16 +128,15 @@ module.exports = {
         type: `array`,
       },
     ],
-    description: `It console.log the \`values\` and then returns the last element of the \`values\` array.. If called with no arguments \`undefined\` is returned.`,
+    description: `It console.log the \`values\` and then returns the last element of the \`values\` array.. If called with no arguments \`nil\` is returned.`,
     examples: [
       `(write! "A string")`,
       `(write! 100 "items")`,
       `(write! (object "a" 10))`,
       `(write! ["a" "b" "c"])`,
       `(write! (regexp "^start"))`,
-      `(write! null undefined true false)`,
+      `(write! nil true false)`,
     ],
-    specialExpression: false,
   },
   'inst-ms': {
     name: `inst-ms`,
@@ -165,7 +148,6 @@ module.exports = {
     arguments: [],
     description: `Returns milliseconds elapsed since the UNIX epoch.`,
     examples: [`(inst-ms)`],
-    specialExpression: false,
   },
   'get-path': {
     name: `get-path`,
@@ -190,14 +172,13 @@ module.exports = {
       `(get-path (write! (object "a" (object "x" [1 2 3]))) "b.z[10]")`,
       `(get-path (write! [(object "x" [1 2 3])]) "[1].x[2]")`,
     ],
-    specialExpression: false,
   },
   'debug!': {
     name: `debug!`,
     category: `Misc`,
     linkName: `debug_exclamation`,
     returns: {
-      type: `undefined`,
+      type: `any`,
     },
     arguments: [
       {
@@ -207,7 +188,6 @@ module.exports = {
     ],
     description: `If no params, prints context stack, otherwise prints \`value\` details.`,
     examples: [`(debug!), (debug! #(> %1 2))`],
-    specialExpression: false,
   },
   boolean: {
     name: `boolean`,
@@ -223,8 +203,7 @@ module.exports = {
       },
     ],
     description: `Coerces \`value\` to boolean.`,
-    examples: [`(boolean 0)`, `(boolean 1)`, `(boolean null)`, `(boolean "Albert")`],
-    specialExpression: false,
+    examples: [`(boolean 0)`, `(boolean 1)`, `(boolean nil)`, `(boolean "Albert")`],
   },
   compare: {
     name: `compare`,
@@ -254,7 +233,6 @@ module.exports = {
       `(compare {"a" 1} [2 3])`,
       `(compare + -)`,
     ],
-    specialExpression: false,
   },
   assert: {
     name: `assert`,
@@ -275,8 +253,7 @@ module.exports = {
       },
     ],
     description: `If \`value\` is falsy it throws AssertionError with \`message\`. If no \`message\` is provided, message is set to \`value\`.`,
-    examples: [`(assert 0 "Expected a positive value")`, `(assert false)`, `(assert 1)`],
-    specialExpression: false,
+    examples: [`(try (assert 0 "Expected a positive value") ((e) e))`],
   },
   'lispish-version': {
     name: `lispish-version`,
@@ -288,7 +265,6 @@ module.exports = {
     arguments: [],
     description: `Returns the lispish version.`,
     examples: [`(lispish-version)`],
-    specialExpression: false,
   },
   'equal?': {
     name: `equal?`,
@@ -310,10 +286,9 @@ module.exports = {
     description: `Returns true if \`a\` and \`b\` are structually equal.`,
     examples: [
       `(equal? {"a" 10 "b" 20} {"b" 20 "a" 10})`,
-      `(equal? [1 true null undefined] [1 true null undefined])`,
+      `(equal? [1 true nil] [1 true nil])`,
       `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10})`,
       `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10})`,
     ],
-    specialExpression: false,
   },
 }

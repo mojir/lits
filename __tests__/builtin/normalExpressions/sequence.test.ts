@@ -6,16 +6,16 @@ beforeEach(() => {
   lispish = new Lispish()
 })
 
-describe(`array functions`, () => {
+describe(`sequence functions`, () => {
   describe(`nth`, () => {
     test(`array samples`, () => {
       expect(lispish.run(`(nth [1 2 3] 1)`)).toBe(2)
-      expect(lispish.run(`(nth [1 2 3] 3)`)).toBeUndefined()
-      expect(lispish.run(`(nth [1 2 3] -1)`)).toBeUndefined()
-      expect(lispish.run(`(nth [1 2 3] -4)`)).toBeUndefined()
+      expect(lispish.run(`(nth [1 2 3] 3)`)).toBeNull()
+      expect(lispish.run(`(nth [1 2 3] -1)`)).toBeNull()
+      expect(lispish.run(`(nth [1 2 3] -4)`)).toBeNull()
       expect(() => lispish.run(`(nth)`)).toThrow()
       expect(() => lispish.run(`(nth (object) 1)`)).toThrow()
-      expect(() => lispish.run(`(nth null 2)`)).toThrow()
+      expect(() => lispish.run(`(nth nil 2)`)).toThrow()
       expect(() => lispish.run(`(nth [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(nth [1 2 3] 1 2)`)).toThrow()
     })
@@ -23,9 +23,9 @@ describe(`array functions`, () => {
     test(`string samples`, () => {
       expect(lispish.run(`(nth "A string" 1)`)).toBe(` `)
       expect(lispish.run(`(nth "A string" 3)`)).toBe(`t`)
-      expect(lispish.run(`(nth "A string" -3)`)).toBeUndefined()
-      expect(lispish.run(`(nth "A string" 30)`)).toBeUndefined()
-      expect(lispish.run(`(nth "A string" -30)`)).toBeUndefined()
+      expect(lispish.run(`(nth "A string" -3)`)).toBeNull()
+      expect(lispish.run(`(nth "A string" 30)`)).toBeNull()
+      expect(lispish.run(`(nth "A string" -30)`)).toBeNull()
       expect(() => lispish.run(`(nth "A string")`)).toThrow()
       expect(() => lispish.run(`(nth "A string" 1 2)`)).toThrow()
     })
@@ -66,7 +66,7 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(slice [1 2 3] 1 2 3)`)).toThrow()
       expect(() => lispish.run(`(slice)`)).toThrow()
       expect(() => lispish.run(`(slice (object) 1)`)).toThrow()
-      expect(() => lispish.run(`(slice null 2)`)).toThrow()
+      expect(() => lispish.run(`(slice nil 2)`)).toThrow()
     })
   })
 
@@ -148,7 +148,7 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(filter number? [1 "2" 3])`)).toEqual([1, 3])
       expect(lispish.run(`(filter number? [])`)).toEqual([])
-      expect(lispish.run(`(filter null? [1 "2" 3])`)).toEqual([])
+      expect(lispish.run(`(filter nil? [1 "2" 3])`)).toEqual([])
       expect(lispish.run(`(filter (fn [x] (zero? (mod x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([0, 3, 6])
       expect(lispish.run(`(filter (fn [x] (>= x "a")) "aAbBcC")`)).toBe(`abc`)
       expect(() => lispish.run(`(filter +)`)).toThrow()
@@ -160,11 +160,11 @@ describe(`array functions`, () => {
   describe(`position`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(position number? ["1" "2" 3])`)).toEqual(2)
-      expect(lispish.run(`(position number? ["1" "2" "3"])`)).toBeUndefined()
-      expect(lispish.run(`(position number? [])`)).toBeUndefined()
+      expect(lispish.run(`(position number? ["1" "2" "3"])`)).toBeNull()
+      expect(lispish.run(`(position number? [])`)).toBeNull()
       expect(lispish.run(`(position (fn [x] (zero? (mod x 3))) [1 2 3 4 5 6 7])`)).toEqual(2)
       expect(lispish.run(`(position (fn [x] (>= x "a")) "Aa")`)).toBe(1)
-      expect(lispish.run(`(position (fn [x] (= x "z")) "Aa")`)).toBeUndefined()
+      expect(lispish.run(`(position (fn [x] (= x "z")) "Aa")`)).toBeNull()
       expect(() => lispish.run(`(position +)`)).toThrow()
       expect(() => lispish.run(`(position)`)).toThrow()
       expect(() => lispish.run(`(position number? [1] 2)`)).toThrow()
@@ -174,12 +174,12 @@ describe(`array functions`, () => {
   describe(`index-of`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(index-of ["1" "2" 3] "2")`)).toEqual(1)
-      expect(lispish.run(`(index-of ["1" "2" "3"] "4")`)).toBeUndefined()
-      expect(lispish.run(`(index-of [] 1)`)).toBeUndefined()
+      expect(lispish.run(`(index-of ["1" "2" "3"] "4")`)).toBeNull()
+      expect(lispish.run(`(index-of [] 1)`)).toBeNull()
       expect(lispish.run(`(index-of "Albert" "l")`)).toBe(1)
       expect(lispish.run(`(index-of "Albert" "ert")`)).toBe(3)
-      expect(lispish.run(`(index-of "Albert" "z")`)).toBeUndefined()
-      expect(lispish.run(`(index-of [1] 2)`)).toBeUndefined()
+      expect(lispish.run(`(index-of "Albert" "z")`)).toBeNull()
+      expect(lispish.run(`(index-of [1] 2)`)).toBeNull()
       expect(() => lispish.run(`(index-of +)`)).toThrow()
       expect(() => lispish.run(`(index-of)`)).toThrow()
     })
@@ -188,12 +188,12 @@ describe(`array functions`, () => {
   describe(`some`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(some number? ["1" "2" 3])`)).toBe(3)
-      expect(lispish.run(`(some number? ["1" "2" "3"])`)).toBeUndefined()
-      expect(lispish.run(`(some number? [])`)).toBeUndefined()
+      expect(lispish.run(`(some number? ["1" "2" "3"])`)).toBeNull()
+      expect(lispish.run(`(some number? [])`)).toBeNull()
       expect(lispish.run(`(some (fn [x] (zero? (mod x 3))) [1 2 3 4 5 6 7])`)).toBe(3)
 
       expect(lispish.run(`(some (fn [x] (>= x "a")) "Aa")`)).toBe(`a`)
-      expect(lispish.run(`(some (fn [x] (>= x "z")) "Aa")`)).toBeUndefined()
+      expect(lispish.run(`(some (fn [x] (>= x "z")) "Aa")`)).toBeNull()
 
       expect(() => lispish.run(`(some +)`)).toThrow()
       expect(() => lispish.run(`(some)`)).toThrow()
@@ -228,7 +228,7 @@ describe(`array functions`, () => {
           `,
         ),
       ).toEqual(`267`)
-      expect(lispish.run(`(map null? [1 "2" 3])`)).toEqual([false, false, false])
+      expect(lispish.run(`(map nil? [1 "2" 3])`)).toEqual([false, false, false])
       expect(lispish.run(`(map (fn [x] (zero? (mod x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([
         true,
         false,
@@ -251,16 +251,15 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(first [1 2 3])`)).toEqual(1)
       expect(lispish.run(`(first ["1"])`)).toEqual(`1`)
-      expect(lispish.run(`(first [])`)).toBeUndefined()
+      expect(lispish.run(`(first [])`)).toBeNull()
       expect(lispish.run(`(first "AB")`)).toBe(`A`)
       expect(lispish.run(`(first "A")`)).toBe(`A`)
-      expect(lispish.run(`(first "")`)).toBeUndefined()
+      expect(lispish.run(`(first "")`)).toBeNull()
 
       expect(() => lispish.run(`(first`)).toThrow()
       expect(() => lispish.run(`(first true)`)).toThrow()
       expect(() => lispish.run(`(first false)`)).toThrow()
-      expect(() => lispish.run(`(first null)`)).toThrow()
-      expect(() => lispish.run(`(first undefined)`)).toThrow()
+      expect(() => lispish.run(`(first nil)`)).toThrow()
       expect(() => lispish.run(`(first (object))`)).toThrow()
       expect(() => lispish.run(`(first 10)`)).toThrow()
     })
@@ -269,19 +268,18 @@ describe(`array functions`, () => {
   describe(`second`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(second [1 2 3])`)).toEqual(2)
-      expect(lispish.run(`(second ["1"])`)).toBeUndefined()
-      expect(lispish.run(`(second [])`)).toBeUndefined()
+      expect(lispish.run(`(second ["1"])`)).toBeNull()
+      expect(lispish.run(`(second [])`)).toBeNull()
 
       expect(lispish.run(`(second "ABC")`)).toBe(`B`)
       expect(lispish.run(`(second "AB")`)).toBe(`B`)
-      expect(lispish.run(`(second "A")`)).toBeUndefined()
-      expect(lispish.run(`(second "")`)).toBeUndefined()
+      expect(lispish.run(`(second "A")`)).toBeNull()
+      expect(lispish.run(`(second "")`)).toBeNull()
 
       expect(() => lispish.run(`(second`)).toThrow()
       expect(() => lispish.run(`(second true)`)).toThrow()
       expect(() => lispish.run(`(second false)`)).toThrow()
-      expect(() => lispish.run(`(second null)`)).toThrow()
-      expect(() => lispish.run(`(second undefined)`)).toThrow()
+      expect(() => lispish.run(`(second nil)`)).toThrow()
       expect(() => lispish.run(`(second (object))`)).toThrow()
       expect(() => lispish.run(`(second 10)`)).toThrow()
     })
@@ -301,8 +299,7 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(reverse`)).toThrow()
       expect(() => lispish.run(`(reverse true)`)).toThrow()
       expect(() => lispish.run(`(reverse false)`)).toThrow()
-      expect(() => lispish.run(`(reverse null)`)).toThrow()
-      expect(() => lispish.run(`(reverse undefined)`)).toThrow()
+      expect(() => lispish.run(`(reverse nil)`)).toThrow()
       expect(() => lispish.run(`(reverse (object))`)).toThrow()
       expect(() => lispish.run(`(reverse 10)`)).toThrow()
     })
@@ -319,16 +316,15 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(last [1 2 3])`)).toEqual(3)
       expect(lispish.run(`(last ["1"])`)).toEqual(`1`)
-      expect(lispish.run(`(last [])`)).toBeUndefined()
+      expect(lispish.run(`(last [])`)).toBeNull()
       expect(lispish.run(`(last "Albert")`)).toBe(`t`)
       expect(lispish.run(`(last "1")`)).toBe(`1`)
-      expect(lispish.run(`(last "")`)).toBeUndefined()
+      expect(lispish.run(`(last "")`)).toBeNull()
 
       expect(() => lispish.run(`(last`)).toThrow()
       expect(() => lispish.run(`(last true)`)).toThrow()
       expect(() => lispish.run(`(last false)`)).toThrow()
-      expect(() => lispish.run(`(last null)`)).toThrow()
-      expect(() => lispish.run(`(last undefined)`)).toThrow()
+      expect(() => lispish.run(`(last nil)`)).toThrow()
       expect(() => lispish.run(`(last (object))`)).toThrow()
       expect(() => lispish.run(`(last 10)`)).toThrow()
     })
@@ -347,8 +343,7 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(rest`)).toThrow()
       expect(() => lispish.run(`(rest true)`)).toThrow()
       expect(() => lispish.run(`(rest false)`)).toThrow()
-      expect(() => lispish.run(`(rest null)`)).toThrow()
-      expect(() => lispish.run(`(rest undefined)`)).toThrow()
+      expect(() => lispish.run(`(rest nil)`)).toThrow()
       expect(() => lispish.run(`(rest (object))`)).toThrow()
       expect(() => lispish.run(`(rest 10)`)).toThrow()
     })
@@ -368,12 +363,11 @@ describe(`array functions`, () => {
 
       expect(() => lispish.run(`(nthrest [1 2 3]`)).toThrow()
       expect(() => lispish.run(`(nthrest [1 2 3] "1"`)).toThrow()
-      expect(() => lispish.run(`(nthrest [1 2 3] null`)).toThrow()
+      expect(() => lispish.run(`(nthrest [1 2 3] nil`)).toThrow()
       expect(() => lispish.run(`(nthrest [1 2 3] {}`)).toThrow()
       expect(() => lispish.run(`(nthrest true)`)).toThrow()
       expect(() => lispish.run(`(nthrest false)`)).toThrow()
-      expect(() => lispish.run(`(nthrest null)`)).toThrow()
-      expect(() => lispish.run(`(nthrest undefined)`)).toThrow()
+      expect(() => lispish.run(`(nthrest nil)`)).toThrow()
       expect(() => lispish.run(`(nthrest (object))`)).toThrow()
       expect(() => lispish.run(`(nthrest 10)`)).toThrow()
     })
@@ -383,17 +377,16 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(next [1 2 3])`)).toEqual([2, 3])
       expect(lispish.run(`(next [1 2])`)).toEqual([2])
-      expect(lispish.run(`(next ["1"])`)).toBeUndefined()
-      expect(lispish.run(`(next [])`)).toBeUndefined()
+      expect(lispish.run(`(next ["1"])`)).toBeNull()
+      expect(lispish.run(`(next [])`)).toBeNull()
       expect(lispish.run(`(next "Albert")`)).toEqual(`lbert`)
-      expect(lispish.run(`(next "A")`)).toBeUndefined()
-      expect(lispish.run(`(next "")`)).toBeUndefined()
+      expect(lispish.run(`(next "A")`)).toBeNull()
+      expect(lispish.run(`(next "")`)).toBeNull()
 
       expect(() => lispish.run(`(next`)).toThrow()
       expect(() => lispish.run(`(next true)`)).toThrow()
       expect(() => lispish.run(`(next false)`)).toThrow()
-      expect(() => lispish.run(`(next null)`)).toThrow()
-      expect(() => lispish.run(`(next undefined)`)).toThrow()
+      expect(() => lispish.run(`(next nil)`)).toThrow()
       expect(() => lispish.run(`(next (object))`)).toThrow()
       expect(() => lispish.run(`(next 10)`)).toThrow()
     })
@@ -402,24 +395,23 @@ describe(`array functions`, () => {
   describe(`nthnext`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(nthnext [1 2 3 4 5 6 7 8 9] 4)`)).toEqual([5, 6, 7, 8, 9])
-      expect(lispish.run(`(nthnext [1 2 3 4 5 6 7 8 9] 10)`)).toBeUndefined()
+      expect(lispish.run(`(nthnext [1 2 3 4 5 6 7 8 9] 10)`)).toBeNull()
       expect(lispish.run(`(nthnext [1 2 3 4 5 6 7 8 9] 4.1)`)).toEqual([6, 7, 8, 9])
       expect(lispish.run(`(nthnext [1 2 3 4 5 6 7 8 9] -1)`)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9])
       expect(lispish.run(`(nthnext [1 2] 0)`)).toEqual([1, 2])
-      expect(lispish.run(`(nthnext ["1"] 1)`)).toBeUndefined()
-      expect(lispish.run(`(nthnext [] 0)`)).toBeUndefined()
+      expect(lispish.run(`(nthnext ["1"] 1)`)).toBeNull()
+      expect(lispish.run(`(nthnext [] 0)`)).toBeNull()
       expect(lispish.run(`(nthnext "Albert" 3)`)).toBe(`ert`)
-      expect(lispish.run(`(nthnext "A" 1)`)).toBeUndefined()
-      expect(lispish.run(`(nthnext "" 0)`)).toBeUndefined()
+      expect(lispish.run(`(nthnext "A" 1)`)).toBeNull()
+      expect(lispish.run(`(nthnext "" 0)`)).toBeNull()
 
       expect(() => lispish.run(`(nthnext [1 2 3]`)).toThrow()
       expect(() => lispish.run(`(nthnext [1 2 3] "1"`)).toThrow()
-      expect(() => lispish.run(`(nthnext [1 2 3] null`)).toThrow()
+      expect(() => lispish.run(`(nthnext [1 2 3] nil`)).toThrow()
       expect(() => lispish.run(`(nthnext [1 2 3] {}`)).toThrow()
       expect(() => lispish.run(`(nthnext true)`)).toThrow()
       expect(() => lispish.run(`(nthnext false)`)).toThrow()
-      expect(() => lispish.run(`(nthnext null)`)).toThrow()
-      expect(() => lispish.run(`(nthnext undefined)`)).toThrow()
+      expect(() => lispish.run(`(nthnext nil)`)).toThrow()
       expect(() => lispish.run(`(nthnext (object))`)).toThrow()
       expect(() => lispish.run(`(nthnext 10)`)).toThrow()
     })
@@ -436,8 +428,7 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(cons 1 "1")`)).toThrow()
       expect(() => lispish.run(`(cons 1 true)`)).toThrow()
       expect(() => lispish.run(`(cons 1 false)`)).toThrow()
-      expect(() => lispish.run(`(cons 1 null)`)).toThrow()
-      expect(() => lispish.run(`(cons 1 undefined)`)).toThrow()
+      expect(() => lispish.run(`(cons 1 nil)`)).toThrow()
       expect(() => lispish.run(`(cons 1 (object))`)).toThrow()
       expect(() => lispish.run(`(cons 1 10)`)).toThrow()
     })
@@ -456,8 +447,7 @@ describe(`array functions`, () => {
       expect(() => lispish.run(`(push "Albert" "!?")`)).toThrow()
       expect(() => lispish.run(`(push [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(push (object) 0 "2")`)).toThrow()
-      expect(() => lispish.run(`(push null 0 "2")`)).toThrow()
-      expect(() => lispish.run(`(push undefined 0 "2")`)).toThrow()
+      expect(() => lispish.run(`(push nil 0 "2")`)).toThrow()
       expect(() => lispish.run(`(push true 0 "2")`)).toThrow()
       expect(() => lispish.run(`(push false 0 "2")`)).toThrow()
       expect(() => lispish.run(`(push 1 0 "2")`)).toThrow()
@@ -470,7 +460,6 @@ describe(`array functions`, () => {
   describe(`pop`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(pop [1 2 3])`)).toEqual([1, 2])
-      expect(lispish.run(`(pop [1 2 undefined])`)).toEqual([1, 2])
       expect(lispish.run(`(pop [])`)).toEqual([])
       expect(lispish.run(`(def l [1 2 3]) (pop l) l`)).toEqual([1, 2, 3])
       expect(lispish.run(`(def l [1 2 3]) (pop l)`)).toEqual([1, 2])
@@ -480,8 +469,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(pop "")`)).toBe(``)
 
       expect(() => lispish.run(`(pop (object))`)).toThrow()
-      expect(() => lispish.run(`(pop null)`)).toThrow()
-      expect(() => lispish.run(`(pop undefined)`)).toThrow()
+      expect(() => lispish.run(`(pop nil)`)).toThrow()
       expect(() => lispish.run(`(pop true)`)).toThrow()
       expect(() => lispish.run(`(pop false)`)).toThrow()
       expect(() => lispish.run(`(pop 1)`)).toThrow()
@@ -499,8 +487,7 @@ describe(`array functions`, () => {
 
       expect(() => lispish.run(`(unshift [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(unshift (object) 0 "2")`)).toThrow()
-      expect(() => lispish.run(`(unshift null 0 "2")`)).toThrow()
-      expect(() => lispish.run(`(unshift undefined 0 "2")`)).toThrow()
+      expect(() => lispish.run(`(unshift nil 0 "2")`)).toThrow()
       expect(() => lispish.run(`(unshift true 0 "2")`)).toThrow()
       expect(() => lispish.run(`(unshift false 0 "2")`)).toThrow()
       expect(() => lispish.run(`(unshift 1 0 "2")`)).toThrow()
@@ -513,7 +500,6 @@ describe(`array functions`, () => {
   describe(`shift`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(shift [1 2 3])`)).toEqual([2, 3])
-      expect(lispish.run(`(shift [undefined 2 3])`)).toEqual([2, 3])
       expect(lispish.run(`(shift [])`)).toEqual([])
       expect(lispish.run(`(def l [1 2 3]) (shift l) l`)).toEqual([1, 2, 3])
       expect(lispish.run(`(def l [1 2 3]) (shift l)`)).toEqual([2, 3])
@@ -523,8 +509,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(shift "")`)).toBe(``)
 
       expect(() => lispish.run(`(shift (object))`)).toThrow()
-      expect(() => lispish.run(`(shift null)`)).toThrow()
-      expect(() => lispish.run(`(shift undefined)`)).toThrow()
+      expect(() => lispish.run(`(shift nil)`)).toThrow()
       expect(() => lispish.run(`(shift true)`)).toThrow()
       expect(() => lispish.run(`(shift false)`)).toThrow()
       expect(() => lispish.run(`(shift 1)`)).toThrow()
@@ -541,8 +526,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(take 2.01 "Albert")`)).toEqual(`Alb`)
 
       expect(() => lispish.run(`(take 1 (object))`)).toThrow()
-      expect(() => lispish.run(`(take 1 null)`)).toThrow()
-      expect(() => lispish.run(`(take 1 undefined)`)).toThrow()
+      expect(() => lispish.run(`(take 1 nil)`)).toThrow()
       expect(() => lispish.run(`(take 1 true)`)).toThrow()
       expect(() => lispish.run(`(take 1 false)`)).toThrow()
       expect(() => lispish.run(`(take "1" "Hej")`)).toThrow()
@@ -569,8 +553,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(take-last 0.01 [1 2 3])`)).toEqual([3])
 
       expect(() => lispish.run(`(take-last (object))`)).toThrow()
-      expect(() => lispish.run(`(take-last null)`)).toThrow()
-      expect(() => lispish.run(`(take-last undefined)`)).toThrow()
+      expect(() => lispish.run(`(take-last nil)`)).toThrow()
       expect(() => lispish.run(`(take-last true)`)).toThrow()
       expect(() => lispish.run(`(take-last false)`)).toThrow()
       expect(() => lispish.run(`(take-last "1")`)).toThrow()
@@ -596,8 +579,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(take-while (fn [x] (<= x "c")) "abcdabcd")`)).toEqual(`abc`)
 
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) (object))`)).toThrow()
-      expect(() => lispish.run(`(take-while (fn [x] (< x 3)) null)`)).toThrow()
-      expect(() => lispish.run(`(take-while (fn [x] (< x 3)) undefined)`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn [x] (< x 3)) nil)`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) true)`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) false)`)).toThrow()
       expect(() => lispish.run(`(take-while 10 [1 2 3])`)).toThrow()
@@ -625,8 +607,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(drop -2 "Albert")`)).toEqual(`Albert`)
 
       expect(() => lispish.run(`(drop 1 (object))`)).toThrow()
-      expect(() => lispish.run(`(drop 1 null)`)).toThrow()
-      expect(() => lispish.run(`(drop 1 undefined)`)).toThrow()
+      expect(() => lispish.run(`(drop 1 nil)`)).toThrow()
       expect(() => lispish.run(`(drop 1 true)`)).toThrow()
       expect(() => lispish.run(`(drop 1 false)`)).toThrow()
       expect(() => lispish.run(`(drop "1" "Hej")`)).toThrow()
@@ -655,8 +636,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(drop-last -2 "Albert")`)).toEqual(`Albert`)
 
       expect(() => lispish.run(`(drop-last 1 (object))`)).toThrow()
-      expect(() => lispish.run(`(drop-last 1 null)`)).toThrow()
-      expect(() => lispish.run(`(drop-last 1 undefined)`)).toThrow()
+      expect(() => lispish.run(`(drop-last 1 nil)`)).toThrow()
       expect(() => lispish.run(`(drop-last 1 true)`)).toThrow()
       expect(() => lispish.run(`(drop-last 1 false)`)).toThrow()
       expect(() => lispish.run(`(drop-last "1" "Hej")`)).toThrow()
@@ -673,8 +653,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(drop-while (fn [x] (<= x "c")) "abcdab")`)).toEqual(`dab`)
 
       expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) (object))`)).toThrow()
-      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) null)`)).toThrow()
-      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) undefined)`)).toThrow()
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) nil)`)).toThrow()
       expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) true)`)).toThrow()
       expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) false)`)).toThrow()
       expect(() => lispish.run(`(drop-while 10 [1 2 3])`)).toThrow()
@@ -703,7 +682,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(sort "Albert")`)).toBe(`Abelrt`)
       expect(
         lispish.run(
-          `(sort [1 true 2 false  -100 null undefined (regexp "abc") (regexp "ABC") [] [1 2 3] [0 1 2] [0 0 0 0] {"a" 1} {} "Albert" "albert"])`,
+          `(sort [1 true 2 false  -100 nil (regexp "abc") (regexp "ABC") [] [1 2 3] [0 1 2] [0 0 0 0] {"a" 1} {} "Albert" "albert"])`,
         ),
       ).toMatchSnapshot()
 
@@ -726,28 +705,28 @@ describe(`array functions`, () => {
     })
   })
 
-  describe(`random-sample`, () => {
+  describe(`random-sample!`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(random-sample 1 [1 2 3])`)).toEqual([1, 2, 3])
-      expect(lispish.run(`(random-sample 1.9 [1 2 3])`)).toEqual([1, 2, 3])
-      expect(lispish.run(`(random-sample 0 [1 2 3])`)).toEqual([])
-      expect(lispish.run(`(random-sample -1.9 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(random-sample! 1 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(random-sample! 1.9 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(random-sample! 0 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(random-sample! -1.9 [1 2 3])`)).toEqual([])
 
-      expect(lispish.run(`(random-sample 1 "Albert")`)).toEqual(`Albert`)
-      expect(lispish.run(`(random-sample 0 "Albert")`)).toEqual(``)
+      expect(lispish.run(`(random-sample! 1 "Albert")`)).toEqual(`Albert`)
+      expect(lispish.run(`(random-sample! 0 "Albert")`)).toEqual(``)
 
-      expect(() => lispish.run(`(random-sample [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(random-sample "1" [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(random-sample 1)`)).toThrow()
+      expect(() => lispish.run(`(random-sample! [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(random-sample! "1" [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(random-sample! 1)`)).toThrow()
     })
   })
 
-  describe(`rand-nth`, () => {
+  describe(`rand-nth!`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(rand-nth [])`)).toBeUndefined()
-      expect(lispish.run(`(rand-nth "")`)).toBeUndefined()
-      expect([1, 2, 3].includes(lispish.run(`(rand-nth [1 2 3])`) as number)).toBe(true)
-      expect(typeof lispish.run(`(rand-nth "Albert")`)).toBe(`string`)
+      expect(lispish.run(`(rand-nth! [])`)).toBeNull()
+      expect(lispish.run(`(rand-nth! "")`)).toBeNull()
+      expect([1, 2, 3].includes(lispish.run(`(rand-nth! [1 2 3])`) as number)).toBe(true)
+      expect(typeof lispish.run(`(rand-nth! "Albert")`)).toBe(`string`)
     })
   })
 

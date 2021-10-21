@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 ;(function () {
   lispish = new Lispish.Lispish()
 
@@ -173,16 +176,16 @@ function stringifyValue(value) {
       return `<function ${value.name || 'λ'}>`
     }
   }
+  if (value === null) {
+    return `nil`
+  }
   if (typeof value === 'object' && value instanceof RegExp) {
     return `${value}`
   }
   if (typeof value === 'object' && value instanceof Error) {
     return value.toString()
   }
-  return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
-    /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
-    'undefined',
-  )
+  return JSON.stringify(value)
 }
 
 function resetPlayground() {

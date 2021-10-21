@@ -1,12 +1,15 @@
+import { Any } from '../interface'
+import { toAny } from '../utils'
+
 const delimiterRegExp = /[[.]/
-export function getPath(obj: unknown, path: string): unknown {
+export function getPath(obj: Any, path: string): Any {
   const destructedPath = destructPath(path)
   for (const part of destructedPath) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      obj = (obj as any)[part]
+      obj = toAny((obj as any)[part])
     } catch {
-      return undefined
+      return null
     }
   }
 

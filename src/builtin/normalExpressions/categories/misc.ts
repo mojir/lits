@@ -1,7 +1,15 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry } from '../../../evaluator/interface'
-import { Arr } from '../../../interface'
-import { assertLength, assertObjectOrArray, assertString, compare, deepEqual, isLispishFunction } from '../../../utils'
+import { Any, Arr } from '../../../interface'
+import {
+  asAny,
+  assertLength,
+  assertObjectOrArray,
+  assertString,
+  compare,
+  deepEqual,
+  isLispishFunction,
+} from '../../../utils'
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
@@ -35,7 +43,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
   'equal?': {
     evaluate: ([a, b]: Arr): boolean => {
-      return deepEqual(a, b)
+      return deepEqual(asAny(a), asAny(b))
     },
     validate: node => assertLength({ min: 1 }, node),
   },
@@ -95,7 +103,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   'get-path': {
-    evaluate: ([first, second]: Arr): unknown => {
+    evaluate: ([first, second]: Arr): Any => {
       assertObjectOrArray(first)
       assertString(second)
       return getPath(first, second)
@@ -113,27 +121,27 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(0, node),
   },
   'write!': {
-    evaluate: (params: Arr): unknown => {
+    evaluate: (params: Arr): Any => {
       // eslint-disable-next-line no-console
       console.log(...params)
 
       if (params.length > 0) {
-        return params[params.length - 1]
+        return asAny(params[params.length - 1])
       }
 
-      return undefined
+      return null
     },
   },
   'debug!': {
-    evaluate: (params, contextStack): undefined => {
+    evaluate: (params, contextStack): Any => {
       if (params.length === 0) {
         // eslint-disable-next-line no-console
-        console.warn(`*** LISPISH DEBUG ***\n\n${contextstackToString(contextStack)}`)
-        return undefined
+        console.warn(`*** LISPISH DEBUG ***\n${contextstackToString(contextStack)}\n`)
+        return null
       }
       // eslint-disable-next-line no-console
-      console.warn(`*** LISPISH DEBUG ***\n\n${JSON.stringify(params[0], null, 2)}`)
-      return undefined
+      console.warn(`*** LISPISH DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
+      return asAny(params[0])
     },
     validate: node => assertLength({ max: 1 }, node),
   },
@@ -150,19 +158,19 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   assert: {
-    evaluate: (params): unknown => {
+    evaluate: (params): Any => {
       const value = params[0]
       const message = params.length === 2 ? params[1] : `${value}`
       assertString(message)
       if (!value) {
         throw new AssertionError(message)
       }
-      return value
+      return asAny(value)
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },
   'lispish-version': {
-    evaluate: (): unknown => {
+    evaluate: (): Any => {
       return version
     },
     validate: node => assertLength(0, node),

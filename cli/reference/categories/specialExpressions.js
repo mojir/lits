@@ -158,7 +158,7 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, undefined is returned.`,
+    description: `Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, \`nil\` is returned.`,
     examples: [
       `(when-let [a (> (count "Albert") 4)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
       `(when-let [a (> (count "Albert") 10)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
@@ -306,8 +306,8 @@ module.exports = {
     ],
     description: `Throws \`UserDefinedError\` with message set to \`message\` evaluated. \`message\` must evaluate to a \`string\`.`,
     examples: [
-      `(throw "You shall not pass!")`,
-      `(throw (subs "You shall not pass!" 0 3))`,
+      `(try (throw "You shall not pass!") ((e) e))`,
+      `(try (throw (subs "You shall not pass!" 0 3)) ((e) e))`,
       `(try (throw "You shall not pass!") ((error) error))`,
     ],
     specialExpression: true,
@@ -334,7 +334,7 @@ module.exports = {
         description: `optional`,
       },
     ],
-    description: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy. I test is falsy and no \`else\` branch exists, undefined is returned.`,
+    description: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy. I test is falsy and no \`else\` branch exists, \`nil\` is returned.`,
     examples: [
       `(if true (write! "TRUE") (write! "FALSE"))`,
       `(if false (write! "TRUE") (write! "FALSE"))`,
@@ -365,7 +365,7 @@ module.exports = {
         description: `optional`,
       },
     ],
-    description: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is falsy. I test is falsy and no \`else\` branch exists, undefined is returned.`,
+    description: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is falsy. I test is falsy and no \`else\` branch exists, \`nil\` is returned.`,
     examples: [
       `(if-not true (write! "TRUE") (write! "FALSE"))`,
       `(if-not false (write! "TRUE") (write! "FALSE"))`,
@@ -387,10 +387,10 @@ module.exports = {
         type: `variants`,
       },
     ],
-    description: `Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, \`undefined\` is returned.`,
+    description: `Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, \`nil\` is returned.`,
     examples: [
-      `(cond false (write! "FALSE") null (write! "NULL") true (write! "TRUE"))`,
-      `(cond false (write! "FALSE") null (write! "NULL"))`,
+      `(cond false (write! "FALSE") nil (write! "nil") true (write! "TRUE"))`,
+      `(cond false (write! "FALSE") nil (write! "nil"))`,
     ],
     specialExpression: true,
   },
@@ -412,7 +412,7 @@ module.exports = {
         description: `zero or more`,
       },
     ],
-    description: `If \`test\` yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a falsy value, the forms are not evaluated, and \`undefined\` is returned. If no \`form\` is provided, undefined is returned.`,
+    description: `If \`test\` yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a falsy value, the forms are not evaluated, and \`nil\` is returned. If no \`form\` is provided, \`nil\` is returned.`,
     examples: [
       `(when true (write! "Hi") (write! "There"))`,
       `(when false (write! "Hi") (write! "There"))`,
@@ -439,7 +439,7 @@ module.exports = {
         description: `zero or more`,
       },
     ],
-    description: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a truthy value, the forms are not evaluated, and \`undefined\` is returned. If no \`form\` is provided, undefined is returned.`,
+    description: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a truthy value, the forms are not evaluated, and \`nil\` is returned. If no \`form\` is provided, \`nil\` is returned.`,
     examples: [
       `(when-not true (write! "Hi") (write! "There"))`,
       `(when-not false (write! "Hi") (write! "There"))`,
@@ -470,7 +470,7 @@ module.exports = {
     category: `Special expression`,
     linkName: `recur`,
     returns: {
-      type: `undefined`,
+      type: `nil`,
     },
     arguments: [
       {

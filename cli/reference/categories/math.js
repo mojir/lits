@@ -15,7 +15,6 @@ module.exports = {
     ],
     description: `Computes sum of \`numbers\`.`,
     examples: [`(+)`, `(+ 1)`, `(+ 2 4)`, `(+ 1 2 3 4)`, `(+ (+ 2 3) (+ 5 6))`],
-    specialExpression: false,
   },
   '-': {
     name: `-`,
@@ -33,7 +32,6 @@ module.exports = {
     ],
     description: `Computes difference between first value and sum of the rest. When called with only one argument, it does negation.`,
     examples: [`(-)`, `(- 1)`, `(- 2 4)`, `(- 4 3 2 1)`],
-    specialExpression: false,
   },
   '*': {
     name: `*`,
@@ -51,7 +49,6 @@ module.exports = {
     ],
     description: `Computes product of \`numbers\`.`,
     examples: [`(*)`, `(* 2)`, `(* 2 4)`, `(* 1 2 3 4)`],
-    specialExpression: false,
   },
   '/': {
     name: `/`,
@@ -69,7 +66,6 @@ module.exports = {
     ],
     description: `Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining \`numbers\`.`,
     examples: [`(/)`, `(/ 2)`, `(/ 2 4)`, `(/ 4 3 2 1)`],
-    specialExpression: false,
   },
   mod: {
     name: `mod`,
@@ -90,7 +86,6 @@ module.exports = {
     ],
     description: `Modulus of \`dividend\` and \`divisor\`. Truncates toward negative infinity.`,
     examples: [`(mod 5 3)`, `(mod 5.2 3.1)`, `(mod -5 3)`, `(mod 5 -3)`, `(mod -5 -3)`],
-    specialExpression: false,
   },
   rem: {
     name: `rem`,
@@ -111,7 +106,6 @@ module.exports = {
     ],
     description: `Remainder of dividing \`dividend\` and \`divisor\`.`,
     examples: [`(rem 5 3)`, `(rem 5.2 3.1)`, `(rem -5 3)`, `(rem 5 -3)`, `(rem -5 -3)`],
-    specialExpression: false,
   },
   quot: {
     name: `quot`,
@@ -132,7 +126,6 @@ module.exports = {
     ],
     description: `Quotient of dividing \`dividend\` and \`divisor\`.`,
     examples: [`(quot 5 3)`, `(quot 5.2 3.1)`, `(quot -5 3)`, `(quot 5 -3)`, `(quot -5 -3)`],
-    specialExpression: false,
   },
   inc: {
     name: `inc`,
@@ -149,7 +142,6 @@ module.exports = {
     ],
     description: `Adds one to \`number\`.`,
     examples: [`(inc 0)`, `(inc 1)`, `(inc 100.1)`],
-    specialExpression: false,
   },
   dec: {
     name: `dec`,
@@ -166,7 +158,6 @@ module.exports = {
     ],
     description: `Subtracts one from \`number\`.`,
     examples: [`(dec 0)`, `(dec 1)`, `(dec 100.1)`],
-    specialExpression: false,
   },
   sqrt: {
     name: `sqrt`,
@@ -183,7 +174,6 @@ module.exports = {
     ],
     description: `Computes square root of \`number\`.`,
     examples: [`(sqrt 0)`, `(sqrt 9)`, `(sqrt 2)`],
-    specialExpression: false,
   },
   cbrt: {
     name: `cbrt`,
@@ -200,7 +190,6 @@ module.exports = {
     ],
     description: `Computes cube root of \`number\`.`,
     examples: [`(cbrt 0)`, `(cbrt 27)`, `(cbrt 2)`, `(cbrt 1)`],
-    specialExpression: false,
   },
   pow: {
     name: `pow`,
@@ -221,7 +210,6 @@ module.exports = {
     ],
     description: `Computes returns \`base-number\` raised to the \`power-number\`.`,
     examples: [`(pow 2 3)`, `(pow 2 0)`, `(pow 2 -3)`, `(pow -2 3)`, `(pow -2 -3)`],
-    specialExpression: false,
   },
   exp: {
     name: `exp`,
@@ -238,7 +226,6 @@ module.exports = {
     ],
     description: `Computes \`e\` rasied to the \`power-number\`.`,
     examples: [`(exp 3)`, `(exp 0)`, `(exp -3)`, `(exp 3)`],
-    specialExpression: false,
   },
   round: {
     name: `round`,
@@ -268,7 +255,6 @@ module.exports = {
       `(round -2.501)`,
       `(round 1.23456789 4)`,
     ],
-    specialExpression: false,
   },
   trunc: {
     name: `trunc`,
@@ -285,7 +271,6 @@ module.exports = {
     ],
     description: `Returns the integer part of \`number\` by removing any fractional digits.`,
     examples: [`(trunc 2)`, `(trunc 2.49)`, `(trunc 2.5)`, `(trunc -2.49)`, `(trunc -2.5)`, `(trunc -2.501)`],
-    specialExpression: false,
   },
   floor: {
     name: `floor`,
@@ -302,7 +287,6 @@ module.exports = {
     ],
     description: `Returns the largest \`integer\` less than or equal to \`number\`.`,
     examples: [`(floor 2)`, `(floor 2.49)`, `(floor 2.5)`, `(floor -2.49)`, `(floor -2.5)`, `(floor -2.501)`],
-    specialExpression: false,
   },
   ceil: {
     name: `ceil`,
@@ -319,7 +303,6 @@ module.exports = {
     ],
     description: `Returns the smallest \`integer\` larger than or equal to \`number\`.`,
     examples: [`(ceil 2)`, `(ceil 2.49)`, `(ceil 2.5)`, `(ceil -2.49)`, `(ceil -2.5)`, `(ceil -2.501)`],
-    specialExpression: false,
   },
   min: {
     name: `min`,
@@ -337,7 +320,6 @@ module.exports = {
     ],
     description: `Returns the smallest number of the arguments.`,
     examples: [`(min 2 0 1)`, `(min 2 -1 1)`, `(min 2.5)`],
-    specialExpression: false,
   },
   max: {
     name: `max`,
@@ -355,7 +337,6 @@ module.exports = {
     ],
     description: `Returns the largest number of the arguments.`,
     examples: [`(max 2 0 1)`, `(max 2 -1 1)`, `(max 2.5)`],
-    specialExpression: false,
   },
   abs: {
     name: `abs`,
@@ -372,7 +353,6 @@ module.exports = {
     ],
     description: `Returns the absolute value of \`number\`.`,
     examples: [`(abs -2.3)`, `(abs 0)`, `(abs 2.5)`],
-    specialExpression: false,
   },
   sign: {
     name: `sign`,
@@ -389,7 +369,6 @@ module.exports = {
     ],
     description: `Returns \`1\` if \`number > 0\`, \`-1\` if \`number < 0\`, \`0\` if \`number = 0\` or \`-0\` if \`number = -0\`.`,
     examples: [`(sign -2.3)`, `(sign -0)`, `(sign 0)`, `(sign 12312)`],
-    specialExpression: false,
   },
   infinity: {
     name: `infinity`,
@@ -401,7 +380,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing positive infinity.`,
     examples: [`(infinity)`],
-    specialExpression: false,
   },
   '-infinity': {
     name: `-infinity`,
@@ -413,7 +391,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing negative infinity.`,
     examples: [`(-infinity)`],
-    specialExpression: false,
   },
   'max-safe-integer': {
     name: `max-safe-integer`,
@@ -425,7 +402,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing the maximum safe integer.`,
     examples: [`(max-safe-integer)`],
-    specialExpression: false,
   },
   'min-safe-integer': {
     name: `min-safe-integer`,
@@ -437,7 +413,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing the minimum safe integer.`,
     examples: [`(min-safe-integer)`],
-    specialExpression: false,
   },
   'max-value': {
     name: `max-value`,
@@ -449,7 +424,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing the maximum numeric value.`,
     examples: [`(max-value)`],
-    specialExpression: false,
   },
   'min-value': {
     name: `min-value`,
@@ -461,7 +435,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing the smallest positive numeric value.`,
     examples: [`(min-value)`],
-    specialExpression: false,
   },
   epsilon: {
     name: `epsilon`,
@@ -473,7 +446,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing the difference between 1 and the smallest floating point number greater than 1.`,
     examples: [`(epsilon)`],
-    specialExpression: false,
   },
   nan: {
     name: `nan`,
@@ -485,7 +457,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing Not-A-Number.`,
     examples: [`(nan)`],
-    specialExpression: false,
   },
   e: {
     name: `e`,
@@ -497,7 +468,6 @@ module.exports = {
     arguments: [],
     description: `Returns Euler's number, the base of natural logarithms, e.`,
     examples: [`(e)`],
-    specialExpression: false,
   },
   pi: {
     name: `pi`,
@@ -509,7 +479,6 @@ module.exports = {
     arguments: [],
     description: `Returns Pi, the ratio of the circumference of a circle to its diameter.`,
     examples: [`(pi)`],
-    specialExpression: false,
   },
   log: {
     name: `log`,
@@ -526,7 +495,6 @@ module.exports = {
     ],
     description: `Returns the natural logarithm (base e) of \`number\`.`,
     examples: [`(log 0.01)`, `(log (exp 12))`, `(log 2.5)`],
-    specialExpression: false,
   },
   log2: {
     name: `log2`,
@@ -543,7 +511,6 @@ module.exports = {
     ],
     description: `Returns the base 2 logarithm of a number.`,
     examples: [`(log2 0.01)`, `(log2 (pow 2 12))`, `(log2 2.5)`],
-    specialExpression: false,
   },
   log10: {
     name: `log10`,
@@ -560,12 +527,11 @@ module.exports = {
     ],
     description: `Returns the base 2 logarithm of a number.`,
     examples: [`(log10 0.01)`, `(log10 (pow 10 12))`, `(log10 2.5)`],
-    specialExpression: false,
   },
-  rand: {
-    name: `rand`,
+  'rand!': {
+    name: `rand!`,
     category: `Math`,
-    linkName: `rand`,
+    linkName: `rand_exclamation`,
     returns: {
       type: `number`,
     },
@@ -577,13 +543,12 @@ module.exports = {
       },
     ],
     description: `Returns a semi random number between \`0\` (inclusive) and \`number\` (default 1) (exclusive).`,
-    examples: [`(rand 1)`, `(rand 0.01)`, `(rand 2.5)`],
-    specialExpression: false,
+    examples: [`(rand! 1)`, `(rand! 0.01)`, `(rand! 2.5)`],
   },
-  'rand-int': {
-    name: `rand-int`,
+  'rand-int!': {
+    name: `rand-int!`,
     category: `Math`,
-    linkName: `rand-int`,
+    linkName: `rand-int_exclamation`,
     returns: {
       type: `number`,
     },
@@ -595,8 +560,7 @@ module.exports = {
       },
     ],
     description: `Returns a semi random integer between \`0\` (inclusive) and \`number\` (exclusive).`,
-    examples: [`(rand-int 1)`, `(rand-int 10.12)`, `(rand-int 123)`],
-    specialExpression: false,
+    examples: [`(rand-int! 1)`, `(rand-int! 10.12)`, `(rand-int! 123)`],
   },
   sin: {
     name: `sin`,
@@ -613,7 +577,6 @@ module.exports = {
     ],
     description: `Returns the sine of \`angle\`. \`angle\` must be specified in radians.`,
     examples: [`(sin 0)`, `(sin 1)`, `(sin (pi))`, `(sin -0.5)`],
-    specialExpression: false,
   },
   cos: {
     name: `cos`,
@@ -630,7 +593,6 @@ module.exports = {
     ],
     description: `Returns the cosine of \`angle\`. \`angle\` must be specified in radians.`,
     examples: [`(cos 0)`, `(cos 1)`, `(cos (pi))`, `(cos -0.5)`],
-    specialExpression: false,
   },
   tan: {
     name: `tan`,
@@ -647,7 +609,6 @@ module.exports = {
     ],
     description: `Returns the tangent of \`angle\`. \`angle\` must be specified in radians.`,
     examples: [`(tan 0)`, `(tan 1)`, `(tan (pi))`, `(tan -0.5)`],
-    specialExpression: false,
   },
   asin: {
     name: `asin`,
@@ -664,7 +625,6 @@ module.exports = {
     ],
     description: `Returns the arcsine (in radians) of \`value\`.`,
     examples: [`(asin 0)`, `(asin 1)`, `(asin -0.5)`],
-    specialExpression: false,
   },
   acos: {
     name: `acos`,
@@ -681,7 +641,6 @@ module.exports = {
     ],
     description: `Returns the arccosine (in radians) of \`value\`.`,
     examples: [`(acos 0)`, `(acos 1)`, `(acos -0.5)`],
-    specialExpression: false,
   },
   atan: {
     name: `atan`,
@@ -698,7 +657,6 @@ module.exports = {
     ],
     description: `Returns the arctangent (in radians) of \`value\`.`,
     examples: [`(atan 0)`, `(atan 1)`, `(atan -0.5)`],
-    specialExpression: false,
   },
   sinh: {
     name: `sinh`,
@@ -715,7 +673,6 @@ module.exports = {
     ],
     description: `Returns the hyperbolic sine of \`value\`.`,
     examples: [`(sinh 0)`, `(sinh 1)`, `(sinh -0.5)`],
-    specialExpression: false,
   },
   cosh: {
     name: `cosh`,
@@ -732,7 +689,6 @@ module.exports = {
     ],
     description: `Returns the hyperbolic cosine of \`value\`.`,
     examples: [`(cosh 0)`, `(cosh 1)`, `(cosh -0.5)`],
-    specialExpression: false,
   },
   tanh: {
     name: `tanh`,
@@ -749,7 +705,6 @@ module.exports = {
     ],
     description: `Returns the hyperbolic tangent of \`value\`.`,
     examples: [`(tanh 0)`, `(tanh 1)`, `(tanh -0.5)`, `(tanh 50)`],
-    specialExpression: false,
   },
   asinh: {
     name: `asinh`,
@@ -766,7 +721,6 @@ module.exports = {
     ],
     description: `Returns the hyperbolic arcsine of \`value\`.`,
     examples: [`(asinh 0)`, `(asinh 0.9)`, `(asinh -0.5)`],
-    specialExpression: false,
   },
   acosh: {
     name: `acosh`,
@@ -783,7 +737,6 @@ module.exports = {
     ],
     description: `Returns the hyperbolic arccosine of \`value\`.`,
     examples: [`(acosh 1)`, `(acosh 2)`, `(acosh 100)`],
-    specialExpression: false,
   },
   atanh: {
     name: `atanh`,
@@ -800,6 +753,5 @@ module.exports = {
     ],
     description: `Returns the hyperbolic arctangent of \`value\`.`,
     examples: [`(atanh 0)`, `(atanh 0.9)`, `(atanh -0.5)`],
-    specialExpression: false,
   },
 }

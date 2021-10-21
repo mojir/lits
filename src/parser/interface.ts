@@ -1,5 +1,6 @@
 import { SpecialExpressionName } from '../builtin/interface'
 import { Context } from '../evaluator/interface'
+import { Any, Arr } from '../interface'
 import { ReservedName } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 
@@ -9,7 +10,7 @@ export type EvaluatedFunctionArguments = {
   mandatoryArguments: string[]
   optionalArguments: Array<{
     name: string
-    defaultValue?: unknown
+    defaultValue?: Any
   }>
   restArgument?: string
 }
@@ -26,44 +27,44 @@ export type UserDefinedLispishFunction = {
 export type PartialLispishFunction = {
   [functionSymbol]: true
   type: `partial`
-  fn: unknown
-  params: unknown[]
+  fn: Any
+  params: Arr
 }
 
 export type CompLispishFunction = {
   [functionSymbol]: true
   type: `comp`
-  fns: unknown[]
+  fns: Arr
 }
 
 export type ConstantlyLispishFunction = {
   [functionSymbol]: true
   type: `constantly`
-  value: unknown
+  value: Any
 }
 
 export type JuxtLispishFunction = {
   [functionSymbol]: true
   type: `juxt`
-  fns: unknown[]
+  fns: Arr
 }
 
 export type ComplementLispishFunction = {
   [functionSymbol]: true
   type: `complement`
-  fn: unknown
+  fn: Any
 }
 
 export type EveryPredLispishFunction = {
   [functionSymbol]: true
   type: `every-pred`
-  fns: unknown[]
+  fns: Arr
 }
 
 export type SomePredLispishFunction = {
   [functionSymbol]: true
   type: `some-pred`
-  fns: unknown[]
+  fns: Arr
 }
 
 export type BuiltinLispishFunction = {

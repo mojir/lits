@@ -18,7 +18,6 @@ module.exports = {
     ],
     description: `Call supplied function with specified arguments.`,
     examples: [`(apply + [1 2 3])`, `(apply (fn [x y] (sqrt (+ (* x x) (* y y)))) [3 4])`],
-    specialExpression: false,
   },
   identity: {
     name: `identity`,
@@ -34,8 +33,7 @@ module.exports = {
       },
     ],
     description: `Returns \`value\`.`,
-    examples: [`(identity 1)`, `(identity "Albert")`, `(identity {"a" 1})`, `(identity null)`],
-    specialExpression: false,
+    examples: [`(identity 1)`, `(identity "Albert")`, `(identity {"a" 1})`, `(identity nil)`],
   },
   partial: {
     name: `partial`,
@@ -57,7 +55,6 @@ module.exports = {
     ],
     description: `Takes a function \`fn\` and fewer (or equal) than the normal arguments to \`fn\`, and returns a function that takes a variable number of additional args. When called, the returned function calls f with \`args\` + additional args.`,
     examples: [`(partial + 100)`, `(def addHundred (partial + 100)) (addHundred 10)`],
-    specialExpression: false,
   },
   comp: {
     name: `comp`,
@@ -84,7 +81,6 @@ module.exports = {
       `(#((apply comp first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)`,
       `(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)`,
     ],
-    specialExpression: false,
   },
   constantly: {
     name: `constantly`,
@@ -101,11 +97,9 @@ module.exports = {
     ],
     description: `Returns a function that takes any number of arguments and returns \`value\`.`,
     examples: [
-      `(def negative-quotient (constantly - /)) (negative-quotient 9 3)`,
+      `(def always-true (constantly true)) (always-true 9 3)`,
       `(#((apply constantly first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)`,
-      `(def x {"bar" {"foo" 42}}) ((constantly "foo" "bar") x)`,
     ],
-    specialExpression: false,
   },
   juxt: {
     name: `juxt`,
@@ -127,7 +121,6 @@ module.exports = {
       `((juxt "a" "b") {"a" 1, "b" 2, "c" 3, "d" 4})`,
       `(apply (juxt + * min max) (range 1 11))`,
     ],
-    specialExpression: false,
   },
   complement: {
     name: `complement`,
@@ -144,7 +137,6 @@ module.exports = {
     ],
     description: `Takes a \`function\` and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.`,
     examples: [`((complement >) 1 3)`, `((complement <) 1 3)`, `((complement +) 1 3)`, `((complement +) 0 0)`],
-    specialExpression: false,
   },
   'every-pred': {
     name: `every-pred`,
@@ -166,7 +158,6 @@ module.exports = {
       `((every-pred string? #(> (count %1) 3)) "Albert" "M")`,
       `((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`,
     ],
-    specialExpression: false,
   },
   'some-pred': {
     name: `some-pred`,
@@ -189,6 +180,5 @@ module.exports = {
       `((some-pred string? #(> (count %1) 3)) "A" [1 2 3])`,
       `((some-pred string? #(> (count %1) 3)) [1 2 3] [2])`,
     ],
-    specialExpression: false,
   },
 }

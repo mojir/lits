@@ -1,9 +1,10 @@
-export type ReservedName = `true` | `false` | `null` | `undefined`
-export const reservedNamesRecord: Record<ReservedName, { value: unknown }> = {
+import { Any } from './interface'
+
+export type ReservedName = `true` | `false` | `nil`
+export const reservedNamesRecord: Record<ReservedName, { value: Any }> = {
   true: { value: true },
   false: { value: false },
-  null: { value: null },
-  undefined: { value: undefined },
+  nil: { value: null },
 }
 
 export const reservedNames: ReservedName[] = Object.keys(reservedNamesRecord) as ReservedName[]

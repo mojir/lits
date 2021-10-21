@@ -62,6 +62,7 @@ const result = evaluate(ast, context) // returns 10
 # Missing functions
 * **assoc-in**
 * **for** ??
+* **fnil**
 * **get-in**
 * **group-by**
 * **merge-with**
@@ -74,3 +75,4 @@ const result = evaluate(ast, context) // returns 10
 * **symbol?**
 * **update**
 * **update-in**
+

@@ -286,10 +286,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
   const expressionName = asNotUndefined(tokens[position]).value
   position += 1
 
-  const { parse, validate } = asNotUndefined(
-    builtin.specialExpressions[expressionName],
-    `${expressionName} is not a built in special expression`,
-  )
+  const { parse, validate } = asNotUndefined(builtin.specialExpressions[expressionName])
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,

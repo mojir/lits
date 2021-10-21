@@ -1,6 +1,6 @@
 {
   "name": "lispish",
-  "version": "0.1.50",
+  "version": "0.1.51",
   "description": "A lispish implementation in Typescript",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -67,5 +67,6 @@
   "bugs": {
     "url": "https://github.com/mojir/lispish/issues"
   },
-  "homepage": "https://mojir.github.io/lispish/#index"
+  "homepage": "https://mojir.github.io/lispish/#index",
+  "dependencies": {}
 }

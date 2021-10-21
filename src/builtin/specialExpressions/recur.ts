@@ -6,7 +6,7 @@ interface RecurSpecialExpressionNode extends SpecialExpressionNode {
   name: `recur`
 }
 
-export const recurSpecialExpression: BuiltinSpecialExpression = {
+export const recurSpecialExpression: BuiltinSpecialExpression<null> = {
   parse: (tokens, position, { parseTokens }) => {
     let params
     ;[position, params] = parseTokens(tokens, position)

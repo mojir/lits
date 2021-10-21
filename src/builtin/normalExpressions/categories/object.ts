@@ -1,4 +1,4 @@
-import { Arr, Obj } from '../../../interface'
+import { Any, Arr, Obj } from '../../../interface'
 import {
   assertLengthEven,
   assertLength,
@@ -7,6 +7,7 @@ import {
   collHasKey,
   assertStringArray,
   assertArr,
+  toAny,
   asNotUndefined,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -51,22 +52,22 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   find: {
-    evaluate: ([obj, key]: Arr): [string, unknown] | undefined => {
+    evaluate: ([obj, key]: Arr): [string, unknown] | null => {
       assertObj(obj)
       assertString(key)
       if (collHasKey(obj, key)) {
         return [key, obj[key]]
       }
-      return undefined
+      return null
     },
     validate: node => assertLength(2, node),
   },
 
   dissoc: {
-    evaluate: ([obj, key]: Arr): unknown => {
+    evaluate: ([obj, key]: Arr): Any => {
       assertObj(obj)
       assertString(key)
-      const result = obj[key]
+      const result = toAny(obj[key])
       delete obj[key]
       return result
     },
@@ -74,7 +75,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   merge: {
-    evaluate: ([first, ...rest]: Arr): unknown => {
+    evaluate: ([first, ...rest]: Arr): Any => {
       assertObj(first)
 
       return rest.reduce(
@@ -89,7 +90,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   zipmap: {
-    evaluate: ([keys, values]: Arr): unknown => {
+    evaluate: ([keys, values]: Arr): Any => {
       assertStringArray(keys)
       assertArr(values)
 
@@ -99,7 +100,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
       for (let i = 0; i < length; i += 1) {
         const key = asNotUndefined(keys[i])
-        result[key] = values[i]
+        result[key] = toAny(values[i])
       }
       return result
     },
@@ -107,13 +108,13 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   'select-keys': {
-    evaluate: ([obj, keys]: Arr): unknown => {
+    evaluate: ([obj, keys]: Arr): Any => {
       assertStringArray(keys)
       assertObj(obj)
 
       return keys.reduce((result: Obj, key) => {
         if (collHasKey(obj, key)) {
-          result[key] = obj[key]
+          result[key] = toAny(obj[key]) as Any
         }
         return result
       }, {})

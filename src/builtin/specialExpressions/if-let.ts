@@ -1,4 +1,5 @@
 import { Context } from '../../evaluator/interface'
+import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined, assertLength } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
@@ -8,7 +9,7 @@ interface IfLetSpecialExpressionNode extends SpecialExpressionNode {
   binding: BindingNode
 }
 
-export const ifLetSpecialExpression: BuiltinSpecialExpression = {
+export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
@@ -42,7 +43,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression = {
       const elseForm = asNotUndefined(node.params[1])
       return evaluateAstNode(elseForm, contextStack)
     }
-    return undefined
+    return null
   },
   validate: node => assertLength({ min: 1, max: 2 }, node),
 }

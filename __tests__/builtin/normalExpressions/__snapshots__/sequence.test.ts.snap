@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`array functions sort samples 1`] = `
+exports[`sequence functions sort samples 1`] = `
 Array [
   false,
   true,
@@ -33,6 +33,5 @@ Array [
   /ABC/,
   /abc/,
   null,
-  undefined,
 ]
 `;

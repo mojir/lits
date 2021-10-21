@@ -79,9 +79,9 @@ module.exports = [
 (def l [7 39 45 0 23 1 50 100 12 -5])
 (defn numberComparer [a b]
   (cond
-    ((< a b) -1)
-    ((> a b) 1)
-    (true 0)
+    (< a b) -1
+    (> a b) 1
+    true 0
   )
 )
 

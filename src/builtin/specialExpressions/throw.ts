@@ -8,7 +8,7 @@ interface ThrowSpecialExpressionNode extends SpecialExpressionNode {
   messageNode: AstNode
 }
 
-export const throwSpecialExpression: BuiltinSpecialExpression = {
+export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
   parse: (tokens, position, { parseToken }) => {
     const [newPosition, messageNode] = parseToken(tokens, position)
     position = newPosition
