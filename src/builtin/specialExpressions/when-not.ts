@@ -1,3 +1,4 @@
+import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { assertLength, assertNotUndefined } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
@@ -6,7 +7,7 @@ interface WhenNotSpecialExpressionNode extends SpecialExpressionNode {
   name: `when-not`
 }
 
-export const whenNotSpecialExpression: BuiltinSpecialExpression = {
+export const whenNotSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
     const [newPosition, params] = parseTokens(tokens, position)
     const node: WhenNotSpecialExpressionNode = {
@@ -24,10 +25,10 @@ export const whenNotSpecialExpression: BuiltinSpecialExpression = {
     assertNotUndefined(whenExpression)
 
     if (evaluateAstNode(whenExpression, contextStack)) {
-      return undefined
+      return null
     }
 
-    let result: unknown = undefined
+    let result: Any = null
     for (const form of body) {
       result = evaluateAstNode(form, contextStack)
     }

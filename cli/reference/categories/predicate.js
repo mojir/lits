@@ -33,30 +33,6 @@ module.exports = {
     examples: [`(null? null)`, `(null? false)`, `(null? [1 2 3])`, `(null? 0)`, `(null? "A string")`],
     specialExpression: false,
   },
-  'undefined?': {
-    name: `undefined?`,
-    category: `Predicate`,
-    linkName: `undefined_question`,
-    returns: {
-      type: `boolean`,
-    },
-    arguments: [
-      {
-        name: `value`,
-        type: `any`,
-      },
-    ],
-    description: `Returns \`true\` if \`value\` is \`undefined\`, otherwise \`false\`.`,
-    examples: [
-      `(undefined? undefined)`,
-      `(undefined? false)`,
-      `(undefined? null)`,
-      `(undefined? [1 2 3])`,
-      `(undefined? 0)`,
-      `(undefined? "A string")`,
-    ],
-    specialExpression: false,
-  },
   'number?': {
     name: `number?`,
     category: `Predicate`,

@@ -30,7 +30,7 @@ describe(`regexp functions`, () => {
   describe(`match`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(match (regexp "^abc$") "abc")`)).toEqual([`abc`])
-      expect(lispish.run(`(match (regexp "^abc$") "abx")`)).toBeUndefined()
+      expect(lispish.run(`(match (regexp "^abc$") "abx")`)).toBeNull()
       expect(lispish.run(`(match (regexp "^(a)bc$") "abc")`)).toEqual([`abc`, `a`])
       expect(lispish.run(`(match (regexp "^(A)BC$" "i") "abc")`)).toEqual([`abc`, `a`])
       expect(() => lispish.run(`(match (regexp "^abc$") 1)`)).toThrow()

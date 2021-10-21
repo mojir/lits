@@ -1,4 +1,5 @@
 import { Context } from '../../evaluator/interface'
+import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
@@ -7,7 +8,7 @@ interface doSpecialExpressionNode extends SpecialExpressionNode {
   name: `do`
 }
 
-export const doSpecialExpression: BuiltinSpecialExpression = {
+export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
     const node: doSpecialExpressionNode = {
       type: `SpecialExpression`,
@@ -29,7 +30,7 @@ export const doSpecialExpression: BuiltinSpecialExpression = {
     const newContext: Context = {}
 
     const newContextStack = [newContext, ...contextStack]
-    let result: unknown
+    let result: Any = null
     for (const form of node.params) {
       result = evaluateAstNode(form, newContextStack)
     }

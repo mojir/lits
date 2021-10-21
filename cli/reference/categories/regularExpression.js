@@ -37,7 +37,7 @@ module.exports = {
         type: `string`,
       },
     ],
-    description: `Matches \`string\` against \`pattern\`. If \`string\` matches, a *match*-array is returned, otherwise \`undefined\`.`,
+    description: `Matches \`string\` against \`pattern\`. If \`string\` matches, a *match*-array is returned, otherwise \`nil\`.`,
     examples: [
       `(match (regexp "^\\s*(.*)$") "  A string")`,
       `(match (regexp "albert" "i") "My name is Albert")`,

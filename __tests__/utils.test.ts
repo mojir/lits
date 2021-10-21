@@ -26,7 +26,6 @@ import {
   asNonEmptyString,
   isLispishFunction,
   asFiniteNumber,
-  assertNotUndefined,
   assertLength,
   assertSeq,
   assertStringOrRegExp,
@@ -38,6 +37,10 @@ import {
   isNormalExpressionNodeName,
   deepEqual,
   assertNonEmptyString,
+  asAny,
+  asString,
+  assertAny,
+  assertNotUndefined,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -45,6 +48,25 @@ describe(`utils`, () => {
     const node: AstNode = { type: `Name`, value: `test` }
 
     expect(asAstNode(node)).toBe(node)
+  })
+  test(`asAny`, () => {
+    expect(() => asAny(undefined)).toThrow()
+    expect(() => asAny(undefined, `An error message`)).toThrow()
+    const node: AstNode = { type: `Name`, value: `test` }
+
+    expect(asAny(node)).toBe(node)
+  })
+  test(`assertAny`, () => {
+    expect(() => assertAny(undefined)).toThrow()
+    const node: AstNode = { type: `Name`, value: `test` }
+
+    expect(() => assertAny(node)).not.toThrow()
+  })
+  test(`assertAny`, () => {
+    expect(() => assertAny(undefined)).toThrow()
+    const node: AstNode = { type: `Name`, value: `test` }
+
+    expect(() => assertAny(node)).not.toThrow()
   })
   test(`asLispishFunction`, () => {
     expect(() => asLispishFunction(undefined)).toThrow()
@@ -80,7 +102,6 @@ describe(`utils`, () => {
   })
   test(`asNotUndefined`, () => {
     expect(() => asNotUndefined(undefined)).toThrow()
-    expect(() => asNotUndefined(undefined, `XXX`)).toThrow()
     expect(asNotUndefined(null)).toBe(null)
     expect(asNotUndefined(false)).toBe(false)
     expect(asNotUndefined(true)).toBe(true)
@@ -90,7 +111,6 @@ describe(`utils`, () => {
   })
   test(`assertNotUndefined`, () => {
     expect(() => assertNotUndefined(undefined)).toThrow()
-    expect(() => assertNotUndefined(undefined, `XXX`)).toThrow()
     expect(() => assertNotUndefined(null)).not.toThrow()
     expect(() => assertNotUndefined(false)).not.toThrow()
     expect(() => assertNotUndefined(true)).not.toThrow()
@@ -400,6 +420,18 @@ describe(`utils`, () => {
     expect(() => assertString([])).toThrow()
     expect(() => assertString({})).toThrow()
   })
+  test(`asString`, () => {
+    expect(() => asString(``)).not.toThrow()
+    expect(() => asString(`1`)).not.toThrow()
+    expect(() => asString(0)).toThrow()
+    expect(() => asString(1)).toThrow()
+    expect(() => asString(true)).toThrow()
+    expect(() => asString(false)).toThrow()
+    expect(() => asString(null)).toThrow()
+    expect(() => asString(undefined)).toThrow()
+    expect(() => asString([])).toThrow()
+    expect(() => asString({})).toThrow()
+  })
   test(`assertNonEmptyString`, () => {
     expect(() => assertNonEmptyString(`1`)).not.toThrow()
     expect(() => assertNonEmptyString(`abc`)).not.toThrow()
@@ -560,7 +592,7 @@ describe(`utils`, () => {
     ).toBe(false)
   })
 
-  const primitives = [0, 1, true, false, null, undefined, `Albert`, `Mojir`, functionSymbol]
+  const primitives = [0, 1, true, false, null, `Albert`, `Mojir`]
   describe(`deepEqual`, () => {
     test(`primitives`, () => {
       for (const a of primitives) {

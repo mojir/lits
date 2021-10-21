@@ -14,22 +14,25 @@ import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
 import {
+  asAny,
   asNotUndefined,
   assertInteger,
   assertNonNegativeInteger,
   assertSeq,
   assertString,
+  asString,
   isInteger,
   isLispishFunction,
   isNormalExpressionNodeName,
   isNumber,
   isObj,
   isString,
+  toAny,
 } from '../utils'
 import { Context, EvaluateAstNode, ExecuteFunction, ExecuteLispishFunction } from './interface'
 import { normalExpressions } from '../builtin/normalExpressions'
 import { RecurSignal } from '../errors'
-import { Arr, Obj } from '../interface'
+import { Any, Arr, Obj } from '../interface'
 
 export function evaluate(ast: Ast, globalScope: Context, importScope: Context): unknown {
   // First element is the global context. E.g. def will assign to this if no local variable is available
@@ -57,6 +60,8 @@ export const evaluateAstNode: EvaluateAstNode = (node, contextStack) => {
       return evaluateNormalExpression(node, contextStack)
     case `SpecialExpression`:
       return evaluateSpecialExpression(node, contextStack)
+    default:
+      throw Error(`${node.type}-node cannot be evaluated`)
   }
 }
 
@@ -68,11 +73,11 @@ function evaluateString(node: StringNode): string {
   return node.value
 }
 
-function evaluateReservedName(node: ReservedNameNode): unknown {
-  return asNotUndefined(reservedNamesRecord[node.value], `${node.value} is not a reserved name`).value
+function evaluateReservedName(node: ReservedNameNode): Any {
+  return asNotUndefined(reservedNamesRecord[node.value]).value
 }
 
-function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
+function evaluateName({ value }: NameNode, contextStack: Context[]): Any {
   for (const context of contextStack) {
     const variable = context[value]
     if (variable) {
@@ -90,11 +95,14 @@ function evaluateName({ value }: NameNode, contextStack: Context[]): unknown {
   throw Error(`Undefined identifier ${value}`)
 }
 
-function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): unknown {
+function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): Any {
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   if (isNormalExpressionNodeName(node)) {
     for (const context of contextStack) {
       const fn = context[node.name]?.value
+      if (fn === undefined) {
+        continue
+      }
       try {
         return executeFunction(fn, params, contextStack)
       } catch {
@@ -162,16 +170,16 @@ const executeLispishFunction: ExecuteLispishFunction = (
         const rest: Arr = []
         for (let i = 0; i < length; i += 1) {
           if (i < nbrOfMandatoryArgs) {
-            const param = params[i]
-            const key = asNotUndefined(args.mandatoryArguments[i], ``)
+            const param = asAny(params[i])
+            const key = asString(args.mandatoryArguments[i])
             newContext[key] = { value: param }
           } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
-            const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs], ``)
-            const param = i < params.length ? params[i] : arg.defaultValue !== undefined ? arg.defaultValue : undefined
+            const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs])
+            const param = i < params.length ? asAny(params[i]) : arg.defaultValue ?? null
             const key = arg.name
             newContext[key] = { value: param }
           } else {
-            rest.push(params[i])
+            rest.push(asAny(params[i]))
           }
         }
 
@@ -180,7 +188,7 @@ const executeLispishFunction: ExecuteLispishFunction = (
         }
 
         try {
-          let result: unknown = undefined
+          let result: Any = null
           for (const node of lispishFunction.body) {
             result = evaluateAstNode(node, [newContext, ...contextStack])
           }
@@ -203,17 +211,19 @@ const executeLispishFunction: ExecuteLispishFunction = (
         if (params.length !== 1) {
           throw Error(`(comp) expects one argument, got ${params.length}`)
         }
-        return params[0]
+        return asAny(params[0])
       }
-      return fns.reduceRight((result: unknown[], fn) => {
-        return [executeFunction(fn, result, contextStack)]
-      }, params)[0]
+      return asAny(
+        fns.reduceRight((result: Arr, fn) => {
+          return [executeFunction(toAny(fn), result, contextStack)]
+        }, params)[0],
+      )
     }
     case `constantly`: {
       return lispishFunction.value
     }
     case `juxt`: {
-      return lispishFunction.fns.map(fn => executeFunction(fn, params, contextStack))
+      return lispishFunction.fns.map(fn => executeFunction(toAny(fn), params, contextStack))
     }
     case `complement`: {
       return !executeFunction(lispishFunction.fn, params, contextStack)
@@ -221,7 +231,7 @@ const executeLispishFunction: ExecuteLispishFunction = (
     case `every-pred`: {
       for (const fn of lispishFunction.fns) {
         for (const param of params) {
-          const result = executeFunction(fn, [param], contextStack)
+          const result = executeFunction(toAny(fn), [param], contextStack)
           if (!result) {
             return false
           }
@@ -232,7 +242,7 @@ const executeLispishFunction: ExecuteLispishFunction = (
     case `some-pred`: {
       for (const fn of lispishFunction.fns) {
         for (const param of params) {
-          const result = executeFunction(fn, [param], contextStack)
+          const result = executeFunction(toAny(fn), [param], contextStack)
           if (result) {
             return true
           }
@@ -241,74 +251,61 @@ const executeLispishFunction: ExecuteLispishFunction = (
       return false
     }
     default: {
-      const normalExpression = asNotUndefined(
-        normalExpressions[lispishFunction.builtin],
-        `${lispishFunction.builtin} is not a function`,
-      )
+      const normalExpression = asNotUndefined(normalExpressions[lispishFunction.builtin])
       return normalExpression.evaluate(params, contextStack, { executeFunction })
     }
   }
 }
 
-function evaluateBuiltinNormalExpression(
-  node: NormalExpressionNodeName,
-  params: Arr,
-  contextStack: Context[],
-): unknown {
-  const normalExpressionEvaluator = asNotUndefined(
-    builtin.normalExpressions[node.name],
-    `${node.name} is not a function`,
-  ).evaluate
+function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params: Arr, contextStack: Context[]): Any {
+  const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
 
   return normalExpressionEvaluator(params, contextStack, { executeFunction })
 }
 
-function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): unknown {
-  const specialExpressionEvaluator = asNotUndefined(
-    builtin.specialExpressions[node.name],
-    `${node.name} is not a built in special expression`,
-  ).evaluate
+function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): Any {
+  const specialExpressionEvaluator = asNotUndefined(builtin.specialExpressions[node.name]).evaluate
   return specialExpressionEvaluator(node, contextStack, { evaluateAstNode, builtin })
 }
 
-function evalueateObjectAsFunction(fn: Obj, params: unknown[]) {
+function evalueateObjectAsFunction(fn: Obj, params: Arr): Any {
   if (params.length !== 1) {
     throw Error(`Object as function requires one string parameter`)
   }
   const key = params[0]
   assertString(key)
-  return fn[key]
+  return toAny(fn[key])
 }
 
-function evaluateArrayAsFunction(fn: Arr, params: unknown[]) {
+function evaluateArrayAsFunction(fn: Arr, params: Arr): Any {
   if (params.length !== 1) {
     throw Error(`Array as function requires one non negative integer parameter`)
   }
   const index = params[0]
   assertNonNegativeInteger(index)
-  return fn[index]
+  return toAny(fn[index])
 }
 
-function evaluateStringAsFunction(fn: string, params: unknown[]) {
+function evaluateStringAsFunction(fn: string, params: Arr): Any {
   if (params.length !== 1) {
     throw Error(`String as function requires one Obj parameter`)
   }
-  const param = params[0]
+  const param = toAny(params[0])
   if (isObj(param)) {
-    return param[fn]
+    return toAny((param as Obj)[fn])
   }
   if (isInteger(param)) {
-    return fn[param]
+    return toAny(fn[param])
   }
   throw Error(`string as function expects Obj or integer parameter, got ${param}`)
 }
 
-function evaluateNumberAsFunction(fn: number, params: unknown[]) {
+function evaluateNumberAsFunction(fn: number, params: Arr): Any {
   assertInteger(fn)
   if (params.length !== 1) {
     throw Error(`String as function requires one Arr parameter`)
   }
   const param = params[0]
   assertSeq(param)
-  return param[fn]
+  return toAny(param[fn])
 }

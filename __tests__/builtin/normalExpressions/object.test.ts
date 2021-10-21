@@ -13,13 +13,13 @@ describe(`object functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(object)`)).toEqual({})
       expect(lispish.run(`(object "x" 1)`)).toEqual({ x: 1 })
-      expect(lispish.run(`(object "x" undefined)`)).toEqual({ x: undefined })
+      expect(lispish.run(`(object "x" null)`)).toEqual({ x: null })
       expect(lispish.run(`(object "x" 1 "x" 2)`)).toEqual({ x: 2 })
-      expect(lispish.run(`(object "a" null "b" true "c" false "d" undefined "e" (object "x" []))`)).toEqual({
+      expect(lispish.run(`(object "a" null "b" true "c" false "d" 0 "e" (object "x" []))`)).toEqual({
         a: null,
         b: true,
         c: false,
-        d: undefined,
+        d: 0,
         e: { x: [] },
       })
       expect(lispish.run(`(let [a "a"] (object a 1))`)).toEqual({ a: 1 })
@@ -30,7 +30,6 @@ describe(`object functions`, () => {
       expect(() => lispish.run(`(object true 1)`)).toThrow()
       expect(() => lispish.run(`(object false 1)`)).toThrow()
       expect(() => lispish.run(`(object null 1)`)).toThrow()
-      expect(() => lispish.run(`(object undefined 1)`)).toThrow()
       expect(() => lispish.run(`(object [] 1)`)).toThrow()
       expect(() => lispish.run(`(object (object) 1)`)).toThrow()
     })
@@ -40,14 +39,13 @@ describe(`object functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(keys (object))`)).toEqual([])
       expect(lispish.run(`(keys (object "x" 1))`)).toEqual([`x`])
-      expect(lispish.run(`(keys (object "x" undefined "y" 2))`)).toEqual([`x`, `y`])
+      expect(lispish.run(`(keys (object "x" null "y" 2))`)).toEqual([`x`, `y`])
       expect(() => lispish.run(`(keys)`)).toThrow()
       expect(() => lispish.run(`(keys (object "x") (object "x"))`)).toThrow()
       expect(() => lispish.run(`(keys 0)`)).toThrow()
       expect(() => lispish.run(`(keys true)`)).toThrow()
       expect(() => lispish.run(`(keys false)`)).toThrow()
       expect(() => lispish.run(`(keys null)`)).toThrow()
-      expect(() => lispish.run(`(keys undefined)`)).toThrow()
       expect(() => lispish.run(`(keys [1])`)).toThrow()
     })
   })
@@ -56,14 +54,13 @@ describe(`object functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(vals (object))`)).toEqual([])
       expect(lispish.run(`(vals (object "x" 1))`)).toEqual([1])
-      expect(lispish.run(`(vals (object "x" undefined "y" 2))`)).toEqual([undefined, 2])
+      expect(lispish.run(`(vals (object "x" null "y" 2))`)).toEqual([null, 2])
       expect(() => lispish.run(`(vals)`)).toThrow()
       expect(() => lispish.run(`(vals (object "x") (object "x"))`)).toThrow()
       expect(() => lispish.run(`(vals 0)`)).toThrow()
       expect(() => lispish.run(`(vals true)`)).toThrow()
       expect(() => lispish.run(`(vals false)`)).toThrow()
       expect(() => lispish.run(`(vals null)`)).toThrow()
-      expect(() => lispish.run(`(vals undefined)`)).toThrow()
       expect(() => lispish.run(`(vals [1])`)).toThrow()
     })
   })
@@ -72,8 +69,8 @@ describe(`object functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(entries (object))`)).toEqual([])
       expect(lispish.run(`(entries (object "x" 1))`)).toEqual([[`x`, 1]])
-      expect(lispish.run(`(entries (object "x" undefined "y" 2))`)).toEqual([
-        [`x`, undefined],
+      expect(lispish.run(`(entries (object "x" null "y" 2))`)).toEqual([
+        [`x`, null],
         [`y`, 2],
       ])
       expect(() => lispish.run(`(entries)`)).toThrow()
@@ -82,14 +79,13 @@ describe(`object functions`, () => {
       expect(() => lispish.run(`(entries true)`)).toThrow()
       expect(() => lispish.run(`(entries false)`)).toThrow()
       expect(() => lispish.run(`(entries null)`)).toThrow()
-      expect(() => lispish.run(`(entries undefined)`)).toThrow()
       expect(() => lispish.run(`(entries [1])`)).toThrow()
     })
   })
 
   describe(`find`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(find (object "x" 1) "a")`)).toBeUndefined()
+      expect(lispish.run(`(find (object "x" 1) "a")`)).toBeNull()
       expect(lispish.run(`(find (object "x" 1) "x")`)).toEqual([`x`, 1])
       expect(lispish.run(`(find (object "x" 1 "y" 2) "x")`)).toEqual([`x`, 1])
       expect(() => lispish.run(`(find)`)).toThrow()
@@ -97,7 +93,6 @@ describe(`object functions`, () => {
       expect(() => lispish.run(`(find (object "x") null)`)).toThrow()
       expect(() => lispish.run(`(find (object "x") true)`)).toThrow()
       expect(() => lispish.run(`(find (object "x") false)`)).toThrow()
-      expect(() => lispish.run(`(find (object "x") undefined)`)).toThrow()
       expect(() => lispish.run(`(find (object "x") "x" "y")`)).toThrow()
       expect(() => lispish.run(`(find (object "x"))`)).toThrow()
       expect(() => lispish.run(`(find [] "x")`)).toThrow()
@@ -109,9 +104,9 @@ describe(`object functions`, () => {
 
   describe(`dissoc`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(dissoc (object) "x")`)).toBeUndefined()
+      expect(lispish.run(`(dissoc (object) "x")`)).toBeNull()
       expect(lispish.run(`(dissoc (object "x" 1) "x")`)).toBe(1)
-      expect(lispish.run(`(dissoc (object "x" 1) "")`)).toBeUndefined()
+      expect(lispish.run(`(dissoc (object "x" 1) "")`)).toBeNull()
       expect(lispish.run(`(dissoc (object "x" (object)) "x")`)).toEqual({})
       expect(() => lispish.run(`(dissoc (object "x" 1) 1)`)).toThrow()
       expect(() => lispish.run(`(dissoc)`)).toThrow()

@@ -1,4 +1,5 @@
 import { Context } from '../../evaluator/interface'
+import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined, assertLength } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
@@ -8,7 +9,7 @@ interface WhenLetSpecialExpressionNode extends SpecialExpressionNode {
   binding: BindingNode
 }
 
-export const whenLetSpecialExpression: BuiltinSpecialExpression = {
+export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
@@ -33,12 +34,12 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression = {
     const locals: Context = {}
     const bindingValue = evaluateAstNode(node.binding.value, contextStack)
     if (!bindingValue) {
-      return undefined
+      return null
     }
     locals[node.binding.name] = { value: bindingValue }
     const newContextStack = [locals, ...contextStack]
 
-    let result: unknown = undefined
+    let result: Any = null
     for (const form of node.params) {
       result = evaluateAstNode(form, newContextStack)
     }

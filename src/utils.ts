@@ -1,5 +1,5 @@
 import { UnexpectedNodeTypeError } from './errors'
-import { Arr, Coll, Obj, Seq } from './interface'
+import { Any, Arr, Coll, Obj, Seq } from './interface'
 import {
   AstNode,
   ExpressionNode,
@@ -38,16 +38,23 @@ export function assertNameNode(node: AstNode | undefined): asserts node is NameN
   }
 }
 
-export function asNotUndefined<T>(value: T | undefined, message = `Unexpected end of input`): T {
+export function asAny(value: unknown, message = `Unexpected end of input`): Any {
   if (value === undefined) {
     throw Error(message)
+  }
+  return value as Any
+}
+
+export function asNotUndefined<T>(value: T | undefined): T {
+  if (value === undefined) {
+    throw Error(`Expected non undefined value, got ${value}`)
   }
   return value
 }
 
-export function assertNotUndefined<T>(value: T | undefined, message = `Unexpected end of input`): asserts value is T {
+export function assertNotUndefined<T>(value: T | undefined): asserts value is T {
   if (value === undefined) {
-    throw Error(message)
+    throw Error(`Expected non undefined value, got ${value}`)
   }
 }
 
@@ -130,10 +137,21 @@ export function assertNumberLt(value: unknown, x: number): asserts value is numb
   }
 }
 
+export function isString(value: unknown): value is string {
+  return typeof value === `string`
+}
+
 export function assertString(value: unknown): asserts value is string {
-  if (typeof value !== `string`) {
+  if (!isString(value)) {
     throw TypeError(`Expected string, got: ${value} type="${typeof value}"`)
   }
+}
+
+export function asString(value: unknown): string {
+  if (!isString(value)) {
+    throw TypeError(`Expected string, got: ${value} type="${typeof value}"`)
+  }
+  return value
 }
 
 export function assertNonEmptyString(value: unknown): asserts value is string {
@@ -244,31 +262,6 @@ export function assertLispishFunction(func: unknown): asserts func is LispishFun
   }
 }
 
-// export function isUserDefinedLispishFunction(func: unknown): func is UserDefinedLispishFunction {
-//   if (isLispishFunction(func)) {
-//     return !!(func as UserDefinedLispishFunction).arguments
-//   }
-//   return false
-// }
-
-// export function isPartialLispishFunction(func: unknown): func is PartialLispishFunction {
-//   if (isLispishFunction(func)) {
-//     return !!Object.getOwnPropertyDescriptor(func, `fn`)
-//   }
-//   return false
-// }
-
-// export function isCompLispishFunction(func: unknown): func is CompLispishFunction {
-//   if (isLispishFunction(func)) {
-//     return !!Object.getOwnPropertyDescriptor(func, `fns`)
-//   }
-//   return false
-// }
-
-// export function isBuiltinLispishFunction(func: unknown): func is UserDefinedLispishFunction {
-//   return isLispishFunction(func) && !isUserDefinedLispishFunction(func)
-// }
-
 export function assertStringArray(value: unknown): asserts value is string[] {
   if (!Array.isArray(value) || value.some(v => typeof v !== `string`)) {
     throw Error(`Expected an array of strings, got ${value}`)
@@ -308,6 +301,16 @@ export function assertColl(value: unknown): asserts value is Coll {
   }
 }
 
+export function isAny(value: unknown): boolean {
+  return value !== undefined
+}
+
+export function assertAny(value: unknown): asserts value is Any {
+  if (!isAny(value)) {
+    throw TypeError(`Expected Any, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function assertSeq(value: unknown): asserts value is Array<unknown> | string {
   if (!isSeq(value)) {
     throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
@@ -342,10 +345,6 @@ export function isColl(value: unknown): value is Coll {
   return isSeq(value) || isObj(value)
 }
 
-export function isString(value: unknown): value is string {
-  return typeof value === `string`
-}
-
 export function isNumber(value: unknown): value is number {
   return typeof value === `number`
 }
@@ -368,7 +367,7 @@ export function collHasKey(coll: unknown, key: string | number): coll is Coll {
 }
 
 // TODO make it into enum or record with sort number as value
-type Type = `undefined` | `null` | `boolean` | `number` | `string` | `object` | `array` | `regexp` | `unknown`
+type Type = `null` | `boolean` | `number` | `string` | `object` | `array` | `regexp` | `unknown`
 
 const sortOrderByType: Record<Type, number> = {
   boolean: 0,
@@ -379,13 +378,10 @@ const sortOrderByType: Record<Type, number> = {
   regexp: 5,
   unknown: 6,
   null: 7,
-  undefined: 8, // Must be last, sinse javascript sort always adds these last
 }
 
 function getType(value: unknown): Type {
-  if (value === undefined) {
-    return `undefined`
-  } else if (value === null) {
+  if (value === null) {
     return `null`
   } else if (typeof value === `boolean`) {
     return `boolean`
@@ -412,8 +408,6 @@ export function compare(a: unknown, b: unknown): number {
   }
 
   switch (aType) {
-    case `undefined`:
-      return 0
     case `null`:
       return 0
     case `boolean`:
@@ -463,7 +457,7 @@ export function isNormalExpressionNodeName(node: NormalExpressionNode): node is 
   return typeof node.name === `string`
 }
 
-export function deepEqual(a: unknown, b: unknown): boolean {
+export function deepEqual(a: Any, b: Any): boolean {
   if (a === b) {
     return true
   }
@@ -477,7 +471,7 @@ export function deepEqual(a: unknown, b: unknown): boolean {
       return false
     }
     for (let i = 0; i < a.length; i += 1) {
-      if (!deepEqual(a[i], b[i])) {
+      if (!deepEqual(asAny(a[i]), asAny(b[i]))) {
         return false
       }
     }
@@ -495,12 +489,16 @@ export function deepEqual(a: unknown, b: unknown): boolean {
       return false
     }
     for (let i = 0; i < aKeys.length; i += 1) {
-      const key = asNotUndefined(aKeys[i])
-      if (!deepEqual(aObj[key], bObj[key])) {
+      const key = asString(aKeys[i])
+      if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]))) {
         return false
       }
     }
     return true
   }
   return false
+}
+
+export function toAny(value: unknown): Any {
+  return (value ?? null) as Any
 }

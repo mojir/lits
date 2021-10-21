@@ -18,7 +18,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },
   match: {
-    evaluate: ([first, second]: Arr): string[] | undefined => {
+    evaluate: ([first, second]: Arr): string[] | null => {
       assertRegExp(first)
       assertString(second)
 
@@ -26,7 +26,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       if (match) {
         return [...match]
       }
-      return undefined
+      return null
     },
     validate: node => assertLength(2, node),
   },

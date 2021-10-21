@@ -1,5 +1,6 @@
 import { UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
 import { Context } from '../../evaluator/interface'
+import { Any } from '../../interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
@@ -11,7 +12,7 @@ interface TrySpecialExpressionNode extends SpecialExpressionNode {
   catchExpression: AstNode
 }
 
-export const trySpecialExpression: BuiltinSpecialExpression = {
+export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokens, position)
@@ -71,7 +72,7 @@ export const trySpecialExpression: BuiltinSpecialExpression = {
     try {
       return evaluateAstNode(node.tryExpression, contextStack)
     } catch (error) {
-      const newContext: Context = { [node.error.value]: { value: error } }
+      const newContext: Context = { [node.error.value]: { value: asNotUndefined(error) } } as Context
       return evaluateAstNode(node.catchExpression, [newContext, ...contextStack])
     }
   },

@@ -42,7 +42,7 @@ describe(`getPath`, () => {
       expect(getPath({ a: [1, 2, 3] }, `a.["1"]`)).toBe(2)
       expect(getPath([1, 2, 3], `.2`)).toBe(3)
       expect(getPath([1, 2, 3], `[2]`)).toBe(3)
-      expect(getPath([1, 2, 3], `a`)).toBe(undefined)
+      expect(getPath([1, 2, 3], `a`)).toBe(null)
     })
   })
 })

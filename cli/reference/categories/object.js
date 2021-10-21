@@ -111,7 +111,7 @@ module.exports = {
         type: `string`,
       },
     ],
-    description: `Returns entry for \`key\`, or undefined if \`key\` not present in \`object\`.`,
+    description: `Returns entry for \`key\`, or \`nil\` if \`key\` not present in \`object\`.`,
     examples: [`(find (object "a" 1 "b" 2) "b")`, `(find (object "a" 1 "b" 2) "c")`],
     specialExpression: false,
   },

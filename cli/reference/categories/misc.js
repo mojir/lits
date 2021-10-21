@@ -118,17 +118,8 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Computes logical negation. Note that any other \`value\` than \`false\`, \`0\`, \`null\`, \`undefined\` and \`""\` is considered as \`true\`.`,
-    examples: [
-      `(not 3)`,
-      `(not true)`,
-      `(not "A string")`,
-      `(not 0)`,
-      `(not false)`,
-      `(not null)`,
-      `(not undefined)`,
-      `(not "")`,
-    ],
+    description: `Computes logical negation. Note that any other \`value\` than \`false\`, \`0\`, \`null\` and \`""\` is considered as \`true\`.`,
+    examples: [`(not 3)`, `(not true)`, `(not "A string")`, `(not 0)`, `(not false)`, `(not null)`, `(not "")`],
     specialExpression: false,
   },
   'write!': {
@@ -144,14 +135,14 @@ module.exports = {
         type: `array`,
       },
     ],
-    description: `It console.log the \`values\` and then returns the last element of the \`values\` array.. If called with no arguments \`undefined\` is returned.`,
+    description: `It console.log the \`values\` and then returns the last element of the \`values\` array.. If called with no arguments \`null\` is returned.`,
     examples: [
       `(write! "A string")`,
       `(write! 100 "items")`,
       `(write! (object "a" 10))`,
       `(write! ["a" "b" "c"])`,
       `(write! (regexp "^start"))`,
-      `(write! null undefined true false)`,
+      `(write! null true false)`,
     ],
     specialExpression: false,
   },
@@ -197,7 +188,7 @@ module.exports = {
     category: `Misc`,
     linkName: `debug_exclamation`,
     returns: {
-      type: `undefined`,
+      type: `any`,
     },
     arguments: [
       {
@@ -310,7 +301,7 @@ module.exports = {
     description: `Returns true if \`a\` and \`b\` are structually equal.`,
     examples: [
       `(equal? {"a" 10 "b" 20} {"b" 20 "a" 10})`,
-      `(equal? [1 true null undefined] [1 true null undefined])`,
+      `(equal? [1 true null] [1 true null])`,
       `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10})`,
       `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10})`,
     ],

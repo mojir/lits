@@ -15,10 +15,10 @@ module.exports = {
     description: `Makes new array from \`values\`.`,
     examples: [
       `(array 1 2 3)`,
-      `(array (array null undefined false true))`,
+      `(array (array null false true))`,
       `[]`,
       `[1 2 3]`,
-      `[[null undefined false true]]`,
+      `[[null false true]]`,
       `[]`,
       `([1 2 3] 1)`,
       `([1 2 3 4 5 6 7 8 9] 3)`,

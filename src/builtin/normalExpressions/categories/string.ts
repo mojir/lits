@@ -1,4 +1,4 @@
-import { Arr } from '../../../interface'
+import { Any, Arr } from '../../../interface'
 import { NormalExpressionNode } from '../../../parser/interface'
 import {
   assertLength,
@@ -18,7 +18,7 @@ import { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
   subs: {
-    evaluate: ([first, second, third]: Arr): unknown => {
+    evaluate: ([first, second, third]: Arr): Any => {
       assertString(first)
       assertNonNegativeInteger(second)
 
@@ -43,13 +43,11 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   str: {
-    evaluate: (params: Arr): unknown => {
+    evaluate: (params: Arr) => {
       return params.reduce((result: string, param) => {
         const paramStr =
-          param === undefined
+          param === undefined || param === null
             ? ``
-            : param === null
-            ? `null`
             : isObj(param)
             ? JSON.stringify(param)
             : Array.isArray(param)

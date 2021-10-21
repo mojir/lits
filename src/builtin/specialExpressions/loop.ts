@@ -1,7 +1,8 @@
 import { RecurSignal } from '../../errors'
 import { Context } from '../../evaluator/interface'
+import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined } from '../../utils'
+import { asAny, asNotUndefined } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface LoopSpecialExpressionNode extends SpecialExpressionNode {
@@ -9,7 +10,7 @@ interface LoopSpecialExpressionNode extends SpecialExpressionNode {
   bindings: BindingNode[]
 }
 
-export const loopSpecialExpression: BuiltinSpecialExpression = {
+export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens, parseBindings }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
@@ -34,7 +35,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression = {
     const newContextStack = [bindingContext, ...contextStack]
 
     for (;;) {
-      let result: unknown
+      let result: Any = null
       try {
         for (const form of node.params) {
           result = evaluateAstNode(form, newContextStack)
@@ -46,7 +47,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression = {
             throw Error(`recur expected ${node.bindings.length} parameters, got ${params.length}`)
           }
           node.bindings.forEach((binding, index) => {
-            asNotUndefined(bindingContext[binding.name]).value = params[index]
+            asNotUndefined(bindingContext[binding.name]).value = asAny(params[index])
           })
           continue
         }

@@ -7,6 +7,7 @@ import { parse } from '../parser'
 import { Ast } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import { Token } from '../tokenizer/interface'
+import { toAny } from '../utils'
 
 type EvaluateParams =
   | {
@@ -38,7 +39,7 @@ export class Lispish {
 
     if (params.vars) {
       Object.entries(params.vars).forEach(([key, value]) => {
-        globalContext[key] = { value }
+        globalContext[key] = { value: toAny(value) }
       })
     }
 

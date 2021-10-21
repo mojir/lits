@@ -1,4 +1,4 @@
-import { Arr } from '../../../interface'
+import { Any, Arr } from '../../../interface'
 import {
   ComplementLispishFunction,
   CompLispishFunction,
@@ -9,11 +9,11 @@ import {
   PartialLispishFunction,
   SomePredLispishFunction,
 } from '../../../parser/interface'
-import { assertArr, assertLength, assertLispishFunction, isArr } from '../../../utils'
+import { assertArr, assertLength, assertLispishFunction, isArr, toAny } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   apply: {
-    evaluate: ([func, ...params]: Arr, contextStack, { executeFunction }): unknown => {
+    evaluate: ([func, ...params]: Arr, contextStack, { executeFunction }): Any => {
       assertLispishFunction(func)
       const paramsLength = params.length
       const last = params[paramsLength - 1]
@@ -25,8 +25,8 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   identity: {
-    evaluate: ([value]): unknown => {
-      return value
+    evaluate: ([value]): Any => {
+      return toAny(value)
     },
     validate: node => assertLength(1, node),
   },
@@ -36,7 +36,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [functionSymbol]: true,
         type: `partial`,
-        fn,
+        fn: toAny(fn),
         params,
       }
     },
@@ -64,7 +64,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [functionSymbol]: true,
         type: `constantly`,
-        value,
+        value: toAny(value),
       }
     },
     validate: node => assertLength(1, node),
@@ -86,7 +86,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       return {
         [functionSymbol]: true,
         type: `complement`,
-        fn,
+        fn: toAny(fn),
       }
     },
     validate: node => assertLength(1, node),

@@ -9,17 +9,17 @@ import {
 } from '../parser/interface'
 import { Token } from '../tokenizer/interface'
 import { NormalExpressionNode } from '../parser/interface'
-import { Arr } from '../interface'
+import { Any, Arr } from '../interface'
 
-export type NormalExpressionEvaluator = (
+export type NormalExpressionEvaluator<T> = (
   params: Arr,
   contextStack: Context[],
   { executeFunction }: { executeFunction: ExecuteFunction },
-) => unknown
+) => T
 type ValidateNode = (node: NormalExpressionNode) => void
 
-type BuiltinNormalExpression = {
-  evaluate: NormalExpressionEvaluator
+type BuiltinNormalExpression<T> = {
+  evaluate: NormalExpressionEvaluator<T>
   validate?: ValidateNode
 }
 
@@ -31,17 +31,17 @@ type Parsers = {
   parseArgument: ParseArgument
 }
 
-export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression>
-export type BuiltinSpecialExpressions = Record<string, BuiltinSpecialExpression>
+export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>
+export type BuiltinSpecialExpressions = Record<string, BuiltinSpecialExpression<Any>>
 
 type EvaluateHelpers = {
   evaluateAstNode: EvaluateAstNode
   builtin: Builtin
 }
-export type BuiltinSpecialExpression<T extends SpecialExpressionNode = SpecialExpressionNode> = {
-  parse: (tokens: Token[], position: number, parsers: Parsers) => [number, T]
-  evaluate: (node: T, contextStack: Context[], helpers: EvaluateHelpers) => unknown
-  validate?: (node: T) => void
+export type BuiltinSpecialExpression<T, N extends SpecialExpressionNode = SpecialExpressionNode> = {
+  parse: (tokens: Token[], position: number, parsers: Parsers) => [number, N]
+  evaluate: (node: N, contextStack: Context[], helpers: EvaluateHelpers) => T
+  validate?: (node: N) => void
 }
 
 export type SpecialExpressionName =

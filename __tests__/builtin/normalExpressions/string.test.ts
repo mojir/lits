@@ -30,6 +30,7 @@ describe(`string functions`, () => {
 
   describe(`str`, () => {
     test(`samples`, () => {
+      expect(lispish.run(`(str x)`, { vars: { x: undefined } })).toBe(``)
       expect(lispish.run(`(str)`)).toBe(``)
       expect(lispish.run(`(str "")`)).toBe(``)
       expect(lispish.run(`(str "1")`)).toBe(`1`)
@@ -38,8 +39,8 @@ describe(`string functions`, () => {
       expect(lispish.run(`(str 0)`)).toBe(`0`)
       expect(lispish.run(`(str true)`)).toBe(`true`)
       expect(lispish.run(`(str "1" false)`)).toBe(`1false`)
-      expect(lispish.run(`(str null "m")`)).toBe(`nullm`)
-      expect(lispish.run(`(str undefined)`)).toBe(``)
+      expect(lispish.run(`(str null "m")`)).toBe(`m`)
+      expect(lispish.run(`(str null)`)).toBe(``)
       expect(lispish.run(`(str [])`)).toBe(`[]`)
       expect(lispish.run(`(str [1 2 3])`)).toBe(`[1,2,3]`)
       expect(lispish.run(`(str {})`)).toBe(`{}`)

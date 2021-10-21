@@ -81,7 +81,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   mapcat: {
-    evaluate: (params, contextStack, helpers): unknown[] | string => {
+    evaluate: (params, contextStack, helpers): Arr | string => {
       params.slice(1).forEach(arr => {
         assertArr(arr)
       })

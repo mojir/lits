@@ -28,19 +28,19 @@ describe(`collection functions`, () => {
 
   describe(`get`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(get [] 1)`)).toBeUndefined()
-      expect(lispish.run(`(get [1] 1)`)).toBeUndefined()
+      expect(lispish.run(`(get [] 1)`)).toBeNull()
+      expect(lispish.run(`(get [1] 1)`)).toBeNull()
       expect(lispish.run(`(get [1 2 3] 1)`)).toBe(2)
       expect(lispish.run(`(get [] 1 "x")`)).toBe(`x`)
       expect(lispish.run(`(get [1] 1 "x")`)).toBe(`x`)
       expect(lispish.run(`(get [1 2 3] 1 "x")`)).toBe(2)
 
       expect(lispish.run(`(get "Albert" 1)`)).toBe(`l`)
-      expect(lispish.run(`(get "Albert" 7)`)).toBeUndefined()
-      expect(lispish.run(`(get "Albert" -1)`)).toBeUndefined()
-      expect(lispish.run(`(get "" 0)`)).toBeUndefined()
+      expect(lispish.run(`(get "Albert" 7)`)).toBeNull()
+      expect(lispish.run(`(get "Albert" -1)`)).toBeNull()
+      expect(lispish.run(`(get "" 0)`)).toBeNull()
 
-      expect(lispish.run(`(get (object) "a")`)).toBeUndefined()
+      expect(lispish.run(`(get (object) "a")`)).toBeNull()
       expect(lispish.run(`(get (object "a" 1 "b" 2) "a")`)).toBe(1)
       expect(lispish.run(`(get (object) "a" "x")`)).toBe(`x`)
       expect(lispish.run(`(get (object "a" 1 "b" 2) "a")`)).toBe(1)

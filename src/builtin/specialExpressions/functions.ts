@@ -109,8 +109,10 @@ function getFunctionName(
   return undefined
 }
 
-function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpression[`evaluate`] {
-  return (node, contextStack, { evaluateAstNode, builtin }): LispishFunction | undefined => {
+function createEvaluator(
+  expressionName: ExpressionsName,
+): BuiltinSpecialExpression<LispishFunction | null>[`evaluate`] {
+  return (node, contextStack, { evaluateAstNode, builtin }) => {
     castExpressionNode(node)
     const name = getFunctionName(expressionName, node, contextStack, evaluateAstNode)
 
@@ -154,24 +156,24 @@ function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpress
       return lispishFunction
     }
 
-    const globalContext = asNotUndefined(contextStack[contextStack.length - 2], `Could not find global scope`)
+    const globalContext = asNotUndefined(contextStack[contextStack.length - 2])
 
     globalContext[name as string] = { value: lispishFunction }
-    return undefined
+    return null
   }
 }
 
-export const defnSpecialExpression: BuiltinSpecialExpression = {
+export const defnSpecialExpression: BuiltinSpecialExpression<LispishFunction | null> = {
   parse: createParser(`defn`),
   evaluate: createEvaluator(`defn`),
 }
 
-export const defnsSpecialExpression: BuiltinSpecialExpression = {
+export const defnsSpecialExpression: BuiltinSpecialExpression<LispishFunction | null> = {
   parse: createParser(`defns`),
   evaluate: createEvaluator(`defns`),
 }
 
-export const fnSpecialExpression: BuiltinSpecialExpression = {
+export const fnSpecialExpression: BuiltinSpecialExpression<LispishFunction | null> = {
   parse: createParser(`fn`),
   evaluate: createEvaluator(`fn`),
 }

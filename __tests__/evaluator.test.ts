@@ -1,6 +1,6 @@
 import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
-import { evaluate } from '../src/evaluator'
+import { evaluate, evaluateAstNode } from '../src/evaluator'
 import { Lispish } from '../src'
 import { Context } from '../src/evaluator/interface'
 
@@ -24,13 +24,13 @@ const formatPhoneNumber = `
     (cond
       (> (count phoneNumber) 6)
         (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3 6) "-" (subs phoneNumber 6))
-      
+
       (> (count phoneNumber) 3)
         (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))
-      
+
       (> (count phoneNumber) 0)
         (str "(" (subs phoneNumber 0))
-      
+
       true phoneNumber
     )
   )
@@ -135,4 +135,29 @@ describe(`Evaluator`, () => {
     expect(lispish.run(formatPhoneNumber, { vars: { $data: `2345678901` } })).toBe(`(234) 567-8901`)
     expect(lispish.run(formatPhoneNumber, { vars: { $data: `23456789012` } })).toBe(`(234) 567-89012`)
   })
+})
+
+test(`evaluateAstNode`, () => {
+  expect(() =>
+    evaluateAstNode(
+      {
+        type: `Modifier`,
+        value: `&rest`,
+      },
+      [],
+    ),
+  ).toThrow()
+})
+
+test(`a test`, () => {
+  expect(() =>
+    lispish.run(`(defn numberComparer [a b]
+    (cond
+      (< a b) -1
+      (> a b) 1
+      true 0
+    )
+  )
+  `),
+  ).not.toThrow()
 })

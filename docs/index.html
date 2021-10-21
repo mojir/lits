@@ -166,10 +166,10 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(get [1 2 3] 1)')"><span class="icon-button">▶</span> (get [1 2 3] 1) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(get [] 1)')"><span class="icon-button">▶</span> (get [] 1) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(get [] 1)')"><span class="icon-button">▶</span> (get [] 1) <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(get [] 1 ___double_quote___default___double_quote___)')"><span class="icon-button">▶</span> (get [] 1 "default") <span class="gray">=> "default"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(get (object ___double_quote___a___double_quote___ 1) ___double_quote___a___double_quote___)')"><span class="icon-button">▶</span> (get (object "a" 1) "a") <span class="gray">=> 1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(get (object ___double_quote___a___double_quote___ 1) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (get (object "a" 1) "b") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(get (object ___double_quote___a___double_quote___ 1) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (get (object "a" 1) "b") <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(get (object ___double_quote___a___double_quote___ 1) ___double_quote___b___double_quote___ ___double_quote___default___double_quote___)')"><span class="icon-button">▶</span> (get (object "a" 1) "b" "default") <span class="gray">=> "default"</span></span></pre>
   </div>
 </div>
@@ -406,10 +406,10 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(array 1 2 3)')"><span class="icon-button">▶</span> (array 1 2 3) <span class="gray">=> [1,2,3]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(array (array null undefined false true))')"><span class="icon-button">▶</span> (array (array null undefined false true)) <span class="gray">=> [[null,undefined,false,true]]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array (array null false true))')"><span class="icon-button">▶</span> (array (array null false true)) <span class="gray">=> [[null,false,true]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[]')"><span class="icon-button">▶</span> [] <span class="gray">=> []</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[1 2 3]')"><span class="icon-button">▶</span> [1 2 3] <span class="gray">=> [1,2,3]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('[[null undefined false true]]')"><span class="icon-button">▶</span> [[null undefined false true]] <span class="gray">=> [[null,undefined,false,true]]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('[[null false true]]')"><span class="icon-button">▶</span> [[null false true]] <span class="gray">=> [[null,false,true]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[]')"><span class="icon-button">▶</span> [] <span class="gray">=> []</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('([1 2 3] 1)')"><span class="icon-button">▶</span> ([1 2 3] 1) <span class="gray">=> 2</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('([1 2 3 4 5 6 7 8 9] 3)')"><span class="icon-button">▶</span> ([1 2 3 4 5 6 7 8 9] 3) <span class="gray">=> 4</span></span></pre>
@@ -506,7 +506,7 @@
 <div id="nth" class="content function">
   <div class="function-header">nth</div>
   
-  <p>Accesses element <span class="pre">index</span> of <span class="pre">input</span>. Negative <span class="pre">index</span> counts backwards. Accessing out-of-bounds indices returns <span class="pre">undefined</span>.</p>
+  <p>Accesses element <span class="pre">index</span> of <span class="pre">input</span>. Negative <span class="pre">index</span> counts backwards. Accessing out-of-bounds indices returns <span class="pre">nil</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>nth input index => any</pre>
@@ -518,14 +518,14 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(nth [1 2 3] 1)')"><span class="icon-button">▶</span> (nth [1 2 3] 1) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nth [1 2 3] 3)')"><span class="icon-button">▶</span> (nth [1 2 3] 3) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nth [1 2 3] -1)')"><span class="icon-button">▶</span> (nth [1 2 3] -1) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nth [1 2 3] -1)')"><span class="icon-button">▶</span> (nth [1 2 3] -1) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nth [1 2 3] 3)')"><span class="icon-button">▶</span> (nth [1 2 3] 3) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nth [1 2 3] -1)')"><span class="icon-button">▶</span> (nth [1 2 3] -1) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nth [1 2 3] -1)')"><span class="icon-button">▶</span> (nth [1 2 3] -1) <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ 1)')"><span class="icon-button">▶</span> (nth "A string" 1) <span class="gray">=> " "</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ 3)')"><span class="icon-button">▶</span> (nth "A string" 3) <span class="gray">=> "t"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ -3)')"><span class="icon-button">▶</span> (nth "A string" -3) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ 30)')"><span class="icon-button">▶</span> (nth "A string" 30) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ -30)')"><span class="icon-button">▶</span> (nth "A string" -30) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ -3)')"><span class="icon-button">▶</span> (nth "A string" -3) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ 30)')"><span class="icon-button">▶</span> (nth "A string" 30) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nth ___double_quote___A string___double_quote___ -30)')"><span class="icon-button">▶</span> (nth "A string" -30) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -554,7 +554,7 @@
 <div id="pop" class="content function">
   <div class="function-header">pop</div>
   
-  <p>Removes and returns then last item of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Removes and returns then last item of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>pop array value => array</pre>
@@ -595,7 +595,7 @@
 <div id="shift" class="content function">
   <div class="function-header">shift</div>
   
-  <p>Removes and returns the first item of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Removes and returns the first item of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>shift array value => array</pre>
@@ -720,7 +720,7 @@
 <div id="position" class="content function">
   <div class="function-header">position</div>
   
-  <p>Returns the index of the first elements that pass the test implemented by <span class="pre">finder</span>. If no element was found, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the index of the first elements that pass the test implemented by <span class="pre">finder</span>. If no element was found, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>position array finder => number</pre>
@@ -733,7 +733,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(position string? [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (position string? ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> 0</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(position (fn [x] (> x 10)) [5 10 15 20])')"><span class="icon-button">▶</span> (position (fn [x] (> x 10)) [5 10 15 20]) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(position (fn [x] (> x 100)) [5 10 15 20])')"><span class="icon-button">▶</span> (position (fn [x] (> x 100)) [5 10 15 20]) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(position (fn [x] (> x 100)) [5 10 15 20])')"><span class="icon-button">▶</span> (position (fn [x] (> x 100)) [5 10 15 20]) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -741,7 +741,7 @@
 <div id="index-of" class="content function">
   <div class="function-header">index-of</div>
   
-  <p>Returns the index of <span class="pre">value</span> in array. If element is not present in <span class="pre">array</span> <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the index of <span class="pre">value</span> in array. If element is not present in <span class="pre">array</span> <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>index-of array value => number</pre>
@@ -762,7 +762,7 @@
 <div id="some" class="content function">
   <div class="function-header">some</div>
   
-  <p>Returns the first elements that pass the test implemented by <span class="pre">finder</span>. I no element was found, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the first elements that pass the test implemented by <span class="pre">finder</span>. I no element was found, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>some array finder => array</pre>
@@ -775,8 +775,8 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(some string? [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (some string? ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> "Albert"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(some (fn [x] (> x 10)) [5 10 15 20])')"><span class="icon-button">▶</span> (some (fn [x] (> x 10)) [5 10 15 20]) <span class="gray">=> 15</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(some (fn [x] (> x 10)) [1 2 3 4])')"><span class="icon-button">▶</span> (some (fn [x] (> x 10)) [1 2 3 4]) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(some (fn [x] (> x 10)) [])')"><span class="icon-button">▶</span> (some (fn [x] (> x 10)) []) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(some (fn [x] (> x 10)) [1 2 3 4])')"><span class="icon-button">▶</span> (some (fn [x] (> x 10)) [1 2 3 4]) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(some (fn [x] (> x 10)) [])')"><span class="icon-button">▶</span> (some (fn [x] (> x 10)) []) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -804,7 +804,7 @@
 <div id="first" class="content function">
   <div class="function-header">first</div>
   
-  <p>Returns the first element of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the first element of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>first array => any</pre>
@@ -815,7 +815,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(first [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (first ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> "Albert"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(first [])')"><span class="icon-button">▶</span> (first []) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(first [])')"><span class="icon-button">▶</span> (first []) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -823,7 +823,7 @@
 <div id="second" class="content function">
   <div class="function-header">second</div>
   
-  <p>Returns the second element of <span class="pre">array</span>. If <span class="pre">array</span> has less than two elements, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the second element of <span class="pre">array</span>. If <span class="pre">array</span> has less than two elements, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>second array => any</pre>
@@ -834,8 +834,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(second [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (second ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> "Mojir"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(second [1])')"><span class="icon-button">▶</span> (second [1]) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(second [])')"><span class="icon-button">▶</span> (second []) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(second [1])')"><span class="icon-button">▶</span> (second [1]) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(second [])')"><span class="icon-button">▶</span> (second []) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -843,7 +843,7 @@
 <div id="last" class="content function">
   <div class="function-header">last</div>
   
-  <p>Returns the last element of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">undefined</span> is returned.</p>
+  <p>Returns the last element of <span class="pre">array</span>. If <span class="pre">array</span> is empty, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>last array => any</pre>
@@ -856,7 +856,7 @@
     <pre><span class="example" onclick="addToPlayground('(last [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (last ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> [1,2]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(last [1 2])')"><span class="icon-button">▶</span> (last [1 2]) <span class="gray">=> 2</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(last [1])')"><span class="icon-button">▶</span> (last [1]) <span class="gray">=> 1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(last [])')"><span class="icon-button">▶</span> (last []) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(last [])')"><span class="icon-button">▶</span> (last []) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -909,7 +909,7 @@
 <div id="next" class="content function">
   <div class="function-header">next</div>
   
-  <p>If <span class="pre">input</span> is an array, returns a new array with all but the first element from <span class="pre">input</span>. If <span class="pre">input</span> has less than two elements, undefined is returned. For string <span class="pre">input</span> returns all but the first characters in <span class="pre">input</span>. If length of string <span class="pre">input</span> is less than two, undefined is returned.</p>
+  <p>If <span class="pre">input</span> is an array, returns a new array with all but the first element from <span class="pre">input</span>. If <span class="pre">input</span> has less than two elements, <span class="pre">null</span> is returned. For string <span class="pre">input</span> returns all but the first characters in <span class="pre">input</span>. If length of string <span class="pre">input</span> is less than two, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>next array => array</pre>
@@ -920,11 +920,11 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(next [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]])')"><span class="icon-button">▶</span> (next ["Albert" "Mojir" 160 [1 2]]) <span class="gray">=> ["Mojir",160,[1,2]]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(next [___double_quote___Albert___double_quote___])')"><span class="icon-button">▶</span> (next ["Albert"]) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(next [])')"><span class="icon-button">▶</span> (next []) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next [___double_quote___Albert___double_quote___])')"><span class="icon-button">▶</span> (next ["Albert"]) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next [])')"><span class="icon-button">▶</span> (next []) <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(next ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (next "Albert") <span class="gray">=> "lbert"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(next ___double_quote___A___double_quote___)')"><span class="icon-button">▶</span> (next "A") <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(next ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (next "") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next ___double_quote___A___double_quote___)')"><span class="icon-button">▶</span> (next "A") <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(next ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (next "") <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -932,7 +932,7 @@
 <div id="nthnext" class="content function">
   <div class="function-header">nthnext</div>
   
-  <p>If <span class="pre">input</span> is an array, returns a new array with all but the first <span class="pre">count</span> elements from <span class="pre">input</span>. If <span class="pre">input</span> has less or equal than <span class="pre">count</span> elements, undefined returned. For string <span class="pre">input</span> returns all but the first <span class="pre">count</span> characters in <span class="pre">input</span>. If length of string <span class="pre">input</span> is less or equal than <span class="pre">count</span>, undefined is returned.</p>
+  <p>If <span class="pre">input</span> is an array, returns a new array with all but the first <span class="pre">count</span> elements from <span class="pre">input</span>. If <span class="pre">input</span> has less or equal than <span class="pre">count</span> elements, <span class="pre">null</span> returned. For string <span class="pre">input</span> returns all but the first <span class="pre">count</span> characters in <span class="pre">input</span>. If length of string <span class="pre">input</span> is less or equal than <span class="pre">count</span>, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>nthnext array => array</pre>
@@ -944,9 +944,9 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(nthnext [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ 160 [1 2]] 2)')"><span class="icon-button">▶</span> (nthnext ["Albert" "Mojir" 160 [1 2]] 2) <span class="gray">=> [160,[1,2]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(nthnext ___double_quote___Albert___double_quote___ 3)')"><span class="icon-button">▶</span> (nthnext "Albert" 3) <span class="gray">=> "ert"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nthnext ___double_quote___Albert___double_quote___ 6)')"><span class="icon-button">▶</span> (nthnext "Albert" 6) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nthnext [] 0)')"><span class="icon-button">▶</span> (nthnext [] 0) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(nthnext ___double_quote______double_quote___ 0)')"><span class="icon-button">▶</span> (nthnext "" 0) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nthnext ___double_quote___Albert___double_quote___ 6)')"><span class="icon-button">▶</span> (nthnext "Albert" 6) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nthnext [] 0)')"><span class="icon-button">▶</span> (nthnext [] 0) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(nthnext ___double_quote______double_quote___ 0)')"><span class="icon-button">▶</span> (nthnext "" 0) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -1148,7 +1148,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,4,5,7,8,9,10]</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,7,8]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (random-sample 0.5 "Albert") <span class="gray">=> "Albt"</span></span></pre>
   </div>
 </div>
@@ -1167,8 +1167,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (rand-nth [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 3</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (rand-nth "Albert") <span class="gray">=> "r"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (rand-nth [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 1</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (rand-nth "Albert") <span class="gray">=> "t"</span></span></pre>
   </div>
 </div>
 
@@ -1186,8 +1186,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [8,3,7,2,10,1,5,9,4,6]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "tilrorAjb eM"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,5,4,10,6,8,2,1,7,9]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "M rtbjAorlei"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1983,9 +1983,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.0773122312235015</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.005494186674566019</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.7502081475013539</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.14274550681795173</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.0019513383045370936</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 1.3240404647255448</span></span></pre>
   </div>
 </div>
 
@@ -2004,8 +2004,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 1</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 38</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 0</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 1</span></span></pre>
   </div>
 </div>
 
@@ -2575,7 +2575,7 @@
 <div id="not" class="content function">
   <div class="function-header">not</div>
   
-  <p>Computes logical negation. Note that any other <span class="pre">value</span> than <span class="pre">false</span>, <span class="pre">0</span>, <span class="pre">null</span>, <span class="pre">undefined</span> and <span class="pre">""</span> is considered as <span class="pre">true</span>.</p>
+  <p>Computes logical negation. Note that any other <span class="pre">value</span> than <span class="pre">false</span>, <span class="pre">0</span>, <span class="pre">null</span> and <span class="pre">""</span> is considered as <span class="pre">true</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>not value => boolean</pre>
@@ -2591,7 +2591,6 @@
 <pre><span class="example" onclick="addToPlayground('(not 0)')"><span class="icon-button">▶</span> (not 0) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(not false)')"><span class="icon-button">▶</span> (not false) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(not null)')"><span class="icon-button">▶</span> (not null) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(not undefined)')"><span class="icon-button">▶</span> (not undefined) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(not ___double_quote______double_quote___)')"><span class="icon-button">▶</span> (not "") <span class="gray">=> true</span></span></pre>
   </div>
 </div>
@@ -2600,7 +2599,7 @@
 <div id="write_exclamation" class="content function">
   <div class="function-header">write!</div>
   
-  <p>It console.log the <span class="pre">values</span> and then returns the last element of the <span class="pre">values</span> array.. If called with no arguments <span class="pre">undefined</span> is returned.</p>
+  <p>It console.log the <span class="pre">values</span> and then returns the last element of the <span class="pre">values</span> array.. If called with no arguments <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>write! values => value</pre>
@@ -2615,7 +2614,7 @@
 <pre><span class="example" onclick="addToPlayground('(write! (object ___double_quote___a___double_quote___ 10))')"><span class="icon-button">▶</span> (write! (object "a" 10)) <span class="gray">=> {"a":10}</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(write! [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___])')"><span class="icon-button">▶</span> (write! ["a" "b" "c"]) <span class="gray">=> ["a","b","c"]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(write! (regexp ___double_quote___^start___double_quote___))')"><span class="icon-button">▶</span> (write! (regexp "^start")) <span class="gray">=> /^start/</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(write! null undefined true false)')"><span class="icon-button">▶</span> (write! null undefined true false) <span class="gray">=> false</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(write! null true false)')"><span class="icon-button">▶</span> (write! null true false) <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -2633,7 +2632,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634640938282</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634823436968</span></span></pre>
   </div>
 </div>
 
@@ -2653,8 +2652,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(get-path (write! (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ [1 2 3]))) ___double_quote___a.x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write! (object "a" (object "x" [1 2 3]))) "a.x[2]") <span class="gray">=> 3</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(get-path (write! (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ [1 2 3]))) ___double_quote___b.z[10]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write! (object "a" (object "x" [1 2 3]))) "b.z[10]") <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(get-path (write! [(object ___double_quote___x___double_quote___ [1 2 3])]) ___double_quote___[1].x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write! [(object "x" [1 2 3])]) "[1].x[2]") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(get-path (write! (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ [1 2 3]))) ___double_quote___b.z[10]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write! (object "a" (object "x" [1 2 3]))) "b.z[10]") <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(get-path (write! [(object ___double_quote___x___double_quote___ [1 2 3])]) ___double_quote___[1].x[2]___double_quote___)')"><span class="icon-button">▶</span> (get-path (write! [(object "x" [1 2 3])]) "[1].x[2]") <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -2665,14 +2664,14 @@
   <p>If no params, prints context stack, otherwise prints <span class="pre">value</span> details.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>debug! value => undefined</pre>
+    <pre>debug! value => any</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(debug!), (debug! #(> %1 2))')"><span class="icon-button">▶</span> (debug!), (debug! #(> %1 2)) <span class="gray">=> undefined</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(debug!), (debug! #(> %1 2))')"><span class="icon-button">▶</span> (debug!), (debug! #(> %1 2)) <span class="gray">=> &lt;function λ&gt;</span></span></pre>
   </div>
 </div>
 
@@ -2778,7 +2777,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20} {___double_quote___b___double_quote___ 20 ___double_quote___a___double_quote___ 10})')"><span class="icon-button">▶</span> (equal? {"a" 10 "b" 20} {"b" 20 "a" 10}) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(equal? [1 true null undefined] [1 true null undefined])')"><span class="icon-button">▶</span> (equal? [1 true null undefined] [1 true null undefined]) <span class="gray">=> true</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(equal? [1 true null] [1 true null])')"><span class="icon-button">▶</span> (equal? [1 true null] [1 true null]) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}]} {___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}] ___double_quote___a___double_quote___ 10})')"><span class="icon-button">▶</span> (equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10}) <span class="gray">=> true</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}]} {___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 21}] ___double_quote___a___double_quote___ 10})')"><span class="icon-button">▶</span> (equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10}) <span class="gray">=> false</span></span></pre>
   </div>
@@ -2800,7 +2799,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(dissoc (object ___double_quote___x___double_quote___ 10) ___double_quote___x___double_quote___)')"><span class="icon-button">▶</span> (dissoc (object "x" 10) "x") <span class="gray">=> 10</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(dissoc (object ___double_quote___x___double_quote___ 10) ___double_quote___y___double_quote___)')"><span class="icon-button">▶</span> (dissoc (object "x" 10) "y") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(dissoc (object ___double_quote___x___double_quote___ 10) ___double_quote___y___double_quote___)')"><span class="icon-button">▶</span> (dissoc (object "x" 10) "y") <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(def o (object ___double_quote___a___double_quote___ 5)) (dissoc o ___double_quote___a___double_quote___) o')"><span class="icon-button">▶</span> (def o (object "a" 5)) (dissoc o "a") o <span class="gray">=> {}</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(def o (object ___double_quote___a___double_quote___ 5)) (dissoc o ___double_quote___b___double_quote___) o')"><span class="icon-button">▶</span> (def o (object "a" 5)) (dissoc o "b") o <span class="gray">=> {"a":5}</span></span></pre>
   </div>
@@ -2886,7 +2885,7 @@
 <div id="find" class="content function">
   <div class="function-header">find</div>
   
-  <p>Returns entry for <span class="pre">key</span>, or undefined if <span class="pre">key</span> not present in <span class="pre">object</span>.</p>
+  <p>Returns entry for <span class="pre">key</span>, or <span class="pre">nil</span> if <span class="pre">key</span> not present in <span class="pre">object</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>find object key => Entry</pre>
@@ -2898,7 +2897,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(find (object ___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2) ___double_quote___b___double_quote___)')"><span class="icon-button">▶</span> (find (object "a" 1 "b" 2) "b") <span class="gray">=> ["b",2]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(find (object ___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (find (object "a" 1 "b" 2) "c") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(find (object ___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2) ___double_quote___c___double_quote___)')"><span class="icon-button">▶</span> (find (object "a" 1 "b" 2) "c") <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -2943,6 +2942,26 @@
 </div>
 
 
+<div id="select-keys" class="content function">
+  <div class="function-header">select-keys</div>
+  
+  <p>Returns an object containing only those entries in <span class="pre">object</span> whose key is in <span class="pre">keys</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>select-keys object keys => object</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>object: Object</pre>
+<pre>keys: Array<string></pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(select-keys {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2 ___double_quote___c___double_quote___ 3} [___double_quote___a___double_quote___ ___double_quote___b___double_quote___])')"><span class="icon-button">▶</span> (select-keys {"a" 1 "b" 2 "c" 3} ["a" "b"]) <span class="gray">=> {"a":1,"b":2}</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(select-keys {___double_quote___a___double_quote___ 1} [___double_quote___a___double_quote___ ___double_quote___b___double_quote___])')"><span class="icon-button">▶</span> (select-keys {"a" 1} ["a" "b"]) <span class="gray">=> {"a":1}</span></span></pre>
+  </div>
+</div>
+
+
 <div id="boolean_question" class="content function">
   <div class="function-header">boolean?</div>
   
@@ -2983,29 +3002,6 @@
 <pre><span class="example" onclick="addToPlayground('(null? [1 2 3])')"><span class="icon-button">▶</span> (null? [1 2 3]) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(null? 0)')"><span class="icon-button">▶</span> (null? 0) <span class="gray">=> false</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(null? ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (null? "A string") <span class="gray">=> false</span></span></pre>
-  </div>
-</div>
-
-
-<div id="undefined_question" class="content function">
-  <div class="function-header">undefined?</div>
-  
-  <p>Returns <span class="pre">true</span> if <span class="pre">value</span> is <span class="pre">undefined</span>, otherwise <span class="pre">false</span>.</p>
-  <label>Syntax</label>
-  <div class="indent">
-    <pre>undefined? value => boolean</pre>
-  </div>
-
-  <label>Arguments</label><div class="indent"><pre>value: any</pre></div>
-
-  <label>Examples</label>
-  <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(undefined? undefined)')"><span class="icon-button">▶</span> (undefined? undefined) <span class="gray">=> true</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(undefined? false)')"><span class="icon-button">▶</span> (undefined? false) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(undefined? null)')"><span class="icon-button">▶</span> (undefined? null) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(undefined? [1 2 3])')"><span class="icon-button">▶</span> (undefined? [1 2 3]) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(undefined? 0)')"><span class="icon-button">▶</span> (undefined? 0) <span class="gray">=> false</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(undefined? ___double_quote___A string___double_quote___)')"><span class="icon-button">▶</span> (undefined? "A string") <span class="gray">=> false</span></span></pre>
   </div>
 </div>
 
@@ -3479,7 +3475,7 @@
 <div id="match" class="content function">
   <div class="function-header">match</div>
   
-  <p>Matches <span class="pre">string</span> against <span class="pre">pattern</span>. If <span class="pre">string</span> matches, a <em>match</em>-array is returned, otherwise <span class="pre">undefined</span>.</p>
+  <p>Matches <span class="pre">string</span> against <span class="pre">pattern</span>. If <span class="pre">string</span> matches, a <em>match</em>-array is returned, otherwise <span class="pre">nil</span>.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>match pattern string => array</pre>
@@ -3492,7 +3488,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___^\s*(.*)$___double_quote___) ___double_quote___  A string___double_quote___)')"><span class="icon-button">▶</span> (match (regexp "^\s*(.*)$") "  A string") <span class="gray">=> ["  A string","A string"]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___) ___double_quote___My name is Albert___double_quote___)')"><span class="icon-button">▶</span> (match (regexp "albert" "i") "My name is Albert") <span class="gray">=> ["Albert"]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___) ___double_quote___My name is Ben___double_quote___)')"><span class="icon-button">▶</span> (match (regexp "albert" "i") "My name is Ben") <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___) ___double_quote___My name is Ben___double_quote___)')"><span class="icon-button">▶</span> (match (regexp "albert" "i") "My name is Ben") <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3646,7 +3642,7 @@
 <div id="when-let" class="content function">
   <div class="function-header">when-let</div>
   <h3>Special Expression</h3>
-  <p>Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, undefined is returned.</p>
+  <p>Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>when-let bindings then => any</pre>
@@ -3658,7 +3654,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(when-let [a (> (count ___double_quote___Albert___double_quote___) 4)] (write! (str a ___double_quote___is big enough___double_quote___)) (write! ___double_quote___Sorry, not big enough.___double_quote___))')"><span class="icon-button">▶</span> (when-let [a (> (count "Albert") 4)] (write! (str a "is big enough")) (write! "Sorry, not big enough.")) <span class="gray">=> "Sorry, not big enough."</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when-let [a (> (count ___double_quote___Albert___double_quote___) 10)] (write! (str a ___double_quote___is big enough___double_quote___)) (write! ___double_quote___Sorry, not big enough.___double_quote___))')"><span class="icon-button">▶</span> (when-let [a (> (count "Albert") 10)] (write! (str a "is big enough")) (write! "Sorry, not big enough.")) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when-let [a (> (count ___double_quote___Albert___double_quote___) 10)] (write! (str a ___double_quote___is big enough___double_quote___)) (write! ___double_quote___Sorry, not big enough.___double_quote___))')"><span class="icon-button">▶</span> (when-let [a (> (count "Albert") 10)] (write! (str a "is big enough")) (write! "Sorry, not big enough.")) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3679,8 +3675,8 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(when-first [x [1 2 3]] (write! 10) (write! 20) x)')"><span class="icon-button">▶</span> (when-first [x [1 2 3]] (write! 10) (write! 20) x) <span class="gray">=> 1</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(when-first [x ___double_quote___Albert___double_quote___] x)')"><span class="icon-button">▶</span> (when-first [x "Albert"] x) <span class="gray">=> "A"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when-first [x ___double_quote______double_quote___] x)')"><span class="icon-button">▶</span> (when-first [x ""] x) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when-first [x []] x)')"><span class="icon-button">▶</span> (when-first [x []] x) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when-first [x ___double_quote______double_quote___] x)')"><span class="icon-button">▶</span> (when-first [x ""] x) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when-first [x []] x)')"><span class="icon-button">▶</span> (when-first [x []] x) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3793,7 +3789,7 @@
 <div id="if" class="content function">
   <div class="function-header">if</div>
   <h3>Special Expression</h3>
-  <p>Either <span class="pre">then</span> or <span class="pre">else</span> branch is taken. Then branch is selected when <span class="pre">test</span> result is truthy. I test is falsy and no <span class="pre">else</span> branch exists, undefined is returned.</p>
+  <p>Either <span class="pre">then</span> or <span class="pre">else</span> branch is taken. Then branch is selected when <span class="pre">test</span> result is truthy. I test is falsy and no <span class="pre">else</span> branch exists, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>if test then else(optional) => any</pre>
@@ -3808,7 +3804,7 @@
     <pre><span class="example" onclick="addToPlayground('(if true (write! ___double_quote___TRUE___double_quote___) (write! ___double_quote___FALSE___double_quote___))')"><span class="icon-button">▶</span> (if true (write! "TRUE") (write! "FALSE")) <span class="gray">=> "TRUE"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(if false (write! ___double_quote___TRUE___double_quote___) (write! ___double_quote___FALSE___double_quote___))')"><span class="icon-button">▶</span> (if false (write! "TRUE") (write! "FALSE")) <span class="gray">=> "FALSE"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(if true (write! ___double_quote___TRUE___double_quote___))')"><span class="icon-button">▶</span> (if true (write! "TRUE")) <span class="gray">=> "TRUE"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(if false (write! ___double_quote___TRUE___double_quote___))')"><span class="icon-button">▶</span> (if false (write! "TRUE")) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(if false (write! ___double_quote___TRUE___double_quote___))')"><span class="icon-button">▶</span> (if false (write! "TRUE")) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3816,7 +3812,7 @@
 <div id="if-not" class="content function">
   <div class="function-header">if-not</div>
   <h3>Special Expression</h3>
-  <p>Either <span class="pre">then</span> or <span class="pre">else</span> branch is taken. Then branch is selected when <span class="pre">test</span> result is falsy. I test is falsy and no <span class="pre">else</span> branch exists, undefined is returned.</p>
+  <p>Either <span class="pre">then</span> or <span class="pre">else</span> branch is taken. Then branch is selected when <span class="pre">test</span> result is falsy. I test is falsy and no <span class="pre">else</span> branch exists, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>if-not test then else(optional) => any</pre>
@@ -3830,7 +3826,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(if-not true (write! ___double_quote___TRUE___double_quote___) (write! ___double_quote___FALSE___double_quote___))')"><span class="icon-button">▶</span> (if-not true (write! "TRUE") (write! "FALSE")) <span class="gray">=> "FALSE"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(if-not false (write! ___double_quote___TRUE___double_quote___) (write! ___double_quote___FALSE___double_quote___))')"><span class="icon-button">▶</span> (if-not false (write! "TRUE") (write! "FALSE")) <span class="gray">=> "TRUE"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(if-not true (write! ___double_quote___TRUE___double_quote___))')"><span class="icon-button">▶</span> (if-not true (write! "TRUE")) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(if-not true (write! ___double_quote___TRUE___double_quote___))')"><span class="icon-button">▶</span> (if-not true (write! "TRUE")) <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(if-not false (write! ___double_quote___TRUE___double_quote___))')"><span class="icon-button">▶</span> (if-not false (write! "TRUE")) <span class="gray">=> "TRUE"</span></span></pre>
   </div>
 </div>
@@ -3839,7 +3835,7 @@
 <div id="cond" class="content function">
   <div class="function-header">cond</div>
   <h3>Special Expression</h3>
-  <p>Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, <span class="pre">undefined</span> is returned.</p>
+  <p>Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>cond variants => any</pre>
@@ -3850,7 +3846,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(cond false (write! ___double_quote___FALSE___double_quote___) null (write! ___double_quote___NULL___double_quote___) true (write! ___double_quote___TRUE___double_quote___))')"><span class="icon-button">▶</span> (cond false (write! "FALSE") null (write! "NULL") true (write! "TRUE")) <span class="gray">=> "TRUE"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(cond false (write! ___double_quote___FALSE___double_quote___) null (write! ___double_quote___NULL___double_quote___))')"><span class="icon-button">▶</span> (cond false (write! "FALSE") null (write! "NULL")) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(cond false (write! ___double_quote___FALSE___double_quote___) null (write! ___double_quote___NULL___double_quote___))')"><span class="icon-button">▶</span> (cond false (write! "FALSE") null (write! "NULL")) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3858,7 +3854,7 @@
 <div id="when" class="content function">
   <div class="function-header">when</div>
   <h3>Special Expression</h3>
-  <p>If <span class="pre">test</span> yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last <span class="pre">form</span> is returned. Otherwise, if <span class="pre">test</span> yields a falsy value, the forms are not evaluated, and <span class="pre">undefined</span> is returned. If no <span class="pre">form</span> is provided, undefined is returned.</p>
+  <p>If <span class="pre">test</span> yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last <span class="pre">form</span> is returned. Otherwise, if <span class="pre">test</span> yields a falsy value, the forms are not evaluated, and <span class="pre">null</span> is returned. If no <span class="pre">form</span> is provided, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>when test form(zero or more) => any</pre>
@@ -3870,9 +3866,9 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(when true (write! ___double_quote___Hi___double_quote___) (write! ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when true (write! "Hi") (write! "There")) <span class="gray">=> "There"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when false (write! ___double_quote___Hi___double_quote___) (write! ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when false (write! "Hi") (write! "There")) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when true)')"><span class="icon-button">▶</span> (when true) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when false)')"><span class="icon-button">▶</span> (when false) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when false (write! ___double_quote___Hi___double_quote___) (write! ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when false (write! "Hi") (write! "There")) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when true)')"><span class="icon-button">▶</span> (when true) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when false)')"><span class="icon-button">▶</span> (when false) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3880,7 +3876,7 @@
 <div id="when-not" class="content function">
   <div class="function-header">when-not</div>
   <h3>Special Expression</h3>
-  <p>If <span class="pre">test</span> yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last <span class="pre">form</span> is returned. Otherwise, if <span class="pre">test</span> yields a truthy value, the forms are not evaluated, and <span class="pre">undefined</span> is returned. If no <span class="pre">form</span> is provided, undefined is returned.</p>
+  <p>If <span class="pre">test</span> yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last <span class="pre">form</span> is returned. Otherwise, if <span class="pre">test</span> yields a truthy value, the forms are not evaluated, and <span class="pre">null</span> is returned. If no <span class="pre">form</span> is provided, <span class="pre">null</span> is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>when-not test form(zero or more) => any</pre>
@@ -3891,10 +3887,10 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(when-not true (write! ___double_quote___Hi___double_quote___) (write! ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when-not true (write! "Hi") (write! "There")) <span class="gray">=> undefined</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(when-not true (write! ___double_quote___Hi___double_quote___) (write! ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when-not true (write! "Hi") (write! "There")) <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(when-not false (write! ___double_quote___Hi___double_quote___) (write! ___double_quote___There___double_quote___))')"><span class="icon-button">▶</span> (when-not false (write! "Hi") (write! "There")) <span class="gray">=> "There"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when-not true)')"><span class="icon-button">▶</span> (when-not true) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(when-not false)')"><span class="icon-button">▶</span> (when-not false) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when-not true)')"><span class="icon-button">▶</span> (when-not true) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(when-not false)')"><span class="icon-button">▶</span> (when-not false) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3913,7 +3909,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(do (write! ___double_quote___Hi___double_quote___) (write! ___double_quote___Albert___double_quote___))')"><span class="icon-button">▶</span> (do (write! "Hi") (write! "Albert")) <span class="gray">=> "Albert"</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(do)')"><span class="icon-button">▶</span> (do) <span class="gray">=> undefined</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(do)')"><span class="icon-button">▶</span> (do) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3924,16 +3920,16 @@
   <p>Recursevly calls enclosing function or loop with its evaluated <span class="pre">forms</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>recur forms => undefined</pre>
+    <pre>recur forms => null</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>forms: form[]</pre></div>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3)')"><span class="icon-button">▶</span> (defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)')"><span class="icon-button">▶</span> ((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3) <span class="gray">=> undefined</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))')"><span class="icon-button">▶</span> (loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n)))) <span class="gray">=> undefined</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3)')"><span class="icon-button">▶</span> (defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)')"><span class="icon-button">▶</span> ((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3) <span class="gray">=> null</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))')"><span class="icon-button">▶</span> (loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n)))) <span class="gray">=> null</span></span></pre>
   </div>
 </div>
 
@@ -3952,7 +3948,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))')"><span class="icon-button">▶</span> (loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n)))) <span class="gray">=> undefined</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))')"><span class="icon-button">▶</span> (loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n)))) <span class="gray">=> null</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(loop [n 3] (write! n) (if (not (zero? n)) (recur (dec n)) n))')"><span class="icon-button">▶</span> (loop [n 3] (write! n) (if (not (zero? n)) (recur (dec n)) n)) <span class="gray">=> 0</span></span></pre>
   </div>
 </div>
@@ -4022,7 +4018,7 @@
 <div id="str" class="content function">
   <div class="function-header">str</div>
   
-  <p>Concatenats <span class="pre">values</span> into one <span class="pre">string</span>. If <span class="pre">value</span> equals <span class="pre">undefined</span> empty string is returned.</p>
+  <p>Concatenats <span class="pre">values</span> into one <span class="pre">string</span>. If <span class="pre">value</span> equals <span class="pre">null</span> empty string is returned.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>str value(zero or more) => number</pre>
@@ -4035,7 +4031,7 @@
     <pre><span class="example" onclick="addToPlayground('(str ___double_quote___A string___double_quote___ ___double_quote___, and another string___double_quote___ ___double_quote___ ...and more___double_quote___)')"><span class="icon-button">▶</span> (str "A string" ", and another string" " ...and more") <span class="gray">=> "A string, and another string ...and more"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(str ___double_quote___Just one string___double_quote___)')"><span class="icon-button">▶</span> (str "Just one string") <span class="gray">=> "Just one string"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(str)')"><span class="icon-button">▶</span> (str) <span class="gray">=> ""</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(str 0 false true null (regexp ___double_quote___^kalle___double_quote___) [1 2 3] {___double_quote___a___double_quote___ ___double_quote___a___double_quote___} undefined)')"><span class="icon-button">▶</span> (str 0 false true null (regexp "^kalle") [1 2 3] {"a" "a"} undefined) <span class="gray">=> "0falsetruenull/^kalle/[1,2,3]{\"a\":\"a\"}"</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(str 0 false true null (regexp ___double_quote___^kalle___double_quote___) [1 2 3] {___double_quote___a___double_quote___ ___double_quote___a___double_quote___})')"><span class="icon-button">▶</span> (str 0 false true null (regexp "^kalle") [1 2 3] {"a" "a"}) <span class="gray">=> "0falsetrue/^kalle/[1,2,3]{\"a\":\"a\"}"</span></span></pre>
   </div>
 </div>
 
@@ -4585,7 +4581,6 @@
 <li id="seq_question_link" onclick="showPage('seq_question')">seq?</li>
 <li id="string_question_link" onclick="showPage('string_question')">string?</li>
 <li id="true_question_link" onclick="showPage('true_question')">true?</li>
-<li id="undefined_question_link" onclick="showPage('undefined_question')">undefined?</li>
 <li id="zero_question_link" onclick="showPage('zero_question')">zero?</li>
         </ul>
 
@@ -4662,6 +4657,7 @@
 <li id="keys_link" onclick="showPage('keys')">keys</li>
 <li id="merge_link" onclick="showPage('merge')">merge</li>
 <li id="object_link" onclick="showPage('object')">object</li>
+<li id="select-keys_link" onclick="showPage('select-keys')">select-keys</li>
 <li id="vals_link" onclick="showPage('vals')">vals</li>
 <li id="zipmap_link" onclick="showPage('zipmap')">zipmap</li>
         </ul>

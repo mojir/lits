@@ -1,5 +1,6 @@
-import { Arr, Coll, Obj } from '../../../interface'
+import { Any, Arr, Coll, Obj } from '../../../interface'
 import {
+  assertAny,
   assertArr,
   assertChar,
   assertColl,
@@ -15,11 +16,12 @@ import {
   isObj,
   isSeq,
   isString,
+  toAny,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const collectionNormalExpression: BuiltinNormalExpressions = {
   get: {
-    evaluate: (params: Arr): unknown => {
+    evaluate: (params: Arr): Any => {
       const [coll, key, defaultValue] = params
       const hasDefault = params.length === 3
 
@@ -28,21 +30,22 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       if (isArr(coll)) {
         assertInteger(key)
         if (key < coll.length) {
-          return coll[key]
+          return toAny(coll[key])
         }
       } else if (isObj(coll)) {
         assertString(key)
         if (Object.getOwnPropertyDescriptor(coll, key)) {
-          return coll[key]
+          return toAny(coll[key])
         }
       } else {
         assertInteger(key)
-        return coll[key]
+        return toAny(coll[key])
       }
       if (hasDefault) {
+        assertAny(defaultValue)
         return defaultValue
       }
-      return undefined
+      return null
     },
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },
@@ -111,7 +114,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(3, node),
   },
   concat: {
-    evaluate: (params: Arr): unknown => {
+    evaluate: (params: Arr): Any => {
       assertColl(params[0])
       if (isArr(params[0])) {
         return params.reduce((result: Arr, arr) => {
