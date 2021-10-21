@@ -247,7 +247,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
           if (intKey === coll.length) {
             result[intKey] = asChar(executeFunction(fn, [undefined, ...params], contextStack))
           }
-          return result
+          return result.join(``)
         }
       }
     },

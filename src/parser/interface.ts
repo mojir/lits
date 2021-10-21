@@ -15,7 +15,7 @@ export type EvaluatedFunctionArguments = {
   restArgument?: string
 }
 
-export type UserDefinedLispishFunction = {
+export type UserDefinedFunction = {
   [functionSymbol]: true
   type: `user-defined`
   name: string | undefined
@@ -24,65 +24,67 @@ export type UserDefinedLispishFunction = {
   functionContext: Context
 }
 
-export type PartialLispishFunction = {
+export type PartialFunction = {
   [functionSymbol]: true
   type: `partial`
   fn: Any
   params: Arr
 }
 
-export type CompLispishFunction = {
+export type CompFunction = {
   [functionSymbol]: true
   type: `comp`
   fns: Arr
 }
 
-export type ConstantlyLispishFunction = {
+export type ConstantlyFunction = {
   [functionSymbol]: true
   type: `constantly`
   value: Any
 }
 
-export type JuxtLispishFunction = {
+export type JuxtFunction = {
   [functionSymbol]: true
   type: `juxt`
   fns: Arr
 }
 
-export type ComplementLispishFunction = {
+export type ComplementFunction = {
   [functionSymbol]: true
   type: `complement`
   fn: Any
 }
 
-export type EveryPredLispishFunction = {
+export type EveryPredFunction = {
   [functionSymbol]: true
   type: `every-pred`
   fns: Arr
 }
 
-export type SomePredLispishFunction = {
+export type SomePredFunction = {
   [functionSymbol]: true
   type: `some-pred`
   fns: Arr
 }
 
-export type BuiltinLispishFunction = {
+export type BuiltinFunction = {
   [functionSymbol]: true
   type: `builtin`
-  builtin: string
+  name: string
 }
 
 export type LispishFunction =
-  | UserDefinedLispishFunction
-  | BuiltinLispishFunction
-  | PartialLispishFunction
-  | CompLispishFunction
-  | ConstantlyLispishFunction
-  | JuxtLispishFunction
-  | ComplementLispishFunction
-  | EveryPredLispishFunction
-  | SomePredLispishFunction
+  | UserDefinedFunction
+  | BuiltinFunction
+  | PartialFunction
+  | CompFunction
+  | ConstantlyFunction
+  | JuxtFunction
+  | ComplementFunction
+  | EveryPredFunction
+  | SomePredFunction
+
+export type LispishFunctionType = LispishFunction[`type`]
 
 export type NodeType =
   | `Number`

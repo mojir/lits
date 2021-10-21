@@ -73,6 +73,4 @@ const result = evaluate(ast, context) // returns 10
 * **special-symbol?**
 * **symbol**
 * **symbol?**
-* **update**
 * **update-in**
-

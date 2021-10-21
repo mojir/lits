@@ -41,6 +41,10 @@ import {
   asString,
   assertAny,
   assertNotUndefined,
+  toNonNegativeInteger,
+  assertMax,
+  assertChar,
+  asChar,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -490,7 +494,7 @@ describe(`utils`, () => {
     const lf2: LispishFunction = {
       [functionSymbol]: true,
       type: `builtin`,
-      builtin: `+`,
+      name: `+`,
     }
     const lf3: LispishFunction = {
       [functionSymbol]: true,
@@ -617,5 +621,40 @@ describe(`utils`, () => {
       expect(deepEqual(/^ab/g, /^ab/)).toBe(false)
       expect(deepEqual(/ab/, /^ab/)).toBe(false)
     })
+  })
+  test(`toNonNegativeInteger`, () => {
+    expect(toNonNegativeInteger(0)).toBe(0)
+    expect(toNonNegativeInteger(-0.1)).toBe(0)
+    expect(toNonNegativeInteger(-100)).toBe(0)
+    expect(toNonNegativeInteger(0.01)).toBe(1)
+    expect(toNonNegativeInteger(2.01)).toBe(3)
+    expect(toNonNegativeInteger(4.0)).toBe(4)
+  })
+  test(`assertMax`, () => {
+    expect(() => assertMax(12, 10)).toThrow()
+    expect(() => assertMax(-12, -10)).not.toThrow()
+    expect(() => assertMax(-8, -10)).toThrow()
+    expect(() => assertMax(10, 10)).not.toThrow()
+    expect(() => assertMax(0, 10)).not.toThrow()
+  })
+  test(`assertChar`, () => {
+    expect(() => assertChar(`2`)).not.toThrow()
+    expect(() => assertChar(`Albert`)).toThrow()
+    expect(() => assertChar(0)).toThrow()
+    expect(() => assertChar(null)).toThrow()
+    expect(() => assertChar(true)).toThrow()
+    expect(() => assertChar(false)).toThrow()
+    expect(() => assertChar([`a`])).toThrow()
+    expect(() => assertChar({ a: `a` })).toThrow()
+  })
+  test(`asChar`, () => {
+    expect(asChar(`2`)).toBe(`2`)
+    expect(() => asChar(`Albert`)).toThrow()
+    expect(() => asChar(0)).toThrow()
+    expect(() => asChar(null)).toThrow()
+    expect(() => asChar(true)).toThrow()
+    expect(() => asChar(false)).toThrow()
+    expect(() => asChar([`a`])).toThrow()
+    expect(() => asChar({ a: `a` })).toThrow()
   })
 })

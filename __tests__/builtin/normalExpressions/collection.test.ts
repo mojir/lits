@@ -279,21 +279,36 @@ describe(`collection functions`, () => {
     })
   })
 
-  describe(`updated`, () => {
+  describe(`update`, () => {
     test(`samples`, () => {
-      lispish.run(`if`)
-      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" inc)`)).toEqual({ a: 2, b: 2 })
-      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" + 10)`)).toEqual({ a: 11, b: 2 })
-      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" #(if (even? %1) 0 (inc %1)))`)).toEqual({
-      //   a: 1,
-      //   b: 3,
-      // })
-      // expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "c" #(if (undefined? %1) 0 (inc %1)))`)).toEqual({
-      //   a: 1,
-      //   b: 2,
-      //   c: 0,
-      // })
-      // expect(() => lispish.run(`(update number? [1] 2)`)).toThrow()
+      expect(
+        lispish.run(
+          `(def x "Albert") (update x 3 (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))`,
+        ),
+      ).toEqual(`Albfrt`)
+      expect(
+        lispish.run(
+          `(def x "Albert") (update x 6 (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))`,
+        ),
+      ).toEqual(`Albert!`)
+
+      expect(lispish.run(`(def x [0, 1, 2, 3]) (update x 3 inc)`)).toEqual([0, 1, 2, 4])
+      expect(lispish.run(`(def x [0, 1, 2, 3]) (update x 4 identity)`)).toEqual([0, 1, 2, 3, null])
+
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" inc)`)).toEqual({ a: 2, b: 2 })
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" + 10)`)).toEqual({ a: 11, b: 2 })
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "a" (fn [val] (if (even? val) 0 (inc val))))`)).toEqual({
+        a: 2,
+        b: 2,
+      })
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) ("c" x)`)).toEqual(null)
+      expect(lispish.run(`(update {} "a" (fn [val] (when (nil? val) 0)))`)).toEqual({ a: 0 })
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update x "c" (fn [val] (if (nil? val) 0 (inc val))))`)).toEqual({
+        a: 1,
+        b: 2,
+        c: 0,
+      })
+      expect(() => lispish.run(`(update number? [1] 2)`)).toThrow()
     })
   })
 })

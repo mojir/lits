@@ -16,6 +16,7 @@ import {
   assertAny,
   toAny,
   asAny,
+  toNonNegativeInteger,
 } from '../../../utils'
 import { BuiltinNormalExpressions, NormalExpressionEvaluator } from '../../interface'
 
@@ -609,7 +610,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   'split-at': {
     evaluate: ([pos, seq]): Seq => {
       assertFiniteNumber(pos)
-      const intPos = Math.max(0, Math.ceil(pos))
+      const intPos = toNonNegativeInteger(pos)
       assertSeq(seq)
       return [seq.slice(0, intPos), seq.slice(intPos)]
     },

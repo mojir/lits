@@ -1,13 +1,13 @@
 import { Any, Arr } from '../../../interface'
 import {
-  ComplementLispishFunction,
-  CompLispishFunction,
-  ConstantlyLispishFunction,
-  EveryPredLispishFunction,
+  ComplementFunction,
+  CompFunction,
+  ConstantlyFunction,
+  EveryPredFunction,
   functionSymbol,
-  JuxtLispishFunction,
-  PartialLispishFunction,
-  SomePredLispishFunction,
+  JuxtFunction,
+  PartialFunction,
+  SomePredFunction,
 } from '../../../parser/interface'
 import { assertArr, assertLength, assertLispishFunction, isArr, toAny } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -32,7 +32,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   partial: {
-    evaluate: ([fn, ...params]): PartialLispishFunction => {
+    evaluate: ([fn, ...params]): PartialFunction => {
       return {
         [functionSymbol]: true,
         type: `partial`,
@@ -44,7 +44,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   comp: {
-    evaluate: (fns): CompLispishFunction => {
+    evaluate: (fns): CompFunction => {
       if (fns.length > 1) {
         const last = fns[fns.length - 1]
         if (isArr(last)) {
@@ -60,7 +60,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   constantly: {
-    evaluate: ([value]): ConstantlyLispishFunction => {
+    evaluate: ([value]): ConstantlyFunction => {
       return {
         [functionSymbol]: true,
         type: `constantly`,
@@ -71,7 +71,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   juxt: {
-    evaluate: (fns): JuxtLispishFunction => {
+    evaluate: (fns): JuxtFunction => {
       return {
         [functionSymbol]: true,
         type: `juxt`,
@@ -82,7 +82,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   complement: {
-    evaluate: ([fn]): ComplementLispishFunction => {
+    evaluate: ([fn]): ComplementFunction => {
       return {
         [functionSymbol]: true,
         type: `complement`,
@@ -93,7 +93,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   'every-pred': {
-    evaluate: (fns): EveryPredLispishFunction => {
+    evaluate: (fns): EveryPredFunction => {
       return {
         [functionSymbol]: true,
         type: `every-pred`,
@@ -104,7 +104,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
   },
 
   'some-pred': {
-    evaluate: (fns): SomePredLispishFunction => {
+    evaluate: (fns): SomePredFunction => {
       return {
         [functionSymbol]: true,
         type: `some-pred`,

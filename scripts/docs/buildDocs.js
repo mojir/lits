@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { version } = require('../../package.json')
 const { functionReference, categories } = require('../../cli/reference')
 const examples = require('./examples')
@@ -198,16 +199,18 @@ function getDocumentationContent(docObj) {
         try {
           result = lispish.run(example)
 
-          return `<pre><span class="example" onclick="addToPlayground('${escapeExample(
-            example,
-          )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifyValue(
-            result,
-          )}</span></span></pre>`
+          return `<pre><span
+                    class="example"
+                    onclick="addToPlayground('${escapeExample(example)}')">
+                    <span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifyValue(result)}
+                    </span>
+                  </span></pre>`
         } catch (error) {
           console.error(example, error)
-          return `<pre class="example" onclick="addToPlayground('${escapeExample(
-            example,
-          )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
+          return `<pre
+                    class="example"
+                    onclick="addToPlayground('${escapeExample(example)}')">
+                    <span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
         } finally {
           console.log = oldLog
           console.warn = oldWarn
@@ -281,7 +284,7 @@ function stringifyValue(value) {
     if (value.builtin) {
       return `&lt;builtin function ${value.builtin}&gt;`
     } else {
-      return `&lt;function ${value.name ?? 'λ'}&gt;`
+      return `&lt;function ${value.name || 'λ'}&gt;`
     }
   }
   if (value === null) {

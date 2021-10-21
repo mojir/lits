@@ -13,6 +13,7 @@ import {
   isObj,
   assertNonEmptyString,
   asNotUndefined,
+  toNonNegativeInteger,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -94,7 +95,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'from-char-code': {
     evaluate: ([number]: Arr): string => {
       assertFiniteNumber(number)
-      const int = Math.max(0, Math.ceil(number))
+      const int = toNonNegativeInteger(number)
 
       return String.fromCodePoint(int)
     },

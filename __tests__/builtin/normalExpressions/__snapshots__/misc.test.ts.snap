@@ -37,7 +37,7 @@ Context 0 - Import context
   x     10
   foo   <user-defined function foo>
   bar   <user-defined function λ>
-  plus  <builtin function λ>
+  plus  <builtin function +>
 
 Context 1 - Global context
   y  20

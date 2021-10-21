@@ -289,4 +289,36 @@ module.exports = {
       `(not-any? #(even? (second %1)) {"a" 1 "b" 3})`,
     ],
   },
+  update: {
+    name: `update`,
+    category: `Collection`,
+    linkName: `update`,
+    returns: {
+      type: `Any`,
+    },
+    arguments: [
+      {
+        name: `key`,
+        type: `string`,
+      },
+      {
+        name: `coll`,
+        type: `Coll`,
+      },
+      {
+        name: `fn`,
+        type: `function`,
+      },
+      {
+        name: `args`,
+        type: `Any`,
+        description: `zero or more`,
+      },
+    ],
+    description: `Updates a value in collection, where \`key\` is a key and \`fn\` is a function that will take the old value and any supplied \`args\` and return the new value, and returns a new collection.  If the key does not exist, nil is passed as the old value.`,
+    examples: [
+      `(def x {"a" 1 "b" 2}) (update x "a" inc)`,
+      `(def x {"a" 1 "b" 2}) (update x "c" (fn [val] (if (nil? val) 0 (inc val))))`,
+    ],
+  },
 }
