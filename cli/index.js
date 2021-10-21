@@ -92,11 +92,7 @@ function executeExample(expression) {
 }
 
 function stringifyValue(value, indent) {
-  return JSON.stringify(
-    value,
-    (_, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v),
-    indent ? 2 : undefined,
-  ).replace(/"b234ca78-ccc4-5749-9384-1d3415d29423"/g, 'undefined')
+  return JSON.stringify(value, null, indent ? 2 : undefined)
 }
 
 function formatValue(value) {
@@ -106,6 +102,10 @@ function formatValue(value) {
 
   if (typeof value === 'object' && value instanceof Error) {
     return value.toString()
+  }
+
+  if (value === null) {
+    return `nil`
   }
 
   if (

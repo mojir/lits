@@ -109,7 +109,7 @@ module.exports = {
       },
     ],
     description: `Returns bitwise \`or\` of all arguments. Return 0 if no arguments.`,
-    examples: [`(bit-or)`, `(bit-or 0b1111)`, `(bit-or 0b0011 0b0110)`, `(bit-or 0b1000 0b0100 0b0010)`],
+    examples: [`(bit-or 0b0011 0b0110)`, `(bit-or 0b1000 0b0100 0b0010)`],
     specialExpression: false,
   },
   'bit-xor': {

@@ -12,7 +12,7 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`[]`)).toEqual([])
       expect(lispish.run(`(array 1)`)).toEqual([1])
-      expect(lispish.run(`(array 0 "1" null true false (array []) (object))`)).toEqual([
+      expect(lispish.run(`(array 0 "1" nil true false (array []) (object))`)).toEqual([
         0,
         `1`,
         null,
@@ -25,8 +25,8 @@ describe(`array functions`, () => {
     test(`shorthand samples`, () => {
       expect(lispish.run(`[]`)).toEqual([])
       expect(lispish.run(`[1]`)).toEqual([1])
-      expect((lispish.run(`[null]`) as Arr)[0]).toEqual(null)
-      expect(lispish.run(`[0 "1" null true false [[]] (object)]`)).toEqual([0, `1`, null, true, false, [[]], {}])
+      expect((lispish.run(`[nil]`) as Arr)[0]).toEqual(null)
+      expect(lispish.run(`[0 "1" nil true false [[]] (object)]`)).toEqual([0, `1`, null, true, false, [[]], {}])
     })
   })
 
@@ -72,7 +72,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`(flatten 12)`)).toEqual([])
       expect(lispish.run(`(flatten true)`)).toEqual([])
       expect(lispish.run(`(flatten false)`)).toEqual([])
-      expect(lispish.run(`(flatten null)`)).toEqual([])
+      expect(lispish.run(`(flatten nil)`)).toEqual([])
       expect(lispish.run(`(flatten #"abc")`)).toEqual([])
       expect(() => lispish.run(`(flatten [] [])`)).toThrow()
       expect(() => lispish.run(`(flatten)`)).toThrow()

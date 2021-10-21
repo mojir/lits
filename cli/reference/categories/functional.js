@@ -34,7 +34,7 @@ module.exports = {
       },
     ],
     description: `Returns \`value\`.`,
-    examples: [`(identity 1)`, `(identity "Albert")`, `(identity {"a" 1})`, `(identity null)`],
+    examples: [`(identity 1)`, `(identity "Albert")`, `(identity {"a" 1})`, `(identity nil)`],
     specialExpression: false,
   },
   partial: {
@@ -101,9 +101,8 @@ module.exports = {
     ],
     description: `Returns a function that takes any number of arguments and returns \`value\`.`,
     examples: [
-      `(def negative-quotient (constantly - /)) (negative-quotient 9 3)`,
+      `(def always-true (constantly true)) (always-true 9 3)`,
       `(#((apply constantly first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)`,
-      `(def x {"bar" {"foo" 42}}) ((constantly "foo" "bar") x)`,
     ],
     specialExpression: false,
   },

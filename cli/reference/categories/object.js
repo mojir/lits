@@ -151,11 +151,7 @@ module.exports = {
       },
     ],
     description: `Returns a new object created by mapping \`keys\` to \`values\`.`,
-    examples: [
-      `(zipmap ["a" "b" "c"] [10 null [1 2 3]])`,
-      `(zipmap ["a" "b" "c"] [1])`,
-      `(zipmap [] [10 null [1 2 3]])`,
-    ],
+    examples: [`(zipmap ["a" "b" "c"] [10 nil [1 2 3]])`, `(zipmap ["a" "b" "c"] [1])`, `(zipmap [] [10 nil [1 2 3]])`],
     specialExpression: false,
   },
   'select-keys': {

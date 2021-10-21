@@ -16,10 +16,10 @@ module.exports = {
     examples: [`(boolean? true)`, `(boolean? false)`, `(boolean? [1 2 3])`, `(boolean? 0)`, `(boolean? "A string")`],
     specialExpression: false,
   },
-  'null?': {
-    name: `null?`,
+  'nil?': {
+    name: `nil?`,
     category: `Predicate`,
-    linkName: `null_question`,
+    linkName: `nil_question`,
     returns: {
       type: `boolean`,
     },
@@ -29,8 +29,8 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Returns \`true\` if \`value\` is \`null\`, otherwise \`false\`.`,
-    examples: [`(null? null)`, `(null? false)`, `(null? [1 2 3])`, `(null? 0)`, `(null? "A string")`],
+    description: `Returns \`true\` if \`value\` is \`nil\`, otherwise \`false\`.`,
+    examples: [`(nil? nil)`, `(nil? false)`, `(nil? [1 2 3])`, `(nil? 0)`, `(nil? "A string")`],
     specialExpression: false,
   },
   'number?': {

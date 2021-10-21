@@ -173,6 +173,9 @@ function stringifyValue(value) {
       return `<function ${value.name || 'λ'}>`
     }
   }
+  if (value === null) {
+    return `nil`
+  }
   if (typeof value === 'object' && value instanceof RegExp) {
     return `${value}`
   }

@@ -15,7 +15,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(nth [1 2 3] -4)`)).toBeNull()
       expect(() => lispish.run(`(nth)`)).toThrow()
       expect(() => lispish.run(`(nth (object) 1)`)).toThrow()
-      expect(() => lispish.run(`(nth null 2)`)).toThrow()
+      expect(() => lispish.run(`(nth nil 2)`)).toThrow()
       expect(() => lispish.run(`(nth [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(nth [1 2 3] 1 2)`)).toThrow()
     })
@@ -66,7 +66,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(slice [1 2 3] 1 2 3)`)).toThrow()
       expect(() => lispish.run(`(slice)`)).toThrow()
       expect(() => lispish.run(`(slice (object) 1)`)).toThrow()
-      expect(() => lispish.run(`(slice null 2)`)).toThrow()
+      expect(() => lispish.run(`(slice nil 2)`)).toThrow()
     })
   })
 
@@ -148,7 +148,7 @@ describe(`sequence functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(filter number? [1 "2" 3])`)).toEqual([1, 3])
       expect(lispish.run(`(filter number? [])`)).toEqual([])
-      expect(lispish.run(`(filter null? [1 "2" 3])`)).toEqual([])
+      expect(lispish.run(`(filter nil? [1 "2" 3])`)).toEqual([])
       expect(lispish.run(`(filter (fn [x] (zero? (mod x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([0, 3, 6])
       expect(lispish.run(`(filter (fn [x] (>= x "a")) "aAbBcC")`)).toBe(`abc`)
       expect(() => lispish.run(`(filter +)`)).toThrow()
@@ -228,7 +228,7 @@ describe(`sequence functions`, () => {
           `,
         ),
       ).toEqual(`267`)
-      expect(lispish.run(`(map null? [1 "2" 3])`)).toEqual([false, false, false])
+      expect(lispish.run(`(map nil? [1 "2" 3])`)).toEqual([false, false, false])
       expect(lispish.run(`(map (fn [x] (zero? (mod x 3))) [0 1 2 3 4 5 6 7])`)).toEqual([
         true,
         false,
@@ -259,7 +259,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(first`)).toThrow()
       expect(() => lispish.run(`(first true)`)).toThrow()
       expect(() => lispish.run(`(first false)`)).toThrow()
-      expect(() => lispish.run(`(first null)`)).toThrow()
+      expect(() => lispish.run(`(first nil)`)).toThrow()
       expect(() => lispish.run(`(first (object))`)).toThrow()
       expect(() => lispish.run(`(first 10)`)).toThrow()
     })
@@ -279,7 +279,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(second`)).toThrow()
       expect(() => lispish.run(`(second true)`)).toThrow()
       expect(() => lispish.run(`(second false)`)).toThrow()
-      expect(() => lispish.run(`(second null)`)).toThrow()
+      expect(() => lispish.run(`(second nil)`)).toThrow()
       expect(() => lispish.run(`(second (object))`)).toThrow()
       expect(() => lispish.run(`(second 10)`)).toThrow()
     })
@@ -299,7 +299,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(reverse`)).toThrow()
       expect(() => lispish.run(`(reverse true)`)).toThrow()
       expect(() => lispish.run(`(reverse false)`)).toThrow()
-      expect(() => lispish.run(`(reverse null)`)).toThrow()
+      expect(() => lispish.run(`(reverse nil)`)).toThrow()
       expect(() => lispish.run(`(reverse (object))`)).toThrow()
       expect(() => lispish.run(`(reverse 10)`)).toThrow()
     })
@@ -324,7 +324,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(last`)).toThrow()
       expect(() => lispish.run(`(last true)`)).toThrow()
       expect(() => lispish.run(`(last false)`)).toThrow()
-      expect(() => lispish.run(`(last null)`)).toThrow()
+      expect(() => lispish.run(`(last nil)`)).toThrow()
       expect(() => lispish.run(`(last (object))`)).toThrow()
       expect(() => lispish.run(`(last 10)`)).toThrow()
     })
@@ -343,7 +343,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(rest`)).toThrow()
       expect(() => lispish.run(`(rest true)`)).toThrow()
       expect(() => lispish.run(`(rest false)`)).toThrow()
-      expect(() => lispish.run(`(rest null)`)).toThrow()
+      expect(() => lispish.run(`(rest nil)`)).toThrow()
       expect(() => lispish.run(`(rest (object))`)).toThrow()
       expect(() => lispish.run(`(rest 10)`)).toThrow()
     })
@@ -363,11 +363,11 @@ describe(`sequence functions`, () => {
 
       expect(() => lispish.run(`(nthrest [1 2 3]`)).toThrow()
       expect(() => lispish.run(`(nthrest [1 2 3] "1"`)).toThrow()
-      expect(() => lispish.run(`(nthrest [1 2 3] null`)).toThrow()
+      expect(() => lispish.run(`(nthrest [1 2 3] nil`)).toThrow()
       expect(() => lispish.run(`(nthrest [1 2 3] {}`)).toThrow()
       expect(() => lispish.run(`(nthrest true)`)).toThrow()
       expect(() => lispish.run(`(nthrest false)`)).toThrow()
-      expect(() => lispish.run(`(nthrest null)`)).toThrow()
+      expect(() => lispish.run(`(nthrest nil)`)).toThrow()
       expect(() => lispish.run(`(nthrest (object))`)).toThrow()
       expect(() => lispish.run(`(nthrest 10)`)).toThrow()
     })
@@ -386,7 +386,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(next`)).toThrow()
       expect(() => lispish.run(`(next true)`)).toThrow()
       expect(() => lispish.run(`(next false)`)).toThrow()
-      expect(() => lispish.run(`(next null)`)).toThrow()
+      expect(() => lispish.run(`(next nil)`)).toThrow()
       expect(() => lispish.run(`(next (object))`)).toThrow()
       expect(() => lispish.run(`(next 10)`)).toThrow()
     })
@@ -407,11 +407,11 @@ describe(`sequence functions`, () => {
 
       expect(() => lispish.run(`(nthnext [1 2 3]`)).toThrow()
       expect(() => lispish.run(`(nthnext [1 2 3] "1"`)).toThrow()
-      expect(() => lispish.run(`(nthnext [1 2 3] null`)).toThrow()
+      expect(() => lispish.run(`(nthnext [1 2 3] nil`)).toThrow()
       expect(() => lispish.run(`(nthnext [1 2 3] {}`)).toThrow()
       expect(() => lispish.run(`(nthnext true)`)).toThrow()
       expect(() => lispish.run(`(nthnext false)`)).toThrow()
-      expect(() => lispish.run(`(nthnext null)`)).toThrow()
+      expect(() => lispish.run(`(nthnext nil)`)).toThrow()
       expect(() => lispish.run(`(nthnext (object))`)).toThrow()
       expect(() => lispish.run(`(nthnext 10)`)).toThrow()
     })
@@ -428,7 +428,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(cons 1 "1")`)).toThrow()
       expect(() => lispish.run(`(cons 1 true)`)).toThrow()
       expect(() => lispish.run(`(cons 1 false)`)).toThrow()
-      expect(() => lispish.run(`(cons 1 null)`)).toThrow()
+      expect(() => lispish.run(`(cons 1 nil)`)).toThrow()
       expect(() => lispish.run(`(cons 1 (object))`)).toThrow()
       expect(() => lispish.run(`(cons 1 10)`)).toThrow()
     })
@@ -447,7 +447,7 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(push "Albert" "!?")`)).toThrow()
       expect(() => lispish.run(`(push [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(push (object) 0 "2")`)).toThrow()
-      expect(() => lispish.run(`(push null 0 "2")`)).toThrow()
+      expect(() => lispish.run(`(push nil 0 "2")`)).toThrow()
       expect(() => lispish.run(`(push true 0 "2")`)).toThrow()
       expect(() => lispish.run(`(push false 0 "2")`)).toThrow()
       expect(() => lispish.run(`(push 1 0 "2")`)).toThrow()
@@ -469,7 +469,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(pop "")`)).toBe(``)
 
       expect(() => lispish.run(`(pop (object))`)).toThrow()
-      expect(() => lispish.run(`(pop null)`)).toThrow()
+      expect(() => lispish.run(`(pop nil)`)).toThrow()
       expect(() => lispish.run(`(pop true)`)).toThrow()
       expect(() => lispish.run(`(pop false)`)).toThrow()
       expect(() => lispish.run(`(pop 1)`)).toThrow()
@@ -487,7 +487,7 @@ describe(`sequence functions`, () => {
 
       expect(() => lispish.run(`(unshift [1 2 3])`)).toThrow()
       expect(() => lispish.run(`(unshift (object) 0 "2")`)).toThrow()
-      expect(() => lispish.run(`(unshift null 0 "2")`)).toThrow()
+      expect(() => lispish.run(`(unshift nil 0 "2")`)).toThrow()
       expect(() => lispish.run(`(unshift true 0 "2")`)).toThrow()
       expect(() => lispish.run(`(unshift false 0 "2")`)).toThrow()
       expect(() => lispish.run(`(unshift 1 0 "2")`)).toThrow()
@@ -509,7 +509,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(shift "")`)).toBe(``)
 
       expect(() => lispish.run(`(shift (object))`)).toThrow()
-      expect(() => lispish.run(`(shift null)`)).toThrow()
+      expect(() => lispish.run(`(shift nil)`)).toThrow()
       expect(() => lispish.run(`(shift true)`)).toThrow()
       expect(() => lispish.run(`(shift false)`)).toThrow()
       expect(() => lispish.run(`(shift 1)`)).toThrow()
@@ -526,7 +526,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(take 2.01 "Albert")`)).toEqual(`Alb`)
 
       expect(() => lispish.run(`(take 1 (object))`)).toThrow()
-      expect(() => lispish.run(`(take 1 null)`)).toThrow()
+      expect(() => lispish.run(`(take 1 nil)`)).toThrow()
       expect(() => lispish.run(`(take 1 true)`)).toThrow()
       expect(() => lispish.run(`(take 1 false)`)).toThrow()
       expect(() => lispish.run(`(take "1" "Hej")`)).toThrow()
@@ -553,7 +553,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(take-last 0.01 [1 2 3])`)).toEqual([3])
 
       expect(() => lispish.run(`(take-last (object))`)).toThrow()
-      expect(() => lispish.run(`(take-last null)`)).toThrow()
+      expect(() => lispish.run(`(take-last nil)`)).toThrow()
       expect(() => lispish.run(`(take-last true)`)).toThrow()
       expect(() => lispish.run(`(take-last false)`)).toThrow()
       expect(() => lispish.run(`(take-last "1")`)).toThrow()
@@ -579,7 +579,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(take-while (fn [x] (<= x "c")) "abcdabcd")`)).toEqual(`abc`)
 
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) (object))`)).toThrow()
-      expect(() => lispish.run(`(take-while (fn [x] (< x 3)) null)`)).toThrow()
+      expect(() => lispish.run(`(take-while (fn [x] (< x 3)) nil)`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) true)`)).toThrow()
       expect(() => lispish.run(`(take-while (fn [x] (< x 3)) false)`)).toThrow()
       expect(() => lispish.run(`(take-while 10 [1 2 3])`)).toThrow()
@@ -607,7 +607,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(drop -2 "Albert")`)).toEqual(`Albert`)
 
       expect(() => lispish.run(`(drop 1 (object))`)).toThrow()
-      expect(() => lispish.run(`(drop 1 null)`)).toThrow()
+      expect(() => lispish.run(`(drop 1 nil)`)).toThrow()
       expect(() => lispish.run(`(drop 1 true)`)).toThrow()
       expect(() => lispish.run(`(drop 1 false)`)).toThrow()
       expect(() => lispish.run(`(drop "1" "Hej")`)).toThrow()
@@ -636,7 +636,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(drop-last -2 "Albert")`)).toEqual(`Albert`)
 
       expect(() => lispish.run(`(drop-last 1 (object))`)).toThrow()
-      expect(() => lispish.run(`(drop-last 1 null)`)).toThrow()
+      expect(() => lispish.run(`(drop-last 1 nil)`)).toThrow()
       expect(() => lispish.run(`(drop-last 1 true)`)).toThrow()
       expect(() => lispish.run(`(drop-last 1 false)`)).toThrow()
       expect(() => lispish.run(`(drop-last "1" "Hej")`)).toThrow()
@@ -653,7 +653,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(drop-while (fn [x] (<= x "c")) "abcdab")`)).toEqual(`dab`)
 
       expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) (object))`)).toThrow()
-      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) null)`)).toThrow()
+      expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) nil)`)).toThrow()
       expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) true)`)).toThrow()
       expect(() => lispish.run(`(drop-while (fn [x] (< x 3)) false)`)).toThrow()
       expect(() => lispish.run(`(drop-while 10 [1 2 3])`)).toThrow()
@@ -682,7 +682,7 @@ describe(`sequence functions`, () => {
       expect(lispish.run(`(sort "Albert")`)).toBe(`Abelrt`)
       expect(
         lispish.run(
-          `(sort [1 true 2 false  -100 null (regexp "abc") (regexp "ABC") [] [1 2 3] [0 1 2] [0 0 0 0] {"a" 1} {} "Albert" "albert"])`,
+          `(sort [1 true 2 false  -100 nil (regexp "abc") (regexp "ABC") [] [1 2 3] [0 1 2] [0 0 0 0] {"a" 1} {} "Albert" "albert"])`,
         ),
       ).toMatchSnapshot()
 

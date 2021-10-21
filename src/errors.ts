@@ -24,7 +24,7 @@ export class UserDefinedError extends Error {
 
 export class AssertionError extends Error {
   constructor(message: string) {
-    super(`Assertion error: ${message}`)
+    super(message)
     Object.setPrototypeOf(this, AssertionError.prototype)
     this.name = `AssertionError`
   }

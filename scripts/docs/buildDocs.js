@@ -193,8 +193,6 @@ function getDocumentationContent(docObj) {
       .map(example => {
         var oldLog = console.log
         console.log = function () {}
-        var oldError = console.error
-        console.error = function () {}
         var oldWarn = console.warn
         console.warn = function () {}
         var result
@@ -207,12 +205,12 @@ function getDocumentationContent(docObj) {
             result,
           )}</span></span></pre>`
         } catch (error) {
+          console.error(example)
           return `<pre class="example" onclick="addToPlayground('${escapeExample(
             example,
           )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
         } finally {
           console.log = oldLog
-          console.error = oldError
           console.warn = oldWarn
         }
       })
@@ -286,6 +284,9 @@ function stringifyValue(value) {
     } else {
       return `&lt;function ${value.name ?? 'λ'}&gt;`
     }
+  }
+  if (value === null) {
+    return `nil`
   }
   if (typeof value === 'object' && value instanceof Error) {
     return value.toString()

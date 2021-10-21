@@ -34,7 +34,7 @@ describe(`functional functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(identity "Albert")`)).toBe(`Albert`)
       expect(lispish.run(`(identity "")`)).toBe(``)
-      expect(lispish.run(`(identity null)`)).toBe(null)
+      expect(lispish.run(`(identity nil)`)).toBe(null)
       expect(lispish.run(`(identity false)`)).toBe(false)
       expect(lispish.run(`(identity true)`)).toBe(true)
       expect(lispish.run(`(identity {"a" 1})`)).toEqual({ a: 1 })
@@ -64,9 +64,9 @@ describe(`functional functions`, () => {
       expect(lispish.run(`(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)`)).toBe(42)
 
       expect(lispish.run(`((comp) 10)`)).toBe(10)
-      expect(lispish.run(`((comp) null)`)).toBe(null)
+      expect(lispish.run(`((comp) nil)`)).toBe(null)
       expect(lispish.run(`((comp) {"a" 10})`)).toEqual({ a: 10 })
-      expect(lispish.run(`((comp) ["x" 10 null])`)).toEqual([`x`, 10, null])
+      expect(lispish.run(`((comp) ["x" 10 nil])`)).toEqual([`x`, 10, null])
       lispish.run(`(comp "a" ["b" "c"])`)
       expect(() => lispish.run(`((comp) 1 2)`)).toThrow()
       expect(() => lispish.run(`((comp true))`)).toThrow()
@@ -76,7 +76,7 @@ describe(`functional functions`, () => {
 
   describe(`constanty`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((constantly 10) 12 null "x")`)).toBe(10)
+      expect(lispish.run(`((constantly 10) 12 nil "x")`)).toBe(10)
       expect(() => lispish.run(`(constanty)`)).toThrow()
       expect(() => lispish.run(`(constanty 10 20)`)).toThrow()
     })
