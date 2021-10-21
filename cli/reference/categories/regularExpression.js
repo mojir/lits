@@ -18,7 +18,6 @@ module.exports = {
     ],
     description: `Creates a RegExp from \`pattern\` and \`flags\`.`,
     examples: [`(regexp "^\\s*(.*)$")`, `(regexp "albert" "i")`],
-    specialExpression: false,
   },
   match: {
     name: `match`,
@@ -43,7 +42,6 @@ module.exports = {
       `(match (regexp "albert" "i") "My name is Albert")`,
       `(match (regexp "albert" "i") "My name is Ben")`,
     ],
-    specialExpression: false,
   },
   replace: {
     name: `replace`,
@@ -68,6 +66,5 @@ module.exports = {
     ],
     description: `Returns a new string with some or all matches of \`pattern\` replaced by \`replacement\`.`,
     examples: [`(replace "Duck" (regexp "u") "i")`, `(replace "abcABC" (regexp "a" "gi") "-")`],
-    specialExpression: false,
   },
 }

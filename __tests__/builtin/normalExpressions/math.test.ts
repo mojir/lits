@@ -176,24 +176,24 @@ describe(`math functions`, () => {
     })
   })
 
-  describe(`rand`, () => {
+  describe(`rand!`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(rand)`)).toBeLessThan(1)
-      expect(lispish.run(`(rand 0.1)`)).toBeLessThan(0.1)
-      expect(lispish.run(`(rand 0.1)`)).toBeGreaterThanOrEqual(0)
-      expect(() => lispish.run(`(rand "x")`)).toThrow()
-      expect(() => lispish.run(`(rand 1 2)`)).toThrow()
+      expect(lispish.run(`(rand!)`)).toBeLessThan(1)
+      expect(lispish.run(`(rand! 0.1)`)).toBeLessThan(0.1)
+      expect(lispish.run(`(rand! 0.1)`)).toBeGreaterThanOrEqual(0)
+      expect(() => lispish.run(`(rand! "x")`)).toThrow()
+      expect(() => lispish.run(`(rand! 1 2)`)).toThrow()
     })
   })
 
-  describe(`rand-int`, () => {
+  describe(`rand-int!`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(rand-int 1)`)).toBe(0)
-      expect(lispish.run(`(rand-int 2)`)).toBeLessThan(2)
-      expect(lispish.run(`(rand-int 20)`)).toBeLessThan(20)
-      expect(lispish.run(`(rand-int 10.1)`)).toBeLessThan(10.1)
-      expect(() => lispish.run(`(rand-int "x")`)).toThrow()
-      expect(() => lispish.run(`(rand-int 1 2)`)).toThrow()
+      expect(lispish.run(`(rand-int! 1)`)).toBe(0)
+      expect(lispish.run(`(rand-int! 2)`)).toBeLessThan(2)
+      expect(lispish.run(`(rand-int! 20)`)).toBeLessThan(20)
+      expect(lispish.run(`(rand-int! 10.1)`)).toBeLessThan(10.1)
+      expect(() => lispish.run(`(rand-int! "x")`)).toThrow()
+      expect(() => lispish.run(`(rand-int! 1 2)`)).toThrow()
     })
   })
 

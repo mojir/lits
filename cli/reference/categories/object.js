@@ -23,7 +23,6 @@ module.exports = {
       `(def o (object "a" 5)) (dissoc o "a") o`,
       `(def o (object "a" 5)) (dissoc o "b") o`,
     ],
-    specialExpression: false,
   },
   object: {
     name: `object`,
@@ -41,7 +40,6 @@ module.exports = {
     ],
     description: `Constructs a new object. Object members are created from \`key\` - \`value\` pairs. Requires an even number of arguments.`,
     examples: [`(object)`, `(object "x" 10 "y" true "z" "A string")`],
-    specialExpression: false,
   },
   keys: {
     name: `keys`,
@@ -58,7 +56,6 @@ module.exports = {
     ],
     description: `Returns array of all keys in \`object\`.`,
     examples: [`(keys (object))`, `(keys (object "x" 10 "y" true "z" "A string"))`],
-    specialExpression: false,
   },
   vals: {
     name: `vals`,
@@ -75,7 +72,6 @@ module.exports = {
     ],
     description: `Returns array of all values in \`object\`.`,
     examples: [`(vals (object))`, `(vals (object "x" 10 "y" true "z" "A string"))`],
-    specialExpression: false,
   },
   entries: {
     name: `entries`,
@@ -92,7 +88,6 @@ module.exports = {
     ],
     description: `Returns nested array of all key - value pairs in \`object\`.`,
     examples: [`(entries (object))`, `(entries (object "x" 10 "y" true "z" "A string"))`],
-    specialExpression: false,
   },
   find: {
     name: `find`,
@@ -113,7 +108,6 @@ module.exports = {
     ],
     description: `Returns entry for \`key\`, or \`nil\` if \`key\` not present in \`object\`.`,
     examples: [`(find (object "a" 1 "b" 2) "b")`, `(find (object "a" 1 "b" 2) "c")`],
-    specialExpression: false,
   },
   merge: {
     name: `merge`,
@@ -131,7 +125,6 @@ module.exports = {
     ],
     description: `Returns a new object created by merging together all arguments.`,
     examples: [`(merge (object "x" 10) (object "y" 20))`, `(merge (object "x" 10) (object "x" 15 "y" 20))`],
-    specialExpression: false,
   },
   zipmap: {
     name: `zipmap`,
@@ -152,7 +145,6 @@ module.exports = {
     ],
     description: `Returns a new object created by mapping \`keys\` to \`values\`.`,
     examples: [`(zipmap ["a" "b" "c"] [10 nil [1 2 3]])`, `(zipmap ["a" "b" "c"] [1])`, `(zipmap [] [10 nil [1 2 3]])`],
-    specialExpression: false,
   },
   'select-keys': {
     name: `select-keys`,
@@ -173,6 +165,5 @@ module.exports = {
     ],
     description: `Returns an object containing only those entries in \`object\` whose key is in \`keys\`.`,
     examples: [`(select-keys {"a" 1 "b" 2 "c" 3} ["a" "b"])`, `(select-keys {"a" 1} ["a" "b"])`],
-    specialExpression: false,
   },
 }

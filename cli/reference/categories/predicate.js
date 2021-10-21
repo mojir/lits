@@ -14,7 +14,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is a \`boolean\`, otherwise \`false\`.`,
     examples: [`(boolean? true)`, `(boolean? false)`, `(boolean? [1 2 3])`, `(boolean? 0)`, `(boolean? "A string")`],
-    specialExpression: false,
   },
   'nil?': {
     name: `nil?`,
@@ -31,7 +30,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is \`nil\`, otherwise \`false\`.`,
     examples: [`(nil? nil)`, `(nil? false)`, `(nil? [1 2 3])`, `(nil? 0)`, `(nil? "A string")`],
-    specialExpression: false,
   },
   'number?': {
     name: `number?`,
@@ -55,7 +53,6 @@ module.exports = {
       `(number? [1 2 3])`,
       `(number? "A string")`,
     ],
-    specialExpression: false,
   },
   'string?': {
     name: `string?`,
@@ -79,7 +76,6 @@ module.exports = {
       `(string? [1 2 3])`,
       `(string? 100)`,
     ],
-    specialExpression: false,
   },
   'function?': {
     name: `function?`,
@@ -103,7 +99,6 @@ module.exports = {
       `(function? "false")`,
       `(function? [1 2 3])`,
     ],
-    specialExpression: false,
   },
   'integer?': {
     name: `integer?`,
@@ -129,7 +124,6 @@ module.exports = {
       `(integer? "false")`,
       `(integer? [1 2 3])`,
     ],
-    specialExpression: false,
   },
   'array?': {
     name: `array?`,
@@ -153,7 +147,6 @@ module.exports = {
       `(array? 10.1)`,
       `(array? (fn [x y] (+ x y)))`,
     ],
-    specialExpression: false,
   },
   'object?': {
     name: `object?`,
@@ -179,7 +172,6 @@ module.exports = {
       `(object? "false")`,
       `(object? [1 2 3])`,
     ],
-    specialExpression: false,
   },
   'coll?': {
     name: `coll?`,
@@ -204,7 +196,6 @@ module.exports = {
       `(coll? 10.1)`,
       `(coll? (fn [x y] (+ x y)))`,
     ],
-    specialExpression: false,
   },
   'seq?': {
     name: `seq?`,
@@ -229,7 +220,6 @@ module.exports = {
       `(seq? 10.1)`,
       `(seq? (fn [x y] (+ x y)))`,
     ],
-    specialExpression: false,
   },
   'regexp?': {
     name: `regexp?`,
@@ -255,7 +245,6 @@ module.exports = {
       `(regexp? "false")`,
       `(regexp? [1 2 3])`,
     ],
-    specialExpression: false,
   },
   'zero?': {
     name: `zero?`,
@@ -272,7 +261,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`number\` is \`0\`, otherwise \`false\`.`,
     examples: [`(zero? 0)`, `(zero? -0.0)`, `(zero? 1)`, `(zero? 0.1)`],
-    specialExpression: false,
   },
   'pos?': {
     name: `pos?`,
@@ -289,7 +277,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`number\` is greater than \`0\`, otherwise \`false\`.`,
     examples: [`(pos? 0)`, `(pos? -0.0)`, `(pos? 1)`, `(pos? -0.1)`],
-    specialExpression: false,
   },
   'neg?': {
     name: `neg?`,
@@ -306,7 +293,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`number\` is less than \`0\`, otherwise \`false\`.`,
     examples: [`(neg? 0)`, `(neg? -0.0)`, `(neg? 1)`, `(neg? -0.1)`],
-    specialExpression: false,
   },
   'even?': {
     name: `even?`,
@@ -323,7 +309,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`number\` is even, otherwise \`false\`.`,
     examples: [`(even? 0)`, `(even? -0.0)`, `(even? -1)`, `(even? 2.1)`],
-    specialExpression: false,
   },
   'odd?': {
     name: `odd?`,
@@ -340,7 +325,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`number\` is odd, otherwise \`false\`.`,
     examples: [`(odd? 1.0)`, `(odd? 1.001)`, `(odd? -1)`, `(odd? 2.1)`],
-    specialExpression: false,
   },
   'finite?': {
     name: `finite?`,
@@ -357,7 +341,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`number\` is finite, otherwise \`false\`.`,
     examples: [`(finite? 1.0)`, `(finite? (/ 1 0))`, `(finite? (/ -1 0))`, `(finite? (sqrt -1))`],
-    specialExpression: false,
   },
   'nan?': {
     name: `nan?`,
@@ -374,7 +357,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`number\` is NaN (not a number), otherwise \`false\`.`,
     examples: [`(nan? 1.0)`, `(nan? (/ 1 0))`, `(nan? (/ -1 0))`, `(nan? (sqrt -1))`],
-    specialExpression: false,
   },
   'negative-infinity?': {
     name: `negative-infinity?`,
@@ -396,7 +378,6 @@ module.exports = {
       `(negative-infinity? (/ -1 0))`,
       `(negative-infinity? (sqrt -1))`,
     ],
-    specialExpression: false,
   },
   'positive-infinity?': {
     name: `positive-infinity?`,
@@ -418,7 +399,6 @@ module.exports = {
       `(positive-infinity? (/ -1 0))`,
       `(positive-infinity? (sqrt -1))`,
     ],
-    specialExpression: false,
   },
   'false?': {
     name: `false?`,
@@ -435,7 +415,6 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is \`true\`, otherwise \`false\`.`,
     examples: [`(false? false)`, `(false? true)`, `(false? 1)`, `(false? 0)`],
-    specialExpression: false,
   },
   'true?': {
     name: `true?`,
@@ -452,6 +431,5 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is \`true\`, otherwise \`false\`.`,
     examples: [`(true? false)`, `(true? true)`, `(true? 1)`, `(true? 0)`],
-    specialExpression: false,
   },
 }

@@ -705,28 +705,28 @@ describe(`sequence functions`, () => {
     })
   })
 
-  describe(`random-sample`, () => {
+  describe(`random-sample!`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(random-sample 1 [1 2 3])`)).toEqual([1, 2, 3])
-      expect(lispish.run(`(random-sample 1.9 [1 2 3])`)).toEqual([1, 2, 3])
-      expect(lispish.run(`(random-sample 0 [1 2 3])`)).toEqual([])
-      expect(lispish.run(`(random-sample -1.9 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(random-sample! 1 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(random-sample! 1.9 [1 2 3])`)).toEqual([1, 2, 3])
+      expect(lispish.run(`(random-sample! 0 [1 2 3])`)).toEqual([])
+      expect(lispish.run(`(random-sample! -1.9 [1 2 3])`)).toEqual([])
 
-      expect(lispish.run(`(random-sample 1 "Albert")`)).toEqual(`Albert`)
-      expect(lispish.run(`(random-sample 0 "Albert")`)).toEqual(``)
+      expect(lispish.run(`(random-sample! 1 "Albert")`)).toEqual(`Albert`)
+      expect(lispish.run(`(random-sample! 0 "Albert")`)).toEqual(``)
 
-      expect(() => lispish.run(`(random-sample [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(random-sample "1" [1 2 3])`)).toThrow()
-      expect(() => lispish.run(`(random-sample 1)`)).toThrow()
+      expect(() => lispish.run(`(random-sample! [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(random-sample! "1" [1 2 3])`)).toThrow()
+      expect(() => lispish.run(`(random-sample! 1)`)).toThrow()
     })
   })
 
-  describe(`rand-nth`, () => {
+  describe(`rand-nth!`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(rand-nth [])`)).toBeNull()
-      expect(lispish.run(`(rand-nth "")`)).toBeNull()
-      expect([1, 2, 3].includes(lispish.run(`(rand-nth [1 2 3])`) as number)).toBe(true)
-      expect(typeof lispish.run(`(rand-nth "Albert")`)).toBe(`string`)
+      expect(lispish.run(`(rand-nth! [])`)).toBeNull()
+      expect(lispish.run(`(rand-nth! "")`)).toBeNull()
+      expect([1, 2, 3].includes(lispish.run(`(rand-nth! [1 2 3])`) as number)).toBe(true)
+      expect(typeof lispish.run(`(rand-nth! "Albert")`)).toBe(`string`)
     })
   })
 

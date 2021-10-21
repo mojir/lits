@@ -525,7 +525,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength({ min: 2 }, node),
   },
-  'random-sample': {
+  'random-sample!': {
     evaluate: ([prob, seq]: Arr): Seq => {
       assertFiniteNumber(prob)
       assertSeq(seq)
@@ -541,7 +541,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
-  'rand-nth': {
+  'rand-nth!': {
     evaluate: ([seq]: Arr): Any => {
       assertSeq(seq)
       if (seq.length === 0) {

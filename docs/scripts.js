@@ -185,10 +185,7 @@ function stringifyValue(value) {
   if (typeof value === 'object' && value instanceof Error) {
     return value.toString()
   }
-  return JSON.stringify(value, (k, v) => (v === null || v === undefined ? '___nil___' : v)).replace(
-    /"___nil___"/g,
-    `nil`,
-  )
+  return JSON.stringify(value)
 }
 
 function resetPlayground() {

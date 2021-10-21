@@ -23,7 +23,6 @@ module.exports = {
     ],
     description: `Extracts characters from \`indexStart\` up to but not including \`indexEnd\`.`,
     examples: [`(subs "A string" 2)`, `(subs "A string" 2 5)`, `(subs "A string" 2 100)`, `(subs "A string" 100)`],
-    specialExpression: false,
   },
   'string-repeat': {
     name: `string-repeat`,
@@ -44,7 +43,6 @@ module.exports = {
     ],
     description: `Repeates \`string\` \`count\` times.`,
     examples: [`(string-repeat "*" 10)`, `(string-repeat "***" 0)`],
-    specialExpression: false,
   },
   str: {
     name: `str`,
@@ -67,7 +65,6 @@ module.exports = {
       `(str)`,
       `(str 0 false true nil (regexp "^kalle") [1 2 3] {"a" "a"})`,
     ],
-    specialExpression: false,
   },
   'string-to-number': {
     name: `string-to-number`,
@@ -84,7 +81,6 @@ module.exports = {
     ],
     description: `Parses \`string\` to a number.`,
     examples: [`(string-to-number "10")`, `(string-to-number "010")`, `(string-to-number "-1.01")`],
-    specialExpression: false,
   },
   'number-to-string': {
     name: `number-to-string`,
@@ -112,7 +108,6 @@ module.exports = {
       `(number-to-string 15 8)`,
       `(number-to-string 15 16)`,
     ],
-    specialExpression: false,
   },
   'lower-case': {
     name: `lower-case`,
@@ -129,7 +124,6 @@ module.exports = {
     ],
     description: `Returns \`string\` converted to lower case.`,
     examples: [`(lower-case "Albert")`, `(lower-case "")`],
-    specialExpression: false,
   },
   'upper-case': {
     name: `upper-case`,
@@ -146,7 +140,6 @@ module.exports = {
     ],
     description: `Returns \`string\` converted to upper case.`,
     examples: [`(upper-case "Albert")`, `(upper-case "")`],
-    specialExpression: false,
   },
   trim: {
     name: `trim`,
@@ -163,7 +156,6 @@ module.exports = {
     ],
     description: `Returns a new string with leading and trailing whitespaces removed.`,
     examples: [`(trim "  Albert  ")`, `(trim "   ")`, `(trim "")`],
-    specialExpression: false,
   },
   'trim-left': {
     name: `trim-left`,
@@ -180,7 +172,6 @@ module.exports = {
     ],
     description: `Returns a new string with leading whitespaces removed.`,
     examples: [`(trim-left "  Albert  ")`, `(trim-left "   ")`, `(trim-left "")`],
-    specialExpression: false,
   },
   'trim-right': {
     name: `trim-right`,
@@ -197,7 +188,6 @@ module.exports = {
     ],
     description: `Returns a new string with trailing whitespaces removed.`,
     examples: [`(trim-right "  Albert  ")`, `(trim-right "   ")`, `(trim-right "")`],
-    specialExpression: false,
   },
   'pad-left': {
     name: `pad-left`,
@@ -228,7 +218,6 @@ module.exports = {
       `(pad-left "Albert" 5)`,
       `(pad-left "Albert" -1)`,
     ],
-    specialExpression: false,
   },
   'pad-right': {
     name: `pad-right`,
@@ -259,7 +248,6 @@ module.exports = {
       `(pad-right "Albert" 5)`,
       `(pad-right "Albert" -1)`,
     ],
-    specialExpression: false,
   },
   split: {
     name: `split`,
@@ -290,7 +278,6 @@ module.exports = {
       `(split "0123456789" "")`,
       `(map string-to-number (split "0123456789" "" 5))`,
     ],
-    specialExpression: false,
   },
   template: {
     name: `template`,
@@ -318,7 +305,6 @@ module.exports = {
       `(template "$1 book||||$1 books" 1)`,
       `(template "$1 book||||$1 books" 2)`,
     ],
-    specialExpression: false,
   },
   'to-char-code': {
     name: `to-char-code`,
@@ -335,7 +321,6 @@ module.exports = {
     ],
     description: `Return code point for first character in \`input\`.`,
     examples: [`(to-char-code "A")`, `(to-char-code "Albert")`],
-    specialExpression: false,
   },
   'from-char-code': {
     name: `from-char-code`,
@@ -352,6 +337,5 @@ module.exports = {
     ],
     description: `Return character for code point \`code\`.`,
     examples: [`(from-char-code 65)`, `(from-char-code 0)`],
-    specialExpression: false,
   },
 }

@@ -14,7 +14,6 @@ module.exports = {
     ],
     description: `Returns number of elements in \`coll\`.`,
     examples: [`(count [1 2 3])`, `(count [])`, `(count (object "a" 1))`, `(count "")`, `(count "Albert")`],
-    specialExpression: false,
   },
   get: {
     name: `get`,
@@ -47,7 +46,6 @@ module.exports = {
       `(get (object "a" 1) "b")`,
       `(get (object "a" 1) "b" "default")`,
     ],
-    specialExpression: false,
   },
   'contains?': {
     name: `contains?`,
@@ -74,7 +72,6 @@ module.exports = {
       `(contains? {} "a")`,
       `(contains? {"a" 1 "b" 2} "a")`,
     ],
-    specialExpression: false,
   },
   'has?': {
     name: `has?`,
@@ -102,7 +99,6 @@ module.exports = {
       `(has? "Albert" "A")`,
       `(has? "Albert" "a")`,
     ],
-    specialExpression: false,
   },
   assoc: {
     name: `assoc`,
@@ -132,7 +128,6 @@ module.exports = {
       `(assoc {"a" 1 "b" 2} "a" "One")`,
       `(assoc {"a" 1 "b" 2} "c" "Three")`,
     ],
-    specialExpression: false,
   },
   concat: {
     name: `concat`,
@@ -158,7 +153,6 @@ module.exports = {
       `(concat {"a" 1 "b" 2} {"b" 1 "c" 2})`,
       `(concat {} {"a" 1})`,
     ],
-    specialExpression: false,
   },
   'empty?': {
     name: `empty?`,
@@ -182,7 +176,6 @@ module.exports = {
       `(empty? "")`,
       `(empty? "Albert")`,
     ],
-    specialExpression: false,
   },
   'every?': {
     name: `every?`,
@@ -211,7 +204,6 @@ module.exports = {
       `(every? #(even? (second %1)) {"a" 2 "b" 4})`,
       `(every? #(even? (second %1)) {"a" 2 "b" 3})`,
     ],
-    specialExpression: false,
   },
   'not-every?': {
     name: `not-every?`,
@@ -240,7 +232,6 @@ module.exports = {
       `(not-every? #(even? (second %1)) {"a" 2 "b" 4})`,
       `(not-every? #(even? (second %1)) {"a" 2 "b" 3})`,
     ],
-    specialExpression: false,
   },
   'any?': {
     name: `any?`,
@@ -269,7 +260,6 @@ module.exports = {
       `(any? #(even? (second %1)) {"a" 2 "b" 3})`,
       `(any? #(even? (second %1)) {"a" 1 "b" 3})`,
     ],
-    specialExpression: false,
   },
   'not-any?': {
     name: `not-any?`,
@@ -298,6 +288,5 @@ module.exports = {
       `(not-any? #(even? (second %1)) {"a" 2 "b" 3})`,
       `(not-any? #(even? (second %1)) {"a" 1 "b" 3})`,
     ],
-    specialExpression: false,
   },
 }

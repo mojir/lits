@@ -28,7 +28,6 @@ module.exports = {
       `(nth "A string" 30)`,
       `(nth "A string" -30)`,
     ],
-    specialExpression: false,
   },
   push: {
     name: `push`,
@@ -50,7 +49,6 @@ module.exports = {
     ],
     description: `Pushes \`values\` to the end of \`array\`.`,
     examples: [`(push [1 2 3] 4)`, `(push [1 2 3] 4 5 6)`, `(def l [1 2 3]) (push l 4) l`],
-    specialExpression: false,
   },
   pop: {
     name: `pop`,
@@ -71,7 +69,6 @@ module.exports = {
     ],
     description: `Removes and returns then last item of \`array\`. If \`array\` is empty, \`nil\` is returned.`,
     examples: [`(pop [1 2 3])`, `(pop [])`],
-    specialExpression: false,
   },
   unshift: {
     name: `unshift`,
@@ -93,7 +90,6 @@ module.exports = {
     ],
     description: `Inserts \`values\` at the beginning of \`array\`.`,
     examples: [`(unshift [1 2 3] 4)`, `(unshift [1 2 3] 4 5 6)`, `(def l [1 2 3]) (unshift l 4) l`],
-    specialExpression: false,
   },
   shift: {
     name: `shift`,
@@ -114,7 +110,6 @@ module.exports = {
     ],
     description: `Removes and returns the first item of \`array\`. If \`array\` is empty, \`nil\` is returned.`,
     examples: [`(shift [1 2 3])`, `(shift [])`],
-    specialExpression: false,
   },
   slice: {
     name: `slice`,
@@ -141,7 +136,6 @@ module.exports = {
     ],
     description: `Returns a shallow copy of a portion of \`array\` into a new array selected from index \`start\` (inclusive) to index \`end\` (exclusive). If \`start\` is not provided it defaults to \`0\`. If \`end\` is not provided, the rest of the array will be copied.`,
     examples: [`(slice [1 2 3 4 5] 2 4)`, `(slice [1 2 3 4 5] 2)`],
-    specialExpression: false,
   },
   reduce: {
     name: `reduce`,
@@ -171,7 +165,6 @@ module.exports = {
       `(reduce + 0 [])`,
       `(reduce (fn [result value] (+ result (if (even? value) value 0))) 0 [1 2 3 4 5 6 7 8 9])`,
     ],
-    specialExpression: false,
   },
   'reduce-right': {
     name: `reduce-right`,
@@ -196,7 +189,6 @@ module.exports = {
     ],
     description: `Runs \`reducer\` function on each element of the \`array\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
     examples: [`(reduce-right str ["A" "B" "C"] "")`],
-    specialExpression: false,
   },
   map: {
     name: `map`,
@@ -223,7 +215,6 @@ module.exports = {
       `(map + [1 2 3] [1 2 3])`,
       `(map max [2 6 3] [2 4 7] [1 6 2])`,
     ],
-    specialExpression: false,
   },
   filter: {
     name: `filter`,
@@ -244,7 +235,6 @@ module.exports = {
     ],
     description: `Creates a new array with all elements that pass the test implemented by \`filter\`.`,
     examples: [`(filter string? ["Albert" "Mojir" 160 [1 2]])`, `(filter (fn [x] (> x 10)) [5 10 15 20])`],
-    specialExpression: false,
   },
   position: {
     name: `position`,
@@ -269,7 +259,6 @@ module.exports = {
       `(position (fn [x] (> x 10)) [5 10 15 20])`,
       `(position (fn [x] (> x 100)) [5 10 15 20])`,
     ],
-    specialExpression: false,
   },
   'index-of': {
     name: `index-of`,
@@ -294,7 +283,6 @@ module.exports = {
       `(index-of [5 10 15 20] 15)`,
       `(index-of [5 10 15 20] 1)`,
     ],
-    specialExpression: false,
   },
   some: {
     name: `some`,
@@ -320,7 +308,6 @@ module.exports = {
       `(some (fn [x] (> x 10)) [1 2 3 4])`,
       `(some (fn [x] (> x 10)) [])`,
     ],
-    specialExpression: false,
   },
   reverse: {
     name: `reverse`,
@@ -337,7 +324,6 @@ module.exports = {
     ],
     description: `If \`input\` is an array, creates a new array with the elements from \`input\` in reversed order. If \`input\` is a string, returns new reversed string.`,
     examples: [`(reverse ["Albert" "Mojir" 160 [1 2]])`, `(reverse [])`, `(reverse "Albert")`],
-    specialExpression: false,
   },
   first: {
     name: `first`,
@@ -354,7 +340,6 @@ module.exports = {
     ],
     description: `Returns the first element of \`array\`. If \`array\` is empty, \`nil\` is returned.`,
     examples: [`(first ["Albert" "Mojir" 160 [1 2]])`, `(first [])`],
-    specialExpression: false,
   },
   second: {
     name: `second`,
@@ -371,7 +356,6 @@ module.exports = {
     ],
     description: `Returns the second element of \`array\`. If \`array\` has less than two elements, \`nil\` is returned.`,
     examples: [`(second ["Albert" "Mojir" 160 [1 2]])`, `(second [1])`, `(second [])`],
-    specialExpression: false,
   },
   last: {
     name: `last`,
@@ -388,7 +372,6 @@ module.exports = {
     ],
     description: `Returns the last element of \`array\`. If \`array\` is empty, \`nil\` is returned.`,
     examples: [`(last ["Albert" "Mojir" 160 [1 2]])`, `(last [1 2])`, `(last [1])`, `(last [])`],
-    specialExpression: false,
   },
   rest: {
     name: `rest`,
@@ -412,7 +395,6 @@ module.exports = {
       `(rest "A")`,
       `(rest "")`,
     ],
-    specialExpression: false,
   },
   nthrest: {
     name: `nthrest`,
@@ -435,7 +417,6 @@ module.exports = {
       `(nthrest [] 0)`,
       `(nthrest "" 0)`,
     ],
-    specialExpression: false,
   },
   next: {
     name: `next`,
@@ -459,7 +440,6 @@ module.exports = {
       `(next "A")`,
       `(next "")`,
     ],
-    specialExpression: false,
   },
   nthnext: {
     name: `nthnext`,
@@ -482,7 +462,6 @@ module.exports = {
       `(nthnext [] 0)`,
       `(nthnext "" 0)`,
     ],
-    specialExpression: false,
   },
   cons: {
     name: `cons`,
@@ -499,7 +478,6 @@ module.exports = {
     ],
     description: `Constructs a new array with \`element\` as first element and \`rest\` as the rest.`,
     examples: [`(cons "Hi" ["Albert" "Mojir" 160 [1 2]])`, `(cons "Hi" [])`],
-    specialExpression: false,
   },
   take: {
     name: `take`,
@@ -520,7 +498,6 @@ module.exports = {
     ],
     description: `Constructs a new array/string with the \`count\` first elements from \`input\`.`,
     examples: [`(take 3 [1 2 3 4 5])`, `(take 0 [1 2 3 4 5])`, `(take 2 "Albert")`, `(take 50 "Albert")`],
-    specialExpression: false,
   },
 
   'take-last': {
@@ -542,7 +519,6 @@ module.exports = {
     ],
     description: `Constructs a new array with the \`count\` last elements from \`array\`.`,
     examples: [`(take-last 3 [1 2 3 4 5])`, `(take-last 0 [1 2 3 4 5])`],
-    specialExpression: false,
   },
 
   'take-while': {
@@ -564,7 +540,6 @@ module.exports = {
     ],
     description: `Returns the members of \`array\` in order, stopping before the first one for which \`predicate\` returns a falsy value.`,
     examples: [`(take-while (fn [x] (< x 3)) [1 2 3 2 1])`, `(take-while (fn [x] (> x 3)) [1 2 3 2 1])`],
-    specialExpression: false,
   },
 
   drop: {
@@ -586,7 +561,6 @@ module.exports = {
     ],
     description: `Constructs a new array/string with the \`count\` first elements dropped from \`input\`.`,
     examples: [`(drop 3 [1 2 3 4 5])`, `(drop 0 [1 2 3 4 5])`, `(drop 2 "Albert")`, `(drop 50 "Albert")`],
-    specialExpression: false,
   },
 
   'drop-last': {
@@ -608,7 +582,6 @@ module.exports = {
     ],
     description: `Constructs a new array with the \`count\` last elements dropped from \`array\`.`,
     examples: [`(drop-last 3 [1 2 3 4 5])`, `(drop-last 0 [1 2 3 4 5])`],
-    specialExpression: false,
   },
 
   'drop-while': {
@@ -630,7 +603,6 @@ module.exports = {
     ],
     description: `Returns the members of \`array\` in order, skipping the fist elements for witch the \`predicate\` returns a truethy value.`,
     examples: [`(drop-while (fn [x] (< x 3)) [1 2 3 2 1])`, `(drop-while (fn [x] (> x 3)) [1 2 3 2 1])`],
-    specialExpression: false,
   },
 
   sort: {
@@ -655,7 +627,6 @@ module.exports = {
       `(sort (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)) [3 1 2])`,
       `(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)) [3 1 2])`,
     ],
-    specialExpression: false,
   },
   join: {
     name: `join`,
@@ -676,12 +647,11 @@ module.exports = {
     ],
     description: `Returns a new string by concatenating all of the elements in \`array\`, separated by \`delimiter\`.`,
     examples: [`(join ["Albert" "Mojir"] " ")`, `(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")`],
-    specialExpression: false,
   },
-  'random-sample': {
-    name: `random-sample`,
+  'random-sample!': {
+    name: `random-sample!`,
     category: `Sequence`,
-    linkName: `random-sample`,
+    linkName: `random-sample_exclamation`,
     returns: {
       type: `array`,
     },
@@ -697,13 +667,12 @@ module.exports = {
       },
     ],
     description: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
-    examples: [`(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])`, `(random-sample 0.5 "Albert")`],
-    specialExpression: false,
+    examples: [`(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])`, `(random-sample! 0.5 "Albert")`],
   },
-  'rand-nth': {
-    name: `rand-nth`,
+  'rand-nth!': {
+    name: `rand-nth!`,
     category: `Sequence`,
-    linkName: `rand-nth`,
+    linkName: `rand-nth_exclamation`,
     returns: {
       type: `any`,
     },
@@ -714,8 +683,7 @@ module.exports = {
       },
     ],
     description: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
-    examples: [`(rand-nth [1 2 3 4 5 6 7 8 9 10])`, `(rand-nth "Albert")`],
-    specialExpression: false,
+    examples: [`(rand-nth! [1 2 3 4 5 6 7 8 9 10])`, `(rand-nth! "Albert")`],
   },
   shuffle: {
     name: `shuffle`,
@@ -738,7 +706,6 @@ module.exports = {
       `(shuffle [1])`,
       `(shuffle [])`,
     ],
-    specialExpression: false,
   },
   distinct: {
     name: `distinct`,
@@ -755,7 +722,6 @@ module.exports = {
     ],
     description: `Returns a copy of \`input\` with no duplicates.`,
     examples: [`(distinct [1 2 3 1 3 5])`, `(distinct "Albert Mojir")`, `(distinct [])`, `(distinct "")`],
-    specialExpression: false,
   },
 
   remove: {
@@ -777,7 +743,6 @@ module.exports = {
     ],
     description: `Returns a new sequence of items in \`input\` for witch \`(pred item)\` returns a falsy value.`,
     examples: [`(remove even? [1 2 3 1 3 5])`, `(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")`],
-    specialExpression: false,
   },
 
   'split-at': {
@@ -799,7 +764,6 @@ module.exports = {
     ],
     description: `Returns a new array/string of \`[(take pos input) (drop pos input)]\`.`,
     examples: [`(split-at 2 [1 2 3 4 5])`, `(split-at 2 "Albert")`],
-    specialExpression: false,
   },
 
   'split-with': {
@@ -821,6 +785,5 @@ module.exports = {
     ],
     description: `Returns a new array/string of \`[(take-while pos input) (drop-while pos input)]\`.`,
     examples: [`(split-with #(> %1 3) [1 2 3 4 5])`, `(split-with #(<= %1 "Z") "Albert")`],
-    specialExpression: false,
   },
 }
