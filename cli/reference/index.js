@@ -1,44 +1,45 @@
-const collectionReference = require('./categories/collection')
-const functionalReference = require('./categories/functional')
-const arrayReference = require('./categories/array')
-const sequenceReference = require('./categories/sequence')
-const mathReference = require('./categories/math')
-const miscReference = require('./categories/misc')
-const objectReference = require('./categories/object')
-const predicateReference = require('./categories/predicate')
-const regularExpressionReference = require('./categories/regularExpression')
-const specialExpressionsReference = require('./categories/specialExpressions')
-const stringReference = require('./categories/string')
-const bitwiseReference = require('./categories/bitwise')
+const collectionReference = require(`./categories/collection`)
+const functionalReference = require(`./categories/functional`)
+const arrayReference = require(`./categories/array`)
+const sequenceReference = require(`./categories/sequence`)
+const mathReference = require(`./categories/math`)
+const miscReference = require(`./categories/misc`)
+const objectReference = require(`./categories/object`)
+const predicateReference = require(`./categories/predicate`)
+const regularExpressionReference = require(`./categories/regularExpression`)
+const specialExpressionsReference = require(`./categories/specialExpressions`)
+const stringReference = require(`./categories/string`)
+const bitwiseReference = require(`./categories/bitwise`)
 
-const functionReference = {
-  ...collectionReference,
-  ...arrayReference,
-  ...sequenceReference,
-  ...mathReference,
-  ...functionalReference,
-  ...miscReference,
-  ...objectReference,
-  ...predicateReference,
-  ...regularExpressionReference,
-  ...specialExpressionsReference,
-  ...stringReference,
-  ...bitwiseReference,
-}
+const functionReference = Object.assign(
+  {},
+  collectionReference,
+  arrayReference,
+  sequenceReference,
+  mathReference,
+  functionalReference,
+  miscReference,
+  objectReference,
+  predicateReference,
+  regularExpressionReference,
+  specialExpressionsReference,
+  stringReference,
+  bitwiseReference,
+)
 
 const categoryNames = [
-  'Special expression',
-  'Predicate',
-  'Sequence',
-  'Collection',
-  'Array',
-  'Object',
-  'String',
-  'Math',
-  'Functional',
-  'Regular expression',
-  'Bitwise',
-  'Misc',
+  `Special expression`,
+  `Predicate`,
+  `Sequence`,
+  `Collection`,
+  `Array`,
+  `Object`,
+  `String`,
+  `Math`,
+  `Functional`,
+  `Regular expression`,
+  `Bitwise`,
+  `Misc`,
 ]
 
 const categories = Object.values(functionReference)

@@ -31,7 +31,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   },
 
   'nil?': {
-    evaluate: ([first]: Arr): boolean => first === null,
+    evaluate: ([first]: Arr): boolean => first === null || first === undefined,
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 

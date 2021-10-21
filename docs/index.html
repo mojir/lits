@@ -27,7 +27,6 @@
     <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
     <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
     <ul>
-      <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
       <li>Only two sequence type exists: <pre>array</pre> and <pre>string</pre>.</li>
       <li>No quotes.</li>
       <li>No macros.</li>
@@ -406,10 +405,10 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(array 1 2 3)')"><span class="icon-button">▶</span> (array 1 2 3) <span class="gray">=> [1,2,3]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(array (array nil false true))')"><span class="icon-button">▶</span> (array (array nil false true)) <span class="gray">=> [[null,false,true]]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(array (array nil false true))')"><span class="icon-button">▶</span> (array (array nil false true)) <span class="gray">=> [[nil,false,true]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[]')"><span class="icon-button">▶</span> [] <span class="gray">=> []</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[1 2 3]')"><span class="icon-button">▶</span> [1 2 3] <span class="gray">=> [1,2,3]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('[[nil false true]]')"><span class="icon-button">▶</span> [[nil false true]] <span class="gray">=> [[null,false,true]]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('[[nil false true]]')"><span class="icon-button">▶</span> [[nil false true]] <span class="gray">=> [[nil,false,true]]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('[]')"><span class="icon-button">▶</span> [] <span class="gray">=> []</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('([1 2 3] 1)')"><span class="icon-button">▶</span> ([1 2 3] 1) <span class="gray">=> 2</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('([1 2 3 4 5 6 7 8 9] 3)')"><span class="icon-button">▶</span> ([1 2 3 4 5 6 7 8 9] 3) <span class="gray">=> 4</span></span></pre>
@@ -1149,8 +1148,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,3,4,5,9]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample 0.5 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (random-sample 0.5 "Albert") <span class="gray">=> "br"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample 0.5 [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (random-sample 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,3]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample 0.5 ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (random-sample 0.5 "Albert") <span class="gray">=> "Alb"</span></span></pre>
   </div>
 </div>
 
@@ -1168,8 +1167,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (rand-nth [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 2</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (rand-nth "Albert") <span class="gray">=> "A"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (rand-nth [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 4</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth ___double_quote___Albert___double_quote___)')"><span class="icon-button">▶</span> (rand-nth "Albert") <span class="gray">=> "b"</span></span></pre>
   </div>
 </div>
 
@@ -1187,8 +1186,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [9,4,2,1,10,5,8,6,7,3]</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "btrrMAli eoj"</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"><span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [7,5,9,3,8,4,10,6,1,2]</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"><span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "ebMj oAtirrl"</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"><span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"><span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1]</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"><span class="icon-button">▶</span> (shuffle []) <span class="gray">=> []</span></span></pre>
@@ -1984,9 +1983,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.1659987963746583</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.00039426886427246233</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 0.15469884470012518</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand 1)')"><span class="icon-button">▶</span> (rand 1) <span class="gray">=> 0.664161858851515</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 0.01)')"><span class="icon-button">▶</span> (rand 0.01) <span class="gray">=> 0.007078823983223022</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand 2.5)')"><span class="icon-button">▶</span> (rand 2.5) <span class="gray">=> 2.355279007603945</span></span></pre>
   </div>
 </div>
 
@@ -2005,8 +2004,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int 1)')"><span class="icon-button">▶</span> (rand-int 1) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 0</span></span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 76</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 10.12)')"><span class="icon-button">▶</span> (rand-int 10.12) <span class="gray">=> 8</span></span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int 123)')"><span class="icon-button">▶</span> (rand-int 123) <span class="gray">=> 79</span></span></pre>
   </div>
 </div>
 
@@ -2632,7 +2631,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634827092078</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"><span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634828304030</span></span></pre>
   </div>
 </div>
 
@@ -2933,7 +2932,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(zipmap [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___] [10 nil [1 2 3]])')"><span class="icon-button">▶</span> (zipmap ["a" "b" "c"] [10 nil [1 2 3]]) <span class="gray">=> {"a":10,"b":null,"c":[1,2,3]}</span></span></pre>
+    <pre><span class="example" onclick="addToPlayground('(zipmap [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___] [10 nil [1 2 3]])')"><span class="icon-button">▶</span> (zipmap ["a" "b" "c"] [10 nil [1 2 3]]) <span class="gray">=> {"a":10,"b":nil,"c":[1,2,3]}</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(zipmap [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___] [1])')"><span class="icon-button">▶</span> (zipmap ["a" "b" "c"] [1]) <span class="gray">=> {"a":1}</span></span></pre>
 <pre><span class="example" onclick="addToPlayground('(zipmap [] [10 nil [1 2 3]])')"><span class="icon-button">▶</span> (zipmap [] [10 nil [1 2 3]]) <span class="gray">=> {}</span></span></pre>
   </div>

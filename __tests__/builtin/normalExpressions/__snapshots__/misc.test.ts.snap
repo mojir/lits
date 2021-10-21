@@ -2,7 +2,6 @@
 
 exports[`misc functions debug! debug value 1`] = `
 "*** LISPISH DEBUG ***
-
 {
   \\"type\\": \\"user-defined\\",
   \\"arguments\\": {
@@ -28,12 +27,12 @@ exports[`misc functions debug! debug value 1`] = `
     }
   ],
   \\"functionContext\\": {}
-}"
+}
+"
 `;
 
 exports[`misc functions debug! multiple contexts 1`] = `
 "*** LISPISH DEBUG ***
-
 Context 0 - Import context
   x     10
   foo   <user-defined function foo>
@@ -45,6 +44,7 @@ Context 1 - Global context
 
 Context 2
   z  10
+
 
 "
 `;

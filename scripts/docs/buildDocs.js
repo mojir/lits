@@ -122,7 +122,6 @@ function getIndexPage() {
     <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
     <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
     <ul>
-      <li><pre>t</pre> and <pre>nil</pre> are gone. Instead there are four new symbols: <pre>true</pre>, <pre>false</pre>, <pre>null</pre> and <pre>undefined</pre>.</li>
       <li>Only two sequence type exists: <pre>array</pre> and <pre>string</pre>.</li>
       <li>No quotes.</li>
       <li>No macros.</li>
@@ -205,7 +204,7 @@ function getDocumentationContent(docObj) {
             result,
           )}</span></span></pre>`
         } catch (error) {
-          console.error(example)
+          console.error(example, error)
           return `<pre class="example" onclick="addToPlayground('${escapeExample(
             example,
           )}')"><span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
@@ -294,10 +293,7 @@ function stringifyValue(value) {
   if (typeof value === 'object' && value instanceof RegExp) {
     return `${value}`
   }
-  return JSON.stringify(value, (k, v) => (v === undefined ? 'b234ca78-ccc4-5749-9384-1d3415d29423' : v)).replace(
-    /"b234ca78-ccc4-5749-9384-1d3415d29423"/g,
-    'undefined',
-  )
+  return JSON.stringify(value)
 }
 
 function escape(str) {

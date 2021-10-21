@@ -136,11 +136,11 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: (params, contextStack): Any => {
       if (params.length === 0) {
         // eslint-disable-next-line no-console
-        console.warn(`*** LISPISH DEBUG ***\n\n${contextstackToString(contextStack)}`)
+        console.warn(`*** LISPISH DEBUG ***\n${contextstackToString(contextStack)}\n`)
         return null
       }
       // eslint-disable-next-line no-console
-      console.warn(`*** LISPISH DEBUG ***\n\n${JSON.stringify(params[0], null, 2)}`)
+      console.warn(`*** LISPISH DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
       return asAny(params[0])
     },
     validate: node => assertLength({ max: 1 }, node),
