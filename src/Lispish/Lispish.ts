@@ -46,11 +46,12 @@ export class Lispish {
     return result
   }
 
-  public import(program: string): void {
+  public import(program: string, params: EvaluateParams = {}): void {
+    const context = getContextFromParams(params)
     const tokens: Token[] = this.tokenize(program)
     const ast: Ast = this.parse(tokens)
     const scope: Context = {}
-    evaluate(ast, scope, {})
+    evaluate(ast, scope, context)
 
     const importKeys = Object.keys(this.importScope)
     for (const key of Object.keys(scope)) {
@@ -72,15 +73,8 @@ export class Lispish {
   }
 
   private evaluate(ast: Ast, params: EvaluateParams = {}): unknown {
-    const globalContext: Context = params.globalContext || {}
-
-    if (params.vars) {
-      Object.entries(params.vars).forEach(([key, value]) => {
-        globalContext[key] = { value: toAny(value) }
-      })
-    }
-
-    return evaluate(ast, globalContext, this.importScope)
+    const context = getContextFromParams(params)
+    return evaluate(ast, context, this.importScope)
   }
 
   private generateAst(program: string) {
@@ -95,4 +89,16 @@ export class Lispish {
     this.astCache?.set(program, ast)
     return ast
   }
+}
+
+function getContextFromParams(params: EvaluateParams) {
+  const context: Context = params.globalContext || {}
+
+  if (params.vars) {
+    Object.entries(params.vars).forEach(([key, value]) => {
+      context[key] = { value: toAny(value) }
+    })
+  }
+
+  return context
 }

@@ -1,6 +1,6 @@
 import typescript from 'rollup-plugin-typescript2'
-import gzipPlugin from 'rollup-plugin-gzip'
-import { terser } from 'rollup-plugin-terser'
+// import gzipPlugin from 'rollup-plugin-gzip'
+// import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
 
 const input = 'src/index.ts'
@@ -9,8 +9,8 @@ const plugins = [
   typescript({
     typescript: require('typescript'),
   }),
-  terser(),
-  gzipPlugin(),
+  // terser(),
+  // gzipPlugin(),
 ]
 
 export default [

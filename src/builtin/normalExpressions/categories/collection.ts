@@ -21,35 +21,53 @@ import {
   toNonNegativeInteger,
   toAny,
   asChar,
+  collHasKey,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
+
+function get(coll: Coll, key: string | number): Any | undefined {
+  if (isArr(coll)) {
+    assertInteger(key)
+    if (key < coll.length) {
+      return toAny(coll[key])
+    }
+  } else if (isObj(coll)) {
+    assertString(key)
+    if (collHasKey(coll, key)) {
+      return toAny(coll[key])
+    }
+  } else {
+    assertInteger(key)
+    if (key < coll.length) {
+      return toAny(coll[key])
+    }
+  }
+  return undefined
+}
+
 export const collectionNormalExpression: BuiltinNormalExpressions = {
   get: {
     evaluate: (params: Arr): Any => {
-      const [coll, key, defaultValue] = params
-      const hasDefault = params.length === 3
-
+      const [coll, key] = params
+      const defaultValue = toAny(params[2])
       assertColl(coll)
-
-      if (isArr(coll)) {
-        assertInteger(key)
-        if (key < coll.length) {
-          return toAny(coll[key])
-        }
-      } else if (isObj(coll)) {
-        assertString(key)
-        if (Object.getOwnPropertyDescriptor(coll, key)) {
-          return toAny(coll[key])
-        }
-      } else {
-        assertInteger(key)
-        return toAny(coll[key])
-      }
-      if (hasDefault) {
-        assertAny(defaultValue)
-        return defaultValue
-      }
-      return null
+      assertStringOrNumber(key)
+      const result = get(coll, key)
+      return result === undefined ? defaultValue : result
+    },
+    validate: node => assertLength({ min: 2, max: 3 }, node),
+  },
+  'get-in': {
+    evaluate: (params: Arr): Any => {
+      const [coll, keys] = params
+      const defaultValue = toAny(params[2])
+      assertColl(coll)
+      assertArr(keys)
+      keys.reduce((result: Any | undefined, key) => {
+        return
+      })
+      const result = get(coll, key)
+      return result === undefined ? defaultValue : result
     },
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },
