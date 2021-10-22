@@ -804,4 +804,71 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(split-with #(<= %1 "Z") "Albert" "Mojir")`)).toThrow()
     })
   })
+
+  describe(`frequencies`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(frequencies ["Albert" "Mojir" "Nina" "Mojir"])`)).toEqual({ Albert: 1, Nina: 1, Mojir: 2 })
+      expect(lispish.run(`(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")`)).toEqual({
+        P: 1,
+        a: 2,
+        c: 6,
+        e: 1,
+        i: 6,
+        l: 3,
+        m: 2,
+        n: 4,
+        o: 9,
+        p: 1,
+        r: 2,
+        s: 4,
+        t: 1,
+        u: 2,
+        v: 1,
+      })
+      expect(() => lispish.run(`(frequencies)`)).toThrow()
+      expect(() => lispish.run(`(frequencies {})`)).toThrow()
+      expect(() => lispish.run(`(frequencies 3)`)).toThrow()
+      expect(() => lispish.run(`(frequencies "" "")`)).toThrow()
+    })
+  })
+
+  describe(`group-by`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}])`)).toEqual({
+        Albert: [{ name: `Albert` }, { name: `Albert` }],
+        Mojir: [{ name: `Mojir` }],
+      })
+      expect(
+        lispish.run(`(group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir")`),
+      ).toEqual({
+        other: [`l`, `b`, `r`, `t`, ` `, `M`, `j`, `r`],
+        vowel: [`A`, `e`, `o`, `i`],
+      })
+      expect(() => lispish.run(`(group-by)`)).toThrow()
+      expect(() => lispish.run(`(group-by "a")`)).toThrow()
+      expect(() => lispish.run(`(group-by "a" {})`)).toThrow()
+      expect(() => lispish.run(`(group-by "a" 3)`)).toThrow()
+      expect(() => lispish.run(`(group-by "a" "" "")`)).toThrow()
+    })
+  })
+
+  describe(`sort-by`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(sort-by count ["Albert" "Mojir" "Nina"])`)).toEqual([`Nina`, `Mojir`, `Albert`])
+      expect(lispish.run(`(sort-by count (fn [a b] (- b a)) ["Albert" "Mojir" "Nina"])`)).toEqual([
+        `Albert`,
+        `Mojir`,
+        `Nina`,
+      ])
+      expect(lispish.run(`(sort-by lower-case "Albert")`)).toEqual(`Abelrt`)
+      expect(lispish.run(`(sort-by lower-case (fn [a b] (- (to-char-code b) (to-char-code a))) "Albert")`)).toEqual(
+        `trlebA`,
+      )
+      expect(() => lispish.run(`(sort-by)`)).toThrow()
+      expect(() => lispish.run(`(sort-by "a")`)).toThrow()
+      expect(() => lispish.run(`(sort-by "a" {})`)).toThrow()
+      expect(() => lispish.run(`(sort-by "a" 3)`)).toThrow()
+      expect(() => lispish.run(`(sort-by "a" "" "")`)).toThrow()
+    })
+  })
 })

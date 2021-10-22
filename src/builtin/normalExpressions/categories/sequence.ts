@@ -1,4 +1,4 @@
-import { Any, Arr, Seq } from '../../../interface'
+import { Any, Arr, Obj, Seq } from '../../../interface'
 import {
   assertArr,
   assertInteger,
@@ -17,6 +17,8 @@ import {
   toAny,
   asAny,
   toNonNegativeInteger,
+  collHasKey,
+  asSeq,
 } from '../../../utils'
 import { BuiltinNormalExpressions, NormalExpressionEvaluator } from '../../interface'
 
@@ -442,6 +444,56 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },
+  'sort-by': {
+    evaluate: (params: Arr, contextStack, { executeFunction }): Seq => {
+      const defaultComparer = params.length === 2
+
+      const keyfn = asAny(params[0])
+      const comparer = defaultComparer ? null : params[1]
+      const seq = asSeq(defaultComparer ? params[1] : params[2])
+
+      if (isString(seq)) {
+        const result = seq.split(``)
+        if (defaultComparer) {
+          result.sort((a, b) => {
+            const aKey = executeFunction(keyfn, [a], contextStack)
+            const bKey = executeFunction(keyfn, [b], contextStack)
+            return compare(aKey, bKey)
+          })
+        } else {
+          assertLispishFunction(comparer)
+          result.sort((a, b) => {
+            const aKey = executeFunction(keyfn, [a], contextStack)
+            const bKey = executeFunction(keyfn, [b], contextStack)
+            const compareValue = executeFunction(comparer, [aKey, bKey], contextStack)
+            assertFiniteNumber(compareValue)
+            return compareValue
+          })
+        }
+        return result.join(``)
+      }
+
+      const result = [...seq]
+      if (defaultComparer) {
+        result.sort((a, b) => {
+          const aKey = executeFunction(keyfn, [a], contextStack)
+          const bKey = executeFunction(keyfn, [b], contextStack)
+          return compare(aKey, bKey)
+        })
+      } else {
+        assertLispishFunction(comparer)
+        result.sort((a, b) => {
+          const aKey = executeFunction(keyfn, [a], contextStack)
+          const bKey = executeFunction(keyfn, [b], contextStack)
+          const compareValue = executeFunction(comparer, [aKey, bKey], contextStack)
+          assertFiniteNumber(compareValue)
+          return compareValue
+        })
+      }
+      return result
+    },
+    validate: node => assertLength({ min: 2, max: 3 }, node),
+  },
   take: {
     evaluate: ([n, input]: Arr): Seq => {
       assertNumber(n)
@@ -616,6 +668,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
+
   'split-with': {
     evaluate: ([fn, seq], contextStack, { executeFunction }): Seq => {
       assertLispishFunction(fn)
@@ -627,6 +680,44 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return [seq, seqIsArray ? [] : ``]
       }
       return [seq.slice(0, index), seq.slice(index)]
+    },
+    validate: node => assertLength(2, node),
+  },
+
+  frequencies: {
+    evaluate: ([seq]): Obj => {
+      assertSeq(seq)
+
+      const arr = isString(seq) ? seq.split(``) : seq
+
+      return arr.reduce((result: Obj, val) => {
+        assertString(val)
+        if (collHasKey(result, val)) {
+          result[val] = (result[val] as number) + 1
+        } else {
+          result[val] = 1
+        }
+        return result
+      }, {})
+    },
+    validate: node => assertLength(1, node),
+  },
+
+  'group-by': {
+    evaluate: ([fn, seq], contextStack, { executeFunction }): Obj => {
+      assertAny(fn)
+      assertSeq(seq)
+      const arr = Array.isArray(seq) ? seq : seq.split(``)
+
+      return arr.reduce((result: Obj, val) => {
+        const key = executeFunction(fn, [val], contextStack)
+        assertString(key)
+        if (!collHasKey(result, key)) {
+          result[key] = []
+        }
+        ;(result[key] as Arr).push(val)
+        return result
+      }, {})
     },
     validate: node => assertLength(2, node),
   },

@@ -319,10 +319,21 @@ export function assertAny(value: unknown): asserts value is Any {
   }
 }
 
-export function assertSeq(value: unknown): asserts value is Array<unknown> | string {
+export function isSeq(value: unknown): value is Seq {
+  return Array.isArray(value) || isString(value)
+}
+
+export function assertSeq(value: unknown): asserts value is Seq {
   if (!isSeq(value)) {
     throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
   }
+}
+
+export function asSeq(value: unknown): Seq {
+  if (!isSeq(value)) {
+    throw TypeError(`Expected string or array, got: ${value} type="${typeof value}"`)
+  }
+  return value as Seq
 }
 
 export function assertObj(value: unknown): asserts value is Obj {
@@ -343,10 +354,6 @@ export function isObj(value: unknown): value is Obj {
 
 export function isArr(value: unknown): value is Arr {
   return Array.isArray(value)
-}
-
-export function isSeq(value: unknown): value is Seq {
-  return Array.isArray(value) || isString(value)
 }
 
 export function isColl(value: unknown): value is Coll {

@@ -144,7 +144,7 @@ module.exports = {
         description: `one or many`,
       },
     ],
-    description: `Returns a new object created by merging together all arguments. If two keys appears in more than obe object \`fn\` is used to calculate the new value.`,
+    description: `Returns a new object created by merging together all arguments. If two keys appears in more than one object \`fn\` is used to calculate the new value.`,
     examples: [
       `(merge-with + (object "x" 10) (object "y" 20))`,
       `(merge-with + (object "x" 10) (object "x" 15 "y" 20))`,

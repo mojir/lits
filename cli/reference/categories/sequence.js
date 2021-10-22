@@ -619,16 +619,41 @@ module.exports = {
         description: `optional`,
       },
       {
-        name: `array`,
-        type: `array`,
+        name: `seq`,
+        type: `Seq`,
       },
     ],
-    description: `Returns a new array with the elements from \`array\` sorted according to \`comparer\`. If no \`comparer\`, builtin \`compare\` will be used.`,
+    description: `Returns a new Seq with the elements from \`seq\` sorted according to \`comparer\`. If no \`comparer\` is supplied, builtin \`compare\` will be used.`,
     examples: [
       `(sort [3 1 2])`,
       `(sort (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)) [3 1 2])`,
       `(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)) [3 1 2])`,
     ],
+  },
+  'sort-by': {
+    name: `sort-by`,
+    category: `Sequence`,
+    linkName: `sort-by`,
+    returns: {
+      type: `array`,
+    },
+    arguments: [
+      {
+        name: `keyfn`,
+        type: `function`,
+      },
+      {
+        name: `comparer`,
+        type: `function`,
+        description: `optional`,
+      },
+      {
+        name: `seq`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns a sorted sequence of the items in \`seq\`, where the sort order is determined by comparing \`(keyfn item)\`. If no \`comparer\` is supplied, uses builtin \`compare\`.`,
+    examples: [`(sort-by count ["Albert" "Mojir" "Nina"])`, `(sort-by lower-case "Albert")`],
   },
   join: {
     name: `join`,
@@ -696,7 +721,7 @@ module.exports = {
     },
     arguments: [
       {
-        input: `input`,
+        name: `input`,
         type: `Seq`,
       },
     ],
@@ -718,7 +743,7 @@ module.exports = {
     },
     arguments: [
       {
-        input: `input`,
+        name: `input`,
         type: `Seq`,
       },
     ],
@@ -735,11 +760,11 @@ module.exports = {
     },
     arguments: [
       {
-        input: `pred`,
+        name: `pred`,
         type: `Function`,
       },
       {
-        input: `input`,
+        name: `input`,
         type: `Seq`,
       },
     ],
@@ -756,11 +781,11 @@ module.exports = {
     },
     arguments: [
       {
-        input: `pos`,
+        name: `pos`,
         type: `number`,
       },
       {
-        input: `input`,
+        name: `input`,
         type: `Seq`,
       },
     ],
@@ -777,15 +802,59 @@ module.exports = {
     },
     arguments: [
       {
-        input: `pos`,
+        name: `pos`,
         type: `number`,
       },
       {
-        input: `input`,
+        name: `input`,
         type: `Seq`,
       },
     ],
     description: `Returns a new array/string of \`[(take-while pos input) (drop-while pos input)]\`.`,
     examples: [`(split-with #(> %1 3) [1 2 3 4 5])`, `(split-with #(<= %1 "Z") "Albert")`],
+  },
+
+  frequencies: {
+    name: `frequencies`,
+    category: `Sequence`,
+    linkName: `frequencies`,
+    returns: {
+      type: `Obj`,
+    },
+    arguments: [
+      {
+        name: `input`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns an object from distinct items in \`seq\` to the number of times they appear. Note that all items in \`seq\` must be valid object keys i.e. strings.`,
+    examples: [
+      `(frequencies ["Albert" "Mojir" "Nina" "Mojir"])`,
+      `(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")`,
+    ],
+  },
+
+  'group-by': {
+    name: `group-by`,
+    category: `Sequence`,
+    linkName: `group-by`,
+    returns: {
+      type: `Obj`,
+    },
+    arguments: [
+      {
+        name: `fn`,
+        type: `Function`,
+      },
+      {
+        name: `input`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns an object of the elements of \`seq\` keyed by the result of \`fn\` on each element. The value at each key will be an array of the corresponding elements.`,
+    examples: [
+      `(group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}])`,
+      `(group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir")`,
+    ],
   },
 }

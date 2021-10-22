@@ -332,10 +332,19 @@ var Lispish = (function (exports) {
             throw TypeError("Expected Any, got: " + value + " type=\"" + typeof value + "\"");
         }
     }
+    function isSeq(value) {
+        return Array.isArray(value) || isString(value);
+    }
     function assertSeq(value) {
         if (!isSeq(value)) {
             throw TypeError("Expected string or array, got: " + value + " type=\"" + typeof value + "\"");
         }
+    }
+    function asSeq(value) {
+        if (!isSeq(value)) {
+            throw TypeError("Expected string or array, got: " + value + " type=\"" + typeof value + "\"");
+        }
+        return value;
     }
     function assertObj(value) {
         if (!isObj(value)) {
@@ -351,9 +360,6 @@ var Lispish = (function (exports) {
     }
     function isArr(value) {
         return Array.isArray(value);
-    }
-    function isSeq(value) {
-        return Array.isArray(value) || isString(value);
     }
     function isColl(value) {
         return isSeq(value) || isObj(value);
@@ -2241,6 +2247,56 @@ var Lispish = (function (exports) {
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
+        'sort-by': {
+            evaluate: function (params, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var defaultComparer = params.length === 2;
+                var keyfn = asAny(params[0]);
+                var comparer = defaultComparer ? null : params[1];
+                var seq = asSeq(defaultComparer ? params[1] : params[2]);
+                if (isString(seq)) {
+                    var result_2 = seq.split("");
+                    if (defaultComparer) {
+                        result_2.sort(function (a, b) {
+                            var aKey = executeFunction(keyfn, [a], contextStack);
+                            var bKey = executeFunction(keyfn, [b], contextStack);
+                            return compare(aKey, bKey);
+                        });
+                    }
+                    else {
+                        assertLispishFunction(comparer);
+                        result_2.sort(function (a, b) {
+                            var aKey = executeFunction(keyfn, [a], contextStack);
+                            var bKey = executeFunction(keyfn, [b], contextStack);
+                            var compareValue = executeFunction(comparer, [aKey, bKey], contextStack);
+                            assertFiniteNumber(compareValue);
+                            return compareValue;
+                        });
+                    }
+                    return result_2.join("");
+                }
+                var result = __spreadArray([], seq);
+                if (defaultComparer) {
+                    result.sort(function (a, b) {
+                        var aKey = executeFunction(keyfn, [a], contextStack);
+                        var bKey = executeFunction(keyfn, [b], contextStack);
+                        return compare(aKey, bKey);
+                    });
+                }
+                else {
+                    assertLispishFunction(comparer);
+                    result.sort(function (a, b) {
+                        var aKey = executeFunction(keyfn, [a], contextStack);
+                        var bKey = executeFunction(keyfn, [b], contextStack);
+                        var compareValue = executeFunction(comparer, [aKey, bKey], contextStack);
+                        assertFiniteNumber(compareValue);
+                        return compareValue;
+                    });
+                }
+                return result;
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
         take: {
             evaluate: function (_a) {
                 var n = _a[0], input = _a[1];
@@ -2437,6 +2493,43 @@ var Lispish = (function (exports) {
                     return [seq, seqIsArray ? [] : ""];
                 }
                 return [seq.slice(0, index), seq.slice(index)];
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        frequencies: {
+            evaluate: function (_a) {
+                var seq = _a[0];
+                assertSeq(seq);
+                var arr = isString(seq) ? seq.split("") : seq;
+                return arr.reduce(function (result, val) {
+                    assertString(val);
+                    if (collHasKey(result, val)) {
+                        result[val] = result[val] + 1;
+                    }
+                    else {
+                        result[val] = 1;
+                    }
+                    return result;
+                }, {});
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'group-by': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertAny(fn);
+                assertSeq(seq);
+                var arr = Array.isArray(seq) ? seq : seq.split("");
+                return arr.reduce(function (result, val) {
+                    var key = executeFunction(fn, [val], contextStack);
+                    assertString(key);
+                    if (!collHasKey(result, key)) {
+                        result[key] = [];
+                    }
+                    result[key].push(val);
+                    return result;
+                }, {});
             },
             validate: function (node) { return assertLength(2, node); },
         },
@@ -2988,7 +3081,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "0.1.58";
+    var version = "0.1.59";
 
     var miscNormalExpression = {
         'not=': {

@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.58</span></div>
+    <div class="column right version"><span>v0.1.59</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1141,20 +1141,41 @@
 <div id="sort" class="content function">
   <div class="function-header">sort</div>
   
-  <p>Returns a new array with the elements from <span class="pre">array</span> sorted according to <span class="pre">comparer</span>. If no <span class="pre">comparer</span>, builtin <span class="pre">compare</span> will be used.</p>
+  <p>Returns a new Seq with the elements from <span class="pre">seq</span> sorted according to <span class="pre">comparer</span>. If no <span class="pre">comparer</span> is supplied, builtin <span class="pre">compare</span> will be used.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>sort comparer(optional) array => array</pre>
+    <pre>sort comparer(optional) seq => array</pre>
   </div>
 
   <label>Arguments</label><div class="indent"><pre>comparer: function</pre>
-<pre>array: array</pre></div>
+<pre>seq: Seq</pre></div>
 
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(sort [3 1 2])')"> <span class="icon-button">▶</span> (sort [3 1 2]) <span class="gray">=> [1,2,3] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(sort (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)) [3 1 2])')"> <span class="icon-button">▶</span> (sort (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)) [3 1 2]) <span class="gray">=> [1,2,3] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)) [3 1 2])')"> <span class="icon-button">▶</span> (sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)) [3 1 2]) <span class="gray">=> [3,2,1] </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="sort-by" class="content function">
+  <div class="function-header">sort-by</div>
+  
+  <p>Returns a sorted sequence of the items in <span class="pre">seq</span>, where the sort order is determined by comparing <span class="pre">(keyfn item)</span>. If no <span class="pre">comparer</span> is supplied, uses builtin <span class="pre">compare</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>sort-by keyfn comparer(optional) seq => array</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>keyfn: function</pre>
+<pre>comparer: function</pre>
+<pre>seq: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(sort-by count [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ ___double_quote___Nina___double_quote___])')"> <span class="icon-button">▶</span> (sort-by count ["Albert" "Mojir" "Nina"]) <span class="gray">=> ["Nina","Mojir","Albert"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(sort-by lower-case ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (sort-by lower-case "Albert") <span class="gray">=> "Abelrt" </span> </span></pre>
   </div>
 </div>
 
@@ -1193,8 +1214,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,5,8,10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "A" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,4,5,9,10] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "lbet" </span> </span></pre>
   </div>
 </div>
 
@@ -1212,8 +1233,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 8 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "t" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 9 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "e" </span> </span></pre>
   </div>
 </div>
 
@@ -1224,15 +1245,15 @@
   <p>Returns a shuffled copy of <span class="pre">input</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>shuffle undefined => Seq</pre>
+    <pre>shuffle input => Seq</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>undefined: Seq</pre></div>
+  <label>Arguments</label><div class="indent"><pre>input: Seq</pre></div>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,5,6,7,10,2,9,1,8,4] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "oAtljeMrr bi" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,6,7,8,2,1,5,9,10,3] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "tbMiAjer olr" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -1246,10 +1267,10 @@
   <p>Returns a copy of <span class="pre">input</span> with no duplicates.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>distinct undefined => Seq</pre>
+    <pre>distinct input => Seq</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>undefined: Seq</pre></div>
+  <label>Arguments</label><div class="indent"><pre>input: Seq</pre></div>
 
   <label>Examples</label>
   <div class="indent">
@@ -1267,11 +1288,11 @@
   <p>Returns a new sequence of items in <span class="pre">input</span> for witch <span class="pre">(pred item)</span> returns a falsy value.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>remove undefined undefined => Seq</pre>
+    <pre>remove pred input => Seq</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>undefined: Function</pre>
-<pre>undefined: Seq</pre></div>
+  <label>Arguments</label><div class="indent"><pre>pred: Function</pre>
+<pre>input: Seq</pre></div>
 
   <label>Examples</label>
   <div class="indent">
@@ -1287,11 +1308,11 @@
   <p>Returns a new array/string of <span class="pre">[(take pos input) (drop pos input)]</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>split-at undefined undefined => Seq</pre>
+    <pre>split-at pos input => Seq</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>undefined: number</pre>
-<pre>undefined: Seq</pre></div>
+  <label>Arguments</label><div class="indent"><pre>pos: number</pre>
+<pre>input: Seq</pre></div>
 
   <label>Examples</label>
   <div class="indent">
@@ -1307,16 +1328,55 @@
   <p>Returns a new array/string of <span class="pre">[(take-while pos input) (drop-while pos input)]</span>.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>split-with undefined undefined => Seq</pre>
+    <pre>split-with pos input => Seq</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>undefined: number</pre>
-<pre>undefined: Seq</pre></div>
+  <label>Arguments</label><div class="indent"><pre>pos: number</pre>
+<pre>input: Seq</pre></div>
 
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(split-with #(> %1 3) [1 2 3 4 5])')"> <span class="icon-button">▶</span> (split-with #(> %1 3) [1 2 3 4 5]) <span class="gray">=> [[],[1,2,3,4,5]] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(split-with #(<= %1 ___double_quote___Z___double_quote___) ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (split-with #(<= %1 "Z") "Albert") <span class="gray">=> ["A","lbert"] </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="frequencies" class="content function">
+  <div class="function-header">frequencies</div>
+  
+  <p>Returns an object from distinct items in <span class="pre">seq</span> to the number of times they appear. Note that all items in <span class="pre">seq</span> must be valid object keys i.e. strings.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>frequencies input => Obj</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>input: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(frequencies [___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___ ___double_quote___Nina___double_quote___ ___double_quote___Mojir___double_quote___])')"> <span class="icon-button">▶</span> (frequencies ["Albert" "Mojir" "Nina" "Mojir"]) <span class="gray">=> {"Albert":1,"Mojir":2,"Nina":1} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(frequencies ___double_quote___Pneumonoultramicroscopicsilicovolcanoconiosis___double_quote___)')"> <span class="icon-button">▶</span> (frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis") <span class="gray">=> {"P":1,"n":4,"e":1,"u":2,"m":2,"o":9,"l":3,"t":1,"r":2,"a":2,"i":6,"c":6,"s":4,"p":1,"v":1} </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="group-by" class="content function">
+  <div class="function-header">group-by</div>
+  
+  <p>Returns an object of the elements of <span class="pre">seq</span> keyed by the result of <span class="pre">fn</span> on each element. The value at each key will be an array of the corresponding elements.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>group-by fn input => Obj</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>fn: Function</pre>
+<pre>input: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(group-by ___double_quote___name___double_quote___ [{___double_quote___name___double_quote___ ___double_quote___Albert___double_quote___} {___double_quote___name___double_quote___ ___double_quote___Albert___double_quote___} {___double_quote___name___double_quote___ ___double_quote___Mojir___double_quote___}])')"> <span class="icon-button">▶</span> (group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}]) <span class="gray">=> {"Albert":[{"name":"Albert"},{"name":"Albert"}],"Mojir":[{"name":"Mojir"}]} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(group-by (fn [char] (if (has? ___double_quote___aoueiAOUEI___double_quote___ char) ___double_quote___vowel___double_quote___ ___double_quote___other___double_quote___)) ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir") <span class="gray">=> {"vowel":["A","e","o","i"],"other":["l","b","r","t"," ","M","j","r"]} </span> </span></pre>
   </div>
 </div>
 
@@ -2028,9 +2088,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.37653227958464486 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.0012143173601935331 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 0.19435209755386817 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.8532374088457597 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.006552258618021698 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.8237071570841716 </span> </span></pre>
   </div>
 </div>
 
@@ -2049,8 +2109,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 4 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 87 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 0 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 62 </span> </span></pre>
   </div>
 </div>
 
@@ -2699,7 +2759,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634937709174 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634942597848 </span> </span></pre>
   </div>
 </div>
 
@@ -2822,7 +2882,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.58" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.59" </span> </span></pre>
   </div>
 </div>
 
@@ -2989,7 +3049,7 @@
 <div id="merge-with" class="content function">
   <div class="function-header">merge-with</div>
   
-  <p>Returns a new object created by merging together all arguments. If two keys appears in more than obe object <span class="pre">fn</span> is used to calculate the new value.</p>
+  <p>Returns a new object created by merging together all arguments. If two keys appears in more than one object <span class="pre">fn</span> is used to calculate the new value.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>merge-with fn object(one or many) => object</pre>
@@ -4677,6 +4737,8 @@
 <li id="drop-while_link" onclick="showPage('drop-while')">drop-while</li>
 <li id="filter_link" onclick="showPage('filter')">filter</li>
 <li id="first_link" onclick="showPage('first')">first</li>
+<li id="frequencies_link" onclick="showPage('frequencies')">frequencies</li>
+<li id="group-by_link" onclick="showPage('group-by')">group-by</li>
 <li id="index-of_link" onclick="showPage('index-of')">index-of</li>
 <li id="join_link" onclick="showPage('join')">join</li>
 <li id="last_link" onclick="showPage('last')">last</li>
@@ -4701,6 +4763,7 @@
 <li id="slice_link" onclick="showPage('slice')">slice</li>
 <li id="some_link" onclick="showPage('some')">some</li>
 <li id="sort_link" onclick="showPage('sort')">sort</li>
+<li id="sort-by_link" onclick="showPage('sort-by')">sort-by</li>
 <li id="split-at_link" onclick="showPage('split-at')">split-at</li>
 <li id="split-with_link" onclick="showPage('split-with')">split-with</li>
 <li id="take_link" onclick="showPage('take')">take</li>
