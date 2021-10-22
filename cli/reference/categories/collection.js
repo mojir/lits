@@ -47,6 +47,35 @@ module.exports = {
       `(get (object "a" 1) "b" "default")`,
     ],
   },
+  'get-in': {
+    name: `get-in`,
+    category: `Collection`,
+    linkName: `get-in`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection`,
+      },
+      {
+        name: `keys`,
+        type: `Array`,
+      },
+      {
+        name: `default`,
+        type: `any`,
+        description: `optional`,
+      },
+    ],
+    description: `Returns the value in a nested collection, where \`keys\` is an array of keys. Returns \`default\` if the key is not present. If \`default\` is not set, \`nil\` is returned.`,
+    examples: [
+      `(get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "a" 0])`,
+      `(get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "b" 0])`,
+      `(get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "b" 0] "Lisa")`,
+    ],
+  },
   'contains?': {
     name: `contains?`,
     category: `Collection`,

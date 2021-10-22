@@ -6,9 +6,16 @@ describe(`import`, () => {
   beforeEach(() => {
     lispish = new Lispish()
   })
-  test(`import a function`, () => {
+  test(`import a function.`, () => {
     lispish = new Lispish({ astCacheSize: 10 })
     lispish.import(`(defn tripple [x] (* x 3))`)
+    expect(lispish.run(`(tripple 10)`)).toBe(30)
+    expect(lispish.run(`(tripple 10)`)).toBe(30)
+  })
+
+  test(`import a function - no cache`, () => {
+    lispish = new Lispish()
+    lispish.import(`(defn tripple [x] (* x 3))`, {})
     expect(lispish.run(`(tripple 10)`)).toBe(30)
     expect(lispish.run(`(tripple 10)`)).toBe(30)
   })

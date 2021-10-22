@@ -63,7 +63,6 @@ const result = evaluate(ast, context) // returns 10
 * **assoc-in**
 * **for** ??
 * **fnil**
-* **get-in**
 * **group-by**
 * **merge-with**
 * **partition**

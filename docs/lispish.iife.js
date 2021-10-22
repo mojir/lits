@@ -1,5 +1,7 @@
-var Lispish=function(e){"use strict";
-/*! *****************************************************************************
+var Lispish = (function (exports) {
+    'use strict';
+
+    /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -12,5 +14,4811 @@ var Lispish=function(e){"use strict";
     LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
-    ***************************************************************************** */var t=function(e,n){return t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n])},t(e,n)};function n(e,n){if("function"!=typeof n&&null!==n)throw new TypeError("Class extends value "+String(n)+" is not a constructor or null");function r(){this.constructor=e}t(e,n),e.prototype=null===n?Object.create(n):(r.prototype=n.prototype,new r)}var r=function(){return r=Object.assign||function(e){for(var t,n=1,r=arguments.length;n<r;n++)for(var a in t=arguments[n])Object.prototype.hasOwnProperty.call(t,a)&&(e[a]=t[a]);return e},r.apply(this,arguments)};function a(e,t){for(var n=0,r=t.length,a=e.length;n<r;n++,a++)e[a]=t[n];return e}var u=function(e){function t(n){var r=e.call(this,"recur, params: "+n)||this;return Object.setPrototypeOf(r,t.prototype),r.name="RecurSignal",r.params=n,r}return n(t,e),t}(Error),i=function(e){function t(n){var r=e.call(this,n)||this;return Object.setPrototypeOf(r,t.prototype),r.name="UserDefinedError",r}return n(t,e),t}(Error),o=function(e){function t(n){var r=e.call(this,n)||this;return Object.setPrototypeOf(r,t.prototype),r.name="AssertionError",r}return n(t,e),t}(Error),l=function(e){function t(n,r){var a=e.call(this,'Expected a "'+n+'" token, got Token['+r.type+':"'+r.value+'"]')||this;return Object.setPrototypeOf(a,t.prototype),a.name="UnexpectedTokenError",a}return n(t,e),t}(Error),f=function(e){function t(n,r){var a=e.call(this,"Expected a "+n+" node, got "+(r?"a "+r.type+" node":"undefined"))||this;return Object.setPrototypeOf(a,t.prototype),a.name="UnexpectedNodeTypeError",a}return n(t,e),t}(Error),c=Symbol("function");function v(e){if(void 0===e)throw Error("Expected an AST node, got undefined");return e}function s(e){if(void 0===e||"Name"!==e.type)throw new f("Name",e)}function p(e,t){if(void 0===t&&(t="Unexpected end of input"),void 0===e)throw Error(t);return e}function d(e){if(void 0===e)throw Error("Expected non undefined value, got "+e);return e}function h(e){if(void 0===e)throw Error("Expected non undefined value, got "+e)}function m(e){if("number"!=typeof e||!isFinite(e))throw TypeError("Expected number, got: "+e+' type="'+typeof e+'"')}function g(e){!function(e){if(m(e),e<0)throw TypeError("Expected non negative number, got "+e)}(e),y(e)}function y(e){if(m(e),!Number.isInteger(e))throw TypeError("Expected integer, got "+e)}function b(e,t){if(m(e),e<t)throw TypeError("Expected parameter ("+e+") to be a number equal or grater than "+t)}function E(e){return"string"==typeof e}function x(e){if(!E(e))throw TypeError("Expected string, got: "+e+' type="'+typeof e+'"')}function w(e){if(!E(e))throw TypeError("Expected string, got: "+e+' type="'+typeof e+'"');return e}function A(e){if(!function(e){return E(e)&&1===e.length}(e))throw TypeError("Expected char, got: "+e+' type="'+typeof e+'"')}function N(e){return A(e),e}function j(e){if("string"!=typeof e&&"number"!=typeof e)throw TypeError("Expected string or number, got: "+e+' type="'+typeof e+'"')}function M(e){if(!(e instanceof RegExp))throw TypeError("Expected RegExp, got: "+e+' type="'+typeof e+'"')}function S(e,t){var n=t.params.length;if("number"==typeof e){if(n!==e)throw Error('Wrong number of arguments to "'+t.name+'", expected '+e+", got "+n)}else{var r=e.min,a=e.max;if(void 0===r&&void 0===a)throw Error("Min or max must be specified");if("number"==typeof r&&n<r)throw Error('Wrong number of arguments to "'+t.name+'", expected at least '+r+", got "+n);if("number"==typeof a&&n>a)throw Error('Wrong number of arguments to "'+t.name+'", expected at most '+a+", got "+n)}}function k(e){var t=e.params.length;if(t%2!=0)throw Error("Wrong number of arguments, expected an even number, got "+t)}function O(e){return null!==e&&"object"==typeof e&&!!e[c]}function T(e){if(!O(e))throw Error("Expected lispish function, got "+JSON.stringify(e))}function I(e){if(!Array.isArray(e)||e.some((function(e){return"string"!=typeof e})))throw Error("Expected an array of strings, got "+e)}function F(e){if(!Array.isArray(e)||e.some((function(e){return"string"!=typeof e||1!==e.length})))throw Error("Expected an array of chars, got "+e)}function _(e){if(!L(e))throw TypeError("Expected a number, got: "+e+' type="'+typeof e+'"')}function P(e){if(!U(e))throw TypeError("Expected Arr, got: "+e+' type="'+typeof e+'"')}function C(e){if(!D(e))throw TypeError("Expected collection, got: "+e+' type="'+typeof e+'"')}function z(e){if(!function(e){return void 0!==e}(e))throw TypeError("Expected Any, got: "+e+' type="'+typeof e+'"')}function R(e){if(!B(e))throw TypeError("Expected string or array, got: "+e+' type="'+typeof e+'"')}function q(e){if(!V(e))throw TypeError("Expected object, got: "+e+' type="'+typeof e+'"')}function V(e){return!(null===e||"object"!=typeof e||Array.isArray(e)||e instanceof RegExp||O(e))}function U(e){return Array.isArray(e)}function B(e){return Array.isArray(e)||E(e)}function D(e){return B(e)||V(e)}function L(e){return"number"==typeof e}function $(e){return Number.isInteger(e)}function G(e,t){return!!D(e)&&(E(e)||U(e)?!!$(t)&&(t>=0&&t<e.length):!!Object.getOwnPropertyDescriptor(e,t))}var Y={boolean:0,number:1,string:2,array:3,object:4,regexp:5,unknown:6,null:7};function J(e){return null===e?"null":"boolean"==typeof e?"boolean":"number"==typeof e?"number":"string"==typeof e?"string":U(e)?"array":V(e)?"object":function(e){return e instanceof RegExp}(e)?"regexp":"unknown"}function W(e,t){var n=J(e),r=J(t);if(n!==r)return Math.sign(Y[n]-Y[r]);switch(n){case"null":case"unknown":return 0;case"boolean":return e===t?0:!1===e?-1:1;case"number":return Math.sign(e-t);case"string":return(c=e)<(v=t)?-1:c>v?1:0;case"array":var a=e,u=t;if(a.length<u.length)return-1;if(a.length>u.length)return 1;for(var i=0;i<a.length;i+=1){var o=W(a[i],u[i]);if(0!==o)return o}return 0;case"object":var l=e,f=t;return Math.sign(Object.keys(l).length-Object.keys(f).length);case"regexp":var c,v;return(c=e.source)<(v=t.source)?-1:c>v?1:0}}function X(e,t){if(e===t)return!0;if("number"==typeof e&&"number"==typeof t)return Math.abs(e-t)<Number.EPSILON;if(U(e)&&U(t)){if(e.length!==t.length)return!1;for(var n=0;n<e.length;n+=1)if(!X(p(e[n]),p(t[n])))return!1;return!0}if(e instanceof RegExp&&t instanceof RegExp)return e.toString()===t.toString();if("object"==typeof e&&null!==e&&"object"==typeof t&&null!==t){var r=e,a=t,u=Object.keys(r),i=Object.keys(a);if(u.length!==i.length)return!1;for(n=0;n<u.length;n+=1){var o=w(u[n]);if(!X(K(r[o]),K(a[o])))return!1}return!0}return!1}function H(e){return Math.max(0,Math.ceil(e))}function K(e){return null!=e?e:null}var Z={parse:function(e,t,n){var r;return r=function(e,t,n){for(var r,a,u=[],i=d(e[t]);"paren"!==i.type||")"!==i.value;){var o,l;t=(r=n(e,t))[0],o=r[1],t=(a=n(e,t))[0],l=a[1],u.push({test:o,form:l}),i=d(e[t])}return[t,u]}(e,t,n.parseToken),[(t=r[0])+1,{type:"SpecialExpression",name:"cond",conditions:r[1],params:[]}]},evaluate:function(e,t,n){for(var r=n.evaluateAstNode,a=0,u=e.conditions;a<u.length;a++){var i=u[a];if(r(i.test,t))return r(i.form,t)}return null}},Q={true:{value:!0},false:{value:!1},nil:{value:null}},ee=Object.keys(Q);function te(e,t,n){if("string"==typeof e){if(n.specialExpressions[e])throw Error("Cannot define variable "+e+", it's a special expression");if(n.normalExpressions[e])throw Error("Cannot define variable "+e+", it's a builtin function");if(Q[e])throw Error("Cannot define variable "+e+", it's a reserved name");if(d(t[t.length-2])[e])throw Error('Name already defined "'+e+'"')}}function ne(e){return function(t,n,r){var a,u=r.parseToken,i=r.parseArgument,o=r.parseBindings,c=void 0;if(("defn"===e||"defns"===e)&&(n=(a=u(t,n))[0],c=a[1],"defn"===e&&"Name"!==c.type))throw new f("Name",c);for(var v=function(e,t,n,r){var a,u=[],i=void 0,o=[],f=[],c={},v="mandatory",s=d(e[t]);if("paren"!==s.type||"["!==s.value)throw new l("[",s);for(s=d(e[t+=1]);"paren"!==s.type||"]"!==s.value;){if("bind"===v){t=(a=r(e,t))[0],u=a[1];break}var p=n(e,t),h=p[0],m=p[1];if(s=d(e[t=h]),"Modifier"===m.type)switch(m.value){case"&opt":if("rest"===v)throw Error("&opt cannot appear after &rest");if("optional"===v)throw Error("&opt can only appear once");v="optional";break;case"&rest":if("rest"===v)throw Error("&rest can only appear once");if("optional"===v&&0===f.length)throw Error("No optional arguments where spcified");v="rest";break;case"&bind":if("optional"===v&&0===f.length)throw Error("No optional arguments where spcified");if("rest"===v&&!i)throw Error("No rest argument was spcified");v="bind"}else{if(c[m.name])throw Error('Duplicate argument "'+m.name+'"');if(c[m.name]=!0,Object.getOwnPropertyDescriptor(m,"defaultValue")){if("optional"!==v)throw Error("Cannot specify default value if not an optional argument");f.push({name:m.name,defaultValue:m.defaultValue})}else switch(v){case"mandatory":o.push(m.name);break;case"optional":f.push({name:m.name,defaultValue:void 0});break;case"rest":if(void 0!==i)throw Error("Can only specify one rest argument");i=m.name}}}if("rest"===v&&void 0===i)throw Error("Missing rest argument name");if("optional"===v&&0===f.length)throw Error("No optional arguments where spcified");return[t+=1,{mandatoryArguments:o,optionalArguments:f,restArgument:i,bindings:u}]}(t,n,i,o),s=v[0],p=v[1],h=d(t[n=s]),m=[];"paren"!==h.type||")"!==h.value;){var g=u(t,n),y=g[0],b=g[1];m.push(b),h=d(t[n=y])}if(0===m.length)throw Error('Missing body in special expression "defn"');return n+=1,"defn"===e||"defns"===e?[n,{type:"SpecialExpression",name:e,functionName:c,params:[],arguments:p,body:m}]:[n,{type:"SpecialExpression",name:e,params:[],arguments:p,body:m}]}}function re(e){return function(t,n,r){var a,u=r.evaluateAstNode,i=r.builtin,o=function(e,t,n,r){if("defn"===e){var a=t.functionName.value;return x(a),a}if("defns"===e){var u=r(t.functionName,n);return x(u),u}}(e,t,n,u);te(o,n,i);for(var l={},f=0,v=t.arguments.bindings;f<v.length;f++){var s=v[f],p=s.value,h=u(p,n);l[s.name]={value:h}}var m=t.arguments.optionalArguments.map((function(e){var t=e.name,r=e.defaultValue;return r?{name:t,defaultValue:u(r,n)}:{name:t}})),g=((a={})[c]=!0,a.type="user-defined",a.name=o,a.arguments={mandatoryArguments:t.arguments.mandatoryArguments,restArgument:t.arguments.restArgument,optionalArguments:m},a.body=t.body,a.functionContext=l,a);return"fn"===e?g:(d(n[n.length-2])[o]={value:g},null)}}var ae={parse:ne("defn"),evaluate:re("defn")},ue={parse:ne("defns"),evaluate:re("defns")},ie={parse:ne("fn"),evaluate:re("fn")},oe={parse:function(e,t,n){var r=(0,n.parseTokens)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"if",params:r[1]}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=e.params,u=a[0],i=a[1],o=a[2];return r(v(u),t)?r(v(i),t):3===e.params.length?r(v(o),t):null},validate:function(e){return S({min:2,max:3},e)}},le={parse:function(e,t,n){var r=(0,n.parseTokens)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"if-not",params:r[1]}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=e.params,u=a[0],i=a[1],o=a[2];return r(v(u),t)?3===e.params.length?r(v(o),t):null:r(v(i),t)},validate:function(e){return S({min:2,max:3},e)}},fe={parse:function(e,t,n){var r,a,u,i,o=n.parseBindings,l=n.parseTokens;if(t=(r=o(e,t))[0],1!==(u=r[1]).length)throw Error("Expected exactly one binding, got "+u.length);return t=(a=l(e,t))[0],i=a[1],[t+1,{type:"SpecialExpression",name:"if-let",binding:d(u[0]),params:i}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,u={},i=r(e.binding.value,t);if(i){u[e.binding.name]={value:i};var o=a([u],t);return r(d(e.params[0]),o)}return 2===e.params.length?r(d(e.params[1]),t):null},validate:function(e){return S({min:1,max:2},e)}},ce={parse:function(e,t,n){var r,a,u,i,o=n.parseBindings,l=n.parseTokens;if(t=(r=o(e,t))[0],1!==(u=r[1]).length)throw Error("Expected exactly one binding, got "+u.length);return t=(a=l(e,t))[0],i=a[1],[t+1,{type:"SpecialExpression",name:"when-let",binding:d(u[0]),params:i}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,u={},i=r(e.binding.value,t);if(!i)return null;u[e.binding.name]={value:i};for(var o=a([u],t),l=null,f=0,c=e.params;f<c.length;f++){l=r(c[f],o)}return l},validate:function(e){return S({min:0},e)}},ve={parse:function(e,t,n){var r=(0,n.parseTokens)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"when-not",params:r[1]}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=e.params,u=a[0],i=a.slice(1);if(h(u),r(u,t))return null;for(var o=null,l=0,f=i;l<f.length;l++){o=r(f[l],t)}return o},validate:function(e){return S({min:1},e)}},se={parse:function(e,t,n){var r,a,u,i,o=n.parseBindings,l=n.parseTokens;if(t=(r=o(e,t))[0],1!==(u=r[1]).length)throw Error("Expected exactly one binding, got "+u.length);return t=(a=l(e,t))[0],i=a[1],[t+1,{type:"SpecialExpression",name:"when-first",binding:d(u[0]),params:i}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,u={},i=r(e.binding.value,t);if(!B(i))throw Error("Expected undefined or a sequence, got "+i);if(0===i.length)return null;var o=K(i[0]);u[e.binding.name]={value:o};for(var l=a([u],t),f=null,c=0,v=e.params;c<v.length;c++){f=r(v[c],l)}return f},validate:function(e){return S({min:0},e)}},pe={parse:function(e,t,n){var r,a,u,i=n.parseBindings,o=n.parseTokens;return t=(r=i(e,t))[0],u=r[1],[(t=(a=o(e,t))[0])+1,{type:"SpecialExpression",name:"let",params:a[1],bindings:u}]},evaluate:function(e,t,n){for(var r=n.evaluateAstNode,u={},i=0,o=e.bindings;i<o.length;i++){var l=o[i],f=r(l.value,t);u[l.name]={value:f}}for(var c=a([u],t),v=null,s=0,p=e.params;s<p.length;s++){v=r(p[s],c)}return v}},de={parse:function(e,t,n){for(var r=n.parseToken,a={type:"SpecialExpression",name:"do",params:[]},u=d(e[t]);"paren"!==u.type||")"!==u.value;){var i=r(e,t),o=i[0],l=i[1];a.params.push(l),u=d(e[t=o])}return[t+1,a]},evaluate:function(e,t,n){for(var r=n.evaluateAstNode,u=a([{}],t),i=null,o=0,l=e.params;o<l.length;o++){i=r(l[o],u)}return i}},he={parse:function(e,t,n){var r=(0,n.parseTokens)(e,t),a=r[0],u=r[1];return s(u[0]),[a+1,{type:"SpecialExpression",name:"def",params:u}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=n.builtin,u=function(e){if(void 0===e||"Name"!==e.type)throw new f("Name",e);return e}(e.params[0]).value;te(u,t,a);var i=r(v(e.params[1]),t);return d(t[t.length-2])[u]={value:i},i},validate:function(e){return S(2,e)}},me={parse:function(e,t,n){var r=(0,n.parseTokens)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"defs",params:r[1]}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=n.builtin,u=r(v(e.params[0]),t);x(u),te(u,t,a);var i=r(v(e.params[1]),t);return d(t[t.length-2])[u]={value:i},i},validate:function(e){return S(2,e)}},ge={parse:function(e,t,n){var r=(0,n.parseToken)(e,t),a=r[0],u=r[1],i=d(e[t=a]);if("paren"!==i.type||")"!==i.value)throw new l(")",i);return[t+=1,{type:"SpecialExpression",name:"throw",params:[],messageNode:u}]},evaluate:function(e,t,n){var r=function(e){if("string"!=typeof e||0===e.length)throw TypeError("Expected non empty string, got: "+e+' type="'+typeof e+'"');return e}((0,n.evaluateAstNode)(e.messageNode,t));throw new i(r)}},ye={parse:function(e,t,n){var r,a,u,i,o=n.parseToken;t=(r=o(e,t))[0],i=r[1];var c,v,s=d(e[t]);if("paren"!==s.type||"("!==s.value)throw new l("(",s);if("paren"!==(s=d(e[t+=1])).type||"("!==s.value)throw new l("(",s);if(t=(a=o(e,t+=1))[0],"Name"!==(c=a[1]).type)throw new f("Name",c);if("paren"!==(s=d(e[t])).type||")"!==s.value)throw new l(")",s);if(t=(u=o(e,t+=1))[0],v=u[1],"paren"!==(s=d(e[t])).type||")"!==s.value)throw new l(")",s);if("paren"!==(s=d(e[t+=1])).type||")"!==s.value)throw new l(")",s);return[t+=1,{type:"SpecialExpression",name:"try",params:[],tryExpression:i,catchExpression:v,error:c}]},evaluate:function(e,t,n){var r,u=n.evaluateAstNode;try{return u(e.tryExpression,t)}catch(n){var i=((r={})[e.error.value]={value:d(n)},r);return u(e.catchExpression,a([i],t))}}},be={parse:function(e,t,n){var r=(0,n.parseTokens)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"when",params:r[1]}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=e.params,u=a[0],i=a.slice(1);if(h(u),!r(u,t))return null;for(var o=null,l=0,f=i;l<f.length;l++){o=r(f[l],t)}return o},validate:function(e){return S({min:1},e)}},Ee={parse:function(e,t,n){var r;return[(t=(r=(0,n.parseTokens)(e,t))[0])+1,{type:"SpecialExpression",name:"recur",params:r[1]}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=e.params.map((function(e){return r(e,t)}));throw new u(a)}},xe={parse:function(e,t,n){var r,a,u,i=n.parseTokens;return t=(r=(0,n.parseBindings)(e,t))[0],u=r[1],[(t=(a=i(e,t))[0])+1,{type:"SpecialExpression",name:"loop",params:a[1],bindings:u}]},evaluate:function(e,t,n){for(var r=n.evaluateAstNode,i=e.bindings.reduce((function(e,n){return e[n.name]={value:r(n.value,t)},e}),{}),o=a([i],t),l=function(){var t=null;try{for(var n=0,a=e.params;n<a.length;n++){var l=a[n];t=r(l,o)}}catch(t){if(t instanceof u){var f=t.params;if(f.length!==e.bindings.length)throw Error("recur expected "+e.bindings.length+" parameters, got "+f.length);return e.bindings.forEach((function(e,t){d(i[e.name]).value=p(f[t])})),"continue"}throw t}return{value:t}};;){var f=l();if("object"==typeof f)return f.value}}},we={parse:function(e,t,n){var r=(0,n.parseToken)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"time!",params:[r[1]]}]},evaluate:function(e,t,n){var r=n.evaluateAstNode,a=e.params[0];h(a);var u=Date.now(),i=r(a,t),o=Date.now()-u;return console.log("Elapsed time: "+o+" ms"),i},validate:function(e){return S(1,e)}},Ae={get:{evaluate:function(e){var t=e[0],n=e[1],r=e[2],a=3===e.length;if(C(t),U(t)){if(y(n),n<t.length)return K(t[n])}else{if(!V(t))return y(n),K(t[n]);if(x(n),Object.getOwnPropertyDescriptor(t,n))return K(t[n])}return a?(z(r),r):null},validate:function(e){return S({min:2,max:3},e)}},count:{evaluate:function(e){var t=e[0];return"string"==typeof t?t.length:(C(t),Array.isArray(t)?t.length:Object.keys(t).length)},validate:function(e){return S(1,e)}},"contains?":{evaluate:function(e){var t=e[0],n=e[1];return C(t),j(n),B(t)?!!Number.isInteger(n)&&(y(n),n>=0&&n<t.length):!!Object.getOwnPropertyDescriptor(t,n)},validate:function(e){return S(2,e)}},"has?":{evaluate:function(e){var t=e[0],n=e[1];return C(t),U(t)?t.includes(n):E(t)?!!E(n)&&t.split("").includes(n):Object.values(t).includes(n)},validate:function(e){return S(2,e)}},assoc:{evaluate:function(e){var t=e[0],n=e[1],u=e[2];if(C(t),j(n),Array.isArray(t)||"string"==typeof t){if(y(n),b(n,0),function(e,t){if(m(e),e>t)throw TypeError("Expected parameter ("+e+") to be a number equal or less than "+t)}(n,t.length),"string"==typeof t)return A(u),""+t.slice(0,n)+u+t.slice(n+1);var i=a([],t);return i[n]=u,i}x(n);var o=r({},t);return o[n]=u,o},validate:function(e){return S(3,e)}},concat:{evaluate:function(e){return C(e[0]),U(e[0])?e.reduce((function(e,t){return P(t),e.concat(t)}),[]):E(e[0])?e.reduce((function(e,t){return x(t),""+e+t}),""):e.reduce((function(e,t){return q(t),Object.assign(e,t)}),{})},validate:function(e){return S({min:1},e)}},"empty?":{evaluate:function(e){var t=e[0];return C(t),E(t)||Array.isArray(t)?0===t.length:0===Object.keys(t).length},validate:function(e){return S(1,e)}},"every?":{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;return T(r),C(a),Array.isArray(a)?a.every((function(e){return u(r,[e],t)})):E(a)?a.split("").every((function(e){return u(r,[e],t)})):Object.entries(a).every((function(e){return u(r,[e],t)}))},validate:function(e){return S(2,e)}},"any?":{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;return T(r),C(a),Array.isArray(a)?a.some((function(e){return u(r,[e],t)})):E(a)?a.split("").some((function(e){return u(r,[e],t)})):Object.entries(a).some((function(e){return u(r,[e],t)}))},validate:function(e){return S(2,e)}},"not-any?":{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;return T(r),C(a),Array.isArray(a)?!a.some((function(e){return u(r,[e],t)})):E(a)?!a.split("").some((function(e){return u(r,[e],t)})):!Object.entries(a).some((function(e){return u(r,[e],t)}))},validate:function(e){return S(2,e)}},"not-every?":{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;return T(r),C(a),Array.isArray(a)?!a.every((function(e){return u(r,[e],t)})):E(a)?!a.split("").every((function(e){return u(r,[e],t)})):!Object.entries(a).every((function(e){return u(r,[e],t)}))},validate:function(e){return S(2,e)}},update:{evaluate:function(e,t,n){var u=e[0],i=e[1],o=e[2],l=e.slice(3),f=n.executeFunction;if(C(u),j(i),T(o),V(u))return x(i),(v=r({},u))[i]=f(o,a([v[i]],l),t),v;_(i);var c=H(i);if(function(e,t){if(e>t)throw Error("Expected number less than or equal to "+t+"'")}(c,u.length),Array.isArray(u)){var v=u.map((function(e,n){return c===n?f(o,a([e],l),t):e}));return c===u.length&&(v[c]=f(o,a([void 0],l),t)),v}v=u.split("").map((function(e,n){return c===n?N(f(o,a([e],l),t)):e}));return c===u.length&&(v[c]=N(f(o,a([void 0],l),t))),v.join("")},validate:function(e){return S({min:3},e)}}},Ne=function(e,t,n){var r=n.executeFunction,a=e[0],u=e[1];T(a),R(u);var i=E(u),o=u.length;if(2===e.length)return U(u)?u.map((function(e){return r(a,[e],t)})):u.split("").map((function(e){var n=r(a,[e],t);return A(n),n})).join("");if(e.slice(2).forEach((function(e){if(i?x(e):P(e),o!==e.length)throw Error('All arguments to "map" must have the same length')})),i){for(var l="",f=function(n){var u=e.slice(1).map((function(e){return e[n]})),i=r(a,u,t);A(i),l+=i},c=0;c<o;c+=1)f(c);return l}l=[];var v=function(n){var u=e.slice(1).map((function(e){return K(e[n])}));l.push(r(a,u,t))};for(c=0;c<o;c+=1)v(c);return l},je={cons:{evaluate:function(e){var t=e[0],n=e[1];return z(t),R(n),Array.isArray(n)?a([t],n):(A(t),""+t+n)},validate:function(e){return S(2,e)}},nth:{evaluate:function(e){var t=e[0],n=e[1];return R(t),y(n),K(t[n])},validate:function(e){return S(2,e)}},filter:{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;return T(r),R(a),Array.isArray(a)?a.filter((function(e){return u(r,[e],t)})):a.split("").filter((function(e){return u(r,[e],t)})).join("")},validate:function(e){return S(2,e)}},first:{evaluate:function(e){var t=e[0];return R(t),K(t[0])},validate:function(e){return S(1,e)}},last:{evaluate:function(e){var t=e[0];return R(t),K(t[t.length-1])},validate:function(e){return S(1,e)}},map:{evaluate:Ne,validate:function(e){return S({min:2},e)}},pop:{evaluate:function(e){var t=e[0];if(R(t),E(t))return t.substr(0,t.length-1);var n=a([],t);return n.pop(),n},validate:function(e){return S(1,e)}},position:{evaluate:function(e,t,n){var r,a=e[0],u=e[1],i=n.executeFunction;return T(a),R(u),E(u)?-1!==(r=u.split("").findIndex((function(e){return i(a,[e],t)})))?r:null:-1!==(r=u.findIndex((function(e){return i(a,[e],t)})))?r:null},validate:function(e){return S(2,e)}},"index-of":{evaluate:function(e){var t,n=e[0],r=e[1];return z(r),R(n),E(n)?(x(r),-1!==(t=n.indexOf(r))?t:null):-1!==(t=n.indexOf(r))?t:null},validate:function(e){return S(2,e)}},push:{evaluate:function(e){var t=e[0],n=e.slice(1);return R(t),E(t)?(F(n),a([t],n).join("")):a(a([],t),n)},validate:function(e){return S({min:2},e)}},reduce:{evaluate:function(e,t,n){var r=n.executeFunction,a=e[0];if(T(a),2===e.length){var u=e[1];if(R(u),0===u.length)return r(a,[],t);if(1===u.length)return K(u[0]);if(E(u)){var i=u.split("");return i.slice(1).reduce((function(e,n){return r(a,[e,n],t)}),p(i[0]))}return u.slice(1).reduce((function(e,n){return r(a,[e,n],t)}),K(u[0]))}var o=e[1],l=e[2];return z(o),R(l),E(l)?(x(o),0===l.length?o:l.split("").reduce((function(e,n){return r(a,[e,n],t)}),o)):0===l.length?o:l.reduce((function(e,n){return r(a,[e,n],t)}),o)},validate:function(e){return S({min:2,max:3},e)}},"reduce-right":{evaluate:function(e,t,n){var r=n.executeFunction,a=e[0];if(T(a),2===e.length){if(R(o=e[1]),0===o.length)return r(a,[],t);if(1===o.length)return K(o[0]);if(E(o)){var u=o.split("");return u.slice(0,u.length-1).reduceRight((function(e,n){var u=r(a,[e,n],t);return x(u),u}),u[u.length-1])}return o.slice(0,o.length-1).reduceRight((function(e,n){return r(a,[e,n],t)}),p(o[o.length-1]))}var i=e[1],o=e[2];return z(i),R(o),E(o)?0===o.length?i:o.split("").reduceRight((function(e,n){return r(a,[e,n],t)}),i):0===o.length?i:o.reduceRight((function(e,n){return r(a,[e,n],t)}),i)},validate:function(e){return S({min:2,max:3},e)}},rest:{evaluate:function(e){var t=e[0];return R(t),Array.isArray(t)?t.length<=1?[]:t.slice(1):t.substr(1)},validate:function(e){return S(1,e)}},nthrest:{evaluate:function(e){var t=e[0],n=e[1];R(t),m(n);var r=Math.max(Math.ceil(n),0);return Array.isArray(t)?t.slice(r):t.substr(r)},validate:function(e){return S(2,e)}},next:{evaluate:function(e){var t=e[0];return R(t),Array.isArray(t)?t.length<=1?null:t.slice(1):t.length<=1?null:t.substr(1)},validate:function(e){return S(1,e)}},nthnext:{evaluate:function(e){var t=e[0],n=e[1];R(t),m(n);var r=Math.max(Math.ceil(n),0);return t.length<=n?null:Array.isArray(t)?t.slice(r):t.substr(r)},validate:function(e){return S(2,e)}},reverse:{evaluate:function(e){var t=e[0];return R(t),Array.isArray(t)?a([],t).reverse():t.split("").reverse().join("")},validate:function(e){return S(1,e)}},second:{evaluate:function(e){var t=e[0];return R(t),K(t[1])},validate:function(e){return S(1,e)}},shift:{evaluate:function(e){var t=e[0];if(R(t),E(t))return t.substr(1);var n=a([],t);return n.shift(),n},validate:function(e){return S(1,e)}},slice:{evaluate:function(e){var t=e[0],n=e[1],r=e[2];return R(t),1===e.length?t:(y(n),2===e.length?t.slice(n):(y(r),t.slice(n,r)))},validate:function(e){return S({min:1,max:3},e)}},some:{evaluate:function(e,t,n){var r,a=e[0],u=e[1],i=n.executeFunction;return T(a),R(u),0===u.length?null:E(u)?null!==(r=u.split("").find((function(e){return i(a,[e],t)})))&&void 0!==r?r:null:K(u.find((function(e){return i(a,[e],t)})))},validate:function(e){return S(2,e)}},sort:{evaluate:function(e,t,n){var r=n.executeFunction,u=1===e.length,i=u?e[0]:e[1],o=u?null:e[0];if(R(i),E(i)){var l=i.split("");return u?l.sort(W):(T(o),l.sort((function(e,n){var a=r(o,[e,n],t);return m(a),a}))),l.join("")}var f=a([],i);return u?f.sort(W):f.sort((function(e,n){T(o);var a=r(o,[e,n],t);return m(a),a})),f},validate:function(e){return S({min:1,max:2},e)}},take:{evaluate:function(e){var t=e[0],n=e[1];_(t),R(n);var r=Math.max(Math.ceil(t),0);return n.slice(0,r)},validate:function(e){return S(2,e)}},"take-last":{evaluate:function(e){var t=e[0],n=e[1];R(n),_(t);var r=Math.max(Math.ceil(t),0),a=n.length-r;return n.slice(a)},validate:function(e){return S(2,e)}},"take-while":{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;R(a),T(r);for(var i=[],o=0,l=a;o<l.length;o++){var f=l[o];if(!u(r,[f],t))break;i.push(f)}return E(a)?i.join(""):i},validate:function(e){return S(2,e)}},drop:{evaluate:function(e){var t=e[0],n=e[1];_(t);var r=Math.max(Math.ceil(t),0);return R(n),n.slice(r)},validate:function(e){return S(2,e)}},"drop-last":{evaluate:function(e){var t=e[0],n=e[1];R(n),_(t);var r=Math.max(Math.ceil(t),0),a=n.length-r;return n.slice(0,a)},validate:function(e){return S(2,e)}},"drop-while":{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;if(R(a),T(r),Array.isArray(a)){var i=a.findIndex((function(e){return!u(r,[e],t)}));return a.slice(i)}var o=a.split(""),l=o.findIndex((function(e){return!u(r,[e],t)}));return o.slice(l).join("")},validate:function(e){return S(2,e)}},unshift:{evaluate:function(e){var t=e[0],n=e.slice(1);if(R(t),E(t))return F(n),a(a([],n),[t]).join("");var r=a([],t);return r.unshift.apply(r,n),r},validate:function(e){return S({min:2},e)}},"random-sample!":{evaluate:function(e){var t=e[0],n=e[1];return m(t),R(n),E(n)?n.split("").filter((function(){return Math.random()<t})).join(""):n.filter((function(){return Math.random()<t}))},validate:function(e){return S(2,e)}},"rand-nth!":{evaluate:function(e){var t=e[0];if(R(t),0===t.length)return null;var n=Math.floor(Math.random()*t.length);return E(t)?K(t.split("")[n]):K(t[n])},validate:function(e){return S(1,e)}},shuffle:{evaluate:function(e){var t=e[0];R(t);for(var n,r,u=E(t)?a([],t.split("")):a([],t),i=u.length;i;)i-=1,r=Math.floor(Math.random()*i),n=K(u[i]),u[i]=K(u[r]),u[r]=n;return E(t)?u.join(""):u},validate:function(e){return S(1,e)}},distinct:{evaluate:function(e){var t=e[0];return R(t),Array.isArray(t)?Array.from(new Set(t)):Array.from(new Set(t.split(""))).join("")},validate:function(e){return S(1,e)}},remove:{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;return T(r),R(a),Array.isArray(a)?a.filter((function(e){return!u(r,[e],t)})):a.split("").filter((function(e){return!u(r,[e],t)})).join("")},validate:function(e){return S(2,e)}},"split-at":{evaluate:function(e){var t=e[0],n=e[1];m(t);var r=H(t);return R(n),[n.slice(0,r),n.slice(r)]},validate:function(e){return S(2,e)}},"split-with":{evaluate:function(e,t,n){var r=e[0],a=e[1],u=n.executeFunction;T(r),R(a);var i=Array.isArray(a),o=(i?a:a.split("")).findIndex((function(e){return!u(r,[e],t)}));return-1===o?[a,i?[]:""]:[a.slice(0,o),a.slice(o)]},validate:function(e){return S(2,e)}}},Me={array:{evaluate:function(e){return e}},range:{evaluate:function(e){var t,n,r,a=e[0],u=e[1],i=e[2];m(a),1===e.length?(t=0,r=(n=a)>=0?1:-1):2===e.length?(m(u),r=(n=u)>=(t=a)?1:-1):(m(u),m(i),r=i,(n=u)>(t=a)?function(e){if(m(e),e<=0)throw TypeError("Expected positive number, got "+e)}(r):n<t?function(e){if(m(e),e>=0)throw TypeError("Expected negative number, got "+e)}(r):function(e){if(m(e),0===e)throw TypeError("Expected non zero value")}(r));for(var o=[],l=t;r<0?l>n:l<n;l+=r)o.push(l);return o},validate:function(e){return S({min:1,max:3},e)}},repeat:{evaluate:function(e){var t=e[0],n=e[1];g(t);for(var r=[],a=0;a<t;a+=1)r.push(n);return r},validate:function(e){return S(2,e)}},flatten:{evaluate:function(e){var t=e[0];return U(t)?t.flat(Number.POSITIVE_INFINITY):[]},validate:function(e){return S(1,e)}},mapcat:{evaluate:function(e,t,n){e.slice(1).forEach((function(e){P(e)}));var r=Ne(e,t,n);return P(r),r.flat(1)},validate:function(e){return S({min:2},e)}}},Se={inc:{evaluate:function(e){var t=e[0];return _(t),t+1},validate:function(e){return S(1,e)}},dec:{evaluate:function(e){var t=e[0];return _(t),t-1},validate:function(e){return S(1,e)}},"+":{evaluate:function(e){return e.reduce((function(e,t){return _(t),e+t}),0)}},"*":{evaluate:function(e){return e.reduce((function(e,t){return _(t),e*t}),1)}},"/":{evaluate:function(e){if(0===e.length)return 1;var t=e[0],n=e.slice(1);return _(t),0===n.length?(_(t),1/t):n.reduce((function(e,t){return _(t),e/t}),t)}},"-":{evaluate:function(e){var t=e[0],n=e.slice(1);return t?(_(t),0===n.length?-t:n.reduce((function(e,t){return _(t),e-t}),t)):0}},quot:{evaluate:function(e){var t=e[0],n=e[1];return _(t),_(n),Math.trunc(t/n)},validate:function(e){return S(2,e)}},mod:{evaluate:function(e){var t=e[0],n=e[1];return _(t),_(n),t-n*Math.floor(t/n)},validate:function(e){return S(2,e)}},rem:{evaluate:function(e){var t=e[0],n=e[1];return _(t),_(n),t-n*Math.trunc(t/n)},validate:function(e){return S(2,e)}},sqrt:{evaluate:function(e){var t=e[0];return _(t),Math.sqrt(t)},validate:function(e){return S(1,e)}},cbrt:{evaluate:function(e){var t=e[0];return _(t),Math.cbrt(t)},validate:function(e){return S(1,e)}},pow:{evaluate:function(e){var t=e[0],n=e[1];return _(t),_(n),Math.pow(t,n)},validate:function(e){return S(2,e)}},round:{evaluate:function(e){var t=e[0],n=e[1];if(_(t),1===e.length||0===n)return Math.round(t);g(n);var r=Math.pow(10,n);return Math.round(t*r)/r},validate:function(e){return S({min:1,max:2},e)}},trunc:{evaluate:function(e){var t=e[0];return _(t),Math.trunc(t)},validate:function(e){return S(1,e)}},floor:{evaluate:function(e){var t=e[0];return _(t),Math.floor(t)},validate:function(e){return S(1,e)}},ceil:{evaluate:function(e){var t=e[0];return _(t),Math.ceil(t)},validate:function(e){return S(1,e)}},"rand!":{evaluate:function(e){var t=1===e.length?e[0]:1;return _(t),Math.random()*t},validate:function(e){return S({min:0,max:1},e)}},"rand-int!":{evaluate:function(e){var t=e[0];return _(t),Math.floor(Math.random()*Math.abs(t))*Math.sign(t)},validate:function(e){return S(1,e)}},min:{evaluate:function(e){var t=e[0],n=e.slice(1);return _(t),0===n.length?t:n.reduce((function(e,t){return _(t),Math.min(e,t)}),t)},validate:function(e){return S({min:1},e)}},max:{evaluate:function(e){var t=e[0],n=e.slice(1);return _(t),0===n.length?t:n.reduce((function(e,t){return _(t),Math.max(e,t)}),t)},validate:function(e){return S({min:1},e)}},abs:{evaluate:function(e){var t=e[0];return _(t),Math.abs(t)},validate:function(e){return S(1,e)}},sign:{evaluate:function(e){var t=e[0];return _(t),Math.sign(t)},validate:function(e){return S(1,e)}},"max-safe-integer":{evaluate:function(){return Number.MAX_SAFE_INTEGER},validate:function(e){return S(0,e)}},"min-safe-integer":{evaluate:function(){return Number.MIN_SAFE_INTEGER},validate:function(e){return S(0,e)}},"max-value":{evaluate:function(){return Number.MAX_VALUE},validate:function(e){return S(0,e)}},"min-value":{evaluate:function(){return Number.MIN_VALUE},validate:function(e){return S(0,e)}},epsilon:{evaluate:function(){return Number.EPSILON},validate:function(e){return S(0,e)}},infinity:{evaluate:function(){return Number.POSITIVE_INFINITY},validate:function(e){return S(0,e)}},"-infinity":{evaluate:function(){return Number.NEGATIVE_INFINITY},validate:function(e){return S(0,e)}},nan:{evaluate:function(){return Number.NaN},validate:function(e){return S(0,e)}},e:{evaluate:function(){return Math.E},validate:function(e){return S(0,e)}},pi:{evaluate:function(){return Math.PI},validate:function(e){return S(0,e)}},exp:{evaluate:function(e){var t=e[0];return _(t),Math.exp(t)},validate:function(e){return S(1,e)}},log:{evaluate:function(e){var t=e[0];return _(t),Math.log(t)},validate:function(e){return S(1,e)}},log2:{evaluate:function(e){var t=e[0];return _(t),Math.log2(t)},validate:function(e){return S(1,e)}},log10:{evaluate:function(e){var t=e[0];return _(t),Math.log10(t)},validate:function(e){return S(1,e)}},sin:{evaluate:function(e){var t=e[0];return _(t),Math.sin(t)},validate:function(e){return S(1,e)}},asin:{evaluate:function(e){var t=e[0];return _(t),Math.asin(t)},validate:function(e){return S(1,e)}},sinh:{evaluate:function(e){var t=e[0];return _(t),Math.sinh(t)},validate:function(e){return S(1,e)}},asinh:{evaluate:function(e){var t=e[0];return _(t),Math.asinh(t)},validate:function(e){return S(1,e)}},cos:{evaluate:function(e){var t=e[0];return _(t),Math.cos(t)},validate:function(e){return S(1,e)}},acos:{evaluate:function(e){var t=e[0];return _(t),Math.acos(t)},validate:function(e){return S(1,e)}},cosh:{evaluate:function(e){var t=e[0];return _(t),Math.cosh(t)},validate:function(e){return S(1,e)}},acosh:{evaluate:function(e){var t=e[0];return _(t),Math.acosh(t)},validate:function(e){return S(1,e)}},tan:{evaluate:function(e){var t=e[0];return _(t),Math.tan(t)},validate:function(e){return S(1,e)}},atan:{evaluate:function(e){var t=e[0];return _(t),Math.atan(t)},validate:function(e){return S(1,e)}},tanh:{evaluate:function(e){var t=e[0];return _(t),Math.tanh(t)},validate:function(e){return S(1,e)}},atanh:{evaluate:function(e){var t=e[0];return _(t),Math.atanh(t)},validate:function(e){return S(1,e)}}},ke=/[[.]/;function Oe(e,t){for(var n=0,r=Te(t);n<r.length;n++){var a=r[n];try{e=K(e[a])}catch(e){return null}}return e}function Te(e){if(!e)return[];var t=ke.exec(e);if(!t)return[e];if(t.index>0)return a([e.substring(0,t.index)],Te(e.substring(t.index)));if("."===e[0]){if(e.length<2)throw Error("Ill formed path: "+e);return Te(e.substring(1))}var n=function(e){var t=Ie.exec(e)||Fe.exec(e);if(t){return[t[0].length,t[1]]}var n=_e.exec(e);if(n){return[n[0].length,Number(n[1])]}throw Error("Ill formed path: "+e)}(e),r=n[0],u=n[1];if(e.length>r&&"."!==e[r]&&"["!==e[r])throw Error("Ill formed path: "+e);return a([u],Te(e.substring(r)))}var Ie=/^\[\s*'(.*)'\s*\]/,Fe=/^\[\s*"(.*)"\s*\]/,_e=/^\[\s*(\d+)\s*\]/;var Pe={"not=":{evaluate:function(e){for(var t=0;t<e.length-1;t+=1)for(var n=t+1;n<e.length;n+=1)if(e[t]===e[n])return!1;return!0},validate:function(e){return S({min:1},e)}},"=":{evaluate:function(e){for(var t=e[0],n=0,r=e.slice(1);n<r.length;n++){if(r[n]!==t)return!1}return!0},validate:function(e){return S({min:1},e)}},"equal?":{evaluate:function(e){var t=e[0],n=e[1];return X(p(t),p(n))},validate:function(e){return S({min:1},e)}},">":{evaluate:function(e){for(var t=e[0],n=0,r=e.slice(1);n<r.length;n++){var a=r[n];if(W(t,a)<=0)return!1;t=a}return!0},validate:function(e){return S({min:1},e)}},"<":{evaluate:function(e){for(var t=e[0],n=0,r=e.slice(1);n<r.length;n++){var a=r[n];if(W(t,a)>=0)return!1;t=a}return!0},validate:function(e){return S({min:1},e)}},">=":{evaluate:function(e){for(var t=e[0],n=0,r=e.slice(1);n<r.length;n++){var a=r[n];if(W(t,a)<0)return!1;t=a}return!0},validate:function(e){return S({min:1},e)}},"<=":{evaluate:function(e){for(var t=e[0],n=0,r=e.slice(1);n<r.length;n++){var a=r[n];if(W(t,a)>0)return!1;t=a}return!0},validate:function(e){return S({min:1},e)}},"get-path":{evaluate:function(e){var t=e[0],n=e[1];return function(e){if((null===e||"object"!=typeof e||Array.isArray(e)||e instanceof RegExp||O(e))&&!Array.isArray(e))throw TypeError("Expected object or array, got: "+e+' type="'+typeof e+'"')}(t),x(n),Oe(t,n)},validate:function(e){return S(2,e)}},not:{evaluate:function(e){return!e[0]},validate:function(e){return S(1,e)}},"inst-ms":{evaluate:function(){return Date.now()},validate:function(e){return S(0,e)}},"write!":{evaluate:function(e){return console.log.apply(console,e),e.length>0?p(e[e.length-1]):null}},"debug!":{evaluate:function(e,t){return 0===e.length?(console.warn("*** LISPISH DEBUG ***\n"+function(e){return a([],e).reverse().reduce((function(e,t,n){return e+"Context "+n+(0===n?" - Import context":1===n?" - Global context":"")+"\n"+function(e){if(0===Object.keys(e).length)return"  <empty>\n";var t=Math.max.apply(Math,Object.keys(e).map((function(e){return e.length})));return Object.entries(e).reduce((function(e,n){return e+"  "+(""+n[0]).padEnd(t+2," ")+function(e){var t=e.value,n=t.name;if(O(t))return n?"<"+t.type+" function "+n+">":"<"+t.type+" function λ>";return JSON.stringify(e.value)}(n[1])+"\n"}),"")}(t)+"\n"}),"")}(t)+"\n"),null):(console.warn("*** LISPISH DEBUG ***\n"+JSON.stringify(e[0],null,2)+"\n"),p(e[0]))},validate:function(e){return S({max:1},e)}},boolean:{evaluate:function(e){return!!e[0]},validate:function(e){return S(1,e)}},compare:{evaluate:function(e){return W(e[0],e[1])},validate:function(e){return S(2,e)}},assert:{evaluate:function(e){var t=e[0],n=2===e.length?e[1]:""+t;if(x(n),!t)throw new o(n);return p(t)},validate:function(e){return S({min:1,max:2},e)}},"lispish-version":{evaluate:function(){return"0.1.55"},validate:function(e){return S(0,e)}}};var Ce={object:{evaluate:function(e){for(var t={},n=0;n<e.length;n+=2){var r=e[n],a=e[n+1];x(r),t[r]=a}return t},validate:function(e){return k(e)}},keys:{evaluate:function(e){var t=e[0];return q(t),Object.keys(t)},validate:function(e){return S(1,e)}},vals:{evaluate:function(e){var t=e[0];return q(t),Object.values(t)},validate:function(e){return S(1,e)}},entries:{evaluate:function(e){var t=e[0];return q(t),Object.entries(t)},validate:function(e){return S(1,e)}},find:{evaluate:function(e){var t=e[0],n=e[1];return q(t),x(n),G(t,n)?[n,t[n]]:null},validate:function(e){return S(2,e)}},dissoc:{evaluate:function(e){var t=e[0],n=e[1];q(t),x(n);var r=K(t[n]);return delete t[n],r},validate:function(e){return S(2,e)}},merge:{evaluate:function(e){var t=e[0],n=e.slice(1);return q(t),n.reduce((function(e,t){return q(t),r(r({},e),t)}),r({},t))},validate:function(e){return S({min:1},e)}},zipmap:{evaluate:function(e){var t=e[0],n=e[1];I(t),P(n);for(var r=Math.min(t.length,n.length),a={},u=0;u<r;u+=1){a[d(t[u])]=K(n[u])}return a},validate:function(e){return S(2,e)}},"select-keys":{evaluate:function(e){var t=e[0],n=e[1];return I(n),q(t),n.reduce((function(e,n){return G(t,n)&&(e[n]=K(t[n])),e}),{})},validate:function(e){return S(2,e)}}},ze={"function?":{evaluate:function(e){return O(e[0])},validate:function(e){return S(1,e)}},"string?":{evaluate:function(e){return"string"==typeof e[0]},validate:function(e){return S(1,e)}},"number?":{evaluate:function(e){return"number"==typeof e[0]},validate:function(e){return S(1,e)}},"integer?":{evaluate:function(e){var t=e[0];return"number"==typeof t&&Number.isInteger(t)},validate:function(e){return S(1,e)}},"boolean?":{evaluate:function(e){return"boolean"==typeof e[0]},validate:function(e){return S(1,e)}},"nil?":{evaluate:function(e){var t=e[0];return null==t},validate:function(e){return S(1,e)}},"zero?":{evaluate:function(e){var t=e[0];return m(t),0===t},validate:function(e){return S(1,e)}},"pos?":{evaluate:function(e){var t=e[0];return m(t),t>0},validate:function(e){return S(1,e)}},"neg?":{evaluate:function(e){var t=e[0];return m(t),t<0},validate:function(e){return S(1,e)}},"even?":{evaluate:function(e){var t=e[0];return m(t),t%2==0},validate:function(e){return S(1,e)}},"odd?":{evaluate:function(e){var t=e[0];return m(t),Number.isInteger(t)&&t%2!=0},validate:function(e){return S(1,e)}},"array?":{evaluate:function(e){return U(e[0])},validate:function(e){return S(1,e)}},"coll?":{evaluate:function(e){return D(e[0])},validate:function(e){return S(1,e)}},"seq?":{evaluate:function(e){return B(e[0])},validate:function(e){return S(1,e)}},"object?":{evaluate:function(e){return V(e[0])},validate:function(e){return S(1,e)}},"regexp?":{evaluate:function(e){var t=e[0];return null!==t&&!Array.isArray(t)&&"object"==typeof t&&t instanceof RegExp},validate:function(e){return S(1,e)}},"finite?":{evaluate:function(e){var t=e[0];return _(t),Number.isFinite(t)},validate:function(e){return S(1,e)}},"nan?":{evaluate:function(e){var t=e[0];return _(t),Number.isNaN(t)},validate:function(e){return S(1,e)}},"positive-infinity?":{evaluate:function(e){var t=e[0];return _(t),t===Number.POSITIVE_INFINITY},validate:function(e){return S(1,e)}},"negative-infinity?":{evaluate:function(e){var t=e[0];return _(t),t===Number.NEGATIVE_INFINITY},validate:function(e){return S(1,e)}},"true?":{evaluate:function(e){return!0===e[0]},validate:function(e){return S(1,e)}},"false?":{evaluate:function(e){return!1===e[0]},validate:function(e){return S(1,e)}}},Re={regexp:{evaluate:function(e){var t=e[0],n=e[1];return x(t),1===e.length?new RegExp(t):(x(n),new RegExp(t,n))},validate:function(e){return S({min:1,max:2},e)}},match:{evaluate:function(e){var t=e[0],n=e[1];M(t),x(n);var r=t.exec(n);return r?a([],r):null},validate:function(e){return S(2,e)}},replace:{evaluate:function(e){var t=e[0],n=e[1],r=e[2];return x(t),M(n),x(r),t.replace(n,r)},validate:function(e){return S(3,e)}}},qe={subs:{evaluate:function(e){var t=e[0],n=e[1],r=e[2];return x(t),g(n),void 0===r?t.substring(n):(b(r,n),t.substring(n,r))},validate:function(e){return S({min:2,max:3},e)}},"string-repeat":{evaluate:function(e){var t=e[0],n=e[1];return x(t),g(n),t.repeat(n)},validate:function(e){return S(2,e)}},str:{evaluate:function(e){return e.reduce((function(e,t){return e+(null==t?"":V(t)||Array.isArray(t)?JSON.stringify(t):""+t)}),"")}},"string-to-number":{evaluate:function(e){var t=e[0];x(t);var n=Number(t);if(Number.isNaN(n))throw Error("Could not convert '"+t+"' to a number");return n},validate:function(e){return S(1,e)}},"number-to-string":{evaluate:function(e){var t=e[0],n=e[1];if(m(t),1===e.length)return""+t;if(m(n),2!==n&&8!==n&&10!==n&&16!==n)throw Error('Expected "number-to-string" base argument to be 2, 8, 10 or 16, got: '+n);return 10===n?""+t:(g(t),Number(t).toString(n))},validate:function(e){return S({min:1,max:2},e)}},"from-char-code":{evaluate:function(e){var t=e[0];m(t);var n=H(t);return String.fromCodePoint(n)},validate:function(e){return S(1,e)}},"to-char-code":{evaluate:function(e){var t=e[0];return function(e){if(x(e),0===e.length)throw TypeError("Expected non empty string, got: "+e+' type="'+typeof e+'"')}(t),d(t.codePointAt(0))},validate:function(e){return S(1,e)}},"lower-case":{evaluate:function(e){var t=e[0];return x(t),t.toLowerCase()},validate:function(e){return S(1,e)}},"upper-case":{evaluate:function(e){var t=e[0];return x(t),t.toUpperCase()},validate:function(e){return S(1,e)}},trim:{evaluate:function(e){var t=e[0];return x(t),t.trim()},validate:function(e){return S(1,e)}},"trim-left":{evaluate:function(e){var t=e[0];return x(t),t.replace(/^\s+/,"")},validate:function(e){return S(1,e)}},"trim-right":{evaluate:function(e){var t=e[0];return x(t),t.replace(/\s+$/,"")},validate:function(e){return S(1,e)}},join:{evaluate:function(e){var t=e[0],n=e[1];return P(t),t.forEach((function(e){return x(e)})),x(n),t.join(n)},validate:function(e){return S(2,e)}},split:{evaluate:function(e){var t=e[0],n=e[1],r=e[2];return x(t),function(e){if(!(e instanceof RegExp||"string"==typeof e))throw TypeError("Expected RegExp or string, got: "+e+' type="'+typeof e+'"')}(n),void 0!==r&&g(r),t.split(n,r)},validate:function(e){return S({min:2,max:3},e)}},"pad-left":{evaluate:function(e){var t=e[0],n=e[1],r=e[2];return x(t),y(n),void 0!==r&&x(r),t.padStart(n,r)},validate:function(e){return S({min:2,max:3},e)}},"pad-right":{evaluate:function(e){var t=e[0],n=e[1],r=e[2];return x(t),y(n),void 0!==r&&x(r),t.padEnd(n,r)},validate:function(e){return S({min:2,max:3},e)}},template:{evaluate:function(e){var t=e[0],n=e.slice(1);x(t);var r=t.split("||||");if(1===r.length)return I(n),Ue(r[0],n);if(2===r.length){var u=n[0];g(u);var i=a([""+u],n.slice(1));return Ue(1===u?r[0]:r[1],i)}throw Error('Invalid template string, only one "||||" separator allowed')},validate:function(e){return S({min:1,max:10},e)}}},Ve=/\$\$/g;function Ue(e,t){for(var n=0;n<9;n+=1){var r=new RegExp("(?<=^|[^$]|\\$\\$)\\$"+(n+1),"g");if(r.test(e)){var a=t[n];x(a),e=e.replace(r,a)}}return e.replace(Ve,"$")}var Be={apply:{evaluate:function(e,t,n){var r=e[0],u=e.slice(1),i=n.executeFunction;T(r);var o=u[u.length-1];return P(o),i(r,a(a([],u.slice(0,-1)),o),t)},validate:function(e){return S({min:2},e)}},identity:{evaluate:function(e){return K(e[0])},validate:function(e){return S(1,e)}},partial:{evaluate:function(e){var t,n=e[0],r=e.slice(1);return(t={})[c]=!0,t.type="partial",t.fn=K(n),t.params=r,t},validate:function(e){return S({min:1},e)}},comp:{evaluate:function(e){var t;if(e.length>1){var n=e[e.length-1];U(n)&&(e=a(a([],e.slice(0,-1)),n))}return(t={})[c]=!0,t.type="comp",t.fns=e,t}},constantly:{evaluate:function(e){var t,n=e[0];return(t={})[c]=!0,t.type="constantly",t.value=K(n),t},validate:function(e){return S(1,e)}},juxt:{evaluate:function(e){var t;return(t={})[c]=!0,t.type="juxt",t.fns=e,t},validate:function(e){return S({min:1},e)}},complement:{evaluate:function(e){var t,n=e[0];return(t={})[c]=!0,t.type="complement",t.fn=K(n),t},validate:function(e){return S(1,e)}},"every-pred":{evaluate:function(e){var t;return(t={})[c]=!0,t.type="every-pred",t.fns=e,t},validate:function(e){return S({min:1},e)}},"some-pred":{evaluate:function(e){var t;return(t={})[c]=!0,t.type="some-pred",t.fns=e,t},validate:function(e){return S({min:1},e)}}},De=r(r(r(r(r(r(r(r(r(r(r({},{"bit-shift-left":{evaluate:function(e){var t=e[0],n=e[1];return y(t),g(n),t<<n},validate:function(e){return S(2,e)}},"bit-shift-right":{evaluate:function(e){var t=e[0],n=e[1];return y(t),g(n),t>>n},validate:function(e){return S(2,e)}},"bit-not":{evaluate:function(e){var t=e[0];return y(t),~t},validate:function(e){return S(1,e)}},"bit-and":{evaluate:function(e){var t=e[0],n=e.slice(1);return y(t),n.reduce((function(e,t){return y(t),e&t}),t)},validate:function(e){return S({min:2},e)}},"bit-and-not":{evaluate:function(e){var t=e[0],n=e.slice(1);return y(t),n.reduce((function(e,t){return y(t),e&~t}),t)},validate:function(e){return S({min:2},e)}},"bit-or":{evaluate:function(e){var t=e[0],n=e.slice(1);return y(t),n.reduce((function(e,t){return y(t),e|t}),t)},validate:function(e){return S({min:2},e)}},"bit-xor":{evaluate:function(e){var t=e[0],n=e.slice(1);return y(t),n.reduce((function(e,t){return y(t),e^t}),t)},validate:function(e){return S({min:2},e)}},"bit-flip":{evaluate:function(e){var t=e[0],n=e[1];return y(t),g(n),t^1<<n},validate:function(e){return S(2,e)}},"bit-set":{evaluate:function(e){var t=e[0],n=e[1];return y(t),g(n),t|1<<n},validate:function(e){return S(2,e)}},"bit-clear":{evaluate:function(e){var t=e[0],n=e[1];return y(t),g(n),t&~(1<<n)},validate:function(e){return S(2,e)}},"bit-test":{evaluate:function(e){var t=e[0],n=e[1];return y(t),g(n),!!(t&1<<n)},validate:function(e){return S(2,e)}}}),Ae),Me),je),Se),Pe),Ce),ze),Re),qe),Be),Le={def:he,defs:me,and:{parse:function(e,t,n){var r=(0,n.parseTokens)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"and",params:r[1]}]},evaluate:function(e,t,n){for(var r=n.evaluateAstNode,a=!0,u=0,i=e.params;u<i.length;u++){if(!(a=r(i[u],t)))break}return a}},cond:Z,defn:ae,defns:ue,if:oe,"if-not":le,"if-let":fe,"when-let":ce,"when-not":ve,"when-first":se,fn:ie,let:pe,or:{parse:function(e,t,n){var r=(0,n.parseTokens)(e,t);return[r[0]+1,{type:"SpecialExpression",name:"or",params:r[1]}]},evaluate:function(e,t,n){for(var r=n.evaluateAstNode,a=!1,u=0,i=e.params;u<i.length;u++){if(a=r(i[u],t))break}return a}},do:de,throw:ge,try:ye,when:be,recur:Ee,loop:xe,"time!":we};Object.keys(Le).forEach((function(e){if(De[e])throw Error("Expression "+e+" is defined as both a normal expression and a special expression")}));var $e={normalExpressions:De,specialExpressions:Le},Ge=Object.keys(De),Ye=Object.keys(Le),Je={"user-defined":function(e,t,n,i){for(var o,l,f,c=i.evaluateAstNode,v=e.arguments,s=v.mandatoryArguments.length,p=v.optionalArguments.length,h=v.restArgument?null:s+p;;){var m=r({},e.functionContext);if(t.length<v.mandatoryArguments.length)throw Error("Function "+(null!==(o=e.name)&&void 0!==o?o:"(fn)")+" requires at least "+v.mandatoryArguments.length+" arguments. Got "+t.length);if(null!==h&&t.length>h)throw Error('Function "'+(null!==(l=e.name)&&void 0!==l?l:"λ")+'" requires at most '+h+" arguments. Got "+t.length);for(var g=Math.max(t.length,v.mandatoryArguments.length+v.optionalArguments.length),y=[],b=0;b<g;b+=1)if(b<s){var E=K(t[b]);m[w(v.mandatoryArguments[b])]={value:E}}else if(b<s+p){var x=d(v.optionalArguments[b-s]);E=b<t.length?K(t[b]):null!==(f=x.defaultValue)&&void 0!==f?f:null;m[x.name]={value:E}}else y.push(K(t[b]));v.restArgument&&(m[v.restArgument]={value:y});try{for(var A=null,N=0,j=e.body;N<j.length;N++){A=c(j[N],a([m],n))}return A}catch(e){if(e instanceof u){t=e.params;continue}throw e}}},partial:function(e,t,n,r){return(0,r.executeFunction)(e.fn,a(a([],e.params),t),n)},comp:function(e,t,n,r){var a=r.executeFunction,u=e.fns;if(0===u.length){if(1!==t.length)throw Error("(comp) expects one argument, got "+t.length);return p(t[0])}return p(u.reduceRight((function(e,t){return[a(K(t),e,n)]}),t)[0])},constantly:function(e){return e.value},juxt:function(e,t,n,r){var a=r.executeFunction;return e.fns.map((function(e){return a(K(e),t,n)}))},complement:function(e,t,n,r){return!(0,r.executeFunction)(e.fn,t,n)},"every-pred":function(e,t,n,r){for(var a=r.executeFunction,u=0,i=e.fns;u<i.length;u++)for(var o=i[u],l=0,f=t;l<f.length;l++){var c=f[l];if(!a(K(o),[c],n))return!1}return!0},"some-pred":function(e,t,n,r){for(var a=r.executeFunction,u=0,i=e.fns;u<i.length;u++)for(var o=i[u],l=0,f=t;l<f.length;l++){var c=f[l];if(a(K(o),[c],n))return!0}return!1},builtin:function(e,t,n,r){var a=r.executeFunction;return d(De[e.name]).evaluate(t,n,{executeFunction:a})}};function We(e,t,n){for(var r,a=[t,n],u=0,i=e.body;u<i.length;u++){var o=i[u];r=Xe(o,a)}return r}var Xe=function(e,t){switch(e.type){case"Number":case"String":return function(e){return e.value}(e);case"Name":return function(e,t){for(var n,r=e.value,a=0,u=t;a<u.length;a++){var i=u[a][r];if(i)return i.value}if($e.normalExpressions[r]){return(n={})[c]=!0,n.type="builtin",n.name=r,n}throw Error("Undefined identifier "+r)}(e,t);case"ReservedName":return function(e){return d(Q[e.value]).value}(e);case"NormalExpression":return function(e,t){var n,r=e.params.map((function(e){return Xe(e,t)}));if(function(e){return"string"==typeof e.name}(e)){for(var a=0,u=t;a<u.length;a++){if(void 0!==(i=null===(n=u[a][e.name])||void 0===n?void 0:n.value))try{return He(i,r,t)}catch(e){continue}}return function(e,t,n){return(0,d($e.normalExpressions[e.name]).evaluate)(t,n,{executeFunction:He})}(e,r,t)}var i=Xe(e.expression,t);return He(i,r,t)}(e,t);case"SpecialExpression":return function(e,t){return(0,d($e.specialExpressions[e.name]).evaluate)(e,t,{evaluateAstNode:Xe,builtin:$e})}(e,t);default:throw Error(e.type+"-node cannot be evaluated")}};var He=function(e,t,n){if(O(e))return Je[e.type](e,t,n,{evaluateAstNode:Xe,executeFunction:He});if(Array.isArray(e))return function(e,t){if(1!==t.length)throw Error("Array as function requires one non negative integer parameter");var n=t[0];return g(n),K(e[n])}(e,t);if(V(e))return function(e,t){if(1!==t.length)throw Error("Object as function requires one string parameter");var n=t[0];return x(n),K(e[n])}(e,t);if(E(e))return function(e,t){if(1!==t.length)throw Error("String as function requires one Obj parameter");var n=K(t[0]);if(V(n))return K(n[e]);if($(n))return K(e[n]);throw Error("string as function expects Obj or integer parameter, got "+n)}(e,t);if(L(e))return function(e,t){if(y(e),1!==t.length)throw Error("String as function requires one Arr parameter");var n=t[0];return R(n),K(n[e])}(e,t);throw Error("Expected function, got "+e)};var Ke=function(e,t){for(var n,r,a=d(e[t]),u=[];"paren"!==a.type||")"!==a.value&&"]"!==a.value;)t=(n=ut(e,t))[0],r=n[1],u.push(r),a=d(e[t]);return[t,u]},Ze=function(e,t){var n=d(e[t+=1]);return"name"===n.type&&$e.specialExpressions[n.value]?at(e,t):rt(e,t)},Qe=/^%([1-9][0-9]?$)/,et=function(e,t){var n=d(e[t]);if("name"===n.type)return[t+1,{type:"Argument",name:n.value}];if("paren"===n.type&&"("===n.value){if("name"!==(n=d(e[t+=1])).type)throw new l("name",n);var r=n.value,a=ut(e,t+=1),u=a[0],i=a[1];if("paren"!==(n=d(e[u])).type||")"!==n.value)throw new l(")",n);return[u+1,{type:"Argument",name:r,defaultValue:i}]}if("modifier"===n.type)return[t+1,{type:"Modifier",value:n.value}];throw new l('"(", name or modifier',n)},tt=function(e,t){var n,r=d(e[t]);if("paren"!==r.type||"["!==r.value)throw new l("[",r);r=d(e[t+=1]);for(var a,u=[];"paren"!==r.type||"]"!==r.value;)t=(n=nt(e,t))[0],a=n[1],u.push(a),r=d(e[t]);return[t+=1,u]};function nt(e,t){var n,r=d(e[t]);if("name"!==r.type)throw Error("Expected name node in binding, got "+r.type+" value="+r.value);var a=r.value;return r=d(e[t+=1]),[t=(n=ut(e,t))[0],{type:"Binding",name:a,value:n[1]}]}var rt=function(e,t){var n,r,a,u=ut(e,t),i=u[0],o=u[1];if(t=(n=Ke(e,i))[0],a=n[1],t+=1,function(e){return"NormalExpression"===e.type||"SpecialExpression"===e.type||"Number"===e.type||"String"===e.type}(o))return[t,{type:"NormalExpression",expression:o,params:a}];s(o);var l={type:"NormalExpression",name:o.value,params:a},f=$e.normalExpressions[l.name];return f&&(null===(r=f.validate)||void 0===r||r.call(f,l)),[t,l]},at=function(e,t){var n=d(e[t]).value;t+=1;var r=d($e.specialExpressions[n]),a=r.parse,u=r.validate,i=a(e,t,{parseExpression:Ze,parseTokens:Ke,parseToken:ut,parseBindings:tt,parseArgument:et}),o=i[0],l=i[1];return null==u||u(l),[o,l]},ut=function(e,t){var n=d(e[t]),r=void 0;switch(n.type){case"number":r=function(e,t){var n=d(e[t]);return[t+1,{type:"Number",value:Number(n.value)}]}(e,t);break;case"string":r=function(e,t){return[t+1,{type:"String",value:d(e[t]).value}]}(e,t);break;case"name":r=function(e,t){return[t+1,{type:"Name",value:d(e[t]).value}]}(e,t);break;case"reservedName":r=function(e,t){return[t+1,{type:"ReservedName",value:d(e[t]).value}]}(e,t);break;case"paren":"("===n.value?r=Ze(e,t):"["===n.value?r=function(e,t){for(var n,r,a=d(e[t+=1]),u=[];"paren"!==a.type||"]"!==a.value;)t=(n=ut(e,t))[0],r=n[1],u.push(r),a=d(e[t]);return[t+=1,{type:"NormalExpression",name:"array",params:u}]}(e,t):"{"===n.value&&(r=function(e,t){for(var n,r,a=d(e[t+=1]),u=[];"paren"!==a.type||"}"!==a.value;)t=(n=ut(e,t))[0],r=n[1],u.push(r),a=d(e[t]);t+=1;var i={type:"NormalExpression",name:"object",params:u};return k(i),[t,i]}(e,t));break;case"regexpShorthand":r=function(e,t){return[t+1,{type:"NormalExpression",name:"regexp",params:[{type:"String",value:d(e[t]).value}]}]}(e,t);break;case"fnShorthand":r=function(e,t){for(var n=rt(e,t+=2),r=n[0],a=n[1],u=0,i=t+1;i<r-1;i+=1){var o=d(e[i]);if("name"===o.type){var l=Qe.exec(o.value);if(l&&(u=Math.max(u,Number(l[1])))>20)throw Error("Can't specify more than 20 arguments")}if("fnShorthand"===o.type)throw Error("Nested shortcut functions are not allowed")}for(var f=[],c=1;c<=u;c+=1)f.push("%"+c);return[r,{type:"SpecialExpression",name:"fn",params:[],arguments:{bindings:[],mandatoryArguments:f,optionalArguments:[]},body:[a]}]}(e,t)}if(!r)throw SyntaxError("Unrecognized token: "+n.type+" value="+n.value);return r};var it=/[@%0-9a-zA-Z_^?=!$%<>.+*/-]/,ot=/\s|,/,lt=function(e,t){if('"'!==e[t])return[0,void 0];for(var n="",r=1,a=e[t+r],u=!1;'"'!==a||u;){if(void 0===a)throw new SyntaxError("Unclosed string at position "+t);u?(u=!1,'"'===a||"\\"===a||(n+="\\"),n+=a):"\\"===a?u=!0:n+=a,a=e[t+(r+=1)]}return[r+1,{type:"string",value:n}]},ft=/\s|[)\]},]/,ct=/[0-9]/,vt=/[0-7]/,st=/[0-9a-fA-F]/,pt=/[0-1]/,dt=/[0-9.-]/;function ht(e,t,n,r){return t===n[r]?[1,{type:e,value:t}]:[0,void 0]}var mt=[function(e,t){if(";"===e[t]){for(var n=1;"\n"!==e[t+n]&&t+n<e.length;)n+=1;return"\n"===e[t+n]&&t+n<e.length&&(n+=1),[n,void 0]}return[0,void 0]},function(e,t){var n;return ot.test(null!==(n=e[t])&&void 0!==n?n:"")?[1,void 0]:[0,void 0]},function(e,t){return ht("paren","(",e,t)},function(e,t){return ht("paren",")",e,t)},function(e,t){return ht("paren","[",e,t)},function(e,t){return ht("paren","]",e,t)},function(e,t){return ht("paren","{",e,t)},function(e,t){return ht("paren","}",e,t)},lt,function(e,t){var n="decimal",r=e[t];if(void 0===r)return[0,void 0];var a,u="."===r;if(!dt.test(r))return[0,void 0];for(a=t+1;a<e.length;a+=1){var i=d(e[a]);if(ft.test(i))break;if(a===t+1&&"0"===r){if("b"===i||"B"===i){n="binary";continue}if("o"===i||"O"===i){n="octal";continue}if("x"===i||"X"===i){n="hex";continue}}if("decimal"===n&&u){if(!ct.test(i))return[0,void 0]}else if("binary"===n){if(!pt.test(i))return[0,void 0]}else if("octal"===n){if(!vt.test(i))return[0,void 0]}else if("hex"===n){if(!st.test(i))return[0,void 0]}else{if("."===i){u=!0;continue}if(!ct.test(i))return[0,void 0]}}var o=a-t,l=e.substring(t,a);return"decimal"!==n&&o<=2||"."===l||"-"===l?[0,void 0]:[o,{type:"number",value:l}]},function(e,t){for(var n=0,r=Object.keys(Q);n<r.length;n++){var a=r[n],u=a.length,i=e[t+u];if((!i||!it.test(i))&&e.substr(t,u)===a)return[u,{type:"reservedName",value:a}]}return[0,void 0]},function(e,t){return function(e,t,n,r){var a=n[r],u=0,i="";if(!a||!t.test(a))return[0,void 0];for(;a&&t.test(a);)i+=a,a=n[r+(u+=1)];return[u,{type:e,value:i}]}("name",it,e,t)},function(e,t){return"&rest"===e.substr(t,5)?[5,{type:"modifier",value:"&rest"}]:"&opt"===e.substr(t,4)?[4,{type:"modifier",value:"&opt"}]:"&bind"===e.substr(t,5)?[5,{type:"modifier",value:"&bind"}]:[0,void 0]},function(e,t){if("#"!==e[t])return[0,void 0];var n=lt(e,t+1),r=n[0],a=n[1];return a?[r+1,{type:"regexpShorthand",value:a.value}]:[0,void 0]},function(e,t){return"#("!==e.slice(t,t+2)?[0,void 0]:[1,{type:"fnShorthand",value:"#"}]}];var gt=function(){function e(e){if(this.cache={},this.firstEntry=void 0,this.lastEntry=void 0,this._size=0,this.maxSize=H(e),this.maxSize<1)throw Error("1 is the minimum maxSize, got "+e)}return Object.defineProperty(e.prototype,"size",{get:function(){return this._size},enumerable:!1,configurable:!0}),e.prototype.get=function(e){var t;return null===(t=this.cache[e])||void 0===t?void 0:t.value},e.prototype.clear=function(){this.cache={},this.firstEntry=void 0,this.lastEntry=void 0,this._size=0},e.prototype.has=function(e){return!!this.cache[e]},e.prototype.set=function(e,t){if(this.has(e))throw Error("AstCache - key already present: "+e);var n={value:t,nextEntry:void 0,key:e};for(this.cache[e]=n,this._size+=1,this.lastEntry&&(this.lastEntry.nextEntry=n),this.lastEntry=n,this.firstEntry||(this.firstEntry=this.lastEntry);this.size>this.maxSize;)this.dropFirstEntry()},e.prototype.dropFirstEntry=function(){var e=d(this.firstEntry);delete this.cache[e.key],this._size-=1,this.firstEntry=e.nextEntry},e}(),yt=function(){function e(e){void 0===e&&(e={}),this.importScope={},e.astCacheSize&&e.astCacheSize>0?this.astCache=new gt(e.astCacheSize):this.astCache=null}return e.prototype.run=function(e,t){var n=this.generateAst(e);return this.evaluate(n,t)},e.prototype.import=function(e){var t=this.tokenize(e),n={};We(this.parse(t),n,{});for(var r=Object.keys(this.importScope),a=0,u=Object.keys(n);a<u.length;a++){var i=u[a];if(r.includes(i))throw Error('Import faild, imported function/variable already exists: "'+i+'"');te(i,[{},{}],$e)}Object.assign(this.importScope,n)},e.prototype.tokenize=function(e){return function(e){for(var t=[],n=0,r=!1;n<e.length;){r=!1;for(var a=0,u=mt;a<u.length;a++){var i=(0,u[a])(e,n),o=i[0],l=i[1];if(o>0&&(r=!0,n+=o,l)){t.push(l);break}}if(!r)throw new SyntaxError("Unrecognized character at position "+n+": '"+e[n]+"'")}return t}(e)},e.prototype.parse=function(e){return function(e){for(var t,n,r={type:"Program",body:[]},a=0;a<e.length;)a=(t=ut(e,a))[0],n=t[1],r.body.push(n);return r}(e)},e.prototype.evaluate=function(e,t){void 0===t&&(t={});var n=t.globalContext||{};return t.vars&&Object.entries(t.vars).forEach((function(e){var t=e[0],r=e[1];n[t]={value:K(r)}})),We(e,n,this.importScope)},e.prototype.generateAst=function(e){var t;if(this.astCache){var n=this.astCache.get(e);if(n)return n}var r=this.tokenize(e),a=this.parse(r);return null===(t=this.astCache)||void 0===t||t.set(e,a),a},e}();return e.Lispish=yt,e.isLispishFunction=O,e.normalExpressionKeys=Ge,e.reservedNames=ee,e.specialExpressionKeys=Ye,Object.defineProperty(e,"__esModule",{value:!0}),e}({});
+    ***************************************************************************** */
+    /* global Reflect, Promise */
+
+    var extendStatics = function(d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+
+    function __extends(d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    }
+
+    var __assign = function() {
+        __assign = Object.assign || function __assign(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign.apply(this, arguments);
+    };
+
+    function __spreadArray(to, from) {
+        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+            to[j] = from[i];
+        return to;
+    }
+
+    /* istanbul ignore file */
+    var RecurSignal = /** @class */ (function (_super) {
+        __extends(RecurSignal, _super);
+        function RecurSignal(params) {
+            var _this = _super.call(this, "recur, params: " + params) || this;
+            Object.setPrototypeOf(_this, RecurSignal.prototype);
+            _this.name = "RecurSignal";
+            _this.params = params;
+            return _this;
+        }
+        return RecurSignal;
+    }(Error));
+    var UserDefinedError = /** @class */ (function (_super) {
+        __extends(UserDefinedError, _super);
+        function UserDefinedError(message) {
+            var _this = _super.call(this, message) || this;
+            Object.setPrototypeOf(_this, UserDefinedError.prototype);
+            _this.name = "UserDefinedError";
+            return _this;
+        }
+        return UserDefinedError;
+    }(Error));
+    var AssertionError = /** @class */ (function (_super) {
+        __extends(AssertionError, _super);
+        function AssertionError(message) {
+            var _this = _super.call(this, message) || this;
+            Object.setPrototypeOf(_this, AssertionError.prototype);
+            _this.name = "AssertionError";
+            return _this;
+        }
+        return AssertionError;
+    }(Error));
+    var UnexpectedTokenError = /** @class */ (function (_super) {
+        __extends(UnexpectedTokenError, _super);
+        function UnexpectedTokenError(expectedToken, actualToken) {
+            var _this = _super.call(this, "Expected a \"" + expectedToken + "\" token, got Token[" + actualToken.type + ":\"" + actualToken.value + "\"]") || this;
+            Object.setPrototypeOf(_this, UnexpectedTokenError.prototype);
+            _this.name = "UnexpectedTokenError";
+            return _this;
+        }
+        return UnexpectedTokenError;
+    }(Error));
+    var UnexpectedNodeTypeError = /** @class */ (function (_super) {
+        __extends(UnexpectedNodeTypeError, _super);
+        function UnexpectedNodeTypeError(expectedNodeType, actualNode) {
+            var _this = _super.call(this, "Expected a " + expectedNodeType + " node, got " + (actualNode ? "a " + actualNode.type + " node" : "undefined")) || this;
+            Object.setPrototypeOf(_this, UnexpectedNodeTypeError.prototype);
+            _this.name = "UnexpectedNodeTypeError";
+            return _this;
+        }
+        return UnexpectedNodeTypeError;
+    }(Error));
+
+    var functionSymbol = Symbol("function");
+
+    function asAstNode(node) {
+        if (node === undefined) {
+            throw Error("Expected an AST node, got undefined");
+        }
+        return node;
+    }
+    function asNameNode(node) {
+        if (node === undefined || node.type !== "Name") {
+            throw new UnexpectedNodeTypeError("Name", node);
+        }
+        return node;
+    }
+    function assertNameNode(node) {
+        if (node === undefined || node.type !== "Name") {
+            throw new UnexpectedNodeTypeError("Name", node);
+        }
+    }
+    function asAny(value, message) {
+        if (message === void 0) { message = "Unexpected end of input"; }
+        if (value === undefined) {
+            throw Error(message);
+        }
+        return value;
+    }
+    function asNotUndefined(value) {
+        if (value === undefined) {
+            throw Error("Expected non undefined value, got " + value);
+        }
+        return value;
+    }
+    function assertNotUndefined(value) {
+        if (value === undefined) {
+            throw Error("Expected non undefined value, got " + value);
+        }
+    }
+    function assertFiniteNumber(value) {
+        if (typeof value !== "number" || !isFinite(value)) {
+            throw TypeError("Expected number, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertPositiveNumber(value) {
+        assertFiniteNumber(value);
+        if (value <= 0) {
+            throw TypeError("Expected positive number, got " + value);
+        }
+    }
+    function assertNegativeNumber(value) {
+        assertFiniteNumber(value);
+        if (value >= 0) {
+            throw TypeError("Expected negative number, got " + value);
+        }
+    }
+    function assertNonNegativeNumber(value) {
+        assertFiniteNumber(value);
+        if (value < 0) {
+            throw TypeError("Expected non negative number, got " + value);
+        }
+    }
+    function assertNonNegativeInteger(value) {
+        assertNonNegativeNumber(value);
+        assertInteger(value);
+    }
+    function assertInteger(value) {
+        assertFiniteNumber(value);
+        if (!Number.isInteger(value)) {
+            throw TypeError("Expected integer, got " + value);
+        }
+    }
+    function assertNumberGte(value, x) {
+        assertFiniteNumber(value);
+        if (value < x) {
+            throw TypeError("Expected parameter (" + value + ") to be a number equal or grater than " + x);
+        }
+    }
+    function assertNumberLte(value, x) {
+        assertFiniteNumber(value);
+        if (value > x) {
+            throw TypeError("Expected parameter (" + value + ") to be a number equal or less than " + x);
+        }
+    }
+    function isString(value) {
+        return typeof value === "string";
+    }
+    function assertString(value) {
+        if (!isString(value)) {
+            throw TypeError("Expected string, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function asString(value) {
+        if (!isString(value)) {
+            throw TypeError("Expected string, got: " + value + " type=\"" + typeof value + "\"");
+        }
+        return value;
+    }
+    function assertNonEmptyString(value) {
+        assertString(value);
+        if (value.length === 0) {
+            throw TypeError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function isChar(value) {
+        return isString(value) && value.length === 1;
+    }
+    function assertChar(value) {
+        if (!isChar(value)) {
+            throw TypeError("Expected char, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function asChar(value) {
+        assertChar(value);
+        return value;
+    }
+    function assertStringOrNumber(value) {
+        if (!(typeof value === "string" || typeof value === "number")) {
+            throw TypeError("Expected string or number, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function asNonEmptyString(value) {
+        if (typeof value !== "string" || value.length === 0) {
+            throw TypeError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"");
+        }
+        return value;
+    }
+    function isRegExp(value) {
+        return value instanceof RegExp;
+    }
+    function assertRegExp(value) {
+        if (!(value instanceof RegExp)) {
+            throw TypeError("Expected RegExp, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertStringOrRegExp(value) {
+        if (!(value instanceof RegExp || typeof value === "string")) {
+            throw TypeError("Expected RegExp or string, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertObjectOrArray(value) {
+        if ((value === null ||
+            typeof value !== "object" ||
+            Array.isArray(value) ||
+            value instanceof RegExp ||
+            isLispishFunction(value)) &&
+            !Array.isArray(value)) {
+            throw TypeError("Expected object or array, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertNumberNotZero(value) {
+        assertFiniteNumber(value);
+        if (value === 0) {
+            throw TypeError("Expected non zero value");
+        }
+    }
+    function assertLength(count, node) {
+        var length = node.params.length;
+        if (typeof count === "number") {
+            if (length !== count) {
+                throw Error("Wrong number of arguments to \"" + node.name + "\", expected " + count + ", got " + length);
+            }
+        }
+        else {
+            var min = count.min, max = count.max;
+            if (min === undefined && max === undefined) {
+                throw Error("Min or max must be specified");
+            }
+            if (typeof min === "number" && length < min) {
+                throw Error("Wrong number of arguments to \"" + node.name + "\", expected at least " + min + ", got " + length);
+            }
+            if (typeof max === "number" && length > max) {
+                throw Error("Wrong number of arguments to \"" + node.name + "\", expected at most " + max + ", got " + length);
+            }
+        }
+    }
+    function assertLengthEven(node) {
+        var length = node.params.length;
+        if (length % 2 !== 0) {
+            throw Error("Wrong number of arguments, expected an even number, got " + length);
+        }
+    }
+    function isLispishFunction(func) {
+        if (func === null || typeof func !== "object") {
+            return false;
+        }
+        return !!func[functionSymbol];
+    }
+    function assertLispishFunction(func) {
+        if (!isLispishFunction(func)) {
+            throw Error("Expected lispish function, got " + JSON.stringify(func));
+        }
+    }
+    function assertStringArray(value) {
+        if (!Array.isArray(value) || value.some(function (v) { return typeof v !== "string"; })) {
+            throw Error("Expected an array of strings, got " + value);
+        }
+    }
+    function assertCharArray(arr) {
+        if (!Array.isArray(arr) || arr.some(function (v) { return typeof v !== "string" || v.length !== 1; })) {
+            throw Error("Expected an array of chars, got " + arr);
+        }
+    }
+    function isExpressionNode(node) {
+        return (node.type === "NormalExpression" ||
+            node.type === "SpecialExpression" ||
+            node.type === "Number" ||
+            node.type === "String");
+    }
+    function assertNumber(value) {
+        if (!isNumber(value)) {
+            throw TypeError("Expected a number, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertArr(value) {
+        if (!isArr(value)) {
+            throw TypeError("Expected Arr, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertColl(value) {
+        if (!isColl(value)) {
+            throw TypeError("Expected collection, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function isAny(value) {
+        return value !== undefined;
+    }
+    function assertAny(value) {
+        if (!isAny(value)) {
+            throw TypeError("Expected Any, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertSeq(value) {
+        if (!isSeq(value)) {
+            throw TypeError("Expected string or array, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function assertObj(value) {
+        if (!isObj(value)) {
+            throw TypeError("Expected object, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function isObj(value) {
+        return !(value === null ||
+            typeof value !== "object" ||
+            Array.isArray(value) ||
+            value instanceof RegExp ||
+            isLispishFunction(value));
+    }
+    function isArr(value) {
+        return Array.isArray(value);
+    }
+    function isSeq(value) {
+        return Array.isArray(value) || isString(value);
+    }
+    function isColl(value) {
+        return isSeq(value) || isObj(value);
+    }
+    function isNumber(value) {
+        return typeof value === "number";
+    }
+    function isInteger(value) {
+        return Number.isInteger(value);
+    }
+    function collHasKey(coll, key) {
+        if (!isColl(coll)) {
+            return false;
+        }
+        if (isString(coll) || isArr(coll)) {
+            if (!isInteger(key)) {
+                return false;
+            }
+            return key >= 0 && key < coll.length;
+        }
+        return !!Object.getOwnPropertyDescriptor(coll, key);
+    }
+    var sortOrderByType = {
+        boolean: 0,
+        number: 1,
+        string: 2,
+        array: 3,
+        object: 4,
+        regexp: 5,
+        unknown: 6,
+        null: 7,
+    };
+    function getType(value) {
+        if (value === null) {
+            return "null";
+        }
+        else if (typeof value === "boolean") {
+            return "boolean";
+        }
+        else if (typeof value === "number") {
+            return "number";
+        }
+        else if (typeof value === "string") {
+            return "string";
+        }
+        else if (isArr(value)) {
+            return "array";
+        }
+        else if (isObj(value)) {
+            return "object";
+        }
+        else if (isRegExp(value)) {
+            return "regexp";
+        }
+        else {
+            return "unknown";
+        }
+    }
+    function compare(a, b) {
+        var aType = getType(a);
+        var bType = getType(b);
+        if (aType !== bType) {
+            return Math.sign(sortOrderByType[aType] - sortOrderByType[bType]);
+        }
+        switch (aType) {
+            case "null":
+                return 0;
+            case "boolean":
+                if (a === b) {
+                    return 0;
+                }
+                return a === false ? -1 : 1;
+            case "number":
+                return Math.sign(a - b);
+            case "string": {
+                var aString = a;
+                var bString = b;
+                return aString < bString ? -1 : aString > bString ? 1 : 0;
+            }
+            case "array": {
+                var aArray = a;
+                var bArray = b;
+                if (aArray.length < bArray.length) {
+                    return -1;
+                }
+                else if (aArray.length > bArray.length) {
+                    return 1;
+                }
+                for (var i = 0; i < aArray.length; i += 1) {
+                    var innerComp = compare(aArray[i], bArray[i]);
+                    if (innerComp !== 0) {
+                        return innerComp;
+                    }
+                }
+                return 0;
+            }
+            case "object": {
+                var aObj = a;
+                var bObj = b;
+                return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length);
+            }
+            case "regexp": {
+                var aString = a.source;
+                var bString = b.source;
+                return aString < bString ? -1 : aString > bString ? 1 : 0;
+            }
+            case "unknown":
+                return 0;
+        }
+    }
+    function isNormalExpressionNodeName(node) {
+        return typeof node.name === "string";
+    }
+    function deepEqual(a, b) {
+        if (a === b) {
+            return true;
+        }
+        if (typeof a === "number" && typeof b === "number") {
+            return Math.abs(a - b) < Number.EPSILON;
+        }
+        if (isArr(a) && isArr(b)) {
+            if (a.length !== b.length) {
+                return false;
+            }
+            for (var i = 0; i < a.length; i += 1) {
+                if (!deepEqual(asAny(a[i]), asAny(b[i]))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (a instanceof RegExp && b instanceof RegExp) {
+            return a.toString() === b.toString();
+        }
+        if (typeof a === "object" && a !== null && typeof b === "object" && b !== null) {
+            var aObj = a;
+            var bObj = b;
+            var aKeys = Object.keys(aObj);
+            var bKeys = Object.keys(bObj);
+            if (aKeys.length !== bKeys.length) {
+                return false;
+            }
+            for (var i = 0; i < aKeys.length; i += 1) {
+                var key = asString(aKeys[i]);
+                if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    function toNonNegativeInteger(number) {
+        return Math.max(0, Math.ceil(number));
+    }
+    function assertMax(value, maxNumber) {
+        if (value > maxNumber) {
+            throw Error("Expected number less than or equal to " + maxNumber + "'");
+        }
+    }
+    function toAny(value) {
+        return (value !== null && value !== void 0 ? value : null);
+    }
+
+    var andSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "and",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var value = true;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var param = _b[_i];
+                value = evaluateAstNode(param, contextStack);
+                if (!value) {
+                    break;
+                }
+            }
+            return value;
+        },
+    };
+
+    function parseConditions(tokens, position, parseToken) {
+        var _a, _b;
+        var conditions = [];
+        var token = asNotUndefined(tokens[position]);
+        while (!(token.type === "paren" && token.value === ")")) {
+            var test_1 = void 0;
+            _a = parseToken(tokens, position), position = _a[0], test_1 = _a[1];
+            var form = void 0;
+            _b = parseToken(tokens, position), position = _b[0], form = _b[1];
+            conditions.push({ test: test_1, form: form });
+            token = asNotUndefined(tokens[position]);
+        }
+        return [position, conditions];
+    }
+    var condSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b;
+            var parseToken = _a.parseToken;
+            var conditions;
+            _b = parseConditions(tokens, position, parseToken), position = _b[0], conditions = _b[1];
+            return [
+                position + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "cond",
+                    conditions: conditions,
+                    params: [],
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            for (var _i = 0, _b = node.conditions; _i < _b.length; _i++) {
+                var condition = _b[_i];
+                var value = evaluateAstNode(condition.test, contextStack);
+                if (!value) {
+                    continue;
+                }
+                return evaluateAstNode(condition.form, contextStack);
+            }
+            return null;
+        },
+    };
+
+    var reservedNamesRecord = {
+        true: { value: true },
+        false: { value: false },
+        nil: { value: null },
+    };
+    var reservedNames = Object.keys(reservedNamesRecord);
+
+    function parseFunctionArguments(tokens, position, parseArgument, parseBindings) {
+        var _a;
+        var bindings = [];
+        var restArgument = undefined;
+        var mandatoryArguments = [];
+        var optionalArguments = [];
+        var argNames = {};
+        var state = "mandatory";
+        var token = asNotUndefined(tokens[position]);
+        if (!(token.type === "paren" && token.value === "[")) {
+            throw new UnexpectedTokenError("[", token);
+        }
+        position += 1;
+        token = asNotUndefined(tokens[position]);
+        while (!(token.type === "paren" && token.value === "]")) {
+            if (state === "bind") {
+                _a = parseBindings(tokens, position), position = _a[0], bindings = _a[1];
+                break;
+            }
+            else {
+                var _b = parseArgument(tokens, position), newPosition = _b[0], node = _b[1];
+                position = newPosition;
+                token = asNotUndefined(tokens[position]);
+                if (node.type === "Modifier") {
+                    switch (node.value) {
+                        case "&opt":
+                            if (state === "rest") {
+                                throw Error("&opt cannot appear after &rest");
+                            }
+                            if (state === "optional") {
+                                throw Error("&opt can only appear once");
+                            }
+                            state = "optional";
+                            break;
+                        case "&rest":
+                            if (state === "rest") {
+                                throw Error("&rest can only appear once");
+                            }
+                            if (state === "optional" && optionalArguments.length === 0) {
+                                throw Error("No optional arguments where spcified");
+                            }
+                            state = "rest";
+                            break;
+                        case "&bind":
+                            if (state === "optional" && optionalArguments.length === 0) {
+                                throw Error("No optional arguments where spcified");
+                            }
+                            if (state === "rest" && !restArgument) {
+                                throw Error("No rest argument was spcified");
+                            }
+                            state = "bind";
+                            break;
+                    }
+                }
+                else {
+                    if (argNames[node.name]) {
+                        throw Error("Duplicate argument \"" + node.name + "\"");
+                    }
+                    else {
+                        argNames[node.name] = true;
+                    }
+                    if (Object.getOwnPropertyDescriptor(node, "defaultValue")) {
+                        if (state !== "optional") {
+                            throw Error("Cannot specify default value if not an optional argument");
+                        }
+                        optionalArguments.push({
+                            name: node.name,
+                            defaultValue: node.defaultValue,
+                        });
+                    }
+                    else {
+                        switch (state) {
+                            case "mandatory":
+                                mandatoryArguments.push(node.name);
+                                break;
+                            case "optional":
+                                optionalArguments.push({
+                                    name: node.name,
+                                    defaultValue: undefined,
+                                });
+                                break;
+                            case "rest":
+                                if (restArgument !== undefined) {
+                                    throw Error("Can only specify one rest argument");
+                                }
+                                restArgument = node.name;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        if (state === "rest" && restArgument === undefined) {
+            throw Error("Missing rest argument name");
+        }
+        if (state === "optional" && optionalArguments.length === 0) {
+            throw Error("No optional arguments where spcified");
+        }
+        position += 1;
+        var args = {
+            mandatoryArguments: mandatoryArguments,
+            optionalArguments: optionalArguments,
+            restArgument: restArgument,
+            bindings: bindings,
+        };
+        return [position, args];
+    }
+    function assertNameNotDefined(name, contextStack, builtin) {
+        if (typeof name !== "string") {
+            return;
+        }
+        if (builtin.specialExpressions[name]) {
+            throw Error("Cannot define variable " + name + ", it's a special expression");
+        }
+        if (builtin.normalExpressions[name]) {
+            throw Error("Cannot define variable " + name + ", it's a builtin function");
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (reservedNamesRecord[name]) {
+            throw Error("Cannot define variable " + name + ", it's a reserved name");
+        }
+        var globalContext = asNotUndefined(contextStack[contextStack.length - 2]);
+        if (globalContext[name]) {
+            throw Error("Name already defined \"" + name + "\"");
+        }
+    }
+
+    function createParser(expressionName) {
+        return function (tokens, position, _a) {
+            var _b;
+            var parseToken = _a.parseToken, parseArgument = _a.parseArgument, parseBindings = _a.parseBindings;
+            var functionName = undefined;
+            if (expressionName === "defn" || expressionName === "defns") {
+                _b = parseToken(tokens, position), position = _b[0], functionName = _b[1];
+                if (expressionName === "defn" && functionName.type !== "Name") {
+                    throw new UnexpectedNodeTypeError("Name", functionName);
+                }
+            }
+            var _c = parseFunctionArguments(tokens, position, parseArgument, parseBindings), nextPosition = _c[0], functionArguments = _c[1];
+            position = nextPosition;
+            var token = asNotUndefined(tokens[position]);
+            var body = [];
+            while (!(token.type === "paren" && token.value === ")")) {
+                var _d = parseToken(tokens, position), newPosition = _d[0], bodyNode = _d[1];
+                body.push(bodyNode);
+                position = newPosition;
+                token = asNotUndefined(tokens[position]);
+            }
+            if (body.length === 0) {
+                throw Error("Missing body in special expression \"defn\"");
+            }
+            position += 1;
+            if (expressionName === "defn" || expressionName === "defns") {
+                return [
+                    position,
+                    {
+                        type: "SpecialExpression",
+                        name: expressionName,
+                        functionName: functionName,
+                        params: [],
+                        arguments: functionArguments,
+                        body: body,
+                    },
+                ];
+            }
+            return [
+                position,
+                {
+                    type: "SpecialExpression",
+                    name: expressionName,
+                    params: [],
+                    arguments: functionArguments,
+                    body: body,
+                },
+            ];
+        };
+    }
+    function getFunctionName(expressionName, node, contextStack, evaluateAstNode) {
+        if (expressionName === "defn") {
+            var name_1 = node.functionName.value;
+            assertString(name_1);
+            return name_1;
+        }
+        if (expressionName === "defns") {
+            var name_2 = evaluateAstNode(node.functionName, contextStack);
+            assertString(name_2);
+            return name_2;
+        }
+        return undefined;
+    }
+    function createEvaluator(expressionName) {
+        return function (node, contextStack, _a) {
+            var _b;
+            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
+            var name = getFunctionName(expressionName, node, contextStack, evaluateAstNode);
+            assertNameNotDefined(name, contextStack, builtin);
+            var functionContext = {};
+            for (var _i = 0, _c = node.arguments.bindings; _i < _c.length; _i++) {
+                var binding = _c[_i];
+                var bindingValueNode = binding.value;
+                var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                functionContext[binding.name] = { value: bindingValue };
+            }
+            var optionalArguments = node.arguments.optionalArguments.map(function (optArg) {
+                var name = optArg.name;
+                var defaultValue = optArg.defaultValue;
+                if (defaultValue) {
+                    return {
+                        name: name,
+                        defaultValue: evaluateAstNode(defaultValue, contextStack),
+                    };
+                }
+                return { name: name };
+            });
+            var lispishFunction = (_b = {},
+                _b[functionSymbol] = true,
+                _b.type = "user-defined",
+                _b.name = name,
+                _b.arguments = {
+                    mandatoryArguments: node.arguments.mandatoryArguments,
+                    restArgument: node.arguments.restArgument,
+                    optionalArguments: optionalArguments,
+                },
+                _b.body = node.body,
+                _b.functionContext = functionContext,
+                _b);
+            if (expressionName === "fn") {
+                return lispishFunction;
+            }
+            var globalContext = asNotUndefined(contextStack[contextStack.length - 2]);
+            globalContext[name] = { value: lispishFunction };
+            return null;
+        };
+    }
+    var defnSpecialExpression = {
+        parse: createParser("defn"),
+        evaluate: createEvaluator("defn"),
+    };
+    var defnsSpecialExpression = {
+        parse: createParser("defns"),
+        evaluate: createEvaluator("defns"),
+    };
+    var fnSpecialExpression = {
+        parse: createParser("fn"),
+        evaluate: createEvaluator("fn"),
+    };
+
+    var ifSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "if",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
+            if (evaluateAstNode(asAstNode(conditionNode), contextStack)) {
+                return evaluateAstNode(asAstNode(trueNode), contextStack);
+            }
+            else {
+                if (node.params.length === 3) {
+                    return evaluateAstNode(asAstNode(falseNode), contextStack);
+                }
+                else {
+                    return null;
+                }
+            }
+        },
+        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+    };
+
+    var ifNotSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "if-not",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
+            if (!evaluateAstNode(asAstNode(conditionNode), contextStack)) {
+                return evaluateAstNode(asAstNode(trueNode), contextStack);
+            }
+            else {
+                if (node.params.length === 3) {
+                    return evaluateAstNode(asAstNode(falseNode), contextStack);
+                }
+                else {
+                    return null;
+                }
+            }
+        },
+        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+    };
+
+    var ifLetSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            if (bindings.length !== 1) {
+                throw Error("Expected exactly one binding, got " + bindings.length);
+            }
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "if-let",
+                binding: asNotUndefined(bindings[0]),
+                params: params,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var locals = {};
+            var bindingValue = evaluateAstNode(node.binding.value, contextStack);
+            if (bindingValue) {
+                locals[node.binding.name] = { value: bindingValue };
+                var newContextStack = __spreadArray([locals], contextStack);
+                var thenForm = asNotUndefined(node.params[0]);
+                return evaluateAstNode(thenForm, newContextStack);
+            }
+            if (node.params.length === 2) {
+                var elseForm = asNotUndefined(node.params[1]);
+                return evaluateAstNode(elseForm, contextStack);
+            }
+            return null;
+        },
+        validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+    };
+
+    var whenLetSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            if (bindings.length !== 1) {
+                throw Error("Expected exactly one binding, got " + bindings.length);
+            }
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "when-let",
+                binding: asNotUndefined(bindings[0]),
+                params: params,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var locals = {};
+            var bindingValue = evaluateAstNode(node.binding.value, contextStack);
+            if (!bindingValue) {
+                return null;
+            }
+            locals[node.binding.name] = { value: bindingValue };
+            var newContextStack = __spreadArray([locals], contextStack);
+            var result = null;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var form = _b[_i];
+                result = evaluateAstNode(form, newContextStack);
+            }
+            return result;
+        },
+        validate: function (node) { return assertLength({ min: 0 }, node); },
+    };
+
+    var whenNotSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "when-not",
+                params: params,
+            };
+            return [newPosition + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
+            assertNotUndefined(whenExpression);
+            if (evaluateAstNode(whenExpression, contextStack)) {
+                return null;
+            }
+            var result = null;
+            for (var _i = 0, body_1 = body; _i < body_1.length; _i++) {
+                var form = body_1[_i];
+                result = evaluateAstNode(form, contextStack);
+            }
+            return result;
+        },
+        validate: function (node) { return assertLength({ min: 1 }, node); },
+    };
+
+    var whenFirstSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            if (bindings.length !== 1) {
+                throw Error("Expected exactly one binding, got " + bindings.length);
+            }
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "when-first",
+                binding: asNotUndefined(bindings[0]),
+                params: params,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var locals = {};
+            var evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack);
+            if (!isSeq(evaluatedBindingForm)) {
+                throw Error("Expected undefined or a sequence, got " + evaluatedBindingForm);
+            }
+            if (evaluatedBindingForm.length === 0) {
+                return null;
+            }
+            var bindingValue = toAny(evaluatedBindingForm[0]);
+            locals[node.binding.name] = { value: bindingValue };
+            var newContextStack = __spreadArray([locals], contextStack);
+            var result = null;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var form = _b[_i];
+                result = evaluateAstNode(form, newContextStack);
+            }
+            return result;
+        },
+        validate: function (node) { return assertLength({ min: 0 }, node); },
+    };
+
+    var letSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "let",
+                params: params,
+                bindings: bindings,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var locals = {};
+            for (var _i = 0, _b = node.bindings; _i < _b.length; _i++) {
+                var binding = _b[_i];
+                var bindingValueNode = binding.value;
+                var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                locals[binding.name] = { value: bindingValue };
+            }
+            var newContextStack = __spreadArray([locals], contextStack);
+            var result = null;
+            for (var _c = 0, _d = node.params; _c < _d.length; _c++) {
+                var astNode = _d[_c];
+                result = evaluateAstNode(astNode, newContextStack);
+            }
+            return result;
+        },
+    };
+
+    var orSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "or",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var value = false;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var param = _b[_i];
+                value = evaluateAstNode(param, contextStack);
+                if (value) {
+                    break;
+                }
+            }
+            return value;
+        },
+    };
+
+    var doSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseToken = _a.parseToken;
+            var node = {
+                type: "SpecialExpression",
+                name: "do",
+                params: [],
+            };
+            var token = asNotUndefined(tokens[position]);
+            while (!(token.type === "paren" && token.value === ")")) {
+                var _b = parseToken(tokens, position), newPosition = _b[0], bodyNode = _b[1];
+                node.params.push(bodyNode);
+                position = newPosition;
+                token = asNotUndefined(tokens[position]);
+            }
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var newContext = {};
+            var newContextStack = __spreadArray([newContext], contextStack);
+            var result = null;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var form = _b[_i];
+                result = evaluateAstNode(form, newContextStack);
+            }
+            return result;
+        },
+    };
+
+    var defSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            assertNameNode(params[0]);
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "def",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
+            var name = asNameNode(node.params[0]).value;
+            assertNameNotDefined(name, contextStack, builtin);
+            var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
+            var context = asNotUndefined(contextStack[contextStack.length - 2]);
+            context[name] = { value: value };
+            return value;
+        },
+        validate: function (node) { return assertLength(2, node); },
+    };
+
+    var defsSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "defs",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
+            var name = evaluateAstNode(asAstNode(node.params[0]), contextStack);
+            assertString(name);
+            assertNameNotDefined(name, contextStack, builtin);
+            var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
+            var context = asNotUndefined(contextStack[contextStack.length - 2]);
+            context[name] = { value: value };
+            return value;
+        },
+        validate: function (node) { return assertLength(2, node); },
+    };
+
+    var throwSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseToken = _a.parseToken;
+            var _b = parseToken(tokens, position), newPosition = _b[0], messageNode = _b[1];
+            position = newPosition;
+            var token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            var node = {
+                type: "SpecialExpression",
+                name: "throw",
+                params: [],
+                messageNode: messageNode,
+            };
+            return [position, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack));
+            throw new UserDefinedError(message);
+        },
+    };
+
+    var trySpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c, _d;
+            var parseToken = _a.parseToken;
+            var tryExpression;
+            _b = parseToken(tokens, position), position = _b[0], tryExpression = _b[1];
+            var token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === "(")) {
+                throw new UnexpectedTokenError("(", token);
+            }
+            position += 1;
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === "(")) {
+                throw new UnexpectedTokenError("(", token);
+            }
+            position += 1;
+            var error;
+            _c = parseToken(tokens, position), position = _c[0], error = _c[1];
+            if (error.type !== "Name") {
+                throw new UnexpectedNodeTypeError("Name", error);
+            }
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            var catchExpression;
+            _d = parseToken(tokens, position), position = _d[0], catchExpression = _d[1];
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            var node = {
+                type: "SpecialExpression",
+                name: "try",
+                params: [],
+                tryExpression: tryExpression,
+                catchExpression: catchExpression,
+                error: error,
+            };
+            return [position, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var _b;
+            var evaluateAstNode = _a.evaluateAstNode;
+            try {
+                return evaluateAstNode(node.tryExpression, contextStack);
+            }
+            catch (error) {
+                var newContext = (_b = {}, _b[node.error.value] = { value: asNotUndefined(error) }, _b);
+                return evaluateAstNode(node.catchExpression, __spreadArray([newContext], contextStack));
+            }
+        },
+    };
+
+    var whenSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "when",
+                params: params,
+            };
+            return [newPosition + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
+            assertNotUndefined(whenExpression);
+            if (!evaluateAstNode(whenExpression, contextStack)) {
+                return null;
+            }
+            var result = null;
+            for (var _i = 0, body_1 = body; _i < body_1.length; _i++) {
+                var form = body_1[_i];
+                result = evaluateAstNode(form, contextStack);
+            }
+            return result;
+        },
+        validate: function (node) { return assertLength({ min: 1 }, node); },
+    };
+
+    var recurSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b;
+            var parseTokens = _a.parseTokens;
+            var params;
+            _b = parseTokens(tokens, position), position = _b[0], params = _b[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "recur",
+                params: params,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
+            throw new RecurSignal(params);
+        },
+    };
+
+    var loopSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseTokens = _a.parseTokens, parseBindings = _a.parseBindings;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "loop",
+                params: params,
+                bindings: bindings,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var bindingContext = node.bindings.reduce(function (result, binding) {
+                result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
+                return result;
+            }, {});
+            var newContextStack = __spreadArray([bindingContext], contextStack);
+            var _loop_1 = function () {
+                var result = null;
+                try {
+                    for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                        var form = _b[_i];
+                        result = evaluateAstNode(form, newContextStack);
+                    }
+                }
+                catch (error) {
+                    if (error instanceof RecurSignal) {
+                        var params_1 = error.params;
+                        if (params_1.length !== node.bindings.length) {
+                            throw Error("recur expected " + node.bindings.length + " parameters, got " + params_1.length);
+                        }
+                        node.bindings.forEach(function (binding, index) {
+                            asNotUndefined(bindingContext[binding.name]).value = asAny(params_1[index]);
+                        });
+                        return "continue";
+                    }
+                    throw error;
+                }
+                return { value: result };
+            };
+            for (;;) {
+                var state_1 = _loop_1();
+                if (typeof state_1 === "object")
+                    return state_1.value;
+            }
+        },
+    };
+
+    var timeSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseToken = _a.parseToken;
+            var _b = parseToken(tokens, position), newPosition = _b[0], astNode = _b[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "time!",
+                params: [astNode],
+            };
+            return [newPosition + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var astNode = node.params[0];
+            assertNotUndefined(astNode);
+            var startTime = Date.now();
+            var result = evaluateAstNode(astNode, contextStack);
+            var totalTime = Date.now() - startTime;
+            // eslint-disable-next-line no-console
+            console.log("Elapsed time: " + totalTime + " ms");
+            return result;
+        },
+        validate: function (node) { return assertLength(1, node); },
+    };
+
+    var bitwiseNormalExpression = {
+        'bit-shift-left': {
+            evaluate: function (_a) {
+                var number = _a[0], count = _a[1];
+                assertInteger(number);
+                assertNonNegativeInteger(count);
+                return number << count;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'bit-shift-right': {
+            evaluate: function (_a) {
+                var number = _a[0], count = _a[1];
+                assertInteger(number);
+                assertNonNegativeInteger(count);
+                return number >> count;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'bit-not': {
+            evaluate: function (_a) {
+                var number = _a[0];
+                assertInteger(number);
+                return ~number;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'bit-and': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                assertInteger(first);
+                return rest.reduce(function (result, value) {
+                    assertInteger(value);
+                    return result & value;
+                }, first);
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        'bit-and-not': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                assertInteger(first);
+                return rest.reduce(function (result, value) {
+                    assertInteger(value);
+                    return result & ~value;
+                }, first);
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        'bit-or': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                assertInteger(first);
+                return rest.reduce(function (result, value) {
+                    assertInteger(value);
+                    return result | value;
+                }, first);
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        'bit-xor': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                assertInteger(first);
+                return rest.reduce(function (result, value) {
+                    assertInteger(value);
+                    return result ^ value;
+                }, first);
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        'bit-flip': {
+            evaluate: function (_a) {
+                var number = _a[0], index = _a[1];
+                assertInteger(number);
+                assertNonNegativeInteger(index);
+                var mask = 1 << index;
+                return (number ^= mask);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'bit-set': {
+            evaluate: function (_a) {
+                var number = _a[0], index = _a[1];
+                assertInteger(number);
+                assertNonNegativeInteger(index);
+                var mask = 1 << index;
+                return (number |= mask);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'bit-clear': {
+            evaluate: function (_a) {
+                var number = _a[0], index = _a[1];
+                assertInteger(number);
+                assertNonNegativeInteger(index);
+                var mask = 1 << index;
+                return (number &= ~mask);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'bit-test': {
+            evaluate: function (_a) {
+                var number = _a[0], index = _a[1];
+                assertInteger(number);
+                assertNonNegativeInteger(index);
+                var mask = 1 << index;
+                return !!(number & mask);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+    };
+
+    function get(coll, key) {
+        if (isArr(coll)) {
+            assertInteger(key);
+            if (key < coll.length) {
+                return toAny(coll[key]);
+            }
+        }
+        else if (isObj(coll)) {
+            assertString(key);
+            if (collHasKey(coll, key)) {
+                return toAny(coll[key]);
+            }
+        }
+        else {
+            assertInteger(key);
+            if (key < coll.length) {
+                return toAny(coll[key]);
+            }
+        }
+        return undefined;
+    }
+    var collectionNormalExpression = {
+        get: {
+            evaluate: function (params) {
+                var coll = params[0], key = params[1];
+                var defaultValue = toAny(params[2]);
+                assertColl(coll);
+                assertStringOrNumber(key);
+                var result = get(coll, key);
+                return result === undefined ? defaultValue : result;
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        'get-in': {
+            evaluate: function (params) {
+                var coll = params[0];
+                var keys = params[1];
+                var defaultValue = toAny(params[2]);
+                assertColl(coll);
+                assertArr(keys);
+                for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                    var key = keys_1[_i];
+                    assertStringOrNumber(key);
+                    if (isColl(coll)) {
+                        coll = get(coll, key);
+                    }
+                    else {
+                        return defaultValue;
+                    }
+                }
+                return isAny(coll) ? coll : defaultValue;
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        count: {
+            evaluate: function (_a) {
+                var coll = _a[0];
+                if (typeof coll === "string") {
+                    return coll.length;
+                }
+                assertColl(coll);
+                if (Array.isArray(coll)) {
+                    return coll.length;
+                }
+                return Object.keys(coll).length;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'contains?': {
+            evaluate: function (_a) {
+                var coll = _a[0], key = _a[1];
+                assertColl(coll);
+                assertStringOrNumber(key);
+                if (isSeq(coll)) {
+                    if (!Number.isInteger(key)) {
+                        return false;
+                    }
+                    assertInteger(key);
+                    return key >= 0 && key < coll.length;
+                }
+                return !!Object.getOwnPropertyDescriptor(coll, key);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'has?': {
+            evaluate: function (_a) {
+                var coll = _a[0], value = _a[1];
+                assertColl(coll);
+                if (isArr(coll)) {
+                    return coll.includes(value);
+                }
+                if (isString(coll)) {
+                    return isString(value) ? coll.split("").includes(value) : false;
+                }
+                return Object.values(coll).includes(value);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        assoc: {
+            evaluate: function (_a) {
+                var coll = _a[0], key = _a[1], value = _a[2];
+                assertColl(coll);
+                assertStringOrNumber(key);
+                if (Array.isArray(coll) || typeof coll === "string") {
+                    assertInteger(key);
+                    assertNumberGte(key, 0);
+                    assertNumberLte(key, coll.length);
+                    if (typeof coll === "string") {
+                        assertChar(value);
+                        return "" + coll.slice(0, key) + value + coll.slice(key + 1);
+                    }
+                    var copy_1 = __spreadArray([], coll);
+                    copy_1[key] = value;
+                    return copy_1;
+                }
+                assertString(key);
+                var copy = __assign({}, coll);
+                copy[key] = value;
+                return copy;
+            },
+            validate: function (node) { return assertLength(3, node); },
+        },
+        concat: {
+            evaluate: function (params) {
+                assertColl(params[0]);
+                if (isArr(params[0])) {
+                    return params.reduce(function (result, arr) {
+                        assertArr(arr);
+                        return result.concat(arr);
+                    }, []);
+                }
+                else if (isString(params[0])) {
+                    return params.reduce(function (result, s) {
+                        assertString(s);
+                        return "" + result + s;
+                    }, "");
+                }
+                else {
+                    return params.reduce(function (result, obj) {
+                        assertObj(obj);
+                        return Object.assign(result, obj);
+                    }, {});
+                }
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        'empty?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertColl(first);
+                if (isString(first)) {
+                    return first.length === 0;
+                }
+                if (Array.isArray(first)) {
+                    return first.length === 0;
+                }
+                return Object.keys(first).length === 0;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'every?': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], coll = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertColl(coll);
+                if (Array.isArray(coll)) {
+                    return coll.every(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                if (isString(coll)) {
+                    return coll.split("").every(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack); });
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'any?': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], coll = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertColl(coll);
+                if (Array.isArray(coll)) {
+                    return coll.some(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                if (isString(coll)) {
+                    return coll.split("").some(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack); });
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'not-any?': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], coll = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertColl(coll);
+                if (Array.isArray(coll)) {
+                    return !coll.some(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                if (isString(coll)) {
+                    return !coll.split("").some(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack); });
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'not-every?': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], coll = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertColl(coll);
+                if (Array.isArray(coll)) {
+                    return !coll.every(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                if (isString(coll)) {
+                    return !coll.split("").every(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack); });
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        update: {
+            evaluate: function (_a, contextStack, _b) {
+                var coll = _a[0], key = _a[1], fn = _a[2], params = _a.slice(3);
+                var executeFunction = _b.executeFunction;
+                assertColl(coll);
+                assertStringOrNumber(key);
+                assertLispishFunction(fn);
+                if (isObj(coll)) {
+                    assertString(key);
+                    var result = __assign({}, coll);
+                    result[key] = executeFunction(fn, __spreadArray([result[key]], params), contextStack);
+                    return result;
+                }
+                else {
+                    assertNumber(key);
+                    var intKey_1 = toNonNegativeInteger(key);
+                    assertMax(intKey_1, coll.length);
+                    if (Array.isArray(coll)) {
+                        var result = coll.map(function (elem, index) {
+                            if (intKey_1 === index) {
+                                return executeFunction(fn, __spreadArray([elem], params), contextStack);
+                            }
+                            return elem;
+                        });
+                        if (intKey_1 === coll.length) {
+                            result[intKey_1] = executeFunction(fn, __spreadArray([undefined], params), contextStack);
+                        }
+                        return result;
+                    }
+                    else {
+                        var result = coll.split("").map(function (elem, index) {
+                            if (intKey_1 === index) {
+                                return asChar(executeFunction(fn, __spreadArray([elem], params), contextStack));
+                            }
+                            return elem;
+                        });
+                        if (intKey_1 === coll.length) {
+                            result[intKey_1] = asChar(executeFunction(fn, __spreadArray([undefined], params), contextStack));
+                        }
+                        return result.join("");
+                    }
+                }
+            },
+            validate: function (node) { return assertLength({ min: 3 }, node); },
+        },
+    };
+
+    var evaluateMap = function (params, contextStack, _a) {
+        var executeFunction = _a.executeFunction;
+        var fn = params[0], firstList = params[1];
+        assertLispishFunction(fn);
+        assertSeq(firstList);
+        var isStringSeq = isString(firstList);
+        var length = firstList.length;
+        if (params.length === 2) {
+            if (isArr(firstList)) {
+                return firstList.map(function (elem) { return executeFunction(fn, [elem], contextStack); });
+            }
+            else {
+                return firstList
+                    .split("")
+                    .map(function (elem) {
+                    var newVal = executeFunction(fn, [elem], contextStack);
+                    assertChar(newVal);
+                    return newVal;
+                })
+                    .join("");
+            }
+        }
+        else {
+            params.slice(2).forEach(function (collParam) {
+                if (isStringSeq) {
+                    assertString(collParam);
+                }
+                else {
+                    assertArr(collParam);
+                }
+                if (length !== collParam.length) {
+                    throw Error("All arguments to \"map\" must have the same length");
+                }
+            });
+            if (isStringSeq) {
+                var result = "";
+                var _loop_1 = function (i) {
+                    var fnParams = params.slice(1).map(function (l) { return l[i]; });
+                    var newValue = executeFunction(fn, fnParams, contextStack);
+                    assertChar(newValue);
+                    result += newValue;
+                };
+                for (var i = 0; i < length; i += 1) {
+                    _loop_1(i);
+                }
+                return result;
+            }
+            else {
+                var result = [];
+                var _loop_2 = function (i) {
+                    var fnParams = params.slice(1).map(function (l) { return toAny(l[i]); });
+                    result.push(executeFunction(fn, fnParams, contextStack));
+                };
+                for (var i = 0; i < length; i += 1) {
+                    _loop_2(i);
+                }
+                return result;
+            }
+        }
+    };
+    var sequenceNormalExpression = {
+        cons: {
+            evaluate: function (_a) {
+                var elem = _a[0], seq = _a[1];
+                assertAny(elem);
+                assertSeq(seq);
+                if (Array.isArray(seq)) {
+                    return __spreadArray([elem], seq);
+                }
+                assertChar(elem);
+                return "" + elem + seq;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        nth: {
+            evaluate: function (_a) {
+                var seq = _a[0], i = _a[1];
+                assertSeq(seq);
+                assertInteger(i);
+                return toAny(seq[i]);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        filter: {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertSeq(seq);
+                if (Array.isArray(seq)) {
+                    return seq.filter(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                }
+                return seq
+                    .split("")
+                    .filter(function (elem) { return executeFunction(fn, [elem], contextStack); })
+                    .join("");
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        first: {
+            evaluate: function (_a) {
+                var array = _a[0];
+                assertSeq(array);
+                return toAny(array[0]);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        last: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertSeq(first);
+                return toAny(first[first.length - 1]);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        map: {
+            evaluate: evaluateMap,
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        pop: {
+            evaluate: function (_a) {
+                var seq = _a[0];
+                assertSeq(seq);
+                if (isString(seq)) {
+                    return seq.substr(0, seq.length - 1);
+                }
+                var copy = __spreadArray([], seq);
+                copy.pop();
+                return copy;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        position: {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertSeq(seq);
+                if (isString(seq)) {
+                    var index = seq.split("").findIndex(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                    return index !== -1 ? index : null;
+                }
+                else {
+                    var index = seq.findIndex(function (elem) { return executeFunction(fn, [elem], contextStack); });
+                    return index !== -1 ? index : null;
+                }
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'index-of': {
+            evaluate: function (_a) {
+                var seq = _a[0], value = _a[1];
+                assertAny(value);
+                assertSeq(seq);
+                if (isString(seq)) {
+                    assertString(value);
+                    var index = seq.indexOf(value);
+                    return index !== -1 ? index : null;
+                }
+                else {
+                    var index = seq.indexOf(value);
+                    return index !== -1 ? index : null;
+                }
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        push: {
+            evaluate: function (_a) {
+                var seq = _a[0], values = _a.slice(1);
+                assertSeq(seq);
+                if (isString(seq)) {
+                    assertCharArray(values);
+                    return __spreadArray([seq], values).join("");
+                }
+                else {
+                    return __spreadArray(__spreadArray([], seq, true), values);
+                }
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        reduce: {
+            evaluate: function (params, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = params[0];
+                assertLispishFunction(fn);
+                if (params.length === 2) {
+                    var arr = params[1];
+                    assertSeq(arr);
+                    if (arr.length === 0) {
+                        return executeFunction(fn, [], contextStack);
+                    }
+                    else if (arr.length === 1) {
+                        return toAny(arr[0]);
+                    }
+                    if (isString(arr)) {
+                        var chars = arr.split("");
+                        return chars.slice(1).reduce(function (result, elem) {
+                            var val = executeFunction(fn, [result, elem], contextStack);
+                            return val;
+                        }, asAny(chars[0]));
+                    }
+                    else {
+                        return arr.slice(1).reduce(function (result, elem) {
+                            return executeFunction(fn, [result, elem], contextStack);
+                        }, toAny(arr[0]));
+                    }
+                }
+                else {
+                    var val = params[1], seq = params[2];
+                    assertAny(val);
+                    assertSeq(seq);
+                    if (isString(seq)) {
+                        assertString(val);
+                        if (seq.length === 0) {
+                            return val;
+                        }
+                        return seq.split("").reduce(function (result, elem) {
+                            var newVal = executeFunction(fn, [result, elem], contextStack);
+                            return newVal;
+                        }, val);
+                    }
+                    else {
+                        if (seq.length === 0) {
+                            return val;
+                        }
+                        return seq.reduce(function (result, elem) {
+                            return executeFunction(fn, [result, elem], contextStack);
+                        }, val);
+                    }
+                }
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        'reduce-right': {
+            evaluate: function (params, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = params[0];
+                assertLispishFunction(fn);
+                if (params.length === 2) {
+                    var seq = params[1];
+                    assertSeq(seq);
+                    if (seq.length === 0) {
+                        return executeFunction(fn, [], contextStack);
+                    }
+                    else if (seq.length === 1) {
+                        return toAny(seq[0]);
+                    }
+                    if (isString(seq)) {
+                        var chars = seq.split("");
+                        return chars.slice(0, chars.length - 1).reduceRight(function (result, elem) {
+                            var newVal = executeFunction(fn, [result, elem], contextStack);
+                            assertString(newVal);
+                            return newVal;
+                        }, chars[chars.length - 1]);
+                    }
+                    else {
+                        return seq.slice(0, seq.length - 1).reduceRight(function (result, elem) {
+                            return executeFunction(fn, [result, elem], contextStack);
+                        }, asAny(seq[seq.length - 1]));
+                    }
+                }
+                else {
+                    var val = params[1], seq = params[2];
+                    assertAny(val);
+                    assertSeq(seq);
+                    if (isString(seq)) {
+                        if (seq.length === 0) {
+                            return val;
+                        }
+                        return seq.split("").reduceRight(function (result, elem) {
+                            var newVal = executeFunction(fn, [result, elem], contextStack);
+                            return newVal;
+                        }, val);
+                    }
+                    else {
+                        if (seq.length === 0) {
+                            return val;
+                        }
+                        return seq.reduceRight(function (result, elem) {
+                            return executeFunction(fn, [result, elem], contextStack);
+                        }, val);
+                    }
+                }
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        rest: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertSeq(first);
+                if (Array.isArray(first)) {
+                    if (first.length <= 1) {
+                        return [];
+                    }
+                    return first.slice(1);
+                }
+                return first.substr(1);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        nthrest: {
+            evaluate: function (_a) {
+                var seq = _a[0], count = _a[1];
+                assertSeq(seq);
+                assertFiniteNumber(count);
+                var integerCount = Math.max(Math.ceil(count), 0);
+                if (Array.isArray(seq)) {
+                    return seq.slice(integerCount);
+                }
+                return seq.substr(integerCount);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        next: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertSeq(first);
+                if (Array.isArray(first)) {
+                    if (first.length <= 1) {
+                        return null;
+                    }
+                    return first.slice(1);
+                }
+                if (first.length <= 1) {
+                    return null;
+                }
+                return first.substr(1);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        nthnext: {
+            evaluate: function (_a) {
+                var seq = _a[0], count = _a[1];
+                assertSeq(seq);
+                assertFiniteNumber(count);
+                var integerCount = Math.max(Math.ceil(count), 0);
+                if (seq.length <= count) {
+                    return null;
+                }
+                if (Array.isArray(seq)) {
+                    return seq.slice(integerCount);
+                }
+                return seq.substr(integerCount);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        reverse: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertSeq(first);
+                if (Array.isArray(first)) {
+                    return __spreadArray([], first).reverse();
+                }
+                return first.split("").reverse().join("");
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        second: {
+            evaluate: function (_a) {
+                var array = _a[0];
+                assertSeq(array);
+                return toAny(array[1]);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        shift: {
+            evaluate: function (_a) {
+                var seq = _a[0];
+                assertSeq(seq);
+                if (isString(seq)) {
+                    return seq.substr(1);
+                }
+                var copy = __spreadArray([], seq);
+                copy.shift();
+                return copy;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        slice: {
+            evaluate: function (params) {
+                var seq = params[0], from = params[1], to = params[2];
+                assertSeq(seq);
+                if (params.length === 1) {
+                    return seq;
+                }
+                assertInteger(from);
+                if (params.length === 2) {
+                    return seq.slice(from);
+                }
+                assertInteger(to);
+                return seq.slice(from, to);
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 3 }, node); },
+        },
+        some: {
+            evaluate: function (_a, contextStack, _b) {
+                var _c;
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertSeq(seq);
+                if (seq.length === 0) {
+                    return null;
+                }
+                if (isString(seq)) {
+                    return (_c = seq.split("").find(function (elem) { return executeFunction(fn, [elem], contextStack); })) !== null && _c !== void 0 ? _c : null;
+                }
+                return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], contextStack); }));
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        sort: {
+            evaluate: function (params, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var defaultComparer = params.length === 1;
+                var seq = defaultComparer ? params[0] : params[1];
+                var comparer = defaultComparer ? null : params[0];
+                assertSeq(seq);
+                if (isString(seq)) {
+                    var result_1 = seq.split("");
+                    if (defaultComparer) {
+                        result_1.sort(compare);
+                    }
+                    else {
+                        assertLispishFunction(comparer);
+                        result_1.sort(function (a, b) {
+                            var compareValue = executeFunction(comparer, [a, b], contextStack);
+                            assertFiniteNumber(compareValue);
+                            return compareValue;
+                        });
+                    }
+                    return result_1.join("");
+                }
+                var result = __spreadArray([], seq);
+                if (defaultComparer) {
+                    result.sort(compare);
+                }
+                else {
+                    result.sort(function (a, b) {
+                        assertLispishFunction(comparer);
+                        var compareValue = executeFunction(comparer, [a, b], contextStack);
+                        assertFiniteNumber(compareValue);
+                        return compareValue;
+                    });
+                }
+                return result;
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+        },
+        take: {
+            evaluate: function (_a) {
+                var n = _a[0], input = _a[1];
+                assertNumber(n);
+                assertSeq(input);
+                var number = Math.max(Math.ceil(n), 0);
+                return input.slice(0, number);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'take-last': {
+            evaluate: function (_a) {
+                var n = _a[0], array = _a[1];
+                assertSeq(array);
+                assertNumber(n);
+                var number = Math.max(Math.ceil(n), 0);
+                var from = array.length - number;
+                return array.slice(from);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'take-while': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertSeq(seq);
+                assertLispishFunction(fn);
+                var result = [];
+                for (var _i = 0, seq_1 = seq; _i < seq_1.length; _i++) {
+                    var item = seq_1[_i];
+                    if (executeFunction(fn, [item], contextStack)) {
+                        result.push(item);
+                    }
+                    else {
+                        break;
+                    }
+                }
+                return isString(seq) ? result.join("") : result;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        drop: {
+            evaluate: function (_a) {
+                var n = _a[0], input = _a[1];
+                assertNumber(n);
+                var number = Math.max(Math.ceil(n), 0);
+                assertSeq(input);
+                return input.slice(number);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'drop-last': {
+            evaluate: function (_a) {
+                var n = _a[0], array = _a[1];
+                assertSeq(array);
+                assertNumber(n);
+                var number = Math.max(Math.ceil(n), 0);
+                var from = array.length - number;
+                return array.slice(0, from);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'drop-while': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertSeq(seq);
+                assertLispishFunction(fn);
+                if (Array.isArray(seq)) {
+                    var from_1 = seq.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack); });
+                    return seq.slice(from_1);
+                }
+                var charArray = seq.split("");
+                var from = charArray.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack); });
+                return charArray.slice(from).join("");
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        unshift: {
+            evaluate: function (_a) {
+                var seq = _a[0], values = _a.slice(1);
+                assertSeq(seq);
+                if (isString(seq)) {
+                    assertCharArray(values);
+                    return __spreadArray(__spreadArray([], values, true), [seq]).join("");
+                }
+                var copy = __spreadArray([], seq);
+                copy.unshift.apply(copy, values);
+                return copy;
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        'random-sample!': {
+            evaluate: function (_a) {
+                var prob = _a[0], seq = _a[1];
+                assertFiniteNumber(prob);
+                assertSeq(seq);
+                if (isString(seq)) {
+                    return seq
+                        .split("")
+                        .filter(function () { return Math.random() < prob; })
+                        .join("");
+                }
+                else {
+                    return seq.filter(function () { return Math.random() < prob; });
+                }
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'rand-nth!': {
+            evaluate: function (_a) {
+                var seq = _a[0];
+                assertSeq(seq);
+                if (seq.length === 0) {
+                    return null;
+                }
+                var index = Math.floor(Math.random() * seq.length);
+                if (isString(seq)) {
+                    return toAny(seq.split("")[index]);
+                }
+                return toAny(seq[index]);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        shuffle: {
+            evaluate: function (_a) {
+                var input = _a[0];
+                assertSeq(input);
+                var array = isString(input) ? __spreadArray([], input.split("")) : __spreadArray([], input);
+                var remainingLength = array.length;
+                var arrayElement;
+                var pickedIndex;
+                // Fisher–Yates Shuffle
+                while (remainingLength) {
+                    remainingLength -= 1;
+                    // Pick a remaining element
+                    pickedIndex = Math.floor(Math.random() * remainingLength);
+                    // And swap it with the current element.
+                    arrayElement = toAny(array[remainingLength]);
+                    array[remainingLength] = toAny(array[pickedIndex]);
+                    array[pickedIndex] = arrayElement;
+                }
+                return isString(input) ? array.join("") : array;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        distinct: {
+            evaluate: function (_a) {
+                var input = _a[0];
+                assertSeq(input);
+                if (Array.isArray(input)) {
+                    return Array.from(new Set(input));
+                }
+                return Array.from(new Set(input.split(""))).join("");
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        remove: {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], input = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertSeq(input);
+                if (Array.isArray(input)) {
+                    return input.filter(function (elem) { return !executeFunction(fn, [elem], contextStack); });
+                }
+                return input
+                    .split("")
+                    .filter(function (elem) { return !executeFunction(fn, [elem], contextStack); })
+                    .join("");
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'split-at': {
+            evaluate: function (_a) {
+                var pos = _a[0], seq = _a[1];
+                assertFiniteNumber(pos);
+                var intPos = toNonNegativeInteger(pos);
+                assertSeq(seq);
+                return [seq.slice(0, intPos), seq.slice(intPos)];
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'split-with': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertSeq(seq);
+                var seqIsArray = Array.isArray(seq);
+                var arr = seqIsArray ? seq : seq.split("");
+                var index = arr.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack); });
+                if (index === -1) {
+                    return [seq, seqIsArray ? [] : ""];
+                }
+                return [seq.slice(0, index), seq.slice(index)];
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+    };
+
+    var arrayNormalExpression = {
+        array: {
+            evaluate: function (params) { return params; },
+        },
+        range: {
+            evaluate: function (params) {
+                var first = params[0], second = params[1], third = params[2];
+                var from;
+                var to;
+                var step;
+                assertFiniteNumber(first);
+                if (params.length === 1) {
+                    from = 0;
+                    to = first;
+                    step = to >= 0 ? 1 : -1;
+                }
+                else if (params.length === 2) {
+                    assertFiniteNumber(second);
+                    from = first;
+                    to = second;
+                    step = to >= from ? 1 : -1;
+                }
+                else {
+                    assertFiniteNumber(second);
+                    assertFiniteNumber(third);
+                    from = first;
+                    to = second;
+                    step = third;
+                    if (to > from) {
+                        assertPositiveNumber(step);
+                    }
+                    else if (to < from) {
+                        assertNegativeNumber(step);
+                    }
+                    else {
+                        assertNumberNotZero(step);
+                    }
+                }
+                var result = [];
+                for (var i = from; step < 0 ? i > to : i < to; i += step) {
+                    result.push(i);
+                }
+                return result;
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 3 }, node); },
+        },
+        repeat: {
+            evaluate: function (_a) {
+                var count = _a[0], value = _a[1];
+                assertNonNegativeInteger(count);
+                var result = [];
+                for (var i = 0; i < count; i += 1) {
+                    result.push(value);
+                }
+                return result;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        flatten: {
+            evaluate: function (_a) {
+                var seq = _a[0];
+                if (!isArr(seq)) {
+                    return [];
+                }
+                return seq.flat(Number.POSITIVE_INFINITY);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        mapcat: {
+            evaluate: function (params, contextStack, helpers) {
+                params.slice(1).forEach(function (arr) {
+                    assertArr(arr);
+                });
+                var mapResult = evaluateMap(params, contextStack, helpers);
+                assertArr(mapResult);
+                return mapResult.flat(1);
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+    };
+
+    var mathNormalExpression = {
+        inc: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return first + 1;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        dec: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return first - 1;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        '+': {
+            evaluate: function (params) {
+                return params.reduce(function (result, param) {
+                    assertNumber(param);
+                    return result + param;
+                }, 0);
+            },
+        },
+        '*': {
+            evaluate: function (params) {
+                return params.reduce(function (result, param) {
+                    assertNumber(param);
+                    return result * param;
+                }, 1);
+            },
+        },
+        '/': {
+            evaluate: function (params) {
+                if (params.length === 0) {
+                    return 1;
+                }
+                var first = params[0], rest = params.slice(1);
+                assertNumber(first);
+                if (rest.length === 0) {
+                    assertNumber(first);
+                    return 1 / first;
+                }
+                return rest.reduce(function (result, param) {
+                    assertNumber(param);
+                    return result / param;
+                }, first);
+            },
+        },
+        '-': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                if (!first) {
+                    return 0;
+                }
+                assertNumber(first);
+                if (rest.length === 0) {
+                    return -first;
+                }
+                return rest.reduce(function (result, param) {
+                    assertNumber(param);
+                    return result - param;
+                }, first);
+            },
+        },
+        quot: {
+            evaluate: function (_a) {
+                var dividend = _a[0], divisor = _a[1];
+                assertNumber(dividend);
+                assertNumber(divisor);
+                var quotient = Math.trunc(dividend / divisor);
+                return quotient;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        mod: {
+            evaluate: function (_a) {
+                var dividend = _a[0], divisor = _a[1];
+                assertNumber(dividend);
+                assertNumber(divisor);
+                var quotient = Math.floor(dividend / divisor);
+                return dividend - divisor * quotient;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        rem: {
+            evaluate: function (_a) {
+                var dividend = _a[0], divisor = _a[1];
+                assertNumber(dividend);
+                assertNumber(divisor);
+                var quotient = Math.trunc(dividend / divisor);
+                return dividend - divisor * quotient;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        sqrt: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return Math.sqrt(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        cbrt: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return Math.cbrt(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        pow: {
+            evaluate: function (_a) {
+                var first = _a[0], second = _a[1];
+                assertNumber(first);
+                assertNumber(second);
+                return Math.pow(first, second);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        round: {
+            evaluate: function (params) {
+                var value = params[0], decimals = params[1];
+                assertNumber(value);
+                if (params.length === 1 || decimals === 0) {
+                    return Math.round(value);
+                }
+                assertNonNegativeInteger(decimals);
+                var factor = Math.pow(10, decimals);
+                return Math.round(value * factor) / factor;
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+        },
+        trunc: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return Math.trunc(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        floor: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return Math.floor(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        ceil: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return Math.ceil(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'rand!': {
+            evaluate: function (parameters) {
+                var number = parameters.length === 1 ? parameters[0] : 1;
+                assertNumber(number);
+                return Math.random() * number;
+            },
+            validate: function (node) { return assertLength({ min: 0, max: 1 }, node); },
+        },
+        'rand-int!': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertNumber(first);
+                return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        min: {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                assertNumber(first);
+                if (rest.length === 0) {
+                    return first;
+                }
+                return rest.reduce(function (min, value) {
+                    assertNumber(value);
+                    return Math.min(min, value);
+                }, first);
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        max: {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                assertNumber(first);
+                if (rest.length === 0) {
+                    return first;
+                }
+                return rest.reduce(function (min, value) {
+                    assertNumber(value);
+                    return Math.max(min, value);
+                }, first);
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        abs: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.abs(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        sign: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.sign(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'max-safe-integer': {
+            evaluate: function () {
+                return Number.MAX_SAFE_INTEGER;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        'min-safe-integer': {
+            evaluate: function () {
+                return Number.MIN_SAFE_INTEGER;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        'max-value': {
+            evaluate: function () {
+                return Number.MAX_VALUE;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        'min-value': {
+            evaluate: function () {
+                return Number.MIN_VALUE;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        epsilon: {
+            evaluate: function () {
+                return Number.EPSILON;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        infinity: {
+            evaluate: function () {
+                return Number.POSITIVE_INFINITY;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        '-infinity': {
+            evaluate: function () {
+                return Number.NEGATIVE_INFINITY;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        nan: {
+            evaluate: function () {
+                return Number.NaN;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        e: {
+            evaluate: function () {
+                return Math.E;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        pi: {
+            evaluate: function () {
+                return Math.PI;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        exp: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.exp(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        log: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.log(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        log2: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.log2(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        log10: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.log10(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        sin: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.sin(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        asin: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.asin(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        sinh: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.sinh(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        asinh: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.asinh(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        cos: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.cos(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        acos: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.acos(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        cosh: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.cosh(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        acosh: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.acosh(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        tan: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.tan(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        atan: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.atan(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        tanh: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.tanh(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        atanh: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Math.atanh(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+    };
+
+    var delimiterRegExp = /[[.]/;
+    function getPath(obj, path) {
+        var destructedPath = destructPath(path);
+        for (var _i = 0, destructedPath_1 = destructedPath; _i < destructedPath_1.length; _i++) {
+            var part = destructedPath_1[_i];
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                obj = toAny(obj[part]);
+            }
+            catch (_a) {
+                return null;
+            }
+        }
+        return obj;
+    }
+    function destructPath(path) {
+        if (!path) {
+            return [];
+        }
+        var match = delimiterRegExp.exec(path);
+        if (!match) {
+            return [path];
+        }
+        if (match.index > 0) {
+            return __spreadArray([path.substring(0, match.index)], destructPath(path.substring(match.index)));
+        }
+        if (path[0] === ".") {
+            if (path.length < 2) {
+                throw Error("Ill formed path: " + path);
+            }
+            return destructPath(path.substring(1));
+        }
+        var _a = parseBracketNotation(path), length = _a[0], value = _a[1];
+        if (path.length > length && path[length] !== "." && path[length] !== "[") {
+            throw Error("Ill formed path: " + path);
+        }
+        return __spreadArray([value], destructPath(path.substring(length)));
+    }
+    var singleQuoteBracketStringRegExp = /^\[\s*'(.*)'\s*\]/;
+    var doubleQuoteBracketStringRegExp = /^\[\s*"(.*)"\s*\]/;
+    var numberBracketStringRegExp = /^\[\s*(\d+)\s*\]/;
+    function parseBracketNotation(path) {
+        var stringMatch = singleQuoteBracketStringRegExp.exec(path) || doubleQuoteBracketStringRegExp.exec(path);
+        if (stringMatch) {
+            var length_1 = stringMatch[0].length;
+            var value = stringMatch[1];
+            return [length_1, value];
+        }
+        var numberMatch = numberBracketStringRegExp.exec(path);
+        if (numberMatch) {
+            var length_2 = numberMatch[0].length;
+            var value = Number(numberMatch[1]);
+            return [length_2, value];
+        }
+        throw Error("Ill formed path: " + path);
+    }
+
+    var version = "0.1.56";
+
+    var miscNormalExpression = {
+        'not=': {
+            evaluate: function (params) {
+                for (var i = 0; i < params.length - 1; i += 1) {
+                    for (var j = i + 1; j < params.length; j += 1) {
+                        if (params[i] === params[j]) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        '=': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                for (var _i = 0, rest_1 = rest; _i < rest_1.length; _i++) {
+                    var param = rest_1[_i];
+                    if (param !== first) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        'equal?': {
+            evaluate: function (_a) {
+                var a = _a[0], b = _a[1];
+                return deepEqual(asAny(a), asAny(b));
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        '>': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                var currentValue = first;
+                for (var _i = 0, rest_2 = rest; _i < rest_2.length; _i++) {
+                    var param = rest_2[_i];
+                    if (compare(currentValue, param) <= 0) {
+                        return false;
+                    }
+                    currentValue = param;
+                }
+                return true;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        '<': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                var currentValue = first;
+                for (var _i = 0, rest_3 = rest; _i < rest_3.length; _i++) {
+                    var param = rest_3[_i];
+                    if (compare(currentValue, param) >= 0) {
+                        return false;
+                    }
+                    currentValue = param;
+                }
+                return true;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        '>=': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                var currentValue = first;
+                for (var _i = 0, rest_4 = rest; _i < rest_4.length; _i++) {
+                    var param = rest_4[_i];
+                    if (compare(currentValue, param) < 0) {
+                        return false;
+                    }
+                    currentValue = param;
+                }
+                return true;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        '<=': {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                var currentValue = first;
+                for (var _i = 0, rest_5 = rest; _i < rest_5.length; _i++) {
+                    var param = rest_5[_i];
+                    if (compare(currentValue, param) > 0) {
+                        return false;
+                    }
+                    currentValue = param;
+                }
+                return true;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        'get-path': {
+            evaluate: function (_a) {
+                var first = _a[0], second = _a[1];
+                assertObjectOrArray(first);
+                assertString(second);
+                return getPath(first, second);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        not: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return !first;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'inst-ms': {
+            evaluate: function () {
+                return Date.now();
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+        'write!': {
+            evaluate: function (params) {
+                // eslint-disable-next-line no-console
+                console.log.apply(console, params);
+                if (params.length > 0) {
+                    return asAny(params[params.length - 1]);
+                }
+                return null;
+            },
+        },
+        'debug!': {
+            evaluate: function (params, contextStack) {
+                if (params.length === 0) {
+                    // eslint-disable-next-line no-console
+                    console.warn("*** LISPISH DEBUG ***\n" + contextstackToString(contextStack) + "\n");
+                    return null;
+                }
+                // eslint-disable-next-line no-console
+                console.warn("*** LISPISH DEBUG ***\n" + JSON.stringify(params[0], null, 2) + "\n");
+                return asAny(params[0]);
+            },
+            validate: function (node) { return assertLength({ max: 1 }, node); },
+        },
+        boolean: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                return !!value;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        compare: {
+            evaluate: function (_a) {
+                var a = _a[0], b = _a[1];
+                return compare(a, b);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        assert: {
+            evaluate: function (params) {
+                var value = params[0];
+                var message = params.length === 2 ? params[1] : "" + value;
+                assertString(message);
+                if (!value) {
+                    throw new AssertionError(message);
+                }
+                return asAny(value);
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+        },
+        'lispish-version': {
+            evaluate: function () {
+                return version;
+            },
+            validate: function (node) { return assertLength(0, node); },
+        },
+    };
+    function contextstackToString(contextStack) {
+        return __spreadArray([], contextStack).reverse().reduce(function (result, context, index) {
+            return result + "Context " + index + (index === 0 ? " - Import context" : index === 1 ? " - Global context" : "") + "\n" + contextToString(context) + "\n";
+        }, "");
+    }
+    function contextToString(context) {
+        if (Object.keys(context).length === 0) {
+            return "  <empty>\n";
+        }
+        var maxKeyLength = Math.max.apply(Math, Object.keys(context).map(function (key) { return key.length; }));
+        return Object.entries(context).reduce(function (result, entry) {
+            var key = ("" + entry[0]).padEnd(maxKeyLength + 2, " ");
+            return result + "  " + key + valueToString(entry[1]) + "\n";
+        }, "");
+    }
+    function valueToString(contextEntry) {
+        var value = contextEntry.value;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        var name = value.name;
+        if (isLispishFunction(value)) {
+            if (name) {
+                return "<" + value.type + " function " + name + ">";
+            }
+            else {
+                return "<" + value.type + " function \u03BB>";
+            }
+        }
+        return JSON.stringify(contextEntry.value);
+    }
+
+    var objectNormalExpression = {
+        object: {
+            evaluate: function (params) {
+                var result = {};
+                for (var i = 0; i < params.length; i += 2) {
+                    var key = params[i];
+                    var value = params[i + 1];
+                    assertString(key);
+                    result[key] = value;
+                }
+                return result;
+            },
+            validate: function (node) { return assertLengthEven(node); },
+        },
+        keys: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertObj(first);
+                return Object.keys(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        vals: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertObj(first);
+                return Object.values(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        entries: {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertObj(first);
+                return Object.entries(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        find: {
+            evaluate: function (_a) {
+                var obj = _a[0], key = _a[1];
+                assertObj(obj);
+                assertString(key);
+                if (collHasKey(obj, key)) {
+                    return [key, obj[key]];
+                }
+                return null;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        dissoc: {
+            evaluate: function (_a) {
+                var obj = _a[0], key = _a[1];
+                assertObj(obj);
+                assertString(key);
+                var result = toAny(obj[key]);
+                delete obj[key];
+                return result;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        merge: {
+            evaluate: function (_a) {
+                var first = _a[0], rest = _a.slice(1);
+                assertObj(first);
+                return rest.reduce(function (result, obj) {
+                    assertObj(obj);
+                    return __assign(__assign({}, result), obj);
+                }, __assign({}, first));
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        zipmap: {
+            evaluate: function (_a) {
+                var keys = _a[0], values = _a[1];
+                assertStringArray(keys);
+                assertArr(values);
+                var length = Math.min(keys.length, values.length);
+                var result = {};
+                for (var i = 0; i < length; i += 1) {
+                    var key = asNotUndefined(keys[i]);
+                    result[key] = toAny(values[i]);
+                }
+                return result;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        'select-keys': {
+            evaluate: function (_a) {
+                var obj = _a[0], keys = _a[1];
+                assertStringArray(keys);
+                assertObj(obj);
+                return keys.reduce(function (result, key) {
+                    if (collHasKey(obj, key)) {
+                        result[key] = toAny(obj[key]);
+                    }
+                    return result;
+                }, {});
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+    };
+
+    var predicatesNormalExpression = {
+        'function?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return isLispishFunction(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'string?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return typeof first === "string";
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'number?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return typeof first === "number";
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'integer?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return typeof first === "number" && Number.isInteger(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'boolean?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return typeof first === "boolean";
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'nil?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return first === null || first === undefined;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'zero?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertFiniteNumber(first);
+                return first === 0;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'pos?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertFiniteNumber(first);
+                return first > 0;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'neg?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertFiniteNumber(first);
+                return first < 0;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'even?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertFiniteNumber(first);
+                return first % 2 === 0;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'odd?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                assertFiniteNumber(first);
+                return Number.isInteger(first) && first % 2 !== 0;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'array?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return isArr(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'coll?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return isColl(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'seq?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return isSeq(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'object?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return isObj(first);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'regexp?': {
+            evaluate: function (_a) {
+                var first = _a[0];
+                return first !== null && !Array.isArray(first) && typeof first === "object" && first instanceof RegExp;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'finite?': {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Number.isFinite(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'nan?': {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return Number.isNaN(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'positive-infinity?': {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return value === Number.POSITIVE_INFINITY;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'negative-infinity?': {
+            evaluate: function (_a) {
+                var value = _a[0];
+                assertNumber(value);
+                return value === Number.NEGATIVE_INFINITY;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'true?': {
+            evaluate: function (_a) {
+                var value = _a[0];
+                return value === true;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'false?': {
+            evaluate: function (_a) {
+                var value = _a[0];
+                return value === false;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+    };
+
+    var regexpNormalExpression = {
+        regexp: {
+            evaluate: function (params) {
+                var first = params[0], second = params[1];
+                assertString(first);
+                if (params.length === 1) {
+                    return new RegExp(first);
+                }
+                assertString(second);
+                return new RegExp(first, second);
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+        },
+        match: {
+            evaluate: function (_a) {
+                var first = _a[0], second = _a[1];
+                assertRegExp(first);
+                assertString(second);
+                var match = first.exec(second);
+                if (match) {
+                    return __spreadArray([], match);
+                }
+                return null;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        replace: {
+            evaluate: function (_a) {
+                var string = _a[0], regexp = _a[1], value = _a[2];
+                assertString(string);
+                assertRegExp(regexp);
+                assertString(value);
+                return string.replace(regexp, value);
+            },
+            validate: function (node) { return assertLength(3, node); },
+        },
+    };
+
+    var stringNormalExpression = {
+        subs: {
+            evaluate: function (_a) {
+                var first = _a[0], second = _a[1], third = _a[2];
+                assertString(first);
+                assertNonNegativeInteger(second);
+                if (third === undefined) {
+                    return first.substring(second);
+                }
+                assertNumberGte(third, second);
+                return first.substring(second, third);
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        'string-repeat': {
+            evaluate: function (_a) {
+                var string = _a[0], count = _a[1];
+                assertString(string);
+                assertNonNegativeInteger(count);
+                return string.repeat(count);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        str: {
+            evaluate: function (params) {
+                return params.reduce(function (result, param) {
+                    var paramStr = param === undefined || param === null
+                        ? ""
+                        : isObj(param)
+                            ? JSON.stringify(param)
+                            : Array.isArray(param)
+                                ? JSON.stringify(param)
+                                : "" + param;
+                    return result + paramStr;
+                }, "");
+            },
+        },
+        'string-to-number': {
+            evaluate: function (_a) {
+                var str = _a[0];
+                assertString(str);
+                var number = Number(str);
+                if (Number.isNaN(number)) {
+                    throw Error("Could not convert '" + str + "' to a number");
+                }
+                return number;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'number-to-string': {
+            evaluate: function (params) {
+                var number = params[0], base = params[1];
+                assertFiniteNumber(number);
+                if (params.length === 1) {
+                    return "" + number;
+                }
+                else {
+                    assertFiniteNumber(base);
+                    if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
+                        throw Error("Expected \"number-to-string\" base argument to be 2, 8, 10 or 16, got: " + base);
+                    }
+                    if (base === 10) {
+                        return "" + number;
+                    }
+                    assertNonNegativeInteger(number);
+                    return Number(number).toString(base);
+                }
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+        },
+        'from-char-code': {
+            evaluate: function (_a) {
+                var number = _a[0];
+                assertFiniteNumber(number);
+                var int = toNonNegativeInteger(number);
+                return String.fromCodePoint(int);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'to-char-code': {
+            evaluate: function (_a) {
+                var str = _a[0];
+                assertNonEmptyString(str);
+                return asNotUndefined(str.codePointAt(0));
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'lower-case': {
+            evaluate: function (_a) {
+                var str = _a[0];
+                assertString(str);
+                return str.toLowerCase();
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'upper-case': {
+            evaluate: function (_a) {
+                var str = _a[0];
+                assertString(str);
+                return str.toUpperCase();
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        trim: {
+            evaluate: function (_a) {
+                var str = _a[0];
+                assertString(str);
+                return str.trim();
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'trim-left': {
+            evaluate: function (_a) {
+                var str = _a[0];
+                assertString(str);
+                return str.replace(/^\s+/, "");
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'trim-right': {
+            evaluate: function (_a) {
+                var str = _a[0];
+                assertString(str);
+                return str.replace(/\s+$/, "");
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        join: {
+            evaluate: function (_a) {
+                var stringList = _a[0], delimiter = _a[1];
+                assertArr(stringList);
+                stringList.forEach(function (str) { return assertString(str); });
+                assertString(delimiter);
+                return stringList.join(delimiter);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
+        split: {
+            evaluate: function (_a) {
+                var str = _a[0], delimiter = _a[1], limit = _a[2];
+                assertString(str);
+                assertStringOrRegExp(delimiter);
+                if (limit !== undefined) {
+                    assertNonNegativeInteger(limit);
+                }
+                return str.split(delimiter, limit);
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        'pad-left': {
+            evaluate: function (_a) {
+                var str = _a[0], length = _a[1], padString = _a[2];
+                assertString(str);
+                assertInteger(length);
+                if (padString !== undefined) {
+                    assertString(padString);
+                }
+                return str.padStart(length, padString);
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        'pad-right': {
+            evaluate: function (_a) {
+                var str = _a[0], length = _a[1], padString = _a[2];
+                assertString(str);
+                assertInteger(length);
+                if (padString !== undefined) {
+                    assertString(padString);
+                }
+                return str.padEnd(length, padString);
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        template: {
+            evaluate: function (_a) {
+                var templateString = _a[0], placeholders = _a.slice(1);
+                assertString(templateString);
+                var templateStrings = templateString.split("||||");
+                if (templateStrings.length === 1) {
+                    assertStringArray(placeholders);
+                    return applyPlaceholders(templateStrings[0], placeholders);
+                }
+                else if (templateStrings.length === 2) {
+                    var firstPlaceholder = placeholders[0];
+                    assertNonNegativeInteger(firstPlaceholder);
+                    var stringPlaceholders = __spreadArray(["" + firstPlaceholder], placeholders.slice(1));
+                    if (firstPlaceholder === 1) {
+                        return applyPlaceholders(templateStrings[0], stringPlaceholders);
+                    }
+                    else {
+                        return applyPlaceholders(templateStrings[1], stringPlaceholders);
+                    }
+                }
+                else {
+                    throw Error("Invalid template string, only one \"||||\" separator allowed");
+                }
+            },
+            validate: function (node) { return assertLength({ min: 1, max: 10 }, node); },
+        },
+    };
+    var doubleDollarRegexp = /\$\$/g;
+    function applyPlaceholders(templateString, placeholders) {
+        for (var i = 0; i < 9; i += 1) {
+            var re = new RegExp("(?<=^|[^$]|\\$\\$)\\$" + (i + 1), "g");
+            if (re.test(templateString)) {
+                var placeholder = placeholders[i];
+                assertString(placeholder);
+                templateString = templateString.replace(re, placeholder);
+            }
+        }
+        return templateString.replace(doubleDollarRegexp, "$");
+    }
+
+    var functionalNormalExpression = {
+        apply: {
+            evaluate: function (_a, contextStack, _b) {
+                var func = _a[0], params = _a.slice(1);
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(func);
+                var paramsLength = params.length;
+                var last = params[paramsLength - 1];
+                assertArr(last);
+                var applyArray = __spreadArray(__spreadArray([], params.slice(0, -1), true), last);
+                return executeFunction(func, applyArray, contextStack);
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
+        identity: {
+            evaluate: function (_a) {
+                var value = _a[0];
+                return toAny(value);
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        partial: {
+            evaluate: function (_a) {
+                var _b;
+                var fn = _a[0], params = _a.slice(1);
+                return _b = {},
+                    _b[functionSymbol] = true,
+                    _b.type = "partial",
+                    _b.fn = toAny(fn),
+                    _b.params = params,
+                    _b;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        comp: {
+            evaluate: function (fns) {
+                var _a;
+                if (fns.length > 1) {
+                    var last = fns[fns.length - 1];
+                    if (isArr(last)) {
+                        fns = __spreadArray(__spreadArray([], fns.slice(0, -1), true), last);
+                    }
+                }
+                return _a = {},
+                    _a[functionSymbol] = true,
+                    _a.type = "comp",
+                    _a.fns = fns,
+                    _a;
+            },
+        },
+        constantly: {
+            evaluate: function (_a) {
+                var _b;
+                var value = _a[0];
+                return _b = {},
+                    _b[functionSymbol] = true,
+                    _b.type = "constantly",
+                    _b.value = toAny(value),
+                    _b;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        juxt: {
+            evaluate: function (fns) {
+                var _a;
+                return _a = {},
+                    _a[functionSymbol] = true,
+                    _a.type = "juxt",
+                    _a.fns = fns,
+                    _a;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        complement: {
+            evaluate: function (_a) {
+                var _b;
+                var fn = _a[0];
+                return _b = {},
+                    _b[functionSymbol] = true,
+                    _b.type = "complement",
+                    _b.fn = toAny(fn),
+                    _b;
+            },
+            validate: function (node) { return assertLength(1, node); },
+        },
+        'every-pred': {
+            evaluate: function (fns) {
+                var _a;
+                return _a = {},
+                    _a[functionSymbol] = true,
+                    _a.type = "every-pred",
+                    _a.fns = fns,
+                    _a;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+        'some-pred': {
+            evaluate: function (fns) {
+                var _a;
+                return _a = {},
+                    _a[functionSymbol] = true,
+                    _a.type = "some-pred",
+                    _a.fns = fns,
+                    _a;
+            },
+            validate: function (node) { return assertLength({ min: 1 }, node); },
+        },
+    };
+
+    var normalExpressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
+
+    var specialExpressions = {
+        def: defSpecialExpression,
+        defs: defsSpecialExpression,
+        and: andSpecialExpression,
+        cond: condSpecialExpression,
+        defn: defnSpecialExpression,
+        defns: defnsSpecialExpression,
+        if: ifSpecialExpression,
+        'if-not': ifNotSpecialExpression,
+        'if-let': ifLetSpecialExpression,
+        'when-let': whenLetSpecialExpression,
+        'when-not': whenNotSpecialExpression,
+        'when-first': whenFirstSpecialExpression,
+        fn: fnSpecialExpression,
+        let: letSpecialExpression,
+        or: orSpecialExpression,
+        do: doSpecialExpression,
+        throw: throwSpecialExpression,
+        try: trySpecialExpression,
+        when: whenSpecialExpression,
+        recur: recurSpecialExpression,
+        loop: loopSpecialExpression,
+        'time!': timeSpecialExpression,
+    };
+    Object.keys(specialExpressions).forEach(function (key) {
+        /* istanbul ignore next */
+        if (normalExpressions[key]) {
+            throw Error("Expression " + key + " is defined as both a normal expression and a special expression");
+        }
+    });
+    var builtin = {
+        normalExpressions: normalExpressions,
+        specialExpressions: specialExpressions,
+    };
+    var normalExpressionKeys = Object.keys(normalExpressions);
+    var specialExpressionKeys = Object.keys(specialExpressions);
+
+    var functionExecutors = {
+        'user-defined': function (fn, params, contextStack, _a) {
+            var _b, _c, _d;
+            var evaluateAstNode = _a.evaluateAstNode;
+            var args = fn.arguments;
+            var nbrOfMandatoryArgs = args.mandatoryArguments.length;
+            var nbrOfOptionalArgs = args.optionalArguments.length;
+            var maxNbrOfParameters = args.restArgument ? null : nbrOfMandatoryArgs + nbrOfOptionalArgs;
+            for (;;) {
+                var newContext = __assign({}, fn.functionContext);
+                if (params.length < args.mandatoryArguments.length) {
+                    throw Error("Function " + ((_b = fn.name) !== null && _b !== void 0 ? _b : "(fn)") + " requires at least " + args.mandatoryArguments.length + " arguments. Got " + params.length);
+                }
+                if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
+                    throw Error("Function \"" + ((_c = fn.name) !== null && _c !== void 0 ? _c : "\u03BB") + "\" requires at most " + maxNbrOfParameters + " arguments. Got " + params.length);
+                }
+                var length_1 = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length);
+                var rest = [];
+                for (var i = 0; i < length_1; i += 1) {
+                    if (i < nbrOfMandatoryArgs) {
+                        var param = toAny(params[i]);
+                        var key = asString(args.mandatoryArguments[i]);
+                        newContext[key] = { value: param };
+                    }
+                    else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
+                        var arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs]);
+                        var param = i < params.length ? toAny(params[i]) : (_d = arg.defaultValue) !== null && _d !== void 0 ? _d : null;
+                        var key = arg.name;
+                        newContext[key] = { value: param };
+                    }
+                    else {
+                        rest.push(toAny(params[i]));
+                    }
+                }
+                if (args.restArgument) {
+                    newContext[args.restArgument] = { value: rest };
+                }
+                try {
+                    var result = null;
+                    for (var _i = 0, _e = fn.body; _i < _e.length; _i++) {
+                        var node = _e[_i];
+                        result = evaluateAstNode(node, __spreadArray([newContext], contextStack, true));
+                    }
+                    return result;
+                }
+                catch (error) {
+                    if (error instanceof RecurSignal) {
+                        params = error.params;
+                        continue;
+                    }
+                    throw error;
+                }
+            }
+        },
+        partial: function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            return executeFunction(fn.fn, __spreadArray(__spreadArray([], fn.params, true), params), contextStack);
+        },
+        comp: function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            var fns = fn.fns;
+            if (fns.length === 0) {
+                if (params.length !== 1) {
+                    throw Error("(comp) expects one argument, got " + params.length);
+                }
+                return asAny(params[0]);
+            }
+            return asAny(fns.reduceRight(function (result, fn) {
+                return [executeFunction(toAny(fn), result, contextStack)];
+            }, params)[0]);
+        },
+        constantly: function (fn) {
+            return fn.value;
+        },
+        juxt: function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            return fn.fns.map(function (fn) { return executeFunction(toAny(fn), params, contextStack); });
+        },
+        complement: function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            return !executeFunction(fn.fn, params, contextStack);
+        },
+        'every-pred': function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            for (var _i = 0, _b = fn.fns; _i < _b.length; _i++) {
+                var f = _b[_i];
+                for (var _c = 0, params_1 = params; _c < params_1.length; _c++) {
+                    var param = params_1[_c];
+                    var result = executeFunction(toAny(f), [param], contextStack);
+                    if (!result) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        },
+        'some-pred': function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            for (var _i = 0, _b = fn.fns; _i < _b.length; _i++) {
+                var f = _b[_i];
+                for (var _c = 0, params_2 = params; _c < params_2.length; _c++) {
+                    var param = params_2[_c];
+                    var result = executeFunction(toAny(f), [param], contextStack);
+                    if (result) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
+        builtin: function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            var normalExpression = asNotUndefined(normalExpressions[fn.name]);
+            return normalExpression.evaluate(params, contextStack, { executeFunction: executeFunction });
+        },
+    };
+
+    function evaluate(ast, globalScope, importScope) {
+        // First element is the global context. E.g. def will assign to this if no local variable is available
+        // Second element is the context sent in from outside (this should never be mutated)
+        var contextStack = [globalScope, importScope];
+        var result;
+        for (var _i = 0, _a = ast.body; _i < _a.length; _i++) {
+            var node = _a[_i];
+            result = evaluateAstNode(node, contextStack);
+        }
+        return result;
+    }
+    var evaluateAstNode = function (node, contextStack) {
+        switch (node.type) {
+            case "Number":
+                return evaluateNumber(node);
+            case "String":
+                return evaluateString(node);
+            case "Name":
+                return evaluateName(node, contextStack);
+            case "ReservedName":
+                return evaluateReservedName(node);
+            case "NormalExpression":
+                return evaluateNormalExpression(node, contextStack);
+            case "SpecialExpression":
+                return evaluateSpecialExpression(node, contextStack);
+            default:
+                throw Error(node.type + "-node cannot be evaluated");
+        }
+    };
+    function evaluateNumber(node) {
+        return node.value;
+    }
+    function evaluateString(node) {
+        return node.value;
+    }
+    function evaluateReservedName(node) {
+        return asNotUndefined(reservedNamesRecord[node.value]).value;
+    }
+    function evaluateName(_a, contextStack) {
+        var _b;
+        var value = _a.value;
+        for (var _i = 0, contextStack_1 = contextStack; _i < contextStack_1.length; _i++) {
+            var context = contextStack_1[_i];
+            var variable = context[value];
+            if (variable) {
+                return variable.value;
+            }
+        }
+        if (builtin.normalExpressions[value]) {
+            var builtinFunction = (_b = {},
+                _b[functionSymbol] = true,
+                _b.type = "builtin",
+                _b.name = value,
+                _b);
+            return builtinFunction;
+        }
+        throw Error("Undefined identifier " + value);
+    }
+    function evaluateNormalExpression(node, contextStack) {
+        var _a;
+        var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
+        if (isNormalExpressionNodeName(node)) {
+            for (var _i = 0, contextStack_2 = contextStack; _i < contextStack_2.length; _i++) {
+                var context = contextStack_2[_i];
+                var fn = (_a = context[node.name]) === null || _a === void 0 ? void 0 : _a.value;
+                if (fn === undefined) {
+                    continue;
+                }
+                try {
+                    return executeFunction(fn, params, contextStack);
+                }
+                catch (_b) {
+                    continue;
+                }
+            }
+            return evaluateBuiltinNormalExpression(node, params, contextStack);
+        }
+        else {
+            var fn = evaluateAstNode(node.expression, contextStack);
+            return executeFunction(fn, params, contextStack);
+        }
+    }
+    var executeFunction = function (fn, params, contextStack) {
+        if (isLispishFunction(fn)) {
+            return functionExecutors[fn.type](fn, params, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
+        }
+        if (Array.isArray(fn)) {
+            return evaluateArrayAsFunction(fn, params);
+        }
+        if (isObj(fn)) {
+            return evalueateObjectAsFunction(fn, params);
+        }
+        if (isString(fn)) {
+            return evaluateStringAsFunction(fn, params);
+        }
+        if (isNumber(fn)) {
+            return evaluateNumberAsFunction(fn, params);
+        }
+        throw Error("Expected function, got " + fn);
+    };
+    function evaluateBuiltinNormalExpression(node, params, contextStack) {
+        var normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate;
+        return normalExpressionEvaluator(params, contextStack, { executeFunction: executeFunction });
+    }
+    function evaluateSpecialExpression(node, contextStack) {
+        var specialExpressionEvaluator = asNotUndefined(builtin.specialExpressions[node.name]).evaluate;
+        return specialExpressionEvaluator(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
+    }
+    function evalueateObjectAsFunction(fn, params) {
+        if (params.length !== 1) {
+            throw Error("Object as function requires one string parameter");
+        }
+        var key = params[0];
+        assertString(key);
+        return toAny(fn[key]);
+    }
+    function evaluateArrayAsFunction(fn, params) {
+        if (params.length !== 1) {
+            throw Error("Array as function requires one non negative integer parameter");
+        }
+        var index = params[0];
+        assertNonNegativeInteger(index);
+        return toAny(fn[index]);
+    }
+    function evaluateStringAsFunction(fn, params) {
+        if (params.length !== 1) {
+            throw Error("String as function requires one Obj parameter");
+        }
+        var param = toAny(params[0]);
+        if (isObj(param)) {
+            return toAny(param[fn]);
+        }
+        if (isInteger(param)) {
+            return toAny(fn[param]);
+        }
+        throw Error("string as function expects Obj or integer parameter, got " + param);
+    }
+    function evaluateNumberAsFunction(fn, params) {
+        assertInteger(fn);
+        if (params.length !== 1) {
+            throw Error("String as function requires one Arr parameter");
+        }
+        var param = params[0];
+        assertSeq(param);
+        return toAny(param[fn]);
+    }
+
+    var parseNumber = function (tokens, position) {
+        var token = asNotUndefined(tokens[position]);
+        return [position + 1, { type: "Number", value: Number(token.value) }];
+    };
+    var parseString = function (tokens, position) {
+        var token = asNotUndefined(tokens[position]);
+        return [position + 1, { type: "String", value: token.value }];
+    };
+    var parseName = function (tokens, position) {
+        var token = asNotUndefined(tokens[position]);
+        return [position + 1, { type: "Name", value: token.value }];
+    };
+    var parseReservedName = function (tokens, position) {
+        var token = asNotUndefined(tokens[position]);
+        return [position + 1, { type: "ReservedName", value: token.value }];
+    };
+    var parseTokens = function (tokens, position) {
+        var _a;
+        var token = asNotUndefined(tokens[position]);
+        var astNodes = [];
+        var astNode;
+        while (!(token.type === "paren" && (token.value === ")" || token.value === "]"))) {
+            _a = parseToken(tokens, position), position = _a[0], astNode = _a[1];
+            astNodes.push(astNode);
+            token = asNotUndefined(tokens[position]);
+        }
+        return [position, astNodes];
+    };
+    var parseExpression = function (tokens, position) {
+        position += 1; // Skip parenthesis
+        var token = asNotUndefined(tokens[position]);
+        if (token.type === "name" && builtin.specialExpressions[token.value]) {
+            return parseSpecialExpression(tokens, position);
+        }
+        return parseNormalExpression(tokens, position);
+    };
+    var parseArrayLitteral = function (tokens, position) {
+        var _a;
+        position = position + 1;
+        var token = asNotUndefined(tokens[position]);
+        var params = [];
+        var param;
+        while (!(token.type === "paren" && token.value === "]")) {
+            _a = parseToken(tokens, position), position = _a[0], param = _a[1];
+            params.push(param);
+            token = asNotUndefined(tokens[position]);
+        }
+        position = position + 1;
+        var node = {
+            type: "NormalExpression",
+            name: "array",
+            params: params,
+        };
+        return [position, node];
+    };
+    var parseObjectLitteral = function (tokens, position) {
+        var _a;
+        position = position + 1;
+        var token = asNotUndefined(tokens[position]);
+        var params = [];
+        var param;
+        while (!(token.type === "paren" && token.value === "}")) {
+            _a = parseToken(tokens, position), position = _a[0], param = _a[1];
+            params.push(param);
+            token = asNotUndefined(tokens[position]);
+        }
+        position = position + 1;
+        var node = {
+            type: "NormalExpression",
+            name: "object",
+            params: params,
+        };
+        assertLengthEven(node);
+        return [position, node];
+    };
+    var parseRegexpShorthand = function (tokens, position) {
+        var token = asNotUndefined(tokens[position]);
+        var stringNode = {
+            type: "String",
+            value: token.value,
+        };
+        var node = {
+            type: "NormalExpression",
+            name: "regexp",
+            params: [stringNode],
+        };
+        return [position + 1, node];
+    };
+    var placeholderRegexp = /^%([1-9][0-9]?$)/;
+    var parseFnShorthand = function (tokens, position) {
+        position += 2;
+        var _a = parseNormalExpression(tokens, position), newPosition = _a[0], normalExpressionNode = _a[1];
+        var arity = 0;
+        for (var pos = position + 1; pos < newPosition - 1; pos += 1) {
+            var token = asNotUndefined(tokens[pos]);
+            if (token.type === "name") {
+                var match = placeholderRegexp.exec(token.value);
+                if (match) {
+                    arity = Math.max(arity, Number(match[1]));
+                    if (arity > 20) {
+                        throw Error("Can't specify more than 20 arguments");
+                    }
+                }
+            }
+            if (token.type === "fnShorthand") {
+                throw Error("Nested shortcut functions are not allowed");
+            }
+        }
+        var mandatoryArguments = [];
+        for (var i = 1; i <= arity; i += 1) {
+            mandatoryArguments.push("%" + i);
+        }
+        var args = {
+            bindings: [],
+            mandatoryArguments: mandatoryArguments,
+            optionalArguments: [],
+        };
+        var node = {
+            type: "SpecialExpression",
+            name: "fn",
+            params: [],
+            arguments: args,
+            body: [normalExpressionNode],
+        };
+        return [newPosition, node];
+    };
+    var parseArgument = function (tokens, position) {
+        var token = asNotUndefined(tokens[position]);
+        if (token.type === "name") {
+            return [position + 1, { type: "Argument", name: token.value }];
+        }
+        else if (token.type === "paren" && token.value === "(") {
+            position += 1;
+            token = asNotUndefined(tokens[position]);
+            if (token.type !== "name") {
+                throw new UnexpectedTokenError("name", token);
+            }
+            var name_1 = token.value;
+            position += 1;
+            var _a = parseToken(tokens, position), newPosition = _a[0], defaultValue = _a[1];
+            token = asNotUndefined(tokens[newPosition]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            return [newPosition + 1, { type: "Argument", name: name_1, defaultValue: defaultValue }];
+        }
+        else if (token.type === "modifier") {
+            var value = token.value;
+            return [position + 1, { type: "Modifier", value: value }];
+        }
+        else {
+            throw new UnexpectedTokenError("\"(\", name or modifier", token);
+        }
+    };
+    var parseBindings = function (tokens, position) {
+        var _a;
+        var token = asNotUndefined(tokens[position]);
+        if (!(token.type === "paren" && token.value === "[")) {
+            throw new UnexpectedTokenError("[", token);
+        }
+        position += 1;
+        token = asNotUndefined(tokens[position]);
+        var bindings = [];
+        var binding;
+        while (!(token.type === "paren" && token.value === "]")) {
+            _a = parseBinding(tokens, position), position = _a[0], binding = _a[1];
+            bindings.push(binding);
+            token = asNotUndefined(tokens[position]);
+        }
+        position += 1;
+        return [position, bindings];
+    };
+    function parseBinding(tokens, position) {
+        var _a;
+        var token = asNotUndefined(tokens[position]);
+        if (token.type !== "name") {
+            throw Error("Expected name node in binding, got " + token.type + " value=" + token.value);
+        }
+        var name = token.value;
+        position += 1;
+        token = asNotUndefined(tokens[position]);
+        var value;
+        _a = parseToken(tokens, position), position = _a[0], value = _a[1];
+        var node = {
+            type: "Binding",
+            name: name,
+            value: value,
+        };
+        return [position, node];
+    }
+    var parseNormalExpression = function (tokens, position) {
+        var _a;
+        var _b;
+        //  let fnNode: AstNode
+        var _c = parseToken(tokens, position), newPosition = _c[0], fnNode = _c[1];
+        var params;
+        _a = parseTokens(tokens, newPosition), position = _a[0], params = _a[1];
+        position += 1;
+        if (isExpressionNode(fnNode)) {
+            var node_1 = {
+                type: "NormalExpression",
+                expression: fnNode,
+                params: params,
+            };
+            return [position, node_1];
+        }
+        assertNameNode(fnNode);
+        var node = {
+            type: "NormalExpression",
+            name: fnNode.value,
+            params: params,
+        };
+        var builtinExpression = builtin.normalExpressions[node.name];
+        if (builtinExpression) {
+            (_b = builtinExpression.validate) === null || _b === void 0 ? void 0 : _b.call(builtinExpression, node);
+        }
+        return [position, node];
+    };
+    var parseSpecialExpression = function (tokens, position) {
+        var expressionName = asNotUndefined(tokens[position]).value;
+        position += 1;
+        var _a = asNotUndefined(builtin.specialExpressions[expressionName]), parse = _a.parse, validate = _a.validate;
+        var _b = parse(tokens, position, {
+            parseExpression: parseExpression,
+            parseTokens: parseTokens,
+            parseToken: parseToken,
+            parseBindings: parseBindings,
+            parseArgument: parseArgument,
+        }), positionAfterParse = _b[0], node = _b[1];
+        validate === null || validate === void 0 ? void 0 : validate(node);
+        return [positionAfterParse, node];
+    };
+    var parseToken = function (tokens, position) {
+        var token = asNotUndefined(tokens[position]);
+        var nodeDescriptor = undefined;
+        switch (token.type) {
+            case "number":
+                nodeDescriptor = parseNumber(tokens, position);
+                break;
+            case "string":
+                nodeDescriptor = parseString(tokens, position);
+                break;
+            case "name":
+                nodeDescriptor = parseName(tokens, position);
+                break;
+            case "reservedName":
+                nodeDescriptor = parseReservedName(tokens, position);
+                break;
+            case "paren":
+                if (token.value === "(") {
+                    nodeDescriptor = parseExpression(tokens, position);
+                }
+                else if (token.value === "[") {
+                    nodeDescriptor = parseArrayLitteral(tokens, position);
+                }
+                else if (token.value === "{") {
+                    nodeDescriptor = parseObjectLitteral(tokens, position);
+                }
+                break;
+            case "regexpShorthand":
+                nodeDescriptor = parseRegexpShorthand(tokens, position);
+                break;
+            case "fnShorthand":
+                nodeDescriptor = parseFnShorthand(tokens, position);
+                break;
+        }
+        if (!nodeDescriptor) {
+            throw SyntaxError("Unrecognized token: " + token.type + " value=" + token.value);
+        }
+        return nodeDescriptor;
+    };
+
+    function parse(tokens) {
+        var _a;
+        var ast = {
+            type: "Program",
+            body: [],
+        };
+        var position = 0;
+        var node;
+        while (position < tokens.length) {
+            _a = parseToken(tokens, position), position = _a[0], node = _a[1];
+            ast.body.push(node);
+        }
+        return ast;
+    }
+
+    // A name (function or variable) can contain a lot of different characters
+    var nameRegExp = /[@%0-9a-zA-Z_^?=!$%<>.+*/-]/;
+    var whitespaceRegExp = /\s|,/;
+    var skipWhiteSpace = function (input, current) { var _a; return whitespaceRegExp.test((_a = input[current]) !== null && _a !== void 0 ? _a : "") ? [1, undefined] : [0, undefined]; };
+    var skipComment = function (input, current) {
+        if (input[current] === ";") {
+            var length_1 = 1;
+            while (input[current + length_1] !== "\n" && current + length_1 < input.length) {
+                length_1 += 1;
+            }
+            if (input[current + length_1] === "\n" && current + length_1 < input.length) {
+                length_1 += 1;
+            }
+            return [length_1, undefined];
+        }
+        return [0, undefined];
+    };
+    var tokenizeLeftParen = function (input, position) {
+        return tokenizeCharacter("paren", "(", input, position);
+    };
+    var tokenizeRightParen = function (input, position) {
+        return tokenizeCharacter("paren", ")", input, position);
+    };
+    var tokenizeLeftBracket = function (input, position) {
+        return tokenizeCharacter("paren", "[", input, position);
+    };
+    var tokenizeRightBracket = function (input, position) {
+        return tokenizeCharacter("paren", "]", input, position);
+    };
+    var tokenizeLeftCurly = function (input, position) {
+        return tokenizeCharacter("paren", "{", input, position);
+    };
+    var tokenizeRightCurly = function (input, position) {
+        return tokenizeCharacter("paren", "}", input, position);
+    };
+    var tokenizeString = function (input, position) {
+        if (input[position] !== "\"") {
+            return [0, undefined];
+        }
+        var value = "";
+        var length = 1;
+        var char = input[position + length];
+        var escape = false;
+        while (char !== "\"" || escape) {
+            if (char === undefined) {
+                throw new SyntaxError("Unclosed string at position " + position);
+            }
+            length += 1;
+            if (escape) {
+                escape = false;
+                if (char === "\"" || char === "\\") {
+                    value += char;
+                }
+                else {
+                    value += "\\";
+                    value += char;
+                }
+            }
+            else {
+                if (char === "\\") {
+                    escape = true;
+                }
+                else {
+                    value += char;
+                }
+            }
+            char = input[position + length];
+        }
+        return [length + 1, { type: "string", value: value }];
+    };
+    var tokenizeRegexpShorthand = function (input, position) {
+        if (input[position] !== "#") {
+            return [0, undefined];
+        }
+        var _a = tokenizeString(input, position + 1), length = _a[0], token = _a[1];
+        if (!token) {
+            return [0, undefined];
+        }
+        return [
+            length + 1,
+            {
+                type: "regexpShorthand",
+                value: token.value,
+            },
+        ];
+    };
+    var tokenizeFnShorthand = function (input, position) {
+        if (input.slice(position, position + 2) !== "#(") {
+            return [0, undefined];
+        }
+        return [
+            1,
+            {
+                type: "fnShorthand",
+                value: "#",
+            },
+        ];
+    };
+    var endOfNumberRegExp = /\s|[)\]},]/;
+    var decimalNumberRegExp = /[0-9]/;
+    var octalNumberRegExp = /[0-7]/;
+    var hexNumberRegExp = /[0-9a-fA-F]/;
+    var binaryNumberRegExp = /[0-1]/;
+    var firstCharRegExp = /[0-9.-]/;
+    var tokenizeNumber = function (input, position) {
+        var type = "decimal";
+        var firstChar = input[position];
+        if (firstChar === undefined) {
+            return [0, undefined];
+        }
+        var hasDecimals = firstChar === ".";
+        if (!firstCharRegExp.test(firstChar)) {
+            return [0, undefined];
+        }
+        var i;
+        for (i = position + 1; i < input.length; i += 1) {
+            var char = asNotUndefined(input[i]);
+            if (endOfNumberRegExp.test(char)) {
+                break;
+            }
+            if (i === position + 1 && firstChar === "0") {
+                if (char === "b" || char === "B") {
+                    type = "binary";
+                    continue;
+                }
+                if (char === "o" || char === "O") {
+                    type = "octal";
+                    continue;
+                }
+                if (char === "x" || char === "X") {
+                    type = "hex";
+                    continue;
+                }
+            }
+            if (type === "decimal" && hasDecimals) {
+                if (!decimalNumberRegExp.test(char)) {
+                    return [0, undefined];
+                }
+            }
+            else if (type === "binary") {
+                if (!binaryNumberRegExp.test(char)) {
+                    return [0, undefined];
+                }
+            }
+            else if (type === "octal") {
+                if (!octalNumberRegExp.test(char)) {
+                    return [0, undefined];
+                }
+            }
+            else if (type === "hex") {
+                if (!hexNumberRegExp.test(char)) {
+                    return [0, undefined];
+                }
+            }
+            else {
+                if (char === ".") {
+                    hasDecimals = true;
+                    continue;
+                }
+                if (!decimalNumberRegExp.test(char)) {
+                    return [0, undefined];
+                }
+            }
+        }
+        var length = i - position;
+        var value = input.substring(position, i);
+        if ((type !== "decimal" && length <= 2) || value === "." || value === "-") {
+            return [0, undefined];
+        }
+        return [length, { type: "number", value: value }];
+    };
+    function tokenizeReservedName(input, position) {
+        for (var _i = 0, _a = Object.keys(reservedNamesRecord); _i < _a.length; _i++) {
+            var reservedName = _a[_i];
+            var length_2 = reservedName.length;
+            var nextChar = input[position + length_2];
+            if (nextChar && nameRegExp.test(nextChar)) {
+                continue;
+            }
+            if (input.substr(position, length_2) === reservedName) {
+                return [length_2, { type: "reservedName", value: reservedName }];
+            }
+        }
+        return [0, undefined];
+    }
+    var tokenizeName = function (input, position) {
+        return tokenizePattern("name", nameRegExp, input, position);
+    };
+    var tokenizeModifier = function (input, position) {
+        if (input.substr(position, 5) === "&rest") {
+            var value = "&rest";
+            return [5, { type: "modifier", value: value }];
+        }
+        if (input.substr(position, 4) === "&opt") {
+            var value = "&opt";
+            return [4, { type: "modifier", value: value }];
+        }
+        if (input.substr(position, 5) === "&bind") {
+            var value = "&bind";
+            return [5, { type: "modifier", value: value }];
+        }
+        return [0, undefined];
+    };
+    function tokenizeCharacter(type, value, input, position) {
+        if (value === input[position]) {
+            return [1, { type: type, value: value }];
+        }
+        else {
+            return [0, undefined];
+        }
+    }
+    function tokenizePattern(type, pattern, input, position) {
+        var char = input[position];
+        var length = 0;
+        var value = "";
+        if (!char || !pattern.test(char)) {
+            return [0, undefined];
+        }
+        while (char && pattern.test(char)) {
+            value += char;
+            length += 1;
+            char = input[position + length];
+        }
+        return [length, { type: type, value: value }];
+    }
+
+    // All tokenizers, order matters!
+    var tokenizers = [
+        skipComment,
+        skipWhiteSpace,
+        tokenizeLeftParen,
+        tokenizeRightParen,
+        tokenizeLeftBracket,
+        tokenizeRightBracket,
+        tokenizeLeftCurly,
+        tokenizeRightCurly,
+        tokenizeString,
+        tokenizeNumber,
+        tokenizeReservedName,
+        tokenizeName,
+        tokenizeModifier,
+        tokenizeRegexpShorthand,
+        tokenizeFnShorthand,
+    ];
+    function tokenize(input) {
+        var tokens = [];
+        var position = 0;
+        var tokenized = false;
+        while (position < input.length) {
+            tokenized = false;
+            // Loop through all tokenizer until one matches
+            for (var _i = 0, tokenizers_1 = tokenizers; _i < tokenizers_1.length; _i++) {
+                var tokenize_1 = tokenizers_1[_i];
+                var _a = tokenize_1(input, position), nbrOfCharacters = _a[0], token = _a[1];
+                // tokenizer matched
+                if (nbrOfCharacters > 0) {
+                    tokenized = true;
+                    position += nbrOfCharacters;
+                    if (token) {
+                        tokens.push(token);
+                        break;
+                    }
+                }
+            }
+            if (!tokenized) {
+                throw new SyntaxError("Unrecognized character at position " + position + ": '" + input[position] + "'");
+            }
+        }
+        return tokens;
+    }
+
+    var Cache = /** @class */ (function () {
+        function Cache(maxSize) {
+            this.cache = {};
+            this.firstEntry = undefined;
+            this.lastEntry = undefined;
+            this._size = 0;
+            this.maxSize = toNonNegativeInteger(maxSize);
+            if (this.maxSize < 1) {
+                throw Error("1 is the minimum maxSize, got " + maxSize);
+            }
+        }
+        Object.defineProperty(Cache.prototype, "size", {
+            get: function () {
+                return this._size;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Cache.prototype.get = function (key) {
+            var _a;
+            return (_a = this.cache[key]) === null || _a === void 0 ? void 0 : _a.value;
+        };
+        Cache.prototype.clear = function () {
+            this.cache = {};
+            this.firstEntry = undefined;
+            this.lastEntry = undefined;
+            this._size = 0;
+        };
+        Cache.prototype.has = function (key) {
+            return !!this.cache[key];
+        };
+        Cache.prototype.set = function (key, value) {
+            if (this.has(key)) {
+                throw Error("AstCache - key already present: " + key);
+            }
+            var newEntry = { value: value, nextEntry: undefined, key: key };
+            this.cache[key] = newEntry;
+            this._size += 1;
+            if (this.lastEntry) {
+                this.lastEntry.nextEntry = newEntry;
+            }
+            this.lastEntry = newEntry;
+            if (!this.firstEntry) {
+                this.firstEntry = this.lastEntry;
+            }
+            while (this.size > this.maxSize) {
+                this.dropFirstEntry();
+            }
+        };
+        Cache.prototype.dropFirstEntry = function () {
+            var firstEntry = asNotUndefined(this.firstEntry);
+            delete this.cache[firstEntry.key];
+            this._size -= 1;
+            this.firstEntry = firstEntry.nextEntry;
+        };
+        return Cache;
+    }());
+
+    var Lispish = /** @class */ (function () {
+        function Lispish(config) {
+            if (config === void 0) { config = {}; }
+            this.importScope = {};
+            if (config.astCacheSize && config.astCacheSize > 0) {
+                this.astCache = new Cache(config.astCacheSize);
+            }
+            else {
+                this.astCache = null;
+            }
+        }
+        Lispish.prototype.run = function (program, params) {
+            var ast = this.generateAst(program);
+            var result = this.evaluate(ast, params);
+            return result;
+        };
+        Lispish.prototype.import = function (program, params) {
+            if (params === void 0) { params = {}; }
+            var context = getContextFromParams(params);
+            var tokens = this.tokenize(program);
+            var ast = this.parse(tokens);
+            var scope = {};
+            evaluate(ast, scope, context);
+            var importKeys = Object.keys(this.importScope);
+            for (var _i = 0, _a = Object.keys(scope); _i < _a.length; _i++) {
+                var key = _a[_i];
+                if (importKeys.includes(key)) {
+                    throw Error("Import faild, imported function/variable already exists: \"" + key + "\"");
+                }
+                assertNameNotDefined(key, [{}, {}], builtin);
+            }
+            Object.assign(this.importScope, scope);
+        };
+        Lispish.prototype.tokenize = function (program) {
+            return tokenize(program);
+        };
+        Lispish.prototype.parse = function (tokens) {
+            return parse(tokens);
+        };
+        Lispish.prototype.evaluate = function (ast, params) {
+            if (params === void 0) { params = {}; }
+            var context = getContextFromParams(params);
+            return evaluate(ast, context, this.importScope);
+        };
+        Lispish.prototype.generateAst = function (program) {
+            var _a;
+            if (this.astCache) {
+                var cachedAst = this.astCache.get(program);
+                if (cachedAst) {
+                    return cachedAst;
+                }
+            }
+            var tokens = this.tokenize(program);
+            var ast = this.parse(tokens);
+            (_a = this.astCache) === null || _a === void 0 ? void 0 : _a.set(program, ast);
+            return ast;
+        };
+        return Lispish;
+    }());
+    function getContextFromParams(params) {
+        var context = params.globalContext || {};
+        if (params.vars) {
+            Object.entries(params.vars).forEach(function (_a) {
+                var key = _a[0], value = _a[1];
+                context[key] = { value: toAny(value) };
+            });
+        }
+        return context;
+    }
+
+    exports.Lispish = Lispish;
+    exports.isLispishFunction = isLispishFunction;
+    exports.normalExpressionKeys = normalExpressionKeys;
+    exports.reservedNames = reservedNames;
+    exports.specialExpressionKeys = specialExpressionKeys;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+    return exports;
+
+})({});
 //# sourceMappingURL=lispish.iife.js.map

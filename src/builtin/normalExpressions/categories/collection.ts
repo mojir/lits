@@ -1,6 +1,5 @@
 import { Any, Arr, Coll, Obj } from '../../../interface'
 import {
-  assertAny,
   assertArr,
   assertChar,
   assertColl,
@@ -22,6 +21,8 @@ import {
   toAny,
   asChar,
   collHasKey,
+  isColl,
+  isAny,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -59,15 +60,20 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'get-in': {
     evaluate: (params: Arr): Any => {
-      const [coll, keys] = params
+      let coll = params[0]
+      const keys = params[1]
       const defaultValue = toAny(params[2])
       assertColl(coll)
       assertArr(keys)
-      keys.reduce((result: Any | undefined, key) => {
-        return
-      })
-      const result = get(coll, key)
-      return result === undefined ? defaultValue : result
+      for (const key of keys) {
+        assertStringOrNumber(key)
+        if (isColl(coll)) {
+          coll = get(coll, key)
+        } else {
+          return defaultValue
+        }
+      }
+      return isAny(coll) ? coll : defaultValue
     },
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },

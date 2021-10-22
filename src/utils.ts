@@ -309,7 +309,7 @@ export function assertColl(value: unknown): asserts value is Coll {
   }
 }
 
-export function isAny(value: unknown): boolean {
+export function isAny(value: unknown): value is Any {
   return value !== undefined
 }
 
