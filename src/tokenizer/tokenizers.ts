@@ -4,7 +4,7 @@ import { asNotUndefined } from '../utils'
 import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 
 // A name (function or variable) can contain a lot of different characters
-const nameRegExp = /[%0-9a-zA-Z_^?=!$%<>.+*/-]/
+const nameRegExp = /[@%0-9a-zA-Z_^?=!$%<>.+*/-]/
 const whitespaceRegExp = /\s|,/
 
 export const skipWhiteSpace: Tokenizer = (input, current) =>

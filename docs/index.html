@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v0.1.53</span></div>
+    <div class="column right version"><span>v0.1.54</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -1171,8 +1171,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "et" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,4,8,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "Abet" </span> </span></pre>
   </div>
 </div>
 
@@ -1190,8 +1190,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 2 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "r" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 10 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "l" </span> </span></pre>
   </div>
 </div>
 
@@ -1209,8 +1209,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [6,7,10,3,1,8,4,2,5,9] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "oMAjrbeiltr " </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [7,1,9,3,4,5,10,2,8,6] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "rioljAteMb r" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -2006,9 +2006,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.3540261685432351 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.009933161861942158 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 0.4786612348609892 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.2919765213555465 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.004278322684384317 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.139472224267955 </span> </span></pre>
   </div>
 </div>
 
@@ -2027,8 +2027,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 3 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 37 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 4 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 120 </span> </span></pre>
   </div>
 </div>
 
@@ -2654,7 +2654,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634900148234 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1634903436433 </span> </span></pre>
   </div>
 </div>
 
@@ -2777,7 +2777,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.53" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "0.1.54" </span> </span></pre>
   </div>
 </div>
 
