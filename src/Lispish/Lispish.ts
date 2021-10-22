@@ -8,6 +8,7 @@ import { Ast } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import { Token } from '../tokenizer/interface'
 import { toAny } from '../utils'
+import { Cache } from './Cache'
 
 type EvaluateParams =
   | {
@@ -23,32 +24,24 @@ type EvaluateParams =
       vars?: never
     }
 
+type LispishConfig = {
+  astCacheSize?: number
+}
+
 export class Lispish {
   private importScope: Context = {}
+  private astCache: Cache<Ast> | null
 
-  public tokenize(program: string): Token[] {
-    return tokenize(program)
-  }
-
-  public parse(tokens: Token[]): Ast {
-    return parse(tokens)
-  }
-
-  public evaluate(ast: Ast, params: EvaluateParams = {}): unknown {
-    const globalContext: Context = params.globalContext || {}
-
-    if (params.vars) {
-      Object.entries(params.vars).forEach(([key, value]) => {
-        globalContext[key] = { value: toAny(value) }
-      })
+  constructor(config: LispishConfig = {}) {
+    if (config.astCacheSize && config.astCacheSize > 0) {
+      this.astCache = new Cache(config.astCacheSize)
+    } else {
+      this.astCache = null
     }
-
-    return evaluate(ast, globalContext, this.importScope)
   }
 
   public run(program: string, params?: EvaluateParams): unknown {
-    const tokens: Token[] = this.tokenize(program)
-    const ast: Ast = this.parse(tokens)
+    const ast = this.generateAst(program)
     const result = this.evaluate(ast, params)
     return result
   }
@@ -68,5 +61,38 @@ export class Lispish {
     }
 
     Object.assign(this.importScope, scope)
+  }
+
+  private tokenize(program: string): Token[] {
+    return tokenize(program)
+  }
+
+  private parse(tokens: Token[]): Ast {
+    return parse(tokens)
+  }
+
+  private evaluate(ast: Ast, params: EvaluateParams = {}): unknown {
+    const globalContext: Context = params.globalContext || {}
+
+    if (params.vars) {
+      Object.entries(params.vars).forEach(([key, value]) => {
+        globalContext[key] = { value: toAny(value) }
+      })
+    }
+
+    return evaluate(ast, globalContext, this.importScope)
+  }
+
+  private generateAst(program: string) {
+    if (this.astCache) {
+      const cachedAst = this.astCache.get(program)
+      if (cachedAst) {
+        return cachedAst
+      }
+    }
+    const tokens: Token[] = this.tokenize(program)
+    const ast: Ast = this.parse(tokens)
+    this.astCache?.set(program, ast)
+    return ast
   }
 }

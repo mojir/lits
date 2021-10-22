@@ -616,14 +616,16 @@ module.exports = {
       {
         name: `comparer`,
         type: `function`,
+        description: `optional`,
       },
       {
         name: `array`,
         type: `array`,
       },
     ],
-    description: `Returns a new array with the elements from \`array\` sorted according to \`comparer\`.`,
+    description: `Returns a new array with the elements from \`array\` sorted according to \`comparer\`. If no \`comparer\`, builtin \`compare\` will be used.`,
     examples: [
+      `(sort [3 1 2])`,
       `(sort (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)) [3 1 2])`,
       `(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)) [3 1 2])`,
     ],

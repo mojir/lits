@@ -1,16 +1,10 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Lispish } from '../src'
-import { tokenize } from '../src/tokenizer'
-import { parse } from '../src/parser'
 import { evaluate } from '../src/evaluator'
 import { Context } from '../src/evaluator/interface'
-
-let lispish: Lispish
-
-beforeEach(() => {
-  lispish = new Lispish()
-})
+import { parse } from '../src/parser'
+import { tokenize } from '../src/tokenizer'
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
@@ -72,11 +66,21 @@ xdescribe(`performace`, () => {
     logPerformace(`Evaluate AST`, Date.now() - startTime)
   })
 
-  test(`lispish tokenize - parse - evaluate`, () => {
+  test(`lispish run - NOT chaced.`, () => {
+    const lispish = new Lispish()
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
       lispish.run(program, { globalContext })
     }
-    logPerformace(`Execute program (tokenize, parse and evaluate)`, Date.now() - startTime)
+    logPerformace(`Run program`, Date.now() - startTime)
+  })
+
+  test(`lispish run - cached`, () => {
+    const lispish = new Lispish({ astCacheSize: 100 })
+    const startTime = Date.now()
+    for (let i = 0; i < ITERATIONS; i += 1) {
+      lispish.run(program, { globalContext })
+    }
+    logPerformace(`Run program (with astCache)`, Date.now() - startTime)
   })
 })

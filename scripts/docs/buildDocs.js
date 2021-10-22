@@ -196,21 +196,15 @@ function getDocumentationContent(docObj) {
         var oldWarn = console.warn
         console.warn = function () {}
         var result
+        var escapedExample = escapeExample(example)
         try {
           result = lispish.run(example)
+          var stringifiedResult = stringifyValue(result)
 
-          return `<pre><span
-                    class="example"
-                    onclick="addToPlayground('${escapeExample(example)}')">
-                    <span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifyValue(result)}
-                    </span>
-                  </span></pre>`
+          return `<pre><span class="example" onclick="addToPlayground('${escapedExample}')"> <span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifiedResult} </span> </span></pre>`
         } catch (error) {
           console.error(example, error)
-          return `<pre
-                    class="example"
-                    onclick="addToPlayground('${escapeExample(example)}')">
-                    <span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
+          return `<pre class="example" onclick="addToPlayground('${escapedExample}')"> <span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
         } finally {
           console.log = oldLog
           console.warn = oldWarn
