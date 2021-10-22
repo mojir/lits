@@ -62,14 +62,9 @@ const result = evaluate(ast, context) // returns 10
 # Missing functions
 * **assoc-in**
 * **for** ??
-* **fnil**
 * **group-by**
-* **merge-with**
 * **partition**
 * **partition-by**
 * **partition-all**
 * **sort-by**
-* **special-symbol?**
-* **symbol**
-* **symbol?**
 * **update-in**

@@ -361,7 +361,7 @@ export function isInteger(value: unknown): value is number {
   return Number.isInteger(value)
 }
 
-export function collHasKey(coll: unknown, key: string | number): coll is Coll {
+export function collHasKey(coll: unknown, key: string | number): boolean {
   if (!isColl(coll)) {
     return false
   }

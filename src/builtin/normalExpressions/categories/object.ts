@@ -9,6 +9,8 @@ import {
   assertArr,
   toAny,
   asNotUndefined,
+  assertLispishFunction,
+  asString,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -75,13 +77,48 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   merge: {
-    evaluate: ([first, ...rest]: Arr): Any => {
+    evaluate: (params: Arr): Any => {
+      if (params.length === 0) {
+        return null
+      }
+      const [first, ...rest] = params
       assertObj(first)
 
       return rest.reduce(
         (result: Obj, obj) => {
           assertObj(obj)
           return { ...result, ...obj }
+        },
+        { ...first },
+      )
+    },
+    validate: node => assertLength({ min: 0 }, node),
+  },
+
+  'merge-with': {
+    evaluate: (params: Arr, contextStack, { executeFunction }): Any => {
+      const [fn, first, ...rest] = params
+      assertLispishFunction(fn)
+
+      if (params.length === 1) {
+        return null
+      }
+
+      assertObj(first)
+
+      return rest.reduce(
+        (result: Obj, obj) => {
+          assertObj(obj)
+          Object.entries(obj).forEach(entry => {
+            const key = asString(entry[0])
+            const val = toAny(entry[1])
+            if (collHasKey(result, key)) {
+              result[key] = executeFunction(fn, [result[key], val], contextStack)
+            } else {
+              result[key] = val
+            }
+          })
+          return result
         },
         { ...first },
       )

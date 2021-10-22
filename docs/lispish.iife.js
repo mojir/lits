@@ -2988,7 +2988,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "0.1.57";
+    var version = "0.1.58";
 
     var miscNormalExpression = {
         'not=': {
@@ -3254,12 +3254,41 @@ var Lispish = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         merge: {
-            evaluate: function (_a) {
-                var first = _a[0], rest = _a.slice(1);
+            evaluate: function (params) {
+                if (params.length === 0) {
+                    return null;
+                }
+                var first = params[0], rest = params.slice(1);
                 assertObj(first);
                 return rest.reduce(function (result, obj) {
                     assertObj(obj);
                     return __assign(__assign({}, result), obj);
+                }, __assign({}, first));
+            },
+            validate: function (node) { return assertLength({ min: 0 }, node); },
+        },
+        'merge-with': {
+            evaluate: function (params, contextStack, _a) {
+                var executeFunction = _a.executeFunction;
+                var fn = params[0], first = params[1], rest = params.slice(2);
+                assertLispishFunction(fn);
+                if (params.length === 1) {
+                    return null;
+                }
+                assertObj(first);
+                return rest.reduce(function (result, obj) {
+                    assertObj(obj);
+                    Object.entries(obj).forEach(function (entry) {
+                        var key = asString(entry[0]);
+                        var val = toAny(entry[1]);
+                        if (collHasKey(result, key)) {
+                            result[key] = executeFunction(fn, [result[key], val], contextStack);
+                        }
+                        else {
+                            result[key] = val;
+                        }
+                    });
+                    return result;
                 }, __assign({}, first));
             },
             validate: function (node) { return assertLength({ min: 1 }, node); },

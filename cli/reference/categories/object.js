@@ -126,6 +126,31 @@ module.exports = {
     description: `Returns a new object created by merging together all arguments.`,
     examples: [`(merge (object "x" 10) (object "y" 20))`, `(merge (object "x" 10) (object "x" 15 "y" 20))`],
   },
+  'merge-with': {
+    name: `merge-with`,
+    category: `Object`,
+    linkName: `merge-with`,
+    returns: {
+      type: `object`,
+    },
+    arguments: [
+      {
+        name: `fn`,
+        type: `Function`,
+      },
+      {
+        name: `object`,
+        type: `object`,
+        description: `one or many`,
+      },
+    ],
+    description: `Returns a new object created by merging together all arguments. If two keys appears in more than obe object \`fn\` is used to calculate the new value.`,
+    examples: [
+      `(merge-with + (object "x" 10) (object "y" 20))`,
+      `(merge-with + (object "x" 10) (object "x" 15 "y" 20))`,
+      `(merge-with - (object "x" 10) (object "x" 20) (object "x" 30) (object "x" 40))`,
+    ],
+  },
   zipmap: {
     name: `zipmap`,
     category: `Object`,
