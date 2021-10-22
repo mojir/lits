@@ -130,13 +130,13 @@ var Lispish = (function (exports) {
     }
     function asNotUndefined(value) {
         if (value === undefined) {
-            throw Error("Expected non undefined value, got " + value);
+            throw Error("Unexpected nil");
         }
         return value;
     }
     function assertNotUndefined(value) {
         if (value === undefined) {
-            throw Error("Expected non undefined value, got " + value);
+            throw Error("Unexpected nil");
         }
     }
     function assertFiniteNumber(value) {
@@ -2988,7 +2988,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "0.1.56";
+    var version = "0.1.57";
 
     var miscNormalExpression = {
         'not=': {
@@ -3819,6 +3819,19 @@ var Lispish = (function (exports) {
             },
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
+        fnil: {
+            evaluate: function (_a) {
+                var _b;
+                var fn = _a[0], params = _a.slice(1);
+                return _b = {},
+                    _b[functionSymbol] = true,
+                    _b.type = "fnil",
+                    _b.fn = toAny(fn),
+                    _b.params = params,
+                    _b;
+            },
+            validate: function (node) { return assertLength({ min: 2 }, node); },
+        },
     };
 
     var normalExpressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
@@ -3969,6 +3982,11 @@ var Lispish = (function (exports) {
                 }
             }
             return false;
+        },
+        fnil: function (fn, params, contextStack, _a) {
+            var executeFunction = _a.executeFunction;
+            var fniledParams = params.map(function (param, index) { return (param === null ? toAny(fn.params[index]) : param); });
+            return executeFunction(toAny(fn.fn), fniledParams, contextStack);
         },
         builtin: function (fn, params, contextStack, _a) {
             var executeFunction = _a.executeFunction;

@@ -67,6 +67,13 @@ export type SomePredFunction = {
   fns: Arr
 }
 
+export type FNilFunction = {
+  [functionSymbol]: true
+  type: `fnil`
+  fn: Any
+  params: Arr
+}
+
 export type BuiltinFunction = {
   [functionSymbol]: true
   type: `builtin`
@@ -83,6 +90,7 @@ export type LispishFunction =
   | ComplementFunction
   | EveryPredFunction
   | SomePredFunction
+  | FNilFunction
 
 export type LispishFunctionType = LispishFunction[`type`]
 

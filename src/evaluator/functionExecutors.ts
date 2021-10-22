@@ -7,6 +7,7 @@ import {
   ComplementFunction,
   ConstantlyFunction,
   EveryPredFunction,
+  FNilFunction,
   JuxtFunction,
   LispishFunctionType,
   PartialFunction,
@@ -133,6 +134,10 @@ export const functionExecutors: FunctionExecutors = {
       }
     }
     return false
+  },
+  fnil: (fn: FNilFunction, params, contextStack, { executeFunction }) => {
+    const fniledParams = params.map((param, index) => (param === null ? toAny(fn.params[index]) : param))
+    return executeFunction(toAny(fn.fn), fniledParams, contextStack)
   },
   builtin: (fn: BuiltinFunction, params, contextStack, { executeFunction }) => {
     const normalExpression = asNotUndefined(normalExpressions[fn.name])

@@ -8,6 +8,7 @@ import {
   JuxtFunction,
   PartialFunction,
   SomePredFunction,
+  FNilFunction,
 } from '../../../parser/interface'
 import { assertArr, assertLength, assertLispishFunction, isArr, toAny } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -112,5 +113,17 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       }
     },
     validate: node => assertLength({ min: 1 }, node),
+  },
+
+  fnil: {
+    evaluate: ([fn, ...params]): FNilFunction => {
+      return {
+        [functionSymbol]: true,
+        type: `fnil`,
+        fn: toAny(fn),
+        params,
+      }
+    },
+    validate: node => assertLength({ min: 2 }, node),
   },
 }

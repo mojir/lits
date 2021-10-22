@@ -181,4 +181,31 @@ module.exports = {
       `((some-pred string? #(> (count %1) 3)) [1 2 3] [2])`,
     ],
   },
+  fnil: {
+    name: `fnil`,
+    category: `Functional`,
+    linkName: `fnil`,
+    returns: {
+      type: `Function`,
+    },
+    arguments: [
+      {
+        name: `fn`,
+        type: `Function`,
+      },
+      {
+        name: `param`,
+        type: `Any`,
+        description: `one or more`,
+      },
+    ],
+    description: `Takes a function \`fn\`, and returns a function that calls \`fn\`, replacing a nil argument to \`fn\` with the corresponding \`param\`.`,
+    examples: [
+      `((fnil + 1 2) 0 0)`,
+      `((fnil + 1 2) nil 0)`,
+      `((fnil + 1 2) 0 nil)`,
+      `((fnil + 1 2) nil nil)`,
+      `((fnil + 1 2) nil nil 3 4)`,
+    ],
+  },
 }

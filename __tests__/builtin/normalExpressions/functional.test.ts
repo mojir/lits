@@ -118,4 +118,15 @@ describe(`functional functions`, () => {
       expect(() => lispish.run(`(some-pred)`)).toThrow()
     })
   })
+
+  describe(`fnil`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`((fnil + 1 2) 0 0)`)).toBe(0)
+      expect(lispish.run(`((fnil + 1 2) nil 0)`)).toBe(1)
+      expect(lispish.run(`((fnil + 1 2) 0 nil)`)).toBe(2)
+      expect(lispish.run(`((fnil + 1 2) nil nil)`)).toBe(3)
+      expect(() => lispish.run(`(fnil)`)).toThrow()
+      expect(() => lispish.run(`(fnil +)`)).toThrow()
+    })
+  })
 })

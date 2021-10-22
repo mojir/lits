@@ -47,14 +47,14 @@ export function asAny(value: unknown, message = `Unexpected end of input`): Any 
 
 export function asNotUndefined<T>(value: T | undefined): T {
   if (value === undefined) {
-    throw Error(`Expected non undefined value, got ${value}`)
+    throw Error(`Unexpected nil`)
   }
   return value
 }
 
 export function assertNotUndefined<T>(value: T | undefined): asserts value is T {
   if (value === undefined) {
-    throw Error(`Expected non undefined value, got ${value}`)
+    throw Error(`Unexpected nil`)
   }
 }
 
