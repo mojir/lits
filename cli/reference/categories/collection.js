@@ -158,6 +158,34 @@ module.exports = {
       `(assoc {"a" 1 "b" 2} "c" "Three")`,
     ],
   },
+  'assoc-in': {
+    name: `assoc-in`,
+    category: `Collection`,
+    linkName: `assoc-in`,
+    returns: {
+      type: `collection`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection`,
+      },
+      {
+        name: `keys`,
+        type: `Array`,
+      },
+      {
+        name: `value`,
+        type: `any`,
+      },
+    ],
+    description: `Associates a value in a nested Coll, where \`keys\` is an array of keys and \`value\` is the new value and returns a new nested structure. If any levels do not exist, objects will be created - and the corresponding key must be a string.`,
+    examples: [
+      `(assoc-in {} ["a" "b" "c"] "Albert")`,
+      `(assoc-in [1 2 [1 2 3]] [2 1] "Albert")`,
+      `(assoc-in [1 2 {"name" "albert"}] [2 "name" 0] "A")`,
+    ],
+  },
   concat: {
     name: `concat`,
     category: `Collection`,

@@ -534,3 +534,17 @@ export function assertMax(value: number, maxNumber: number): void {
 export function toAny(value: unknown): Any {
   return (value ?? null) as Any
 }
+
+export function clone<T>(value: T): T {
+  if (isObj(value)) {
+    return Object.entries(value).reduce((result: Obj, entry) => {
+      const [key, val] = entry
+      result[key] = clone(val)
+      return result
+    }, {}) as T
+  }
+  if (isArr(value)) {
+    return value.map(item => clone(item)) as unknown as T
+  }
+  return value
+}

@@ -46,6 +46,7 @@ import {
   assertChar,
   asChar,
   asColl,
+  clone,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -667,5 +668,19 @@ describe(`utils`, () => {
     expect(() => asColl(null)).toThrow()
     expect(() => asColl(true)).toThrow()
     expect(() => asColl(false)).toThrow()
+  })
+
+  describe(`clone`, () => {
+    test(`samples`, () => {
+      expect(clone({ a: 10 })).toEqual({ a: 10 })
+      expect(clone({ a: [1, 2, 3] })).toEqual({ a: [1, 2, 3] })
+    })
+    test(`new instance`, () => {
+      const original = { a: [1, 2, 3] }
+      const second = clone(original)
+      expect(original).not.toBe(second)
+      second.a[0] = 10
+      expect(original.a[0]).toBe(1)
+    })
   })
 })

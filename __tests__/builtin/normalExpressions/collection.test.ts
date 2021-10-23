@@ -55,7 +55,7 @@ describe(`collection functions`, () => {
     })
   })
 
-  describe(`get`, () => {
+  describe(`get-in`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(get-in [] [1])`)).toBeNull()
       expect(lispish.run(`(get-in [1] [1])`)).toBeNull()
@@ -66,25 +66,14 @@ describe(`collection functions`, () => {
       expect(lispish.run(`(get-in {"a" ["Albert" "Mojir"]} ["a" 0 5 0 0 0 0 0 0])`)).toBe(`t`)
       expect(lispish.run(`(get-in {"a" ["Albert" "Mojir"]} ["a" 2] "DEFAULT")`)).toBe(`DEFAULT`)
       expect(lispish.run(`(get-in {"a" ["Albert" "Mojir"]} ["a" 2 "x"] "DEFAULT")`)).toBe(`DEFAULT`)
-      // expect(lispish.run(`(get-in [1 2 3] 1 "x")`)).toBe(2)
 
-      // expect(lispish.run(`(get-in "Albert" 1)`)).toBe(`l`)
-      // expect(lispish.run(`(get-in "Albert" 7)`)).toBeNull()
-      // expect(lispish.run(`(get-in "Albert" -1)`)).toBeNull()
-      // expect(lispish.run(`(get-in "" 0)`)).toBeNull()
-
-      // expect(lispish.run(`(get-in (object) "a")`)).toBeNull()
-      // expect(lispish.run(`(get-in (object "a" 1 "b" 2) "a")`)).toBe(1)
-      // expect(lispish.run(`(get-in (object) "a" "x")`)).toBe(`x`)
-      // expect(lispish.run(`(get-in (object "a" 1 "b" 2) "a")`)).toBe(1)
-
-      // expect(() => lispish.run(`(get-in)`)).toThrow()
-      // expect(() => lispish.run(`(get-in [])`)).toThrow()
-      // expect(() => lispish.run(`(get-in 12)`)).toThrow()
-      // expect(() => lispish.run(`(get-in false)`)).toThrow()
-      // expect(() => lispish.run(`(get-in true)`)).toThrow()
-      // expect(() => lispish.run(`(get-in nil)`)).toThrow()
-      // expect(() => lispish.run(`(get-in undefined)`)).toThrow()
+      expect(() => lispish.run(`(get-in)`)).toThrow()
+      expect(() => lispish.run(`(get-in [])`)).toThrow()
+      expect(() => lispish.run(`(get-in 12)`)).toThrow()
+      expect(() => lispish.run(`(get-in false)`)).toThrow()
+      expect(() => lispish.run(`(get-in true)`)).toThrow()
+      expect(() => lispish.run(`(get-in nil)`)).toThrow()
+      expect(() => lispish.run(`(get-in undefined)`)).toThrow()
     })
   })
 
@@ -187,6 +176,21 @@ describe(`collection functions`, () => {
       expect(() => lispish.run(`(assoc [] 0 "x" "y")`)).toThrow()
     })
   })
+
+  describe(`assoc-in`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(assoc-in {} ["a" "b" "c"] "Albert")`)).toEqual({ a: { b: { c: `Albert` } } })
+      expect(lispish.run(`(assoc-in [1 2 3] [0] "1")`)).toEqual([`1`, 2, 3])
+      expect(lispish.run(`(assoc-in [1 2 [1 2 3]] [2 1] "2")`)).toEqual([1, 2, [1, `2`, 3]])
+      expect(lispish.run(`(assoc-in [1 2 "albert"] [2 0] "A")`)).toEqual([1, 2, `Albert`])
+      expect(lispish.run(`(assoc-in [1 2 {"name" "albert"}] [2 "name"] "A")`)).toEqual([1, 2, { name: `A` }])
+      expect(lispish.run(`(assoc-in [1 2 {"name" "albert"}] [2 "name" 0] "A")`)).toEqual([1, 2, { name: `Albert` }])
+      expect(() => lispish.run(`(assoc-in [1 2 {"name" "albert"}] ["2" "name" 0] "A")`)).toThrow()
+      expect(() => lispish.run(`(assoc-in [1 2 {"name" "albert"}] [2 1 0] "A")`)).toThrow()
+      expect(() => lispish.run(`(assoc-in [1 2 {"name" "albert"}] [2 "name" "a"] "A")`)).toThrow()
+    })
+  })
+
   describe(`concat`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(concat [])`)).toEqual([])

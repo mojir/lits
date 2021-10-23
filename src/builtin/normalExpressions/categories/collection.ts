@@ -23,6 +23,8 @@ import {
   collHasKey,
   isColl,
   isAny,
+  clone,
+  asColl,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -138,6 +140,62 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       const copy = { ...coll }
       copy[key] = value
       return copy
+    },
+    validate: node => assertLength(3, node),
+  },
+  'assoc-in': {
+    evaluate: ([originalColl, keys, value]): Coll => {
+      assertColl(originalColl)
+      assertArr(keys)
+      const coll = clone(originalColl)
+
+      const butLastKeys = keys.slice(0, keys.length - 1)
+      const lastKey = keys[keys.length - 1]
+      const parentKey = keys[keys.length - 2]
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let parentColl: any
+      const innerColl = butLastKeys.reduce((result: Coll, key) => {
+        parentColl = result
+
+        let innerColl: Coll
+        if (isArr(result)) {
+          assertNumber(key)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          innerColl = asColl(result[key])
+        } else {
+          assertObj(result)
+          assertString(key)
+          if (!collHasKey(result, key)) {
+            result[key] = {}
+          }
+          innerColl = asColl(result[key])
+        }
+
+        return innerColl
+      }, coll)
+
+      if (isArr(innerColl)) {
+        assertNumber(lastKey)
+        innerColl[lastKey] = value
+      } else if (isString(innerColl)) {
+        assertNumber(lastKey)
+        assertChar(value)
+        const newString = `${innerColl.substring(0, lastKey)}${value}${innerColl.substring(lastKey + 1)}`
+        if (isArr(parentColl)) {
+          assertNumber(parentKey)
+          parentColl[parentKey] = newString
+        } else {
+          assertObj(parentColl)
+          assertString(parentKey)
+          parentColl[parentKey] = newString
+        }
+      } else {
+        assertString(lastKey)
+        innerColl[lastKey] = value
+      }
+
+      return coll
     },
     validate: node => assertLength(3, node),
   },

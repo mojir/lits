@@ -529,6 +529,19 @@ var Lispish = (function (exports) {
     function toAny(value) {
         return (value !== null && value !== void 0 ? value : null);
     }
+    function clone(value) {
+        if (isObj(value)) {
+            return Object.entries(value).reduce(function (result, entry) {
+                var key = entry[0], val = entry[1];
+                result[key] = clone(val);
+                return result;
+            }, {});
+        }
+        if (isArr(value)) {
+            return value.map(function (item) { return clone(item); });
+        }
+        return value;
+    }
 
     var andSpecialExpression = {
         parse: function (tokens, position, _a) {
@@ -1809,6 +1822,61 @@ var Lispish = (function (exports) {
                 var copy = __assign({}, coll);
                 copy[key] = value;
                 return copy;
+            },
+            validate: function (node) { return assertLength(3, node); },
+        },
+        'assoc-in': {
+            evaluate: function (_a) {
+                var originalColl = _a[0], keys = _a[1], value = _a[2];
+                assertColl(originalColl);
+                assertArr(keys);
+                var coll = clone(originalColl);
+                var butLastKeys = keys.slice(0, keys.length - 1);
+                var lastKey = keys[keys.length - 1];
+                var parentKey = keys[keys.length - 2];
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                var parentColl;
+                var innerColl = butLastKeys.reduce(function (result, key) {
+                    parentColl = result;
+                    var innerColl;
+                    if (isArr(result)) {
+                        assertNumber(key);
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        innerColl = asColl(result[key]);
+                    }
+                    else {
+                        assertObj(result);
+                        assertString(key);
+                        if (!collHasKey(result, key)) {
+                            result[key] = {};
+                        }
+                        innerColl = asColl(result[key]);
+                    }
+                    return innerColl;
+                }, coll);
+                if (isArr(innerColl)) {
+                    assertNumber(lastKey);
+                    innerColl[lastKey] = value;
+                }
+                else if (isString(innerColl)) {
+                    assertNumber(lastKey);
+                    assertChar(value);
+                    var newString = "" + innerColl.substring(0, lastKey) + value + innerColl.substring(lastKey + 1);
+                    if (isArr(parentColl)) {
+                        assertNumber(parentKey);
+                        parentColl[parentKey] = newString;
+                    }
+                    else {
+                        assertObj(parentColl);
+                        assertString(parentKey);
+                        parentColl[parentKey] = newString;
+                    }
+                }
+                else {
+                    assertString(lastKey);
+                    innerColl[lastKey] = value;
+                }
+                return coll;
             },
             validate: function (node) { return assertLength(3, node); },
         },
@@ -3244,7 +3312,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "0.1.60";
+    var version = "0.1.61";
 
     var miscNormalExpression = {
         'not=': {
