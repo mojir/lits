@@ -17,6 +17,7 @@ import {
   ModifierName,
   ParseBindings,
   NormalExpressionNodeName,
+  ParseBinding,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
@@ -228,7 +229,7 @@ const parseBindings: ParseBindings = (tokens, position) => {
   return [position, bindings]
 }
 
-function parseBinding(tokens: Token[], position: number): [number, BindingNode] {
+const parseBinding: ParseBinding = (tokens, position) => {
   let token = asNotUndefined(tokens[position])
   if (token.type !== `name`) {
     throw Error(`Expected name node in binding, got ${token.type} value=${token.value}`)
@@ -292,6 +293,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
     parseExpression,
     parseTokens,
     parseToken,
+    parseBinding,
     parseBindings,
     parseArgument,
   })

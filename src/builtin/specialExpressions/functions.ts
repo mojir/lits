@@ -1,16 +1,20 @@
-import { UnexpectedNodeTypeError } from '../../errors'
+import { UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
 import { Context, EvaluateAstNode } from '../../evaluator/interface'
 import {
   AstNode,
+  BindingNode,
   EvaluatedFunctionArguments,
   functionSymbol,
   LispishFunction,
   NameNode,
+  ParseArgument,
+  ParseBindings,
   SpecialExpressionNode,
 } from '../../parser/interface'
+import { Token } from '../../tokenizer/interface'
 import { asNotUndefined, assertString } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
-import { assertNameNotDefined, FunctionArguments, parseFunctionArguments } from '../utils'
+import { assertNameNotDefined, FunctionArguments } from '../utils'
 
 interface DefnSpecialExpressionNode extends SpecialExpressionNode {
   name: `defn`
@@ -182,4 +186,124 @@ function castExpressionNode(
   _node: SpecialExpressionNode,
 ): asserts _node is DefnSpecialExpressionNode | DefnsSpecialExpressionNode | FnSpecialExpressionNode {
   return
+}
+
+function parseFunctionArguments(
+  tokens: Token[],
+  position: number,
+  parseArgument: ParseArgument,
+  parseBindings: ParseBindings,
+): [number, FunctionArguments] {
+  let bindings: BindingNode[] = []
+  let restArgument: string | undefined = undefined
+  const mandatoryArguments: string[] = []
+  const optionalArguments: Array<{
+    name: string
+    defaultValue?: AstNode
+  }> = []
+  const argNames: Record<string, true> = {}
+  let state: `mandatory` | `optional` | `rest` | `let` = `mandatory`
+  let token = asNotUndefined(tokens[position])
+  if (!(token.type === `paren` && token.value === `[`)) {
+    throw new UnexpectedTokenError(`[`, token)
+  }
+
+  position += 1
+  token = asNotUndefined(tokens[position])
+  while (!(token.type === `paren` && token.value === `]`)) {
+    if (state === `let`) {
+      ;[position, bindings] = parseBindings(tokens, position)
+      break
+    } else {
+      const [newPosition, node] = parseArgument(tokens, position)
+      position = newPosition
+      token = asNotUndefined(tokens[position])
+
+      if (node.type === `Modifier`) {
+        switch (node.value) {
+          case `&opt`:
+            if (state === `rest`) {
+              throw Error(`&opt cannot appear after &rest`)
+            }
+            if (state === `optional`) {
+              throw Error(`&opt can only appear once`)
+            }
+            state = `optional`
+            break
+          case `&rest`:
+            if (state === `rest`) {
+              throw Error(`&rest can only appear once`)
+            }
+            if (state === `optional` && optionalArguments.length === 0) {
+              throw Error(`No optional arguments where spcified`)
+            }
+            state = `rest`
+            break
+          case `&let`:
+            if (state === `optional` && optionalArguments.length === 0) {
+              throw Error(`No optional arguments where spcified`)
+            }
+            if (state === `rest` && !restArgument) {
+              throw Error(`No rest argument was spcified`)
+            }
+            state = `let`
+            break
+          default:
+            throw Error(`Illegal modifier: ${node.value}`)
+        }
+      } else {
+        if (argNames[node.name]) {
+          throw Error(`Duplicate argument "${node.name}"`)
+        } else {
+          argNames[node.name] = true
+        }
+
+        if (Object.getOwnPropertyDescriptor(node, `defaultValue`)) {
+          if (state !== `optional`) {
+            throw Error(`Cannot specify default value if not an optional argument`)
+          }
+          optionalArguments.push({
+            name: node.name,
+            defaultValue: node.defaultValue,
+          })
+        } else {
+          switch (state) {
+            case `mandatory`:
+              mandatoryArguments.push(node.name)
+              break
+            case `optional`:
+              optionalArguments.push({
+                name: node.name,
+                defaultValue: undefined,
+              })
+              break
+            case `rest`:
+              if (restArgument !== undefined) {
+                throw Error(`Can only specify one rest argument`)
+              }
+              restArgument = node.name
+              break
+          }
+        }
+      }
+    }
+  }
+
+  if (state === `rest` && restArgument === undefined) {
+    throw Error(`Missing rest argument name`)
+  }
+  if (state === `optional` && optionalArguments.length === 0) {
+    throw Error(`No optional arguments where spcified`)
+  }
+
+  position += 1
+
+  const args: FunctionArguments = {
+    mandatoryArguments,
+    optionalArguments,
+    restArgument,
+    bindings,
+  }
+
+  return [position, args]
 }

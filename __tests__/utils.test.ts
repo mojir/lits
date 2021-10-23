@@ -45,6 +45,7 @@ import {
   assertMax,
   assertChar,
   asChar,
+  asColl,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -656,5 +657,15 @@ describe(`utils`, () => {
     expect(() => asChar(false)).toThrow()
     expect(() => asChar([`a`])).toThrow()
     expect(() => asChar({ a: `a` })).toThrow()
+  })
+
+  test(`asColl`, () => {
+    expect(asColl(`2`)).toEqual(`2`)
+    expect(asColl({ a: 1 })).toEqual({ a: 1 })
+    expect(asColl([2])).toEqual([2])
+    expect(() => asColl(0)).toThrow()
+    expect(() => asColl(null)).toThrow()
+    expect(() => asColl(true)).toThrow()
+    expect(() => asColl(false)).toThrow()
   })
 })

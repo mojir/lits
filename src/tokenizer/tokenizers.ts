@@ -197,17 +197,13 @@ export const tokenizeName: Tokenizer = (input: string, position: number) =>
   tokenizePattern(`name`, nameRegExp, input, position)
 
 export const tokenizeModifier: Tokenizer = (input: string, position: number) => {
-  if (input.substr(position, 5) === `&rest`) {
-    const value: ModifierName = `&rest`
-    return [5, { type: `modifier`, value }]
-  }
-  if (input.substr(position, 4) === `&opt`) {
-    const value: ModifierName = `&opt`
-    return [4, { type: `modifier`, value }]
-  }
-  if (input.substr(position, 5) === `&bind`) {
-    const value: ModifierName = `&bind`
-    return [5, { type: `modifier`, value }]
+  const modifiers: ModifierName[] = [`&rest`, `&opt`, `&let`, `&when`, `&while`]
+  for (const modifier of modifiers) {
+    const length = modifier.length
+    if (input.substr(position, length) === modifier) {
+      const value: ModifierName = modifier
+      return [length, { type: `modifier`, value }]
+    }
   }
   return [0, undefined]
 }

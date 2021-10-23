@@ -303,12 +303,6 @@ export function assertArr(value: unknown): asserts value is Arr {
   }
 }
 
-export function assertColl(value: unknown): asserts value is Coll {
-  if (!isColl(value)) {
-    throw TypeError(`Expected collection, got: ${value} type="${typeof value}"`)
-  }
-}
-
 export function isAny(value: unknown): value is Any {
   return value !== undefined
 }
@@ -358,6 +352,19 @@ export function isArr(value: unknown): value is Arr {
 
 export function isColl(value: unknown): value is Coll {
   return isSeq(value) || isObj(value)
+}
+
+export function assertColl(value: unknown): asserts value is Coll {
+  if (!isColl(value)) {
+    throw TypeError(`Expected collection, got: ${value} type="${typeof value}"`)
+  }
+}
+
+export function asColl(value: unknown): Coll {
+  if (!isColl(value)) {
+    throw TypeError(`Expected collection, got: ${value} type="${typeof value}"`)
+  }
+  return value
 }
 
 export function isNumber(value: unknown): value is number {

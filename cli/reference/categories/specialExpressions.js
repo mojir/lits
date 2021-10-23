@@ -527,4 +527,35 @@ module.exports = {
     examples: [`(defn fib [x] (if (<= x 2) 1 (+ (fib (dec x)) (fib (- x 2))))) (time! (fib 10))`],
     specialExpression: true,
   },
+  for: {
+    name: `for`,
+    category: `Special expression`,
+    linkName: `for`,
+    returns: {
+      type: `Array`,
+    },
+    arguments: [
+      {
+        name: `bindings`,
+        type: `bindings`,
+      },
+      {
+        name: `expression`,
+        type: `form`,
+      },
+    ],
+    description: `List comprehension. Takes an array of one or more \`bindings\`, each followed by zero or more modifiers, and returns an array of evaluations of \`expression\`. Collections are iterated in a nested fashion, rightmost fastest. Supported modifiers are: &let &while and &when.`,
+    examples: [
+      `(for [x "Al" y [1 2]] (repeat y x))`,
+      `(for [x {"a" 10 "b" 20} y [1 2]] (repeat y x))`,
+      `(for [x [1 2] y [1 10]] (* x y))`,
+      `(for [x [1 2] &let [z (* x x x)]] z)`,
+      `(for [x [0 1 2 3 4 5] &let [y (* x 3)] &when (even? y)] y)`,
+      `(for [x [0 1 2 3 4 5] &let [y (* x 3)] &while (even? y)] y)`,
+      `(for [x [0 1 2 3 4 5] &let [y (* x 3)] &while (odd? y)] y)`,
+      `(for [x [1 2 3] y [1 2 3] &while (<= x y) z [1 2 3]] [x y z])`,
+      `(for [x [1 2 3] y [1 2 3] z [1 2 3] &while (<= x y)] [x y z])`,
+    ],
+    specialExpression: true,
+  },
 }

@@ -54,40 +54,34 @@ describe(`parseArguments`, () => {
       expect(lispish.run(`((fn [a &opt b c &rest d] [a b c d]) 1 2 3)`)).toEqual([1, 2, 3, []])
       expect(lispish.run(`((fn [a &opt b c &rest d] [a b c d]) 1 2 3 4)`)).toEqual([1, 2, 3, [4]])
       expect(lispish.run(`((fn [a &opt b c &rest d] [a b c d]) 1 2 3 4 5)`)).toEqual([1, 2, 3, [4, 5]])
-      expect(lispish.run(`((fn [&opt a &rest b &bind [x (+ 5 5)]] [a b x]))`)).toEqual([null, [], 10])
-      expect(lispish.run(`((fn [&opt a &rest b &bind [x (+ 5 5)]] [a b x]) 1)`)).toEqual([1, [], 10])
-      expect(lispish.run(`((fn [&opt a &rest b &bind [x (+ 5 5)]] [a b x]) 1 2)`)).toEqual([1, [2], 10])
-      expect(lispish.run(`((fn [&opt a &rest b &bind [x (+ 5 5)]] [a b x]) 1 2 3)`)).toEqual([1, [2, 3], 10])
-      expect(lispish.run(`((fn [a &opt b c &rest d &bind [x (+ 5 5)]] [a b c d x]) 1)`)).toEqual([
-        1,
-        null,
-        null,
-        [],
-        10,
-      ])
-      expect(lispish.run(`((fn [a &opt b c &rest d &bind [x (+ 5 5)]] [a b c d x]) 1 2)`)).toEqual([1, 2, null, [], 10])
-      expect(lispish.run(`((fn [a &opt b c &rest d &bind [x (+ 5 5)]] [a b c d x]) 1 2 3)`)).toEqual([1, 2, 3, [], 10])
-      expect(lispish.run(`((fn [a &opt b c &rest d &bind [x (+ 5 5)]] [a b c d x]) 1 2 3 4)`)).toEqual([
+      expect(lispish.run(`((fn [&opt a &rest b &let [x (+ 5 5)]] [a b x]))`)).toEqual([null, [], 10])
+      expect(lispish.run(`((fn [&opt a &rest b &let [x (+ 5 5)]] [a b x]) 1)`)).toEqual([1, [], 10])
+      expect(lispish.run(`((fn [&opt a &rest b &let [x (+ 5 5)]] [a b x]) 1 2)`)).toEqual([1, [2], 10])
+      expect(lispish.run(`((fn [&opt a &rest b &let [x (+ 5 5)]] [a b x]) 1 2 3)`)).toEqual([1, [2, 3], 10])
+      expect(lispish.run(`((fn [a &opt b c &rest d &let [x (+ 5 5)]] [a b c d x]) 1)`)).toEqual([1, null, null, [], 10])
+      expect(lispish.run(`((fn [a &opt b c &rest d &let [x (+ 5 5)]] [a b c d x]) 1 2)`)).toEqual([1, 2, null, [], 10])
+      expect(lispish.run(`((fn [a &opt b c &rest d &let [x (+ 5 5)]] [a b c d x]) 1 2 3)`)).toEqual([1, 2, 3, [], 10])
+      expect(lispish.run(`((fn [a &opt b c &rest d &let [x (+ 5 5)]] [a b c d x]) 1 2 3 4)`)).toEqual([
         1,
         2,
         3,
         [4],
         10,
       ])
-      expect(lispish.run(`((fn [a &opt b c &rest d &bind [x (+ 5 5)]] [a b c d x]) 1 2 3 4 5)`)).toEqual([
+      expect(lispish.run(`((fn [a &opt b c &rest d &let [x (+ 5 5)]] [a b c d x]) 1 2 3 4 5)`)).toEqual([
         1,
         2,
         3,
         [4, 5],
         10,
       ])
-      expect(() => lispish.run(`(fn [&opt a &rest b &bind []] a)`)).not.toThrow()
-      expect(() => lispish.run(`(fn [&bind [a 1)] a)`)).toThrow()
-      expect(() => lispish.run(`(fn [&opt a &rest b &bind [] &bind []] a)`)).toThrow()
-      expect(() => lispish.run(`(fn [&opt a &bind [] &rest b] a)`)).toThrow()
-      expect(() => lispish.run(`(fn [&opt &bind []] nil)`)).toThrow()
-      expect(() => lispish.run(`(fn [&rest &bind []] nil)`)).toThrow()
-      expect(() => lispish.run(`(fn [&bind [] &opt a &rest b] a)`)).toThrow()
+      expect(() => lispish.run(`(fn [&opt a &rest b &let []] a)`)).not.toThrow()
+      expect(() => lispish.run(`(fn [&let [a 1)] a)`)).toThrow()
+      expect(() => lispish.run(`(fn [&opt a &rest b &let [] &let []] a)`)).toThrow()
+      expect(() => lispish.run(`(fn [&opt a &let [] &rest b] a)`)).toThrow()
+      expect(() => lispish.run(`(fn [&opt &let []] nil)`)).toThrow()
+      expect(() => lispish.run(`(fn [&rest &let []] nil)`)).toThrow()
+      expect(() => lispish.run(`(fn [&let [] &opt a &rest b] a)`)).toThrow()
       expect(() => lispish.run(`(fn [&opt &rest a] a)`)).toThrow()
       expect(() => lispish.run(`(fn [&opt &opt a] a)`)).toThrow()
       expect(() => lispish.run(`(fn [&rest &rest a] a)`)).toThrow()
@@ -96,6 +90,8 @@ describe(`parseArguments`, () => {
       expect(() => lispish.run(`(fn [&rest &opt a] a)`)).toThrow()
       expect(() => lispish.run(`(fn [&rest a &opt b] a)`)).toThrow()
       expect(() => lispish.run(`(fn [&rst a] a)`)).toThrow()
+      expect(() => lispish.run(`(fn [&when a] a)`)).toThrow()
+      expect(() => lispish.run(`(fn [&while a] a)`)).toThrow()
     })
   })
 })

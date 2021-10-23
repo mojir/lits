@@ -106,13 +106,14 @@ export type NodeType =
   | `Argument`
   | `Partial`
 
-export type ModifierName = `&rest` | `&opt` | `&bind`
+export type ModifierName = `&rest` | `&opt` | `&let` | `&when` | `&while`
 
 interface GenericNode {
   type: NodeType
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
+export type ParseBinding = (tokens: Token[], position: number) => [number, BindingNode]
 export type ParseBindings = (tokens: Token[], position: number) => [number, BindingNode[]]
 export type ParseArgument = (tokens: Token[], position: number) => [number, ArgumentNode | ModifierNode]
 export type ParseExpression = (tokens: Token[], position: number) => [number, ExpressionNode]

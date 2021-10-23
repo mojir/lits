@@ -102,7 +102,7 @@ var examples = [
 (loop [list (entries TRANSLATIONS)]
   (when (count list)
     (let [entry (first list)]
-      (defns (entry 0) [&rest params &bind [templateString (entry 1)]]
+      (defns (entry 0) [&rest params &let [templateString (entry 1)]]
         (apply template (cons templateString params))
       )
       (recur (rest list))

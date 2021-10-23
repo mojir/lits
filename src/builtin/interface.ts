@@ -6,6 +6,7 @@ import {
   ParseTokens,
   ParseToken,
   SpecialExpressionNode,
+  ParseBinding,
 } from '../parser/interface'
 import { Token } from '../tokenizer/interface'
 import { NormalExpressionNode } from '../parser/interface'
@@ -23,10 +24,11 @@ type BuiltinNormalExpression<T> = {
   validate?: ValidateNode
 }
 
-type Parsers = {
+export type Parsers = {
   parseExpression: ParseExpression
   parseTokens: ParseTokens
   parseToken: ParseToken
+  parseBinding: ParseBinding
   parseBindings: ParseBindings
   parseArgument: ParseArgument
 }
@@ -48,30 +50,31 @@ export type SpecialExpressionName =
   | `and`
   | `block`
   | `cond`
+  | `def`
   | `defn`
   | `defns`
+  | `defs`
+  | `do`
+  | `for`
   | `fn`
   | `function`
-  | `if`
+  | `if-let`
   | `if-not`
+  | `if`
   | `let`
-  | `or`
-  | `do`
   | `loop`
+  | `or`
+  | `partial`
   | `recur`
   | `return-from`
   | `return`
-  | `def`
-  | `defs`
   | `throw`
-  | `try`
-  | `when`
-  | `partial`
   | `time!`
-  | `if-let`
+  | `try`
+  | `when-first`
   | `when-let`
   | `when-not`
-  | `when-first`
+  | `when`
 
 export type Builtin = {
   normalExpressions: BuiltinNormalExpressions

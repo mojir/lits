@@ -61,7 +61,6 @@ const result = evaluate(ast, context) // returns 10
 
 # Missing functions
 * **assoc-in**
-* **for** ??
 * **partition**
 * **partition-by**
 * **partition-all**

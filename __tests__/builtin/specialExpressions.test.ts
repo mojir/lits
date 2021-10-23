@@ -301,7 +301,7 @@ describe(`specialExpressions`, () => {
   describe(`defn`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(defn add [a b] (+ a b)) (add 1 2)`)).toBe(3)
-      expect(lispish.run(`(defn add [a b &bind [x 10]] (+ a b x)) (add 1 2)`)).toBe(13)
+      expect(lispish.run(`(defn add [a b &let [x 10]] (+ a b x)) (add 1 2)`)).toBe(13)
       expect(() => lispish.run(`(defn add [] 10)`)).not.toThrow()
       expect(() => lispish.run(`(defn x [a a] 10)`)).toThrow()
       expect(() => lispish.run(`(defn true [] 10)`)).toThrow()
@@ -472,6 +472,72 @@ describe(`specialExpressions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(time! (+ 1 2)`)).toBe(3)
       expect(lastLog).toMatch(/Elapsed time: \d+ ms/)
+    })
+  })
+
+  describe(`for`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(for [x []] x)`)).toEqual([])
+      expect(lispish.run(`(for [x [1 2 3] y []] x)`)).toEqual([])
+      expect(lispish.run(`(for [x [] y [1 2 3]] x)`)).toEqual([])
+
+      expect(lispish.run(`(for [x "Al" y [1 2]] (repeat y x))`)).toEqual([[`A`], [`A`, `A`], [`l`], [`l`, `l`]])
+      expect(lispish.run(`(for [x {"a" 10 "b" 20} y [1 2]] (repeat y x))`)).toEqual([
+        [[`a`, 10]],
+        [
+          [`a`, 10],
+          [`a`, 10],
+        ],
+        [[`b`, 20]],
+        [
+          [`b`, 20],
+          [`b`, 20],
+        ],
+      ])
+
+      expect(lispish.run(`(for [x [1 2] y [1 10]] (* x y))`)).toEqual([1, 10, 2, 20])
+      expect(lispish.run(`(for [x [1 2] &let [z (* x x x)]] z)`)).toEqual([1, 8])
+      expect(lispish.run(`(for [x [1 2] y [x (* 2 x)]] (* x y))`)).toEqual([1, 2, 4, 8])
+
+      expect(lispish.run(`(for [x [0 1 2 3 4 5] &let [y (* x 3)] &when (even? y)] y)`)).toEqual([0, 6, 12])
+      expect(lispish.run(`(for [x [0 1 2 3 4 5] &let [y (* x 3)] &while (even? y)] y)`)).toEqual([0])
+
+      expect(lispish.run(`(for [x [1 2 3] y [1 2 3] &while (<= x y) z [1 2 3]] [x y z])`)).toEqual([
+        [1, 1, 1],
+        [1, 1, 2],
+        [1, 1, 3],
+        [1, 2, 1],
+        [1, 2, 2],
+        [1, 2, 3],
+        [1, 3, 1],
+        [1, 3, 2],
+        [1, 3, 3],
+      ])
+      expect(lispish.run(`(for [x [1 2 3] y [1 2 3] z [1 2 3] &while (<= x y)] [x y z])`)).toEqual([
+        [1, 1, 1],
+        [1, 1, 2],
+        [1, 1, 3],
+        [1, 2, 1],
+        [1, 2, 2],
+        [1, 2, 3],
+        [1, 3, 1],
+        [1, 3, 2],
+        [1, 3, 3],
+        [2, 2, 1],
+        [2, 2, 2],
+        [2, 2, 3],
+        [2, 3, 1],
+        [2, 3, 2],
+        [2, 3, 3],
+        [3, 3, 1],
+        [3, 3, 2],
+        [3, 3, 3],
+      ])
+      expect(() => lispish.run(`(for [x [0 1 2 3 4 5] &opt [y (* x 3)] &while (even? y)] y)`)).toThrow()
+      expect(() => lispish.run(`(for [x [0 1 2 3 4 5] &let [x 10]] y)`)).toThrow()
+      expect(() => lispish.run(`(for x [0 1 2 3 4 5] y)`)).toThrow()
+      expect(() => lispish.run(`(for [x [0 1 2 3 4 5]] x y)`)).toThrow()
+      expect(() => lispish.run(`(for [x [0 1 2 3 4 5] x [10 20]] x)`)).toThrow()
     })
   })
 })

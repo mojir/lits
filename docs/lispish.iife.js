@@ -319,11 +319,6 @@ var Lispish = (function (exports) {
             throw TypeError("Expected Arr, got: " + value + " type=\"" + typeof value + "\"");
         }
     }
-    function assertColl(value) {
-        if (!isColl(value)) {
-            throw TypeError("Expected collection, got: " + value + " type=\"" + typeof value + "\"");
-        }
-    }
     function isAny(value) {
         return value !== undefined;
     }
@@ -363,6 +358,17 @@ var Lispish = (function (exports) {
     }
     function isColl(value) {
         return isSeq(value) || isObj(value);
+    }
+    function assertColl(value) {
+        if (!isColl(value)) {
+            throw TypeError("Expected collection, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
+    function asColl(value) {
+        if (!isColl(value)) {
+            throw TypeError("Expected collection, got: " + value + " type=\"" + typeof value + "\"");
+        }
+        return value;
     }
     function isNumber(value) {
         return typeof value === "number";
@@ -602,113 +608,6 @@ var Lispish = (function (exports) {
     };
     var reservedNames = Object.keys(reservedNamesRecord);
 
-    function parseFunctionArguments(tokens, position, parseArgument, parseBindings) {
-        var _a;
-        var bindings = [];
-        var restArgument = undefined;
-        var mandatoryArguments = [];
-        var optionalArguments = [];
-        var argNames = {};
-        var state = "mandatory";
-        var token = asNotUndefined(tokens[position]);
-        if (!(token.type === "paren" && token.value === "[")) {
-            throw new UnexpectedTokenError("[", token);
-        }
-        position += 1;
-        token = asNotUndefined(tokens[position]);
-        while (!(token.type === "paren" && token.value === "]")) {
-            if (state === "bind") {
-                _a = parseBindings(tokens, position), position = _a[0], bindings = _a[1];
-                break;
-            }
-            else {
-                var _b = parseArgument(tokens, position), newPosition = _b[0], node = _b[1];
-                position = newPosition;
-                token = asNotUndefined(tokens[position]);
-                if (node.type === "Modifier") {
-                    switch (node.value) {
-                        case "&opt":
-                            if (state === "rest") {
-                                throw Error("&opt cannot appear after &rest");
-                            }
-                            if (state === "optional") {
-                                throw Error("&opt can only appear once");
-                            }
-                            state = "optional";
-                            break;
-                        case "&rest":
-                            if (state === "rest") {
-                                throw Error("&rest can only appear once");
-                            }
-                            if (state === "optional" && optionalArguments.length === 0) {
-                                throw Error("No optional arguments where spcified");
-                            }
-                            state = "rest";
-                            break;
-                        case "&bind":
-                            if (state === "optional" && optionalArguments.length === 0) {
-                                throw Error("No optional arguments where spcified");
-                            }
-                            if (state === "rest" && !restArgument) {
-                                throw Error("No rest argument was spcified");
-                            }
-                            state = "bind";
-                            break;
-                    }
-                }
-                else {
-                    if (argNames[node.name]) {
-                        throw Error("Duplicate argument \"" + node.name + "\"");
-                    }
-                    else {
-                        argNames[node.name] = true;
-                    }
-                    if (Object.getOwnPropertyDescriptor(node, "defaultValue")) {
-                        if (state !== "optional") {
-                            throw Error("Cannot specify default value if not an optional argument");
-                        }
-                        optionalArguments.push({
-                            name: node.name,
-                            defaultValue: node.defaultValue,
-                        });
-                    }
-                    else {
-                        switch (state) {
-                            case "mandatory":
-                                mandatoryArguments.push(node.name);
-                                break;
-                            case "optional":
-                                optionalArguments.push({
-                                    name: node.name,
-                                    defaultValue: undefined,
-                                });
-                                break;
-                            case "rest":
-                                if (restArgument !== undefined) {
-                                    throw Error("Can only specify one rest argument");
-                                }
-                                restArgument = node.name;
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-        if (state === "rest" && restArgument === undefined) {
-            throw Error("Missing rest argument name");
-        }
-        if (state === "optional" && optionalArguments.length === 0) {
-            throw Error("No optional arguments where spcified");
-        }
-        position += 1;
-        var args = {
-            mandatoryArguments: mandatoryArguments,
-            optionalArguments: optionalArguments,
-            restArgument: restArgument,
-            bindings: bindings,
-        };
-        return [position, args];
-    }
     function assertNameNotDefined(name, contextStack, builtin) {
         if (typeof name !== "string") {
             return;
@@ -848,39 +747,143 @@ var Lispish = (function (exports) {
         parse: createParser("fn"),
         evaluate: createEvaluator("fn"),
     };
+    function parseFunctionArguments(tokens, position, parseArgument, parseBindings) {
+        var _a;
+        var bindings = [];
+        var restArgument = undefined;
+        var mandatoryArguments = [];
+        var optionalArguments = [];
+        var argNames = {};
+        var state = "mandatory";
+        var token = asNotUndefined(tokens[position]);
+        if (!(token.type === "paren" && token.value === "[")) {
+            throw new UnexpectedTokenError("[", token);
+        }
+        position += 1;
+        token = asNotUndefined(tokens[position]);
+        while (!(token.type === "paren" && token.value === "]")) {
+            if (state === "let") {
+                _a = parseBindings(tokens, position), position = _a[0], bindings = _a[1];
+                break;
+            }
+            else {
+                var _b = parseArgument(tokens, position), newPosition = _b[0], node = _b[1];
+                position = newPosition;
+                token = asNotUndefined(tokens[position]);
+                if (node.type === "Modifier") {
+                    switch (node.value) {
+                        case "&opt":
+                            if (state === "rest") {
+                                throw Error("&opt cannot appear after &rest");
+                            }
+                            if (state === "optional") {
+                                throw Error("&opt can only appear once");
+                            }
+                            state = "optional";
+                            break;
+                        case "&rest":
+                            if (state === "rest") {
+                                throw Error("&rest can only appear once");
+                            }
+                            if (state === "optional" && optionalArguments.length === 0) {
+                                throw Error("No optional arguments where spcified");
+                            }
+                            state = "rest";
+                            break;
+                        case "&let":
+                            if (state === "optional" && optionalArguments.length === 0) {
+                                throw Error("No optional arguments where spcified");
+                            }
+                            if (state === "rest" && !restArgument) {
+                                throw Error("No rest argument was spcified");
+                            }
+                            state = "let";
+                            break;
+                        default:
+                            throw Error("Illegal modifier: " + node.value);
+                    }
+                }
+                else {
+                    if (argNames[node.name]) {
+                        throw Error("Duplicate argument \"" + node.name + "\"");
+                    }
+                    else {
+                        argNames[node.name] = true;
+                    }
+                    if (Object.getOwnPropertyDescriptor(node, "defaultValue")) {
+                        if (state !== "optional") {
+                            throw Error("Cannot specify default value if not an optional argument");
+                        }
+                        optionalArguments.push({
+                            name: node.name,
+                            defaultValue: node.defaultValue,
+                        });
+                    }
+                    else {
+                        switch (state) {
+                            case "mandatory":
+                                mandatoryArguments.push(node.name);
+                                break;
+                            case "optional":
+                                optionalArguments.push({
+                                    name: node.name,
+                                    defaultValue: undefined,
+                                });
+                                break;
+                            case "rest":
+                                if (restArgument !== undefined) {
+                                    throw Error("Can only specify one rest argument");
+                                }
+                                restArgument = node.name;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        if (state === "rest" && restArgument === undefined) {
+            throw Error("Missing rest argument name");
+        }
+        if (state === "optional" && optionalArguments.length === 0) {
+            throw Error("No optional arguments where spcified");
+        }
+        position += 1;
+        var args = {
+            mandatoryArguments: mandatoryArguments,
+            optionalArguments: optionalArguments,
+            restArgument: restArgument,
+            bindings: bindings,
+        };
+        return [position, args];
+    }
 
-    var ifSpecialExpression = {
+    var defSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            assertNameNode(params[0]);
             return [
                 newPosition + 1,
                 {
                     type: "SpecialExpression",
-                    name: "if",
+                    name: "def",
                     params: params,
                 },
             ];
         },
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (evaluateAstNode(asAstNode(conditionNode), contextStack)) {
-                return evaluateAstNode(asAstNode(trueNode), contextStack);
-            }
-            else {
-                if (node.params.length === 3) {
-                    return evaluateAstNode(asAstNode(falseNode), contextStack);
-                }
-                else {
-                    return null;
-                }
-            }
+            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
+            var name = asNameNode(node.params[0]).value;
+            assertNameNotDefined(name, contextStack, builtin);
+            var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
+            var context = asNotUndefined(contextStack[contextStack.length - 2]);
+            context[name] = { value: value };
+            return value;
         },
-        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        validate: function (node) { return assertLength(2, node); },
     };
 
-    var ifNotSpecialExpression = {
+    var defsSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
@@ -888,27 +891,207 @@ var Lispish = (function (exports) {
                 newPosition + 1,
                 {
                     type: "SpecialExpression",
-                    name: "if-not",
+                    name: "defs",
                     params: params,
                 },
             ];
         },
         evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (!evaluateAstNode(asAstNode(conditionNode), contextStack)) {
-                return evaluateAstNode(asAstNode(trueNode), contextStack);
-            }
-            else {
-                if (node.params.length === 3) {
-                    return evaluateAstNode(asAstNode(falseNode), contextStack);
-                }
-                else {
-                    return null;
-                }
-            }
+            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
+            var name = evaluateAstNode(asAstNode(node.params[0]), contextStack);
+            assertString(name);
+            assertNameNotDefined(name, contextStack, builtin);
+            var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
+            var context = asNotUndefined(contextStack[contextStack.length - 2]);
+            context[name] = { value: value };
+            return value;
         },
-        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        validate: function (node) { return assertLength(2, node); },
+    };
+
+    var doSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseToken = _a.parseToken;
+            var node = {
+                type: "SpecialExpression",
+                name: "do",
+                params: [],
+            };
+            var token = asNotUndefined(tokens[position]);
+            while (!(token.type === "paren" && token.value === ")")) {
+                var _b = parseToken(tokens, position), newPosition = _b[0], bodyNode = _b[1];
+                node.params.push(bodyNode);
+                position = newPosition;
+                token = asNotUndefined(tokens[position]);
+            }
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var newContext = {};
+            var newContextStack = __spreadArray([newContext], contextStack);
+            var result = null;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var form = _b[_i];
+                result = evaluateAstNode(form, newContextStack);
+            }
+            return result;
+        },
+    };
+
+    function parseLoopBinding(tokens, position, _a) {
+        var _b, _c, _d, _e;
+        var parseBinding = _a.parseBinding, parseBindings = _a.parseBindings, parseToken = _a.parseToken;
+        var bindingNode;
+        _b = parseBinding(tokens, position), position = _b[0], bindingNode = _b[1];
+        var loopBinding = {
+            binding: bindingNode,
+            modifiers: [],
+        };
+        var token = asNotUndefined(tokens[position]);
+        while (token.type === "modifier") {
+            switch (token.value) {
+                case "&let":
+                    if (loopBinding.letBindings) {
+                        throw Error("Only one &let modifier allowed");
+                    }
+                    _c = parseBindings(tokens, position + 1), position = _c[0], loopBinding.letBindings = _c[1];
+                    loopBinding.modifiers.push("&let");
+                    break;
+                case "&when":
+                    if (loopBinding.whenNode) {
+                        throw Error("Only one &when modifier allowed");
+                    }
+                    _d = parseToken(tokens, position + 1), position = _d[0], loopBinding.whenNode = _d[1];
+                    loopBinding.modifiers.push("&when");
+                    break;
+                case "&while":
+                    if (loopBinding.whileNode) {
+                        throw Error("Only one &while modifier allowed");
+                    }
+                    _e = parseToken(tokens, position + 1), position = _e[0], loopBinding.whileNode = _e[1];
+                    loopBinding.modifiers.push("&while");
+                    break;
+                default:
+                    throw Error("Illegal modifier: " + token.value);
+            }
+            token = asNotUndefined(tokens[position]);
+        }
+        return [position, loopBinding];
+    }
+    function addToContext(bindings, context, contextStack, evaluateAstNode) {
+        for (var _i = 0, bindings_1 = bindings; _i < bindings_1.length; _i++) {
+            var binding = bindings_1[_i];
+            if (context[binding.name]) {
+                throw Error("Variable already defined: " + binding.name);
+            }
+            context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
+        }
+    }
+    function parseLoopBindings(tokens, position, parsers) {
+        var _a;
+        var token = asNotUndefined(tokens[position]);
+        if (!(token.type === "paren" && token.value === "[")) {
+            throw new UnexpectedTokenError("[", token);
+        }
+        position += 1;
+        var loopBindings = [];
+        token = asNotUndefined(tokens[position]);
+        while (!(token.type === "paren" && token.value === "]")) {
+            var loopBinding = void 0;
+            _a = parseLoopBinding(tokens, position, parsers), position = _a[0], loopBinding = _a[1];
+            loopBindings.push(loopBinding);
+            token = asNotUndefined(tokens[position]);
+        }
+        return [position + 1, loopBindings];
+    }
+    var forSpecialExpression = {
+        parse: function (tokens, position, parsers) {
+            var _a, _b;
+            var parseToken = parsers.parseToken;
+            var loopBindings;
+            _a = parseLoopBindings(tokens, position, parsers), position = _a[0], loopBindings = _a[1];
+            var expression;
+            _b = parseToken(tokens, position), position = _b[0], expression = _b[1];
+            var token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            var node = {
+                name: "for",
+                type: "SpecialExpression",
+                loopBindings: loopBindings,
+                params: [expression],
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var loopBindings = node.loopBindings, params = node.params;
+            var expression = asNotUndefined(params[0]);
+            var result = [];
+            var bindingIndices = loopBindings.map(function () { return 0; });
+            var abort = false;
+            while (!abort) {
+                var context = {};
+                var newContextStack = __spreadArray([context], contextStack);
+                var skip = false;
+                bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
+                    var _b = asNotUndefined(loopBindings[bindingIndex]), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
+                    var coll = asColl(evaluateAstNode(binding.value, newContextStack));
+                    var seq = isSeq(coll) ? coll : Object.entries(coll);
+                    if (seq.length === 0) {
+                        skip = true;
+                        abort = true;
+                        break;
+                    }
+                    var index = asNotUndefined(bindingIndices[bindingIndex]);
+                    if (index >= seq.length) {
+                        skip = true;
+                        if (bindingIndex === 0) {
+                            abort = true;
+                            break;
+                        }
+                        bindingIndices[bindingIndex] = 0;
+                        bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1]) + 1;
+                        break;
+                    }
+                    if (context[binding.name]) {
+                        throw Error("Variable already defined: " + binding.name);
+                    }
+                    context[binding.name] = {
+                        value: asAny(seq[index]),
+                    };
+                    for (var _i = 0, modifiers_1 = modifiers; _i < modifiers_1.length; _i++) {
+                        var modifier = modifiers_1[_i];
+                        switch (modifier) {
+                            case "&let":
+                                addToContext(asNotUndefined(letBindings), context, newContextStack, evaluateAstNode);
+                                break;
+                            case "&when":
+                                if (!evaluateAstNode(asNotUndefined(whenNode), newContextStack)) {
+                                    bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex]) + 1;
+                                    skip = true;
+                                    break bindingsLoop;
+                                }
+                                break;
+                            case "&while":
+                                if (!evaluateAstNode(asNotUndefined(whileNode), newContextStack)) {
+                                    bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY;
+                                    skip = true;
+                                    break bindingsLoop;
+                                }
+                                break;
+                        }
+                    }
+                }
+                if (!skip) {
+                    result.push(evaluateAstNode(expression, newContextStack));
+                    bindingIndices[bindingIndices.length - 1] += 1;
+                }
+            }
+            return result;
+        },
     };
 
     var ifLetSpecialExpression = {
@@ -947,6 +1130,357 @@ var Lispish = (function (exports) {
             return null;
         },
         validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+    };
+
+    var ifNotSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "if-not",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
+            if (!evaluateAstNode(asAstNode(conditionNode), contextStack)) {
+                return evaluateAstNode(asAstNode(trueNode), contextStack);
+            }
+            else {
+                if (node.params.length === 3) {
+                    return evaluateAstNode(asAstNode(falseNode), contextStack);
+                }
+                else {
+                    return null;
+                }
+            }
+        },
+        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+    };
+
+    var ifSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "if",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
+            if (evaluateAstNode(asAstNode(conditionNode), contextStack)) {
+                return evaluateAstNode(asAstNode(trueNode), contextStack);
+            }
+            else {
+                if (node.params.length === 3) {
+                    return evaluateAstNode(asAstNode(falseNode), contextStack);
+                }
+                else {
+                    return null;
+                }
+            }
+        },
+        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+    };
+
+    var letSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "let",
+                params: params,
+                bindings: bindings,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var locals = {};
+            for (var _i = 0, _b = node.bindings; _i < _b.length; _i++) {
+                var binding = _b[_i];
+                var bindingValueNode = binding.value;
+                var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                locals[binding.name] = { value: bindingValue };
+            }
+            var newContextStack = __spreadArray([locals], contextStack);
+            var result = null;
+            for (var _c = 0, _d = node.params; _c < _d.length; _c++) {
+                var astNode = _d[_c];
+                result = evaluateAstNode(astNode, newContextStack);
+            }
+            return result;
+        },
+    };
+
+    var loopSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseTokens = _a.parseTokens, parseBindings = _a.parseBindings;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "loop",
+                params: params,
+                bindings: bindings,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var bindingContext = node.bindings.reduce(function (result, binding) {
+                result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
+                return result;
+            }, {});
+            var newContextStack = __spreadArray([bindingContext], contextStack);
+            var _loop_1 = function () {
+                var result = null;
+                try {
+                    for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                        var form = _b[_i];
+                        result = evaluateAstNode(form, newContextStack);
+                    }
+                }
+                catch (error) {
+                    if (error instanceof RecurSignal) {
+                        var params_1 = error.params;
+                        if (params_1.length !== node.bindings.length) {
+                            throw Error("recur expected " + node.bindings.length + " parameters, got " + params_1.length);
+                        }
+                        node.bindings.forEach(function (binding, index) {
+                            asNotUndefined(bindingContext[binding.name]).value = asAny(params_1[index]);
+                        });
+                        return "continue";
+                    }
+                    throw error;
+                }
+                return { value: result };
+            };
+            for (;;) {
+                var state_1 = _loop_1();
+                if (typeof state_1 === "object")
+                    return state_1.value;
+            }
+        },
+    };
+
+    var orSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "or",
+                    params: params,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var value = false;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var param = _b[_i];
+                value = evaluateAstNode(param, contextStack);
+                if (value) {
+                    break;
+                }
+            }
+            return value;
+        },
+    };
+
+    var recurSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b;
+            var parseTokens = _a.parseTokens;
+            var params;
+            _b = parseTokens(tokens, position), position = _b[0], params = _b[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "recur",
+                params: params,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
+            throw new RecurSignal(params);
+        },
+    };
+
+    var throwSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseToken = _a.parseToken;
+            var _b = parseToken(tokens, position), newPosition = _b[0], messageNode = _b[1];
+            position = newPosition;
+            var token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            var node = {
+                type: "SpecialExpression",
+                name: "throw",
+                params: [],
+                messageNode: messageNode,
+            };
+            return [position, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack));
+            throw new UserDefinedError(message);
+        },
+    };
+
+    var timeSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseToken = _a.parseToken;
+            var _b = parseToken(tokens, position), newPosition = _b[0], astNode = _b[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "time!",
+                params: [astNode],
+            };
+            return [newPosition + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var astNode = node.params[0];
+            assertNotUndefined(astNode);
+            var startTime = Date.now();
+            var result = evaluateAstNode(astNode, contextStack);
+            var totalTime = Date.now() - startTime;
+            // eslint-disable-next-line no-console
+            console.log("Elapsed time: " + totalTime + " ms");
+            return result;
+        },
+        validate: function (node) { return assertLength(1, node); },
+    };
+
+    var trySpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c, _d;
+            var parseToken = _a.parseToken;
+            var tryExpression;
+            _b = parseToken(tokens, position), position = _b[0], tryExpression = _b[1];
+            var token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === "(")) {
+                throw new UnexpectedTokenError("(", token);
+            }
+            position += 1;
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === "(")) {
+                throw new UnexpectedTokenError("(", token);
+            }
+            position += 1;
+            var error;
+            _c = parseToken(tokens, position), position = _c[0], error = _c[1];
+            if (error.type !== "Name") {
+                throw new UnexpectedNodeTypeError("Name", error);
+            }
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            var catchExpression;
+            _d = parseToken(tokens, position), position = _d[0], catchExpression = _d[1];
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            token = asNotUndefined(tokens[position]);
+            if (!(token.type === "paren" && token.value === ")")) {
+                throw new UnexpectedTokenError(")", token);
+            }
+            position += 1;
+            var node = {
+                type: "SpecialExpression",
+                name: "try",
+                params: [],
+                tryExpression: tryExpression,
+                catchExpression: catchExpression,
+                error: error,
+            };
+            return [position, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var _b;
+            var evaluateAstNode = _a.evaluateAstNode;
+            try {
+                return evaluateAstNode(node.tryExpression, contextStack);
+            }
+            catch (error) {
+                var newContext = (_b = {}, _b[node.error.value] = { value: asNotUndefined(error) }, _b);
+                return evaluateAstNode(node.catchExpression, __spreadArray([newContext], contextStack));
+            }
+        },
+    };
+
+    var whenFirstSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b, _c;
+            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
+            var bindings;
+            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
+            if (bindings.length !== 1) {
+                throw Error("Expected exactly one binding, got " + bindings.length);
+            }
+            var params;
+            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
+            var node = {
+                type: "SpecialExpression",
+                name: "when-first",
+                binding: asNotUndefined(bindings[0]),
+                params: params,
+            };
+            return [position + 1, node];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var locals = {};
+            var evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack);
+            if (!isSeq(evaluatedBindingForm)) {
+                throw Error("Expected undefined or a sequence, got " + evaluatedBindingForm);
+            }
+            if (evaluatedBindingForm.length === 0) {
+                return null;
+            }
+            var bindingValue = toAny(evaluatedBindingForm[0]);
+            locals[node.binding.name] = { value: bindingValue };
+            var newContextStack = __spreadArray([locals], contextStack);
+            var result = null;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var form = _b[_i];
+                result = evaluateAstNode(form, newContextStack);
+            }
+            return result;
+        },
+        validate: function (node) { return assertLength({ min: 0 }, node); },
     };
 
     var whenLetSpecialExpression = {
@@ -1015,278 +1549,6 @@ var Lispish = (function (exports) {
         validate: function (node) { return assertLength({ min: 1 }, node); },
     };
 
-    var whenFirstSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var _b, _c;
-            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var bindings;
-            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
-            if (bindings.length !== 1) {
-                throw Error("Expected exactly one binding, got " + bindings.length);
-            }
-            var params;
-            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
-            var node = {
-                type: "SpecialExpression",
-                name: "when-first",
-                binding: asNotUndefined(bindings[0]),
-                params: params,
-            };
-            return [position + 1, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var locals = {};
-            var evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack);
-            if (!isSeq(evaluatedBindingForm)) {
-                throw Error("Expected undefined or a sequence, got " + evaluatedBindingForm);
-            }
-            if (evaluatedBindingForm.length === 0) {
-                return null;
-            }
-            var bindingValue = toAny(evaluatedBindingForm[0]);
-            locals[node.binding.name] = { value: bindingValue };
-            var newContextStack = __spreadArray([locals], contextStack);
-            var result = null;
-            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
-                var form = _b[_i];
-                result = evaluateAstNode(form, newContextStack);
-            }
-            return result;
-        },
-        validate: function (node) { return assertLength({ min: 0 }, node); },
-    };
-
-    var letSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var _b, _c;
-            var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var bindings;
-            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
-            var params;
-            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
-            var node = {
-                type: "SpecialExpression",
-                name: "let",
-                params: params,
-                bindings: bindings,
-            };
-            return [position + 1, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var locals = {};
-            for (var _i = 0, _b = node.bindings; _i < _b.length; _i++) {
-                var binding = _b[_i];
-                var bindingValueNode = binding.value;
-                var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
-                locals[binding.name] = { value: bindingValue };
-            }
-            var newContextStack = __spreadArray([locals], contextStack);
-            var result = null;
-            for (var _c = 0, _d = node.params; _c < _d.length; _c++) {
-                var astNode = _d[_c];
-                result = evaluateAstNode(astNode, newContextStack);
-            }
-            return result;
-        },
-    };
-
-    var orSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var parseTokens = _a.parseTokens;
-            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
-            return [
-                newPosition + 1,
-                {
-                    type: "SpecialExpression",
-                    name: "or",
-                    params: params,
-                },
-            ];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var value = false;
-            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
-                var param = _b[_i];
-                value = evaluateAstNode(param, contextStack);
-                if (value) {
-                    break;
-                }
-            }
-            return value;
-        },
-    };
-
-    var doSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var parseToken = _a.parseToken;
-            var node = {
-                type: "SpecialExpression",
-                name: "do",
-                params: [],
-            };
-            var token = asNotUndefined(tokens[position]);
-            while (!(token.type === "paren" && token.value === ")")) {
-                var _b = parseToken(tokens, position), newPosition = _b[0], bodyNode = _b[1];
-                node.params.push(bodyNode);
-                position = newPosition;
-                token = asNotUndefined(tokens[position]);
-            }
-            return [position + 1, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var newContext = {};
-            var newContextStack = __spreadArray([newContext], contextStack);
-            var result = null;
-            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
-                var form = _b[_i];
-                result = evaluateAstNode(form, newContextStack);
-            }
-            return result;
-        },
-    };
-
-    var defSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var parseTokens = _a.parseTokens;
-            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
-            assertNameNode(params[0]);
-            return [
-                newPosition + 1,
-                {
-                    type: "SpecialExpression",
-                    name: "def",
-                    params: params,
-                },
-            ];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var name = asNameNode(node.params[0]).value;
-            assertNameNotDefined(name, contextStack, builtin);
-            var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
-            var context = asNotUndefined(contextStack[contextStack.length - 2]);
-            context[name] = { value: value };
-            return value;
-        },
-        validate: function (node) { return assertLength(2, node); },
-    };
-
-    var defsSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var parseTokens = _a.parseTokens;
-            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
-            return [
-                newPosition + 1,
-                {
-                    type: "SpecialExpression",
-                    name: "defs",
-                    params: params,
-                },
-            ];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var name = evaluateAstNode(asAstNode(node.params[0]), contextStack);
-            assertString(name);
-            assertNameNotDefined(name, contextStack, builtin);
-            var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
-            var context = asNotUndefined(contextStack[contextStack.length - 2]);
-            context[name] = { value: value };
-            return value;
-        },
-        validate: function (node) { return assertLength(2, node); },
-    };
-
-    var throwSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var parseToken = _a.parseToken;
-            var _b = parseToken(tokens, position), newPosition = _b[0], messageNode = _b[1];
-            position = newPosition;
-            var token = asNotUndefined(tokens[position]);
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
-            }
-            position += 1;
-            var node = {
-                type: "SpecialExpression",
-                name: "throw",
-                params: [],
-                messageNode: messageNode,
-            };
-            return [position, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack));
-            throw new UserDefinedError(message);
-        },
-    };
-
-    var trySpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var _b, _c, _d;
-            var parseToken = _a.parseToken;
-            var tryExpression;
-            _b = parseToken(tokens, position), position = _b[0], tryExpression = _b[1];
-            var token = asNotUndefined(tokens[position]);
-            if (!(token.type === "paren" && token.value === "(")) {
-                throw new UnexpectedTokenError("(", token);
-            }
-            position += 1;
-            token = asNotUndefined(tokens[position]);
-            if (!(token.type === "paren" && token.value === "(")) {
-                throw new UnexpectedTokenError("(", token);
-            }
-            position += 1;
-            var error;
-            _c = parseToken(tokens, position), position = _c[0], error = _c[1];
-            if (error.type !== "Name") {
-                throw new UnexpectedNodeTypeError("Name", error);
-            }
-            token = asNotUndefined(tokens[position]);
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
-            }
-            position += 1;
-            var catchExpression;
-            _d = parseToken(tokens, position), position = _d[0], catchExpression = _d[1];
-            token = asNotUndefined(tokens[position]);
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
-            }
-            position += 1;
-            token = asNotUndefined(tokens[position]);
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
-            }
-            position += 1;
-            var node = {
-                type: "SpecialExpression",
-                name: "try",
-                params: [],
-                tryExpression: tryExpression,
-                catchExpression: catchExpression,
-                error: error,
-            };
-            return [position, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var _b;
-            var evaluateAstNode = _a.evaluateAstNode;
-            try {
-                return evaluateAstNode(node.tryExpression, contextStack);
-            }
-            catch (error) {
-                var newContext = (_b = {}, _b[node.error.value] = { value: asNotUndefined(error) }, _b);
-                return evaluateAstNode(node.catchExpression, __spreadArray([newContext], contextStack));
-            }
-        },
-    };
-
     var whenSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
@@ -1313,105 +1575,6 @@ var Lispish = (function (exports) {
             return result;
         },
         validate: function (node) { return assertLength({ min: 1 }, node); },
-    };
-
-    var recurSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var _b;
-            var parseTokens = _a.parseTokens;
-            var params;
-            _b = parseTokens(tokens, position), position = _b[0], params = _b[1];
-            var node = {
-                type: "SpecialExpression",
-                name: "recur",
-                params: params,
-            };
-            return [position + 1, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
-            throw new RecurSignal(params);
-        },
-    };
-
-    var loopSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var _b, _c;
-            var parseTokens = _a.parseTokens, parseBindings = _a.parseBindings;
-            var bindings;
-            _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
-            var params;
-            _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
-            var node = {
-                type: "SpecialExpression",
-                name: "loop",
-                params: params,
-                bindings: bindings,
-            };
-            return [position + 1, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var bindingContext = node.bindings.reduce(function (result, binding) {
-                result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
-                return result;
-            }, {});
-            var newContextStack = __spreadArray([bindingContext], contextStack);
-            var _loop_1 = function () {
-                var result = null;
-                try {
-                    for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
-                        var form = _b[_i];
-                        result = evaluateAstNode(form, newContextStack);
-                    }
-                }
-                catch (error) {
-                    if (error instanceof RecurSignal) {
-                        var params_1 = error.params;
-                        if (params_1.length !== node.bindings.length) {
-                            throw Error("recur expected " + node.bindings.length + " parameters, got " + params_1.length);
-                        }
-                        node.bindings.forEach(function (binding, index) {
-                            asNotUndefined(bindingContext[binding.name]).value = asAny(params_1[index]);
-                        });
-                        return "continue";
-                    }
-                    throw error;
-                }
-                return { value: result };
-            };
-            for (;;) {
-                var state_1 = _loop_1();
-                if (typeof state_1 === "object")
-                    return state_1.value;
-            }
-        },
-    };
-
-    var timeSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var parseToken = _a.parseToken;
-            var _b = parseToken(tokens, position), newPosition = _b[0], astNode = _b[1];
-            var node = {
-                type: "SpecialExpression",
-                name: "time!",
-                params: [astNode],
-            };
-            return [newPosition + 1, node];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var astNode = node.params[0];
-            assertNotUndefined(astNode);
-            var startTime = Date.now();
-            var result = evaluateAstNode(astNode, contextStack);
-            var totalTime = Date.now() - startTime;
-            // eslint-disable-next-line no-console
-            console.log("Elapsed time: " + totalTime + " ms");
-            return result;
-        },
-        validate: function (node) { return assertLength(1, node); },
     };
 
     var bitwiseNormalExpression = {
@@ -3081,7 +3244,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "0.1.59";
+    var version = "0.1.60";
 
     var miscNormalExpression = {
         'not=': {
@@ -3959,28 +4122,29 @@ var Lispish = (function (exports) {
     var normalExpressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
 
     var specialExpressions = {
-        def: defSpecialExpression,
-        defs: defsSpecialExpression,
         and: andSpecialExpression,
         cond: condSpecialExpression,
+        def: defSpecialExpression,
         defn: defnSpecialExpression,
         defns: defnsSpecialExpression,
-        if: ifSpecialExpression,
-        'if-not': ifNotSpecialExpression,
-        'if-let': ifLetSpecialExpression,
-        'when-let': whenLetSpecialExpression,
-        'when-not': whenNotSpecialExpression,
-        'when-first': whenFirstSpecialExpression,
-        fn: fnSpecialExpression,
-        let: letSpecialExpression,
-        or: orSpecialExpression,
+        defs: defsSpecialExpression,
         do: doSpecialExpression,
+        for: forSpecialExpression,
+        fn: fnSpecialExpression,
+        if: ifSpecialExpression,
+        'if-let': ifLetSpecialExpression,
+        'if-not': ifNotSpecialExpression,
+        let: letSpecialExpression,
+        loop: loopSpecialExpression,
+        or: orSpecialExpression,
+        recur: recurSpecialExpression,
         throw: throwSpecialExpression,
+        'time!': timeSpecialExpression,
         try: trySpecialExpression,
         when: whenSpecialExpression,
-        recur: recurSpecialExpression,
-        loop: loopSpecialExpression,
-        'time!': timeSpecialExpression,
+        'when-first': whenFirstSpecialExpression,
+        'when-let': whenLetSpecialExpression,
+        'when-not': whenNotSpecialExpression,
     };
     Object.keys(specialExpressions).forEach(function (key) {
         /* istanbul ignore next */
@@ -4436,7 +4600,7 @@ var Lispish = (function (exports) {
         position += 1;
         return [position, bindings];
     };
-    function parseBinding(tokens, position) {
+    var parseBinding = function (tokens, position) {
         var _a;
         var token = asNotUndefined(tokens[position]);
         if (token.type !== "name") {
@@ -4453,7 +4617,7 @@ var Lispish = (function (exports) {
             value: value,
         };
         return [position, node];
-    }
+    };
     var parseNormalExpression = function (tokens, position) {
         var _a;
         var _b;
@@ -4490,6 +4654,7 @@ var Lispish = (function (exports) {
             parseExpression: parseExpression,
             parseTokens: parseTokens,
             parseToken: parseToken,
+            parseBinding: parseBinding,
             parseBindings: parseBindings,
             parseArgument: parseArgument,
         }), positionAfterParse = _b[0], node = _b[1];
@@ -4740,17 +4905,14 @@ var Lispish = (function (exports) {
         return tokenizePattern("name", nameRegExp, input, position);
     };
     var tokenizeModifier = function (input, position) {
-        if (input.substr(position, 5) === "&rest") {
-            var value = "&rest";
-            return [5, { type: "modifier", value: value }];
-        }
-        if (input.substr(position, 4) === "&opt") {
-            var value = "&opt";
-            return [4, { type: "modifier", value: value }];
-        }
-        if (input.substr(position, 5) === "&bind") {
-            var value = "&bind";
-            return [5, { type: "modifier", value: value }];
+        var modifiers = ["&rest", "&opt", "&let", "&when", "&while"];
+        for (var _i = 0, modifiers_1 = modifiers; _i < modifiers_1.length; _i++) {
+            var modifier = modifiers_1[_i];
+            var length_3 = modifier.length;
+            if (input.substr(position, length_3) === modifier) {
+                var value = modifier;
+                return [length_3, { type: "modifier", value: value }];
+            }
         }
         return [0, undefined];
     };

@@ -1,49 +1,51 @@
 import { andSpecialExpression } from './specialExpressions/and'
 import { condSpecialExpression } from './specialExpressions/cond'
 import { defnSpecialExpression, defnsSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
-import { ifSpecialExpression } from './specialExpressions/if'
-import { ifNotSpecialExpression } from './specialExpressions/if-not'
-import { ifLetSpecialExpression } from './specialExpressions/if-let'
-import { whenLetSpecialExpression } from './specialExpressions/when-let'
-import { whenNotSpecialExpression } from './specialExpressions/when-not'
-import { whenFirstSpecialExpression } from './specialExpressions/when-first'
-import { letSpecialExpression } from './specialExpressions/let'
-import { orSpecialExpression } from './specialExpressions/or'
-import { doSpecialExpression } from './specialExpressions/do'
 import { defSpecialExpression } from './specialExpressions/def'
 import { defsSpecialExpression } from './specialExpressions/defs'
-import { throwSpecialExpression } from './specialExpressions/throw'
-import { trySpecialExpression } from './specialExpressions/try'
-import { whenSpecialExpression } from './specialExpressions/when'
-import { recurSpecialExpression } from './specialExpressions/recur'
+import { doSpecialExpression } from './specialExpressions/do'
+import { forSpecialExpression } from './specialExpressions/for'
+import { ifLetSpecialExpression } from './specialExpressions/if-let'
+import { ifNotSpecialExpression } from './specialExpressions/if-not'
+import { ifSpecialExpression } from './specialExpressions/if'
+import { letSpecialExpression } from './specialExpressions/let'
 import { loopSpecialExpression } from './specialExpressions/loop'
+import { orSpecialExpression } from './specialExpressions/or'
+import { recurSpecialExpression } from './specialExpressions/recur'
+import { throwSpecialExpression } from './specialExpressions/throw'
 import { timeSpecialExpression } from './specialExpressions/time'
+import { trySpecialExpression } from './specialExpressions/try'
+import { whenFirstSpecialExpression } from './specialExpressions/when-first'
+import { whenLetSpecialExpression } from './specialExpressions/when-let'
+import { whenNotSpecialExpression } from './specialExpressions/when-not'
+import { whenSpecialExpression } from './specialExpressions/when'
 import { Builtin, BuiltinSpecialExpressions } from './interface'
 import { normalExpressions } from './normalExpressions'
 
 export const specialExpressions: BuiltinSpecialExpressions = {
-  def: defSpecialExpression,
-  defs: defsSpecialExpression,
   and: andSpecialExpression,
   cond: condSpecialExpression,
+  def: defSpecialExpression,
   defn: defnSpecialExpression,
   defns: defnsSpecialExpression,
-  if: ifSpecialExpression,
-  'if-not': ifNotSpecialExpression,
-  'if-let': ifLetSpecialExpression,
-  'when-let': whenLetSpecialExpression,
-  'when-not': whenNotSpecialExpression,
-  'when-first': whenFirstSpecialExpression,
-  fn: fnSpecialExpression,
-  let: letSpecialExpression,
-  or: orSpecialExpression,
+  defs: defsSpecialExpression,
   do: doSpecialExpression,
+  for: forSpecialExpression,
+  fn: fnSpecialExpression,
+  if: ifSpecialExpression,
+  'if-let': ifLetSpecialExpression,
+  'if-not': ifNotSpecialExpression,
+  let: letSpecialExpression,
+  loop: loopSpecialExpression,
+  or: orSpecialExpression,
+  recur: recurSpecialExpression,
   throw: throwSpecialExpression,
+  'time!': timeSpecialExpression,
   try: trySpecialExpression,
   when: whenSpecialExpression,
-  recur: recurSpecialExpression,
-  loop: loopSpecialExpression,
-  'time!': timeSpecialExpression,
+  'when-first': whenFirstSpecialExpression,
+  'when-let': whenLetSpecialExpression,
+  'when-not': whenNotSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {

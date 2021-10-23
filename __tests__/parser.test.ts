@@ -33,4 +33,22 @@ describe(`Parser`, () => {
     const tokens = tokenize(`(`)
     expect(() => parse(tokens)).toThrow()
   })
+
+  test(`parse for`, () => {
+    expect(() => parse(tokenize(`(for [x [1 2 3]] x)`))).not.toThrow()
+    expect(() => parse(tokenize(`(for [x [1 2 3] &let [y (* x x)]] y)`))).not.toThrow()
+    expect(() => parse(tokenize(`(for [x [1 2 3] &let [z x] &let [y (* x x)]] y)`))).toThrow()
+    expect(() => parse(tokenize(`(for [x [1 2 3] &when (odd? x)] x)`))).not.toThrow()
+    expect(() => parse(tokenize(`(for [x [1 2 3] &when (odd? x) &when (odd? x)] x)`))).toThrow()
+    expect(() => parse(tokenize(`(for [x [1 2 3] &while (odd? x)] x)`))).not.toThrow()
+    expect(() => parse(tokenize(`(for [x [1 2 3] &while (odd? x) &while (odd? x)] x)`))).toThrow()
+    expect(() => parse(tokenize(`(for [x [1 2 3] &while (odd? x) &whil (odd? x)] x)`))).toThrow()
+    expect(() =>
+      parse(
+        tokenize(
+          `(for [x [1 2 3] &when (odd? x) &while (not= x 3) &let [y (* x x)] y [5 10 15] z [100 200 300]] (+ x y z))`,
+        ),
+      ),
+    ).not.toThrow()
+  })
 })
