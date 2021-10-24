@@ -63,4 +63,3 @@ const result = evaluate(ast, context) // returns 10
 * **partition**
 * **partition-by**
 * **partition-all**
-* **update-in**

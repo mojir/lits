@@ -102,7 +102,7 @@ var Lispish = (function (exports) {
         return UnexpectedNodeTypeError;
     }(Error));
 
-    var functionSymbol = Symbol("function");
+    var FUNCTION_SYMBOL = Symbol("function");
 
     function asAstNode(node) {
         if (node === undefined) {
@@ -192,6 +192,11 @@ var Lispish = (function (exports) {
             throw TypeError("Expected string, got: " + value + " type=\"" + typeof value + "\"");
         }
     }
+    function assertStringOrRegExp(value) {
+        if (!(value instanceof RegExp || typeof value === "string")) {
+            throw TypeError("Expected RegExp or string, got: " + value + " type=\"" + typeof value + "\"");
+        }
+    }
     function asString(value) {
         if (!isString(value)) {
             throw TypeError("Expected string, got: " + value + " type=\"" + typeof value + "\"");
@@ -216,10 +221,17 @@ var Lispish = (function (exports) {
         assertChar(value);
         return value;
     }
+    function isStringOrNumber(value) {
+        return typeof value === "string" || typeof value === "number";
+    }
     function assertStringOrNumber(value) {
-        if (!(typeof value === "string" || typeof value === "number")) {
+        if (!isStringOrNumber(value)) {
             throw TypeError("Expected string or number, got: " + value + " type=\"" + typeof value + "\"");
         }
+    }
+    function asStringOrNumber(value) {
+        assertStringOrNumber(value);
+        return value;
     }
     function asNonEmptyString(value) {
         if (typeof value !== "string" || value.length === 0) {
@@ -233,11 +245,6 @@ var Lispish = (function (exports) {
     function assertRegExp(value) {
         if (!(value instanceof RegExp)) {
             throw TypeError("Expected RegExp, got: " + value + " type=\"" + typeof value + "\"");
-        }
-    }
-    function assertStringOrRegExp(value) {
-        if (!(value instanceof RegExp || typeof value === "string")) {
-            throw TypeError("Expected RegExp or string, got: " + value + " type=\"" + typeof value + "\"");
         }
     }
     function assertObjectOrArray(value) {
@@ -286,7 +293,7 @@ var Lispish = (function (exports) {
         if (func === null || typeof func !== "object") {
             return false;
         }
-        return !!func[functionSymbol];
+        return !!func[FUNCTION_SYMBOL];
     }
     function assertLispishFunction(func) {
         if (!isLispishFunction(func)) {
@@ -542,6 +549,9 @@ var Lispish = (function (exports) {
         }
         return value;
     }
+    function cloneColl(value) {
+        return clone(value);
+    }
 
     var andSpecialExpression = {
         parse: function (tokens, position, _a) {
@@ -729,7 +739,7 @@ var Lispish = (function (exports) {
                 return { name: name };
             });
             var lispishFunction = (_b = {},
-                _b[functionSymbol] = true,
+                _b[FUNCTION_SYMBOL] = true,
                 _b.type = "user-defined",
                 _b.name = name,
                 _b.arguments = {
@@ -1703,6 +1713,29 @@ var Lispish = (function (exports) {
         },
     };
 
+    function cloneAndGetMeta(originalColl, keys) {
+        var coll = cloneColl(originalColl);
+        var butLastKeys = keys.slice(0, keys.length - 1);
+        var innerCollMeta = butLastKeys.reduce(function (result, key) {
+            var resultColl = result.coll;
+            var newResultColl;
+            if (isArr(resultColl)) {
+                assertNumber(key);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                newResultColl = asColl(resultColl[key]);
+            }
+            else {
+                assertObj(resultColl);
+                assertString(key);
+                if (!collHasKey(result.coll, key)) {
+                    resultColl[key] = {};
+                }
+                newResultColl = asColl(resultColl[key]);
+            }
+            return { coll: newResultColl, parent: resultColl };
+        }, { coll: coll, parent: {} });
+        return { coll: coll, innerCollMeta: innerCollMeta };
+    }
     function get(coll, key) {
         if (isArr(coll)) {
             assertInteger(key);
@@ -1723,6 +1756,63 @@ var Lispish = (function (exports) {
             }
         }
         return undefined;
+    }
+    function update(coll, key, fn, params, contextStack, executeFunction) {
+        if (isObj(coll)) {
+            assertString(key);
+            var result = __assign({}, coll);
+            result[key] = executeFunction(fn, __spreadArray([result[key]], params), contextStack);
+            return result;
+        }
+        else {
+            assertNumber(key);
+            var intKey_1 = toNonNegativeInteger(key);
+            assertMax(intKey_1, coll.length);
+            if (Array.isArray(coll)) {
+                var result = coll.map(function (elem, index) {
+                    if (intKey_1 === index) {
+                        return executeFunction(fn, __spreadArray([elem], params), contextStack);
+                    }
+                    return elem;
+                });
+                if (intKey_1 === coll.length) {
+                    result[intKey_1] = executeFunction(fn, __spreadArray([undefined], params), contextStack);
+                }
+                return result;
+            }
+            else {
+                var result = coll.split("").map(function (elem, index) {
+                    if (intKey_1 === index) {
+                        return asChar(executeFunction(fn, __spreadArray([elem], params), contextStack));
+                    }
+                    return elem;
+                });
+                if (intKey_1 === coll.length) {
+                    result[intKey_1] = asChar(executeFunction(fn, __spreadArray([undefined], params), contextStack));
+                }
+                return result.join("");
+            }
+        }
+    }
+    function assoc(coll, key, value) {
+        assertColl(coll);
+        assertStringOrNumber(key);
+        if (Array.isArray(coll) || typeof coll === "string") {
+            assertInteger(key);
+            assertNumberGte(key, 0);
+            assertNumberLte(key, coll.length);
+            if (typeof coll === "string") {
+                assertChar(value);
+                return "" + coll.slice(0, key) + value + coll.slice(key + 1);
+            }
+            var copy_1 = __spreadArray([], coll);
+            copy_1[key] = value;
+            return copy_1;
+        }
+        assertString(key);
+        var copy = __assign({}, coll);
+        copy[key] = value;
+        return copy;
     }
     var collectionNormalExpression = {
         get: {
@@ -1806,22 +1896,8 @@ var Lispish = (function (exports) {
                 var coll = _a[0], key = _a[1], value = _a[2];
                 assertColl(coll);
                 assertStringOrNumber(key);
-                if (Array.isArray(coll) || typeof coll === "string") {
-                    assertInteger(key);
-                    assertNumberGte(key, 0);
-                    assertNumberLte(key, coll.length);
-                    if (typeof coll === "string") {
-                        assertChar(value);
-                        return "" + coll.slice(0, key) + value + coll.slice(key + 1);
-                    }
-                    var copy_1 = __spreadArray([], coll);
-                    copy_1[key] = value;
-                    return copy_1;
-                }
-                assertString(key);
-                var copy = __assign({}, coll);
-                copy[key] = value;
-                return copy;
+                assertAny(value);
+                return assoc(coll, key, value);
             },
             validate: function (node) { return assertLength(3, node); },
         },
@@ -1830,55 +1906,62 @@ var Lispish = (function (exports) {
                 var originalColl = _a[0], keys = _a[1], value = _a[2];
                 assertColl(originalColl);
                 assertArr(keys);
-                var coll = clone(originalColl);
-                var butLastKeys = keys.slice(0, keys.length - 1);
-                var lastKey = keys[keys.length - 1];
-                var parentKey = keys[keys.length - 2];
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                var parentColl;
-                var innerColl = butLastKeys.reduce(function (result, key) {
-                    parentColl = result;
-                    var innerColl;
-                    if (isArr(result)) {
-                        assertNumber(key);
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        innerColl = asColl(result[key]);
-                    }
-                    else {
-                        assertObj(result);
-                        assertString(key);
-                        if (!collHasKey(result, key)) {
-                            result[key] = {};
-                        }
-                        innerColl = asColl(result[key]);
-                    }
-                    return innerColl;
-                }, coll);
-                if (isArr(innerColl)) {
-                    assertNumber(lastKey);
-                    innerColl[lastKey] = value;
+                assertAny(value);
+                if (keys.length === 1) {
+                    assertStringOrNumber(keys[0]);
+                    return assoc(originalColl, keys[0], value);
                 }
-                else if (isString(innerColl)) {
-                    assertNumber(lastKey);
-                    assertChar(value);
-                    var newString = "" + innerColl.substring(0, lastKey) + value + innerColl.substring(lastKey + 1);
-                    if (isArr(parentColl)) {
-                        assertNumber(parentKey);
-                        parentColl[parentKey] = newString;
-                    }
-                    else {
-                        assertObj(parentColl);
-                        assertString(parentKey);
-                        parentColl[parentKey] = newString;
-                    }
+                var _b = cloneAndGetMeta(originalColl, keys), coll = _b.coll, innerCollMeta = _b.innerCollMeta;
+                var lastKey = asStringOrNumber(keys[keys.length - 1]);
+                var parentKey = asStringOrNumber(keys[keys.length - 2]);
+                if (isArr(innerCollMeta.parent)) {
+                    assertNumber(parentKey);
+                    innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value);
                 }
                 else {
-                    assertString(lastKey);
-                    innerColl[lastKey] = value;
+                    assertString(parentKey);
+                    innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value);
                 }
                 return coll;
             },
             validate: function (node) { return assertLength(3, node); },
+        },
+        update: {
+            evaluate: function (_a, contextStack, _b) {
+                var coll = _a[0], key = _a[1], fn = _a[2], params = _a.slice(3);
+                var executeFunction = _b.executeFunction;
+                assertColl(coll);
+                assertStringOrNumber(key);
+                assertLispishFunction(fn);
+                return update(coll, key, fn, params, contextStack, executeFunction);
+            },
+            validate: function (node) { return assertLength({ min: 3 }, node); },
+        },
+        'update-in': {
+            evaluate: function (_a, contextStack, _b) {
+                var originalColl = _a[0], keys = _a[1], fn = _a[2], params = _a.slice(3);
+                var executeFunction = _b.executeFunction;
+                assertColl(originalColl);
+                assertArr(keys);
+                assertLispishFunction(fn);
+                if (keys.length === 1) {
+                    assertStringOrNumber(keys[0]);
+                    return update(originalColl, keys[0], fn, params, contextStack, executeFunction);
+                }
+                var _c = cloneAndGetMeta(originalColl, keys), coll = _c.coll, innerCollMeta = _c.innerCollMeta;
+                var lastKey = asStringOrNumber(keys[keys.length - 1]);
+                var parentKey = asStringOrNumber(keys[keys.length - 2]);
+                if (isArr(innerCollMeta.parent)) {
+                    assertNumber(parentKey);
+                    innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, contextStack, executeFunction);
+                }
+                else {
+                    assertString(parentKey);
+                    innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, contextStack, executeFunction);
+                }
+                return coll;
+            },
+            validate: function (node) { return assertLength({ min: 3 }, node); },
         },
         concat: {
             evaluate: function (params) {
@@ -1981,51 +2064,6 @@ var Lispish = (function (exports) {
                 return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack); });
             },
             validate: function (node) { return assertLength(2, node); },
-        },
-        update: {
-            evaluate: function (_a, contextStack, _b) {
-                var coll = _a[0], key = _a[1], fn = _a[2], params = _a.slice(3);
-                var executeFunction = _b.executeFunction;
-                assertColl(coll);
-                assertStringOrNumber(key);
-                assertLispishFunction(fn);
-                if (isObj(coll)) {
-                    assertString(key);
-                    var result = __assign({}, coll);
-                    result[key] = executeFunction(fn, __spreadArray([result[key]], params), contextStack);
-                    return result;
-                }
-                else {
-                    assertNumber(key);
-                    var intKey_1 = toNonNegativeInteger(key);
-                    assertMax(intKey_1, coll.length);
-                    if (Array.isArray(coll)) {
-                        var result = coll.map(function (elem, index) {
-                            if (intKey_1 === index) {
-                                return executeFunction(fn, __spreadArray([elem], params), contextStack);
-                            }
-                            return elem;
-                        });
-                        if (intKey_1 === coll.length) {
-                            result[intKey_1] = executeFunction(fn, __spreadArray([undefined], params), contextStack);
-                        }
-                        return result;
-                    }
-                    else {
-                        var result = coll.split("").map(function (elem, index) {
-                            if (intKey_1 === index) {
-                                return asChar(executeFunction(fn, __spreadArray([elem], params), contextStack));
-                            }
-                            return elem;
-                        });
-                        if (intKey_1 === coll.length) {
-                            result[intKey_1] = asChar(executeFunction(fn, __spreadArray([undefined], params), contextStack));
-                        }
-                        return result.join("");
-                    }
-                }
-            },
-            validate: function (node) { return assertLength({ min: 3 }, node); },
         },
     };
 
@@ -4091,7 +4129,7 @@ var Lispish = (function (exports) {
                 var _b;
                 var fn = _a[0], params = _a.slice(1);
                 return _b = {},
-                    _b[functionSymbol] = true,
+                    _b[FUNCTION_SYMBOL] = true,
                     _b.type = "partial",
                     _b.fn = toAny(fn),
                     _b.params = params,
@@ -4109,7 +4147,7 @@ var Lispish = (function (exports) {
                     }
                 }
                 return _a = {},
-                    _a[functionSymbol] = true,
+                    _a[FUNCTION_SYMBOL] = true,
                     _a.type = "comp",
                     _a.fns = fns,
                     _a;
@@ -4120,7 +4158,7 @@ var Lispish = (function (exports) {
                 var _b;
                 var value = _a[0];
                 return _b = {},
-                    _b[functionSymbol] = true,
+                    _b[FUNCTION_SYMBOL] = true,
                     _b.type = "constantly",
                     _b.value = toAny(value),
                     _b;
@@ -4131,7 +4169,7 @@ var Lispish = (function (exports) {
             evaluate: function (fns) {
                 var _a;
                 return _a = {},
-                    _a[functionSymbol] = true,
+                    _a[FUNCTION_SYMBOL] = true,
                     _a.type = "juxt",
                     _a.fns = fns,
                     _a;
@@ -4143,7 +4181,7 @@ var Lispish = (function (exports) {
                 var _b;
                 var fn = _a[0];
                 return _b = {},
-                    _b[functionSymbol] = true,
+                    _b[FUNCTION_SYMBOL] = true,
                     _b.type = "complement",
                     _b.fn = toAny(fn),
                     _b;
@@ -4154,7 +4192,7 @@ var Lispish = (function (exports) {
             evaluate: function (fns) {
                 var _a;
                 return _a = {},
-                    _a[functionSymbol] = true,
+                    _a[FUNCTION_SYMBOL] = true,
                     _a.type = "every-pred",
                     _a.fns = fns,
                     _a;
@@ -4165,7 +4203,7 @@ var Lispish = (function (exports) {
             evaluate: function (fns) {
                 var _a;
                 return _a = {},
-                    _a[functionSymbol] = true,
+                    _a[FUNCTION_SYMBOL] = true,
                     _a.type = "some-pred",
                     _a.fns = fns,
                     _a;
@@ -4177,7 +4215,7 @@ var Lispish = (function (exports) {
                 var _b;
                 var fn = _a[0], params = _a.slice(1);
                 return _b = {},
-                    _b[functionSymbol] = true,
+                    _b[FUNCTION_SYMBOL] = true,
                     _b.type = "fnil",
                     _b.fn = toAny(fn),
                     _b.params = params,
@@ -4399,7 +4437,7 @@ var Lispish = (function (exports) {
         }
         if (builtin.normalExpressions[value]) {
             var builtinFunction = (_b = {},
-                _b[functionSymbol] = true,
+                _b[FUNCTION_SYMBOL] = true,
                 _b.type = "builtin",
                 _b.name = value,
                 _b);

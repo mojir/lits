@@ -179,7 +179,7 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Associates a value in a nested Coll, where \`keys\` is an array of keys and \`value\` is the new value and returns a new nested structure. If any levels do not exist, objects will be created - and the corresponding key must be a string.`,
+    description: `Associates a value in a nested Coll, where \`keys\` is an array of keys and \`value\` is the new value and returns a new nested structure. If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `(assoc-in {} ["a" "b" "c"] "Albert")`,
       `(assoc-in [1 2 [1 2 3]] [2 1] "Albert")`,
@@ -351,16 +351,16 @@ module.exports = {
     category: `Collection`,
     linkName: `update`,
     returns: {
-      type: `Any`,
+      type: `Coll`,
     },
     arguments: [
       {
-        name: `key`,
-        type: `string`,
-      },
-      {
         name: `coll`,
         type: `Coll`,
+      },
+      {
+        name: `key`,
+        type: `string | number`,
       },
       {
         name: `fn`,
@@ -376,6 +376,38 @@ module.exports = {
     examples: [
       `(def x {"a" 1 "b" 2}) (update x "a" inc)`,
       `(def x {"a" 1 "b" 2}) (update x "c" (fn [val] (if (nil? val) 0 (inc val))))`,
+    ],
+  },
+  'update-in': {
+    name: `update-in`,
+    category: `Collection`,
+    linkName: `update-in`,
+    returns: {
+      type: `Coll`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `Coll`,
+      },
+      {
+        name: `keys`,
+        type: `Arr`,
+      },
+      {
+        name: `fn`,
+        type: `function`,
+      },
+      {
+        name: `args`,
+        type: `Any`,
+        description: `zero or more`,
+      },
+    ],
+    description: `'Updates' a value in \`coll\`, where \`keys\` is an array of keys (string or number) and \`fn\` is a function that will take the old value and any supplied \`args\` and return the new value, and returns a new Coll. If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
+    examples: [
+      `(update-in {"a" [1 2 3]} ["a" 1] (fn [val] (when (nil? val) 0)))`,
+      `(update-in {"a" [1 "Albert" 3]} ["a" 1 0] (fn [val] (if (nil? val) "?" "!")))`,
     ],
   },
 }

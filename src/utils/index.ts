@@ -1,5 +1,5 @@
-import { UnexpectedNodeTypeError } from './errors'
-import { Any, Arr, Coll, Obj, Seq } from './interface'
+import { UnexpectedNodeTypeError } from '../errors'
+import { Any, Arr, Coll, Obj, Seq } from '../interface'
 import {
   AstNode,
   ExpressionNode,
@@ -9,7 +9,7 @@ import {
   NormalExpressionNode,
   NormalExpressionNodeName,
   SpecialExpressionNode,
-} from './parser/interface'
+} from '../parser/interface'
 
 export function asAstNode(node: AstNode | undefined): AstNode {
   if (node === undefined) {

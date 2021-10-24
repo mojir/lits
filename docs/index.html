@@ -269,7 +269,7 @@
 <div id="assoc-in" class="content function">
   <div class="function-header">assoc-in</div>
   
-  <p>Associates a value in a nested Coll, where <span class="pre">keys</span> is an array of keys and <span class="pre">value</span> is the new value and returns a new nested structure. If any levels do not exist, objects will be created - and the corresponding key must be a string.</p>
+  <p>Associates a value in a nested Coll, where <span class="pre">keys</span> is an array of keys and <span class="pre">value</span> is the new value and returns a new nested structure. If any levels do not exist, objects will be created - and the corresponding keys must be of type string.</p>
   <label>Syntax</label>
   <div class="indent">
     <pre>assoc-in coll keys value => collection</pre>
@@ -441,11 +441,11 @@
   <p>Updates a value in collection, where <span class="pre">key</span> is a key and <span class="pre">fn</span> is a function that will take the old value and any supplied <span class="pre">args</span> and return the new value, and returns a new collection.  If the key does not exist, nil is passed as the old value.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>update key coll fn args(zero or more) => Any</pre>
+    <pre>update coll key fn args(zero or more) => Coll</pre>
   </div>
 
-  <label>Arguments</label><div class="indent"><pre>key: string</pre>
-<pre>coll: Coll</pre>
+  <label>Arguments</label><div class="indent"><pre>coll: Coll</pre>
+<pre>key: string | number</pre>
 <pre>fn: function</pre>
 <pre>args: Any</pre></div>
 
@@ -453,6 +453,28 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(def x {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2}) (update x ___double_quote___a___double_quote___ inc)')"> <span class="icon-button">▶</span> (def x {"a" 1 "b" 2}) (update x "a" inc) <span class="gray">=> {"a":2,"b":2} </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(def x {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2}) (update x ___double_quote___c___double_quote___ (fn [val] (if (nil? val) 0 (inc val))))')"> <span class="icon-button">▶</span> (def x {"a" 1 "b" 2}) (update x "c" (fn [val] (if (nil? val) 0 (inc val)))) <span class="gray">=> {"a":1,"b":2,"c":0} </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="update-in" class="content function">
+  <div class="function-header">update-in</div>
+  
+  <p>'Updates' a value in <span class="pre">coll</span>, where <span class="pre">keys</span> is an array of keys (string or number) and <span class="pre">fn</span> is a function that will take the old value and any supplied <span class="pre">args</span> and return the new value, and returns a new Coll. If any levels do not exist, objects will be created - and the corresponding keys must be of type string.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>update-in coll keys fn args(zero or more) => Coll</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>coll: Coll</pre>
+<pre>keys: Arr</pre>
+<pre>fn: function</pre>
+<pre>args: Any</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(update-in {___double_quote___a___double_quote___ [1 2 3]} [___double_quote___a___double_quote___ 1] (fn [val] (when (nil? val) 0)))')"> <span class="icon-button">▶</span> (update-in {"a" [1 2 3]} ["a" 1] (fn [val] (when (nil? val) 0))) <span class="gray">=> {"a":[1,null,3]} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(update-in {___double_quote___a___double_quote___ [1 ___double_quote___Albert___double_quote___ 3]} [___double_quote___a___double_quote___ 1 0] (fn [val] (if (nil? val) ___double_quote___?___double_quote___ ___double_quote___!___double_quote___)))')"> <span class="icon-button">▶</span> (update-in {"a" [1 "Albert" 3]} ["a" 1 0] (fn [val] (if (nil? val) "?" "!"))) <span class="gray">=> {"a":[1,"!lbert",3]} </span> </span></pre>
   </div>
 </div>
 
@@ -1236,8 +1258,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,3,5,9,10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "bert" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,8,9,10] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "lb" </span> </span></pre>
   </div>
 </div>
 
@@ -1255,8 +1277,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 10 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "A" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 8 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "l" </span> </span></pre>
   </div>
 </div>
 
@@ -1274,8 +1296,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,8,1,7,4,3,10,9,5,6] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "j elorrAMtbi" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,8,1,6,3,7,10,9,4,5] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "jrtbiMrAl eo" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -2110,9 +2132,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.7215271182678935 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.009715207539089174 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 0.8681524089737602 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.8869498377754261 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.009820281158359876 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.953285877158057 </span> </span></pre>
   </div>
 </div>
 
@@ -2132,7 +2154,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 9 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 42 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 7 </span> </span></pre>
   </div>
 </div>
 
@@ -2781,7 +2803,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635031778745 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635104878016 </span> </span></pre>
   </div>
 </div>
 
@@ -4838,6 +4860,7 @@
 <li id="not-any_question_link" onclick="showPage('not-any_question')">not-any?</li>
 <li id="not-every_question_link" onclick="showPage('not-every_question')">not-every?</li>
 <li id="update_link" onclick="showPage('update')">update</li>
+<li id="update-in_link" onclick="showPage('update-in')">update-in</li>
         </ul>
 
         <label>Array</label>

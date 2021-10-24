@@ -354,4 +354,47 @@ describe(`collection functions`, () => {
       expect(() => lispish.run(`(update number? [1] 2)`)).toThrow()
     })
   })
+
+  describe(`update-in`, () => {
+    test(`samples`, () => {
+      expect(
+        lispish.run(
+          `(def x "Albert") (update-in x [3] (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))`,
+        ),
+      ).toEqual(`Albfrt`)
+      expect(
+        lispish.run(
+          `(def x "Albert") (update-in x [6] (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))`,
+        ),
+      ).toEqual(`Albert!`)
+
+      expect(lispish.run(`(def x [0, 1, 2, 3]) (update-in x [3] inc)`)).toEqual([0, 1, 2, 4])
+      expect(lispish.run(`(def x [0, 1, 2, 3]) (update-in x [4] identity)`)).toEqual([0, 1, 2, 3, null])
+
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update-in x ["a"] inc)`)).toEqual({ a: 2, b: 2 })
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update-in x ["a"] + 10)`)).toEqual({ a: 11, b: 2 })
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update-in x ["a"] (fn [val] (if (even? val) 0 (inc val))))`)).toEqual({
+        a: 2,
+        b: 2,
+      })
+      expect(lispish.run(`(update-in {} ["a"] (fn [val] (when (nil? val) 0)))`)).toEqual({ a: 0 })
+      expect(lispish.run(`(def x {"a" 1 "b" 2}) (update-in x ["c"] (fn [val] (if (nil? val) 0 (inc val))))`)).toEqual({
+        a: 1,
+        b: 2,
+        c: 0,
+      })
+      expect(lispish.run(`(update-in {"a" [1 2 3]} ["a" 1] (fn [val] (when (nil? val) 0)))`)).toEqual({
+        a: [1, null, 3],
+      })
+      expect(lispish.run(`(update-in {"a" [1 nil 3]} ["a" 1] (fn [val] (when (nil? val) 0)))`)).toEqual({
+        a: [1, 0, 3],
+      })
+      expect(lispish.run(`(update-in {"a" [1 "Albert" 3]} ["a" 1 0] (fn [val] (if (nil? val) "?" "!")))`)).toEqual({
+        a: [1, `!lbert`, 3],
+      })
+      expect(lispish.run(`(update-in {"a" [1 "" 3]} ["a" 1 0] (fn [val] (if (nil? val) "?" "!")))`)).toEqual({
+        a: [1, `?`, 3],
+      })
+    })
+  })
 })
