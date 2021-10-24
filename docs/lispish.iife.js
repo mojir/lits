@@ -321,10 +321,18 @@ var Lispish = (function (exports) {
             throw TypeError("Expected a number, got: " + value + " type=\"" + typeof value + "\"");
         }
     }
+    function asNumber(value) {
+        assertNumber(value);
+        return value;
+    }
     function assertArr(value) {
         if (!isArr(value)) {
             throw TypeError("Expected Arr, got: " + value + " type=\"" + typeof value + "\"");
         }
+    }
+    function asArr(value) {
+        assertArr(value);
+        return value;
     }
     function isAny(value) {
         return value !== undefined;
@@ -2802,7 +2810,77 @@ var Lispish = (function (exports) {
             },
             validate: function (node) { return assertLength(2, node); },
         },
+        partition: {
+            evaluate: function (params) {
+                var len = params.length;
+                var n = toNonNegativeInteger(asNumber(params[0]));
+                var seq = len === 2 ? asSeq(params[1]) : len === 3 ? asSeq(params[2]) : asSeq(params[3]);
+                var step = len >= 3 ? toNonNegativeInteger(asNumber(params[1])) : n;
+                var pad = len === 4 ? (params[2] === null ? [] : asArr(params[2])) : undefined;
+                return partition(n, step, seq, pad);
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 4 }, node); },
+        },
+        'partition-all': {
+            evaluate: function (params) {
+                var len = params.length;
+                var n = toNonNegativeInteger(asNumber(params[0]));
+                var seq = len === 2 ? asSeq(params[1]) : asSeq(params[2]);
+                var step = len >= 3 ? toNonNegativeInteger(asNumber(params[1])) : n;
+                return partition(n, step, seq, []);
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
+        'partition-by': {
+            evaluate: function (_a, contextStack, _b) {
+                var fn = _a[0], seq = _a[1];
+                var executeFunction = _b.executeFunction;
+                assertLispishFunction(fn);
+                assertSeq(seq);
+                var isStringSeq = isString(seq);
+                var oldValue = undefined;
+                var result = (isStringSeq ? seq.split("") : seq).reduce(function (result, elem) {
+                    var value = executeFunction(fn, [elem], contextStack);
+                    if (value !== oldValue) {
+                        result.push([]);
+                        oldValue = value;
+                    }
+                    result[result.length - 1].push(elem);
+                    return result;
+                }, []);
+                return isStringSeq ? result.map(function (elem) { return elem.join(""); }) : result;
+            },
+            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        },
     };
+    function partition(n, step, seq, pad) {
+        assertPositiveNumber(step);
+        var isStringSeq = isString(seq);
+        var result = [];
+        var start = 0;
+        outer: while (start < seq.length) {
+            var innerArr = [];
+            for (var i = start; i < start + n; i += 1) {
+                if (i >= seq.length) {
+                    var padIndex = i - seq.length;
+                    if (!pad) {
+                        start += step;
+                        continue outer;
+                    }
+                    if (padIndex >= pad.length) {
+                        break;
+                    }
+                    innerArr.push(pad[padIndex]);
+                }
+                else {
+                    innerArr.push(seq[i]);
+                }
+            }
+            result.push(innerArr);
+            start += step;
+        }
+        return isStringSeq ? result.map(function (x) { return x.join(""); }) : result;
+    }
 
     var arrayNormalExpression = {
         array: {

@@ -306,10 +306,20 @@ export function assertNumber(value: unknown): asserts value is number {
   }
 }
 
+export function asNumber(value: unknown): number {
+  assertNumber(value)
+  return value
+}
+
 export function assertArr(value: unknown): asserts value is Arr {
   if (!isArr(value)) {
     throw TypeError(`Expected Arr, got: ${value} type="${typeof value}"`)
   }
+}
+
+export function asArr(value: unknown): Arr {
+  assertArr(value)
+  return value
 }
 
 export function isAny(value: unknown): value is Any {

@@ -1258,8 +1258,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,8,9,10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "lb" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,7,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "Alb" </span> </span></pre>
   </div>
 </div>
 
@@ -1277,8 +1277,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 8 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "l" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 4 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "r" </span> </span></pre>
   </div>
 </div>
 
@@ -1296,8 +1296,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [2,8,1,6,3,7,10,9,4,5] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "jrtbiMrAl eo" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [8,5,10,7,6,3,1,2,4,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "jeA lrtiMrbo" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -1421,6 +1421,84 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(group-by ___double_quote___name___double_quote___ [{___double_quote___name___double_quote___ ___double_quote___Albert___double_quote___} {___double_quote___name___double_quote___ ___double_quote___Albert___double_quote___} {___double_quote___name___double_quote___ ___double_quote___Mojir___double_quote___}])')"> <span class="icon-button">▶</span> (group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}]) <span class="gray">=> {"Albert":[{"name":"Albert"},{"name":"Albert"}],"Mojir":[{"name":"Mojir"}]} </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(group-by (fn [char] (if (has? ___double_quote___aoueiAOUEI___double_quote___ char) ___double_quote___vowel___double_quote___ ___double_quote___other___double_quote___)) ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir") <span class="gray">=> {"vowel":["A","e","o","i"],"other":["l","b","r","t"," ","M","j","r"]} </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="partition" class="content function">
+  <div class="function-header">partition</div>
+  
+  <p>Returns an array of sequences of <span class="pre">n</span> items each, at offsets <span class="pre">step</span> apart. If <span class="pre">step</span> is not supplied, defaults to <span class="pre">n</span>. If a <span class="pre">pad</span> array is supplied, use its elements as necessary to complete last partition upto <span class="pre">n</span> items. In case there are not enough padding elements, return a partition with less than <span class="pre">n</span> items.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>partition n step(optional) pad(optional) seq => Seq</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>n: number</pre>
+<pre>step: number</pre>
+<pre>pad: Arr</pre>
+<pre>seq: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(partition 4 (range 20))')"> <span class="icon-button">▶</span> (partition 4 (range 20)) <span class="gray">=> [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[16,17,18,19]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 (range 22))')"> <span class="icon-button">▶</span> (partition 4 (range 22)) <span class="gray">=> [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[16,17,18,19]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 6 (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 3 (range 20))')"> <span class="icon-button">▶</span> (partition 4 3 (range 20)) <span class="gray">=> [[0,1,2,3],[3,4,5,6],[6,7,8,9],[9,10,11,12],[12,13,14,15],[15,16,17,18]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 3 6 [___double_quote___a___double_quote___] (range 20))')"> <span class="icon-button">▶</span> (partition 3 6 ["a"] (range 20)) <span class="gray">=> [[0,1,2],[6,7,8],[12,13,14],[18,19,"a"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 6 [___double_quote___a___double_quote___] (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 ["a"] (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15],[18,19,"a"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 6 [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___ ___double_quote___d___double_quote___] (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 ["a" "b" "c" "d"] (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15],[18,19,"a","b"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 3 1 [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___ ___double_quote___d___double_quote___ ___double_quote___e___double_quote___ ___double_quote___f___double_quote___])')"> <span class="icon-button">▶</span> (partition 3 1 ["a" "b" "c" "d" "e" "f"]) <span class="gray">=> [["a","b","c"],["b","c","d"],["c","d","e"],["d","e","f"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 10 [1 2 3 4])')"> <span class="icon-button">▶</span> (partition 10 [1 2 3 4]) <span class="gray">=> [] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 10 10 [1 2 3 4])')"> <span class="icon-button">▶</span> (partition 10 10 [1 2 3 4]) <span class="gray">=> [] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 10 10 [] [1 2 3 4])')"> <span class="icon-button">▶</span> (partition 10 10 [] [1 2 3 4]) <span class="gray">=> [[1,2,3,4]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 10 10 nil [1 2 3 4])')"> <span class="icon-button">▶</span> (partition 10 10 nil [1 2 3 4]) <span class="gray">=> [[1,2,3,4]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 5 ___double_quote___superfragilistic___double_quote___)')"> <span class="icon-button">▶</span> (partition 5 "superfragilistic") <span class="gray">=> ["super","fragi","listi"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 5 5 nil ___double_quote___superfragilistic___double_quote___)')"> <span class="icon-button">▶</span> (partition 5 5 nil "superfragilistic") <span class="gray">=> ["super","fragi","listi","c"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(def foo [5 6 7 8]) (partition 2 1 foo foo)')"> <span class="icon-button">▶</span> (def foo [5 6 7 8]) (partition 2 1 foo foo) <span class="gray">=> [[5,6],[6,7],[7,8],[8,5]] </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="partition-all" class="content function">
+  <div class="function-header">partition-all</div>
+  
+  <p>Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>partition-all n step(optional) seq => Seq</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>n: number</pre>
+<pre>step: number</pre>
+<pre>seq: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(partition-all 4 [0 1 2 3 4 5 6 7 8 9])')"> <span class="icon-button">▶</span> (partition-all 4 [0 1 2 3 4 5 6 7 8 9]) <span class="gray">=> [[0,1,2,3],[4,5,6,7],[8,9]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 [0 1 2 3 4 5 6 7 8 9])')"> <span class="icon-button">▶</span> (partition 4 [0 1 2 3 4 5 6 7 8 9]) <span class="gray">=> [[0,1,2,3],[4,5,6,7]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition-all 2 4 [0 1 2 3 4 5 6 7 8 9])')"> <span class="icon-button">▶</span> (partition-all 2 4 [0 1 2 3 4 5 6 7 8 9]) <span class="gray">=> [[0,1],[4,5],[8,9]] </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="partition-by" class="content function">
+  <div class="function-header">partition-by</div>
+  
+  <p>Applies <span class="pre">fn</span> to each value in <span class="pre">seq</span>, splitting it each time <span class="pre">fn</span> returns a new value. Returns an array of sequences.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>partition-by fn seq => Seq</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>fn: function</pre>
+<pre>seq: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(partition-by #(= 3 %1) [1 2 3 4 5])')"> <span class="icon-button">▶</span> (partition-by #(= 3 %1) [1 2 3 4 5]) <span class="gray">=> [[1,2],[3],[4,5]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition-by odd? [1 1 1 2 2 3 3])')"> <span class="icon-button">▶</span> (partition-by odd? [1 1 1 2 2 3 3]) <span class="gray">=> [[1,1,1],[2,2],[3,3]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition-by identity ___double_quote___Leeeeeerrroyyy___double_quote___)')"> <span class="icon-button">▶</span> (partition-by identity "Leeeeeerrroyyy") <span class="gray">=> ["L","eeeeee","rrr","o","yyy"] </span> </span></pre>
   </div>
 </div>
 
@@ -2132,9 +2210,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.8869498377754261 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.009820281158359876 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.953285877158057 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.04526654849797662 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.005554339372969941 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 2.264762337214807 </span> </span></pre>
   </div>
 </div>
 
@@ -2153,7 +2231,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 9 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 7 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 7 </span> </span></pre>
   </div>
 </div>
@@ -2803,7 +2881,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635104878016 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635110502031 </span> </span></pre>
   </div>
 </div>
 
@@ -4819,6 +4897,9 @@
 <li id="nth_link" onclick="showPage('nth')">nth</li>
 <li id="nthnext_link" onclick="showPage('nthnext')">nthnext</li>
 <li id="nthrest_link" onclick="showPage('nthrest')">nthrest</li>
+<li id="partition_link" onclick="showPage('partition')">partition</li>
+<li id="partition-all_link" onclick="showPage('partition-all')">partition-all</li>
+<li id="partition-by_link" onclick="showPage('partition-by')">partition-by</li>
 <li id="pop_link" onclick="showPage('pop')">pop</li>
 <li id="position_link" onclick="showPage('position')">position</li>
 <li id="push_link" onclick="showPage('push')">push</li>

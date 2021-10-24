@@ -871,4 +871,106 @@ describe(`sequence functions`, () => {
       expect(() => lispish.run(`(sort-by "a" "" "")`)).toThrow()
     })
   })
+
+  describe(`partition`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(partition 4 (range 20))`)).toEqual([
+        [0, 1, 2, 3],
+        [4, 5, 6, 7],
+        [8, 9, 10, 11],
+        [12, 13, 14, 15],
+        [16, 17, 18, 19],
+      ])
+      expect(lispish.run(`(partition 4 (range 22))`)).toEqual([
+        [0, 1, 2, 3],
+        [4, 5, 6, 7],
+        [8, 9, 10, 11],
+        [12, 13, 14, 15],
+        [16, 17, 18, 19],
+      ])
+      expect(lispish.run(`(partition 4 6 (range 20))`)).toEqual([
+        [0, 1, 2, 3],
+        [6, 7, 8, 9],
+        [12, 13, 14, 15],
+      ])
+      expect(lispish.run(`(partition 4 3 (range 20))`)).toEqual([
+        [0, 1, 2, 3],
+        [3, 4, 5, 6],
+        [6, 7, 8, 9],
+        [9, 10, 11, 12],
+        [12, 13, 14, 15],
+        [15, 16, 17, 18],
+      ])
+      expect(lispish.run(`(partition 3 6 ["a"] (range 20))`)).toEqual([
+        [0, 1, 2],
+        [6, 7, 8],
+        [12, 13, 14],
+        [18, 19, `a`],
+      ])
+      expect(lispish.run(`(partition 4 6 ["a"] (range 20))`)).toEqual([
+        [0, 1, 2, 3],
+        [6, 7, 8, 9],
+        [12, 13, 14, 15],
+        [18, 19, `a`],
+      ])
+      expect(lispish.run(`(partition 4 6 ["a" "b" "c" "d"] (range 20))`)).toEqual([
+        [0, 1, 2, 3],
+        [6, 7, 8, 9],
+        [12, 13, 14, 15],
+        [18, 19, `a`, `b`],
+      ])
+      expect(lispish.run(`(partition 3 1 ["a" "b" "c" "d" "e" "f"])`)).toEqual([
+        [`a`, `b`, `c`],
+        [`b`, `c`, `d`],
+        [`c`, `d`, `e`],
+        [`d`, `e`, `f`],
+      ])
+      expect(lispish.run(`(partition 10 [1 2 3 4])`)).toEqual([])
+      expect(lispish.run(`(partition 10 10 [1 2 3 4])`)).toEqual([])
+      expect(lispish.run(`(partition 10 10 [] [1 2 3 4])`)).toEqual([[1, 2, 3, 4]])
+      expect(lispish.run(`(partition 10 10 nil [1 2 3 4])`)).toEqual([[1, 2, 3, 4]])
+      expect(lispish.run(`(partition 5 "superfragilistic")`)).toEqual([`super`, `fragi`, `listi`])
+      expect(lispish.run(`(partition 5 5 nil "superfragilistic")`)).toEqual([`super`, `fragi`, `listi`, `c`])
+      expect(lispish.run(`(def foo [5 6 7 8]) (partition 2 1 foo foo)`)).toEqual([
+        [5, 6],
+        [6, 7],
+        [7, 8],
+        [8, 5],
+      ])
+      expect(() => lispish.run(`(partition 0 [1 2 3 4])`)).toThrow()
+      expect(() => lispish.run(`(partition 1)`)).toThrow()
+      expect(() => lispish.run(`(partition [1])`)).toThrow()
+    })
+  })
+
+  describe(`partition-all`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(partition-all 4 [0 1 2 3 4 5 6 7 8 9])`)).toEqual([
+        [0, 1, 2, 3],
+        [4, 5, 6, 7],
+        [8, 9],
+      ])
+      expect(lispish.run(`(partition-all 2 4 [0 1 2 3 4 5 6 7 8 9])`)).toEqual([
+        [0, 1],
+        [4, 5],
+        [8, 9],
+      ])
+      expect(() => lispish.run(`(partition-all 1)`)).toThrow()
+      expect(() => lispish.run(`(partition-all [1])`)).toThrow()
+    })
+  })
+
+  describe(`partition-by`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(partition-by #(= 3 %1) [1 2 3 4 5])`)).toEqual([[1, 2], [3], [4, 5]])
+      expect(lispish.run(`(partition-by odd? [1 1 1 2 2 3 3])`)).toEqual([
+        [1, 1, 1],
+        [2, 2],
+        [3, 3],
+      ])
+      expect(lispish.run(`(partition-by identity "Leeeeeerrroyyy")`)).toEqual([`L`, `eeeeee`, `rrr`, `o`, `yyy`])
+      expect(() => lispish.run(`(partition-by odd?)`)).toThrow()
+      expect(() => lispish.run(`(partition-by [1 2 3])`)).toThrow()
+    })
+  })
 })

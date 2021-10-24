@@ -857,4 +857,106 @@ module.exports = {
       `(group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir")`,
     ],
   },
+
+  partition: {
+    name: `partition`,
+    category: `Sequence`,
+    linkName: `partition`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        name: `n`,
+        type: `number`,
+      },
+      {
+        name: `step`,
+        type: `number`,
+        description: `optional`,
+      },
+      {
+        name: `pad`,
+        type: `Arr`,
+        description: `optional`,
+      },
+      {
+        name: `seq`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns an array of sequences of \`n\` items each, at offsets \`step\` apart. If \`step\` is not supplied, defaults to \`n\`. If a \`pad\` array is supplied, use its elements as necessary to complete last partition upto \`n\` items. In case there are not enough padding elements, return a partition with less than \`n\` items.`,
+    examples: [
+      `(partition 4 (range 20))`,
+      `(partition 4 (range 22))`,
+      `(partition 4 6 (range 20))`,
+      `(partition 4 3 (range 20))`,
+      `(partition 3 6 ["a"] (range 20))`,
+      `(partition 4 6 ["a"] (range 20))`,
+      `(partition 4 6 ["a" "b" "c" "d"] (range 20))`,
+      `(partition 3 1 ["a" "b" "c" "d" "e" "f"])`,
+      `(partition 10 [1 2 3 4])`,
+      `(partition 10 10 [1 2 3 4])`,
+      `(partition 10 10 [] [1 2 3 4])`,
+      `(partition 10 10 nil [1 2 3 4])`,
+      `(partition 5 "superfragilistic")`,
+      `(partition 5 5 nil "superfragilistic")`,
+      `(def foo [5 6 7 8]) (partition 2 1 foo foo)`,
+    ],
+  },
+
+  'partition-all': {
+    name: `partition-all`,
+    category: `Sequence`,
+    linkName: `partition-all`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        name: `n`,
+        type: `number`,
+      },
+      {
+        name: `step`,
+        type: `number`,
+        description: `optional`,
+      },
+      {
+        name: `seq`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.`,
+    examples: [
+      `(partition-all 4 [0 1 2 3 4 5 6 7 8 9])`,
+      `(partition 4 [0 1 2 3 4 5 6 7 8 9])`,
+      `(partition-all 2 4 [0 1 2 3 4 5 6 7 8 9])`,
+    ],
+  },
+
+  'partition-by': {
+    name: `partition-by`,
+    category: `Sequence`,
+    linkName: `partition-by`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        name: `fn`,
+        type: `function`,
+      },
+      {
+        name: `seq`,
+        type: `Seq`,
+      },
+    ],
+    description: `Applies \`fn\` to each value in \`seq\`, splitting it each time \`fn\` returns a new value. Returns an array of sequences.`,
+    examples: [
+      `(partition-by #(= 3 %1) [1 2 3 4 5])`,
+      `(partition-by odd? [1 1 1 2 2 3 3])`,
+      `(partition-by identity "Leeeeeerrroyyy")`,
+    ],
+  },
 }

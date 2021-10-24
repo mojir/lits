@@ -19,6 +19,9 @@ import {
   toNonNegativeInteger,
   collHasKey,
   asSeq,
+  asNumber,
+  asArr,
+  assertPositiveNumber,
 } from '../../../utils'
 import { BuiltinNormalExpressions, NormalExpressionEvaluator } from '../../interface'
 
@@ -721,4 +724,80 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
+
+  partition: {
+    evaluate: (params): Seq => {
+      const len = params.length
+      const n = toNonNegativeInteger(asNumber(params[0]))
+      const seq = len === 2 ? asSeq(params[1]) : len === 3 ? asSeq(params[2]) : asSeq(params[3])
+      const step = len >= 3 ? toNonNegativeInteger(asNumber(params[1])) : n
+      const pad = len === 4 ? (params[2] === null ? [] : asArr(params[2])) : undefined
+
+      return partition(n, step, seq, pad)
+    },
+    validate: node => assertLength({ min: 2, max: 4 }, node),
+  },
+
+  'partition-all': {
+    evaluate: (params): Seq => {
+      const len = params.length
+      const n = toNonNegativeInteger(asNumber(params[0]))
+      const seq = len === 2 ? asSeq(params[1]) : asSeq(params[2])
+      const step = len >= 3 ? toNonNegativeInteger(asNumber(params[1])) : n
+
+      return partition(n, step, seq, [])
+    },
+    validate: node => assertLength({ min: 2, max: 3 }, node),
+  },
+
+  'partition-by': {
+    evaluate: ([fn, seq], contextStack, { executeFunction }): Seq => {
+      assertLispishFunction(fn)
+      assertSeq(seq)
+      const isStringSeq = isString(seq)
+      let oldValue: unknown = undefined
+
+      const result = (isStringSeq ? seq.split(``) : seq).reduce((result: Arr, elem) => {
+        const value = executeFunction(fn, [elem], contextStack)
+        if (value !== oldValue) {
+          result.push([])
+          oldValue = value
+        }
+        ;(result[result.length - 1] as Arr).push(elem)
+        return result
+      }, [])
+
+      return isStringSeq ? result.map(elem => (elem as Arr).join(``)) : result
+    },
+    validate: node => assertLength({ min: 2, max: 3 }, node),
+  },
+}
+
+function partition(n: number, step: number, seq: Seq, pad?: Arr) {
+  assertPositiveNumber(step)
+  const isStringSeq = isString(seq)
+
+  const result: Arr[] = []
+  let start = 0
+  outer: while (start < seq.length) {
+    const innerArr: Arr = []
+    for (let i = start; i < start + n; i += 1) {
+      if (i >= seq.length) {
+        const padIndex = i - seq.length
+        if (!pad) {
+          start += step
+          continue outer
+        }
+        if (padIndex >= pad.length) {
+          break
+        }
+        innerArr.push(pad[padIndex])
+      } else {
+        innerArr.push(seq[i])
+      }
+    }
+    result.push(innerArr)
+    start += step
+  }
+  return isStringSeq ? result.map(x => x.join(``)) : result
 }
