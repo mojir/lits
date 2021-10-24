@@ -370,27 +370,27 @@ module.exports = {
     description: `Returns \`1\` if \`number > 0\`, \`-1\` if \`number < 0\`, \`0\` if \`number = 0\` or \`-0\` if \`number = -0\`.`,
     examples: [`(sign -2.3)`, `(sign -0)`, `(sign 0)`, `(sign 12312)`],
   },
-  infinity: {
-    name: `infinity`,
+  'positive-infinity': {
+    name: `positive-infinity`,
     category: `Math`,
-    linkName: `infinity`,
+    linkName: `positive-infinity`,
     returns: {
       type: `number`,
     },
     arguments: [],
-    description: `Returns a number representing positive infinity.`,
-    examples: [`(infinity)`],
+    description: `Returns a number representing positive positive-infinity.`,
+    examples: [`(positive-infinity)`],
   },
-  '-infinity': {
-    name: `-infinity`,
+  'negative-infinity': {
+    name: `negative-infinity`,
     category: `Math`,
-    linkName: `-infinity`,
+    linkName: `negative-infinity`,
     returns: {
       type: `number`,
     },
     arguments: [],
     description: `Returns a number representing negative infinity.`,
-    examples: [`(-infinity)`],
+    examples: [`(negative-infinity)`],
   },
   'max-safe-integer': {
     name: `max-safe-integer`,

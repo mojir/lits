@@ -3211,13 +3211,13 @@ var Lispish = (function (exports) {
             },
             validate: function (node) { return assertLength(0, node); },
         },
-        infinity: {
+        'positive-infinity': {
             evaluate: function () {
                 return Number.POSITIVE_INFINITY;
             },
             validate: function (node) { return assertLength(0, node); },
         },
-        '-infinity': {
+        'negative-infinity': {
             evaluate: function () {
                 return Number.NEGATIVE_INFINITY;
             },
@@ -3428,7 +3428,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "0.1.61";
+    var version = "1.0.0-alpha.1";
 
     var miscNormalExpression = {
         'not=': {

@@ -268,17 +268,17 @@ describe(`math functions`, () => {
     })
   })
 
-  describe(`infinity`, () => {
+  describe(`positive-infinity`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(infinity)`)).toBe(Number.POSITIVE_INFINITY)
-      expect(() => lispish.run(`(infinity "1")`)).toThrow()
+      expect(lispish.run(`(positive-infinity)`)).toBe(Number.POSITIVE_INFINITY)
+      expect(() => lispish.run(`(positive-infinity "1")`)).toThrow()
     })
   })
 
-  describe(`-infinity`, () => {
+  describe(`negative-infinity`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(-infinity)`)).toBe(Number.NEGATIVE_INFINITY)
-      expect(() => lispish.run(`(-infinity "1")`)).toThrow()
+      expect(lispish.run(`(negative-infinity)`)).toBe(Number.NEGATIVE_INFINITY)
+      expect(() => lispish.run(`(negative-infinity "1")`)).toThrow()
     })
   })
 

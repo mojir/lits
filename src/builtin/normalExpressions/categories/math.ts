@@ -263,14 +263,14 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertLength(0, node),
   },
 
-  infinity: {
+  'positive-infinity': {
     evaluate: (): number => {
       return Number.POSITIVE_INFINITY
     },
     validate: (node: NormalExpressionNode): void => assertLength(0, node),
   },
 
-  '-infinity': {
+  'negative-infinity': {
     evaluate: (): number => {
       return Number.NEGATIVE_INFINITY
     },
