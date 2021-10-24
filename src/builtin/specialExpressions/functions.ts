@@ -4,7 +4,7 @@ import {
   AstNode,
   BindingNode,
   EvaluatedFunctionArguments,
-  functionSymbol,
+  FUNCTION_SYMBOL,
   LispishFunction,
   NameNode,
   ParseArgument,
@@ -144,7 +144,7 @@ function createEvaluator(
     )
 
     const lispishFunction: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       name,
       arguments: {

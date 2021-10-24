@@ -4,7 +4,7 @@ import { Any, Arr } from '../interface'
 import { ReservedName } from '../reservedNames'
 import { Token } from '../tokenizer/interface'
 
-export const functionSymbol = Symbol(`function`)
+export const FUNCTION_SYMBOL = Symbol(`function`)
 
 export type EvaluatedFunctionArguments = {
   mandatoryArguments: string[]
@@ -16,7 +16,7 @@ export type EvaluatedFunctionArguments = {
 }
 
 export type UserDefinedFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `user-defined`
   name: string | undefined
   arguments: EvaluatedFunctionArguments
@@ -25,57 +25,57 @@ export type UserDefinedFunction = {
 }
 
 export type PartialFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `partial`
   fn: Any
   params: Arr
 }
 
 export type CompFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `comp`
   fns: Arr
 }
 
 export type ConstantlyFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `constantly`
   value: Any
 }
 
 export type JuxtFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `juxt`
   fns: Arr
 }
 
 export type ComplementFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `complement`
   fn: Any
 }
 
 export type EveryPredFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `every-pred`
   fns: Arr
 }
 
 export type SomePredFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `some-pred`
   fns: Arr
 }
 
 export type FNilFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `fnil`
   fn: Any
   params: Arr
 }
 
 export type BuiltinFunction = {
-  [functionSymbol]: true
+  [FUNCTION_SYMBOL]: true
   type: `builtin`
   name: string
 }

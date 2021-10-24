@@ -144,6 +144,8 @@ describe(`collection functions`, () => {
       expect(lispish.run(`(def a [1 2 3]) (assoc a 1 "2") a`)).toEqual([1, 2, 3])
       expect(lispish.run(`(assoc [1 2 3] 3 "4")`)).toEqual([1, 2, 3, `4`])
 
+      expect(lispish.run(`(assoc {} "a" "1")`)).toEqual({ a: `1` })
+
       expect(lispish.run(`(assoc {"a" 1 "b" 2} "a" "1")`)).toEqual({ a: `1`, b: 2 })
       expect(lispish.run(`(assoc {"a" 1 "b" 2} "b" "2")`)).toEqual({ a: 1, b: `2` })
       expect(lispish.run(`(def o {"a" 1 "b" 2}) (assoc o "a" "1")`)).toEqual({ a: `1`, b: 2 })
@@ -174,11 +176,15 @@ describe(`collection functions`, () => {
       expect(() => lispish.run(`(assoc [])`)).toThrow()
       expect(() => lispish.run(`(assoc [] 0)`)).toThrow()
       expect(() => lispish.run(`(assoc [] 0 "x" "y")`)).toThrow()
+      expect(() => lispish.run(`(assoc [] "a" "1")`)).toThrow()
     })
   })
 
   describe(`assoc-in`, () => {
     test(`samples`, () => {
+      expect(lispish.run(`(assoc-in "Albert" [0] "a")`)).toEqual(`albert`)
+      expect(lispish.run(`(assoc-in "Albert" [6] "!")`)).toEqual(`Albert!`)
+      expect(() => lispish.run(`(assoc-in "Albert" [7] "!")`)).toThrow()
       expect(lispish.run(`(assoc-in {} ["a" "b" "c"] "Albert")`)).toEqual({ a: { b: { c: `Albert` } } })
       expect(lispish.run(`(assoc-in [1 2 3] [0] "1")`)).toEqual([`1`, 2, 3])
       expect(lispish.run(`(assoc-in [1 2 [1 2 3]] [2 1] "2")`)).toEqual([1, 2, [1, `2`, 3]])

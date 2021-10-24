@@ -23,8 +23,10 @@ import {
   collHasKey,
   isColl,
   isAny,
-  clone,
+  cloneColl,
   asColl,
+  assertAny,
+  asStringOrNumber,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -46,6 +48,27 @@ function get(coll: Coll, key: string | number): Any | undefined {
     }
   }
   return undefined
+}
+
+function assoc(coll: Coll, key: string | number, value: Any) {
+  assertColl(coll)
+  assertStringOrNumber(key)
+  if (Array.isArray(coll) || typeof coll === `string`) {
+    assertInteger(key)
+    assertNumberGte(key, 0)
+    assertNumberLte(key, coll.length)
+    if (typeof coll === `string`) {
+      assertChar(value)
+      return `${coll.slice(0, key)}${value}${coll.slice(key + 1)}`
+    }
+    const copy = [...coll]
+    copy[key] = value
+    return copy
+  }
+  assertString(key)
+  const copy = { ...coll }
+  copy[key] = value
+  return copy
 }
 
 export const collectionNormalExpression: BuiltinNormalExpressions = {
@@ -124,75 +147,64 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([coll, key, value]): Coll => {
       assertColl(coll)
       assertStringOrNumber(key)
-      if (Array.isArray(coll) || typeof coll === `string`) {
-        assertInteger(key)
-        assertNumberGte(key, 0)
-        assertNumberLte(key, coll.length)
-        if (typeof coll === `string`) {
-          assertChar(value)
-          return `${coll.slice(0, key)}${value}${coll.slice(key + 1)}`
-        }
-        const copy = [...coll]
-        copy[key] = value
-        return copy
-      }
-      assertString(key)
-      const copy = { ...coll }
-      copy[key] = value
-      return copy
+      assertAny(value)
+      return assoc(coll, key, value)
     },
     validate: node => assertLength(3, node),
   },
   'assoc-in': {
+    // TODO: make use of function from assoc.
     evaluate: ([originalColl, keys, value]): Coll => {
       assertColl(originalColl)
       assertArr(keys)
-      const coll = clone(originalColl)
+      assertAny(value)
+
+      if (keys.length === 1) {
+        assertStringOrNumber(keys[0])
+        return assoc(originalColl, keys[0], value)
+      }
+
+      const coll = cloneColl(originalColl)
 
       const butLastKeys = keys.slice(0, keys.length - 1)
-      const lastKey = keys[keys.length - 1]
-      const parentKey = keys[keys.length - 2]
+      const lastKey = asStringOrNumber(keys[keys.length - 1])
+      const parentKey = asStringOrNumber(keys[keys.length - 2])
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let parentColl: any
-      const innerColl = butLastKeys.reduce((result: Coll, key) => {
-        parentColl = result
+      type CollMeta = {
+        coll: Coll
+        parent: Coll
+      }
 
-        let innerColl: Coll
-        if (isArr(result)) {
-          assertNumber(key)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          innerColl = asColl(result[key])
-        } else {
-          assertObj(result)
-          assertString(key)
-          if (!collHasKey(result, key)) {
-            result[key] = {}
+      const innerCollMeta = butLastKeys.reduce(
+        (result: CollMeta, key) => {
+          const resultColl = result.coll
+
+          let newResultColl: Coll
+          if (isArr(resultColl)) {
+            assertNumber(key)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            newResultColl = asColl(resultColl[key])
+          } else {
+            assertObj(resultColl)
+            assertString(key)
+            if (!collHasKey(result.coll, key)) {
+              resultColl[key] = {}
+            }
+            newResultColl = asColl(resultColl[key])
           }
-          innerColl = asColl(result[key])
-        }
 
-        return innerColl
-      }, coll)
+          return { coll: newResultColl, parent: resultColl }
+        },
+        { coll, parent: {} },
+      )
 
-      if (isArr(innerColl)) {
-        assertNumber(lastKey)
-        innerColl[lastKey] = value
-      } else if (isString(innerColl)) {
-        assertNumber(lastKey)
-        assertChar(value)
-        const newString = `${innerColl.substring(0, lastKey)}${value}${innerColl.substring(lastKey + 1)}`
-        if (isArr(parentColl)) {
-          assertNumber(parentKey)
-          parentColl[parentKey] = newString
-        } else {
-          assertObj(parentColl)
-          assertString(parentKey)
-          parentColl[parentKey] = newString
-        }
+      if (isArr(innerCollMeta.parent)) {
+        assertNumber(parentKey)
+        innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value)
       } else {
-        assertString(lastKey)
-        innerColl[lastKey] = value
+        assertString(parentKey)
+        innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value)
       }
 
       return coll

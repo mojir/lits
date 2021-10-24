@@ -3,7 +3,7 @@ import { Any, Arr, Coll, Obj, Seq } from './interface'
 import {
   AstNode,
   ExpressionNode,
-  functionSymbol,
+  FUNCTION_SYMBOL,
   LispishFunction,
   NameNode,
   NormalExpressionNode,
@@ -147,6 +147,12 @@ export function assertString(value: unknown): asserts value is string {
   }
 }
 
+export function assertStringOrRegExp(value: unknown): asserts value is RegExp | string {
+  if (!(value instanceof RegExp || typeof value === `string`)) {
+    throw TypeError(`Expected RegExp or string, got: ${value} type="${typeof value}"`)
+  }
+}
+
 export function asString(value: unknown): string {
   if (!isString(value)) {
     throw TypeError(`Expected string, got: ${value} type="${typeof value}"`)
@@ -176,10 +182,19 @@ export function asChar(value: unknown): string {
   return value
 }
 
+export function isStringOrNumber(value: unknown): boolean {
+  return typeof value === `string` || typeof value === `number`
+}
+
 export function assertStringOrNumber(value: unknown): asserts value is string {
-  if (!(typeof value === `string` || typeof value === `number`)) {
+  if (!isStringOrNumber(value)) {
     throw TypeError(`Expected string or number, got: ${value} type="${typeof value}"`)
   }
+}
+
+export function asStringOrNumber(value: unknown): string {
+  assertStringOrNumber(value)
+  return value
 }
 
 export function asNonEmptyString(value: unknown): string {
@@ -196,12 +211,6 @@ export function isRegExp(value: unknown): value is RegExp {
 export function assertRegExp(value: unknown): asserts value is RegExp {
   if (!(value instanceof RegExp)) {
     throw TypeError(`Expected RegExp, got: ${value} type="${typeof value}"`)
-  }
-}
-
-export function assertStringOrRegExp(value: unknown): asserts value is RegExp | string {
-  if (!(value instanceof RegExp || typeof value === `string`)) {
-    throw TypeError(`Expected RegExp or string, got: ${value} type="${typeof value}"`)
   }
 }
 
@@ -261,7 +270,7 @@ export function isLispishFunction(func: unknown): func is LispishFunction {
   if (func === null || typeof func !== `object`) {
     return false
   }
-  return !!(func as LispishFunction)[functionSymbol]
+  return !!(func as LispishFunction)[FUNCTION_SYMBOL]
 }
 
 export function assertLispishFunction(func: unknown): asserts func is LispishFunction {
@@ -535,7 +544,7 @@ export function toAny(value: unknown): Any {
   return (value ?? null) as Any
 }
 
-export function clone<T>(value: T): T {
+function clone<T>(value: T): T {
   if (isObj(value)) {
     return Object.entries(value).reduce((result: Obj, entry) => {
       const [key, val] = entry
@@ -547,4 +556,8 @@ export function clone<T>(value: T): T {
     return value.map(item => clone(item)) as unknown as T
   }
   return value
+}
+
+export function cloneColl<T extends Coll>(value: T): T {
+  return clone(value)
 }

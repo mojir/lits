@@ -5,7 +5,7 @@ import {
   NumberNode,
   StringNode,
   ReservedNameNode,
-  functionSymbol,
+  FUNCTION_SYMBOL,
   NormalExpressionNodeName,
   BuiltinFunction,
 } from '../parser/interface'
@@ -82,7 +82,7 @@ function evaluateName({ value }: NameNode, contextStack: Context[]): Any {
   }
   if (builtin.normalExpressions[value]) {
     const builtinFunction: BuiltinFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `builtin`,
       name: value,
     }

@@ -1,4 +1,4 @@
-import { AstNode, functionSymbol, LispishFunction, NameNode, NormalExpressionNode } from '../src/parser/interface'
+import { AstNode, FUNCTION_SYMBOL, LispishFunction, NameNode, NormalExpressionNode } from '../src/parser/interface'
 import {
   asAstNode,
   asLispishFunction,
@@ -46,7 +46,7 @@ import {
   assertChar,
   asChar,
   asColl,
-  clone,
+  cloneColl,
 } from '../src/utils'
 describe(`utils`, () => {
   test(`asAstNode`, () => {
@@ -77,7 +77,7 @@ describe(`utils`, () => {
   test(`asLispishFunction`, () => {
     expect(() => asLispishFunction(undefined)).toThrow()
     const lf: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       arguments: {
         mandatoryArguments: [],
@@ -148,7 +148,7 @@ describe(`utils`, () => {
   test(`assertObj`, () => {
     expect(() => assertObj(0)).toThrow()
     expect(() => assertObj({})).not.toThrow()
-    expect(() => assertObj({ [functionSymbol]: true })).toThrow()
+    expect(() => assertObj({ [FUNCTION_SYMBOL]: true })).toThrow()
     expect(() => assertObj({ a: 1 })).not.toThrow()
     expect(() => assertObj(/test/)).toThrow()
     expect(() => assertObj([])).toThrow()
@@ -160,7 +160,7 @@ describe(`utils`, () => {
   test(`assertObjectOrArray`, () => {
     expect(() => assertObjectOrArray(0)).toThrow()
     expect(() => assertObjectOrArray({})).not.toThrow()
-    expect(() => assertObjectOrArray({ [functionSymbol]: true })).toThrow()
+    expect(() => assertObjectOrArray({ [FUNCTION_SYMBOL]: true })).toThrow()
     expect(() => assertObjectOrArray({ a: 1 })).not.toThrow()
     expect(() => assertObjectOrArray(/test/)).toThrow()
     expect(() => assertObjectOrArray([])).not.toThrow()
@@ -253,7 +253,7 @@ describe(`utils`, () => {
 
   test(`assertLispishFunction`, () => {
     const lf: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       arguments: {
         mandatoryArguments: [],
@@ -483,7 +483,7 @@ describe(`utils`, () => {
 
   test(`isLispishFunction`, () => {
     const lf1: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       arguments: {
         mandatoryArguments: [],
@@ -494,23 +494,23 @@ describe(`utils`, () => {
       body: [],
     }
     const lf2: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `builtin`,
       name: `+`,
     }
     const lf3: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `partial`,
       fn: { a: 10, b: 20 },
       params: [],
     }
     const lf4: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `comp`,
       fns: [`x`],
     }
     const lf5: LispishFunction = {
-      [functionSymbol]: true,
+      [FUNCTION_SYMBOL]: true,
       type: `constantly`,
       value: 10,
     }
@@ -670,14 +670,14 @@ describe(`utils`, () => {
     expect(() => asColl(false)).toThrow()
   })
 
-  describe(`clone`, () => {
+  describe(`cloneColl`, () => {
     test(`samples`, () => {
-      expect(clone({ a: 10 })).toEqual({ a: 10 })
-      expect(clone({ a: [1, 2, 3] })).toEqual({ a: [1, 2, 3] })
+      expect(cloneColl({ a: 10 })).toEqual({ a: 10 })
+      expect(cloneColl({ a: [1, 2, 3] })).toEqual({ a: [1, 2, 3] })
     })
     test(`new instance`, () => {
       const original = { a: [1, 2, 3] }
-      const second = clone(original)
+      const second = cloneColl(original)
       expect(original).not.toBe(second)
       second.a[0] = 10
       expect(original.a[0]).toBe(1)
