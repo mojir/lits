@@ -1899,6 +1899,39 @@ var Lispish = (function (exports) {
             },
             validate: function (node) { return assertLength(2, node); },
         },
+        'has-some?': {
+            evaluate: function (_a) {
+                var coll = _a[0], seq = _a[1];
+                assertColl(coll);
+                assertSeq(seq);
+                if (isArr(coll)) {
+                    for (var _i = 0, seq_1 = seq; _i < seq_1.length; _i++) {
+                        var value = seq_1[_i];
+                        if (coll.includes(value)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                if (isString(coll)) {
+                    for (var _b = 0, seq_2 = seq; _b < seq_2.length; _b++) {
+                        var value = seq_2[_b];
+                        if (isChar(value) ? coll.split("").includes(value) : false) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                for (var _c = 0, seq_3 = seq; _c < seq_3.length; _c++) {
+                    var value = seq_3[_c];
+                    if (Object.values(coll).includes(value)) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
         assoc: {
             evaluate: function (_a) {
                 var coll = _a[0], key = _a[1], value = _a[2];
@@ -3428,7 +3461,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "1.0.0-alpha.3";
+    var version = "1.0.0-alpha.4";
 
     var miscNormalExpression = {
         'not=': {

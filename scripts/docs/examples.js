@@ -182,4 +182,51 @@ module.exports = [
 (label-from-value arr :name)
 `.trim(),
   },
+
+  {
+    id: 'labels-from-values',
+    name: 'label-from-value',
+    description: 'Find labels to corresponding values in array of {label value}-objects.',
+    code: `
+(defn labels-from-values [$array $values]
+  (for
+    [
+      value
+      $values
+      &let [
+        label
+        (let [entry (some #(= value (%1 :value)) $array)]
+          (if (nil? entry) (str value) (entry :label))
+        )
+      ]
+      &when (boolean label)
+    ]
+    label
+  )
+)
+
+(def arr [
+  {:label "Name" :value "name"}
+  {:label "Age" :value "age"}
+  {:label "Email" :value "email"}
+])
+
+(labels-from-values arr [:name :age])
+`.trim(),
+  },
 ]
+
+// "@containsAny": {
+//   "ARGS": [
+//     "$list",
+//     "$items"
+//   ],
+//   "BODY": [
+//     "(function () {",
+//     "  for (var i = 0; i < ($items || []).length; i += 1) {",
+//     "    if (($list || []).indexOf($items[i]) >= 0) return true;",
+//     "  }",
+//     "  return false;",
+//     "})()"
+//   ]
+// },

@@ -29,6 +29,8 @@ import {
   asColl,
   assertAny,
   asStringOrNumber,
+  assertSeq,
+  isChar,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -220,6 +222,35 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         return isString(value) ? coll.split(``).includes(value) : false
       }
       return Object.values(coll).includes(value)
+    },
+    validate: node => assertLength(2, node),
+  },
+  'has-some?': {
+    evaluate: ([coll, seq]): boolean => {
+      assertColl(coll)
+      assertSeq(seq)
+      if (isArr(coll)) {
+        for (const value of seq) {
+          if (coll.includes(value)) {
+            return true
+          }
+        }
+        return false
+      }
+      if (isString(coll)) {
+        for (const value of seq) {
+          if (isChar(value) ? coll.split(``).includes(value) : false) {
+            return true
+          }
+        }
+        return false
+      }
+      for (const value of seq) {
+        if (Object.values(coll).includes(value)) {
+          return true
+        }
+      }
+      return false
     },
     validate: node => assertLength(2, node),
   },

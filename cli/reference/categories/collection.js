@@ -129,6 +129,35 @@ module.exports = {
       `(has? "Albert" :a)`,
     ],
   },
+  'has-some?': {
+    name: `has-some?`,
+    category: `Collection`,
+    linkName: `has-some_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection`,
+      },
+      {
+        name: `keys`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns \`true\` if \`collection\` has any of the elements in \`keys\`, otherwise returns \`false\`.`,
+    examples: [
+      `(has-some? [1 2 3] [0])`,
+      `(has-some? [1 2 3] [0 1])`,
+      `(has-some? (object :a 1 :b 2) [0])`,
+      `(has-some? (object :a 1 :b 2) [0 1])`,
+      `(has-some? "Albert" "xyz")`,
+      `(has-some? "Albert" "xyzl")`,
+      `(has-some? [:a :b :c :d] "xyz")`,
+      `(has-some? [:a :b :c :d] "xyzc")`,
+    ],
+  },
   assoc: {
     name: `assoc`,
     category: `Collection`,
