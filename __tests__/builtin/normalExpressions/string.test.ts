@@ -48,16 +48,16 @@ describe(`string functions`, () => {
     })
   })
 
-  describe(`string-to-number`, () => {
+  describe(`number`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(string-to-number "123.25")`)).toBe(123.25)
-      expect(lispish.run(`(string-to-number "0b1111")`)).toBe(15)
-      expect(lispish.run(`(string-to-number "0Xf")`)).toBe(15)
-      expect(lispish.run(`(string-to-number "0o17")`)).toBe(15)
-      expect(lispish.run(`(string-to-number "-0.125")`)).toBe(-0.125)
-      expect(() => lispish.run(`(string-to-number)`)).toThrow()
-      expect(() => lispish.run(`(string-to-number "987" "65")`)).toThrow()
-      expect(() => lispish.run(`(string-to-number "non parsable number")`)).toThrow()
+      expect(lispish.run(`(number "123.25")`)).toBe(123.25)
+      expect(lispish.run(`(number "0b1111")`)).toBe(15)
+      expect(lispish.run(`(number "0Xf")`)).toBe(15)
+      expect(lispish.run(`(number "0o17")`)).toBe(15)
+      expect(lispish.run(`(number "-0.125")`)).toBe(-0.125)
+      expect(() => lispish.run(`(number)`)).toThrow()
+      expect(() => lispish.run(`(number "987" "65")`)).toThrow()
+      expect(() => lispish.run(`(number "non parsable number")`)).toThrow()
     })
   })
 
@@ -165,7 +165,7 @@ describe(`string functions`, () => {
         `pqrst`,
         `vw`,
       ])
-      expect(lispish.run(`(map string-to-number (split "0123456789" "" 5))`)).toEqual([0, 1, 2, 3, 4])
+      expect(lispish.run(`(map number (split "0123456789" "" 5))`)).toEqual([0, 1, 2, 3, 4])
       expect(() => lispish.run(`(split "0123456789")`)).toThrow()
       expect(() => lispish.run(`(split "0123456789" :5 -1)`)).toThrow()
       expect(() => lispish.run(`(split 23456789 :5)`)).toThrow()

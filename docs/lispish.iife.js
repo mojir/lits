@@ -4005,7 +4005,7 @@ var Lispish = (function (exports) {
                 }, "");
             },
         },
-        'string-to-number': {
+        number: {
             evaluate: function (_a) {
                 var str = _a[0];
                 assertString(str);

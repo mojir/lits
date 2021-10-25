@@ -59,7 +59,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     },
   },
 
-  'string-to-number': {
+  number: {
     evaluate: ([str]: Arr): number => {
       assertString(str)
       const number = Number(str)

@@ -20,9 +20,18 @@ describe(`import`, () => {
     expect(lispish.run(`(tripple 10)`)).toBe(30)
   })
 
-  test(`import a variable`, () => {
+  test(`import a variable.`, () => {
     lispish.import(`(def magicNumber 42)`)
     expect(lispish.run(`magicNumber`)).toBe(42)
+  })
+
+  test(`import a variable - again.`, () => {
+    lispish.import(`
+    (defn zip? [string] (boolean (match (regexp "^\\d{5}$") string)))
+    (defn isoDateString? [string] (boolean (match (regexp "^\\d{4}-\\d{2}-\\d{2}$") string)))
+    (def NAME_LENGTH 100)
+    `)
+    expect(lispish.run(`NAME_LENGTH`)).toBe(100)
   })
 
   test(`change imported variable`, () => {

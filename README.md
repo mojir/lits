@@ -182,13 +182,13 @@ lispish.run('(+ 1 2 3 4)'); // returns 10
 ### String
 * from-char-code
 * lower-case
+* number
 * number-to-string
 * pad-left
 * pad-right
 * split
 * str
 * string-repeat
-* string-to-number
 * subs
 * template
 * to-char-code

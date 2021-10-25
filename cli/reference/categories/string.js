@@ -66,10 +66,10 @@ module.exports = {
       `(str 0 false true nil (regexp "^kalle") [1 2 3] {:a :a})`,
     ],
   },
-  'string-to-number': {
-    name: `string-to-number`,
+  number: {
+    name: `number`,
     category: `String`,
-    linkName: `string-to-number`,
+    linkName: `number`,
     returns: {
       type: `number`,
     },
@@ -80,7 +80,7 @@ module.exports = {
       },
     ],
     description: `Parses \`string\` to a number.`,
-    examples: [`(string-to-number "10")`, `(string-to-number "010")`, `(string-to-number "-1.01")`],
+    examples: [`(number "10")`, `(number "010")`, `(number "-1.01")`],
   },
   'number-to-string': {
     name: `number-to-string`,
@@ -276,7 +276,7 @@ module.exports = {
       `(split "Albert Mojir" " ")`,
       `(split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]"))`,
       `(split "0123456789" "")`,
-      `(map string-to-number (split "0123456789" "" 5))`,
+      `(map number (split "0123456789" "" 5))`,
     ],
   },
   template: {

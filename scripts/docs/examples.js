@@ -115,4 +115,77 @@ module.exports = [
 (write! (count-chairs 1))
 `.trim(),
   },
+
+  {
+    id: 'isoDateString',
+    name: 'Is ISO date string',
+    description: 'Check if string is formatted as an ISO date string.',
+    code: `
+(defn isoDateString? [$data]
+  (if-let [m (match (regexp "^(\\d{4})-(\\d{2})-(\\d{2})$") $data)]
+    (let
+      [
+        year (number (m 1))
+        month (number (m 2))
+        day (number (m 3))
+        leapYear
+          (and
+            (zero? (mod year 4))
+            (or
+              (not (zero? (mod year 100)))
+              (zero? (mod year 400))
+            )
+          )
+      ]
+      (not (or
+        (or (< year 1900) (> year 2100))
+        (or (< month 1) (> month 12))
+        (or (< day 1) (> day 31))
+        (and
+          (or (= month 4) (= month 6) (= month 9) (= month 11))
+          (> day 30)
+        )
+        (and
+          (= month 2)
+          (or
+            (and leapYear (> day 29))
+            (and (not leapYear) (> day 28))
+          )
+        )
+      ))
+    )
+    false
+  )
+)
+
+(write! (isoDateString? "1978-12-21"))
+(write! (isoDateString? "197-12-21"))
+`.trim(),
+  },
 ]
+
+// "(function () {",
+// "  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test($date)) {",
+// "    return false;",
+// "  }",
+// "  var year = Number($date.substr(0, 4));",
+// "  var month = Number($date.substr(5, 2));",
+// "  var day = Number($date.substr(8, 2));",
+// "  if (year < 1900 || year > 2100) {",
+// "    return false;",
+// "  }",
+// "  if (month < 1 || month > 12) {",
+// "    return false;",
+// "  }",
+// "  if (day < 1 || day > 31) {",
+// "    return false;",
+// "  }",
+// "  if ((month === 4 || month === 6 || month === 9 || month === 11) && day > 30) {",
+// "    return false;",
+// "  }",
+// "  var leapYear = (year % 4 === 0) && ((year % 100 !== 0) || (year % 400 === 0));",
+// "  if (month === 2 && (leapYear && day > 29 || !leapYear && day > 28)) {",
+// "    return false;",
+// "  }",
+// "  return true;",
+// "})();"
