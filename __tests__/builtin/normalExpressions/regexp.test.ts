@@ -10,6 +10,7 @@ describe(`regexp functions`, () => {
   describe(`regexp`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(regexp "^abc$")`)).toEqual(/^abc$/)
+      expect(lispish.run(`#"^abc$"`)).toEqual(/^abc$/)
       expect(lispish.run(`(regexp "^abc$" "gi")`)).toEqual(/^abc$/gi)
       expect(lispish.run(`(regexp "^abc$" "ig")`)).toEqual(/^abc$/gi)
       expect(lispish.run(`(regexp "")`)).toEqual(/(?:)/)
