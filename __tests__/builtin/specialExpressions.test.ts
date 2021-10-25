@@ -176,6 +176,27 @@ describe(`specialExpressions`, () => {
       expect(() => lispish.run(`(let (a :A]`)).toThrow()
       expect(() => lispish.run(`(let (a :A) a)`)).toThrow()
     })
+    test(`variables depend on each other`, () => {
+      const program = `
+      (let
+        [
+          year 2000
+          month 1
+          day 1
+          leapYear
+            (and
+              (zero? (mod year 4))
+              (or
+                (not (zero? (mod year 100)))
+                (zero? (mod year 400))
+              )
+            )
+        ]
+        leapYear
+      )
+      `
+      expect(lispish.run(program)).toBe(true)
+    })
     test(`local and global variables`, () => {
       expect(() =>
         lispish.run(`
@@ -197,7 +218,7 @@ describe(`specialExpressions`, () => {
             b
           )
         `),
-      ).toBe(`X`)
+      ).toBe(`A`)
     })
   })
 

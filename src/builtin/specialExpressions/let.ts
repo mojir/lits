@@ -27,12 +27,12 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     castLetExpressionNode(node)
     const locals: Context = {}
+    const newContextStack = [locals, ...contextStack]
     for (const binding of node.bindings) {
       const bindingValueNode = binding.value
-      const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
+      const bindingValue = evaluateAstNode(bindingValueNode, newContextStack)
       locals[binding.name] = { value: bindingValue }
     }
-    const newContextStack = [locals, ...contextStack]
 
     let result: Any = null
     for (const astNode of node.params) {

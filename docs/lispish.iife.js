@@ -1244,13 +1244,13 @@ var Lispish = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var locals = {};
+            var newContextStack = __spreadArray([locals], contextStack);
             for (var _i = 0, _b = node.bindings; _i < _b.length; _i++) {
                 var binding = _b[_i];
                 var bindingValueNode = binding.value;
-                var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                var bindingValue = evaluateAstNode(bindingValueNode, newContextStack);
                 locals[binding.name] = { value: bindingValue };
             }
-            var newContextStack = __spreadArray([locals], contextStack);
             var result = null;
             for (var _c = 0, _d = node.params; _c < _d.length; _c++) {
                 var astNode = _d[_c];
@@ -4900,10 +4900,11 @@ var Lispish = (function (exports) {
         return ast;
     }
 
+    var NO_MATCH = [0, undefined];
     // A name (function or variable) can contain a lot of different characters
     var nameRegExp = /[@%0-9a-zA-Z_^?=!$%<>.+*/-]/;
     var whitespaceRegExp = /\s|,/;
-    var skipWhiteSpace = function (input, current) { var _a; return whitespaceRegExp.test((_a = input[current]) !== null && _a !== void 0 ? _a : "") ? [1, undefined] : [0, undefined]; };
+    var skipWhiteSpace = function (input, current) { var _a; return whitespaceRegExp.test((_a = input[current]) !== null && _a !== void 0 ? _a : "") ? [1, undefined] : NO_MATCH; };
     var skipComment = function (input, current) {
         if (input[current] === ";") {
             var length_1 = 1;
@@ -4915,7 +4916,7 @@ var Lispish = (function (exports) {
             }
             return [length_1, undefined];
         }
-        return [0, undefined];
+        return NO_MATCH;
     };
     var tokenizeLeftParen = function (input, position) {
         return tokenizeCharacter("paren", "(", input, position);
@@ -4937,7 +4938,7 @@ var Lispish = (function (exports) {
     };
     var tokenizeString = function (input, position) {
         if (input[position] !== "\"") {
-            return [0, undefined];
+            return NO_MATCH;
         }
         var value = "";
         var length = 1;
@@ -4972,7 +4973,7 @@ var Lispish = (function (exports) {
     };
     var tokenizeSymbolString = function (input, position) {
         if (input[position] !== ":") {
-            return [0, undefined];
+            return NO_MATCH;
         }
         var value = "";
         var length = 1;
@@ -4982,15 +4983,18 @@ var Lispish = (function (exports) {
             value += char;
             char = input[position + length];
         }
+        if (length === 1) {
+            return NO_MATCH;
+        }
         return [length, { type: "string", value: value }];
     };
     var tokenizeRegexpShorthand = function (input, position) {
         if (input[position] !== "#") {
-            return [0, undefined];
+            return NO_MATCH;
         }
         var _a = tokenizeString(input, position + 1), length = _a[0], token = _a[1];
         if (!token) {
-            return [0, undefined];
+            return NO_MATCH;
         }
         return [
             length + 1,
@@ -5002,7 +5006,7 @@ var Lispish = (function (exports) {
     };
     var tokenizeFnShorthand = function (input, position) {
         if (input.slice(position, position + 2) !== "#(") {
-            return [0, undefined];
+            return NO_MATCH;
         }
         return [
             1,
@@ -5022,11 +5026,11 @@ var Lispish = (function (exports) {
         var type = "decimal";
         var firstChar = input[position];
         if (firstChar === undefined) {
-            return [0, undefined];
+            return NO_MATCH;
         }
         var hasDecimals = firstChar === ".";
         if (!firstCharRegExp.test(firstChar)) {
-            return [0, undefined];
+            return NO_MATCH;
         }
         var i;
         for (i = position + 1; i < input.length; i += 1) {
@@ -5050,22 +5054,22 @@ var Lispish = (function (exports) {
             }
             if (type === "decimal" && hasDecimals) {
                 if (!decimalNumberRegExp.test(char)) {
-                    return [0, undefined];
+                    return NO_MATCH;
                 }
             }
             else if (type === "binary") {
                 if (!binaryNumberRegExp.test(char)) {
-                    return [0, undefined];
+                    return NO_MATCH;
                 }
             }
             else if (type === "octal") {
                 if (!octalNumberRegExp.test(char)) {
-                    return [0, undefined];
+                    return NO_MATCH;
                 }
             }
             else if (type === "hex") {
                 if (!hexNumberRegExp.test(char)) {
-                    return [0, undefined];
+                    return NO_MATCH;
                 }
             }
             else {
@@ -5074,14 +5078,14 @@ var Lispish = (function (exports) {
                     continue;
                 }
                 if (!decimalNumberRegExp.test(char)) {
-                    return [0, undefined];
+                    return NO_MATCH;
                 }
             }
         }
         var length = i - position;
         var value = input.substring(position, i);
         if ((type !== "decimal" && length <= 2) || value === "." || value === "-") {
-            return [0, undefined];
+            return NO_MATCH;
         }
         return [length, { type: "number", value: value }];
     };
@@ -5097,7 +5101,7 @@ var Lispish = (function (exports) {
                 return [length_2, { type: "reservedName", value: reservedName }];
             }
         }
-        return [0, undefined];
+        return NO_MATCH;
     }
     var tokenizeName = function (input, position) {
         return tokenizePattern("name", nameRegExp, input, position);
@@ -5112,14 +5116,14 @@ var Lispish = (function (exports) {
                 return [length_3, { type: "modifier", value: value }];
             }
         }
-        return [0, undefined];
+        return NO_MATCH;
     };
     function tokenizeCharacter(type, value, input, position) {
         if (value === input[position]) {
             return [1, { type: type, value: value }];
         }
         else {
-            return [0, undefined];
+            return NO_MATCH;
         }
     }
     function tokenizePattern(type, pattern, input, position) {
@@ -5127,7 +5131,7 @@ var Lispish = (function (exports) {
         var length = 0;
         var value = "";
         if (!char || !pattern.test(char)) {
-            return [0, undefined];
+            return NO_MATCH;
         }
         while (char && pattern.test(char)) {
             value += char;

@@ -162,30 +162,24 @@ var examples = [
 (write! (isoDateString? "197-12-21"))
 `.trim(),
   },
-]
 
-// "(function () {",
-// "  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test($date)) {",
-// "    return false;",
-// "  }",
-// "  var year = Number($date.substr(0, 4));",
-// "  var month = Number($date.substr(5, 2));",
-// "  var day = Number($date.substr(8, 2));",
-// "  if (year < 1900 || year > 2100) {",
-// "    return false;",
-// "  }",
-// "  if (month < 1 || month > 12) {",
-// "    return false;",
-// "  }",
-// "  if (day < 1 || day > 31) {",
-// "    return false;",
-// "  }",
-// "  if ((month === 4 || month === 6 || month === 9 || month === 11) && day > 30) {",
-// "    return false;",
-// "  }",
-// "  var leapYear = (year % 4 === 0) && ((year % 100 !== 0) || (year % 400 === 0));",
-// "  if (month === 2 && (leapYear && day > 29 || !leapYear && day > 28)) {",
-// "    return false;",
-// "  }",
-// "  return true;",
-// "})();"
+  {
+    id: 'label-from-value',
+    name: 'label-from-value',
+    description: 'Find label to corresponding value in array of {label value}-objects.',
+    code: `
+(defn label-from-value [$array $value]
+  (let [entry (some #(= $value (%1 :value)) $array)]
+    (if (nil? entry) (str $value) (entry :label))
+  )
+)
+
+(def arr [
+  {:label "Name" :value "name"}
+  {:label "Age" :value "age"}
+])
+
+(label-from-value arr :name)
+`.trim(),
+  },
+]

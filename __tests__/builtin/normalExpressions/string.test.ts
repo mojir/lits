@@ -249,4 +249,11 @@ describe(`string functions`, () => {
       expect(() => lispish.run(`(from-char-code 65 66)`)).toThrow()
     })
   })
+  describe(`from-char-code`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`:a`)).toBe(`a`)
+      expect(lispish.run(`:a-a`)).toBe(`a-a`)
+      expect(() => lispish.run(`:`)).toThrow()
+    })
+  })
 })
