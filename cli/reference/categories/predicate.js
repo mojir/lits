@@ -142,7 +142,7 @@ module.exports = {
     examples: [
       `(array? [])`,
       `(array? [1 2 3])`,
-      `(array? (object "a" 10))`,
+      `(array? (object :a 10))`,
       `(array? 42)`,
       `(array? 10.1)`,
       `(array? (fn [x y] (+ x y)))`,
@@ -163,7 +163,7 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is an object, otherwise \`false\`.`,
     examples: [
-      `(object? (object "a" 10))`,
+      `(object? (object :a 10))`,
       `(object? (object))`,
       `(object? 42)`,
       `(object? 10.1)`,
@@ -190,7 +190,7 @@ module.exports = {
     examples: [
       `(coll? [])`,
       `(coll? [1 2 3])`,
-      `(coll? (object "a" 10))`,
+      `(coll? (object :a 10))`,
       `(coll? "Albert")`,
       `(coll? 42)`,
       `(coll? 10.1)`,
@@ -214,7 +214,7 @@ module.exports = {
     examples: [
       `(seq? [])`,
       `(seq? [1 2 3])`,
-      `(seq? (object "a" 10))`,
+      `(seq? (object :a 10))`,
       `(seq? "Albert")`,
       `(seq? 42)`,
       `(seq? 10.1)`,

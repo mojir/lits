@@ -63,7 +63,7 @@ module.exports = {
       },
     ],
     description: `Bind \`value\` to \`variable\`. If \`variable\` isn't defined, a new global variable is created.`,
-    examples: [`(def a (object))`, `(def a (object "x" 10 "y" true "z" "A string"))`],
+    examples: [`(def a (object))`, `(def a (object :x 10 :y true :z "A string"))`],
     specialExpression: true,
   },
   defs: {
@@ -85,9 +85,9 @@ module.exports = {
     ],
     description: `Creates a variable with name set to \`variable\` evaluated and value set to \`value\`. If a variable with name \`variable\` isn't found a new global variable is created.`,
     examples: [
-      `(defs "a" "b")`,
-      `(defs (str "a" "1") (object "x" 10 "y" true "z" "A string")) a1`,
-      `(defs "a" "b") (defs a "c") b`,
+      `(defs :a :b)`,
+      `(defs (str :a :1) (object :x 10 :y true :z "A string")) a1`,
+      `(defs :a :b) (defs a :c) b`,
     ],
     specialExpression: true,
   },
@@ -265,7 +265,7 @@ module.exports = {
     description: `Creates a named global function with its name set to \`name\` evaluated. When called, evaluation of the last expression in the body is returned.`,
     examples: [
       `(defns "hyp" [a b] (sqrt (+ (* a a) (* b b)))) hyp`,
-      `(defns (str "h" "y" "p") [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
+      `(defns (str :h :y :p) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
       `(defns "sumOfSquares" [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
@@ -547,7 +547,7 @@ module.exports = {
     description: `List comprehension. Takes an array of one or more \`bindings\`, each followed by zero or more modifiers, and returns an array of evaluations of \`expression\`. Collections are iterated in a nested fashion, rightmost fastest. Supported modifiers are: &let &while and &when.`,
     examples: [
       `(for [x "Al" y [1 2]] (repeat y x))`,
-      `(for [x {"a" 10 "b" 20} y [1 2]] (repeat y x))`,
+      `(for [x {:a 10 :b 20} y [1 2]] (repeat y x))`,
       `(for [x [1 2] y [1 10]] (* x y))`,
       `(for [x [1 2] &let [z (* x x x)]] z)`,
       `(for [x [0 1 2 3 4 5] &let [y (* x 3)] &when (even? y)] y)`,

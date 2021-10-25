@@ -9,7 +9,7 @@ beforeEach(() => {
 describe(`array litterals`, () => {
   test(`samples`, () => {
     expect(lispish.run(`[1 2 3]`)).toEqual([1, 2, 3])
-    expect(lispish.run(`["1" nil]`)).toEqual([`1`, null])
+    expect(lispish.run(`[:1 nil]`)).toEqual([`1`, null])
     expect(lispish.run(`[]`)).toEqual([])
   })
 })

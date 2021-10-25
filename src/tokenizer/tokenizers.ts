@@ -76,6 +76,22 @@ export const tokenizeString: Tokenizer = (input, position) => {
   return [length + 1, { type: `string`, value }]
 }
 
+export const tokenizeSymbolString: Tokenizer = (input, position) => {
+  if (input[position] !== `:`) {
+    return [0, undefined]
+  }
+
+  let value = ``
+  let length = 1
+  let char = input[position + length]
+  while (char && nameRegExp.test(char)) {
+    length += 1
+    value += char
+    char = input[position + length]
+  }
+  return [length, { type: `string`, value }]
+}
+
 export const tokenizeRegexpShorthand: Tokenizer = (input, position) => {
   if (input[position] !== `#`) {
     return [0, undefined]

@@ -12,7 +12,7 @@ describe(`array functions`, () => {
     test(`samples`, () => {
       expect(lispish.run(`[]`)).toEqual([])
       expect(lispish.run(`(array 1)`)).toEqual([1])
-      expect(lispish.run(`(array 0 "1" nil true false (array []) (object))`)).toEqual([
+      expect(lispish.run(`(array 0 :1 nil true false (array []) (object))`)).toEqual([
         0,
         `1`,
         null,
@@ -26,7 +26,7 @@ describe(`array functions`, () => {
       expect(lispish.run(`[]`)).toEqual([])
       expect(lispish.run(`[1]`)).toEqual([1])
       expect((lispish.run(`[nil]`) as Arr)[0]).toEqual(null)
-      expect(lispish.run(`[0 "1" nil true false [[]] (object)]`)).toEqual([0, `1`, null, true, false, [[]], {}])
+      expect(lispish.run(`[0 :1 nil true false [[]] (object)]`)).toEqual([0, `1`, null, true, false, [[]], {}])
     })
   })
 
@@ -53,13 +53,13 @@ describe(`array functions`, () => {
   describe(`repeat`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(repeat 3 5)`)).toEqual([5, 5, 5])
-      expect(lispish.run(`(repeat 3 "5")`)).toEqual([`5`, `5`, `5`])
-      expect(lispish.run(`(repeat 1 "5")`)).toEqual([`5`])
-      expect(lispish.run(`(repeat 0 "5")`)).toEqual([])
-      expect(() => lispish.run(`(repeat 1.3 "5")`)).toThrow()
-      expect(() => lispish.run(`(repeat -10 "5")`)).toThrow()
+      expect(lispish.run(`(repeat 3 :5)`)).toEqual([`5`, `5`, `5`])
+      expect(lispish.run(`(repeat 1 :5)`)).toEqual([`5`])
+      expect(lispish.run(`(repeat 0 :5)`)).toEqual([])
+      expect(() => lispish.run(`(repeat 1.3 :5)`)).toThrow()
+      expect(() => lispish.run(`(repeat -10 :5)`)).toThrow()
       expect(() => lispish.run(`(repeat 10)`)).toThrow()
-      expect(() => lispish.run(`(repeat "5")`)).toThrow()
+      expect(() => lispish.run(`(repeat :5)`)).toThrow()
       expect(() => lispish.run(`(repeat)`)).toThrow()
     })
   })

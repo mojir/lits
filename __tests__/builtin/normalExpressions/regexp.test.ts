@@ -23,7 +23,7 @@ describe(`regexp functions`, () => {
       expect(() => lispish.run(`(regexp [])`)).toThrow()
       expect(() => lispish.run(`(regexp (object))`)).toThrow()
       expect(() => lispish.run(`(regexp "" "ab")`)).toThrow()
-      expect(() => lispish.run(`(regexp "abc" "g" "extra")`)).toThrow()
+      expect(() => lispish.run(`(regexp "abc" :g "extra")`)).toThrow()
     })
   })
 
@@ -32,7 +32,7 @@ describe(`regexp functions`, () => {
       expect(lispish.run(`(match (regexp "^abc$") "abc")`)).toEqual([`abc`])
       expect(lispish.run(`(match (regexp "^abc$") "abx")`)).toBeNull()
       expect(lispish.run(`(match (regexp "^(a)bc$") "abc")`)).toEqual([`abc`, `a`])
-      expect(lispish.run(`(match (regexp "^(A)BC$" "i") "abc")`)).toEqual([`abc`, `a`])
+      expect(lispish.run(`(match (regexp "^(A)BC$" :i) "abc")`)).toEqual([`abc`, `a`])
       expect(() => lispish.run(`(match (regexp "^abc$") 1)`)).toThrow()
       expect(() => lispish.run(`(match (regexp "^abc$") nil)`)).toThrow()
       expect(() => lispish.run(`(match (regexp "^abc$") undefined)`)).toThrow()
@@ -46,9 +46,9 @@ describe(`regexp functions`, () => {
   describe(`replace`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(replace "abcabcABCABC" (regexp "^abc") "ABC")`)).toEqual(`ABCabcABCABC`)
-      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a") "A")`)).toEqual(`AbcabcABCABC`)
-      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a" "g") "A")`)).toEqual(`AbcAbcABCABC`)
-      expect(lispish.run(`(replace "abcabcABCABC" (regexp "a" "gi") "-")`)).toEqual(`-bc-bc-BC-BC`)
+      expect(lispish.run(`(replace "abcabcABCABC" (regexp :a) :A)`)).toEqual(`AbcabcABCABC`)
+      expect(lispish.run(`(replace "abcabcABCABC" (regexp :a :g) :A)`)).toEqual(`AbcAbcABCABC`)
+      expect(lispish.run(`(replace "abcabcABCABC" (regexp :a "gi") "-")`)).toEqual(`-bc-bc-BC-BC`)
       expect(() => lispish.run(`(replace "abcabcABCABC" (regexp "^abc$") 1)`)).toThrow()
       expect(() => lispish.run(`(replace "abcabcABCABC" (regexp "^abc$") nil)`)).toThrow()
       expect(() => lispish.run(`(replace "abcabcABCABC" (regexp "^abc$") undefined)`)).toThrow()

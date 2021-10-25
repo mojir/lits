@@ -37,7 +37,7 @@ describe(`functional functions`, () => {
       expect(lispish.run(`(identity nil)`)).toBe(null)
       expect(lispish.run(`(identity false)`)).toBe(false)
       expect(lispish.run(`(identity true)`)).toBe(true)
-      expect(lispish.run(`(identity {"a" 1})`)).toEqual({ a: 1 })
+      expect(lispish.run(`(identity {:a 1})`)).toEqual({ a: 1 })
       expect(lispish.run(`(identity [1 2 3])`)).toEqual([1, 2, 3])
       expect(() => lispish.run(`(identity)`)).toThrow()
       expect(() => lispish.run(`(identity 1 2)`)).toThrow()
@@ -65,9 +65,9 @@ describe(`functional functions`, () => {
 
       expect(lispish.run(`((comp) 10)`)).toBe(10)
       expect(lispish.run(`((comp) nil)`)).toBe(null)
-      expect(lispish.run(`((comp) {"a" 10})`)).toEqual({ a: 10 })
-      expect(lispish.run(`((comp) ["x" 10 nil])`)).toEqual([`x`, 10, null])
-      lispish.run(`(comp "a" ["b" "c"])`)
+      expect(lispish.run(`((comp) {:a 10})`)).toEqual({ a: 10 })
+      expect(lispish.run(`((comp) [:x 10 nil])`)).toEqual([`x`, 10, null])
+      lispish.run(`(comp :a [:b :c])`)
       expect(() => lispish.run(`((comp) 1 2)`)).toThrow()
       expect(() => lispish.run(`((comp true))`)).toThrow()
       expect(() => lispish.run(`((comp mod 1))`)).toThrow()
@@ -76,7 +76,7 @@ describe(`functional functions`, () => {
 
   describe(`constanty`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((constantly 10) 12 nil "x")`)).toBe(10)
+      expect(lispish.run(`((constantly 10) 12 nil :x)`)).toBe(10)
       expect(() => lispish.run(`(constanty)`)).toThrow()
       expect(() => lispish.run(`(constanty 10 20)`)).toThrow()
     })
@@ -85,7 +85,7 @@ describe(`functional functions`, () => {
   describe(`juxt`, () => {
     test(`samples`, () => {
       expect(lispish.run(`((juxt + * min max) 3 4 6)`)).toEqual([13, 72, 3, 6])
-      expect(lispish.run(`((juxt "a" "b") {"a" 1, "b" 2, "c" 3, "d" 4})`)).toEqual([1, 2])
+      expect(lispish.run(`((juxt :a :b) {:a 1, :b 2, :c 3, :d 4})`)).toEqual([1, 2])
       expect(lispish.run(`(apply (juxt + * min max) (range 1 5))`)).toEqual([10, 24, 1, 4])
       expect(() => lispish.run(`(juxt)`)).toThrow()
     })
@@ -103,7 +103,7 @@ describe(`functional functions`, () => {
   describe(`every-pred`, () => {
     test(`samples`, () => {
       expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`)).toBe(true)
-      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" "M")`)).toBe(false)
+      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(false)
       expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`)).toBe(false)
       expect(() => lispish.run(`(every-pred)`)).toThrow()
     })
@@ -111,8 +111,8 @@ describe(`functional functions`, () => {
 
   describe(`some-pred`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "Albert" "M")`)).toBe(true)
-      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "A" "M")`)).toBe(true)
+      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(true)
+      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) :A :M)`)).toBe(true)
       expect(lispish.run(`((some-pred string? #(> (count %1) 3)) [10 20] [20 10])`)).toBe(false)
       expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "Albert" [10 20])`)).toBe(true)
       expect(() => lispish.run(`(some-pred)`)).toThrow()

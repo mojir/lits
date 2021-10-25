@@ -3428,7 +3428,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "1.0.0-alpha.1";
+    var version = "1.0.0-alpha.2";
 
     var miscNormalExpression = {
         'not=': {
@@ -4970,6 +4970,20 @@ var Lispish = (function (exports) {
         }
         return [length + 1, { type: "string", value: value }];
     };
+    var tokenizeSymbolString = function (input, position) {
+        if (input[position] !== ":") {
+            return [0, undefined];
+        }
+        var value = "";
+        var length = 1;
+        var char = input[position + length];
+        while (char && nameRegExp.test(char)) {
+            length += 1;
+            value += char;
+            char = input[position + length];
+        }
+        return [length, { type: "string", value: value }];
+    };
     var tokenizeRegexpShorthand = function (input, position) {
         if (input[position] !== "#") {
             return [0, undefined];
@@ -5134,6 +5148,7 @@ var Lispish = (function (exports) {
         tokenizeLeftCurly,
         tokenizeRightCurly,
         tokenizeString,
+        tokenizeSymbolString,
         tokenizeNumber,
         tokenizeReservedName,
         tokenizeName,

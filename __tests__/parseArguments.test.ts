@@ -30,7 +30,7 @@ describe(`parseArguments`, () => {
       expect(lispish.run(`(defn foo [&opt (a 10)] a) (foo)`)).toBe(10)
       expect(lispish.run(`(defn foo [&opt (a 10)] a) (foo 5)`)).toBe(5)
       expect(() => lispish.run(`(defn foo [&opt (a 10 20)] a)`)).toThrow()
-      expect(() => lispish.run(`(defn foo [&opt ("a" 10)] a)`)).toThrow()
+      expect(() => lispish.run(`(defn foo [&opt (:a 10)] a)`)).toThrow()
       expect(() => lispish.run(`(defn foo [x &opt a] a)`)).not.toThrow()
       expect(() => lispish.run(`(defn foo [x &opt] a)`)).toThrow()
       expect(() => lispish.run(`(defn foo [x &opt a b] a)`)).not.toThrow()

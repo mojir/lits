@@ -16,7 +16,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(inc -2.5)`)).toBe(-1.5)
       expect(() => lispish.run(`(inc)`)).toThrow()
       expect(() => lispish.run(`(inc 1 1)`)).toThrow()
-      expect(() => lispish.run(`(inc "1")`)).toThrow()
+      expect(() => lispish.run(`(inc :1)`)).toThrow()
       expect(() => lispish.run(`(inc false)`)).toThrow()
       expect(() => lispish.run(`(inc true)`)).toThrow()
       expect(() => lispish.run(`(inc nil)`)).toThrow()
@@ -35,7 +35,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(dec -2.5)`)).toBe(-3.5)
       expect(() => lispish.run(`(dec)`)).toThrow()
       expect(() => lispish.run(`(dec 1 1)`)).toThrow()
-      expect(() => lispish.run(`(dec "1")`)).toThrow()
+      expect(() => lispish.run(`(dec :1)`)).toThrow()
       expect(() => lispish.run(`(dec false)`)).toThrow()
       expect(() => lispish.run(`(dec true)`)).toThrow()
       expect(() => lispish.run(`(dec nil)`)).toThrow()
@@ -52,7 +52,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(+ 2 2)`)).toBe(4)
       expect(lispish.run(`(+ -2 2)`)).toBe(0)
       expect(lispish.run(`(+ 1 2 3 4)`)).toBe(10)
-      expect(() => lispish.run(`(+ "1" 2 3 4)`)).toThrow()
+      expect(() => lispish.run(`(+ :1 2 3 4)`)).toThrow()
     })
   })
 
@@ -63,7 +63,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(* 2 2)`)).toBe(4)
       expect(lispish.run(`(* -2 2)`)).toBe(-4)
       expect(lispish.run(`(* 1 2 3 4)`)).toBe(24)
-      expect(() => lispish.run(`(* "1" 2 3 4)`)).toThrow()
+      expect(() => lispish.run(`(* :1 2 3 4)`)).toThrow()
     })
   })
 
@@ -74,7 +74,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(/ 2 2)`)).toBe(2 / 2)
       expect(lispish.run(`(/ -2 2)`)).toBe(-2 / 2)
       expect(lispish.run(`(/ 1 2 3 4)`)).toBe(1 / 2 / 3 / 4)
-      expect(() => lispish.run(`(/ "1" 2 3 4)`)).toThrow()
+      expect(() => lispish.run(`(/ :1 2 3 4)`)).toThrow()
     })
   })
 
@@ -85,7 +85,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(- 2 2)`)).toBe(2 - 2)
       expect(lispish.run(`(- -2 2)`)).toBe(-2 - 2)
       expect(lispish.run(`(- 1 2 3 4)`)).toBe(1 - 2 - 3 - 4)
-      expect(() => lispish.run(`(- "1" 2 3 4)`)).toThrow()
+      expect(() => lispish.run(`(- :1 2 3 4)`)).toThrow()
     })
   })
 
@@ -181,7 +181,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(rand!)`)).toBeLessThan(1)
       expect(lispish.run(`(rand! 0.1)`)).toBeLessThan(0.1)
       expect(lispish.run(`(rand! 0.1)`)).toBeGreaterThanOrEqual(0)
-      expect(() => lispish.run(`(rand! "x")`)).toThrow()
+      expect(() => lispish.run(`(rand! :x)`)).toThrow()
       expect(() => lispish.run(`(rand! 1 2)`)).toThrow()
     })
   })
@@ -192,7 +192,7 @@ describe(`math functions`, () => {
       expect(lispish.run(`(rand-int! 2)`)).toBeLessThan(2)
       expect(lispish.run(`(rand-int! 20)`)).toBeLessThan(20)
       expect(lispish.run(`(rand-int! 10.1)`)).toBeLessThan(10.1)
-      expect(() => lispish.run(`(rand-int! "x")`)).toThrow()
+      expect(() => lispish.run(`(rand-int! :x)`)).toThrow()
       expect(() => lispish.run(`(rand-int! 1 2)`)).toThrow()
     })
   })
@@ -203,8 +203,8 @@ describe(`math functions`, () => {
       expect(lispish.run(`(min 1 -2)`)).toBe(-2)
       expect(lispish.run(`(min 3 1 2 )`)).toBe(1)
       expect(() => lispish.run(`(min)`)).toThrow()
-      expect(() => lispish.run(`(min "1")`)).toThrow()
-      expect(() => lispish.run(`(min "1" "3")`)).toThrow()
+      expect(() => lispish.run(`(min :1)`)).toThrow()
+      expect(() => lispish.run(`(min :1 :3)`)).toThrow()
     })
   })
 
@@ -214,71 +214,71 @@ describe(`math functions`, () => {
       expect(lispish.run(`(max 1 -2)`)).toBe(1)
       expect(lispish.run(`(max 3 1 2 )`)).toBe(3)
       expect(() => lispish.run(`(max)`)).toThrow()
-      expect(() => lispish.run(`(max "1")`)).toThrow()
-      expect(() => lispish.run(`(max "1" "3")`)).toThrow()
+      expect(() => lispish.run(`(max :1)`)).toThrow()
+      expect(() => lispish.run(`(max :1 :3)`)).toThrow()
     })
   })
 
   describe(`e`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(e)`)).toBe(Math.E)
-      expect(() => lispish.run(`(e "1")`)).toThrow()
+      expect(() => lispish.run(`(e :1)`)).toThrow()
     })
   })
 
   describe(`max-safe-integer`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(max-safe-integer)`)).toBe(Number.MAX_SAFE_INTEGER)
-      expect(() => lispish.run(`(max-safe-integer "1")`)).toThrow()
+      expect(() => lispish.run(`(max-safe-integer :1)`)).toThrow()
     })
   })
 
   describe(`min-safe-integer`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(min-safe-integer)`)).toBe(Number.MIN_SAFE_INTEGER)
-      expect(() => lispish.run(`(min-safe-integer "1")`)).toThrow()
+      expect(() => lispish.run(`(min-safe-integer :1)`)).toThrow()
     })
   })
 
   describe(`max-value`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(max-value)`)).toBe(Number.MAX_VALUE)
-      expect(() => lispish.run(`(max-value "1")`)).toThrow()
+      expect(() => lispish.run(`(max-value :1)`)).toThrow()
     })
   })
 
   describe(`min-value`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(min-value)`)).toBe(Number.MIN_VALUE)
-      expect(() => lispish.run(`(min-value "1")`)).toThrow()
+      expect(() => lispish.run(`(min-value :1)`)).toThrow()
     })
   })
 
   describe(`epsilon`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(epsilon)`)).toBe(Number.EPSILON)
-      expect(() => lispish.run(`(epsilon "1")`)).toThrow()
+      expect(() => lispish.run(`(epsilon :1)`)).toThrow()
     })
   })
 
   describe(`nan`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(nan)`)).toBeNaN()
-      expect(() => lispish.run(`(nan "1")`)).toThrow()
+      expect(() => lispish.run(`(nan :1)`)).toThrow()
     })
   })
 
   describe(`positive-infinity`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(positive-infinity)`)).toBe(Number.POSITIVE_INFINITY)
-      expect(() => lispish.run(`(positive-infinity "1")`)).toThrow()
+      expect(() => lispish.run(`(positive-infinity :1)`)).toThrow()
     })
   })
 
   describe(`negative-infinity`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(negative-infinity)`)).toBe(Number.NEGATIVE_INFINITY)
-      expect(() => lispish.run(`(negative-infinity "1")`)).toThrow()
+      expect(() => lispish.run(`(negative-infinity :1)`)).toThrow()
     })
   })
 

@@ -13,7 +13,7 @@ module.exports = {
       },
     ],
     description: `Result is \`true\` if no two \`values\` are equal to each other, otherwise result is \`false\`. Note that only two argument version result is negation of \`=\` function, that is \`(not= a b)\` is same as \`(not (= a b))\`.`,
-    examples: [`(not= 3)`, `(not= 3 2)`, `(not= "3" 3)`, `(not= 3 3 2)`, `(not= "3" "2" "1" "0")`, `(not= 0 -0)`],
+    examples: [`(not= 3)`, `(not= 3 2)`, `(not= :3 3)`, `(not= 3 3 2)`, `(not= :3 :2 :1 :0)`, `(not= 0 -0)`],
   },
   '=': {
     name: `=`,
@@ -29,7 +29,7 @@ module.exports = {
       },
     ],
     description: `Compares \`values\` according to "equal" predicate. Result is \`true\` if every specified value is equal to each other, otherwise result is \`false\`.`,
-    examples: [`(= 1 1)`, `(= 1.01 1)`, `(= "1" 1)`, `(= "2" "2" "2" "2")`, `(= 2 2 1 2)`],
+    examples: [`(= 1 1)`, `(= 1.01 1)`, `(= :1 1)`, `(= :2 :2 :2 :2)`, `(= 2 2 1 2)`],
   },
   '<': {
     name: `<`,
@@ -46,7 +46,7 @@ module.exports = {
       },
     ],
     description: `Compares \`values\` according to "less than" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
-    examples: [`(< 0 1)`, `(< 1 1.01)`, `(< 1 1)`, `(< 1 2 2 3)`, `(< "a" "b")`, `(< [9] [1 2])`],
+    examples: [`(< 0 1)`, `(< 1 1.01)`, `(< 1 1)`, `(< 1 2 2 3)`, `(< :a :b)`, `(< [9] [1 2])`],
   },
   '>': {
     name: `>`,
@@ -132,8 +132,8 @@ module.exports = {
     examples: [
       `(write! "A string")`,
       `(write! 100 "items")`,
-      `(write! (object "a" 10))`,
-      `(write! ["a" "b" "c"])`,
+      `(write! (object :a 10))`,
+      `(write! [:a :b :c])`,
       `(write! (regexp "^start"))`,
       `(write! nil true false)`,
     ],
@@ -168,9 +168,9 @@ module.exports = {
     ],
     description: `Is used to get the value at \`path\` of object or array.`,
     examples: [
-      `(get-path (write! (object "a" (object "x" [1 2 3]))) "a.x[2]")`,
-      `(get-path (write! (object "a" (object "x" [1 2 3]))) "b.z[10]")`,
-      `(get-path (write! [(object "x" [1 2 3])]) "[1].x[2]")`,
+      `(get-path (write! (object :a (object :x [1 2 3]))) "a.x[2]")`,
+      `(get-path (write! (object :a (object :x [1 2 3]))) "b.z[10]")`,
+      `(get-path (write! [(object :x [1 2 3])]) "[1].x[2]")`,
     ],
   },
   'debug!': {
@@ -226,11 +226,11 @@ module.exports = {
     examples: [
       `(compare 0 1)`,
       `(compare "Albert" "Mojir")`,
-      `(compare 1 "1")`,
+      `(compare 1 :1)`,
       `(compare [1 2 3] [2 3])`,
       `(compare [1 2 3] [2 3 4])`,
-      `(compare {"a" 1 "b" 2} {"a" 1})`,
-      `(compare {"a" 1} [2 3])`,
+      `(compare {:a 1 :b 2} {:a 1})`,
+      `(compare {:a 1} [2 3])`,
       `(compare + -)`,
     ],
   },
@@ -285,10 +285,10 @@ module.exports = {
     ],
     description: `Returns true if \`a\` and \`b\` are structually equal.`,
     examples: [
-      `(equal? {"a" 10 "b" 20} {"b" 20 "a" 10})`,
+      `(equal? {:a 10 :b 20} {:b 20 :a 10})`,
       `(equal? [1 true nil] [1 true nil])`,
-      `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10})`,
-      `(equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10})`,
+      `(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})`,
+      `(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})`,
     ],
   },
 }

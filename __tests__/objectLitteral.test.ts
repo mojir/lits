@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe(`object litterals`, () => {
   test(`samples`, () => {
-    expect(lispish.run(`{"1" 1, "2" 2}`)).toEqual({ 1: 1, 2: 2 })
+    expect(lispish.run(`{:1 1, :2 2}`)).toEqual({ 1: 1, 2: 2 })
     expect(lispish.run(`{}`)).toEqual({})
   })
 })

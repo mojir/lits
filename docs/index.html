@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v1.0.0-alpha.1</span></div>
+    <div class="column right version"><span>v1.0.0-alpha.2</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -142,7 +142,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(count [1 2 3])')"> <span class="icon-button">▶</span> (count [1 2 3]) <span class="gray">=> 3 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(count [])')"> <span class="icon-button">▶</span> (count []) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(count (object ___double_quote___a___double_quote___ 1))')"> <span class="icon-button">▶</span> (count (object "a" 1)) <span class="gray">=> 1 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(count (object :a 1))')"> <span class="icon-button">▶</span> (count (object :a 1)) <span class="gray">=> 1 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(count ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (count "") <span class="gray">=> 0 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(count ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (count "Albert") <span class="gray">=> 6 </span> </span></pre>
   </div>
@@ -167,9 +167,9 @@
     <pre><span class="example" onclick="addToPlayground('(get [1 2 3] 1)')"> <span class="icon-button">▶</span> (get [1 2 3] 1) <span class="gray">=> 2 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(get [] 1)')"> <span class="icon-button">▶</span> (get [] 1) <span class="gray">=> nil </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(get [] 1 ___double_quote___default___double_quote___)')"> <span class="icon-button">▶</span> (get [] 1 "default") <span class="gray">=> "default" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(get (object ___double_quote___a___double_quote___ 1) ___double_quote___a___double_quote___)')"> <span class="icon-button">▶</span> (get (object "a" 1) "a") <span class="gray">=> 1 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(get (object ___double_quote___a___double_quote___ 1) ___double_quote___b___double_quote___)')"> <span class="icon-button">▶</span> (get (object "a" 1) "b") <span class="gray">=> nil </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(get (object ___double_quote___a___double_quote___ 1) ___double_quote___b___double_quote___ ___double_quote___default___double_quote___)')"> <span class="icon-button">▶</span> (get (object "a" 1) "b" "default") <span class="gray">=> "default" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(get (object :a 1) :a)')"> <span class="icon-button">▶</span> (get (object :a 1) :a) <span class="gray">=> 1 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(get (object :a 1) :b)')"> <span class="icon-button">▶</span> (get (object :a 1) :b) <span class="gray">=> nil </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(get (object :a 1) :b ___double_quote___default___double_quote___)')"> <span class="icon-button">▶</span> (get (object :a 1) :b "default") <span class="gray">=> "default" </span> </span></pre>
   </div>
 </div>
 
@@ -189,9 +189,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(get-in [[1 2 3] [4 {___double_quote___a___double_quote___ ___double_quote___Kalle___double_quote___} 6]] [1 1 ___double_quote___a___double_quote___ 0])')"> <span class="icon-button">▶</span> (get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "a" 0]) <span class="gray">=> "K" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(get-in [[1 2 3] [4 {___double_quote___a___double_quote___ ___double_quote___Kalle___double_quote___} 6]] [1 1 ___double_quote___b___double_quote___ 0])')"> <span class="icon-button">▶</span> (get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "b" 0]) <span class="gray">=> nil </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(get-in [[1 2 3] [4 {___double_quote___a___double_quote___ ___double_quote___Kalle___double_quote___} 6]] [1 1 ___double_quote___b___double_quote___ 0] ___double_quote___Lisa___double_quote___)')"> <span class="icon-button">▶</span> (get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "b" 0] "Lisa") <span class="gray">=> "Lisa" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(get-in [[1 2 3] [4 {:a ___double_quote___Kalle___double_quote___} 6]] [1 1 :a 0])')"> <span class="icon-button">▶</span> (get-in [[1 2 3] [4 {:a "Kalle"} 6]] [1 1 :a 0]) <span class="gray">=> "K" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(get-in [[1 2 3] [4 {:a ___double_quote___Kalle___double_quote___} 6]] [1 1 :b 0])')"> <span class="icon-button">▶</span> (get-in [[1 2 3] [4 {:a "Kalle"} 6]] [1 1 :b 0]) <span class="gray">=> nil </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(get-in [[1 2 3] [4 {:a ___double_quote___Kalle___double_quote___} 6]] [1 1 :b 0] ___double_quote___Lisa___double_quote___)')"> <span class="icon-button">▶</span> (get-in [[1 2 3] [4 {:a "Kalle"} 6]] [1 1 :b 0] "Lisa") <span class="gray">=> "Lisa" </span> </span></pre>
   </div>
 </div>
 
@@ -213,8 +213,8 @@
     <pre><span class="example" onclick="addToPlayground('(contains? [] 1)')"> <span class="icon-button">▶</span> (contains? [] 1) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(contains? [1] 1)')"> <span class="icon-button">▶</span> (contains? [1] 1) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(contains? [1 2 3] 1)')"> <span class="icon-button">▶</span> (contains? [1 2 3] 1) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(contains? {} ___double_quote___a___double_quote___)')"> <span class="icon-button">▶</span> (contains? {} "a") <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(contains? {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} ___double_quote___a___double_quote___)')"> <span class="icon-button">▶</span> (contains? {"a" 1 "b" 2} "a") <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(contains? {} :a)')"> <span class="icon-button">▶</span> (contains? {} :a) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(contains? {:a 1 :b 2} :a)')"> <span class="icon-button">▶</span> (contains? {:a 1 :b 2} :a) <span class="gray">=> true </span> </span></pre>
   </div>
 </div>
 
@@ -235,10 +235,10 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(has? [1 2 3] 1)')"> <span class="icon-button">▶</span> (has? [1 2 3] 1) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(has? [1 2 3] 0)')"> <span class="icon-button">▶</span> (has? [1 2 3] 0) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(has? {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} 1)')"> <span class="icon-button">▶</span> (has? {"a" 1 "b" 2} 1) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(has? {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} 0)')"> <span class="icon-button">▶</span> (has? {"a" 1 "b" 2} 0) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(has? ___double_quote___Albert___double_quote___ ___double_quote___A___double_quote___)')"> <span class="icon-button">▶</span> (has? "Albert" "A") <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(has? ___double_quote___Albert___double_quote___ ___double_quote___a___double_quote___)')"> <span class="icon-button">▶</span> (has? "Albert" "a") <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has? {:a 1 :b 2} 1)')"> <span class="icon-button">▶</span> (has? {:a 1 :b 2} 1) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has? {:a 1 :b 2} 0)')"> <span class="icon-button">▶</span> (has? {:a 1 :b 2} 0) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has? ___double_quote___Albert___double_quote___ :A)')"> <span class="icon-button">▶</span> (has? "Albert" :A) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has? ___double_quote___Albert___double_quote___ :a)')"> <span class="icon-button">▶</span> (has? "Albert" :a) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
 
@@ -260,8 +260,8 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(assoc [1 2 3] 1 ___double_quote___Two___double_quote___)')"> <span class="icon-button">▶</span> (assoc [1 2 3] 1 "Two") <span class="gray">=> [1,"Two",3] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(assoc [1 2 3] 3 ___double_quote___Four___double_quote___)')"> <span class="icon-button">▶</span> (assoc [1 2 3] 3 "Four") <span class="gray">=> [1,2,3,"Four"] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(assoc {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} ___double_quote___a___double_quote___ ___double_quote___One___double_quote___)')"> <span class="icon-button">▶</span> (assoc {"a" 1 "b" 2} "a" "One") <span class="gray">=> {"a":"One","b":2} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(assoc {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} ___double_quote___c___double_quote___ ___double_quote___Three___double_quote___)')"> <span class="icon-button">▶</span> (assoc {"a" 1 "b" 2} "c" "Three") <span class="gray">=> {"a":1,"b":2,"c":"Three"} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(assoc {:a 1 :b 2} :a ___double_quote___One___double_quote___)')"> <span class="icon-button">▶</span> (assoc {:a 1 :b 2} :a "One") <span class="gray">=> {"a":"One","b":2} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(assoc {:a 1 :b 2} :c ___double_quote___Three___double_quote___)')"> <span class="icon-button">▶</span> (assoc {:a 1 :b 2} :c "Three") <span class="gray">=> {"a":1,"b":2,"c":"Three"} </span> </span></pre>
   </div>
 </div>
 
@@ -281,9 +281,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(assoc-in {} [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___] ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (assoc-in {} ["a" "b" "c"] "Albert") <span class="gray">=> {"a":{"b":{"c":"Albert"}}} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(assoc-in {} [:a :b :c] ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (assoc-in {} [:a :b :c] "Albert") <span class="gray">=> {"a":{"b":{"c":"Albert"}}} </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(assoc-in [1 2 [1 2 3]] [2 1] ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (assoc-in [1 2 [1 2 3]] [2 1] "Albert") <span class="gray">=> [1,2,[1,"Albert",3]] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(assoc-in [1 2 {___double_quote___name___double_quote___ ___double_quote___albert___double_quote___}] [2 ___double_quote___name___double_quote___ 0] ___double_quote___A___double_quote___)')"> <span class="icon-button">▶</span> (assoc-in [1 2 {"name" "albert"}] [2 "name" 0] "A") <span class="gray">=> [1,2,{"name":"Albert"}] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(assoc-in [1 2 {___double_quote___name___double_quote___ ___double_quote___albert___double_quote___}] [2 ___double_quote___name___double_quote___ 0] :A)')"> <span class="icon-button">▶</span> (assoc-in [1 2 {"name" "albert"}] [2 "name" 0] :A) <span class="gray">=> [1,2,{"name":"Albert"}] </span> </span></pre>
   </div>
 </div>
 
@@ -306,8 +306,8 @@
 <pre><span class="example" onclick="addToPlayground('(concat [1 2] [])')"> <span class="icon-button">▶</span> (concat [1 2] []) <span class="gray">=> [1,2] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(concat [1 2] [3 4] [5 6])')"> <span class="icon-button">▶</span> (concat [1 2] [3 4] [5 6]) <span class="gray">=> [1,2,3,4,5,6] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(concat [])')"> <span class="icon-button">▶</span> (concat []) <span class="gray">=> [] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(concat {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} {___double_quote___b___double_quote___ 1 ___double_quote___c___double_quote___ 2})')"> <span class="icon-button">▶</span> (concat {"a" 1 "b" 2} {"b" 1 "c" 2}) <span class="gray">=> {"a":1,"b":1,"c":2} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(concat {} {___double_quote___a___double_quote___ 1})')"> <span class="icon-button">▶</span> (concat {} {"a" 1}) <span class="gray">=> {"a":1} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(concat {:a 1 :b 2} {:b 1 :c 2})')"> <span class="icon-button">▶</span> (concat {:a 1 :b 2} {:b 1 :c 2}) <span class="gray">=> {"a":1,"b":1,"c":2} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(concat {} {:a 1})')"> <span class="icon-button">▶</span> (concat {} {:a 1}) <span class="gray">=> {"a":1} </span> </span></pre>
   </div>
 </div>
 
@@ -328,7 +328,7 @@
     <pre><span class="example" onclick="addToPlayground('(empty? [])')"> <span class="icon-button">▶</span> (empty? []) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(empty? [1 2 3])')"> <span class="icon-button">▶</span> (empty? [1 2 3]) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(empty? {})')"> <span class="icon-button">▶</span> (empty? {}) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(empty? {___double_quote___a___double_quote___ 2})')"> <span class="icon-button">▶</span> (empty? {"a" 2}) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(empty? {:a 2})')"> <span class="icon-button">▶</span> (empty? {:a 2}) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(empty? ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (empty? "") <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(empty? ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (empty? "Albert") <span class="gray">=> false </span> </span></pre>
   </div>
@@ -354,8 +354,8 @@
 <pre><span class="example" onclick="addToPlayground('(every? number? [])')"> <span class="icon-button">▶</span> (every? number? []) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(every? number? ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (every? number? "") <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(every? number? {})')"> <span class="icon-button">▶</span> (every? number? {}) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 4})')"> <span class="icon-button">▶</span> (every? #(even? (second %1)) {"a" 2 "b" 4}) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"> <span class="icon-button">▶</span> (every? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? #(even? (second %1)) {:a 2 :b 4})')"> <span class="icon-button">▶</span> (every? #(even? (second %1)) {:a 2 :b 4}) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(every? #(even? (second %1)) {:a 2 :b 3})')"> <span class="icon-button">▶</span> (every? #(even? (second %1)) {:a 2 :b 3}) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
 
@@ -379,8 +379,8 @@
 <pre><span class="example" onclick="addToPlayground('(not-every? number? [])')"> <span class="icon-button">▶</span> (not-every? number? []) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(not-every? number? ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (not-every? number? "") <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(not-every? number? {})')"> <span class="icon-button">▶</span> (not-every? number? {}) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(not-every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 4})')"> <span class="icon-button">▶</span> (not-every? #(even? (second %1)) {"a" 2 "b" 4}) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(not-every? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"> <span class="icon-button">▶</span> (not-every? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? #(even? (second %1)) {:a 2 :b 4})')"> <span class="icon-button">▶</span> (not-every? #(even? (second %1)) {:a 2 :b 4}) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-every? #(even? (second %1)) {:a 2 :b 3})')"> <span class="icon-button">▶</span> (not-every? #(even? (second %1)) {:a 2 :b 3}) <span class="gray">=> true </span> </span></pre>
   </div>
 </div>
 
@@ -404,8 +404,8 @@
 <pre><span class="example" onclick="addToPlayground('(any? number? [])')"> <span class="icon-button">▶</span> (any? number? []) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(any? number? ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (any? number? "") <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(any? number? {})')"> <span class="icon-button">▶</span> (any? number? {}) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(any? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"> <span class="icon-button">▶</span> (any? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(any? #(even? (second %1)) {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 3})')"> <span class="icon-button">▶</span> (any? #(even? (second %1)) {"a" 1 "b" 3}) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? #(even? (second %1)) {:a 2 :b 3})')"> <span class="icon-button">▶</span> (any? #(even? (second %1)) {:a 2 :b 3}) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(any? #(even? (second %1)) {:a 1 :b 3})')"> <span class="icon-button">▶</span> (any? #(even? (second %1)) {:a 1 :b 3}) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
 
@@ -429,8 +429,8 @@
 <pre><span class="example" onclick="addToPlayground('(not-any? number? [])')"> <span class="icon-button">▶</span> (not-any? number? []) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(not-any? number? ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (not-any? number? "") <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(not-any? number? {})')"> <span class="icon-button">▶</span> (not-any? number? {}) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(not-any? #(even? (second %1)) {___double_quote___a___double_quote___ 2 ___double_quote___b___double_quote___ 3})')"> <span class="icon-button">▶</span> (not-any? #(even? (second %1)) {"a" 2 "b" 3}) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(not-any? #(even? (second %1)) {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 3})')"> <span class="icon-button">▶</span> (not-any? #(even? (second %1)) {"a" 1 "b" 3}) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? #(even? (second %1)) {:a 2 :b 3})')"> <span class="icon-button">▶</span> (not-any? #(even? (second %1)) {:a 2 :b 3}) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(not-any? #(even? (second %1)) {:a 1 :b 3})')"> <span class="icon-button">▶</span> (not-any? #(even? (second %1)) {:a 1 :b 3}) <span class="gray">=> true </span> </span></pre>
   </div>
 </div>
 
@@ -451,8 +451,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(def x {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2}) (update x ___double_quote___a___double_quote___ inc)')"> <span class="icon-button">▶</span> (def x {"a" 1 "b" 2}) (update x "a" inc) <span class="gray">=> {"a":2,"b":2} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(def x {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2}) (update x ___double_quote___c___double_quote___ (fn [val] (if (nil? val) 0 (inc val))))')"> <span class="icon-button">▶</span> (def x {"a" 1 "b" 2}) (update x "c" (fn [val] (if (nil? val) 0 (inc val)))) <span class="gray">=> {"a":1,"b":2,"c":0} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(def x {:a 1 :b 2}) (update x :a inc)')"> <span class="icon-button">▶</span> (def x {:a 1 :b 2}) (update x :a inc) <span class="gray">=> {"a":2,"b":2} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(def x {:a 1 :b 2}) (update x :c (fn [val] (if (nil? val) 0 (inc val))))')"> <span class="icon-button">▶</span> (def x {:a 1 :b 2}) (update x :c (fn [val] (if (nil? val) 0 (inc val)))) <span class="gray">=> {"a":1,"b":2,"c":0} </span> </span></pre>
   </div>
 </div>
 
@@ -473,8 +473,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(update-in {___double_quote___a___double_quote___ [1 2 3]} [___double_quote___a___double_quote___ 1] (fn [val] (when (nil? val) 0)))')"> <span class="icon-button">▶</span> (update-in {"a" [1 2 3]} ["a" 1] (fn [val] (when (nil? val) 0))) <span class="gray">=> {"a":[1,null,3]} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(update-in {___double_quote___a___double_quote___ [1 ___double_quote___Albert___double_quote___ 3]} [___double_quote___a___double_quote___ 1 0] (fn [val] (if (nil? val) ___double_quote___?___double_quote___ ___double_quote___!___double_quote___)))')"> <span class="icon-button">▶</span> (update-in {"a" [1 "Albert" 3]} ["a" 1 0] (fn [val] (if (nil? val) "?" "!"))) <span class="gray">=> {"a":[1,"!lbert",3]} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(update-in {:a [1 2 3]} [:a 1] (fn [val] (when (nil? val) 0)))')"> <span class="icon-button">▶</span> (update-in {:a [1 2 3]} [:a 1] (fn [val] (when (nil? val) 0))) <span class="gray">=> {"a":[1,null,3]} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(update-in {:a [1 ___double_quote___Albert___double_quote___ 3]} [:a 1 0] (fn [val] (if (nil? val) ___double_quote___?___double_quote___ ___double_quote___!___double_quote___)))')"> <span class="icon-button">▶</span> (update-in {:a [1 "Albert" 3]} [:a 1 0] (fn [val] (if (nil? val) "?" "!"))) <span class="gray">=> {"a":[1,"!lbert",3]} </span> </span></pre>
   </div>
 </div>
 
@@ -758,7 +758,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(reduce-right str [___double_quote___A___double_quote___ ___double_quote___B___double_quote___ ___double_quote___C___double_quote___] ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (reduce-right str ["A" "B" "C"] "") <span class="gray">=> ["A","B","C"] </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(reduce-right str [:A :B :C] ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (reduce-right str [:A :B :C] "") <span class="gray">=> ["A","B","C"] </span> </span></pre>
   </div>
 </div>
 
@@ -966,7 +966,7 @@
 <pre><span class="example" onclick="addToPlayground('(rest [___double_quote___Albert___double_quote___])')"> <span class="icon-button">▶</span> (rest ["Albert"]) <span class="gray">=> [] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(rest [])')"> <span class="icon-button">▶</span> (rest []) <span class="gray">=> [] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(rest ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rest "Albert") <span class="gray">=> "lbert" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rest ___double_quote___A___double_quote___)')"> <span class="icon-button">▶</span> (rest "A") <span class="gray">=> "" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rest :A)')"> <span class="icon-button">▶</span> (rest :A) <span class="gray">=> "" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(rest ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (rest "") <span class="gray">=> "" </span> </span></pre>
   </div>
 </div>
@@ -1011,7 +1011,7 @@
 <pre><span class="example" onclick="addToPlayground('(next [___double_quote___Albert___double_quote___])')"> <span class="icon-button">▶</span> (next ["Albert"]) <span class="gray">=> nil </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(next [])')"> <span class="icon-button">▶</span> (next []) <span class="gray">=> nil </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(next ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (next "Albert") <span class="gray">=> "lbert" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(next ___double_quote___A___double_quote___)')"> <span class="icon-button">▶</span> (next "A") <span class="gray">=> nil </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(next :A)')"> <span class="icon-button">▶</span> (next :A) <span class="gray">=> nil </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(next ___double_quote______double_quote___)')"> <span class="icon-button">▶</span> (next "") <span class="gray">=> nil </span> </span></pre>
   </div>
 </div>
@@ -1258,8 +1258,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,5,6,7,9,10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "Alet" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,3,9,10] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "Al" </span> </span></pre>
   </div>
 </div>
 
@@ -1277,7 +1277,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 1 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 4 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "A" </span> </span></pre>
   </div>
 </div>
@@ -1296,8 +1296,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [9,4,7,6,3,10,2,5,8,1] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "rMtloeAibrj " </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [10,6,2,8,7,4,3,1,5,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "oAirrje tMlb" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -1381,7 +1381,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(split-with #(> %1 3) [1 2 3 4 5])')"> <span class="icon-button">▶</span> (split-with #(> %1 3) [1 2 3 4 5]) <span class="gray">=> [[],[1,2,3,4,5]] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(split-with #(<= %1 ___double_quote___Z___double_quote___) ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (split-with #(<= %1 "Z") "Albert") <span class="gray">=> ["A","lbert"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(split-with #(<= %1 :Z) ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (split-with #(<= %1 :Z) "Albert") <span class="gray">=> ["A","lbert"] </span> </span></pre>
   </div>
 </div>
 
@@ -1445,10 +1445,10 @@
 <pre><span class="example" onclick="addToPlayground('(partition 4 (range 22))')"> <span class="icon-button">▶</span> (partition 4 (range 22)) <span class="gray">=> [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[16,17,18,19]] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(partition 4 6 (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15]] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(partition 4 3 (range 20))')"> <span class="icon-button">▶</span> (partition 4 3 (range 20)) <span class="gray">=> [[0,1,2,3],[3,4,5,6],[6,7,8,9],[9,10,11,12],[12,13,14,15],[15,16,17,18]] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(partition 3 6 [___double_quote___a___double_quote___] (range 20))')"> <span class="icon-button">▶</span> (partition 3 6 ["a"] (range 20)) <span class="gray">=> [[0,1,2],[6,7,8],[12,13,14],[18,19,"a"]] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(partition 4 6 [___double_quote___a___double_quote___] (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 ["a"] (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15],[18,19,"a"]] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(partition 4 6 [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___ ___double_quote___d___double_quote___] (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 ["a" "b" "c" "d"] (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15],[18,19,"a","b"]] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(partition 3 1 [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___ ___double_quote___d___double_quote___ ___double_quote___e___double_quote___ ___double_quote___f___double_quote___])')"> <span class="icon-button">▶</span> (partition 3 1 ["a" "b" "c" "d" "e" "f"]) <span class="gray">=> [["a","b","c"],["b","c","d"],["c","d","e"],["d","e","f"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 3 6 [:a] (range 20))')"> <span class="icon-button">▶</span> (partition 3 6 [:a] (range 20)) <span class="gray">=> [[0,1,2],[6,7,8],[12,13,14],[18,19,"a"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 6 [:a] (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 [:a] (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15],[18,19,"a"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 4 6 [:a :b :c :d] (range 20))')"> <span class="icon-button">▶</span> (partition 4 6 [:a :b :c :d] (range 20)) <span class="gray">=> [[0,1,2,3],[6,7,8,9],[12,13,14,15],[18,19,"a","b"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(partition 3 1 [:a :b :c :d :e :f])')"> <span class="icon-button">▶</span> (partition 3 1 [:a :b :c :d :e :f]) <span class="gray">=> [["a","b","c"],["b","c","d"],["c","d","e"],["d","e","f"]] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(partition 10 [1 2 3 4])')"> <span class="icon-button">▶</span> (partition 10 [1 2 3 4]) <span class="gray">=> [] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(partition 10 10 [1 2 3 4])')"> <span class="icon-button">▶</span> (partition 10 10 [1 2 3 4]) <span class="gray">=> [] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(partition 10 10 [] [1 2 3 4])')"> <span class="icon-button">▶</span> (partition 10 10 [] [1 2 3 4]) <span class="gray">=> [[1,2,3,4]] </span> </span></pre>
@@ -2210,9 +2210,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.2665494677521656 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.000692197157947756 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.2994104071350154 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.620029943199945 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.00016281070255002472 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 2.4248204786172205 </span> </span></pre>
   </div>
 </div>
 
@@ -2231,8 +2231,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 1 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 97 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 9 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 23 </span> </span></pre>
   </div>
 </div>
 
@@ -2516,7 +2516,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(identity 1)')"> <span class="icon-button">▶</span> (identity 1) <span class="gray">=> 1 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(identity ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (identity "Albert") <span class="gray">=> "Albert" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(identity {___double_quote___a___double_quote___ 1})')"> <span class="icon-button">▶</span> (identity {"a" 1}) <span class="gray">=> {"a":1} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(identity {:a 1})')"> <span class="icon-button">▶</span> (identity {:a 1}) <span class="gray">=> {"a":1} </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(identity nil)')"> <span class="icon-button">▶</span> (identity nil) <span class="gray">=> nil </span> </span></pre>
   </div>
 </div>
@@ -2596,7 +2596,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('((juxt + * min max) 3 4 6)')"> <span class="icon-button">▶</span> ((juxt + * min max) 3 4 6) <span class="gray">=> [13,72,3,6] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('((juxt ___double_quote___a___double_quote___ ___double_quote___b___double_quote___) {___double_quote___a___double_quote___ 1, ___double_quote___b___double_quote___ 2, ___double_quote___c___double_quote___ 3, ___double_quote___d___double_quote___ 4})')"> <span class="icon-button">▶</span> ((juxt "a" "b") {"a" 1, "b" 2, "c" 3, "d" 4}) <span class="gray">=> [1,2] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('((juxt :a :b) {:a 1, :b 2, :c 3, :d 4})')"> <span class="icon-button">▶</span> ((juxt :a :b) {:a 1, :b 2, :c 3, :d 4}) <span class="gray">=> [1,2] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(apply (juxt + * min max) (range 1 11))')"> <span class="icon-button">▶</span> (apply (juxt + * min max) (range 1 11)) <span class="gray">=> [55,3628800,1,10] </span> </span></pre>
   </div>
 </div>
@@ -2637,7 +2637,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('((every-pred string? #(> (count %1) 3)) ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___)')"> <span class="icon-button">▶</span> ((every-pred string? #(> (count %1) 3)) "Albert" "Mojir") <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('((every-pred string? #(> (count %1) 3)) ___double_quote___Albert___double_quote___ ___double_quote___M___double_quote___)')"> <span class="icon-button">▶</span> ((every-pred string? #(> (count %1) 3)) "Albert" "M") <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('((every-pred string? #(> (count %1) 3)) ___double_quote___Albert___double_quote___ :M)')"> <span class="icon-button">▶</span> ((every-pred string? #(> (count %1) 3)) "Albert" :M) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('((every-pred string? #(> (count %1) 3)) ___double_quote___Albert___double_quote___ [1 2 3])')"> <span class="icon-button">▶</span> ((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3]) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
@@ -2657,8 +2657,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('((some-pred string? #(> (count %1) 3)) ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___)')"> <span class="icon-button">▶</span> ((some-pred string? #(> (count %1) 3)) "Albert" "Mojir") <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('((some-pred string? #(> (count %1) 3)) ___double_quote___A___double_quote___ ___double_quote___M___double_quote___)')"> <span class="icon-button">▶</span> ((some-pred string? #(> (count %1) 3)) "A" "M") <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('((some-pred string? #(> (count %1) 3)) ___double_quote___A___double_quote___ [1 2 3])')"> <span class="icon-button">▶</span> ((some-pred string? #(> (count %1) 3)) "A" [1 2 3]) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('((some-pred string? #(> (count %1) 3)) :A :M)')"> <span class="icon-button">▶</span> ((some-pred string? #(> (count %1) 3)) :A :M) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('((some-pred string? #(> (count %1) 3)) :A [1 2 3])')"> <span class="icon-button">▶</span> ((some-pred string? #(> (count %1) 3)) :A [1 2 3]) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('((some-pred string? #(> (count %1) 3)) [1 2 3] [2])')"> <span class="icon-button">▶</span> ((some-pred string? #(> (count %1) 3)) [1 2 3] [2]) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
@@ -2702,9 +2702,9 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(not= 3)')"> <span class="icon-button">▶</span> (not= 3) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(not= 3 2)')"> <span class="icon-button">▶</span> (not= 3 2) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(not= ___double_quote___3___double_quote___ 3)')"> <span class="icon-button">▶</span> (not= "3" 3) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(not= :3 3)')"> <span class="icon-button">▶</span> (not= :3 3) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(not= 3 3 2)')"> <span class="icon-button">▶</span> (not= 3 3 2) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(not= ___double_quote___3___double_quote___ ___double_quote___2___double_quote___ ___double_quote___1___double_quote___ ___double_quote___0___double_quote___)')"> <span class="icon-button">▶</span> (not= "3" "2" "1" "0") <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(not= :3 :2 :1 :0)')"> <span class="icon-button">▶</span> (not= :3 :2 :1 :0) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(not= 0 -0)')"> <span class="icon-button">▶</span> (not= 0 -0) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
@@ -2725,8 +2725,8 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(= 1 1)')"> <span class="icon-button">▶</span> (= 1 1) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(= 1.01 1)')"> <span class="icon-button">▶</span> (= 1.01 1) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(= ___double_quote___1___double_quote___ 1)')"> <span class="icon-button">▶</span> (= "1" 1) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(= ___double_quote___2___double_quote___ ___double_quote___2___double_quote___ ___double_quote___2___double_quote___ ___double_quote___2___double_quote___)')"> <span class="icon-button">▶</span> (= "2" "2" "2" "2") <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(= :1 1)')"> <span class="icon-button">▶</span> (= :1 1) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(= :2 :2 :2 :2)')"> <span class="icon-button">▶</span> (= :2 :2 :2 :2) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(= 2 2 1 2)')"> <span class="icon-button">▶</span> (= 2 2 1 2) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
@@ -2749,7 +2749,7 @@
 <pre><span class="example" onclick="addToPlayground('(< 1 1.01)')"> <span class="icon-button">▶</span> (< 1 1.01) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(< 1 1)')"> <span class="icon-button">▶</span> (< 1 1) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(< 1 2 2 3)')"> <span class="icon-button">▶</span> (< 1 2 2 3) <span class="gray">=> false </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(< ___double_quote___a___double_quote___ ___double_quote___b___double_quote___)')"> <span class="icon-button">▶</span> (< "a" "b") <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(< :a :b)')"> <span class="icon-button">▶</span> (< :a :b) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(< [9] [1 2])')"> <span class="icon-button">▶</span> (< [9] [1 2]) <span class="gray">=> true </span> </span></pre>
   </div>
 </div>
@@ -2860,8 +2860,8 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(write! ___double_quote___A string___double_quote___)')"> <span class="icon-button">▶</span> (write! "A string") <span class="gray">=> "A string" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(write! 100 ___double_quote___items___double_quote___)')"> <span class="icon-button">▶</span> (write! 100 "items") <span class="gray">=> "items" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(write! (object ___double_quote___a___double_quote___ 10))')"> <span class="icon-button">▶</span> (write! (object "a" 10)) <span class="gray">=> {"a":10} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(write! [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___])')"> <span class="icon-button">▶</span> (write! ["a" "b" "c"]) <span class="gray">=> ["a","b","c"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(write! (object :a 10))')"> <span class="icon-button">▶</span> (write! (object :a 10)) <span class="gray">=> {"a":10} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(write! [:a :b :c])')"> <span class="icon-button">▶</span> (write! [:a :b :c]) <span class="gray">=> ["a","b","c"] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(write! (regexp ___double_quote___^start___double_quote___))')"> <span class="icon-button">▶</span> (write! (regexp "^start")) <span class="gray">=> /^start/ </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(write! nil true false)')"> <span class="icon-button">▶</span> (write! nil true false) <span class="gray">=> false </span> </span></pre>
   </div>
@@ -2881,7 +2881,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635111593895 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635160528063 </span> </span></pre>
   </div>
 </div>
 
@@ -2900,9 +2900,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(get-path (write! (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ [1 2 3]))) ___double_quote___a.x[2]___double_quote___)')"> <span class="icon-button">▶</span> (get-path (write! (object "a" (object "x" [1 2 3]))) "a.x[2]") <span class="gray">=> 3 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(get-path (write! (object ___double_quote___a___double_quote___ (object ___double_quote___x___double_quote___ [1 2 3]))) ___double_quote___b.z[10]___double_quote___)')"> <span class="icon-button">▶</span> (get-path (write! (object "a" (object "x" [1 2 3]))) "b.z[10]") <span class="gray">=> nil </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(get-path (write! [(object ___double_quote___x___double_quote___ [1 2 3])]) ___double_quote___[1].x[2]___double_quote___)')"> <span class="icon-button">▶</span> (get-path (write! [(object "x" [1 2 3])]) "[1].x[2]") <span class="gray">=> nil </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(get-path (write! (object :a (object :x [1 2 3]))) ___double_quote___a.x[2]___double_quote___)')"> <span class="icon-button">▶</span> (get-path (write! (object :a (object :x [1 2 3]))) "a.x[2]") <span class="gray">=> 3 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(get-path (write! (object :a (object :x [1 2 3]))) ___double_quote___b.z[10]___double_quote___)')"> <span class="icon-button">▶</span> (get-path (write! (object :a (object :x [1 2 3]))) "b.z[10]") <span class="gray">=> nil </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(get-path (write! [(object :x [1 2 3])]) ___double_quote___[1].x[2]___double_quote___)')"> <span class="icon-button">▶</span> (get-path (write! [(object :x [1 2 3])]) "[1].x[2]") <span class="gray">=> nil </span> </span></pre>
   </div>
 </div>
 
@@ -2962,11 +2962,11 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(compare 0 1)')"> <span class="icon-button">▶</span> (compare 0 1) <span class="gray">=> -1 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(compare ___double_quote___Albert___double_quote___ ___double_quote___Mojir___double_quote___)')"> <span class="icon-button">▶</span> (compare "Albert" "Mojir") <span class="gray">=> -1 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(compare 1 ___double_quote___1___double_quote___)')"> <span class="icon-button">▶</span> (compare 1 "1") <span class="gray">=> -1 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare 1 :1)')"> <span class="icon-button">▶</span> (compare 1 :1) <span class="gray">=> -1 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(compare [1 2 3] [2 3])')"> <span class="icon-button">▶</span> (compare [1 2 3] [2 3]) <span class="gray">=> 1 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(compare [1 2 3] [2 3 4])')"> <span class="icon-button">▶</span> (compare [1 2 3] [2 3 4]) <span class="gray">=> -1 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(compare {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2} {___double_quote___a___double_quote___ 1})')"> <span class="icon-button">▶</span> (compare {"a" 1 "b" 2} {"a" 1}) <span class="gray">=> 1 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(compare {___double_quote___a___double_quote___ 1} [2 3])')"> <span class="icon-button">▶</span> (compare {"a" 1} [2 3]) <span class="gray">=> 1 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare {:a 1 :b 2} {:a 1})')"> <span class="icon-button">▶</span> (compare {:a 1 :b 2} {:a 1}) <span class="gray">=> 1 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(compare {:a 1} [2 3])')"> <span class="icon-button">▶</span> (compare {:a 1} [2 3]) <span class="gray">=> 1 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(compare + -)')"> <span class="icon-button">▶</span> (compare + -) <span class="gray">=> 0 </span> </span></pre>
   </div>
 </div>
@@ -3004,7 +3004,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "1.0.0-alpha.1" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "1.0.0-alpha.2" </span> </span></pre>
   </div>
 </div>
 
@@ -3023,10 +3023,10 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20} {___double_quote___b___double_quote___ 20 ___double_quote___a___double_quote___ 10})')"> <span class="icon-button">▶</span> (equal? {"a" 10 "b" 20} {"b" 20 "a" 10}) <span class="gray">=> true </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(equal? {:a 10 :b 20} {:b 20 :a 10})')"> <span class="icon-button">▶</span> (equal? {:a 10 :b 20} {:b 20 :a 10}) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(equal? [1 true nil] [1 true nil])')"> <span class="icon-button">▶</span> (equal? [1 true nil] [1 true nil]) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}]} {___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}] ___double_quote___a___double_quote___ 10})')"> <span class="icon-button">▶</span> (equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 20}] "a" 10}) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(equal? {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 20}]} {___double_quote___b___double_quote___ [1 2 {___double_quote___b___double_quote___ 21}] ___double_quote___a___double_quote___ 10})')"> <span class="icon-button">▶</span> (equal? {"a" 10 "b" [1 2 {"b" 20}]} {"b" [1 2 {"b" 21}] "a" 10}) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})')"> <span class="icon-button">▶</span> (equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10}) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})')"> <span class="icon-button">▶</span> (equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10}) <span class="gray">=> false </span> </span></pre>
   </div>
 </div>
 
@@ -3045,10 +3045,10 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(dissoc (object ___double_quote___x___double_quote___ 10) ___double_quote___x___double_quote___)')"> <span class="icon-button">▶</span> (dissoc (object "x" 10) "x") <span class="gray">=> 10 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(dissoc (object ___double_quote___x___double_quote___ 10) ___double_quote___y___double_quote___)')"> <span class="icon-button">▶</span> (dissoc (object "x" 10) "y") <span class="gray">=> nil </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(def o (object ___double_quote___a___double_quote___ 5)) (dissoc o ___double_quote___a___double_quote___) o')"> <span class="icon-button">▶</span> (def o (object "a" 5)) (dissoc o "a") o <span class="gray">=> {} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(def o (object ___double_quote___a___double_quote___ 5)) (dissoc o ___double_quote___b___double_quote___) o')"> <span class="icon-button">▶</span> (def o (object "a" 5)) (dissoc o "b") o <span class="gray">=> {"a":5} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(dissoc (object :x 10) :x)')"> <span class="icon-button">▶</span> (dissoc (object :x 10) :x) <span class="gray">=> 10 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(dissoc (object :x 10) :y)')"> <span class="icon-button">▶</span> (dissoc (object :x 10) :y) <span class="gray">=> nil </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(def o (object :a 5)) (dissoc o :a) o')"> <span class="icon-button">▶</span> (def o (object :a 5)) (dissoc o :a) o <span class="gray">=> {} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(def o (object :a 5)) (dissoc o :b) o')"> <span class="icon-button">▶</span> (def o (object :a 5)) (dissoc o :b) o <span class="gray">=> {"a":5} </span> </span></pre>
   </div>
 </div>
 
@@ -3067,7 +3067,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(object)')"> <span class="icon-button">▶</span> (object) <span class="gray">=> {} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___)')"> <span class="icon-button">▶</span> (object "x" 10 "y" true "z" "A string") <span class="gray">=> {"x":10,"y":true,"z":"A string"} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(object :x 10 :y true :z ___double_quote___A string___double_quote___)')"> <span class="icon-button">▶</span> (object :x 10 :y true :z "A string") <span class="gray">=> {"x":10,"y":true,"z":"A string"} </span> </span></pre>
   </div>
 </div>
 
@@ -3086,7 +3086,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(keys (object))')"> <span class="icon-button">▶</span> (keys (object)) <span class="gray">=> [] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(keys (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (keys (object "x" 10 "y" true "z" "A string")) <span class="gray">=> ["x","y","z"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(keys (object :x 10 :y true :z ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (keys (object :x 10 :y true :z "A string")) <span class="gray">=> ["x","y","z"] </span> </span></pre>
   </div>
 </div>
 
@@ -3105,7 +3105,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(vals (object))')"> <span class="icon-button">▶</span> (vals (object)) <span class="gray">=> [] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(vals (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (vals (object "x" 10 "y" true "z" "A string")) <span class="gray">=> [10,true,"A string"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(vals (object :x 10 :y true :z ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (vals (object :x 10 :y true :z "A string")) <span class="gray">=> [10,true,"A string"] </span> </span></pre>
   </div>
 </div>
 
@@ -3124,7 +3124,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(entries (object))')"> <span class="icon-button">▶</span> (entries (object)) <span class="gray">=> [] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(entries (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (entries (object "x" 10 "y" true "z" "A string")) <span class="gray">=> [["x",10],["y",true],["z","A string"]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(entries (object :x 10 :y true :z ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (entries (object :x 10 :y true :z "A string")) <span class="gray">=> [["x",10],["y",true],["z","A string"]] </span> </span></pre>
   </div>
 </div>
 
@@ -3143,8 +3143,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(find (object ___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2) ___double_quote___b___double_quote___)')"> <span class="icon-button">▶</span> (find (object "a" 1 "b" 2) "b") <span class="gray">=> ["b",2] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(find (object ___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2) ___double_quote___c___double_quote___)')"> <span class="icon-button">▶</span> (find (object "a" 1 "b" 2) "c") <span class="gray">=> nil </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(find (object :a 1 :b 2) :b)')"> <span class="icon-button">▶</span> (find (object :a 1 :b 2) :b) <span class="gray">=> ["b",2] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(find (object :a 1 :b 2) :c)')"> <span class="icon-button">▶</span> (find (object :a 1 :b 2) :c) <span class="gray">=> nil </span> </span></pre>
   </div>
 </div>
 
@@ -3162,8 +3162,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(merge (object ___double_quote___x___double_quote___ 10) (object ___double_quote___y___double_quote___ 20))')"> <span class="icon-button">▶</span> (merge (object "x" 10) (object "y" 20)) <span class="gray">=> {"x":10,"y":20} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(merge (object ___double_quote___x___double_quote___ 10) (object ___double_quote___x___double_quote___ 15 ___double_quote___y___double_quote___ 20))')"> <span class="icon-button">▶</span> (merge (object "x" 10) (object "x" 15 "y" 20)) <span class="gray">=> {"x":15,"y":20} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(merge (object :x 10) (object :y 20))')"> <span class="icon-button">▶</span> (merge (object :x 10) (object :y 20)) <span class="gray">=> {"x":10,"y":20} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(merge (object :x 10) (object :x 15 :y 20))')"> <span class="icon-button">▶</span> (merge (object :x 10) (object :x 15 :y 20)) <span class="gray">=> {"x":15,"y":20} </span> </span></pre>
   </div>
 </div>
 
@@ -3182,9 +3182,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(merge-with + (object ___double_quote___x___double_quote___ 10) (object ___double_quote___y___double_quote___ 20))')"> <span class="icon-button">▶</span> (merge-with + (object "x" 10) (object "y" 20)) <span class="gray">=> {"x":10,"y":20} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(merge-with + (object ___double_quote___x___double_quote___ 10) (object ___double_quote___x___double_quote___ 15 ___double_quote___y___double_quote___ 20))')"> <span class="icon-button">▶</span> (merge-with + (object "x" 10) (object "x" 15 "y" 20)) <span class="gray">=> {"x":25,"y":20} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(merge-with - (object ___double_quote___x___double_quote___ 10) (object ___double_quote___x___double_quote___ 20) (object ___double_quote___x___double_quote___ 30) (object ___double_quote___x___double_quote___ 40))')"> <span class="icon-button">▶</span> (merge-with - (object "x" 10) (object "x" 20) (object "x" 30) (object "x" 40)) <span class="gray">=> {"x":-80} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(merge-with + (object :x 10) (object :y 20))')"> <span class="icon-button">▶</span> (merge-with + (object :x 10) (object :y 20)) <span class="gray">=> {"x":10,"y":20} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(merge-with + (object :x 10) (object :x 15 :y 20))')"> <span class="icon-button">▶</span> (merge-with + (object :x 10) (object :x 15 :y 20)) <span class="gray">=> {"x":25,"y":20} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(merge-with - (object :x 10) (object :x 20) (object :x 30) (object :x 40))')"> <span class="icon-button">▶</span> (merge-with - (object :x 10) (object :x 20) (object :x 30) (object :x 40)) <span class="gray">=> {"x":-80} </span> </span></pre>
   </div>
 </div>
 
@@ -3203,8 +3203,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(zipmap [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___] [10 nil [1 2 3]])')"> <span class="icon-button">▶</span> (zipmap ["a" "b" "c"] [10 nil [1 2 3]]) <span class="gray">=> {"a":10,"b":null,"c":[1,2,3]} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(zipmap [___double_quote___a___double_quote___ ___double_quote___b___double_quote___ ___double_quote___c___double_quote___] [1])')"> <span class="icon-button">▶</span> (zipmap ["a" "b" "c"] [1]) <span class="gray">=> {"a":1} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(zipmap [:a :b :c] [10 nil [1 2 3]])')"> <span class="icon-button">▶</span> (zipmap [:a :b :c] [10 nil [1 2 3]]) <span class="gray">=> {"a":10,"b":null,"c":[1,2,3]} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(zipmap [:a :b :c] [1])')"> <span class="icon-button">▶</span> (zipmap [:a :b :c] [1]) <span class="gray">=> {"a":1} </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(zipmap [] [10 nil [1 2 3]])')"> <span class="icon-button">▶</span> (zipmap [] [10 nil [1 2 3]]) <span class="gray">=> {} </span> </span></pre>
   </div>
 </div>
@@ -3224,8 +3224,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(select-keys {___double_quote___a___double_quote___ 1 ___double_quote___b___double_quote___ 2 ___double_quote___c___double_quote___ 3} [___double_quote___a___double_quote___ ___double_quote___b___double_quote___])')"> <span class="icon-button">▶</span> (select-keys {"a" 1 "b" 2 "c" 3} ["a" "b"]) <span class="gray">=> {"a":1,"b":2} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(select-keys {___double_quote___a___double_quote___ 1} [___double_quote___a___double_quote___ ___double_quote___b___double_quote___])')"> <span class="icon-button">▶</span> (select-keys {"a" 1} ["a" "b"]) <span class="gray">=> {"a":1} </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(select-keys {:a 1 :b 2 :c 3} [:a :b])')"> <span class="icon-button">▶</span> (select-keys {:a 1 :b 2 :c 3} [:a :b]) <span class="gray">=> {"a":1,"b":2} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(select-keys {:a 1} [:a :b])')"> <span class="icon-button">▶</span> (select-keys {:a 1} [:a :b]) <span class="gray">=> {"a":1} </span> </span></pre>
   </div>
 </div>
 
@@ -3383,7 +3383,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(array? [])')"> <span class="icon-button">▶</span> (array? []) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(array? [1 2 3])')"> <span class="icon-button">▶</span> (array? [1 2 3]) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(array? (object ___double_quote___a___double_quote___ 10))')"> <span class="icon-button">▶</span> (array? (object "a" 10)) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(array? (object :a 10))')"> <span class="icon-button">▶</span> (array? (object :a 10)) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(array? 42)')"> <span class="icon-button">▶</span> (array? 42) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(array? 10.1)')"> <span class="icon-button">▶</span> (array? 10.1) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(array? (fn [x y] (+ x y)))')"> <span class="icon-button">▶</span> (array? (fn [x y] (+ x y))) <span class="gray">=> false </span> </span></pre>
@@ -3404,7 +3404,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(object? (object ___double_quote___a___double_quote___ 10))')"> <span class="icon-button">▶</span> (object? (object "a" 10)) <span class="gray">=> true </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(object? (object :a 10))')"> <span class="icon-button">▶</span> (object? (object :a 10)) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(object? (object))')"> <span class="icon-button">▶</span> (object? (object)) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(object? 42)')"> <span class="icon-button">▶</span> (object? 42) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(object? 10.1)')"> <span class="icon-button">▶</span> (object? 10.1) <span class="gray">=> false </span> </span></pre>
@@ -3431,7 +3431,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(coll? [])')"> <span class="icon-button">▶</span> (coll? []) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(coll? [1 2 3])')"> <span class="icon-button">▶</span> (coll? [1 2 3]) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(coll? (object ___double_quote___a___double_quote___ 10))')"> <span class="icon-button">▶</span> (coll? (object "a" 10)) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(coll? (object :a 10))')"> <span class="icon-button">▶</span> (coll? (object :a 10)) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(coll? ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (coll? "Albert") <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(coll? 42)')"> <span class="icon-button">▶</span> (coll? 42) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(coll? 10.1)')"> <span class="icon-button">▶</span> (coll? 10.1) <span class="gray">=> false </span> </span></pre>
@@ -3455,7 +3455,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(seq? [])')"> <span class="icon-button">▶</span> (seq? []) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(seq? [1 2 3])')"> <span class="icon-button">▶</span> (seq? [1 2 3]) <span class="gray">=> true </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(seq? (object ___double_quote___a___double_quote___ 10))')"> <span class="icon-button">▶</span> (seq? (object "a" 10)) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(seq? (object :a 10))')"> <span class="icon-button">▶</span> (seq? (object :a 10)) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(seq? ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (seq? "Albert") <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(seq? 42)')"> <span class="icon-button">▶</span> (seq? 42) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(seq? 10.1)')"> <span class="icon-button">▶</span> (seq? 10.1) <span class="gray">=> false </span> </span></pre>
@@ -3735,7 +3735,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(regexp ___double_quote___^\s*(.*)$___double_quote___)')"> <span class="icon-button">▶</span> (regexp "^\s*(.*)$") <span class="gray">=> /^\s*(.*)$/ </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___)')"> <span class="icon-button">▶</span> (regexp "albert" "i") <span class="gray">=> /albert/i </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(regexp ___double_quote___albert___double_quote___ :i)')"> <span class="icon-button">▶</span> (regexp "albert" :i) <span class="gray">=> /albert/i </span> </span></pre>
   </div>
 </div>
 
@@ -3755,8 +3755,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___^\s*(.*)$___double_quote___) ___double_quote___  A string___double_quote___)')"> <span class="icon-button">▶</span> (match (regexp "^\s*(.*)$") "  A string") <span class="gray">=> ["  A string","A string"] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___) ___double_quote___My name is Albert___double_quote___)')"> <span class="icon-button">▶</span> (match (regexp "albert" "i") "My name is Albert") <span class="gray">=> ["Albert"] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___albert___double_quote___ ___double_quote___i___double_quote___) ___double_quote___My name is Ben___double_quote___)')"> <span class="icon-button">▶</span> (match (regexp "albert" "i") "My name is Ben") <span class="gray">=> nil </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___albert___double_quote___ :i) ___double_quote___My name is Albert___double_quote___)')"> <span class="icon-button">▶</span> (match (regexp "albert" :i) "My name is Albert") <span class="gray">=> ["Albert"] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(match (regexp ___double_quote___albert___double_quote___ :i) ___double_quote___My name is Ben___double_quote___)')"> <span class="icon-button">▶</span> (match (regexp "albert" :i) "My name is Ben") <span class="gray">=> nil </span> </span></pre>
   </div>
 </div>
 
@@ -3776,8 +3776,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(replace ___double_quote___Duck___double_quote___ (regexp ___double_quote___u___double_quote___) ___double_quote___i___double_quote___)')"> <span class="icon-button">▶</span> (replace "Duck" (regexp "u") "i") <span class="gray">=> "Dick" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(replace ___double_quote___abcABC___double_quote___ (regexp ___double_quote___a___double_quote___ ___double_quote___gi___double_quote___) ___double_quote___-___double_quote___)')"> <span class="icon-button">▶</span> (replace "abcABC" (regexp "a" "gi") "-") <span class="gray">=> "-bc-BC" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(replace ___double_quote___Duck___double_quote___ (regexp :u) :i)')"> <span class="icon-button">▶</span> (replace "Duck" (regexp :u) :i) <span class="gray">=> "Dick" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(replace ___double_quote___abcABC___double_quote___ (regexp :a ___double_quote___gi___double_quote___) ___double_quote___-___double_quote___)')"> <span class="icon-button">▶</span> (replace "abcABC" (regexp :a "gi") "-") <span class="gray">=> "-bc-BC" </span> </span></pre>
   </div>
 </div>
 
@@ -3841,7 +3841,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(def a (object))')"> <span class="icon-button">▶</span> (def a (object)) <span class="gray">=> {} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(def a (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (def a (object "x" 10 "y" true "z" "A string")) <span class="gray">=> {"x":10,"y":true,"z":"A string"} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(def a (object :x 10 :y true :z ___double_quote___A string___double_quote___))')"> <span class="icon-button">▶</span> (def a (object :x 10 :y true :z "A string")) <span class="gray">=> {"x":10,"y":true,"z":"A string"} </span> </span></pre>
   </div>
 </div>
 
@@ -3860,9 +3860,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(defs ___double_quote___a___double_quote___ ___double_quote___b___double_quote___)')"> <span class="icon-button">▶</span> (defs "a" "b") <span class="gray">=> "b" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(defs (str ___double_quote___a___double_quote___ ___double_quote___1___double_quote___) (object ___double_quote___x___double_quote___ 10 ___double_quote___y___double_quote___ true ___double_quote___z___double_quote___ ___double_quote___A string___double_quote___)) a1')"> <span class="icon-button">▶</span> (defs (str "a" "1") (object "x" 10 "y" true "z" "A string")) a1 <span class="gray">=> {"x":10,"y":true,"z":"A string"} </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(defs ___double_quote___a___double_quote___ ___double_quote___b___double_quote___) (defs a ___double_quote___c___double_quote___) b')"> <span class="icon-button">▶</span> (defs "a" "b") (defs a "c") b <span class="gray">=> "c" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(defs :a :b)')"> <span class="icon-button">▶</span> (defs :a :b) <span class="gray">=> "b" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(defs (str :a :1) (object :x 10 :y true :z ___double_quote___A string___double_quote___)) a1')"> <span class="icon-button">▶</span> (defs (str :a :1) (object :x 10 :y true :z "A string")) a1 <span class="gray">=> {"x":10,"y":true,"z":"A string"} </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(defs :a :b) (defs a :c) b')"> <span class="icon-button">▶</span> (defs :a :b) (defs a :c) b <span class="gray">=> "c" </span> </span></pre>
   </div>
 </div>
 
@@ -4007,7 +4007,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(defns ___double_quote___hyp___double_quote___ [a b] (sqrt (+ (* a a) (* b b)))) hyp')"> <span class="icon-button">▶</span> (defns "hyp" [a b] (sqrt (+ (* a a) (* b b)))) hyp <span class="gray">=> &lt;function hyp&gt; </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(defns (str ___double_quote___h___double_quote___ ___double_quote___y___double_quote___ ___double_quote___p___double_quote___) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"> <span class="icon-button">▶</span> (defns (str "h" "y" "p") [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(defns (str :h :y :p) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"> <span class="icon-button">▶</span> (defns (str :h :y :p) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(defns ___double_quote___sumOfSquares___double_quote___ [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"> <span class="icon-button">▶</span> (defns "sumOfSquares" [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55 </span> </span></pre>
   </div>
 </div>
@@ -4255,7 +4255,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(for [x ___double_quote___Al___double_quote___ y [1 2]] (repeat y x))')"> <span class="icon-button">▶</span> (for [x "Al" y [1 2]] (repeat y x)) <span class="gray">=> [["A"],["A","A"],["l"],["l","l"]] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(for [x {___double_quote___a___double_quote___ 10 ___double_quote___b___double_quote___ 20} y [1 2]] (repeat y x))')"> <span class="icon-button">▶</span> (for [x {"a" 10 "b" 20} y [1 2]] (repeat y x)) <span class="gray">=> [[["a",10]],[["a",10],["a",10]],[["b",20]],[["b",20],["b",20]]] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(for [x {:a 10 :b 20} y [1 2]] (repeat y x))')"> <span class="icon-button">▶</span> (for [x {:a 10 :b 20} y [1 2]] (repeat y x)) <span class="gray">=> [[["a",10]],[["a",10],["a",10]],[["b",20]],[["b",20],["b",20]]] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(for [x [1 2] y [1 10]] (* x y))')"> <span class="icon-button">▶</span> (for [x [1 2] y [1 10]] (* x y)) <span class="gray">=> [1,10,2,20] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(for [x [1 2] &let [z (* x x x)]] z)')"> <span class="icon-button">▶</span> (for [x [1 2] &let [z (* x x x)]] z) <span class="gray">=> [1,8] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(for [x [0 1 2 3 4 5] &let [y (* x 3)] &when (even? y)] y)')"> <span class="icon-button">▶</span> (for [x [0 1 2 3 4 5] &let [y (* x 3)] &when (even? y)] y) <span class="gray">=> [0,6,12] </span> </span></pre>
@@ -4326,7 +4326,7 @@
     <pre><span class="example" onclick="addToPlayground('(str ___double_quote___A string___double_quote___ ___double_quote___, and another string___double_quote___ ___double_quote___ ...and more___double_quote___)')"> <span class="icon-button">▶</span> (str "A string" ", and another string" " ...and more") <span class="gray">=> "A string, and another string ...and more" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(str ___double_quote___Just one string___double_quote___)')"> <span class="icon-button">▶</span> (str "Just one string") <span class="gray">=> "Just one string" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(str)')"> <span class="icon-button">▶</span> (str) <span class="gray">=> "" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(str 0 false true nil (regexp ___double_quote___^kalle___double_quote___) [1 2 3] {___double_quote___a___double_quote___ ___double_quote___a___double_quote___})')"> <span class="icon-button">▶</span> (str 0 false true nil (regexp "^kalle") [1 2 3] {"a" "a"}) <span class="gray">=> "0falsetrue/^kalle/[1,2,3]{\"a\":\"a\"}" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(str 0 false true nil (regexp ___double_quote___^kalle___double_quote___) [1 2 3] {:a :a})')"> <span class="icon-button">▶</span> (str 0 false true nil (regexp "^kalle") [1 2 3] {:a :a}) <span class="gray">=> "0falsetrue/^kalle/[1,2,3]{\"a\":\"a\"}" </span> </span></pre>
   </div>
 </div>
 
@@ -4557,7 +4557,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(template ___double_quote___Hi, $1 and $2___double_quote___ ___double_quote___Carl___double_quote___ ___double_quote___Larry___double_quote___)')"> <span class="icon-button">▶</span> (template "Hi, $1 and $2" "Carl" "Larry") <span class="gray">=> "Hi, Carl and Larry" </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(template ___double_quote___Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9___double_quote___ ___double_quote___A___double_quote___ ___double_quote___B___double_quote___ ___double_quote___C___double_quote___ ___double_quote___D___double_quote___ ___double_quote___E___double_quote___ ___double_quote___F___double_quote___ ___double_quote___G___double_quote___ ___double_quote___H___double_quote___ ___double_quote___I___double_quote___)')"> <span class="icon-button">▶</span> (template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" "A" "B" "C" "D" "E" "F" "G" "H" "I") <span class="gray">=> "Hi A, B, C, D, E, F, G, H and I" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(template ___double_quote___Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9___double_quote___ :A :B :C :D :E :F :G :H :I)')"> <span class="icon-button">▶</span> (template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" :A :B :C :D :E :F :G :H :I) <span class="gray">=> "Hi A, B, C, D, E, F, G, H and I" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(template ___double_quote___$1 book||||$1 books___double_quote___ 0)')"> <span class="icon-button">▶</span> (template "$1 book||||$1 books" 0) <span class="gray">=> "0 books" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(template ___double_quote___$1 book||||$1 books___double_quote___ 1)')"> <span class="icon-button">▶</span> (template "$1 book||||$1 books" 1) <span class="gray">=> "1 book" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(template ___double_quote___$1 book||||$1 books___double_quote___ 2)')"> <span class="icon-button">▶</span> (template "$1 book||||$1 books" 2) <span class="gray">=> "2 books" </span> </span></pre>
@@ -4578,7 +4578,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(to-char-code ___double_quote___A___double_quote___)')"> <span class="icon-button">▶</span> (to-char-code "A") <span class="gray">=> 65 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(to-char-code :A)')"> <span class="icon-button">▶</span> (to-char-code :A) <span class="gray">=> 65 </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(to-char-code ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (to-char-code "Albert") <span class="gray">=> 65 </span> </span></pre>
   </div>
 </div>

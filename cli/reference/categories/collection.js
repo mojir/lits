@@ -13,7 +13,7 @@ module.exports = {
       },
     ],
     description: `Returns number of elements in \`coll\`.`,
-    examples: [`(count [1 2 3])`, `(count [])`, `(count (object "a" 1))`, `(count "")`, `(count "Albert")`],
+    examples: [`(count [1 2 3])`, `(count [])`, `(count (object :a 1))`, `(count "")`, `(count "Albert")`],
   },
   get: {
     name: `get`,
@@ -42,9 +42,9 @@ module.exports = {
       `(get [1 2 3] 1)`,
       `(get [] 1)`,
       `(get [] 1 "default")`,
-      `(get (object "a" 1) "a")`,
-      `(get (object "a" 1) "b")`,
-      `(get (object "a" 1) "b" "default")`,
+      `(get (object :a 1) :a)`,
+      `(get (object :a 1) :b)`,
+      `(get (object :a 1) :b "default")`,
     ],
   },
   'get-in': {
@@ -71,9 +71,9 @@ module.exports = {
     ],
     description: `Returns the value in a nested collection, where \`keys\` is an array of keys. Returns \`default\` if the key is not present. If \`default\` is not set, \`nil\` is returned.`,
     examples: [
-      `(get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "a" 0])`,
-      `(get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "b" 0])`,
-      `(get-in [[1 2 3] [4 {"a" "Kalle"} 6]] [1 1 "b" 0] "Lisa")`,
+      `(get-in [[1 2 3] [4 {:a "Kalle"} 6]] [1 1 :a 0])`,
+      `(get-in [[1 2 3] [4 {:a "Kalle"} 6]] [1 1 :b 0])`,
+      `(get-in [[1 2 3] [4 {:a "Kalle"} 6]] [1 1 :b 0] "Lisa")`,
     ],
   },
   'contains?': {
@@ -98,8 +98,8 @@ module.exports = {
       `(contains? [] 1)`,
       `(contains? [1] 1)`,
       `(contains? [1 2 3] 1)`,
-      `(contains? {} "a")`,
-      `(contains? {"a" 1 "b" 2} "a")`,
+      `(contains? {} :a)`,
+      `(contains? {:a 1 :b 2} :a)`,
     ],
   },
   'has?': {
@@ -123,10 +123,10 @@ module.exports = {
     examples: [
       `(has? [1 2 3] 1)`,
       `(has? [1 2 3] 0)`,
-      `(has? {"a" 1 "b" 2} 1)`,
-      `(has? {"a" 1 "b" 2} 0)`,
-      `(has? "Albert" "A")`,
-      `(has? "Albert" "a")`,
+      `(has? {:a 1 :b 2} 1)`,
+      `(has? {:a 1 :b 2} 0)`,
+      `(has? "Albert" :A)`,
+      `(has? "Albert" :a)`,
     ],
   },
   assoc: {
@@ -154,8 +154,8 @@ module.exports = {
     examples: [
       `(assoc [1 2 3] 1 "Two")`,
       `(assoc [1 2 3] 3 "Four")`,
-      `(assoc {"a" 1 "b" 2} "a" "One")`,
-      `(assoc {"a" 1 "b" 2} "c" "Three")`,
+      `(assoc {:a 1 :b 2} :a "One")`,
+      `(assoc {:a 1 :b 2} :c "Three")`,
     ],
   },
   'assoc-in': {
@@ -181,9 +181,9 @@ module.exports = {
     ],
     description: `Associates a value in a nested Coll, where \`keys\` is an array of keys and \`value\` is the new value and returns a new nested structure. If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
     examples: [
-      `(assoc-in {} ["a" "b" "c"] "Albert")`,
+      `(assoc-in {} [:a :b :c] "Albert")`,
       `(assoc-in [1 2 [1 2 3]] [2 1] "Albert")`,
-      `(assoc-in [1 2 {"name" "albert"}] [2 "name" 0] "A")`,
+      `(assoc-in [1 2 {"name" "albert"}] [2 "name" 0] :A)`,
     ],
   },
   concat: {
@@ -207,8 +207,8 @@ module.exports = {
       `(concat [1 2] [])`,
       `(concat [1 2] [3 4] [5 6])`,
       `(concat [])`,
-      `(concat {"a" 1 "b" 2} {"b" 1 "c" 2})`,
-      `(concat {} {"a" 1})`,
+      `(concat {:a 1 :b 2} {:b 1 :c 2})`,
+      `(concat {} {:a 1})`,
     ],
   },
   'empty?': {
@@ -225,14 +225,7 @@ module.exports = {
       },
     ],
     description: `Returns \`true\` if \`coll\` is empty, otherwise \`false\`.`,
-    examples: [
-      `(empty? [])`,
-      `(empty? [1 2 3])`,
-      `(empty? {})`,
-      `(empty? {"a" 2})`,
-      `(empty? "")`,
-      `(empty? "Albert")`,
-    ],
+    examples: [`(empty? [])`, `(empty? [1 2 3])`, `(empty? {})`, `(empty? {:a 2})`, `(empty? "")`, `(empty? "Albert")`],
   },
   'every?': {
     name: `every?`,
@@ -258,8 +251,8 @@ module.exports = {
       `(every? number? [])`,
       `(every? number? "")`,
       `(every? number? {})`,
-      `(every? #(even? (second %1)) {"a" 2 "b" 4})`,
-      `(every? #(even? (second %1)) {"a" 2 "b" 3})`,
+      `(every? #(even? (second %1)) {:a 2 :b 4})`,
+      `(every? #(even? (second %1)) {:a 2 :b 3})`,
     ],
   },
   'not-every?': {
@@ -286,8 +279,8 @@ module.exports = {
       `(not-every? number? [])`,
       `(not-every? number? "")`,
       `(not-every? number? {})`,
-      `(not-every? #(even? (second %1)) {"a" 2 "b" 4})`,
-      `(not-every? #(even? (second %1)) {"a" 2 "b" 3})`,
+      `(not-every? #(even? (second %1)) {:a 2 :b 4})`,
+      `(not-every? #(even? (second %1)) {:a 2 :b 3})`,
     ],
   },
   'any?': {
@@ -314,8 +307,8 @@ module.exports = {
       `(any? number? [])`,
       `(any? number? "")`,
       `(any? number? {})`,
-      `(any? #(even? (second %1)) {"a" 2 "b" 3})`,
-      `(any? #(even? (second %1)) {"a" 1 "b" 3})`,
+      `(any? #(even? (second %1)) {:a 2 :b 3})`,
+      `(any? #(even? (second %1)) {:a 1 :b 3})`,
     ],
   },
   'not-any?': {
@@ -342,8 +335,8 @@ module.exports = {
       `(not-any? number? [])`,
       `(not-any? number? "")`,
       `(not-any? number? {})`,
-      `(not-any? #(even? (second %1)) {"a" 2 "b" 3})`,
-      `(not-any? #(even? (second %1)) {"a" 1 "b" 3})`,
+      `(not-any? #(even? (second %1)) {:a 2 :b 3})`,
+      `(not-any? #(even? (second %1)) {:a 1 :b 3})`,
     ],
   },
   update: {
@@ -374,8 +367,8 @@ module.exports = {
     ],
     description: `Updates a value in collection, where \`key\` is a key and \`fn\` is a function that will take the old value and any supplied \`args\` and return the new value, and returns a new collection.  If the key does not exist, nil is passed as the old value.`,
     examples: [
-      `(def x {"a" 1 "b" 2}) (update x "a" inc)`,
-      `(def x {"a" 1 "b" 2}) (update x "c" (fn [val] (if (nil? val) 0 (inc val))))`,
+      `(def x {:a 1 :b 2}) (update x :a inc)`,
+      `(def x {:a 1 :b 2}) (update x :c (fn [val] (if (nil? val) 0 (inc val))))`,
     ],
   },
   'update-in': {
@@ -406,8 +399,8 @@ module.exports = {
     ],
     description: `'Updates' a value in \`coll\`, where \`keys\` is an array of keys (string or number) and \`fn\` is a function that will take the old value and any supplied \`args\` and return the new value, and returns a new Coll. If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
     examples: [
-      `(update-in {"a" [1 2 3]} ["a" 1] (fn [val] (when (nil? val) 0)))`,
-      `(update-in {"a" [1 "Albert" 3]} ["a" 1 0] (fn [val] (if (nil? val) "?" "!")))`,
+      `(update-in {:a [1 2 3]} [:a 1] (fn [val] (when (nil? val) 0)))`,
+      `(update-in {:a [1 "Albert" 3]} [:a 1 0] (fn [val] (if (nil? val) "?" "!")))`,
     ],
   },
 }

@@ -33,18 +33,18 @@ describe(`string functions`, () => {
       expect(lispish.run(`(str x)`, { vars: { x: undefined } })).toBe(``)
       expect(lispish.run(`(str)`)).toBe(``)
       expect(lispish.run(`(str "")`)).toBe(``)
-      expect(lispish.run(`(str "1")`)).toBe(`1`)
-      expect(lispish.run(`(str "1" "2")`)).toBe(`12`)
-      expect(lispish.run(`(str "1" "2" "three" "4")`)).toBe(`12three4`)
+      expect(lispish.run(`(str :1)`)).toBe(`1`)
+      expect(lispish.run(`(str :1 :2)`)).toBe(`12`)
+      expect(lispish.run(`(str :1 :2 "three" :4)`)).toBe(`12three4`)
       expect(lispish.run(`(str 0)`)).toBe(`0`)
       expect(lispish.run(`(str true)`)).toBe(`true`)
-      expect(lispish.run(`(str "1" false)`)).toBe(`1false`)
-      expect(lispish.run(`(str nil "m")`)).toBe(`m`)
+      expect(lispish.run(`(str :1 false)`)).toBe(`1false`)
+      expect(lispish.run(`(str nil :m)`)).toBe(`m`)
       expect(lispish.run(`(str nil)`)).toBe(``)
       expect(lispish.run(`(str [])`)).toBe(`[]`)
       expect(lispish.run(`(str [1 2 3])`)).toBe(`[1,2,3]`)
       expect(lispish.run(`(str {})`)).toBe(`{}`)
-      expect(lispish.run(`(str {"a" 1})`)).toBe(`{"a":1}`)
+      expect(lispish.run(`(str {:a 1})`)).toBe(`{"a":1}`)
     })
   })
 
@@ -167,8 +167,8 @@ describe(`string functions`, () => {
       ])
       expect(lispish.run(`(map string-to-number (split "0123456789" "" 5))`)).toEqual([0, 1, 2, 3, 4])
       expect(() => lispish.run(`(split "0123456789")`)).toThrow()
-      expect(() => lispish.run(`(split "0123456789" "5" -1)`)).toThrow()
-      expect(() => lispish.run(`(split 23456789 "5")`)).toThrow()
+      expect(() => lispish.run(`(split "0123456789" :5 -1)`)).toThrow()
+      expect(() => lispish.run(`(split 23456789 :5)`)).toThrow()
     })
   })
 
@@ -180,7 +180,7 @@ describe(`string functions`, () => {
       expect(() => lispish.run(`(string-repeat)`)).toThrow()
       expect(() => lispish.run(`(string-repeat "Hello, ")`)).toThrow()
       expect(() => lispish.run(`(string-repeat "Hello, " 3 3)`)).toThrow()
-      expect(() => lispish.run(`(string-repeat "Hello, " "3")`)).toThrow()
+      expect(() => lispish.run(`(string-repeat "Hello, " :3)`)).toThrow()
       expect(() => lispish.run(`(string-repeat true, 1)`)).toThrow()
     })
   })
@@ -195,17 +195,17 @@ describe(`string functions`, () => {
       expect(lispish.run(`(template "Hi, $1" "Carl" "Larry")`)).toBe(`Hi, Carl`)
       expect(lispish.run(`(template "Hi, $1 and $2" "Carl" "Larry")`)).toBe(`Hi, Carl and Larry`)
       expect(lispish.run(`(template "Hi, $1 and $3" "Carl" "Larry" "Sofi")`)).toBe(`Hi, Carl and Sofi`)
-      expect(
-        lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" "A" "B" "C" "D" "E" "F" "G" "H" "I")`),
-      ).toBe(`Hi A, B, C, D, E, F, G, H and I`)
+      expect(lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" :A :B :C :D :E :F :G :H :I)`)).toBe(
+        `Hi A, B, C, D, E, F, G, H and I`,
+      )
       expect(() =>
-        lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" "A" "B" "C" "D" "E" "F" "G" "H")`),
+        lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" :A :B :C :D :E :F :G :H)`),
       ).toThrow()
-      expect(
-        lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 and $10" "A" "B" "C" "D" "E" "F" "G" "H" "I")`),
-      ).toBe(`Hi A, B, C, D, E, F, G, H, I and A0`)
+      expect(lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 and $10" :A :B :C :D :E :F :G :H :I)`)).toBe(
+        `Hi A, B, C, D, E, F, G, H, I and A0`,
+      )
       expect(() =>
-        lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 $10" "A" "B" "C" "D" "E" "F" "G" "H" "I" "J")`),
+        lispish.run(`(template "Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 $10" :A :B :C :D :E :F :G :H :I :J)`),
       ).toThrow()
       expect(() => lispish.run(`(template)`)).toThrow()
       expect(() => lispish.run(`(template "$1", 0)`)).toThrow()
@@ -228,7 +228,7 @@ describe(`string functions`, () => {
       expect(lispish.run(`(template "$1 book||||$1 books" 1)`)).toBe(`1 book`)
       expect(lispish.run(`(template "$1 book||||$1 books" 2)`)).toBe(`2 books`)
       expect(() => lispish.run(`(template "$1 book||||$1 books")`)).toThrow()
-      expect(() => lispish.run(`(template "$1 book||||$1 books" "1")`)).toThrow()
+      expect(() => lispish.run(`(template "$1 book||||$1 books" :1)`)).toThrow()
       expect(() => lispish.run(`(template "$1 book||||$1 books||||$1 chairs" )`)).toThrow()
       expect(lispish.run(`(template "$2 got $1 book||||$2 got $1 books" 1 "Carl")`)).toBe(`Carl got 1 book`)
       expect(lispish.run(`(template "$2 got $1 book||||$2 got $1 books" 2 "Carl")`)).toBe(`Carl got 2 books`)
@@ -236,10 +236,10 @@ describe(`string functions`, () => {
   })
   describe(`to-char-code`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(to-char-code "a")`)).toBe(97)
+      expect(lispish.run(`(to-char-code :a)`)).toBe(97)
       expect(lispish.run(`(to-char-code "abc")`)).toBe(97)
       expect(() => lispish.run(`(to-char-code)`)).toThrow()
-      expect(() => lispish.run(`(to-char-code "A" "B")`)).toThrow()
+      expect(() => lispish.run(`(to-char-code :A :B)`)).toThrow()
     })
   })
   describe(`from-char-code`, () => {
