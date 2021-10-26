@@ -2780,6 +2780,24 @@ var Lispish = (function (exports) {
             },
             validate: function (node) { return assertLength(2, node); },
         },
+        'remove-at': {
+            evaluate: function (_a) {
+                var index = _a[0], input = _a[1];
+                assertNumber(index);
+                assertSeq(input);
+                var intIndex = Math.ceil(index);
+                if (intIndex < 0 || intIndex >= input.length) {
+                    return input;
+                }
+                if (Array.isArray(input)) {
+                    var copy = __spreadArray([], input);
+                    copy.splice(index, 1);
+                    return copy;
+                }
+                return "" + input.substring(0, index) + input.substring(index + 1);
+            },
+            validate: function (node) { return assertLength(2, node); },
+        },
         'split-at': {
             evaluate: function (_a) {
                 var pos = _a[0], seq = _a[1];
@@ -3461,7 +3479,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "1.0.0-alpha.4";
+    var version = "1.0.0-alpha.5";
 
     var miscNormalExpression = {
         'not=': {

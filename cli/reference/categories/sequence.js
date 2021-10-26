@@ -772,6 +772,27 @@ module.exports = {
     examples: [`(remove even? [1 2 3 1 3 5])`, `(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")`],
   },
 
+  'remove-at': {
+    name: `remove-at`,
+    category: `Sequence`,
+    linkName: `remove-at`,
+    returns: {
+      type: `Seq`,
+    },
+    arguments: [
+      {
+        name: `index`,
+        type: `number`,
+      },
+      {
+        name: `input`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns a new sequence of all items in \`input\` except item at \`index\`.`,
+    examples: [`(remove-at 0 [1 2 3 1 3 5])`, `(remove-at -1 [1 2 3 1 3 5])`, `(remove-at 6 "Albert Mojir")`],
+  },
+
   'split-at': {
     name: `split-at`,
     category: `Sequence`,

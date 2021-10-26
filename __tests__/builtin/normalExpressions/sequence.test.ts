@@ -764,6 +764,25 @@ describe(`sequence functions`, () => {
     })
   })
 
+  describe(`remove-at`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(remove-at -1 [1 2 3 4 5])`)).toEqual([1, 2, 3, 4, 5])
+      expect(lispish.run(`(remove-at 0 [1 2 3 4 5])`)).toEqual([2, 3, 4, 5])
+      expect(lispish.run(`(remove-at 2 [1 2 3 4 5])`)).toEqual([1, 2, 4, 5])
+      expect(lispish.run(`(remove-at 4 [1 2 3 4 5])`)).toEqual([1, 2, 3, 4])
+      expect(lispish.run(`(remove-at 5 [1 2 3 4 5])`)).toEqual([1, 2, 3, 4, 5])
+      expect(lispish.run(`(remove-at -1 "Mojir")`)).toEqual(`Mojir`)
+      expect(lispish.run(`(remove-at 0 "Mojir")`)).toEqual(`ojir`)
+      expect(lispish.run(`(remove-at 2 "Mojir")`)).toEqual(`Moir`)
+      expect(lispish.run(`(remove-at 4 "Mojir")`)).toEqual(`Moji`)
+      expect(lispish.run(`(remove-at 5 "Mojir")`)).toEqual(`Mojir`)
+      expect(() => lispish.run(`(remove-at)`)).toThrow()
+      expect(() => lispish.run(`(remove-at "Albert Mojir")`)).toThrow()
+      expect(() => lispish.run(`(remove-at 1)`)).toThrow()
+      expect(() => lispish.run(`(remove-at 1 "Albert" 2`)).toThrow()
+    })
+  })
+
   describe(`split-at`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(split-at 2 [1 2 3 4 5])`)).toEqual([

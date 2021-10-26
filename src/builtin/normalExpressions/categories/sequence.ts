@@ -662,6 +662,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
+  'remove-at': {
+    evaluate: ([index, input]): Seq => {
+      assertNumber(index)
+      assertSeq(input)
+
+      const intIndex = Math.ceil(index)
+      if (intIndex < 0 || intIndex >= input.length) {
+        return input
+      }
+
+      if (Array.isArray(input)) {
+        const copy = [...input]
+        copy.splice(index, 1)
+        return copy
+      }
+      return `${input.substring(0, index)}${input.substring(index + 1)}`
+    },
+    validate: node => assertLength(2, node),
+  },
   'split-at': {
     evaluate: ([pos, seq]): Seq => {
       assertFiniteNumber(pos)
