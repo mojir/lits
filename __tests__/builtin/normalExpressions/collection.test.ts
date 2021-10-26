@@ -167,6 +167,38 @@ describe(`collection functions`, () => {
     })
   })
 
+  describe(`has-every?`, () => {
+    test(`samples`, () => {
+      expect(lispish.run(`(has-every? [] [1])`)).toBe(false)
+      expect(lispish.run(`(has-every? [1] [])`)).toBe(true)
+      expect(lispish.run(`(has-every? [1] [1])`)).toBe(true)
+      expect(lispish.run(`(has-every? [1 2 3] [0 1])`)).toBe(false)
+      expect(lispish.run(`(has-every? [1 2 3] [1 2])`)).toBe(true)
+      expect(lispish.run(`(has-every? (object) [:a])`)).toBe(false)
+      expect(lispish.run(`(has-every? (object :a 1 :b 2) [0 1])`)).toBe(false)
+      expect(lispish.run(`(has-every? (object :a 1 :b 2) [1 2])`)).toBe(true)
+      expect(lispish.run(`(has-every? "Albert" "xyz")`)).toBe(false)
+      expect(lispish.run(`(has-every? "Albert" ["Alb" "ert"])`)).toBe(false)
+      expect(lispish.run(`(has-every? "Albert" ["A"])`)).toBe(true)
+      expect(lispish.run(`(has-every? "Albert" "treblA")`)).toBe(true)
+      expect(lispish.run(`(has-every? [:a :b :c :d] "xyz")`)).toBe(false)
+      expect(lispish.run(`(has-every? [:a :b :c :d] "dcba")`)).toBe(true)
+
+      expect(() => lispish.run(`(has-every? [] [1] 1)`)).toThrow()
+      expect(() => lispish.run(`(has-every? [] 4)`)).toThrow()
+      expect(() => lispish.run(`(has-every? [] true)`)).toThrow()
+      expect(() => lispish.run(`(has-every? [] false)`)).toThrow()
+      expect(() => lispish.run(`(has-every? [] nil)`)).toThrow()
+      expect(() => lispish.run(`(has-every? [] odd?)`)).toThrow()
+      expect(() => lispish.run(`(has-every? [] {})`)).toThrow()
+      expect(() => lispish.run(`(has-every? true [1])`)).toThrow()
+      expect(() => lispish.run(`(has-every? false [1])`)).toThrow()
+      expect(() => lispish.run(`(has-every? nil [1])`)).toThrow()
+      expect(() => lispish.run(`(has-every? odd? [1])`)).toThrow()
+      expect(() => lispish.run(`(has-every? 3 [1])`)).toThrow()
+    })
+  })
+
   describe(`assoc`, () => {
     test(`samples`, () => {
       expect(lispish.run(`(assoc [1 2 3] 0 :1)`)).toEqual([`1`, 2, 3])

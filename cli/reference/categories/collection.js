@@ -148,6 +148,8 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`collection\` has any of the elements in \`keys\`, otherwise returns \`false\`.`,
     examples: [
+      `(has-some? [] [])`,
+      `(has-some? [1 2 3] [])`,
       `(has-some? [1 2 3] [0])`,
       `(has-some? [1 2 3] [0 1])`,
       `(has-some? (object :a 1 :b 2) [0])`,
@@ -156,6 +158,37 @@ module.exports = {
       `(has-some? "Albert" "xyzl")`,
       `(has-some? [:a :b :c :d] "xyz")`,
       `(has-some? [:a :b :c :d] "xyzc")`,
+    ],
+  },
+  'has-every?': {
+    name: `has-every?`,
+    category: `Collection`,
+    linkName: `has-every_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection`,
+      },
+      {
+        name: `keys`,
+        type: `Seq`,
+      },
+    ],
+    description: `Returns \`true\` if \`collection\` has all of the elements in \`keys\`, otherwise returns \`false\`.`,
+    examples: [
+      `(has-every? [] [])`,
+      `(has-every? [1 2 3] [])`,
+      `(has-every? [1 2 3] [0 1])`,
+      `(has-every? [1 2 3] [1 2])`,
+      `(has-every? (object :a 1 :b 2) [0 1])`,
+      `(has-every? (object :a 1 :b 2) [1 2])`,
+      `(has-every? "Albert" "xyz")`,
+      `(has-every? "Albert" "treblA")`,
+      `(has-every? [:a :b :c :d] "xyz")`,
+      `(has-every? [:a :b :c :d] "dcba")`,
     ],
   },
   assoc: {

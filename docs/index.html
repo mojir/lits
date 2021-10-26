@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lispish</div>
-    <div class="column right version"><span>v1.0.0-alpha.5</span></div>
+    <div class="column right version"><span>v1.0.0-alpha.6</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -296,7 +296,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(has-some? [1 2 3] [0])')"> <span class="icon-button">▶</span> (has-some? [1 2 3] [0]) <span class="gray">=> false </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(has-some? [] [])')"> <span class="icon-button">▶</span> (has-some? [] []) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-some? [1 2 3] [])')"> <span class="icon-button">▶</span> (has-some? [1 2 3] []) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-some? [1 2 3] [0])')"> <span class="icon-button">▶</span> (has-some? [1 2 3] [0]) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(has-some? [1 2 3] [0 1])')"> <span class="icon-button">▶</span> (has-some? [1 2 3] [0 1]) <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(has-some? (object :a 1 :b 2) [0])')"> <span class="icon-button">▶</span> (has-some? (object :a 1 :b 2) [0]) <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(has-some? (object :a 1 :b 2) [0 1])')"> <span class="icon-button">▶</span> (has-some? (object :a 1 :b 2) [0 1]) <span class="gray">=> true </span> </span></pre>
@@ -304,6 +306,34 @@
 <pre><span class="example" onclick="addToPlayground('(has-some? ___double_quote___Albert___double_quote___ ___double_quote___xyzl___double_quote___)')"> <span class="icon-button">▶</span> (has-some? "Albert" "xyzl") <span class="gray">=> true </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(has-some? [:a :b :c :d] ___double_quote___xyz___double_quote___)')"> <span class="icon-button">▶</span> (has-some? [:a :b :c :d] "xyz") <span class="gray">=> false </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(has-some? [:a :b :c :d] ___double_quote___xyzc___double_quote___)')"> <span class="icon-button">▶</span> (has-some? [:a :b :c :d] "xyzc") <span class="gray">=> true </span> </span></pre>
+  </div>
+</div>
+
+
+<div id="has-every_question" class="content function">
+  <div class="function-header">has-every?</div>
+  
+  <p>Returns <span class="pre">true</span> if <span class="pre">collection</span> has all of the elements in <span class="pre">keys</span>, otherwise returns <span class="pre">false</span>.</p>
+  <label>Syntax</label>
+  <div class="indent">
+    <pre>has-every? coll keys => boolean</pre>
+  </div>
+
+  <label>Arguments</label><div class="indent"><pre>coll: collection</pre>
+<pre>keys: Seq</pre></div>
+
+  <label>Examples</label>
+  <div class="indent">
+    <pre><span class="example" onclick="addToPlayground('(has-every? [] [])')"> <span class="icon-button">▶</span> (has-every? [] []) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? [1 2 3] [])')"> <span class="icon-button">▶</span> (has-every? [1 2 3] []) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? [1 2 3] [0 1])')"> <span class="icon-button">▶</span> (has-every? [1 2 3] [0 1]) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? [1 2 3] [1 2])')"> <span class="icon-button">▶</span> (has-every? [1 2 3] [1 2]) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? (object :a 1 :b 2) [0 1])')"> <span class="icon-button">▶</span> (has-every? (object :a 1 :b 2) [0 1]) <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? (object :a 1 :b 2) [1 2])')"> <span class="icon-button">▶</span> (has-every? (object :a 1 :b 2) [1 2]) <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? ___double_quote___Albert___double_quote___ ___double_quote___xyz___double_quote___)')"> <span class="icon-button">▶</span> (has-every? "Albert" "xyz") <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? ___double_quote___Albert___double_quote___ ___double_quote___treblA___double_quote___)')"> <span class="icon-button">▶</span> (has-every? "Albert" "treblA") <span class="gray">=> true </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? [:a :b :c :d] ___double_quote___xyz___double_quote___)')"> <span class="icon-button">▶</span> (has-every? [:a :b :c :d] "xyz") <span class="gray">=> false </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(has-every? [:a :b :c :d] ___double_quote___dcba___double_quote___)')"> <span class="icon-button">▶</span> (has-every? [:a :b :c :d] "dcba") <span class="gray">=> true </span> </span></pre>
   </div>
 </div>
 
@@ -1323,8 +1353,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,5,6,7,9] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "Alber" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,4,5,7,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "t" </span> </span></pre>
   </div>
 </div>
 
@@ -1342,8 +1372,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 8 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "l" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 3 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "b" </span> </span></pre>
   </div>
 </div>
 
@@ -1361,8 +1391,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [7,8,1,3,10,4,5,6,2,9] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> " joliMbretAr" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [9,3,7,5,8,1,4,10,2,6] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "jtMAlibrroe " </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -2296,9 +2326,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.24579307201096334 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.0072074532150046755 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 2.0269361998367867 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.22127066320505007 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.003438654204311482 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 0.6122590206385525 </span> </span></pre>
   </div>
 </div>
 
@@ -2317,8 +2347,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 3 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 71 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 0 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 23 </span> </span></pre>
   </div>
 </div>
 
@@ -2967,7 +2997,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635235558974 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635246773442 </span> </span></pre>
   </div>
 </div>
 
@@ -3090,7 +3120,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "1.0.0-alpha.5" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "1.0.0-alpha.6" </span> </span></pre>
   </div>
 </div>
 
@@ -5024,6 +5054,7 @@
 <li id="every_question_link" onclick="showPage('every_question')">every?</li>
 <li id="get_link" onclick="showPage('get')">get</li>
 <li id="get-in_link" onclick="showPage('get-in')">get-in</li>
+<li id="has-every_question_link" onclick="showPage('has-every_question')">has-every?</li>
 <li id="has-some_question_link" onclick="showPage('has-some_question')">has-some?</li>
 <li id="has_question_link" onclick="showPage('has_question')">has?</li>
 <li id="not-any_question_link" onclick="showPage('not-any_question')">not-any?</li>

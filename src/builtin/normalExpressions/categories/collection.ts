@@ -254,6 +254,35 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength(2, node),
   },
+  'has-every?': {
+    evaluate: ([coll, seq]): boolean => {
+      assertColl(coll)
+      assertSeq(seq)
+      if (isArr(coll)) {
+        for (const value of seq) {
+          if (!coll.includes(value)) {
+            return false
+          }
+        }
+        return true
+      }
+      if (isString(coll)) {
+        for (const value of seq) {
+          if (!isChar(value) || !coll.split(``).includes(value)) {
+            return false
+          }
+        }
+        return true
+      }
+      for (const value of seq) {
+        if (!Object.values(coll).includes(value)) {
+          return false
+        }
+      }
+      return true
+    },
+    validate: node => assertLength(2, node),
+  },
   assoc: {
     evaluate: ([coll, key, value]): Coll => {
       assertColl(coll)

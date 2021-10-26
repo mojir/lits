@@ -158,6 +158,8 @@ lispish.run('(+ 1 2 3 4)'); // returns 10
 * get
 * get-in
 * has?
+* has-every?
+* has-some?
 * not-any?
 * not-every?
 * update
