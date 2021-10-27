@@ -34,7 +34,13 @@ describe(`Tokenizer`, () => {
 
   describe(`regexpShorthand`, () => {
     test(`samples`, () => {
-      expect(tokenize(`#"Hej"`)).toEqual([{ type: `regexpShorthand`, value: `Hej` }])
+      expect(tokenize(`#"Hej"`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: {} }])
+      expect(tokenize(`#"Hej"g`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { g: true } }])
+      expect(tokenize(`#"Hej"i`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { i: true } }])
+      expect(tokenize(`#"Hej"gi`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { i: true, g: true } }])
+      expect(tokenize(`#"Hej"ig`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { i: true, g: true } }])
+      expect(() => tokenize(`#"Hej"gg`)).toThrow()
+      expect(() => tokenize(`#"Hej"ii`)).toThrow()
       expect(() => tokenize(`#1`)).toThrow()
     })
   })

@@ -3512,7 +3512,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "1.0.0-alpha.6";
+    var version = "1.0.0-alpha.7";
 
     var miscNormalExpression = {
         'not=': {
@@ -4777,10 +4777,15 @@ var Lispish = (function (exports) {
             type: "String",
             value: token.value,
         };
+        assertNotUndefined(token.options);
+        var optionsNode = {
+            type: "String",
+            value: "" + (token.options.g ? "g" : "") + (token.options.i ? "i" : ""),
+        };
         var node = {
             type: "NormalExpression",
             name: "regexp",
-            params: [stringNode],
+            params: [stringNode, optionsNode],
         };
         return [position + 1, node];
     };
@@ -5073,18 +5078,43 @@ var Lispish = (function (exports) {
         return [length, { type: "string", value: value }];
     };
     var tokenizeRegexpShorthand = function (input, position) {
+        var _a;
         if (input[position] !== "#") {
             return NO_MATCH;
         }
-        var _a = tokenizeString(input, position + 1), length = _a[0], token = _a[1];
+        var _b = tokenizeString(input, position + 1), stringLength = _b[0], token = _b[1];
         if (!token) {
             return NO_MATCH;
         }
+        position += stringLength + 1;
+        var length = stringLength + 1;
+        var options = {};
+        while (input[position] === "g" || input[position] === "i") {
+            if (input[position] === "g") {
+                if (options.g) {
+                    throw new SyntaxError("Duplicated regexp option \"" + input[position] + "\" at position " + position);
+                }
+                length += 1;
+                options.g = true;
+            }
+            else {
+                if (options.i) {
+                    throw new SyntaxError("Duplicated regexp option \"" + input[position] + "\" at position " + position);
+                }
+                length += 1;
+                options.i = true;
+            }
+            position += 1;
+        }
+        if (nameRegExp.test((_a = input[position]) !== null && _a !== void 0 ? _a : "")) {
+            throw new SyntaxError("Unexpected regexp option \"" + input[position] + "\" at position " + position);
+        }
         return [
-            length + 1,
+            length,
             {
                 type: "regexpShorthand",
                 value: token.value,
+                options: options,
             },
         ];
     };

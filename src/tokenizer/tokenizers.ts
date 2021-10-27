@@ -101,15 +101,41 @@ export const tokenizeRegexpShorthand: Tokenizer = (input, position) => {
   if (input[position] !== `#`) {
     return NO_MATCH
   }
-  const [length, token] = tokenizeString(input, position + 1)
+  const [stringLength, token] = tokenizeString(input, position + 1)
   if (!token) {
     return NO_MATCH
   }
+  position += stringLength + 1
+  let length = stringLength + 1
+
+  const options: Record<string, boolean> = {}
+  while (input[position] === `g` || input[position] === `i`) {
+    if (input[position] === `g`) {
+      if (options.g) {
+        throw new SyntaxError(`Duplicated regexp option "${input[position]}" at position ${position}`)
+      }
+      length += 1
+      options.g = true
+    } else {
+      if (options.i) {
+        throw new SyntaxError(`Duplicated regexp option "${input[position]}" at position ${position}`)
+      }
+      length += 1
+      options.i = true
+    }
+    position += 1
+  }
+
+  if (nameRegExp.test(input[position] ?? ``)) {
+    throw new SyntaxError(`Unexpected regexp option "${input[position]}" at position ${position}`)
+  }
+
   return [
-    length + 1,
+    length,
     {
       type: `regexpShorthand`,
       value: token.value,
+      options,
     },
   ]
 }

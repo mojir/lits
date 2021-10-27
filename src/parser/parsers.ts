@@ -1,5 +1,5 @@
 import { Token } from '../tokenizer/interface'
-import { asNotUndefined, assertLengthEven, assertNameNode, isExpressionNode } from '../utils'
+import { asNotUndefined, assertLengthEven, assertNameNode, assertNotUndefined, isExpressionNode } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
@@ -129,10 +129,17 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
     value: token.value,
   }
 
+  assertNotUndefined(token.options)
+
+  const optionsNode: StringNode = {
+    type: `String`,
+    value: `${token.options.g ? `g` : ``}${token.options.i ? `i` : ``}`,
+  }
+
   const node: NormalExpressionNode = {
     type: `NormalExpression`,
     name: `regexp`,
-    params: [stringNode],
+    params: [stringNode, optionsNode],
   }
 
   return [position + 1, node]
