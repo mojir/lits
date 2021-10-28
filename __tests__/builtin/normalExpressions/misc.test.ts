@@ -246,12 +246,14 @@ describe(`misc functions`, () => {
       expect(lispish.run(`(get-path [1 2 3] "[1]")`)).toBe(2)
       expect(lispish.run(`(get-path (object :a 1) :a)`)).toBe(1)
       expect(lispish.run(`(get-path (object :a (object :b [1 2 3])) "a.b[1]")`)).toBe(2)
-      expect(lispish.run(`(get-path O "a.b[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBe(2)
-      expect(lispish.run(`(get-path O "a.c[1]")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toBe(null)
-      expect(lispish.run(`(get-path O "")`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toEqual({ a: { b: [1, 2, 3] } })
-      expect(() => lispish.run(`(get-path O)`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
-      expect(() => lispish.run(`(get-path)`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
-      expect(() => lispish.run(`(get-path O :a :b)`, { vars: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
+      expect(lispish.run(`(get-path O "a.b[1]")`, { values: { O: { a: { b: [1, 2, 3] } } } })).toBe(2)
+      expect(lispish.run(`(get-path O "a.c[1]")`, { values: { O: { a: { b: [1, 2, 3] } } } })).toBe(null)
+      expect(lispish.run(`(get-path O "")`, { values: { O: { a: { b: [1, 2, 3] } } } })).toEqual({
+        a: { b: [1, 2, 3] },
+      })
+      expect(() => lispish.run(`(get-path O)`, { values: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
+      expect(() => lispish.run(`(get-path)`, { values: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
+      expect(() => lispish.run(`(get-path O :a :b)`, { values: { O: { a: { b: [1, 2, 3] } } } })).toThrow()
       expect(() => lispish.run(`(get-path (regexp "abc" :a)`)).toThrow()
     })
   })
@@ -263,8 +265,8 @@ describe(`misc functions`, () => {
       expect(() => lispish.run(`(debug! "" 0)`)).toThrow()
     })
     test(`multiple contexts`, () => {
-      lispish.import(`(def x 10) (defn foo [] "foo") (def bar (fn [] "bar")) (def plus +)`)
-      lispish.run(`((fn [z] (debug!) (+ z 1)) 10)`, { vars: { y: 20 } })
+      const context = lispish.context(`(def x 10) (defn foo [] "foo") (def bar (fn [] "bar")) (def plus +)`)
+      lispish.run(`((fn [z] (debug!) (+ z 1)) 10)`, { values: { y: 20 }, contexts: [context] })
       expect(lastLog).toMatchSnapshot()
     })
     test(`debug value`, () => {

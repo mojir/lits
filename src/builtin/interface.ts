@@ -1,4 +1,4 @@
-import { Context, EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
+import { ContextStack, EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
 import {
   ParseArgument,
   ParseBindings,
@@ -14,7 +14,7 @@ import { Any, Arr } from '../interface'
 
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
-  contextStack: Context[],
+  contextStack: ContextStack,
   { executeFunction }: { executeFunction: ExecuteFunction },
 ) => T
 type ValidateNode = (node: NormalExpressionNode) => void
@@ -42,7 +42,7 @@ type EvaluateHelpers = {
 }
 export type BuiltinSpecialExpression<T, N extends SpecialExpressionNode = SpecialExpressionNode> = {
   parse: (tokens: Token[], position: number, parsers: Parsers) => [number, N]
-  evaluate: (node: N, contextStack: Context[], helpers: EvaluateHelpers) => T
+  evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
   validate?: (node: N) => void
 }
 

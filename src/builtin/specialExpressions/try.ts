@@ -73,7 +73,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
       return evaluateAstNode(node.tryExpression, contextStack)
     } catch (error) {
       const newContext: Context = { [node.error.value]: { value: asNotUndefined(error) } } as Context
-      return evaluateAstNode(node.catchExpression, [newContext, ...contextStack])
+      return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext))
     }
   },
 }

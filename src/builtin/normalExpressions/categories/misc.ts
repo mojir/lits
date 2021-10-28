@@ -1,5 +1,5 @@
 import { AssertionError } from '../../../errors'
-import { Context, ContextEntry } from '../../../evaluator/interface'
+import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
 import { Any, Arr } from '../../../interface'
 import {
   asAny,
@@ -177,10 +177,10 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
 }
 
-function contextstackToString(contextStack: Context[]): string {
-  return [...contextStack].reverse().reduce((result, context, index) => {
+function contextstackToString(contextStack: ContextStack): string {
+  return contextStack.stack.reduce((result, context, index) => {
     return `${result}Context ${index}${
-      index === 0 ? ` - Import context` : index === 1 ? ` - Global context` : ``
+      context === contextStack.globalContext ? ` - Global context` : ``
     }\n${contextToString(context)}\n`
   }, ``)
 }

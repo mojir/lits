@@ -27,7 +27,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     castLetExpressionNode(node)
     const locals: Context = {}
-    const newContextStack = [locals, ...contextStack]
+    const newContextStack = contextStack.withContext(locals)
     for (const binding of node.bindings) {
       const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, newContextStack)

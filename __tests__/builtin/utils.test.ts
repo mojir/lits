@@ -1,8 +1,9 @@
 import { builtin } from '../../src/builtin'
 import { assertNameNotDefined } from '../../src/builtin/utils'
-import { Context } from '../../src/evaluator/interface'
+import { createContextStack } from '../../src/evaluator'
+import { ContextStack } from '../../src/evaluator/interface'
 
-const contextStack: Context[] = [{ a: { value: 1 } }, {}]
+const contextStack: ContextStack = createContextStack([{ a: { value: 1 } }, {}])
 
 describe(`builtin utils`, () => {
   test(`assertNameNotDefined`, () => {

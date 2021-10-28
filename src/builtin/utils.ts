@@ -1,7 +1,6 @@
-import { Context } from '../evaluator/interface'
+import { ContextStack } from '../evaluator/interface'
 import { AstNode, BindingNode } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
-import { asNotUndefined } from '../utils'
 import { Builtin } from './interface'
 
 export type FunctionArguments = {
@@ -14,7 +13,7 @@ export type FunctionArguments = {
   bindings: BindingNode[]
 }
 
-export function assertNameNotDefined<T>(name: T, contextStack: Context[], builtin: Builtin): asserts name is T {
+export function assertNameNotDefined<T>(name: T, contextStack: ContextStack, builtin: Builtin): asserts name is T {
   if (typeof name !== `string`) {
     return
   }
@@ -31,9 +30,7 @@ export function assertNameNotDefined<T>(name: T, contextStack: Context[], builti
     throw Error(`Cannot define variable ${name}, it's a reserved name`)
   }
 
-  const globalContext = asNotUndefined(contextStack[contextStack.length - 2])
-
-  if (globalContext[name]) {
+  if (contextStack.globalContext[name]) {
     throw Error(`Name already defined "${name}"`)
   }
 }

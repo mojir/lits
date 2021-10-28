@@ -35,7 +35,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     const bindingValue = evaluateAstNode(node.binding.value, contextStack)
     if (bindingValue) {
       locals[node.binding.name] = { value: bindingValue }
-      const newContextStack = [locals, ...contextStack]
+      const newContextStack = contextStack.withContext(locals)
       const thenForm = asNotUndefined(node.params[0])
       return evaluateAstNode(thenForm, newContextStack)
     }

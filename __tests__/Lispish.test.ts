@@ -1,66 +1,64 @@
 import { Lispish } from '../src'
 import { Cache } from '../src/Lispish/Cache'
 
-describe(`import`, () => {
+describe(`context`, () => {
   let lispish: Lispish
   beforeEach(() => {
     lispish = new Lispish()
   })
-  test(`import a function.`, () => {
+  test(`a function.`, () => {
     lispish = new Lispish({ astCacheSize: 10 })
-    lispish.import(`(defn tripple [x] (* x 3))`)
-    expect(lispish.run(`(tripple 10)`)).toBe(30)
-    expect(lispish.run(`(tripple 10)`)).toBe(30)
+    const contexts = [lispish.context(`(defn tripple [x] (* x 3))`)]
+    expect(lispish.run(`(tripple 10)`, { contexts })).toBe(30)
+    expect(lispish.run(`(tripple 10)`, { contexts })).toBe(30)
   })
 
-  test(`import a function - no cache`, () => {
+  test(`a function - no cache`, () => {
     lispish = new Lispish()
-    lispish.import(`(defn tripple [x] (* x 3))`, {})
-    expect(lispish.run(`(tripple 10)`)).toBe(30)
-    expect(lispish.run(`(tripple 10)`)).toBe(30)
+    const contexts = [lispish.context(`(defn tripple [x] (* x 3))`, {})]
+    expect(lispish.run(`(tripple 10)`, { contexts })).toBe(30)
+    expect(lispish.run(`(tripple 10)`, { contexts })).toBe(30)
   })
 
-  test(`import a variable.`, () => {
-    lispish.import(`(def magicNumber 42)`)
-    expect(lispish.run(`magicNumber`)).toBe(42)
+  test(`a variable.`, () => {
+    const contexts = [lispish.context(`(def magicNumber 42)`)]
+    expect(lispish.run(`magicNumber`, { contexts })).toBe(42)
   })
 
-  test(`import a variable - again.`, () => {
-    lispish.import(`
+  test(`a variable - again.`, () => {
+    const contexts = [
+      lispish.context(`
     (defn zip? [string] (boolean (match (regexp "^\\d{5}$") string)))
     (defn isoDateString? [string] (boolean (match (regexp "^\\d{4}-\\d{2}-\\d{2}$") string)))
     (def NAME_LENGTH 100)
-    `)
-    expect(lispish.run(`NAME_LENGTH`)).toBe(100)
+    `),
+    ]
+    expect(lispish.run(`NAME_LENGTH`, { contexts })).toBe(100)
   })
 
   test(`change imported variable`, () => {
-    lispish.import(`(def magicNumber 42)`)
-    expect(lispish.run(`magicNumber`)).toBe(42)
+    const contexts = [lispish.context(`(def magicNumber 42)`)]
+    expect(lispish.run(`magicNumber`, { contexts })).toBe(42)
   })
 
-  test(`import a function twice`, () => {
-    lispish.import(`(defn tripple [x] (* x 3))`)
-    expect(() => lispish.import(`(defn tripple [x] (* x 3))`)).toThrow()
+  test(`a function with a built in normal expression name`, () => {
+    expect(() => lispish.context(`(defn inc (x) (+ x 1))`)).toThrow()
+    expect(() => lispish.context(`(defn inc (x) (+ x 1))`, {})).toThrow()
+    expect(() => lispish.context(`(defn inc (x) (+ x 1))`, { values: {} })).toThrow()
   })
 
-  test(`import a function with a built in normal expression name`, () => {
-    expect(() => lispish.import(`(defn inc (x) (+ x 1))`)).toThrow()
+  test(`a function with a built in special expression name`, () => {
+    expect(() => lispish.context(`(defn and (x y) (* x y))`)).toThrow()
   })
 
-  test(`import a function with a built in special expression name`, () => {
-    expect(() => lispish.import(`(defn and (x y) (* x y))`)).toThrow()
+  test(`a variable twice`, () => {
+    const contexts = [lispish.context(`(def magicNumber 42) (defn getMagic [] 42)`)]
+    expect(() => lispish.context(`(def magicNumber 42) (defn getMagic [] 42)`, { contexts })).not.toThrow()
   })
 
-  test(`import a variable twice`, () => {
-    lispish.import(`(def magicNumber 42)`)
-    expect(() => lispish.import(`(def magicNumber 42)`)).toThrow()
-  })
-
-  test(`import more than once`, () => {
-    lispish.import(`(defn tripple [x] (* x 3))`)
-    lispish.import(`(def magicNumber 42)`)
-    expect(lispish.run(`(tripple magicNumber)`)).toBe(126)
+  test(`more than one`, () => {
+    const contexts = [lispish.context(`(defn tripple [x] (* x 3))`), lispish.context(`(def magicNumber 42)`)]
+    expect(lispish.run(`(tripple magicNumber)`, { contexts })).toBe(126)
   })
 })
 

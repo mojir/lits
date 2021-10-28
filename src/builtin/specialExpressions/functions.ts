@@ -1,5 +1,5 @@
 import { UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
-import { Context, EvaluateAstNode } from '../../evaluator/interface'
+import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interface'
 import {
   AstNode,
   BindingNode,
@@ -97,7 +97,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
 function getFunctionName(
   expressionName: ExpressionsName,
   node: FunctionNode,
-  contextStack: Context[],
+  contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ): string | undefined {
   if (expressionName === `defn`) {
@@ -160,9 +160,7 @@ function createEvaluator(
       return lispishFunction
     }
 
-    const globalContext = asNotUndefined(contextStack[contextStack.length - 2])
-
-    globalContext[name as string] = { value: lispishFunction }
+    contextStack.globalContext[name as string] = { value: lispishFunction }
     return null
   }
 }

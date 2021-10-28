@@ -15,7 +15,7 @@ import {
   UserDefinedFunction,
 } from '../parser/interface'
 import { asAny, asNotUndefined, asString, toAny } from '../utils'
-import { Context, EvaluateAstNode, ExecuteFunction } from './interface'
+import { Context, ContextStack, EvaluateAstNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
   LispishFunctionType,
@@ -23,7 +23,7 @@ type FunctionExecutors = Record<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fn: any,
     params: Arr,
-    contextStack: Context[],
+    contextStack: ContextStack,
     helpers: { evaluateAstNode: EvaluateAstNode; executeFunction: ExecuteFunction },
   ) => Any
 >
@@ -75,7 +75,7 @@ export const functionExecutors: FunctionExecutors = {
       try {
         let result: Any = null
         for (const node of fn.body) {
-          result = evaluateAstNode(node, [newContext, ...contextStack])
+          result = evaluateAstNode(node, contextStack.withContext(newContext))
         }
         return result
       } catch (error) {

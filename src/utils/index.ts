@@ -1,4 +1,5 @@
 import { UnexpectedNodeTypeError } from '../errors'
+import { Context } from '../evaluator/interface'
 import { Any, Arr, Coll, Obj, Seq } from '../interface'
 import {
   AstNode,
@@ -570,4 +571,14 @@ function clone<T>(value: T): T {
 
 export function cloneColl<T extends Coll>(value: T): T {
   return clone(value)
+}
+
+export function createContextFromValues(values?: Obj): Context {
+  if (!values) {
+    return {}
+  }
+  return Object.entries(values).reduce((context: Context, [key, value]) => {
+    context[key] = { value: toAny(value) }
+    return context
+  }, {})
 }

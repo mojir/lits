@@ -1,5 +1,5 @@
 import { LispishFunction } from '../../..'
-import { Context, ExecuteFunction } from '../../../evaluator/interface'
+import { ContextStack, ExecuteFunction } from '../../../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../../../interface'
 import {
   assertArr,
@@ -94,7 +94,7 @@ function update(
   key: string | number,
   fn: LispishFunction,
   params: Arr,
-  contextStack: Context[],
+  contextStack: ContextStack,
   executeFunction: ExecuteFunction,
 ): Coll {
   if (isObj(coll)) {

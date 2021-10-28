@@ -1,6 +1,6 @@
 import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
-import { evaluate, evaluateAstNode } from '../src/evaluator'
+import { createContextStack, evaluate, evaluateAstNode } from '../src/evaluator'
 import { Lispish } from '../src'
 import { Context } from '../src/evaluator/interface'
 
@@ -52,13 +52,13 @@ describe(`Evaluator`, () => {
   test(`super simple program`, () => {
     const tokens = tokenize(`(+ 10 kalle)`)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, {})
+    const result = evaluate(ast, createContextStack([context]))
     expect(result).toBe(15)
   })
   test(`simple program`, () => {
     const tokens = tokenize(simpleProgram)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, {})
+    const result = evaluate(ast, createContextStack([context]))
     expect(result).toBe(13 * 24 * 60 * 60 * 1000)
   })
   test(`if statement (true)`, () => {
@@ -66,7 +66,7 @@ describe(`Evaluator`, () => {
       (if (= (get info "gender") "male") "It's a boy" "It's not a girl")
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, {})
+    const result = evaluate(ast, createContextStack([context]))
     expect(result).toBe(`It's a boy`)
   })
   test(`if statement (false)`, () => {
@@ -74,7 +74,7 @@ describe(`Evaluator`, () => {
       (if (= (get info "gender") "female") "It's a girl" "It's not a girl")
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, {})
+    const result = evaluate(ast, createContextStack([context]))
     expect(result).toBe(`It's not a girl`)
   })
   test(`> statement`, () => {
@@ -82,7 +82,7 @@ describe(`Evaluator`, () => {
       (> 0 -1)
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, {})
+    const result = evaluate(ast, createContextStack([context]))
     expect(result).toBe(true)
   })
   test(`not= statement 1`, () => {
@@ -90,7 +90,7 @@ describe(`Evaluator`, () => {
       [(not= 0 -1) (not= 1 1)]
     `)
     const ast = parse(tokens)
-    const result = evaluate(ast, context, {})
+    const result = evaluate(ast, createContextStack([context]))
     expect(result).toEqual([true, false])
   })
 
@@ -108,32 +108,32 @@ describe(`Evaluator`, () => {
   })
 
   test(`formatPhoneNumber`, () => {
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: null } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `` } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+` } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+1` } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+12` } })).toBe(`(2`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+123` } })).toBe(`(23`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+1234` } })).toBe(`(234`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+12345` } })).toBe(`(234) 5`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+123456` } })).toBe(`(234) 56`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+1234567` } })).toBe(`(234) 567`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+12345678` } })).toBe(`(234) 567-8`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+123456789` } })).toBe(`(234) 567-89`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+1234567890` } })).toBe(`(234) 567-890`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+12345678901` } })).toBe(`(234) 567-8901`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `+123456789012` } })).toBe(`(234) 567-89012`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `2` } })).toBe(`(2`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `23` } })).toBe(`(23`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `234` } })).toBe(`(234`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `2345` } })).toBe(`(234) 5`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `23456` } })).toBe(`(234) 56`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `234567` } })).toBe(`(234) 567`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `2345678` } })).toBe(`(234) 567-8`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `23456789` } })).toBe(`(234) 567-89`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `234567890` } })).toBe(`(234) 567-890`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `2345678901` } })).toBe(`(234) 567-8901`)
-    expect(lispish.run(formatPhoneNumber, { vars: { $data: `23456789012` } })).toBe(`(234) 567-89012`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: null } })).toBe(``)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `` } })).toBe(``)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+` } })).toBe(``)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+1` } })).toBe(``)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+12` } })).toBe(`(2`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+123` } })).toBe(`(23`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+1234` } })).toBe(`(234`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+12345` } })).toBe(`(234) 5`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+123456` } })).toBe(`(234) 56`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+1234567` } })).toBe(`(234) 567`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+12345678` } })).toBe(`(234) 567-8`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+123456789` } })).toBe(`(234) 567-89`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+1234567890` } })).toBe(`(234) 567-890`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+12345678901` } })).toBe(`(234) 567-8901`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `+123456789012` } })).toBe(`(234) 567-89012`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `2` } })).toBe(`(2`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `23` } })).toBe(`(23`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `234` } })).toBe(`(234`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `2345` } })).toBe(`(234) 5`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `23456` } })).toBe(`(234) 56`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `234567` } })).toBe(`(234) 567`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `2345678` } })).toBe(`(234) 567-8`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `23456789` } })).toBe(`(234) 567-89`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `234567890` } })).toBe(`(234) 567-890`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `2345678901` } })).toBe(`(234) 567-8901`)
+    expect(lispish.run(formatPhoneNumber, { values: { $data: `23456789012` } })).toBe(`(234) 567-89012`)
   })
 })
 
@@ -144,7 +144,7 @@ test(`evaluateAstNode`, () => {
         type: `Modifier`,
         value: `&rest`,
       },
-      [],
+      createContextStack(),
     ),
   ).toThrow()
 })

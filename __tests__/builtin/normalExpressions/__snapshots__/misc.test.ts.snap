@@ -33,17 +33,17 @@ exports[`misc functions debug! debug value 1`] = `
 
 exports[`misc functions debug! multiple contexts 1`] = `
 "*** LISPISH DEBUG ***
-Context 0 - Import context
-  x     10
-  foo   <user-defined function foo>
-  bar   <user-defined function λ>
-  plus  <builtin function +>
+Context 0
+  z  10
 
 Context 1 - Global context
   y  20
 
 Context 2
-  z  10
+  x     10
+  foo   <user-defined function foo>
+  bar   <user-defined function λ>
+  plus  <builtin function +>
 
 
 "

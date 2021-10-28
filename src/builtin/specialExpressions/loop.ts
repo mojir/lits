@@ -32,7 +32,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
       result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
       return result
     }, {})
-    const newContextStack = [bindingContext, ...contextStack]
+    const newContextStack = contextStack.withContext(bindingContext)
 
     for (;;) {
       let result: Any = null

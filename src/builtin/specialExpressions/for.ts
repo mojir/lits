@@ -1,5 +1,5 @@
 import { UnexpectedTokenError } from '../../errors'
-import { Context, EvaluateAstNode } from '../../evaluator/interface'
+import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interface'
 import { Any, Arr } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
@@ -67,7 +67,7 @@ function parseLoopBinding(
 function addToContext(
   bindings: BindingNode[],
   context: Context,
-  contextStack: Context[],
+  contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ) {
   for (const binding of bindings) {
@@ -131,7 +131,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
     let abort = false
     while (!abort) {
       const context: Context = {}
-      const newContextStack = [context, ...contextStack]
+      const newContextStack = contextStack.withContext(context)
       let skip = false
       bindingsLoop: for (let bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
         const { binding, letBindings, whenNode, whileNode, modifiers } = asNotUndefined(loopBindings[bindingIndex])

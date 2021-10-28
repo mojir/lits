@@ -28,14 +28,34 @@ import {
 } from '../utils'
 import { Context, EvaluateAstNode, ExecuteFunction } from './interface'
 import { Any, Arr, Obj } from '../interface'
+import { ContextStack } from './interface'
 import { functionExecutors } from './functionExecutors'
 
-export function evaluate(ast: Ast, globalScope: Context, importScope: Context): unknown {
-  // First element is the global context. E.g. def will assign to this if no local variable is available
-  // Second element is the context sent in from outside (this should never be mutated)
-  const contextStack: Context[] = [globalScope, importScope]
+export function createContextStack(contexts: Context[] = []): ContextStack {
+  if (contexts.length === 0) {
+    contexts.push({})
+  }
 
-  let result: unknown
+  return new ContextStackImpl(contexts, 0)
+}
+
+class ContextStackImpl implements ContextStack {
+  public stack: Context[]
+  public globalContext: Context
+  public numberOfImportedContexts: number
+  constructor(contexts: Context[], globalContextIndex: number) {
+    this.stack = contexts
+    this.numberOfImportedContexts = contexts.length - (globalContextIndex + 1)
+    this.globalContext = contexts[globalContextIndex] as Context
+  }
+
+  public withContext(context: Context): ContextStack {
+    return new ContextStackImpl([context, ...this.stack], this.stack.length - this.numberOfImportedContexts)
+  }
+}
+
+export function evaluate(ast: Ast, contextStack: ContextStack): Any {
+  let result: Any = null
   for (const node of ast.body) {
     result = evaluateAstNode(node, contextStack)
   }
@@ -73,8 +93,8 @@ function evaluateReservedName(node: ReservedNameNode): Any {
   return asNotUndefined(reservedNamesRecord[node.value]).value
 }
 
-function evaluateName({ value }: NameNode, contextStack: Context[]): Any {
-  for (const context of contextStack) {
+function evaluateName({ value }: NameNode, contextStack: ContextStack): Any {
+  for (const context of contextStack.stack) {
     const variable = context[value]
     if (variable) {
       return variable.value
@@ -92,10 +112,10 @@ function evaluateName({ value }: NameNode, contextStack: Context[]): Any {
   throw Error(`Undefined identifier ${value}`)
 }
 
-function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Context[]): Any {
+function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   if (isNormalExpressionNodeName(node)) {
-    for (const context of contextStack) {
+    for (const context of contextStack.stack) {
       const fn = context[node.name]?.value
       if (fn === undefined) {
         continue
@@ -133,13 +153,13 @@ export const executeFunction: ExecuteFunction = (fn, params, contextStack) => {
   throw Error(`Expected function, got ${fn}`)
 }
 
-function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params: Arr, contextStack: Context[]): Any {
+function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params: Arr, contextStack: ContextStack): Any {
   const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
 
   return normalExpressionEvaluator(params, contextStack, { executeFunction })
 }
 
-function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Context[]): Any {
+function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
   const specialExpressionEvaluator = asNotUndefined(builtin.specialExpressions[node.name]).evaluate
   return specialExpressionEvaluator(node, contextStack, { evaluateAstNode, builtin })
 }

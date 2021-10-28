@@ -1,35 +1,25 @@
-import { builtin } from '../builtin'
-import { assertNameNotDefined } from '../builtin/utils'
-import { evaluate } from '../evaluator'
+// import { builtin } from '../builtin'
+// import { assertNameNotDefined } from '../builtin/utils'
+import { createContextStack, evaluate } from '../evaluator'
 import { Context } from '../evaluator/interface'
-import { Obj } from '../interface'
+import { Any, Obj } from '../interface'
 import { parse } from '../parser'
 import { Ast } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import { Token } from '../tokenizer/interface'
-import { toAny } from '../utils'
+import { createContextFromValues } from '../utils'
 import { Cache } from './Cache'
 
-type EvaluateParams =
-  | {
-      globalContext: Context
-      vars?: never
-    }
-  | {
-      globalContext?: never
-      vars: Obj
-    }
-  | {
-      globalContext?: never
-      vars?: never
-    }
+type LispishParams = {
+  contexts?: Context[]
+  values?: Obj
+}
 
 type LispishConfig = {
   astCacheSize?: number
 }
 
 export class Lispish {
-  private importScope: Context = {}
   private astCache: Cache<Ast> | null
 
   constructor(config: LispishConfig = {}) {
@@ -40,28 +30,18 @@ export class Lispish {
     }
   }
 
-  public run(program: string, params?: EvaluateParams): unknown {
+  public run(program: string, params?: LispishParams): unknown {
     const ast = this.generateAst(program)
     const result = this.evaluate(ast, params)
     return result
   }
 
-  public import(program: string, params: EvaluateParams = {}): void {
-    const context = getContextFromParams(params)
-    const tokens: Token[] = this.tokenize(program)
-    const ast: Ast = this.parse(tokens)
-    const scope: Context = {}
-    evaluate(ast, scope, context)
-
-    const importKeys = Object.keys(this.importScope)
-    for (const key of Object.keys(scope)) {
-      if (importKeys.includes(key)) {
-        throw Error(`Import faild, imported function/variable already exists: "${key}"`)
-      }
-      assertNameNotDefined(key, [{}, {}], builtin)
-    }
-
-    Object.assign(this.importScope, scope)
+  public context(program: string, params?: LispishParams): Context {
+    const context: Context = createContextFromValues(params?.values ?? {})
+    const contextStack = createContextStack([context, ...(params?.contexts ?? [])])
+    const ast = this.generateAst(program)
+    evaluate(ast, contextStack)
+    return contextStack.globalContext
   }
 
   private tokenize(program: string): Token[] {
@@ -72,9 +52,10 @@ export class Lispish {
     return parse(tokens)
   }
 
-  private evaluate(ast: Ast, params: EvaluateParams = {}): unknown {
-    const context = getContextFromParams(params)
-    return evaluate(ast, context, this.importScope)
+  private evaluate(ast: Ast, params: LispishParams = {}): Any {
+    const globalContext = createContextFromValues(params.values)
+    const contextStack = createContextStack([globalContext, ...(params.contexts ?? [])])
+    return evaluate(ast, contextStack)
   }
 
   private generateAst(program: string) {
@@ -89,16 +70,4 @@ export class Lispish {
     this.astCache?.set(program, ast)
     return ast
   }
-}
-
-function getContextFromParams(params: EvaluateParams) {
-  const context: Context = params.globalContext || {}
-
-  if (params.vars) {
-    Object.entries(params.vars).forEach(([key, value]) => {
-      context[key] = { value: toAny(value) }
-    })
-  }
-
-  return context
 }

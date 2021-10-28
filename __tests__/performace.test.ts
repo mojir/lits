@@ -1,25 +1,29 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Lispish } from '../src'
-import { evaluate } from '../src/evaluator'
+import { createContextStack, evaluate } from '../src/evaluator'
 import { Context } from '../src/evaluator/interface'
+import { Obj } from '../src/interface'
 import { parse } from '../src/parser'
 import { tokenize } from '../src/tokenizer'
+import { createContextFromValues } from '../src/utils'
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
-const globalContext: Context = { x: { value: 20 }, y: { value: 30 } }
+const values: Obj = { x: 20, y: 30 }
+const context = createContextFromValues(values)
+const contextStack = createContextStack([context])
 const jsExpression = `((x - y) * (y - x)) + ((x / y) * (y / x))`
 
 // Some baseline values for javascript eval to compare with
 const startRefTime = Date.now()
 for (let i = 0; i < ITERATIONS; i += 1) {
-  const jsProgram = createJsProgram(jsExpression, globalContext)
+  const jsProgram = createJsProgram(jsExpression, context)
   eval(jsProgram)
 }
 const averageRefTime = Math.round((100000 * (Date.now() - startRefTime)) / ITERATIONS) / 100
 
-function createJsProgram(expression: string, globalContext: any) {
+function createJsProgram(expression: string, globalContext: Context) {
   const vars = Object.entries(globalContext)
     .map(entry => `  var ${entry[0]} = ${JSON.stringify(entry[1])};`)
     .join(`\n`)
@@ -61,7 +65,7 @@ xdescribe(`performace`, () => {
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      evaluate(ast, globalContext, {})
+      evaluate(ast, contextStack)
     }
     logPerformace(`Evaluate AST`, Date.now() - startTime)
   })
@@ -70,7 +74,7 @@ xdescribe(`performace`, () => {
     const lispish = new Lispish()
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish.run(program, { globalContext })
+      lispish.run(program, { values })
     }
     logPerformace(`Run program`, Date.now() - startTime)
   })
@@ -79,7 +83,7 @@ xdescribe(`performace`, () => {
     const lispish = new Lispish({ astCacheSize: 100 })
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish.run(program, { globalContext })
+      lispish.run(program, { values })
     }
     logPerformace(`Run program (with astCache)`, Date.now() - startTime)
   })

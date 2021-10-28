@@ -43,7 +43,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
 
     const bindingValue = toAny(evaluatedBindingForm[0])
     locals[node.binding.name] = { value: bindingValue }
-    const newContextStack = [locals, ...contextStack]
+    const newContextStack = contextStack.withContext(locals)
 
     let result: Any = null
     for (const form of node.params) {
