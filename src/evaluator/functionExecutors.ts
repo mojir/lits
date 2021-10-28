@@ -9,7 +9,7 @@ import {
   EveryPredFunction,
   FNilFunction,
   JuxtFunction,
-  LispishFunctionType,
+  LitsFunctionType,
   PartialFunction,
   SomePredFunction,
   UserDefinedFunction,
@@ -18,7 +18,7 @@ import { asAny, asNotUndefined, asString, toAny } from '../utils'
 import { Context, ContextStack, EvaluateAstNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
-  LispishFunctionType,
+  LitsFunctionType,
   (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fn: any,

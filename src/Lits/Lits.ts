@@ -10,20 +10,20 @@ import { Token } from '../tokenizer/interface'
 import { createContextFromValues } from '../utils'
 import { Cache } from './Cache'
 
-type LispishParams = {
+type LitsParams = {
   contexts?: Context[]
   globals?: Obj
   globalContext?: Context
 }
 
-type LispishConfig = {
+type LitsConfig = {
   astCacheSize?: number
 }
 
-export class Lispish {
+export class Lits {
   private astCache: Cache<Ast> | null
 
-  constructor(config: LispishConfig = {}) {
+  constructor(config: LitsConfig = {}) {
     if (config.astCacheSize && config.astCacheSize > 0) {
       this.astCache = new Cache(config.astCacheSize)
     } else {
@@ -31,13 +31,13 @@ export class Lispish {
     }
   }
 
-  public run(program: string, params?: LispishParams): unknown {
+  public run(program: string, params?: LitsParams): unknown {
     const ast = this.generateAst(program)
     const result = this.evaluate(ast, params)
     return result
   }
 
-  public context(program: string, params: LispishParams = {}): Context {
+  public context(program: string, params: LitsParams = {}): Context {
     const contextStack = createContextStackFromParams(params)
     const ast = this.generateAst(program)
     evaluate(ast, contextStack)
@@ -52,7 +52,7 @@ export class Lispish {
     return parse(tokens)
   }
 
-  private evaluate(ast: Ast, params?: LispishParams): Any {
+  private evaluate(ast: Ast, params?: LitsParams): Any {
     const contextStack = createContextStackFromParams(params)
     return evaluate(ast, contextStack)
   }
@@ -71,7 +71,7 @@ export class Lispish {
   }
 }
 
-function createContextStackFromParams(params?: LispishParams): ContextStack {
+function createContextStackFromParams(params?: LitsParams): ContextStack {
   const globalContext: Context = params?.globalContext ?? {}
   Object.assign(globalContext, createContextFromValues(params?.globals))
   const contextStack = createContextStack([globalContext, ...(params?.contexts ?? [])])

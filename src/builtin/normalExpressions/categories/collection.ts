@@ -1,4 +1,4 @@
-import { LispishFunction } from '../../..'
+import { LitsFunction } from '../../..'
 import { ContextStack, ExecuteFunction } from '../../../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../../../interface'
 import {
@@ -7,7 +7,7 @@ import {
   assertColl,
   assertInteger,
   assertLength,
-  assertLispishFunction,
+  assertLitsFunction,
   assertMax,
   assertNumber,
   assertNumberGte,
@@ -92,7 +92,7 @@ function get(coll: Coll, key: string | number): Any | undefined {
 function update(
   coll: Coll,
   key: string | number,
-  fn: LispishFunction,
+  fn: LitsFunction,
   params: Arr,
   contextStack: ContextStack,
   executeFunction: ExecuteFunction,
@@ -324,7 +324,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([coll, key, fn, ...params], contextStack, { executeFunction }): Coll => {
       assertColl(coll)
       assertStringOrNumber(key)
-      assertLispishFunction(fn)
+      assertLitsFunction(fn)
       return update(coll, key, fn, params, contextStack, executeFunction)
     },
     validate: node => assertLength({ min: 3 }, node),
@@ -333,7 +333,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([originalColl, keys, fn, ...params], contextStack, { executeFunction }): Coll => {
       assertColl(originalColl)
       assertArr(keys)
-      assertLispishFunction(fn)
+      assertLitsFunction(fn)
 
       if (keys.length === 1) {
         assertStringOrNumber(keys[0])
@@ -394,7 +394,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'every?': {
     evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLispishFunction(fn)
+      assertLitsFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {
@@ -409,7 +409,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'any?': {
     evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLispishFunction(fn)
+      assertLitsFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {
@@ -424,7 +424,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'not-any?': {
     evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLispishFunction(fn)
+      assertLitsFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {
@@ -439,7 +439,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'not-every?': {
     evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLispishFunction(fn)
+      assertLitsFunction(fn)
       assertColl(coll)
 
       if (Array.isArray(coll)) {

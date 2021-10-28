@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import { Lispish } from '../../../src'
+import { Lits } from '../../../src'
 
-let lispish: Lispish
+let lits: Lits
 
 beforeEach(() => {
-  lispish = new Lispish()
+  lits = new Lits()
 })
 
 describe(`functional functions`, () => {
@@ -22,111 +22,111 @@ describe(`functional functions`, () => {
   })
   describe(`apply`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(apply + [1 2 3 4])`)).toBe(10)
-      expect(lispish.run(`(apply + 1 2 [ 3 4])`)).toBe(10)
-      expect(() => lispish.run(`(apply +)`)).toThrow()
-      expect(() => lispish.run(`(apply + 2 3)`)).toThrow()
-      expect(() => lispish.run(`(apply + [1 2] [3 4])`)).toThrow()
+      expect(lits.run(`(apply + [1 2 3 4])`)).toBe(10)
+      expect(lits.run(`(apply + 1 2 [ 3 4])`)).toBe(10)
+      expect(() => lits.run(`(apply +)`)).toThrow()
+      expect(() => lits.run(`(apply + 2 3)`)).toThrow()
+      expect(() => lits.run(`(apply + [1 2] [3 4])`)).toThrow()
     })
   })
 
   describe(`identity`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(identity "Albert")`)).toBe(`Albert`)
-      expect(lispish.run(`(identity "")`)).toBe(``)
-      expect(lispish.run(`(identity nil)`)).toBe(null)
-      expect(lispish.run(`(identity false)`)).toBe(false)
-      expect(lispish.run(`(identity true)`)).toBe(true)
-      expect(lispish.run(`(identity {:a 1})`)).toEqual({ a: 1 })
-      expect(lispish.run(`(identity [1 2 3])`)).toEqual([1, 2, 3])
-      expect(() => lispish.run(`(identity)`)).toThrow()
-      expect(() => lispish.run(`(identity 1 2)`)).toThrow()
+      expect(lits.run(`(identity "Albert")`)).toBe(`Albert`)
+      expect(lits.run(`(identity "")`)).toBe(``)
+      expect(lits.run(`(identity nil)`)).toBe(null)
+      expect(lits.run(`(identity false)`)).toBe(false)
+      expect(lits.run(`(identity true)`)).toBe(true)
+      expect(lits.run(`(identity {:a 1})`)).toEqual({ a: 1 })
+      expect(lits.run(`(identity [1 2 3])`)).toEqual([1, 2, 3])
+      expect(() => lits.run(`(identity)`)).toThrow()
+      expect(() => lits.run(`(identity 1 2)`)).toThrow()
     })
   })
 
   describe(`partial`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((partial + 1) 2)`)).toBe(3)
-      expect(lispish.run(`((partial (partial + 1) 2) 2)`)).toBe(5)
-      expect(() => lispish.run(`((partial true))`)).toThrow()
-      expect(() => lispish.run(`((partial mod 1))`)).toThrow()
+      expect(lits.run(`((partial + 1) 2)`)).toBe(3)
+      expect(lits.run(`((partial (partial + 1) 2) 2)`)).toBe(5)
+      expect(() => lits.run(`((partial true))`)).toThrow()
+      expect(() => lits.run(`((partial mod 1))`)).toThrow()
     })
   })
 
   describe(`comp`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(def negative-quotient (comp - /)) (negative-quotient 9 3)`)).toBe(-3)
+      expect(lits.run(`(def negative-quotient (comp - /)) (negative-quotient 9 3)`)).toBe(-3)
       expect(
-        lispish.run(`
+        lits.run(`
         (#((apply comp first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)
       `),
       ).toBe(4)
-      expect(lispish.run(`(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)`)).toBe(42)
+      expect(lits.run(`(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)`)).toBe(42)
 
-      expect(lispish.run(`((comp) 10)`)).toBe(10)
-      expect(lispish.run(`((comp) nil)`)).toBe(null)
-      expect(lispish.run(`((comp) {:a 10})`)).toEqual({ a: 10 })
-      expect(lispish.run(`((comp) [:x 10 nil])`)).toEqual([`x`, 10, null])
-      lispish.run(`(comp :a [:b :c])`)
-      expect(() => lispish.run(`((comp) 1 2)`)).toThrow()
-      expect(() => lispish.run(`((comp true))`)).toThrow()
-      expect(() => lispish.run(`((comp mod 1))`)).toThrow()
+      expect(lits.run(`((comp) 10)`)).toBe(10)
+      expect(lits.run(`((comp) nil)`)).toBe(null)
+      expect(lits.run(`((comp) {:a 10})`)).toEqual({ a: 10 })
+      expect(lits.run(`((comp) [:x 10 nil])`)).toEqual([`x`, 10, null])
+      lits.run(`(comp :a [:b :c])`)
+      expect(() => lits.run(`((comp) 1 2)`)).toThrow()
+      expect(() => lits.run(`((comp true))`)).toThrow()
+      expect(() => lits.run(`((comp mod 1))`)).toThrow()
     })
   })
 
   describe(`constanty`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((constantly 10) 12 nil :x)`)).toBe(10)
-      expect(() => lispish.run(`(constanty)`)).toThrow()
-      expect(() => lispish.run(`(constanty 10 20)`)).toThrow()
+      expect(lits.run(`((constantly 10) 12 nil :x)`)).toBe(10)
+      expect(() => lits.run(`(constanty)`)).toThrow()
+      expect(() => lits.run(`(constanty 10 20)`)).toThrow()
     })
   })
 
   describe(`juxt`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((juxt + * min max) 3 4 6)`)).toEqual([13, 72, 3, 6])
-      expect(lispish.run(`((juxt :a :b) {:a 1, :b 2, :c 3, :d 4})`)).toEqual([1, 2])
-      expect(lispish.run(`(apply (juxt + * min max) (range 1 5))`)).toEqual([10, 24, 1, 4])
-      expect(() => lispish.run(`(juxt)`)).toThrow()
+      expect(lits.run(`((juxt + * min max) 3 4 6)`)).toEqual([13, 72, 3, 6])
+      expect(lits.run(`((juxt :a :b) {:a 1, :b 2, :c 3, :d 4})`)).toEqual([1, 2])
+      expect(lits.run(`(apply (juxt + * min max) (range 1 5))`)).toEqual([10, 24, 1, 4])
+      expect(() => lits.run(`(juxt)`)).toThrow()
     })
   })
 
   describe(`complement`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((complement >) 4 6)`)).toBe(true)
-      expect(lispish.run(`((complement =) 3 3)`)).toBe(false)
-      expect(() => lispish.run(`(complement)`)).toThrow()
-      expect(() => lispish.run(`(complement > <)`)).toThrow()
+      expect(lits.run(`((complement >) 4 6)`)).toBe(true)
+      expect(lits.run(`((complement =) 3 3)`)).toBe(false)
+      expect(() => lits.run(`(complement)`)).toThrow()
+      expect(() => lits.run(`(complement > <)`)).toThrow()
     })
   })
 
   describe(`every-pred`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`)).toBe(true)
-      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(false)
-      expect(lispish.run(`((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`)).toBe(false)
-      expect(() => lispish.run(`(every-pred)`)).toThrow()
+      expect(lits.run(`((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`)).toBe(true)
+      expect(lits.run(`((every-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(false)
+      expect(lits.run(`((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`)).toBe(false)
+      expect(() => lits.run(`(every-pred)`)).toThrow()
     })
   })
 
   describe(`some-pred`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(true)
-      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) :A :M)`)).toBe(true)
-      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) [10 20] [20 10])`)).toBe(false)
-      expect(lispish.run(`((some-pred string? #(> (count %1) 3)) "Albert" [10 20])`)).toBe(true)
-      expect(() => lispish.run(`(some-pred)`)).toThrow()
+      expect(lits.run(`((some-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(true)
+      expect(lits.run(`((some-pred string? #(> (count %1) 3)) :A :M)`)).toBe(true)
+      expect(lits.run(`((some-pred string? #(> (count %1) 3)) [10 20] [20 10])`)).toBe(false)
+      expect(lits.run(`((some-pred string? #(> (count %1) 3)) "Albert" [10 20])`)).toBe(true)
+      expect(() => lits.run(`(some-pred)`)).toThrow()
     })
   })
 
   describe(`fnil`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`((fnil + 1 2) 0 0)`)).toBe(0)
-      expect(lispish.run(`((fnil + 1 2) nil 0)`)).toBe(1)
-      expect(lispish.run(`((fnil + 1 2) 0 nil)`)).toBe(2)
-      expect(lispish.run(`((fnil + 1 2) nil nil)`)).toBe(3)
-      expect(() => lispish.run(`(fnil)`)).toThrow()
-      expect(() => lispish.run(`(fnil +)`)).toThrow()
+      expect(lits.run(`((fnil + 1 2) 0 0)`)).toBe(0)
+      expect(lits.run(`((fnil + 1 2) nil 0)`)).toBe(1)
+      expect(lits.run(`((fnil + 1 2) 0 nil)`)).toBe(2)
+      expect(lits.run(`((fnil + 1 2) nil nil)`)).toBe(3)
+      expect(() => lits.run(`(fnil)`)).toThrow()
+      expect(() => lits.run(`(fnil +)`)).toThrow()
     })
   })
 })

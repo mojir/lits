@@ -2,38 +2,38 @@ A lisp implementation in Typescript. Could be used in browser, node.js or as a C
 
 # REPL
 ## Documentation
-[mojir.github.io/lispish](https://mojir.github.io/lispish)
+[mojir.github.io/lits](https://mojir.github.io/lits)
 ## Install
 ```
-npm i -g lispish
+npm i -g lits-parser
 ```
 ## Repl usage
-Start the lispish REPL in a terminal by enter `lispish`
+Start the lits REPL in a terminal by enter `lits`
 * Tab completion
 * History stored on file
 ```
-$ lispish
+$ lits
 Type "`help" for more information.
-LISPISH> (+ 7 4)
+LITS> (+ 7 4)
 11
-LISPISH> (let ((day (* 24 60 60 1000))) (* 7 day)) ; Ever wondered how many milliseconds there are in a week?
+LITS> (let ((day (* 24 60 60 1000))) (* 7 day)) ; Ever wondered how many milliseconds there are in a week?
 604800000
 ```
 ```
-$ lispish --help
-Usage: lispish [options]
+$ lits --help
+Usage: lits [options]
 
 Options:
   -g ...                          Global variables as a JSON string
   -G ...                          Global variables file (.json file)
-  -f ...                          .lispish file
-  -e ...                          Lispish expression
+  -f ...                          .lits file
+  -e ...                          Lits expression
   -h, --help                      Show this help
   -h, --help <builtin function>   Show help for <builtin function>
-  -v, --version                   Print lispish version
+  -v, --version                   Print lits version
 ```
 ```
-$ lispish -e "(/ 81 9)"
+$ lits -e "(/ 81 9)"
 9
 ```
 
@@ -41,16 +41,16 @@ $ lispish -e "(/ 81 9)"
 ## Install api
 
 ```
-npm i lispish
+npm i lits-parser
 ```
 
 ## How to use?
 
 ```ts
-import { Lispish } from 'lispish'
+import { Lits } from 'lits-parser'
 
-const lispish = new Lispish()
-lispish.run('(+ 1 2 3 4)'); // returns 10
+const lits = new Lits()
+lits.run('(+ 1 2 3 4)'); // returns 10
 ```
 
 # Builtin Functions
@@ -287,7 +287,7 @@ lispish.run('(+ 1 2 3 4)'); // returns 10
 * equal?
 * get-path
 * inst-ms
-* lispish-version
+* lits-version
 * not
 * not=
 * write!

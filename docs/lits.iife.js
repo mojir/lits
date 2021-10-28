@@ -1,4 +1,4 @@
-var Lispish = (function (exports) {
+var Lits = (function (exports) {
     'use strict';
 
     /*! *****************************************************************************
@@ -252,7 +252,7 @@ var Lispish = (function (exports) {
             typeof value !== "object" ||
             Array.isArray(value) ||
             value instanceof RegExp ||
-            isLispishFunction(value)) &&
+            isLitsFunction(value)) &&
             !Array.isArray(value)) {
             throw TypeError("Expected object or array, got: " + value + " type=\"" + typeof value + "\"");
         }
@@ -289,15 +289,15 @@ var Lispish = (function (exports) {
             throw Error("Wrong number of arguments, expected an even number, got " + length);
         }
     }
-    function isLispishFunction(func) {
+    function isLitsFunction(func) {
         if (func === null || typeof func !== "object") {
             return false;
         }
         return !!func[FUNCTION_SYMBOL];
     }
-    function assertLispishFunction(func) {
-        if (!isLispishFunction(func)) {
-            throw Error("Expected lispish function, got " + JSON.stringify(func));
+    function assertLitsFunction(func) {
+        if (!isLitsFunction(func)) {
+            throw Error("Expected lits function, got " + JSON.stringify(func));
         }
     }
     function assertStringArray(value) {
@@ -366,7 +366,7 @@ var Lispish = (function (exports) {
             typeof value !== "object" ||
             Array.isArray(value) ||
             value instanceof RegExp ||
-            isLispishFunction(value));
+            isLitsFunction(value));
     }
     function isArr(value) {
         return Array.isArray(value);
@@ -755,7 +755,7 @@ var Lispish = (function (exports) {
                 }
                 return { name: name };
             });
-            var lispishFunction = (_b = {},
+            var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.type = "user-defined",
                 _b.name = name,
@@ -768,9 +768,9 @@ var Lispish = (function (exports) {
                 _b.functionContext = functionContext,
                 _b);
             if (expressionName === "fn") {
-                return lispishFunction;
+                return litsFunction;
             }
-            contextStack.globalContext[name] = { value: lispishFunction };
+            contextStack.globalContext[name] = { value: litsFunction };
             return null;
         };
     }
@@ -2012,7 +2012,7 @@ var Lispish = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertColl(coll);
                 assertStringOrNumber(key);
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 return update(coll, key, fn, params, contextStack, executeFunction);
             },
             validate: function (node) { return assertLength({ min: 3 }, node); },
@@ -2023,7 +2023,7 @@ var Lispish = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 assertColl(originalColl);
                 assertArr(keys);
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 if (keys.length === 1) {
                     assertStringOrNumber(keys[0]);
                     return update(originalColl, keys[0], fn, params, contextStack, executeFunction);
@@ -2085,7 +2085,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertColl(coll);
                 if (Array.isArray(coll)) {
                     return coll.every(function (elem) { return executeFunction(fn, [elem], contextStack); });
@@ -2101,7 +2101,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertColl(coll);
                 if (Array.isArray(coll)) {
                     return coll.some(function (elem) { return executeFunction(fn, [elem], contextStack); });
@@ -2117,7 +2117,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertColl(coll);
                 if (Array.isArray(coll)) {
                     return !coll.some(function (elem) { return executeFunction(fn, [elem], contextStack); });
@@ -2133,7 +2133,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertColl(coll);
                 if (Array.isArray(coll)) {
                     return !coll.every(function (elem) { return executeFunction(fn, [elem], contextStack); });
@@ -2150,7 +2150,7 @@ var Lispish = (function (exports) {
     var evaluateMap = function (params, contextStack, _a) {
         var executeFunction = _a.executeFunction;
         var fn = params[0], firstList = params[1];
-        assertLispishFunction(fn);
+        assertLitsFunction(fn);
         assertSeq(firstList);
         var isStringSeq = isString(firstList);
         var length = firstList.length;
@@ -2234,7 +2234,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertSeq(seq);
                 if (Array.isArray(seq)) {
                     return seq.filter(function (elem) { return executeFunction(fn, [elem], contextStack); });
@@ -2283,7 +2283,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertSeq(seq);
                 if (isString(seq)) {
                     var index = seq.split("").findIndex(function (elem) { return executeFunction(fn, [elem], contextStack); });
@@ -2331,7 +2331,7 @@ var Lispish = (function (exports) {
             evaluate: function (params, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0];
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 if (params.length === 2) {
                     var arr = params[1];
                     assertSeq(arr);
@@ -2384,7 +2384,7 @@ var Lispish = (function (exports) {
             evaluate: function (params, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0];
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 if (params.length === 2) {
                     var seq = params[1];
                     assertSeq(seq);
@@ -2546,7 +2546,7 @@ var Lispish = (function (exports) {
                 var _c;
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertSeq(seq);
                 if (seq.length === 0) {
                     return null;
@@ -2571,7 +2571,7 @@ var Lispish = (function (exports) {
                         result_1.sort(compare);
                     }
                     else {
-                        assertLispishFunction(comparer);
+                        assertLitsFunction(comparer);
                         result_1.sort(function (a, b) {
                             var compareValue = executeFunction(comparer, [a, b], contextStack);
                             assertFiniteNumber(compareValue);
@@ -2586,7 +2586,7 @@ var Lispish = (function (exports) {
                 }
                 else {
                     result.sort(function (a, b) {
-                        assertLispishFunction(comparer);
+                        assertLitsFunction(comparer);
                         var compareValue = executeFunction(comparer, [a, b], contextStack);
                         assertFiniteNumber(compareValue);
                         return compareValue;
@@ -2613,7 +2613,7 @@ var Lispish = (function (exports) {
                         });
                     }
                     else {
-                        assertLispishFunction(comparer);
+                        assertLitsFunction(comparer);
                         result_2.sort(function (a, b) {
                             var aKey = executeFunction(keyfn, [a], contextStack);
                             var bKey = executeFunction(keyfn, [b], contextStack);
@@ -2633,7 +2633,7 @@ var Lispish = (function (exports) {
                     });
                 }
                 else {
-                    assertLispishFunction(comparer);
+                    assertLitsFunction(comparer);
                     result.sort(function (a, b) {
                         var aKey = executeFunction(keyfn, [a], contextStack);
                         var bKey = executeFunction(keyfn, [b], contextStack);
@@ -2672,7 +2672,7 @@ var Lispish = (function (exports) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq);
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 var result = [];
                 for (var _i = 0, seq_1 = seq; _i < seq_1.length; _i++) {
                     var item = seq_1[_i];
@@ -2713,7 +2713,7 @@ var Lispish = (function (exports) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq);
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 if (Array.isArray(seq)) {
                     var from_1 = seq.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack); });
                     return seq.slice(from_1);
@@ -2807,7 +2807,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], input = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertSeq(input);
                 if (Array.isArray(input)) {
                     return input.filter(function (elem) { return !executeFunction(fn, [elem], contextStack); });
@@ -2851,7 +2851,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertSeq(seq);
                 var seqIsArray = Array.isArray(seq);
                 var arr = seqIsArray ? seq : seq.split("");
@@ -2925,7 +2925,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 assertSeq(seq);
                 var isStringSeq = isString(seq);
                 var oldValue = undefined;
@@ -3518,7 +3518,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "1.0.0-alpha.8";
+    var version = "1.0.0-alpha.1";
 
     var miscNormalExpression = {
         'not=': {
@@ -3650,11 +3650,11 @@ var Lispish = (function (exports) {
             evaluate: function (params, contextStack) {
                 if (params.length === 0) {
                     // eslint-disable-next-line no-console
-                    console.warn("*** LISPISH DEBUG ***\n" + contextStackToString(contextStack) + "\n");
+                    console.warn("*** LITS DEBUG ***\n" + contextStackToString(contextStack) + "\n");
                     return null;
                 }
                 // eslint-disable-next-line no-console
-                console.warn("*** LISPISH DEBUG ***\n" + JSON.stringify(params[0], null, 2) + "\n");
+                console.warn("*** LITS DEBUG ***\n" + JSON.stringify(params[0], null, 2) + "\n");
                 return asAny(params[0]);
             },
             validate: function (node) { return assertLength({ max: 1 }, node); },
@@ -3685,7 +3685,7 @@ var Lispish = (function (exports) {
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
-        'lispish-version': {
+        'lits-version': {
             evaluate: function () {
                 return version;
             },
@@ -3711,7 +3711,7 @@ var Lispish = (function (exports) {
         var value = contextEntry.value;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         var name = value.name;
-        if (isLispishFunction(value)) {
+        if (isLitsFunction(value)) {
             if (name) {
                 return "<" + value.type + " function " + name + ">";
             }
@@ -3801,7 +3801,7 @@ var Lispish = (function (exports) {
             evaluate: function (params, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0], first = params[1], rest = params.slice(2);
-                assertLispishFunction(fn);
+                assertLitsFunction(fn);
                 if (params.length === 1) {
                     return null;
                 }
@@ -3858,7 +3858,7 @@ var Lispish = (function (exports) {
         'function?': {
             evaluate: function (_a) {
                 var first = _a[0];
-                return isLispishFunction(first);
+                return isLitsFunction(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
@@ -4276,7 +4276,7 @@ var Lispish = (function (exports) {
             evaluate: function (_a, contextStack, _b) {
                 var func = _a[0], params = _a.slice(1);
                 var executeFunction = _b.executeFunction;
-                assertLispishFunction(func);
+                assertLitsFunction(func);
                 var paramsLength = params.length;
                 var last = params[paramsLength - 1];
                 assertArr(last);
@@ -4653,7 +4653,7 @@ var Lispish = (function (exports) {
         }
     }
     var executeFunction = function (fn, params, contextStack) {
-        if (isLispishFunction(fn)) {
+        if (isLitsFunction(fn)) {
             return functionExecutors[fn.type](fn, params, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
         }
         if (Array.isArray(fn)) {
@@ -5380,8 +5380,8 @@ var Lispish = (function (exports) {
         return Cache;
     }());
 
-    var Lispish = /** @class */ (function () {
-        function Lispish(config) {
+    var Lits = /** @class */ (function () {
+        function Lits(config) {
             if (config === void 0) { config = {}; }
             if (config.astCacheSize && config.astCacheSize > 0) {
                 this.astCache = new Cache(config.astCacheSize);
@@ -5390,29 +5390,29 @@ var Lispish = (function (exports) {
                 this.astCache = null;
             }
         }
-        Lispish.prototype.run = function (program, params) {
+        Lits.prototype.run = function (program, params) {
             var ast = this.generateAst(program);
             var result = this.evaluate(ast, params);
             return result;
         };
-        Lispish.prototype.context = function (program, params) {
+        Lits.prototype.context = function (program, params) {
             if (params === void 0) { params = {}; }
             var contextStack = createContextStackFromParams(params);
             var ast = this.generateAst(program);
             evaluate(ast, contextStack);
             return contextStack.globalContext;
         };
-        Lispish.prototype.tokenize = function (program) {
+        Lits.prototype.tokenize = function (program) {
             return tokenize(program);
         };
-        Lispish.prototype.parse = function (tokens) {
+        Lits.prototype.parse = function (tokens) {
             return parse(tokens);
         };
-        Lispish.prototype.evaluate = function (ast, params) {
+        Lits.prototype.evaluate = function (ast, params) {
             var contextStack = createContextStackFromParams(params);
             return evaluate(ast, contextStack);
         };
-        Lispish.prototype.generateAst = function (program) {
+        Lits.prototype.generateAst = function (program) {
             var _a;
             if (this.astCache) {
                 var cachedAst = this.astCache.get(program);
@@ -5425,7 +5425,7 @@ var Lispish = (function (exports) {
             (_a = this.astCache) === null || _a === void 0 ? void 0 : _a.set(program, ast);
             return ast;
         };
-        return Lispish;
+        return Lits;
     }());
     function createContextStackFromParams(params) {
         var _a, _b;
@@ -5435,8 +5435,8 @@ var Lispish = (function (exports) {
         return contextStack;
     }
 
-    exports.Lispish = Lispish;
-    exports.isLispishFunction = isLispishFunction;
+    exports.Lits = Lits;
+    exports.isLitsFunction = isLitsFunction;
     exports.normalExpressionKeys = normalExpressionKeys;
     exports.reservedNames = reservedNames;
     exports.specialExpressionKeys = specialExpressionKeys;
@@ -5446,4 +5446,4 @@ var Lispish = (function (exports) {
     return exports;
 
 })({});
-//# sourceMappingURL=lispish.iife.js.map
+//# sourceMappingURL=lits.iife.js.map

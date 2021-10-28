@@ -80,7 +80,7 @@ export type BuiltinFunction = {
   name: string
 }
 
-export type LispishFunction =
+export type LitsFunction =
   | UserDefinedFunction
   | BuiltinFunction
   | PartialFunction
@@ -92,7 +92,7 @@ export type LispishFunction =
   | SomePredFunction
   | FNilFunction
 
-export type LispishFunctionType = LispishFunction[`type`]
+export type LitsFunctionType = LitsFunction[`type`]
 
 export type NodeType =
   | `Number`

@@ -1,21 +1,21 @@
-import { Lispish } from '../src'
+import { Lits } from '../src'
 
-let lispish: Lispish
+let lits: Lits
 
 beforeEach(() => {
-  lispish = new Lispish()
+  lits = new Lits()
 })
 
 describe(`regexpShorthand`, () => {
   test(`samples`, () => {
-    expect(lispish.run(`#" "g`)).toEqual(/ /g)
-    expect(lispish.run(`#"a"gi`)).toEqual(/a/gi)
-    expect(lispish.run(`#"a"ig`)).toEqual(/a/gi)
-    expect(lispish.run(`#"a"i`)).toEqual(/a/i)
-    expect(() => lispish.run(`#"a"is`)).toThrow()
-    expect(() => lispish.run(`#"a"s`)).toThrow()
-    expect(() => lispish.run(`#"a"ii`)).toThrow()
-    expect(() => lispish.run(`#"a"gg`)).toThrow()
-    expect(lispish.run(`#"^abc"`)).toEqual(/^abc/)
+    expect(lits.run(`#" "g`)).toEqual(/ /g)
+    expect(lits.run(`#"a"gi`)).toEqual(/a/gi)
+    expect(lits.run(`#"a"ig`)).toEqual(/a/gi)
+    expect(lits.run(`#"a"i`)).toEqual(/a/i)
+    expect(() => lits.run(`#"a"is`)).toThrow()
+    expect(() => lits.run(`#"a"s`)).toThrow()
+    expect(() => lits.run(`#"a"ii`)).toThrow()
+    expect(() => lits.run(`#"a"gg`)).toThrow()
+    expect(lits.run(`#"^abc"`)).toEqual(/^abc/)
   })
 })

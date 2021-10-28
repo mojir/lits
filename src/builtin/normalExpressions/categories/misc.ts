@@ -8,7 +8,7 @@ import {
   assertString,
   compare,
   deepEqual,
-  isLispishFunction,
+  isLitsFunction,
 } from '../../../utils'
 import { getPath } from '../../getPath'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -136,11 +136,11 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: (params, contextStack): Any => {
       if (params.length === 0) {
         // eslint-disable-next-line no-console
-        console.warn(`*** LISPISH DEBUG ***\n${contextStackToString(contextStack)}\n`)
+        console.warn(`*** LITS DEBUG ***\n${contextStackToString(contextStack)}\n`)
         return null
       }
       // eslint-disable-next-line no-console
-      console.warn(`*** LISPISH DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
+      console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
       return asAny(params[0])
     },
     validate: node => assertLength({ max: 1 }, node),
@@ -169,7 +169,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },
-  'lispish-version': {
+  'lits-version': {
     evaluate: (): Any => {
       return version
     },
@@ -200,7 +200,7 @@ function valueToString(contextEntry: ContextEntry): string {
   const { value } = contextEntry
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const name: string | undefined = (value as any).name
-  if (isLispishFunction(value)) {
+  if (isLitsFunction(value)) {
     if (name) {
       return `<${value.type} function ${name}>`
     } else {

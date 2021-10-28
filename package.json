@@ -1,17 +1,19 @@
 {
-  "name": "lispish",
-  "version": "1.0.0-alpha.8",
-  "description": "A lispish implementation in Typescript",
+  "name": "lits-parser",
+  "version": "1.0.0-alpha.1",
+  "description": "A lisp implementation in Typescript",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "iife": "dist/lispish.iife.js",
-  "bin": "cli/index.js",
+  "iife": "dist/lits.iife.js",
+  "bin": {
+    "lits": "cli/index.js"
+  },
   "scripts": {
     "lint": "eslint \"src/**/*.ts\" \"__tests__/**/*.ts\" \"cli/**/*.js\" \"cli/**/*.js\"",
     "build": "node ./scripts/generateVersion.js && rm -rf dist && rollup -c",
     "test": "jest --collect-coverage",
     "compile": "tsc -p ./tsconfig.json --noEmit",
-    "lispish": "node ./cli/index.js",
+    "lits": "node ./cli/index.js",
     "build-docs": "node ./scripts/docs/buildDocs.js",
     "open-docs": "open-cli ./docs/index.html",
     "open-lcov": "open-cli ./coverage/lcov-report/index.html"
@@ -54,7 +56,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mojir/lispish.git"
+    "url": "git+https://github.com/mojir/lits.git"
   },
   "keywords": [
     "LISP"
@@ -65,8 +67,8 @@
   "author": "Albert Mojir",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mojir/lispish/issues"
+    "url": "https://github.com/mojir/lits/issues"
   },
-  "homepage": "https://mojir.github.io/lispish/#index",
+  "homepage": "https://mojir.github.io/lits/#index",
   "dependencies": {}
 }

@@ -1,10 +1,10 @@
-import { Lispish } from '../src/'
+import { Lits } from '../src/'
 import { tokenizeNumber } from '../src/tokenizer/tokenizers'
 
-let lispish: Lispish
+let lits: Lits
 
 beforeEach(() => {
-  lispish = new Lispish()
+  lits = new Lits()
 })
 
 describe(`parse numbers`, () => {
@@ -33,7 +33,7 @@ describe(`parse numbers`, () => {
     numberSamples.forEach(sample => {
       test(`number sample: ${sample}`, () => {
         expect(tokenizeNumber(sample, 0)).toEqual([sample.length, { type: `number`, value: sample }])
-        expect(lispish.run(sample)).toEqual(Number(sample))
+        expect(lits.run(sample)).toEqual(Number(sample))
       })
     })
   })

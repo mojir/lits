@@ -2,9 +2,9 @@
 <html lang="en">
 
 <head>
-  <title>Lispish</title>
+  <title>Lits</title>
   <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
-  <meta name="description" content="A reference and a playground for Lispish - a Typescript Lisp implementation">
+  <meta name="description" content="A reference and a playground for Lits - a Typescript Lisp implementation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,18 +14,18 @@
 <header id="top-bar">
   <div class="row">
     <div class="column"></div>
-    <div class="column header">Lispish</div>
-    <div class="column right version"><span>v1.0.0-alpha.8</span></div>
+    <div class="column header">Lits</div>
+    <div class="column right version"><span>v1.0.0-alpha.1</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
     
 <div id="index" class="content">
-  <h1>Welcome to Lispish!</h1>
+  <h1>Welcome to Lits!</h1>
   <br />
     <div class="text">
-    <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
-    <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
+    <p>Lits is a Lisp dialect made to work well in a browser or Node environment.</p>
+    <p>Quite a lot in Lits is not what you're used to if you've done some Lisp before.</p>
     <ul>
       <li>Only two sequence type exists: <pre>array</pre> and <pre>string</pre>.</li>
       <li>No quotes.</li>
@@ -34,7 +34,7 @@
       <li>100% test coverage</li>
     </ul>
     <p>You can see some examples and find documentation of all built-in function to the left.</p>
-    <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+    <p>For more instruction on how to install and use Lits as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lits">https://github.com/mojir/lits</a></p>
     <p/>
     <p>Happy coding!</p>
   </div>
@@ -115,7 +115,7 @@
         <div class="row example-item">
           <div class="column wide">
             <div class="example-name">Translations lib</div>
-            <div class="example-description">A Lispish take on i18n.</div>
+            <div class="example-description">A Lits take on i18n.</div>
           </div>
           <div class="column right">
             <span class="button" onclick="setPlayground('translations-lib')">Show in playground</span>
@@ -1353,8 +1353,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,4,10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "Alber" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,3,6,7] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 "Albert") <span class="gray">=> "Abrt" </span> </span></pre>
   </div>
 </div>
 
@@ -1372,8 +1372,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 3 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "r" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 2 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___double_quote___Albert___double_quote___)')"> <span class="icon-button">▶</span> (rand-nth! "Albert") <span class="gray">=> "l" </span> </span></pre>
   </div>
 </div>
 
@@ -1391,8 +1391,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,4,8,10,2,7,3,9,1,6] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "rjoltiMA bre" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,10,8,3,6,1,2,7,5,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___double_quote___Albert Mojir___double_quote___)')"> <span class="icon-button">▶</span> (shuffle "Albert Mojir") <span class="gray">=> "tj lebroiMrA" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -2326,9 +2326,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.7213563614399243 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.007184141611018353 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 0.4073262668266364 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.29462823478257616 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.008816196068932773 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.0624437850041657 </span> </span></pre>
   </div>
 </div>
 
@@ -2347,8 +2347,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 2 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 80 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 5 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 53 </span> </span></pre>
   </div>
 </div>
 
@@ -2997,7 +2997,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635433439862 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635437410950 </span> </span></pre>
   </div>
 </div>
 
@@ -3107,20 +3107,20 @@
 </div>
 
 
-<div id="lispish-version" class="content function">
-  <div class="function-header">lispish-version</div>
+<div id="lits-version" class="content function">
+  <div class="function-header">lits-version</div>
   
-  <p>Returns the lispish version.</p>
+  <p>Returns the lits version.</p>
   <label>Syntax</label>
   <div class="indent">
-    <pre>lispish-version => string</pre>
+    <pre>lits-version => string</pre>
   </div>
 
   <label>No arguments</label>
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lispish-version)')"> <span class="icon-button">▶</span> (lispish-version) <span class="gray">=> "1.0.0-alpha.8" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lits-version)')"> <span class="icon-button">▶</span> (lits-version) <span class="gray">=> "1.0.0-alpha.1" </span> </span></pre>
   </div>
 </div>
 
@@ -5208,7 +5208,7 @@
 <li id="equal_question_link" onclick="showPage('equal_question')">equal?</li>
 <li id="get-path_link" onclick="showPage('get-path')">get-path</li>
 <li id="inst-ms_link" onclick="showPage('inst-ms')">inst-ms</li>
-<li id="lispish-version_link" onclick="showPage('lispish-version')">lispish-version</li>
+<li id="lits-version_link" onclick="showPage('lits-version')">lits-version</li>
 <li id="not_link" onclick="showPage('not')">not</li>
 <li id="not_equal_link" onclick="showPage('not_equal')">not=</li>
 <li id="write_exclamation_link" onclick="showPage('write_exclamation')">write!</li>
@@ -5264,7 +5264,7 @@
   </div>
 </div>
 
-  <script src="lispish.iife.js"></script>
+  <script src="lits.iife.js"></script>
   <script src='examples.js'></script>
   <script src='scripts.js'></script>
 </body>

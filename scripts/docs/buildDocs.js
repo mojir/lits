@@ -2,12 +2,12 @@
 const { version } = require('../../package.json')
 const { functionReference, categories } = require('../../cli/reference')
 const examples = require('./examples')
-const Lispish = require('../../dist/index')
+const Lits = require('../../dist/index')
 const path = require('path')
 const fs = require('fs')
 
 const DOC_DIR = path.resolve(__dirname, '../../docs')
-const lispish = new Lispish.Lispish()
+const lits = new Lits.Lits()
 
 setupDocDir()
 copyScripts()
@@ -30,7 +30,7 @@ ${getHtmlHeader()}
   </main>
   ${getSideBar()}
   ${getPlayground()}
-  <script src="lispish.iife.js"></script>
+  <script src="lits.iife.js"></script>
   <script src='examples.js'></script>
   <script src='scripts.js'></script>
 </body>
@@ -44,7 +44,7 @@ function getTopBar() {
 <header id="top-bar">
   <div class="row">
     <div class="column"></div>
-    <div class="column header">Lispish</div>
+    <div class="column header">Lits</div>
     <div class="column right version"><span>v${version}</span></div>
   </div>
 </header>`
@@ -53,9 +53,9 @@ function getTopBar() {
 function getHtmlHeader() {
   return `
 <head>
-  <title>Lispish</title>
+  <title>Lits</title>
   <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
-  <meta name="description" content="A reference and a playground for Lispish - a Typescript Lisp implementation">
+  <meta name="description" content="A reference and a playground for Lits - a Typescript Lisp implementation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -117,11 +117,11 @@ function getPlayground() {
 function getIndexPage() {
   return `
 <div id="index" class="content">
-  <h1>Welcome to Lispish!</h1>
+  <h1>Welcome to Lits!</h1>
   <br />
     <div class="text">
-    <p>Lispish is a Lisp dialect made to work well in a browser or Node environment.</p>
-    <p>Quite a lot in Lispish is not what you're used to if you've done some Lisp before.</p>
+    <p>Lits is a Lisp dialect made to work well in a browser or Node environment.</p>
+    <p>Quite a lot in Lits is not what you're used to if you've done some Lisp before.</p>
     <ul>
       <li>Only two sequence type exists: <pre>array</pre> and <pre>string</pre>.</li>
       <li>No quotes.</li>
@@ -130,7 +130,7 @@ function getIndexPage() {
       <li>100% test coverage</li>
     </ul>
     <p>You can see some examples and find documentation of all built-in function to the left.</p>
-    <p>For more instruction on how to install and use Lispish as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lispish">https://github.com/mojir/lispish</a></p>
+    <p>For more instruction on how to install and use Lits as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lits">https://github.com/mojir/lits</a></p>
     <p/>
     <p>Happy coding!</p>
   </div>
@@ -198,7 +198,7 @@ function getDocumentationContent(docObj) {
         var result
         var escapedExample = escapeExample(example)
         try {
-          result = lispish.run(example)
+          result = lits.run(example)
           var stringifiedResult = stringifyValue(result)
 
           return `<pre><span class="example" onclick="addToPlayground('${escapedExample}')"> <span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifiedResult} </span> </span></pre>`
@@ -259,7 +259,7 @@ function setupDocDir() {
 }
 
 function copyScripts() {
-  fs.copyFileSync(path.join(__dirname, '../../dist/lispish.iife.js'), path.join(DOC_DIR, 'lispish.iife.js'))
+  fs.copyFileSync(path.join(__dirname, '../../dist/lits.iife.js'), path.join(DOC_DIR, 'lits.iife.js'))
   fs.copyFileSync(path.join(__dirname, `scripts.js`), path.join(DOC_DIR, `scripts.js`))
   const examplesContent = fs.readFileSync(path.join(__dirname, `examples.js`), { encoding: 'utf-8' })
   fs.writeFileSync(path.join(DOC_DIR, `examples.js`), examplesContent.replace('module.exports =', 'var examples ='))
@@ -274,7 +274,7 @@ function copyFavicon() {
 }
 
 function stringifyValue(value) {
-  if (Lispish.isLispishFunction(value)) {
+  if (Lits.isLitsFunction(value)) {
     if (value.builtin) {
       return `&lt;builtin function ${value.builtin}&gt;`
     } else {

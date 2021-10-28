@@ -1,16 +1,16 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Lispish } from '../src'
+import { Lits } from '../src'
 
-let lispish: Lispish
+let lits: Lits
 
 beforeEach(() => {
-  lispish = new Lispish()
+  lits = new Lits()
 })
 
 describe(`object litterals`, () => {
   test(`samples`, () => {
-    expect(lispish.run(`{:1 1, :2 2}`)).toEqual({ 1: 1, 2: 2 })
-    expect(lispish.run(`{}`)).toEqual({})
+    expect(lits.run(`{:1 1, :2 2}`)).toEqual({ 1: 1, 2: 2 })
+    expect(lits.run(`{}`)).toEqual({})
   })
 })

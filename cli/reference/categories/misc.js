@@ -255,16 +255,16 @@ module.exports = {
     description: `If \`value\` is falsy it throws AssertionError with \`message\`. If no \`message\` is provided, message is set to \`value\`.`,
     examples: [`(try (assert 0 "Expected a positive value") ((e) e))`],
   },
-  'lispish-version': {
-    name: `lispish-version`,
+  'lits-version': {
+    name: `lits-version`,
     category: `Misc`,
-    linkName: `lispish-version`,
+    linkName: `lits-version`,
     returns: {
       type: `string`,
     },
     arguments: [],
-    description: `Returns the lispish version.`,
-    examples: [`(lispish-version)`],
+    description: `Returns the lits version.`,
+    examples: [`(lits-version)`],
   },
   'equal?': {
     name: `equal?`,

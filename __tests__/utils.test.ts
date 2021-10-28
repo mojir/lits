@@ -1,13 +1,13 @@
-import { AstNode, FUNCTION_SYMBOL, LispishFunction, NameNode, NormalExpressionNode } from '../src/parser/interface'
+import { AstNode, FUNCTION_SYMBOL, LitsFunction, NameNode, NormalExpressionNode } from '../src/parser/interface'
 import {
   asAstNode,
-  asLispishFunction,
+  asLitsFunction,
   asNameNode,
   asNotUndefined,
   assertArr,
   assertInteger,
   assertLengthEven,
-  assertLispishFunction,
+  assertLitsFunction,
   assertNameNode,
   assertNegativeNumber,
   assertNonNegativeNumber,
@@ -24,7 +24,7 @@ import {
   assertRegExp,
   assertString,
   asNonEmptyString,
-  isLispishFunction,
+  isLitsFunction,
   asFiniteNumber,
   assertLength,
   assertSeq,
@@ -74,9 +74,9 @@ describe(`utils`, () => {
 
     expect(() => assertAny(node)).not.toThrow()
   })
-  test(`asLispishFunction`, () => {
-    expect(() => asLispishFunction(undefined)).toThrow()
-    const lf: LispishFunction = {
+  test(`asLitsFunction`, () => {
+    expect(() => asLitsFunction(undefined)).toThrow()
+    const lf: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       arguments: {
@@ -87,7 +87,7 @@ describe(`utils`, () => {
       name: undefined,
       body: [],
     }
-    expect(asLispishFunction(lf)).toBe(lf)
+    expect(asLitsFunction(lf)).toBe(lf)
   })
   test(`asNameNode`, () => {
     expect(() => asNameNode(undefined)).toThrow()
@@ -251,8 +251,8 @@ describe(`utils`, () => {
     expect(() => assertLength({ min: 3, max: 1 }, node([1, 2, 3, 4, 5, 6]))).toThrow()
   })
 
-  test(`assertLispishFunction`, () => {
-    const lf: LispishFunction = {
+  test(`assertLitsFunction`, () => {
+    const lf: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       arguments: {
@@ -263,9 +263,9 @@ describe(`utils`, () => {
       name: undefined,
       body: [],
     }
-    expect(() => assertLispishFunction(lf)).not.toThrow()
-    expect(() => assertLispishFunction(1)).toThrow()
-    expect(() => assertLispishFunction({})).toThrow()
+    expect(() => assertLitsFunction(lf)).not.toThrow()
+    expect(() => assertLitsFunction(1)).toThrow()
+    expect(() => assertLitsFunction({})).toThrow()
   })
   test(`assertPositiveNumber`, () => {
     expect(() => assertPositiveNumber(-1)).toThrow()
@@ -481,8 +481,8 @@ describe(`utils`, () => {
     expect(() => assertStringOrRegExp({})).toThrow()
   })
 
-  test(`isLispishFunction`, () => {
-    const lf1: LispishFunction = {
+  test(`isLitsFunction`, () => {
+    const lf1: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       arguments: {
@@ -493,42 +493,42 @@ describe(`utils`, () => {
       name: undefined,
       body: [],
     }
-    const lf2: LispishFunction = {
+    const lf2: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `builtin`,
       name: `+`,
     }
-    const lf3: LispishFunction = {
+    const lf3: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `partial`,
       fn: { a: 10, b: 20 },
       params: [],
     }
-    const lf4: LispishFunction = {
+    const lf4: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `comp`,
       fns: [`x`],
     }
-    const lf5: LispishFunction = {
+    const lf5: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `constantly`,
       value: 10,
     }
-    expect(isLispishFunction(lf1)).toBe(true)
-    expect(isLispishFunction(lf2)).toBe(true)
-    expect(isLispishFunction(lf3)).toBe(true)
-    expect(isLispishFunction(lf4)).toBe(true)
-    expect(isLispishFunction(lf5)).toBe(true)
-    expect(isLispishFunction(``)).toBe(false)
-    expect(isLispishFunction(`1`)).toBe(false)
-    expect(isLispishFunction(0)).toBe(false)
-    expect(isLispishFunction(1)).toBe(false)
-    expect(isLispishFunction(true)).toBe(false)
-    expect(isLispishFunction(false)).toBe(false)
-    expect(isLispishFunction(null)).toBe(false)
-    expect(isLispishFunction(undefined)).toBe(false)
-    expect(isLispishFunction([])).toBe(false)
-    expect(isLispishFunction({})).toBe(false)
+    expect(isLitsFunction(lf1)).toBe(true)
+    expect(isLitsFunction(lf2)).toBe(true)
+    expect(isLitsFunction(lf3)).toBe(true)
+    expect(isLitsFunction(lf4)).toBe(true)
+    expect(isLitsFunction(lf5)).toBe(true)
+    expect(isLitsFunction(``)).toBe(false)
+    expect(isLitsFunction(`1`)).toBe(false)
+    expect(isLitsFunction(0)).toBe(false)
+    expect(isLitsFunction(1)).toBe(false)
+    expect(isLitsFunction(true)).toBe(false)
+    expect(isLitsFunction(false)).toBe(false)
+    expect(isLitsFunction(null)).toBe(false)
+    expect(isLitsFunction(undefined)).toBe(false)
+    expect(isLitsFunction([])).toBe(false)
+    expect(isLitsFunction({})).toBe(false)
   })
 
   test(`isNumber`, () => {

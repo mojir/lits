@@ -6,16 +6,10 @@ const readline = require(`readline`)
 const path = require(`path`)
 const fs = require(`fs`)
 const homeDir = require(`os`).homedir()
-const {
-  Lispish,
-  normalExpressionKeys,
-  specialExpressionKeys,
-  reservedNames,
-  isLispishFunction,
-} = require(`../dist/index`)
+const { Lits, normalExpressionKeys, specialExpressionKeys, reservedNames, isLitsFunction } = require(`../dist/index`)
 
 const historyResults = []
-const lispish = new Lispish()
+const lits = new Lits()
 const { functionReference } = require(`./reference`)
 
 const commands = [`\`help`, `\`quit`, `\`builtins`, `\`globalContext`, `\`GlobalContext`, `\`resetGlobalContext`]
@@ -25,7 +19,7 @@ const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]+)\s*$/
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const historyDir = path.join(homeDir, `.config`)
-const historyFile = path.join(historyDir, `lispish_history.txt`)
+const historyFile = path.join(historyDir, `lits_history.txt`)
 
 const config = processArguments(process.argv.slice(2))
 
@@ -47,7 +41,7 @@ if (config.expression) {
 
 function execute(expression) {
   try {
-    const result = lispish.run(expression, { globalContext: config.globalContext })
+    const result = lits.run(expression, { globalContext: config.globalContext })
     historyResults.unshift(result)
     if (historyResults.length > 9) {
       historyResults.length = 9
@@ -82,7 +76,7 @@ function executeExample(expression) {
   console.log = (...values) => outputs.push(values.map(value => formatValue(value)))
   console.error = (...values) => outputs.push(values.map(value => formatValue(value)))
   try {
-    const result = lispish.run(expression)
+    const result = lits.run(expression)
     const outputString = `Console: ` + outputs.map(output => output.join(`, `)).join(`  `)
     return `${formatValue(result)}    ${outputs.length > 0 ? outputString : ``}`
   } catch (error) {
@@ -98,7 +92,7 @@ function stringifyValue(value, indent) {
 }
 
 function formatValue(value) {
-  if (isLispishFunction(value)) {
+  if (isLitsFunction(value)) {
     return functionToString(value)
   }
 
@@ -172,7 +166,7 @@ function processArguments(args) {
         break
       case `-e`:
         if (!argument) {
-          console.error(`Missing lispish expression after -e`)
+          console.error(`Missing lits expression after -e`)
           process.exit(1)
         }
         config.expression = argument
@@ -205,7 +199,7 @@ function runREPL() {
   createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: `LISPISH> `,
+    prompt: `LITS> `,
     completer,
     next(rl) {
       console.log(`Type "\`help" for more information.`)
@@ -323,7 +317,7 @@ function printHelp() {
   console.log(`\`builtins                 Print all builtin functions
 \`globalContext            Print all global variables
 \`GlobalContext            Print all global variables (JSON.stringify)
-\`resetGlobalContext     Reset global variables
+\`resetGlobalContext       Reset all global variables
 \`help                     Print this help message
 \`help [builtin function]  Print help for [builtin function]
 \`quit                     Quit
@@ -331,16 +325,16 @@ function printHelp() {
 }
 
 function printUsage() {
-  console.log(`Usage: lispish [options]
+  console.log(`Usage: lits [options]
 
 Options:
   -g ...                          Global variables as a JSON string
   -G ...                          Global variables file (.json file)
-  -f ...                          .lispish file
-  -e ...                          Lispish expression
+  -f ...                          .lits file
+  -e ...                          Lits expression
   -h, --help                      Show this help
   -h, --help <builtin function>   Show help for <builtin function>
-  -v, --version                   Print lispish version
+  -v, --version                   Print lits version
 `)
 }
 

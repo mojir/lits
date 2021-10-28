@@ -5,7 +5,7 @@ import {
   AstNode,
   ExpressionNode,
   FUNCTION_SYMBOL,
-  LispishFunction,
+  LitsFunction,
   NameNode,
   NormalExpressionNode,
   NormalExpressionNodeName,
@@ -19,11 +19,11 @@ export function asAstNode(node: AstNode | undefined): AstNode {
   return node
 }
 
-export function asLispishFunction(value: unknown): LispishFunction {
-  if (isLispishFunction(value)) {
+export function asLitsFunction(value: unknown): LitsFunction {
+  if (isLitsFunction(value)) {
     return value
   }
-  throw Error(`Expected a Lispish function, got ${value}`)
+  throw Error(`Expected a Lits function, got ${value}`)
 }
 
 export function asNameNode(node: AstNode | undefined): NameNode {
@@ -221,7 +221,7 @@ export function assertObjectOrArray(value: unknown): asserts value is Obj | Arr 
       typeof value !== `object` ||
       Array.isArray(value) ||
       value instanceof RegExp ||
-      isLispishFunction(value)) &&
+      isLitsFunction(value)) &&
     !Array.isArray(value)
   ) {
     throw TypeError(`Expected object or array, got: ${value} type="${typeof value}"`)
@@ -267,16 +267,16 @@ export function assertLengthEven(node: NormalExpressionNode): void {
   }
 }
 
-export function isLispishFunction(func: unknown): func is LispishFunction {
+export function isLitsFunction(func: unknown): func is LitsFunction {
   if (func === null || typeof func !== `object`) {
     return false
   }
-  return !!(func as LispishFunction)[FUNCTION_SYMBOL]
+  return !!(func as LitsFunction)[FUNCTION_SYMBOL]
 }
 
-export function assertLispishFunction(func: unknown): asserts func is LispishFunction {
-  if (!isLispishFunction(func)) {
-    throw Error(`Expected lispish function, got ${JSON.stringify(func)}`)
+export function assertLitsFunction(func: unknown): asserts func is LitsFunction {
+  if (!isLitsFunction(func)) {
+    throw Error(`Expected lits function, got ${JSON.stringify(func)}`)
   }
 }
 
@@ -362,7 +362,7 @@ export function isObj(value: unknown): value is Obj {
     typeof value !== `object` ||
     Array.isArray(value) ||
     value instanceof RegExp ||
-    isLispishFunction(value)
+    isLitsFunction(value)
   )
 }
 

@@ -10,12 +10,12 @@ import {
   SomePredFunction,
   FNilFunction,
 } from '../../../parser/interface'
-import { assertArr, assertLength, assertLispishFunction, isArr, toAny } from '../../../utils'
+import { assertArr, assertLength, assertLitsFunction, isArr, toAny } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   apply: {
     evaluate: ([func, ...params]: Arr, contextStack, { executeFunction }): Any => {
-      assertLispishFunction(func)
+      assertLitsFunction(func)
       const paramsLength = params.length
       const last = params[paramsLength - 1]
       assertArr(last)

@@ -1,13 +1,13 @@
 import { tokenize } from '../src/tokenizer'
 import { parse } from '../src/parser'
 import { createContextStack, evaluate, evaluateAstNode } from '../src/evaluator'
-import { Lispish } from '../src'
+import { Lits } from '../src'
 import { Context } from '../src/evaluator/interface'
 
-let lispish: Lispish
+let lits: Lits
 
 beforeEach(() => {
-  lispish = new Lispish()
+  lits = new Lits()
 })
 
 const simpleProgram = `
@@ -95,45 +95,45 @@ describe(`Evaluator`, () => {
   })
 
   test(`normal expression with lambda`, () => {
-    expect(lispish.run(`((fn [x] (* x x)) 10)`)).toBe(100)
+    expect(lits.run(`((fn [x] (* x x)) 10)`)).toBe(100)
   })
 
-  test(`lispishFunction`, () => {
-    expect(lispish.run(`((fn [] 10))`)).toBe(10)
-    expect(lispish.run(`((fn [x] (x 10)) (fn [x] (* x x)))`)).toBe(100)
-    expect(lispish.run(`((fn [x] (x 10)) inc)`)).toBe(11)
-    expect(() => lispish.run(`((fn [x] (x 10)) inc+)`)).toThrow()
-    expect(() => lispish.run(`((fn [x] (* x x)) 10 20)`)).toThrow()
-    expect(() => lispish.run(`((fn [x] (* x x)))`)).toThrow()
+  test(`litsFunction`, () => {
+    expect(lits.run(`((fn [] 10))`)).toBe(10)
+    expect(lits.run(`((fn [x] (x 10)) (fn [x] (* x x)))`)).toBe(100)
+    expect(lits.run(`((fn [x] (x 10)) inc)`)).toBe(11)
+    expect(() => lits.run(`((fn [x] (x 10)) inc+)`)).toThrow()
+    expect(() => lits.run(`((fn [x] (* x x)) 10 20)`)).toThrow()
+    expect(() => lits.run(`((fn [x] (* x x)))`)).toThrow()
   })
 
   test(`formatPhoneNumber`, () => {
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: null } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `` } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+` } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+1` } })).toBe(``)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+12` } })).toBe(`(2`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+123` } })).toBe(`(23`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+1234` } })).toBe(`(234`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+12345` } })).toBe(`(234) 5`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+123456` } })).toBe(`(234) 56`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+1234567` } })).toBe(`(234) 567`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+12345678` } })).toBe(`(234) 567-8`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+123456789` } })).toBe(`(234) 567-89`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+1234567890` } })).toBe(`(234) 567-890`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+12345678901` } })).toBe(`(234) 567-8901`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `+123456789012` } })).toBe(`(234) 567-89012`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `2` } })).toBe(`(2`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `23` } })).toBe(`(23`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `234` } })).toBe(`(234`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `2345` } })).toBe(`(234) 5`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `23456` } })).toBe(`(234) 56`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `234567` } })).toBe(`(234) 567`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `2345678` } })).toBe(`(234) 567-8`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `23456789` } })).toBe(`(234) 567-89`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `234567890` } })).toBe(`(234) 567-890`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `2345678901` } })).toBe(`(234) 567-8901`)
-    expect(lispish.run(formatPhoneNumber, { globals: { $data: `23456789012` } })).toBe(`(234) 567-89012`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: null } })).toBe(``)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `` } })).toBe(``)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+` } })).toBe(``)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+1` } })).toBe(``)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+12` } })).toBe(`(2`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+123` } })).toBe(`(23`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+1234` } })).toBe(`(234`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+12345` } })).toBe(`(234) 5`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+123456` } })).toBe(`(234) 56`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+1234567` } })).toBe(`(234) 567`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+12345678` } })).toBe(`(234) 567-8`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+123456789` } })).toBe(`(234) 567-89`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+1234567890` } })).toBe(`(234) 567-890`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+12345678901` } })).toBe(`(234) 567-8901`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `+123456789012` } })).toBe(`(234) 567-89012`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `2` } })).toBe(`(2`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `23` } })).toBe(`(23`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `234` } })).toBe(`(234`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `2345` } })).toBe(`(234) 5`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `23456` } })).toBe(`(234) 56`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `234567` } })).toBe(`(234) 567`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `2345678` } })).toBe(`(234) 567-8`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `23456789` } })).toBe(`(234) 567-89`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `234567890` } })).toBe(`(234) 567-890`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `2345678901` } })).toBe(`(234) 567-8901`)
+    expect(lits.run(formatPhoneNumber, { globals: { $data: `23456789012` } })).toBe(`(234) 567-89012`)
   })
 })
 
@@ -151,7 +151,7 @@ test(`evaluateAstNode`, () => {
 
 test(`a test`, () => {
   expect(() =>
-    lispish.run(`(defn numberComparer [a b]
+    lits.run(`(defn numberComparer [a b]
     (cond
       (< a b) -1
       (> a b) 1

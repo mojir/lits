@@ -19,7 +19,7 @@ import {
   assertSeq,
   assertString,
   isInteger,
-  isLispishFunction,
+  isLitsFunction,
   isNormalExpressionNodeName,
   isNumber,
   isObj,
@@ -135,7 +135,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 }
 
 export const executeFunction: ExecuteFunction = (fn, params, contextStack) => {
-  if (isLispishFunction(fn)) {
+  if (isLitsFunction(fn)) {
     return functionExecutors[fn.type](fn, params, contextStack, { evaluateAstNode, executeFunction })
   }
   if (Array.isArray(fn)) {

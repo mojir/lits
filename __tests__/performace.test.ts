@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Lispish } from '../src'
+import { Lits } from '../src'
 import { createContextStack, evaluate } from '../src/evaluator'
 import { Context } from '../src/evaluator/interface'
 import { Obj } from '../src/interface'
@@ -70,20 +70,20 @@ xdescribe(`performace`, () => {
     logPerformace(`Evaluate AST`, Date.now() - startTime)
   })
 
-  test(`lispish run - NOT chaced.`, () => {
-    const lispish = new Lispish()
+  test(`lits run - NOT chaced.`, () => {
+    const lits = new Lits()
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish.run(program, { globals })
+      lits.run(program, { globals })
     }
     logPerformace(`Run program`, Date.now() - startTime)
   })
 
-  test(`lispish run - cached`, () => {
-    const lispish = new Lispish({ astCacheSize: 100 })
+  test(`lits run - cached`, () => {
+    const lits = new Lits({ astCacheSize: 100 })
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish.run(program, { globals })
+      lits.run(program, { globals })
     }
     logPerformace(`Run program (with astCache)`, Date.now() - startTime)
   })

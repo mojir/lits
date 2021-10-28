@@ -91,7 +91,7 @@ var examples = [
   {
     id: 'translations-lib',
     name: 'Translations lib',
-    description: 'A Lispish take on i18n.',
+    description: 'A Lits take on i18n.',
     context: {
       TRANSLATIONS: {
         'welcome-message': 'Welcome, $1',

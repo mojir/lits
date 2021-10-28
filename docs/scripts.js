@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 ;(function () {
-  lispish = new Lispish.Lispish()
+  lits = new Lits.Lits()
 
   window.addEventListener('keydown', function (evt) {
     if (evt.key === 'F2') {
@@ -113,7 +113,7 @@ function play() {
     output.scrollTop = output.scrollHeight
   }
   try {
-    result = lispish.run(code, { vars: context })
+    result = lits.run(code, { vars: context })
   } catch (error) {
     output.value = error
     output.classList.add('error')
@@ -169,7 +169,7 @@ function inactivateAll() {
 }
 
 function stringifyValue(value) {
-  if (Lispish.isLispishFunction(value)) {
+  if (Lits.isLitsFunction(value)) {
     if (value.builtin) {
       return `<builtin function ${value.builtin}>`
     } else {

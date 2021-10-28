@@ -5,7 +5,7 @@ import {
   BindingNode,
   EvaluatedFunctionArguments,
   FUNCTION_SYMBOL,
-  LispishFunction,
+  LitsFunction,
   NameNode,
   ParseArgument,
   ParseBindings,
@@ -113,9 +113,7 @@ function getFunctionName(
   return undefined
 }
 
-function createEvaluator(
-  expressionName: ExpressionsName,
-): BuiltinSpecialExpression<LispishFunction | null>[`evaluate`] {
+function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpression<LitsFunction | null>[`evaluate`] {
   return (node, contextStack, { evaluateAstNode, builtin }) => {
     castExpressionNode(node)
     const name = getFunctionName(expressionName, node, contextStack, evaluateAstNode)
@@ -143,7 +141,7 @@ function createEvaluator(
       },
     )
 
-    const lispishFunction: LispishFunction = {
+    const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       name,
@@ -157,25 +155,25 @@ function createEvaluator(
     }
 
     if (expressionName === `fn`) {
-      return lispishFunction
+      return litsFunction
     }
 
-    contextStack.globalContext[name as string] = { value: lispishFunction }
+    contextStack.globalContext[name as string] = { value: litsFunction }
     return null
   }
 }
 
-export const defnSpecialExpression: BuiltinSpecialExpression<LispishFunction | null> = {
+export const defnSpecialExpression: BuiltinSpecialExpression<LitsFunction | null> = {
   parse: createParser(`defn`),
   evaluate: createEvaluator(`defn`),
 }
 
-export const defnsSpecialExpression: BuiltinSpecialExpression<LispishFunction | null> = {
+export const defnsSpecialExpression: BuiltinSpecialExpression<LitsFunction | null> = {
   parse: createParser(`defns`),
   evaluate: createEvaluator(`defns`),
 }
 
-export const fnSpecialExpression: BuiltinSpecialExpression<LispishFunction | null> = {
+export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction | null> = {
   parse: createParser(`fn`),
   evaluate: createEvaluator(`fn`),
 }

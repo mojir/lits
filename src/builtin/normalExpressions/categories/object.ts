@@ -9,7 +9,7 @@ import {
   assertArr,
   toAny,
   asNotUndefined,
-  assertLispishFunction,
+  assertLitsFunction,
   asString,
 } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
@@ -98,7 +98,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   'merge-with': {
     evaluate: (params: Arr, contextStack, { executeFunction }): Any => {
       const [fn, first, ...rest] = params
-      assertLispishFunction(fn)
+      assertLitsFunction(fn)
 
       if (params.length === 1) {
         return null

@@ -1,5 +1,5 @@
 import { Any, Arr } from '../interface'
-import { LispishFunction } from '../parser/interface'
+import { LitsFunction } from '../parser/interface'
 import { AstNode } from '../parser/interface'
 
 export type ContextEntry = { value: Any }
@@ -11,5 +11,5 @@ export interface ContextStack {
 }
 
 export type EvaluateAstNode = (node: AstNode, contextStack: ContextStack) => Any
-export type ExecuteLispishFunction = (lispishFunction: LispishFunction, params: Arr, contextStack: ContextStack) => Any
+export type ExecuteLitsFunction = (litsFunction: LitsFunction, params: Arr, contextStack: ContextStack) => Any
 export type ExecuteFunction = (fn: Any, params: Arr, contextStack: ContextStack) => Any

@@ -1,15 +1,15 @@
-import { Lispish } from '../src'
+import { Lits } from '../src'
 
-let lispish: Lispish
+let lits: Lits
 
 beforeEach(() => {
-  lispish = new Lispish()
+  lits = new Lits()
 })
 
 describe(`array litterals`, () => {
   test(`samples`, () => {
-    expect(lispish.run(`[1 2 3]`)).toEqual([1, 2, 3])
-    expect(lispish.run(`[:1 nil]`)).toEqual([`1`, null])
-    expect(lispish.run(`[]`)).toEqual([])
+    expect(lits.run(`[1 2 3]`)).toEqual([1, 2, 3])
+    expect(lits.run(`[:1 nil]`)).toEqual([`1`, null])
+    expect(lits.run(`[]`)).toEqual([])
   })
 })
