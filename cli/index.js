@@ -294,7 +294,7 @@ Syntax
   ${getSyntax(doc)}
 
 ${`Arguments`}
-${doc.arguments.length === 0 ? `  None` : doc.arguments.map(arg => `  ${arg.name.bold}: ${arg.type}`).join(`\n`)}
+${doc.arguments.length === 0 ? `  None` : doc.arguments.map(arg => `  ${arg.name}: ${arg.type}`).join(`\n`)}
 
 ${`Examples`}
 ${

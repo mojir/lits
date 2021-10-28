@@ -3518,7 +3518,7 @@ var Lits = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "1.0.0-alpha.1";
+    var version = "1.0.0-alpha.2";
 
     var miscNormalExpression = {
         'not=': {
