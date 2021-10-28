@@ -30,7 +30,7 @@ describe(`string functions`, () => {
 
   describe(`str`, () => {
     test(`samples`, () => {
-      expect(lispish.run(`(str x)`, { values: { x: undefined } })).toBe(``)
+      expect(lispish.run(`(str x)`, { globals: { x: undefined } })).toBe(``)
       expect(lispish.run(`(str)`)).toBe(``)
       expect(lispish.run(`(str "")`)).toBe(``)
       expect(lispish.run(`(str :1)`)).toBe(`1`)

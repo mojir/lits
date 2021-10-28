@@ -246,14 +246,10 @@ function runREPL() {
           execute(line)
         }
         rl.prompt()
+      }).on(`close`, () => {
+        console.log(`Over and out!`)
+        process.exit(0)
       })
-        .on(`close`, () => {
-          console.log(`Over and out!`)
-          process.exit(0)
-        })
-        .on(`history`, history => {
-          console.log(`HISTORY`, history)
-        })
     },
   })
 }
@@ -349,7 +345,6 @@ Options:
 }
 
 function printGlobalContext(stringify) {
-  // console.log(config.globalContext)
   const context = config.globalContext
   const keys = Object.keys(context)
   if (keys.length === 0) {

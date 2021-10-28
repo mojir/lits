@@ -43,8 +43,8 @@ describe(`context`, () => {
 
   test(`a function with a built in normal expression name`, () => {
     expect(() => lispish.context(`(defn inc (x) (+ x 1))`)).toThrow()
-    expect(() => lispish.context(`(defn inc (x) (+ x 1))`, {})).toThrow()
-    expect(() => lispish.context(`(defn inc (x) (+ x 1))`, { values: {} })).toThrow()
+    expect(() => lispish.context(`(defn inc (x) (+ x 1))`, { globalContext: {} })).toThrow()
+    expect(() => lispish.context(`(defn inc (x) (+ x 1))`, { globals: {} })).toThrow()
   })
 
   test(`a function with a built in special expression name`, () => {

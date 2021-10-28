@@ -1,7 +1,7 @@
 // import { builtin } from '../builtin'
 // import { assertNameNotDefined } from '../builtin/utils'
 import { createContextStack, evaluate } from '../evaluator'
-import { Context } from '../evaluator/interface'
+import { Context, ContextStack } from '../evaluator/interface'
 import { Any, Obj } from '../interface'
 import { parse } from '../parser'
 import { Ast } from '../parser/interface'
@@ -12,7 +12,8 @@ import { Cache } from './Cache'
 
 type LispishParams = {
   contexts?: Context[]
-  values?: Obj
+  globals?: Obj
+  globalContext?: Context
 }
 
 type LispishConfig = {
@@ -36,9 +37,8 @@ export class Lispish {
     return result
   }
 
-  public context(program: string, params?: LispishParams): Context {
-    const context: Context = createContextFromValues(params?.values ?? {})
-    const contextStack = createContextStack([context, ...(params?.contexts ?? [])])
+  public context(program: string, params: LispishParams = {}): Context {
+    const contextStack = createContextStackFromParams(params)
     const ast = this.generateAst(program)
     evaluate(ast, contextStack)
     return contextStack.globalContext
@@ -52,9 +52,8 @@ export class Lispish {
     return parse(tokens)
   }
 
-  private evaluate(ast: Ast, params: LispishParams = {}): Any {
-    const globalContext = createContextFromValues(params.values)
-    const contextStack = createContextStack([globalContext, ...(params.contexts ?? [])])
+  private evaluate(ast: Ast, params?: LispishParams): Any {
+    const contextStack = createContextStackFromParams(params)
     return evaluate(ast, contextStack)
   }
 
@@ -70,4 +69,11 @@ export class Lispish {
     this.astCache?.set(program, ast)
     return ast
   }
+}
+
+function createContextStackFromParams(params?: LispishParams): ContextStack {
+  const globalContext: Context = params?.globalContext ?? {}
+  Object.assign(globalContext, createContextFromValues(params?.globals))
+  const contextStack = createContextStack([globalContext, ...(params?.contexts ?? [])])
+  return contextStack
 }

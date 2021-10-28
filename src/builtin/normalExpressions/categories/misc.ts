@@ -136,7 +136,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: (params, contextStack): Any => {
       if (params.length === 0) {
         // eslint-disable-next-line no-console
-        console.warn(`*** LISPISH DEBUG ***\n${contextstackToString(contextStack)}\n`)
+        console.warn(`*** LISPISH DEBUG ***\n${contextStackToString(contextStack)}\n`)
         return null
       }
       // eslint-disable-next-line no-console
@@ -177,7 +177,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
 }
 
-function contextstackToString(contextStack: ContextStack): string {
+function contextStackToString(contextStack: ContextStack): string {
   return contextStack.stack.reduce((result, context, index) => {
     return `${result}Context ${index}${
       context === contextStack.globalContext ? ` - Global context` : ``

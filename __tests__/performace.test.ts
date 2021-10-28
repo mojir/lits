@@ -10,8 +10,8 @@ import { createContextFromValues } from '../src/utils'
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
-const values: Obj = { x: 20, y: 30 }
-const context = createContextFromValues(values)
+const globals: Obj = { x: 20, y: 30 }
+const context = createContextFromValues(globals)
 const contextStack = createContextStack([context])
 const jsExpression = `((x - y) * (y - x)) + ((x / y) * (y / x))`
 
@@ -74,7 +74,7 @@ xdescribe(`performace`, () => {
     const lispish = new Lispish()
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish.run(program, { values })
+      lispish.run(program, { globals })
     }
     logPerformace(`Run program`, Date.now() - startTime)
   })
@@ -83,7 +83,7 @@ xdescribe(`performace`, () => {
     const lispish = new Lispish({ astCacheSize: 100 })
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      lispish.run(program, { values })
+      lispish.run(program, { globals })
     }
     logPerformace(`Run program (with astCache)`, Date.now() - startTime)
   })

@@ -560,6 +560,16 @@ var Lispish = (function (exports) {
     function cloneColl(value) {
         return clone(value);
     }
+    function createContextFromValues(values) {
+        if (!values) {
+            return {};
+        }
+        return Object.entries(values).reduce(function (context, _a) {
+            var key = _a[0], value = _a[1];
+            context[key] = { value: toAny(value) };
+            return context;
+        }, {});
+    }
 
     var andSpecialExpression = {
         parse: function (tokens, position, _a) {
@@ -653,8 +663,7 @@ var Lispish = (function (exports) {
         if (reservedNamesRecord[name]) {
             throw Error("Cannot define variable " + name + ", it's a reserved name");
         }
-        var globalContext = asNotUndefined(contextStack[contextStack.length - 2]);
-        if (globalContext[name]) {
+        if (contextStack.globalContext[name]) {
             throw Error("Name already defined \"" + name + "\"");
         }
     }
@@ -761,8 +770,7 @@ var Lispish = (function (exports) {
             if (expressionName === "fn") {
                 return lispishFunction;
             }
-            var globalContext = asNotUndefined(contextStack[contextStack.length - 2]);
-            globalContext[name] = { value: lispishFunction };
+            contextStack.globalContext[name] = { value: lispishFunction };
             return null;
         };
     }
@@ -907,8 +915,7 @@ var Lispish = (function (exports) {
             var name = asNameNode(node.params[0]).value;
             assertNameNotDefined(name, contextStack, builtin);
             var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
-            var context = asNotUndefined(contextStack[contextStack.length - 2]);
-            context[name] = { value: value };
+            contextStack.globalContext[name] = { value: value };
             return value;
         },
         validate: function (node) { return assertLength(2, node); },
@@ -933,8 +940,7 @@ var Lispish = (function (exports) {
             assertString(name);
             assertNameNotDefined(name, contextStack, builtin);
             var value = evaluateAstNode(asAstNode(node.params[1]), contextStack);
-            var context = asNotUndefined(contextStack[contextStack.length - 2]);
-            context[name] = { value: value };
+            contextStack.globalContext[name] = { value: value };
             return value;
         },
         validate: function (node) { return assertLength(2, node); },
@@ -960,7 +966,7 @@ var Lispish = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var newContext = {};
-            var newContextStack = __spreadArray([newContext], contextStack);
+            var newContextStack = contextStack.withContext(newContext);
             var result = null;
             for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
                 var form = _b[_i];
@@ -1065,7 +1071,7 @@ var Lispish = (function (exports) {
             var abort = false;
             while (!abort) {
                 var context = {};
-                var newContextStack = __spreadArray([context], contextStack);
+                var newContextStack = contextStack.withContext(context);
                 var skip = false;
                 bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
                     var _b = asNotUndefined(loopBindings[bindingIndex]), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
@@ -1150,7 +1156,7 @@ var Lispish = (function (exports) {
             var bindingValue = evaluateAstNode(node.binding.value, contextStack);
             if (bindingValue) {
                 locals[node.binding.name] = { value: bindingValue };
-                var newContextStack = __spreadArray([locals], contextStack);
+                var newContextStack = contextStack.withContext(locals);
                 var thenForm = asNotUndefined(node.params[0]);
                 return evaluateAstNode(thenForm, newContextStack);
             }
@@ -1244,7 +1250,7 @@ var Lispish = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var locals = {};
-            var newContextStack = __spreadArray([locals], contextStack);
+            var newContextStack = contextStack.withContext(locals);
             for (var _i = 0, _b = node.bindings; _i < _b.length; _i++) {
                 var binding = _b[_i];
                 var bindingValueNode = binding.value;
@@ -1282,7 +1288,7 @@ var Lispish = (function (exports) {
                 result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
                 return result;
             }, {});
-            var newContextStack = __spreadArray([bindingContext], contextStack);
+            var newContextStack = contextStack.withContext(bindingContext);
             var _loop_1 = function () {
                 var result = null;
                 try {
@@ -1467,7 +1473,7 @@ var Lispish = (function (exports) {
             }
             catch (error) {
                 var newContext = (_b = {}, _b[node.error.value] = { value: asNotUndefined(error) }, _b);
-                return evaluateAstNode(node.catchExpression, __spreadArray([newContext], contextStack));
+                return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext));
             }
         },
     };
@@ -1503,7 +1509,7 @@ var Lispish = (function (exports) {
             }
             var bindingValue = toAny(evaluatedBindingForm[0]);
             locals[node.binding.name] = { value: bindingValue };
-            var newContextStack = __spreadArray([locals], contextStack);
+            var newContextStack = contextStack.withContext(locals);
             var result = null;
             for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
                 var form = _b[_i];
@@ -1541,7 +1547,7 @@ var Lispish = (function (exports) {
                 return null;
             }
             locals[node.binding.name] = { value: bindingValue };
-            var newContextStack = __spreadArray([locals], contextStack);
+            var newContextStack = contextStack.withContext(locals);
             var result = null;
             for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
                 var form = _b[_i];
@@ -3512,7 +3518,7 @@ var Lispish = (function (exports) {
         throw Error("Ill formed path: " + path);
     }
 
-    var version = "1.0.0-alpha.7";
+    var version = "1.0.0-alpha.8";
 
     var miscNormalExpression = {
         'not=': {
@@ -3644,7 +3650,7 @@ var Lispish = (function (exports) {
             evaluate: function (params, contextStack) {
                 if (params.length === 0) {
                     // eslint-disable-next-line no-console
-                    console.warn("*** LISPISH DEBUG ***\n" + contextstackToString(contextStack) + "\n");
+                    console.warn("*** LISPISH DEBUG ***\n" + contextStackToString(contextStack) + "\n");
                     return null;
                 }
                 // eslint-disable-next-line no-console
@@ -3686,9 +3692,9 @@ var Lispish = (function (exports) {
             validate: function (node) { return assertLength(0, node); },
         },
     };
-    function contextstackToString(contextStack) {
-        return __spreadArray([], contextStack).reverse().reduce(function (result, context, index) {
-            return result + "Context " + index + (index === 0 ? " - Import context" : index === 1 ? " - Global context" : "") + "\n" + contextToString(context) + "\n";
+    function contextStackToString(contextStack) {
+        return contextStack.stack.reduce(function (result, context, index) {
+            return result + "Context " + index + (context === contextStack.globalContext ? " - Global context" : "") + "\n" + contextToString(context) + "\n";
         }, "");
     }
     function contextToString(context) {
@@ -4468,7 +4474,7 @@ var Lispish = (function (exports) {
                     var result = null;
                     for (var _i = 0, _e = fn.body; _i < _e.length; _i++) {
                         var node = _e[_i];
-                        result = evaluateAstNode(node, __spreadArray([newContext], contextStack, true));
+                        result = evaluateAstNode(node, contextStack.withContext(newContext));
                     }
                     return result;
                 }
@@ -4549,11 +4555,26 @@ var Lispish = (function (exports) {
         },
     };
 
-    function evaluate(ast, globalScope, importScope) {
-        // First element is the global context. E.g. def will assign to this if no local variable is available
-        // Second element is the context sent in from outside (this should never be mutated)
-        var contextStack = [globalScope, importScope];
-        var result;
+    function createContextStack(contexts) {
+        if (contexts === void 0) { contexts = []; }
+        if (contexts.length === 0) {
+            contexts.push({});
+        }
+        return new ContextStackImpl(contexts, 0);
+    }
+    var ContextStackImpl = /** @class */ (function () {
+        function ContextStackImpl(contexts, globalContextIndex) {
+            this.stack = contexts;
+            this.numberOfImportedContexts = contexts.length - (globalContextIndex + 1);
+            this.globalContext = contexts[globalContextIndex];
+        }
+        ContextStackImpl.prototype.withContext = function (context) {
+            return new ContextStackImpl(__spreadArray([context], this.stack), this.stack.length - this.numberOfImportedContexts);
+        };
+        return ContextStackImpl;
+    }());
+    function evaluate(ast, contextStack) {
+        var result = null;
         for (var _i = 0, _a = ast.body; _i < _a.length; _i++) {
             var node = _a[_i];
             result = evaluateAstNode(node, contextStack);
@@ -4590,8 +4611,8 @@ var Lispish = (function (exports) {
     function evaluateName(_a, contextStack) {
         var _b;
         var value = _a.value;
-        for (var _i = 0, contextStack_1 = contextStack; _i < contextStack_1.length; _i++) {
-            var context = contextStack_1[_i];
+        for (var _i = 0, _c = contextStack.stack; _i < _c.length; _i++) {
+            var context = _c[_i];
             var variable = context[value];
             if (variable) {
                 return variable.value;
@@ -4611,8 +4632,8 @@ var Lispish = (function (exports) {
         var _a;
         var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
         if (isNormalExpressionNodeName(node)) {
-            for (var _i = 0, contextStack_2 = contextStack; _i < contextStack_2.length; _i++) {
-                var context = contextStack_2[_i];
+            for (var _i = 0, _b = contextStack.stack; _i < _b.length; _i++) {
+                var context = _b[_i];
                 var fn = (_a = context[node.name]) === null || _a === void 0 ? void 0 : _a.value;
                 if (fn === undefined) {
                     continue;
@@ -4620,7 +4641,7 @@ var Lispish = (function (exports) {
                 try {
                     return executeFunction(fn, params, contextStack);
                 }
-                catch (_b) {
+                catch (_c) {
                     continue;
                 }
             }
@@ -5362,7 +5383,6 @@ var Lispish = (function (exports) {
     var Lispish = /** @class */ (function () {
         function Lispish(config) {
             if (config === void 0) { config = {}; }
-            this.importScope = {};
             if (config.astCacheSize && config.astCacheSize > 0) {
                 this.astCache = new Cache(config.astCacheSize);
             }
@@ -5375,22 +5395,12 @@ var Lispish = (function (exports) {
             var result = this.evaluate(ast, params);
             return result;
         };
-        Lispish.prototype.import = function (program, params) {
+        Lispish.prototype.context = function (program, params) {
             if (params === void 0) { params = {}; }
-            var context = getContextFromParams(params);
-            var tokens = this.tokenize(program);
-            var ast = this.parse(tokens);
-            var scope = {};
-            evaluate(ast, scope, context);
-            var importKeys = Object.keys(this.importScope);
-            for (var _i = 0, _a = Object.keys(scope); _i < _a.length; _i++) {
-                var key = _a[_i];
-                if (importKeys.includes(key)) {
-                    throw Error("Import faild, imported function/variable already exists: \"" + key + "\"");
-                }
-                assertNameNotDefined(key, [{}, {}], builtin);
-            }
-            Object.assign(this.importScope, scope);
+            var contextStack = createContextStackFromParams(params);
+            var ast = this.generateAst(program);
+            evaluate(ast, contextStack);
+            return contextStack.globalContext;
         };
         Lispish.prototype.tokenize = function (program) {
             return tokenize(program);
@@ -5399,9 +5409,8 @@ var Lispish = (function (exports) {
             return parse(tokens);
         };
         Lispish.prototype.evaluate = function (ast, params) {
-            if (params === void 0) { params = {}; }
-            var context = getContextFromParams(params);
-            return evaluate(ast, context, this.importScope);
+            var contextStack = createContextStackFromParams(params);
+            return evaluate(ast, contextStack);
         };
         Lispish.prototype.generateAst = function (program) {
             var _a;
@@ -5418,15 +5427,12 @@ var Lispish = (function (exports) {
         };
         return Lispish;
     }());
-    function getContextFromParams(params) {
-        var context = params.globalContext || {};
-        if (params.vars) {
-            Object.entries(params.vars).forEach(function (_a) {
-                var key = _a[0], value = _a[1];
-                context[key] = { value: toAny(value) };
-            });
-        }
-        return context;
+    function createContextStackFromParams(params) {
+        var _a, _b;
+        var globalContext = (_a = params === null || params === void 0 ? void 0 : params.globalContext) !== null && _a !== void 0 ? _a : {};
+        Object.assign(globalContext, createContextFromValues(params === null || params === void 0 ? void 0 : params.globals));
+        var contextStack = createContextStack(__spreadArray([globalContext], ((_b = params === null || params === void 0 ? void 0 : params.contexts) !== null && _b !== void 0 ? _b : [])));
+        return contextStack;
     }
 
     exports.Lispish = Lispish;
