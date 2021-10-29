@@ -1,5 +1,3 @@
-// import { builtin } from '../builtin'
-// import { assertNameNotDefined } from '../builtin/utils'
 import { createContextStack, evaluate } from '../evaluator'
 import { Context, ContextStack } from '../evaluator/interface'
 import { Any, Obj } from '../interface'

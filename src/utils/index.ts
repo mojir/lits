@@ -408,7 +408,6 @@ export function collHasKey(coll: unknown, key: string | number): boolean {
   return !!Object.getOwnPropertyDescriptor(coll, key)
 }
 
-// TODO make it into enum or record with sort number as value
 type Type = `null` | `boolean` | `number` | `string` | `object` | `array` | `regexp` | `unknown`
 
 const sortOrderByType: Record<Type, number> = {

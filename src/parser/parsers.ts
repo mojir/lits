@@ -257,7 +257,6 @@ const parseBinding: ParseBinding = (tokens, position) => {
 }
 
 const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
-  //  let fnNode: AstNode
   const [newPosition, fnNode] = parseToken(tokens, position)
 
   let params: AstNode[]

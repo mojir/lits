@@ -215,18 +215,3 @@ module.exports = [
 `.trim(),
   },
 ]
-
-// "@containsAny": {
-//   "ARGS": [
-//     "$list",
-//     "$items"
-//   ],
-//   "BODY": [
-//     "(function () {",
-//     "  for (var i = 0; i < ($items || []).length; i += 1) {",
-//     "    if (($list || []).indexOf($items[i]) >= 0) return true;",
-//     "  }",
-//     "  return false;",
-//     "})()"
-//   ]
-// },
