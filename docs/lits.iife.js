@@ -247,16 +247,6 @@ var Lits = (function (exports) {
             throw TypeError("Expected RegExp, got: " + value + " type=\"" + typeof value + "\"");
         }
     }
-    function assertObjectOrArray(value) {
-        if ((value === null ||
-            typeof value !== "object" ||
-            Array.isArray(value) ||
-            value instanceof RegExp ||
-            isLitsFunction(value)) &&
-            !Array.isArray(value)) {
-            throw TypeError("Expected object or array, got: " + value + " type=\"" + typeof value + "\"");
-        }
-    }
     function assertNumberNotZero(value) {
         assertFiniteNumber(value);
         if (value === 0) {
@@ -3461,63 +3451,6 @@ var Lits = (function (exports) {
         },
     };
 
-    var delimiterRegExp = /[[.]/;
-    function getPath(obj, path) {
-        var destructedPath = destructPath(path);
-        for (var _i = 0, destructedPath_1 = destructedPath; _i < destructedPath_1.length; _i++) {
-            var part = destructedPath_1[_i];
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                obj = toAny(obj[part]);
-            }
-            catch (_a) {
-                return null;
-            }
-        }
-        return obj;
-    }
-    function destructPath(path) {
-        if (!path) {
-            return [];
-        }
-        var match = delimiterRegExp.exec(path);
-        if (!match) {
-            return [path];
-        }
-        if (match.index > 0) {
-            return __spreadArray([path.substring(0, match.index)], destructPath(path.substring(match.index)));
-        }
-        if (path[0] === ".") {
-            if (path.length < 2) {
-                throw Error("Ill formed path: " + path);
-            }
-            return destructPath(path.substring(1));
-        }
-        var _a = parseBracketNotation(path), length = _a[0], value = _a[1];
-        if (path.length > length && path[length] !== "." && path[length] !== "[") {
-            throw Error("Ill formed path: " + path);
-        }
-        return __spreadArray([value], destructPath(path.substring(length)));
-    }
-    var singleQuoteBracketStringRegExp = /^\[\s*'(.*)'\s*\]/;
-    var doubleQuoteBracketStringRegExp = /^\[\s*"(.*)"\s*\]/;
-    var numberBracketStringRegExp = /^\[\s*(\d+)\s*\]/;
-    function parseBracketNotation(path) {
-        var stringMatch = singleQuoteBracketStringRegExp.exec(path) || doubleQuoteBracketStringRegExp.exec(path);
-        if (stringMatch) {
-            var length_1 = stringMatch[0].length;
-            var value = stringMatch[1];
-            return [length_1, value];
-        }
-        var numberMatch = numberBracketStringRegExp.exec(path);
-        if (numberMatch) {
-            var length_2 = numberMatch[0].length;
-            var value = Number(numberMatch[1]);
-            return [length_2, value];
-        }
-        throw Error("Ill formed path: " + path);
-    }
-
     var version = "1.0.0-alpha.2";
 
     var miscNormalExpression = {
@@ -3613,15 +3546,6 @@ var Lits = (function (exports) {
                 return true;
             },
             validate: function (node) { return assertLength({ min: 1 }, node); },
-        },
-        'get-path': {
-            evaluate: function (_a) {
-                var first = _a[0], second = _a[1];
-                assertObjectOrArray(first);
-                assertString(second);
-                return getPath(first, second);
-            },
-            validate: function (node) { return assertLength(2, node); },
         },
         not: {
             evaluate: function (_a) {
@@ -4915,7 +4839,6 @@ var Lits = (function (exports) {
     var parseNormalExpression = function (tokens, position) {
         var _a;
         var _b;
-        //  let fnNode: AstNode
         var _c = parseToken(tokens, position), newPosition = _c[0], fnNode = _c[1];
         var params;
         _a = parseTokens(tokens, newPosition), position = _a[0], params = _a[1];
@@ -5047,21 +4970,21 @@ var Lits = (function (exports) {
         return tokenizeCharacter("paren", "}", input, position);
     };
     var tokenizeString = function (input, position) {
-        if (input[position] !== "\"") {
+        if (input[position] !== "'") {
             return NO_MATCH;
         }
         var value = "";
         var length = 1;
         var char = input[position + length];
         var escape = false;
-        while (char !== "\"" || escape) {
+        while (char !== "'" || escape) {
             if (char === undefined) {
                 throw new SyntaxError("Unclosed string at position " + position);
             }
             length += 1;
             if (escape) {
                 escape = false;
-                if (char === "\"" || char === "\\") {
+                if (char === "'" || char === "\\") {
                     value += char;
                 }
                 else {

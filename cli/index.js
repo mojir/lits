@@ -101,7 +101,7 @@ function formatValue(value) {
   }
 
   if (value === null) {
-    return `nil`
+    return `null`
   }
 
   if (

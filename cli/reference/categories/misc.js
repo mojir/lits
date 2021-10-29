@@ -28,7 +28,7 @@ module.exports = {
         type: `array`,
       },
     ],
-    description: `Compares \`values\` according to "equal" predicate. Result is \`true\` if every specified value is equal to each other, otherwise result is \`false\`.`,
+    description: `Compares \`values\` according to 'equal' predicate. Result is \`true\` if every specified value is equal to each other, otherwise result is \`false\`.`,
     examples: [`(= 1 1)`, `(= 1.01 1)`, `(= :1 1)`, `(= :2 :2 :2 :2)`, `(= 2 2 1 2)`],
   },
   '<': {
@@ -45,7 +45,7 @@ module.exports = {
         description: `one or many`,
       },
     ],
-    description: `Compares \`values\` according to "less than" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    description: `Compares \`values\` according to 'less than' predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(< 0 1)`, `(< 1 1.01)`, `(< 1 1)`, `(< 1 2 2 3)`, `(< :a :b)`, `(< [9] [1 2])`],
   },
   '>': {
@@ -62,7 +62,7 @@ module.exports = {
         description: `one or many`,
       },
     ],
-    description: `Compares \`values\` according to "greater than" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    description: `Compares \`values\` according to 'greater than' predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(> 1 0)`, `(> 1.01 1)`, `(> 1 1)`, `(> 4 3 2 1)`, `(> 3 2 2 1)`],
   },
   '<=': {
@@ -79,7 +79,7 @@ module.exports = {
         description: `one or many`,
       },
     ],
-    description: `Compares \`values\` according to "less than or equal" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    description: `Compares \`values\` according to 'less than or equal' predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(<= 0 1)`, `(<= 1 1.01)`, `(<= 1 1)`, `(<= 1 2 3 4)`, `(<= 1 2 2 3)`],
   },
   '>=': {
@@ -96,7 +96,7 @@ module.exports = {
         description: `one or many`,
       },
     ],
-    description: `Compares \`values\` according to "greater than or equal" predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
+    description: `Compares \`values\` according to 'greater than or equal' predicate. Each (overlapping) pair of the \`values\` is compared by it. The result is \`true\` if all compared pairs satisfy comparison.`,
     examples: [`(>= 1 0)`, `(>= 1.01 1)`, `(>= 1 1)`, `(>= 4 3 2 1)`, `(>= 3 2 2 1)`],
   },
   not: {
@@ -112,8 +112,8 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Computes logical negation. Note that any other \`value\` than \`false\`, \`0\`, \`nil\` and \`""\` is considered as \`true\`.`,
-    examples: [`(not 3)`, `(not true)`, `(not "A string")`, `(not 0)`, `(not false)`, `(not nil)`, `(not "")`],
+    description: `Computes logical negation. Note that any other \`value\` than \`false\`, \`0\`, \`nil\` and \`''\` is considered as \`true\`.`,
+    examples: [`(not 3)`, `(not true)`, `(not 'A string')`, `(not 0)`, `(not false)`, `(not nil)`, `(not '')`],
   },
   'write!': {
     name: `write!`,
@@ -130,11 +130,11 @@ module.exports = {
     ],
     description: `It console.log the \`values\` and then returns the last element of the \`values\` array.. If called with no arguments \`nil\` is returned.`,
     examples: [
-      `(write! "A string")`,
-      `(write! 100 "items")`,
+      `(write! 'A string')`,
+      `(write! 100 'items')`,
       `(write! (object :a 10))`,
       `(write! [:a :b :c])`,
-      `(write! (regexp "^start"))`,
+      `(write! (regexp '^start'))`,
       `(write! nil true false)`,
     ],
   },
@@ -148,30 +148,6 @@ module.exports = {
     arguments: [],
     description: `Returns milliseconds elapsed since the UNIX epoch.`,
     examples: [`(inst-ms)`],
-  },
-  'get-path': {
-    name: `get-path`,
-    category: `Misc`,
-    linkName: `get-path`,
-    returns: {
-      type: `number`,
-    },
-    arguments: [
-      {
-        name: `object`,
-        type: `object | array`,
-      },
-      {
-        name: `path`,
-        type: `string`,
-      },
-    ],
-    description: `Is used to get the value at \`path\` of object or array.`,
-    examples: [
-      `(get-path (write! (object :a (object :x [1 2 3]))) "a.x[2]")`,
-      `(get-path (write! (object :a (object :x [1 2 3]))) "b.z[10]")`,
-      `(get-path (write! [(object :x [1 2 3])]) "[1].x[2]")`,
-    ],
   },
   'debug!': {
     name: `debug!`,
@@ -203,7 +179,7 @@ module.exports = {
       },
     ],
     description: `Coerces \`value\` to boolean.`,
-    examples: [`(boolean 0)`, `(boolean 1)`, `(boolean nil)`, `(boolean "Albert")`],
+    examples: [`(boolean 0)`, `(boolean 1)`, `(boolean nil)`, `(boolean 'Albert')`],
   },
   compare: {
     name: `compare`,
@@ -225,7 +201,7 @@ module.exports = {
     description: `Compares two values. Returns -1 if a < b, 1 if a > b and 0 if a and b have the same sort order.`,
     examples: [
       `(compare 0 1)`,
-      `(compare "Albert" "Mojir")`,
+      `(compare 'Albert' 'Mojir')`,
       `(compare 1 :1)`,
       `(compare [1 2 3] [2 3])`,
       `(compare [1 2 3] [2 3 4])`,
@@ -253,7 +229,7 @@ module.exports = {
       },
     ],
     description: `If \`value\` is falsy it throws AssertionError with \`message\`. If no \`message\` is provided, message is set to \`value\`.`,
-    examples: [`(try (assert 0 "Expected a positive value") ((e) e))`],
+    examples: [`(try (assert 0 'Expected a positive value') ((e) e))`],
   },
   'lits-version': {
     name: `lits-version`,

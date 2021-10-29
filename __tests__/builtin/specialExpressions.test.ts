@@ -84,7 +84,7 @@ describe(`specialExpressions`, () => {
       expect(lits.run(`(if true :A)`)).toBe(`A`)
       expect(lits.run(`(if false :A)`)).toBeNull()
       expect(lits.run(`(if nil :A)`)).toBeNull()
-      expect(lits.run(`(if "" :A :B)`)).toBe(`B`)
+      expect(lits.run(`(if '' :A :B)`)).toBe(`B`)
       expect(lits.run(`(if :x :A :B)`)).toBe(`A`)
       expect(lits.run(`(if 0 :A :B)`)).toBe(`B`)
       expect(lits.run(`(if 1 :A :B)`)).toBe(`A`)
@@ -95,12 +95,12 @@ describe(`specialExpressions`, () => {
       expect(() => lits.run(`(if true)`)).toThrow()
       expect(() => lits.run(`(if true :A :B :Q)`)).toThrow()
     })
-    test(`That special form "if" only evaluate the correct path (true)`, () => {
+    test(`That special form 'if' only evaluate the correct path (true)`, () => {
       lits.run(`(if true (write! :A) (write! :B))`)
       expect(logSpy).toHaveBeenCalledWith(`A`)
       expect(logSpy).not.toHaveBeenCalledWith(`B`)
     })
-    test(`That special form "if" only evaluate the correct path (false)`, () => {
+    test(`That special form 'if' only evaluate the correct path (false)`, () => {
       lits.run(`(if false (write! :A) (write! :B))`)
       expect(logSpy).not.toHaveBeenCalledWith(`A`)
       expect(logSpy).toHaveBeenCalledWith(`B`)
@@ -115,7 +115,7 @@ describe(`specialExpressions`, () => {
       expect(lits.run(`(if-not true :A)`)).toBeNull()
       expect(lits.run(`(if-not false :A)`)).toBe(`A`)
       expect(lits.run(`(if-not nil :A)`)).toBe(`A`)
-      expect(lits.run(`(if-not "" :A :B)`)).toBe(`A`)
+      expect(lits.run(`(if-not '' :A :B)`)).toBe(`A`)
       expect(lits.run(`(if-not :x :A :B)`)).toBe(`B`)
       expect(lits.run(`(if-not 0 :A :B)`)).toBe(`A`)
       expect(lits.run(`(if-not 1 :A :B)`)).toBe(`B`)
@@ -126,12 +126,12 @@ describe(`specialExpressions`, () => {
       expect(() => lits.run(`(if-not true)`)).toThrow()
       expect(() => lits.run(`(if-not true :A :B :Q)`)).toThrow()
     })
-    test(`That special form "if-not" only evaluate the correct path (true)`, () => {
+    test(`That special form 'if-not' only evaluate the correct path (true)`, () => {
       lits.run(`(if-not true (write! :A) (write! :B))`)
       expect(logSpy).toHaveBeenCalledWith(`B`)
       expect(logSpy).not.toHaveBeenCalledWith(`A`)
     })
-    test(`That special form "if-not" only evaluate the correct path (false)`, () => {
+    test(`That special form 'if-not' only evaluate the correct path (false)`, () => {
       lits.run(`(if-not false (write! :A) (write! :B))`)
       expect(logSpy).not.toHaveBeenCalledWith(`B`)
       expect(logSpy).toHaveBeenCalledWith(`A`)
@@ -140,24 +140,24 @@ describe(`specialExpressions`, () => {
 
   describe(`if-let`, () => {
     test(`samples`, () => {
-      expect(lits.run(`(if-let [a (> (count "Albert") 4)] a)`)).toBe(true)
-      expect(lits.run(`(if-let [a (> (count "Albert") 10)] a)`)).toBeNull()
-      expect(lits.run(`(if-let [a (> (count "Albert") 4)] "YES" "NO")`)).toBe(`YES`)
-      expect(lits.run(`(if-let [a (> (count "Albert") 10)] "YES" "NO")`)).toBe(`NO`)
-      expect(() => lits.run(`(if-let [a (> (count "Albert") 10)] "YES" a)`)).toThrow()
-      expect(() => lits.run(`(if-let [a (> (count "Albert") 10)])`)).toThrow()
-      expect(() => lits.run(`(if-let [a (> (count "Albert") 10) b 20] 1 2)`)).toThrow()
+      expect(lits.run(`(if-let [a (> (count 'Albert') 4)] a)`)).toBe(true)
+      expect(lits.run(`(if-let [a (> (count 'Albert') 10)] a)`)).toBeNull()
+      expect(lits.run(`(if-let [a (> (count 'Albert') 4)] 'YES' 'NO')`)).toBe(`YES`)
+      expect(lits.run(`(if-let [a (> (count 'Albert') 10)] 'YES' 'NO')`)).toBe(`NO`)
+      expect(() => lits.run(`(if-let [a (> (count 'Albert') 10)] 'YES' a)`)).toThrow()
+      expect(() => lits.run(`(if-let [a (> (count 'Albert') 10)])`)).toThrow()
+      expect(() => lits.run(`(if-let [a (> (count 'Albert') 10) b 20] 1 2)`)).toThrow()
     })
   })
 
   describe(`when-let`, () => {
     test(`samples`, () => {
-      expect(lits.run(`(when-let [a (> (count "Albert") 4)] a)`)).toBe(true)
-      expect(lits.run(`(when-let [a (> (count "Albert") 10)] a)`)).toBeNull()
-      expect(lits.run(`(when-let [a (> (count "Albert") 10)])`)).toBeNull()
-      expect(lits.run(`(when-let [a (> (count "Albert") 10)] 10 20)`)).toBeNull()
-      expect(lits.run(`(when-let [a (> (count "Albert") 4)] 10 20)`)).toBe(20)
-      expect(() => lits.run(`(when-let [a (> (count "Albert") 10) b 20] 1)`)).toThrow()
+      expect(lits.run(`(when-let [a (> (count 'Albert') 4)] a)`)).toBe(true)
+      expect(lits.run(`(when-let [a (> (count 'Albert') 10)] a)`)).toBeNull()
+      expect(lits.run(`(when-let [a (> (count 'Albert') 10)])`)).toBeNull()
+      expect(lits.run(`(when-let [a (> (count 'Albert') 10)] 10 20)`)).toBeNull()
+      expect(lits.run(`(when-let [a (> (count 'Albert') 4)] 10 20)`)).toBe(20)
+      expect(() => lits.run(`(when-let [a (> (count 'Albert') 10) b 20] 1)`)).toThrow()
     })
   })
 
@@ -230,7 +230,7 @@ describe(`specialExpressions`, () => {
       expect(lits.run(`(and 2 0)`)).toBe(0)
       expect(lits.run(`(and 2 0 1)`)).toBe(0)
       expect(lits.run(`(and 2 3 0)`)).toBe(0)
-      expect(lits.run(`(and 2 3 "")`)).toBe(``)
+      expect(lits.run(`(and 2 3 '')`)).toBe(``)
       expect(lits.run(`(and 2 3 :x)`)).toBe(`x`)
       expect(lits.run(`(and false 1)`)).toBe(false)
       expect(lits.run(`(and 1 false)`)).toBe(false)
@@ -302,14 +302,14 @@ describe(`specialExpressions`, () => {
       expect(lits.run(`(cond true 10)`)).toBe(10)
       expect(lits.run(`(cond false 20 true (+ 5 5))`)).toBe(10)
       expect(
-        lits.run(`(cond (> 5 10) 20 (> 10 10) (do (write! "Hej") (+ 5 5)) (>= 10 10) (do "This will work" (+ 5 5 5)))`),
+        lits.run(`(cond (> 5 10) 20 (> 10 10) (do (write! 'Hej') (+ 5 5)) (>= 10 10) (do 'This will work' (+ 5 5 5)))`),
       ).toBe(15)
       expect(() => lits.run(`(cond true 123)`)).not.toThrow()
       expect(() => lits.run(`(cond (true 123))`)).toThrow()
     })
     test(`middle condition true`, () => {
       expect(
-        lits.run(`(cond (> 5 10) (write! 20) (>= 10 10) (+ 5 5) (write! (>= 10 10)) (do "This will work" (+ 5 5 5)))`),
+        lits.run(`(cond (> 5 10) (write! 20) (>= 10 10) (+ 5 5) (write! (>= 10 10)) (do 'This will work' (+ 5 5 5)))`),
       ).toBe(10)
       expect(logSpy).not.toHaveBeenCalled()
     })
@@ -325,7 +325,7 @@ describe(`specialExpressions`, () => {
       expect(() => lits.run(`(defn false [] 10)`)).toThrow()
       expect(() => lits.run(`(defn nil [] 10)`)).toThrow()
       expect(() => lits.run(`(defn add [:s] 10)`)).toThrow()
-      expect(() => lits.run(`(defn "add" [a b] (+ a b))`)).toThrow()
+      expect(() => lits.run(`(defn 'add' [a b] (+ a b))`)).toThrow()
       expect(() => lits.run(`(defn add 1 (+ a b))`)).toThrow()
       expect(() => lits.run(`(defn add [a b])`)).toThrow()
     })
@@ -339,7 +339,7 @@ describe(`specialExpressions`, () => {
   describe(`defns`, () => {
     test(`samples`, () => {
       expect(lits.run(`(defns (str :a :d :d) [a b] (+ a b)) (add 1 2)`)).toBe(3)
-      expect(() => lits.run(`(defns "add" [] 10)`)).not.toThrow()
+      expect(() => lits.run(`(defns 'add' [] 10)`)).not.toThrow()
       expect(() => lits.run(`(defns :x [a a] 10)`)).toThrow()
       expect(() => lits.run(`(defns true [] 10)`)).toThrow()
       expect(() => lits.run(`(defns false [] 10)`)).toThrow()
@@ -349,8 +349,8 @@ describe(`specialExpressions`, () => {
       expect(() => lits.run(`(defns add (a b))`)).toThrow()
     })
     test(`call defns function`, () => {
-      expect(lits.run(`(defns "sumOneToN" [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
-      expect(lits.run(`(defns "applyWithVal" [fun val] (fun val)) (applyWithVal inc 10)`)).toBe(11)
+      expect(lits.run(`(defns 'sumOneToN' [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
+      expect(lits.run(`(defns 'applyWithVal' [fun val] (fun val)) (applyWithVal inc 10)`)).toBe(11)
     })
   })
 
@@ -373,11 +373,11 @@ describe(`specialExpressions`, () => {
   describe(`try`, () => {
     test(`samples`, () => {
       expect(lits.run(`(try (/ 2 4) ((error) 1))`)).toBe(0.5)
-      expect(lits.run(`(try (throw "oops") ((error) 1))`)).toBe(1)
-      expect(lits.run(`(try (throw "oops") ((error) error))`)).toBeInstanceOf(Error)
+      expect(lits.run(`(try (throw 'oops') ((error) 1))`)).toBe(1)
+      expect(lits.run(`(try (throw 'oops') ((error) error))`)).toBeInstanceOf(Error)
       expect(() => lits.run(`(try (/ 2 4) 1)`)).toThrow()
       expect(() => lits.run(`(try (/ 2 4) (1))`)).toThrow()
-      expect(() => lits.run(`(try (/ 2 4) (("error") 1))`)).toThrow()
+      expect(() => lits.run(`(try (/ 2 4) (('error') 1))`)).toThrow()
       expect(() => lits.run(`(try (/ 2 4) ((error1 error2) 1))`)).toThrow()
       expect(() => lits.run(`(try (/ 2 4) ((error) 1 2))`)).toThrow()
       expect(() => lits.run(`(try (/ 2 4) ((error) 1 )2)`)).toThrow()
@@ -386,12 +386,12 @@ describe(`specialExpressions`, () => {
 
   describe(`throw`, () => {
     test(`samples`, () => {
-      expect(() => lits.run(`(throw "An error")`)).toThrowError(UserDefinedError)
-      expect(() => lits.run(`(throw (subs "An error" 3))`)).toThrowError(UserDefinedError)
-      expect(() => lits.run(`(throw "An error" 10)`)).not.toThrowError(UserDefinedError)
-      expect(() => lits.run(`(throw "An error" 10)`)).toThrow()
+      expect(() => lits.run(`(throw 'An error')`)).toThrowError(UserDefinedError)
+      expect(() => lits.run(`(throw (subs 'An error' 3))`)).toThrowError(UserDefinedError)
+      expect(() => lits.run(`(throw 'An error' 10)`)).not.toThrowError(UserDefinedError)
+      expect(() => lits.run(`(throw 'An error' 10)`)).toThrow()
       try {
-        lits.run(`(throw (subs "An error" 3))`)
+        lits.run(`(throw (subs 'An error' 3))`)
         throw Error()
       } catch (error) {
         expect((error as UserDefinedError).message).toBe(`error`)
@@ -402,7 +402,7 @@ describe(`specialExpressions`, () => {
   describe(`when`, () => {
     test(`samples`, () => {
       expect(lits.run(`(when true (write! 10) (write! 20))`)).toBe(20)
-      expect(lits.run(`(when "Charles" (write! 10) (write! 20))`)).toBe(20)
+      expect(lits.run(`(when 'Charles' (write! 10) (write! 20))`)).toBe(20)
       expect(lits.run(`(when false)`)).toBeNull()
       expect(lits.run(`(when true)`)).toBeNull()
       expect(() => lits.run(`(when)`)).toThrow()
@@ -423,8 +423,8 @@ describe(`specialExpressions`, () => {
     test(`samples`, () => {
       expect(lits.run(`(when-first [x [1 2 3]] (write! 10) (write! 20) x)`)).toBe(1)
       expect(lits.run(`(when-first [x []] (write! 10) (write! 20) x)`)).toBeNull()
-      expect(lits.run(`(when-first [x "Albert"] (write! 10) (write! 20) x)`)).toBe(`A`)
-      expect(lits.run(`(when-first [x ""] (write! 10) (write! 20) x)`)).toBeNull()
+      expect(lits.run(`(when-first [x 'Albert'] (write! 10) (write! 20) x)`)).toBe(`A`)
+      expect(lits.run(`(when-first [x ''] (write! 10) (write! 20) x)`)).toBeNull()
       expect(lits.run(`(when-first [x [0]])`)).toBeNull()
       expect(() => lits.run(`(when-first [x nil] x)`)).toThrow()
       expect(() => lits.run(`(when-first [x nil a 2] x)`)).toThrow()
@@ -435,7 +435,7 @@ describe(`specialExpressions`, () => {
 
   describe(`do`, () => {
     test(`samples`, () => {
-      expect(lits.run(`(do [1 2 3] "[1]" (+ 1 2))`)).toBe(3)
+      expect(lits.run(`(do [1 2 3] '[1]' (+ 1 2))`)).toBe(3)
       expect(lits.run(`(do (object :a 1) :a)`)).toBe(`a`)
       expect(lits.run(`(do)`)).toBeNull()
     })
@@ -496,7 +496,7 @@ describe(`specialExpressions`, () => {
       expect(lits.run(`(for [x [1 2 3] y []] x)`)).toEqual([])
       expect(lits.run(`(for [x [] y [1 2 3]] x)`)).toEqual([])
 
-      expect(lits.run(`(for [x "Al" y [1 2]] (repeat y x))`)).toEqual([[`A`], [`A`, `A`], [`l`], [`l`, `l`]])
+      expect(lits.run(`(for [x 'Al' y [1 2]] (repeat y x))`)).toEqual([[`A`], [`A`, `A`], [`l`], [`l`, `l`]])
       expect(lits.run(`(for [x {:a 10 :b 20} y [1 2]] (repeat y x))`)).toEqual([
         [[`a`, 10]],
         [

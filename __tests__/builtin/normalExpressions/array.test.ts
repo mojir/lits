@@ -65,7 +65,7 @@ describe(`array functions`, () => {
       expect(lits.run(`(flatten true)`)).toEqual([])
       expect(lits.run(`(flatten false)`)).toEqual([])
       expect(lits.run(`(flatten nil)`)).toEqual([])
-      expect(lits.run(`(flatten #"abc")`)).toEqual([])
+      expect(lits.run(`(flatten #'abc')`)).toEqual([])
       expect(() => lits.run(`(flatten [] [])`)).toThrow()
       expect(() => lits.run(`(flatten)`)).toThrow()
     })

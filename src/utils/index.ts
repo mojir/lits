@@ -215,19 +215,6 @@ export function assertRegExp(value: unknown): asserts value is RegExp {
   }
 }
 
-export function assertObjectOrArray(value: unknown): asserts value is Obj | Arr {
-  if (
-    (value === null ||
-      typeof value !== `object` ||
-      Array.isArray(value) ||
-      value instanceof RegExp ||
-      isLitsFunction(value)) &&
-    !Array.isArray(value)
-  ) {
-    throw TypeError(`Expected object or array, got: ${value} type="${typeof value}"`)
-  }
-}
-
 export function assertNumberNotZero(value: unknown): asserts value is number {
   assertFiniteNumber(value)
   if (value === 0) {

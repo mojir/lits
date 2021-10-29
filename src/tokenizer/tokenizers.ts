@@ -45,7 +45,7 @@ export const tokenizeRightCurly: Tokenizer = (input: string, position: number) =
   tokenizeCharacter(`paren`, `}`, input, position)
 
 export const tokenizeString: Tokenizer = (input, position) => {
-  if (input[position] !== `"`) {
+  if (input[position] !== `'`) {
     return NO_MATCH
   }
 
@@ -53,14 +53,14 @@ export const tokenizeString: Tokenizer = (input, position) => {
   let length = 1
   let char = input[position + length]
   let escape = false
-  while (char !== `"` || escape) {
+  while (char !== `'` || escape) {
     if (char === undefined) {
       throw new SyntaxError(`Unclosed string at position ${position}`)
     }
     length += 1
     if (escape) {
       escape = false
-      if (char === `"` || char === `\\`) {
+      if (char === `'` || char === `\\`) {
         value += char
       } else {
         value += `\\`

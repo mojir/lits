@@ -285,7 +285,6 @@ lits.run('(+ 1 2 3 4)'); // returns 10
 * compare
 * debug!
 * equal?
-* get-path
 * inst-ms
 * lits-version
 * not

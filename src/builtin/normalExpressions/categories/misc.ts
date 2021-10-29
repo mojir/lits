@@ -1,16 +1,7 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
 import { Any, Arr } from '../../../interface'
-import {
-  asAny,
-  assertLength,
-  assertObjectOrArray,
-  assertString,
-  compare,
-  deepEqual,
-  isLitsFunction,
-} from '../../../utils'
-import { getPath } from '../../getPath'
+import { asAny, assertLength, assertString, compare, deepEqual, isLitsFunction } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
 
@@ -101,14 +92,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return true
     },
     validate: node => assertLength({ min: 1 }, node),
-  },
-  'get-path': {
-    evaluate: ([first, second]: Arr): Any => {
-      assertObjectOrArray(first)
-      assertString(second)
-      return getPath(first, second)
-    },
-    validate: node => assertLength(2, node),
   },
   not: {
     evaluate: ([first]: Arr): boolean => !first,

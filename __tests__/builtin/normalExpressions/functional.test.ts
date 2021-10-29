@@ -32,8 +32,8 @@ describe(`functional functions`, () => {
 
   describe(`identity`, () => {
     test(`samples`, () => {
-      expect(lits.run(`(identity "Albert")`)).toBe(`Albert`)
-      expect(lits.run(`(identity "")`)).toBe(``)
+      expect(lits.run(`(identity 'Albert')`)).toBe(`Albert`)
+      expect(lits.run(`(identity '')`)).toBe(``)
       expect(lits.run(`(identity nil)`)).toBe(null)
       expect(lits.run(`(identity false)`)).toBe(false)
       expect(lits.run(`(identity true)`)).toBe(true)
@@ -61,7 +61,7 @@ describe(`functional functions`, () => {
         (#((apply comp first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)
       `),
       ).toBe(4)
-      expect(lits.run(`(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)`)).toBe(42)
+      expect(lits.run(`(def x {'bar' {'foo' 42}}) ((comp 'foo' 'bar') x)`)).toBe(42)
 
       expect(lits.run(`((comp) 10)`)).toBe(10)
       expect(lits.run(`((comp) nil)`)).toBe(null)
@@ -102,19 +102,19 @@ describe(`functional functions`, () => {
 
   describe(`every-pred`, () => {
     test(`samples`, () => {
-      expect(lits.run(`((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`)).toBe(true)
-      expect(lits.run(`((every-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(false)
-      expect(lits.run(`((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`)).toBe(false)
+      expect(lits.run(`((every-pred string? #(> (count %1) 3)) 'Albert' 'Mojir')`)).toBe(true)
+      expect(lits.run(`((every-pred string? #(> (count %1) 3)) 'Albert' :M)`)).toBe(false)
+      expect(lits.run(`((every-pred string? #(> (count %1) 3)) 'Albert' [1 2 3])`)).toBe(false)
       expect(() => lits.run(`(every-pred)`)).toThrow()
     })
   })
 
   describe(`some-pred`, () => {
     test(`samples`, () => {
-      expect(lits.run(`((some-pred string? #(> (count %1) 3)) "Albert" :M)`)).toBe(true)
+      expect(lits.run(`((some-pred string? #(> (count %1) 3)) 'Albert' :M)`)).toBe(true)
       expect(lits.run(`((some-pred string? #(> (count %1) 3)) :A :M)`)).toBe(true)
       expect(lits.run(`((some-pred string? #(> (count %1) 3)) [10 20] [20 10])`)).toBe(false)
-      expect(lits.run(`((some-pred string? #(> (count %1) 3)) "Albert" [10 20])`)).toBe(true)
+      expect(lits.run(`((some-pred string? #(> (count %1) 3)) 'Albert' [10 20])`)).toBe(true)
       expect(() => lits.run(`(some-pred)`)).toThrow()
     })
   })

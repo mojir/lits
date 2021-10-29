@@ -17,7 +17,7 @@ module.exports = {
       },
     ],
     description: `Creates a RegExp from \`pattern\` and \`flags\`.`,
-    examples: [`(regexp "^\\s*(.*)$")`, `(regexp "albert" :i)`],
+    examples: [`(regexp '^\\s*(.*)$')`, `(regexp 'albert' :i)`],
   },
   match: {
     name: `match`,
@@ -38,9 +38,9 @@ module.exports = {
     ],
     description: `Matches \`string\` against \`pattern\`. If \`string\` matches, a *match*-array is returned, otherwise \`nil\`.`,
     examples: [
-      `(match (regexp "^\\s*(.*)$") "  A string")`,
-      `(match (regexp "albert" :i) "My name is Albert")`,
-      `(match (regexp "albert" :i) "My name is Ben")`,
+      `(match (regexp '^\\s*(.*)$') '  A string')`,
+      `(match (regexp 'albert' :i) 'My name is Albert')`,
+      `(match (regexp 'albert' :i) 'My name is Ben')`,
     ],
   },
   replace: {
@@ -65,6 +65,6 @@ module.exports = {
       },
     ],
     description: `Returns a new string with some or all matches of \`pattern\` replaced by \`replacement\`.`,
-    examples: [`(replace "Duck" (regexp :u) :i)`, `(replace "abcABC" (regexp :a "gi") "-")`],
+    examples: [`(replace 'Duck' (regexp :u) :i)`, `(replace 'abcABC' (regexp :a 'gi') '-')`],
   },
 }

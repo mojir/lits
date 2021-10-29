@@ -282,7 +282,7 @@ function stringifyValue(value) {
     }
   }
   if (value === null) {
-    return `nil`
+    return `null`
   }
   if (typeof value === 'object' && value instanceof Error) {
     return value.toString()

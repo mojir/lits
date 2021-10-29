@@ -19,7 +19,6 @@ import {
   assertNumberLte,
   assertNumberNotZero,
   assertObj,
-  assertObjectOrArray,
   assertPositiveNumber,
   assertRegExp,
   assertString,
@@ -156,18 +155,6 @@ describe(`utils`, () => {
     expect(() => assertObj(true)).toThrow()
     expect(() => assertObj(null)).toThrow()
     expect(() => assertObj(undefined)).toThrow()
-  })
-  test(`assertObjectOrArray`, () => {
-    expect(() => assertObjectOrArray(0)).toThrow()
-    expect(() => assertObjectOrArray({})).not.toThrow()
-    expect(() => assertObjectOrArray({ [FUNCTION_SYMBOL]: true })).toThrow()
-    expect(() => assertObjectOrArray({ a: 1 })).not.toThrow()
-    expect(() => assertObjectOrArray(/test/)).toThrow()
-    expect(() => assertObjectOrArray([])).not.toThrow()
-    expect(() => assertObjectOrArray([1])).not.toThrow()
-    expect(() => assertObjectOrArray(true)).toThrow()
-    expect(() => assertObjectOrArray(null)).toThrow()
-    expect(() => assertObjectOrArray(undefined)).toThrow()
   })
   test(`assertInteger`, () => {
     expect(() => assertInteger(-0)).not.toThrow()

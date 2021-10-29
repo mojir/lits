@@ -15,26 +15,26 @@ const simpleProgram = `
   [
     day (let [sec 1000] (* 24 60 60 sec))
   ]
-  (* (get-path info "days[1]") day)
+  (* (get-in info [:days 1]) day)
 )`
 
 const formatPhoneNumber = `
 (if (string? $data)
-  (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)]
+  (let [phoneNumber (if (= '+' (nth $data 0)) (subs $data 2) $data)]
     (cond
       (> (count phoneNumber) 6)
-        (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3 6) "-" (subs phoneNumber 6))
+        (str '(' (subs phoneNumber 0 3) ') ' (subs phoneNumber 3 6) '-' (subs phoneNumber 6))
 
       (> (count phoneNumber) 3)
-        (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))
+        (str '(' (subs phoneNumber 0 3) ') ' (subs phoneNumber 3))
 
       (> (count phoneNumber) 0)
-        (str "(" (subs phoneNumber 0))
+        (str '(' (subs phoneNumber 0))
 
       true phoneNumber
     )
   )
-  ""
+  ''
 )
 `
 
@@ -63,7 +63,7 @@ describe(`Evaluator`, () => {
   })
   test(`if statement (true)`, () => {
     const tokens = tokenize(`
-      (if (= (get info "gender") "male") "It's a boy" "It's not a girl")
+      (if (= (get info 'gender') 'male') 'It\\'s a boy' 'It\\'s not a girl')
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))
@@ -71,7 +71,7 @@ describe(`Evaluator`, () => {
   })
   test(`if statement (false)`, () => {
     const tokens = tokenize(`
-      (if (= (get info "gender") "female") "It's a girl" "It's not a girl")
+      (if (= (get info 'gender') 'female') 'It\\'s a girl' 'It\\'s not a girl')
     `)
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))

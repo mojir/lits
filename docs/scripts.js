@@ -113,7 +113,7 @@ function play() {
     output.scrollTop = output.scrollHeight
   }
   try {
-    result = lits.run(code, { vars: context })
+    result = lits.run(code, { globals: context })
   } catch (error) {
     output.value = error
     output.classList.add('error')
@@ -177,7 +177,7 @@ function stringifyValue(value) {
     }
   }
   if (value === null) {
-    return `nil`
+    return `null`
   }
   if (typeof value === 'object' && value instanceof RegExp) {
     return `${value}`
