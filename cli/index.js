@@ -13,9 +13,10 @@ const lits = new Lits()
 const { functionReference } = require(`./reference`)
 
 const commands = [`\`help`, `\`quit`, `\`builtins`, `\`globalContext`, `\`GlobalContext`, `\`resetGlobalContext`]
-const expressionRegExp = /^(.*\(\s*)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
-const nameRegExp = /^(.*?)([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]*)$/
-const helpRegExp = /^`help\s+([0-9a-zA-Z_^?=!$%<>.+*/\-[\]]+)\s*$/
+const nameCharacters = `@%0-9a-zA-ZàáâãăäāåæćčçèéêĕëēìíîĭïðłñòóôõöőøšùúûüűýÿþÀÁÂÃĂÄĀÅÆĆČÇÈÉÊĔËĒÌÍÎĬÏÐŁÑÒÓÔÕÖŐØŠÙÚÛÜŰÝÞß_^?=!$%<>.+*/-`
+const expressionRegExp = new RegExp(`^(.*\\(\\s*)([${nameCharacters}]*)$`)
+const nameRegExp = new RegExp(`^(.*?)([${nameCharacters}]*)$`)
+const helpRegExp = new RegExp(`^\`help\\s+([${nameCharacters}]+)\\s*$`)
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const historyDir = path.join(homeDir, `.config`)

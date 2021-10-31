@@ -4,29 +4,33 @@ exports[`misc functions debug! debug value 1`] = `
 "*** LITS DEBUG ***
 {
   \\"type\\": \\"user-defined\\",
-  \\"arguments\\": {
-    \\"mandatoryArguments\\": [
-      \\"%1\\"
-    ],
-    \\"optionalArguments\\": []
-  },
-  \\"body\\": [
+  \\"overloads\\": [
     {
-      \\"type\\": \\"NormalExpression\\",
-      \\"name\\": \\">\\",
-      \\"params\\": [
+      \\"arguments\\": {
+        \\"mandatoryArguments\\": [
+          \\"%1\\"
+        ]
+      },
+      \\"arity\\": 1,
+      \\"body\\": [
         {
-          \\"type\\": \\"Name\\",
-          \\"value\\": \\"%1\\"
-        },
-        {
-          \\"type\\": \\"Number\\",
-          \\"value\\": 2
+          \\"type\\": \\"NormalExpression\\",
+          \\"name\\": \\">\\",
+          \\"params\\": [
+            {
+              \\"type\\": \\"Name\\",
+              \\"value\\": \\"%1\\"
+            },
+            {
+              \\"type\\": \\"Number\\",
+              \\"value\\": 2
+            }
+          ]
         }
-      ]
+      ],
+      \\"functionContext\\": {}
     }
-  ],
-  \\"functionContext\\": {}
+  ]
 }
 "
 `;

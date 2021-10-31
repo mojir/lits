@@ -6,6 +6,7 @@ import {
   CompFunction,
   ComplementFunction,
   ConstantlyFunction,
+  EvaluatedFunctionOverload,
   EveryPredFunction,
   FNilFunction,
   JuxtFunction,
@@ -28,40 +29,36 @@ type FunctionExecutors = Record<
   ) => Any
 >
 
+function findOverloadFunction(overloads: EvaluatedFunctionOverload[], nbrOfParams: number): EvaluatedFunctionOverload {
+  const overloadFunction = overloads.find(overload => {
+    const arity = overload.arity
+    if (typeof arity === `number`) {
+      return arity === nbrOfParams
+    } else {
+      return arity.min <= nbrOfParams
+    }
+  })
+  if (!overloadFunction) {
+    throw Error(`Unexpected number of arguments, got ${nbrOfParams}`)
+  }
+  return overloadFunction
+}
+
 export const functionExecutors: FunctionExecutors = {
   'user-defined': (fn: UserDefinedFunction, params, contextStack, { evaluateAstNode }) => {
-    const args = fn.arguments
-    const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
-    const nbrOfOptionalArgs: number = args.optionalArguments.length
-    const maxNbrOfParameters: null | number = args.restArgument ? null : nbrOfMandatoryArgs + nbrOfOptionalArgs
-
     for (;;) {
-      const newContext: Context = { ...fn.functionContext }
-      if (params.length < args.mandatoryArguments.length) {
-        throw Error(
-          `Function ${fn.name ?? `(fn)`} requires at least ${args.mandatoryArguments.length} arguments. Got ${
-            params.length
-          }`,
-        )
-      }
+      const overloadFunction = findOverloadFunction(fn.overloads, params.length)
+      const args = overloadFunction.arguments
+      const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
 
-      if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
-        throw Error(
-          `Function "${fn.name ?? `λ`}" requires at most ${maxNbrOfParameters} arguments. Got ${params.length}`,
-        )
-      }
+      const newContext: Context = { ...overloadFunction.functionContext }
 
-      const length = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length)
+      const length = Math.max(params.length, args.mandatoryArguments.length)
       const rest: Arr = []
       for (let i = 0; i < length; i += 1) {
         if (i < nbrOfMandatoryArgs) {
           const param = toAny(params[i])
           const key = asString(args.mandatoryArguments[i])
-          newContext[key] = { value: param }
-        } else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
-          const arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs])
-          const param = i < params.length ? toAny(params[i]) : arg.defaultValue ?? null
-          const key = arg.name
           newContext[key] = { value: param }
         } else {
           rest.push(toAny(params[i]))
@@ -74,7 +71,7 @@ export const functionExecutors: FunctionExecutors = {
 
       try {
         let result: Any = null
-        for (const node of fn.body) {
+        for (const node of overloadFunction.body) {
           result = evaluateAstNode(node, contextStack.withContext(newContext))
         }
         return result

@@ -3,12 +3,16 @@ import { AstNode, BindingNode } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
 import { Builtin } from './interface'
 
+export type Arity = number | { min: number }
+
+export type FunctionOverload = {
+  arguments: FunctionArguments
+  arity: Arity
+  body: AstNode[]
+}
+
 export type FunctionArguments = {
   mandatoryArguments: string[]
-  optionalArguments: Array<{
-    name: string
-    defaultValue?: AstNode
-  }>
   restArgument?: string
   bindings: BindingNode[]
 }

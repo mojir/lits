@@ -78,13 +78,17 @@ describe(`utils`, () => {
     const lf: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
-      arguments: {
-        mandatoryArguments: [],
-        optionalArguments: [],
-      },
-      functionContext: {},
       name: undefined,
-      body: [],
+      overloads: [
+        {
+          arguments: {
+            mandatoryArguments: [],
+          },
+          functionContext: {},
+          body: [],
+          arity: 0,
+        },
+      ],
     }
     expect(asLitsFunction(lf)).toBe(lf)
   })
@@ -242,13 +246,17 @@ describe(`utils`, () => {
     const lf: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
-      arguments: {
-        mandatoryArguments: [],
-        optionalArguments: [],
-      },
-      functionContext: {},
       name: undefined,
-      body: [],
+      overloads: [
+        {
+          arguments: {
+            mandatoryArguments: [],
+          },
+          functionContext: {},
+          body: [],
+          arity: 0,
+        },
+      ],
     }
     expect(() => assertLitsFunction(lf)).not.toThrow()
     expect(() => assertLitsFunction(1)).toThrow()
@@ -472,13 +480,17 @@ describe(`utils`, () => {
     const lf1: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
-      arguments: {
-        mandatoryArguments: [],
-        optionalArguments: [],
-      },
-      functionContext: {},
       name: undefined,
-      body: [],
+      overloads: [
+        {
+          arguments: {
+            mandatoryArguments: [],
+          },
+          functionContext: {},
+          body: [],
+          arity: 0,
+        },
+      ],
     }
     const lf2: LitsFunction = {
       [FUNCTION_SYMBOL]: true,

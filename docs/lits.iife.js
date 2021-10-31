@@ -659,30 +659,18 @@ var Lits = (function (exports) {
     }
 
     function createParser(expressionName) {
-        return function (tokens, position, _a) {
-            var _b;
-            var parseToken = _a.parseToken, parseArgument = _a.parseArgument, parseBindings = _a.parseBindings;
+        return function (tokens, position, parsers) {
+            var _a, _b;
+            var parseToken = parsers.parseToken;
             var functionName = undefined;
             if (expressionName === "defn" || expressionName === "defns") {
-                _b = parseToken(tokens, position), position = _b[0], functionName = _b[1];
+                _a = parseToken(tokens, position), position = _a[0], functionName = _a[1];
                 if (expressionName === "defn" && functionName.type !== "Name") {
                     throw new UnexpectedNodeTypeError("Name", functionName);
                 }
             }
-            var _c = parseFunctionArguments(tokens, position, parseArgument, parseBindings), nextPosition = _c[0], functionArguments = _c[1];
-            position = nextPosition;
-            var token = asNotUndefined(tokens[position]);
-            var body = [];
-            while (!(token.type === "paren" && token.value === ")")) {
-                var _d = parseToken(tokens, position), newPosition = _d[0], bodyNode = _d[1];
-                body.push(bodyNode);
-                position = newPosition;
-                token = asNotUndefined(tokens[position]);
-            }
-            if (body.length === 0) {
-                throw Error("Missing body in special expression \"defn\"");
-            }
-            position += 1;
+            var functionOverloades;
+            _b = parseFunctionOverloades(tokens, position, parsers), position = _b[0], functionOverloades = _b[1];
             if (expressionName === "defn" || expressionName === "defns") {
                 return [
                     position,
@@ -691,8 +679,7 @@ var Lits = (function (exports) {
                         name: expressionName,
                         functionName: functionName,
                         params: [],
-                        arguments: functionArguments,
-                        body: body,
+                        overloads: functionOverloades,
                     },
                 ];
             }
@@ -702,8 +689,7 @@ var Lits = (function (exports) {
                     type: "SpecialExpression",
                     name: expressionName,
                     params: [],
-                    arguments: functionArguments,
-                    body: body,
+                    overloads: functionOverloades,
                 },
             ];
         };
@@ -727,35 +713,32 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
             var name = getFunctionName(expressionName, node, contextStack, evaluateAstNode);
             assertNameNotDefined(name, contextStack, builtin);
-            var functionContext = {};
-            for (var _i = 0, _c = node.arguments.bindings; _i < _c.length; _i++) {
-                var binding = _c[_i];
-                var bindingValueNode = binding.value;
-                var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
-                functionContext[binding.name] = { value: bindingValue };
-            }
-            var optionalArguments = node.arguments.optionalArguments.map(function (optArg) {
-                var name = optArg.name;
-                var defaultValue = optArg.defaultValue;
-                if (defaultValue) {
-                    return {
-                        name: name,
-                        defaultValue: evaluateAstNode(defaultValue, contextStack),
-                    };
+            var evaluatedFunctionOverloades = [];
+            for (var _i = 0, _c = node.overloads; _i < _c.length; _i++) {
+                var functionOverload = _c[_i];
+                var functionContext = {};
+                for (var _d = 0, _e = functionOverload.arguments.bindings; _d < _e.length; _d++) {
+                    var binding = _e[_d];
+                    var bindingValueNode = binding.value;
+                    var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                    functionContext[binding.name] = { value: bindingValue };
                 }
-                return { name: name };
-            });
+                var evaluatedFunctionOverload = {
+                    arguments: {
+                        mandatoryArguments: functionOverload.arguments.mandatoryArguments,
+                        restArgument: functionOverload.arguments.restArgument,
+                    },
+                    arity: functionOverload.arity,
+                    body: functionOverload.body,
+                    functionContext: functionContext,
+                };
+                evaluatedFunctionOverloades.push(evaluatedFunctionOverload);
+            }
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
                 _b.type = "user-defined",
                 _b.name = name,
-                _b.arguments = {
-                    mandatoryArguments: node.arguments.mandatoryArguments,
-                    restArgument: node.arguments.restArgument,
-                    optionalArguments: optionalArguments,
-                },
-                _b.body = node.body,
-                _b.functionContext = functionContext,
+                _b.overloads = evaluatedFunctionOverloades,
                 _b);
             if (expressionName === "fn") {
                 return litsFunction;
@@ -776,18 +759,97 @@ var Lits = (function (exports) {
         parse: createParser("fn"),
         evaluate: createEvaluator("fn"),
     };
-    function parseFunctionArguments(tokens, position, parseArgument, parseBindings) {
+    function arityOk(overloadedFunctions, arity) {
+        if (typeof arity === "number") {
+            return overloadedFunctions.every(function (fun) {
+                if (typeof fun.arity === "number") {
+                    return fun.arity !== arity;
+                }
+                return fun.arity.min > arity;
+            });
+        }
+        return overloadedFunctions.every(function (fun) {
+            if (typeof fun.arity === "number") {
+                return fun.arity < arity.min;
+            }
+            return false;
+        });
+    }
+    function parseFunctionBody(tokens, position, _a) {
+        var parseToken = _a.parseToken;
+        var token = asNotUndefined(tokens[position]);
+        var body = [];
+        while (!(token.type === "paren" && (token.value === ")" || token.value === "]"))) {
+            var _b = parseToken(tokens, position), newPosition = _b[0], bodyNode = _b[1];
+            body.push(bodyNode);
+            position = newPosition;
+            token = asNotUndefined(tokens[position]);
+        }
+        if (body.length === 0) {
+            throw Error("Missing body in function");
+        }
+        position += 1;
+        return [position, body];
+    }
+    function parseFunctionOverloades(tokens, position, parsers) {
+        var _a, _b, _c, _d;
+        var token = asNotUndefined(tokens[position]);
+        if (token.type === "paren" && token.value === "(") {
+            var functionOverloades = [];
+            while (!(token.type === "paren" && token.value === ")")) {
+                position += 1;
+                token = asNotUndefined(tokens[position]);
+                var functionArguments = void 0;
+                _a = parseFunctionArguments(tokens, position, parsers), position = _a[0], functionArguments = _a[1];
+                var arity = functionArguments.restArgument
+                    ? { min: functionArguments.mandatoryArguments.length }
+                    : functionArguments.mandatoryArguments.length;
+                if (!arityOk(functionOverloades, arity)) {
+                    throw Error("All overloaded functions must have different arity");
+                }
+                var functionBody = void 0;
+                _b = parseFunctionBody(tokens, position, parsers), position = _b[0], functionBody = _b[1];
+                functionOverloades.push({
+                    arguments: functionArguments,
+                    body: functionBody,
+                    arity: arity,
+                });
+                token = asNotUndefined(tokens[position]);
+            }
+            return [position + 1, functionOverloades];
+        }
+        else if (token.type === "paren" && token.value === "[") {
+            var functionArguments = void 0;
+            _c = parseFunctionArguments(tokens, position, parsers), position = _c[0], functionArguments = _c[1];
+            var arity = functionArguments.restArgument
+                ? { min: functionArguments.mandatoryArguments.length }
+                : functionArguments.mandatoryArguments.length;
+            var functionBody = void 0;
+            _d = parseFunctionBody(tokens, position, parsers), position = _d[0], functionBody = _d[1];
+            return [
+                position,
+                [
+                    {
+                        arguments: functionArguments,
+                        body: functionBody,
+                        arity: arity,
+                    },
+                ],
+            ];
+        }
+        else {
+            throw new UnexpectedTokenError("[ or (", token);
+        }
+    }
+    function parseFunctionArguments(tokens, position, parsers) {
         var _a;
+        var parseArgument = parsers.parseArgument, parseBindings = parsers.parseBindings;
         var bindings = [];
         var restArgument = undefined;
         var mandatoryArguments = [];
-        var optionalArguments = [];
         var argNames = {};
         var state = "mandatory";
         var token = asNotUndefined(tokens[position]);
-        if (!(token.type === "paren" && token.value === "[")) {
-            throw new UnexpectedTokenError("[", token);
-        }
         position += 1;
         token = asNotUndefined(tokens[position]);
         while (!(token.type === "paren" && token.value === "]")) {
@@ -801,28 +863,13 @@ var Lits = (function (exports) {
                 token = asNotUndefined(tokens[position]);
                 if (node.type === "Modifier") {
                     switch (node.value) {
-                        case "&opt":
+                        case "&":
                             if (state === "rest") {
-                                throw Error("&opt cannot appear after &rest");
-                            }
-                            if (state === "optional") {
-                                throw Error("&opt can only appear once");
-                            }
-                            state = "optional";
-                            break;
-                        case "&rest":
-                            if (state === "rest") {
-                                throw Error("&rest can only appear once");
-                            }
-                            if (state === "optional" && optionalArguments.length === 0) {
-                                throw Error("No optional arguments where spcified");
+                                throw Error("& can only appear once");
                             }
                             state = "rest";
                             break;
                         case "&let":
-                            if (state === "optional" && optionalArguments.length === 0) {
-                                throw Error("No optional arguments where spcified");
-                            }
                             if (state === "rest" && !restArgument) {
                                 throw Error("No rest argument was spcified");
                             }
@@ -839,33 +886,16 @@ var Lits = (function (exports) {
                     else {
                         argNames[node.name] = true;
                     }
-                    if (Object.getOwnPropertyDescriptor(node, "defaultValue")) {
-                        if (state !== "optional") {
-                            throw Error("Cannot specify default value if not an optional argument");
-                        }
-                        optionalArguments.push({
-                            name: node.name,
-                            defaultValue: node.defaultValue,
-                        });
-                    }
-                    else {
-                        switch (state) {
-                            case "mandatory":
-                                mandatoryArguments.push(node.name);
-                                break;
-                            case "optional":
-                                optionalArguments.push({
-                                    name: node.name,
-                                    defaultValue: undefined,
-                                });
-                                break;
-                            case "rest":
-                                if (restArgument !== undefined) {
-                                    throw Error("Can only specify one rest argument");
-                                }
-                                restArgument = node.name;
-                                break;
-                        }
+                    switch (state) {
+                        case "mandatory":
+                            mandatoryArguments.push(node.name);
+                            break;
+                        case "rest":
+                            if (restArgument !== undefined) {
+                                throw Error("Can only specify one rest argument");
+                            }
+                            restArgument = node.name;
+                            break;
                     }
                 }
             }
@@ -873,13 +903,9 @@ var Lits = (function (exports) {
         if (state === "rest" && restArgument === undefined) {
             throw Error("Missing rest argument name");
         }
-        if (state === "optional" && optionalArguments.length === 0) {
-            throw Error("No optional arguments where spcified");
-        }
         position += 1;
         var args = {
             mandatoryArguments: mandatoryArguments,
-            optionalArguments: optionalArguments,
             restArgument: restArgument,
             bindings: bindings,
         };
@@ -3451,7 +3477,7 @@ var Lits = (function (exports) {
         },
     };
 
-    var version = "1.0.0-alpha.3";
+    var version = "1.0.0-alpha.4";
 
     var miscNormalExpression = {
         'not=': {
@@ -4357,34 +4383,35 @@ var Lits = (function (exports) {
     var normalExpressionKeys = Object.keys(normalExpressions);
     var specialExpressionKeys = Object.keys(specialExpressions);
 
+    function findOverloadFunction(overloads, nbrOfParams) {
+        var overloadFunction = overloads.find(function (overload) {
+            var arity = overload.arity;
+            if (typeof arity === "number") {
+                return arity === nbrOfParams;
+            }
+            else {
+                return arity.min <= nbrOfParams;
+            }
+        });
+        if (!overloadFunction) {
+            throw Error("Unexpected number of arguments, got " + nbrOfParams);
+        }
+        return overloadFunction;
+    }
     var functionExecutors = {
         'user-defined': function (fn, params, contextStack, _a) {
-            var _b, _c, _d;
             var evaluateAstNode = _a.evaluateAstNode;
-            var args = fn.arguments;
-            var nbrOfMandatoryArgs = args.mandatoryArguments.length;
-            var nbrOfOptionalArgs = args.optionalArguments.length;
-            var maxNbrOfParameters = args.restArgument ? null : nbrOfMandatoryArgs + nbrOfOptionalArgs;
             for (;;) {
-                var newContext = __assign({}, fn.functionContext);
-                if (params.length < args.mandatoryArguments.length) {
-                    throw Error("Function " + ((_b = fn.name) !== null && _b !== void 0 ? _b : "(fn)") + " requires at least " + args.mandatoryArguments.length + " arguments. Got " + params.length);
-                }
-                if (maxNbrOfParameters !== null && params.length > maxNbrOfParameters) {
-                    throw Error("Function \"" + ((_c = fn.name) !== null && _c !== void 0 ? _c : "\u03BB") + "\" requires at most " + maxNbrOfParameters + " arguments. Got " + params.length);
-                }
-                var length_1 = Math.max(params.length, args.mandatoryArguments.length + args.optionalArguments.length);
+                var overloadFunction = findOverloadFunction(fn.overloads, params.length);
+                var args = overloadFunction.arguments;
+                var nbrOfMandatoryArgs = args.mandatoryArguments.length;
+                var newContext = __assign({}, overloadFunction.functionContext);
+                var length_1 = Math.max(params.length, args.mandatoryArguments.length);
                 var rest = [];
                 for (var i = 0; i < length_1; i += 1) {
                     if (i < nbrOfMandatoryArgs) {
                         var param = toAny(params[i]);
                         var key = asString(args.mandatoryArguments[i]);
-                        newContext[key] = { value: param };
-                    }
-                    else if (i < nbrOfMandatoryArgs + nbrOfOptionalArgs) {
-                        var arg = asNotUndefined(args.optionalArguments[i - nbrOfMandatoryArgs]);
-                        var param = i < params.length ? toAny(params[i]) : (_d = arg.defaultValue) !== null && _d !== void 0 ? _d : null;
-                        var key = arg.name;
                         newContext[key] = { value: param };
                     }
                     else {
@@ -4396,8 +4423,8 @@ var Lits = (function (exports) {
                 }
                 try {
                     var result = null;
-                    for (var _i = 0, _e = fn.body; _i < _e.length; _i++) {
-                        var node = _e[_i];
+                    for (var _i = 0, _b = overloadFunction.body; _i < _b.length; _i++) {
+                        var node = _b[_i];
                         result = evaluateAstNode(node, contextStack.withContext(newContext));
                     }
                     return result;
@@ -4761,14 +4788,18 @@ var Lits = (function (exports) {
         var args = {
             bindings: [],
             mandatoryArguments: mandatoryArguments,
-            optionalArguments: [],
         };
         var node = {
             type: "SpecialExpression",
             name: "fn",
             params: [],
-            arguments: args,
-            body: [normalExpressionNode],
+            overloads: [
+                {
+                    arguments: args,
+                    body: [normalExpressionNode],
+                    arity: args.mandatoryArguments.length,
+                },
+            ],
         };
         return [newPosition, node];
     };
@@ -4777,27 +4808,12 @@ var Lits = (function (exports) {
         if (token.type === "name") {
             return [position + 1, { type: "Argument", name: token.value }];
         }
-        else if (token.type === "paren" && token.value === "(") {
-            position += 1;
-            token = asNotUndefined(tokens[position]);
-            if (token.type !== "name") {
-                throw new UnexpectedTokenError("name", token);
-            }
-            var name_1 = token.value;
-            position += 1;
-            var _a = parseToken(tokens, position), newPosition = _a[0], defaultValue = _a[1];
-            token = asNotUndefined(tokens[newPosition]);
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
-            }
-            return [newPosition + 1, { type: "Argument", name: name_1, defaultValue: defaultValue }];
-        }
         else if (token.type === "modifier") {
             var value = token.value;
             return [position + 1, { type: "Modifier", value: value }];
         }
         else {
-            throw new UnexpectedTokenError("\"(\", name or modifier", token);
+            throw new UnexpectedTokenError("name or modifier", token);
         }
     };
     var parseBindings = function (tokens, position) {
@@ -4935,7 +4951,7 @@ var Lits = (function (exports) {
 
     var NO_MATCH = [0, undefined];
     // A name (function or variable) can contain a lot of different characters
-    var nameRegExp = /[@%0-9a-zA-Z_^?=!$%<>.+*/-]/;
+    var nameRegExp = /[@%0-9a-zA-ZàáâãăäāåæćčçèéêĕëēìíîĭïðłñòóôõöőøšùúûüűýÿþÀÁÂÃĂÄĀÅÆĆČÇÈÉÊĔËĒÌÍÎĬÏÐŁÑÒÓÔÕÖŐØŠÙÚÛÜŰÝÞß_^?=!$%<>.+*/-]/;
     var whitespaceRegExp = /\s|,/;
     var skipWhiteSpace = function (input, current) { var _a; return whitespaceRegExp.test((_a = input[current]) !== null && _a !== void 0 ? _a : "") ? [1, undefined] : NO_MATCH; };
     var skipComment = function (input, current) {
@@ -5165,11 +5181,12 @@ var Lits = (function (exports) {
         return tokenizePattern("name", nameRegExp, input, position);
     };
     var tokenizeModifier = function (input, position) {
-        var modifiers = ["&rest", "&opt", "&let", "&when", "&while"];
+        var modifiers = ["&", "&let", "&when", "&while"];
         for (var _i = 0, modifiers_1 = modifiers; _i < modifiers_1.length; _i++) {
             var modifier = modifiers_1[_i];
             var length_3 = modifier.length;
-            if (input.substr(position, length_3) === modifier) {
+            var charAfterModifier = input[position + length_3];
+            if (input.substr(position, length_3) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
                 var value = modifier;
                 return [length_3, { type: "modifier", value: value }];
             }

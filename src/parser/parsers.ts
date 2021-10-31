@@ -177,43 +177,33 @@ const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
   const args: FunctionArguments = {
     bindings: [],
     mandatoryArguments,
-    optionalArguments: [],
   }
 
   const node: FnSpecialExpressionNode = {
     type: `SpecialExpression`,
     name: `fn`,
     params: [],
-    arguments: args,
-    body: [normalExpressionNode],
+    overloads: [
+      {
+        arguments: args,
+        body: [normalExpressionNode],
+        arity: args.mandatoryArguments.length,
+      },
+    ],
   }
 
   return [newPosition, node]
 }
 
 const parseArgument: ParseArgument = (tokens, position) => {
-  let token = asNotUndefined(tokens[position])
+  const token = asNotUndefined(tokens[position])
   if (token.type === `name`) {
     return [position + 1, { type: `Argument`, name: token.value }]
-  } else if (token.type === `paren` && token.value === `(`) {
-    position += 1
-    token = asNotUndefined(tokens[position])
-    if (token.type !== `name`) {
-      throw new UnexpectedTokenError(`name`, token)
-    }
-    const name = token.value
-    position += 1
-    const [newPosition, defaultValue] = parseToken(tokens, position)
-    token = asNotUndefined(tokens[newPosition])
-    if (!(token.type === `paren` && token.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, token)
-    }
-    return [newPosition + 1, { type: `Argument`, name, defaultValue }]
   } else if (token.type === `modifier`) {
     const value = token.value as ModifierName
     return [position + 1, { type: `Modifier`, value }]
   } else {
-    throw new UnexpectedTokenError(`"(", name or modifier`, token)
+    throw new UnexpectedTokenError(`name or modifier`, token)
   }
 }
 

@@ -212,7 +212,7 @@ describe(`sequence functions`, () => {
       expect(
         lits.run(
           `
-          (defn maxChar [char &rest chars]
+          (defn maxChar [char & chars]
             (loop [cs chars result char]
               (if (empty? cs)
                 result

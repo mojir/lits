@@ -89,6 +89,27 @@ module.exports = [
     `.trim(),
   },
   {
+    id: 'multiple-arity',
+    name: 'Many arities',
+    description: 'Function with multiple arities.',
+    code: `
+(defn foo
+  ([] 'No parameters')
+  ([x] 'One parameter')
+  ([x y] 'Two parameters')
+  ([x y z] 'Three parameters')
+  ([x y z å & rest] 'Four or more parameters')
+)
+
+(write! (foo))
+(write! (foo 1))
+(write! (foo 1 2))
+(write! (foo 1 2 3))
+(write! (foo 1 2 3 4))
+(write! (foo 1 2 3 4 5))
+`.trim(),
+  },
+  {
     id: 'translations-lib',
     name: 'Translations lib',
     description: 'A Lits take on i18n.',
@@ -102,7 +123,7 @@ module.exports = [
 (loop [list (entries TRANSLATIONS)]
   (when (count list)
     (let [entry (first list)]
-      (defns (entry 0) [&rest params &let [templateString (entry 1)]]
+      (defns (entry 0) [& params &let [templateString (entry 1)]]
         (apply template (cons templateString params))
       )
       (recur (rest list))

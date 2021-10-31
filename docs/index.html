@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lits</div>
-    <div class="column right version"><span>v1.0.0-alpha.3</span></div>
+    <div class="column right version"><span>v1.0.0-alpha.4</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -106,6 +106,19 @@
           </div>
           <div class="column right">
             <span class="button" onclick="setPlayground('sort')">Show in playground</span>
+          </div>
+        </div>
+      </li>
+    
+
+      <li>
+        <div class="row example-item">
+          <div class="column wide">
+            <div class="example-name">Many arities</div>
+            <div class="example-description">Function with multiple arities.</div>
+          </div>
+          <div class="column right">
+            <span class="button" onclick="setPlayground('multiple-arity')">Show in playground</span>
           </div>
         </div>
       </li>
@@ -1353,8 +1366,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,4,8,10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 'Albert') <span class="gray">=> "lbt" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,6,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 'Albert') <span class="gray">=> "Abt" </span> </span></pre>
   </div>
 </div>
 
@@ -1372,8 +1385,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 7 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (rand-nth! 'Albert') <span class="gray">=> "l" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 6 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (rand-nth! 'Albert') <span class="gray">=> "t" </span> </span></pre>
   </div>
 </div>
 
@@ -1391,8 +1404,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [5,10,1,8,2,4,9,7,3,6] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___single_quote___Albert Mojir___single_quote___)')"> <span class="icon-button">▶</span> (shuffle 'Albert Mojir') <span class="gray">=> " btiArejroMl" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,5,1,7,9,2,8,10,3,6] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___single_quote___Albert Mojir___single_quote___)')"> <span class="icon-button">▶</span> (shuffle 'Albert Mojir') <span class="gray">=> "MAt eojirrbl" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -2326,9 +2339,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.804469653626201 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.005526804961686163 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.5488984786068887 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.4041497164029939 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.0067243170222763965 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 0.5173805352050298 </span> </span></pre>
   </div>
 </div>
 
@@ -2347,8 +2360,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 37 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 5 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 34 </span> </span></pre>
   </div>
 </div>
 
@@ -2997,7 +3010,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635491872845 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635697018554 </span> </span></pre>
   </div>
 </div>
 
@@ -3099,7 +3112,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lits-version)')"> <span class="icon-button">▶</span> (lits-version) <span class="gray">=> "1.0.0-alpha.3" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lits-version)')"> <span class="icon-button">▶</span> (lits-version) <span class="gray">=> "1.0.0-alpha.4" </span> </span></pre>
   </div>
 </div>
 
@@ -4081,7 +4094,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(defn hyp [a b] (sqrt (+ (* a a) (* b b)))) hyp')"> <span class="icon-button">▶</span> (defn hyp [a b] (sqrt (+ (* a a) (* b b)))) hyp <span class="gray">=> &lt;function hyp&gt; </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(defn hyp [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"> <span class="icon-button">▶</span> (defn hyp [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(defn sumOfSquares [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"> <span class="icon-button">▶</span> (defn sumOfSquares [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(defn sumOfSquares [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"> <span class="icon-button">▶</span> (defn sumOfSquares [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55 </span> </span></pre>
   </div>
 </div>
 
@@ -4103,7 +4116,7 @@
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(defns ___single_quote___hyp___single_quote___ [a b] (sqrt (+ (* a a) (* b b)))) hyp')"> <span class="icon-button">▶</span> (defns 'hyp' [a b] (sqrt (+ (* a a) (* b b)))) hyp <span class="gray">=> &lt;function hyp&gt; </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(defns (str :h :y :p) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)')"> <span class="icon-button">▶</span> (defns (str :h :y :p) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4) <span class="gray">=> 5 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(defns ___single_quote___sumOfSquares___single_quote___ [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"> <span class="icon-button">▶</span> (defns 'sumOfSquares' [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(defns ___single_quote___sumOfSquares___single_quote___ [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)')"> <span class="icon-button">▶</span> (defns 'sumOfSquares' [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5) <span class="gray">=> 55 </span> </span></pre>
   </div>
 </div>
 

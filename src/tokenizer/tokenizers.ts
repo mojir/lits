@@ -6,7 +6,9 @@ import { TokenDescriptor, Tokenizer, TokenizerType } from './interface'
 const NO_MATCH: TokenDescriptor = [0, undefined]
 
 // A name (function or variable) can contain a lot of different characters
-const nameRegExp = /[@%0-9a-zA-Z_^?=!$%<>.+*/-]/
+
+const nameRegExp =
+  /[@%0-9a-zA-ZàáâãăäāåæćčçèéêĕëēìíîĭïðłñòóôõöőøšùúûüűýÿþÀÁÂÃĂÄĀÅÆĆČÇÈÉÊĔËĒÌÍÎĬÏÐŁÑÒÓÔÕÖŐØŠÙÚÛÜŰÝÞß_^?=!$%<>.+*/-]/
 const whitespaceRegExp = /\s|,/
 
 export const skipWhiteSpace: Tokenizer = (input, current) =>
@@ -244,10 +246,11 @@ export const tokenizeName: Tokenizer = (input: string, position: number) =>
   tokenizePattern(`name`, nameRegExp, input, position)
 
 export const tokenizeModifier: Tokenizer = (input: string, position: number) => {
-  const modifiers: ModifierName[] = [`&rest`, `&opt`, `&let`, `&when`, `&while`]
+  const modifiers: ModifierName[] = [`&`, `&let`, `&when`, `&while`]
   for (const modifier of modifiers) {
     const length = modifier.length
-    if (input.substr(position, length) === modifier) {
+    const charAfterModifier = input[position + length]
+    if (input.substr(position, length) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
       const value: ModifierName = modifier
       return [length, { type: `modifier`, value }]
     }

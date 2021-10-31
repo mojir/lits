@@ -237,7 +237,7 @@ module.exports = {
     examples: [
       `(defn hyp [a b] (sqrt (+ (* a a) (* b b)))) hyp`,
       `(defn hyp [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
-      `(defn sumOfSquares [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
+      `(defn sumOfSquares [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
   },
@@ -266,7 +266,7 @@ module.exports = {
     examples: [
       `(defns 'hyp' [a b] (sqrt (+ (* a a) (* b b)))) hyp`,
       `(defns (str :h :y :p) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
-      `(defns 'sumOfSquares' [&rest s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
+      `(defns 'sumOfSquares' [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
   },

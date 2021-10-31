@@ -142,7 +142,7 @@ test(`evaluateAstNode`, () => {
     evaluateAstNode(
       {
         type: `Modifier`,
-        value: `&rest`,
+        value: `&`,
       },
       createContextStack(),
     ),

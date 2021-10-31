@@ -328,6 +328,15 @@ describe(`specialExpressions`, () => {
       expect(() => lits.run(`(defn 'add' [a b] (+ a b))`)).toThrow()
       expect(() => lits.run(`(defn add 1 (+ a b))`)).toThrow()
       expect(() => lits.run(`(defn add [a b])`)).toThrow()
+      expect(() => lits.run(`(defn add a b)`)).toThrow()
+    })
+    test(`arity`, () => {
+      expect(lits.run(`(defn add ([a b] (+ a b))) (add 1 2)`)).toBe(3)
+      expect(lits.run(`(defn add ([a b] (+ a b)) ([a] 10)) (+ (add 1 2) (add 1))`)).toBe(13)
+      expect(() => lits.run(`(defn add ([a b] (+ a b)) ([a b] 10))`)).toThrow()
+      expect(() => lits.run(`(defn add ([a b] (+ a b)) ([a b & rest] 10))`)).toThrow()
+      expect(() => lits.run(`(defn add ([a b & rest] (+ a b)) ([a b] 10))`)).toThrow()
+      expect(() => lits.run(`(defn add ([a b & rest] (+ a b)) ([a b c & rest] 10))`)).toThrow()
     })
     test(`call defn function`, () => {
       expect(lits.run(`(defn sumOneToN [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)`)).toBe(55)
@@ -450,20 +459,14 @@ describe(`specialExpressions`, () => {
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     test(`recur must be called with the right number of parameters`, () => {
-      expect(() => lits.run(`(defn foo [n &opt m] (write! n m) (when (not (zero? n)) (recur))) (foo 3)`)).toThrow()
-      expect(() =>
-        lits.run(`(defn foo [n &opt m] (write! n m) (when (not (zero? n)) (recur (dec n)))) (foo 3)`),
-      ).not.toThrow()
-      expect(() =>
-        lits.run(`(defn foo [n &opt m] (write! n m) (when (not (zero? n)) (recur (dec n) 1))) (foo 3)`),
-      ).not.toThrow()
-      expect(() =>
-        lits.run(`(defn foo [n &opt m] (write! n m) (when (not (zero? n)) (recur (dec n) 1 2))) (foo 3)`),
-      ).toThrow()
-      expect(() => lits.run(`((fn [n &opt m] (write! n m) (when (not (zero? n)) (recur))) 3)`)).toThrow()
-      expect(() => lits.run(`((fn [n &opt m] (write! n m) (when (not (zero? n)) (recur (dec n)))) 3)`)).not.toThrow()
-      expect(() => lits.run(`((fn [n &opt m] (write! n m) (when (not (zero? n)) (recur (dec n) 1))) 3)`)).not.toThrow()
-      expect(() => lits.run(`((fn [n &opt m] (write! n m) (when (not (zero? n)) (recur (dec n) 1 2))) 3)`)).toThrow()
+      expect(() => lits.run(`(defn foo [n] (write! n) (when (not (zero? n)) (recur))) (foo 3)`)).toThrow()
+      expect(() => lits.run(`(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3)`)).not.toThrow()
+      expect(() => lits.run(`(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n) 1))) (foo 3)`)).toThrow()
+      expect(() => lits.run(`(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n) 1 2))) (foo 3)`)).toThrow()
+      expect(() => lits.run(`((fn [n] (write! n) (when (not (zero? n)) (recur))) 3)`)).toThrow()
+      expect(() => lits.run(`((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)`)).not.toThrow()
+      expect(() => lits.run(`((fn [n] (write! n) (when (not (zero? n)) (recur (dec n) 1))) 3)`)).toThrow()
+      expect(() => lits.run(`((fn [n] (write! n) (when (not (zero? n)) (recur (dec n) 1 2))) 3)`)).toThrow()
     })
   })
 
@@ -548,7 +551,7 @@ describe(`specialExpressions`, () => {
         [3, 3, 2],
         [3, 3, 3],
       ])
-      expect(() => lits.run(`(for [x [0 1 2 3 4 5] &opt [y (* x 3)] &while (even? y)] y)`)).toThrow()
+      expect(() => lits.run(`(for [x [0 1 2 3 4 5] & [y (* x 3)] &while (even? y)] y)`)).toThrow()
       expect(() => lits.run(`(for [x [0 1 2 3 4 5] &let [x 10]] y)`)).toThrow()
       expect(() => lits.run(`(for x [0 1 2 3 4 5] y)`)).toThrow()
       expect(() => lits.run(`(for [x [0 1 2 3 4 5]] x y)`)).toThrow()

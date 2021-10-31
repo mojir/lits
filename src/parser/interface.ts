@@ -1,4 +1,5 @@
 import { SpecialExpressionName } from '../builtin/interface'
+import { Arity } from '../builtin/utils'
 import { Context } from '../evaluator/interface'
 import { Any, Arr } from '../interface'
 import { ReservedName } from '../reservedNames'
@@ -8,20 +9,21 @@ export const FUNCTION_SYMBOL = Symbol(`function`)
 
 export type EvaluatedFunctionArguments = {
   mandatoryArguments: string[]
-  optionalArguments: Array<{
-    name: string
-    defaultValue?: Any
-  }>
   restArgument?: string
+}
+
+export type EvaluatedFunctionOverload = {
+  arguments: EvaluatedFunctionArguments
+  body: AstNode[]
+  arity: Arity
+  functionContext: Context
 }
 
 export type UserDefinedFunction = {
   [FUNCTION_SYMBOL]: true
   type: `user-defined`
   name: string | undefined
-  arguments: EvaluatedFunctionArguments
-  body: AstNode[]
-  functionContext: Context
+  overloads: EvaluatedFunctionOverload[]
 }
 
 export type PartialFunction = {
@@ -106,7 +108,7 @@ export type NodeType =
   | `Argument`
   | `Partial`
 
-export type ModifierName = `&rest` | `&opt` | `&let` | `&when` | `&while`
+export type ModifierName = `&` | `&let` | `&when` | `&while`
 
 interface GenericNode {
   type: NodeType

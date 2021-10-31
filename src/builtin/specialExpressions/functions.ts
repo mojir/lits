@@ -3,37 +3,32 @@ import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interfac
 import {
   AstNode,
   BindingNode,
-  EvaluatedFunctionArguments,
+  EvaluatedFunctionOverload,
   FUNCTION_SYMBOL,
   LitsFunction,
   NameNode,
-  ParseArgument,
-  ParseBindings,
   SpecialExpressionNode,
 } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
 import { asNotUndefined, assertString } from '../../utils'
-import { BuiltinSpecialExpression } from '../interface'
-import { assertNameNotDefined, FunctionArguments } from '../utils'
+import { BuiltinSpecialExpression, Parsers } from '../interface'
+import { Arity, assertNameNotDefined, FunctionArguments, FunctionOverload } from '../utils'
 
 interface DefnSpecialExpressionNode extends SpecialExpressionNode {
   name: `defn`
   functionName: AstNode
-  arguments: FunctionArguments
-  body: AstNode[]
+  overloads: FunctionOverload[]
 }
 
 interface DefnsSpecialExpressionNode extends SpecialExpressionNode {
   name: `defns`
   functionName: AstNode
-  arguments: FunctionArguments
-  body: AstNode[]
+  overloads: FunctionOverload[]
 }
 
 export interface FnSpecialExpressionNode extends SpecialExpressionNode {
   name: `fn`
-  arguments: FunctionArguments
-  body: AstNode[]
+  overloads: FunctionOverload[]
 }
 
 type FunctionNode = DefnSpecialExpressionNode | DefnsSpecialExpressionNode | FnSpecialExpressionNode
@@ -41,7 +36,8 @@ type FunctionNode = DefnSpecialExpressionNode | DefnsSpecialExpressionNode | FnS
 type ExpressionsName = `defn` | `defns` | `fn`
 
 function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression<FunctionNode>[`parse`] {
-  return (tokens, position, { parseToken, parseArgument, parseBindings }) => {
+  return (tokens, position, parsers) => {
+    const { parseToken } = parsers
     let functionName = undefined
     if (expressionName === `defn` || expressionName === `defns`) {
       ;[position, functionName] = parseToken(tokens, position)
@@ -50,22 +46,8 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
       }
     }
 
-    const [nextPosition, functionArguments] = parseFunctionArguments(tokens, position, parseArgument, parseBindings)
-    position = nextPosition
-
-    let token = asNotUndefined(tokens[position])
-    const body: AstNode[] = []
-    while (!(token.type === `paren` && token.value === `)`)) {
-      const [newPosition, bodyNode] = parseToken(tokens, position)
-      body.push(bodyNode)
-      position = newPosition
-      token = asNotUndefined(tokens[position])
-    }
-    if (body.length === 0) {
-      throw Error(`Missing body in special expression "defn"`)
-    }
-
-    position += 1
+    let functionOverloades: FunctionOverload[]
+    ;[position, functionOverloades] = parseFunctionOverloades(tokens, position, parsers)
 
     if (expressionName === `defn` || expressionName === `defns`) {
       return [
@@ -75,8 +57,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
           name: expressionName,
           functionName: functionName as AstNode,
           params: [],
-          arguments: functionArguments,
-          body,
+          overloads: functionOverloades,
         },
       ]
     }
@@ -87,8 +68,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
         type: `SpecialExpression`,
         name: expressionName,
         params: [],
-        arguments: functionArguments,
-        body,
+        overloads: functionOverloades,
       },
     ]
   }
@@ -120,38 +100,33 @@ function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpress
 
     assertNameNotDefined(name, contextStack, builtin)
 
-    const functionContext: Context = {}
-    for (const binding of node.arguments.bindings) {
-      const bindingValueNode = binding.value
-      const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
-      functionContext[binding.name] = { value: bindingValue }
-    }
+    const evaluatedFunctionOverloades: EvaluatedFunctionOverload[] = []
+    for (const functionOverload of node.overloads) {
+      const functionContext: Context = {}
+      for (const binding of functionOverload.arguments.bindings) {
+        const bindingValueNode = binding.value
+        const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
+        functionContext[binding.name] = { value: bindingValue }
+      }
 
-    const optionalArguments: EvaluatedFunctionArguments[`optionalArguments`] = node.arguments.optionalArguments.map(
-      optArg => {
-        const name = optArg.name
-        const defaultValue = optArg.defaultValue
-        if (defaultValue) {
-          return {
-            name,
-            defaultValue: evaluateAstNode(defaultValue, contextStack),
-          }
-        }
-        return { name }
-      },
-    )
+      const evaluatedFunctionOverload: EvaluatedFunctionOverload = {
+        arguments: {
+          mandatoryArguments: functionOverload.arguments.mandatoryArguments,
+          restArgument: functionOverload.arguments.restArgument,
+        },
+        arity: functionOverload.arity,
+        body: functionOverload.body,
+        functionContext,
+      }
+
+      evaluatedFunctionOverloades.push(evaluatedFunctionOverload)
+    }
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
       name,
-      arguments: {
-        mandatoryArguments: node.arguments.mandatoryArguments,
-        restArgument: node.arguments.restArgument,
-        optionalArguments,
-      },
-      body: node.body,
-      functionContext,
+      overloads: evaluatedFunctionOverloades,
     }
 
     if (expressionName === `fn`) {
@@ -184,25 +159,99 @@ function castExpressionNode(
   return
 }
 
-function parseFunctionArguments(
-  tokens: Token[],
-  position: number,
-  parseArgument: ParseArgument,
-  parseBindings: ParseBindings,
-): [number, FunctionArguments] {
+function arityOk(overloadedFunctions: FunctionOverload[], arity: Arity) {
+  if (typeof arity === `number`) {
+    return overloadedFunctions.every(fun => {
+      if (typeof fun.arity === `number`) {
+        return fun.arity !== arity
+      }
+      return fun.arity.min > arity
+    })
+  }
+  return overloadedFunctions.every(fun => {
+    if (typeof fun.arity === `number`) {
+      return fun.arity < arity.min
+    }
+    return false
+  })
+}
+
+function parseFunctionBody(tokens: Token[], position: number, { parseToken }: Parsers): [number, AstNode[]] {
+  let token = asNotUndefined(tokens[position])
+  const body: AstNode[] = []
+  while (!(token.type === `paren` && (token.value === `)` || token.value === `]`))) {
+    const [newPosition, bodyNode] = parseToken(tokens, position)
+    body.push(bodyNode)
+    position = newPosition
+    token = asNotUndefined(tokens[position])
+  }
+  if (body.length === 0) {
+    throw Error(`Missing body in function`)
+  }
+  position += 1
+  return [position, body]
+}
+
+function parseFunctionOverloades(tokens: Token[], position: number, parsers: Parsers): [number, FunctionOverload[]] {
+  let token = asNotUndefined(tokens[position])
+  if (token.type === `paren` && token.value === `(`) {
+    const functionOverloades: FunctionOverload[] = []
+    while (!(token.type === `paren` && token.value === `)`)) {
+      position += 1
+      token = asNotUndefined(tokens[position])
+      let functionArguments: FunctionArguments
+      ;[position, functionArguments] = parseFunctionArguments(tokens, position, parsers)
+      const arity: Arity = functionArguments.restArgument
+        ? { min: functionArguments.mandatoryArguments.length }
+        : functionArguments.mandatoryArguments.length
+
+      if (!arityOk(functionOverloades, arity)) {
+        throw Error(`All overloaded functions must have different arity`)
+      }
+
+      let functionBody: AstNode[]
+      ;[position, functionBody] = parseFunctionBody(tokens, position, parsers)
+      functionOverloades.push({
+        arguments: functionArguments,
+        body: functionBody,
+        arity,
+      })
+      token = asNotUndefined(tokens[position])
+    }
+
+    return [position + 1, functionOverloades]
+  } else if (token.type === `paren` && token.value === `[`) {
+    let functionArguments: FunctionArguments
+    ;[position, functionArguments] = parseFunctionArguments(tokens, position, parsers)
+    const arity: Arity = functionArguments.restArgument
+      ? { min: functionArguments.mandatoryArguments.length }
+      : functionArguments.mandatoryArguments.length
+    let functionBody: AstNode[]
+    ;[position, functionBody] = parseFunctionBody(tokens, position, parsers)
+    return [
+      position,
+      [
+        {
+          arguments: functionArguments,
+          body: functionBody,
+          arity,
+        },
+      ],
+    ]
+  } else {
+    throw new UnexpectedTokenError(`[ or (`, token)
+  }
+}
+
+function parseFunctionArguments(tokens: Token[], position: number, parsers: Parsers): [number, FunctionArguments] {
+  const { parseArgument, parseBindings } = parsers
+
   let bindings: BindingNode[] = []
   let restArgument: string | undefined = undefined
   const mandatoryArguments: string[] = []
-  const optionalArguments: Array<{
-    name: string
-    defaultValue?: AstNode
-  }> = []
   const argNames: Record<string, true> = {}
-  let state: `mandatory` | `optional` | `rest` | `let` = `mandatory`
+  let state: `mandatory` | `rest` | `let` = `mandatory`
   let token = asNotUndefined(tokens[position])
-  if (!(token.type === `paren` && token.value === `[`)) {
-    throw new UnexpectedTokenError(`[`, token)
-  }
 
   position += 1
   token = asNotUndefined(tokens[position])
@@ -217,28 +266,13 @@ function parseFunctionArguments(
 
       if (node.type === `Modifier`) {
         switch (node.value) {
-          case `&opt`:
+          case `&`:
             if (state === `rest`) {
-              throw Error(`&opt cannot appear after &rest`)
-            }
-            if (state === `optional`) {
-              throw Error(`&opt can only appear once`)
-            }
-            state = `optional`
-            break
-          case `&rest`:
-            if (state === `rest`) {
-              throw Error(`&rest can only appear once`)
-            }
-            if (state === `optional` && optionalArguments.length === 0) {
-              throw Error(`No optional arguments where spcified`)
+              throw Error(`& can only appear once`)
             }
             state = `rest`
             break
           case `&let`:
-            if (state === `optional` && optionalArguments.length === 0) {
-              throw Error(`No optional arguments where spcified`)
-            }
             if (state === `rest` && !restArgument) {
               throw Error(`No rest argument was spcified`)
             }
@@ -253,33 +287,16 @@ function parseFunctionArguments(
         } else {
           argNames[node.name] = true
         }
-
-        if (Object.getOwnPropertyDescriptor(node, `defaultValue`)) {
-          if (state !== `optional`) {
-            throw Error(`Cannot specify default value if not an optional argument`)
-          }
-          optionalArguments.push({
-            name: node.name,
-            defaultValue: node.defaultValue,
-          })
-        } else {
-          switch (state) {
-            case `mandatory`:
-              mandatoryArguments.push(node.name)
-              break
-            case `optional`:
-              optionalArguments.push({
-                name: node.name,
-                defaultValue: undefined,
-              })
-              break
-            case `rest`:
-              if (restArgument !== undefined) {
-                throw Error(`Can only specify one rest argument`)
-              }
-              restArgument = node.name
-              break
-          }
+        switch (state) {
+          case `mandatory`:
+            mandatoryArguments.push(node.name)
+            break
+          case `rest`:
+            if (restArgument !== undefined) {
+              throw Error(`Can only specify one rest argument`)
+            }
+            restArgument = node.name
+            break
         }
       }
     }
@@ -288,15 +305,11 @@ function parseFunctionArguments(
   if (state === `rest` && restArgument === undefined) {
     throw Error(`Missing rest argument name`)
   }
-  if (state === `optional` && optionalArguments.length === 0) {
-    throw Error(`No optional arguments where spcified`)
-  }
 
   position += 1
 
   const args: FunctionArguments = {
     mandatoryArguments,
-    optionalArguments,
     restArgument,
     bindings,
   }
