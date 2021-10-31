@@ -12,6 +12,7 @@ interface LoopSpecialExpressionNode extends SpecialExpressionNode {
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens, parseBindings }) => {
+    const firstToken = asNotUndefined(tokens[position])
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -23,6 +24,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
       name: `loop`,
       params,
       bindings,
+      token: firstToken,
     }
     return [position + 1, node]
   },

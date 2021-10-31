@@ -19,13 +19,37 @@ exports[`misc functions debug! debug value 1`] = `
           \\"params\\": [
             {
               \\"type\\": \\"Name\\",
-              \\"value\\": \\"%1\\"
+              \\"value\\": \\"%1\\",
+              \\"token\\": {
+                \\"type\\": \\"name\\",
+                \\"value\\": \\"%1\\",
+                \\"meta\\": {
+                  \\"line\\": 1,
+                  \\"column\\": 13
+                }
+              }
             },
             {
               \\"type\\": \\"Number\\",
-              \\"value\\": 2
+              \\"value\\": 2,
+              \\"token\\": {
+                \\"type\\": \\"number\\",
+                \\"value\\": \\"2\\",
+                \\"meta\\": {
+                  \\"line\\": 1,
+                  \\"column\\": 16
+                }
+              }
             }
-          ]
+          ],
+          \\"token\\": {
+            \\"type\\": \\"name\\",
+            \\"value\\": \\">\\",
+            \\"meta\\": {
+              \\"line\\": 1,
+              \\"column\\": 11
+            }
+          }
         }
       ],
       \\"functionContext\\": {}

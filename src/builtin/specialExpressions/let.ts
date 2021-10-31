@@ -1,6 +1,7 @@
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
+import { asNotUndefined } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface LetSpecialExpressionNode extends SpecialExpressionNode {
@@ -10,6 +11,7 @@ interface LetSpecialExpressionNode extends SpecialExpressionNode {
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
+    const firstToken = asNotUndefined(tokens[position])
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -21,6 +23,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
       name: `let`,
       params,
       bindings,
+      token: firstToken,
     }
     return [position + 1, node]
   },

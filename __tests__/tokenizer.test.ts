@@ -14,10 +14,10 @@ describe(`Tokenizer`, () => {
   })
 
   test(`comments`, () => {
-    expect(tokenize(`'Hi' ;This is a string`)).toEqual([{ type: `string`, value: `Hi` }])
+    expect(tokenize(`'Hi' ;This is a string`)).toEqual([{ type: `string`, value: `Hi`, meta: { line: 1, column: 1 } }])
     expect(tokenize(`'Hi' ;This is a string\n'there'`)).toEqual([
-      { type: `string`, value: `Hi` },
-      { type: `string`, value: `there` },
+      { type: `string`, value: `Hi`, meta: { line: 1, column: 1 } },
+      { type: `string`, value: `there`, meta: { line: 2, column: 1 } },
     ])
   })
 
@@ -26,19 +26,29 @@ describe(`Tokenizer`, () => {
       expect(() => tokenize(`'Hej`)).toThrow()
     })
     test(`Escaped string`, () => {
-      expect(tokenize(`'He\\'j'`)[0]).toEqual({ type: `string`, value: `He'j` })
-      expect(tokenize(`'He\\\\j'`)[0]).toEqual({ type: `string`, value: `He\\j` })
-      expect(tokenize(`'H\\ej'`)[0]).toEqual({ type: `string`, value: `H\\ej` })
+      expect(tokenize(`'He\\'j'`)[0]).toEqual({ type: `string`, value: `He'j`, meta: { line: 1, column: 1 } })
+      expect(tokenize(`'He\\\\j'`)[0]).toEqual({ type: `string`, value: `He\\j`, meta: { line: 1, column: 1 } })
+      expect(tokenize(`'H\\ej'`)[0]).toEqual({ type: `string`, value: `H\\ej`, meta: { line: 1, column: 1 } })
     })
   })
 
   describe(`regexpShorthand`, () => {
     test(`samples`, () => {
-      expect(tokenize(`#'Hej'`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: {} }])
-      expect(tokenize(`#'Hej'g`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { g: true } }])
-      expect(tokenize(`#'Hej'i`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { i: true } }])
-      expect(tokenize(`#'Hej'gi`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { i: true, g: true } }])
-      expect(tokenize(`#'Hej'ig`)).toEqual([{ type: `regexpShorthand`, value: `Hej`, options: { i: true, g: true } }])
+      expect(tokenize(`#'Hej'`)).toEqual([
+        { type: `regexpShorthand`, value: `Hej`, options: {}, meta: { line: 1, column: 1 } },
+      ])
+      expect(tokenize(`#'Hej'g`)).toEqual([
+        { type: `regexpShorthand`, value: `Hej`, options: { g: true }, meta: { line: 1, column: 1 } },
+      ])
+      expect(tokenize(`#'Hej'i`)).toEqual([
+        { type: `regexpShorthand`, value: `Hej`, options: { i: true }, meta: { line: 1, column: 1 } },
+      ])
+      expect(tokenize(`#'Hej'gi`)).toEqual([
+        { type: `regexpShorthand`, value: `Hej`, options: { i: true, g: true }, meta: { line: 1, column: 1 } },
+      ])
+      expect(tokenize(`#'Hej'ig`)).toEqual([
+        { type: `regexpShorthand`, value: `Hej`, options: { i: true, g: true }, meta: { line: 1, column: 1 } },
+      ])
       expect(() => tokenize(`#'Hej'gg`)).toThrow()
       expect(() => tokenize(`#'Hej'ii`)).toThrow()
       expect(() => tokenize(`#1`)).toThrow()
@@ -48,8 +58,8 @@ describe(`Tokenizer`, () => {
   describe(`fnShorthand`, () => {
     test(`samples`, () => {
       expect(tokenize(`#(`)).toEqual([
-        { type: `fnShorthand`, value: `#` },
-        { type: `paren`, value: `(` },
+        { type: `fnShorthand`, value: `#`, meta: { line: 1, column: 1 } },
+        { type: `paren`, value: `(`, meta: { line: 1, column: 2 } },
       ])
       expect(() => tokenize(`#`)).toThrow()
     })

@@ -1,4 +1,4 @@
-import { Token, Tokenizer } from './interface'
+import { Token, Tokenizer, TokenMeta } from './interface'
 import {
   skipComment,
   skipWhiteSpace,
@@ -38,6 +38,14 @@ const tokenizers: Tokenizer[] = [
   tokenizeFnShorthand,
 ]
 
+export function calculateMeta(input: string, position: number): TokenMeta {
+  const lines = input.substr(0, position + 1).split(/\r\n|\r|\n/)
+  return {
+    line: lines.length,
+    column: (lines[lines.length - 1] as string).length,
+  }
+}
+
 export function tokenize(input: string): Token[] {
   const tokens: Token[] = []
   let position = 0
@@ -47,7 +55,8 @@ export function tokenize(input: string): Token[] {
 
     // Loop through all tokenizer until one matches
     for (const tokenize of tokenizers) {
-      const [nbrOfCharacters, token] = tokenize(input, position)
+      const meta: TokenMeta = calculateMeta(input, position)
+      const [nbrOfCharacters, token] = tokenize(input, position, meta)
 
       // tokenizer matched
       if (nbrOfCharacters > 0) {

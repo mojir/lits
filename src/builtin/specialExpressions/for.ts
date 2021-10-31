@@ -99,6 +99,7 @@ function parseLoopBindings(tokens: Token[], position: number, parsers: Parsers):
 
 export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, parsers) => {
+    const firstToken = asNotUndefined(tokens[position])
     const { parseToken } = parsers
     let loopBindings: LoopBindingNode[]
     ;[position, loopBindings] = parseLoopBindings(tokens, position, parsers)
@@ -116,6 +117,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
       type: `SpecialExpression`,
       loopBindings,
       params: [expression],
+      token: firstToken,
     }
 
     return [position + 1, node]

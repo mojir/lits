@@ -1,6 +1,6 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asAstNode, assertLength } from '../../utils'
+import { asAstNode, asNotUndefined, assertLength } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface IfNotSpecialExpressionNode extends SpecialExpressionNode {
@@ -9,6 +9,7 @@ interface IfNotSpecialExpressionNode extends SpecialExpressionNode {
 
 export const ifNotSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
+    const firstToken = asNotUndefined(tokens[position])
     const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,
@@ -16,6 +17,7 @@ export const ifNotSpecialExpression: BuiltinSpecialExpression<Any> = {
         type: `SpecialExpression`,
         name: `if-not`,
         params,
+        token: firstToken,
       },
     ]
   },

@@ -50,26 +50,42 @@ import {
 describe(`utils`, () => {
   test(`asAstNode`, () => {
     expect(() => asAstNode(undefined)).toThrow()
-    const node: AstNode = { type: `Name`, value: `test` }
+    const node: AstNode = {
+      type: `Name`,
+      value: `test`,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
+    }
 
     expect(asAstNode(node)).toBe(node)
   })
   test(`asAny`, () => {
     expect(() => asAny(undefined)).toThrow()
     expect(() => asAny(undefined, `An error message`)).toThrow()
-    const node: AstNode = { type: `Name`, value: `test` }
+    const node: AstNode = {
+      type: `Name`,
+      value: `test`,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
+    }
 
     expect(asAny(node)).toBe(node)
   })
   test(`assertAny`, () => {
     expect(() => assertAny(undefined)).toThrow()
-    const node: AstNode = { type: `Name`, value: `test` }
+    const node: AstNode = {
+      type: `Name`,
+      value: `test`,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
+    }
 
     expect(() => assertAny(node)).not.toThrow()
   })
   test(`assertAny`, () => {
     expect(() => assertAny(undefined)).toThrow()
-    const node: AstNode = { type: `Name`, value: `test` }
+    const node: AstNode = {
+      type: `Name`,
+      value: `test`,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
+    }
 
     expect(() => assertAny(node)).not.toThrow()
   })
@@ -94,10 +110,13 @@ describe(`utils`, () => {
   })
   test(`asNameNode`, () => {
     expect(() => asNameNode(undefined)).toThrow()
-    expect(() => asNameNode({ type: `Number`, value: 12 })).toThrow()
+    expect(() =>
+      asNameNode({ type: `Number`, value: 12, token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` } }),
+    ).toThrow()
     const nameNode: NameNode = {
       type: `Name`,
       value: `a-name`,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
     }
     expect(asNameNode(nameNode)).toBe(nameNode)
   })
@@ -106,6 +125,7 @@ describe(`utils`, () => {
     const nameNode: NameNode = {
       type: `Name`,
       value: `a-name`,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
     }
     asNameNode(nameNode)
   })
@@ -186,11 +206,16 @@ describe(`utils`, () => {
   })
 
   function node(arr: number[]): NormalExpressionNode {
-    const astNodes: AstNode[] = arr.map(n => ({ type: `Number`, value: n }))
+    const astNodes: AstNode[] = arr.map(n => ({
+      type: `Number`,
+      value: n,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
+    }))
     return {
       name: `let`,
       params: astNodes,
       type: `NormalExpression`,
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
     }
   }
 
@@ -587,13 +612,25 @@ describe(`utils`, () => {
   })
 
   test(`isNormalExpressionNodeName`, () => {
-    expect(isNormalExpressionNodeName({ type: `NormalExpression`, params: [], name: `object` })).toBe(true)
     expect(
       isNormalExpressionNodeName({
         type: `NormalExpression`,
         params: [],
-        expression: { type: `NormalExpression`, name: `+`, params: [{ type: `Number`, value: 2 }] },
+        name: `object`,
+        token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
       }),
+    ).toBe(true)
+    expect(
+      isNormalExpressionNodeName({
+        type: `NormalExpression`,
+        params: [],
+        expression: {
+          type: `NormalExpression`,
+          name: `+`,
+          params: [{ type: `Number`, value: 2, token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` } }],
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any),
     ).toBe(false)
   })
 

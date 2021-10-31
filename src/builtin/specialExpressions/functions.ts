@@ -37,6 +37,7 @@ type ExpressionsName = `defn` | `defns` | `fn`
 
 function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression<FunctionNode>[`parse`] {
   return (tokens, position, parsers) => {
+    const firstToken = asNotUndefined(tokens[position])
     const { parseToken } = parsers
     let functionName = undefined
     if (expressionName === `defn` || expressionName === `defns`) {
@@ -58,6 +59,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
           functionName: functionName as AstNode,
           params: [],
           overloads: functionOverloades,
+          token: firstToken,
         },
       ]
     }
@@ -69,6 +71,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
         name: expressionName,
         params: [],
         overloads: functionOverloades,
+        token: firstToken,
       },
     ]
   }

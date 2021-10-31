@@ -14,6 +14,7 @@ interface TrySpecialExpressionNode extends SpecialExpressionNode {
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
+    const firstToken = asNotUndefined(tokens[position])
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokens, position)
 
@@ -63,6 +64,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
       tryExpression,
       catchExpression,
       error,
+      token: firstToken,
     }
 
     return [position, node]

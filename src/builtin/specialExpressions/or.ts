@@ -1,5 +1,6 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
+import { asNotUndefined } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface OrSpecialExpressionNode extends SpecialExpressionNode {
@@ -8,6 +9,7 @@ interface OrSpecialExpressionNode extends SpecialExpressionNode {
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
+    const firstToken = asNotUndefined(tokens[position])
     const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,
@@ -15,6 +17,7 @@ export const orSpecialExpression: BuiltinSpecialExpression<Any> = {
         type: `SpecialExpression`,
         name: `or`,
         params,
+        token: firstToken,
       },
     ]
   },

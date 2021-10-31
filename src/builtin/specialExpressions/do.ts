@@ -14,6 +14,7 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
       type: `SpecialExpression`,
       name: `do`,
       params: [],
+      token: asNotUndefined(tokens[position]),
     }
 
     let token = asNotUndefined(tokens[position])

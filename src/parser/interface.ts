@@ -112,6 +112,7 @@ export type ModifierName = `&` | `&let` | `&when` | `&while`
 
 interface GenericNode {
   type: NodeType
+  token: Token
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode

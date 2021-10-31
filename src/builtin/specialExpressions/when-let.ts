@@ -11,6 +11,7 @@ interface WhenLetSpecialExpressionNode extends SpecialExpressionNode {
 
 export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
+    const firstToken = asNotUndefined(tokens[position])
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -26,6 +27,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
       name: `when-let`,
       binding: asNotUndefined(bindings[0]),
       params,
+      token: firstToken,
     }
     return [position + 1, node]
   },

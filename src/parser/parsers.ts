@@ -28,25 +28,25 @@ import { FunctionArguments } from '../builtin/utils'
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: `Number`, value: Number(token.value) }]
+  return [position + 1, { type: `Number`, value: Number(token.value), token }]
 }
 
 type ParseString = (tokens: Token[], position: number) => [number, StringNode]
 export const parseString: ParseString = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: `String`, value: token.value }]
+  return [position + 1, { type: `String`, value: token.value, token }]
 }
 
 type ParseName = (tokens: Token[], position: number) => [number, NameNode]
 export const parseName: ParseName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: `Name`, value: token.value }]
+  return [position + 1, { type: `Name`, value: token.value, token }]
 }
 
 type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
 export const parseReservedName: ParseReservedName = (tokens: Token[], position: number) => {
   const token = asNotUndefined(tokens[position])
-  return [position + 1, { type: `ReservedName`, value: token.value as ReservedName }]
+  return [position + 1, { type: `ReservedName`, value: token.value as ReservedName, token }]
 }
 
 const parseTokens: ParseTokens = (tokens, position) => {
@@ -73,6 +73,7 @@ const parseExpression: ParseExpression = (tokens, position) => {
 
 type ParseArrayLitteral = (tokens: Token[], position: number) => [number, AstNode]
 const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
+  const firstToken = asNotUndefined(tokens[position])
   position = position + 1
 
   let token = asNotUndefined(tokens[position])
@@ -90,6 +91,7 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
     type: `NormalExpression`,
     name: `array`,
     params,
+    token: firstToken,
   }
 
   return [position, node]
@@ -97,6 +99,7 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
 
 type ParseObjectLitteral = (tokens: Token[], position: number) => [number, NormalExpressionNodeName]
 const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
+  const firstToken = asNotUndefined(tokens[position])
   position = position + 1
 
   let token = asNotUndefined(tokens[position])
@@ -114,6 +117,7 @@ const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
     type: `NormalExpression`,
     name: `object`,
     params,
+    token: firstToken,
   }
 
   assertLengthEven(node)
@@ -127,6 +131,7 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
   const stringNode: StringNode = {
     type: `String`,
     value: token.value,
+    token,
   }
 
   assertNotUndefined(token.options)
@@ -134,12 +139,14 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
   const optionsNode: StringNode = {
     type: `String`,
     value: `${token.options.g ? `g` : ``}${token.options.i ? `i` : ``}`,
+    token,
   }
 
   const node: NormalExpressionNode = {
     type: `NormalExpression`,
     name: `regexp`,
     params: [stringNode, optionsNode],
+    token,
   }
 
   return [position + 1, node]
@@ -148,6 +155,8 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
 const placeholderRegexp = /^%([1-9][0-9]?$)/
 type ParseFnShorthand = (tokens: Token[], position: number) => [number, FnSpecialExpressionNode]
 const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
+  const firstToken = asNotUndefined(tokens[position])
+
   position += 2
   const [newPosition, normalExpressionNode] = parseNormalExpression(tokens, position)
 
@@ -190,6 +199,7 @@ const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
         arity: args.mandatoryArguments.length,
       },
     ],
+    token: firstToken,
   }
 
   return [newPosition, node]
@@ -198,10 +208,10 @@ const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
 const parseArgument: ParseArgument = (tokens, position) => {
   const token = asNotUndefined(tokens[position])
   if (token.type === `name`) {
-    return [position + 1, { type: `Argument`, name: token.value }]
+    return [position + 1, { type: `Argument`, name: token.value, token }]
   } else if (token.type === `modifier`) {
     const value = token.value as ModifierName
-    return [position + 1, { type: `Modifier`, value }]
+    return [position + 1, { type: `Modifier`, value, token }]
   } else {
     throw new UnexpectedTokenError(`name or modifier`, token)
   }
@@ -227,14 +237,13 @@ const parseBindings: ParseBindings = (tokens, position) => {
 }
 
 const parseBinding: ParseBinding = (tokens, position) => {
-  let token = asNotUndefined(tokens[position])
-  if (token.type !== `name`) {
-    throw Error(`Expected name node in binding, got ${token.type} value=${token.value}`)
+  const firstToken = asNotUndefined(tokens[position])
+  if (firstToken.type !== `name`) {
+    throw Error(`Expected name node in binding, got ${firstToken.type} value=${firstToken.value}`)
   }
-  const name = token.value
+  const name = firstToken.value
 
   position += 1
-  token = asNotUndefined(tokens[position])
   let value: AstNode
   ;[position, value] = parseToken(tokens, position)
 
@@ -242,6 +251,7 @@ const parseBinding: ParseBinding = (tokens, position) => {
     type: `Binding`,
     name,
     value,
+    token: firstToken,
   }
   return [position, node]
 }
@@ -258,6 +268,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
       type: `NormalExpression`,
       expression: fnNode,
       params,
+      token: fnNode.token,
     }
 
     return [position, node]
@@ -268,6 +279,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
     type: `NormalExpression`,
     name: fnNode.value,
     params,
+    token: fnNode.token,
   }
 
   const builtinExpression = builtin.normalExpressions[node.name]

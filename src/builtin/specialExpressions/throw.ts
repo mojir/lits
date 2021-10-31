@@ -10,6 +10,7 @@ interface ThrowSpecialExpressionNode extends SpecialExpressionNode {
 
 export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
   parse: (tokens, position, { parseToken }) => {
+    const firstToken = asNotUndefined(tokens[position])
     const [newPosition, messageNode] = parseToken(tokens, position)
     position = newPosition
 
@@ -24,6 +25,7 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
       name: `throw`,
       params: [],
       messageNode,
+      token: firstToken,
     }
     return [position, node]
   },

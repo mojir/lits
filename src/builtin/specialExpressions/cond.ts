@@ -34,6 +34,7 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
 export const condSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
+    const firstToken = asNotUndefined(tokens[position])
     let conditions: Condition[]
     ;[position, conditions] = parseConditions(tokens, position, parseToken)
 
@@ -44,6 +45,7 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any> = {
         name: `cond`,
         conditions,
         params: [],
+        token: firstToken,
       },
     ]
   },

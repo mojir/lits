@@ -18,6 +18,7 @@ describe(`errors`, () => {
     const token: Token = {
       type: `name`,
       value: `xxx`,
+      meta: { line: 0, column: 0 },
     }
     const err = new UnexpectedTokenError(`)`, token)
     expect(err).toBeInstanceOf(UnexpectedTokenError)
@@ -29,6 +30,7 @@ describe(`errors`, () => {
       type: `NormalExpression`,
       name: `+`,
       params: [],
+      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
     }
     const err = new UnexpectedNodeTypeError(`Name`, node)
     expect(err).toBeInstanceOf(UnexpectedNodeTypeError)
