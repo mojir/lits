@@ -1,3 +1,4 @@
+import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
@@ -16,7 +17,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     ;[position, bindings] = parseBindings(tokens, position)
 
     if (bindings.length !== 1) {
-      throw Error(`Expected exactly one binding, got ${bindings.length}`)
+      throw new LitsError(`Expected exactly one binding, got ${bindings.length}`, firstToken.meta)
     }
 
     let params: AstNode[]
@@ -36,7 +37,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     const locals: Context = {}
     const evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack)
     if (!isSeq(evaluatedBindingForm)) {
-      throw Error(`Expected undefined or a sequence, got ${evaluatedBindingForm}`)
+      throw new LitsError(`Expected undefined or a sequence, got ${evaluatedBindingForm}`, node.token.meta)
     }
 
     if (evaluatedBindingForm.length === 0) {

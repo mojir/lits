@@ -1,3 +1,4 @@
+import { LitsError } from '../errors'
 import { Token, Tokenizer, TokenMeta } from './interface'
 import {
   skipComment,
@@ -38,12 +39,20 @@ const tokenizers: Tokenizer[] = [
   tokenizeFnShorthand,
 ]
 
+class TokenMetaImpl {
+  line: number
+  column: number
+  constructor(line: number, column: number) {
+    this.line = line
+    this.column = column
+  }
+  toString() {
+    return `(${this.line}:${this.column})`
+  }
+}
 export function calculateMeta(input: string, position: number): TokenMeta {
   const lines = input.substr(0, position + 1).split(/\r\n|\r|\n/)
-  return {
-    line: lines.length,
-    column: (lines[lines.length - 1] as string).length,
-  }
+  return new TokenMetaImpl(lines.length, (lines[lines.length - 1] as string).length)
 }
 
 export function tokenize(input: string): Token[] {
@@ -69,7 +78,7 @@ export function tokenize(input: string): Token[] {
       }
     }
     if (!tokenized) {
-      throw new SyntaxError(`Unrecognized character at position ${position}: '${input[position]}'`)
+      throw new LitsError(`Unrecognized character`, calculateMeta(input, position))
     }
   }
   return tokens

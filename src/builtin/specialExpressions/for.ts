@@ -1,8 +1,8 @@
-import { UnexpectedTokenError } from '../../errors'
+import { LitsError, UnexpectedTokenError } from '../../errors'
 import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interface'
 import { Any, Arr } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { Token } from '../../tokenizer/interface'
+import { Token, TokenMeta } from '../../tokenizer/interface'
 import { asAny, asColl, asNotUndefined, isSeq } from '../../utils'
 import { BuiltinSpecialExpression, Parsers } from '../interface'
 
@@ -37,27 +37,27 @@ function parseLoopBinding(
     switch (token.value) {
       case `&let`:
         if (loopBinding.letBindings) {
-          throw Error(`Only one &let modifier allowed`)
+          throw new LitsError(`Only one &let modifier allowed`, token.meta)
         }
         ;[position, loopBinding.letBindings] = parseBindings(tokens, position + 1)
         loopBinding.modifiers.push(`&let`)
         break
       case `&when`:
         if (loopBinding.whenNode) {
-          throw Error(`Only one &when modifier allowed`)
+          throw new LitsError(`Only one &when modifier allowed`, token.meta)
         }
         ;[position, loopBinding.whenNode] = parseToken(tokens, position + 1)
         loopBinding.modifiers.push(`&when`)
         break
       case `&while`:
         if (loopBinding.whileNode) {
-          throw Error(`Only one &while modifier allowed`)
+          throw new LitsError(`Only one &while modifier allowed`, token.meta)
         }
         ;[position, loopBinding.whileNode] = parseToken(tokens, position + 1)
         loopBinding.modifiers.push(`&while`)
         break
       default:
-        throw Error(`Illegal modifier: ${token.value}`)
+        throw new LitsError(`Illegal modifier: ${token.value}`, token.meta)
     }
     token = asNotUndefined(tokens[position])
   }
@@ -69,10 +69,11 @@ function addToContext(
   context: Context,
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
+  meta: TokenMeta,
 ) {
   for (const binding of bindings) {
     if (context[binding.name]) {
-      throw Error(`Variable already defined: ${binding.name}`)
+      throw new LitsError(`Variable already defined: ${binding.name}`, meta)
     }
     context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
   }
@@ -124,6 +125,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     castLoopExpressionNode(node)
+    const meta = node.token.meta
     const { loopBindings, params } = node
     const expression = asNotUndefined(params[0])
 
@@ -137,7 +139,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
       let skip = false
       bindingsLoop: for (let bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
         const { binding, letBindings, whenNode, whileNode, modifiers } = asNotUndefined(loopBindings[bindingIndex])
-        const coll = asColl(evaluateAstNode(binding.value, newContextStack))
+        const coll = asColl(evaluateAstNode(binding.value, newContextStack), meta)
         const seq = isSeq(coll) ? coll : Object.entries(coll)
         if (seq.length === 0) {
           skip = true
@@ -156,15 +158,15 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
           break
         }
         if (context[binding.name]) {
-          throw Error(`Variable already defined: ${binding.name}`)
+          throw new LitsError(`Variable already defined: ${binding.name}`, meta)
         }
         context[binding.name] = {
-          value: asAny(seq[index]),
+          value: asAny(seq[index], meta),
         }
         for (const modifier of modifiers) {
           switch (modifier) {
             case `&let`:
-              addToContext(asNotUndefined(letBindings), context, newContextStack, evaluateAstNode)
+              addToContext(asNotUndefined(letBindings), context, newContextStack, evaluateAstNode, meta)
               break
             case `&when`:
               if (!evaluateAstNode(asNotUndefined(whenNode), newContextStack)) {

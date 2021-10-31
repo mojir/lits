@@ -1,3 +1,4 @@
+import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
@@ -16,7 +17,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     ;[position, bindings] = parseBindings(tokens, position)
 
     if (bindings.length !== 1) {
-      throw Error(`Expected exactly one binding, got ${bindings.length}`)
+      throw new LitsError(`Expected exactly one binding, got ${bindings.length}`, firstToken.meta)
     }
 
     let params: AstNode[]

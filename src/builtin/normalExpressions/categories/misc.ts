@@ -1,13 +1,13 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
-import { Any, Arr } from '../../../interface'
+import { Any } from '../../../interface'
 import { asAny, assertLength, assertString, compare, deepEqual, isLitsFunction } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
   'not=': {
-    evaluate: (params: Arr): boolean => {
+    evaluate: (params): boolean => {
       for (let i = 0; i < params.length - 1; i += 1) {
         for (let j = i + 1; j < params.length; j += 1) {
           if (params[i] === params[j]) {
@@ -21,7 +21,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   '=': {
-    evaluate: ([first, ...rest]: Arr): boolean => {
+    evaluate: ([first, ...rest]): boolean => {
       for (const param of rest) {
         if (param !== first) {
           return false
@@ -33,13 +33,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   'equal?': {
-    evaluate: ([a, b]: Arr): boolean => {
-      return deepEqual(asAny(a), asAny(b))
+    evaluate: ([a, b], meta): boolean => {
+      return deepEqual(asAny(a, meta), asAny(b, meta), meta)
     },
     validate: node => assertLength({ min: 1 }, node),
   },
   '>': {
-    evaluate: ([first, ...rest]: Arr): boolean => {
+    evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
         if (compare(currentValue, param) <= 0) {
@@ -53,7 +53,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
 
   '<': {
-    evaluate: ([first, ...rest]: Arr): boolean => {
+    evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
         if (compare(currentValue, param) >= 0) {
@@ -67,7 +67,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
 
   '>=': {
-    evaluate: ([first, ...rest]: Arr): boolean => {
+    evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
         if (compare(currentValue, param) < 0) {
@@ -81,7 +81,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
 
   '<=': {
-    evaluate: ([first, ...rest]: Arr): boolean => {
+    evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
         if (compare(currentValue, param) > 0) {
@@ -94,7 +94,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   not: {
-    evaluate: ([first]: Arr): boolean => !first,
+    evaluate: ([first]): boolean => !first,
     validate: node => assertLength(1, node),
   },
   'inst-ms': {
@@ -104,19 +104,19 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(0, node),
   },
   'write!': {
-    evaluate: (params: Arr): Any => {
+    evaluate: (params, meta): Any => {
       // eslint-disable-next-line no-console
       console.log(...params)
 
       if (params.length > 0) {
-        return asAny(params[params.length - 1])
+        return asAny(params[params.length - 1], meta)
       }
 
       return null
     },
   },
   'debug!': {
-    evaluate: (params, contextStack): Any => {
+    evaluate: (params, meta, contextStack): Any => {
       if (params.length === 0) {
         // eslint-disable-next-line no-console
         console.warn(`*** LITS DEBUG ***\n${contextStackToString(contextStack)}\n`)
@@ -124,7 +124,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       // eslint-disable-next-line no-console
       console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
-      return asAny(params[0])
+      return asAny(params[0], meta)
     },
     validate: node => assertLength({ max: 1 }, node),
   },
@@ -141,14 +141,14 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   assert: {
-    evaluate: (params): Any => {
+    evaluate: (params, meta): Any => {
       const value = params[0]
       const message = params.length === 2 ? params[1] : `${value}`
-      assertString(message)
+      assertString(message, meta)
       if (!value) {
-        throw new AssertionError(message)
+        throw new AssertionError(message, meta)
       }
-      return asAny(value)
+      return asAny(value, meta)
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },

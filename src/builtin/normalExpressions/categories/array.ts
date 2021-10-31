@@ -13,38 +13,38 @@ import { BuiltinNormalExpressions } from '../../interface'
 import { evaluateMap } from './sequence'
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   array: {
-    evaluate: (params: Arr): Arr => params,
+    evaluate: (params): Arr => params,
   },
 
   range: {
-    evaluate: (params: Arr): Arr => {
+    evaluate: (params, meta): Arr => {
       const [first, second, third] = params
       let from: number
       let to: number
       let step: number
-      assertFiniteNumber(first)
+      assertFiniteNumber(first, meta)
 
       if (params.length === 1) {
         from = 0
         to = first
         step = to >= 0 ? 1 : -1
       } else if (params.length === 2) {
-        assertFiniteNumber(second)
+        assertFiniteNumber(second, meta)
         from = first
         to = second
         step = to >= from ? 1 : -1
       } else {
-        assertFiniteNumber(second)
-        assertFiniteNumber(third)
+        assertFiniteNumber(second, meta)
+        assertFiniteNumber(third, meta)
         from = first
         to = second
         step = third
         if (to > from) {
-          assertPositiveNumber(step)
+          assertPositiveNumber(step, meta)
         } else if (to < from) {
-          assertNegativeNumber(step)
+          assertNegativeNumber(step, meta)
         } else {
-          assertNumberNotZero(step)
+          assertNumberNotZero(step, meta)
         }
       }
 
@@ -60,8 +60,8 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   },
 
   repeat: {
-    evaluate: ([count, value]: Arr): Arr => {
-      assertNonNegativeInteger(count)
+    evaluate: ([count, value], meta): Arr => {
+      assertNonNegativeInteger(count, meta)
       const result: Arr = []
       for (let i = 0; i < count; i += 1) {
         result.push(value)
@@ -72,7 +72,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   },
 
   flatten: {
-    evaluate: ([seq]: Arr): Arr => {
+    evaluate: ([seq]): Arr => {
       if (!isArr(seq)) {
         return []
       }
@@ -81,12 +81,12 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   mapcat: {
-    evaluate: (params, contextStack, helpers): Arr | string => {
+    evaluate: (params, meta, contextStack, helpers): Arr | string => {
       params.slice(1).forEach(arr => {
-        assertArr(arr)
+        assertArr(arr, meta)
       })
-      const mapResult = evaluateMap(params, contextStack, helpers)
-      assertArr(mapResult)
+      const mapResult = evaluateMap(params, meta, contextStack, helpers)
+      assertArr(mapResult, meta)
       return mapResult.flat(1)
     },
     validate: node => assertLength({ min: 2 }, node),

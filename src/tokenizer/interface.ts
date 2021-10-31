@@ -8,10 +8,13 @@ export type TokenizerType =
   | `regexpShorthand`
   | `fnShorthand`
 
-export type TokenMeta = {
-  line: number
-  column: number
-}
+export type TokenMeta =
+  | {
+      line: number
+      column: number
+      toString(): string
+    }
+  | `EOF`
 
 export type Token = {
   type: TokenizerType

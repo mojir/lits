@@ -1,4 +1,4 @@
-import { RecurSignal } from '../../errors'
+import { LitsError, RecurSignal } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
@@ -29,6 +29,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
+    const meta = node.token.meta
     castLoopExpressionNode(node)
     const bindingContext: Context = node.bindings.reduce((result: Context, binding) => {
       result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
@@ -46,10 +47,10 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
         if (error instanceof RecurSignal) {
           const params = error.params
           if (params.length !== node.bindings.length) {
-            throw Error(`recur expected ${node.bindings.length} parameters, got ${params.length}`)
+            throw new LitsError(`recur expected ${node.bindings.length} parameters, got ${params.length}`, meta)
           }
           node.bindings.forEach((binding, index) => {
-            asNotUndefined(bindingContext[binding.name]).value = asAny(params[index])
+            asNotUndefined(bindingContext[binding.name]).value = asAny(params[index], meta)
           })
           continue
         }

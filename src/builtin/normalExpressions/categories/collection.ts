@@ -1,6 +1,7 @@
 import { LitsFunction } from '../../..'
 import { ContextStack, ExecuteFunction } from '../../../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../../../interface'
+import { TokenMeta } from '../../../tokenizer/interface'
 import {
   assertArr,
   assertChar,
@@ -39,7 +40,7 @@ type CollMeta = {
   parent: Obj | Arr
 }
 
-function cloneAndGetMeta(originalColl: Coll, keys: Arr): { coll: Coll; innerCollMeta: CollMeta } {
+function cloneAndGetMeta(originalColl: Coll, keys: Arr, meta: TokenMeta): { coll: Coll; innerCollMeta: CollMeta } {
   const coll = cloneColl(originalColl)
 
   const butLastKeys = keys.slice(0, keys.length - 1)
@@ -50,16 +51,16 @@ function cloneAndGetMeta(originalColl: Coll, keys: Arr): { coll: Coll; innerColl
 
       let newResultColl: Coll
       if (isArr(resultColl)) {
-        assertNumber(key)
+        assertNumber(key, meta)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        newResultColl = asColl(resultColl[key])
+        newResultColl = asColl(resultColl[key], meta)
       } else {
-        assertObj(resultColl)
-        assertString(key)
+        assertObj(resultColl, meta)
+        assertString(key, meta)
         if (!collHasKey(result.coll, key)) {
           resultColl[key] = {}
         }
-        newResultColl = asColl(resultColl[key])
+        newResultColl = asColl(resultColl[key], meta)
       }
 
       return { coll: newResultColl, parent: resultColl }
@@ -69,19 +70,19 @@ function cloneAndGetMeta(originalColl: Coll, keys: Arr): { coll: Coll; innerColl
   return { coll, innerCollMeta }
 }
 
-function get(coll: Coll, key: string | number): Any | undefined {
+function get(coll: Coll, key: string | number, meta: TokenMeta): Any | undefined {
   if (isArr(coll)) {
-    assertInteger(key)
+    assertInteger(key, meta)
     if (key < coll.length) {
       return toAny(coll[key])
     }
   } else if (isObj(coll)) {
-    assertString(key)
+    assertString(key, meta)
     if (collHasKey(coll, key)) {
       return toAny(coll[key])
     }
   } else {
-    assertInteger(key)
+    assertInteger(key, meta)
     if (key < coll.length) {
       return toAny(coll[key])
     }
@@ -94,60 +95,61 @@ function update(
   key: string | number,
   fn: LitsFunction,
   params: Arr,
+  meta: TokenMeta,
   contextStack: ContextStack,
   executeFunction: ExecuteFunction,
 ): Coll {
   if (isObj(coll)) {
-    assertString(key)
+    assertString(key, meta)
     const result = { ...coll }
-    result[key] = executeFunction(fn, [result[key], ...params], contextStack)
+    result[key] = executeFunction(fn, [result[key], ...params], meta, contextStack)
     return result
   } else {
-    assertNumber(key)
+    assertNumber(key, meta)
     const intKey = toNonNegativeInteger(key)
-    assertMax(intKey, coll.length)
+    assertMax(intKey, coll.length, meta)
     if (Array.isArray(coll)) {
       const result = coll.map((elem, index) => {
         if (intKey === index) {
-          return executeFunction(fn, [elem, ...params], contextStack)
+          return executeFunction(fn, [elem, ...params], meta, contextStack)
         }
         return elem
       })
       if (intKey === coll.length) {
-        result[intKey] = executeFunction(fn, [undefined, ...params], contextStack)
+        result[intKey] = executeFunction(fn, [undefined, ...params], meta, contextStack)
       }
       return result
     } else {
       const result = coll.split(``).map((elem, index) => {
         if (intKey === index) {
-          return asChar(executeFunction(fn, [elem, ...params], contextStack))
+          return asChar(executeFunction(fn, [elem, ...params], meta, contextStack), meta)
         }
         return elem
       })
       if (intKey === coll.length) {
-        result[intKey] = asChar(executeFunction(fn, [undefined, ...params], contextStack))
+        result[intKey] = asChar(executeFunction(fn, [undefined, ...params], meta, contextStack), meta)
       }
       return result.join(``)
     }
   }
 }
 
-function assoc(coll: Coll, key: string | number, value: Any) {
-  assertColl(coll)
-  assertStringOrNumber(key)
+function assoc(coll: Coll, key: string | number, value: Any, meta: TokenMeta) {
+  assertColl(coll, meta)
+  assertStringOrNumber(key, meta)
   if (Array.isArray(coll) || typeof coll === `string`) {
-    assertInteger(key)
-    assertNumberGte(key, 0)
-    assertNumberLte(key, coll.length)
+    assertInteger(key, meta)
+    assertNumberGte(key, 0, meta)
+    assertNumberLte(key, coll.length, meta)
     if (typeof coll === `string`) {
-      assertChar(value)
+      assertChar(value, meta)
       return `${coll.slice(0, key)}${value}${coll.slice(key + 1)}`
     }
     const copy = [...coll]
     copy[key] = value
     return copy
   }
-  assertString(key)
+  assertString(key, meta)
   const copy = { ...coll }
   copy[key] = value
   return copy
@@ -155,27 +157,27 @@ function assoc(coll: Coll, key: string | number, value: Any) {
 
 export const collectionNormalExpression: BuiltinNormalExpressions = {
   get: {
-    evaluate: (params: Arr): Any => {
+    evaluate: (params, meta) => {
       const [coll, key] = params
       const defaultValue = toAny(params[2])
-      assertColl(coll)
-      assertStringOrNumber(key)
-      const result = get(coll, key)
+      assertColl(coll, meta)
+      assertStringOrNumber(key, meta)
+      const result = get(coll, key, meta)
       return result === undefined ? defaultValue : result
     },
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },
   'get-in': {
-    evaluate: (params: Arr): Any => {
+    evaluate: (params, meta): Any => {
       let coll = params[0]
       const keys = params[1]
       const defaultValue = toAny(params[2])
-      assertColl(coll)
-      assertArr(keys)
+      assertColl(coll, meta)
+      assertArr(keys, meta)
       for (const key of keys) {
-        assertStringOrNumber(key)
+        assertStringOrNumber(key, meta)
         if (isColl(coll)) {
-          coll = get(coll, key)
+          coll = get(coll, key, meta)
         } else {
           return defaultValue
         }
@@ -185,11 +187,11 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 2, max: 3 }, node),
   },
   count: {
-    evaluate: ([coll]): number => {
+    evaluate: ([coll], meta): number => {
       if (typeof coll === `string`) {
         return coll.length
       }
-      assertColl(coll)
+      assertColl(coll, meta)
       if (Array.isArray(coll)) {
         return coll.length
       }
@@ -198,14 +200,14 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   'contains?': {
-    evaluate: ([coll, key]): boolean => {
-      assertColl(coll)
-      assertStringOrNumber(key)
+    evaluate: ([coll, key], meta): boolean => {
+      assertColl(coll, meta)
+      assertStringOrNumber(key, meta)
       if (isSeq(coll)) {
         if (!Number.isInteger(key)) {
           return false
         }
-        assertInteger(key)
+        assertInteger(key, meta)
         return key >= 0 && key < coll.length
       }
       return !!Object.getOwnPropertyDescriptor(coll, key)
@@ -213,8 +215,8 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'has?': {
-    evaluate: ([coll, value]): boolean => {
-      assertColl(coll)
+    evaluate: ([coll, value], meta): boolean => {
+      assertColl(coll, meta)
       if (isArr(coll)) {
         return coll.includes(value)
       }
@@ -226,9 +228,9 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'has-some?': {
-    evaluate: ([coll, seq]): boolean => {
-      assertColl(coll)
-      assertSeq(seq)
+    evaluate: ([coll, seq], meta): boolean => {
+      assertColl(coll, meta)
+      assertSeq(seq, meta)
       if (isArr(coll)) {
         for (const value of seq) {
           if (coll.includes(value)) {
@@ -255,9 +257,9 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'has-every?': {
-    evaluate: ([coll, seq]): boolean => {
-      assertColl(coll)
-      assertSeq(seq)
+    evaluate: ([coll, seq], meta): boolean => {
+      assertColl(coll, meta)
+      assertSeq(seq, meta)
       if (isArr(coll)) {
         for (const value of seq) {
           if (!coll.includes(value)) {
@@ -284,36 +286,36 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   assoc: {
-    evaluate: ([coll, key, value]): Coll => {
-      assertColl(coll)
-      assertStringOrNumber(key)
-      assertAny(value)
-      return assoc(coll, key, value)
+    evaluate: ([coll, key, value], meta): Coll => {
+      assertColl(coll, meta)
+      assertStringOrNumber(key, meta)
+      assertAny(value, meta)
+      return assoc(coll, key, value, meta)
     },
     validate: node => assertLength(3, node),
   },
   'assoc-in': {
-    evaluate: ([originalColl, keys, value]): Coll => {
-      assertColl(originalColl)
-      assertArr(keys)
-      assertAny(value)
+    evaluate: ([originalColl, keys, value], meta): Coll => {
+      assertColl(originalColl, meta)
+      assertArr(keys, meta)
+      assertAny(value, meta)
 
       if (keys.length === 1) {
-        assertStringOrNumber(keys[0])
-        return assoc(originalColl, keys[0], value)
+        assertStringOrNumber(keys[0], meta)
+        return assoc(originalColl, keys[0], value, meta)
       }
 
-      const { coll, innerCollMeta } = cloneAndGetMeta(originalColl, keys)
+      const { coll, innerCollMeta } = cloneAndGetMeta(originalColl, keys, meta)
 
-      const lastKey = asStringOrNumber(keys[keys.length - 1])
-      const parentKey = asStringOrNumber(keys[keys.length - 2])
+      const lastKey = asStringOrNumber(keys[keys.length - 1], meta)
+      const parentKey = asStringOrNumber(keys[keys.length - 2], meta)
 
       if (isArr(innerCollMeta.parent)) {
-        assertNumber(parentKey)
-        innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value)
+        assertNumber(parentKey, meta)
+        innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, meta)
       } else {
-        assertString(parentKey)
-        innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value)
+        assertString(parentKey, meta)
+        innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, meta)
       }
 
       return coll
@@ -321,36 +323,52 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(3, node),
   },
   update: {
-    evaluate: ([coll, key, fn, ...params], contextStack, { executeFunction }): Coll => {
-      assertColl(coll)
-      assertStringOrNumber(key)
-      assertLitsFunction(fn)
-      return update(coll, key, fn, params, contextStack, executeFunction)
+    evaluate: ([coll, key, fn, ...params], meta, contextStack, { executeFunction }): Coll => {
+      assertColl(coll, meta)
+      assertStringOrNumber(key, meta)
+      assertLitsFunction(fn, meta)
+      return update(coll, key, fn, params, meta, contextStack, executeFunction)
     },
     validate: node => assertLength({ min: 3 }, node),
   },
   'update-in': {
-    evaluate: ([originalColl, keys, fn, ...params], contextStack, { executeFunction }): Coll => {
-      assertColl(originalColl)
-      assertArr(keys)
-      assertLitsFunction(fn)
+    evaluate: ([originalColl, keys, fn, ...params], meta, contextStack, { executeFunction }): Coll => {
+      assertColl(originalColl, meta)
+      assertArr(keys, meta)
+      assertLitsFunction(fn, meta)
 
       if (keys.length === 1) {
-        assertStringOrNumber(keys[0])
-        return update(originalColl, keys[0], fn, params, contextStack, executeFunction)
+        assertStringOrNumber(keys[0], meta)
+        return update(originalColl, keys[0], fn, params, meta, contextStack, executeFunction)
       }
 
-      const { coll, innerCollMeta } = cloneAndGetMeta(originalColl, keys)
+      const { coll, innerCollMeta } = cloneAndGetMeta(originalColl, keys, meta)
 
-      const lastKey = asStringOrNumber(keys[keys.length - 1])
-      const parentKey = asStringOrNumber(keys[keys.length - 2])
+      const lastKey = asStringOrNumber(keys[keys.length - 1], meta)
+      const parentKey = asStringOrNumber(keys[keys.length - 2], meta)
 
       if (isArr(innerCollMeta.parent)) {
-        assertNumber(parentKey)
-        innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, contextStack, executeFunction)
+        assertNumber(parentKey, meta)
+        innerCollMeta.parent[parentKey] = update(
+          innerCollMeta.coll,
+          lastKey,
+          fn,
+          params,
+          meta,
+          contextStack,
+          executeFunction,
+        )
       } else {
-        assertString(parentKey)
-        innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, contextStack, executeFunction)
+        assertString(parentKey, meta)
+        innerCollMeta.parent[parentKey] = update(
+          innerCollMeta.coll,
+          lastKey,
+          fn,
+          params,
+          meta,
+          contextStack,
+          executeFunction,
+        )
       }
 
       return coll
@@ -358,21 +376,21 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 3 }, node),
   },
   concat: {
-    evaluate: (params: Arr): Any => {
-      assertColl(params[0])
+    evaluate: (params, meta): Any => {
+      assertColl(params[0], meta)
       if (isArr(params[0])) {
         return params.reduce((result: Arr, arr) => {
-          assertArr(arr)
+          assertArr(arr, meta)
           return result.concat(arr)
         }, [])
       } else if (isString(params[0])) {
         return params.reduce((result: string, s) => {
-          assertString(s)
+          assertString(s, meta)
           return `${result}${s}`
         }, ``)
       } else {
         return params.reduce((result: Obj, obj) => {
-          assertObj(obj)
+          assertObj(obj, meta)
           return Object.assign(result, obj)
         }, {})
       }
@@ -380,8 +398,8 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   'empty?': {
-    evaluate: ([first]): boolean => {
-      assertColl(first)
+    evaluate: ([first], meta): boolean => {
+      assertColl(first, meta)
       if (isString(first)) {
         return first.length === 0
       }
@@ -393,62 +411,62 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(1, node),
   },
   'every?': {
-    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLitsFunction(fn)
-      assertColl(coll)
+    evaluate: ([fn, coll], meta, contextStack, { executeFunction }): boolean => {
+      assertLitsFunction(fn, meta)
+      assertColl(coll, meta)
 
       if (Array.isArray(coll)) {
-        return coll.every(elem => executeFunction(fn, [elem], contextStack))
+        return coll.every(elem => executeFunction(fn, [elem], meta, contextStack))
       }
       if (isString(coll)) {
-        return coll.split(``).every(elem => executeFunction(fn, [elem], contextStack))
+        return coll.split(``).every(elem => executeFunction(fn, [elem], meta, contextStack))
       }
-      return Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack))
+      return Object.entries(coll).every(elem => executeFunction(fn, [elem], meta, contextStack))
     },
     validate: node => assertLength(2, node),
   },
   'any?': {
-    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLitsFunction(fn)
-      assertColl(coll)
+    evaluate: ([fn, coll], meta, contextStack, { executeFunction }): boolean => {
+      assertLitsFunction(fn, meta)
+      assertColl(coll, meta)
 
       if (Array.isArray(coll)) {
-        return coll.some(elem => executeFunction(fn, [elem], contextStack))
+        return coll.some(elem => executeFunction(fn, [elem], meta, contextStack))
       }
       if (isString(coll)) {
-        return coll.split(``).some(elem => executeFunction(fn, [elem], contextStack))
+        return coll.split(``).some(elem => executeFunction(fn, [elem], meta, contextStack))
       }
-      return Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack))
+      return Object.entries(coll).some(elem => executeFunction(fn, [elem], meta, contextStack))
     },
     validate: node => assertLength(2, node),
   },
   'not-any?': {
-    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLitsFunction(fn)
-      assertColl(coll)
+    evaluate: ([fn, coll], meta, contextStack, { executeFunction }): boolean => {
+      assertLitsFunction(fn, meta)
+      assertColl(coll, meta)
 
       if (Array.isArray(coll)) {
-        return !coll.some(elem => executeFunction(fn, [elem], contextStack))
+        return !coll.some(elem => executeFunction(fn, [elem], meta, contextStack))
       }
       if (isString(coll)) {
-        return !coll.split(``).some(elem => executeFunction(fn, [elem], contextStack))
+        return !coll.split(``).some(elem => executeFunction(fn, [elem], meta, contextStack))
       }
-      return !Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack))
+      return !Object.entries(coll).some(elem => executeFunction(fn, [elem], meta, contextStack))
     },
     validate: node => assertLength(2, node),
   },
   'not-every?': {
-    evaluate: ([fn, coll], contextStack, { executeFunction }): boolean => {
-      assertLitsFunction(fn)
-      assertColl(coll)
+    evaluate: ([fn, coll], meta, contextStack, { executeFunction }): boolean => {
+      assertLitsFunction(fn, meta)
+      assertColl(coll, meta)
 
       if (Array.isArray(coll)) {
-        return !coll.every(elem => executeFunction(fn, [elem], contextStack))
+        return !coll.every(elem => executeFunction(fn, [elem], meta, contextStack))
       }
       if (isString(coll)) {
-        return !coll.split(``).every(elem => executeFunction(fn, [elem], contextStack))
+        return !coll.split(``).every(elem => executeFunction(fn, [elem], meta, contextStack))
       }
-      return !Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack))
+      return !Object.entries(coll).every(elem => executeFunction(fn, [elem], meta, contextStack))
     },
     validate: node => assertLength(2, node),
   },

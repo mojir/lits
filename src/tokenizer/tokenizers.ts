@@ -1,3 +1,4 @@
+import { LitsError } from '../errors'
 import { ModifierName } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
 import { asNotUndefined } from '../utils'
@@ -52,7 +53,7 @@ export const tokenizeString: Tokenizer = (input, position, meta) => {
   let escape = false
   while (char !== `'` || escape) {
     if (char === undefined) {
-      throw new SyntaxError(`Unclosed string at position ${position}`)
+      throw new LitsError(`Unclosed string at position ${position}`, meta)
     }
     length += 1
     if (escape) {
@@ -109,13 +110,13 @@ export const tokenizeRegexpShorthand: Tokenizer = (input, position, meta) => {
   while (input[position] === `g` || input[position] === `i`) {
     if (input[position] === `g`) {
       if (options.g) {
-        throw new SyntaxError(`Duplicated regexp option "${input[position]}" at position ${position}`)
+        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}`, meta)
       }
       length += 1
       options.g = true
     } else {
       if (options.i) {
-        throw new SyntaxError(`Duplicated regexp option "${input[position]}" at position ${position}`)
+        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}`, meta)
       }
       length += 1
       options.i = true
@@ -124,7 +125,7 @@ export const tokenizeRegexpShorthand: Tokenizer = (input, position, meta) => {
   }
 
   if (nameRegExp.test(input[position] ?? ``)) {
-    throw new SyntaxError(`Unexpected regexp option "${input[position]}" at position ${position}`)
+    throw new LitsError(`Unexpected regexp option "${input[position]}" at position ${position}`, meta)
   }
 
   return [
@@ -171,7 +172,7 @@ export const tokenizeNumber: Tokenizer = (input, position, meta) => {
 
   let i: number
   for (i = position + 1; i < input.length; i += 1) {
-    const char = asNotUndefined(input[i])
+    const char = asNotUndefined(input[i], meta)
     if (endOfNumberRegExp.test(char)) {
       break
     }

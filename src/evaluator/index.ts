@@ -30,6 +30,8 @@ import { Context, EvaluateAstNode, ExecuteFunction } from './interface'
 import { Any, Arr, Obj } from '../interface'
 import { ContextStack } from './interface'
 import { functionExecutors } from './functionExecutors'
+import { TokenMeta } from '../tokenizer/interface'
+import { LitsError } from '../errors'
 
 export function createContextStack(contexts: Context[] = []): ContextStack {
   if (contexts.length === 0) {
@@ -77,7 +79,7 @@ export const evaluateAstNode: EvaluateAstNode = (node, contextStack) => {
     case `SpecialExpression`:
       return evaluateSpecialExpression(node, contextStack)
     default:
-      throw Error(`${node.type}-node cannot be evaluated`)
+      throw new LitsError(`${node.type}-node cannot be evaluated`, node.token.meta)
   }
 }
 
@@ -93,7 +95,11 @@ function evaluateReservedName(node: ReservedNameNode): Any {
   return asNotUndefined(reservedNamesRecord[node.value]).value
 }
 
-function evaluateName({ value }: NameNode, contextStack: ContextStack): Any {
+function evaluateName(node: NameNode, contextStack: ContextStack): Any {
+  const {
+    value,
+    token: { meta },
+  } = node
   for (const context of contextStack.stack) {
     const variable = context[value]
     if (variable) {
@@ -109,7 +115,7 @@ function evaluateName({ value }: NameNode, contextStack: ContextStack): Any {
     return builtinFunction
   }
 
-  throw Error(`Undefined identifier ${value}`)
+  throw new LitsError(`Undefined identifier ${value}`, meta)
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
@@ -121,7 +127,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
         continue
       }
       try {
-        return executeFunction(fn, params, contextStack)
+        return executeFunction(fn, params, node.token.meta, contextStack)
       } catch {
         continue
       }
@@ -130,33 +136,33 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
     return evaluateBuiltinNormalExpression(node, params, contextStack)
   } else {
     const fn = evaluateAstNode(node.expression, contextStack)
-    return executeFunction(fn, params, contextStack)
+    return executeFunction(fn, params, node.token.meta, contextStack)
   }
 }
 
-export const executeFunction: ExecuteFunction = (fn, params, contextStack) => {
+export const executeFunction: ExecuteFunction = (fn, params, meta, contextStack) => {
   if (isLitsFunction(fn)) {
-    return functionExecutors[fn.type](fn, params, contextStack, { evaluateAstNode, executeFunction })
+    return functionExecutors[fn.type](fn, params, meta, contextStack, { evaluateAstNode, executeFunction })
   }
   if (Array.isArray(fn)) {
-    return evaluateArrayAsFunction(fn, params)
+    return evaluateArrayAsFunction(fn, params, meta)
   }
   if (isObj(fn)) {
-    return evalueateObjectAsFunction(fn, params)
+    return evalueateObjectAsFunction(fn, params, meta)
   }
   if (isString(fn)) {
-    return evaluateStringAsFunction(fn, params)
+    return evaluateStringAsFunction(fn, params, meta)
   }
   if (isNumber(fn)) {
-    return evaluateNumberAsFunction(fn, params)
+    return evaluateNumberAsFunction(fn, params, meta)
   }
-  throw Error(`Expected function, got ${fn}`)
+  throw new LitsError(`Expected function, got ${fn}`, meta)
 }
 
 function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params: Arr, contextStack: ContextStack): Any {
   const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
 
-  return normalExpressionEvaluator(params, contextStack, { executeFunction })
+  return normalExpressionEvaluator(params, node.token.meta, contextStack, { executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
@@ -164,27 +170,27 @@ function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: Co
   return specialExpressionEvaluator(node, contextStack, { evaluateAstNode, builtin })
 }
 
-function evalueateObjectAsFunction(fn: Obj, params: Arr): Any {
+function evalueateObjectAsFunction(fn: Obj, params: Arr, meta: TokenMeta): Any {
   if (params.length !== 1) {
-    throw Error(`Object as function requires one string parameter`)
+    throw new LitsError(`Object as function requires one string parameter`, meta)
   }
   const key = params[0]
-  assertString(key)
+  assertString(key, meta)
   return toAny(fn[key])
 }
 
-function evaluateArrayAsFunction(fn: Arr, params: Arr): Any {
+function evaluateArrayAsFunction(fn: Arr, params: Arr, meta: TokenMeta): Any {
   if (params.length !== 1) {
-    throw Error(`Array as function requires one non negative integer parameter`)
+    throw new LitsError(`Array as function requires one non negative integer parameter`, meta)
   }
   const index = params[0]
-  assertNonNegativeInteger(index)
+  assertNonNegativeInteger(index, meta)
   return toAny(fn[index])
 }
 
-function evaluateStringAsFunction(fn: string, params: Arr): Any {
+function evaluateStringAsFunction(fn: string, params: Arr, meta: TokenMeta): Any {
   if (params.length !== 1) {
-    throw Error(`String as function requires one Obj parameter`)
+    throw new LitsError(`String as function requires one Obj parameter`, meta)
   }
   const param = toAny(params[0])
   if (isObj(param)) {
@@ -193,15 +199,15 @@ function evaluateStringAsFunction(fn: string, params: Arr): Any {
   if (isInteger(param)) {
     return toAny(fn[param])
   }
-  throw Error(`string as function expects Obj or integer parameter, got ${param}`)
+  throw new LitsError(`string as function expects Obj or integer parameter, got ${param}`, meta)
 }
 
-function evaluateNumberAsFunction(fn: number, params: Arr): Any {
-  assertInteger(fn)
+function evaluateNumberAsFunction(fn: number, params: Arr, meta: TokenMeta): Any {
+  assertInteger(fn, meta)
   if (params.length !== 1) {
-    throw Error(`String as function requires one Arr parameter`)
+    throw new LitsError(`String as function requires one Arr parameter`, meta)
   }
   const param = params[0]
-  assertSeq(param)
+  assertSeq(param, meta)
   return toAny(param[fn])
 }

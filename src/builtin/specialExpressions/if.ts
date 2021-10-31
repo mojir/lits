@@ -23,13 +23,14 @@ export const ifSpecialExpression: BuiltinSpecialExpression<Any> = {
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     castIfExpressionNode(node)
+    const meta = node.token.meta
 
     const [conditionNode, trueNode, falseNode] = node.params
-    if (evaluateAstNode(asAstNode(conditionNode), contextStack)) {
-      return evaluateAstNode(asAstNode(trueNode), contextStack)
+    if (evaluateAstNode(asAstNode(conditionNode, meta), contextStack)) {
+      return evaluateAstNode(asAstNode(trueNode, meta), contextStack)
     } else {
       if (node.params.length === 3) {
-        return evaluateAstNode(asAstNode(falseNode), contextStack)
+        return evaluateAstNode(asAstNode(falseNode, meta), contextStack)
       } else {
         return null
       }

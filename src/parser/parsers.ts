@@ -21,7 +21,7 @@ import {
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
-import { UnexpectedTokenError } from '../errors'
+import { LitsError, UnexpectedTokenError } from '../errors'
 import { FnSpecialExpressionNode } from '../builtin/specialExpressions/functions'
 import { FunctionArguments } from '../builtin/utils'
 
@@ -168,12 +168,12 @@ const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
       if (match) {
         arity = Math.max(arity, Number(match[1]))
         if (arity > 20) {
-          throw Error(`Can't specify more than 20 arguments`)
+          throw new LitsError(`Can't specify more than 20 arguments`, firstToken.meta)
         }
       }
     }
     if (token.type === `fnShorthand`) {
-      throw Error(`Nested shortcut functions are not allowed`)
+      throw new LitsError(`Nested shortcut functions are not allowed`, firstToken.meta)
     }
   }
 
@@ -213,7 +213,7 @@ const parseArgument: ParseArgument = (tokens, position) => {
     const value = token.value as ModifierName
     return [position + 1, { type: `Modifier`, value, token }]
   } else {
-    throw new UnexpectedTokenError(`name or modifier`, token)
+    throw new UnexpectedTokenError(`), name or modifier`, token)
   }
 }
 
@@ -239,7 +239,10 @@ const parseBindings: ParseBindings = (tokens, position) => {
 const parseBinding: ParseBinding = (tokens, position) => {
   const firstToken = asNotUndefined(tokens[position])
   if (firstToken.type !== `name`) {
-    throw Error(`Expected name node in binding, got ${firstToken.type} value=${firstToken.value}`)
+    throw new LitsError(
+      `Expected name node in binding, got ${firstToken.type} value=${firstToken.value}`,
+      firstToken.meta,
+    )
   }
   const name = firstToken.value
 
@@ -274,7 +277,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
     return [position, node]
   }
 
-  assertNameNode(fnNode)
+  assertNameNode(fnNode, fnNode.token.meta)
   const node: NormalExpressionNode = {
     type: `NormalExpression`,
     name: fnNode.value,
@@ -344,7 +347,7 @@ export const parseToken: ParseToken = (tokens, position) => {
       break
   }
   if (!nodeDescriptor) {
-    throw SyntaxError(`Unrecognized token: ${token.type} value=${token.value}`)
+    throw new LitsError(`Unrecognized token: ${token.type} value=${token.value}`, token.meta)
   }
   return nodeDescriptor
 }

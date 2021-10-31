@@ -9,39 +9,44 @@ describe(`errors`, () => {
     expect(err.params).toEqual([100])
   })
   test(`UserDefinedError`, () => {
-    const err = new UserDefinedError(`A message`)
+    const err = new UserDefinedError(`A message`, { line: 1, column: 1, toString: () => `(1:1)` })
     expect(err).toBeInstanceOf(UserDefinedError)
     expect(err.name).toBe(`UserDefinedError`)
-    expect(err.message).toBe(`A message`)
+    expect(err.message).toBe(`A message (1:1)`)
   })
   test(`UnexpectedTokenError`, () => {
     const token: Token = {
       type: `name`,
       value: `xxx`,
-      meta: { line: 0, column: 0 },
+      meta: { line: 1, column: 1, toString: () => `(1:1)` },
     }
     const err = new UnexpectedTokenError(`)`, token)
     expect(err).toBeInstanceOf(UnexpectedTokenError)
     expect(err.name).toBe(`UnexpectedTokenError`)
-    expect(err.message).toBe(`Expected a ")" token, got Token[name:"xxx"]`)
+    expect(err.message).toBe(`Expected a ")" token, got Token[name:"xxx"] (1:1)`)
   })
   test(`UnexpectedNodeTypeError with node`, () => {
     const node: AstNode = {
       type: `NormalExpression`,
       name: `+`,
       params: [],
-      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
+      token: { type: `name`, meta: { line: 1, column: 1, toString: () => `(1:1)` }, value: `X` },
     }
-    const err = new UnexpectedNodeTypeError(`Name`, node)
+    const err = new UnexpectedNodeTypeError(`Name`, node, node.token.meta)
     expect(err).toBeInstanceOf(UnexpectedNodeTypeError)
     expect(err.name).toBe(`UnexpectedNodeTypeError`)
-    expect(err.message).toBe(`Expected a Name node, got a NormalExpression node`)
+    expect(err.message).toBe(`Expected a Name node, got a NormalExpression node (1:1)`)
   })
 
   test(`UnexpectedNodeTypeError with undefined`, () => {
-    const err = new UnexpectedNodeTypeError(`Name`, undefined)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const err = new UnexpectedNodeTypeError(`Name`, undefined, {
+      line: 1,
+      column: 1,
+      toString: () => `(1:1)`,
+    })
     expect(err).toBeInstanceOf(UnexpectedNodeTypeError)
     expect(err.name).toBe(`UnexpectedNodeTypeError`)
-    expect(err.message).toBe(`Expected a Name node, got undefined`)
+    expect(err.message).toBe(`Expected a Name node, got undefined (1:1)`)
   })
 })

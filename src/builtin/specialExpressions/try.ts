@@ -33,7 +33,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     let error: AstNode
     ;[position, error] = parseToken(tokens, position)
     if (error.type !== `Name`) {
-      throw new UnexpectedNodeTypeError(`Name`, error)
+      throw new UnexpectedNodeTypeError(`Name`, error, error.token.meta)
     }
 
     token = asNotUndefined(tokens[position])

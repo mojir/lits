@@ -403,7 +403,7 @@ describe(`specialExpressions`, () => {
         lits.run(`(throw (subs 'An error' 3))`)
         throw Error()
       } catch (error) {
-        expect((error as UserDefinedError).message).toBe(`error`)
+        expect((error as UserDefinedError).message).toBe(`error (1:8)`)
       }
     })
   })

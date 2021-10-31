@@ -8,12 +8,13 @@ import {
   SpecialExpressionNode,
   ParseBinding,
 } from '../parser/interface'
-import { Token } from '../tokenizer/interface'
+import { Token, TokenMeta } from '../tokenizer/interface'
 import { NormalExpressionNode } from '../parser/interface'
 import { Any, Arr } from '../interface'
 
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
+  meta: TokenMeta,
   contextStack: ContextStack,
   { executeFunction }: { executeFunction: ExecuteFunction },
 ) => T

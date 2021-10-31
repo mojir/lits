@@ -12,7 +12,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
     const firstToken = asNotUndefined(tokens[position])
     const [newPosition, params] = parseTokens(tokens, position)
-    assertNameNode(params[0])
+    assertNameNode(params[0], firstToken.meta)
     return [
       newPosition + 1,
       {
@@ -25,11 +25,12 @@ export const defSpecialExpression: BuiltinSpecialExpression<Any> = {
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     castDefExpressionNode(node)
-    const name = asNameNode(node.params[0]).value
+    const meta = node.token.meta
+    const name = asNameNode(node.params[0], meta).value
 
-    assertNameNotDefined(name, contextStack, builtin)
+    assertNameNotDefined(name, contextStack, builtin, meta)
 
-    const value = evaluateAstNode(asAstNode(node.params[1]), contextStack)
+    const value = evaluateAstNode(asAstNode(node.params[1], meta), contextStack)
 
     contextStack.globalContext[name] = { value }
 
