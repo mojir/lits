@@ -9,7 +9,7 @@ interface OrSpecialExpressionNode extends SpecialExpressionNode {
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,

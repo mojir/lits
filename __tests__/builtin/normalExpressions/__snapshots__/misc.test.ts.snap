@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`misc functions debug! debug value 1`] = `
+exports[`misc functions debug! debug value. 1`] = `
 "*** LITS DEBUG ***
 {
   \\"type\\": \\"user-defined\\",

@@ -252,7 +252,7 @@ describe(`misc functions`, () => {
       lits.run(`((fn [z] (debug!) (+ z 1)) 10)`, { globals: { y: 20 }, contexts: [context] })
       expect(lastLog).toMatchSnapshot()
     })
-    test(`debug value`, () => {
+    test(`debug value.`, () => {
       lits.run(`(debug! #(> %1 2))`)
       expect(lastLog).toMatchSnapshot()
     })

@@ -9,7 +9,7 @@ interface WhenSpecialExpressionNode extends SpecialExpressionNode {
 
 export const whenSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     const [newPosition, params] = parseTokens(tokens, position)
     const node: WhenSpecialExpressionNode = {
       type: `SpecialExpression`,
@@ -24,7 +24,7 @@ export const whenSpecialExpression: BuiltinSpecialExpression<Any> = {
     castWhenExpressionNode(node)
 
     const [whenExpression, ...body] = node.params
-    assertNotUndefined(whenExpression)
+    assertNotUndefined(whenExpression, node.token.meta)
 
     if (!evaluateAstNode(whenExpression, contextStack)) {
       return null

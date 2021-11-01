@@ -54,9 +54,7 @@ export class UnexpectedTokenError extends Error {
   public line: number | null
   public column: number | null
   constructor(expectedToken: string, actualToken: Token) {
-    super(
-      `Expected a "${expectedToken}" token, got Token[${actualToken.type}:"${actualToken.value}"] ${actualToken.meta}`,
-    )
+    super(`Expected a '${expectedToken}'-token, got '${actualToken.value}' ${actualToken.meta}`)
     this.line = actualToken.meta === `EOF` ? null : actualToken.meta.line
     this.column = actualToken.meta === `EOF` ? null : actualToken.meta.column
     Object.setPrototypeOf(this, UnexpectedTokenError.prototype)
@@ -73,5 +71,17 @@ export class UnexpectedNodeTypeError extends Error {
     this.column = meta === `EOF` ? null : meta.column
     Object.setPrototypeOf(this, UnexpectedNodeTypeError.prototype)
     this.name = `UnexpectedNodeTypeError`
+  }
+}
+
+export class UndefinedSymbolError extends Error {
+  public line: number | null
+  public column: number | null
+  constructor(symbolName: string, meta: TokenMeta) {
+    super(`Undefined symbol '${symbolName}' ${meta}`)
+    this.line = meta === `EOF` ? null : meta.line
+    this.column = meta === `EOF` ? null : meta.column
+    Object.setPrototypeOf(this, UndefinedSymbolError.prototype)
+    this.name = `UndefinedSymbolError`
   }
 }

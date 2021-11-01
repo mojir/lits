@@ -144,7 +144,7 @@ export const functionExecutors: FunctionExecutors = {
     return executeFunction(toAny(fn.fn), fniledParams, meta, contextStack)
   },
   builtin: (fn: BuiltinFunction, params, meta, contextStack, { executeFunction }) => {
-    const normalExpression = asNotUndefined(normalExpressions[fn.name])
+    const normalExpression = asNotUndefined(normalExpressions[fn.name], meta)
     return normalExpression.evaluate(params, meta, contextStack, { executeFunction })
   },
 }

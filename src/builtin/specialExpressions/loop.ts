@@ -12,7 +12,7 @@ interface LoopSpecialExpressionNode extends SpecialExpressionNode {
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens, parseBindings }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -50,7 +50,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
             throw new LitsError(`recur expected ${node.bindings.length} parameters, got ${params.length}`, meta)
           }
           node.bindings.forEach((binding, index) => {
-            asNotUndefined(bindingContext[binding.name]).value = asAny(params[index], meta)
+            asNotUndefined(bindingContext[binding.name], meta).value = asAny(params[index], meta)
           })
           continue
         }

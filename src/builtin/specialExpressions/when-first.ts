@@ -12,7 +12,7 @@ interface WhenFirstSpecialExpressionNode extends SpecialExpressionNode {
 
 export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -26,7 +26,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     const node: WhenFirstSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `when-first`,
-      binding: asNotUndefined(bindings[0]),
+      binding: asNotUndefined(bindings[0], firstToken.meta),
       params,
       token: firstToken,
     }

@@ -23,7 +23,7 @@ describe(`errors`, () => {
     const err = new UnexpectedTokenError(`)`, token)
     expect(err).toBeInstanceOf(UnexpectedTokenError)
     expect(err.name).toBe(`UnexpectedTokenError`)
-    expect(err.message).toBe(`Expected a ")" token, got Token[name:"xxx"] (1:1)`)
+    expect(err.message).toBe(`Expected a ')'-token, got 'xxx' (1:1)`)
   })
   test(`UnexpectedNodeTypeError with node`, () => {
     const node: AstNode = {

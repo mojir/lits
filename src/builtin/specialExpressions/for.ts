@@ -32,7 +32,7 @@ function parseLoopBinding(
     modifiers: [],
   }
 
-  let token = asNotUndefined(tokens[position])
+  let token = asNotUndefined(tokens[position], `EOF`)
   while (token.type === `modifier`) {
     switch (token.value) {
       case `&let`:
@@ -59,7 +59,7 @@ function parseLoopBinding(
       default:
         throw new LitsError(`Illegal modifier: ${token.value}`, token.meta)
     }
-    token = asNotUndefined(tokens[position])
+    token = asNotUndefined(tokens[position], `EOF`)
   }
   return [position, loopBinding]
 }
@@ -80,7 +80,7 @@ function addToContext(
 }
 
 function parseLoopBindings(tokens: Token[], position: number, parsers: Parsers): [number, LoopBindingNode[]] {
-  let token = asNotUndefined(tokens[position])
+  let token = asNotUndefined(tokens[position], `EOF`)
   if (!(token.type === `paren` && token.value === `[`)) {
     throw new UnexpectedTokenError(`[`, token)
   }
@@ -88,19 +88,19 @@ function parseLoopBindings(tokens: Token[], position: number, parsers: Parsers):
 
   const loopBindings: LoopBindingNode[] = []
 
-  token = asNotUndefined(tokens[position])
+  token = asNotUndefined(tokens[position], `EOF`)
   while (!(token.type === `paren` && token.value === `]`)) {
     let loopBinding: LoopBindingNode
     ;[position, loopBinding] = parseLoopBinding(tokens, position, parsers)
     loopBindings.push(loopBinding)
-    token = asNotUndefined(tokens[position])
+    token = asNotUndefined(tokens[position], `EOF`)
   }
   return [position + 1, loopBindings]
 }
 
 export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, parsers) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     const { parseToken } = parsers
     let loopBindings: LoopBindingNode[]
     ;[position, loopBindings] = parseLoopBindings(tokens, position, parsers)
@@ -108,7 +108,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
     let expression: AstNode
     ;[position, expression] = parseToken(tokens, position)
 
-    const token = asNotUndefined(tokens[position])
+    const token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `)`)) {
       throw new UnexpectedTokenError(`)`, token)
     }
@@ -127,7 +127,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
     castLoopExpressionNode(node)
     const meta = node.token.meta
     const { loopBindings, params } = node
-    const expression = asNotUndefined(params[0])
+    const expression = asNotUndefined(params[0], meta)
 
     const result: Arr = []
 
@@ -138,7 +138,10 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
       const newContextStack = contextStack.withContext(context)
       let skip = false
       bindingsLoop: for (let bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-        const { binding, letBindings, whenNode, whileNode, modifiers } = asNotUndefined(loopBindings[bindingIndex])
+        const { binding, letBindings, whenNode, whileNode, modifiers } = asNotUndefined(
+          loopBindings[bindingIndex],
+          meta,
+        )
         const coll = asColl(evaluateAstNode(binding.value, newContextStack), meta)
         const seq = isSeq(coll) ? coll : Object.entries(coll)
         if (seq.length === 0) {
@@ -146,7 +149,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
           abort = true
           break
         }
-        const index = asNotUndefined(bindingIndices[bindingIndex])
+        const index = asNotUndefined(bindingIndices[bindingIndex], meta)
         if (index >= seq.length) {
           skip = true
           if (bindingIndex === 0) {
@@ -154,7 +157,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
             break
           }
           bindingIndices[bindingIndex] = 0
-          bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1]) + 1
+          bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1], meta) + 1
           break
         }
         if (context[binding.name]) {
@@ -166,17 +169,17 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
         for (const modifier of modifiers) {
           switch (modifier) {
             case `&let`:
-              addToContext(asNotUndefined(letBindings), context, newContextStack, evaluateAstNode, meta)
+              addToContext(asNotUndefined(letBindings, meta), context, newContextStack, evaluateAstNode, meta)
               break
             case `&when`:
-              if (!evaluateAstNode(asNotUndefined(whenNode), newContextStack)) {
-                bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex]) + 1
+              if (!evaluateAstNode(asNotUndefined(whenNode, meta), newContextStack)) {
+                bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex], meta) + 1
                 skip = true
                 break bindingsLoop
               }
               break
             case `&while`:
-              if (!evaluateAstNode(asNotUndefined(whileNode), newContextStack)) {
+              if (!evaluateAstNode(asNotUndefined(whileNode, meta), newContextStack)) {
                 bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
                 skip = true
                 break bindingsLoop

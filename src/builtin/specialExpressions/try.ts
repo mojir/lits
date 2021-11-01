@@ -14,17 +14,17 @@ interface TrySpecialExpressionNode extends SpecialExpressionNode {
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokens, position)
 
-    let token = asNotUndefined(tokens[position])
+    let token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `(`)) {
       throw new UnexpectedTokenError(`(`, token)
     }
     position += 1
 
-    token = asNotUndefined(tokens[position])
+    token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `(`)) {
       throw new UnexpectedTokenError(`(`, token)
     }
@@ -36,7 +36,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
       throw new UnexpectedNodeTypeError(`Name`, error, error.token.meta)
     }
 
-    token = asNotUndefined(tokens[position])
+    token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `)`)) {
       throw new UnexpectedTokenError(`)`, token)
     }
@@ -45,13 +45,13 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     let catchExpression: AstNode
     ;[position, catchExpression] = parseToken(tokens, position)
 
-    token = asNotUndefined(tokens[position])
+    token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `)`)) {
       throw new UnexpectedTokenError(`)`, token)
     }
     position += 1
 
-    token = asNotUndefined(tokens[position])
+    token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `)`)) {
       throw new UnexpectedTokenError(`)`, token)
     }
@@ -74,7 +74,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     try {
       return evaluateAstNode(node.tryExpression, contextStack)
     } catch (error) {
-      const newContext: Context = { [node.error.value]: { value: asNotUndefined(error) } } as Context
+      const newContext: Context = { [node.error.value]: { value: asNotUndefined(error, node.token.meta) } } as Context
       return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext))
     }
   },

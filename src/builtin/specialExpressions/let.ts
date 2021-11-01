@@ -11,7 +11,7 @@ interface LetSpecialExpressionNode extends SpecialExpressionNode {
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 

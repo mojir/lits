@@ -107,7 +107,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'to-char-code': {
     evaluate: ([str], meta): number => {
       assertNonEmptyString(str, meta)
-      return asNotUndefined(str.codePointAt(0))
+      return asNotUndefined(str.codePointAt(0), meta)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },

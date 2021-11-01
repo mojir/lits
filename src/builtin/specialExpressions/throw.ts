@@ -10,11 +10,11 @@ interface ThrowSpecialExpressionNode extends SpecialExpressionNode {
 
 export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
   parse: (tokens, position, { parseToken }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     const [newPosition, messageNode] = parseToken(tokens, position)
     position = newPosition
 
-    const token = asNotUndefined(tokens[position])
+    const token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `)`)) {
       throw new UnexpectedTokenError(`)`, token)
     }

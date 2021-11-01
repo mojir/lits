@@ -17,7 +17,7 @@ interface CondSpecialExpressionNode extends SpecialExpressionNode {
 function parseConditions(tokens: Token[], position: number, parseToken: ParseToken): [number, Condition[]] {
   const conditions: Condition[] = []
 
-  let token = asNotUndefined(tokens[position])
+  let token = asNotUndefined(tokens[position], `EOF`)
   while (!(token.type === `paren` && token.value === `)`)) {
     let test: AstNode
     ;[position, test] = parseToken(tokens, position)
@@ -27,14 +27,14 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
     conditions.push({ test, form })
 
-    token = asNotUndefined(tokens[position])
+    token = asNotUndefined(tokens[position], `EOF`)
   }
   return [position, conditions]
 }
 
 export const condSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     let conditions: Condition[]
     ;[position, conditions] = parseConditions(tokens, position, parseToken)
 

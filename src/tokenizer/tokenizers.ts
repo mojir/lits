@@ -161,14 +161,12 @@ const binaryNumberRegExp = /[0-1]/
 const firstCharRegExp = /[0-9.-]/
 export const tokenizeNumber: Tokenizer = (input, position, meta) => {
   let type: `decimal` | `octal` | `hex` | `binary` = `decimal`
-  const firstChar = input[position]
-  if (firstChar === undefined) {
-    return NO_MATCH
-  }
-  let hasDecimals = firstChar === `.`
+  const firstChar = input[position] as string
   if (!firstCharRegExp.test(firstChar)) {
     return NO_MATCH
   }
+
+  let hasDecimals = firstChar === `.`
 
   let i: number
   for (i = position + 1; i < input.length; i += 1) {

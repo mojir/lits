@@ -135,7 +135,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       const result: Obj = {}
 
       for (let i = 0; i < length; i += 1) {
-        const key = asNotUndefined(keys[i])
+        const key = asNotUndefined(keys[i], meta)
         result[key] = toAny(values[i])
       }
       return result

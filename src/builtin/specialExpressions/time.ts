@@ -9,7 +9,7 @@ interface TimeSpecialExpressionNode extends SpecialExpressionNode {
 
 export const timeSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     const [newPosition, astNode] = parseToken(tokens, position)
     const node: TimeSpecialExpressionNode = {
       type: `SpecialExpression`,
@@ -24,7 +24,7 @@ export const timeSpecialExpression: BuiltinSpecialExpression<Any> = {
     castTimeExpressionNode(node)
 
     const [astNode] = node.params
-    assertNotUndefined(astNode)
+    assertNotUndefined(astNode, node.token.meta)
 
     const startTime = Date.now()
     const result = evaluateAstNode(astNode, contextStack)

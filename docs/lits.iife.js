@@ -100,7 +100,7 @@ var Lits = (function (exports) {
     var UnexpectedTokenError = /** @class */ (function (_super) {
         __extends(UnexpectedTokenError, _super);
         function UnexpectedTokenError(expectedToken, actualToken) {
-            var _this = _super.call(this, "Expected a \"" + expectedToken + "\" token, got Token[" + actualToken.type + ":\"" + actualToken.value + "\"] " + actualToken.meta) || this;
+            var _this = _super.call(this, "Expected a '" + expectedToken + "'-token, got '" + actualToken.value + "' " + actualToken.meta) || this;
             _this.line = actualToken.meta === "EOF" ? null : actualToken.meta.line;
             _this.column = actualToken.meta === "EOF" ? null : actualToken.meta.column;
             Object.setPrototypeOf(_this, UnexpectedTokenError.prototype);
@@ -120,6 +120,18 @@ var Lits = (function (exports) {
             return _this;
         }
         return UnexpectedNodeTypeError;
+    }(Error));
+    var UndefinedSymbolError = /** @class */ (function (_super) {
+        __extends(UndefinedSymbolError, _super);
+        function UndefinedSymbolError(symbolName, meta) {
+            var _this = _super.call(this, "Undefined symbol '" + symbolName + "' " + meta) || this;
+            _this.line = meta === "EOF" ? null : meta.line;
+            _this.column = meta === "EOF" ? null : meta.column;
+            Object.setPrototypeOf(_this, UndefinedSymbolError.prototype);
+            _this.name = "UndefinedSymbolError";
+            return _this;
+        }
+        return UndefinedSymbolError;
     }(Error));
 
     var FUNCTION_SYMBOL = Symbol("function");
@@ -148,14 +160,12 @@ var Lits = (function (exports) {
         return value;
     }
     function asNotUndefined(value, meta) {
-        if (meta === void 0) { meta = "EOF"; }
         if (value === undefined) {
             throw new LitsError("Unexpected nil", meta);
         }
         return value;
     }
     function assertNotUndefined(value, meta) {
-        if (meta === void 0) { meta = "EOF"; }
         if (value === undefined) {
             throw new LitsError("Unexpected nil", meta);
         }
@@ -579,7 +589,7 @@ var Lits = (function (exports) {
     var andSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -608,14 +618,14 @@ var Lits = (function (exports) {
     function parseConditions(tokens, position, parseToken) {
         var _a, _b;
         var conditions = [];
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         while (!(token.type === "paren" && token.value === ")")) {
             var test_1 = void 0;
             _a = parseToken(tokens, position), position = _a[0], test_1 = _a[1];
             var form = void 0;
             _b = parseToken(tokens, position), position = _b[0], form = _b[1];
             conditions.push({ test: test_1, form: form });
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         return [position, conditions];
     }
@@ -623,7 +633,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b;
             var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var conditions;
             _b = parseConditions(tokens, position, parseToken), position = _b[0], conditions = _b[1];
             return [
@@ -680,7 +690,7 @@ var Lits = (function (exports) {
     function createParser(expressionName) {
         return function (tokens, position, parsers) {
             var _a, _b;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var parseToken = parsers.parseToken;
             var functionName = undefined;
             if (expressionName === "defn" || expressionName === "defns") {
@@ -799,29 +809,29 @@ var Lits = (function (exports) {
         });
     }
     function parseFunctionBody(tokens, position, _a) {
+        var _b;
         var parseToken = _a.parseToken;
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         var body = [];
-        while (!(token.type === "paren" && (token.value === ")" || token.value === "]"))) {
-            var _b = parseToken(tokens, position), newPosition = _b[0], bodyNode = _b[1];
+        while (!(token.type === "paren" && token.value === ")")) {
+            var bodyNode = void 0;
+            _b = parseToken(tokens, position), position = _b[0], bodyNode = _b[1];
             body.push(bodyNode);
-            position = newPosition;
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         if (body.length === 0) {
             throw new LitsError("Missing body in function", token.meta);
         }
-        position += 1;
-        return [position, body];
+        return [position + 1, body];
     }
     function parseFunctionOverloades(tokens, position, parsers) {
         var _a, _b, _c, _d;
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         if (token.type === "paren" && token.value === "(") {
             var functionOverloades = [];
             while (!(token.type === "paren" && token.value === ")")) {
                 position += 1;
-                token = asNotUndefined(tokens[position]);
+                token = asNotUndefined(tokens[position], "EOF");
                 var functionArguments = void 0;
                 _a = parseFunctionArguments(tokens, position, parsers), position = _a[0], functionArguments = _a[1];
                 var arity = functionArguments.restArgument
@@ -837,7 +847,10 @@ var Lits = (function (exports) {
                     body: functionBody,
                     arity: arity,
                 });
-                token = asNotUndefined(tokens[position]);
+                token = asNotUndefined(tokens[position], "EOF");
+                if (!(token.type === "paren" && (token.value === ")" || token.value === "("))) {
+                    throw new UnexpectedTokenError(") or (", token);
+                }
             }
             return [position + 1, functionOverloades];
         }
@@ -872,9 +885,9 @@ var Lits = (function (exports) {
         var mandatoryArguments = [];
         var argNames = {};
         var state = "mandatory";
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         position += 1;
-        token = asNotUndefined(tokens[position]);
+        token = asNotUndefined(tokens[position], "EOF");
         while (!(token.type === "paren" && token.value === "]")) {
             if (state === "let") {
                 _a = parseBindings(tokens, position), position = _a[0], bindings = _a[1];
@@ -883,7 +896,7 @@ var Lits = (function (exports) {
             else {
                 var _b = parseArgument(tokens, position), newPosition = _b[0], node = _b[1];
                 position = newPosition;
-                token = asNotUndefined(tokens[position]);
+                token = asNotUndefined(tokens[position], "EOF");
                 if (node.type === "Modifier") {
                     switch (node.value) {
                         case "&":
@@ -938,7 +951,7 @@ var Lits = (function (exports) {
     var defSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             assertNameNode(params[0], firstToken.meta);
             return [
@@ -966,7 +979,7 @@ var Lits = (function (exports) {
     var defsSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -993,19 +1006,20 @@ var Lits = (function (exports) {
 
     var doSpecialExpression = {
         parse: function (tokens, position, _a) {
+            var _b;
             var parseToken = _a.parseToken;
+            var token = asNotUndefined(tokens[position], "EOF");
             var node = {
                 type: "SpecialExpression",
                 name: "do",
                 params: [],
-                token: asNotUndefined(tokens[position]),
+                token: token,
             };
-            var token = asNotUndefined(tokens[position]);
             while (!(token.type === "paren" && token.value === ")")) {
-                var _b = parseToken(tokens, position), newPosition = _b[0], bodyNode = _b[1];
+                var bodyNode = void 0;
+                _b = parseToken(tokens, position), position = _b[0], bodyNode = _b[1];
                 node.params.push(bodyNode);
-                position = newPosition;
-                token = asNotUndefined(tokens[position]);
+                token = asNotUndefined(tokens[position], "EOF");
             }
             return [position + 1, node];
         },
@@ -1031,7 +1045,7 @@ var Lits = (function (exports) {
             binding: bindingNode,
             modifiers: [],
         };
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         while (token.type === "modifier") {
             switch (token.value) {
                 case "&let":
@@ -1058,7 +1072,7 @@ var Lits = (function (exports) {
                 default:
                     throw new LitsError("Illegal modifier: " + token.value, token.meta);
             }
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         return [position, loopBinding];
     }
@@ -1073,31 +1087,31 @@ var Lits = (function (exports) {
     }
     function parseLoopBindings(tokens, position, parsers) {
         var _a;
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         if (!(token.type === "paren" && token.value === "[")) {
             throw new UnexpectedTokenError("[", token);
         }
         position += 1;
         var loopBindings = [];
-        token = asNotUndefined(tokens[position]);
+        token = asNotUndefined(tokens[position], "EOF");
         while (!(token.type === "paren" && token.value === "]")) {
             var loopBinding = void 0;
             _a = parseLoopBinding(tokens, position, parsers), position = _a[0], loopBinding = _a[1];
             loopBindings.push(loopBinding);
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         return [position + 1, loopBindings];
     }
     var forSpecialExpression = {
         parse: function (tokens, position, parsers) {
             var _a, _b;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var parseToken = parsers.parseToken;
             var loopBindings;
             _a = parseLoopBindings(tokens, position, parsers), position = _a[0], loopBindings = _a[1];
             var expression;
             _b = parseToken(tokens, position), position = _b[0], expression = _b[1];
-            var token = asNotUndefined(tokens[position]);
+            var token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === ")")) {
                 throw new UnexpectedTokenError(")", token);
             }
@@ -1114,7 +1128,7 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var meta = node.token.meta;
             var loopBindings = node.loopBindings, params = node.params;
-            var expression = asNotUndefined(params[0]);
+            var expression = asNotUndefined(params[0], meta);
             var result = [];
             var bindingIndices = loopBindings.map(function () { return 0; });
             var abort = false;
@@ -1123,7 +1137,7 @@ var Lits = (function (exports) {
                 var newContextStack = contextStack.withContext(context);
                 var skip = false;
                 bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-                    var _b = asNotUndefined(loopBindings[bindingIndex]), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
+                    var _b = asNotUndefined(loopBindings[bindingIndex], meta), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
                     var coll = asColl(evaluateAstNode(binding.value, newContextStack), meta);
                     var seq = isSeq(coll) ? coll : Object.entries(coll);
                     if (seq.length === 0) {
@@ -1131,7 +1145,7 @@ var Lits = (function (exports) {
                         abort = true;
                         break;
                     }
-                    var index = asNotUndefined(bindingIndices[bindingIndex]);
+                    var index = asNotUndefined(bindingIndices[bindingIndex], meta);
                     if (index >= seq.length) {
                         skip = true;
                         if (bindingIndex === 0) {
@@ -1139,7 +1153,7 @@ var Lits = (function (exports) {
                             break;
                         }
                         bindingIndices[bindingIndex] = 0;
-                        bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1]) + 1;
+                        bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1], meta) + 1;
                         break;
                     }
                     if (context[binding.name]) {
@@ -1152,17 +1166,17 @@ var Lits = (function (exports) {
                         var modifier = modifiers_1[_i];
                         switch (modifier) {
                             case "&let":
-                                addToContext(asNotUndefined(letBindings), context, newContextStack, evaluateAstNode, meta);
+                                addToContext(asNotUndefined(letBindings, meta), context, newContextStack, evaluateAstNode, meta);
                                 break;
                             case "&when":
-                                if (!evaluateAstNode(asNotUndefined(whenNode), newContextStack)) {
-                                    bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex]) + 1;
+                                if (!evaluateAstNode(asNotUndefined(whenNode, meta), newContextStack)) {
+                                    bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex], meta) + 1;
                                     skip = true;
                                     break bindingsLoop;
                                 }
                                 break;
                             case "&while":
-                                if (!evaluateAstNode(asNotUndefined(whileNode), newContextStack)) {
+                                if (!evaluateAstNode(asNotUndefined(whileNode, meta), newContextStack)) {
                                     bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY;
                                     skip = true;
                                     break bindingsLoop;
@@ -1184,7 +1198,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
@@ -1195,7 +1209,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "if-let",
-                binding: asNotUndefined(bindings[0]),
+                binding: asNotUndefined(bindings[0], firstToken.meta),
                 params: params,
                 token: firstToken,
             };
@@ -1203,16 +1217,17 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
+            var meta = node.token.meta;
             var locals = {};
             var bindingValue = evaluateAstNode(node.binding.value, contextStack);
             if (bindingValue) {
                 locals[node.binding.name] = { value: bindingValue };
                 var newContextStack = contextStack.withContext(locals);
-                var thenForm = asNotUndefined(node.params[0]);
+                var thenForm = asNotUndefined(node.params[0], meta);
                 return evaluateAstNode(thenForm, newContextStack);
             }
             if (node.params.length === 2) {
-                var elseForm = asNotUndefined(node.params[1]);
+                var elseForm = asNotUndefined(node.params[1], meta);
                 return evaluateAstNode(elseForm, contextStack);
             }
             return null;
@@ -1223,7 +1238,7 @@ var Lits = (function (exports) {
     var ifNotSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -1257,7 +1272,7 @@ var Lits = (function (exports) {
     var ifSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -1292,7 +1307,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             var params;
@@ -1329,7 +1344,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseTokens = _a.parseTokens, parseBindings = _a.parseBindings;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             var params;
@@ -1366,7 +1381,7 @@ var Lits = (function (exports) {
                             throw new LitsError("recur expected " + node.bindings.length + " parameters, got " + params_1.length, meta);
                         }
                         node.bindings.forEach(function (binding, index) {
-                            asNotUndefined(bindingContext[binding.name]).value = asAny(params_1[index], meta);
+                            asNotUndefined(bindingContext[binding.name], meta).value = asAny(params_1[index], meta);
                         });
                         return "continue";
                     }
@@ -1385,7 +1400,7 @@ var Lits = (function (exports) {
     var orSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -1415,7 +1430,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b;
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var params;
             _b = parseTokens(tokens, position), position = _b[0], params = _b[1];
             var node = {
@@ -1436,10 +1451,10 @@ var Lits = (function (exports) {
     var throwSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseToken(tokens, position), newPosition = _b[0], messageNode = _b[1];
             position = newPosition;
-            var token = asNotUndefined(tokens[position]);
+            var token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === ")")) {
                 throw new UnexpectedTokenError(")", token);
             }
@@ -1463,7 +1478,7 @@ var Lits = (function (exports) {
     var timeSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseToken(tokens, position), newPosition = _b[0], astNode = _b[1];
             var node = {
                 type: "SpecialExpression",
@@ -1476,7 +1491,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var astNode = node.params[0];
-            assertNotUndefined(astNode);
+            assertNotUndefined(astNode, node.token.meta);
             var startTime = Date.now();
             var result = evaluateAstNode(astNode, contextStack);
             var totalTime = Date.now() - startTime;
@@ -1491,15 +1506,15 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c, _d;
             var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var tryExpression;
             _b = parseToken(tokens, position), position = _b[0], tryExpression = _b[1];
-            var token = asNotUndefined(tokens[position]);
+            var token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === "(")) {
                 throw new UnexpectedTokenError("(", token);
             }
             position += 1;
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === "(")) {
                 throw new UnexpectedTokenError("(", token);
             }
@@ -1509,19 +1524,19 @@ var Lits = (function (exports) {
             if (error.type !== "Name") {
                 throw new UnexpectedNodeTypeError("Name", error, error.token.meta);
             }
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === ")")) {
                 throw new UnexpectedTokenError(")", token);
             }
             position += 1;
             var catchExpression;
             _d = parseToken(tokens, position), position = _d[0], catchExpression = _d[1];
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === ")")) {
                 throw new UnexpectedTokenError(")", token);
             }
             position += 1;
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === ")")) {
                 throw new UnexpectedTokenError(")", token);
             }
@@ -1544,7 +1559,7 @@ var Lits = (function (exports) {
                 return evaluateAstNode(node.tryExpression, contextStack);
             }
             catch (error) {
-                var newContext = (_b = {}, _b[node.error.value] = { value: asNotUndefined(error) }, _b);
+                var newContext = (_b = {}, _b[node.error.value] = { value: asNotUndefined(error, node.token.meta) }, _b);
                 return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext));
             }
         },
@@ -1554,7 +1569,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
@@ -1565,7 +1580,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "when-first",
-                binding: asNotUndefined(bindings[0]),
+                binding: asNotUndefined(bindings[0], firstToken.meta),
                 params: params,
                 token: firstToken,
             };
@@ -1598,7 +1613,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
@@ -1609,7 +1624,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "when-let",
-                binding: asNotUndefined(bindings[0]),
+                binding: asNotUndefined(bindings[0], firstToken.meta),
                 params: params,
                 token: firstToken,
             };
@@ -1637,7 +1652,7 @@ var Lits = (function (exports) {
     var whenNotSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             var node = {
                 type: "SpecialExpression",
@@ -1650,7 +1665,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
-            assertNotUndefined(whenExpression);
+            assertNotUndefined(whenExpression, node.token.meta);
             if (evaluateAstNode(whenExpression, contextStack)) {
                 return null;
             }
@@ -1667,7 +1682,7 @@ var Lits = (function (exports) {
     var whenSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position]);
+            var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             var node = {
                 type: "SpecialExpression",
@@ -1680,7 +1695,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
-            assertNotUndefined(whenExpression);
+            assertNotUndefined(whenExpression, node.token.meta);
             if (!evaluateAstNode(whenExpression, contextStack)) {
                 return null;
             }
@@ -3541,7 +3556,7 @@ var Lits = (function (exports) {
         },
     };
 
-    var version = "1.0.0-alpha.5";
+    var version = "1.0.0-alpha.6";
 
     var miscNormalExpression = {
         'not=': {
@@ -3845,7 +3860,7 @@ var Lits = (function (exports) {
                 var length = Math.min(keys.length, values.length);
                 var result = {};
                 for (var i = 0; i < length; i += 1) {
-                    var key = asNotUndefined(keys[i]);
+                    var key = asNotUndefined(keys[i], meta);
                     result[key] = toAny(values[i]);
                 }
                 return result;
@@ -4155,7 +4170,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta) {
                 var str = _a[0];
                 assertNonEmptyString(str, meta);
-                return asNotUndefined(str.codePointAt(0));
+                return asNotUndefined(str.codePointAt(0), meta);
             },
             validate: function (node) { return assertLength(1, node); },
         },
@@ -4565,7 +4580,7 @@ var Lits = (function (exports) {
         },
         builtin: function (fn, params, meta, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            var normalExpression = asNotUndefined(normalExpressions[fn.name]);
+            var normalExpression = asNotUndefined(normalExpressions[fn.name], meta);
             return normalExpression.evaluate(params, meta, contextStack, { executeFunction: executeFunction });
         },
     };
@@ -4621,7 +4636,7 @@ var Lits = (function (exports) {
         return node.value;
     }
     function evaluateReservedName(node) {
-        return asNotUndefined(reservedNamesRecord[node.value]).value;
+        return asNotUndefined(reservedNamesRecord[node.value], node.token.meta).value;
     }
     function evaluateName(node, contextStack) {
         var _a;
@@ -4641,7 +4656,7 @@ var Lits = (function (exports) {
                 _a);
             return builtinFunction;
         }
-        throw new LitsError("Undefined identifier " + value, meta);
+        throw new UndefinedSymbolError(value, meta);
     }
     function evaluateNormalExpression(node, contextStack) {
         var _a;
@@ -4686,12 +4701,15 @@ var Lits = (function (exports) {
         throw new LitsError("Expected function, got " + fn, meta);
     };
     function evaluateBuiltinNormalExpression(node, params, contextStack) {
-        var normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate;
-        return normalExpressionEvaluator(params, node.token.meta, contextStack, { executeFunction: executeFunction });
+        var normalExpression = builtin.normalExpressions[node.name];
+        if (!normalExpression) {
+            throw new UndefinedSymbolError(node.name, node.token.meta);
+        }
+        return normalExpression.evaluate(params, node.token.meta, contextStack, { executeFunction: executeFunction });
     }
     function evaluateSpecialExpression(node, contextStack) {
-        var specialExpressionEvaluator = asNotUndefined(builtin.specialExpressions[node.name]).evaluate;
-        return specialExpressionEvaluator(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
+        var specialExpression = asNotUndefined(builtin.specialExpressions[node.name], node.token.meta);
+        return specialExpression.evaluate(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
     }
     function evalueateObjectAsFunction(fn, params, meta) {
         if (params.length !== 1) {
@@ -4733,36 +4751,36 @@ var Lits = (function (exports) {
     }
 
     var parseNumber = function (tokens, position) {
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         return [position + 1, { type: "Number", value: Number(token.value), token: token }];
     };
     var parseString = function (tokens, position) {
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         return [position + 1, { type: "String", value: token.value, token: token }];
     };
     var parseName = function (tokens, position) {
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         return [position + 1, { type: "Name", value: token.value, token: token }];
     };
     var parseReservedName = function (tokens, position) {
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         return [position + 1, { type: "ReservedName", value: token.value, token: token }];
     };
     var parseTokens = function (tokens, position) {
         var _a;
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         var astNodes = [];
         var astNode;
         while (!(token.type === "paren" && (token.value === ")" || token.value === "]"))) {
             _a = parseToken(tokens, position), position = _a[0], astNode = _a[1];
             astNodes.push(astNode);
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         return [position, astNodes];
     };
     var parseExpression = function (tokens, position) {
         position += 1; // Skip parenthesis
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         if (token.type === "name" && builtin.specialExpressions[token.value]) {
             return parseSpecialExpression(tokens, position);
         }
@@ -4770,15 +4788,15 @@ var Lits = (function (exports) {
     };
     var parseArrayLitteral = function (tokens, position) {
         var _a;
-        var firstToken = asNotUndefined(tokens[position]);
+        var firstToken = asNotUndefined(tokens[position], "EOF");
         position = position + 1;
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         var params = [];
         var param;
         while (!(token.type === "paren" && token.value === "]")) {
             _a = parseToken(tokens, position), position = _a[0], param = _a[1];
             params.push(param);
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         position = position + 1;
         var node = {
@@ -4791,15 +4809,15 @@ var Lits = (function (exports) {
     };
     var parseObjectLitteral = function (tokens, position) {
         var _a;
-        var firstToken = asNotUndefined(tokens[position]);
+        var firstToken = asNotUndefined(tokens[position], "EOF");
         position = position + 1;
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         var params = [];
         var param;
         while (!(token.type === "paren" && token.value === "}")) {
             _a = parseToken(tokens, position), position = _a[0], param = _a[1];
             params.push(param);
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         position = position + 1;
         var node = {
@@ -4812,13 +4830,13 @@ var Lits = (function (exports) {
         return [position, node];
     };
     var parseRegexpShorthand = function (tokens, position) {
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         var stringNode = {
             type: "String",
             value: token.value,
             token: token,
         };
-        assertNotUndefined(token.options);
+        assertNotUndefined(token.options, token.meta);
         var optionsNode = {
             type: "String",
             value: "" + (token.options.g ? "g" : "") + (token.options.i ? "i" : ""),
@@ -4834,12 +4852,12 @@ var Lits = (function (exports) {
     };
     var placeholderRegexp = /^%([1-9][0-9]?$)/;
     var parseFnShorthand = function (tokens, position) {
-        var firstToken = asNotUndefined(tokens[position]);
+        var firstToken = asNotUndefined(tokens[position], "EOF");
         position += 2;
         var _a = parseNormalExpression(tokens, position), newPosition = _a[0], normalExpressionNode = _a[1];
         var arity = 0;
         for (var pos = position + 1; pos < newPosition - 1; pos += 1) {
-            var token = asNotUndefined(tokens[pos]);
+            var token = asNotUndefined(tokens[pos], "EOF");
             if (token.type === "name") {
                 var match = placeholderRegexp.exec(token.value);
                 if (match) {
@@ -4877,7 +4895,7 @@ var Lits = (function (exports) {
         return [newPosition, node];
     };
     var parseArgument = function (tokens, position) {
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         if (token.type === "name") {
             return [position + 1, { type: "Argument", name: token.value, token: token }];
         }
@@ -4891,27 +4909,27 @@ var Lits = (function (exports) {
     };
     var parseBindings = function (tokens, position) {
         var _a;
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         if (!(token.type === "paren" && token.value === "[")) {
             throw new UnexpectedTokenError("[", token);
         }
         position += 1;
-        token = asNotUndefined(tokens[position]);
+        token = asNotUndefined(tokens[position], "EOF");
         var bindings = [];
         var binding;
         while (!(token.type === "paren" && token.value === "]")) {
             _a = parseBinding(tokens, position), position = _a[0], binding = _a[1];
             bindings.push(binding);
-            token = asNotUndefined(tokens[position]);
+            token = asNotUndefined(tokens[position], "EOF");
         }
         position += 1;
         return [position, bindings];
     };
     var parseBinding = function (tokens, position) {
         var _a;
-        var firstToken = asNotUndefined(tokens[position]);
+        var firstToken = asNotUndefined(tokens[position], "EOF");
         if (firstToken.type !== "name") {
-            throw new LitsError("Expected name node in binding, got " + firstToken.type + " value=" + firstToken.value, firstToken.meta);
+            throw new UnexpectedTokenError("name", firstToken);
         }
         var name = firstToken.value;
         position += 1;
@@ -4955,22 +4973,22 @@ var Lits = (function (exports) {
         return [position, node];
     };
     var parseSpecialExpression = function (tokens, position) {
-        var expressionName = asNotUndefined(tokens[position]).value;
+        var _a = asNotUndefined(tokens[position], "EOF"), expressionName = _a.value, meta = _a.meta;
         position += 1;
-        var _a = asNotUndefined(builtin.specialExpressions[expressionName]), parse = _a.parse, validate = _a.validate;
-        var _b = parse(tokens, position, {
+        var _b = asNotUndefined(builtin.specialExpressions[expressionName], meta), parse = _b.parse, validate = _b.validate;
+        var _c = parse(tokens, position, {
             parseExpression: parseExpression,
             parseTokens: parseTokens,
             parseToken: parseToken,
             parseBinding: parseBinding,
             parseBindings: parseBindings,
             parseArgument: parseArgument,
-        }), positionAfterParse = _b[0], node = _b[1];
+        }), positionAfterParse = _c[0], node = _c[1];
         validate === null || validate === void 0 ? void 0 : validate(node);
         return [positionAfterParse, node];
     };
     var parseToken = function (tokens, position) {
-        var token = asNotUndefined(tokens[position]);
+        var token = asNotUndefined(tokens[position], "EOF");
         var nodeDescriptor = undefined;
         switch (token.type) {
             case "number":
@@ -5178,13 +5196,10 @@ var Lits = (function (exports) {
     var tokenizeNumber = function (input, position, meta) {
         var type = "decimal";
         var firstChar = input[position];
-        if (firstChar === undefined) {
-            return NO_MATCH;
-        }
-        var hasDecimals = firstChar === ".";
         if (!firstCharRegExp.test(firstChar)) {
             return NO_MATCH;
         }
+        var hasDecimals = firstChar === ".";
         var i;
         for (i = position + 1; i < input.length; i += 1) {
             var char = asNotUndefined(input[i], meta);
@@ -5325,7 +5340,7 @@ var Lits = (function (exports) {
         return TokenMetaImpl;
     }());
     function calculateMeta(input, position) {
-        var lines = input.substr(0, position).split(/\r\n|\r|\n/);
+        var lines = input.substr(0, position + 1).split(/\r\n|\r|\n/);
         return new TokenMetaImpl(lines.length, lines[lines.length - 1].length);
     }
     function tokenize(input) {
@@ -5345,12 +5360,12 @@ var Lits = (function (exports) {
                     position += nbrOfCharacters;
                     if (token) {
                         tokens.push(token);
-                        break;
                     }
+                    break;
                 }
             }
             if (!tokenized) {
-                throw new LitsError("Unrecognized character", calculateMeta(input, position));
+                throw new LitsError("Unrecognized character '" + input[position] + "'", meta);
             }
         }
         return tokens;
@@ -5406,7 +5421,7 @@ var Lits = (function (exports) {
             }
         };
         Cache.prototype.dropFirstEntry = function () {
-            var firstEntry = asNotUndefined(this.firstEntry);
+            var firstEntry = this.firstEntry;
             delete this.cache[firstEntry.key];
             this._size -= 1;
             this.firstEntry = firstEntry.nextEntry;

@@ -1,4 +1,4 @@
-import { asNotUndefined, toNonNegativeInteger } from '../utils'
+import { toNonNegativeInteger } from '../utils'
 
 type CacheEntry<T> = {
   key: string
@@ -62,7 +62,7 @@ export class Cache<T> {
   }
 
   private dropFirstEntry(): void {
-    const firstEntry = asNotUndefined(this.firstEntry)
+    const firstEntry = this.firstEntry as CacheEntry<T>
     delete this.cache[firstEntry.key]
     this._size -= 1
     this.firstEntry = firstEntry.nextEntry

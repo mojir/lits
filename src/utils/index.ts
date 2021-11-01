@@ -47,14 +47,14 @@ export function asAny(value: unknown, meta: TokenMeta): Any {
   return value as Any
 }
 
-export function asNotUndefined<T>(value: T | undefined, meta: TokenMeta = `EOF`): T {
+export function asNotUndefined<T>(value: T | undefined, meta: TokenMeta): T {
   if (value === undefined) {
     throw new LitsError(`Unexpected nil`, meta)
   }
   return value
 }
 
-export function assertNotUndefined<T>(value: T | undefined, meta: TokenMeta = `EOF`): asserts value is T {
+export function assertNotUndefined<T>(value: T | undefined, meta: TokenMeta): asserts value is T {
   if (value === undefined) {
     throw new LitsError(`Unexpected nil`, meta)
   }

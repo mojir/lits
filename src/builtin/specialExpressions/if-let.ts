@@ -12,7 +12,7 @@ interface IfLetSpecialExpressionNode extends SpecialExpressionNode {
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -26,7 +26,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     const node: IfLetSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `if-let`,
-      binding: asNotUndefined(bindings[0]),
+      binding: asNotUndefined(bindings[0], firstToken.meta),
       params,
       token: firstToken,
     }
@@ -34,16 +34,17 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     castIfLetExpressionNode(node)
+    const meta = node.token.meta
     const locals: Context = {}
     const bindingValue = evaluateAstNode(node.binding.value, contextStack)
     if (bindingValue) {
       locals[node.binding.name] = { value: bindingValue }
       const newContextStack = contextStack.withContext(locals)
-      const thenForm = asNotUndefined(node.params[0])
+      const thenForm = asNotUndefined(node.params[0], meta)
       return evaluateAstNode(thenForm, newContextStack)
     }
     if (node.params.length === 2) {
-      const elseForm = asNotUndefined(node.params[1])
+      const elseForm = asNotUndefined(node.params[1], meta)
       return evaluateAstNode(elseForm, contextStack)
     }
     return null

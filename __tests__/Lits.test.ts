@@ -1,4 +1,5 @@
 import { Lits } from '../src'
+import { UndefinedSymbolError } from '../src/errors'
 import { Cache } from '../src/Lits/Cache'
 
 describe(`context`, () => {
@@ -145,5 +146,9 @@ describe(`regressions`, () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect((error as any).column).toBe(10)
     }
+  })
+  test(`name not recognized`, () => {
+    expect(() => lits.run(`(asd)`)).toThrowError(UndefinedSymbolError)
+    expect(() => lits.run(`asd`)).toThrowError(UndefinedSymbolError)
   })
 })

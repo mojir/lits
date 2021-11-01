@@ -9,7 +9,7 @@ interface RecurSpecialExpressionNode extends SpecialExpressionNode {
 
 export const recurSpecialExpression: BuiltinSpecialExpression<null> = {
   parse: (tokens, position, { parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     let params
     ;[position, params] = parseTokens(tokens, position)
 

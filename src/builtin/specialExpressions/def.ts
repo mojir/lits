@@ -10,7 +10,7 @@ interface DefSpecialExpressionNode extends SpecialExpressionNode {
 
 export const defSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position])
+    const firstToken = asNotUndefined(tokens[position], `EOF`)
     const [newPosition, params] = parseTokens(tokens, position)
     assertNameNode(params[0], firstToken.meta)
     return [

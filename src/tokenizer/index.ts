@@ -51,7 +51,7 @@ class TokenMetaImpl {
   }
 }
 export function calculateMeta(input: string, position: number): TokenMeta {
-  const lines = input.substr(0, position).split(/\r\n|\r|\n/)
+  const lines = input.substr(0, position + 1).split(/\r\n|\r|\n/)
   return new TokenMetaImpl(lines.length, (lines[lines.length - 1] as string).length)
 }
 
@@ -73,12 +73,12 @@ export function tokenize(input: string): Token[] {
         position += nbrOfCharacters
         if (token) {
           tokens.push(token)
-          break
         }
+        break
       }
     }
     if (!tokenized) {
-      throw new LitsError(`Unrecognized character`, calculateMeta(input, position))
+      throw new LitsError(`Unrecognized character '${input[position]}'`, meta)
     }
   }
   return tokens

@@ -31,7 +31,7 @@ import { Any, Arr, Obj } from '../interface'
 import { ContextStack } from './interface'
 import { functionExecutors } from './functionExecutors'
 import { TokenMeta } from '../tokenizer/interface'
-import { LitsError } from '../errors'
+import { LitsError, UndefinedSymbolError } from '../errors'
 
 export function createContextStack(contexts: Context[] = []): ContextStack {
   if (contexts.length === 0) {
@@ -92,7 +92,7 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedNameNode): Any {
-  return asNotUndefined(reservedNamesRecord[node.value]).value
+  return asNotUndefined(reservedNamesRecord[node.value], node.token.meta).value
 }
 
 function evaluateName(node: NameNode, contextStack: ContextStack): Any {
@@ -115,7 +115,7 @@ function evaluateName(node: NameNode, contextStack: ContextStack): Any {
     return builtinFunction
   }
 
-  throw new LitsError(`Undefined identifier ${value}`, meta)
+  throw new UndefinedSymbolError(value, meta)
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
@@ -160,14 +160,18 @@ export const executeFunction: ExecuteFunction = (fn, params, meta, contextStack)
 }
 
 function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params: Arr, contextStack: ContextStack): Any {
-  const normalExpressionEvaluator = asNotUndefined(builtin.normalExpressions[node.name]).evaluate
+  const normalExpression = builtin.normalExpressions[node.name]
+  if (!normalExpression) {
+    throw new UndefinedSymbolError(node.name, node.token.meta)
+  }
 
-  return normalExpressionEvaluator(params, node.token.meta, contextStack, { executeFunction })
+  return normalExpression.evaluate(params, node.token.meta, contextStack, { executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
-  const specialExpressionEvaluator = asNotUndefined(builtin.specialExpressions[node.name]).evaluate
-  return specialExpressionEvaluator(node, contextStack, { evaluateAstNode, builtin })
+  const specialExpression = asNotUndefined(builtin.specialExpressions[node.name], node.token.meta)
+
+  return specialExpression.evaluate(node, contextStack, { evaluateAstNode, builtin })
 }
 
 function evalueateObjectAsFunction(fn: Obj, params: Arr, meta: TokenMeta): Any {
