@@ -1,11 +1,11 @@
-import { assertNumber, isArr, isColl, isLitsFunction, isObj, isSeq } from '../../../utils'
 import { NormalExpressionNode } from '../../../parser/interface'
 import { assertLength, assertFiniteNumber } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
+import { collection, litsFunction, number, object, sequence, array } from '../../../utils/assertion'
 
 export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'function?': {
-    evaluate: ([first]): boolean => isLitsFunction(first),
+    evaluate: ([first]): boolean => litsFunction.is(first),
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
@@ -20,7 +20,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   },
 
   'integer?': {
-    evaluate: ([first]): boolean => typeof first === `number` && Number.isInteger(first),
+    evaluate: ([first]): boolean => typeof first === `number` && number.is(first, { integer: true }),
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
@@ -69,34 +69,34 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   'odd?': {
     evaluate: ([first], meta): boolean => {
       assertFiniteNumber(first, meta)
-      return Number.isInteger(first) && first % 2 !== 0
+      return number.is(first, { integer: true }) && first % 2 !== 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'array?': {
     evaluate: ([first]): boolean => {
-      return isArr(first)
+      return array.is(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'coll?': {
     evaluate: ([first]): boolean => {
-      return isColl(first)
+      return collection.is(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'seq?': {
     evaluate: ([first]): boolean => {
-      return isSeq(first)
+      return sequence.is(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'object?': {
-    evaluate: ([first]): boolean => isObj(first),
+    evaluate: ([first]): boolean => object.is(first),
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
@@ -108,7 +108,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'finite?': {
     evaluate: ([value], meta): boolean => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Number.isFinite(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -116,7 +116,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'nan?': {
     evaluate: ([value], meta): boolean => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Number.isNaN(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -124,7 +124,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'positive-infinity?': {
     evaluate: ([value], meta): boolean => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return value === Number.POSITIVE_INFINITY
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -132,7 +132,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'negative-infinity?': {
     evaluate: ([value], meta): boolean => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return value === Number.NEGATIVE_INFINITY
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),

@@ -2,7 +2,8 @@ import { LitsError, RecurSignal } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { asAny, asNotUndefined } from '../../utils'
+import { asNotUndefined } from '../../utils'
+import { any } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface LoopSpecialExpressionNode extends SpecialExpressionNode {
@@ -50,7 +51,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
             throw new LitsError(`recur expected ${node.bindings.length} parameters, got ${params.length}`, meta)
           }
           node.bindings.forEach((binding, index) => {
-            asNotUndefined(bindingContext[binding.name], meta).value = asAny(params[index], meta)
+            asNotUndefined(bindingContext[binding.name], meta).value = any.as(params[index], meta)
           })
           continue
         }

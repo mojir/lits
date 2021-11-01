@@ -1,9 +1,10 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
 import { Any } from '../../../interface'
-import { asAny, assertLength, assertString, compare, deepEqual, isLitsFunction } from '../../../utils'
+import { assertLength, assertString, compare, deepEqual } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
+import { any, litsFunction } from '../../../utils/assertion'
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
   'not=': {
@@ -34,7 +35,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
   'equal?': {
     evaluate: ([a, b], meta): boolean => {
-      return deepEqual(asAny(a, meta), asAny(b, meta), meta)
+      return deepEqual(any.as(a, meta), any.as(b, meta), meta)
     },
     validate: node => assertLength({ min: 1 }, node),
   },
@@ -109,7 +110,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       console.log(...params)
 
       if (params.length > 0) {
-        return asAny(params[params.length - 1], meta)
+        return any.as(params[params.length - 1], meta)
       }
 
       return null
@@ -124,7 +125,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       // eslint-disable-next-line no-console
       console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
-      return asAny(params[0], meta)
+      return any.as(params[0], meta)
     },
     validate: node => assertLength({ max: 1 }, node),
   },
@@ -148,7 +149,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       if (!value) {
         throw new AssertionError(message, meta)
       }
-      return asAny(value, meta)
+      return any.as(value, meta)
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },
@@ -183,7 +184,7 @@ function valueToString(contextEntry: ContextEntry): string {
   const { value } = contextEntry
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const name: string | undefined = (value as any).name
-  if (isLitsFunction(value)) {
+  if (litsFunction.is(value)) {
     if (name) {
       return `<${value.type} function ${name}>`
     } else {

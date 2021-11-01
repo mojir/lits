@@ -14,15 +14,9 @@ import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
 import {
   asNotUndefined,
-  assertInteger,
   assertNonNegativeInteger,
-  assertSeq,
   assertString,
-  isInteger,
-  isLitsFunction,
   isNormalExpressionNodeName,
-  isNumber,
-  isObj,
   isString,
   toAny,
 } from '../utils'
@@ -32,6 +26,7 @@ import { ContextStack } from './interface'
 import { functionExecutors } from './functionExecutors'
 import { TokenMeta } from '../tokenizer/interface'
 import { LitsError, UndefinedSymbolError } from '../errors'
+import { litsFunction, number, object, sequence } from '../utils/assertion'
 
 export function createContextStack(contexts: Context[] = []): ContextStack {
   if (contexts.length === 0) {
@@ -141,19 +136,19 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 }
 
 export const executeFunction: ExecuteFunction = (fn, params, meta, contextStack) => {
-  if (isLitsFunction(fn)) {
+  if (litsFunction.is(fn)) {
     return functionExecutors[fn.type](fn, params, meta, contextStack, { evaluateAstNode, executeFunction })
   }
   if (Array.isArray(fn)) {
     return evaluateArrayAsFunction(fn, params, meta)
   }
-  if (isObj(fn)) {
+  if (object.is(fn)) {
     return evalueateObjectAsFunction(fn, params, meta)
   }
   if (isString(fn)) {
     return evaluateStringAsFunction(fn, params, meta)
   }
-  if (isNumber(fn)) {
+  if (number.is(fn)) {
     return evaluateNumberAsFunction(fn, params, meta)
   }
   throw new LitsError(`Expected function, got ${fn}`, meta)
@@ -197,21 +192,21 @@ function evaluateStringAsFunction(fn: string, params: Arr, meta: TokenMeta): Any
     throw new LitsError(`String as function requires one Obj parameter`, meta)
   }
   const param = toAny(params[0])
-  if (isObj(param)) {
+  if (object.is(param)) {
     return toAny((param as Obj)[fn])
   }
-  if (isInteger(param)) {
+  if (number.is(param, { integer: true })) {
     return toAny(fn[param])
   }
   throw new LitsError(`string as function expects Obj or integer parameter, got ${param}`, meta)
 }
 
 function evaluateNumberAsFunction(fn: number, params: Arr, meta: TokenMeta): Any {
-  assertInteger(fn, meta)
+  number.assert(fn, meta, { integer: true })
   if (params.length !== 1) {
     throw new LitsError(`String as function requires one Arr parameter`, meta)
   }
   const param = params[0]
-  assertSeq(param, meta)
+  sequence.assert(param, meta)
   return toAny(param[fn])
 }

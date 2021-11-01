@@ -134,30 +134,14 @@ var Lits = (function (exports) {
         return UndefinedSymbolError;
     }(Error));
 
-    var FUNCTION_SYMBOL = Symbol("function");
-
-    function asAstNode(node, meta) {
-        if (node === undefined) {
-            throw new LitsError("Expected an AST node, got undefined", meta);
-        }
-        return node;
-    }
     function asNameNode(node, meta) {
-        if (node === undefined || node.type !== "Name") {
-            throw new UnexpectedNodeTypeError("Name", node, meta);
-        }
+        assertNameNode(node, meta);
         return node;
     }
     function assertNameNode(node, meta) {
         if (node === undefined || node.type !== "Name") {
             throw new UnexpectedNodeTypeError("Name", node, meta);
         }
-    }
-    function asAny(value, meta) {
-        if (value === undefined) {
-            throw new LitsError("Unexpected end of input", meta);
-        }
-        return value;
     }
     function asNotUndefined(value, meta) {
         if (value === undefined) {
@@ -195,13 +179,7 @@ var Lits = (function (exports) {
     }
     function assertNonNegativeInteger(value, meta) {
         assertNonNegativeNumber(value, meta);
-        assertInteger(value, meta);
-    }
-    function assertInteger(value, meta) {
-        assertFiniteNumber(value, meta);
-        if (!Number.isInteger(value)) {
-            throw new LitsError("Expected integer, got " + value, meta);
-        }
+        number.assert(value, meta, { integer: true });
     }
     function assertNumberGte(value, x, meta) {
         assertFiniteNumber(value, meta);
@@ -244,18 +222,6 @@ var Lits = (function (exports) {
     }
     function asChar(value, meta) {
         assertChar(value, meta);
-        return value;
-    }
-    function isStringOrNumber(value) {
-        return typeof value === "string" || typeof value === "number";
-    }
-    function assertStringOrNumber(value, meta) {
-        if (!isStringOrNumber(value)) {
-            throw new LitsError("Expected string or number, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-    }
-    function asStringOrNumber(value, meta) {
-        assertStringOrNumber(value, meta);
         return value;
     }
     function asNonEmptyString(value, meta) {
@@ -304,17 +270,6 @@ var Lits = (function (exports) {
             throw new LitsError("Wrong number of arguments, expected an even number, got " + length, node.token.meta);
         }
     }
-    function isLitsFunction(func) {
-        if (func === null || typeof func !== "object") {
-            return false;
-        }
-        return !!func[FUNCTION_SYMBOL];
-    }
-    function assertLitsFunction(func, meta) {
-        if (!isLitsFunction(func)) {
-            throw new LitsError("Expected lits function, got " + JSON.stringify(func), meta);
-        }
-    }
     function assertStringArray(value, meta) {
         if (!Array.isArray(value) || value.some(function (v) { return typeof v !== "string"; })) {
             throw new LitsError("Expected an array of strings, got " + value, meta);
@@ -331,87 +286,12 @@ var Lits = (function (exports) {
             node.type === "Number" ||
             node.type === "String");
     }
-    function assertNumber(value, meta) {
-        if (!isNumber(value)) {
-            throw new LitsError("Expected a number, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-    }
-    function asNumber(value, meta) {
-        assertNumber(value, meta);
-        return value;
-    }
-    function assertArr(value, meta) {
-        if (!isArr(value)) {
-            throw new LitsError("Expected Arr, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-    }
-    function asArr(value, meta) {
-        assertArr(value, meta);
-        return value;
-    }
-    function isAny(value) {
-        return value !== undefined;
-    }
-    function assertAny(value, meta) {
-        if (!isAny(value)) {
-            throw new LitsError("Expected Any, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-    }
-    function isSeq(value) {
-        return Array.isArray(value) || isString(value);
-    }
-    function assertSeq(value, meta) {
-        if (!isSeq(value)) {
-            throw new LitsError("Expected string or array, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-    }
-    function asSeq(value, meta) {
-        if (!isSeq(value)) {
-            throw new LitsError("Expected string or array, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-        return value;
-    }
-    function assertObj(value, meta) {
-        if (!isObj(value)) {
-            throw new LitsError("Expected object, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-    }
-    function isObj(value) {
-        return !(value === null ||
-            typeof value !== "object" ||
-            Array.isArray(value) ||
-            value instanceof RegExp ||
-            isLitsFunction(value));
-    }
-    function isArr(value) {
-        return Array.isArray(value);
-    }
-    function isColl(value) {
-        return isSeq(value) || isObj(value);
-    }
-    function assertColl(value, meta) {
-        if (!isColl(value)) {
-            throw new LitsError("Expected collection, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-    }
-    function asColl(value, meta) {
-        if (!isColl(value)) {
-            throw new LitsError("Expected collection, got: " + value + " type=\"" + typeof value + "\"", meta);
-        }
-        return value;
-    }
-    function isNumber(value) {
-        return typeof value === "number";
-    }
-    function isInteger(value) {
-        return Number.isInteger(value);
-    }
     function collHasKey(coll, key) {
-        if (!isColl(coll)) {
+        if (!collection.is(coll)) {
             return false;
         }
-        if (isString(coll) || isArr(coll)) {
-            if (!isInteger(key)) {
+        if (isString(coll) || array.is(coll)) {
+            if (!number.is(key, { integer: true })) {
                 return false;
             }
             return key >= 0 && key < coll.length;
@@ -441,10 +321,10 @@ var Lits = (function (exports) {
         else if (typeof value === "string") {
             return "string";
         }
-        else if (isArr(value)) {
+        else if (array.is(value)) {
             return "array";
         }
-        else if (isObj(value)) {
+        else if (object.is(value)) {
             return "object";
         }
         else if (isRegExp(value)) {
@@ -516,12 +396,12 @@ var Lits = (function (exports) {
         if (typeof a === "number" && typeof b === "number") {
             return Math.abs(a - b) < Number.EPSILON;
         }
-        if (isArr(a) && isArr(b)) {
+        if (array.is(a) && array.is(b)) {
             if (a.length !== b.length) {
                 return false;
             }
             for (var i = 0; i < a.length; i += 1) {
-                if (!deepEqual(asAny(a[i], meta), asAny(b[i], meta), meta)) {
+                if (!deepEqual(any.as(a[i], meta), any.as(b[i], meta), meta)) {
                     return false;
                 }
             }
@@ -560,14 +440,14 @@ var Lits = (function (exports) {
         return (value !== null && value !== void 0 ? value : null);
     }
     function clone(value) {
-        if (isObj(value)) {
+        if (object.is(value)) {
             return Object.entries(value).reduce(function (result, entry) {
                 var key = entry[0], val = entry[1];
                 result[key] = clone(val);
                 return result;
             }, {});
         }
-        if (isArr(value)) {
+        if (array.is(value)) {
             return value.map(function (item) { return clone(item); });
         }
         return value;
@@ -585,6 +465,80 @@ var Lits = (function (exports) {
             return context;
         }, {});
     }
+
+    var FUNCTION_SYMBOL = Symbol("function");
+
+    function getNumberTypeName(options) {
+        if (options.integer) {
+            return "integer";
+        }
+        return "number";
+    }
+    function is(value, options) {
+        if (options === void 0) { options = {}; }
+        if (typeof value !== "number") {
+            return false;
+        }
+        if (options.integer && !Number.isInteger(value)) {
+            return false;
+        }
+        return true;
+    }
+    function assert(value, meta, options) {
+        if (options === void 0) { options = {}; }
+        if (!is(value, options)) {
+            throw new LitsError("Expected " + getNumberTypeName(options) + ", got " + value, meta);
+        }
+    }
+    function as(value, meta, options) {
+        if (options === void 0) { options = {}; }
+        assert(value, meta, options);
+        return value;
+    }
+    var number = {
+        is: is,
+        as: as,
+        assert: assert,
+    };
+
+    var Asserter = /** @class */ (function () {
+        function Asserter(typeName, predicate) {
+            this.typeName = typeName;
+            this.predicate = predicate;
+        }
+        Asserter.prototype.is = function (value) {
+            return this.predicate(value);
+        };
+        Asserter.prototype.assert = function (value, meta) {
+            if (!this.predicate(value)) {
+                throw new LitsError("Expected " + this.typeName + ", got " + value, meta);
+            }
+        };
+        Asserter.prototype.as = function (value, meta) {
+            this.assert(value, meta);
+            return value;
+        };
+        return Asserter;
+    }());
+    function isLitsFunction(func) {
+        if (func === null || typeof func !== "object") {
+            return false;
+        }
+        return !!func[FUNCTION_SYMBOL];
+    }
+    var litsFunction = new Asserter("LitsFunction", isLitsFunction);
+    var stringOrNumber = new Asserter("string or number", function (value) { return typeof value === "string" || typeof value === "number"; });
+    var any = new Asserter("Any", function (value) { return value !== undefined; });
+    var sequence = new Asserter("Seq", function (value) { return Array.isArray(value) || isString(value); });
+    var object = new Asserter("Obj", function (value) {
+        return !(value === null ||
+            typeof value !== "object" ||
+            Array.isArray(value) ||
+            value instanceof RegExp ||
+            isLitsFunction(value));
+    });
+    var collection = new Asserter("Coll", function (value) { return sequence.is(value) || object.is(value); });
+    var array = new Asserter("Arr", function (value) { return Array.isArray(value); });
 
     var andSpecialExpression = {
         parse: function (tokens, position, _a) {
@@ -969,7 +923,7 @@ var Lits = (function (exports) {
             var meta = node.token.meta;
             var name = asNameNode(node.params[0], meta).value;
             assertNameNotDefined(name, contextStack, builtin, meta);
-            var value = evaluateAstNode(asAstNode(node.params[1], meta), contextStack);
+            var value = evaluateAstNode(asNotUndefined(node.params[1], meta), contextStack);
             contextStack.globalContext[name] = { value: value };
             return value;
         },
@@ -994,10 +948,10 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
             var meta = node.token.meta;
-            var name = evaluateAstNode(asAstNode(node.params[0], meta), contextStack);
+            var name = evaluateAstNode(asNotUndefined(node.params[0], meta), contextStack);
             assertString(name, meta);
             assertNameNotDefined(name, contextStack, builtin, node.token.meta);
-            var value = evaluateAstNode(asAstNode(node.params[1], meta), contextStack);
+            var value = evaluateAstNode(asNotUndefined(node.params[1], meta), contextStack);
             contextStack.globalContext[name] = { value: value };
             return value;
         },
@@ -1138,8 +1092,8 @@ var Lits = (function (exports) {
                 var skip = false;
                 bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
                     var _b = asNotUndefined(loopBindings[bindingIndex], meta), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
-                    var coll = asColl(evaluateAstNode(binding.value, newContextStack), meta);
-                    var seq = isSeq(coll) ? coll : Object.entries(coll);
+                    var coll = collection.as(evaluateAstNode(binding.value, newContextStack), meta);
+                    var seq = sequence.is(coll) ? coll : Object.entries(coll);
                     if (seq.length === 0) {
                         skip = true;
                         abort = true;
@@ -1160,7 +1114,7 @@ var Lits = (function (exports) {
                         throw new LitsError("Variable already defined: " + binding.name, meta);
                     }
                     context[binding.name] = {
-                        value: asAny(seq[index], meta),
+                        value: any.as(seq[index], meta),
                     };
                     for (var _i = 0, modifiers_1 = modifiers; _i < modifiers_1.length; _i++) {
                         var modifier = modifiers_1[_i];
@@ -1254,12 +1208,12 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var meta = node.token.meta;
             var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (!evaluateAstNode(asAstNode(conditionNode, meta), contextStack)) {
-                return evaluateAstNode(asAstNode(trueNode, meta), contextStack);
+            if (!evaluateAstNode(asNotUndefined(conditionNode, meta), contextStack)) {
+                return evaluateAstNode(asNotUndefined(trueNode, meta), contextStack);
             }
             else {
                 if (node.params.length === 3) {
-                    return evaluateAstNode(asAstNode(falseNode, meta), contextStack);
+                    return evaluateAstNode(asNotUndefined(falseNode, meta), contextStack);
                 }
                 else {
                     return null;
@@ -1288,12 +1242,12 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var meta = node.token.meta;
             var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (evaluateAstNode(asAstNode(conditionNode, meta), contextStack)) {
-                return evaluateAstNode(asAstNode(trueNode, meta), contextStack);
+            if (evaluateAstNode(asNotUndefined(conditionNode, meta), contextStack)) {
+                return evaluateAstNode(asNotUndefined(trueNode, meta), contextStack);
             }
             else {
                 if (node.params.length === 3) {
-                    return evaluateAstNode(asAstNode(falseNode, meta), contextStack);
+                    return evaluateAstNode(asNotUndefined(falseNode, meta), contextStack);
                 }
                 else {
                     return null;
@@ -1381,7 +1335,7 @@ var Lits = (function (exports) {
                             throw new LitsError("recur expected " + node.bindings.length + " parameters, got " + params_1.length, meta);
                         }
                         node.bindings.forEach(function (binding, index) {
-                            asNotUndefined(bindingContext[binding.name], meta).value = asAny(params_1[index], meta);
+                            asNotUndefined(bindingContext[binding.name], meta).value = any.as(params_1[index], meta);
                         });
                         return "continue";
                     }
@@ -1590,7 +1544,7 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var locals = {};
             var evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack);
-            if (!isSeq(evaluatedBindingForm)) {
+            if (!sequence.is(evaluatedBindingForm)) {
                 throw new LitsError("Expected undefined or a sequence, got " + evaluatedBindingForm, node.token.meta);
             }
             if (evaluatedBindingForm.length === 0) {
@@ -1712,36 +1666,36 @@ var Lits = (function (exports) {
     var bitwiseNormalExpression = {
         'bit-shift-left': {
             evaluate: function (_a, meta) {
-                var number = _a[0], count = _a[1];
-                assertInteger(number, meta);
+                var num = _a[0], count = _a[1];
+                number.assert(num, meta, { integer: true });
                 assertNonNegativeInteger(count, meta);
-                return number << count;
+                return num << count;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-shift-right': {
             evaluate: function (_a, meta) {
-                var number = _a[0], count = _a[1];
-                assertInteger(number, meta);
+                var num = _a[0], count = _a[1];
+                number.assert(num, meta, { integer: true });
                 assertNonNegativeInteger(count, meta);
-                return number >> count;
+                return num >> count;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-not': {
             evaluate: function (_a, meta) {
-                var number = _a[0];
-                assertInteger(number, meta);
-                return ~number;
+                var num = _a[0];
+                number.assert(num, meta, { integer: true });
+                return ~num;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'bit-and': {
             evaluate: function (_a, meta) {
                 var first = _a[0], rest = _a.slice(1);
-                assertInteger(first, meta);
+                number.assert(first, meta, { integer: true });
                 return rest.reduce(function (result, value) {
-                    assertInteger(value, meta);
+                    number.assert(value, meta, { integer: true });
                     return result & value;
                 }, first);
             },
@@ -1750,9 +1704,9 @@ var Lits = (function (exports) {
         'bit-and-not': {
             evaluate: function (_a, meta) {
                 var first = _a[0], rest = _a.slice(1);
-                assertInteger(first, meta);
+                number.assert(first, meta, { integer: true });
                 return rest.reduce(function (result, value) {
-                    assertInteger(value, meta);
+                    number.assert(value, meta, { integer: true });
                     return result & ~value;
                 }, first);
             },
@@ -1761,9 +1715,9 @@ var Lits = (function (exports) {
         'bit-or': {
             evaluate: function (_a, meta) {
                 var first = _a[0], rest = _a.slice(1);
-                assertInteger(first, meta);
+                number.assert(first, meta, { integer: true });
                 return rest.reduce(function (result, value) {
-                    assertInteger(value, meta);
+                    number.assert(value, meta, { integer: true });
                     return result | value;
                 }, first);
             },
@@ -1772,9 +1726,9 @@ var Lits = (function (exports) {
         'bit-xor': {
             evaluate: function (_a, meta) {
                 var first = _a[0], rest = _a.slice(1);
-                assertInteger(first, meta);
+                number.assert(first, meta, { integer: true });
                 return rest.reduce(function (result, value) {
-                    assertInteger(value, meta);
+                    number.assert(value, meta, { integer: true });
                     return result ^ value;
                 }, first);
             },
@@ -1782,41 +1736,41 @@ var Lits = (function (exports) {
         },
         'bit-flip': {
             evaluate: function (_a, meta) {
-                var number = _a[0], index = _a[1];
-                assertInteger(number, meta);
+                var num = _a[0], index = _a[1];
+                number.assert(num, meta, { integer: true });
                 assertNonNegativeInteger(index, meta);
                 var mask = 1 << index;
-                return (number ^= mask);
+                return (num ^= mask);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-set': {
             evaluate: function (_a, meta) {
-                var number = _a[0], index = _a[1];
-                assertInteger(number, meta);
+                var num = _a[0], index = _a[1];
+                number.assert(num, meta, { integer: true });
                 assertNonNegativeInteger(index, meta);
                 var mask = 1 << index;
-                return (number |= mask);
+                return (num |= mask);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-clear': {
             evaluate: function (_a, meta) {
-                var number = _a[0], index = _a[1];
-                assertInteger(number, meta);
+                var num = _a[0], index = _a[1];
+                number.assert(num, meta, { integer: true });
                 assertNonNegativeInteger(index, meta);
                 var mask = 1 << index;
-                return (number &= ~mask);
+                return (num &= ~mask);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-test': {
             evaluate: function (_a, meta) {
-                var number = _a[0], index = _a[1];
-                assertInteger(number, meta);
+                var num = _a[0], index = _a[1];
+                number.assert(num, meta, { integer: true });
                 assertNonNegativeInteger(index, meta);
                 var mask = 1 << index;
-                return !!(number & mask);
+                return !!(num & mask);
             },
             validate: function (node) { return assertLength(2, node); },
         },
@@ -1828,38 +1782,38 @@ var Lits = (function (exports) {
         var innerCollMeta = butLastKeys.reduce(function (result, key) {
             var resultColl = result.coll;
             var newResultColl;
-            if (isArr(resultColl)) {
-                assertNumber(key, meta);
+            if (array.is(resultColl)) {
+                number.assert(key, meta);
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                newResultColl = asColl(resultColl[key], meta);
+                newResultColl = collection.as(resultColl[key], meta);
             }
             else {
-                assertObj(resultColl, meta);
+                object.assert(resultColl, meta);
                 assertString(key, meta);
                 if (!collHasKey(result.coll, key)) {
                     resultColl[key] = {};
                 }
-                newResultColl = asColl(resultColl[key], meta);
+                newResultColl = collection.as(resultColl[key], meta);
             }
             return { coll: newResultColl, parent: resultColl };
         }, { coll: coll, parent: {} });
         return { coll: coll, innerCollMeta: innerCollMeta };
     }
     function get(coll, key, meta) {
-        if (isArr(coll)) {
-            assertInteger(key, meta);
+        if (array.is(coll)) {
+            number.assert(key, meta, { integer: true });
             if (key < coll.length) {
                 return toAny(coll[key]);
             }
         }
-        else if (isObj(coll)) {
+        else if (object.is(coll)) {
             assertString(key, meta);
             if (collHasKey(coll, key)) {
                 return toAny(coll[key]);
             }
         }
         else {
-            assertInteger(key, meta);
+            number.assert(key, meta, { integer: true });
             if (key < coll.length) {
                 return toAny(coll[key]);
             }
@@ -1867,14 +1821,14 @@ var Lits = (function (exports) {
         return undefined;
     }
     function update(coll, key, fn, params, meta, contextStack, executeFunction) {
-        if (isObj(coll)) {
+        if (object.is(coll)) {
             assertString(key, meta);
             var result = __assign({}, coll);
             result[key] = executeFunction(fn, __spreadArray([result[key]], params), meta, contextStack);
             return result;
         }
         else {
-            assertNumber(key, meta);
+            number.assert(key, meta);
             var intKey_1 = toNonNegativeInteger(key);
             assertMax(intKey_1, coll.length, meta);
             if (Array.isArray(coll)) {
@@ -1904,10 +1858,10 @@ var Lits = (function (exports) {
         }
     }
     function assoc(coll, key, value, meta) {
-        assertColl(coll, meta);
-        assertStringOrNumber(key, meta);
+        collection.assert(coll, meta);
+        stringOrNumber.assert(key, meta);
         if (Array.isArray(coll) || typeof coll === "string") {
-            assertInteger(key, meta);
+            number.assert(key, meta, { integer: true });
             assertNumberGte(key, 0, meta);
             assertNumberLte(key, coll.length, meta);
             if (typeof coll === "string") {
@@ -1928,8 +1882,8 @@ var Lits = (function (exports) {
             evaluate: function (params, meta) {
                 var coll = params[0], key = params[1];
                 var defaultValue = toAny(params[2]);
-                assertColl(coll, meta);
-                assertStringOrNumber(key, meta);
+                collection.assert(coll, meta);
+                stringOrNumber.assert(key, meta);
                 var result = get(coll, key, meta);
                 return result === undefined ? defaultValue : result;
             },
@@ -1940,19 +1894,19 @@ var Lits = (function (exports) {
                 var coll = params[0];
                 var keys = params[1];
                 var defaultValue = toAny(params[2]);
-                assertColl(coll, meta);
-                assertArr(keys, meta);
+                collection.assert(coll, meta);
+                array.assert(keys, meta);
                 for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
                     var key = keys_1[_i];
-                    assertStringOrNumber(key, meta);
-                    if (isColl(coll)) {
+                    stringOrNumber.assert(key, meta);
+                    if (collection.is(coll)) {
                         coll = get(coll, key, meta);
                     }
                     else {
                         return defaultValue;
                     }
                 }
-                return isAny(coll) ? coll : defaultValue;
+                return any.is(coll) ? coll : defaultValue;
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
@@ -1962,7 +1916,7 @@ var Lits = (function (exports) {
                 if (typeof coll === "string") {
                     return coll.length;
                 }
-                assertColl(coll, meta);
+                collection.assert(coll, meta);
                 if (Array.isArray(coll)) {
                     return coll.length;
                 }
@@ -1973,13 +1927,13 @@ var Lits = (function (exports) {
         'contains?': {
             evaluate: function (_a, meta) {
                 var coll = _a[0], key = _a[1];
-                assertColl(coll, meta);
-                assertStringOrNumber(key, meta);
-                if (isSeq(coll)) {
-                    if (!Number.isInteger(key)) {
+                collection.assert(coll, meta);
+                stringOrNumber.assert(key, meta);
+                if (sequence.is(coll)) {
+                    if (!number.is(key, { integer: true })) {
                         return false;
                     }
-                    assertInteger(key, meta);
+                    number.assert(key, meta, { integer: true });
                     return key >= 0 && key < coll.length;
                 }
                 return !!Object.getOwnPropertyDescriptor(coll, key);
@@ -1989,8 +1943,8 @@ var Lits = (function (exports) {
         'has?': {
             evaluate: function (_a, meta) {
                 var coll = _a[0], value = _a[1];
-                assertColl(coll, meta);
-                if (isArr(coll)) {
+                collection.assert(coll, meta);
+                if (array.is(coll)) {
                     return coll.includes(value);
                 }
                 if (isString(coll)) {
@@ -2003,9 +1957,9 @@ var Lits = (function (exports) {
         'has-some?': {
             evaluate: function (_a, meta) {
                 var coll = _a[0], seq = _a[1];
-                assertColl(coll, meta);
-                assertSeq(seq, meta);
-                if (isArr(coll)) {
+                collection.assert(coll, meta);
+                sequence.assert(seq, meta);
+                if (array.is(coll)) {
                     for (var _i = 0, seq_1 = seq; _i < seq_1.length; _i++) {
                         var value = seq_1[_i];
                         if (coll.includes(value)) {
@@ -2036,9 +1990,9 @@ var Lits = (function (exports) {
         'has-every?': {
             evaluate: function (_a, meta) {
                 var coll = _a[0], seq = _a[1];
-                assertColl(coll, meta);
-                assertSeq(seq, meta);
-                if (isArr(coll)) {
+                collection.assert(coll, meta);
+                sequence.assert(seq, meta);
+                if (array.is(coll)) {
                     for (var _i = 0, seq_4 = seq; _i < seq_4.length; _i++) {
                         var value = seq_4[_i];
                         if (!coll.includes(value)) {
@@ -2069,9 +2023,9 @@ var Lits = (function (exports) {
         assoc: {
             evaluate: function (_a, meta) {
                 var coll = _a[0], key = _a[1], value = _a[2];
-                assertColl(coll, meta);
-                assertStringOrNumber(key, meta);
-                assertAny(value, meta);
+                collection.assert(coll, meta);
+                stringOrNumber.assert(key, meta);
+                any.assert(value, meta);
                 return assoc(coll, key, value, meta);
             },
             validate: function (node) { return assertLength(3, node); },
@@ -2079,18 +2033,18 @@ var Lits = (function (exports) {
         'assoc-in': {
             evaluate: function (_a, meta) {
                 var originalColl = _a[0], keys = _a[1], value = _a[2];
-                assertColl(originalColl, meta);
-                assertArr(keys, meta);
-                assertAny(value, meta);
+                collection.assert(originalColl, meta);
+                array.assert(keys, meta);
+                any.assert(value, meta);
                 if (keys.length === 1) {
-                    assertStringOrNumber(keys[0], meta);
+                    stringOrNumber.assert(keys[0], meta);
                     return assoc(originalColl, keys[0], value, meta);
                 }
                 var _b = cloneAndGetMeta(originalColl, keys, meta), coll = _b.coll, innerCollMeta = _b.innerCollMeta;
-                var lastKey = asStringOrNumber(keys[keys.length - 1], meta);
-                var parentKey = asStringOrNumber(keys[keys.length - 2], meta);
-                if (isArr(innerCollMeta.parent)) {
-                    assertNumber(parentKey, meta);
+                var lastKey = stringOrNumber.as(keys[keys.length - 1], meta);
+                var parentKey = stringOrNumber.as(keys[keys.length - 2], meta);
+                if (array.is(innerCollMeta.parent)) {
+                    number.assert(parentKey, meta);
                     innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, meta);
                 }
                 else {
@@ -2105,9 +2059,9 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var coll = _a[0], key = _a[1], fn = _a[2], params = _a.slice(3);
                 var executeFunction = _b.executeFunction;
-                assertColl(coll, meta);
-                assertStringOrNumber(key, meta);
-                assertLitsFunction(fn, meta);
+                collection.assert(coll, meta);
+                stringOrNumber.assert(key, meta);
+                litsFunction.assert(fn, meta);
                 return update(coll, key, fn, params, meta, contextStack, executeFunction);
             },
             validate: function (node) { return assertLength({ min: 3 }, node); },
@@ -2116,18 +2070,18 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var originalColl = _a[0], keys = _a[1], fn = _a[2], params = _a.slice(3);
                 var executeFunction = _b.executeFunction;
-                assertColl(originalColl, meta);
-                assertArr(keys, meta);
-                assertLitsFunction(fn, meta);
+                collection.assert(originalColl, meta);
+                array.assert(keys, meta);
+                litsFunction.assert(fn, meta);
                 if (keys.length === 1) {
-                    assertStringOrNumber(keys[0], meta);
+                    stringOrNumber.assert(keys[0], meta);
                     return update(originalColl, keys[0], fn, params, meta, contextStack, executeFunction);
                 }
                 var _c = cloneAndGetMeta(originalColl, keys, meta), coll = _c.coll, innerCollMeta = _c.innerCollMeta;
-                var lastKey = asStringOrNumber(keys[keys.length - 1], meta);
-                var parentKey = asStringOrNumber(keys[keys.length - 2], meta);
-                if (isArr(innerCollMeta.parent)) {
-                    assertNumber(parentKey, meta);
+                var lastKey = stringOrNumber.as(keys[keys.length - 1], meta);
+                var parentKey = stringOrNumber.as(keys[keys.length - 2], meta);
+                if (array.is(innerCollMeta.parent)) {
+                    number.assert(parentKey, meta);
                     innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, meta, contextStack, executeFunction);
                 }
                 else {
@@ -2140,10 +2094,10 @@ var Lits = (function (exports) {
         },
         concat: {
             evaluate: function (params, meta) {
-                assertColl(params[0], meta);
-                if (isArr(params[0])) {
+                collection.assert(params[0], meta);
+                if (array.is(params[0])) {
                     return params.reduce(function (result, arr) {
-                        assertArr(arr, meta);
+                        array.assert(arr, meta);
                         return result.concat(arr);
                     }, []);
                 }
@@ -2155,7 +2109,7 @@ var Lits = (function (exports) {
                 }
                 else {
                     return params.reduce(function (result, obj) {
-                        assertObj(obj, meta);
+                        object.assert(obj, meta);
                         return Object.assign(result, obj);
                     }, {});
                 }
@@ -2165,7 +2119,7 @@ var Lits = (function (exports) {
         'empty?': {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertColl(first, meta);
+                collection.assert(first, meta);
                 if (isString(first)) {
                     return first.length === 0;
                 }
@@ -2180,8 +2134,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertColl(coll, meta);
+                litsFunction.assert(fn, meta);
+                collection.assert(coll, meta);
                 if (Array.isArray(coll)) {
                     return coll.every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
                 }
@@ -2196,8 +2150,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertColl(coll, meta);
+                litsFunction.assert(fn, meta);
+                collection.assert(coll, meta);
                 if (Array.isArray(coll)) {
                     return coll.some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
                 }
@@ -2212,8 +2166,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertColl(coll, meta);
+                litsFunction.assert(fn, meta);
+                collection.assert(coll, meta);
                 if (Array.isArray(coll)) {
                     return !coll.some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
                 }
@@ -2228,8 +2182,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertColl(coll, meta);
+                litsFunction.assert(fn, meta);
+                collection.assert(coll, meta);
                 if (Array.isArray(coll)) {
                     return !coll.every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
                 }
@@ -2245,12 +2199,12 @@ var Lits = (function (exports) {
     var evaluateMap = function (params, meta, contextStack, _a) {
         var executeFunction = _a.executeFunction;
         var fn = params[0], firstList = params[1];
-        assertLitsFunction(fn, meta);
-        assertSeq(firstList, meta);
+        litsFunction.assert(fn, meta);
+        sequence.assert(firstList, meta);
         var isStringSeq = isString(firstList);
         var length = firstList.length;
         if (params.length === 2) {
-            if (isArr(firstList)) {
+            if (array.is(firstList)) {
                 return firstList.map(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
             }
             else {
@@ -2270,7 +2224,7 @@ var Lits = (function (exports) {
                     assertString(collParam, meta);
                 }
                 else {
-                    assertArr(collParam, meta);
+                    array.assert(collParam, meta);
                 }
                 if (length !== collParam.length) {
                     throw new LitsError("All arguments to \"map\" must have the same length", meta);
@@ -2306,8 +2260,8 @@ var Lits = (function (exports) {
         cons: {
             evaluate: function (_a, meta) {
                 var elem = _a[0], seq = _a[1];
-                assertAny(elem, meta);
-                assertSeq(seq, meta);
+                any.assert(elem, meta);
+                sequence.assert(seq, meta);
                 if (Array.isArray(seq)) {
                     return __spreadArray([elem], seq);
                 }
@@ -2319,8 +2273,8 @@ var Lits = (function (exports) {
         nth: {
             evaluate: function (_a, meta) {
                 var seq = _a[0], i = _a[1];
-                assertSeq(seq, meta);
-                assertInteger(i, meta);
+                sequence.assert(seq, meta);
+                number.assert(i, meta, { integer: true });
                 return toAny(seq[i]);
             },
             validate: function (node) { return assertLength(2, node); },
@@ -2329,8 +2283,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertSeq(seq, meta);
+                litsFunction.assert(fn, meta);
+                sequence.assert(seq, meta);
                 if (Array.isArray(seq)) {
                     return seq.filter(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
                 }
@@ -2344,7 +2298,7 @@ var Lits = (function (exports) {
         first: {
             evaluate: function (_a, meta) {
                 var array = _a[0];
-                assertSeq(array, meta);
+                sequence.assert(array, meta);
                 return toAny(array[0]);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -2352,7 +2306,7 @@ var Lits = (function (exports) {
         last: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertSeq(first, meta);
+                sequence.assert(first, meta);
                 return toAny(first[first.length - 1]);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -2364,7 +2318,7 @@ var Lits = (function (exports) {
         pop: {
             evaluate: function (_a, meta) {
                 var seq = _a[0];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     return seq.substr(0, seq.length - 1);
                 }
@@ -2378,8 +2332,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertSeq(seq, meta);
+                litsFunction.assert(fn, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     var index = seq.split("").findIndex(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
                     return index !== -1 ? index : null;
@@ -2394,8 +2348,8 @@ var Lits = (function (exports) {
         'index-of': {
             evaluate: function (_a, meta) {
                 var seq = _a[0], value = _a[1];
-                assertAny(value, meta);
-                assertSeq(seq, meta);
+                any.assert(value, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     assertString(value, meta);
                     var index = seq.indexOf(value);
@@ -2411,7 +2365,7 @@ var Lits = (function (exports) {
         push: {
             evaluate: function (_a, meta) {
                 var seq = _a[0], values = _a.slice(1);
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     assertCharArray(values, meta);
                     return __spreadArray([seq], values).join("");
@@ -2426,10 +2380,10 @@ var Lits = (function (exports) {
             evaluate: function (params, meta, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0];
-                assertLitsFunction(fn, meta);
+                litsFunction.assert(fn, meta);
                 if (params.length === 2) {
                     var arr = params[1];
-                    assertSeq(arr, meta);
+                    sequence.assert(arr, meta);
                     if (arr.length === 0) {
                         return executeFunction(fn, [], meta, contextStack);
                     }
@@ -2441,7 +2395,7 @@ var Lits = (function (exports) {
                         return chars.slice(1).reduce(function (result, elem) {
                             var val = executeFunction(fn, [result, elem], meta, contextStack);
                             return val;
-                        }, asAny(chars[0], meta));
+                        }, any.as(chars[0], meta));
                     }
                     else {
                         return arr.slice(1).reduce(function (result, elem) {
@@ -2451,8 +2405,8 @@ var Lits = (function (exports) {
                 }
                 else {
                     var val = params[1], seq = params[2];
-                    assertAny(val, meta);
-                    assertSeq(seq, meta);
+                    any.assert(val, meta);
+                    sequence.assert(seq, meta);
                     if (isString(seq)) {
                         assertString(val, meta);
                         if (seq.length === 0) {
@@ -2479,10 +2433,10 @@ var Lits = (function (exports) {
             evaluate: function (params, meta, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0];
-                assertLitsFunction(fn, meta);
+                litsFunction.assert(fn, meta);
                 if (params.length === 2) {
                     var seq = params[1];
-                    assertSeq(seq, meta);
+                    sequence.assert(seq, meta);
                     if (seq.length === 0) {
                         return executeFunction(fn, [], meta, contextStack);
                     }
@@ -2500,13 +2454,13 @@ var Lits = (function (exports) {
                     else {
                         return seq.slice(0, seq.length - 1).reduceRight(function (result, elem) {
                             return executeFunction(fn, [result, elem], meta, contextStack);
-                        }, asAny(seq[seq.length - 1], meta));
+                        }, any.as(seq[seq.length - 1], meta));
                     }
                 }
                 else {
                     var val = params[1], seq = params[2];
-                    assertAny(val, meta);
-                    assertSeq(seq, meta);
+                    any.assert(val, meta);
+                    sequence.assert(seq, meta);
                     if (isString(seq)) {
                         if (seq.length === 0) {
                             return val;
@@ -2531,7 +2485,7 @@ var Lits = (function (exports) {
         rest: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertSeq(first, meta);
+                sequence.assert(first, meta);
                 if (Array.isArray(first)) {
                     if (first.length <= 1) {
                         return [];
@@ -2545,7 +2499,7 @@ var Lits = (function (exports) {
         nthrest: {
             evaluate: function (_a, meta) {
                 var seq = _a[0], count = _a[1];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 assertFiniteNumber(count, meta);
                 var integerCount = Math.max(Math.ceil(count), 0);
                 if (Array.isArray(seq)) {
@@ -2558,7 +2512,7 @@ var Lits = (function (exports) {
         next: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertSeq(first, meta);
+                sequence.assert(first, meta);
                 if (Array.isArray(first)) {
                     if (first.length <= 1) {
                         return null;
@@ -2575,7 +2529,7 @@ var Lits = (function (exports) {
         nthnext: {
             evaluate: function (_a, meta) {
                 var seq = _a[0], count = _a[1];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 assertFiniteNumber(count, meta);
                 var integerCount = Math.max(Math.ceil(count), 0);
                 if (seq.length <= count) {
@@ -2591,7 +2545,7 @@ var Lits = (function (exports) {
         reverse: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertSeq(first, meta);
+                sequence.assert(first, meta);
                 if (Array.isArray(first)) {
                     return __spreadArray([], first).reverse();
                 }
@@ -2602,7 +2556,7 @@ var Lits = (function (exports) {
         second: {
             evaluate: function (_a, meta) {
                 var array = _a[0];
-                assertSeq(array, meta);
+                sequence.assert(array, meta);
                 return toAny(array[1]);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -2610,7 +2564,7 @@ var Lits = (function (exports) {
         shift: {
             evaluate: function (_a, meta) {
                 var seq = _a[0];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     return seq.substr(1);
                 }
@@ -2623,15 +2577,15 @@ var Lits = (function (exports) {
         slice: {
             evaluate: function (params, meta) {
                 var seq = params[0], from = params[1], to = params[2];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (params.length === 1) {
                     return seq;
                 }
-                assertInteger(from, meta);
+                number.assert(from, meta, { integer: true });
                 if (params.length === 2) {
                     return seq.slice(from);
                 }
-                assertInteger(to, meta);
+                number.assert(to, meta, { integer: true });
                 return seq.slice(from, to);
             },
             validate: function (node) { return assertLength({ min: 1, max: 3 }, node); },
@@ -2641,8 +2595,8 @@ var Lits = (function (exports) {
                 var _c;
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertSeq(seq, meta);
+                litsFunction.assert(fn, meta);
+                sequence.assert(seq, meta);
                 if (seq.length === 0) {
                     return null;
                 }
@@ -2659,14 +2613,14 @@ var Lits = (function (exports) {
                 var defaultComparer = params.length === 1;
                 var seq = defaultComparer ? params[0] : params[1];
                 var comparer = defaultComparer ? null : params[0];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     var result_1 = seq.split("");
                     if (defaultComparer) {
                         result_1.sort(compare);
                     }
                     else {
-                        assertLitsFunction(comparer, meta);
+                        litsFunction.assert(comparer, meta);
                         result_1.sort(function (a, b) {
                             var compareValue = executeFunction(comparer, [a, b], meta, contextStack);
                             assertFiniteNumber(compareValue, meta);
@@ -2681,7 +2635,7 @@ var Lits = (function (exports) {
                 }
                 else {
                     result.sort(function (a, b) {
-                        assertLitsFunction(comparer, meta);
+                        litsFunction.assert(comparer, meta);
                         var compareValue = executeFunction(comparer, [a, b], meta, contextStack);
                         assertFiniteNumber(compareValue, meta);
                         return compareValue;
@@ -2695,9 +2649,9 @@ var Lits = (function (exports) {
             evaluate: function (params, meta, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var defaultComparer = params.length === 2;
-                var keyfn = asAny(params[0], meta);
+                var keyfn = any.as(params[0], meta);
                 var comparer = defaultComparer ? null : params[1];
-                var seq = asSeq(defaultComparer ? params[1] : params[2], meta);
+                var seq = sequence.as(defaultComparer ? params[1] : params[2], meta);
                 if (isString(seq)) {
                     var result_2 = seq.split("");
                     if (defaultComparer) {
@@ -2708,7 +2662,7 @@ var Lits = (function (exports) {
                         });
                     }
                     else {
-                        assertLitsFunction(comparer, meta);
+                        litsFunction.assert(comparer, meta);
                         result_2.sort(function (a, b) {
                             var aKey = executeFunction(keyfn, [a], meta, contextStack);
                             var bKey = executeFunction(keyfn, [b], meta, contextStack);
@@ -2728,7 +2682,7 @@ var Lits = (function (exports) {
                     });
                 }
                 else {
-                    assertLitsFunction(comparer, meta);
+                    litsFunction.assert(comparer, meta);
                     result.sort(function (a, b) {
                         var aKey = executeFunction(keyfn, [a], meta, contextStack);
                         var bKey = executeFunction(keyfn, [b], meta, contextStack);
@@ -2744,20 +2698,20 @@ var Lits = (function (exports) {
         take: {
             evaluate: function (_a, meta) {
                 var n = _a[0], input = _a[1];
-                assertNumber(n, meta);
-                assertSeq(input, meta);
-                var number = Math.max(Math.ceil(n), 0);
-                return input.slice(0, number);
+                number.assert(n, meta);
+                sequence.assert(input, meta);
+                var num = Math.max(Math.ceil(n), 0);
+                return input.slice(0, num);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'take-last': {
             evaluate: function (_a, meta) {
                 var n = _a[0], array = _a[1];
-                assertSeq(array, meta);
-                assertNumber(n, meta);
-                var number = Math.max(Math.ceil(n), 0);
-                var from = array.length - number;
+                sequence.assert(array, meta);
+                number.assert(n, meta);
+                var num = Math.max(Math.ceil(n), 0);
+                var from = array.length - num;
                 return array.slice(from);
             },
             validate: function (node) { return assertLength(2, node); },
@@ -2766,8 +2720,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertSeq(seq, meta);
-                assertLitsFunction(fn, meta);
+                sequence.assert(seq, meta);
+                litsFunction.assert(fn, meta);
                 var result = [];
                 for (var _i = 0, seq_1 = seq; _i < seq_1.length; _i++) {
                     var item = seq_1[_i];
@@ -2785,20 +2739,20 @@ var Lits = (function (exports) {
         drop: {
             evaluate: function (_a, meta) {
                 var n = _a[0], input = _a[1];
-                assertNumber(n, meta);
-                var number = Math.max(Math.ceil(n), 0);
-                assertSeq(input, meta);
-                return input.slice(number);
+                number.assert(n, meta);
+                var num = Math.max(Math.ceil(n), 0);
+                sequence.assert(input, meta);
+                return input.slice(num);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'drop-last': {
             evaluate: function (_a, meta) {
                 var n = _a[0], array = _a[1];
-                assertSeq(array, meta);
-                assertNumber(n, meta);
-                var number = Math.max(Math.ceil(n), 0);
-                var from = array.length - number;
+                sequence.assert(array, meta);
+                number.assert(n, meta);
+                var num = Math.max(Math.ceil(n), 0);
+                var from = array.length - num;
                 return array.slice(0, from);
             },
             validate: function (node) { return assertLength(2, node); },
@@ -2807,8 +2761,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertSeq(seq, meta);
-                assertLitsFunction(fn, meta);
+                sequence.assert(seq, meta);
+                litsFunction.assert(fn, meta);
                 if (Array.isArray(seq)) {
                     var from_1 = seq.findIndex(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); });
                     return seq.slice(from_1);
@@ -2822,7 +2776,7 @@ var Lits = (function (exports) {
         unshift: {
             evaluate: function (_a, meta) {
                 var seq = _a[0], values = _a.slice(1);
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     assertCharArray(values, meta);
                     return __spreadArray(__spreadArray([], values, true), [seq]).join("");
@@ -2837,7 +2791,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta) {
                 var prob = _a[0], seq = _a[1];
                 assertFiniteNumber(prob, meta);
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (isString(seq)) {
                     return seq
                         .split("")
@@ -2853,7 +2807,7 @@ var Lits = (function (exports) {
         'rand-nth!': {
             evaluate: function (_a, meta) {
                 var seq = _a[0];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 if (seq.length === 0) {
                     return null;
                 }
@@ -2868,7 +2822,7 @@ var Lits = (function (exports) {
         shuffle: {
             evaluate: function (_a, meta) {
                 var input = _a[0];
-                assertSeq(input, meta);
+                sequence.assert(input, meta);
                 var array = isString(input) ? __spreadArray([], input.split("")) : __spreadArray([], input);
                 var remainingLength = array.length;
                 var arrayElement;
@@ -2890,7 +2844,7 @@ var Lits = (function (exports) {
         distinct: {
             evaluate: function (_a, meta) {
                 var input = _a[0];
-                assertSeq(input, meta);
+                sequence.assert(input, meta);
                 if (Array.isArray(input)) {
                     return Array.from(new Set(input));
                 }
@@ -2902,8 +2856,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], input = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertSeq(input, meta);
+                litsFunction.assert(fn, meta);
+                sequence.assert(input, meta);
                 if (Array.isArray(input)) {
                     return input.filter(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); });
                 }
@@ -2917,8 +2871,8 @@ var Lits = (function (exports) {
         'remove-at': {
             evaluate: function (_a, meta) {
                 var index = _a[0], input = _a[1];
-                assertNumber(index, meta);
-                assertSeq(input, meta);
+                number.assert(index, meta);
+                sequence.assert(input, meta);
                 var intIndex = Math.ceil(index);
                 if (intIndex < 0 || intIndex >= input.length) {
                     return input;
@@ -2937,7 +2891,7 @@ var Lits = (function (exports) {
                 var pos = _a[0], seq = _a[1];
                 assertFiniteNumber(pos, meta);
                 var intPos = toNonNegativeInteger(pos);
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 return [seq.slice(0, intPos), seq.slice(intPos)];
             },
             validate: function (node) { return assertLength(2, node); },
@@ -2946,8 +2900,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertSeq(seq, meta);
+                litsFunction.assert(fn, meta);
+                sequence.assert(seq, meta);
                 var seqIsArray = Array.isArray(seq);
                 var arr = seqIsArray ? seq : seq.split("");
                 var index = arr.findIndex(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); });
@@ -2961,7 +2915,7 @@ var Lits = (function (exports) {
         frequencies: {
             evaluate: function (_a, meta) {
                 var seq = _a[0];
-                assertSeq(seq, meta);
+                sequence.assert(seq, meta);
                 var arr = isString(seq) ? seq.split("") : seq;
                 return arr.reduce(function (result, val) {
                     assertString(val, meta);
@@ -2980,8 +2934,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertAny(fn, meta);
-                assertSeq(seq, meta);
+                any.assert(fn, meta);
+                sequence.assert(seq, meta);
                 var arr = Array.isArray(seq) ? seq : seq.split("");
                 return arr.reduce(function (result, val) {
                     var key = executeFunction(fn, [val], meta, contextStack);
@@ -2998,10 +2952,14 @@ var Lits = (function (exports) {
         partition: {
             evaluate: function (params, meta) {
                 var len = params.length;
-                var n = toNonNegativeInteger(asNumber(params[0], meta));
-                var seq = len === 2 ? asSeq(params[1], meta) : len === 3 ? asSeq(params[2], meta) : asSeq(params[3], meta);
-                var step = len >= 3 ? toNonNegativeInteger(asNumber(params[1], meta)) : n;
-                var pad = len === 4 ? (params[2] === null ? [] : asArr(params[2], meta)) : undefined;
+                var n = toNonNegativeInteger(number.as(params[0], meta));
+                var seq = len === 2
+                    ? sequence.as(params[1], meta)
+                    : len === 3
+                        ? sequence.as(params[2], meta)
+                        : sequence.as(params[3], meta);
+                var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], meta)) : n;
+                var pad = len === 4 ? (params[2] === null ? [] : array.as(params[2], meta)) : undefined;
                 return partition(n, step, seq, pad, meta);
             },
             validate: function (node) { return assertLength({ min: 2, max: 4 }, node); },
@@ -3009,9 +2967,9 @@ var Lits = (function (exports) {
         'partition-all': {
             evaluate: function (params, meta) {
                 var len = params.length;
-                var n = toNonNegativeInteger(asNumber(params[0], meta));
-                var seq = len === 2 ? asSeq(params[1], meta) : asSeq(params[2], meta);
-                var step = len >= 3 ? toNonNegativeInteger(asNumber(params[1], meta)) : n;
+                var n = toNonNegativeInteger(number.as(params[0], meta));
+                var seq = len === 2 ? sequence.as(params[1], meta) : sequence.as(params[2], meta);
+                var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], meta)) : n;
                 return partition(n, step, seq, [], meta);
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
@@ -3020,8 +2978,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, meta);
-                assertSeq(seq, meta);
+                litsFunction.assert(fn, meta);
+                sequence.assert(seq, meta);
                 var isStringSeq = isString(seq);
                 var oldValue = undefined;
                 var result = (isStringSeq ? seq.split("") : seq).reduce(function (result, elem) {
@@ -3128,7 +3086,7 @@ var Lits = (function (exports) {
         flatten: {
             evaluate: function (_a) {
                 var seq = _a[0];
-                if (!isArr(seq)) {
+                if (!array.is(seq)) {
                     return [];
                 }
                 return seq.flat(Number.POSITIVE_INFINITY);
@@ -3138,10 +3096,10 @@ var Lits = (function (exports) {
         mapcat: {
             evaluate: function (params, meta, contextStack, helpers) {
                 params.slice(1).forEach(function (arr) {
-                    assertArr(arr, meta);
+                    array.assert(arr, meta);
                 });
                 var mapResult = evaluateMap(params, meta, contextStack, helpers);
-                assertArr(mapResult, meta);
+                array.assert(mapResult, meta);
                 return mapResult.flat(1);
             },
             validate: function (node) { return assertLength({ min: 2 }, node); },
@@ -3152,7 +3110,7 @@ var Lits = (function (exports) {
         inc: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return first + 1;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3160,7 +3118,7 @@ var Lits = (function (exports) {
         dec: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return first - 1;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3168,7 +3126,7 @@ var Lits = (function (exports) {
         '+': {
             evaluate: function (params, meta) {
                 return params.reduce(function (result, param) {
-                    assertNumber(param, meta);
+                    number.assert(param, meta);
                     return result + param;
                 }, 0);
             },
@@ -3176,7 +3134,7 @@ var Lits = (function (exports) {
         '*': {
             evaluate: function (params, meta) {
                 return params.reduce(function (result, param) {
-                    assertNumber(param, meta);
+                    number.assert(param, meta);
                     return result * param;
                 }, 1);
             },
@@ -3187,13 +3145,13 @@ var Lits = (function (exports) {
                     return 1;
                 }
                 var first = params[0], rest = params.slice(1);
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 if (rest.length === 0) {
-                    assertNumber(first, meta);
+                    number.assert(first, meta);
                     return 1 / first;
                 }
                 return rest.reduce(function (result, param) {
-                    assertNumber(param, meta);
+                    number.assert(param, meta);
                     return result / param;
                 }, first);
             },
@@ -3204,12 +3162,12 @@ var Lits = (function (exports) {
                 if (!first) {
                     return 0;
                 }
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 if (rest.length === 0) {
                     return -first;
                 }
                 return rest.reduce(function (result, param) {
-                    assertNumber(param, meta);
+                    number.assert(param, meta);
                     return result - param;
                 }, first);
             },
@@ -3217,8 +3175,8 @@ var Lits = (function (exports) {
         quot: {
             evaluate: function (_a, meta) {
                 var dividend = _a[0], divisor = _a[1];
-                assertNumber(dividend, meta);
-                assertNumber(divisor, meta);
+                number.assert(dividend, meta);
+                number.assert(divisor, meta);
                 var quotient = Math.trunc(dividend / divisor);
                 return quotient;
             },
@@ -3227,8 +3185,8 @@ var Lits = (function (exports) {
         mod: {
             evaluate: function (_a, meta) {
                 var dividend = _a[0], divisor = _a[1];
-                assertNumber(dividend, meta);
-                assertNumber(divisor, meta);
+                number.assert(dividend, meta);
+                number.assert(divisor, meta);
                 var quotient = Math.floor(dividend / divisor);
                 return dividend - divisor * quotient;
             },
@@ -3237,8 +3195,8 @@ var Lits = (function (exports) {
         rem: {
             evaluate: function (_a, meta) {
                 var dividend = _a[0], divisor = _a[1];
-                assertNumber(dividend, meta);
-                assertNumber(divisor, meta);
+                number.assert(dividend, meta);
+                number.assert(divisor, meta);
                 var quotient = Math.trunc(dividend / divisor);
                 return dividend - divisor * quotient;
             },
@@ -3247,7 +3205,7 @@ var Lits = (function (exports) {
         sqrt: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return Math.sqrt(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3255,7 +3213,7 @@ var Lits = (function (exports) {
         cbrt: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return Math.cbrt(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3263,8 +3221,8 @@ var Lits = (function (exports) {
         pow: {
             evaluate: function (_a, meta) {
                 var first = _a[0], second = _a[1];
-                assertNumber(first, meta);
-                assertNumber(second, meta);
+                number.assert(first, meta);
+                number.assert(second, meta);
                 return Math.pow(first, second);
             },
             validate: function (node) { return assertLength(2, node); },
@@ -3272,7 +3230,7 @@ var Lits = (function (exports) {
         round: {
             evaluate: function (params, meta) {
                 var value = params[0], decimals = params[1];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 if (params.length === 1 || decimals === 0) {
                     return Math.round(value);
                 }
@@ -3285,7 +3243,7 @@ var Lits = (function (exports) {
         trunc: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return Math.trunc(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3293,7 +3251,7 @@ var Lits = (function (exports) {
         floor: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return Math.floor(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3301,23 +3259,22 @@ var Lits = (function (exports) {
         ceil: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return Math.ceil(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'rand!': {
             evaluate: function (parameters, meta) {
-                var number = parameters.length === 1 ? parameters[0] : 1;
-                assertNumber(number, meta);
-                return Math.random() * number;
+                var num = number.as(parameters.length === 1 ? parameters[0] : 1, meta);
+                return Math.random() * num;
             },
             validate: function (node) { return assertLength({ min: 0, max: 1 }, node); },
         },
         'rand-int!': {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3325,12 +3282,12 @@ var Lits = (function (exports) {
         min: {
             evaluate: function (_a, meta) {
                 var first = _a[0], rest = _a.slice(1);
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 if (rest.length === 0) {
                     return first;
                 }
                 return rest.reduce(function (min, value) {
-                    assertNumber(value, meta);
+                    number.assert(value, meta);
                     return Math.min(min, value);
                 }, first);
             },
@@ -3339,12 +3296,12 @@ var Lits = (function (exports) {
         max: {
             evaluate: function (_a, meta) {
                 var first = _a[0], rest = _a.slice(1);
-                assertNumber(first, meta);
+                number.assert(first, meta);
                 if (rest.length === 0) {
                     return first;
                 }
                 return rest.reduce(function (min, value) {
-                    assertNumber(value, meta);
+                    number.assert(value, meta);
                     return Math.max(min, value);
                 }, first);
             },
@@ -3353,7 +3310,7 @@ var Lits = (function (exports) {
         abs: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.abs(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3361,7 +3318,7 @@ var Lits = (function (exports) {
         sign: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.sign(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3429,7 +3386,7 @@ var Lits = (function (exports) {
         exp: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.exp(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3437,7 +3394,7 @@ var Lits = (function (exports) {
         log: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.log(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3445,7 +3402,7 @@ var Lits = (function (exports) {
         log2: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.log2(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3453,7 +3410,7 @@ var Lits = (function (exports) {
         log10: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.log10(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3461,7 +3418,7 @@ var Lits = (function (exports) {
         sin: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.sin(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3469,7 +3426,7 @@ var Lits = (function (exports) {
         asin: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.asin(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3477,7 +3434,7 @@ var Lits = (function (exports) {
         sinh: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.sinh(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3485,7 +3442,7 @@ var Lits = (function (exports) {
         asinh: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.asinh(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3493,7 +3450,7 @@ var Lits = (function (exports) {
         cos: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.cos(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3501,7 +3458,7 @@ var Lits = (function (exports) {
         acos: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.acos(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3509,7 +3466,7 @@ var Lits = (function (exports) {
         cosh: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.cosh(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3517,7 +3474,7 @@ var Lits = (function (exports) {
         acosh: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.acosh(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3525,7 +3482,7 @@ var Lits = (function (exports) {
         tan: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.tan(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3533,7 +3490,7 @@ var Lits = (function (exports) {
         atan: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.atan(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3541,7 +3498,7 @@ var Lits = (function (exports) {
         tanh: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.tanh(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3549,14 +3506,14 @@ var Lits = (function (exports) {
         atanh: {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Math.atanh(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
     };
 
-    var version = "1.0.0-alpha.7";
+    var version = "1.0.0-alpha.8";
 
     var miscNormalExpression = {
         'not=': {
@@ -3588,7 +3545,7 @@ var Lits = (function (exports) {
         'equal?': {
             evaluate: function (_a, meta) {
                 var a = _a[0], b = _a[1];
-                return deepEqual(asAny(a, meta), asAny(b, meta), meta);
+                return deepEqual(any.as(a, meta), any.as(b, meta), meta);
             },
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
@@ -3670,7 +3627,7 @@ var Lits = (function (exports) {
                 // eslint-disable-next-line no-console
                 console.log.apply(console, params);
                 if (params.length > 0) {
-                    return asAny(params[params.length - 1], meta);
+                    return any.as(params[params.length - 1], meta);
                 }
                 return null;
             },
@@ -3684,7 +3641,7 @@ var Lits = (function (exports) {
                 }
                 // eslint-disable-next-line no-console
                 console.warn("*** LITS DEBUG ***\n" + JSON.stringify(params[0], null, 2) + "\n");
-                return asAny(params[0], meta);
+                return any.as(params[0], meta);
             },
             validate: function (node) { return assertLength({ max: 1 }, node); },
         },
@@ -3710,7 +3667,7 @@ var Lits = (function (exports) {
                 if (!value) {
                     throw new AssertionError(message, meta);
                 }
-                return asAny(value, meta);
+                return any.as(value, meta);
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
@@ -3740,7 +3697,7 @@ var Lits = (function (exports) {
         var value = contextEntry.value;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         var name = value.name;
-        if (isLitsFunction(value)) {
+        if (litsFunction.is(value)) {
             if (name) {
                 return "<" + value.type + " function " + name + ">";
             }
@@ -3768,7 +3725,7 @@ var Lits = (function (exports) {
         keys: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertObj(first, meta);
+                object.assert(first, meta);
                 return Object.keys(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3776,7 +3733,7 @@ var Lits = (function (exports) {
         vals: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertObj(first, meta);
+                object.assert(first, meta);
                 return Object.values(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3784,7 +3741,7 @@ var Lits = (function (exports) {
         entries: {
             evaluate: function (_a, meta) {
                 var first = _a[0];
-                assertObj(first, meta);
+                object.assert(first, meta);
                 return Object.entries(first);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3792,7 +3749,7 @@ var Lits = (function (exports) {
         find: {
             evaluate: function (_a, meta) {
                 var obj = _a[0], key = _a[1];
-                assertObj(obj, meta);
+                object.assert(obj, meta);
                 assertString(key, meta);
                 if (collHasKey(obj, key)) {
                     return [key, obj[key]];
@@ -3804,7 +3761,7 @@ var Lits = (function (exports) {
         dissoc: {
             evaluate: function (_a, meta) {
                 var obj = _a[0], key = _a[1];
-                assertObj(obj, meta);
+                object.assert(obj, meta);
                 assertString(key, meta);
                 var result = toAny(obj[key]);
                 delete obj[key];
@@ -3818,9 +3775,9 @@ var Lits = (function (exports) {
                     return null;
                 }
                 var first = params[0], rest = params.slice(1);
-                assertObj(first, meta);
+                object.assert(first, meta);
                 return rest.reduce(function (result, obj) {
-                    assertObj(obj, meta);
+                    object.assert(obj, meta);
                     return __assign(__assign({}, result), obj);
                 }, __assign({}, first));
             },
@@ -3830,13 +3787,13 @@ var Lits = (function (exports) {
             evaluate: function (params, meta, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0], first = params[1], rest = params.slice(2);
-                assertLitsFunction(fn, meta);
+                litsFunction.assert(fn, meta);
                 if (params.length === 1) {
                     return null;
                 }
-                assertObj(first, meta);
+                object.assert(first, meta);
                 return rest.reduce(function (result, obj) {
-                    assertObj(obj, meta);
+                    object.assert(obj, meta);
                     Object.entries(obj).forEach(function (entry) {
                         var key = asNotUndefined(entry[0], meta);
                         var val = toAny(entry[1]);
@@ -3856,7 +3813,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta) {
                 var keys = _a[0], values = _a[1];
                 assertStringArray(keys, meta);
-                assertArr(values, meta);
+                array.assert(values, meta);
                 var length = Math.min(keys.length, values.length);
                 var result = {};
                 for (var i = 0; i < length; i += 1) {
@@ -3871,7 +3828,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta) {
                 var obj = _a[0], keys = _a[1];
                 assertStringArray(keys, meta);
-                assertObj(obj, meta);
+                object.assert(obj, meta);
                 return keys.reduce(function (result, key) {
                     if (collHasKey(obj, key)) {
                         result[key] = toAny(obj[key]);
@@ -3887,7 +3844,7 @@ var Lits = (function (exports) {
         'function?': {
             evaluate: function (_a) {
                 var first = _a[0];
-                return isLitsFunction(first);
+                return litsFunction.is(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
@@ -3908,7 +3865,7 @@ var Lits = (function (exports) {
         'integer?': {
             evaluate: function (_a) {
                 var first = _a[0];
-                return typeof first === "number" && Number.isInteger(first);
+                return typeof first === "number" && number.is(first, { integer: true });
             },
             validate: function (node) { return assertLength(1, node); },
         },
@@ -3962,35 +3919,35 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta) {
                 var first = _a[0];
                 assertFiniteNumber(first, meta);
-                return Number.isInteger(first) && first % 2 !== 0;
+                return number.is(first, { integer: true }) && first % 2 !== 0;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'array?': {
             evaluate: function (_a) {
                 var first = _a[0];
-                return isArr(first);
+                return array.is(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'coll?': {
             evaluate: function (_a) {
                 var first = _a[0];
-                return isColl(first);
+                return collection.is(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'seq?': {
             evaluate: function (_a) {
                 var first = _a[0];
-                return isSeq(first);
+                return sequence.is(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'object?': {
             evaluate: function (_a) {
                 var first = _a[0];
-                return isObj(first);
+                return object.is(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
@@ -4004,7 +3961,7 @@ var Lits = (function (exports) {
         'finite?': {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Number.isFinite(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4012,7 +3969,7 @@ var Lits = (function (exports) {
         'nan?': {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return Number.isNaN(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4020,7 +3977,7 @@ var Lits = (function (exports) {
         'positive-infinity?': {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return value === Number.POSITIVE_INFINITY;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4028,7 +3985,7 @@ var Lits = (function (exports) {
         'negative-infinity?': {
             evaluate: function (_a, meta) {
                 var value = _a[0];
-                assertNumber(value, meta);
+                number.assert(value, meta);
                 return value === Number.NEGATIVE_INFINITY;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4115,7 +4072,7 @@ var Lits = (function (exports) {
                 return params.reduce(function (result, param) {
                     var paramStr = param === undefined || param === null
                         ? ""
-                        : isObj(param)
+                        : object.is(param)
                             ? JSON.stringify(param)
                             : Array.isArray(param)
                                 ? JSON.stringify(param)
@@ -4217,7 +4174,7 @@ var Lits = (function (exports) {
         join: {
             evaluate: function (_a, meta) {
                 var stringList = _a[0], delimiter = _a[1];
-                assertArr(stringList, meta);
+                array.assert(stringList, meta);
                 stringList.forEach(function (str) { return assertString(str, meta); });
                 assertString(delimiter, meta);
                 return stringList.join(delimiter);
@@ -4240,7 +4197,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta) {
                 var str = _a[0], length = _a[1], padString = _a[2];
                 assertString(str, meta);
-                assertInteger(length, meta);
+                number.assert(length, meta, { integer: true });
                 if (padString !== undefined) {
                     assertString(padString, meta);
                 }
@@ -4252,7 +4209,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta) {
                 var str = _a[0], length = _a[1], padString = _a[2];
                 assertString(str, meta);
-                assertInteger(length, meta);
+                number.assert(length, meta, { integer: true });
                 if (padString !== undefined) {
                     assertString(padString, meta);
                 }
@@ -4305,10 +4262,10 @@ var Lits = (function (exports) {
             evaluate: function (_a, meta, contextStack, _b) {
                 var func = _a[0], params = _a.slice(1);
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(func, meta);
+                litsFunction.assert(func, meta);
                 var paramsLength = params.length;
                 var last = params[paramsLength - 1];
-                assertArr(last, meta);
+                array.assert(last, meta);
                 var applyArray = __spreadArray(__spreadArray([], params.slice(0, -1), true), last);
                 return executeFunction(func, applyArray, meta, contextStack);
             },
@@ -4339,7 +4296,7 @@ var Lits = (function (exports) {
                 var _a;
                 if (fns.length > 1) {
                     var last = fns[fns.length - 1];
-                    if (isArr(last)) {
+                    if (array.is(last)) {
                         fns = __spreadArray(__spreadArray([], fns.slice(0, -1), true), last);
                     }
                 }
@@ -4528,9 +4485,9 @@ var Lits = (function (exports) {
                 if (params.length !== 1) {
                     throw new LitsError("(comp) expects one argument, got " + params.length, meta);
                 }
-                return asAny(params[0], meta);
+                return any.as(params[0], meta);
             }
-            return asAny(fns.reduceRight(function (result, fn) {
+            return any.as(fns.reduceRight(function (result, fn) {
                 return [executeFunction(toAny(fn), result, meta, contextStack)];
             }, params)[0], meta);
         },
@@ -4683,19 +4640,19 @@ var Lits = (function (exports) {
         }
     }
     var executeFunction = function (fn, params, meta, contextStack) {
-        if (isLitsFunction(fn)) {
+        if (litsFunction.is(fn)) {
             return functionExecutors[fn.type](fn, params, meta, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
         }
         if (Array.isArray(fn)) {
             return evaluateArrayAsFunction(fn, params, meta);
         }
-        if (isObj(fn)) {
+        if (object.is(fn)) {
             return evalueateObjectAsFunction(fn, params, meta);
         }
         if (isString(fn)) {
             return evaluateStringAsFunction(fn, params, meta);
         }
-        if (isNumber(fn)) {
+        if (number.is(fn)) {
             return evaluateNumberAsFunction(fn, params, meta);
         }
         throw new LitsError("Expected function, got " + fn, meta);
@@ -4732,21 +4689,21 @@ var Lits = (function (exports) {
             throw new LitsError("String as function requires one Obj parameter", meta);
         }
         var param = toAny(params[0]);
-        if (isObj(param)) {
+        if (object.is(param)) {
             return toAny(param[fn]);
         }
-        if (isInteger(param)) {
+        if (number.is(param, { integer: true })) {
             return toAny(fn[param]);
         }
         throw new LitsError("string as function expects Obj or integer parameter, got " + param, meta);
     }
     function evaluateNumberAsFunction(fn, params, meta) {
-        assertInteger(fn, meta);
+        number.assert(fn, meta, { integer: true });
         if (params.length !== 1) {
             throw new LitsError("String as function requires one Arr parameter", meta);
         }
         var param = params[0];
-        assertSeq(param, meta);
+        sequence.assert(param, meta);
         return toAny(param[fn]);
     }
 

@@ -2,7 +2,8 @@ import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength, isSeq, toAny } from '../../utils'
+import { asNotUndefined, assertLength, toAny } from '../../utils'
+import { sequence } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface WhenFirstSpecialExpressionNode extends SpecialExpressionNode {
@@ -36,7 +37,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     castWhenFirstExpressionNode(node)
     const locals: Context = {}
     const evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack)
-    if (!isSeq(evaluatedBindingForm)) {
+    if (!sequence.is(evaluatedBindingForm)) {
       throw new LitsError(`Expected undefined or a sequence, got ${evaluatedBindingForm}`, node.token.meta)
     }
 

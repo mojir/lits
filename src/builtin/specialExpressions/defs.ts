@@ -1,6 +1,6 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asAstNode, asNotUndefined, assertLength, assertString } from '../../utils'
+import { asNotUndefined, assertLength, assertString } from '../../utils'
 import { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
 
@@ -25,12 +25,12 @@ export const defsSpecialExpression: BuiltinSpecialExpression<Any> = {
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     castDefsExpressionNode(node)
     const meta = node.token.meta
-    const name = evaluateAstNode(asAstNode(node.params[0], meta), contextStack)
+    const name = evaluateAstNode(asNotUndefined(node.params[0], meta), contextStack)
     assertString(name, meta)
 
     assertNameNotDefined(name, contextStack, builtin, node.token.meta)
 
-    const value = evaluateAstNode(asAstNode(node.params[1], meta), contextStack)
+    const value = evaluateAstNode(asNotUndefined(node.params[1], meta), contextStack)
 
     contextStack.globalContext[name] = { value }
 

@@ -2,15 +2,13 @@ import { Any, Arr, Obj } from '../../../interface'
 import {
   assertLengthEven,
   assertLength,
-  assertObj,
   assertString,
   collHasKey,
   assertStringArray,
-  assertArr,
   toAny,
   asNotUndefined,
-  assertLitsFunction,
 } from '../../../utils'
+import { litsFunction, object, array } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
@@ -30,7 +28,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
   keys: {
     evaluate: ([first], meta): string[] => {
-      assertObj(first, meta)
+      object.assert(first, meta)
       return Object.keys(first)
     },
     validate: node => assertLength(1, node),
@@ -38,7 +36,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
   vals: {
     evaluate: ([first], meta): Arr => {
-      assertObj(first, meta)
+      object.assert(first, meta)
       return Object.values(first)
     },
     validate: node => assertLength(1, node),
@@ -46,7 +44,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
   entries: {
     evaluate: ([first], meta): Array<[string, unknown]> => {
-      assertObj(first, meta)
+      object.assert(first, meta)
       return Object.entries(first)
     },
     validate: node => assertLength(1, node),
@@ -54,7 +52,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
   find: {
     evaluate: ([obj, key], meta): [string, unknown] | null => {
-      assertObj(obj, meta)
+      object.assert(obj, meta)
       assertString(key, meta)
       if (collHasKey(obj, key)) {
         return [key, obj[key]]
@@ -66,7 +64,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
   dissoc: {
     evaluate: ([obj, key], meta): Any => {
-      assertObj(obj, meta)
+      object.assert(obj, meta)
       assertString(key, meta)
       const result = toAny(obj[key])
       delete obj[key]
@@ -81,11 +79,11 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         return null
       }
       const [first, ...rest] = params
-      assertObj(first, meta)
+      object.assert(first, meta)
 
       return rest.reduce(
         (result: Obj, obj) => {
-          assertObj(obj, meta)
+          object.assert(obj, meta)
           return { ...result, ...obj }
         },
         { ...first },
@@ -97,17 +95,17 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   'merge-with': {
     evaluate: (params: Arr, meta, contextStack, { executeFunction }): Any => {
       const [fn, first, ...rest] = params
-      assertLitsFunction(fn, meta)
+      litsFunction.assert(fn, meta)
 
       if (params.length === 1) {
         return null
       }
 
-      assertObj(first, meta)
+      object.assert(first, meta)
 
       return rest.reduce(
         (result: Obj, obj) => {
-          assertObj(obj, meta)
+          object.assert(obj, meta)
           Object.entries(obj).forEach(entry => {
             const key = asNotUndefined(entry[0], meta)
             const val = toAny(entry[1])
@@ -128,7 +126,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   zipmap: {
     evaluate: ([keys, values], meta): Any => {
       assertStringArray(keys, meta)
-      assertArr(values, meta)
+      array.assert(values, meta)
 
       const length = Math.min(keys.length, values.length)
 
@@ -146,7 +144,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   'select-keys': {
     evaluate: ([obj, keys], meta): Any => {
       assertStringArray(keys, meta)
-      assertObj(obj, meta)
+      object.assert(obj, meta)
 
       return keys.reduce((result: Obj, key) => {
         if (collHasKey(obj, key)) {

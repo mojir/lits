@@ -3,7 +3,8 @@ import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interfac
 import { Any, Arr } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { Token, TokenMeta } from '../../tokenizer/interface'
-import { asAny, asColl, asNotUndefined, isSeq } from '../../utils'
+import { asNotUndefined } from '../../utils'
+import { any, collection, sequence } from '../../utils/assertion'
 import { BuiltinSpecialExpression, Parsers } from '../interface'
 
 interface ForSpecialExpressionNode extends SpecialExpressionNode {
@@ -142,8 +143,8 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
           loopBindings[bindingIndex],
           meta,
         )
-        const coll = asColl(evaluateAstNode(binding.value, newContextStack), meta)
-        const seq = isSeq(coll) ? coll : Object.entries(coll)
+        const coll = collection.as(evaluateAstNode(binding.value, newContextStack), meta)
+        const seq = sequence.is(coll) ? coll : Object.entries(coll)
         if (seq.length === 0) {
           skip = true
           abort = true
@@ -164,7 +165,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
           throw new LitsError(`Variable already defined: ${binding.name}`, meta)
         }
         context[binding.name] = {
-          value: asAny(seq[index], meta),
+          value: any.as(seq[index], meta),
         }
         for (const modifier of modifiers) {
           switch (modifier) {

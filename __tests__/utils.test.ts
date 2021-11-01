@@ -1,14 +1,9 @@
 import { AstNode, FUNCTION_SYMBOL, LitsFunction, NameNode, NormalExpressionNode } from '../src/parser/interface'
 import { TokenMeta } from '../src/tokenizer/interface'
 import {
-  asAstNode,
-  asLitsFunction,
   asNameNode,
   asNotUndefined,
-  assertArr,
-  assertInteger,
   assertLengthEven,
-  assertLitsFunction,
   assertNameNode,
   assertNegativeNumber,
   assertNonNegativeNumber,
@@ -19,80 +14,62 @@ import {
   assertNumberLt,
   assertNumberLte,
   assertNumberNotZero,
-  assertObj,
   assertPositiveNumber,
   assertRegExp,
   assertString,
   asNonEmptyString,
-  isLitsFunction,
   asFiniteNumber,
   assertLength,
-  assertSeq,
   assertStringOrRegExp,
-  isNumber,
-  assertNumber,
-  isInteger,
   collHasKey,
   isRegExp,
   isNormalExpressionNodeName,
   deepEqual,
   assertNonEmptyString,
-  asAny,
-  assertAny,
   assertNotUndefined,
   toNonNegativeInteger,
   assertMax,
   assertChar,
   asChar,
-  asColl,
   cloneColl,
   asString,
 } from '../src/utils'
+import { any, collection, litsFunction, number, object, sequence, array } from '../src/utils/assertion'
 
 const meta: TokenMeta = `EOF`
 describe(`utils`, () => {
-  test(`asAstNode`, () => {
-    expect(() => asAstNode(undefined, meta)).toThrow()
-    const node: AstNode = {
-      type: `Name`,
-      value: `test`,
-      token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
-    }
-
-    expect(asAstNode(node, meta)).toBe(node)
-  })
   test(`asAny`, () => {
-    expect(() => asAny(undefined, meta)).toThrow()
+    expect(() => any.as(undefined, meta)).toThrow()
     const node: AstNode = {
       type: `Name`,
       value: `test`,
       token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
     }
 
-    expect(asAny(node, meta)).toBe(node)
+    expect(any.as(node, meta)).toBe(node)
   })
   test(`assertAny`, () => {
-    expect(() => assertAny(undefined, meta)).toThrow()
+    expect(() => any.assert(undefined, meta)).toThrow()
     const node: AstNode = {
       type: `Name`,
       value: `test`,
       token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
     }
 
-    expect(() => assertAny(node, meta)).not.toThrow()
+    expect(() => any.assert(node, meta)).not.toThrow()
   })
   test(`assertAny`, () => {
-    expect(() => assertAny(undefined, meta)).toThrow()
+    expect(() => any.assert(undefined, meta)).toThrow()
     const node: AstNode = {
       type: `Name`,
       value: `test`,
       token: { type: `name`, meta: { line: 0, column: 0 }, value: `X` },
     }
 
-    expect(() => assertAny(node, meta)).not.toThrow()
+    expect(() => any.assert(node, meta)).not.toThrow()
   })
   test(`asLitsFunction`, () => {
-    expect(() => asLitsFunction(undefined, meta)).toThrow()
+    expect(() => litsFunction.as(undefined, meta)).toThrow()
     const lf: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
       type: `user-defined`,
@@ -108,7 +85,7 @@ describe(`utils`, () => {
         },
       ],
     }
-    expect(asLitsFunction(lf, meta)).toBe(lf)
+    expect(litsFunction.as(lf, meta)).toBe(lf)
   })
   test(`asNameNode`, () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -168,37 +145,37 @@ describe(`utils`, () => {
   })
 
   test(`assertArr`, () => {
-    expect(() => assertArr(0, meta)).toThrow()
-    expect(() => assertArr({}, meta)).toThrow()
-    expect(() => assertArr([], meta)).not.toThrow()
-    expect(() => assertArr([1], meta)).not.toThrow()
-    expect(() => assertArr(true, meta)).toThrow()
-    expect(() => assertArr(null, meta)).toThrow()
-    expect(() => assertArr(undefined, meta)).toThrow()
+    expect(() => array.assert(0, meta)).toThrow()
+    expect(() => array.assert({}, meta)).toThrow()
+    expect(() => array.assert([], meta)).not.toThrow()
+    expect(() => array.assert([1], meta)).not.toThrow()
+    expect(() => array.assert(true, meta)).toThrow()
+    expect(() => array.assert(null, meta)).toThrow()
+    expect(() => array.assert(undefined, meta)).toThrow()
   })
   test(`assertObj`, () => {
-    expect(() => assertObj(0, meta)).toThrow()
-    expect(() => assertObj({}, meta)).not.toThrow()
-    expect(() => assertObj({ [FUNCTION_SYMBOL]: true }, meta)).toThrow()
-    expect(() => assertObj({ a: 1 }, meta)).not.toThrow()
-    expect(() => assertObj(/test/, meta)).toThrow()
-    expect(() => assertObj([], meta)).toThrow()
-    expect(() => assertObj([1], meta)).toThrow()
-    expect(() => assertObj(true, meta)).toThrow()
-    expect(() => assertObj(null, meta)).toThrow()
-    expect(() => assertObj(undefined, meta)).toThrow()
+    expect(() => object.assert(0, meta)).toThrow()
+    expect(() => object.assert({}, meta)).not.toThrow()
+    expect(() => object.assert({ [FUNCTION_SYMBOL]: true }, meta)).toThrow()
+    expect(() => object.assert({ a: 1 }, meta)).not.toThrow()
+    expect(() => object.assert(/test/, meta)).toThrow()
+    expect(() => object.assert([], meta)).toThrow()
+    expect(() => object.assert([1], meta)).toThrow()
+    expect(() => object.assert(true, meta)).toThrow()
+    expect(() => object.assert(null, meta)).toThrow()
+    expect(() => object.assert(undefined, meta)).toThrow()
   })
   test(`assertInteger`, () => {
-    expect(() => assertInteger(-0, meta)).not.toThrow()
-    expect(() => assertInteger(-1, meta)).not.toThrow()
-    expect(() => assertInteger(1, meta)).not.toThrow()
-    expect(() => assertInteger(-0.1, meta)).toThrow()
-    expect(() => assertInteger(1.00001, meta)).toThrow()
-    expect(() => assertInteger(`k`, meta)).toThrow()
-    expect(() => assertInteger(false, meta)).toThrow()
-    expect(() => assertInteger(undefined, meta)).toThrow()
-    expect(() => assertInteger(null, meta)).toThrow()
-    expect(() => assertInteger([], meta)).toThrow()
+    expect(() => number.assert(-0, meta, { integer: true })).not.toThrow()
+    expect(() => number.assert(-1, meta, { integer: true })).not.toThrow()
+    expect(() => number.assert(1, meta, { integer: true })).not.toThrow()
+    expect(() => number.assert(-0.1, meta, { integer: true })).toThrow()
+    expect(() => number.assert(1.00001, meta, { integer: true })).toThrow()
+    expect(() => number.assert(`k`, meta, { integer: true })).toThrow()
+    expect(() => number.assert(false, meta, { integer: true })).toThrow()
+    expect(() => number.assert(undefined, meta, { integer: true })).toThrow()
+    expect(() => number.assert(null, meta, { integer: true })).toThrow()
+    expect(() => number.assert([], meta, { integer: true })).toThrow()
   })
   test(`assertRegExp`, () => {
     expect(() => assertRegExp(/a/, meta)).not.toThrow()
@@ -291,9 +268,9 @@ describe(`utils`, () => {
         },
       ],
     }
-    expect(() => assertLitsFunction(lf, meta)).not.toThrow()
-    expect(() => assertLitsFunction(1, meta)).toThrow()
-    expect(() => assertLitsFunction({}, meta)).toThrow()
+    expect(() => litsFunction.assert(lf, meta)).not.toThrow()
+    expect(() => litsFunction.assert(1, meta)).toThrow()
+    expect(() => litsFunction.assert({}, meta)).toThrow()
   })
   test(`assertPositiveNumber`, () => {
     expect(() => assertPositiveNumber(-1, meta)).toThrow()
@@ -481,17 +458,17 @@ describe(`utils`, () => {
   })
 
   test(`assertStringOrArray`, () => {
-    expect(() => assertSeq(``, meta)).not.toThrow()
-    expect(() => assertSeq(`1`, meta)).not.toThrow()
-    expect(() => assertSeq([], meta)).not.toThrow()
-    expect(() => assertSeq([1, 2, 3], meta)).not.toThrow()
-    expect(() => assertSeq(0, meta)).toThrow()
-    expect(() => assertSeq(1, meta)).toThrow()
-    expect(() => assertSeq(true, meta)).toThrow()
-    expect(() => assertSeq(false, meta)).toThrow()
-    expect(() => assertSeq(null, meta)).toThrow()
-    expect(() => assertSeq(undefined, meta)).toThrow()
-    expect(() => assertSeq({}, meta)).toThrow()
+    expect(() => sequence.assert(``, meta)).not.toThrow()
+    expect(() => sequence.assert(`1`, meta)).not.toThrow()
+    expect(() => sequence.assert([], meta)).not.toThrow()
+    expect(() => sequence.assert([1, 2, 3], meta)).not.toThrow()
+    expect(() => sequence.assert(0, meta)).toThrow()
+    expect(() => sequence.assert(1, meta)).toThrow()
+    expect(() => sequence.assert(true, meta)).toThrow()
+    expect(() => sequence.assert(false, meta)).toThrow()
+    expect(() => sequence.assert(null, meta)).toThrow()
+    expect(() => sequence.assert(undefined, meta)).toThrow()
+    expect(() => sequence.assert({}, meta)).toThrow()
   })
 
   test(`assertStringOrRegExp`, () => {
@@ -546,42 +523,51 @@ describe(`utils`, () => {
       type: `constantly`,
       value: 10,
     }
-    expect(isLitsFunction(lf1)).toBe(true)
-    expect(isLitsFunction(lf2)).toBe(true)
-    expect(isLitsFunction(lf3)).toBe(true)
-    expect(isLitsFunction(lf4)).toBe(true)
-    expect(isLitsFunction(lf5)).toBe(true)
-    expect(isLitsFunction(``)).toBe(false)
-    expect(isLitsFunction(`1`)).toBe(false)
-    expect(isLitsFunction(0)).toBe(false)
-    expect(isLitsFunction(1)).toBe(false)
-    expect(isLitsFunction(true)).toBe(false)
-    expect(isLitsFunction(false)).toBe(false)
-    expect(isLitsFunction(null)).toBe(false)
-    expect(isLitsFunction(undefined)).toBe(false)
-    expect(isLitsFunction([])).toBe(false)
-    expect(isLitsFunction({})).toBe(false)
+    expect(litsFunction.is(lf1)).toBe(true)
+    expect(litsFunction.is(lf2)).toBe(true)
+    expect(litsFunction.is(lf3)).toBe(true)
+    expect(litsFunction.is(lf4)).toBe(true)
+    expect(litsFunction.is(lf5)).toBe(true)
+    expect(litsFunction.is(``)).toBe(false)
+    expect(litsFunction.is(`1`)).toBe(false)
+    expect(litsFunction.is(0)).toBe(false)
+    expect(litsFunction.is(1)).toBe(false)
+    expect(litsFunction.is(true)).toBe(false)
+    expect(litsFunction.is(false)).toBe(false)
+    expect(litsFunction.is(null)).toBe(false)
+    expect(litsFunction.is(undefined)).toBe(false)
+    expect(litsFunction.is([])).toBe(false)
+    expect(litsFunction.is({})).toBe(false)
   })
 
   test(`isNumber`, () => {
-    expect(isNumber(1 / 0)).toBe(true)
-    expect(isNumber(Number(`abc`))).toBe(true)
-    expect(isNumber(0.12)).toBe(true)
-    expect(isNumber(undefined)).toBe(false)
-    expect(isNumber(`undefined`)).toBe(false)
-    expect(isNumber([])).toBe(false)
+    expect(number.is(1 / 0)).toBe(true)
+    expect(number.is(Number(`abc`))).toBe(true)
+    expect(number.is(0.12)).toBe(true)
+    expect(number.is(undefined)).toBe(false)
+    expect(number.is(`undefined`)).toBe(false)
+    expect(number.is([])).toBe(false)
+  })
+
+  test(`asInteger`, () => {
+    expect(() => number.as(1 / 0, `EOF`, { integer: true })).toThrow()
+    expect(() => number.as(Number(`abc`), `EOF`, { integer: true })).toThrow()
+    expect(() => number.as(12, `EOF`, { integer: true })).not.toThrow()
+    expect(() => number.as(undefined, `EOF`, { integer: true })).toThrow()
+    expect(() => number.as(`undefined`, `EOF`, { integer: true })).toThrow()
+    expect(() => number.as([], `EOF`, { integer: true })).toThrow()
   })
 
   test(`isInteger`, () => {
-    expect(isInteger(1 / 0)).toBe(false)
-    expect(isInteger(Number(`abc`))).toBe(false)
-    expect(isInteger(0.12)).toBe(false)
-    expect(isInteger(-12)).toBe(true)
-    expect(isInteger(0)).toBe(true)
-    expect(isInteger(12)).toBe(true)
-    expect(isInteger(undefined)).toBe(false)
-    expect(isInteger(`undefined`)).toBe(false)
-    expect(isInteger([])).toBe(false)
+    expect(number.is(1 / 0, { integer: true })).toBe(false)
+    expect(number.is(Number(`abc`), { integer: true })).toBe(false)
+    expect(number.is(0.12, { integer: true })).toBe(false)
+    expect(number.is(-12, { integer: true })).toBe(true)
+    expect(number.is(0, { integer: true })).toBe(true)
+    expect(number.is(12, { integer: true })).toBe(true)
+    expect(number.is(undefined, { integer: true })).toBe(false)
+    expect(number.is(`undefined`, { integer: true })).toBe(false)
+    expect(number.is([], { integer: true })).toBe(false)
   })
 
   test(`collHasKey`, () => {
@@ -605,12 +591,12 @@ describe(`utils`, () => {
   })
 
   test(`assertNumber`, () => {
-    expect(() => assertNumber(1 / 0, meta)).not.toThrow()
-    expect(() => assertNumber(Number(`abc`), meta)).not.toThrow()
-    expect(() => assertNumber(0.12, meta)).not.toThrow()
-    expect(() => assertNumber(undefined, meta)).toThrow()
-    expect(() => assertNumber(`undefined`, meta)).toThrow()
-    expect(() => assertNumber([], meta)).toThrow()
+    expect(() => number.assert(1 / 0, meta)).not.toThrow()
+    expect(() => number.assert(Number(`abc`), meta)).not.toThrow()
+    expect(() => number.assert(0.12, meta)).not.toThrow()
+    expect(() => number.assert(undefined, meta)).toThrow()
+    expect(() => number.assert(`undefined`, meta)).toThrow()
+    expect(() => number.assert([], meta)).toThrow()
   })
 
   test(`isRegexp`, () => {
@@ -705,13 +691,13 @@ describe(`utils`, () => {
   })
 
   test(`asColl`, () => {
-    expect(asColl(`2`, meta)).toEqual(`2`)
-    expect(asColl({ a: 1 }, meta)).toEqual({ a: 1 })
-    expect(asColl([2], meta)).toEqual([2])
-    expect(() => asColl(0, meta)).toThrow()
-    expect(() => asColl(null, meta)).toThrow()
-    expect(() => asColl(true, meta)).toThrow()
-    expect(() => asColl(false, meta)).toThrow()
+    expect(collection.as(`2`, meta)).toEqual(`2`)
+    expect(collection.as({ a: 1 }, meta)).toEqual({ a: 1 })
+    expect(collection.as([2], meta)).toEqual([2])
+    expect(() => collection.as(0, meta)).toThrow()
+    expect(() => collection.as(null, meta)).toThrow()
+    expect(() => collection.as(true, meta)).toThrow()
+    expect(() => collection.as(false, meta)).toThrow()
   })
 
   describe(`cloneColl`, () => {

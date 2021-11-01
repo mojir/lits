@@ -8,15 +8,13 @@ import {
   assertFiniteNumber,
   assertNumberGte,
   assertString,
-  assertInteger,
-  assertArr,
   assertStringOrRegExp,
   assertStringArray,
-  isObj,
   assertNonEmptyString,
   asNotUndefined,
   toNonNegativeInteger,
 } from '../../../utils'
+import { number, object, array } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
@@ -51,7 +49,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         const paramStr =
           param === undefined || param === null
             ? ``
-            : isObj(param)
+            : object.is(param)
             ? JSON.stringify(param)
             : Array.isArray(param)
             ? JSON.stringify(param)
@@ -154,7 +152,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   join: {
     evaluate: ([stringList, delimiter], meta): string => {
-      assertArr(stringList, meta)
+      array.assert(stringList, meta)
       stringList.forEach(str => assertString(str, meta))
       assertString(delimiter, meta)
       return stringList.join(delimiter)
@@ -177,7 +175,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'pad-left': {
     evaluate: ([str, length, padString], meta): string => {
       assertString(str, meta)
-      assertInteger(length, meta)
+      number.assert(length, meta, { integer: true })
 
       if (padString !== undefined) {
         assertString(padString, meta)
@@ -191,7 +189,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'pad-right': {
     evaluate: ([str, length, padString], meta): string => {
       assertString(str, meta)
-      assertInteger(length, meta)
+      number.assert(length, meta, { integer: true })
 
       if (padString !== undefined) {
         assertString(padString, meta)

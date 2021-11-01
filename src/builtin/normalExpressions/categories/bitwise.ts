@@ -1,38 +1,39 @@
-import { assertInteger, assertLength, assertNonNegativeInteger } from '../../../utils'
+import { assertLength, assertNonNegativeInteger } from '../../../utils'
+import { number } from '../../../utils/numberAssertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const bitwiseNormalExpression: BuiltinNormalExpressions = {
   'bit-shift-left': {
-    evaluate: ([number, count], meta): number => {
-      assertInteger(number, meta)
+    evaluate: ([num, count], meta): number => {
+      number.assert(num, meta, { integer: true })
       assertNonNegativeInteger(count, meta)
 
-      return number << count
+      return num << count
     },
     validate: node => assertLength(2, node),
   },
   'bit-shift-right': {
-    evaluate: ([number, count], meta): number => {
-      assertInteger(number, meta)
+    evaluate: ([num, count], meta): number => {
+      number.assert(num, meta, { integer: true })
       assertNonNegativeInteger(count, meta)
 
-      return number >> count
+      return num >> count
     },
     validate: node => assertLength(2, node),
   },
   'bit-not': {
-    evaluate: ([number], meta): number => {
-      assertInteger(number, meta)
-      return ~number
+    evaluate: ([num], meta): number => {
+      number.assert(num, meta, { integer: true })
+      return ~num
     },
     validate: node => assertLength(1, node),
   },
   'bit-and': {
     evaluate: ([first, ...rest], meta): number => {
-      assertInteger(first, meta)
+      number.assert(first, meta, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        assertInteger(value, meta)
+        number.assert(value, meta, { integer: true })
         return result & value
       }, first)
     },
@@ -40,10 +41,10 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
   },
   'bit-and-not': {
     evaluate: ([first, ...rest], meta): number => {
-      assertInteger(first, meta)
+      number.assert(first, meta, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        assertInteger(value, meta)
+        number.assert(value, meta, { integer: true })
         return result & ~value
       }, first)
     },
@@ -51,10 +52,10 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
   },
   'bit-or': {
     evaluate: ([first, ...rest], meta): number => {
-      assertInteger(first, meta)
+      number.assert(first, meta, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        assertInteger(value, meta)
+        number.assert(value, meta, { integer: true })
         return result | value
       }, first)
     },
@@ -62,52 +63,52 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
   },
   'bit-xor': {
     evaluate: ([first, ...rest], meta): number => {
-      assertInteger(first, meta)
+      number.assert(first, meta, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        assertInteger(value, meta)
+        number.assert(value, meta, { integer: true })
         return result ^ value
       }, first)
     },
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-flip': {
-    evaluate: ([number, index], meta): number => {
-      assertInteger(number, meta)
+    evaluate: ([num, index], meta): number => {
+      number.assert(num, meta, { integer: true })
       assertNonNegativeInteger(index, meta)
 
       const mask = 1 << index
-      return (number ^= mask)
+      return (num ^= mask)
     },
     validate: node => assertLength(2, node),
   },
   'bit-set': {
-    evaluate: ([number, index], meta): number => {
-      assertInteger(number, meta)
+    evaluate: ([num, index], meta): number => {
+      number.assert(num, meta, { integer: true })
       assertNonNegativeInteger(index, meta)
 
       const mask = 1 << index
-      return (number |= mask)
+      return (num |= mask)
     },
     validate: node => assertLength(2, node),
   },
   'bit-clear': {
-    evaluate: ([number, index], meta): number => {
-      assertInteger(number, meta)
+    evaluate: ([num, index], meta): number => {
+      number.assert(num, meta, { integer: true })
       assertNonNegativeInteger(index, meta)
 
       const mask = 1 << index
-      return (number &= ~mask)
+      return (num &= ~mask)
     },
     validate: node => assertLength(2, node),
   },
   'bit-test': {
-    evaluate: ([number, index], meta): boolean => {
-      assertInteger(number, meta)
+    evaluate: ([num, index], meta): boolean => {
+      number.assert(num, meta, { integer: true })
       assertNonNegativeInteger(index, meta)
 
       const mask = 1 << index
-      return !!(number & mask)
+      return !!(num & mask)
     },
     validate: node => assertLength(2, node),
   },

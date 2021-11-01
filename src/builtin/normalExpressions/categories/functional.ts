@@ -10,15 +10,16 @@ import {
   SomePredFunction,
   FNilFunction,
 } from '../../../parser/interface'
-import { assertArr, assertLength, assertLitsFunction, isArr, toAny } from '../../../utils'
+import { assertLength, toAny } from '../../../utils'
+import { litsFunction, array } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   apply: {
     evaluate: ([func, ...params]: Arr, meta, contextStack, { executeFunction }): Any => {
-      assertLitsFunction(func, meta)
+      litsFunction.assert(func, meta)
       const paramsLength = params.length
       const last = params[paramsLength - 1]
-      assertArr(last, meta)
+      array.assert(last, meta)
       const applyArray = [...params.slice(0, -1), ...last]
       return executeFunction(func, applyArray, meta, contextStack)
     },
@@ -48,7 +49,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     evaluate: (fns): CompFunction => {
       if (fns.length > 1) {
         const last = fns[fns.length - 1]
-        if (isArr(last)) {
+        if (array.is(last)) {
           fns = [...fns.slice(0, -1), ...last]
         }
       }

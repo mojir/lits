@@ -1,11 +1,9 @@
 import { LitsError, UnexpectedNodeTypeError } from '../errors'
 import { Context } from '../evaluator/interface'
-import { Any, Arr, Coll, Obj, Seq } from '../interface'
+import { Any, Arr, Coll, Obj } from '../interface'
 import {
   AstNode,
   ExpressionNode,
-  FUNCTION_SYMBOL,
-  LitsFunction,
   NameNode,
   NormalExpressionNode,
   NormalExpressionNodeName,
@@ -13,24 +11,10 @@ import {
 } from '../parser/interface'
 import { TokenMeta } from '../tokenizer/interface'
 
-export function asAstNode(node: AstNode | undefined, meta: TokenMeta): AstNode {
-  if (node === undefined) {
-    throw new LitsError(`Expected an AST node, got undefined`, meta)
-  }
-  return node
-}
-
-export function asLitsFunction(value: unknown, meta: TokenMeta): LitsFunction {
-  if (isLitsFunction(value)) {
-    return value
-  }
-  throw new LitsError(`Expected a Lits function, got ${value}`, meta)
-}
+import { any, array, collection, number, object } from './assertion'
 
 export function asNameNode(node: AstNode | undefined, meta: TokenMeta): NameNode {
-  if (node === undefined || node.type !== `Name`) {
-    throw new UnexpectedNodeTypeError(`Name`, node, meta)
-  }
+  assertNameNode(node, meta)
   return node
 }
 
@@ -38,13 +22,6 @@ export function assertNameNode(node: AstNode | undefined, meta: TokenMeta): asse
   if (node === undefined || node.type !== `Name`) {
     throw new UnexpectedNodeTypeError(`Name`, node, meta)
   }
-}
-
-export function asAny(value: unknown, meta: TokenMeta): Any {
-  if (value === undefined) {
-    throw new LitsError(`Unexpected end of input`, meta)
-  }
-  return value as Any
 }
 
 export function asNotUndefined<T>(value: T | undefined, meta: TokenMeta): T {
@@ -94,20 +71,13 @@ export function assertNonNegativeNumber(value: unknown, meta: TokenMeta): assert
 
 export function assertNonNegativeInteger(value: unknown, meta: TokenMeta): asserts value is number {
   assertNonNegativeNumber(value, meta)
-  assertInteger(value, meta)
+  number.assert(value, meta, { integer: true })
 }
 
 export function assertNonPositiveNumber(value: unknown, meta: TokenMeta): asserts value is number {
   assertFiniteNumber(value, meta)
   if (value > 0) {
     throw new LitsError(`Expected non positive number, got ${value}`, meta)
-  }
-}
-
-export function assertInteger(value: unknown, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
-  if (!Number.isInteger(value)) {
-    throw new LitsError(`Expected integer, got ${value}`, meta)
   }
 }
 
@@ -184,21 +154,6 @@ export function asChar(value: unknown, meta: TokenMeta): string {
   return value
 }
 
-export function isStringOrNumber(value: unknown): boolean {
-  return typeof value === `string` || typeof value === `number`
-}
-
-export function assertStringOrNumber(value: unknown, meta: TokenMeta): asserts value is string {
-  if (!isStringOrNumber(value)) {
-    throw new LitsError(`Expected string or number, got: ${value} type="${typeof value}"`, meta)
-  }
-}
-
-export function asStringOrNumber(value: unknown, meta: TokenMeta): string {
-  assertStringOrNumber(value, meta)
-  return value
-}
-
 export function asNonEmptyString(value: unknown, meta: TokenMeta): string {
   if (typeof value !== `string` || value.length === 0) {
     throw new LitsError(`Expected non empty string, got: ${value} type="${typeof value}"`, meta)
@@ -264,19 +219,6 @@ export function assertLengthEven(node: NormalExpressionNode): void {
   }
 }
 
-export function isLitsFunction(func: unknown): func is LitsFunction {
-  if (func === null || typeof func !== `object`) {
-    return false
-  }
-  return !!(func as LitsFunction)[FUNCTION_SYMBOL]
-}
-
-export function assertLitsFunction(func: unknown, meta: TokenMeta): asserts func is LitsFunction {
-  if (!isLitsFunction(func)) {
-    throw new LitsError(`Expected lits function, got ${JSON.stringify(func)}`, meta)
-  }
-}
-
 export function assertStringArray(value: unknown, meta: TokenMeta): asserts value is string[] {
   if (!Array.isArray(value) || value.some(v => typeof v !== `string`)) {
     throw new LitsError(`Expected an array of strings, got ${value}`, meta)
@@ -298,106 +240,12 @@ export function isExpressionNode(node: AstNode): node is ExpressionNode {
   )
 }
 
-export function assertNumber(value: unknown, meta: TokenMeta): asserts value is number {
-  if (!isNumber(value)) {
-    throw new LitsError(`Expected a number, got: ${value} type="${typeof value}"`, meta)
-  }
-}
-
-export function asNumber(value: unknown, meta: TokenMeta): number {
-  assertNumber(value, meta)
-  return value
-}
-
-export function assertArr(value: unknown, meta: TokenMeta): asserts value is Arr {
-  if (!isArr(value)) {
-    throw new LitsError(`Expected Arr, got: ${value} type="${typeof value}"`, meta)
-  }
-}
-
-export function asArr(value: unknown, meta: TokenMeta): Arr {
-  assertArr(value, meta)
-  return value
-}
-
-export function isAny(value: unknown): value is Any {
-  return value !== undefined
-}
-
-export function assertAny(value: unknown, meta: TokenMeta): asserts value is Any {
-  if (!isAny(value)) {
-    throw new LitsError(`Expected Any, got: ${value} type="${typeof value}"`, meta)
-  }
-}
-
-export function isSeq(value: unknown): value is Seq {
-  return Array.isArray(value) || isString(value)
-}
-
-export function assertSeq(value: unknown, meta: TokenMeta): asserts value is Seq {
-  if (!isSeq(value)) {
-    throw new LitsError(`Expected string or array, got: ${value} type="${typeof value}"`, meta)
-  }
-}
-
-export function asSeq(value: unknown, meta: TokenMeta): Seq {
-  if (!isSeq(value)) {
-    throw new LitsError(`Expected string or array, got: ${value} type="${typeof value}"`, meta)
-  }
-  return value as Seq
-}
-
-export function assertObj(value: unknown, meta: TokenMeta): asserts value is Obj {
-  if (!isObj(value)) {
-    throw new LitsError(`Expected object, got: ${value} type="${typeof value}"`, meta)
-  }
-}
-
-export function isObj(value: unknown): value is Obj {
-  return !(
-    value === null ||
-    typeof value !== `object` ||
-    Array.isArray(value) ||
-    value instanceof RegExp ||
-    isLitsFunction(value)
-  )
-}
-
-export function isArr(value: unknown): value is Arr {
-  return Array.isArray(value)
-}
-
-export function isColl(value: unknown): value is Coll {
-  return isSeq(value) || isObj(value)
-}
-
-export function assertColl(value: unknown, meta: TokenMeta): asserts value is Coll {
-  if (!isColl(value)) {
-    throw new LitsError(`Expected collection, got: ${value} type="${typeof value}"`, meta)
-  }
-}
-
-export function asColl(value: unknown, meta: TokenMeta): Coll {
-  if (!isColl(value)) {
-    throw new LitsError(`Expected collection, got: ${value} type="${typeof value}"`, meta)
-  }
-  return value
-}
-
-export function isNumber(value: unknown): value is number {
-  return typeof value === `number`
-}
-
-export function isInteger(value: unknown): value is number {
-  return Number.isInteger(value)
-}
-
 export function collHasKey(coll: unknown, key: string | number): boolean {
-  if (!isColl(coll)) {
+  if (!collection.is(coll)) {
     return false
   }
-  if (isString(coll) || isArr(coll)) {
-    if (!isInteger(key)) {
+  if (isString(coll) || array.is(coll)) {
+    if (!number.is(key, { integer: true })) {
       return false
     }
     return key >= 0 && key < coll.length
@@ -427,9 +275,9 @@ function getType(value: unknown): Type {
     return `number`
   } else if (typeof value === `string`) {
     return `string`
-  } else if (isArr(value)) {
+  } else if (array.is(value)) {
     return `array`
-  } else if (isObj(value)) {
+  } else if (object.is(value)) {
     return `object`
   } else if (isRegExp(value)) {
     return `regexp`
@@ -504,12 +352,12 @@ export function deepEqual(a: Any, b: Any, meta: TokenMeta): boolean {
     return Math.abs(a - b) < Number.EPSILON
   }
 
-  if (isArr(a) && isArr(b)) {
+  if (array.is(a) && array.is(b)) {
     if (a.length !== b.length) {
       return false
     }
     for (let i = 0; i < a.length; i += 1) {
-      if (!deepEqual(asAny(a[i], meta), asAny(b[i], meta), meta)) {
+      if (!deepEqual(any.as(a[i], meta), any.as(b[i], meta), meta)) {
         return false
       }
     }
@@ -552,14 +400,14 @@ export function toAny(value: unknown): Any {
 }
 
 function clone<T>(value: T): T {
-  if (isObj(value)) {
+  if (object.is(value)) {
     return Object.entries(value).reduce((result: Obj, entry) => {
       const [key, val] = entry
       result[key] = clone(val)
       return result
     }, {}) as T
   }
-  if (isArr(value)) {
+  if (array.is(value)) {
     return value.map(item => clone(item)) as unknown as T
   }
   return value

@@ -1,11 +1,12 @@
 import { NormalExpressionNode } from '../../../parser/interface'
-import { assertLength, assertNumber, assertNonNegativeInteger } from '../../../utils'
+import { assertLength, assertNonNegativeInteger } from '../../../utils'
+import { number } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const mathNormalExpression: BuiltinNormalExpressions = {
   inc: {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return first + 1
     },
     validate: node => assertLength(1, node),
@@ -13,7 +14,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   dec: {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return first - 1
     },
     validate: node => assertLength(1, node),
@@ -22,7 +23,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   '+': {
     evaluate: (params, meta): number => {
       return params.reduce((result: number, param) => {
-        assertNumber(param, meta)
+        number.assert(param, meta)
         return result + param
       }, 0)
     },
@@ -31,7 +32,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   '*': {
     evaluate: (params, meta): number => {
       return params.reduce((result: number, param) => {
-        assertNumber(param, meta)
+        number.assert(param, meta)
         return result * param
       }, 1)
     },
@@ -43,13 +44,13 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return 1
       }
       const [first, ...rest] = params
-      assertNumber(first, meta)
+      number.assert(first, meta)
       if (rest.length === 0) {
-        assertNumber(first, meta)
+        number.assert(first, meta)
         return 1 / first
       }
       return rest.reduce((result: number, param) => {
-        assertNumber(param, meta)
+        number.assert(param, meta)
         return result / param
       }, first)
     },
@@ -60,12 +61,12 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       if (!first) {
         return 0
       }
-      assertNumber(first, meta)
+      number.assert(first, meta)
       if (rest.length === 0) {
         return -first
       }
       return rest.reduce((result: number, param) => {
-        assertNumber(param, meta)
+        number.assert(param, meta)
         return result - param
       }, first)
     },
@@ -73,8 +74,8 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   quot: {
     evaluate: ([dividend, divisor], meta): number => {
-      assertNumber(dividend, meta)
-      assertNumber(divisor, meta)
+      number.assert(dividend, meta)
+      number.assert(divisor, meta)
       const quotient = Math.trunc(dividend / divisor)
       return quotient
     },
@@ -83,8 +84,8 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   mod: {
     evaluate: ([dividend, divisor], meta): number => {
-      assertNumber(dividend, meta)
-      assertNumber(divisor, meta)
+      number.assert(dividend, meta)
+      number.assert(divisor, meta)
       const quotient = Math.floor(dividend / divisor)
       return dividend - divisor * quotient
     },
@@ -93,8 +94,8 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   rem: {
     evaluate: ([dividend, divisor], meta): number => {
-      assertNumber(dividend, meta)
-      assertNumber(divisor, meta)
+      number.assert(dividend, meta)
+      number.assert(divisor, meta)
       const quotient = Math.trunc(dividend / divisor)
       return dividend - divisor * quotient
     },
@@ -103,7 +104,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   sqrt: {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return Math.sqrt(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -111,7 +112,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   cbrt: {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return Math.cbrt(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -119,8 +120,8 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   pow: {
     evaluate: ([first, second], meta): number => {
-      assertNumber(first, meta)
-      assertNumber(second, meta)
+      number.assert(first, meta)
+      number.assert(second, meta)
       return Math.pow(first, second)
     },
     validate: (node: NormalExpressionNode): void => assertLength(2, node),
@@ -129,7 +130,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   round: {
     evaluate: (params, meta): number => {
       const [value, decimals] = params
-      assertNumber(value, meta)
+      number.assert(value, meta)
       if (params.length === 1 || decimals === 0) {
         return Math.round(value)
       }
@@ -142,7 +143,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   trunc: {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return Math.trunc(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -150,7 +151,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   floor: {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return Math.floor(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -158,7 +159,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   ceil: {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return Math.ceil(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -166,16 +167,15 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   'rand!': {
     evaluate: (parameters, meta): number => {
-      const number = parameters.length === 1 ? parameters[0] : 1
-      assertNumber(number, meta)
-      return Math.random() * number
+      const num = number.as(parameters.length === 1 ? parameters[0] : 1, meta)
+      return Math.random() * num
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 0, max: 1 }, node),
   },
 
   'rand-int!': {
     evaluate: ([first], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -183,13 +183,13 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   min: {
     evaluate: ([first, ...rest], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       if (rest.length === 0) {
         return first
       }
 
       return rest.reduce((min: number, value) => {
-        assertNumber(value, meta)
+        number.assert(value, meta)
         return Math.min(min, value)
       }, first)
     },
@@ -198,13 +198,13 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   max: {
     evaluate: ([first, ...rest], meta): number => {
-      assertNumber(first, meta)
+      number.assert(first, meta)
       if (rest.length === 0) {
         return first
       }
 
       return rest.reduce((min: number, value) => {
-        assertNumber(value, meta)
+        number.assert(value, meta)
         return Math.max(min, value)
       }, first)
     },
@@ -213,7 +213,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   abs: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.abs(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -221,7 +221,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   sign: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.sign(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -299,7 +299,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   exp: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.exp(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -307,7 +307,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   log: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.log(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -315,7 +315,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   log2: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.log2(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -323,7 +323,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   log10: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.log10(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -331,7 +331,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   sin: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.sin(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -339,7 +339,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   asin: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.asin(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -347,7 +347,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   sinh: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.sinh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -355,7 +355,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   asinh: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.asinh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -363,7 +363,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   cos: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.cos(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -371,7 +371,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   acos: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.acos(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -379,7 +379,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   cosh: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.cosh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -387,7 +387,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   acosh: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.acosh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -395,7 +395,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   tan: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.tan(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -403,7 +403,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   atan: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.atan(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -411,7 +411,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   tanh: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.tanh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -419,7 +419,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
 
   atanh: {
     evaluate: ([value], meta): number => {
-      assertNumber(value, meta)
+      number.assert(value, meta)
       return Math.atanh(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),

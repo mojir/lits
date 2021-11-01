@@ -16,7 +16,8 @@ import {
   UserDefinedFunction,
 } from '../parser/interface'
 import { TokenMeta } from '../tokenizer/interface'
-import { asAny, asNotUndefined, toAny } from '../utils'
+import { asNotUndefined, toAny } from '../utils'
+import { any } from '../utils/assertion'
 import { Context, ContextStack, EvaluateAstNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
@@ -99,9 +100,9 @@ export const functionExecutors: FunctionExecutors = {
       if (params.length !== 1) {
         throw new LitsError(`(comp) expects one argument, got ${params.length}`, meta)
       }
-      return asAny(params[0], meta)
+      return any.as(params[0], meta)
     }
-    return asAny(
+    return any.as(
       fns.reduceRight((result: Arr, fn) => {
         return [executeFunction(toAny(fn), result, meta, contextStack)]
       }, params)[0],
