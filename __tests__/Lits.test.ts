@@ -113,4 +113,37 @@ describe(`Cache`, () => {
     expect(cache.get(`b`)).toBe(2)
     expect(cache.has(`b`)).toBe(true)
   })
+  test(`maxSize.`, () => {
+    const cache = new Cache<number>(1)
+    cache.set(`a`, 1)
+    expect(cache.get(`a`)).toBe(1)
+    cache.set(`b`, 2)
+    expect(cache.size).toBe(1)
+    expect(cache.get(`a`)).toBeUndefined()
+    expect(cache.has(`a`)).toBe(false)
+    expect(cache.get(`b`)).toBe(2)
+    expect(cache.has(`b`)).toBe(true)
+  })
+})
+
+describe(`regressions`, () => {
+  let lits: Lits
+  beforeEach(() => {
+    lits = new Lits()
+  })
+  test(`meta`, () => {
+    try {
+      lits.run(`(loop [n 3]
+  (write! n)
+  (when (not zero? n))
+    (recur (dec n))
+  )
+)`)
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((error as any).line).toBe(3)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((error as any).column).toBe(10)
+    }
+  })
 })

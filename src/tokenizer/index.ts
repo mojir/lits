@@ -51,7 +51,7 @@ class TokenMetaImpl {
   }
 }
 export function calculateMeta(input: string, position: number): TokenMeta {
-  const lines = input.substr(0, position + 1).split(/\r\n|\r|\n/)
+  const lines = input.substr(0, position).split(/\r\n|\r|\n/)
   return new TokenMetaImpl(lines.length, (lines[lines.length - 1] as string).length)
 }
 
@@ -63,8 +63,8 @@ export function tokenize(input: string): Token[] {
     tokenized = false
 
     // Loop through all tokenizer until one matches
+    const meta: TokenMeta = calculateMeta(input, position)
     for (const tokenize of tokenizers) {
-      const meta: TokenMeta = calculateMeta(input, position)
       const [nbrOfCharacters, token] = tokenize(input, position, meta)
 
       // tokenizer matched

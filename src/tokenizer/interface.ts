@@ -24,4 +24,3 @@ export type Token = {
 }
 export type TokenDescriptor = [length: number, token: Token | undefined]
 export type Tokenizer = (input: string, position: number, meta: TokenMeta) => TokenDescriptor
-export type CalculateMeta = (input: string, position: number) => TokenMeta

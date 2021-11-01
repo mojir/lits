@@ -5325,7 +5325,7 @@ var Lits = (function (exports) {
         return TokenMetaImpl;
     }());
     function calculateMeta(input, position) {
-        var lines = input.substr(0, position + 1).split(/\r\n|\r|\n/);
+        var lines = input.substr(0, position).split(/\r\n|\r|\n/);
         return new TokenMetaImpl(lines.length, lines[lines.length - 1].length);
     }
     function tokenize(input) {
@@ -5335,9 +5335,9 @@ var Lits = (function (exports) {
         while (position < input.length) {
             tokenized = false;
             // Loop through all tokenizer until one matches
+            var meta = calculateMeta(input, position);
             for (var _i = 0, tokenizers_1 = tokenizers; _i < tokenizers_1.length; _i++) {
                 var tokenize_1 = tokenizers_1[_i];
-                var meta = calculateMeta(input, position);
                 var _a = tokenize_1(input, position, meta), nbrOfCharacters = _a[0], token = _a[1];
                 // tokenizer matched
                 if (nbrOfCharacters > 0) {
