@@ -148,28 +148,6 @@ var Lits = (function (exports) {
         }
         return true;
     }
-    // function assert(
-    //   value: unknown,
-    //   sourceCodeInfo: SourceCodeInfo,
-    //   options: AstNodeOptions = {},
-    // ): asserts value is AstNode {
-    //   if (!is(value, options)) {
-    //     throw new LitsError(`Expected AstNode${options.type ? ` (${options.type})` : ``}, got ${value}`, sourceCodeInfo)
-    //   }
-    // }
-    // function as(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): number {
-    //   assert(value, sourceCodeInfo, options)
-    //   return value
-    // }
-    // export const number: {
-    //   is: (value: unknown, options?: NumberOptions) => value is number
-    //   as: (value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions) => number
-    //   assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions): asserts value is number
-    // } = {
-    //   is,
-    //   as,
-    //   assert,
-    // }
 
     function is$2(value, options) {
         if (options === void 0) { options = {}; }
@@ -187,7 +165,7 @@ var Lits = (function (exports) {
     function assert$2(value, sourceCodeInfo, options) {
         if (options === void 0) { options = {}; }
         if (!is$2(value, options)) {
-            throw new LitsError("Expected " + (options.nonEmpty ? "non empty string" : options.nonEmpty ? "character" : "string") + ", got " + value, sourceCodeInfo);
+            throw new LitsError("Expected " + (options.nonEmpty ? "non empty string" : options.char ? "character" : "string") + ", got " + value, sourceCodeInfo);
         }
     }
     function as$2(value, sourceCodeInfo, options) {
@@ -294,6 +272,16 @@ var Lits = (function (exports) {
         assert: assert$1,
     };
 
+    var tokenTypes = {
+        fnShorthand: true,
+        modifier: true,
+        name: true,
+        number: true,
+        paren: true,
+        regexpShorthand: true,
+        reservedName: true,
+        string: true,
+    };
     function isToken(value) {
         if (typeof value !== "object" || value === null) {
             return false;
@@ -302,7 +290,7 @@ var Lits = (function (exports) {
         if (!tkn.sourceCodeInfo || !tkn.type || typeof tkn.value !== "string") {
             return false;
         }
-        return true;
+        return !!tokenTypes[tkn.type];
     }
     function is(value, options) {
         if (options === void 0) { options = {}; }
@@ -383,6 +371,63 @@ var Lits = (function (exports) {
         var nodeType = "Name";
         return value.type === nodeType;
     });
+    var normalExpressionNodeWithName = new Asserter("Normal expression node with name", function (value) {
+        if (!isAstNode(value)) {
+            return false;
+        }
+        var nodeType = "NormalExpression";
+        return value.type === nodeType && typeof value.name === "string";
+    });
+    var stringArray = new Asserter("string array", function (value) { return Array.isArray(value) && value.every(function (v) { return typeof v === "string"; }); });
+    var charArray = new Asserter("character array", function (value) { return Array.isArray(value) && value.every(function (v) { return typeof v === "string" && v.length === 1; }); });
+    var regExp = new Asserter("RegExp", function (value) { return value instanceof RegExp; });
+    var stringOrRegExp = new Asserter("string or RegExp", function (value) { return value instanceof RegExp || typeof value === "string"; });
+    var expressionNode = new Asserter("expression node", function (value) {
+        if (!astNode.is(value)) {
+            return false;
+        }
+        return (value.type === "NormalExpression" ||
+            value.type === "SpecialExpression" ||
+            value.type === "Number" ||
+            value.type === "String");
+    });
+    function assertNumberOfParams(count, node) {
+        var length = node.params.length;
+        if (typeof count === "number") {
+            if (length !== count) {
+                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected " + count + ", got " + length, node.token.sourceCodeInfo);
+            }
+        }
+        else {
+            var min = count.min, max = count.max;
+            if (min === undefined && max === undefined) {
+                throw new LitsError("Min or max must be specified", node.token.sourceCodeInfo);
+            }
+            if (typeof min === "number" && length < min) {
+                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at least " + min + ", got " + length, node.token.sourceCodeInfo);
+            }
+            if (typeof max === "number" && length > max) {
+                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at most " + max + ", got " + length, node.token.sourceCodeInfo);
+            }
+        }
+    }
+    function assertEventNumberOfParams(node) {
+        var length = node.params.length;
+        if (length % 2 !== 0) {
+            throw new LitsError("Wrong number of arguments, expected an even number, got " + length, node.token.sourceCodeInfo);
+        }
+    }
+    function asValue(value, sourceCodeInfo) {
+        if (value === undefined) {
+            throw new LitsError("Unexpected nil", sourceCodeInfo);
+        }
+        return value;
+    }
+    function assertValue(value, sourceCodeInfo) {
+        if (value === undefined) {
+            throw new LitsError("Unexpected nil", sourceCodeInfo);
+        }
+    }
 
     var andSpecialExpression = {
         parse: function (tokens, position, _a) {
@@ -744,247 +789,6 @@ var Lits = (function (exports) {
         return [position, args];
     }
 
-    function asX(value, sourceCodeInfo) {
-        if (value === undefined) {
-            throw new LitsError("Unexpected nil", sourceCodeInfo);
-        }
-        return value;
-    }
-    function assertNotUndefined(value, sourceCodeInfo) {
-        if (value === undefined) {
-            throw new LitsError("Unexpected nil", sourceCodeInfo);
-        }
-    }
-    function assertStringOrRegExp(value, sourceCodeInfo) {
-        if (!(value instanceof RegExp || typeof value === "string")) {
-            throw new LitsError("Expected RegExp or string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-    }
-    function isRegExp(value) {
-        return value instanceof RegExp;
-    }
-    function assertRegExp(value, sourceCodeInfo) {
-        if (!(value instanceof RegExp)) {
-            throw new LitsError("Expected RegExp, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-    }
-    function assertLength(count, node) {
-        var length = node.params.length;
-        if (typeof count === "number") {
-            if (length !== count) {
-                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected " + count + ", got " + length, node.token.sourceCodeInfo);
-            }
-        }
-        else {
-            var min = count.min, max = count.max;
-            if (min === undefined && max === undefined) {
-                throw new LitsError("Min or max must be specified", node.token.sourceCodeInfo);
-            }
-            if (typeof min === "number" && length < min) {
-                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at least " + min + ", got " + length, node.token.sourceCodeInfo);
-            }
-            if (typeof max === "number" && length > max) {
-                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at most " + max + ", got " + length, node.token.sourceCodeInfo);
-            }
-        }
-    }
-    function assertLengthEven(node) {
-        var length = node.params.length;
-        if (length % 2 !== 0) {
-            throw new LitsError("Wrong number of arguments, expected an even number, got " + length, node.token.sourceCodeInfo);
-        }
-    }
-    function assertStringArray(value, sourceCodeInfo) {
-        if (!Array.isArray(value) || value.some(function (v) { return typeof v !== "string"; })) {
-            throw new LitsError("Expected an array of strings, got " + value, sourceCodeInfo);
-        }
-    }
-    function assertCharArray(arr, sourceCodeInfo) {
-        if (!Array.isArray(arr) || arr.some(function (v) { return typeof v !== "string" || v.length !== 1; })) {
-            throw new LitsError("Expected an array of chars, got " + arr, sourceCodeInfo);
-        }
-    }
-    function isExpressionNode(node) {
-        return (node.type === "NormalExpression" ||
-            node.type === "SpecialExpression" ||
-            node.type === "Number" ||
-            node.type === "String");
-    }
-    function collHasKey(coll, key) {
-        if (!collection.is(coll)) {
-            return false;
-        }
-        if (string.is(coll) || array.is(coll)) {
-            if (!number.is(key, { integer: true })) {
-                return false;
-            }
-            return key >= 0 && key < coll.length;
-        }
-        return !!Object.getOwnPropertyDescriptor(coll, key);
-    }
-    var sortOrderByType = {
-        boolean: 0,
-        number: 1,
-        string: 2,
-        array: 3,
-        object: 4,
-        regexp: 5,
-        unknown: 6,
-        null: 7,
-    };
-    function getType(value) {
-        if (value === null) {
-            return "null";
-        }
-        else if (typeof value === "boolean") {
-            return "boolean";
-        }
-        else if (typeof value === "number") {
-            return "number";
-        }
-        else if (typeof value === "string") {
-            return "string";
-        }
-        else if (array.is(value)) {
-            return "array";
-        }
-        else if (object.is(value)) {
-            return "object";
-        }
-        else if (isRegExp(value)) {
-            return "regexp";
-        }
-        else {
-            return "unknown";
-        }
-    }
-    function compare(a, b) {
-        var aType = getType(a);
-        var bType = getType(b);
-        if (aType !== bType) {
-            return Math.sign(sortOrderByType[aType] - sortOrderByType[bType]);
-        }
-        switch (aType) {
-            case "null":
-                return 0;
-            case "boolean":
-                if (a === b) {
-                    return 0;
-                }
-                return a === false ? -1 : 1;
-            case "number":
-                return Math.sign(a - b);
-            case "string": {
-                var aString = a;
-                var bString = b;
-                return aString < bString ? -1 : aString > bString ? 1 : 0;
-            }
-            case "array": {
-                var aArray = a;
-                var bArray = b;
-                if (aArray.length < bArray.length) {
-                    return -1;
-                }
-                else if (aArray.length > bArray.length) {
-                    return 1;
-                }
-                for (var i = 0; i < aArray.length; i += 1) {
-                    var innerComp = compare(aArray[i], bArray[i]);
-                    if (innerComp !== 0) {
-                        return innerComp;
-                    }
-                }
-                return 0;
-            }
-            case "object": {
-                var aObj = a;
-                var bObj = b;
-                return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length);
-            }
-            case "regexp": {
-                var aString = a.source;
-                var bString = b.source;
-                return aString < bString ? -1 : aString > bString ? 1 : 0;
-            }
-            case "unknown":
-                return 0;
-        }
-    }
-    function isNormalExpressionNodeName(node) {
-        return typeof node.name === "string";
-    }
-    function deepEqual(a, b, sourceCodeInfo) {
-        if (a === b) {
-            return true;
-        }
-        if (typeof a === "number" && typeof b === "number") {
-            return Math.abs(a - b) < Number.EPSILON;
-        }
-        if (array.is(a) && array.is(b)) {
-            if (a.length !== b.length) {
-                return false;
-            }
-            for (var i = 0; i < a.length; i += 1) {
-                if (!deepEqual(any.as(a[i], sourceCodeInfo), any.as(b[i], sourceCodeInfo), sourceCodeInfo)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        if (a instanceof RegExp && b instanceof RegExp) {
-            return a.toString() === b.toString();
-        }
-        if (typeof a === "object" && a !== null && typeof b === "object" && b !== null) {
-            var aObj = a;
-            var bObj = b;
-            var aKeys = Object.keys(aObj);
-            var bKeys = Object.keys(bObj);
-            if (aKeys.length !== bKeys.length) {
-                return false;
-            }
-            for (var i = 0; i < aKeys.length; i += 1) {
-                var key = string.as(aKeys[i], sourceCodeInfo);
-                if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), sourceCodeInfo)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-    function toNonNegativeInteger(number) {
-        return Math.max(0, Math.ceil(number));
-    }
-    function toAny(value) {
-        return (value !== null && value !== void 0 ? value : null);
-    }
-    function clone(value) {
-        if (object.is(value)) {
-            return Object.entries(value).reduce(function (result, entry) {
-                var key = entry[0], val = entry[1];
-                result[key] = clone(val);
-                return result;
-            }, {});
-        }
-        if (array.is(value)) {
-            return value.map(function (item) { return clone(item); });
-        }
-        return value;
-    }
-    function cloneColl(value) {
-        return clone(value);
-    }
-    function createContextFromValues(values) {
-        if (!values) {
-            return {};
-        }
-        return Object.entries(values).reduce(function (context, _a) {
-            var key = _a[0], value = _a[1];
-            context[key] = { value: toAny(value) };
-            return context;
-        }, {});
-    }
-
     var defSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
@@ -1010,7 +814,7 @@ var Lits = (function (exports) {
             contextStack.globalContext[name] = { value: value };
             return value;
         },
-        validate: function (node) { return assertLength(2, node); },
+        validate: function (node) { return assertNumberOfParams(2, node); },
     };
 
     var defsSpecialExpression = {
@@ -1038,7 +842,7 @@ var Lits = (function (exports) {
             contextStack.globalContext[name] = { value: value };
             return value;
         },
-        validate: function (node) { return assertLength(2, node); },
+        validate: function (node) { return assertNumberOfParams(2, node); },
     };
 
     var doSpecialExpression = {
@@ -1168,7 +972,7 @@ var Lits = (function (exports) {
                 var newContextStack = contextStack.withContext(context);
                 var skip = false;
                 bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-                    var _b = asX(loopBindings[bindingIndex], sourceCodeInfo), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
+                    var _b = asValue(loopBindings[bindingIndex], sourceCodeInfo), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
                     var coll = collection.as(evaluateAstNode(binding.value, newContextStack), sourceCodeInfo);
                     var seq = sequence.is(coll) ? coll : Object.entries(coll);
                     if (seq.length === 0) {
@@ -1176,7 +980,7 @@ var Lits = (function (exports) {
                         abort = true;
                         break;
                     }
-                    var index = asX(bindingIndices[bindingIndex], sourceCodeInfo);
+                    var index = asValue(bindingIndices[bindingIndex], sourceCodeInfo);
                     if (index >= seq.length) {
                         skip = true;
                         if (bindingIndex === 0) {
@@ -1184,7 +988,7 @@ var Lits = (function (exports) {
                             break;
                         }
                         bindingIndices[bindingIndex] = 0;
-                        bindingIndices[bindingIndex - 1] = asX(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1;
+                        bindingIndices[bindingIndex - 1] = asValue(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1;
                         break;
                     }
                     if (context[binding.name]) {
@@ -1197,11 +1001,11 @@ var Lits = (function (exports) {
                         var modifier = modifiers_1[_i];
                         switch (modifier) {
                             case "&let":
-                                addToContext(asX(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo);
+                                addToContext(asValue(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo);
                                 break;
                             case "&when":
                                 if (!evaluateAstNode(astNode.as(whenNode, sourceCodeInfo), newContextStack)) {
-                                    bindingIndices[bindingIndex] = asX(bindingIndices[bindingIndex], sourceCodeInfo) + 1;
+                                    bindingIndices[bindingIndex] = asValue(bindingIndices[bindingIndex], sourceCodeInfo) + 1;
                                     skip = true;
                                     break bindingsLoop;
                                 }
@@ -1240,7 +1044,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "if-let",
-                binding: asX(bindings[0], firstToken.sourceCodeInfo),
+                binding: asValue(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1263,7 +1067,7 @@ var Lits = (function (exports) {
             }
             return null;
         },
-        validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+        validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
     };
 
     var ifNotSpecialExpression = {
@@ -1297,7 +1101,7 @@ var Lits = (function (exports) {
                 }
             }
         },
-        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
     };
 
     var ifSpecialExpression = {
@@ -1331,7 +1135,7 @@ var Lits = (function (exports) {
                 }
             }
         },
-        validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+        validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
     };
 
     var letSpecialExpression = {
@@ -1412,7 +1216,7 @@ var Lits = (function (exports) {
                             throw new LitsError("recur expected " + node.bindings.length + " parameters, got " + params_1.length, sourceCodeInfo);
                         }
                         node.bindings.forEach(function (binding, index) {
-                            asX(bindingContext[binding.name], sourceCodeInfo).value = any.as(params_1[index], sourceCodeInfo);
+                            asValue(bindingContext[binding.name], sourceCodeInfo).value = any.as(params_1[index], sourceCodeInfo);
                         });
                         return "continue";
                     }
@@ -1520,16 +1324,16 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var astNode = node.params[0];
-            assertNotUndefined(astNode, node.token.sourceCodeInfo);
+            var param = node.params[0];
+            astNode.assert(param, node.token.sourceCodeInfo);
             var startTime = Date.now();
-            var result = evaluateAstNode(astNode, contextStack);
+            var result = evaluateAstNode(param, contextStack);
             var totalTime = Date.now() - startTime;
             // eslint-disable-next-line no-console
             console.log("Elapsed time: " + totalTime + " ms");
             return result;
         },
-        validate: function (node) { return assertLength(1, node); },
+        validate: function (node) { return assertNumberOfParams(1, node); },
     };
 
     var trySpecialExpression = {
@@ -1580,6 +1384,178 @@ var Lits = (function (exports) {
         },
     };
 
+    function collHasKey(coll, key) {
+        if (!collection.is(coll)) {
+            return false;
+        }
+        if (string.is(coll) || array.is(coll)) {
+            if (!number.is(key, { integer: true })) {
+                return false;
+            }
+            return key >= 0 && key < coll.length;
+        }
+        return !!Object.getOwnPropertyDescriptor(coll, key);
+    }
+    var sortOrderByType = {
+        boolean: 0,
+        number: 1,
+        string: 2,
+        array: 3,
+        object: 4,
+        regexp: 5,
+        unknown: 6,
+        null: 7,
+    };
+    function getType(value) {
+        if (value === null) {
+            return "null";
+        }
+        else if (typeof value === "boolean") {
+            return "boolean";
+        }
+        else if (typeof value === "number") {
+            return "number";
+        }
+        else if (typeof value === "string") {
+            return "string";
+        }
+        else if (array.is(value)) {
+            return "array";
+        }
+        else if (object.is(value)) {
+            return "object";
+        }
+        else if (regExp.is(value)) {
+            return "regexp";
+        }
+        else {
+            return "unknown";
+        }
+    }
+    function compare(a, b) {
+        var aType = getType(a);
+        var bType = getType(b);
+        if (aType !== bType) {
+            return Math.sign(sortOrderByType[aType] - sortOrderByType[bType]);
+        }
+        switch (aType) {
+            case "null":
+                return 0;
+            case "boolean":
+                if (a === b) {
+                    return 0;
+                }
+                return a === false ? -1 : 1;
+            case "number":
+                return Math.sign(a - b);
+            case "string": {
+                var aString = a;
+                var bString = b;
+                return aString < bString ? -1 : aString > bString ? 1 : 0;
+            }
+            case "array": {
+                var aArray = a;
+                var bArray = b;
+                if (aArray.length < bArray.length) {
+                    return -1;
+                }
+                else if (aArray.length > bArray.length) {
+                    return 1;
+                }
+                for (var i = 0; i < aArray.length; i += 1) {
+                    var innerComp = compare(aArray[i], bArray[i]);
+                    if (innerComp !== 0) {
+                        return innerComp;
+                    }
+                }
+                return 0;
+            }
+            case "object": {
+                var aObj = a;
+                var bObj = b;
+                return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length);
+            }
+            case "regexp": {
+                var aString = a.source;
+                var bString = b.source;
+                return aString < bString ? -1 : aString > bString ? 1 : 0;
+            }
+            case "unknown":
+                return 0;
+        }
+    }
+    function deepEqual(a, b, sourceCodeInfo) {
+        if (a === b) {
+            return true;
+        }
+        if (typeof a === "number" && typeof b === "number") {
+            return Math.abs(a - b) < Number.EPSILON;
+        }
+        if (array.is(a) && array.is(b)) {
+            if (a.length !== b.length) {
+                return false;
+            }
+            for (var i = 0; i < a.length; i += 1) {
+                if (!deepEqual(any.as(a[i], sourceCodeInfo), any.as(b[i], sourceCodeInfo), sourceCodeInfo)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (a instanceof RegExp && b instanceof RegExp) {
+            return a.toString() === b.toString();
+        }
+        if (typeof a === "object" && a !== null && typeof b === "object" && b !== null) {
+            var aObj = a;
+            var bObj = b;
+            var aKeys = Object.keys(aObj);
+            var bKeys = Object.keys(bObj);
+            if (aKeys.length !== bKeys.length) {
+                return false;
+            }
+            for (var i = 0; i < aKeys.length; i += 1) {
+                var key = string.as(aKeys[i], sourceCodeInfo);
+                if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), sourceCodeInfo)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    function toNonNegativeInteger(number) {
+        return Math.max(0, Math.ceil(number));
+    }
+    function toAny(value) {
+        return (value !== null && value !== void 0 ? value : null);
+    }
+    function clone(value) {
+        if (object.is(value)) {
+            return Object.entries(value).reduce(function (result, entry) {
+                var key = entry[0], val = entry[1];
+                result[key] = clone(val);
+                return result;
+            }, {});
+        }
+        if (array.is(value)) {
+            return value.map(function (item) { return clone(item); });
+        }
+        return value;
+    }
+    function cloneColl(value) {
+        return clone(value);
+    }
+    function createContextFromValues(values) {
+        if (!values) {
+            return {};
+        }
+        return Object.entries(values).reduce(function (context, _a) {
+            var key = _a[0], value = _a[1];
+            context[key] = { value: toAny(value) };
+            return context;
+        }, {});
+    }
+
     var whenFirstSpecialExpression = {
         parse: function (tokens, position, _a) {
             var _b, _c;
@@ -1595,7 +1571,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "when-first",
-                binding: asX(bindings[0], firstToken.sourceCodeInfo),
+                binding: asValue(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1621,7 +1597,7 @@ var Lits = (function (exports) {
             }
             return result;
         },
-        validate: function (node) { return assertLength({ min: 0 }, node); },
+        validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
     };
 
     var whenLetSpecialExpression = {
@@ -1639,7 +1615,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "when-let",
-                binding: asX(bindings[0], firstToken.sourceCodeInfo),
+                binding: asValue(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1661,7 +1637,7 @@ var Lits = (function (exports) {
             }
             return result;
         },
-        validate: function (node) { return assertLength({ min: 0 }, node); },
+        validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
     };
 
     var whenNotSpecialExpression = {
@@ -1680,7 +1656,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
-            assertNotUndefined(whenExpression, node.token.sourceCodeInfo);
+            astNode.assert(whenExpression, node.token.sourceCodeInfo);
             if (evaluateAstNode(whenExpression, contextStack)) {
                 return null;
             }
@@ -1691,7 +1667,7 @@ var Lits = (function (exports) {
             }
             return result;
         },
-        validate: function (node) { return assertLength({ min: 1 }, node); },
+        validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
     };
 
     var whenSpecialExpression = {
@@ -1710,7 +1686,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
-            assertNotUndefined(whenExpression, node.token.sourceCodeInfo);
+            astNode.assert(whenExpression, node.token.sourceCodeInfo);
             if (!evaluateAstNode(whenExpression, contextStack)) {
                 return null;
             }
@@ -1721,7 +1697,7 @@ var Lits = (function (exports) {
             }
             return result;
         },
-        validate: function (node) { return assertLength({ min: 1 }, node); },
+        validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
     };
 
     var bitwiseNormalExpression = {
@@ -1732,7 +1708,7 @@ var Lits = (function (exports) {
                 number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num << count;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'bit-shift-right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1741,7 +1717,7 @@ var Lits = (function (exports) {
                 number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num >> count;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'bit-not': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1749,7 +1725,7 @@ var Lits = (function (exports) {
                 number.assert(num, sourceCodeInfo, { integer: true });
                 return ~num;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'bit-and': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1760,7 +1736,7 @@ var Lits = (function (exports) {
                     return result & value;
                 }, first);
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         'bit-and-not': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1771,7 +1747,7 @@ var Lits = (function (exports) {
                     return result & ~value;
                 }, first);
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         'bit-or': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1782,7 +1758,7 @@ var Lits = (function (exports) {
                     return result | value;
                 }, first);
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         'bit-xor': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1793,7 +1769,7 @@ var Lits = (function (exports) {
                     return result ^ value;
                 }, first);
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         'bit-flip': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1803,7 +1779,7 @@ var Lits = (function (exports) {
                 var mask = 1 << index;
                 return (num ^= mask);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'bit-set': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1813,7 +1789,7 @@ var Lits = (function (exports) {
                 var mask = 1 << index;
                 return (num |= mask);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'bit-clear': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1823,7 +1799,7 @@ var Lits = (function (exports) {
                 var mask = 1 << index;
                 return (num &= ~mask);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'bit-test': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1833,7 +1809,7 @@ var Lits = (function (exports) {
                 var mask = 1 << index;
                 return !!(num & mask);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
     };
 
@@ -1952,7 +1928,7 @@ var Lits = (function (exports) {
                 var result = get(coll, key, sourceCodeInfo);
                 return result === undefined ? defaultValue : result;
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         'get-in': {
             evaluate: function (params, sourceCodeInfo) {
@@ -1973,7 +1949,7 @@ var Lits = (function (exports) {
                 }
                 return any.is(coll) ? coll : defaultValue;
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         count: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1987,7 +1963,7 @@ var Lits = (function (exports) {
                 }
                 return Object.keys(coll).length;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'contains?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2003,7 +1979,7 @@ var Lits = (function (exports) {
                 }
                 return !!Object.getOwnPropertyDescriptor(coll, key);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'has?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2017,7 +1993,7 @@ var Lits = (function (exports) {
                 }
                 return Object.values(coll).includes(value);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'has-some?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2050,7 +2026,7 @@ var Lits = (function (exports) {
                 }
                 return false;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'has-every?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2083,7 +2059,7 @@ var Lits = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         assoc: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2093,7 +2069,7 @@ var Lits = (function (exports) {
                 any.assert(value, sourceCodeInfo);
                 return assoc(coll, key, value, sourceCodeInfo);
             },
-            validate: function (node) { return assertLength(3, node); },
+            validate: function (node) { return assertNumberOfParams(3, node); },
         },
         'assoc-in': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2118,7 +2094,7 @@ var Lits = (function (exports) {
                 }
                 return coll;
             },
-            validate: function (node) { return assertLength(3, node); },
+            validate: function (node) { return assertNumberOfParams(3, node); },
         },
         update: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2129,7 +2105,7 @@ var Lits = (function (exports) {
                 litsFunction.assert(fn, sourceCodeInfo);
                 return update(coll, key, fn, params, sourceCodeInfo, contextStack, executeFunction);
             },
-            validate: function (node) { return assertLength({ min: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 3 }, node); },
         },
         'update-in': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2155,7 +2131,7 @@ var Lits = (function (exports) {
                 }
                 return coll;
             },
-            validate: function (node) { return assertLength({ min: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 3 }, node); },
         },
         concat: {
             evaluate: function (params, sourceCodeInfo) {
@@ -2179,7 +2155,7 @@ var Lits = (function (exports) {
                     }, {});
                 }
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         'empty?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2193,7 +2169,7 @@ var Lits = (function (exports) {
                 }
                 return Object.keys(first).length === 0;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2209,7 +2185,7 @@ var Lits = (function (exports) {
                 }
                 return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2225,7 +2201,7 @@ var Lits = (function (exports) {
                 }
                 return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'not-any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2241,7 +2217,7 @@ var Lits = (function (exports) {
                 }
                 return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'not-every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2257,7 +2233,7 @@ var Lits = (function (exports) {
                 }
                 return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
     };
 
@@ -2333,7 +2309,7 @@ var Lits = (function (exports) {
                 string.assert(elem, sourceCodeInfo, { char: true });
                 return "" + elem + seq;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         nth: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2342,7 +2318,7 @@ var Lits = (function (exports) {
                 number.assert(i, sourceCodeInfo, { integer: true });
                 return toAny(seq[i]);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         filter: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2358,7 +2334,7 @@ var Lits = (function (exports) {
                     .filter(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); })
                     .join("");
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         first: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2366,7 +2342,7 @@ var Lits = (function (exports) {
                 sequence.assert(array, sourceCodeInfo);
                 return toAny(array[0]);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         last: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2374,11 +2350,11 @@ var Lits = (function (exports) {
                 sequence.assert(first, sourceCodeInfo);
                 return toAny(first[first.length - 1]);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         map: {
             evaluate: evaluateMap,
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         pop: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2391,7 +2367,7 @@ var Lits = (function (exports) {
                 copy.pop();
                 return copy;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         position: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2408,7 +2384,7 @@ var Lits = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'index-of': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2425,21 +2401,21 @@ var Lits = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         push: {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], values = _a.slice(1);
                 sequence.assert(seq, sourceCodeInfo);
                 if (string.is(seq)) {
-                    assertCharArray(values, sourceCodeInfo);
+                    charArray.assert(values, sourceCodeInfo);
                     return __spreadArray([seq], values).join("");
                 }
                 else {
                     return __spreadArray(__spreadArray([], seq, true), values);
                 }
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         reduce: {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2492,7 +2468,7 @@ var Lits = (function (exports) {
                     }
                 }
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         'reduce-right': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2545,7 +2521,7 @@ var Lits = (function (exports) {
                     }
                 }
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         rest: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2559,7 +2535,7 @@ var Lits = (function (exports) {
                 }
                 return first.substr(1);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         nthrest: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2572,7 +2548,7 @@ var Lits = (function (exports) {
                 }
                 return seq.substr(integerCount);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         next: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2589,7 +2565,7 @@ var Lits = (function (exports) {
                 }
                 return first.substr(1);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         nthnext: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2605,7 +2581,7 @@ var Lits = (function (exports) {
                 }
                 return seq.substr(integerCount);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         reverse: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2616,7 +2592,7 @@ var Lits = (function (exports) {
                 }
                 return first.split("").reverse().join("");
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         second: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2624,7 +2600,7 @@ var Lits = (function (exports) {
                 sequence.assert(array, sourceCodeInfo);
                 return toAny(array[1]);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         shift: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2637,7 +2613,7 @@ var Lits = (function (exports) {
                 copy.shift();
                 return copy;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         slice: {
             evaluate: function (params, sourceCodeInfo) {
@@ -2653,7 +2629,7 @@ var Lits = (function (exports) {
                 number.assert(to, sourceCodeInfo, { integer: true });
                 return seq.slice(from, to);
             },
-            validate: function (node) { return assertLength({ min: 1, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
         },
         some: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2670,7 +2646,7 @@ var Lits = (function (exports) {
                 }
                 return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); }));
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         sort: {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2708,7 +2684,7 @@ var Lits = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
         },
         'sort-by': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2758,7 +2734,7 @@ var Lits = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         take: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2768,7 +2744,7 @@ var Lits = (function (exports) {
                 var num = Math.max(Math.ceil(n), 0);
                 return input.slice(0, num);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'take-last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2779,7 +2755,7 @@ var Lits = (function (exports) {
                 var from = array.length - num;
                 return array.slice(from);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2799,7 +2775,7 @@ var Lits = (function (exports) {
                 }
                 return string.is(seq) ? result.join("") : result;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         drop: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2809,7 +2785,7 @@ var Lits = (function (exports) {
                 sequence.assert(input, sourceCodeInfo);
                 return input.slice(num);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'drop-last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2820,7 +2796,7 @@ var Lits = (function (exports) {
                 var from = array.length - num;
                 return array.slice(0, from);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'drop-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2836,21 +2812,21 @@ var Lits = (function (exports) {
                 var from = charArray.findIndex(function (elem) { return !executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 return charArray.slice(from).join("");
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         unshift: {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], values = _a.slice(1);
                 sequence.assert(seq, sourceCodeInfo);
                 if (string.is(seq)) {
-                    assertCharArray(values, sourceCodeInfo);
+                    charArray.assert(values, sourceCodeInfo);
                     return __spreadArray(__spreadArray([], values, true), [seq]).join("");
                 }
                 var copy = __spreadArray([], seq);
                 copy.unshift.apply(copy, values);
                 return copy;
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         'random-sample!': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2867,7 +2843,7 @@ var Lits = (function (exports) {
                     return seq.filter(function () { return Math.random() < prob; });
                 }
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'rand-nth!': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2882,7 +2858,7 @@ var Lits = (function (exports) {
                 }
                 return toAny(seq[index]);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         shuffle: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2904,7 +2880,7 @@ var Lits = (function (exports) {
                 }
                 return string.is(input) ? array.join("") : array;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         distinct: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2915,7 +2891,7 @@ var Lits = (function (exports) {
                 }
                 return Array.from(new Set(input.split(""))).join("");
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         remove: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2931,7 +2907,7 @@ var Lits = (function (exports) {
                     .filter(function (elem) { return !executeFunction(fn, [elem], sourceCodeInfo, contextStack); })
                     .join("");
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'remove-at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2949,7 +2925,7 @@ var Lits = (function (exports) {
                 }
                 return "" + input.substring(0, index) + input.substring(index + 1);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'split-at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2959,7 +2935,7 @@ var Lits = (function (exports) {
                 sequence.assert(seq, sourceCodeInfo);
                 return [seq.slice(0, intPos), seq.slice(intPos)];
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'split-with': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2975,7 +2951,7 @@ var Lits = (function (exports) {
                 }
                 return [seq.slice(0, index), seq.slice(index)];
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         frequencies: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2993,7 +2969,7 @@ var Lits = (function (exports) {
                     return result;
                 }, {});
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'group-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3012,7 +2988,7 @@ var Lits = (function (exports) {
                     return result;
                 }, {});
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         partition: {
             evaluate: function (params, sourceCodeInfo) {
@@ -3027,7 +3003,7 @@ var Lits = (function (exports) {
                 var pad = len === 4 ? (params[2] === null ? [] : array.as(params[2], sourceCodeInfo)) : undefined;
                 return partition(n, step, seq, pad, sourceCodeInfo);
             },
-            validate: function (node) { return assertLength({ min: 2, max: 4 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 4 }, node); },
         },
         'partition-all': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3037,7 +3013,7 @@ var Lits = (function (exports) {
                 var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], sourceCodeInfo)) : n;
                 return partition(n, step, seq, [], sourceCodeInfo);
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         'partition-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3058,7 +3034,7 @@ var Lits = (function (exports) {
                 }, []);
                 return isStringSeq ? result.map(function (elem) { return elem.join(""); }) : result;
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
     };
     function partition(n, step, seq, pad, sourceCodeInfo) {
@@ -3134,7 +3110,7 @@ var Lits = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertLength({ min: 1, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
         },
         repeat: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3146,7 +3122,7 @@ var Lits = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         flatten: {
             evaluate: function (_a) {
@@ -3156,7 +3132,7 @@ var Lits = (function (exports) {
                 }
                 return seq.flat(Number.POSITIVE_INFINITY);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         mapcat: {
             evaluate: function (params, sourceCodeInfo, contextStack, helpers) {
@@ -3167,7 +3143,7 @@ var Lits = (function (exports) {
                 array.assert(mapResult, sourceCodeInfo);
                 return mapResult.flat(1);
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
     };
 
@@ -3178,7 +3154,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return first + 1;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         dec: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3186,7 +3162,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return first - 1;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         '+': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3245,7 +3221,7 @@ var Lits = (function (exports) {
                 var quotient = Math.trunc(dividend / divisor);
                 return quotient;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         mod: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3255,7 +3231,7 @@ var Lits = (function (exports) {
                 var quotient = Math.floor(dividend / divisor);
                 return dividend - divisor * quotient;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         rem: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3265,7 +3241,7 @@ var Lits = (function (exports) {
                 var quotient = Math.trunc(dividend / divisor);
                 return dividend - divisor * quotient;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         sqrt: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3273,7 +3249,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return Math.sqrt(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         cbrt: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3281,7 +3257,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return Math.cbrt(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         pow: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3290,7 +3266,7 @@ var Lits = (function (exports) {
                 number.assert(second, sourceCodeInfo);
                 return Math.pow(first, second);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         round: {
             evaluate: function (params, sourceCodeInfo) {
@@ -3303,7 +3279,7 @@ var Lits = (function (exports) {
                 var factor = Math.pow(10, decimals);
                 return Math.round(value * factor) / factor;
             },
-            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
         },
         trunc: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3311,7 +3287,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return Math.trunc(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         floor: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3319,7 +3295,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return Math.floor(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         ceil: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3327,14 +3303,14 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return Math.ceil(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'rand!': {
             evaluate: function (parameters, sourceCodeInfo) {
                 var num = number.as(parameters.length === 1 ? parameters[0] : 1, sourceCodeInfo);
                 return Math.random() * num;
             },
-            validate: function (node) { return assertLength({ min: 0, max: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 0, max: 1 }, node); },
         },
         'rand-int!': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3342,7 +3318,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo);
                 return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         min: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3356,7 +3332,7 @@ var Lits = (function (exports) {
                     return Math.min(min, value);
                 }, first);
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         max: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3370,7 +3346,7 @@ var Lits = (function (exports) {
                     return Math.max(min, value);
                 }, first);
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         abs: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3378,7 +3354,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.abs(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         sign: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3386,67 +3362,67 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.sign(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'max-safe-integer': {
             evaluate: function () {
                 return Number.MAX_SAFE_INTEGER;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         'min-safe-integer': {
             evaluate: function () {
                 return Number.MIN_SAFE_INTEGER;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         'max-value': {
             evaluate: function () {
                 return Number.MAX_VALUE;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         'min-value': {
             evaluate: function () {
                 return Number.MIN_VALUE;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         epsilon: {
             evaluate: function () {
                 return Number.EPSILON;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         'positive-infinity': {
             evaluate: function () {
                 return Number.POSITIVE_INFINITY;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         'negative-infinity': {
             evaluate: function () {
                 return Number.NEGATIVE_INFINITY;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         nan: {
             evaluate: function () {
                 return Number.NaN;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         e: {
             evaluate: function () {
                 return Math.E;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         pi: {
             evaluate: function () {
                 return Math.PI;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         exp: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3454,7 +3430,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.exp(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         log: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3462,7 +3438,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.log(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         log2: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3470,7 +3446,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.log2(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         log10: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3478,7 +3454,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.log10(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         sin: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3486,7 +3462,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.sin(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         asin: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3494,7 +3470,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.asin(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         sinh: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3502,7 +3478,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.sinh(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         asinh: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3510,7 +3486,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.asinh(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         cos: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3518,7 +3494,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.cos(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         acos: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3526,7 +3502,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.acos(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         cosh: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3534,7 +3510,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.cosh(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         acosh: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3542,7 +3518,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.acosh(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         tan: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3550,7 +3526,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.tan(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         atan: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3558,7 +3534,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.atan(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         tanh: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3566,7 +3542,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.tanh(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         atanh: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3574,7 +3550,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Math.atanh(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
     };
 
@@ -3592,7 +3568,7 @@ var Lits = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         '=': {
             evaluate: function (_a) {
@@ -3605,14 +3581,14 @@ var Lits = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         'equal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var a = _a[0], b = _a[1];
                 return deepEqual(any.as(a, sourceCodeInfo), any.as(b, sourceCodeInfo), sourceCodeInfo);
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         '>': {
             evaluate: function (_a) {
@@ -3627,7 +3603,7 @@ var Lits = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         '<': {
             evaluate: function (_a) {
@@ -3642,7 +3618,7 @@ var Lits = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         '>=': {
             evaluate: function (_a) {
@@ -3657,7 +3633,7 @@ var Lits = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         '<=': {
             evaluate: function (_a) {
@@ -3672,20 +3648,20 @@ var Lits = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         not: {
             evaluate: function (_a) {
                 var first = _a[0];
                 return !first;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'inst-ms': {
             evaluate: function () {
                 return Date.now();
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         'write!': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3708,21 +3684,21 @@ var Lits = (function (exports) {
                 console.warn("*** LITS DEBUG ***\n" + JSON.stringify(params[0], null, 2) + "\n");
                 return any.as(params[0], sourceCodeInfo);
             },
-            validate: function (node) { return assertLength({ max: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ max: 1 }, node); },
         },
         boolean: {
             evaluate: function (_a) {
                 var value = _a[0];
                 return !!value;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         compare: {
             evaluate: function (_a) {
                 var a = _a[0], b = _a[1];
                 return compare(a, b);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         assert: {
             evaluate: function (params, sourceCodeInfo) {
@@ -3734,13 +3710,13 @@ var Lits = (function (exports) {
                 }
                 return any.as(value, sourceCodeInfo);
             },
-            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
         },
         'lits-version': {
             evaluate: function () {
                 return version;
             },
-            validate: function (node) { return assertLength(0, node); },
+            validate: function (node) { return assertNumberOfParams(0, node); },
         },
     };
     function contextStackToString(contextStack) {
@@ -3785,7 +3761,7 @@ var Lits = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertLengthEven(node); },
+            validate: function (node) { return assertEventNumberOfParams(node); },
         },
         keys: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3793,7 +3769,7 @@ var Lits = (function (exports) {
                 object.assert(first, sourceCodeInfo);
                 return Object.keys(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         vals: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3801,7 +3777,7 @@ var Lits = (function (exports) {
                 object.assert(first, sourceCodeInfo);
                 return Object.values(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         entries: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3809,7 +3785,7 @@ var Lits = (function (exports) {
                 object.assert(first, sourceCodeInfo);
                 return Object.entries(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         find: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3821,7 +3797,7 @@ var Lits = (function (exports) {
                 }
                 return null;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         dissoc: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3832,7 +3808,7 @@ var Lits = (function (exports) {
                 delete obj[key];
                 return result;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         merge: {
             evaluate: function (params, sourceCodeInfo) {
@@ -3846,7 +3822,7 @@ var Lits = (function (exports) {
                     return __assign(__assign({}, result), obj);
                 }, __assign({}, first));
             },
-            validate: function (node) { return assertLength({ min: 0 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
         },
         'merge-with': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -3872,12 +3848,12 @@ var Lits = (function (exports) {
                     return result;
                 }, __assign({}, first));
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         zipmap: {
             evaluate: function (_a, sourceCodeInfo) {
                 var keys = _a[0], values = _a[1];
-                assertStringArray(keys, sourceCodeInfo);
+                stringArray.assert(keys, sourceCodeInfo);
                 array.assert(values, sourceCodeInfo);
                 var length = Math.min(keys.length, values.length);
                 var result = {};
@@ -3887,12 +3863,12 @@ var Lits = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'select-keys': {
             evaluate: function (_a, sourceCodeInfo) {
                 var obj = _a[0], keys = _a[1];
-                assertStringArray(keys, sourceCodeInfo);
+                stringArray.assert(keys, sourceCodeInfo);
                 object.assert(obj, sourceCodeInfo);
                 return keys.reduce(function (result, key) {
                     if (collHasKey(obj, key)) {
@@ -3901,7 +3877,7 @@ var Lits = (function (exports) {
                     return result;
                 }, {});
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
     };
 
@@ -3911,42 +3887,42 @@ var Lits = (function (exports) {
                 var first = _a[0];
                 return litsFunction.is(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'string?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return typeof first === "string";
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'number?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return typeof first === "number";
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'integer?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return typeof first === "number" && number.is(first, { integer: true });
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'boolean?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return typeof first === "boolean";
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'nil?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return first === null || first === undefined;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'zero?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3954,7 +3930,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo, { finite: true });
                 return first === 0;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'pos?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3962,7 +3938,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo, { finite: true });
                 return first > 0;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'neg?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3970,7 +3946,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo, { finite: true });
                 return first < 0;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'even?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3978,7 +3954,7 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo, { finite: true });
                 return first % 2 === 0;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'odd?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3986,42 +3962,42 @@ var Lits = (function (exports) {
                 number.assert(first, sourceCodeInfo, { finite: true });
                 return number.is(first, { integer: true }) && first % 2 !== 0;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'array?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return array.is(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'coll?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return collection.is(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'seq?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return sequence.is(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'object?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return object.is(first);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'regexp?': {
             evaluate: function (_a) {
                 var first = _a[0];
                 return first !== null && !Array.isArray(first) && typeof first === "object" && first instanceof RegExp;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'finite?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4029,7 +4005,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Number.isFinite(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'nan?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4037,7 +4013,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return Number.isNaN(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'positive-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4045,7 +4021,7 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return value === Number.POSITIVE_INFINITY;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'negative-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4053,21 +4029,21 @@ var Lits = (function (exports) {
                 number.assert(value, sourceCodeInfo);
                 return value === Number.NEGATIVE_INFINITY;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'true?': {
             evaluate: function (_a) {
                 var value = _a[0];
                 return value === true;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'false?': {
             evaluate: function (_a) {
                 var value = _a[0];
                 return value === false;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
     };
 
@@ -4082,12 +4058,12 @@ var Lits = (function (exports) {
                 string.assert(second, sourceCodeInfo);
                 return new RegExp(first, second);
             },
-            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
         },
         match: {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], second = _a[1];
-                assertRegExp(first, sourceCodeInfo);
+                regExp.assert(first, sourceCodeInfo);
                 string.assert(second, sourceCodeInfo);
                 var match = first.exec(second);
                 if (match) {
@@ -4095,17 +4071,17 @@ var Lits = (function (exports) {
                 }
                 return null;
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         replace: {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], regexp = _a[1], value = _a[2];
                 string.assert(str, sourceCodeInfo);
-                assertRegExp(regexp, sourceCodeInfo);
+                regExp.assert(regexp, sourceCodeInfo);
                 string.assert(value, sourceCodeInfo);
                 return str.replace(regexp, value);
             },
-            validate: function (node) { return assertLength(3, node); },
+            validate: function (node) { return assertNumberOfParams(3, node); },
         },
     };
 
@@ -4121,7 +4097,7 @@ var Lits = (function (exports) {
                 number.assert(third, sourceCodeInfo, { gte: second });
                 return first.substring(second, third);
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         'string-repeat': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4130,7 +4106,7 @@ var Lits = (function (exports) {
                 number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return str.repeat(count);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         str: {
             evaluate: function (params) {
@@ -4156,7 +4132,7 @@ var Lits = (function (exports) {
                 }
                 return number;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'number-to-string': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4177,7 +4153,7 @@ var Lits = (function (exports) {
                     return Number(num).toString(base);
                 }
             },
-            validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
         },
         'from-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4186,15 +4162,15 @@ var Lits = (function (exports) {
                 var int = toNonNegativeInteger(num);
                 return String.fromCodePoint(int);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'to-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
                 string.assert(str, sourceCodeInfo, { nonEmpty: true });
-                return asX(str.codePointAt(0), sourceCodeInfo);
+                return asValue(str.codePointAt(0), sourceCodeInfo);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'lower-case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4202,7 +4178,7 @@ var Lits = (function (exports) {
                 string.assert(str, sourceCodeInfo);
                 return str.toLowerCase();
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'upper-case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4210,7 +4186,7 @@ var Lits = (function (exports) {
                 string.assert(str, sourceCodeInfo);
                 return str.toUpperCase();
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         trim: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4218,7 +4194,7 @@ var Lits = (function (exports) {
                 string.assert(str, sourceCodeInfo);
                 return str.trim();
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'trim-left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4226,7 +4202,7 @@ var Lits = (function (exports) {
                 string.assert(str, sourceCodeInfo);
                 return str.replace(/^\s+/, "");
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'trim-right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4234,7 +4210,7 @@ var Lits = (function (exports) {
                 string.assert(str, sourceCodeInfo);
                 return str.replace(/\s+$/, "");
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         join: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4244,19 +4220,19 @@ var Lits = (function (exports) {
                 string.assert(delimiter, sourceCodeInfo);
                 return stringList.join(delimiter);
             },
-            validate: function (node) { return assertLength(2, node); },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         split: {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], delimiter = _a[1], limit = _a[2];
                 string.assert(str, sourceCodeInfo);
-                assertStringOrRegExp(delimiter, sourceCodeInfo);
+                stringOrRegExp.assert(delimiter, sourceCodeInfo);
                 if (limit !== undefined) {
                     number.assert(limit, sourceCodeInfo, { integer: true, nonNegative: true });
                 }
                 return str.split(delimiter, limit);
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         'pad-left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4268,7 +4244,7 @@ var Lits = (function (exports) {
                 }
                 return str.padStart(length, padString);
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         'pad-right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4280,7 +4256,7 @@ var Lits = (function (exports) {
                 }
                 return str.padEnd(length, padString);
             },
-            validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
         template: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4288,7 +4264,7 @@ var Lits = (function (exports) {
                 string.assert(templateString, sourceCodeInfo);
                 var templateStrings = templateString.split("||||");
                 if (templateStrings.length === 1) {
-                    assertStringArray(placeholders, sourceCodeInfo);
+                    stringArray.assert(placeholders, sourceCodeInfo);
                     return applyPlaceholders(templateStrings[0], placeholders, sourceCodeInfo);
                 }
                 else if (templateStrings.length === 2) {
@@ -4306,7 +4282,7 @@ var Lits = (function (exports) {
                     throw new LitsError("Invalid template string, only one \"||||\" separator allowed", sourceCodeInfo);
                 }
             },
-            validate: function (node) { return assertLength({ min: 1, max: 10 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 10 }, node); },
         },
     };
     var doubleDollarRegexp = /\$\$/g;
@@ -4334,14 +4310,14 @@ var Lits = (function (exports) {
                 var applyArray = __spreadArray(__spreadArray([], params.slice(0, -1), true), last);
                 return executeFunction(func, applyArray, sourceCodeInfo, contextStack);
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         identity: {
             evaluate: function (_a) {
                 var value = _a[0];
                 return toAny(value);
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         partial: {
             evaluate: function (_a) {
@@ -4354,7 +4330,7 @@ var Lits = (function (exports) {
                     _b.params = params,
                     _b;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         comp: {
             evaluate: function (fns) {
@@ -4382,7 +4358,7 @@ var Lits = (function (exports) {
                     _b.value = toAny(value),
                     _b;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         juxt: {
             evaluate: function (fns) {
@@ -4393,7 +4369,7 @@ var Lits = (function (exports) {
                     _a.fns = fns,
                     _a;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         complement: {
             evaluate: function (_a) {
@@ -4405,7 +4381,7 @@ var Lits = (function (exports) {
                     _b.fn = toAny(fn),
                     _b;
             },
-            validate: function (node) { return assertLength(1, node); },
+            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'every-pred': {
             evaluate: function (fns) {
@@ -4416,7 +4392,7 @@ var Lits = (function (exports) {
                     _a.fns = fns,
                     _a;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         'some-pred': {
             evaluate: function (fns) {
@@ -4427,7 +4403,7 @@ var Lits = (function (exports) {
                     _a.fns = fns,
                     _a;
             },
-            validate: function (node) { return assertLength({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
         fnil: {
             evaluate: function (_a) {
@@ -4440,7 +4416,7 @@ var Lits = (function (exports) {
                     _b.params = params,
                     _b;
             },
-            validate: function (node) { return assertLength({ min: 2 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
     };
 
@@ -4602,7 +4578,7 @@ var Lits = (function (exports) {
         },
         builtin: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            var normalExpression = asX(normalExpressions[fn.name], sourceCodeInfo);
+            var normalExpression = asValue(normalExpressions[fn.name], sourceCodeInfo);
             return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction: executeFunction });
         },
     };
@@ -4658,7 +4634,7 @@ var Lits = (function (exports) {
         return node.value;
     }
     function evaluateReservedName(node) {
-        return asX(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value;
+        return asValue(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value;
     }
     function evaluateName(node, contextStack) {
         var _a;
@@ -4684,7 +4660,7 @@ var Lits = (function (exports) {
         var _a;
         var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
         var sourceCodeInfo = node.token.sourceCodeInfo;
-        if (isNormalExpressionNodeName(node)) {
+        if (normalExpressionNodeWithName.is(node)) {
             for (var _i = 0, _b = contextStack.stack; _i < _b.length; _i++) {
                 var context = _b[_i];
                 var fn = (_a = context[node.name]) === null || _a === void 0 ? void 0 : _a.value;
@@ -4726,7 +4702,7 @@ var Lits = (function (exports) {
         return normalExpression.evaluate(params, node.token.sourceCodeInfo, contextStack, { executeFunction: executeFunction });
     }
     function evaluateSpecialExpression(node, contextStack) {
-        var specialExpression = asX(builtin.specialExpressions[node.name], node.token.sourceCodeInfo);
+        var specialExpression = asValue(builtin.specialExpressions[node.name], node.token.sourceCodeInfo);
         return specialExpression.evaluate(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
     }
     function evalueateObjectAsFunction(fn, params, sourceCodeInfo) {
@@ -4844,7 +4820,7 @@ var Lits = (function (exports) {
             params: params,
             token: firstToken,
         };
-        assertLengthEven(node);
+        assertEventNumberOfParams(node);
         return [position, node];
     };
     var parseRegexpShorthand = function (tokens, position) {
@@ -4854,7 +4830,7 @@ var Lits = (function (exports) {
             value: tkn.value,
             token: tkn,
         };
-        assertNotUndefined(tkn.options, tkn.sourceCodeInfo);
+        assertValue(tkn.options, tkn.sourceCodeInfo);
         var optionsNode = {
             type: "String",
             value: "" + (tkn.options.g ? "g" : "") + (tkn.options.i ? "i" : ""),
@@ -4962,7 +4938,7 @@ var Lits = (function (exports) {
         var params;
         _a = parseTokens(tokens, newPosition), position = _a[0], params = _a[1];
         position += 1;
-        if (isExpressionNode(fnNode)) {
+        if (expressionNode.is(fnNode)) {
             var node_1 = {
                 type: "NormalExpression",
                 expression: fnNode,
@@ -4987,7 +4963,7 @@ var Lits = (function (exports) {
     var parseSpecialExpression = function (tokens, position) {
         var _a = token.as(tokens[position], "EOF"), expressionName = _a.value, sourceCodeInfo = _a.sourceCodeInfo;
         position += 1;
-        var _b = asX(builtin.specialExpressions[expressionName], sourceCodeInfo), parse = _b.parse, validate = _b.validate;
+        var _b = asValue(builtin.specialExpressions[expressionName], sourceCodeInfo), parse = _b.parse, validate = _b.validate;
         var _c = parse(tokens, position, {
             parseExpression: parseExpression,
             parseTokens: parseTokens,

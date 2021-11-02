@@ -3,8 +3,7 @@ import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interfac
 import { Any, Arr } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { Token, SourceCodeInfo } from '../../tokenizer/interface'
-import { asX } from '../../utils'
-import { any, astNode, collection, sequence, token } from '../../utils/assertion'
+import { any, astNode, asValue, collection, sequence, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression, Parsers } from '../interface'
 
 interface ForSpecialExpressionNode extends SpecialExpressionNode {
@@ -133,7 +132,10 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
       const newContextStack = contextStack.withContext(context)
       let skip = false
       bindingsLoop: for (let bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-        const { binding, letBindings, whenNode, whileNode, modifiers } = asX(loopBindings[bindingIndex], sourceCodeInfo)
+        const { binding, letBindings, whenNode, whileNode, modifiers } = asValue(
+          loopBindings[bindingIndex],
+          sourceCodeInfo,
+        )
         const coll = collection.as(evaluateAstNode(binding.value, newContextStack), sourceCodeInfo)
         const seq = sequence.is(coll) ? coll : Object.entries(coll)
         if (seq.length === 0) {
@@ -141,7 +143,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
           abort = true
           break
         }
-        const index = asX(bindingIndices[bindingIndex], sourceCodeInfo)
+        const index = asValue(bindingIndices[bindingIndex], sourceCodeInfo)
         if (index >= seq.length) {
           skip = true
           if (bindingIndex === 0) {
@@ -149,7 +151,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
             break
           }
           bindingIndices[bindingIndex] = 0
-          bindingIndices[bindingIndex - 1] = asX(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
+          bindingIndices[bindingIndex - 1] = asValue(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
           break
         }
         if (context[binding.name]) {
@@ -161,11 +163,17 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
         for (const modifier of modifiers) {
           switch (modifier) {
             case `&let`:
-              addToContext(asX(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo)
+              addToContext(
+                asValue(letBindings, sourceCodeInfo),
+                context,
+                newContextStack,
+                evaluateAstNode,
+                sourceCodeInfo,
+              )
               break
             case `&when`:
               if (!evaluateAstNode(astNode.as(whenNode, sourceCodeInfo), newContextStack)) {
-                bindingIndices[bindingIndex] = asX(bindingIndices[bindingIndex], sourceCodeInfo) + 1
+                bindingIndices[bindingIndex] = asValue(bindingIndices[bindingIndex], sourceCodeInfo) + 1
                 skip = true
                 break bindingsLoop
               }

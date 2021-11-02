@@ -1,5 +1,4 @@
-import { assertLength, assertRegExp } from '../../../utils'
-import { string } from '../../../utils/assertion'
+import { assertNumberOfParams, regExp, string } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const regexpNormalExpression: BuiltinNormalExpressions = {
@@ -15,11 +14,11 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       string.assert(second, sourceCodeInfo)
       return new RegExp(first, second)
     },
-    validate: node => assertLength({ min: 1, max: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
   match: {
     evaluate: ([first, second], sourceCodeInfo): string[] | null => {
-      assertRegExp(first, sourceCodeInfo)
+      regExp.assert(first, sourceCodeInfo)
       string.assert(second, sourceCodeInfo)
 
       const match = first.exec(second)
@@ -28,16 +27,16 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
       }
       return null
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
   replace: {
     evaluate: ([str, regexp, value], sourceCodeInfo): string => {
       string.assert(str, sourceCodeInfo)
-      assertRegExp(regexp, sourceCodeInfo)
+      regExp.assert(regexp, sourceCodeInfo)
       string.assert(value, sourceCodeInfo)
 
       return str.replace(regexp, value)
     },
-    validate: node => assertLength(3, node),
+    validate: node => assertNumberOfParams(3, node),
   },
 }

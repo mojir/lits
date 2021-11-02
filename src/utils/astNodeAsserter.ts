@@ -25,28 +25,3 @@ export function isAstNode(value: unknown): value is AstNode {
   }
   return true
 }
-
-// function assert(
-//   value: unknown,
-//   sourceCodeInfo: SourceCodeInfo,
-//   options: AstNodeOptions = {},
-// ): asserts value is AstNode {
-//   if (!is(value, options)) {
-//     throw new LitsError(`Expected AstNode${options.type ? ` (${options.type})` : ``}, got ${value}`, sourceCodeInfo)
-//   }
-// }
-
-// function as(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): number {
-//   assert(value, sourceCodeInfo, options)
-//   return value
-// }
-
-// export const number: {
-//   is: (value: unknown, options?: NumberOptions) => value is number
-//   as: (value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions) => number
-//   assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions): asserts value is number
-// } = {
-//   is,
-//   as,
-//   assert,
-// }

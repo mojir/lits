@@ -1,7 +1,6 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { assertLength } from '../../utils'
-import { astNode, token } from '../../utils/assertion'
+import { assertNumberOfParams, astNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface IfSpecialExpressionNode extends SpecialExpressionNode {
@@ -37,7 +36,7 @@ export const ifSpecialExpression: BuiltinSpecialExpression<Any> = {
       }
     }
   },
-  validate: node => assertLength({ min: 2, max: 3 }, node),
+  validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
 }
 
 function castIfExpressionNode(_node: SpecialExpressionNode): asserts _node is IfSpecialExpressionNode {

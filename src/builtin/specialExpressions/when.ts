@@ -1,7 +1,6 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { assertLength, assertNotUndefined } from '../../utils'
-import { token } from '../../utils/assertion'
+import { assertNumberOfParams, astNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface WhenSpecialExpressionNode extends SpecialExpressionNode {
@@ -25,7 +24,7 @@ export const whenSpecialExpression: BuiltinSpecialExpression<Any> = {
     castWhenExpressionNode(node)
 
     const [whenExpression, ...body] = node.params
-    assertNotUndefined(whenExpression, node.token.sourceCodeInfo)
+    astNode.assert(whenExpression, node.token.sourceCodeInfo)
 
     if (!evaluateAstNode(whenExpression, contextStack)) {
       return null
@@ -37,7 +36,7 @@ export const whenSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return result
   },
-  validate: node => assertLength({ min: 1 }, node),
+  validate: node => assertNumberOfParams({ min: 1 }, node),
 }
 
 function castWhenExpressionNode(_node: SpecialExpressionNode): asserts _node is WhenSpecialExpressionNode {

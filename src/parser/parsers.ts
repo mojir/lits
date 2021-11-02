@@ -1,5 +1,4 @@
 import { Token } from '../tokenizer/interface'
-import { assertLengthEven, assertNotUndefined, asX, isExpressionNode } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
@@ -16,7 +15,7 @@ import {
   BindingNode,
   ModifierName,
   ParseBindings,
-  NormalExpressionNodeName,
+  NormalExpressionNodeWithName,
   ParseBinding,
 } from './interface'
 import { builtin } from '../builtin'
@@ -24,7 +23,7 @@ import { ReservedName } from '../reservedNames'
 import { LitsError } from '../errors'
 import { FnSpecialExpressionNode } from '../builtin/specialExpressions/functions'
 import { FunctionArguments } from '../builtin/utils'
-import { nameNode, token } from '../utils/assertion'
+import { assertEventNumberOfParams, assertValue, asValue, expressionNode, nameNode, token } from '../utils/assertion'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
@@ -98,7 +97,7 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
   return [position, node]
 }
 
-type ParseObjectLitteral = (tokens: Token[], position: number) => [number, NormalExpressionNodeName]
+type ParseObjectLitteral = (tokens: Token[], position: number) => [number, NormalExpressionNodeWithName]
 const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
   const firstToken = token.as(tokens[position], `EOF`)
   position = position + 1
@@ -121,12 +120,12 @@ const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
     token: firstToken,
   }
 
-  assertLengthEven(node)
+  assertEventNumberOfParams(node)
 
   return [position, node]
 }
 
-type ParseRegexpShorthand = (tokens: Token[], position: number) => [number, NormalExpressionNodeName]
+type ParseRegexpShorthand = (tokens: Token[], position: number) => [number, NormalExpressionNodeWithName]
 const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
   const tkn = token.as(tokens[position], `EOF`)
   const stringNode: StringNode = {
@@ -135,7 +134,7 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
     token: tkn,
   }
 
-  assertNotUndefined(tkn.options, tkn.sourceCodeInfo)
+  assertValue(tkn.options, tkn.sourceCodeInfo)
 
   const optionsNode: StringNode = {
     type: `String`,
@@ -258,7 +257,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
   ;[position, params] = parseTokens(tokens, newPosition)
   position += 1
 
-  if (isExpressionNode(fnNode)) {
+  if (expressionNode.is(fnNode)) {
     const node: NormalExpressionNode = {
       type: `NormalExpression`,
       expression: fnNode,
@@ -290,7 +289,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
   const { value: expressionName, sourceCodeInfo } = token.as(tokens[position], `EOF`)
   position += 1
 
-  const { parse, validate } = asX(builtin.specialExpressions[expressionName], sourceCodeInfo)
+  const { parse, validate } = asValue(builtin.specialExpressions[expressionName], sourceCodeInfo)
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,

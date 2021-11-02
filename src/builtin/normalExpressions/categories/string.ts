@@ -2,8 +2,17 @@ import { LitsError } from '../../../errors'
 import { Any, Arr } from '../../../interface'
 import { NormalExpressionNode } from '../../../parser/interface'
 import { SourceCodeInfo } from '../../../tokenizer/interface'
-import { assertLength, assertStringOrRegExp, assertStringArray, toNonNegativeInteger, asX } from '../../../utils'
-import { number, object, array, string } from '../../../utils/assertion'
+import { toNonNegativeInteger } from '../../../utils'
+import {
+  number,
+  object,
+  array,
+  string,
+  assertNumberOfParams,
+  stringArray,
+  stringOrRegExp,
+  asValue,
+} from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
@@ -19,7 +28,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       number.assert(third, sourceCodeInfo, { gte: second })
       return (first as string).substring(second, third)
     },
-    validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
   'string-repeat': {
@@ -29,7 +38,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return str.repeat(count)
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
 
   str: {
@@ -57,7 +66,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       }
       return number
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   'number-to-string': {
@@ -81,7 +90,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         return Number(num).toString(base)
       }
     },
-    validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 2 }, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
 
   'from-char-code': {
@@ -91,15 +100,15 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return String.fromCodePoint(int)
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   'to-char-code': {
     evaluate: ([str], sourceCodeInfo): number => {
       string.assert(str, sourceCodeInfo, { nonEmpty: true })
-      return asX(str.codePointAt(0), sourceCodeInfo)
+      return asValue(str.codePointAt(0), sourceCodeInfo)
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   'lower-case': {
@@ -107,7 +116,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(str, sourceCodeInfo)
       return str.toLowerCase()
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   'upper-case': {
@@ -115,7 +124,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(str, sourceCodeInfo)
       return str.toUpperCase()
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   trim: {
@@ -123,7 +132,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(str, sourceCodeInfo)
       return str.trim()
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   'trim-left': {
@@ -131,7 +140,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(str, sourceCodeInfo)
       return str.replace(/^\s+/, ``)
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   'trim-right': {
@@ -139,7 +148,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(str, sourceCodeInfo)
       return str.replace(/\s+$/, ``)
     },
-    validate: (node: NormalExpressionNode): void => assertLength(1, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   join: {
@@ -149,19 +158,19 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(delimiter, sourceCodeInfo)
       return stringList.join(delimiter)
     },
-    validate: (node: NormalExpressionNode): void => assertLength(2, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
   },
 
   split: {
     evaluate: ([str, delimiter, limit], sourceCodeInfo): string[] => {
       string.assert(str, sourceCodeInfo)
-      assertStringOrRegExp(delimiter, sourceCodeInfo)
+      stringOrRegExp.assert(delimiter, sourceCodeInfo)
       if (limit !== undefined) {
         number.assert(limit, sourceCodeInfo, { integer: true, nonNegative: true })
       }
       return str.split(delimiter, limit)
     },
-    validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
   'pad-left': {
@@ -175,7 +184,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return str.padStart(length, padString)
     },
-    validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
   'pad-right': {
@@ -189,7 +198,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
       return str.padEnd(length, padString)
     },
-    validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
   template: {
@@ -197,7 +206,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(templateString, sourceCodeInfo)
       const templateStrings = templateString.split(`||||`)
       if (templateStrings.length === 1) {
-        assertStringArray(placeholders, sourceCodeInfo)
+        stringArray.assert(placeholders, sourceCodeInfo)
         return applyPlaceholders(templateStrings[0] as string, placeholders, sourceCodeInfo)
       } else if (templateStrings.length === 2) {
         const firstPlaceholder = placeholders[0]
@@ -212,7 +221,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         throw new LitsError(`Invalid template string, only one "||||" separator allowed`, sourceCodeInfo)
       }
     },
-    validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 10 }, node),
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 1, max: 10 }, node),
   },
 }
 

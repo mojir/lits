@@ -1,4 +1,4 @@
-import { assertLength } from '../../../utils'
+import { assertNumberOfParams } from '../../../utils/assertion'
 import { number } from '../../../utils/numberAssertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -10,7 +10,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
 
       return num << count
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
   'bit-shift-right': {
     evaluate: ([num, count], sourceCodeInfo): number => {
@@ -19,14 +19,14 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
 
       return num >> count
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
   'bit-not': {
     evaluate: ([num], sourceCodeInfo): number => {
       number.assert(num, sourceCodeInfo, { integer: true })
       return ~num
     },
-    validate: node => assertLength(1, node),
+    validate: node => assertNumberOfParams(1, node),
   },
   'bit-and': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -37,7 +37,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result & value
       }, first)
     },
-    validate: node => assertLength({ min: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
   'bit-and-not': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -48,7 +48,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result & ~value
       }, first)
     },
-    validate: node => assertLength({ min: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
   'bit-or': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -59,7 +59,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result | value
       }, first)
     },
-    validate: node => assertLength({ min: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
   'bit-xor': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
@@ -70,7 +70,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result ^ value
       }, first)
     },
-    validate: node => assertLength({ min: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
   'bit-flip': {
     evaluate: ([num, index], sourceCodeInfo): number => {
@@ -80,7 +80,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num ^= mask)
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
   'bit-set': {
     evaluate: ([num, index], sourceCodeInfo): number => {
@@ -90,7 +90,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num |= mask)
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
   'bit-clear': {
     evaluate: ([num, index], sourceCodeInfo): number => {
@@ -100,7 +100,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num &= ~mask)
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
   'bit-test': {
     evaluate: ([num, index], sourceCodeInfo): boolean => {
@@ -110,6 +110,6 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return !!(num & mask)
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
 }

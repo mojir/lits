@@ -2,8 +2,7 @@ import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { assertLength, asX } from '../../utils'
-import { astNode, token } from '../../utils/assertion'
+import { assertNumberOfParams, astNode, asValue, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface IfLetSpecialExpressionNode extends SpecialExpressionNode {
@@ -27,7 +26,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     const node: IfLetSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `if-let`,
-      binding: asX(bindings[0], firstToken.sourceCodeInfo),
+      binding: asValue(bindings[0], firstToken.sourceCodeInfo),
       params,
       token: firstToken,
     }
@@ -50,7 +49,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return null
   },
-  validate: node => assertLength({ min: 1, max: 2 }, node),
+  validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
 }
 
 function castIfLetExpressionNode(_node: SpecialExpressionNode): asserts _node is IfLetSpecialExpressionNode {

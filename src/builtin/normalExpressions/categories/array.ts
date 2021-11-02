@@ -1,6 +1,5 @@
 import { Arr } from '../../../interface'
-import { assertLength } from '../../../utils'
-import { array, number } from '../../../utils/assertion'
+import { array, assertNumberOfParams, number } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 import { evaluateMap } from './sequence'
 export const arrayNormalExpression: BuiltinNormalExpressions = {
@@ -48,7 +47,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    validate: node => assertLength({ min: 1, max: 3 }, node),
+    validate: node => assertNumberOfParams({ min: 1, max: 3 }, node),
   },
 
   repeat: {
@@ -60,7 +59,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
 
   flatten: {
@@ -70,7 +69,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       }
       return seq.flat(Number.POSITIVE_INFINITY)
     },
-    validate: node => assertLength(1, node),
+    validate: node => assertNumberOfParams(1, node),
   },
   mapcat: {
     evaluate: (params, sourceCodeInfo, contextStack, helpers): Arr | string => {
@@ -81,6 +80,6 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       array.assert(mapResult, sourceCodeInfo)
       return mapResult.flat(1)
     },
-    validate: node => assertLength({ min: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
 }

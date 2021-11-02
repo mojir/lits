@@ -2,8 +2,7 @@ import { LitsError, RecurSignal } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { asX } from '../../utils'
-import { any, token } from '../../utils/assertion'
+import { any, asValue, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface LoopSpecialExpressionNode extends SpecialExpressionNode {
@@ -54,7 +53,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
             )
           }
           node.bindings.forEach((binding, index) => {
-            asX(bindingContext[binding.name], sourceCodeInfo).value = any.as(params[index], sourceCodeInfo)
+            asValue(bindingContext[binding.name], sourceCodeInfo).value = any.as(params[index], sourceCodeInfo)
           })
           continue
         }

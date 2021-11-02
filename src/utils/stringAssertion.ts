@@ -30,7 +30,7 @@ function is(value: unknown, options: Options = {}): value is string {
 function assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options: Options = {}): asserts value is string {
   if (!is(value, options)) {
     throw new LitsError(
-      `Expected ${options.nonEmpty ? `non empty string` : options.nonEmpty ? `character` : `string`}, got ${value}`,
+      `Expected ${options.nonEmpty ? `non empty string` : options.char ? `character` : `string`}, got ${value}`,
       sourceCodeInfo,
     )
   }

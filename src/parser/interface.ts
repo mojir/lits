@@ -151,7 +151,7 @@ interface NormalExpressionNodeBase extends GenericNode {
   params: AstNode[]
 }
 
-export interface NormalExpressionNodeName extends NormalExpressionNodeBase {
+export interface NormalExpressionNodeWithName extends NormalExpressionNodeBase {
   name: string
   expression?: ExpressionNode
 }
@@ -161,7 +161,7 @@ interface NormalExpressionNodeExpression extends NormalExpressionNodeBase {
   expression: ExpressionNode
 }
 
-export type NormalExpressionNode = NormalExpressionNodeName | NormalExpressionNodeExpression
+export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
 
 export interface BindingNode extends GenericNode {
   type: `Binding`

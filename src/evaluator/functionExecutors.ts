@@ -16,8 +16,8 @@ import {
   UserDefinedFunction,
 } from '../parser/interface'
 import { SourceCodeInfo } from '../tokenizer/interface'
-import { asX, toAny } from '../utils'
-import { any, string } from '../utils/assertion'
+import { toAny } from '../utils'
+import { any, asValue, string } from '../utils/assertion'
 import { Context, ContextStack, EvaluateAstNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
@@ -145,7 +145,7 @@ export const functionExecutors: FunctionExecutors = {
     return executeFunction(toAny(fn.fn), fniledParams, sourceCodeInfo, contextStack)
   },
   builtin: (fn: BuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    const normalExpression = asX(normalExpressions[fn.name], sourceCodeInfo)
+    const normalExpression = asValue(normalExpressions[fn.name], sourceCodeInfo)
     return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
   },
 }

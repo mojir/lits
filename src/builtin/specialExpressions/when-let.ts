@@ -2,8 +2,7 @@ import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { assertLength, asX } from '../../utils'
-import { token } from '../../utils/assertion'
+import { assertNumberOfParams, asValue, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface WhenLetSpecialExpressionNode extends SpecialExpressionNode {
@@ -27,7 +26,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     const node: WhenLetSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `when-let`,
-      binding: asX(bindings[0], firstToken.sourceCodeInfo),
+      binding: asValue(bindings[0], firstToken.sourceCodeInfo),
       params,
       token: firstToken,
     }
@@ -49,7 +48,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return result
   },
-  validate: node => assertLength({ min: 0 }, node),
+  validate: node => assertNumberOfParams({ min: 0 }, node),
 }
 
 function castWhenLetExpressionNode(_node: SpecialExpressionNode): asserts _node is WhenLetSpecialExpressionNode {

@@ -1,107 +1,7 @@
-import { LitsError } from '../errors'
 import { Context } from '../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../interface'
-import {
-  AstNode,
-  ExpressionNode,
-  NormalExpressionNode,
-  NormalExpressionNodeName,
-  SpecialExpressionNode,
-} from '../parser/interface'
 import { SourceCodeInfo } from '../tokenizer/interface'
-
-import { any, array, collection, number, object, string } from './assertion'
-
-export function asX<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): T {
-  if (value === undefined) {
-    throw new LitsError(`Unexpected nil`, sourceCodeInfo)
-  }
-  return value
-}
-
-export function assertNotUndefined<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): asserts value is T {
-  if (value === undefined) {
-    throw new LitsError(`Unexpected nil`, sourceCodeInfo)
-  }
-}
-
-export function assertStringOrRegExp(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is RegExp | string {
-  if (!(value instanceof RegExp || typeof value === `string`)) {
-    throw new LitsError(`Expected RegExp or string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-}
-
-export function isRegExp(value: unknown): value is RegExp {
-  return value instanceof RegExp
-}
-
-export function assertRegExp(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is RegExp {
-  if (!(value instanceof RegExp)) {
-    throw new LitsError(`Expected RegExp, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-}
-
-export function assertLength(
-  count: number | { min?: number; max?: number },
-  node: NormalExpressionNode | SpecialExpressionNode,
-): void {
-  const length = node.params.length
-  if (typeof count === `number`) {
-    if (length !== count) {
-      throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected ${count}, got ${length}`,
-        node.token.sourceCodeInfo,
-      )
-    }
-  } else {
-    const { min, max } = count
-    if (min === undefined && max === undefined) {
-      throw new LitsError(`Min or max must be specified`, node.token.sourceCodeInfo)
-    }
-
-    if (typeof min === `number` && length < min) {
-      throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected at least ${min}, got ${length}`,
-        node.token.sourceCodeInfo,
-      )
-    }
-
-    if (typeof max === `number` && length > max) {
-      throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected at most ${max}, got ${length}`,
-        node.token.sourceCodeInfo,
-      )
-    }
-  }
-}
-
-export function assertLengthEven(node: NormalExpressionNode): void {
-  const length = node.params.length
-  if (length % 2 !== 0) {
-    throw new LitsError(`Wrong number of arguments, expected an even number, got ${length}`, node.token.sourceCodeInfo)
-  }
-}
-
-export function assertStringArray(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string[] {
-  if (!Array.isArray(value) || value.some(v => typeof v !== `string`)) {
-    throw new LitsError(`Expected an array of strings, got ${value}`, sourceCodeInfo)
-  }
-}
-
-export function assertCharArray(arr: unknown, sourceCodeInfo: SourceCodeInfo): asserts arr is string[] {
-  if (!Array.isArray(arr) || arr.some(v => typeof v !== `string` || v.length !== 1)) {
-    throw new LitsError(`Expected an array of chars, got ${arr}`, sourceCodeInfo)
-  }
-}
-
-export function isExpressionNode(node: AstNode): node is ExpressionNode {
-  return (
-    node.type === `NormalExpression` ||
-    node.type === `SpecialExpression` ||
-    node.type === `Number` ||
-    node.type === `String`
-  )
-}
+import { any, array, collection, number, object, regExp, string } from './assertion'
 
 export function collHasKey(coll: unknown, key: string | number): boolean {
   if (!collection.is(coll)) {
@@ -142,7 +42,7 @@ function getType(value: unknown): Type {
     return `array`
   } else if (object.is(value)) {
     return `object`
-  } else if (isRegExp(value)) {
+  } else if (regExp.is(value)) {
     return `regexp`
   } else {
     return `unknown`
@@ -200,10 +100,6 @@ export function compare(a: unknown, b: unknown): number {
     case `unknown`:
       return 0
   }
-}
-
-export function isNormalExpressionNodeName(node: NormalExpressionNode): node is NormalExpressionNodeName {
-  return typeof node.name === `string`
 }
 
 export function deepEqual(a: Any, b: Any, sourceCodeInfo: SourceCodeInfo): boolean {

@@ -10,8 +10,8 @@ import {
   SomePredFunction,
   FNilFunction,
 } from '../../../parser/interface'
-import { assertLength, toAny } from '../../../utils'
-import { litsFunction, array } from '../../../utils/assertion'
+import { toAny } from '../../../utils'
+import { litsFunction, array, assertNumberOfParams } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   apply: {
@@ -23,14 +23,14 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       const applyArray = [...params.slice(0, -1), ...last]
       return executeFunction(func, applyArray, sourceCodeInfo, contextStack)
     },
-    validate: node => assertLength({ min: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
 
   identity: {
     evaluate: ([value]): Any => {
       return toAny(value)
     },
-    validate: node => assertLength(1, node),
+    validate: node => assertNumberOfParams(1, node),
   },
 
   partial: {
@@ -42,7 +42,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         params,
       }
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
   comp: {
@@ -69,7 +69,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         value: toAny(value),
       }
     },
-    validate: node => assertLength(1, node),
+    validate: node => assertNumberOfParams(1, node),
   },
 
   juxt: {
@@ -80,7 +80,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fns,
       }
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
   complement: {
@@ -91,7 +91,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fn: toAny(fn),
       }
     },
-    validate: node => assertLength(1, node),
+    validate: node => assertNumberOfParams(1, node),
   },
 
   'every-pred': {
@@ -102,7 +102,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fns,
       }
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
   'some-pred': {
@@ -113,7 +113,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fns,
       }
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
   fnil: {
@@ -125,6 +125,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         params,
       }
     },
-    validate: node => assertLength({ min: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
 }

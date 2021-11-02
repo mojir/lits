@@ -1,10 +1,10 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
 import { Any } from '../../../interface'
-import { assertLength, compare, deepEqual } from '../../../utils'
+import { compare, deepEqual } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
-import { any, litsFunction, string } from '../../../utils/assertion'
+import { any, assertNumberOfParams, litsFunction, string } from '../../../utils/assertion'
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
   'not=': {
@@ -19,7 +19,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
   '=': {
     evaluate: ([first, ...rest]): boolean => {
@@ -31,13 +31,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
   'equal?': {
     evaluate: ([a, b], sourceCodeInfo): boolean => {
       return deepEqual(any.as(a, sourceCodeInfo), any.as(b, sourceCodeInfo), sourceCodeInfo)
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
   '>': {
     evaluate: ([first, ...rest]): boolean => {
@@ -50,7 +50,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
   '<': {
@@ -64,7 +64,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
   '>=': {
@@ -78,7 +78,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
   '<=': {
@@ -92,17 +92,17 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertLength({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 1 }, node),
   },
   not: {
     evaluate: ([first]): boolean => !first,
-    validate: node => assertLength(1, node),
+    validate: node => assertNumberOfParams(1, node),
   },
   'inst-ms': {
     evaluate: (): number => {
       return Date.now()
     },
-    validate: node => assertLength(0, node),
+    validate: node => assertNumberOfParams(0, node),
   },
   'write!': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -127,19 +127,19 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
       return any.as(params[0], sourceCodeInfo)
     },
-    validate: node => assertLength({ max: 1 }, node),
+    validate: node => assertNumberOfParams({ max: 1 }, node),
   },
   boolean: {
     evaluate: ([value]): boolean => {
       return !!value
     },
-    validate: node => assertLength(1, node),
+    validate: node => assertNumberOfParams(1, node),
   },
   compare: {
     evaluate: ([a, b]): number => {
       return compare(a, b)
     },
-    validate: node => assertLength(2, node),
+    validate: node => assertNumberOfParams(2, node),
   },
   assert: {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -151,13 +151,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return any.as(value, sourceCodeInfo)
     },
-    validate: node => assertLength({ min: 1, max: 2 }, node),
+    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
   'lits-version': {
     evaluate: (): Any => {
       return version
     },
-    validate: node => assertLength(0, node),
+    validate: node => assertNumberOfParams(0, node),
   },
 }
 

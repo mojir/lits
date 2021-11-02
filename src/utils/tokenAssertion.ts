@@ -11,6 +11,17 @@ type Options =
       value?: never
     }
 
+const tokenTypes: Record<TokenizerType, true> = {
+  fnShorthand: true,
+  modifier: true,
+  name: true,
+  number: true,
+  paren: true,
+  regexpShorthand: true,
+  reservedName: true,
+  string: true,
+}
+
 function isToken(value: unknown): value is Token {
   if (typeof value !== `object` || value === null) {
     return false
@@ -20,7 +31,8 @@ function isToken(value: unknown): value is Token {
   if (!tkn.sourceCodeInfo || !tkn.type || typeof tkn.value !== `string`) {
     return false
   }
-  return true
+
+  return !!tokenTypes[tkn.type]
 }
 
 function is(value: unknown, options: Options = {}): value is Token {

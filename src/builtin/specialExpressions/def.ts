@@ -1,7 +1,6 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { assertLength } from '../../utils'
-import { astNode, nameNode, token } from '../../utils/assertion'
+import { assertNumberOfParams, astNode, nameNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
 
@@ -37,7 +36,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<Any> = {
 
     return value
   },
-  validate: node => assertLength(2, node),
+  validate: node => assertNumberOfParams(2, node),
 }
 
 function castDefExpressionNode(_node: SpecialExpressionNode): asserts _node is DefSpecialExpressionNode {

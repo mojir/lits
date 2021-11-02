@@ -6,20 +6,28 @@ import {
   StringNode,
   ReservedNameNode,
   FUNCTION_SYMBOL,
-  NormalExpressionNodeName,
+  NormalExpressionNodeWithName,
   BuiltinFunction,
 } from '../parser/interface'
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
-import { asX, isNormalExpressionNodeName, toAny } from '../utils'
+import { toAny } from '../utils'
 import { Context, EvaluateAstNode, ExecuteFunction } from './interface'
 import { Any, Arr, Obj } from '../interface'
 import { ContextStack } from './interface'
 import { functionExecutors } from './functionExecutors'
 import { SourceCodeInfo } from '../tokenizer/interface'
 import { LitsError, NotAFunctionError, UndefinedSymbolError } from '../errors'
-import { litsFunction, number, object, sequence, string } from '../utils/assertion'
+import {
+  asValue,
+  litsFunction,
+  normalExpressionNodeWithName,
+  number,
+  object,
+  sequence,
+  string,
+} from '../utils/assertion'
 
 export function createContextStack(contexts: Context[] = []): ContextStack {
   if (contexts.length === 0) {
@@ -80,7 +88,7 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedNameNode): Any {
-  return asX(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value
+  return asValue(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value
 }
 
 function evaluateName(node: NameNode, contextStack: ContextStack): Any {
@@ -109,7 +117,7 @@ function evaluateName(node: NameNode, contextStack: ContextStack): Any {
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
   const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
   const { sourceCodeInfo } = node.token
-  if (isNormalExpressionNodeName(node)) {
+  if (normalExpressionNodeWithName.is(node)) {
     for (const context of contextStack.stack) {
       const fn = context[node.name]?.value
       if (fn === undefined) {
@@ -144,7 +152,11 @@ const executeFunction: ExecuteFunction = (fn, params, sourceCodeInfo, contextSta
   throw new NotAFunctionError(fn, sourceCodeInfo)
 }
 
-function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params: Arr, contextStack: ContextStack): Any {
+function evaluateBuiltinNormalExpression(
+  node: NormalExpressionNodeWithName,
+  params: Arr,
+  contextStack: ContextStack,
+): Any {
   const normalExpression = builtin.normalExpressions[node.name]
   if (!normalExpression) {
     throw new UndefinedSymbolError(node.name, node.token.sourceCodeInfo)
@@ -154,7 +166,7 @@ function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params:
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
-  const specialExpression = asX(builtin.specialExpressions[node.name], node.token.sourceCodeInfo)
+  const specialExpression = asValue(builtin.specialExpressions[node.name], node.token.sourceCodeInfo)
 
   return specialExpression.evaluate(node, contextStack, { evaluateAstNode, builtin })
 }
