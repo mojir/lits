@@ -122,11 +122,7 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
       if (fn === undefined) {
         continue
       }
-      const result = executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack)
-      if (result === undefined) {
-        continue
-      }
-      return result.value
+      return executeFunction(fn, params, sourceCodeInfo, contextStack)
     }
 
     return evaluateBuiltinNormalExpression(node, params, contextStack)
@@ -137,32 +133,22 @@ function evaluateNormalExpression(node: NormalExpressionNode, contextStack: Cont
 }
 
 const executeFunction: ExecuteFunction = (fn, params, sourceCodeInfo, contextStack) => {
-  const result = executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack)
-  if (!result) {
-    throw new NotAFunctionError(fn, sourceCodeInfo)
-  }
-  return result.value
-}
-
-function executeFunctionOrUndefined(fn: Any, params: Arr, sourceCodeInfo: SourceCodeInfo, contextStack: ContextStack) {
   if (litsFunction.is(fn)) {
-    return {
-      value: functionExecutors[fn.type](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode, executeFunction }),
-    }
+    return functionExecutors[fn.type](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode, executeFunction })
   }
   if (Array.isArray(fn)) {
-    return { value: evaluateArrayAsFunction(fn, params, sourceCodeInfo) }
+    return evaluateArrayAsFunction(fn, params, sourceCodeInfo)
   }
   if (object.is(fn)) {
-    return { value: evalueateObjectAsFunction(fn, params, sourceCodeInfo) }
+    return evalueateObjectAsFunction(fn, params, sourceCodeInfo)
   }
   if (isString(fn)) {
-    return { value: evaluateStringAsFunction(fn, params, sourceCodeInfo) }
+    return evaluateStringAsFunction(fn, params, sourceCodeInfo)
   }
   if (number.is(fn)) {
-    return { value: evaluateNumberAsFunction(fn, params, sourceCodeInfo) }
+    return evaluateNumberAsFunction(fn, params, sourceCodeInfo)
   }
-  return undefined
+  throw new NotAFunctionError(fn, sourceCodeInfo)
 }
 
 function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params: Arr, contextStack: ContextStack): Any {

@@ -3530,7 +3530,7 @@ var Lits = (function (exports) {
         },
     };
 
-    var version = "1.0.0-alpha.8";
+    var version = "1.0.0-alpha.9";
 
     var miscNormalExpression = {
         'not=': {
@@ -4643,11 +4643,7 @@ var Lits = (function (exports) {
                 if (fn === undefined) {
                     continue;
                 }
-                var result = executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack);
-                if (result === undefined) {
-                    continue;
-                }
-                return result.value;
+                return executeFunction(fn, params, sourceCodeInfo, contextStack);
             }
             return evaluateBuiltinNormalExpression(node, params, contextStack);
         }
@@ -4657,32 +4653,23 @@ var Lits = (function (exports) {
         }
     }
     var executeFunction = function (fn, params, sourceCodeInfo, contextStack) {
-        var result = executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack);
-        if (!result) {
-            throw new NotAFunctionError(fn, sourceCodeInfo);
-        }
-        return result.value;
-    };
-    function executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack) {
         if (litsFunction.is(fn)) {
-            return {
-                value: functionExecutors[fn.type](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction }),
-            };
+            return functionExecutors[fn.type](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
         }
         if (Array.isArray(fn)) {
-            return { value: evaluateArrayAsFunction(fn, params, sourceCodeInfo) };
+            return evaluateArrayAsFunction(fn, params, sourceCodeInfo);
         }
         if (object.is(fn)) {
-            return { value: evalueateObjectAsFunction(fn, params, sourceCodeInfo) };
+            return evalueateObjectAsFunction(fn, params, sourceCodeInfo);
         }
         if (isString(fn)) {
-            return { value: evaluateStringAsFunction(fn, params, sourceCodeInfo) };
+            return evaluateStringAsFunction(fn, params, sourceCodeInfo);
         }
         if (number.is(fn)) {
-            return { value: evaluateNumberAsFunction(fn, params, sourceCodeInfo) };
+            return evaluateNumberAsFunction(fn, params, sourceCodeInfo);
         }
-        return undefined;
-    }
+        throw new NotAFunctionError(fn, sourceCodeInfo);
+    };
     function evaluateBuiltinNormalExpression(node, params, contextStack) {
         var normalExpression = builtin.normalExpressions[node.name];
         if (!normalExpression) {
@@ -5327,9 +5314,6 @@ var Lits = (function (exports) {
         });
         Object.defineProperty(TokenMetaImpl.prototype, "marker", {
             get: function () {
-                if (this.sourceCodeLine === null) {
-                    return "";
-                }
                 return "\n" + " ".repeat(this.column - 1 + ("" + this.column).length + 2) + "^";
             },
             enumerable: false,

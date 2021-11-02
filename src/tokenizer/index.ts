@@ -55,9 +55,6 @@ class TokenMetaImpl {
   }
 
   private get marker(): string {
-    if (this.sourceCodeLine === null) {
-      return ``
-    }
     return `\n${` `.repeat(this.column - 1 + `${this.column}`.length + 2)}^`
   }
 

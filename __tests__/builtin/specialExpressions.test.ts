@@ -333,6 +333,7 @@ describe(`specialExpressions`, () => {
     test(`arity`, () => {
       expect(lits.run(`(defn add ([a b] (+ a b))) (add 1 2)`)).toBe(3)
       expect(lits.run(`(defn add ([a b] (+ a b)) ([a] 10)) (+ (add 1 2) (add 1))`)).toBe(13)
+      expect(() => lits.run(`(defn add ([a b] (++ a b)) ([a] 10)) (+ (add 1 2) (add 1))`)).toThrow()
       expect(() => lits.run(`(defn add ([a b] (+ a b)) ([a] 10)] (+ (add 1 2) (add 1))`)).toThrow()
       expect(() => lits.run(`(defn add ([a b] (+ a b)] ([a] 10)) (+ (add 1 2) (add 1))`)).toThrow()
       expect(() => lits.run(`(defn add ([a b] (+ a b)) ([a b] 10))`)).toThrow()
