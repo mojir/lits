@@ -10,20 +10,20 @@ interface doSpecialExpressionNode extends SpecialExpressionNode {
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    let token = asNotUndefined(tokens[position], `EOF`)
+    let tkn = asNotUndefined(tokens[position], `EOF`)
 
     const node: doSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `do`,
       params: [],
-      token,
+      token: tkn,
     }
 
-    while (!(token.type === `paren` && token.value === `)`)) {
+    while (!(tkn.type === `paren` && tkn.value === `)`)) {
       let bodyNode: AstNode
       ;[position, bodyNode] = parseToken(tokens, position)
       node.params.push(bodyNode)
-      token = asNotUndefined(tokens[position], `EOF`)
+      tkn = asNotUndefined(tokens[position], `EOF`)
     }
     return [position + 1, node]
   },

@@ -14,9 +14,9 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
     const [newPosition, messageNode] = parseToken(tokens, position)
     position = newPosition
 
-    const token = asNotUndefined(tokens[position], `EOF`)
-    if (!(token.type === `paren` && token.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, token)
+    const tkn = asNotUndefined(tokens[position], `EOF`)
+    if (!(tkn.type === `paren` && tkn.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, tkn)
     }
     position += 1
 

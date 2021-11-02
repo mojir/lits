@@ -650,14 +650,14 @@ var Lits = (function (exports) {
     function parseConditions(tokens, position, parseToken) {
         var _a, _b;
         var conditions = [];
-        var token = asNotUndefined(tokens[position], "EOF");
-        while (!(token.type === "paren" && token.value === ")")) {
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        while (!(tkn.type === "paren" && tkn.value === ")")) {
             var test_1 = void 0;
             _a = parseToken(tokens, position), position = _a[0], test_1 = _a[1];
             var form = void 0;
             _b = parseToken(tokens, position), position = _b[0], form = _b[1];
             conditions.push({ test: test_1, form: form });
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         return [position, conditions];
     }
@@ -843,34 +843,34 @@ var Lits = (function (exports) {
     function parseFunctionBody(tokens, position, _a) {
         var _b;
         var parseToken = _a.parseToken;
-        var token = asNotUndefined(tokens[position], "EOF");
+        var tkn = asNotUndefined(tokens[position], "EOF");
         var body = [];
-        while (!(token.type === "paren" && token.value === ")")) {
+        while (!(tkn.type === "paren" && tkn.value === ")")) {
             var bodyNode = void 0;
             _b = parseToken(tokens, position), position = _b[0], bodyNode = _b[1];
             body.push(bodyNode);
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         if (body.length === 0) {
-            throw new LitsError("Missing body in function", token.sourceCodeInfo);
+            throw new LitsError("Missing body in function", tkn.sourceCodeInfo);
         }
         return [position + 1, body];
     }
     function parseFunctionOverloades(tokens, position, parsers) {
         var _a, _b, _c, _d;
-        var token = asNotUndefined(tokens[position], "EOF");
-        if (token.type === "paren" && token.value === "(") {
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        if (tkn.type === "paren" && tkn.value === "(") {
             var functionOverloades = [];
-            while (!(token.type === "paren" && token.value === ")")) {
+            while (!(tkn.type === "paren" && tkn.value === ")")) {
                 position += 1;
-                token = asNotUndefined(tokens[position], "EOF");
+                tkn = asNotUndefined(tokens[position], "EOF");
                 var functionArguments = void 0;
                 _a = parseFunctionArguments(tokens, position, parsers), position = _a[0], functionArguments = _a[1];
                 var arity = functionArguments.restArgument
                     ? { min: functionArguments.mandatoryArguments.length }
                     : functionArguments.mandatoryArguments.length;
                 if (!arityOk(functionOverloades, arity)) {
-                    throw new LitsError("All overloaded functions must have different arity", token.sourceCodeInfo);
+                    throw new LitsError("All overloaded functions must have different arity", tkn.sourceCodeInfo);
                 }
                 var functionBody = void 0;
                 _b = parseFunctionBody(tokens, position, parsers), position = _b[0], functionBody = _b[1];
@@ -879,14 +879,14 @@ var Lits = (function (exports) {
                     body: functionBody,
                     arity: arity,
                 });
-                token = asNotUndefined(tokens[position], "EOF");
-                if (!(token.type === "paren" && (token.value === ")" || token.value === "("))) {
-                    throw new UnexpectedTokenError(") or (", token);
+                tkn = asNotUndefined(tokens[position], "EOF");
+                if (!(tkn.type === "paren" && (tkn.value === ")" || tkn.value === "("))) {
+                    throw new UnexpectedTokenError(") or (", tkn);
                 }
             }
             return [position + 1, functionOverloades];
         }
-        else if (token.type === "paren" && token.value === "[") {
+        else if (tkn.type === "paren" && tkn.value === "[") {
             var functionArguments = void 0;
             _c = parseFunctionArguments(tokens, position, parsers), position = _c[0], functionArguments = _c[1];
             var arity = functionArguments.restArgument
@@ -906,7 +906,7 @@ var Lits = (function (exports) {
             ];
         }
         else {
-            throw new UnexpectedTokenError("[ or (", token);
+            throw new UnexpectedTokenError("[ or (", tkn);
         }
     }
     function parseFunctionArguments(tokens, position, parsers) {
@@ -917,10 +917,10 @@ var Lits = (function (exports) {
         var mandatoryArguments = [];
         var argNames = {};
         var state = "mandatory";
-        var token = asNotUndefined(tokens[position], "EOF");
+        var tkn = asNotUndefined(tokens[position], "EOF");
         position += 1;
-        token = asNotUndefined(tokens[position], "EOF");
-        while (!(token.type === "paren" && token.value === "]")) {
+        tkn = asNotUndefined(tokens[position], "EOF");
+        while (!(tkn.type === "paren" && tkn.value === "]")) {
             if (state === "let") {
                 _a = parseBindings(tokens, position), position = _a[0], bindings = _a[1];
                 break;
@@ -928,28 +928,28 @@ var Lits = (function (exports) {
             else {
                 var _b = parseArgument(tokens, position), newPosition = _b[0], node = _b[1];
                 position = newPosition;
-                token = asNotUndefined(tokens[position], "EOF");
+                tkn = asNotUndefined(tokens[position], "EOF");
                 if (node.type === "Modifier") {
                     switch (node.value) {
                         case "&":
                             if (state === "rest") {
-                                throw new LitsError("& can only appear once", token.sourceCodeInfo);
+                                throw new LitsError("& can only appear once", tkn.sourceCodeInfo);
                             }
                             state = "rest";
                             break;
                         case "&let":
                             if (state === "rest" && !restArgument) {
-                                throw new LitsError("No rest argument was spcified", token.sourceCodeInfo);
+                                throw new LitsError("No rest argument was spcified", tkn.sourceCodeInfo);
                             }
                             state = "let";
                             break;
                         default:
-                            throw new LitsError("Illegal modifier: " + node.value, token.sourceCodeInfo);
+                            throw new LitsError("Illegal modifier: " + node.value, tkn.sourceCodeInfo);
                     }
                 }
                 else {
                     if (argNames[node.name]) {
-                        throw new LitsError("Duplicate argument \"" + node.name + "\"", token.sourceCodeInfo);
+                        throw new LitsError("Duplicate argument \"" + node.name + "\"", tkn.sourceCodeInfo);
                     }
                     else {
                         argNames[node.name] = true;
@@ -960,7 +960,7 @@ var Lits = (function (exports) {
                             break;
                         case "rest":
                             if (restArgument !== undefined) {
-                                throw new LitsError("Can only specify one rest argument", token.sourceCodeInfo);
+                                throw new LitsError("Can only specify one rest argument", tkn.sourceCodeInfo);
                             }
                             restArgument = node.name;
                             break;
@@ -969,7 +969,7 @@ var Lits = (function (exports) {
             }
         }
         if (state === "rest" && restArgument === undefined) {
-            throw new LitsError("Missing rest argument name", token.sourceCodeInfo);
+            throw new LitsError("Missing rest argument name", tkn.sourceCodeInfo);
         }
         position += 1;
         var args = {
@@ -1040,18 +1040,18 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b;
             var parseToken = _a.parseToken;
-            var token = asNotUndefined(tokens[position], "EOF");
+            var tkn = asNotUndefined(tokens[position], "EOF");
             var node = {
                 type: "SpecialExpression",
                 name: "do",
                 params: [],
-                token: token,
+                token: tkn,
             };
-            while (!(token.type === "paren" && token.value === ")")) {
+            while (!(tkn.type === "paren" && tkn.value === ")")) {
                 var bodyNode = void 0;
                 _b = parseToken(tokens, position), position = _b[0], bodyNode = _b[1];
                 node.params.push(bodyNode);
-                token = asNotUndefined(tokens[position], "EOF");
+                tkn = asNotUndefined(tokens[position], "EOF");
             }
             return [position + 1, node];
         },
@@ -1077,34 +1077,34 @@ var Lits = (function (exports) {
             binding: bindingNode,
             modifiers: [],
         };
-        var token = asNotUndefined(tokens[position], "EOF");
-        while (token.type === "modifier") {
-            switch (token.value) {
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        while (tkn.type === "modifier") {
+            switch (tkn.value) {
                 case "&let":
                     if (loopBinding.letBindings) {
-                        throw new LitsError("Only one &let modifier allowed", token.sourceCodeInfo);
+                        throw new LitsError("Only one &let modifier allowed", tkn.sourceCodeInfo);
                     }
                     _c = parseBindings(tokens, position + 1), position = _c[0], loopBinding.letBindings = _c[1];
                     loopBinding.modifiers.push("&let");
                     break;
                 case "&when":
                     if (loopBinding.whenNode) {
-                        throw new LitsError("Only one &when modifier allowed", token.sourceCodeInfo);
+                        throw new LitsError("Only one &when modifier allowed", tkn.sourceCodeInfo);
                     }
                     _d = parseToken(tokens, position + 1), position = _d[0], loopBinding.whenNode = _d[1];
                     loopBinding.modifiers.push("&when");
                     break;
                 case "&while":
                     if (loopBinding.whileNode) {
-                        throw new LitsError("Only one &while modifier allowed", token.sourceCodeInfo);
+                        throw new LitsError("Only one &while modifier allowed", tkn.sourceCodeInfo);
                     }
                     _e = parseToken(tokens, position + 1), position = _e[0], loopBinding.whileNode = _e[1];
                     loopBinding.modifiers.push("&while");
                     break;
                 default:
-                    throw new LitsError("Illegal modifier: " + token.value, token.sourceCodeInfo);
+                    throw new LitsError("Illegal modifier: " + tkn.value, tkn.sourceCodeInfo);
             }
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         return [position, loopBinding];
     }
@@ -1119,18 +1119,18 @@ var Lits = (function (exports) {
     }
     function parseLoopBindings(tokens, position, parsers) {
         var _a;
-        var token = asNotUndefined(tokens[position], "EOF");
-        if (!(token.type === "paren" && token.value === "[")) {
-            throw new UnexpectedTokenError("[", token);
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        if (!(tkn.type === "paren" && tkn.value === "[")) {
+            throw new UnexpectedTokenError("[", tkn);
         }
         position += 1;
         var loopBindings = [];
-        token = asNotUndefined(tokens[position], "EOF");
-        while (!(token.type === "paren" && token.value === "]")) {
+        tkn = asNotUndefined(tokens[position], "EOF");
+        while (!(tkn.type === "paren" && tkn.value === "]")) {
             var loopBinding = void 0;
             _a = parseLoopBinding(tokens, position, parsers), position = _a[0], loopBinding = _a[1];
             loopBindings.push(loopBinding);
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         return [position + 1, loopBindings];
     }
@@ -1143,9 +1143,9 @@ var Lits = (function (exports) {
             _a = parseLoopBindings(tokens, position, parsers), position = _a[0], loopBindings = _a[1];
             var expression;
             _b = parseToken(tokens, position), position = _b[0], expression = _b[1];
-            var token = asNotUndefined(tokens[position], "EOF");
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
+            var tkn = asNotUndefined(tokens[position], "EOF");
+            if (!(tkn.type === "paren" && tkn.value === ")")) {
+                throw new UnexpectedTokenError(")", tkn);
             }
             var node = {
                 name: "for",
@@ -1486,9 +1486,9 @@ var Lits = (function (exports) {
             var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseToken(tokens, position), newPosition = _b[0], messageNode = _b[1];
             position = newPosition;
-            var token = asNotUndefined(tokens[position], "EOF");
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
+            var tkn = asNotUndefined(tokens[position], "EOF");
+            if (!(tkn.type === "paren" && tkn.value === ")")) {
+                throw new UnexpectedTokenError(")", tkn);
             }
             position += 1;
             var node = {
@@ -1541,34 +1541,34 @@ var Lits = (function (exports) {
             var firstToken = asNotUndefined(tokens[position], "EOF");
             var tryExpression;
             _b = parseToken(tokens, position), position = _b[0], tryExpression = _b[1];
-            var token = asNotUndefined(tokens[position], "EOF");
-            if (!(token.type === "paren" && token.value === "(")) {
-                throw new UnexpectedTokenError("(", token);
+            var tkn = asNotUndefined(tokens[position], "EOF");
+            if (!(tkn.type === "paren" && tkn.value === "(")) {
+                throw new UnexpectedTokenError("(", tkn);
             }
             position += 1;
-            token = asNotUndefined(tokens[position], "EOF");
-            if (!(token.type === "paren" && token.value === "(")) {
-                throw new UnexpectedTokenError("(", token);
+            tkn = asNotUndefined(tokens[position], "EOF");
+            if (!(tkn.type === "paren" && tkn.value === "(")) {
+                throw new UnexpectedTokenError("(", tkn);
             }
             position += 1;
             var error;
             _c = parseToken(tokens, position), position = _c[0], error = _c[1];
             nameNode.assert(error, error.token.sourceCodeInfo);
-            token = asNotUndefined(tokens[position], "EOF");
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
+            tkn = asNotUndefined(tokens[position], "EOF");
+            if (!(tkn.type === "paren" && tkn.value === ")")) {
+                throw new UnexpectedTokenError(")", tkn);
             }
             position += 1;
             var catchExpression;
             _d = parseToken(tokens, position), position = _d[0], catchExpression = _d[1];
-            token = asNotUndefined(tokens[position], "EOF");
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
+            tkn = asNotUndefined(tokens[position], "EOF");
+            if (!(tkn.type === "paren" && tkn.value === ")")) {
+                throw new UnexpectedTokenError(")", tkn);
             }
             position += 1;
-            token = asNotUndefined(tokens[position], "EOF");
-            if (!(token.type === "paren" && token.value === ")")) {
-                throw new UnexpectedTokenError(")", token);
+            tkn = asNotUndefined(tokens[position], "EOF");
+            if (!(tkn.type === "paren" && tkn.value === ")")) {
+                throw new UnexpectedTokenError(")", tkn);
             }
             position += 1;
             var node = {
@@ -4782,37 +4782,37 @@ var Lits = (function (exports) {
     }
 
     var parseNumber = function (tokens, position) {
-        var token = asNotUndefined(tokens[position], "EOF");
-        return [position + 1, { type: "Number", value: Number(token.value), token: token }];
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        return [position + 1, { type: "Number", value: Number(tkn.value), token: tkn }];
     };
     var parseString = function (tokens, position) {
-        var token = asNotUndefined(tokens[position], "EOF");
-        return [position + 1, { type: "String", value: token.value, token: token }];
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        return [position + 1, { type: "String", value: tkn.value, token: tkn }];
     };
     var parseName = function (tokens, position) {
-        var token = asNotUndefined(tokens[position], "EOF");
-        return [position + 1, { type: "Name", value: token.value, token: token }];
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        return [position + 1, { type: "Name", value: tkn.value, token: tkn }];
     };
     var parseReservedName = function (tokens, position) {
-        var token = asNotUndefined(tokens[position], "EOF");
-        return [position + 1, { type: "ReservedName", value: token.value, token: token }];
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        return [position + 1, { type: "ReservedName", value: tkn.value, token: tkn }];
     };
     var parseTokens = function (tokens, position) {
         var _a;
-        var token = asNotUndefined(tokens[position], "EOF");
+        var tkn = asNotUndefined(tokens[position], "EOF");
         var astNodes = [];
         var astNode;
-        while (!(token.type === "paren" && (token.value === ")" || token.value === "]"))) {
+        while (!(tkn.type === "paren" && (tkn.value === ")" || tkn.value === "]"))) {
             _a = parseToken(tokens, position), position = _a[0], astNode = _a[1];
             astNodes.push(astNode);
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         return [position, astNodes];
     };
     var parseExpression = function (tokens, position) {
         position += 1; // Skip parenthesis
-        var token = asNotUndefined(tokens[position], "EOF");
-        if (token.type === "name" && builtin.specialExpressions[token.value]) {
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        if (tkn.type === "name" && builtin.specialExpressions[tkn.value]) {
             return parseSpecialExpression(tokens, position);
         }
         return parseNormalExpression(tokens, position);
@@ -4821,13 +4821,13 @@ var Lits = (function (exports) {
         var _a;
         var firstToken = asNotUndefined(tokens[position], "EOF");
         position = position + 1;
-        var token = asNotUndefined(tokens[position], "EOF");
+        var tkn = asNotUndefined(tokens[position], "EOF");
         var params = [];
         var param;
-        while (!(token.type === "paren" && token.value === "]")) {
+        while (!(tkn.type === "paren" && tkn.value === "]")) {
             _a = parseToken(tokens, position), position = _a[0], param = _a[1];
             params.push(param);
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         position = position + 1;
         var node = {
@@ -4842,13 +4842,13 @@ var Lits = (function (exports) {
         var _a;
         var firstToken = asNotUndefined(tokens[position], "EOF");
         position = position + 1;
-        var token = asNotUndefined(tokens[position], "EOF");
+        var tkn = asNotUndefined(tokens[position], "EOF");
         var params = [];
         var param;
-        while (!(token.type === "paren" && token.value === "}")) {
+        while (!(tkn.type === "paren" && tkn.value === "}")) {
             _a = parseToken(tokens, position), position = _a[0], param = _a[1];
             params.push(param);
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         position = position + 1;
         var node = {
@@ -4861,23 +4861,23 @@ var Lits = (function (exports) {
         return [position, node];
     };
     var parseRegexpShorthand = function (tokens, position) {
-        var token = asNotUndefined(tokens[position], "EOF");
+        var tkn = asNotUndefined(tokens[position], "EOF");
         var stringNode = {
             type: "String",
-            value: token.value,
-            token: token,
+            value: tkn.value,
+            token: tkn,
         };
-        assertNotUndefined(token.options, token.sourceCodeInfo);
+        assertNotUndefined(tkn.options, tkn.sourceCodeInfo);
         var optionsNode = {
             type: "String",
-            value: "" + (token.options.g ? "g" : "") + (token.options.i ? "i" : ""),
-            token: token,
+            value: "" + (tkn.options.g ? "g" : "") + (tkn.options.i ? "i" : ""),
+            token: tkn,
         };
         var node = {
             type: "NormalExpression",
             name: "regexp",
             params: [stringNode, optionsNode],
-            token: token,
+            token: tkn,
         };
         return [position + 1, node];
     };
@@ -4888,9 +4888,9 @@ var Lits = (function (exports) {
         var _a = parseNormalExpression(tokens, position), newPosition = _a[0], normalExpressionNode = _a[1];
         var arity = 0;
         for (var pos = position + 1; pos < newPosition - 1; pos += 1) {
-            var token = asNotUndefined(tokens[pos], "EOF");
-            if (token.type === "name") {
-                var match = placeholderRegexp.exec(token.value);
+            var tkn = asNotUndefined(tokens[pos], "EOF");
+            if (tkn.type === "name") {
+                var match = placeholderRegexp.exec(tkn.value);
                 if (match) {
                     arity = Math.max(arity, Number(match[1]));
                     if (arity > 20) {
@@ -4898,7 +4898,7 @@ var Lits = (function (exports) {
                     }
                 }
             }
-            if (token.type === "fnShorthand") {
+            if (tkn.type === "fnShorthand") {
                 throw new LitsError("Nested shortcut functions are not allowed", firstToken.sourceCodeInfo);
             }
         }
@@ -4926,32 +4926,32 @@ var Lits = (function (exports) {
         return [newPosition, node];
     };
     var parseArgument = function (tokens, position) {
-        var token = asNotUndefined(tokens[position], "EOF");
-        if (token.type === "name") {
-            return [position + 1, { type: "Argument", name: token.value, token: token }];
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        if (tkn.type === "name") {
+            return [position + 1, { type: "Argument", name: tkn.value, token: tkn }];
         }
-        else if (token.type === "modifier") {
-            var value = token.value;
-            return [position + 1, { type: "Modifier", value: value, token: token }];
+        else if (tkn.type === "modifier") {
+            var value = tkn.value;
+            return [position + 1, { type: "Modifier", value: value, token: tkn }];
         }
         else {
-            throw new UnexpectedTokenError("), name or modifier", token);
+            throw new UnexpectedTokenError("), name or modifier", tkn);
         }
     };
     var parseBindings = function (tokens, position) {
         var _a;
-        var token = asNotUndefined(tokens[position], "EOF");
-        if (!(token.type === "paren" && token.value === "[")) {
-            throw new UnexpectedTokenError("[", token);
+        var tkn = asNotUndefined(tokens[position], "EOF");
+        if (!(tkn.type === "paren" && tkn.value === "[")) {
+            throw new UnexpectedTokenError("[", tkn);
         }
         position += 1;
-        token = asNotUndefined(tokens[position], "EOF");
+        tkn = asNotUndefined(tokens[position], "EOF");
         var bindings = [];
         var binding;
-        while (!(token.type === "paren" && token.value === "]")) {
+        while (!(tkn.type === "paren" && tkn.value === "]")) {
             _a = parseBinding(tokens, position), position = _a[0], binding = _a[1];
             bindings.push(binding);
-            token = asNotUndefined(tokens[position], "EOF");
+            tkn = asNotUndefined(tokens[position], "EOF");
         }
         position += 1;
         return [position, bindings];
@@ -5019,9 +5019,9 @@ var Lits = (function (exports) {
         return [positionAfterParse, node];
     };
     var parseToken = function (tokens, position) {
-        var token = asNotUndefined(tokens[position], "EOF");
+        var tkn = asNotUndefined(tokens[position], "EOF");
         var nodeDescriptor = undefined;
-        switch (token.type) {
+        switch (tkn.type) {
             case "number":
                 nodeDescriptor = parseNumber(tokens, position);
                 break;
@@ -5035,13 +5035,13 @@ var Lits = (function (exports) {
                 nodeDescriptor = parseReservedName(tokens, position);
                 break;
             case "paren":
-                if (token.value === "(") {
+                if (tkn.value === "(") {
                     nodeDescriptor = parseExpression(tokens, position);
                 }
-                else if (token.value === "[") {
+                else if (tkn.value === "[") {
                     nodeDescriptor = parseArrayLitteral(tokens, position);
                 }
-                else if (token.value === "{") {
+                else if (tkn.value === "{") {
                     nodeDescriptor = parseObjectLitteral(tokens, position);
                 }
                 break;
@@ -5053,7 +5053,7 @@ var Lits = (function (exports) {
                 break;
         }
         if (!nodeDescriptor) {
-            throw new LitsError("Unrecognized token: " + token.type + " value=" + token.value, token.sourceCodeInfo);
+            throw new LitsError("Unrecognized token: " + tkn.type + " value=" + tkn.value, tkn.sourceCodeInfo);
         }
         return nodeDescriptor;
     };

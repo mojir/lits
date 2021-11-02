@@ -182,27 +182,27 @@ function arityOk(overloadedFunctions: FunctionOverload[], arity: Arity) {
 }
 
 function parseFunctionBody(tokens: Token[], position: number, { parseToken }: Parsers): [number, AstNode[]] {
-  let token = asNotUndefined(tokens[position], `EOF`)
+  let tkn = asNotUndefined(tokens[position], `EOF`)
   const body: AstNode[] = []
-  while (!(token.type === `paren` && token.value === `)`)) {
+  while (!(tkn.type === `paren` && tkn.value === `)`)) {
     let bodyNode: AstNode
     ;[position, bodyNode] = parseToken(tokens, position)
     body.push(bodyNode)
-    token = asNotUndefined(tokens[position], `EOF`)
+    tkn = asNotUndefined(tokens[position], `EOF`)
   }
   if (body.length === 0) {
-    throw new LitsError(`Missing body in function`, token.sourceCodeInfo)
+    throw new LitsError(`Missing body in function`, tkn.sourceCodeInfo)
   }
   return [position + 1, body]
 }
 
 function parseFunctionOverloades(tokens: Token[], position: number, parsers: Parsers): [number, FunctionOverload[]] {
-  let token = asNotUndefined(tokens[position], `EOF`)
-  if (token.type === `paren` && token.value === `(`) {
+  let tkn = asNotUndefined(tokens[position], `EOF`)
+  if (tkn.type === `paren` && tkn.value === `(`) {
     const functionOverloades: FunctionOverload[] = []
-    while (!(token.type === `paren` && token.value === `)`)) {
+    while (!(tkn.type === `paren` && tkn.value === `)`)) {
       position += 1
-      token = asNotUndefined(tokens[position], `EOF`)
+      tkn = asNotUndefined(tokens[position], `EOF`)
       let functionArguments: FunctionArguments
       ;[position, functionArguments] = parseFunctionArguments(tokens, position, parsers)
       const arity: Arity = functionArguments.restArgument
@@ -210,7 +210,7 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
         : functionArguments.mandatoryArguments.length
 
       if (!arityOk(functionOverloades, arity)) {
-        throw new LitsError(`All overloaded functions must have different arity`, token.sourceCodeInfo)
+        throw new LitsError(`All overloaded functions must have different arity`, tkn.sourceCodeInfo)
       }
 
       let functionBody: AstNode[]
@@ -220,14 +220,14 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
         body: functionBody,
         arity,
       })
-      token = asNotUndefined(tokens[position], `EOF`)
-      if (!(token.type === `paren` && (token.value === `)` || token.value === `(`))) {
-        throw new UnexpectedTokenError(`) or (`, token)
+      tkn = asNotUndefined(tokens[position], `EOF`)
+      if (!(tkn.type === `paren` && (tkn.value === `)` || tkn.value === `(`))) {
+        throw new UnexpectedTokenError(`) or (`, tkn)
       }
     }
 
     return [position + 1, functionOverloades]
-  } else if (token.type === `paren` && token.value === `[`) {
+  } else if (tkn.type === `paren` && tkn.value === `[`) {
     let functionArguments: FunctionArguments
     ;[position, functionArguments] = parseFunctionArguments(tokens, position, parsers)
     const arity: Arity = functionArguments.restArgument
@@ -246,7 +246,7 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
       ],
     ]
   } else {
-    throw new UnexpectedTokenError(`[ or (`, token)
+    throw new UnexpectedTokenError(`[ or (`, tkn)
   }
 }
 
@@ -258,39 +258,39 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
   const mandatoryArguments: string[] = []
   const argNames: Record<string, true> = {}
   let state: `mandatory` | `rest` | `let` = `mandatory`
-  let token = asNotUndefined(tokens[position], `EOF`)
+  let tkn = asNotUndefined(tokens[position], `EOF`)
 
   position += 1
-  token = asNotUndefined(tokens[position], `EOF`)
-  while (!(token.type === `paren` && token.value === `]`)) {
+  tkn = asNotUndefined(tokens[position], `EOF`)
+  while (!(tkn.type === `paren` && tkn.value === `]`)) {
     if (state === `let`) {
       ;[position, bindings] = parseBindings(tokens, position)
       break
     } else {
       const [newPosition, node] = parseArgument(tokens, position)
       position = newPosition
-      token = asNotUndefined(tokens[position], `EOF`)
+      tkn = asNotUndefined(tokens[position], `EOF`)
 
       if (node.type === `Modifier`) {
         switch (node.value) {
           case `&`:
             if (state === `rest`) {
-              throw new LitsError(`& can only appear once`, token.sourceCodeInfo)
+              throw new LitsError(`& can only appear once`, tkn.sourceCodeInfo)
             }
             state = `rest`
             break
           case `&let`:
             if (state === `rest` && !restArgument) {
-              throw new LitsError(`No rest argument was spcified`, token.sourceCodeInfo)
+              throw new LitsError(`No rest argument was spcified`, tkn.sourceCodeInfo)
             }
             state = `let`
             break
           default:
-            throw new LitsError(`Illegal modifier: ${node.value}`, token.sourceCodeInfo)
+            throw new LitsError(`Illegal modifier: ${node.value}`, tkn.sourceCodeInfo)
         }
       } else {
         if (argNames[node.name]) {
-          throw new LitsError(`Duplicate argument "${node.name}"`, token.sourceCodeInfo)
+          throw new LitsError(`Duplicate argument "${node.name}"`, tkn.sourceCodeInfo)
         } else {
           argNames[node.name] = true
         }
@@ -300,7 +300,7 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
             break
           case `rest`:
             if (restArgument !== undefined) {
-              throw new LitsError(`Can only specify one rest argument`, token.sourceCodeInfo)
+              throw new LitsError(`Can only specify one rest argument`, tkn.sourceCodeInfo)
             }
             restArgument = node.name
             break
@@ -310,7 +310,7 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
   }
 
   if (state === `rest` && restArgument === undefined) {
-    throw new LitsError(`Missing rest argument name`, token.sourceCodeInfo)
+    throw new LitsError(`Missing rest argument name`, tkn.sourceCodeInfo)
   }
 
   position += 1

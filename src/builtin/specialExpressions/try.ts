@@ -19,15 +19,15 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokens, position)
 
-    let token = asNotUndefined(tokens[position], `EOF`)
-    if (!(token.type === `paren` && token.value === `(`)) {
-      throw new UnexpectedTokenError(`(`, token)
+    let tkn = asNotUndefined(tokens[position], `EOF`)
+    if (!(tkn.type === `paren` && tkn.value === `(`)) {
+      throw new UnexpectedTokenError(`(`, tkn)
     }
     position += 1
 
-    token = asNotUndefined(tokens[position], `EOF`)
-    if (!(token.type === `paren` && token.value === `(`)) {
-      throw new UnexpectedTokenError(`(`, token)
+    tkn = asNotUndefined(tokens[position], `EOF`)
+    if (!(tkn.type === `paren` && tkn.value === `(`)) {
+      throw new UnexpectedTokenError(`(`, tkn)
     }
 
     position += 1
@@ -35,24 +35,24 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     ;[position, error] = parseToken(tokens, position)
     nameNode.assert(error, error.token.sourceCodeInfo)
 
-    token = asNotUndefined(tokens[position], `EOF`)
-    if (!(token.type === `paren` && token.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, token)
+    tkn = asNotUndefined(tokens[position], `EOF`)
+    if (!(tkn.type === `paren` && tkn.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, tkn)
     }
     position += 1
 
     let catchExpression: AstNode
     ;[position, catchExpression] = parseToken(tokens, position)
 
-    token = asNotUndefined(tokens[position], `EOF`)
-    if (!(token.type === `paren` && token.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, token)
+    tkn = asNotUndefined(tokens[position], `EOF`)
+    if (!(tkn.type === `paren` && tkn.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, tkn)
     }
     position += 1
 
-    token = asNotUndefined(tokens[position], `EOF`)
-    if (!(token.type === `paren` && token.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, token)
+    tkn = asNotUndefined(tokens[position], `EOF`)
+    if (!(tkn.type === `paren` && tkn.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, tkn)
     }
     position += 1
 

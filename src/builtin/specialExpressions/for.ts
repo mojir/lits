@@ -33,34 +33,34 @@ function parseLoopBinding(
     modifiers: [],
   }
 
-  let token = asNotUndefined(tokens[position], `EOF`)
-  while (token.type === `modifier`) {
-    switch (token.value) {
+  let tkn = asNotUndefined(tokens[position], `EOF`)
+  while (tkn.type === `modifier`) {
+    switch (tkn.value) {
       case `&let`:
         if (loopBinding.letBindings) {
-          throw new LitsError(`Only one &let modifier allowed`, token.sourceCodeInfo)
+          throw new LitsError(`Only one &let modifier allowed`, tkn.sourceCodeInfo)
         }
         ;[position, loopBinding.letBindings] = parseBindings(tokens, position + 1)
         loopBinding.modifiers.push(`&let`)
         break
       case `&when`:
         if (loopBinding.whenNode) {
-          throw new LitsError(`Only one &when modifier allowed`, token.sourceCodeInfo)
+          throw new LitsError(`Only one &when modifier allowed`, tkn.sourceCodeInfo)
         }
         ;[position, loopBinding.whenNode] = parseToken(tokens, position + 1)
         loopBinding.modifiers.push(`&when`)
         break
       case `&while`:
         if (loopBinding.whileNode) {
-          throw new LitsError(`Only one &while modifier allowed`, token.sourceCodeInfo)
+          throw new LitsError(`Only one &while modifier allowed`, tkn.sourceCodeInfo)
         }
         ;[position, loopBinding.whileNode] = parseToken(tokens, position + 1)
         loopBinding.modifiers.push(`&while`)
         break
       default:
-        throw new LitsError(`Illegal modifier: ${token.value}`, token.sourceCodeInfo)
+        throw new LitsError(`Illegal modifier: ${tkn.value}`, tkn.sourceCodeInfo)
     }
-    token = asNotUndefined(tokens[position], `EOF`)
+    tkn = asNotUndefined(tokens[position], `EOF`)
   }
   return [position, loopBinding]
 }
@@ -81,20 +81,20 @@ function addToContext(
 }
 
 function parseLoopBindings(tokens: Token[], position: number, parsers: Parsers): [number, LoopBindingNode[]] {
-  let token = asNotUndefined(tokens[position], `EOF`)
-  if (!(token.type === `paren` && token.value === `[`)) {
-    throw new UnexpectedTokenError(`[`, token)
+  let tkn = asNotUndefined(tokens[position], `EOF`)
+  if (!(tkn.type === `paren` && tkn.value === `[`)) {
+    throw new UnexpectedTokenError(`[`, tkn)
   }
   position += 1
 
   const loopBindings: LoopBindingNode[] = []
 
-  token = asNotUndefined(tokens[position], `EOF`)
-  while (!(token.type === `paren` && token.value === `]`)) {
+  tkn = asNotUndefined(tokens[position], `EOF`)
+  while (!(tkn.type === `paren` && tkn.value === `]`)) {
     let loopBinding: LoopBindingNode
     ;[position, loopBinding] = parseLoopBinding(tokens, position, parsers)
     loopBindings.push(loopBinding)
-    token = asNotUndefined(tokens[position], `EOF`)
+    tkn = asNotUndefined(tokens[position], `EOF`)
   }
   return [position + 1, loopBindings]
 }
@@ -109,9 +109,9 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
     let expression: AstNode
     ;[position, expression] = parseToken(tokens, position)
 
-    const token = asNotUndefined(tokens[position], `EOF`)
-    if (!(token.type === `paren` && token.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, token)
+    const tkn = asNotUndefined(tokens[position], `EOF`)
+    if (!(tkn.type === `paren` && tkn.value === `)`)) {
+      throw new UnexpectedTokenError(`)`, tkn)
     }
 
     const node: ForSpecialExpressionNode = {

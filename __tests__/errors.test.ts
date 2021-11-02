@@ -14,12 +14,12 @@ describe(`errors`, () => {
     expect(err.message).toBe(`A message (1:1)`)
   })
   test(`UnexpectedTokenError`, () => {
-    const token: Token = {
+    const tkn: Token = {
       type: `name`,
       value: `xxx`,
       sourceCodeInfo: { line: 1, column: 1, toString: () => `(1:1)`, sourceCodeLine: null },
     }
-    const err = new UnexpectedTokenError(`)`, token)
+    const err = new UnexpectedTokenError(`)`, tkn)
     expect(err).toBeInstanceOf(UnexpectedTokenError)
     expect(err.name).toBe(`UnexpectedTokenError`)
     expect(err.message).toBe(`Expected a ')'-token, got 'xxx' (1:1)`)
