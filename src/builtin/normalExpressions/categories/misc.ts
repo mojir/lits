@@ -34,8 +34,8 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength({ min: 1 }, node),
   },
   'equal?': {
-    evaluate: ([a, b], meta): boolean => {
-      return deepEqual(any.as(a, meta), any.as(b, meta), meta)
+    evaluate: ([a, b], sourceCodeInfo): boolean => {
+      return deepEqual(any.as(a, sourceCodeInfo), any.as(b, sourceCodeInfo), sourceCodeInfo)
     },
     validate: node => assertLength({ min: 1 }, node),
   },
@@ -105,19 +105,19 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(0, node),
   },
   'write!': {
-    evaluate: (params, meta): Any => {
+    evaluate: (params, sourceCodeInfo): Any => {
       // eslint-disable-next-line no-console
       console.log(...params)
 
       if (params.length > 0) {
-        return any.as(params[params.length - 1], meta)
+        return any.as(params[params.length - 1], sourceCodeInfo)
       }
 
       return null
     },
   },
   'debug!': {
-    evaluate: (params, meta, contextStack): Any => {
+    evaluate: (params, sourceCodeInfo, contextStack): Any => {
       if (params.length === 0) {
         // eslint-disable-next-line no-console
         console.warn(`*** LITS DEBUG ***\n${contextStackToString(contextStack)}\n`)
@@ -125,7 +125,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       // eslint-disable-next-line no-console
       console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
-      return any.as(params[0], meta)
+      return any.as(params[0], sourceCodeInfo)
     },
     validate: node => assertLength({ max: 1 }, node),
   },
@@ -142,14 +142,14 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   assert: {
-    evaluate: (params, meta): Any => {
+    evaluate: (params, sourceCodeInfo): Any => {
       const value = params[0]
       const message = params.length === 2 ? params[1] : `${value}`
-      assertString(message, meta)
+      assertString(message, sourceCodeInfo)
       if (!value) {
-        throw new AssertionError(message, meta)
+        throw new AssertionError(message, sourceCodeInfo)
       }
-      return any.as(value, meta)
+      return any.as(value, sourceCodeInfo)
     },
     validate: node => assertLength({ min: 1, max: 2 }, node),
   },

@@ -46,13 +46,13 @@ xdescribe(`performace`, () => {
   test(`tokenise`, () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
-      tokenize(program)
+      tokenize(program, true)
     }
     logPerformace(`Tokenise`, Date.now() - startTime)
   })
 
   test(`parse`, () => {
-    const tokens = tokenize(program)
+    const tokens = tokenize(program, true)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
       parse(tokens)
@@ -61,7 +61,7 @@ xdescribe(`performace`, () => {
   })
 
   test(`evaluate`, () => {
-    const tokens = tokenize(program)
+    const tokens = tokenize(program, true)
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
@@ -71,7 +71,7 @@ xdescribe(`performace`, () => {
   })
 
   test(`lits run - NOT chaced.`, () => {
-    const lits = new Lits()
+    const lits = new Lits({ debug: true })
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {
       lits.run(program, { globals })

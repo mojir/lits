@@ -31,8 +31,8 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     castThrowExpressionNode(node)
-    const message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack), node.token.meta)
-    throw new UserDefinedError(message, node.token.meta)
+    const message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack), node.token.sourceCodeInfo)
+    throw new UserDefinedError(message, node.token.sourceCodeInfo)
   },
 }
 

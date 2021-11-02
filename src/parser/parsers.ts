@@ -134,7 +134,7 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
     token,
   }
 
-  assertNotUndefined(token.options, token.meta)
+  assertNotUndefined(token.options, token.sourceCodeInfo)
 
   const optionsNode: StringNode = {
     type: `String`,
@@ -168,12 +168,12 @@ const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
       if (match) {
         arity = Math.max(arity, Number(match[1]))
         if (arity > 20) {
-          throw new LitsError(`Can't specify more than 20 arguments`, firstToken.meta)
+          throw new LitsError(`Can't specify more than 20 arguments`, firstToken.sourceCodeInfo)
         }
       }
     }
     if (token.type === `fnShorthand`) {
-      throw new LitsError(`Nested shortcut functions are not allowed`, firstToken.meta)
+      throw new LitsError(`Nested shortcut functions are not allowed`, firstToken.sourceCodeInfo)
     }
   }
 
@@ -274,7 +274,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
     return [position, node]
   }
 
-  assertNameNode(fnNode, fnNode.token.meta)
+  assertNameNode(fnNode, fnNode.token.sourceCodeInfo)
   const node: NormalExpressionNode = {
     type: `NormalExpression`,
     name: fnNode.value,
@@ -292,10 +292,10 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
 }
 
 const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
-  const { value: expressionName, meta } = asNotUndefined(tokens[position], `EOF`)
+  const { value: expressionName, sourceCodeInfo } = asNotUndefined(tokens[position], `EOF`)
   position += 1
 
-  const { parse, validate } = asNotUndefined(builtin.specialExpressions[expressionName], meta)
+  const { parse, validate } = asNotUndefined(builtin.specialExpressions[expressionName], sourceCodeInfo)
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
@@ -344,7 +344,7 @@ export const parseToken: ParseToken = (tokens, position) => {
       break
   }
   if (!nodeDescriptor) {
-    throw new LitsError(`Unrecognized token: ${token.type} value=${token.value}`, token.meta)
+    throw new LitsError(`Unrecognized token: ${token.type} value=${token.value}`, token.sourceCodeInfo)
   }
   return nodeDescriptor
 }

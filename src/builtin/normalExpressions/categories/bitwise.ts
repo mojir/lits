@@ -4,78 +4,78 @@ import { BuiltinNormalExpressions } from '../../interface'
 
 export const bitwiseNormalExpression: BuiltinNormalExpressions = {
   'bit-shift-left': {
-    evaluate: ([num, count], meta): number => {
-      number.assert(num, meta, { integer: true })
-      assertNonNegativeInteger(count, meta)
+    evaluate: ([num, count], sourceCodeInfo): number => {
+      number.assert(num, sourceCodeInfo, { integer: true })
+      assertNonNegativeInteger(count, sourceCodeInfo)
 
       return num << count
     },
     validate: node => assertLength(2, node),
   },
   'bit-shift-right': {
-    evaluate: ([num, count], meta): number => {
-      number.assert(num, meta, { integer: true })
-      assertNonNegativeInteger(count, meta)
+    evaluate: ([num, count], sourceCodeInfo): number => {
+      number.assert(num, sourceCodeInfo, { integer: true })
+      assertNonNegativeInteger(count, sourceCodeInfo)
 
       return num >> count
     },
     validate: node => assertLength(2, node),
   },
   'bit-not': {
-    evaluate: ([num], meta): number => {
-      number.assert(num, meta, { integer: true })
+    evaluate: ([num], sourceCodeInfo): number => {
+      number.assert(num, sourceCodeInfo, { integer: true })
       return ~num
     },
     validate: node => assertLength(1, node),
   },
   'bit-and': {
-    evaluate: ([first, ...rest], meta): number => {
-      number.assert(first, meta, { integer: true })
+    evaluate: ([first, ...rest], sourceCodeInfo): number => {
+      number.assert(first, sourceCodeInfo, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        number.assert(value, meta, { integer: true })
+        number.assert(value, sourceCodeInfo, { integer: true })
         return result & value
       }, first)
     },
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-and-not': {
-    evaluate: ([first, ...rest], meta): number => {
-      number.assert(first, meta, { integer: true })
+    evaluate: ([first, ...rest], sourceCodeInfo): number => {
+      number.assert(first, sourceCodeInfo, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        number.assert(value, meta, { integer: true })
+        number.assert(value, sourceCodeInfo, { integer: true })
         return result & ~value
       }, first)
     },
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-or': {
-    evaluate: ([first, ...rest], meta): number => {
-      number.assert(first, meta, { integer: true })
+    evaluate: ([first, ...rest], sourceCodeInfo): number => {
+      number.assert(first, sourceCodeInfo, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        number.assert(value, meta, { integer: true })
+        number.assert(value, sourceCodeInfo, { integer: true })
         return result | value
       }, first)
     },
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-xor': {
-    evaluate: ([first, ...rest], meta): number => {
-      number.assert(first, meta, { integer: true })
+    evaluate: ([first, ...rest], sourceCodeInfo): number => {
+      number.assert(first, sourceCodeInfo, { integer: true })
 
       return rest.reduce((result: number, value) => {
-        number.assert(value, meta, { integer: true })
+        number.assert(value, sourceCodeInfo, { integer: true })
         return result ^ value
       }, first)
     },
     validate: node => assertLength({ min: 2 }, node),
   },
   'bit-flip': {
-    evaluate: ([num, index], meta): number => {
-      number.assert(num, meta, { integer: true })
-      assertNonNegativeInteger(index, meta)
+    evaluate: ([num, index], sourceCodeInfo): number => {
+      number.assert(num, sourceCodeInfo, { integer: true })
+      assertNonNegativeInteger(index, sourceCodeInfo)
 
       const mask = 1 << index
       return (num ^= mask)
@@ -83,9 +83,9 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'bit-set': {
-    evaluate: ([num, index], meta): number => {
-      number.assert(num, meta, { integer: true })
-      assertNonNegativeInteger(index, meta)
+    evaluate: ([num, index], sourceCodeInfo): number => {
+      number.assert(num, sourceCodeInfo, { integer: true })
+      assertNonNegativeInteger(index, sourceCodeInfo)
 
       const mask = 1 << index
       return (num |= mask)
@@ -93,9 +93,9 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'bit-clear': {
-    evaluate: ([num, index], meta): number => {
-      number.assert(num, meta, { integer: true })
-      assertNonNegativeInteger(index, meta)
+    evaluate: ([num, index], sourceCodeInfo): number => {
+      number.assert(num, sourceCodeInfo, { integer: true })
+      assertNonNegativeInteger(index, sourceCodeInfo)
 
       const mask = 1 << index
       return (num &= ~mask)
@@ -103,9 +103,9 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertLength(2, node),
   },
   'bit-test': {
-    evaluate: ([num, index], meta): boolean => {
-      number.assert(num, meta, { integer: true })
-      assertNonNegativeInteger(index, meta)
+    evaluate: ([num, index], sourceCodeInfo): boolean => {
+      number.assert(num, sourceCodeInfo, { integer: true })
+      assertNonNegativeInteger(index, sourceCodeInfo)
 
       const mask = 1 << index
       return !!(num & mask)

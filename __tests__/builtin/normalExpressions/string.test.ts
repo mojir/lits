@@ -3,7 +3,7 @@ import { Lits } from '../../../src'
 let lits: Lits
 
 beforeEach(() => {
-  lits = new Lits()
+  lits = new Lits({ debug: true })
 })
 
 describe(`string functions`, () => {

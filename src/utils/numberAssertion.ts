@@ -1,5 +1,5 @@
 import { LitsError } from '../errors'
-import { TokenMeta } from '../tokenizer/interface'
+import { SourceCodeInfo } from '../tokenizer/interface'
 
 type NumberOptions = {
   integer?: true
@@ -21,21 +21,21 @@ function is(value: unknown, options: NumberOptions = {}): value is number {
   return true
 }
 
-function assert(value: unknown, meta: TokenMeta, options: NumberOptions = {}): asserts value is number {
+function assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): asserts value is number {
   if (!is(value, options)) {
-    throw new LitsError(`Expected ${getNumberTypeName(options)}, got ${value}`, meta)
+    throw new LitsError(`Expected ${getNumberTypeName(options)}, got ${value}`, sourceCodeInfo)
   }
 }
 
-function as(value: unknown, meta: TokenMeta, options: NumberOptions = {}): number {
-  assert(value, meta, options)
+function as(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): number {
+  assert(value, sourceCodeInfo, options)
   return value
 }
 
 export const number: {
   is: (value: unknown, options?: NumberOptions) => value is number
-  as: (value: unknown, meta: TokenMeta, options?: NumberOptions) => number
-  assert(value: unknown, meta: TokenMeta, options?: NumberOptions): asserts value is number
+  as: (value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions) => number
+  assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions): asserts value is number
 } = {
   is,
   as,

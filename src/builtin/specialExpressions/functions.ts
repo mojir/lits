@@ -43,7 +43,7 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
     if (expressionName === `defn` || expressionName === `defns`) {
       ;[position, functionName] = parseToken(tokens, position)
       if (expressionName === `defn` && functionName.type !== `Name`) {
-        throw new UnexpectedNodeTypeError(`Name`, functionName, functionName.token.meta)
+        throw new UnexpectedNodeTypeError(`Name`, functionName, functionName.token.sourceCodeInfo)
       }
     }
 
@@ -83,15 +83,15 @@ function getFunctionName(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ): string | undefined {
-  const meta = node.token.meta
+  const sourceCodeInfo = node.token.sourceCodeInfo
   if (expressionName === `defn`) {
     const name = ((node as DefnSpecialExpressionNode).functionName as NameNode).value
-    assertString(name, meta)
+    assertString(name, sourceCodeInfo)
     return name
   }
   if (expressionName === `defns`) {
     const name = evaluateAstNode((node as DefnsSpecialExpressionNode).functionName, contextStack)
-    assertString(name, meta)
+    assertString(name, sourceCodeInfo)
     return name
   }
   return undefined
@@ -102,7 +102,7 @@ function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpress
     castExpressionNode(node)
     const name = getFunctionName(expressionName, node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack, builtin, node.token.meta)
+    assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo)
 
     const evaluatedFunctionOverloades: EvaluatedFunctionOverload[] = []
     for (const functionOverload of node.overloads) {
@@ -190,7 +190,7 @@ function parseFunctionBody(tokens: Token[], position: number, { parseToken }: Pa
     token = asNotUndefined(tokens[position], `EOF`)
   }
   if (body.length === 0) {
-    throw new LitsError(`Missing body in function`, token.meta)
+    throw new LitsError(`Missing body in function`, token.sourceCodeInfo)
   }
   return [position + 1, body]
 }
@@ -209,7 +209,7 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
         : functionArguments.mandatoryArguments.length
 
       if (!arityOk(functionOverloades, arity)) {
-        throw new LitsError(`All overloaded functions must have different arity`, token.meta)
+        throw new LitsError(`All overloaded functions must have different arity`, token.sourceCodeInfo)
       }
 
       let functionBody: AstNode[]
@@ -274,22 +274,22 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
         switch (node.value) {
           case `&`:
             if (state === `rest`) {
-              throw new LitsError(`& can only appear once`, token.meta)
+              throw new LitsError(`& can only appear once`, token.sourceCodeInfo)
             }
             state = `rest`
             break
           case `&let`:
             if (state === `rest` && !restArgument) {
-              throw new LitsError(`No rest argument was spcified`, token.meta)
+              throw new LitsError(`No rest argument was spcified`, token.sourceCodeInfo)
             }
             state = `let`
             break
           default:
-            throw new LitsError(`Illegal modifier: ${node.value}`, token.meta)
+            throw new LitsError(`Illegal modifier: ${node.value}`, token.sourceCodeInfo)
         }
       } else {
         if (argNames[node.name]) {
-          throw new LitsError(`Duplicate argument "${node.name}"`, token.meta)
+          throw new LitsError(`Duplicate argument "${node.name}"`, token.sourceCodeInfo)
         } else {
           argNames[node.name] = true
         }
@@ -299,7 +299,7 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
             break
           case `rest`:
             if (restArgument !== undefined) {
-              throw new LitsError(`Can only specify one rest argument`, token.meta)
+              throw new LitsError(`Can only specify one rest argument`, token.sourceCodeInfo)
             }
             restArgument = node.name
             break
@@ -309,7 +309,7 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
   }
 
   if (state === `rest` && restArgument === undefined) {
-    throw new LitsError(`Missing rest argument name`, token.meta)
+    throw new LitsError(`Missing rest argument name`, token.sourceCodeInfo)
   }
 
   position += 1

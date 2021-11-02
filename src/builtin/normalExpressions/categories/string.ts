@@ -1,7 +1,7 @@
 import { LitsError } from '../../../errors'
 import { Any, Arr } from '../../../interface'
 import { NormalExpressionNode } from '../../../parser/interface'
-import { TokenMeta } from '../../../tokenizer/interface'
+import { SourceCodeInfo } from '../../../tokenizer/interface'
 import {
   assertLength,
   assertNonNegativeInteger,
@@ -19,24 +19,24 @@ import { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
   subs: {
-    evaluate: ([first, second, third], meta): Any => {
-      assertString(first, meta)
-      assertNonNegativeInteger(second, meta)
+    evaluate: ([first, second, third], sourceCodeInfo): Any => {
+      assertString(first, sourceCodeInfo)
+      assertNonNegativeInteger(second, sourceCodeInfo)
 
       if (third === undefined) {
         return (first as string).substring(second)
       }
 
-      assertNumberGte(third, second, meta)
+      assertNumberGte(third, second, sourceCodeInfo)
       return (first as string).substring(second, third)
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
   },
 
   'string-repeat': {
-    evaluate: ([string, count], meta): string => {
-      assertString(string, meta)
-      assertNonNegativeInteger(count, meta)
+    evaluate: ([string, count], sourceCodeInfo): string => {
+      assertString(string, sourceCodeInfo)
+      assertNonNegativeInteger(count, sourceCodeInfo)
 
       return string.repeat(count)
     },
@@ -60,11 +60,11 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   number: {
-    evaluate: ([str], meta): number => {
-      assertString(str, meta)
+    evaluate: ([str], sourceCodeInfo): number => {
+      assertString(str, sourceCodeInfo)
       const number = Number(str)
       if (Number.isNaN(number)) {
-        throw new LitsError(`Could not convert '${str}' to a number`, meta)
+        throw new LitsError(`Could not convert '${str}' to a number`, sourceCodeInfo)
       }
       return number
     },
@@ -72,20 +72,23 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'number-to-string': {
-    evaluate: (params, meta): string => {
+    evaluate: (params, sourceCodeInfo): string => {
       const [number, base] = params
-      assertFiniteNumber(number, meta)
+      assertFiniteNumber(number, sourceCodeInfo)
       if (params.length === 1) {
         return `${number}`
       } else {
-        assertFiniteNumber(base, meta)
+        assertFiniteNumber(base, sourceCodeInfo)
         if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
-          throw new LitsError(`Expected "number-to-string" base argument to be 2, 8, 10 or 16, got: ${base}`, meta)
+          throw new LitsError(
+            `Expected "number-to-string" base argument to be 2, 8, 10 or 16, got: ${base}`,
+            sourceCodeInfo,
+          )
         }
         if (base === 10) {
           return `${number}`
         }
-        assertNonNegativeInteger(number, meta)
+        assertNonNegativeInteger(number, sourceCodeInfo)
         return Number(number).toString(base)
       }
     },
@@ -93,8 +96,8 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'from-char-code': {
-    evaluate: ([number], meta): string => {
-      assertFiniteNumber(number, meta)
+    evaluate: ([number], sourceCodeInfo): string => {
+      assertFiniteNumber(number, sourceCodeInfo)
       const int = toNonNegativeInteger(number)
 
       return String.fromCodePoint(int)
@@ -103,69 +106,69 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'to-char-code': {
-    evaluate: ([str], meta): number => {
-      assertNonEmptyString(str, meta)
-      return asNotUndefined(str.codePointAt(0), meta)
+    evaluate: ([str], sourceCodeInfo): number => {
+      assertNonEmptyString(str, sourceCodeInfo)
+      return asNotUndefined(str.codePointAt(0), sourceCodeInfo)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'lower-case': {
-    evaluate: ([str], meta): string => {
-      assertString(str, meta)
+    evaluate: ([str], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
       return str.toLowerCase()
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'upper-case': {
-    evaluate: ([str], meta): string => {
-      assertString(str, meta)
+    evaluate: ([str], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
       return str.toUpperCase()
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   trim: {
-    evaluate: ([str], meta): string => {
-      assertString(str, meta)
+    evaluate: ([str], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
       return str.trim()
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'trim-left': {
-    evaluate: ([str], meta): string => {
-      assertString(str, meta)
+    evaluate: ([str], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
       return str.replace(/^\s+/, ``)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'trim-right': {
-    evaluate: ([str], meta): string => {
-      assertString(str, meta)
+    evaluate: ([str], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
       return str.replace(/\s+$/, ``)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   join: {
-    evaluate: ([stringList, delimiter], meta): string => {
-      array.assert(stringList, meta)
-      stringList.forEach(str => assertString(str, meta))
-      assertString(delimiter, meta)
+    evaluate: ([stringList, delimiter], sourceCodeInfo): string => {
+      array.assert(stringList, sourceCodeInfo)
+      stringList.forEach(str => assertString(str, sourceCodeInfo))
+      assertString(delimiter, sourceCodeInfo)
       return stringList.join(delimiter)
     },
     validate: (node: NormalExpressionNode): void => assertLength(2, node),
   },
 
   split: {
-    evaluate: ([str, delimiter, limit], meta): string[] => {
-      assertString(str, meta)
-      assertStringOrRegExp(delimiter, meta)
+    evaluate: ([str, delimiter, limit], sourceCodeInfo): string[] => {
+      assertString(str, sourceCodeInfo)
+      assertStringOrRegExp(delimiter, sourceCodeInfo)
       if (limit !== undefined) {
-        assertNonNegativeInteger(limit, meta)
+        assertNonNegativeInteger(limit, sourceCodeInfo)
       }
       return str.split(delimiter, limit)
     },
@@ -173,12 +176,12 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'pad-left': {
-    evaluate: ([str, length, padString], meta): string => {
-      assertString(str, meta)
-      number.assert(length, meta, { integer: true })
+    evaluate: ([str, length, padString], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
+      number.assert(length, sourceCodeInfo, { integer: true })
 
       if (padString !== undefined) {
-        assertString(padString, meta)
+        assertString(padString, sourceCodeInfo)
       }
 
       return str.padStart(length, padString)
@@ -187,12 +190,12 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'pad-right': {
-    evaluate: ([str, length, padString], meta): string => {
-      assertString(str, meta)
-      number.assert(length, meta, { integer: true })
+    evaluate: ([str, length, padString], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
+      number.assert(length, sourceCodeInfo, { integer: true })
 
       if (padString !== undefined) {
-        assertString(padString, meta)
+        assertString(padString, sourceCodeInfo)
       }
 
       return str.padEnd(length, padString)
@@ -201,23 +204,23 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   template: {
-    evaluate: ([templateString, ...placeholders], meta): string => {
-      assertString(templateString, meta)
+    evaluate: ([templateString, ...placeholders], sourceCodeInfo): string => {
+      assertString(templateString, sourceCodeInfo)
       const templateStrings = templateString.split(`||||`)
       if (templateStrings.length === 1) {
-        assertStringArray(placeholders, meta)
-        return applyPlaceholders(templateStrings[0] as string, placeholders, meta)
+        assertStringArray(placeholders, sourceCodeInfo)
+        return applyPlaceholders(templateStrings[0] as string, placeholders, sourceCodeInfo)
       } else if (templateStrings.length === 2) {
         const firstPlaceholder = placeholders[0]
-        assertNonNegativeInteger(firstPlaceholder, meta)
+        assertNonNegativeInteger(firstPlaceholder, sourceCodeInfo)
         const stringPlaceholders = [`${firstPlaceholder}`, ...placeholders.slice(1)] as string[]
         if (firstPlaceholder === 1) {
-          return applyPlaceholders(templateStrings[0] as string, stringPlaceholders, meta)
+          return applyPlaceholders(templateStrings[0] as string, stringPlaceholders, sourceCodeInfo)
         } else {
-          return applyPlaceholders(templateStrings[1] as string, stringPlaceholders, meta)
+          return applyPlaceholders(templateStrings[1] as string, stringPlaceholders, sourceCodeInfo)
         }
       } else {
-        throw new LitsError(`Invalid template string, only one "||||" separator allowed`, meta)
+        throw new LitsError(`Invalid template string, only one "||||" separator allowed`, sourceCodeInfo)
       }
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 10 }, node),
@@ -225,12 +228,12 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 }
 
 const doubleDollarRegexp = /\$\$/g
-function applyPlaceholders(templateString: string, placeholders: string[], meta: TokenMeta): string {
+function applyPlaceholders(templateString: string, placeholders: string[], sourceCodeInfo: SourceCodeInfo): string {
   for (let i = 0; i < 9; i += 1) {
     const re = new RegExp(`(?<=^|[^$]|\\$\\$)\\$${i + 1}`, `g`)
     if (re.test(templateString)) {
       const placeholder = placeholders[i]
-      assertString(placeholder, meta)
+      assertString(placeholder, sourceCodeInfo)
       templateString = templateString.replace(re, placeholder)
     }
   }

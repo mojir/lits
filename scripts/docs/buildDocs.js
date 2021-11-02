@@ -7,7 +7,7 @@ const path = require('path')
 const fs = require('fs')
 
 const DOC_DIR = path.resolve(__dirname, '../../docs')
-const lits = new Lits.Lits()
+const lits = new Lits.Lits({ debug: true })
 
 setupDocDir()
 copyScripts()
@@ -202,9 +202,6 @@ function getDocumentationContent(docObj) {
           var stringifiedResult = stringifyValue(result)
 
           return `<pre><span class="example" onclick="addToPlayground('${escapedExample}')"> <span class="icon-button">▶</span> ${example} <span class="gray">=> ${stringifiedResult} </span> </span></pre>`
-        } catch (error) {
-          console.error(example, error)
-          return `<pre class="example" onclick="addToPlayground('${escapedExample}')"> <span class="icon-button">▶</span> ${example} <span class="gray">=></span> <span class="error">Error!</span></pre>`
         } finally {
           console.log = oldLog
           console.warn = oldWarn

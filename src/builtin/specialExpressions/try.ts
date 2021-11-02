@@ -33,7 +33,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     let error: AstNode
     ;[position, error] = parseToken(tokens, position)
     if (error.type !== `Name`) {
-      throw new UnexpectedNodeTypeError(`Name`, error, error.token.meta)
+      throw new UnexpectedNodeTypeError(`Name`, error, error.token.sourceCodeInfo)
     }
 
     token = asNotUndefined(tokens[position], `EOF`)
@@ -74,7 +74,9 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     try {
       return evaluateAstNode(node.tryExpression, contextStack)
     } catch (error) {
-      const newContext: Context = { [node.error.value]: { value: asNotUndefined(error, node.token.meta) } } as Context
+      const newContext: Context = {
+        [node.error.value]: { value: asNotUndefined(error, node.token.sourceCodeInfo) },
+      } as Context
       return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext))
     }
   },

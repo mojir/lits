@@ -5,7 +5,7 @@ import { Cache } from '../src/Lits/Cache'
 describe(`context`, () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits()
+    lits = new Lits({ debug: true })
   })
   test(`a function.`, () => {
     lits = new Lits({ astCacheSize: 10 })
@@ -15,7 +15,7 @@ describe(`context`, () => {
   })
 
   test(`a function - no cache`, () => {
-    lits = new Lits()
+    lits = new Lits({ debug: true })
     const contexts = [lits.context(`(defn tripple [x] (* x 3))`, {})]
     expect(lits.run(`(tripple 10)`, { contexts })).toBe(30)
     expect(lits.run(`(tripple 10)`, { contexts })).toBe(30)
@@ -130,9 +130,9 @@ describe(`Cache`, () => {
 describe(`regressions`, () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits()
+    lits = new Lits({ debug: true })
   })
-  test(`meta`, () => {
+  test(`sourceCodeInfo`, () => {
     try {
       lits.run(`(loop [n 3]
   (write! n)
@@ -150,5 +150,46 @@ describe(`regressions`, () => {
   test(`name not recognized`, () => {
     expect(() => lits.run(`(asd)`)).toThrowError(UndefinedSymbolError)
     expect(() => lits.run(`asd`)).toThrowError(UndefinedSymbolError)
+  })
+
+  test(`debug info when executing function with error in`, () => {
+    const program = `(defn formatPhoneNumber [$data]
+  (if (string? $data)
+    (let [phoneNumber (if (= '+' (nth $data 0)) (subs $data 2) $data)]
+      (cond
+        (> (count phoneNumber) 6)
+          (astr
+            '('
+            (subs phoneNumber 0 3)
+
+            ') '
+            (subs phoneNumber 3 6)
+            '-'
+            (subs phoneNumber 6))
+
+        (> (count phoneNumber) 3)
+          (str '(' (subs phoneNumber 0 3) ') ' (subs phoneNumber 3))
+
+        (> (count phoneNumber) 0)
+          (str '(' (subs phoneNumber 0))
+
+        true
+          phoneNumber
+      )
+    )
+    ''
+  )
+)
+
+(formatPhoneNumber '+1234232123')`
+    try {
+      lits.run(program)
+      fail()
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((error as any).line).toBe(6)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((error as any).column).toBe(12)
+    }
   })
 })

@@ -15,13 +15,13 @@ import { litsFunction, array } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 export const functionalNormalExpression: BuiltinNormalExpressions = {
   apply: {
-    evaluate: ([func, ...params]: Arr, meta, contextStack, { executeFunction }): Any => {
-      litsFunction.assert(func, meta)
+    evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
+      litsFunction.assert(func, sourceCodeInfo)
       const paramsLength = params.length
       const last = params[paramsLength - 1]
-      array.assert(last, meta)
+      array.assert(last, sourceCodeInfo)
       const applyArray = [...params.slice(0, -1), ...last]
-      return executeFunction(func, applyArray, meta, contextStack)
+      return executeFunction(func, applyArray, sourceCodeInfo, contextStack)
     },
     validate: node => assertLength({ min: 2 }, node),
   },

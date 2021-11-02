@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 ;(function () {
-  lits = new Lits.Lits()
+  lits = new Lits.Lits({ debug: true })
 
   window.addEventListener('keydown', function (evt) {
     if (evt.key === 'F2') {

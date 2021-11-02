@@ -9,7 +9,7 @@ describe(`errors`, () => {
     expect(err.params).toEqual([100])
   })
   test(`UserDefinedError`, () => {
-    const err = new UserDefinedError(`A message`, { line: 1, column: 1, toString: () => `(1:1)` })
+    const err = new UserDefinedError(`A message`, { line: 1, column: 1, toString: () => `(1:1)`, sourceCodeLine: null })
     expect(err).toBeInstanceOf(UserDefinedError)
     expect(err.name).toBe(`UserDefinedError`)
     expect(err.message).toBe(`A message (1:1)`)
@@ -18,7 +18,7 @@ describe(`errors`, () => {
     const token: Token = {
       type: `name`,
       value: `xxx`,
-      meta: { line: 1, column: 1, toString: () => `(1:1)` },
+      sourceCodeInfo: { line: 1, column: 1, toString: () => `(1:1)`, sourceCodeLine: null },
     }
     const err = new UnexpectedTokenError(`)`, token)
     expect(err).toBeInstanceOf(UnexpectedTokenError)
@@ -30,9 +30,13 @@ describe(`errors`, () => {
       type: `NormalExpression`,
       name: `+`,
       params: [],
-      token: { type: `name`, meta: { line: 1, column: 1, toString: () => `(1:1)` }, value: `X` },
+      token: {
+        type: `name`,
+        sourceCodeInfo: { line: 1, column: 1, toString: () => `(1:1)`, sourceCodeLine: null },
+        value: `X`,
+      },
     }
-    const err = new UnexpectedNodeTypeError(`Name`, node, node.token.meta)
+    const err = new UnexpectedNodeTypeError(`Name`, node, node.token.sourceCodeInfo)
     expect(err).toBeInstanceOf(UnexpectedNodeTypeError)
     expect(err.name).toBe(`UnexpectedNodeTypeError`)
     expect(err.message).toBe(`Expected a Name node, got a NormalExpression node (1:1)`)
@@ -44,6 +48,7 @@ describe(`errors`, () => {
       line: 1,
       column: 1,
       toString: () => `(1:1)`,
+      sourceCodeLine: null,
     })
     expect(err).toBeInstanceOf(UnexpectedNodeTypeError)
     expect(err.name).toBe(`UnexpectedNodeTypeError`)

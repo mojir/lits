@@ -9,103 +9,103 @@ import {
   NormalExpressionNodeName,
   SpecialExpressionNode,
 } from '../parser/interface'
-import { TokenMeta } from '../tokenizer/interface'
+import { SourceCodeInfo } from '../tokenizer/interface'
 
 import { any, array, collection, number, object } from './assertion'
 
-export function asNameNode(node: AstNode | undefined, meta: TokenMeta): NameNode {
-  assertNameNode(node, meta)
+export function asNameNode(node: AstNode | undefined, sourceCodeInfo: SourceCodeInfo): NameNode {
+  assertNameNode(node, sourceCodeInfo)
   return node
 }
 
-export function assertNameNode(node: AstNode | undefined, meta: TokenMeta): asserts node is NameNode {
+export function assertNameNode(node: AstNode | undefined, sourceCodeInfo: SourceCodeInfo): asserts node is NameNode {
   if (node === undefined || node.type !== `Name`) {
-    throw new UnexpectedNodeTypeError(`Name`, node, meta)
+    throw new UnexpectedNodeTypeError(`Name`, node, sourceCodeInfo)
   }
 }
 
-export function asNotUndefined<T>(value: T | undefined, meta: TokenMeta): T {
+export function asNotUndefined<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): T {
   if (value === undefined) {
-    throw new LitsError(`Unexpected nil`, meta)
+    throw new LitsError(`Unexpected nil`, sourceCodeInfo)
   }
   return value
 }
 
-export function assertNotUndefined<T>(value: T | undefined, meta: TokenMeta): asserts value is T {
+export function assertNotUndefined<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): asserts value is T {
   if (value === undefined) {
-    throw new LitsError(`Unexpected nil`, meta)
+    throw new LitsError(`Unexpected nil`, sourceCodeInfo)
   }
 }
 
-export function assertFiniteNumber(value: unknown, meta: TokenMeta): asserts value is number {
+export function assertFiniteNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
   if (typeof value !== `number` || !isFinite(value)) {
-    throw new LitsError(`Expected number, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected number, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
 }
 
-export function asFiniteNumber(value: unknown, meta: TokenMeta): number {
-  assertFiniteNumber(value, meta)
+export function asFiniteNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): number {
+  assertFiniteNumber(value, sourceCodeInfo)
   return value
 }
 
-export function assertPositiveNumber(value: unknown, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertPositiveNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value <= 0) {
-    throw new LitsError(`Expected positive number, got ${value}`, meta)
+    throw new LitsError(`Expected positive number, got ${value}`, sourceCodeInfo)
   }
 }
 
-export function assertNegativeNumber(value: unknown, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNegativeNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value >= 0) {
-    throw new LitsError(`Expected negative number, got ${value}`, meta)
+    throw new LitsError(`Expected negative number, got ${value}`, sourceCodeInfo)
   }
 }
 
-export function assertNonNegativeNumber(value: unknown, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNonNegativeNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value < 0) {
-    throw new LitsError(`Expected non negative number, got ${value}`, meta)
+    throw new LitsError(`Expected non negative number, got ${value}`, sourceCodeInfo)
   }
 }
 
-export function assertNonNegativeInteger(value: unknown, meta: TokenMeta): asserts value is number {
-  assertNonNegativeNumber(value, meta)
-  number.assert(value, meta, { integer: true })
+export function assertNonNegativeInteger(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertNonNegativeNumber(value, sourceCodeInfo)
+  number.assert(value, sourceCodeInfo, { integer: true })
 }
 
-export function assertNonPositiveNumber(value: unknown, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNonPositiveNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value > 0) {
-    throw new LitsError(`Expected non positive number, got ${value}`, meta)
+    throw new LitsError(`Expected non positive number, got ${value}`, sourceCodeInfo)
   }
 }
 
-export function assertNumberGte(value: unknown, x: number, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNumberGte(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value < x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number equal or grater than ${x}`, meta)
+    throw new LitsError(`Expected parameter (${value}) to be a number equal or grater than ${x}`, sourceCodeInfo)
   }
 }
 
-export function assertNumberGt(value: unknown, x: number, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNumberGt(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value <= x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number grater than ${x}`, meta)
+    throw new LitsError(`Expected parameter (${value}) to be a number grater than ${x}`, sourceCodeInfo)
   }
 }
 
-export function assertNumberLte(value: unknown, x: number, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNumberLte(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value > x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number equal or less than ${x}`, meta)
+    throw new LitsError(`Expected parameter (${value}) to be a number equal or less than ${x}`, sourceCodeInfo)
   }
 }
 
-export function assertNumberLt(value: unknown, x: number, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNumberLt(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value >= x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number less than ${x}`, meta)
+    throw new LitsError(`Expected parameter (${value}) to be a number less than ${x}`, sourceCodeInfo)
   }
 }
 
@@ -113,29 +113,29 @@ export function isString(value: unknown): value is string {
   return typeof value === `string`
 }
 
-export function assertString(value: unknown, meta: TokenMeta): asserts value is string {
+export function assertString(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string {
   if (!isString(value)) {
-    throw new LitsError(`Expected string, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
 }
 
-export function assertStringOrRegExp(value: unknown, meta: TokenMeta): asserts value is RegExp | string {
+export function assertStringOrRegExp(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is RegExp | string {
   if (!(value instanceof RegExp || typeof value === `string`)) {
-    throw new LitsError(`Expected RegExp or string, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected RegExp or string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
 }
 
-export function asString(value: unknown, meta: TokenMeta): string {
+export function asString(value: unknown, sourceCodeInfo: SourceCodeInfo): string {
   if (!isString(value)) {
-    throw new LitsError(`Expected string, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
   return value
 }
 
-export function assertNonEmptyString(value: unknown, meta: TokenMeta): asserts value is string {
-  assertString(value, meta)
+export function assertNonEmptyString(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string {
+  assertString(value, sourceCodeInfo)
   if (value.length === 0) {
-    throw new LitsError(`Expected non empty string, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected non empty string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
 }
 
@@ -143,20 +143,20 @@ export function isChar(value: unknown): value is string {
   return isString(value) && value.length === 1
 }
 
-export function assertChar(value: unknown, meta: TokenMeta): asserts value is string {
+export function assertChar(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string {
   if (!isChar(value)) {
-    throw new LitsError(`Expected char, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected char, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
 }
 
-export function asChar(value: unknown, meta: TokenMeta): string {
-  assertChar(value, meta)
+export function asChar(value: unknown, sourceCodeInfo: SourceCodeInfo): string {
+  assertChar(value, sourceCodeInfo)
   return value
 }
 
-export function asNonEmptyString(value: unknown, meta: TokenMeta): string {
+export function asNonEmptyString(value: unknown, sourceCodeInfo: SourceCodeInfo): string {
   if (typeof value !== `string` || value.length === 0) {
-    throw new LitsError(`Expected non empty string, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected non empty string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
   return value
 }
@@ -165,16 +165,16 @@ export function isRegExp(value: unknown): value is RegExp {
   return value instanceof RegExp
 }
 
-export function assertRegExp(value: unknown, meta: TokenMeta): asserts value is RegExp {
+export function assertRegExp(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is RegExp {
   if (!(value instanceof RegExp)) {
-    throw new LitsError(`Expected RegExp, got: ${value} type="${typeof value}"`, meta)
+    throw new LitsError(`Expected RegExp, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
 }
 
-export function assertNumberNotZero(value: unknown, meta: TokenMeta): asserts value is number {
-  assertFiniteNumber(value, meta)
+export function assertNumberNotZero(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
+  assertFiniteNumber(value, sourceCodeInfo)
   if (value === 0) {
-    throw new LitsError(`Expected non zero value`, meta)
+    throw new LitsError(`Expected non zero value`, sourceCodeInfo)
   }
 }
 
@@ -187,26 +187,26 @@ export function assertLength(
     if (length !== count) {
       throw new LitsError(
         `Wrong number of arguments to "${node.name}", expected ${count}, got ${length}`,
-        node.token.meta,
+        node.token.sourceCodeInfo,
       )
     }
   } else {
     const { min, max } = count
     if (min === undefined && max === undefined) {
-      throw new LitsError(`Min or max must be specified`, node.token.meta)
+      throw new LitsError(`Min or max must be specified`, node.token.sourceCodeInfo)
     }
 
     if (typeof min === `number` && length < min) {
       throw new LitsError(
         `Wrong number of arguments to "${node.name}", expected at least ${min}, got ${length}`,
-        node.token.meta,
+        node.token.sourceCodeInfo,
       )
     }
 
     if (typeof max === `number` && length > max) {
       throw new LitsError(
         `Wrong number of arguments to "${node.name}", expected at most ${max}, got ${length}`,
-        node.token.meta,
+        node.token.sourceCodeInfo,
       )
     }
   }
@@ -215,19 +215,19 @@ export function assertLength(
 export function assertLengthEven(node: NormalExpressionNode): void {
   const length = node.params.length
   if (length % 2 !== 0) {
-    throw new LitsError(`Wrong number of arguments, expected an even number, got ${length}`, node.token.meta)
+    throw new LitsError(`Wrong number of arguments, expected an even number, got ${length}`, node.token.sourceCodeInfo)
   }
 }
 
-export function assertStringArray(value: unknown, meta: TokenMeta): asserts value is string[] {
+export function assertStringArray(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string[] {
   if (!Array.isArray(value) || value.some(v => typeof v !== `string`)) {
-    throw new LitsError(`Expected an array of strings, got ${value}`, meta)
+    throw new LitsError(`Expected an array of strings, got ${value}`, sourceCodeInfo)
   }
 }
 
-export function assertCharArray(arr: unknown, meta: TokenMeta): asserts arr is string[] {
+export function assertCharArray(arr: unknown, sourceCodeInfo: SourceCodeInfo): asserts arr is string[] {
   if (!Array.isArray(arr) || arr.some(v => typeof v !== `string` || v.length !== 1)) {
-    throw new LitsError(`Expected an array of chars, got ${arr}`, meta)
+    throw new LitsError(`Expected an array of chars, got ${arr}`, sourceCodeInfo)
   }
 }
 
@@ -343,7 +343,7 @@ export function isNormalExpressionNodeName(node: NormalExpressionNode): node is 
   return typeof node.name === `string`
 }
 
-export function deepEqual(a: Any, b: Any, meta: TokenMeta): boolean {
+export function deepEqual(a: Any, b: Any, sourceCodeInfo: SourceCodeInfo): boolean {
   if (a === b) {
     return true
   }
@@ -357,7 +357,7 @@ export function deepEqual(a: Any, b: Any, meta: TokenMeta): boolean {
       return false
     }
     for (let i = 0; i < a.length; i += 1) {
-      if (!deepEqual(any.as(a[i], meta), any.as(b[i], meta), meta)) {
+      if (!deepEqual(any.as(a[i], sourceCodeInfo), any.as(b[i], sourceCodeInfo), sourceCodeInfo)) {
         return false
       }
     }
@@ -375,8 +375,8 @@ export function deepEqual(a: Any, b: Any, meta: TokenMeta): boolean {
       return false
     }
     for (let i = 0; i < aKeys.length; i += 1) {
-      const key = asNotUndefined(aKeys[i], meta)
-      if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), meta)) {
+      const key = asNotUndefined(aKeys[i], sourceCodeInfo)
+      if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), sourceCodeInfo)) {
         return false
       }
     }
@@ -389,9 +389,9 @@ export function toNonNegativeInteger(number: number): number {
   return Math.max(0, Math.ceil(number))
 }
 
-export function assertMax(value: number, maxNumber: number, meta: TokenMeta): void {
+export function assertMax(value: number, maxNumber: number, sourceCodeInfo: SourceCodeInfo): void {
   if (value > maxNumber) {
-    throw new LitsError(`Expected number less than or equal to ${maxNumber}'`, meta)
+    throw new LitsError(`Expected number less than or equal to ${maxNumber}'`, sourceCodeInfo)
   }
 }
 

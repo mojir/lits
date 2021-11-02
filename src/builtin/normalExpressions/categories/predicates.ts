@@ -35,40 +35,40 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   },
 
   'zero?': {
-    evaluate: ([first], meta): boolean => {
-      assertFiniteNumber(first, meta)
+    evaluate: ([first], sourceCodeInfo): boolean => {
+      assertFiniteNumber(first, sourceCodeInfo)
       return first === 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'pos?': {
-    evaluate: ([first], meta): boolean => {
-      assertFiniteNumber(first, meta)
+    evaluate: ([first], sourceCodeInfo): boolean => {
+      assertFiniteNumber(first, sourceCodeInfo)
       return first > 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'neg?': {
-    evaluate: ([first], meta): boolean => {
-      assertFiniteNumber(first, meta)
+    evaluate: ([first], sourceCodeInfo): boolean => {
+      assertFiniteNumber(first, sourceCodeInfo)
       return first < 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'even?': {
-    evaluate: ([first], meta): boolean => {
-      assertFiniteNumber(first, meta)
+    evaluate: ([first], sourceCodeInfo): boolean => {
+      assertFiniteNumber(first, sourceCodeInfo)
       return first % 2 === 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'odd?': {
-    evaluate: ([first], meta): boolean => {
-      assertFiniteNumber(first, meta)
+    evaluate: ([first], sourceCodeInfo): boolean => {
+      assertFiniteNumber(first, sourceCodeInfo)
       return number.is(first, { integer: true }) && first % 2 !== 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -107,32 +107,32 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
   },
 
   'finite?': {
-    evaluate: ([value], meta): boolean => {
-      number.assert(value, meta)
+    evaluate: ([value], sourceCodeInfo): boolean => {
+      number.assert(value, sourceCodeInfo)
       return Number.isFinite(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'nan?': {
-    evaluate: ([value], meta): boolean => {
-      number.assert(value, meta)
+    evaluate: ([value], sourceCodeInfo): boolean => {
+      number.assert(value, sourceCodeInfo)
       return Number.isNaN(value)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'positive-infinity?': {
-    evaluate: ([value], meta): boolean => {
-      number.assert(value, meta)
+    evaluate: ([value], sourceCodeInfo): boolean => {
+      number.assert(value, sourceCodeInfo)
       return value === Number.POSITIVE_INFINITY
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'negative-infinity?': {
-    evaluate: ([value], meta): boolean => {
-      number.assert(value, meta)
+    evaluate: ([value], sourceCodeInfo): boolean => {
+      number.assert(value, sourceCodeInfo)
       return value === Number.NEGATIVE_INFINITY
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),

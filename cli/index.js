@@ -9,7 +9,7 @@ const homeDir = require(`os`).homedir()
 const { Lits, normalExpressionKeys, specialExpressionKeys, reservedNames, isLitsFunction } = require(`../dist/index`)
 
 const historyResults = []
-const lits = new Lits()
+const lits = new Lits({ debug: true })
 const { functionReference } = require(`./reference`)
 
 const commands = [`\`help`, `\`quit`, `\`builtins`, `\`globalContext`, `\`GlobalContext`, `\`resetGlobalContext`]

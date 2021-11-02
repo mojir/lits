@@ -30,7 +30,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const meta = node.token.meta
+    const sourceCodeInfo = node.token.sourceCodeInfo
     castLoopExpressionNode(node)
     const bindingContext: Context = node.bindings.reduce((result: Context, binding) => {
       result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
@@ -48,10 +48,13 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
         if (error instanceof RecurSignal) {
           const params = error.params
           if (params.length !== node.bindings.length) {
-            throw new LitsError(`recur expected ${node.bindings.length} parameters, got ${params.length}`, meta)
+            throw new LitsError(
+              `recur expected ${node.bindings.length} parameters, got ${params.length}`,
+              sourceCodeInfo,
+            )
           }
           node.bindings.forEach((binding, index) => {
-            asNotUndefined(bindingContext[binding.name], meta).value = any.as(params[index], meta)
+            asNotUndefined(bindingContext[binding.name], sourceCodeInfo).value = any.as(params[index], sourceCodeInfo)
           })
           continue
         }

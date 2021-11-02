@@ -16,12 +16,15 @@ type LitsParams = {
 
 type LitsConfig = {
   astCacheSize?: number
+  debug?: true
 }
 
 export class Lits {
   private astCache: Cache<Ast> | null
+  private debug: boolean
 
   constructor(config: LitsConfig = {}) {
+    this.debug = config.debug ?? false
     if (config.astCacheSize && config.astCacheSize > 0) {
       this.astCache = new Cache(config.astCacheSize)
     } else {
@@ -43,7 +46,7 @@ export class Lits {
   }
 
   private tokenize(program: string): Token[] {
-    return tokenize(program)
+    return tokenize(program, this.debug)
   }
 
   private parse(tokens: Token[]): Ast {

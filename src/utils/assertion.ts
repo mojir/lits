@@ -1,10 +1,13 @@
-import { isString } from '.'
 import { LitsError } from '../errors'
 import { Any, Arr, Coll, Obj, Seq } from '../interface'
 import { FUNCTION_SYMBOL, LitsFunction } from '../parser/interface'
-import { TokenMeta } from '../tokenizer/interface'
+import { SourceCodeInfo } from '../tokenizer/interface'
 
 export { number } from './numberAssertion'
+
+function isString(value: unknown): value is string {
+  return typeof value === `string`
+}
 
 class Asserter<T> {
   private typeName: string
@@ -18,14 +21,14 @@ class Asserter<T> {
     return this.predicate(value)
   }
 
-  public assert(value: unknown, meta: TokenMeta): asserts value is T {
+  public assert(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is T {
     if (!this.predicate(value)) {
-      throw new LitsError(`Expected ${this.typeName}, got ${value}`, meta)
+      throw new LitsError(`Expected ${this.typeName}, got ${value}`, sourceCodeInfo)
     }
   }
 
-  public as(value: unknown, meta: TokenMeta): T {
-    this.assert(value, meta)
+  public as(value: unknown, sourceCodeInfo: SourceCodeInfo): T {
+    this.assert(value, sourceCodeInfo)
     return value
   }
 }

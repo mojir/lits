@@ -24,7 +24,7 @@ export const whenSpecialExpression: BuiltinSpecialExpression<Any> = {
     castWhenExpressionNode(node)
 
     const [whenExpression, ...body] = node.params
-    assertNotUndefined(whenExpression, node.token.meta)
+    assertNotUndefined(whenExpression, node.token.sourceCodeInfo)
 
     if (!evaluateAstNode(whenExpression, contextStack)) {
       return null

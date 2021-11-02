@@ -24,7 +24,7 @@ export const timeSpecialExpression: BuiltinSpecialExpression<Any> = {
     castTimeExpressionNode(node)
 
     const [astNode] = node.params
-    assertNotUndefined(astNode, node.token.meta)
+    assertNotUndefined(astNode, node.token.sourceCodeInfo)
 
     const startTime = Date.now()
     const result = evaluateAstNode(astNode, contextStack)

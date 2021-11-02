@@ -17,7 +17,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     ;[position, bindings] = parseBindings(tokens, position)
 
     if (bindings.length !== 1) {
-      throw new LitsError(`Expected exactly one binding, got ${bindings.length}`, firstToken.meta)
+      throw new LitsError(`Expected exactly one binding, got ${bindings.length}`, firstToken.sourceCodeInfo)
     }
 
     let params: AstNode[]
@@ -26,7 +26,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     const node: WhenLetSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `when-let`,
-      binding: asNotUndefined(bindings[0], firstToken.meta),
+      binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
       params,
       token: firstToken,
     }

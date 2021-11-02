@@ -63,22 +63,34 @@ var Lits = (function (exports) {
     }(Error));
     var LitsError = /** @class */ (function (_super) {
         __extends(LitsError, _super);
-        function LitsError(message, meta) {
-            var _this = _super.call(this, message + " " + meta) || this;
-            _this.line = meta === "EOF" ? null : meta.line;
-            _this.column = meta === "EOF" ? null : meta.column;
+        function LitsError(message, sourceCodeInfo) {
+            var _this = _super.call(this, message + " " + sourceCodeInfo) || this;
+            _this.line = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.line;
+            _this.column = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.column;
             Object.setPrototypeOf(_this, LitsError.prototype);
             _this.name = "LitsError";
             return _this;
         }
         return LitsError;
     }(Error));
+    var NotAFunctionError = /** @class */ (function (_super) {
+        __extends(NotAFunctionError, _super);
+        function NotAFunctionError(fn, sourceCodeInfo) {
+            var _this = _super.call(this, "Expected function, got " + fn + " " + sourceCodeInfo) || this;
+            _this.line = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.line;
+            _this.column = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.column;
+            Object.setPrototypeOf(_this, NotAFunctionError.prototype);
+            _this.name = "NotAFunctionError";
+            return _this;
+        }
+        return NotAFunctionError;
+    }(Error));
     var UserDefinedError = /** @class */ (function (_super) {
         __extends(UserDefinedError, _super);
-        function UserDefinedError(message, meta) {
-            var _this = _super.call(this, message + " " + meta) || this;
-            _this.line = meta === "EOF" ? null : meta.line;
-            _this.column = meta === "EOF" ? null : meta.column;
+        function UserDefinedError(message, sourceCodeInfo) {
+            var _this = _super.call(this, message + " " + sourceCodeInfo) || this;
+            _this.line = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.line;
+            _this.column = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.column;
             Object.setPrototypeOf(_this, UserDefinedError.prototype);
             _this.name = "UserDefinedError";
             return _this;
@@ -87,10 +99,10 @@ var Lits = (function (exports) {
     }(Error));
     var AssertionError = /** @class */ (function (_super) {
         __extends(AssertionError, _super);
-        function AssertionError(message, meta) {
-            var _this = _super.call(this, message + " " + meta) || this;
-            _this.line = meta === "EOF" ? null : meta.line;
-            _this.column = meta === "EOF" ? null : meta.column;
+        function AssertionError(message, sourceCodeInfo) {
+            var _this = _super.call(this, message + " " + sourceCodeInfo) || this;
+            _this.line = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.line;
+            _this.column = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.column;
             Object.setPrototypeOf(_this, AssertionError.prototype);
             _this.name = "AssertionError";
             return _this;
@@ -100,9 +112,9 @@ var Lits = (function (exports) {
     var UnexpectedTokenError = /** @class */ (function (_super) {
         __extends(UnexpectedTokenError, _super);
         function UnexpectedTokenError(expectedToken, actualToken) {
-            var _this = _super.call(this, "Expected a '" + expectedToken + "'-token, got '" + actualToken.value + "' " + actualToken.meta) || this;
-            _this.line = actualToken.meta === "EOF" ? null : actualToken.meta.line;
-            _this.column = actualToken.meta === "EOF" ? null : actualToken.meta.column;
+            var _this = _super.call(this, "Expected a '" + expectedToken + "'-token, got '" + actualToken.value + "' " + actualToken.sourceCodeInfo) || this;
+            _this.line = actualToken.sourceCodeInfo === "EOF" ? null : actualToken.sourceCodeInfo.line;
+            _this.column = actualToken.sourceCodeInfo === "EOF" ? null : actualToken.sourceCodeInfo.column;
             Object.setPrototypeOf(_this, UnexpectedTokenError.prototype);
             _this.name = "UnexpectedTokenError";
             return _this;
@@ -111,10 +123,10 @@ var Lits = (function (exports) {
     }(Error));
     var UnexpectedNodeTypeError = /** @class */ (function (_super) {
         __extends(UnexpectedNodeTypeError, _super);
-        function UnexpectedNodeTypeError(expectedNodeType, actualNode, meta) {
-            var _this = _super.call(this, "Expected a " + expectedNodeType + " node, got " + (actualNode ? "a " + actualNode.type + " node" : "undefined") + " " + meta) || this;
-            _this.line = meta === "EOF" ? null : meta.line;
-            _this.column = meta === "EOF" ? null : meta.column;
+        function UnexpectedNodeTypeError(expectedNodeType, actualNode, sourceCodeInfo) {
+            var _this = _super.call(this, "Expected a " + expectedNodeType + " node, got " + (actualNode ? "a " + actualNode.type + " node" : "undefined") + " " + sourceCodeInfo) || this;
+            _this.line = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.line;
+            _this.column = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.column;
             Object.setPrototypeOf(_this, UnexpectedNodeTypeError.prototype);
             _this.name = "UnexpectedNodeTypeError";
             return _this;
@@ -123,10 +135,10 @@ var Lits = (function (exports) {
     }(Error));
     var UndefinedSymbolError = /** @class */ (function (_super) {
         __extends(UndefinedSymbolError, _super);
-        function UndefinedSymbolError(symbolName, meta) {
-            var _this = _super.call(this, "Undefined symbol '" + symbolName + "' " + meta) || this;
-            _this.line = meta === "EOF" ? null : meta.line;
-            _this.column = meta === "EOF" ? null : meta.column;
+        function UndefinedSymbolError(symbolName, sourceCodeInfo) {
+            var _this = _super.call(this, "Undefined symbol '" + symbolName + "' " + sourceCodeInfo) || this;
+            _this.line = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.line;
+            _this.column = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.column;
             Object.setPrototypeOf(_this, UndefinedSymbolError.prototype);
             _this.name = "UndefinedSymbolError";
             return _this;
@@ -134,150 +146,227 @@ var Lits = (function (exports) {
         return UndefinedSymbolError;
     }(Error));
 
-    function asNameNode(node, meta) {
-        assertNameNode(node, meta);
-        return node;
+    var FUNCTION_SYMBOL = Symbol("function");
+
+    function getNumberTypeName(options) {
+        if (options.integer) {
+            return "integer";
+        }
+        return "number";
     }
-    function assertNameNode(node, meta) {
-        if (node === undefined || node.type !== "Name") {
-            throw new UnexpectedNodeTypeError("Name", node, meta);
+    function is(value, options) {
+        if (options === void 0) { options = {}; }
+        if (typeof value !== "number") {
+            return false;
+        }
+        if (options.integer && !Number.isInteger(value)) {
+            return false;
+        }
+        return true;
+    }
+    function assert(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        if (!is(value, options)) {
+            throw new LitsError("Expected " + getNumberTypeName(options) + ", got " + value, sourceCodeInfo);
         }
     }
-    function asNotUndefined(value, meta) {
+    function as(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        assert(value, sourceCodeInfo, options);
+        return value;
+    }
+    var number = {
+        is: is,
+        as: as,
+        assert: assert,
+    };
+
+    function isString$1(value) {
+        return typeof value === "string";
+    }
+    var Asserter = /** @class */ (function () {
+        function Asserter(typeName, predicate) {
+            this.typeName = typeName;
+            this.predicate = predicate;
+        }
+        Asserter.prototype.is = function (value) {
+            return this.predicate(value);
+        };
+        Asserter.prototype.assert = function (value, sourceCodeInfo) {
+            if (!this.predicate(value)) {
+                throw new LitsError("Expected " + this.typeName + ", got " + value, sourceCodeInfo);
+            }
+        };
+        Asserter.prototype.as = function (value, sourceCodeInfo) {
+            this.assert(value, sourceCodeInfo);
+            return value;
+        };
+        return Asserter;
+    }());
+    function isLitsFunction(func) {
+        if (func === null || typeof func !== "object") {
+            return false;
+        }
+        return !!func[FUNCTION_SYMBOL];
+    }
+    var litsFunction = new Asserter("LitsFunction", isLitsFunction);
+    var stringOrNumber = new Asserter("string or number", function (value) { return typeof value === "string" || typeof value === "number"; });
+    var any = new Asserter("Any", function (value) { return value !== undefined; });
+    var sequence = new Asserter("Seq", function (value) { return Array.isArray(value) || isString$1(value); });
+    var object = new Asserter("Obj", function (value) {
+        return !(value === null ||
+            typeof value !== "object" ||
+            Array.isArray(value) ||
+            value instanceof RegExp ||
+            isLitsFunction(value));
+    });
+    var collection = new Asserter("Coll", function (value) { return sequence.is(value) || object.is(value); });
+    var array = new Asserter("Arr", function (value) { return Array.isArray(value); });
+
+    function asNameNode(node, sourceCodeInfo) {
+        assertNameNode(node, sourceCodeInfo);
+        return node;
+    }
+    function assertNameNode(node, sourceCodeInfo) {
+        if (node === undefined || node.type !== "Name") {
+            throw new UnexpectedNodeTypeError("Name", node, sourceCodeInfo);
+        }
+    }
+    function asNotUndefined(value, sourceCodeInfo) {
         if (value === undefined) {
-            throw new LitsError("Unexpected nil", meta);
+            throw new LitsError("Unexpected nil", sourceCodeInfo);
         }
         return value;
     }
-    function assertNotUndefined(value, meta) {
+    function assertNotUndefined(value, sourceCodeInfo) {
         if (value === undefined) {
-            throw new LitsError("Unexpected nil", meta);
+            throw new LitsError("Unexpected nil", sourceCodeInfo);
         }
     }
-    function assertFiniteNumber(value, meta) {
+    function assertFiniteNumber(value, sourceCodeInfo) {
         if (typeof value !== "number" || !isFinite(value)) {
-            throw new LitsError("Expected number, got: " + value + " type=\"" + typeof value + "\"", meta);
+            throw new LitsError("Expected number, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
     }
-    function assertPositiveNumber(value, meta) {
-        assertFiniteNumber(value, meta);
+    function assertPositiveNumber(value, sourceCodeInfo) {
+        assertFiniteNumber(value, sourceCodeInfo);
         if (value <= 0) {
-            throw new LitsError("Expected positive number, got " + value, meta);
+            throw new LitsError("Expected positive number, got " + value, sourceCodeInfo);
         }
     }
-    function assertNegativeNumber(value, meta) {
-        assertFiniteNumber(value, meta);
+    function assertNegativeNumber(value, sourceCodeInfo) {
+        assertFiniteNumber(value, sourceCodeInfo);
         if (value >= 0) {
-            throw new LitsError("Expected negative number, got " + value, meta);
+            throw new LitsError("Expected negative number, got " + value, sourceCodeInfo);
         }
     }
-    function assertNonNegativeNumber(value, meta) {
-        assertFiniteNumber(value, meta);
+    function assertNonNegativeNumber(value, sourceCodeInfo) {
+        assertFiniteNumber(value, sourceCodeInfo);
         if (value < 0) {
-            throw new LitsError("Expected non negative number, got " + value, meta);
+            throw new LitsError("Expected non negative number, got " + value, sourceCodeInfo);
         }
     }
-    function assertNonNegativeInteger(value, meta) {
-        assertNonNegativeNumber(value, meta);
-        number.assert(value, meta, { integer: true });
+    function assertNonNegativeInteger(value, sourceCodeInfo) {
+        assertNonNegativeNumber(value, sourceCodeInfo);
+        number.assert(value, sourceCodeInfo, { integer: true });
     }
-    function assertNumberGte(value, x, meta) {
-        assertFiniteNumber(value, meta);
+    function assertNumberGte(value, x, sourceCodeInfo) {
+        assertFiniteNumber(value, sourceCodeInfo);
         if (value < x) {
-            throw new LitsError("Expected parameter (" + value + ") to be a number equal or grater than " + x, meta);
+            throw new LitsError("Expected parameter (" + value + ") to be a number equal or grater than " + x, sourceCodeInfo);
         }
     }
-    function assertNumberLte(value, x, meta) {
-        assertFiniteNumber(value, meta);
+    function assertNumberLte(value, x, sourceCodeInfo) {
+        assertFiniteNumber(value, sourceCodeInfo);
         if (value > x) {
-            throw new LitsError("Expected parameter (" + value + ") to be a number equal or less than " + x, meta);
+            throw new LitsError("Expected parameter (" + value + ") to be a number equal or less than " + x, sourceCodeInfo);
         }
     }
     function isString(value) {
         return typeof value === "string";
     }
-    function assertString(value, meta) {
+    function assertString(value, sourceCodeInfo) {
         if (!isString(value)) {
-            throw new LitsError("Expected string, got: " + value + " type=\"" + typeof value + "\"", meta);
+            throw new LitsError("Expected string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
     }
-    function assertStringOrRegExp(value, meta) {
+    function assertStringOrRegExp(value, sourceCodeInfo) {
         if (!(value instanceof RegExp || typeof value === "string")) {
-            throw new LitsError("Expected RegExp or string, got: " + value + " type=\"" + typeof value + "\"", meta);
+            throw new LitsError("Expected RegExp or string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
     }
-    function assertNonEmptyString(value, meta) {
-        assertString(value, meta);
+    function assertNonEmptyString(value, sourceCodeInfo) {
+        assertString(value, sourceCodeInfo);
         if (value.length === 0) {
-            throw new LitsError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"", meta);
+            throw new LitsError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
     }
     function isChar(value) {
         return isString(value) && value.length === 1;
     }
-    function assertChar(value, meta) {
+    function assertChar(value, sourceCodeInfo) {
         if (!isChar(value)) {
-            throw new LitsError("Expected char, got: " + value + " type=\"" + typeof value + "\"", meta);
+            throw new LitsError("Expected char, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
     }
-    function asChar(value, meta) {
-        assertChar(value, meta);
+    function asChar(value, sourceCodeInfo) {
+        assertChar(value, sourceCodeInfo);
         return value;
     }
-    function asNonEmptyString(value, meta) {
+    function asNonEmptyString(value, sourceCodeInfo) {
         if (typeof value !== "string" || value.length === 0) {
-            throw new LitsError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"", meta);
+            throw new LitsError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
         return value;
     }
     function isRegExp(value) {
         return value instanceof RegExp;
     }
-    function assertRegExp(value, meta) {
+    function assertRegExp(value, sourceCodeInfo) {
         if (!(value instanceof RegExp)) {
-            throw new LitsError("Expected RegExp, got: " + value + " type=\"" + typeof value + "\"", meta);
+            throw new LitsError("Expected RegExp, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
     }
-    function assertNumberNotZero(value, meta) {
-        assertFiniteNumber(value, meta);
+    function assertNumberNotZero(value, sourceCodeInfo) {
+        assertFiniteNumber(value, sourceCodeInfo);
         if (value === 0) {
-            throw new LitsError("Expected non zero value", meta);
+            throw new LitsError("Expected non zero value", sourceCodeInfo);
         }
     }
     function assertLength(count, node) {
         var length = node.params.length;
         if (typeof count === "number") {
             if (length !== count) {
-                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected " + count + ", got " + length, node.token.meta);
+                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected " + count + ", got " + length, node.token.sourceCodeInfo);
             }
         }
         else {
             var min = count.min, max = count.max;
             if (min === undefined && max === undefined) {
-                throw new LitsError("Min or max must be specified", node.token.meta);
+                throw new LitsError("Min or max must be specified", node.token.sourceCodeInfo);
             }
             if (typeof min === "number" && length < min) {
-                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at least " + min + ", got " + length, node.token.meta);
+                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at least " + min + ", got " + length, node.token.sourceCodeInfo);
             }
             if (typeof max === "number" && length > max) {
-                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at most " + max + ", got " + length, node.token.meta);
+                throw new LitsError("Wrong number of arguments to \"" + node.name + "\", expected at most " + max + ", got " + length, node.token.sourceCodeInfo);
             }
         }
     }
     function assertLengthEven(node) {
         var length = node.params.length;
         if (length % 2 !== 0) {
-            throw new LitsError("Wrong number of arguments, expected an even number, got " + length, node.token.meta);
+            throw new LitsError("Wrong number of arguments, expected an even number, got " + length, node.token.sourceCodeInfo);
         }
     }
-    function assertStringArray(value, meta) {
+    function assertStringArray(value, sourceCodeInfo) {
         if (!Array.isArray(value) || value.some(function (v) { return typeof v !== "string"; })) {
-            throw new LitsError("Expected an array of strings, got " + value, meta);
+            throw new LitsError("Expected an array of strings, got " + value, sourceCodeInfo);
         }
     }
-    function assertCharArray(arr, meta) {
+    function assertCharArray(arr, sourceCodeInfo) {
         if (!Array.isArray(arr) || arr.some(function (v) { return typeof v !== "string" || v.length !== 1; })) {
-            throw new LitsError("Expected an array of chars, got " + arr, meta);
+            throw new LitsError("Expected an array of chars, got " + arr, sourceCodeInfo);
         }
     }
     function isExpressionNode(node) {
@@ -389,7 +478,7 @@ var Lits = (function (exports) {
     function isNormalExpressionNodeName(node) {
         return typeof node.name === "string";
     }
-    function deepEqual(a, b, meta) {
+    function deepEqual(a, b, sourceCodeInfo) {
         if (a === b) {
             return true;
         }
@@ -401,7 +490,7 @@ var Lits = (function (exports) {
                 return false;
             }
             for (var i = 0; i < a.length; i += 1) {
-                if (!deepEqual(any.as(a[i], meta), any.as(b[i], meta), meta)) {
+                if (!deepEqual(any.as(a[i], sourceCodeInfo), any.as(b[i], sourceCodeInfo), sourceCodeInfo)) {
                     return false;
                 }
             }
@@ -419,8 +508,8 @@ var Lits = (function (exports) {
                 return false;
             }
             for (var i = 0; i < aKeys.length; i += 1) {
-                var key = asNotUndefined(aKeys[i], meta);
-                if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), meta)) {
+                var key = asNotUndefined(aKeys[i], sourceCodeInfo);
+                if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), sourceCodeInfo)) {
                     return false;
                 }
             }
@@ -431,9 +520,9 @@ var Lits = (function (exports) {
     function toNonNegativeInteger(number) {
         return Math.max(0, Math.ceil(number));
     }
-    function assertMax(value, maxNumber, meta) {
+    function assertMax(value, maxNumber, sourceCodeInfo) {
         if (value > maxNumber) {
-            throw new LitsError("Expected number less than or equal to " + maxNumber + "'", meta);
+            throw new LitsError("Expected number less than or equal to " + maxNumber + "'", sourceCodeInfo);
         }
     }
     function toAny(value) {
@@ -465,80 +554,6 @@ var Lits = (function (exports) {
             return context;
         }, {});
     }
-
-    var FUNCTION_SYMBOL = Symbol("function");
-
-    function getNumberTypeName(options) {
-        if (options.integer) {
-            return "integer";
-        }
-        return "number";
-    }
-    function is(value, options) {
-        if (options === void 0) { options = {}; }
-        if (typeof value !== "number") {
-            return false;
-        }
-        if (options.integer && !Number.isInteger(value)) {
-            return false;
-        }
-        return true;
-    }
-    function assert(value, meta, options) {
-        if (options === void 0) { options = {}; }
-        if (!is(value, options)) {
-            throw new LitsError("Expected " + getNumberTypeName(options) + ", got " + value, meta);
-        }
-    }
-    function as(value, meta, options) {
-        if (options === void 0) { options = {}; }
-        assert(value, meta, options);
-        return value;
-    }
-    var number = {
-        is: is,
-        as: as,
-        assert: assert,
-    };
-
-    var Asserter = /** @class */ (function () {
-        function Asserter(typeName, predicate) {
-            this.typeName = typeName;
-            this.predicate = predicate;
-        }
-        Asserter.prototype.is = function (value) {
-            return this.predicate(value);
-        };
-        Asserter.prototype.assert = function (value, meta) {
-            if (!this.predicate(value)) {
-                throw new LitsError("Expected " + this.typeName + ", got " + value, meta);
-            }
-        };
-        Asserter.prototype.as = function (value, meta) {
-            this.assert(value, meta);
-            return value;
-        };
-        return Asserter;
-    }());
-    function isLitsFunction(func) {
-        if (func === null || typeof func !== "object") {
-            return false;
-        }
-        return !!func[FUNCTION_SYMBOL];
-    }
-    var litsFunction = new Asserter("LitsFunction", isLitsFunction);
-    var stringOrNumber = new Asserter("string or number", function (value) { return typeof value === "string" || typeof value === "number"; });
-    var any = new Asserter("Any", function (value) { return value !== undefined; });
-    var sequence = new Asserter("Seq", function (value) { return Array.isArray(value) || isString(value); });
-    var object = new Asserter("Obj", function (value) {
-        return !(value === null ||
-            typeof value !== "object" ||
-            Array.isArray(value) ||
-            value instanceof RegExp ||
-            isLitsFunction(value));
-    });
-    var collection = new Asserter("Coll", function (value) { return sequence.is(value) || object.is(value); });
-    var array = new Asserter("Arr", function (value) { return Array.isArray(value); });
 
     var andSpecialExpression = {
         parse: function (tokens, position, _a) {
@@ -622,22 +637,22 @@ var Lits = (function (exports) {
     };
     var reservedNames = Object.keys(reservedNamesRecord);
 
-    function assertNameNotDefined(name, contextStack, builtin, meta) {
+    function assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo) {
         if (typeof name !== "string") {
             return;
         }
         if (builtin.specialExpressions[name]) {
-            throw new LitsError("Cannot define variable " + name + ", it's a special expression", meta);
+            throw new LitsError("Cannot define variable " + name + ", it's a special expression", sourceCodeInfo);
         }
         if (builtin.normalExpressions[name]) {
-            throw new LitsError("Cannot define variable " + name + ", it's a builtin function", meta);
+            throw new LitsError("Cannot define variable " + name + ", it's a builtin function", sourceCodeInfo);
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (reservedNamesRecord[name]) {
-            throw new LitsError("Cannot define variable " + name + ", it's a reserved name", meta);
+            throw new LitsError("Cannot define variable " + name + ", it's a reserved name", sourceCodeInfo);
         }
         if (contextStack.globalContext[name]) {
-            throw new LitsError("Name already defined \"" + name + "\"", meta);
+            throw new LitsError("Name already defined \"" + name + "\"", sourceCodeInfo);
         }
     }
 
@@ -650,7 +665,7 @@ var Lits = (function (exports) {
             if (expressionName === "defn" || expressionName === "defns") {
                 _a = parseToken(tokens, position), position = _a[0], functionName = _a[1];
                 if (expressionName === "defn" && functionName.type !== "Name") {
-                    throw new UnexpectedNodeTypeError("Name", functionName, functionName.token.meta);
+                    throw new UnexpectedNodeTypeError("Name", functionName, functionName.token.sourceCodeInfo);
                 }
             }
             var functionOverloades;
@@ -681,15 +696,15 @@ var Lits = (function (exports) {
         };
     }
     function getFunctionName(expressionName, node, contextStack, evaluateAstNode) {
-        var meta = node.token.meta;
+        var sourceCodeInfo = node.token.sourceCodeInfo;
         if (expressionName === "defn") {
             var name_1 = node.functionName.value;
-            assertString(name_1, meta);
+            assertString(name_1, sourceCodeInfo);
             return name_1;
         }
         if (expressionName === "defns") {
             var name_2 = evaluateAstNode(node.functionName, contextStack);
-            assertString(name_2, meta);
+            assertString(name_2, sourceCodeInfo);
             return name_2;
         }
         return undefined;
@@ -699,7 +714,7 @@ var Lits = (function (exports) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
             var name = getFunctionName(expressionName, node, contextStack, evaluateAstNode);
-            assertNameNotDefined(name, contextStack, builtin, node.token.meta);
+            assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo);
             var evaluatedFunctionOverloades = [];
             for (var _i = 0, _c = node.overloads; _i < _c.length; _i++) {
                 var functionOverload = _c[_i];
@@ -774,7 +789,7 @@ var Lits = (function (exports) {
             token = asNotUndefined(tokens[position], "EOF");
         }
         if (body.length === 0) {
-            throw new LitsError("Missing body in function", token.meta);
+            throw new LitsError("Missing body in function", token.sourceCodeInfo);
         }
         return [position + 1, body];
     }
@@ -792,7 +807,7 @@ var Lits = (function (exports) {
                     ? { min: functionArguments.mandatoryArguments.length }
                     : functionArguments.mandatoryArguments.length;
                 if (!arityOk(functionOverloades, arity)) {
-                    throw new LitsError("All overloaded functions must have different arity", token.meta);
+                    throw new LitsError("All overloaded functions must have different arity", token.sourceCodeInfo);
                 }
                 var functionBody = void 0;
                 _b = parseFunctionBody(tokens, position, parsers), position = _b[0], functionBody = _b[1];
@@ -855,23 +870,23 @@ var Lits = (function (exports) {
                     switch (node.value) {
                         case "&":
                             if (state === "rest") {
-                                throw new LitsError("& can only appear once", token.meta);
+                                throw new LitsError("& can only appear once", token.sourceCodeInfo);
                             }
                             state = "rest";
                             break;
                         case "&let":
                             if (state === "rest" && !restArgument) {
-                                throw new LitsError("No rest argument was spcified", token.meta);
+                                throw new LitsError("No rest argument was spcified", token.sourceCodeInfo);
                             }
                             state = "let";
                             break;
                         default:
-                            throw new LitsError("Illegal modifier: " + node.value, token.meta);
+                            throw new LitsError("Illegal modifier: " + node.value, token.sourceCodeInfo);
                     }
                 }
                 else {
                     if (argNames[node.name]) {
-                        throw new LitsError("Duplicate argument \"" + node.name + "\"", token.meta);
+                        throw new LitsError("Duplicate argument \"" + node.name + "\"", token.sourceCodeInfo);
                     }
                     else {
                         argNames[node.name] = true;
@@ -882,7 +897,7 @@ var Lits = (function (exports) {
                             break;
                         case "rest":
                             if (restArgument !== undefined) {
-                                throw new LitsError("Can only specify one rest argument", token.meta);
+                                throw new LitsError("Can only specify one rest argument", token.sourceCodeInfo);
                             }
                             restArgument = node.name;
                             break;
@@ -891,7 +906,7 @@ var Lits = (function (exports) {
             }
         }
         if (state === "rest" && restArgument === undefined) {
-            throw new LitsError("Missing rest argument name", token.meta);
+            throw new LitsError("Missing rest argument name", token.sourceCodeInfo);
         }
         position += 1;
         var args = {
@@ -907,7 +922,7 @@ var Lits = (function (exports) {
             var parseTokens = _a.parseTokens;
             var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
-            assertNameNode(params[0], firstToken.meta);
+            assertNameNode(params[0], firstToken.sourceCodeInfo);
             return [
                 newPosition + 1,
                 {
@@ -920,10 +935,10 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var meta = node.token.meta;
-            var name = asNameNode(node.params[0], meta).value;
-            assertNameNotDefined(name, contextStack, builtin, meta);
-            var value = evaluateAstNode(asNotUndefined(node.params[1], meta), contextStack);
+            var sourceCodeInfo = node.token.sourceCodeInfo;
+            var name = asNameNode(node.params[0], sourceCodeInfo).value;
+            assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
+            var value = evaluateAstNode(asNotUndefined(node.params[1], sourceCodeInfo), contextStack);
             contextStack.globalContext[name] = { value: value };
             return value;
         },
@@ -947,11 +962,11 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var meta = node.token.meta;
-            var name = evaluateAstNode(asNotUndefined(node.params[0], meta), contextStack);
-            assertString(name, meta);
-            assertNameNotDefined(name, contextStack, builtin, node.token.meta);
-            var value = evaluateAstNode(asNotUndefined(node.params[1], meta), contextStack);
+            var sourceCodeInfo = node.token.sourceCodeInfo;
+            var name = evaluateAstNode(asNotUndefined(node.params[0], sourceCodeInfo), contextStack);
+            assertString(name, sourceCodeInfo);
+            assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo);
+            var value = evaluateAstNode(asNotUndefined(node.params[1], sourceCodeInfo), contextStack);
             contextStack.globalContext[name] = { value: value };
             return value;
         },
@@ -1004,37 +1019,37 @@ var Lits = (function (exports) {
             switch (token.value) {
                 case "&let":
                     if (loopBinding.letBindings) {
-                        throw new LitsError("Only one &let modifier allowed", token.meta);
+                        throw new LitsError("Only one &let modifier allowed", token.sourceCodeInfo);
                     }
                     _c = parseBindings(tokens, position + 1), position = _c[0], loopBinding.letBindings = _c[1];
                     loopBinding.modifiers.push("&let");
                     break;
                 case "&when":
                     if (loopBinding.whenNode) {
-                        throw new LitsError("Only one &when modifier allowed", token.meta);
+                        throw new LitsError("Only one &when modifier allowed", token.sourceCodeInfo);
                     }
                     _d = parseToken(tokens, position + 1), position = _d[0], loopBinding.whenNode = _d[1];
                     loopBinding.modifiers.push("&when");
                     break;
                 case "&while":
                     if (loopBinding.whileNode) {
-                        throw new LitsError("Only one &while modifier allowed", token.meta);
+                        throw new LitsError("Only one &while modifier allowed", token.sourceCodeInfo);
                     }
                     _e = parseToken(tokens, position + 1), position = _e[0], loopBinding.whileNode = _e[1];
                     loopBinding.modifiers.push("&while");
                     break;
                 default:
-                    throw new LitsError("Illegal modifier: " + token.value, token.meta);
+                    throw new LitsError("Illegal modifier: " + token.value, token.sourceCodeInfo);
             }
             token = asNotUndefined(tokens[position], "EOF");
         }
         return [position, loopBinding];
     }
-    function addToContext(bindings, context, contextStack, evaluateAstNode, meta) {
+    function addToContext(bindings, context, contextStack, evaluateAstNode, sourceCodeInfo) {
         for (var _i = 0, bindings_1 = bindings; _i < bindings_1.length; _i++) {
             var binding = bindings_1[_i];
             if (context[binding.name]) {
-                throw new LitsError("Variable already defined: " + binding.name, meta);
+                throw new LitsError("Variable already defined: " + binding.name, sourceCodeInfo);
             }
             context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
         }
@@ -1080,9 +1095,9 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var meta = node.token.meta;
+            var sourceCodeInfo = node.token.sourceCodeInfo;
             var loopBindings = node.loopBindings, params = node.params;
-            var expression = asNotUndefined(params[0], meta);
+            var expression = asNotUndefined(params[0], sourceCodeInfo);
             var result = [];
             var bindingIndices = loopBindings.map(function () { return 0; });
             var abort = false;
@@ -1091,15 +1106,15 @@ var Lits = (function (exports) {
                 var newContextStack = contextStack.withContext(context);
                 var skip = false;
                 bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-                    var _b = asNotUndefined(loopBindings[bindingIndex], meta), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
-                    var coll = collection.as(evaluateAstNode(binding.value, newContextStack), meta);
+                    var _b = asNotUndefined(loopBindings[bindingIndex], sourceCodeInfo), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
+                    var coll = collection.as(evaluateAstNode(binding.value, newContextStack), sourceCodeInfo);
                     var seq = sequence.is(coll) ? coll : Object.entries(coll);
                     if (seq.length === 0) {
                         skip = true;
                         abort = true;
                         break;
                     }
-                    var index = asNotUndefined(bindingIndices[bindingIndex], meta);
+                    var index = asNotUndefined(bindingIndices[bindingIndex], sourceCodeInfo);
                     if (index >= seq.length) {
                         skip = true;
                         if (bindingIndex === 0) {
@@ -1107,30 +1122,30 @@ var Lits = (function (exports) {
                             break;
                         }
                         bindingIndices[bindingIndex] = 0;
-                        bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1], meta) + 1;
+                        bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1;
                         break;
                     }
                     if (context[binding.name]) {
-                        throw new LitsError("Variable already defined: " + binding.name, meta);
+                        throw new LitsError("Variable already defined: " + binding.name, sourceCodeInfo);
                     }
                     context[binding.name] = {
-                        value: any.as(seq[index], meta),
+                        value: any.as(seq[index], sourceCodeInfo),
                     };
                     for (var _i = 0, modifiers_1 = modifiers; _i < modifiers_1.length; _i++) {
                         var modifier = modifiers_1[_i];
                         switch (modifier) {
                             case "&let":
-                                addToContext(asNotUndefined(letBindings, meta), context, newContextStack, evaluateAstNode, meta);
+                                addToContext(asNotUndefined(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo);
                                 break;
                             case "&when":
-                                if (!evaluateAstNode(asNotUndefined(whenNode, meta), newContextStack)) {
-                                    bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex], meta) + 1;
+                                if (!evaluateAstNode(asNotUndefined(whenNode, sourceCodeInfo), newContextStack)) {
+                                    bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1;
                                     skip = true;
                                     break bindingsLoop;
                                 }
                                 break;
                             case "&while":
-                                if (!evaluateAstNode(asNotUndefined(whileNode, meta), newContextStack)) {
+                                if (!evaluateAstNode(asNotUndefined(whileNode, sourceCodeInfo), newContextStack)) {
                                     bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY;
                                     skip = true;
                                     break bindingsLoop;
@@ -1156,14 +1171,14 @@ var Lits = (function (exports) {
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got " + bindings.length, firstToken.meta);
+                throw new LitsError("Expected exactly one binding, got " + bindings.length, firstToken.sourceCodeInfo);
             }
             var params;
             _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
             var node = {
                 type: "SpecialExpression",
                 name: "if-let",
-                binding: asNotUndefined(bindings[0], firstToken.meta),
+                binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1171,17 +1186,17 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var meta = node.token.meta;
+            var sourceCodeInfo = node.token.sourceCodeInfo;
             var locals = {};
             var bindingValue = evaluateAstNode(node.binding.value, contextStack);
             if (bindingValue) {
                 locals[node.binding.name] = { value: bindingValue };
                 var newContextStack = contextStack.withContext(locals);
-                var thenForm = asNotUndefined(node.params[0], meta);
+                var thenForm = asNotUndefined(node.params[0], sourceCodeInfo);
                 return evaluateAstNode(thenForm, newContextStack);
             }
             if (node.params.length === 2) {
-                var elseForm = asNotUndefined(node.params[1], meta);
+                var elseForm = asNotUndefined(node.params[1], sourceCodeInfo);
                 return evaluateAstNode(elseForm, contextStack);
             }
             return null;
@@ -1206,14 +1221,14 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var meta = node.token.meta;
+            var sourceCodeInfo = node.token.sourceCodeInfo;
             var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (!evaluateAstNode(asNotUndefined(conditionNode, meta), contextStack)) {
-                return evaluateAstNode(asNotUndefined(trueNode, meta), contextStack);
+            if (!evaluateAstNode(asNotUndefined(conditionNode, sourceCodeInfo), contextStack)) {
+                return evaluateAstNode(asNotUndefined(trueNode, sourceCodeInfo), contextStack);
             }
             else {
                 if (node.params.length === 3) {
-                    return evaluateAstNode(asNotUndefined(falseNode, meta), contextStack);
+                    return evaluateAstNode(asNotUndefined(falseNode, sourceCodeInfo), contextStack);
                 }
                 else {
                     return null;
@@ -1240,14 +1255,14 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var meta = node.token.meta;
+            var sourceCodeInfo = node.token.sourceCodeInfo;
             var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (evaluateAstNode(asNotUndefined(conditionNode, meta), contextStack)) {
-                return evaluateAstNode(asNotUndefined(trueNode, meta), contextStack);
+            if (evaluateAstNode(asNotUndefined(conditionNode, sourceCodeInfo), contextStack)) {
+                return evaluateAstNode(asNotUndefined(trueNode, sourceCodeInfo), contextStack);
             }
             else {
                 if (node.params.length === 3) {
-                    return evaluateAstNode(asNotUndefined(falseNode, meta), contextStack);
+                    return evaluateAstNode(asNotUndefined(falseNode, sourceCodeInfo), contextStack);
                 }
                 else {
                     return null;
@@ -1314,7 +1329,7 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var meta = node.token.meta;
+            var sourceCodeInfo = node.token.sourceCodeInfo;
             var bindingContext = node.bindings.reduce(function (result, binding) {
                 result[binding.name] = { value: evaluateAstNode(binding.value, contextStack) };
                 return result;
@@ -1332,10 +1347,10 @@ var Lits = (function (exports) {
                     if (error instanceof RecurSignal) {
                         var params_1 = error.params;
                         if (params_1.length !== node.bindings.length) {
-                            throw new LitsError("recur expected " + node.bindings.length + " parameters, got " + params_1.length, meta);
+                            throw new LitsError("recur expected " + node.bindings.length + " parameters, got " + params_1.length, sourceCodeInfo);
                         }
                         node.bindings.forEach(function (binding, index) {
-                            asNotUndefined(bindingContext[binding.name], meta).value = any.as(params_1[index], meta);
+                            asNotUndefined(bindingContext[binding.name], sourceCodeInfo).value = any.as(params_1[index], sourceCodeInfo);
                         });
                         return "continue";
                     }
@@ -1424,8 +1439,8 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack), node.token.meta);
-            throw new UserDefinedError(message, node.token.meta);
+            var message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack), node.token.sourceCodeInfo);
+            throw new UserDefinedError(message, node.token.sourceCodeInfo);
         },
     };
 
@@ -1445,7 +1460,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var astNode = node.params[0];
-            assertNotUndefined(astNode, node.token.meta);
+            assertNotUndefined(astNode, node.token.sourceCodeInfo);
             var startTime = Date.now();
             var result = evaluateAstNode(astNode, contextStack);
             var totalTime = Date.now() - startTime;
@@ -1476,7 +1491,7 @@ var Lits = (function (exports) {
             var error;
             _c = parseToken(tokens, position), position = _c[0], error = _c[1];
             if (error.type !== "Name") {
-                throw new UnexpectedNodeTypeError("Name", error, error.token.meta);
+                throw new UnexpectedNodeTypeError("Name", error, error.token.sourceCodeInfo);
             }
             token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === ")")) {
@@ -1513,7 +1528,9 @@ var Lits = (function (exports) {
                 return evaluateAstNode(node.tryExpression, contextStack);
             }
             catch (error) {
-                var newContext = (_b = {}, _b[node.error.value] = { value: asNotUndefined(error, node.token.meta) }, _b);
+                var newContext = (_b = {},
+                    _b[node.error.value] = { value: asNotUndefined(error, node.token.sourceCodeInfo) },
+                    _b);
                 return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext));
             }
         },
@@ -1527,14 +1544,14 @@ var Lits = (function (exports) {
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got " + bindings.length, firstToken.meta);
+                throw new LitsError("Expected exactly one binding, got " + bindings.length, firstToken.sourceCodeInfo);
             }
             var params;
             _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
             var node = {
                 type: "SpecialExpression",
                 name: "when-first",
-                binding: asNotUndefined(bindings[0], firstToken.meta),
+                binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1545,7 +1562,7 @@ var Lits = (function (exports) {
             var locals = {};
             var evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack);
             if (!sequence.is(evaluatedBindingForm)) {
-                throw new LitsError("Expected undefined or a sequence, got " + evaluatedBindingForm, node.token.meta);
+                throw new LitsError("Expected undefined or a sequence, got " + evaluatedBindingForm, node.token.sourceCodeInfo);
             }
             if (evaluatedBindingForm.length === 0) {
                 return null;
@@ -1571,14 +1588,14 @@ var Lits = (function (exports) {
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got " + bindings.length, firstToken.meta);
+                throw new LitsError("Expected exactly one binding, got " + bindings.length, firstToken.sourceCodeInfo);
             }
             var params;
             _c = parseTokens(tokens, position), position = _c[0], params = _c[1];
             var node = {
                 type: "SpecialExpression",
                 name: "when-let",
-                binding: asNotUndefined(bindings[0], firstToken.meta),
+                binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1619,7 +1636,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
-            assertNotUndefined(whenExpression, node.token.meta);
+            assertNotUndefined(whenExpression, node.token.sourceCodeInfo);
             if (evaluateAstNode(whenExpression, contextStack)) {
                 return null;
             }
@@ -1649,7 +1666,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var _b = node.params, whenExpression = _b[0], body = _b.slice(1);
-            assertNotUndefined(whenExpression, node.token.meta);
+            assertNotUndefined(whenExpression, node.token.sourceCodeInfo);
             if (!evaluateAstNode(whenExpression, contextStack)) {
                 return null;
             }
@@ -1665,110 +1682,110 @@ var Lits = (function (exports) {
 
     var bitwiseNormalExpression = {
         'bit-shift-left': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], count = _a[1];
-                number.assert(num, meta, { integer: true });
-                assertNonNegativeInteger(count, meta);
+                number.assert(num, sourceCodeInfo, { integer: true });
+                assertNonNegativeInteger(count, sourceCodeInfo);
                 return num << count;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-shift-right': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], count = _a[1];
-                number.assert(num, meta, { integer: true });
-                assertNonNegativeInteger(count, meta);
+                number.assert(num, sourceCodeInfo, { integer: true });
+                assertNonNegativeInteger(count, sourceCodeInfo);
                 return num >> count;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-not': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0];
-                number.assert(num, meta, { integer: true });
+                number.assert(num, sourceCodeInfo, { integer: true });
                 return ~num;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'bit-and': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], rest = _a.slice(1);
-                number.assert(first, meta, { integer: true });
+                number.assert(first, sourceCodeInfo, { integer: true });
                 return rest.reduce(function (result, value) {
-                    number.assert(value, meta, { integer: true });
+                    number.assert(value, sourceCodeInfo, { integer: true });
                     return result & value;
                 }, first);
             },
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
         'bit-and-not': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], rest = _a.slice(1);
-                number.assert(first, meta, { integer: true });
+                number.assert(first, sourceCodeInfo, { integer: true });
                 return rest.reduce(function (result, value) {
-                    number.assert(value, meta, { integer: true });
+                    number.assert(value, sourceCodeInfo, { integer: true });
                     return result & ~value;
                 }, first);
             },
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
         'bit-or': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], rest = _a.slice(1);
-                number.assert(first, meta, { integer: true });
+                number.assert(first, sourceCodeInfo, { integer: true });
                 return rest.reduce(function (result, value) {
-                    number.assert(value, meta, { integer: true });
+                    number.assert(value, sourceCodeInfo, { integer: true });
                     return result | value;
                 }, first);
             },
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
         'bit-xor': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], rest = _a.slice(1);
-                number.assert(first, meta, { integer: true });
+                number.assert(first, sourceCodeInfo, { integer: true });
                 return rest.reduce(function (result, value) {
-                    number.assert(value, meta, { integer: true });
+                    number.assert(value, sourceCodeInfo, { integer: true });
                     return result ^ value;
                 }, first);
             },
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
         'bit-flip': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
-                number.assert(num, meta, { integer: true });
-                assertNonNegativeInteger(index, meta);
+                number.assert(num, sourceCodeInfo, { integer: true });
+                assertNonNegativeInteger(index, sourceCodeInfo);
                 var mask = 1 << index;
                 return (num ^= mask);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-set': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
-                number.assert(num, meta, { integer: true });
-                assertNonNegativeInteger(index, meta);
+                number.assert(num, sourceCodeInfo, { integer: true });
+                assertNonNegativeInteger(index, sourceCodeInfo);
                 var mask = 1 << index;
                 return (num |= mask);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-clear': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
-                number.assert(num, meta, { integer: true });
-                assertNonNegativeInteger(index, meta);
+                number.assert(num, sourceCodeInfo, { integer: true });
+                assertNonNegativeInteger(index, sourceCodeInfo);
                 var mask = 1 << index;
                 return (num &= ~mask);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'bit-test': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
-                number.assert(num, meta, { integer: true });
-                assertNonNegativeInteger(index, meta);
+                number.assert(num, sourceCodeInfo, { integer: true });
+                assertNonNegativeInteger(index, sourceCodeInfo);
                 var mask = 1 << index;
                 return !!(num & mask);
             },
@@ -1776,131 +1793,131 @@ var Lits = (function (exports) {
         },
     };
 
-    function cloneAndGetMeta(originalColl, keys, meta) {
+    function cloneAndGetMeta(originalColl, keys, sourceCodeInfo) {
         var coll = cloneColl(originalColl);
         var butLastKeys = keys.slice(0, keys.length - 1);
         var innerCollMeta = butLastKeys.reduce(function (result, key) {
             var resultColl = result.coll;
             var newResultColl;
             if (array.is(resultColl)) {
-                number.assert(key, meta);
+                number.assert(key, sourceCodeInfo);
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                newResultColl = collection.as(resultColl[key], meta);
+                newResultColl = collection.as(resultColl[key], sourceCodeInfo);
             }
             else {
-                object.assert(resultColl, meta);
-                assertString(key, meta);
+                object.assert(resultColl, sourceCodeInfo);
+                assertString(key, sourceCodeInfo);
                 if (!collHasKey(result.coll, key)) {
                     resultColl[key] = {};
                 }
-                newResultColl = collection.as(resultColl[key], meta);
+                newResultColl = collection.as(resultColl[key], sourceCodeInfo);
             }
             return { coll: newResultColl, parent: resultColl };
         }, { coll: coll, parent: {} });
         return { coll: coll, innerCollMeta: innerCollMeta };
     }
-    function get(coll, key, meta) {
+    function get(coll, key, sourceCodeInfo) {
         if (array.is(coll)) {
-            number.assert(key, meta, { integer: true });
+            number.assert(key, sourceCodeInfo, { integer: true });
             if (key < coll.length) {
                 return toAny(coll[key]);
             }
         }
         else if (object.is(coll)) {
-            assertString(key, meta);
+            assertString(key, sourceCodeInfo);
             if (collHasKey(coll, key)) {
                 return toAny(coll[key]);
             }
         }
         else {
-            number.assert(key, meta, { integer: true });
+            number.assert(key, sourceCodeInfo, { integer: true });
             if (key < coll.length) {
                 return toAny(coll[key]);
             }
         }
         return undefined;
     }
-    function update(coll, key, fn, params, meta, contextStack, executeFunction) {
+    function update(coll, key, fn, params, sourceCodeInfo, contextStack, executeFunction) {
         if (object.is(coll)) {
-            assertString(key, meta);
+            assertString(key, sourceCodeInfo);
             var result = __assign({}, coll);
-            result[key] = executeFunction(fn, __spreadArray([result[key]], params), meta, contextStack);
+            result[key] = executeFunction(fn, __spreadArray([result[key]], params), sourceCodeInfo, contextStack);
             return result;
         }
         else {
-            number.assert(key, meta);
+            number.assert(key, sourceCodeInfo);
             var intKey_1 = toNonNegativeInteger(key);
-            assertMax(intKey_1, coll.length, meta);
+            assertMax(intKey_1, coll.length, sourceCodeInfo);
             if (Array.isArray(coll)) {
                 var result = coll.map(function (elem, index) {
                     if (intKey_1 === index) {
-                        return executeFunction(fn, __spreadArray([elem], params), meta, contextStack);
+                        return executeFunction(fn, __spreadArray([elem], params), sourceCodeInfo, contextStack);
                     }
                     return elem;
                 });
                 if (intKey_1 === coll.length) {
-                    result[intKey_1] = executeFunction(fn, __spreadArray([undefined], params), meta, contextStack);
+                    result[intKey_1] = executeFunction(fn, __spreadArray([undefined], params), sourceCodeInfo, contextStack);
                 }
                 return result;
             }
             else {
                 var result = coll.split("").map(function (elem, index) {
                     if (intKey_1 === index) {
-                        return asChar(executeFunction(fn, __spreadArray([elem], params), meta, contextStack), meta);
+                        return asChar(executeFunction(fn, __spreadArray([elem], params), sourceCodeInfo, contextStack), sourceCodeInfo);
                     }
                     return elem;
                 });
                 if (intKey_1 === coll.length) {
-                    result[intKey_1] = asChar(executeFunction(fn, __spreadArray([undefined], params), meta, contextStack), meta);
+                    result[intKey_1] = asChar(executeFunction(fn, __spreadArray([undefined], params), sourceCodeInfo, contextStack), sourceCodeInfo);
                 }
                 return result.join("");
             }
         }
     }
-    function assoc(coll, key, value, meta) {
-        collection.assert(coll, meta);
-        stringOrNumber.assert(key, meta);
+    function assoc(coll, key, value, sourceCodeInfo) {
+        collection.assert(coll, sourceCodeInfo);
+        stringOrNumber.assert(key, sourceCodeInfo);
         if (Array.isArray(coll) || typeof coll === "string") {
-            number.assert(key, meta, { integer: true });
-            assertNumberGte(key, 0, meta);
-            assertNumberLte(key, coll.length, meta);
+            number.assert(key, sourceCodeInfo, { integer: true });
+            assertNumberGte(key, 0, sourceCodeInfo);
+            assertNumberLte(key, coll.length, sourceCodeInfo);
             if (typeof coll === "string") {
-                assertChar(value, meta);
+                assertChar(value, sourceCodeInfo);
                 return "" + coll.slice(0, key) + value + coll.slice(key + 1);
             }
             var copy_1 = __spreadArray([], coll);
             copy_1[key] = value;
             return copy_1;
         }
-        assertString(key, meta);
+        assertString(key, sourceCodeInfo);
         var copy = __assign({}, coll);
         copy[key] = value;
         return copy;
     }
     var collectionNormalExpression = {
         get: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var coll = params[0], key = params[1];
                 var defaultValue = toAny(params[2]);
-                collection.assert(coll, meta);
-                stringOrNumber.assert(key, meta);
-                var result = get(coll, key, meta);
+                collection.assert(coll, sourceCodeInfo);
+                stringOrNumber.assert(key, sourceCodeInfo);
+                var result = get(coll, key, sourceCodeInfo);
                 return result === undefined ? defaultValue : result;
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         'get-in': {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var coll = params[0];
                 var keys = params[1];
                 var defaultValue = toAny(params[2]);
-                collection.assert(coll, meta);
-                array.assert(keys, meta);
+                collection.assert(coll, sourceCodeInfo);
+                array.assert(keys, sourceCodeInfo);
                 for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
                     var key = keys_1[_i];
-                    stringOrNumber.assert(key, meta);
+                    stringOrNumber.assert(key, sourceCodeInfo);
                     if (collection.is(coll)) {
-                        coll = get(coll, key, meta);
+                        coll = get(coll, key, sourceCodeInfo);
                     }
                     else {
                         return defaultValue;
@@ -1911,12 +1928,12 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         count: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var coll = _a[0];
                 if (typeof coll === "string") {
                     return coll.length;
                 }
-                collection.assert(coll, meta);
+                collection.assert(coll, sourceCodeInfo);
                 if (Array.isArray(coll)) {
                     return coll.length;
                 }
@@ -1925,15 +1942,15 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         'contains?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var coll = _a[0], key = _a[1];
-                collection.assert(coll, meta);
-                stringOrNumber.assert(key, meta);
+                collection.assert(coll, sourceCodeInfo);
+                stringOrNumber.assert(key, sourceCodeInfo);
                 if (sequence.is(coll)) {
                     if (!number.is(key, { integer: true })) {
                         return false;
                     }
-                    number.assert(key, meta, { integer: true });
+                    number.assert(key, sourceCodeInfo, { integer: true });
                     return key >= 0 && key < coll.length;
                 }
                 return !!Object.getOwnPropertyDescriptor(coll, key);
@@ -1941,9 +1958,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'has?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var coll = _a[0], value = _a[1];
-                collection.assert(coll, meta);
+                collection.assert(coll, sourceCodeInfo);
                 if (array.is(coll)) {
                     return coll.includes(value);
                 }
@@ -1955,10 +1972,10 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'has-some?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var coll = _a[0], seq = _a[1];
-                collection.assert(coll, meta);
-                sequence.assert(seq, meta);
+                collection.assert(coll, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (array.is(coll)) {
                     for (var _i = 0, seq_1 = seq; _i < seq_1.length; _i++) {
                         var value = seq_1[_i];
@@ -1988,10 +2005,10 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'has-every?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var coll = _a[0], seq = _a[1];
-                collection.assert(coll, meta);
-                sequence.assert(seq, meta);
+                collection.assert(coll, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (array.is(coll)) {
                     for (var _i = 0, seq_4 = seq; _i < seq_4.length; _i++) {
                         var value = seq_4[_i];
@@ -2021,95 +2038,95 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         assoc: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var coll = _a[0], key = _a[1], value = _a[2];
-                collection.assert(coll, meta);
-                stringOrNumber.assert(key, meta);
-                any.assert(value, meta);
-                return assoc(coll, key, value, meta);
+                collection.assert(coll, sourceCodeInfo);
+                stringOrNumber.assert(key, sourceCodeInfo);
+                any.assert(value, sourceCodeInfo);
+                return assoc(coll, key, value, sourceCodeInfo);
             },
             validate: function (node) { return assertLength(3, node); },
         },
         'assoc-in': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var originalColl = _a[0], keys = _a[1], value = _a[2];
-                collection.assert(originalColl, meta);
-                array.assert(keys, meta);
-                any.assert(value, meta);
+                collection.assert(originalColl, sourceCodeInfo);
+                array.assert(keys, sourceCodeInfo);
+                any.assert(value, sourceCodeInfo);
                 if (keys.length === 1) {
-                    stringOrNumber.assert(keys[0], meta);
-                    return assoc(originalColl, keys[0], value, meta);
+                    stringOrNumber.assert(keys[0], sourceCodeInfo);
+                    return assoc(originalColl, keys[0], value, sourceCodeInfo);
                 }
-                var _b = cloneAndGetMeta(originalColl, keys, meta), coll = _b.coll, innerCollMeta = _b.innerCollMeta;
-                var lastKey = stringOrNumber.as(keys[keys.length - 1], meta);
-                var parentKey = stringOrNumber.as(keys[keys.length - 2], meta);
+                var _b = cloneAndGetMeta(originalColl, keys, sourceCodeInfo), coll = _b.coll, innerCollMeta = _b.innerCollMeta;
+                var lastKey = stringOrNumber.as(keys[keys.length - 1], sourceCodeInfo);
+                var parentKey = stringOrNumber.as(keys[keys.length - 2], sourceCodeInfo);
                 if (array.is(innerCollMeta.parent)) {
-                    number.assert(parentKey, meta);
-                    innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, meta);
+                    number.assert(parentKey, sourceCodeInfo);
+                    innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, sourceCodeInfo);
                 }
                 else {
-                    assertString(parentKey, meta);
-                    innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, meta);
+                    assertString(parentKey, sourceCodeInfo);
+                    innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, sourceCodeInfo);
                 }
                 return coll;
             },
             validate: function (node) { return assertLength(3, node); },
         },
         update: {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var coll = _a[0], key = _a[1], fn = _a[2], params = _a.slice(3);
                 var executeFunction = _b.executeFunction;
-                collection.assert(coll, meta);
-                stringOrNumber.assert(key, meta);
-                litsFunction.assert(fn, meta);
-                return update(coll, key, fn, params, meta, contextStack, executeFunction);
+                collection.assert(coll, sourceCodeInfo);
+                stringOrNumber.assert(key, sourceCodeInfo);
+                litsFunction.assert(fn, sourceCodeInfo);
+                return update(coll, key, fn, params, sourceCodeInfo, contextStack, executeFunction);
             },
             validate: function (node) { return assertLength({ min: 3 }, node); },
         },
         'update-in': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var originalColl = _a[0], keys = _a[1], fn = _a[2], params = _a.slice(3);
                 var executeFunction = _b.executeFunction;
-                collection.assert(originalColl, meta);
-                array.assert(keys, meta);
-                litsFunction.assert(fn, meta);
+                collection.assert(originalColl, sourceCodeInfo);
+                array.assert(keys, sourceCodeInfo);
+                litsFunction.assert(fn, sourceCodeInfo);
                 if (keys.length === 1) {
-                    stringOrNumber.assert(keys[0], meta);
-                    return update(originalColl, keys[0], fn, params, meta, contextStack, executeFunction);
+                    stringOrNumber.assert(keys[0], sourceCodeInfo);
+                    return update(originalColl, keys[0], fn, params, sourceCodeInfo, contextStack, executeFunction);
                 }
-                var _c = cloneAndGetMeta(originalColl, keys, meta), coll = _c.coll, innerCollMeta = _c.innerCollMeta;
-                var lastKey = stringOrNumber.as(keys[keys.length - 1], meta);
-                var parentKey = stringOrNumber.as(keys[keys.length - 2], meta);
+                var _c = cloneAndGetMeta(originalColl, keys, sourceCodeInfo), coll = _c.coll, innerCollMeta = _c.innerCollMeta;
+                var lastKey = stringOrNumber.as(keys[keys.length - 1], sourceCodeInfo);
+                var parentKey = stringOrNumber.as(keys[keys.length - 2], sourceCodeInfo);
                 if (array.is(innerCollMeta.parent)) {
-                    number.assert(parentKey, meta);
-                    innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, meta, contextStack, executeFunction);
+                    number.assert(parentKey, sourceCodeInfo);
+                    innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, sourceCodeInfo, contextStack, executeFunction);
                 }
                 else {
-                    assertString(parentKey, meta);
-                    innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, meta, contextStack, executeFunction);
+                    assertString(parentKey, sourceCodeInfo);
+                    innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, sourceCodeInfo, contextStack, executeFunction);
                 }
                 return coll;
             },
             validate: function (node) { return assertLength({ min: 3 }, node); },
         },
         concat: {
-            evaluate: function (params, meta) {
-                collection.assert(params[0], meta);
+            evaluate: function (params, sourceCodeInfo) {
+                collection.assert(params[0], sourceCodeInfo);
                 if (array.is(params[0])) {
                     return params.reduce(function (result, arr) {
-                        array.assert(arr, meta);
+                        array.assert(arr, sourceCodeInfo);
                         return result.concat(arr);
                     }, []);
                 }
                 else if (isString(params[0])) {
                     return params.reduce(function (result, s) {
-                        assertString(s, meta);
+                        assertString(s, sourceCodeInfo);
                         return "" + result + s;
                     }, "");
                 }
                 else {
                     return params.reduce(function (result, obj) {
-                        object.assert(obj, meta);
+                        object.assert(obj, sourceCodeInfo);
                         return Object.assign(result, obj);
                     }, {});
                 }
@@ -2117,9 +2134,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
         'empty?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                collection.assert(first, meta);
+                collection.assert(first, sourceCodeInfo);
                 if (isString(first)) {
                     return first.length === 0;
                 }
@@ -2131,88 +2148,88 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         'every?': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                collection.assert(coll, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                collection.assert(coll, sourceCodeInfo);
                 if (Array.isArray(coll)) {
-                    return coll.every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return coll.every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 if (isString(coll)) {
-                    return coll.split("").every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return coll.split("").every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'any?': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                collection.assert(coll, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                collection.assert(coll, sourceCodeInfo);
                 if (Array.isArray(coll)) {
-                    return coll.some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return coll.some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 if (isString(coll)) {
-                    return coll.split("").some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return coll.split("").some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'not-any?': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                collection.assert(coll, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                collection.assert(coll, sourceCodeInfo);
                 if (Array.isArray(coll)) {
-                    return !coll.some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return !coll.some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 if (isString(coll)) {
-                    return !coll.split("").some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return !coll.split("").some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'not-every?': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], coll = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                collection.assert(coll, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                collection.assert(coll, sourceCodeInfo);
                 if (Array.isArray(coll)) {
-                    return !coll.every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return !coll.every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 if (isString(coll)) {
-                    return !coll.split("").every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return !coll.split("").every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             },
             validate: function (node) { return assertLength(2, node); },
         },
     };
 
-    var evaluateMap = function (params, meta, contextStack, _a) {
+    var evaluateMap = function (params, sourceCodeInfo, contextStack, _a) {
         var executeFunction = _a.executeFunction;
         var fn = params[0], firstList = params[1];
-        litsFunction.assert(fn, meta);
-        sequence.assert(firstList, meta);
+        litsFunction.assert(fn, sourceCodeInfo);
+        sequence.assert(firstList, sourceCodeInfo);
         var isStringSeq = isString(firstList);
         var length = firstList.length;
         if (params.length === 2) {
             if (array.is(firstList)) {
-                return firstList.map(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                return firstList.map(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
             }
             else {
                 return firstList
                     .split("")
                     .map(function (elem) {
-                    var newVal = executeFunction(fn, [elem], meta, contextStack);
-                    assertChar(newVal, meta);
+                    var newVal = executeFunction(fn, [elem], sourceCodeInfo, contextStack);
+                    assertChar(newVal, sourceCodeInfo);
                     return newVal;
                 })
                     .join("");
@@ -2221,21 +2238,21 @@ var Lits = (function (exports) {
         else {
             params.slice(2).forEach(function (collParam) {
                 if (isStringSeq) {
-                    assertString(collParam, meta);
+                    assertString(collParam, sourceCodeInfo);
                 }
                 else {
-                    array.assert(collParam, meta);
+                    array.assert(collParam, sourceCodeInfo);
                 }
                 if (length !== collParam.length) {
-                    throw new LitsError("All arguments to \"map\" must have the same length", meta);
+                    throw new LitsError("All arguments to \"map\" must have the same length", sourceCodeInfo);
                 }
             });
             if (isStringSeq) {
                 var result = "";
                 var _loop_1 = function (i) {
                     var fnParams = params.slice(1).map(function (l) { return l[i]; });
-                    var newValue = executeFunction(fn, fnParams, meta, contextStack);
-                    assertChar(newValue, meta);
+                    var newValue = executeFunction(fn, fnParams, sourceCodeInfo, contextStack);
+                    assertChar(newValue, sourceCodeInfo);
                     result += newValue;
                 };
                 for (var i = 0; i < length; i += 1) {
@@ -2247,7 +2264,7 @@ var Lits = (function (exports) {
                 var result = [];
                 var _loop_2 = function (i) {
                     var fnParams = params.slice(1).map(function (l) { return toAny(l[i]); });
-                    result.push(executeFunction(fn, fnParams, meta, contextStack));
+                    result.push(executeFunction(fn, fnParams, sourceCodeInfo, contextStack));
                 };
                 for (var i = 0; i < length; i += 1) {
                     _loop_2(i);
@@ -2258,55 +2275,55 @@ var Lits = (function (exports) {
     };
     var sequenceNormalExpression = {
         cons: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var elem = _a[0], seq = _a[1];
-                any.assert(elem, meta);
-                sequence.assert(seq, meta);
+                any.assert(elem, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (Array.isArray(seq)) {
                     return __spreadArray([elem], seq);
                 }
-                assertChar(elem, meta);
+                assertChar(elem, sourceCodeInfo);
                 return "" + elem + seq;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         nth: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], i = _a[1];
-                sequence.assert(seq, meta);
-                number.assert(i, meta, { integer: true });
+                sequence.assert(seq, sourceCodeInfo);
+                number.assert(i, sourceCodeInfo, { integer: true });
                 return toAny(seq[i]);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         filter: {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                sequence.assert(seq, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (Array.isArray(seq)) {
-                    return seq.filter(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    return seq.filter(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 return seq
                     .split("")
-                    .filter(function (elem) { return executeFunction(fn, [elem], meta, contextStack); })
+                    .filter(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); })
                     .join("");
             },
             validate: function (node) { return assertLength(2, node); },
         },
         first: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var array = _a[0];
-                sequence.assert(array, meta);
+                sequence.assert(array, sourceCodeInfo);
                 return toAny(array[0]);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         last: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                sequence.assert(first, meta);
+                sequence.assert(first, sourceCodeInfo);
                 return toAny(first[first.length - 1]);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -2316,9 +2333,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
         pop: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0];
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
                     return seq.substr(0, seq.length - 1);
                 }
@@ -2329,29 +2346,29 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         position: {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                sequence.assert(seq, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
-                    var index = seq.split("").findIndex(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    var index = seq.split("").findIndex(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                     return index !== -1 ? index : null;
                 }
                 else {
-                    var index = seq.findIndex(function (elem) { return executeFunction(fn, [elem], meta, contextStack); });
+                    var index = seq.findIndex(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                     return index !== -1 ? index : null;
                 }
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'index-of': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], value = _a[1];
-                any.assert(value, meta);
-                sequence.assert(seq, meta);
+                any.assert(value, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
-                    assertString(value, meta);
+                    assertString(value, sourceCodeInfo);
                     var index = seq.indexOf(value);
                     return index !== -1 ? index : null;
                 }
@@ -2363,11 +2380,11 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         push: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], values = _a.slice(1);
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
-                    assertCharArray(values, meta);
+                    assertCharArray(values, sourceCodeInfo);
                     return __spreadArray([seq], values).join("");
                 }
                 else {
@@ -2377,15 +2394,15 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
         reduce: {
-            evaluate: function (params, meta, contextStack, _a) {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0];
-                litsFunction.assert(fn, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
                 if (params.length === 2) {
                     var arr = params[1];
-                    sequence.assert(arr, meta);
+                    sequence.assert(arr, sourceCodeInfo);
                     if (arr.length === 0) {
-                        return executeFunction(fn, [], meta, contextStack);
+                        return executeFunction(fn, [], sourceCodeInfo, contextStack);
                     }
                     else if (arr.length === 1) {
                         return toAny(arr[0]);
@@ -2393,27 +2410,27 @@ var Lits = (function (exports) {
                     if (isString(arr)) {
                         var chars = arr.split("");
                         return chars.slice(1).reduce(function (result, elem) {
-                            var val = executeFunction(fn, [result, elem], meta, contextStack);
+                            var val = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
                             return val;
-                        }, any.as(chars[0], meta));
+                        }, any.as(chars[0], sourceCodeInfo));
                     }
                     else {
                         return arr.slice(1).reduce(function (result, elem) {
-                            return executeFunction(fn, [result, elem], meta, contextStack);
+                            return executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
                         }, toAny(arr[0]));
                     }
                 }
                 else {
                     var val = params[1], seq = params[2];
-                    any.assert(val, meta);
-                    sequence.assert(seq, meta);
+                    any.assert(val, sourceCodeInfo);
+                    sequence.assert(seq, sourceCodeInfo);
                     if (isString(seq)) {
-                        assertString(val, meta);
+                        assertString(val, sourceCodeInfo);
                         if (seq.length === 0) {
                             return val;
                         }
                         return seq.split("").reduce(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], meta, contextStack);
+                            var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
                             return newVal;
                         }, val);
                     }
@@ -2422,7 +2439,7 @@ var Lits = (function (exports) {
                             return val;
                         }
                         return seq.reduce(function (result, elem) {
-                            return executeFunction(fn, [result, elem], meta, contextStack);
+                            return executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
                         }, val);
                     }
                 }
@@ -2430,15 +2447,15 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         'reduce-right': {
-            evaluate: function (params, meta, contextStack, _a) {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0];
-                litsFunction.assert(fn, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
                 if (params.length === 2) {
                     var seq = params[1];
-                    sequence.assert(seq, meta);
+                    sequence.assert(seq, sourceCodeInfo);
                     if (seq.length === 0) {
-                        return executeFunction(fn, [], meta, contextStack);
+                        return executeFunction(fn, [], sourceCodeInfo, contextStack);
                     }
                     else if (seq.length === 1) {
                         return toAny(seq[0]);
@@ -2446,27 +2463,27 @@ var Lits = (function (exports) {
                     if (isString(seq)) {
                         var chars = seq.split("");
                         return chars.slice(0, chars.length - 1).reduceRight(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], meta, contextStack);
-                            assertString(newVal, meta);
+                            var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
+                            assertString(newVal, sourceCodeInfo);
                             return newVal;
                         }, chars[chars.length - 1]);
                     }
                     else {
                         return seq.slice(0, seq.length - 1).reduceRight(function (result, elem) {
-                            return executeFunction(fn, [result, elem], meta, contextStack);
-                        }, any.as(seq[seq.length - 1], meta));
+                            return executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
+                        }, any.as(seq[seq.length - 1], sourceCodeInfo));
                     }
                 }
                 else {
                     var val = params[1], seq = params[2];
-                    any.assert(val, meta);
-                    sequence.assert(seq, meta);
+                    any.assert(val, sourceCodeInfo);
+                    sequence.assert(seq, sourceCodeInfo);
                     if (isString(seq)) {
                         if (seq.length === 0) {
                             return val;
                         }
                         return seq.split("").reduceRight(function (result, elem) {
-                            var newVal = executeFunction(fn, [result, elem], meta, contextStack);
+                            var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
                             return newVal;
                         }, val);
                     }
@@ -2475,7 +2492,7 @@ var Lits = (function (exports) {
                             return val;
                         }
                         return seq.reduceRight(function (result, elem) {
-                            return executeFunction(fn, [result, elem], meta, contextStack);
+                            return executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
                         }, val);
                     }
                 }
@@ -2483,9 +2500,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         rest: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                sequence.assert(first, meta);
+                sequence.assert(first, sourceCodeInfo);
                 if (Array.isArray(first)) {
                     if (first.length <= 1) {
                         return [];
@@ -2497,10 +2514,10 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         nthrest: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], count = _a[1];
-                sequence.assert(seq, meta);
-                assertFiniteNumber(count, meta);
+                sequence.assert(seq, sourceCodeInfo);
+                assertFiniteNumber(count, sourceCodeInfo);
                 var integerCount = Math.max(Math.ceil(count), 0);
                 if (Array.isArray(seq)) {
                     return seq.slice(integerCount);
@@ -2510,9 +2527,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         next: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                sequence.assert(first, meta);
+                sequence.assert(first, sourceCodeInfo);
                 if (Array.isArray(first)) {
                     if (first.length <= 1) {
                         return null;
@@ -2527,10 +2544,10 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         nthnext: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], count = _a[1];
-                sequence.assert(seq, meta);
-                assertFiniteNumber(count, meta);
+                sequence.assert(seq, sourceCodeInfo);
+                assertFiniteNumber(count, sourceCodeInfo);
                 var integerCount = Math.max(Math.ceil(count), 0);
                 if (seq.length <= count) {
                     return null;
@@ -2543,9 +2560,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         reverse: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                sequence.assert(first, meta);
+                sequence.assert(first, sourceCodeInfo);
                 if (Array.isArray(first)) {
                     return __spreadArray([], first).reverse();
                 }
@@ -2554,17 +2571,17 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         second: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var array = _a[0];
-                sequence.assert(array, meta);
+                sequence.assert(array, sourceCodeInfo);
                 return toAny(array[1]);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         shift: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0];
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
                     return seq.substr(1);
                 }
@@ -2575,55 +2592,55 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         slice: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var seq = params[0], from = params[1], to = params[2];
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 if (params.length === 1) {
                     return seq;
                 }
-                number.assert(from, meta, { integer: true });
+                number.assert(from, sourceCodeInfo, { integer: true });
                 if (params.length === 2) {
                     return seq.slice(from);
                 }
-                number.assert(to, meta, { integer: true });
+                number.assert(to, sourceCodeInfo, { integer: true });
                 return seq.slice(from, to);
             },
             validate: function (node) { return assertLength({ min: 1, max: 3 }, node); },
         },
         some: {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c;
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                sequence.assert(seq, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (seq.length === 0) {
                     return null;
                 }
                 if (isString(seq)) {
-                    return (_c = seq.split("").find(function (elem) { return executeFunction(fn, [elem], meta, contextStack); })) !== null && _c !== void 0 ? _c : null;
+                    return (_c = seq.split("").find(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); })) !== null && _c !== void 0 ? _c : null;
                 }
-                return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], meta, contextStack); }));
+                return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); }));
             },
             validate: function (node) { return assertLength(2, node); },
         },
         sort: {
-            evaluate: function (params, meta, contextStack, _a) {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var defaultComparer = params.length === 1;
                 var seq = defaultComparer ? params[0] : params[1];
                 var comparer = defaultComparer ? null : params[0];
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
                     var result_1 = seq.split("");
                     if (defaultComparer) {
                         result_1.sort(compare);
                     }
                     else {
-                        litsFunction.assert(comparer, meta);
+                        litsFunction.assert(comparer, sourceCodeInfo);
                         result_1.sort(function (a, b) {
-                            var compareValue = executeFunction(comparer, [a, b], meta, contextStack);
-                            assertFiniteNumber(compareValue, meta);
+                            var compareValue = executeFunction(comparer, [a, b], sourceCodeInfo, contextStack);
+                            assertFiniteNumber(compareValue, sourceCodeInfo);
                             return compareValue;
                         });
                     }
@@ -2635,9 +2652,9 @@ var Lits = (function (exports) {
                 }
                 else {
                     result.sort(function (a, b) {
-                        litsFunction.assert(comparer, meta);
-                        var compareValue = executeFunction(comparer, [a, b], meta, contextStack);
-                        assertFiniteNumber(compareValue, meta);
+                        litsFunction.assert(comparer, sourceCodeInfo);
+                        var compareValue = executeFunction(comparer, [a, b], sourceCodeInfo, contextStack);
+                        assertFiniteNumber(compareValue, sourceCodeInfo);
                         return compareValue;
                     });
                 }
@@ -2646,28 +2663,28 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
         'sort-by': {
-            evaluate: function (params, meta, contextStack, _a) {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var defaultComparer = params.length === 2;
-                var keyfn = any.as(params[0], meta);
+                var keyfn = any.as(params[0], sourceCodeInfo);
                 var comparer = defaultComparer ? null : params[1];
-                var seq = sequence.as(defaultComparer ? params[1] : params[2], meta);
+                var seq = sequence.as(defaultComparer ? params[1] : params[2], sourceCodeInfo);
                 if (isString(seq)) {
                     var result_2 = seq.split("");
                     if (defaultComparer) {
                         result_2.sort(function (a, b) {
-                            var aKey = executeFunction(keyfn, [a], meta, contextStack);
-                            var bKey = executeFunction(keyfn, [b], meta, contextStack);
+                            var aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack);
+                            var bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack);
                             return compare(aKey, bKey);
                         });
                     }
                     else {
-                        litsFunction.assert(comparer, meta);
+                        litsFunction.assert(comparer, sourceCodeInfo);
                         result_2.sort(function (a, b) {
-                            var aKey = executeFunction(keyfn, [a], meta, contextStack);
-                            var bKey = executeFunction(keyfn, [b], meta, contextStack);
-                            var compareValue = executeFunction(comparer, [aKey, bKey], meta, contextStack);
-                            assertFiniteNumber(compareValue, meta);
+                            var aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack);
+                            var bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack);
+                            var compareValue = executeFunction(comparer, [aKey, bKey], sourceCodeInfo, contextStack);
+                            assertFiniteNumber(compareValue, sourceCodeInfo);
                             return compareValue;
                         });
                     }
@@ -2676,18 +2693,18 @@ var Lits = (function (exports) {
                 var result = __spreadArray([], seq);
                 if (defaultComparer) {
                     result.sort(function (a, b) {
-                        var aKey = executeFunction(keyfn, [a], meta, contextStack);
-                        var bKey = executeFunction(keyfn, [b], meta, contextStack);
+                        var aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack);
+                        var bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack);
                         return compare(aKey, bKey);
                     });
                 }
                 else {
-                    litsFunction.assert(comparer, meta);
+                    litsFunction.assert(comparer, sourceCodeInfo);
                     result.sort(function (a, b) {
-                        var aKey = executeFunction(keyfn, [a], meta, contextStack);
-                        var bKey = executeFunction(keyfn, [b], meta, contextStack);
-                        var compareValue = executeFunction(comparer, [aKey, bKey], meta, contextStack);
-                        assertFiniteNumber(compareValue, meta);
+                        var aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack);
+                        var bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack);
+                        var compareValue = executeFunction(comparer, [aKey, bKey], sourceCodeInfo, contextStack);
+                        assertFiniteNumber(compareValue, sourceCodeInfo);
                         return compareValue;
                     });
                 }
@@ -2696,20 +2713,20 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         take: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var n = _a[0], input = _a[1];
-                number.assert(n, meta);
-                sequence.assert(input, meta);
+                number.assert(n, sourceCodeInfo);
+                sequence.assert(input, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
                 return input.slice(0, num);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'take-last': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var n = _a[0], array = _a[1];
-                sequence.assert(array, meta);
-                number.assert(n, meta);
+                sequence.assert(array, sourceCodeInfo);
+                number.assert(n, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
                 var from = array.length - num;
                 return array.slice(from);
@@ -2717,15 +2734,15 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'take-while': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                sequence.assert(seq, meta);
-                litsFunction.assert(fn, meta);
+                sequence.assert(seq, sourceCodeInfo);
+                litsFunction.assert(fn, sourceCodeInfo);
                 var result = [];
                 for (var _i = 0, seq_1 = seq; _i < seq_1.length; _i++) {
                     var item = seq_1[_i];
-                    if (executeFunction(fn, [item], meta, contextStack)) {
+                    if (executeFunction(fn, [item], sourceCodeInfo, contextStack)) {
                         result.push(item);
                     }
                     else {
@@ -2737,20 +2754,20 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         drop: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var n = _a[0], input = _a[1];
-                number.assert(n, meta);
+                number.assert(n, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
-                sequence.assert(input, meta);
+                sequence.assert(input, sourceCodeInfo);
                 return input.slice(num);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'drop-last': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var n = _a[0], array = _a[1];
-                sequence.assert(array, meta);
-                number.assert(n, meta);
+                sequence.assert(array, sourceCodeInfo);
+                number.assert(n, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
                 var from = array.length - num;
                 return array.slice(0, from);
@@ -2758,27 +2775,27 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'drop-while': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                sequence.assert(seq, meta);
-                litsFunction.assert(fn, meta);
+                sequence.assert(seq, sourceCodeInfo);
+                litsFunction.assert(fn, sourceCodeInfo);
                 if (Array.isArray(seq)) {
-                    var from_1 = seq.findIndex(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); });
+                    var from_1 = seq.findIndex(function (elem) { return !executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                     return seq.slice(from_1);
                 }
                 var charArray = seq.split("");
-                var from = charArray.findIndex(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); });
+                var from = charArray.findIndex(function (elem) { return !executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 return charArray.slice(from).join("");
             },
             validate: function (node) { return assertLength(2, node); },
         },
         unshift: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], values = _a.slice(1);
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
-                    assertCharArray(values, meta);
+                    assertCharArray(values, sourceCodeInfo);
                     return __spreadArray(__spreadArray([], values, true), [seq]).join("");
                 }
                 var copy = __spreadArray([], seq);
@@ -2788,10 +2805,10 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
         'random-sample!': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var prob = _a[0], seq = _a[1];
-                assertFiniteNumber(prob, meta);
-                sequence.assert(seq, meta);
+                assertFiniteNumber(prob, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
                     return seq
                         .split("")
@@ -2805,9 +2822,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'rand-nth!': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0];
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 if (seq.length === 0) {
                     return null;
                 }
@@ -2820,9 +2837,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         shuffle: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var input = _a[0];
-                sequence.assert(input, meta);
+                sequence.assert(input, sourceCodeInfo);
                 var array = isString(input) ? __spreadArray([], input.split("")) : __spreadArray([], input);
                 var remainingLength = array.length;
                 var arrayElement;
@@ -2842,9 +2859,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         distinct: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var input = _a[0];
-                sequence.assert(input, meta);
+                sequence.assert(input, sourceCodeInfo);
                 if (Array.isArray(input)) {
                     return Array.from(new Set(input));
                 }
@@ -2853,26 +2870,26 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         remove: {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], input = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                sequence.assert(input, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                sequence.assert(input, sourceCodeInfo);
                 if (Array.isArray(input)) {
-                    return input.filter(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); });
+                    return input.filter(function (elem) { return !executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 return input
                     .split("")
-                    .filter(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); })
+                    .filter(function (elem) { return !executeFunction(fn, [elem], sourceCodeInfo, contextStack); })
                     .join("");
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'remove-at': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var index = _a[0], input = _a[1];
-                number.assert(index, meta);
-                sequence.assert(input, meta);
+                number.assert(index, sourceCodeInfo);
+                sequence.assert(input, sourceCodeInfo);
                 var intIndex = Math.ceil(index);
                 if (intIndex < 0 || intIndex >= input.length) {
                     return input;
@@ -2887,24 +2904,24 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'split-at': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var pos = _a[0], seq = _a[1];
-                assertFiniteNumber(pos, meta);
+                assertFiniteNumber(pos, sourceCodeInfo);
                 var intPos = toNonNegativeInteger(pos);
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 return [seq.slice(0, intPos), seq.slice(intPos)];
             },
             validate: function (node) { return assertLength(2, node); },
         },
         'split-with': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                sequence.assert(seq, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 var seqIsArray = Array.isArray(seq);
                 var arr = seqIsArray ? seq : seq.split("");
-                var index = arr.findIndex(function (elem) { return !executeFunction(fn, [elem], meta, contextStack); });
+                var index = arr.findIndex(function (elem) { return !executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 if (index === -1) {
                     return [seq, seqIsArray ? [] : ""];
                 }
@@ -2913,12 +2930,12 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         frequencies: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0];
-                sequence.assert(seq, meta);
+                sequence.assert(seq, sourceCodeInfo);
                 var arr = isString(seq) ? seq.split("") : seq;
                 return arr.reduce(function (result, val) {
-                    assertString(val, meta);
+                    assertString(val, sourceCodeInfo);
                     if (collHasKey(result, val)) {
                         result[val] = result[val] + 1;
                     }
@@ -2931,15 +2948,15 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         'group-by': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                any.assert(fn, meta);
-                sequence.assert(seq, meta);
+                any.assert(fn, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 var arr = Array.isArray(seq) ? seq : seq.split("");
                 return arr.reduce(function (result, val) {
-                    var key = executeFunction(fn, [val], meta, contextStack);
-                    assertString(key, meta);
+                    var key = executeFunction(fn, [val], sourceCodeInfo, contextStack);
+                    assertString(key, sourceCodeInfo);
                     if (!collHasKey(result, key)) {
                         result[key] = [];
                     }
@@ -2950,40 +2967,40 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         partition: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var len = params.length;
-                var n = toNonNegativeInteger(number.as(params[0], meta));
+                var n = toNonNegativeInteger(number.as(params[0], sourceCodeInfo));
                 var seq = len === 2
-                    ? sequence.as(params[1], meta)
+                    ? sequence.as(params[1], sourceCodeInfo)
                     : len === 3
-                        ? sequence.as(params[2], meta)
-                        : sequence.as(params[3], meta);
-                var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], meta)) : n;
-                var pad = len === 4 ? (params[2] === null ? [] : array.as(params[2], meta)) : undefined;
-                return partition(n, step, seq, pad, meta);
+                        ? sequence.as(params[2], sourceCodeInfo)
+                        : sequence.as(params[3], sourceCodeInfo);
+                var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], sourceCodeInfo)) : n;
+                var pad = len === 4 ? (params[2] === null ? [] : array.as(params[2], sourceCodeInfo)) : undefined;
+                return partition(n, step, seq, pad, sourceCodeInfo);
             },
             validate: function (node) { return assertLength({ min: 2, max: 4 }, node); },
         },
         'partition-all': {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var len = params.length;
-                var n = toNonNegativeInteger(number.as(params[0], meta));
-                var seq = len === 2 ? sequence.as(params[1], meta) : sequence.as(params[2], meta);
-                var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], meta)) : n;
-                return partition(n, step, seq, [], meta);
+                var n = toNonNegativeInteger(number.as(params[0], sourceCodeInfo));
+                var seq = len === 2 ? sequence.as(params[1], sourceCodeInfo) : sequence.as(params[2], sourceCodeInfo);
+                var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], sourceCodeInfo)) : n;
+                return partition(n, step, seq, [], sourceCodeInfo);
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         'partition-by': {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var fn = _a[0], seq = _a[1];
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(fn, meta);
-                sequence.assert(seq, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
+                sequence.assert(seq, sourceCodeInfo);
                 var isStringSeq = isString(seq);
                 var oldValue = undefined;
                 var result = (isStringSeq ? seq.split("") : seq).reduce(function (result, elem) {
-                    var value = executeFunction(fn, [elem], meta, contextStack);
+                    var value = executeFunction(fn, [elem], sourceCodeInfo, contextStack);
                     if (value !== oldValue) {
                         result.push([]);
                         oldValue = value;
@@ -2996,8 +3013,8 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
     };
-    function partition(n, step, seq, pad, meta) {
-        assertPositiveNumber(step, meta);
+    function partition(n, step, seq, pad, sourceCodeInfo) {
+        assertPositiveNumber(step, sourceCodeInfo);
         var isStringSeq = isString(seq);
         var result = [];
         var start = 0;
@@ -3030,37 +3047,37 @@ var Lits = (function (exports) {
             evaluate: function (params) { return params; },
         },
         range: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var first = params[0], second = params[1], third = params[2];
                 var from;
                 var to;
                 var step;
-                assertFiniteNumber(first, meta);
+                assertFiniteNumber(first, sourceCodeInfo);
                 if (params.length === 1) {
                     from = 0;
                     to = first;
                     step = to >= 0 ? 1 : -1;
                 }
                 else if (params.length === 2) {
-                    assertFiniteNumber(second, meta);
+                    assertFiniteNumber(second, sourceCodeInfo);
                     from = first;
                     to = second;
                     step = to >= from ? 1 : -1;
                 }
                 else {
-                    assertFiniteNumber(second, meta);
-                    assertFiniteNumber(third, meta);
+                    assertFiniteNumber(second, sourceCodeInfo);
+                    assertFiniteNumber(third, sourceCodeInfo);
                     from = first;
                     to = second;
                     step = third;
                     if (to > from) {
-                        assertPositiveNumber(step, meta);
+                        assertPositiveNumber(step, sourceCodeInfo);
                     }
                     else if (to < from) {
-                        assertNegativeNumber(step, meta);
+                        assertNegativeNumber(step, sourceCodeInfo);
                     }
                     else {
-                        assertNumberNotZero(step, meta);
+                        assertNumberNotZero(step, sourceCodeInfo);
                     }
                 }
                 var result = [];
@@ -3072,9 +3089,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 1, max: 3 }, node); },
         },
         repeat: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var count = _a[0], value = _a[1];
-                assertNonNegativeInteger(count, meta);
+                assertNonNegativeInteger(count, sourceCodeInfo);
                 var result = [];
                 for (var i = 0; i < count; i += 1) {
                     result.push(value);
@@ -3094,12 +3111,12 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         mapcat: {
-            evaluate: function (params, meta, contextStack, helpers) {
+            evaluate: function (params, sourceCodeInfo, contextStack, helpers) {
                 params.slice(1).forEach(function (arr) {
-                    array.assert(arr, meta);
+                    array.assert(arr, sourceCodeInfo);
                 });
-                var mapResult = evaluateMap(params, meta, contextStack, helpers);
-                array.assert(mapResult, meta);
+                var mapResult = evaluateMap(params, sourceCodeInfo, contextStack, helpers);
+                array.assert(mapResult, sourceCodeInfo);
                 return mapResult.flat(1);
             },
             validate: function (node) { return assertLength({ min: 2 }, node); },
@@ -3108,217 +3125,217 @@ var Lits = (function (exports) {
 
     var mathNormalExpression = {
         inc: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return first + 1;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         dec: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return first - 1;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         '+': {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 return params.reduce(function (result, param) {
-                    number.assert(param, meta);
+                    number.assert(param, sourceCodeInfo);
                     return result + param;
                 }, 0);
             },
         },
         '*': {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 return params.reduce(function (result, param) {
-                    number.assert(param, meta);
+                    number.assert(param, sourceCodeInfo);
                     return result * param;
                 }, 1);
             },
         },
         '/': {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 if (params.length === 0) {
                     return 1;
                 }
                 var first = params[0], rest = params.slice(1);
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 if (rest.length === 0) {
-                    number.assert(first, meta);
+                    number.assert(first, sourceCodeInfo);
                     return 1 / first;
                 }
                 return rest.reduce(function (result, param) {
-                    number.assert(param, meta);
+                    number.assert(param, sourceCodeInfo);
                     return result / param;
                 }, first);
             },
         },
         '-': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], rest = _a.slice(1);
                 if (!first) {
                     return 0;
                 }
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 if (rest.length === 0) {
                     return -first;
                 }
                 return rest.reduce(function (result, param) {
-                    number.assert(param, meta);
+                    number.assert(param, sourceCodeInfo);
                     return result - param;
                 }, first);
             },
         },
         quot: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var dividend = _a[0], divisor = _a[1];
-                number.assert(dividend, meta);
-                number.assert(divisor, meta);
+                number.assert(dividend, sourceCodeInfo);
+                number.assert(divisor, sourceCodeInfo);
                 var quotient = Math.trunc(dividend / divisor);
                 return quotient;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         mod: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var dividend = _a[0], divisor = _a[1];
-                number.assert(dividend, meta);
-                number.assert(divisor, meta);
+                number.assert(dividend, sourceCodeInfo);
+                number.assert(divisor, sourceCodeInfo);
                 var quotient = Math.floor(dividend / divisor);
                 return dividend - divisor * quotient;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         rem: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var dividend = _a[0], divisor = _a[1];
-                number.assert(dividend, meta);
-                number.assert(divisor, meta);
+                number.assert(dividend, sourceCodeInfo);
+                number.assert(divisor, sourceCodeInfo);
                 var quotient = Math.trunc(dividend / divisor);
                 return dividend - divisor * quotient;
             },
             validate: function (node) { return assertLength(2, node); },
         },
         sqrt: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return Math.sqrt(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         cbrt: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return Math.cbrt(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         pow: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], second = _a[1];
-                number.assert(first, meta);
-                number.assert(second, meta);
+                number.assert(first, sourceCodeInfo);
+                number.assert(second, sourceCodeInfo);
                 return Math.pow(first, second);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         round: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var value = params[0], decimals = params[1];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 if (params.length === 1 || decimals === 0) {
                     return Math.round(value);
                 }
-                assertNonNegativeInteger(decimals, meta);
+                assertNonNegativeInteger(decimals, sourceCodeInfo);
                 var factor = Math.pow(10, decimals);
                 return Math.round(value * factor) / factor;
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
         trunc: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return Math.trunc(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         floor: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return Math.floor(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         ceil: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return Math.ceil(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'rand!': {
-            evaluate: function (parameters, meta) {
-                var num = number.as(parameters.length === 1 ? parameters[0] : 1, meta);
+            evaluate: function (parameters, sourceCodeInfo) {
+                var num = number.as(parameters.length === 1 ? parameters[0] : 1, sourceCodeInfo);
                 return Math.random() * num;
             },
             validate: function (node) { return assertLength({ min: 0, max: 1 }, node); },
         },
         'rand-int!': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         min: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], rest = _a.slice(1);
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 if (rest.length === 0) {
                     return first;
                 }
                 return rest.reduce(function (min, value) {
-                    number.assert(value, meta);
+                    number.assert(value, sourceCodeInfo);
                     return Math.min(min, value);
                 }, first);
             },
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
         max: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], rest = _a.slice(1);
-                number.assert(first, meta);
+                number.assert(first, sourceCodeInfo);
                 if (rest.length === 0) {
                     return first;
                 }
                 return rest.reduce(function (min, value) {
-                    number.assert(value, meta);
+                    number.assert(value, sourceCodeInfo);
                     return Math.max(min, value);
                 }, first);
             },
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
         abs: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.abs(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         sign: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.sign(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3384,129 +3401,129 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(0, node); },
         },
         exp: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.exp(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         log: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.log(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         log2: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.log2(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         log10: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.log10(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         sin: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.sin(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         asin: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.asin(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         sinh: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.sinh(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         asinh: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.asinh(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         cos: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.cos(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         acos: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.acos(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         cosh: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.cosh(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         acosh: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.acosh(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         tan: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.tan(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         atan: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.atan(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         tanh: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.tanh(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         atanh: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Math.atanh(value);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3543,9 +3560,9 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
         'equal?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var a = _a[0], b = _a[1];
-                return deepEqual(any.as(a, meta), any.as(b, meta), meta);
+                return deepEqual(any.as(a, sourceCodeInfo), any.as(b, sourceCodeInfo), sourceCodeInfo);
             },
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
@@ -3623,17 +3640,17 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(0, node); },
         },
         'write!': {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 // eslint-disable-next-line no-console
                 console.log.apply(console, params);
                 if (params.length > 0) {
-                    return any.as(params[params.length - 1], meta);
+                    return any.as(params[params.length - 1], sourceCodeInfo);
                 }
                 return null;
             },
         },
         'debug!': {
-            evaluate: function (params, meta, contextStack) {
+            evaluate: function (params, sourceCodeInfo, contextStack) {
                 if (params.length === 0) {
                     // eslint-disable-next-line no-console
                     console.warn("*** LITS DEBUG ***\n" + contextStackToString(contextStack) + "\n");
@@ -3641,7 +3658,7 @@ var Lits = (function (exports) {
                 }
                 // eslint-disable-next-line no-console
                 console.warn("*** LITS DEBUG ***\n" + JSON.stringify(params[0], null, 2) + "\n");
-                return any.as(params[0], meta);
+                return any.as(params[0], sourceCodeInfo);
             },
             validate: function (node) { return assertLength({ max: 1 }, node); },
         },
@@ -3660,14 +3677,14 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         assert: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var value = params[0];
                 var message = params.length === 2 ? params[1] : "" + value;
-                assertString(message, meta);
+                assertString(message, sourceCodeInfo);
                 if (!value) {
-                    throw new AssertionError(message, meta);
+                    throw new AssertionError(message, sourceCodeInfo);
                 }
-                return any.as(value, meta);
+                return any.as(value, sourceCodeInfo);
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
@@ -3710,12 +3727,12 @@ var Lits = (function (exports) {
 
     var objectNormalExpression = {
         object: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var result = {};
                 for (var i = 0; i < params.length; i += 2) {
                     var key = params[i];
                     var value = params[i + 1];
-                    assertString(key, meta);
+                    assertString(key, sourceCodeInfo);
                     result[key] = value;
                 }
                 return result;
@@ -3723,34 +3740,34 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLengthEven(node); },
         },
         keys: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                object.assert(first, meta);
+                object.assert(first, sourceCodeInfo);
                 return Object.keys(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         vals: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                object.assert(first, meta);
+                object.assert(first, sourceCodeInfo);
                 return Object.values(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         entries: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                object.assert(first, meta);
+                object.assert(first, sourceCodeInfo);
                 return Object.entries(first);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         find: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var obj = _a[0], key = _a[1];
-                object.assert(obj, meta);
-                assertString(key, meta);
+                object.assert(obj, sourceCodeInfo);
+                assertString(key, sourceCodeInfo);
                 if (collHasKey(obj, key)) {
                     return [key, obj[key]];
                 }
@@ -3759,10 +3776,10 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         dissoc: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var obj = _a[0], key = _a[1];
-                object.assert(obj, meta);
-                assertString(key, meta);
+                object.assert(obj, sourceCodeInfo);
+                assertString(key, sourceCodeInfo);
                 var result = toAny(obj[key]);
                 delete obj[key];
                 return result;
@@ -3770,35 +3787,35 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         merge: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 if (params.length === 0) {
                     return null;
                 }
                 var first = params[0], rest = params.slice(1);
-                object.assert(first, meta);
+                object.assert(first, sourceCodeInfo);
                 return rest.reduce(function (result, obj) {
-                    object.assert(obj, meta);
+                    object.assert(obj, sourceCodeInfo);
                     return __assign(__assign({}, result), obj);
                 }, __assign({}, first));
             },
             validate: function (node) { return assertLength({ min: 0 }, node); },
         },
         'merge-with': {
-            evaluate: function (params, meta, contextStack, _a) {
+            evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var fn = params[0], first = params[1], rest = params.slice(2);
-                litsFunction.assert(fn, meta);
+                litsFunction.assert(fn, sourceCodeInfo);
                 if (params.length === 1) {
                     return null;
                 }
-                object.assert(first, meta);
+                object.assert(first, sourceCodeInfo);
                 return rest.reduce(function (result, obj) {
-                    object.assert(obj, meta);
+                    object.assert(obj, sourceCodeInfo);
                     Object.entries(obj).forEach(function (entry) {
-                        var key = asNotUndefined(entry[0], meta);
+                        var key = asNotUndefined(entry[0], sourceCodeInfo);
                         var val = toAny(entry[1]);
                         if (collHasKey(result, key)) {
-                            result[key] = executeFunction(fn, [result[key], val], meta, contextStack);
+                            result[key] = executeFunction(fn, [result[key], val], sourceCodeInfo, contextStack);
                         }
                         else {
                             result[key] = val;
@@ -3810,14 +3827,14 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength({ min: 1 }, node); },
         },
         zipmap: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var keys = _a[0], values = _a[1];
-                assertStringArray(keys, meta);
-                array.assert(values, meta);
+                assertStringArray(keys, sourceCodeInfo);
+                array.assert(values, sourceCodeInfo);
                 var length = Math.min(keys.length, values.length);
                 var result = {};
                 for (var i = 0; i < length; i += 1) {
-                    var key = asNotUndefined(keys[i], meta);
+                    var key = asNotUndefined(keys[i], sourceCodeInfo);
                     result[key] = toAny(values[i]);
                 }
                 return result;
@@ -3825,10 +3842,10 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         'select-keys': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var obj = _a[0], keys = _a[1];
-                assertStringArray(keys, meta);
-                object.assert(obj, meta);
+                assertStringArray(keys, sourceCodeInfo);
+                object.assert(obj, sourceCodeInfo);
                 return keys.reduce(function (result, key) {
                     if (collHasKey(obj, key)) {
                         result[key] = toAny(obj[key]);
@@ -3884,41 +3901,41 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         'zero?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, meta);
+                assertFiniteNumber(first, sourceCodeInfo);
                 return first === 0;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'pos?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, meta);
+                assertFiniteNumber(first, sourceCodeInfo);
                 return first > 0;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'neg?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, meta);
+                assertFiniteNumber(first, sourceCodeInfo);
                 return first < 0;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'even?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, meta);
+                assertFiniteNumber(first, sourceCodeInfo);
                 return first % 2 === 0;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'odd?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, meta);
+                assertFiniteNumber(first, sourceCodeInfo);
                 return number.is(first, { integer: true }) && first % 2 !== 0;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3959,33 +3976,33 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(1, node); },
         },
         'finite?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Number.isFinite(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'nan?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return Number.isNaN(value);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'positive-infinity?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return value === Number.POSITIVE_INFINITY;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'negative-infinity?': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var value = _a[0];
-                number.assert(value, meta);
+                number.assert(value, sourceCodeInfo);
                 return value === Number.NEGATIVE_INFINITY;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4008,22 +4025,22 @@ var Lits = (function (exports) {
 
     var regexpNormalExpression = {
         regexp: {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var first = params[0], second = params[1];
-                assertString(first, meta);
+                assertString(first, sourceCodeInfo);
                 if (params.length === 1) {
                     return new RegExp(first);
                 }
-                assertString(second, meta);
+                assertString(second, sourceCodeInfo);
                 return new RegExp(first, second);
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
         match: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], second = _a[1];
-                assertRegExp(first, meta);
-                assertString(second, meta);
+                assertRegExp(first, sourceCodeInfo);
+                assertString(second, sourceCodeInfo);
                 var match = first.exec(second);
                 if (match) {
                     return __spreadArray([], match);
@@ -4033,11 +4050,11 @@ var Lits = (function (exports) {
             validate: function (node) { return assertLength(2, node); },
         },
         replace: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var string = _a[0], regexp = _a[1], value = _a[2];
-                assertString(string, meta);
-                assertRegExp(regexp, meta);
-                assertString(value, meta);
+                assertString(string, sourceCodeInfo);
+                assertRegExp(regexp, sourceCodeInfo);
+                assertString(value, sourceCodeInfo);
                 return string.replace(regexp, value);
             },
             validate: function (node) { return assertLength(3, node); },
@@ -4046,23 +4063,23 @@ var Lits = (function (exports) {
 
     var stringNormalExpression = {
         subs: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], second = _a[1], third = _a[2];
-                assertString(first, meta);
-                assertNonNegativeInteger(second, meta);
+                assertString(first, sourceCodeInfo);
+                assertNonNegativeInteger(second, sourceCodeInfo);
                 if (third === undefined) {
                     return first.substring(second);
                 }
-                assertNumberGte(third, second, meta);
+                assertNumberGte(third, second, sourceCodeInfo);
                 return first.substring(second, third);
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         'string-repeat': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var string = _a[0], count = _a[1];
-                assertString(string, meta);
-                assertNonNegativeInteger(count, meta);
+                assertString(string, sourceCodeInfo);
+                assertNonNegativeInteger(count, sourceCodeInfo);
                 return string.repeat(count);
             },
             validate: function (node) { return assertLength(2, node); },
@@ -4082,175 +4099,175 @@ var Lits = (function (exports) {
             },
         },
         number: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, meta);
+                assertString(str, sourceCodeInfo);
                 var number = Number(str);
                 if (Number.isNaN(number)) {
-                    throw new LitsError("Could not convert '" + str + "' to a number", meta);
+                    throw new LitsError("Could not convert '" + str + "' to a number", sourceCodeInfo);
                 }
                 return number;
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'number-to-string': {
-            evaluate: function (params, meta) {
+            evaluate: function (params, sourceCodeInfo) {
                 var number = params[0], base = params[1];
-                assertFiniteNumber(number, meta);
+                assertFiniteNumber(number, sourceCodeInfo);
                 if (params.length === 1) {
                     return "" + number;
                 }
                 else {
-                    assertFiniteNumber(base, meta);
+                    assertFiniteNumber(base, sourceCodeInfo);
                     if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
-                        throw new LitsError("Expected \"number-to-string\" base argument to be 2, 8, 10 or 16, got: " + base, meta);
+                        throw new LitsError("Expected \"number-to-string\" base argument to be 2, 8, 10 or 16, got: " + base, sourceCodeInfo);
                     }
                     if (base === 10) {
                         return "" + number;
                     }
-                    assertNonNegativeInteger(number, meta);
+                    assertNonNegativeInteger(number, sourceCodeInfo);
                     return Number(number).toString(base);
                 }
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
         'from-char-code': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var number = _a[0];
-                assertFiniteNumber(number, meta);
+                assertFiniteNumber(number, sourceCodeInfo);
                 var int = toNonNegativeInteger(number);
                 return String.fromCodePoint(int);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'to-char-code': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertNonEmptyString(str, meta);
-                return asNotUndefined(str.codePointAt(0), meta);
+                assertNonEmptyString(str, sourceCodeInfo);
+                return asNotUndefined(str.codePointAt(0), sourceCodeInfo);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'lower-case': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, meta);
+                assertString(str, sourceCodeInfo);
                 return str.toLowerCase();
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'upper-case': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, meta);
+                assertString(str, sourceCodeInfo);
                 return str.toUpperCase();
             },
             validate: function (node) { return assertLength(1, node); },
         },
         trim: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, meta);
+                assertString(str, sourceCodeInfo);
                 return str.trim();
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'trim-left': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, meta);
+                assertString(str, sourceCodeInfo);
                 return str.replace(/^\s+/, "");
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'trim-right': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, meta);
+                assertString(str, sourceCodeInfo);
                 return str.replace(/\s+$/, "");
             },
             validate: function (node) { return assertLength(1, node); },
         },
         join: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var stringList = _a[0], delimiter = _a[1];
-                array.assert(stringList, meta);
-                stringList.forEach(function (str) { return assertString(str, meta); });
-                assertString(delimiter, meta);
+                array.assert(stringList, sourceCodeInfo);
+                stringList.forEach(function (str) { return assertString(str, sourceCodeInfo); });
+                assertString(delimiter, sourceCodeInfo);
                 return stringList.join(delimiter);
             },
             validate: function (node) { return assertLength(2, node); },
         },
         split: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], delimiter = _a[1], limit = _a[2];
-                assertString(str, meta);
-                assertStringOrRegExp(delimiter, meta);
+                assertString(str, sourceCodeInfo);
+                assertStringOrRegExp(delimiter, sourceCodeInfo);
                 if (limit !== undefined) {
-                    assertNonNegativeInteger(limit, meta);
+                    assertNonNegativeInteger(limit, sourceCodeInfo);
                 }
                 return str.split(delimiter, limit);
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         'pad-left': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], length = _a[1], padString = _a[2];
-                assertString(str, meta);
-                number.assert(length, meta, { integer: true });
+                assertString(str, sourceCodeInfo);
+                number.assert(length, sourceCodeInfo, { integer: true });
                 if (padString !== undefined) {
-                    assertString(padString, meta);
+                    assertString(padString, sourceCodeInfo);
                 }
                 return str.padStart(length, padString);
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         'pad-right': {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], length = _a[1], padString = _a[2];
-                assertString(str, meta);
-                number.assert(length, meta, { integer: true });
+                assertString(str, sourceCodeInfo);
+                number.assert(length, sourceCodeInfo, { integer: true });
                 if (padString !== undefined) {
-                    assertString(padString, meta);
+                    assertString(padString, sourceCodeInfo);
                 }
                 return str.padEnd(length, padString);
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
         },
         template: {
-            evaluate: function (_a, meta) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var templateString = _a[0], placeholders = _a.slice(1);
-                assertString(templateString, meta);
+                assertString(templateString, sourceCodeInfo);
                 var templateStrings = templateString.split("||||");
                 if (templateStrings.length === 1) {
-                    assertStringArray(placeholders, meta);
-                    return applyPlaceholders(templateStrings[0], placeholders, meta);
+                    assertStringArray(placeholders, sourceCodeInfo);
+                    return applyPlaceholders(templateStrings[0], placeholders, sourceCodeInfo);
                 }
                 else if (templateStrings.length === 2) {
                     var firstPlaceholder = placeholders[0];
-                    assertNonNegativeInteger(firstPlaceholder, meta);
+                    assertNonNegativeInteger(firstPlaceholder, sourceCodeInfo);
                     var stringPlaceholders = __spreadArray(["" + firstPlaceholder], placeholders.slice(1));
                     if (firstPlaceholder === 1) {
-                        return applyPlaceholders(templateStrings[0], stringPlaceholders, meta);
+                        return applyPlaceholders(templateStrings[0], stringPlaceholders, sourceCodeInfo);
                     }
                     else {
-                        return applyPlaceholders(templateStrings[1], stringPlaceholders, meta);
+                        return applyPlaceholders(templateStrings[1], stringPlaceholders, sourceCodeInfo);
                     }
                 }
                 else {
-                    throw new LitsError("Invalid template string, only one \"||||\" separator allowed", meta);
+                    throw new LitsError("Invalid template string, only one \"||||\" separator allowed", sourceCodeInfo);
                 }
             },
             validate: function (node) { return assertLength({ min: 1, max: 10 }, node); },
         },
     };
     var doubleDollarRegexp = /\$\$/g;
-    function applyPlaceholders(templateString, placeholders, meta) {
+    function applyPlaceholders(templateString, placeholders, sourceCodeInfo) {
         for (var i = 0; i < 9; i += 1) {
             var re = new RegExp("(?<=^|[^$]|\\$\\$)\\$" + (i + 1), "g");
             if (re.test(templateString)) {
                 var placeholder = placeholders[i];
-                assertString(placeholder, meta);
+                assertString(placeholder, sourceCodeInfo);
                 templateString = templateString.replace(re, placeholder);
             }
         }
@@ -4259,15 +4276,15 @@ var Lits = (function (exports) {
 
     var functionalNormalExpression = {
         apply: {
-            evaluate: function (_a, meta, contextStack, _b) {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var func = _a[0], params = _a.slice(1);
                 var executeFunction = _b.executeFunction;
-                litsFunction.assert(func, meta);
+                litsFunction.assert(func, sourceCodeInfo);
                 var paramsLength = params.length;
                 var last = params[paramsLength - 1];
-                array.assert(last, meta);
+                array.assert(last, sourceCodeInfo);
                 var applyArray = __spreadArray(__spreadArray([], params.slice(0, -1), true), last);
-                return executeFunction(func, applyArray, meta, contextStack);
+                return executeFunction(func, applyArray, sourceCodeInfo, contextStack);
             },
             validate: function (node) { return assertLength({ min: 2 }, node); },
         },
@@ -4419,7 +4436,7 @@ var Lits = (function (exports) {
     var normalExpressionKeys = Object.keys(normalExpressions);
     var specialExpressionKeys = Object.keys(specialExpressions);
 
-    function findOverloadFunction(overloads, nbrOfParams, meta) {
+    function findOverloadFunction(overloads, nbrOfParams, sourceCodeInfo) {
         var overloadFunction = overloads.find(function (overload) {
             var arity = overload.arity;
             if (typeof arity === "number") {
@@ -4430,15 +4447,15 @@ var Lits = (function (exports) {
             }
         });
         if (!overloadFunction) {
-            throw new LitsError("Unexpected number of arguments, got " + nbrOfParams, meta);
+            throw new LitsError("Unexpected number of arguments, got " + nbrOfParams, sourceCodeInfo);
         }
         return overloadFunction;
     }
     var functionExecutors = {
-        'user-defined': function (fn, params, meta, contextStack, _a) {
+        'user-defined': function (fn, params, sourceCodeInfo, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             for (;;) {
-                var overloadFunction = findOverloadFunction(fn.overloads, params.length, meta);
+                var overloadFunction = findOverloadFunction(fn.overloads, params.length, sourceCodeInfo);
                 var args = overloadFunction.arguments;
                 var nbrOfMandatoryArgs = args.mandatoryArguments.length;
                 var newContext = __assign({}, overloadFunction.functionContext);
@@ -4447,7 +4464,7 @@ var Lits = (function (exports) {
                 for (var i = 0; i < length_1; i += 1) {
                     if (i < nbrOfMandatoryArgs) {
                         var param = toAny(params[i]);
-                        var key = asNotUndefined(args.mandatoryArguments[i], meta);
+                        var key = asNotUndefined(args.mandatoryArguments[i], sourceCodeInfo);
                         newContext[key] = { value: param };
                     }
                     else {
@@ -4474,41 +4491,41 @@ var Lits = (function (exports) {
                 }
             }
         },
-        partial: function (fn, params, meta, contextStack, _a) {
+        partial: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            return executeFunction(fn.fn, __spreadArray(__spreadArray([], fn.params, true), params), meta, contextStack);
+            return executeFunction(fn.fn, __spreadArray(__spreadArray([], fn.params, true), params), sourceCodeInfo, contextStack);
         },
-        comp: function (fn, params, meta, contextStack, _a) {
+        comp: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             var fns = fn.fns;
             if (fns.length === 0) {
                 if (params.length !== 1) {
-                    throw new LitsError("(comp) expects one argument, got " + params.length, meta);
+                    throw new LitsError("(comp) expects one argument, got " + params.length, sourceCodeInfo);
                 }
-                return any.as(params[0], meta);
+                return any.as(params[0], sourceCodeInfo);
             }
             return any.as(fns.reduceRight(function (result, fn) {
-                return [executeFunction(toAny(fn), result, meta, contextStack)];
-            }, params)[0], meta);
+                return [executeFunction(toAny(fn), result, sourceCodeInfo, contextStack)];
+            }, params)[0], sourceCodeInfo);
         },
         constantly: function (fn) {
             return fn.value;
         },
-        juxt: function (fn, params, meta, contextStack, _a) {
+        juxt: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            return fn.fns.map(function (fn) { return executeFunction(toAny(fn), params, meta, contextStack); });
+            return fn.fns.map(function (fn) { return executeFunction(toAny(fn), params, sourceCodeInfo, contextStack); });
         },
-        complement: function (fn, params, meta, contextStack, _a) {
+        complement: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            return !executeFunction(fn.fn, params, meta, contextStack);
+            return !executeFunction(fn.fn, params, sourceCodeInfo, contextStack);
         },
-        'every-pred': function (fn, params, meta, contextStack, _a) {
+        'every-pred': function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             for (var _i = 0, _b = fn.fns; _i < _b.length; _i++) {
                 var f = _b[_i];
                 for (var _c = 0, params_1 = params; _c < params_1.length; _c++) {
                     var param = params_1[_c];
-                    var result = executeFunction(toAny(f), [param], meta, contextStack);
+                    var result = executeFunction(toAny(f), [param], sourceCodeInfo, contextStack);
                     if (!result) {
                         return false;
                     }
@@ -4516,13 +4533,13 @@ var Lits = (function (exports) {
             }
             return true;
         },
-        'some-pred': function (fn, params, meta, contextStack, _a) {
+        'some-pred': function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             for (var _i = 0, _b = fn.fns; _i < _b.length; _i++) {
                 var f = _b[_i];
                 for (var _c = 0, params_2 = params; _c < params_2.length; _c++) {
                     var param = params_2[_c];
-                    var result = executeFunction(toAny(f), [param], meta, contextStack);
+                    var result = executeFunction(toAny(f), [param], sourceCodeInfo, contextStack);
                     if (result) {
                         return true;
                     }
@@ -4530,15 +4547,15 @@ var Lits = (function (exports) {
             }
             return false;
         },
-        fnil: function (fn, params, meta, contextStack, _a) {
+        fnil: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             var fniledParams = params.map(function (param, index) { return (param === null ? toAny(fn.params[index]) : param); });
-            return executeFunction(toAny(fn.fn), fniledParams, meta, contextStack);
+            return executeFunction(toAny(fn.fn), fniledParams, sourceCodeInfo, contextStack);
         },
-        builtin: function (fn, params, meta, contextStack, _a) {
+        builtin: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            var normalExpression = asNotUndefined(normalExpressions[fn.name], meta);
-            return normalExpression.evaluate(params, meta, contextStack, { executeFunction: executeFunction });
+            var normalExpression = asNotUndefined(normalExpressions[fn.name], sourceCodeInfo);
+            return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction: executeFunction });
         },
     };
 
@@ -4583,7 +4600,7 @@ var Lits = (function (exports) {
             case "SpecialExpression":
                 return evaluateSpecialExpression(node, contextStack);
             default:
-                throw new LitsError(node.type + "-node cannot be evaluated", node.token.meta);
+                throw new LitsError(node.type + "-node cannot be evaluated", node.token.sourceCodeInfo);
         }
     };
     function evaluateNumber(node) {
@@ -4593,11 +4610,11 @@ var Lits = (function (exports) {
         return node.value;
     }
     function evaluateReservedName(node) {
-        return asNotUndefined(reservedNamesRecord[node.value], node.token.meta).value;
+        return asNotUndefined(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value;
     }
     function evaluateName(node, contextStack) {
         var _a;
-        var value = node.value, meta = node.token.meta;
+        var value = node.value, sourceCodeInfo = node.token.sourceCodeInfo;
         for (var _i = 0, _b = contextStack.stack; _i < _b.length; _i++) {
             var context = _b[_i];
             var variable = context[value];
@@ -4613,11 +4630,12 @@ var Lits = (function (exports) {
                 _a);
             return builtinFunction;
         }
-        throw new UndefinedSymbolError(value, meta);
+        throw new UndefinedSymbolError(value, sourceCodeInfo);
     }
     function evaluateNormalExpression(node, contextStack) {
         var _a;
         var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
+        var sourceCodeInfo = node.token.sourceCodeInfo;
         if (isNormalExpressionNodeName(node)) {
             for (var _i = 0, _b = contextStack.stack; _i < _b.length; _i++) {
                 var context = _b[_i];
@@ -4625,68 +4643,76 @@ var Lits = (function (exports) {
                 if (fn === undefined) {
                     continue;
                 }
-                try {
-                    return executeFunction(fn, params, node.token.meta, contextStack);
-                }
-                catch (_c) {
+                var result = executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack);
+                if (result === undefined) {
                     continue;
                 }
+                return result.value;
             }
             return evaluateBuiltinNormalExpression(node, params, contextStack);
         }
         else {
             var fn = evaluateAstNode(node.expression, contextStack);
-            return executeFunction(fn, params, node.token.meta, contextStack);
+            return executeFunction(fn, params, sourceCodeInfo, contextStack);
         }
     }
-    var executeFunction = function (fn, params, meta, contextStack) {
+    var executeFunction = function (fn, params, sourceCodeInfo, contextStack) {
+        var result = executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack);
+        if (!result) {
+            throw new NotAFunctionError(fn, sourceCodeInfo);
+        }
+        return result.value;
+    };
+    function executeFunctionOrUndefined(fn, params, sourceCodeInfo, contextStack) {
         if (litsFunction.is(fn)) {
-            return functionExecutors[fn.type](fn, params, meta, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction });
+            return {
+                value: functionExecutors[fn.type](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode: evaluateAstNode, executeFunction: executeFunction }),
+            };
         }
         if (Array.isArray(fn)) {
-            return evaluateArrayAsFunction(fn, params, meta);
+            return { value: evaluateArrayAsFunction(fn, params, sourceCodeInfo) };
         }
         if (object.is(fn)) {
-            return evalueateObjectAsFunction(fn, params, meta);
+            return { value: evalueateObjectAsFunction(fn, params, sourceCodeInfo) };
         }
         if (isString(fn)) {
-            return evaluateStringAsFunction(fn, params, meta);
+            return { value: evaluateStringAsFunction(fn, params, sourceCodeInfo) };
         }
         if (number.is(fn)) {
-            return evaluateNumberAsFunction(fn, params, meta);
+            return { value: evaluateNumberAsFunction(fn, params, sourceCodeInfo) };
         }
-        throw new LitsError("Expected function, got " + fn, meta);
-    };
+        return undefined;
+    }
     function evaluateBuiltinNormalExpression(node, params, contextStack) {
         var normalExpression = builtin.normalExpressions[node.name];
         if (!normalExpression) {
-            throw new UndefinedSymbolError(node.name, node.token.meta);
+            throw new UndefinedSymbolError(node.name, node.token.sourceCodeInfo);
         }
-        return normalExpression.evaluate(params, node.token.meta, contextStack, { executeFunction: executeFunction });
+        return normalExpression.evaluate(params, node.token.sourceCodeInfo, contextStack, { executeFunction: executeFunction });
     }
     function evaluateSpecialExpression(node, contextStack) {
-        var specialExpression = asNotUndefined(builtin.specialExpressions[node.name], node.token.meta);
+        var specialExpression = asNotUndefined(builtin.specialExpressions[node.name], node.token.sourceCodeInfo);
         return specialExpression.evaluate(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
     }
-    function evalueateObjectAsFunction(fn, params, meta) {
+    function evalueateObjectAsFunction(fn, params, sourceCodeInfo) {
         if (params.length !== 1) {
-            throw new LitsError("Object as function requires one string parameter", meta);
+            throw new LitsError("Object as function requires one string parameter", sourceCodeInfo);
         }
         var key = params[0];
-        assertString(key, meta);
+        assertString(key, sourceCodeInfo);
         return toAny(fn[key]);
     }
-    function evaluateArrayAsFunction(fn, params, meta) {
+    function evaluateArrayAsFunction(fn, params, sourceCodeInfo) {
         if (params.length !== 1) {
-            throw new LitsError("Array as function requires one non negative integer parameter", meta);
+            throw new LitsError("Array as function requires one non negative integer parameter", sourceCodeInfo);
         }
         var index = params[0];
-        assertNonNegativeInteger(index, meta);
+        assertNonNegativeInteger(index, sourceCodeInfo);
         return toAny(fn[index]);
     }
-    function evaluateStringAsFunction(fn, params, meta) {
+    function evaluateStringAsFunction(fn, params, sourceCodeInfo) {
         if (params.length !== 1) {
-            throw new LitsError("String as function requires one Obj parameter", meta);
+            throw new LitsError("String as function requires one Obj parameter", sourceCodeInfo);
         }
         var param = toAny(params[0]);
         if (object.is(param)) {
@@ -4695,15 +4721,15 @@ var Lits = (function (exports) {
         if (number.is(param, { integer: true })) {
             return toAny(fn[param]);
         }
-        throw new LitsError("string as function expects Obj or integer parameter, got " + param, meta);
+        throw new LitsError("string as function expects Obj or integer parameter, got " + param, sourceCodeInfo);
     }
-    function evaluateNumberAsFunction(fn, params, meta) {
-        number.assert(fn, meta, { integer: true });
+    function evaluateNumberAsFunction(fn, params, sourceCodeInfo) {
+        number.assert(fn, sourceCodeInfo, { integer: true });
         if (params.length !== 1) {
-            throw new LitsError("String as function requires one Arr parameter", meta);
+            throw new LitsError("String as function requires one Arr parameter", sourceCodeInfo);
         }
         var param = params[0];
-        sequence.assert(param, meta);
+        sequence.assert(param, sourceCodeInfo);
         return toAny(param[fn]);
     }
 
@@ -4793,7 +4819,7 @@ var Lits = (function (exports) {
             value: token.value,
             token: token,
         };
-        assertNotUndefined(token.options, token.meta);
+        assertNotUndefined(token.options, token.sourceCodeInfo);
         var optionsNode = {
             type: "String",
             value: "" + (token.options.g ? "g" : "") + (token.options.i ? "i" : ""),
@@ -4820,12 +4846,12 @@ var Lits = (function (exports) {
                 if (match) {
                     arity = Math.max(arity, Number(match[1]));
                     if (arity > 20) {
-                        throw new LitsError("Can't specify more than 20 arguments", firstToken.meta);
+                        throw new LitsError("Can't specify more than 20 arguments", firstToken.sourceCodeInfo);
                     }
                 }
             }
             if (token.type === "fnShorthand") {
-                throw new LitsError("Nested shortcut functions are not allowed", firstToken.meta);
+                throw new LitsError("Nested shortcut functions are not allowed", firstToken.sourceCodeInfo);
             }
         }
         var mandatoryArguments = [];
@@ -4916,7 +4942,7 @@ var Lits = (function (exports) {
             };
             return [position, node_1];
         }
-        assertNameNode(fnNode, fnNode.token.meta);
+        assertNameNode(fnNode, fnNode.token.sourceCodeInfo);
         var node = {
             type: "NormalExpression",
             name: fnNode.value,
@@ -4930,9 +4956,9 @@ var Lits = (function (exports) {
         return [position, node];
     };
     var parseSpecialExpression = function (tokens, position) {
-        var _a = asNotUndefined(tokens[position], "EOF"), expressionName = _a.value, meta = _a.meta;
+        var _a = asNotUndefined(tokens[position], "EOF"), expressionName = _a.value, sourceCodeInfo = _a.sourceCodeInfo;
         position += 1;
-        var _b = asNotUndefined(builtin.specialExpressions[expressionName], meta), parse = _b.parse, validate = _b.validate;
+        var _b = asNotUndefined(builtin.specialExpressions[expressionName], sourceCodeInfo), parse = _b.parse, validate = _b.validate;
         var _c = parse(tokens, position, {
             parseExpression: parseExpression,
             parseTokens: parseTokens,
@@ -4979,7 +5005,7 @@ var Lits = (function (exports) {
                 break;
         }
         if (!nodeDescriptor) {
-            throw new LitsError("Unrecognized token: " + token.type + " value=" + token.value, token.meta);
+            throw new LitsError("Unrecognized token: " + token.type + " value=" + token.value, token.sourceCodeInfo);
         }
         return nodeDescriptor;
     };
@@ -5019,25 +5045,25 @@ var Lits = (function (exports) {
         }
         return NO_MATCH;
     };
-    var tokenizeLeftParen = function (input, position, meta) {
-        return tokenizeCharacter("paren", "(", input, position, meta);
+    var tokenizeLeftParen = function (input, position, sourceCodeInfo) {
+        return tokenizeCharacter("paren", "(", input, position, sourceCodeInfo);
     };
-    var tokenizeRightParen = function (input, position, meta) {
-        return tokenizeCharacter("paren", ")", input, position, meta);
+    var tokenizeRightParen = function (input, position, sourceCodeInfo) {
+        return tokenizeCharacter("paren", ")", input, position, sourceCodeInfo);
     };
-    var tokenizeLeftBracket = function (input, position, meta) {
-        return tokenizeCharacter("paren", "[", input, position, meta);
+    var tokenizeLeftBracket = function (input, position, sourceCodeInfo) {
+        return tokenizeCharacter("paren", "[", input, position, sourceCodeInfo);
     };
-    var tokenizeRightBracket = function (input, position, meta) {
-        return tokenizeCharacter("paren", "]", input, position, meta);
+    var tokenizeRightBracket = function (input, position, sourceCodeInfo) {
+        return tokenizeCharacter("paren", "]", input, position, sourceCodeInfo);
     };
-    var tokenizeLeftCurly = function (input, position, meta) {
-        return tokenizeCharacter("paren", "{", input, position, meta);
+    var tokenizeLeftCurly = function (input, position, sourceCodeInfo) {
+        return tokenizeCharacter("paren", "{", input, position, sourceCodeInfo);
     };
-    var tokenizeRightCurly = function (input, position, meta) {
-        return tokenizeCharacter("paren", "}", input, position, meta);
+    var tokenizeRightCurly = function (input, position, sourceCodeInfo) {
+        return tokenizeCharacter("paren", "}", input, position, sourceCodeInfo);
     };
-    var tokenizeString = function (input, position, meta) {
+    var tokenizeString = function (input, position, sourceCodeInfo) {
         if (input[position] !== "'") {
             return NO_MATCH;
         }
@@ -5047,7 +5073,7 @@ var Lits = (function (exports) {
         var escape = false;
         while (char !== "'" || escape) {
             if (char === undefined) {
-                throw new LitsError("Unclosed string at position " + position, meta);
+                throw new LitsError("Unclosed string at position " + position, sourceCodeInfo);
             }
             length += 1;
             if (escape) {
@@ -5070,9 +5096,9 @@ var Lits = (function (exports) {
             }
             char = input[position + length];
         }
-        return [length + 1, { type: "string", value: value, meta: meta }];
+        return [length + 1, { type: "string", value: value, sourceCodeInfo: sourceCodeInfo }];
     };
-    var tokenizeSymbolString = function (input, position, meta) {
+    var tokenizeSymbolString = function (input, position, sourceCodeInfo) {
         if (input[position] !== ":") {
             return NO_MATCH;
         }
@@ -5087,14 +5113,14 @@ var Lits = (function (exports) {
         if (length === 1) {
             return NO_MATCH;
         }
-        return [length, { type: "string", value: value, meta: meta }];
+        return [length, { type: "string", value: value, sourceCodeInfo: sourceCodeInfo }];
     };
-    var tokenizeRegexpShorthand = function (input, position, meta) {
+    var tokenizeRegexpShorthand = function (input, position, sourceCodeInfo) {
         var _a;
         if (input[position] !== "#") {
             return NO_MATCH;
         }
-        var _b = tokenizeString(input, position + 1, meta), stringLength = _b[0], token = _b[1];
+        var _b = tokenizeString(input, position + 1, sourceCodeInfo), stringLength = _b[0], token = _b[1];
         if (!token) {
             return NO_MATCH;
         }
@@ -5104,14 +5130,14 @@ var Lits = (function (exports) {
         while (input[position] === "g" || input[position] === "i") {
             if (input[position] === "g") {
                 if (options.g) {
-                    throw new LitsError("Duplicated regexp option \"" + input[position] + "\" at position " + position, meta);
+                    throw new LitsError("Duplicated regexp option \"" + input[position] + "\" at position " + position, sourceCodeInfo);
                 }
                 length += 1;
                 options.g = true;
             }
             else {
                 if (options.i) {
-                    throw new LitsError("Duplicated regexp option \"" + input[position] + "\" at position " + position, meta);
+                    throw new LitsError("Duplicated regexp option \"" + input[position] + "\" at position " + position, sourceCodeInfo);
                 }
                 length += 1;
                 options.i = true;
@@ -5119,7 +5145,7 @@ var Lits = (function (exports) {
             position += 1;
         }
         if (nameRegExp.test((_a = input[position]) !== null && _a !== void 0 ? _a : "")) {
-            throw new LitsError("Unexpected regexp option \"" + input[position] + "\" at position " + position, meta);
+            throw new LitsError("Unexpected regexp option \"" + input[position] + "\" at position " + position, sourceCodeInfo);
         }
         return [
             length,
@@ -5127,11 +5153,11 @@ var Lits = (function (exports) {
                 type: "regexpShorthand",
                 value: token.value,
                 options: options,
-                meta: meta,
+                sourceCodeInfo: sourceCodeInfo,
             },
         ];
     };
-    var tokenizeFnShorthand = function (input, position, meta) {
+    var tokenizeFnShorthand = function (input, position, sourceCodeInfo) {
         if (input.slice(position, position + 2) !== "#(") {
             return NO_MATCH;
         }
@@ -5140,7 +5166,7 @@ var Lits = (function (exports) {
             {
                 type: "fnShorthand",
                 value: "#",
-                meta: meta,
+                sourceCodeInfo: sourceCodeInfo,
             },
         ];
     };
@@ -5150,7 +5176,7 @@ var Lits = (function (exports) {
     var hexNumberRegExp = /[0-9a-fA-F]/;
     var binaryNumberRegExp = /[0-1]/;
     var firstCharRegExp = /[0-9.-]/;
-    var tokenizeNumber = function (input, position, meta) {
+    var tokenizeNumber = function (input, position, sourceCodeInfo) {
         var type = "decimal";
         var firstChar = input[position];
         if (!firstCharRegExp.test(firstChar)) {
@@ -5159,7 +5185,7 @@ var Lits = (function (exports) {
         var hasDecimals = firstChar === ".";
         var i;
         for (i = position + 1; i < input.length; i += 1) {
-            var char = asNotUndefined(input[i], meta);
+            var char = asNotUndefined(input[i], sourceCodeInfo);
             if (endOfNumberRegExp.test(char)) {
                 break;
             }
@@ -5212,9 +5238,9 @@ var Lits = (function (exports) {
         if ((type !== "decimal" && length <= 2) || value === "." || value === "-") {
             return NO_MATCH;
         }
-        return [length, { type: "number", value: value, meta: meta }];
+        return [length, { type: "number", value: value, sourceCodeInfo: sourceCodeInfo }];
     };
-    var tokenizeReservedName = function (input, position, meta) {
+    var tokenizeReservedName = function (input, position, sourceCodeInfo) {
         for (var _i = 0, _a = Object.keys(reservedNamesRecord); _i < _a.length; _i++) {
             var reservedName = _a[_i];
             var length_2 = reservedName.length;
@@ -5223,15 +5249,15 @@ var Lits = (function (exports) {
                 continue;
             }
             if (input.substr(position, length_2) === reservedName) {
-                return [length_2, { type: "reservedName", value: reservedName, meta: meta }];
+                return [length_2, { type: "reservedName", value: reservedName, sourceCodeInfo: sourceCodeInfo }];
             }
         }
         return NO_MATCH;
     };
-    var tokenizeName = function (input, position, meta) {
-        return tokenizePattern("name", nameRegExp, input, position, meta);
+    var tokenizeName = function (input, position, sourceCodeInfo) {
+        return tokenizePattern("name", nameRegExp, input, position, sourceCodeInfo);
     };
-    var tokenizeModifier = function (input, position, meta) {
+    var tokenizeModifier = function (input, position, sourceCodeInfo) {
         var modifiers = ["&", "&let", "&when", "&while"];
         for (var _i = 0, modifiers_1 = modifiers; _i < modifiers_1.length; _i++) {
             var modifier = modifiers_1[_i];
@@ -5239,20 +5265,20 @@ var Lits = (function (exports) {
             var charAfterModifier = input[position + length_3];
             if (input.substr(position, length_3) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
                 var value = modifier;
-                return [length_3, { type: "modifier", value: value, meta: meta }];
+                return [length_3, { type: "modifier", value: value, sourceCodeInfo: sourceCodeInfo }];
             }
         }
         return NO_MATCH;
     };
-    function tokenizeCharacter(type, value, input, position, meta) {
+    function tokenizeCharacter(type, value, input, position, sourceCodeInfo) {
         if (value === input[position]) {
-            return [1, { type: type, value: value, meta: meta }];
+            return [1, { type: type, value: value, sourceCodeInfo: sourceCodeInfo }];
         }
         else {
             return NO_MATCH;
         }
     }
-    function tokenizePattern(type, pattern, input, position, meta) {
+    function tokenizePattern(type, pattern, input, position, sourceCodeInfo) {
         var char = input[position];
         var length = 0;
         var value = "";
@@ -5264,7 +5290,7 @@ var Lits = (function (exports) {
             length += 1;
             char = input[position + length];
         }
-        return [length, { type: type, value: value, meta: meta }];
+        return [length, { type: type, value: value, sourceCodeInfo: sourceCodeInfo }];
     }
 
     // All tokenizers, order matters!
@@ -5287,30 +5313,60 @@ var Lits = (function (exports) {
         tokenizeFnShorthand,
     ];
     var TokenMetaImpl = /** @class */ (function () {
-        function TokenMetaImpl(line, column) {
+        function TokenMetaImpl(line, column, sourceCodeLine) {
             this.line = line;
             this.column = column;
+            this.sourceCodeLine = sourceCodeLine;
         }
+        Object.defineProperty(TokenMetaImpl.prototype, "position", {
+            get: function () {
+                return "(" + this.line + ":" + this.column + ")";
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(TokenMetaImpl.prototype, "marker", {
+            get: function () {
+                if (this.sourceCodeLine === null) {
+                    return "";
+                }
+                return "\n" + " ".repeat(this.column - 1 + ("" + this.column).length + 2) + "^";
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(TokenMetaImpl.prototype, "debugInfo", {
+            get: function () {
+                return this.sourceCodeLine !== null ? "\n" + this.column + ": " + this.sourceCodeLine + this.marker : "";
+            },
+            enumerable: false,
+            configurable: true
+        });
         TokenMetaImpl.prototype.toString = function () {
-            return "(" + this.line + ":" + this.column + ")";
+            return "" + this.position + this.debugInfo;
         };
         return TokenMetaImpl;
     }());
-    function calculateMeta(input, position) {
-        var lines = input.substr(0, position + 1).split(/\r\n|\r|\n/);
-        return new TokenMetaImpl(lines.length, lines[lines.length - 1].length);
+    function getSourceCodeLine(input, lineNbr) {
+        return input.split(/\r\n|\r|\n/)[lineNbr];
     }
-    function tokenize(input) {
+    function createSourceCodeInfo(input, position, debug) {
+        var lines = input.substr(0, position + 1).split(/\r\n|\r|\n/);
+        var lastLine = lines[lines.length - 1];
+        var sourceCodeLine = debug ? getSourceCodeLine(input, lines.length - 1) : null;
+        return new TokenMetaImpl(lines.length, lastLine.length, sourceCodeLine);
+    }
+    function tokenize(input, debug) {
         var tokens = [];
         var position = 0;
         var tokenized = false;
         while (position < input.length) {
             tokenized = false;
             // Loop through all tokenizer until one matches
-            var meta = calculateMeta(input, position);
+            var sourceCodeInfo = createSourceCodeInfo(input, position, debug);
             for (var _i = 0, tokenizers_1 = tokenizers; _i < tokenizers_1.length; _i++) {
                 var tokenize_1 = tokenizers_1[_i];
-                var _a = tokenize_1(input, position, meta), nbrOfCharacters = _a[0], token = _a[1];
+                var _a = tokenize_1(input, position, sourceCodeInfo), nbrOfCharacters = _a[0], token = _a[1];
                 // tokenizer matched
                 if (nbrOfCharacters > 0) {
                     tokenized = true;
@@ -5322,7 +5378,7 @@ var Lits = (function (exports) {
                 }
             }
             if (!tokenized) {
-                throw new LitsError("Unrecognized character '" + input[position] + "'", meta);
+                throw new LitsError("Unrecognized character '" + input[position] + "'", sourceCodeInfo);
             }
         }
         return tokens;
@@ -5389,6 +5445,8 @@ var Lits = (function (exports) {
     var Lits = /** @class */ (function () {
         function Lits(config) {
             if (config === void 0) { config = {}; }
+            var _a;
+            this.debug = (_a = config.debug) !== null && _a !== void 0 ? _a : false;
             if (config.astCacheSize && config.astCacheSize > 0) {
                 this.astCache = new Cache(config.astCacheSize);
             }
@@ -5409,7 +5467,7 @@ var Lits = (function (exports) {
             return contextStack.globalContext;
         };
         Lits.prototype.tokenize = function (program) {
-            return tokenize(program);
+            return tokenize(program, this.debug);
         };
         Lits.prototype.parse = function (tokens) {
             return parse(tokens);

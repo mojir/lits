@@ -4,7 +4,7 @@ import { Arr } from '../../../src/interface'
 let lits: Lits
 
 beforeEach(() => {
-  lits = new Lits()
+  lits = new Lits({ debug: true })
 })
 
 describe(`array functions`, () => {

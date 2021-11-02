@@ -23,9 +23,10 @@ exports[`misc functions debug! debug value. 1`] = `
               \\"token\\": {
                 \\"type\\": \\"name\\",
                 \\"value\\": \\"%1\\",
-                \\"meta\\": {
+                \\"sourceCodeInfo\\": {
                   \\"line\\": 1,
-                  \\"column\\": 13
+                  \\"column\\": 13,
+                  \\"sourceCodeLine\\": null
                 }
               }
             },
@@ -35,9 +36,10 @@ exports[`misc functions debug! debug value. 1`] = `
               \\"token\\": {
                 \\"type\\": \\"number\\",
                 \\"value\\": \\"2\\",
-                \\"meta\\": {
+                \\"sourceCodeInfo\\": {
                   \\"line\\": 1,
-                  \\"column\\": 16
+                  \\"column\\": 16,
+                  \\"sourceCodeLine\\": null
                 }
               }
             }
@@ -45,9 +47,10 @@ exports[`misc functions debug! debug value. 1`] = `
           \\"token\\": {
             \\"type\\": \\"name\\",
             \\"value\\": \\">\\",
-            \\"meta\\": {
+            \\"sourceCodeInfo\\": {
               \\"line\\": 1,
-              \\"column\\": 11
+              \\"column\\": 11,
+              \\"sourceCodeLine\\": null
             }
           }
         }
