@@ -1,6 +1,7 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength, assertNotUndefined } from '../../utils'
+import { assertLength, assertNotUndefined } from '../../utils'
+import { token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface TimeSpecialExpressionNode extends SpecialExpressionNode {
@@ -9,7 +10,7 @@ interface TimeSpecialExpressionNode extends SpecialExpressionNode {
 
 export const timeSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     const [newPosition, astNode] = parseToken(tokens, position)
     const node: TimeSpecialExpressionNode = {
       type: `SpecialExpression`,

@@ -1,4 +1,4 @@
-import { LitsError, UnexpectedTokenError } from '../../errors'
+import { LitsError } from '../../errors'
 import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interface'
 import {
   AstNode,
@@ -10,8 +10,7 @@ import {
   SpecialExpressionNode,
 } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
-import { asNotUndefined, assertString } from '../../utils'
-import { nameNode } from '../../utils/assertion'
+import { nameNode, string, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression, Parsers } from '../interface'
 import { Arity, assertNameNotDefined, FunctionArguments, FunctionOverload } from '../utils'
 
@@ -38,7 +37,7 @@ type ExpressionsName = `defn` | `defns` | `fn`
 
 function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression<FunctionNode>[`parse`] {
   return (tokens, position, parsers) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     const { parseToken } = parsers
     let functionName = undefined
     if (expressionName === `defn` || expressionName === `defns`) {
@@ -86,13 +85,11 @@ function getFunctionName(
 ): string | undefined {
   const sourceCodeInfo = node.token.sourceCodeInfo
   if (expressionName === `defn`) {
-    const name = ((node as DefnSpecialExpressionNode).functionName as NameNode).value
-    assertString(name, sourceCodeInfo)
-    return name
+    return ((node as DefnSpecialExpressionNode).functionName as NameNode).value
   }
   if (expressionName === `defns`) {
     const name = evaluateAstNode((node as DefnsSpecialExpressionNode).functionName, contextStack)
-    assertString(name, sourceCodeInfo)
+    string.assert(name, sourceCodeInfo)
     return name
   }
   return undefined
@@ -182,13 +179,13 @@ function arityOk(overloadedFunctions: FunctionOverload[], arity: Arity) {
 }
 
 function parseFunctionBody(tokens: Token[], position: number, { parseToken }: Parsers): [number, AstNode[]] {
-  let tkn = asNotUndefined(tokens[position], `EOF`)
+  let tkn = token.as(tokens[position], `EOF`)
   const body: AstNode[] = []
   while (!(tkn.type === `paren` && tkn.value === `)`)) {
     let bodyNode: AstNode
     ;[position, bodyNode] = parseToken(tokens, position)
     body.push(bodyNode)
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
   if (body.length === 0) {
     throw new LitsError(`Missing body in function`, tkn.sourceCodeInfo)
@@ -197,12 +194,12 @@ function parseFunctionBody(tokens: Token[], position: number, { parseToken }: Pa
 }
 
 function parseFunctionOverloades(tokens: Token[], position: number, parsers: Parsers): [number, FunctionOverload[]] {
-  let tkn = asNotUndefined(tokens[position], `EOF`)
-  if (tkn.type === `paren` && tkn.value === `(`) {
+  let tkn = token.as(tokens[position], `EOF`, { type: `paren` })
+  if (tkn.value === `(`) {
     const functionOverloades: FunctionOverload[] = []
     while (!(tkn.type === `paren` && tkn.value === `)`)) {
       position += 1
-      tkn = asNotUndefined(tokens[position], `EOF`)
+      tkn = token.as(tokens[position], `EOF`)
       let functionArguments: FunctionArguments
       ;[position, functionArguments] = parseFunctionArguments(tokens, position, parsers)
       const arity: Arity = functionArguments.restArgument
@@ -220,14 +217,15 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
         body: functionBody,
         arity,
       })
-      tkn = asNotUndefined(tokens[position], `EOF`)
-      if (!(tkn.type === `paren` && (tkn.value === `)` || tkn.value === `(`))) {
-        throw new UnexpectedTokenError(`) or (`, tkn)
+
+      tkn = token.as(tokens[position], `EOF`, { type: `paren` })
+      if (tkn.value !== `)` && tkn.value !== `(`) {
+        throw new LitsError(`Expected ( or ) token, got ${tkn}`, tkn.sourceCodeInfo)
       }
     }
 
     return [position + 1, functionOverloades]
-  } else if (tkn.type === `paren` && tkn.value === `[`) {
+  } else if (tkn.value === `[`) {
     let functionArguments: FunctionArguments
     ;[position, functionArguments] = parseFunctionArguments(tokens, position, parsers)
     const arity: Arity = functionArguments.restArgument
@@ -246,7 +244,7 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
       ],
     ]
   } else {
-    throw new UnexpectedTokenError(`[ or (`, tkn)
+    throw new LitsError(`Expected [ or ( token, got ${tkn}`, tkn.sourceCodeInfo)
   }
 }
 
@@ -258,10 +256,10 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
   const mandatoryArguments: string[] = []
   const argNames: Record<string, true> = {}
   let state: `mandatory` | `rest` | `let` = `mandatory`
-  let tkn = asNotUndefined(tokens[position], `EOF`)
+  let tkn = token.as(tokens[position], `EOF`)
 
   position += 1
-  tkn = asNotUndefined(tokens[position], `EOF`)
+  tkn = token.as(tokens[position], `EOF`)
   while (!(tkn.type === `paren` && tkn.value === `]`)) {
     if (state === `let`) {
       ;[position, bindings] = parseBindings(tokens, position)
@@ -269,7 +267,7 @@ function parseFunctionArguments(tokens: Token[], position: number, parsers: Pars
     } else {
       const [newPosition, node] = parseArgument(tokens, position)
       position = newPosition
-      tkn = asNotUndefined(tokens[position], `EOF`)
+      tkn = token.as(tokens[position], `EOF`)
 
       if (node.type === `Modifier`) {
         switch (node.value) {

@@ -1,6 +1,7 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength, assertString } from '../../utils'
+import { assertLength } from '../../utils'
+import { astNode, string, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
 
@@ -10,7 +11,7 @@ interface DefsSpecialExpressionNode extends SpecialExpressionNode {
 
 export const defsSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,
@@ -25,12 +26,12 @@ export const defsSpecialExpression: BuiltinSpecialExpression<Any> = {
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     castDefsExpressionNode(node)
     const sourceCodeInfo = node.token.sourceCodeInfo
-    const name = evaluateAstNode(asNotUndefined(node.params[0], sourceCodeInfo), contextStack)
-    assertString(name, sourceCodeInfo)
+    const name = evaluateAstNode(astNode.as(node.params[0], sourceCodeInfo), contextStack)
+    string.assert(name, sourceCodeInfo)
 
     assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo)
 
-    const value = evaluateAstNode(asNotUndefined(node.params[1], sourceCodeInfo), contextStack)
+    const value = evaluateAstNode(astNode.as(node.params[1], sourceCodeInfo), contextStack)
 
     contextStack.globalContext[name] = { value }
 

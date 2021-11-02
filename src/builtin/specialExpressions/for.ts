@@ -1,10 +1,10 @@
-import { LitsError, UnexpectedTokenError } from '../../errors'
+import { LitsError } from '../../errors'
 import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interface'
 import { Any, Arr } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { Token, SourceCodeInfo } from '../../tokenizer/interface'
-import { asNotUndefined } from '../../utils'
-import { any, collection, sequence } from '../../utils/assertion'
+import { asX } from '../../utils'
+import { any, astNode, collection, sequence, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression, Parsers } from '../interface'
 
 interface ForSpecialExpressionNode extends SpecialExpressionNode {
@@ -33,7 +33,7 @@ function parseLoopBinding(
     modifiers: [],
   }
 
-  let tkn = asNotUndefined(tokens[position], `EOF`)
+  let tkn = token.as(tokens[position], `EOF`)
   while (tkn.type === `modifier`) {
     switch (tkn.value) {
       case `&let`:
@@ -60,7 +60,7 @@ function parseLoopBinding(
       default:
         throw new LitsError(`Illegal modifier: ${tkn.value}`, tkn.sourceCodeInfo)
     }
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
   return [position, loopBinding]
 }
@@ -81,27 +81,24 @@ function addToContext(
 }
 
 function parseLoopBindings(tokens: Token[], position: number, parsers: Parsers): [number, LoopBindingNode[]] {
-  let tkn = asNotUndefined(tokens[position], `EOF`)
-  if (!(tkn.type === `paren` && tkn.value === `[`)) {
-    throw new UnexpectedTokenError(`[`, tkn)
-  }
+  token.assert(tokens[position], `EOF`, { type: `paren`, value: `[` })
   position += 1
 
   const loopBindings: LoopBindingNode[] = []
 
-  tkn = asNotUndefined(tokens[position], `EOF`)
-  while (!(tkn.type === `paren` && tkn.value === `]`)) {
+  let tkn = token.as(tokens[position], `EOF`)
+  while (!token.is(tkn, { type: `paren`, value: `]` })) {
     let loopBinding: LoopBindingNode
     ;[position, loopBinding] = parseLoopBinding(tokens, position, parsers)
     loopBindings.push(loopBinding)
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
   return [position + 1, loopBindings]
 }
 
 export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, parsers) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     const { parseToken } = parsers
     let loopBindings: LoopBindingNode[]
     ;[position, loopBindings] = parseLoopBindings(tokens, position, parsers)
@@ -109,10 +106,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
     let expression: AstNode
     ;[position, expression] = parseToken(tokens, position)
 
-    const tkn = asNotUndefined(tokens[position], `EOF`)
-    if (!(tkn.type === `paren` && tkn.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, tkn)
-    }
+    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
 
     const node: ForSpecialExpressionNode = {
       name: `for`,
@@ -128,7 +122,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
     castLoopExpressionNode(node)
     const sourceCodeInfo = node.token.sourceCodeInfo
     const { loopBindings, params } = node
-    const expression = asNotUndefined(params[0], sourceCodeInfo)
+    const expression = astNode.as(params[0], sourceCodeInfo)
 
     const result: Arr = []
 
@@ -139,10 +133,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
       const newContextStack = contextStack.withContext(context)
       let skip = false
       bindingsLoop: for (let bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-        const { binding, letBindings, whenNode, whileNode, modifiers } = asNotUndefined(
-          loopBindings[bindingIndex],
-          sourceCodeInfo,
-        )
+        const { binding, letBindings, whenNode, whileNode, modifiers } = asX(loopBindings[bindingIndex], sourceCodeInfo)
         const coll = collection.as(evaluateAstNode(binding.value, newContextStack), sourceCodeInfo)
         const seq = sequence.is(coll) ? coll : Object.entries(coll)
         if (seq.length === 0) {
@@ -150,7 +141,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
           abort = true
           break
         }
-        const index = asNotUndefined(bindingIndices[bindingIndex], sourceCodeInfo)
+        const index = asX(bindingIndices[bindingIndex], sourceCodeInfo)
         if (index >= seq.length) {
           skip = true
           if (bindingIndex === 0) {
@@ -158,7 +149,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
             break
           }
           bindingIndices[bindingIndex] = 0
-          bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
+          bindingIndices[bindingIndex - 1] = asX(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
           break
         }
         if (context[binding.name]) {
@@ -170,23 +161,17 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
         for (const modifier of modifiers) {
           switch (modifier) {
             case `&let`:
-              addToContext(
-                asNotUndefined(letBindings, sourceCodeInfo),
-                context,
-                newContextStack,
-                evaluateAstNode,
-                sourceCodeInfo,
-              )
+              addToContext(asX(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo)
               break
             case `&when`:
-              if (!evaluateAstNode(asNotUndefined(whenNode, sourceCodeInfo), newContextStack)) {
-                bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1
+              if (!evaluateAstNode(astNode.as(whenNode, sourceCodeInfo), newContextStack)) {
+                bindingIndices[bindingIndex] = asX(bindingIndices[bindingIndex], sourceCodeInfo) + 1
                 skip = true
                 break bindingsLoop
               }
               break
             case `&while`:
-              if (!evaluateAstNode(asNotUndefined(whileNode, sourceCodeInfo), newContextStack)) {
+              if (!evaluateAstNode(astNode.as(whileNode, sourceCodeInfo), newContextStack)) {
                 bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
                 skip = true
                 break bindingsLoop

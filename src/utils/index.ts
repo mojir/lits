@@ -10,9 +10,9 @@ import {
 } from '../parser/interface'
 import { SourceCodeInfo } from '../tokenizer/interface'
 
-import { any, array, collection, number, object } from './assertion'
+import { any, array, collection, number, object, string } from './assertion'
 
-export function asNotUndefined<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): T {
+export function asX<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): T {
   if (value === undefined) {
     throw new LitsError(`Unexpected nil`, sourceCodeInfo)
   }
@@ -25,56 +25,10 @@ export function assertNotUndefined<T>(value: T | undefined, sourceCodeInfo: Sour
   }
 }
 
-export function isString(value: unknown): value is string {
-  return typeof value === `string`
-}
-
-export function assertString(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string {
-  if (!isString(value)) {
-    throw new LitsError(`Expected string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-}
-
 export function assertStringOrRegExp(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is RegExp | string {
   if (!(value instanceof RegExp || typeof value === `string`)) {
     throw new LitsError(`Expected RegExp or string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
   }
-}
-
-export function asString(value: unknown, sourceCodeInfo: SourceCodeInfo): string {
-  if (!isString(value)) {
-    throw new LitsError(`Expected string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-  return value
-}
-
-export function assertNonEmptyString(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string {
-  assertString(value, sourceCodeInfo)
-  if (value.length === 0) {
-    throw new LitsError(`Expected non empty string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-}
-
-export function isChar(value: unknown): value is string {
-  return isString(value) && value.length === 1
-}
-
-export function assertChar(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is string {
-  if (!isChar(value)) {
-    throw new LitsError(`Expected char, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-}
-
-export function asChar(value: unknown, sourceCodeInfo: SourceCodeInfo): string {
-  assertChar(value, sourceCodeInfo)
-  return value
-}
-
-export function asNonEmptyString(value: unknown, sourceCodeInfo: SourceCodeInfo): string {
-  if (typeof value !== `string` || value.length === 0) {
-    throw new LitsError(`Expected non empty string, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-  return value
 }
 
 export function isRegExp(value: unknown): value is RegExp {
@@ -153,7 +107,7 @@ export function collHasKey(coll: unknown, key: string | number): boolean {
   if (!collection.is(coll)) {
     return false
   }
-  if (isString(coll) || array.is(coll)) {
+  if (string.is(coll) || array.is(coll)) {
     if (!number.is(key, { integer: true })) {
       return false
     }
@@ -284,7 +238,7 @@ export function deepEqual(a: Any, b: Any, sourceCodeInfo: SourceCodeInfo): boole
       return false
     }
     for (let i = 0; i < aKeys.length; i += 1) {
-      const key = asNotUndefined(aKeys[i], sourceCodeInfo)
+      const key = string.as(aKeys[i], sourceCodeInfo)
       if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), sourceCodeInfo)) {
         return false
       }

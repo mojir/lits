@@ -1,6 +1,7 @@
 import { Any } from '../../interface'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength } from '../../utils'
+import { assertLength } from '../../utils'
+import { astNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface IfNotSpecialExpressionNode extends SpecialExpressionNode {
@@ -9,7 +10,7 @@ interface IfNotSpecialExpressionNode extends SpecialExpressionNode {
 
 export const ifNotSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     const [newPosition, params] = parseTokens(tokens, position)
     return [
       newPosition + 1,
@@ -26,11 +27,11 @@ export const ifNotSpecialExpression: BuiltinSpecialExpression<Any> = {
     const sourceCodeInfo = node.token.sourceCodeInfo
 
     const [conditionNode, trueNode, falseNode] = node.params
-    if (!evaluateAstNode(asNotUndefined(conditionNode, sourceCodeInfo), contextStack)) {
-      return evaluateAstNode(asNotUndefined(trueNode, sourceCodeInfo), contextStack)
+    if (!evaluateAstNode(astNode.as(conditionNode, sourceCodeInfo), contextStack)) {
+      return evaluateAstNode(astNode.as(trueNode, sourceCodeInfo), contextStack)
     } else {
       if (node.params.length === 3) {
-        return evaluateAstNode(asNotUndefined(falseNode, sourceCodeInfo), contextStack)
+        return evaluateAstNode(astNode.as(falseNode, sourceCodeInfo), contextStack)
       } else {
         return null
       }

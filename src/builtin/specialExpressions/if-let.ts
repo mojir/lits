@@ -2,7 +2,8 @@ import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength } from '../../utils'
+import { assertLength, asX } from '../../utils'
+import { astNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface IfLetSpecialExpressionNode extends SpecialExpressionNode {
@@ -12,7 +13,7 @@ interface IfLetSpecialExpressionNode extends SpecialExpressionNode {
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -26,7 +27,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     const node: IfLetSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `if-let`,
-      binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
+      binding: asX(bindings[0], firstToken.sourceCodeInfo),
       params,
       token: firstToken,
     }
@@ -40,11 +41,11 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     if (bindingValue) {
       locals[node.binding.name] = { value: bindingValue }
       const newContextStack = contextStack.withContext(locals)
-      const thenForm = asNotUndefined(node.params[0], sourceCodeInfo)
+      const thenForm = astNode.as(node.params[0], sourceCodeInfo)
       return evaluateAstNode(thenForm, newContextStack)
     }
     if (node.params.length === 2) {
-      const elseForm = asNotUndefined(node.params[1], sourceCodeInfo)
+      const elseForm = astNode.as(node.params[1], sourceCodeInfo)
       return evaluateAstNode(elseForm, contextStack)
     }
     return null

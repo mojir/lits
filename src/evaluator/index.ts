@@ -12,14 +12,14 @@ import {
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
-import { asNotUndefined, assertString, isNormalExpressionNodeName, isString, toAny } from '../utils'
+import { asX, isNormalExpressionNodeName, toAny } from '../utils'
 import { Context, EvaluateAstNode, ExecuteFunction } from './interface'
 import { Any, Arr, Obj } from '../interface'
 import { ContextStack } from './interface'
 import { functionExecutors } from './functionExecutors'
 import { SourceCodeInfo } from '../tokenizer/interface'
 import { LitsError, NotAFunctionError, UndefinedSymbolError } from '../errors'
-import { litsFunction, number, object, sequence } from '../utils/assertion'
+import { litsFunction, number, object, sequence, string } from '../utils/assertion'
 
 export function createContextStack(contexts: Context[] = []): ContextStack {
   if (contexts.length === 0) {
@@ -80,7 +80,7 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedNameNode): Any {
-  return asNotUndefined(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value
+  return asX(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value
 }
 
 function evaluateName(node: NameNode, contextStack: ContextStack): Any {
@@ -135,7 +135,7 @@ const executeFunction: ExecuteFunction = (fn, params, sourceCodeInfo, contextSta
   if (object.is(fn)) {
     return evalueateObjectAsFunction(fn, params, sourceCodeInfo)
   }
-  if (isString(fn)) {
+  if (string.is(fn)) {
     return evaluateStringAsFunction(fn, params, sourceCodeInfo)
   }
   if (number.is(fn)) {
@@ -154,7 +154,7 @@ function evaluateBuiltinNormalExpression(node: NormalExpressionNodeName, params:
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
-  const specialExpression = asNotUndefined(builtin.specialExpressions[node.name], node.token.sourceCodeInfo)
+  const specialExpression = asX(builtin.specialExpressions[node.name], node.token.sourceCodeInfo)
 
   return specialExpression.evaluate(node, contextStack, { evaluateAstNode, builtin })
 }
@@ -164,7 +164,7 @@ function evalueateObjectAsFunction(fn: Obj, params: Arr, sourceCodeInfo: SourceC
     throw new LitsError(`Object as function requires one string parameter`, sourceCodeInfo)
   }
   const key = params[0]
-  assertString(key, sourceCodeInfo)
+  string.assert(key, sourceCodeInfo)
   return toAny(fn[key])
 }
 

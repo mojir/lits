@@ -1,5 +1,5 @@
 import { Token } from '../tokenizer/interface'
-import { asNotUndefined, assertLengthEven, assertNotUndefined, isExpressionNode } from '../utils'
+import { assertLengthEven, assertNotUndefined, asX, isExpressionNode } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
@@ -21,43 +21,43 @@ import {
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
-import { LitsError, UnexpectedTokenError } from '../errors'
+import { LitsError } from '../errors'
 import { FnSpecialExpressionNode } from '../builtin/specialExpressions/functions'
 import { FunctionArguments } from '../builtin/utils'
-import { nameNode } from '../utils/assertion'
+import { nameNode, token } from '../utils/assertion'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   return [position + 1, { type: `Number`, value: Number(tkn.value), token: tkn }]
 }
 
 type ParseString = (tokens: Token[], position: number) => [number, StringNode]
 export const parseString: ParseString = (tokens: Token[], position: number) => {
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   return [position + 1, { type: `String`, value: tkn.value, token: tkn }]
 }
 
 type ParseName = (tokens: Token[], position: number) => [number, NameNode]
 export const parseName: ParseName = (tokens: Token[], position: number) => {
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   return [position + 1, { type: `Name`, value: tkn.value, token: tkn }]
 }
 
 type ParseReservedName = (tokens: Token[], position: number) => [number, ReservedNameNode]
 export const parseReservedName: ParseReservedName = (tokens: Token[], position: number) => {
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   return [position + 1, { type: `ReservedName`, value: tkn.value as ReservedName, token: tkn }]
 }
 
 const parseTokens: ParseTokens = (tokens, position) => {
-  let tkn = asNotUndefined(tokens[position], `EOF`)
+  let tkn = token.as(tokens[position], `EOF`)
   const astNodes: AstNode[] = []
   let astNode: AstNode
-  while (!(tkn.type === `paren` && (tkn.value === `)` || tkn.value === `]`))) {
+  while (!(tkn.value === `)` || tkn.value === `]`)) {
     ;[position, astNode] = parseToken(tokens, position)
     astNodes.push(astNode)
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
   return [position, astNodes]
 }
@@ -65,7 +65,7 @@ const parseTokens: ParseTokens = (tokens, position) => {
 const parseExpression: ParseExpression = (tokens, position) => {
   position += 1 // Skip parenthesis
 
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   if (tkn.type === `name` && builtin.specialExpressions[tkn.value]) {
     return parseSpecialExpression(tokens, position)
   }
@@ -74,16 +74,16 @@ const parseExpression: ParseExpression = (tokens, position) => {
 
 type ParseArrayLitteral = (tokens: Token[], position: number) => [number, AstNode]
 const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
-  const firstToken = asNotUndefined(tokens[position], `EOF`)
+  const firstToken = token.as(tokens[position], `EOF`)
   position = position + 1
 
-  let tkn = asNotUndefined(tokens[position], `EOF`)
+  let tkn = token.as(tokens[position], `EOF`)
   const params: AstNode[] = []
   let param: AstNode
   while (!(tkn.type === `paren` && tkn.value === `]`)) {
     ;[position, param] = parseToken(tokens, position)
     params.push(param)
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
 
   position = position + 1
@@ -100,16 +100,16 @@ const parseArrayLitteral: ParseArrayLitteral = (tokens, position) => {
 
 type ParseObjectLitteral = (tokens: Token[], position: number) => [number, NormalExpressionNodeName]
 const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
-  const firstToken = asNotUndefined(tokens[position], `EOF`)
+  const firstToken = token.as(tokens[position], `EOF`)
   position = position + 1
 
-  let tkn = asNotUndefined(tokens[position], `EOF`)
+  let tkn = token.as(tokens[position], `EOF`)
   const params: AstNode[] = []
   let param: AstNode
   while (!(tkn.type === `paren` && tkn.value === `}`)) {
     ;[position, param] = parseToken(tokens, position)
     params.push(param)
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
 
   position = position + 1
@@ -128,7 +128,7 @@ const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
 
 type ParseRegexpShorthand = (tokens: Token[], position: number) => [number, NormalExpressionNodeName]
 const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   const stringNode: StringNode = {
     type: `String`,
     value: tkn.value,
@@ -156,14 +156,14 @@ const parseRegexpShorthand: ParseRegexpShorthand = (tokens, position) => {
 const placeholderRegexp = /^%([1-9][0-9]?$)/
 type ParseFnShorthand = (tokens: Token[], position: number) => [number, FnSpecialExpressionNode]
 const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
-  const firstToken = asNotUndefined(tokens[position], `EOF`)
+  const firstToken = token.as(tokens[position], `EOF`)
 
   position += 2
   const [newPosition, normalExpressionNode] = parseNormalExpression(tokens, position)
 
   let arity = 0
   for (let pos = position + 1; pos < newPosition - 1; pos += 1) {
-    const tkn = asNotUndefined(tokens[pos], `EOF`)
+    const tkn = token.as(tokens[pos], `EOF`)
     if (tkn.type === `name`) {
       const match = placeholderRegexp.exec(tkn.value)
       if (match) {
@@ -207,30 +207,27 @@ const parseFnShorthand: ParseFnShorthand = (tokens, position) => {
 }
 
 const parseArgument: ParseArgument = (tokens, position) => {
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   if (tkn.type === `name`) {
     return [position + 1, { type: `Argument`, name: tkn.value, token: tkn }]
   } else if (tkn.type === `modifier`) {
     const value = tkn.value as ModifierName
     return [position + 1, { type: `Modifier`, value, token: tkn }]
   } else {
-    throw new UnexpectedTokenError(`), name or modifier`, tkn)
+    throw new LitsError(`Expected name or modifier token, got ${tkn}`, tkn.sourceCodeInfo)
   }
 }
 
 const parseBindings: ParseBindings = (tokens, position) => {
-  let tkn = asNotUndefined(tokens[position], `EOF`)
-  if (!(tkn.type === `paren` && tkn.value === `[`)) {
-    throw new UnexpectedTokenError(`[`, tkn)
-  }
+  let tkn = token.as(tokens[position], `EOF`, { type: `paren`, value: `[` })
   position += 1
-  tkn = asNotUndefined(tokens[position], `EOF`)
+  tkn = token.as(tokens[position], `EOF`)
   const bindings: BindingNode[] = []
   let binding: BindingNode
   while (!(tkn.type === `paren` && tkn.value === `]`)) {
     ;[position, binding] = parseBinding(tokens, position)
     bindings.push(binding)
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
   position += 1
 
@@ -238,10 +235,7 @@ const parseBindings: ParseBindings = (tokens, position) => {
 }
 
 const parseBinding: ParseBinding = (tokens, position) => {
-  const firstToken = asNotUndefined(tokens[position], `EOF`)
-  if (firstToken.type !== `name`) {
-    throw new UnexpectedTokenError(`name`, firstToken)
-  }
+  const firstToken = token.as(tokens[position], `EOF`, { type: `name` })
   const name = firstToken.value
 
   position += 1
@@ -293,10 +287,10 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
 }
 
 const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
-  const { value: expressionName, sourceCodeInfo } = asNotUndefined(tokens[position], `EOF`)
+  const { value: expressionName, sourceCodeInfo } = token.as(tokens[position], `EOF`)
   position += 1
 
-  const { parse, validate } = asNotUndefined(builtin.specialExpressions[expressionName], sourceCodeInfo)
+  const { parse, validate } = asX(builtin.specialExpressions[expressionName], sourceCodeInfo)
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
@@ -313,7 +307,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
 }
 
 export const parseToken: ParseToken = (tokens, position) => {
-  const tkn = asNotUndefined(tokens[position], `EOF`)
+  const tkn = token.as(tokens[position], `EOF`)
   let nodeDescriptor: [number, AstNode] | undefined = undefined
   switch (tkn.type) {
     case `number`:

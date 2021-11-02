@@ -1,6 +1,6 @@
 import { RecurSignal } from '../../errors'
 import { SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined } from '../../utils'
+import { token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface RecurSpecialExpressionNode extends SpecialExpressionNode {
@@ -9,7 +9,7 @@ interface RecurSpecialExpressionNode extends SpecialExpressionNode {
 
 export const recurSpecialExpression: BuiltinSpecialExpression<null> = {
   parse: (tokens, position, { parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     let params
     ;[position, params] = parseTokens(tokens, position)
 

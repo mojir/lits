@@ -1,14 +1,6 @@
 import { Any, Arr, Obj } from '../../../interface'
-import {
-  assertLengthEven,
-  assertLength,
-  assertString,
-  collHasKey,
-  assertStringArray,
-  toAny,
-  asNotUndefined,
-} from '../../../utils'
-import { litsFunction, object, array } from '../../../utils/assertion'
+import { assertLengthEven, assertLength, collHasKey, assertStringArray, toAny } from '../../../utils'
+import { litsFunction, object, array, string } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
@@ -18,7 +10,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       for (let i = 0; i < params.length; i += 2) {
         const key = params[i]
         const value = params[i + 1]
-        assertString(key, sourceCodeInfo)
+        string.assert(key, sourceCodeInfo)
         result[key] = value
       }
       return result
@@ -53,7 +45,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   find: {
     evaluate: ([obj, key], sourceCodeInfo): [string, unknown] | null => {
       object.assert(obj, sourceCodeInfo)
-      assertString(key, sourceCodeInfo)
+      string.assert(key, sourceCodeInfo)
       if (collHasKey(obj, key)) {
         return [key, obj[key]]
       }
@@ -65,7 +57,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   dissoc: {
     evaluate: ([obj, key], sourceCodeInfo): Any => {
       object.assert(obj, sourceCodeInfo)
-      assertString(key, sourceCodeInfo)
+      string.assert(key, sourceCodeInfo)
       const result = toAny(obj[key])
       delete obj[key]
       return result
@@ -107,7 +99,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         (result: Obj, obj) => {
           object.assert(obj, sourceCodeInfo)
           Object.entries(obj).forEach(entry => {
-            const key = asNotUndefined(entry[0], sourceCodeInfo)
+            const key = string.as(entry[0], sourceCodeInfo)
             const val = toAny(entry[1])
             if (collHasKey(result, key)) {
               result[key] = executeFunction(fn, [result[key], val], sourceCodeInfo, contextStack)
@@ -133,7 +125,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       const result: Obj = {}
 
       for (let i = 0; i < length; i += 1) {
-        const key = asNotUndefined(keys[i], sourceCodeInfo)
+        const key = string.as(keys[i], sourceCodeInfo)
         result[key] = toAny(values[i])
       }
       return result

@@ -2,22 +2,14 @@ import { LitsError } from '../../../errors'
 import { Any, Arr } from '../../../interface'
 import { NormalExpressionNode } from '../../../parser/interface'
 import { SourceCodeInfo } from '../../../tokenizer/interface'
-import {
-  assertLength,
-  assertString,
-  assertStringOrRegExp,
-  assertStringArray,
-  assertNonEmptyString,
-  asNotUndefined,
-  toNonNegativeInteger,
-} from '../../../utils'
-import { number, object, array } from '../../../utils/assertion'
+import { assertLength, assertStringOrRegExp, assertStringArray, toNonNegativeInteger, asX } from '../../../utils'
+import { number, object, array, string } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
   subs: {
     evaluate: ([first, second, third], sourceCodeInfo): Any => {
-      assertString(first, sourceCodeInfo)
+      string.assert(first, sourceCodeInfo)
       number.assert(second, sourceCodeInfo, { integer: true, nonNegative: true })
 
       if (third === undefined) {
@@ -31,11 +23,11 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   },
 
   'string-repeat': {
-    evaluate: ([string, count], sourceCodeInfo): string => {
-      assertString(string, sourceCodeInfo)
+    evaluate: ([str, count], sourceCodeInfo): string => {
+      string.assert(str, sourceCodeInfo)
       number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true })
 
-      return string.repeat(count)
+      return str.repeat(count)
     },
     validate: node => assertLength(2, node),
   },
@@ -58,7 +50,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   number: {
     evaluate: ([str], sourceCodeInfo): number => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       const number = Number(str)
       if (Number.isNaN(number)) {
         throw new LitsError(`Could not convert '${str}' to a number`, sourceCodeInfo)
@@ -104,15 +96,15 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   'to-char-code': {
     evaluate: ([str], sourceCodeInfo): number => {
-      assertNonEmptyString(str, sourceCodeInfo)
-      return asNotUndefined(str.codePointAt(0), sourceCodeInfo)
+      string.assert(str, sourceCodeInfo, { nonEmpty: true })
+      return asX(str.codePointAt(0), sourceCodeInfo)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
   },
 
   'lower-case': {
     evaluate: ([str], sourceCodeInfo): string => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       return str.toLowerCase()
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -120,7 +112,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   'upper-case': {
     evaluate: ([str], sourceCodeInfo): string => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       return str.toUpperCase()
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -128,7 +120,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   trim: {
     evaluate: ([str], sourceCodeInfo): string => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       return str.trim()
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -136,7 +128,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   'trim-left': {
     evaluate: ([str], sourceCodeInfo): string => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       return str.replace(/^\s+/, ``)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -144,7 +136,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   'trim-right': {
     evaluate: ([str], sourceCodeInfo): string => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       return str.replace(/\s+$/, ``)
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -153,8 +145,8 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   join: {
     evaluate: ([stringList, delimiter], sourceCodeInfo): string => {
       array.assert(stringList, sourceCodeInfo)
-      stringList.forEach(str => assertString(str, sourceCodeInfo))
-      assertString(delimiter, sourceCodeInfo)
+      stringList.forEach(str => string.assert(str, sourceCodeInfo))
+      string.assert(delimiter, sourceCodeInfo)
       return stringList.join(delimiter)
     },
     validate: (node: NormalExpressionNode): void => assertLength(2, node),
@@ -162,7 +154,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   split: {
     evaluate: ([str, delimiter, limit], sourceCodeInfo): string[] => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       assertStringOrRegExp(delimiter, sourceCodeInfo)
       if (limit !== undefined) {
         number.assert(limit, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -174,11 +166,11 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   'pad-left': {
     evaluate: ([str, length, padString], sourceCodeInfo): string => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       number.assert(length, sourceCodeInfo, { integer: true })
 
       if (padString !== undefined) {
-        assertString(padString, sourceCodeInfo)
+        string.assert(padString, sourceCodeInfo)
       }
 
       return str.padStart(length, padString)
@@ -188,11 +180,11 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   'pad-right': {
     evaluate: ([str, length, padString], sourceCodeInfo): string => {
-      assertString(str, sourceCodeInfo)
+      string.assert(str, sourceCodeInfo)
       number.assert(length, sourceCodeInfo, { integer: true })
 
       if (padString !== undefined) {
-        assertString(padString, sourceCodeInfo)
+        string.assert(padString, sourceCodeInfo)
       }
 
       return str.padEnd(length, padString)
@@ -202,7 +194,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   template: {
     evaluate: ([templateString, ...placeholders], sourceCodeInfo): string => {
-      assertString(templateString, sourceCodeInfo)
+      string.assert(templateString, sourceCodeInfo)
       const templateStrings = templateString.split(`||||`)
       if (templateStrings.length === 1) {
         assertStringArray(placeholders, sourceCodeInfo)
@@ -230,7 +222,7 @@ function applyPlaceholders(templateString: string, placeholders: string[], sourc
     const re = new RegExp(`(?<=^|[^$]|\\$\\$)\\$${i + 1}`, `g`)
     if (re.test(templateString)) {
       const placeholder = placeholders[i]
-      assertString(placeholder, sourceCodeInfo)
+      string.assert(placeholder, sourceCodeInfo)
       templateString = templateString.replace(re, placeholder)
     }
   }

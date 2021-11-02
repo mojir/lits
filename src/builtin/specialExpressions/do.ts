@@ -1,7 +1,7 @@
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined } from '../../utils'
+import { token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface doSpecialExpressionNode extends SpecialExpressionNode {
@@ -10,7 +10,7 @@ interface doSpecialExpressionNode extends SpecialExpressionNode {
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    let tkn = asNotUndefined(tokens[position], `EOF`)
+    let tkn = token.as(tokens[position], `EOF`)
 
     const node: doSpecialExpressionNode = {
       type: `SpecialExpression`,
@@ -19,11 +19,11 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
       token: tkn,
     }
 
-    while (!(tkn.type === `paren` && tkn.value === `)`)) {
+    while (!token.is(tkn, { type: `paren`, value: `)` })) {
       let bodyNode: AstNode
       ;[position, bodyNode] = parseToken(tokens, position)
       node.params.push(bodyNode)
-      tkn = asNotUndefined(tokens[position], `EOF`)
+      tkn = token.as(tokens[position], `EOF`)
     }
     return [position + 1, node]
   },

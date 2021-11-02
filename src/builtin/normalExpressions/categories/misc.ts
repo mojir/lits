@@ -1,10 +1,10 @@
 import { AssertionError } from '../../../errors'
 import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
 import { Any } from '../../../interface'
-import { assertLength, assertString, compare, deepEqual } from '../../../utils'
+import { assertLength, compare, deepEqual } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
-import { any, litsFunction } from '../../../utils/assertion'
+import { any, litsFunction, string } from '../../../utils/assertion'
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
   'not=': {
@@ -145,7 +145,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: (params, sourceCodeInfo): Any => {
       const value = params[0]
       const message = params.length === 2 ? params[1] : `${value}`
-      assertString(message, sourceCodeInfo)
+      string.assert(message, sourceCodeInfo)
       if (!value) {
         throw new AssertionError(message, sourceCodeInfo)
       }

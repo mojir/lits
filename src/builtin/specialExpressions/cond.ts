@@ -1,7 +1,7 @@
 import { Any } from '../../interface'
 import { AstNode, ParseToken, SpecialExpressionNode } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
-import { asNotUndefined } from '../../utils'
+import { token } from '../../utils/tokenAssertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 type Condition = {
@@ -17,8 +17,8 @@ interface CondSpecialExpressionNode extends SpecialExpressionNode {
 function parseConditions(tokens: Token[], position: number, parseToken: ParseToken): [number, Condition[]] {
   const conditions: Condition[] = []
 
-  let tkn = asNotUndefined(tokens[position], `EOF`)
-  while (!(tkn.type === `paren` && tkn.value === `)`)) {
+  let tkn = token.as(tokens[position], `EOF`)
+  while (!token.is(tkn, { type: `paren`, value: `)` })) {
     let test: AstNode
     ;[position, test] = parseToken(tokens, position)
 
@@ -27,14 +27,14 @@ function parseConditions(tokens: Token[], position: number, parseToken: ParseTok
 
     conditions.push({ test, form })
 
-    tkn = asNotUndefined(tokens[position], `EOF`)
+    tkn = token.as(tokens[position], `EOF`)
   }
   return [position, conditions]
 }
 
 export const condSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     let conditions: Condition[]
     ;[position, conditions] = parseConditions(tokens, position, parseToken)
 

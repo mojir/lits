@@ -2,7 +2,8 @@ import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined, assertLength } from '../../utils'
+import { assertLength, asX } from '../../utils'
+import { token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface WhenLetSpecialExpressionNode extends SpecialExpressionNode {
@@ -12,7 +13,7 @@ interface WhenLetSpecialExpressionNode extends SpecialExpressionNode {
 
 export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseBindings, parseTokens }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokens, position)
 
@@ -26,7 +27,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     const node: WhenLetSpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `when-let`,
-      binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
+      binding: asX(bindings[0], firstToken.sourceCodeInfo),
       params,
       token: firstToken,
     }

@@ -1,9 +1,7 @@
-import { UnexpectedTokenError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
-import { asNotUndefined } from '../../utils'
-import { nameNode } from '../../utils/assertion'
+import { any, nameNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface TrySpecialExpressionNode extends SpecialExpressionNode {
@@ -15,45 +13,30 @@ interface TrySpecialExpressionNode extends SpecialExpressionNode {
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
-    const firstToken = asNotUndefined(tokens[position], `EOF`)
+    const firstToken = token.as(tokens[position], `EOF`)
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokens, position)
 
-    let tkn = asNotUndefined(tokens[position], `EOF`)
-    if (!(tkn.type === `paren` && tkn.value === `(`)) {
-      throw new UnexpectedTokenError(`(`, tkn)
-    }
+    token.assert(tokens[position], `EOF`, { type: `paren`, value: `(` })
     position += 1
 
-    tkn = asNotUndefined(tokens[position], `EOF`)
-    if (!(tkn.type === `paren` && tkn.value === `(`)) {
-      throw new UnexpectedTokenError(`(`, tkn)
-    }
-
+    token.assert(tokens[position], `EOF`, { type: `paren`, value: `(` })
     position += 1
+
     let error: AstNode
     ;[position, error] = parseToken(tokens, position)
     nameNode.assert(error, error.token.sourceCodeInfo)
 
-    tkn = asNotUndefined(tokens[position], `EOF`)
-    if (!(tkn.type === `paren` && tkn.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, tkn)
-    }
+    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
     position += 1
 
     let catchExpression: AstNode
     ;[position, catchExpression] = parseToken(tokens, position)
 
-    tkn = asNotUndefined(tokens[position], `EOF`)
-    if (!(tkn.type === `paren` && tkn.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, tkn)
-    }
+    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
     position += 1
 
-    tkn = asNotUndefined(tokens[position], `EOF`)
-    if (!(tkn.type === `paren` && tkn.value === `)`)) {
-      throw new UnexpectedTokenError(`)`, tkn)
-    }
+    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
     position += 1
 
     const node: TrySpecialExpressionNode = {
@@ -74,7 +57,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
       return evaluateAstNode(node.tryExpression, contextStack)
     } catch (error) {
       const newContext: Context = {
-        [node.error.value]: { value: asNotUndefined(error, node.token.sourceCodeInfo) },
+        [node.error.value]: { value: any.as(error, node.token.sourceCodeInfo) },
       } as Context
       return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext))
     }

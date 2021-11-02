@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 import { ModifierName } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
-import { asNotUndefined } from '../utils'
+import { string } from '../utils/assertion'
 import { TokenDescriptor, Tokenizer, TokenizerType, SourceCodeInfo } from './interface'
 
 const NO_MATCH: TokenDescriptor = [0, undefined]
@@ -170,7 +170,7 @@ export const tokenizeNumber: Tokenizer = (input, position, sourceCodeInfo) => {
 
   let i: number
   for (i = position + 1; i < input.length; i += 1) {
-    const char = asNotUndefined(input[i], sourceCodeInfo)
+    const char = string.as(input[i], sourceCodeInfo, { char: true })
     if (endOfNumberRegExp.test(char)) {
       break
     }

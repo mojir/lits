@@ -2,18 +2,7 @@ import { LitsFunction } from '../../..'
 import { ContextStack, ExecuteFunction } from '../../../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../../../interface'
 import { SourceCodeInfo } from '../../../tokenizer/interface'
-import {
-  assertChar,
-  assertLength,
-  assertString,
-  isString,
-  toNonNegativeInteger,
-  toAny,
-  asChar,
-  collHasKey,
-  cloneColl,
-  isChar,
-} from '../../../utils'
+import { assertLength, toNonNegativeInteger, toAny, collHasKey, cloneColl } from '../../../utils'
 import {
   any,
   collection,
@@ -23,6 +12,7 @@ import {
   sequence,
   stringOrNumber,
   array,
+  string,
 } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -51,7 +41,7 @@ function cloneAndGetMeta(
         newResultColl = collection.as(resultColl[key], sourceCodeInfo)
       } else {
         object.assert(resultColl, sourceCodeInfo)
-        assertString(key, sourceCodeInfo)
+        string.assert(key, sourceCodeInfo)
         if (!collHasKey(result.coll, key)) {
           resultColl[key] = {}
         }
@@ -72,7 +62,7 @@ function get(coll: Coll, key: string | number, sourceCodeInfo: SourceCodeInfo): 
       return toAny(coll[key])
     }
   } else if (object.is(coll)) {
-    assertString(key, sourceCodeInfo)
+    string.assert(key, sourceCodeInfo)
     if (collHasKey(coll, key)) {
       return toAny(coll[key])
     }
@@ -95,7 +85,7 @@ function update(
   executeFunction: ExecuteFunction,
 ): Coll {
   if (object.is(coll)) {
-    assertString(key, sourceCodeInfo)
+    string.assert(key, sourceCodeInfo)
     const result = { ...coll }
     result[key] = executeFunction(fn, [result[key], ...params], sourceCodeInfo, contextStack)
     return result
@@ -117,14 +107,19 @@ function update(
     } else {
       const result = coll.split(``).map((elem, index) => {
         if (intKey === index) {
-          return asChar(executeFunction(fn, [elem, ...params], sourceCodeInfo, contextStack), sourceCodeInfo)
+          return string.as(executeFunction(fn, [elem, ...params], sourceCodeInfo, contextStack), sourceCodeInfo, {
+            char: true,
+          })
         }
         return elem
       })
       if (intKey === coll.length) {
-        result[intKey] = asChar(
+        result[intKey] = string.as(
           executeFunction(fn, [undefined, ...params], sourceCodeInfo, contextStack),
           sourceCodeInfo,
+          {
+            char: true,
+          },
         )
       }
       return result.join(``)
@@ -140,14 +135,14 @@ function assoc(coll: Coll, key: string | number, value: Any, sourceCodeInfo: Sou
     number.assert(key, sourceCodeInfo, { gte: 0 })
     number.assert(key, sourceCodeInfo, { lte: coll.length })
     if (typeof coll === `string`) {
-      assertChar(value, sourceCodeInfo)
+      string.assert(value, sourceCodeInfo, { char: true })
       return `${coll.slice(0, key)}${value}${coll.slice(key + 1)}`
     }
     const copy = [...coll]
     copy[key] = value
     return copy
   }
-  assertString(key, sourceCodeInfo)
+  string.assert(key, sourceCodeInfo)
   const copy = { ...coll }
   copy[key] = value
   return copy
@@ -218,8 +213,8 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       if (array.is(coll)) {
         return coll.includes(value)
       }
-      if (isString(coll)) {
-        return isString(value) ? coll.split(``).includes(value) : false
+      if (string.is(coll)) {
+        return string.is(value) ? coll.split(``).includes(value) : false
       }
       return Object.values(coll).includes(value)
     },
@@ -237,9 +232,9 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }
         return false
       }
-      if (isString(coll)) {
+      if (string.is(coll)) {
         for (const value of seq) {
-          if (isChar(value) ? coll.split(``).includes(value) : false) {
+          if (string.is(value, { char: true }) ? coll.split(``).includes(value) : false) {
             return true
           }
         }
@@ -266,9 +261,9 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }
         return true
       }
-      if (isString(coll)) {
+      if (string.is(coll)) {
         for (const value of seq) {
-          if (!isChar(value) || !coll.split(``).includes(value)) {
+          if (!string.is(value, { char: true }) || !coll.split(``).includes(value)) {
             return false
           }
         }
@@ -312,7 +307,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         number.assert(parentKey, sourceCodeInfo)
         innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, sourceCodeInfo)
       } else {
-        assertString(parentKey, sourceCodeInfo)
+        string.assert(parentKey, sourceCodeInfo)
         innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, sourceCodeInfo)
       }
 
@@ -357,7 +352,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
           executeFunction,
         )
       } else {
-        assertString(parentKey, sourceCodeInfo)
+        string.assert(parentKey, sourceCodeInfo)
         innerCollMeta.parent[parentKey] = update(
           innerCollMeta.coll,
           lastKey,
@@ -381,9 +376,9 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
           array.assert(arr, sourceCodeInfo)
           return result.concat(arr)
         }, [])
-      } else if (isString(params[0])) {
+      } else if (string.is(params[0])) {
         return params.reduce((result: string, s) => {
-          assertString(s, sourceCodeInfo)
+          string.assert(s, sourceCodeInfo)
           return `${result}${s}`
         }, ``)
       } else {
@@ -398,7 +393,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   'empty?': {
     evaluate: ([first], sourceCodeInfo): boolean => {
       collection.assert(first, sourceCodeInfo)
-      if (isString(first)) {
+      if (string.is(first)) {
         return first.length === 0
       }
       if (Array.isArray(first)) {
@@ -416,7 +411,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       if (Array.isArray(coll)) {
         return coll.every(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
-      if (isString(coll)) {
+      if (string.is(coll)) {
         return coll.split(``).every(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
       return Object.entries(coll).every(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
@@ -431,7 +426,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       if (Array.isArray(coll)) {
         return coll.some(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
-      if (isString(coll)) {
+      if (string.is(coll)) {
         return coll.split(``).some(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
       return Object.entries(coll).some(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
@@ -446,7 +441,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       if (Array.isArray(coll)) {
         return !coll.some(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
-      if (isString(coll)) {
+      if (string.is(coll)) {
         return !coll.split(``).some(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
       return !Object.entries(coll).some(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
@@ -461,7 +456,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       if (Array.isArray(coll)) {
         return !coll.every(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
-      if (isString(coll)) {
+      if (string.is(coll)) {
         return !coll.split(``).every(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))
       }
       return !Object.entries(coll).every(elem => executeFunction(fn, [elem], sourceCodeInfo, contextStack))

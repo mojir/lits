@@ -109,37 +109,6 @@ var Lits = (function (exports) {
         }
         return AssertionError;
     }(Error));
-    var UnexpectedTokenError = /** @class */ (function (_super) {
-        __extends(UnexpectedTokenError, _super);
-        function UnexpectedTokenError(expectedToken, actualToken) {
-            var _this = _super.call(this, "Expected a '" + expectedToken + "'-token, got '" + actualToken.value + "' " + actualToken.sourceCodeInfo) || this;
-            _this.line = actualToken.sourceCodeInfo === "EOF" ? null : actualToken.sourceCodeInfo.line;
-            _this.column = actualToken.sourceCodeInfo === "EOF" ? null : actualToken.sourceCodeInfo.column;
-            Object.setPrototypeOf(_this, UnexpectedTokenError.prototype);
-            _this.name = "UnexpectedTokenError";
-            return _this;
-        }
-        return UnexpectedTokenError;
-    }(Error));
-    // export class UnexpectedNodeTypeError extends Error {
-    //   public line: number | null
-    //   public column: number | null
-    //   constructor(
-    //     expectedNodeType: NodeType | `ExpressionNode`,
-    //     actualNode: AstNode | undefined,
-    //     sourceCodeInfo: SourceCodeInfo,
-    //   ) {
-    //     super(
-    //       `Expected a ${expectedNodeType} node, got ${
-    //         actualNode ? `a ${actualNode.type} node` : `undefined`
-    //       } ${sourceCodeInfo}`,
-    //     )
-    //     this.line = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.line
-    //     this.column = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.column
-    //     Object.setPrototypeOf(this, UnexpectedNodeTypeError.prototype)
-    //     this.name = `UnexpectedNodeTypeError`
-    //   }
-    // }
     var UndefinedSymbolError = /** @class */ (function (_super) {
         __extends(UndefinedSymbolError, _super);
         function UndefinedSymbolError(symbolName, sourceCodeInfo) {
@@ -202,6 +171,36 @@ var Lits = (function (exports) {
     //   assert,
     // }
 
+    function is$2(value, options) {
+        if (options === void 0) { options = {}; }
+        if (typeof value !== "string") {
+            return false;
+        }
+        if (options.nonEmpty && value.length === 0) {
+            return false;
+        }
+        if (options.char && value.length !== 1) {
+            return false;
+        }
+        return true;
+    }
+    function assert$2(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        if (!is$2(value, options)) {
+            throw new LitsError("Expected " + (options.nonEmpty ? "non empty string" : options.nonEmpty ? "character" : "string") + ", got " + value, sourceCodeInfo);
+        }
+    }
+    function as$2(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        assert$2(value, sourceCodeInfo, options);
+        return value;
+    }
+    var string = {
+        is: is$2,
+        as: as$2,
+        assert: assert$2,
+    };
+
     function getRangeString(options) {
         if ((typeof options.gt === "number" || typeof options.gte === "number") &&
             (typeof options.lt === "number" || typeof options.lte === "number")) {
@@ -235,7 +234,7 @@ var Lits = (function (exports) {
         var range = getRangeString(options);
         return [sign, finite, numberType, range].filter(function (x) { return !!x; }).join(" ");
     }
-    function is(value, options) {
+    function is$1(value, options) {
         if (options === void 0) { options = {}; }
         if (typeof value !== "number") {
             return false;
@@ -278,10 +277,53 @@ var Lits = (function (exports) {
         }
         return true;
     }
+    function assert$1(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        if (!is$1(value, options)) {
+            throw new LitsError("Expected " + getNumberTypeName(options) + ", got " + value, sourceCodeInfo);
+        }
+    }
+    function as$1(value, sourceCodeInfo, options) {
+        if (options === void 0) { options = {}; }
+        assert$1(value, sourceCodeInfo, options);
+        return value;
+    }
+    var number = {
+        is: is$1,
+        as: as$1,
+        assert: assert$1,
+    };
+
+    function isToken(value) {
+        if (typeof value !== "object" || value === null) {
+            return false;
+        }
+        var tkn = value;
+        if (!tkn.sourceCodeInfo || !tkn.type || typeof tkn.value !== "string") {
+            return false;
+        }
+        return true;
+    }
+    function is(value, options) {
+        if (options === void 0) { options = {}; }
+        if (!isToken(value)) {
+            return false;
+        }
+        if (options.type && value.type !== options.type) {
+            return false;
+        }
+        if (options.value && value.value !== options.value) {
+            return false;
+        }
+        return true;
+    }
     function assert(value, sourceCodeInfo, options) {
         if (options === void 0) { options = {}; }
         if (!is(value, options)) {
-            throw new LitsError("Expected " + getNumberTypeName(options) + ", got " + value, sourceCodeInfo);
+            if (isToken(value)) {
+                sourceCodeInfo = value.sourceCodeInfo;
+            }
+            throw new LitsError("Expected " + (options.type ? options.type + "-" : "") + "token" + (typeof options.value === "string" ? " value='" + options.value + "'" : "") + ", got " + value, sourceCodeInfo);
         }
     }
     function as(value, sourceCodeInfo, options) {
@@ -289,15 +331,12 @@ var Lits = (function (exports) {
         assert(value, sourceCodeInfo, options);
         return value;
     }
-    var number = {
+    var token = {
         is: is,
         as: as,
         assert: assert,
     };
 
-    function isString$1(value) {
-        return typeof value === "string";
-    }
     var Asserter = /** @class */ (function () {
         function Asserter(typeName, predicate) {
             this.typeName = typeName;
@@ -326,7 +365,7 @@ var Lits = (function (exports) {
     var litsFunction = new Asserter("LitsFunction", isLitsFunction);
     var stringOrNumber = new Asserter("string or number", function (value) { return typeof value === "string" || typeof value === "number"; });
     var any = new Asserter("Any", function (value) { return value !== undefined; });
-    var sequence = new Asserter("Seq", function (value) { return Array.isArray(value) || isString$1(value); });
+    var sequence = new Asserter("Seq", function (value) { return Array.isArray(value) || string.is(value); });
     var object = new Asserter("Obj", function (value) {
         return !(value === null ||
             typeof value !== "object" ||
@@ -336,7 +375,7 @@ var Lits = (function (exports) {
     });
     var collection = new Asserter("Coll", function (value) { return sequence.is(value) || object.is(value); });
     var array = new Asserter("Arr", function (value) { return Array.isArray(value); });
-    new Asserter("AstNode", isAstNode);
+    var astNode = new Asserter("AstNode", isAstNode);
     var nameNode = new Asserter("NameNode", function (value) {
         if (!isAstNode(value)) {
             return false;
@@ -345,7 +384,367 @@ var Lits = (function (exports) {
         return value.type === nodeType;
     });
 
-    function asNotUndefined(value, sourceCodeInfo) {
+    var andSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var parseTokens = _a.parseTokens;
+            var firstToken = token.as(tokens[position], "EOF");
+            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
+            return [
+                newPosition + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "and",
+                    params: params,
+                    token: firstToken,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            var value = true;
+            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
+                var param = _b[_i];
+                value = evaluateAstNode(param, contextStack);
+                if (!value) {
+                    break;
+                }
+            }
+            return value;
+        },
+    };
+
+    function parseConditions(tokens, position, parseToken) {
+        var _a, _b;
+        var conditions = [];
+        var tkn = token.as(tokens[position], "EOF");
+        while (!token.is(tkn, { type: "paren", value: ")" })) {
+            var test_1 = void 0;
+            _a = parseToken(tokens, position), position = _a[0], test_1 = _a[1];
+            var form = void 0;
+            _b = parseToken(tokens, position), position = _b[0], form = _b[1];
+            conditions.push({ test: test_1, form: form });
+            tkn = token.as(tokens[position], "EOF");
+        }
+        return [position, conditions];
+    }
+    var condSpecialExpression = {
+        parse: function (tokens, position, _a) {
+            var _b;
+            var parseToken = _a.parseToken;
+            var firstToken = token.as(tokens[position], "EOF");
+            var conditions;
+            _b = parseConditions(tokens, position, parseToken), position = _b[0], conditions = _b[1];
+            return [
+                position + 1,
+                {
+                    type: "SpecialExpression",
+                    name: "cond",
+                    conditions: conditions,
+                    params: [],
+                    token: firstToken,
+                },
+            ];
+        },
+        evaluate: function (node, contextStack, _a) {
+            var evaluateAstNode = _a.evaluateAstNode;
+            for (var _i = 0, _b = node.conditions; _i < _b.length; _i++) {
+                var condition = _b[_i];
+                var value = evaluateAstNode(condition.test, contextStack);
+                if (!value) {
+                    continue;
+                }
+                return evaluateAstNode(condition.form, contextStack);
+            }
+            return null;
+        },
+    };
+
+    var reservedNamesRecord = {
+        true: { value: true },
+        false: { value: false },
+        nil: { value: null },
+    };
+    var reservedNames = Object.keys(reservedNamesRecord);
+
+    function assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo) {
+        if (typeof name !== "string") {
+            return;
+        }
+        if (builtin.specialExpressions[name]) {
+            throw new LitsError("Cannot define variable " + name + ", it's a special expression", sourceCodeInfo);
+        }
+        if (builtin.normalExpressions[name]) {
+            throw new LitsError("Cannot define variable " + name + ", it's a builtin function", sourceCodeInfo);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (reservedNamesRecord[name]) {
+            throw new LitsError("Cannot define variable " + name + ", it's a reserved name", sourceCodeInfo);
+        }
+        if (contextStack.globalContext[name]) {
+            throw new LitsError("Name already defined \"" + name + "\"", sourceCodeInfo);
+        }
+    }
+
+    function createParser(expressionName) {
+        return function (tokens, position, parsers) {
+            var _a, _b;
+            var firstToken = token.as(tokens[position], "EOF");
+            var parseToken = parsers.parseToken;
+            var functionName = undefined;
+            if (expressionName === "defn" || expressionName === "defns") {
+                _a = parseToken(tokens, position), position = _a[0], functionName = _a[1];
+                if (expressionName === "defn") {
+                    nameNode.assert(functionName, functionName.token.sourceCodeInfo);
+                }
+            }
+            var functionOverloades;
+            _b = parseFunctionOverloades(tokens, position, parsers), position = _b[0], functionOverloades = _b[1];
+            if (expressionName === "defn" || expressionName === "defns") {
+                return [
+                    position,
+                    {
+                        type: "SpecialExpression",
+                        name: expressionName,
+                        functionName: functionName,
+                        params: [],
+                        overloads: functionOverloades,
+                        token: firstToken,
+                    },
+                ];
+            }
+            return [
+                position,
+                {
+                    type: "SpecialExpression",
+                    name: expressionName,
+                    params: [],
+                    overloads: functionOverloades,
+                    token: firstToken,
+                },
+            ];
+        };
+    }
+    function getFunctionName(expressionName, node, contextStack, evaluateAstNode) {
+        var sourceCodeInfo = node.token.sourceCodeInfo;
+        if (expressionName === "defn") {
+            return node.functionName.value;
+        }
+        if (expressionName === "defns") {
+            var name_1 = evaluateAstNode(node.functionName, contextStack);
+            string.assert(name_1, sourceCodeInfo);
+            return name_1;
+        }
+        return undefined;
+    }
+    function createEvaluator(expressionName) {
+        return function (node, contextStack, _a) {
+            var _b;
+            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
+            var name = getFunctionName(expressionName, node, contextStack, evaluateAstNode);
+            assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo);
+            var evaluatedFunctionOverloades = [];
+            for (var _i = 0, _c = node.overloads; _i < _c.length; _i++) {
+                var functionOverload = _c[_i];
+                var functionContext = {};
+                for (var _d = 0, _e = functionOverload.arguments.bindings; _d < _e.length; _d++) {
+                    var binding = _e[_d];
+                    var bindingValueNode = binding.value;
+                    var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                    functionContext[binding.name] = { value: bindingValue };
+                }
+                var evaluatedFunctionOverload = {
+                    arguments: {
+                        mandatoryArguments: functionOverload.arguments.mandatoryArguments,
+                        restArgument: functionOverload.arguments.restArgument,
+                    },
+                    arity: functionOverload.arity,
+                    body: functionOverload.body,
+                    functionContext: functionContext,
+                };
+                evaluatedFunctionOverloades.push(evaluatedFunctionOverload);
+            }
+            var litsFunction = (_b = {},
+                _b[FUNCTION_SYMBOL] = true,
+                _b.type = "user-defined",
+                _b.name = name,
+                _b.overloads = evaluatedFunctionOverloades,
+                _b);
+            if (expressionName === "fn") {
+                return litsFunction;
+            }
+            contextStack.globalContext[name] = { value: litsFunction };
+            return null;
+        };
+    }
+    var defnSpecialExpression = {
+        parse: createParser("defn"),
+        evaluate: createEvaluator("defn"),
+    };
+    var defnsSpecialExpression = {
+        parse: createParser("defns"),
+        evaluate: createEvaluator("defns"),
+    };
+    var fnSpecialExpression = {
+        parse: createParser("fn"),
+        evaluate: createEvaluator("fn"),
+    };
+    function arityOk(overloadedFunctions, arity) {
+        if (typeof arity === "number") {
+            return overloadedFunctions.every(function (fun) {
+                if (typeof fun.arity === "number") {
+                    return fun.arity !== arity;
+                }
+                return fun.arity.min > arity;
+            });
+        }
+        return overloadedFunctions.every(function (fun) {
+            if (typeof fun.arity === "number") {
+                return fun.arity < arity.min;
+            }
+            return false;
+        });
+    }
+    function parseFunctionBody(tokens, position, _a) {
+        var _b;
+        var parseToken = _a.parseToken;
+        var tkn = token.as(tokens[position], "EOF");
+        var body = [];
+        while (!(tkn.type === "paren" && tkn.value === ")")) {
+            var bodyNode = void 0;
+            _b = parseToken(tokens, position), position = _b[0], bodyNode = _b[1];
+            body.push(bodyNode);
+            tkn = token.as(tokens[position], "EOF");
+        }
+        if (body.length === 0) {
+            throw new LitsError("Missing body in function", tkn.sourceCodeInfo);
+        }
+        return [position + 1, body];
+    }
+    function parseFunctionOverloades(tokens, position, parsers) {
+        var _a, _b, _c, _d;
+        var tkn = token.as(tokens[position], "EOF", { type: "paren" });
+        if (tkn.value === "(") {
+            var functionOverloades = [];
+            while (!(tkn.type === "paren" && tkn.value === ")")) {
+                position += 1;
+                tkn = token.as(tokens[position], "EOF");
+                var functionArguments = void 0;
+                _a = parseFunctionArguments(tokens, position, parsers), position = _a[0], functionArguments = _a[1];
+                var arity = functionArguments.restArgument
+                    ? { min: functionArguments.mandatoryArguments.length }
+                    : functionArguments.mandatoryArguments.length;
+                if (!arityOk(functionOverloades, arity)) {
+                    throw new LitsError("All overloaded functions must have different arity", tkn.sourceCodeInfo);
+                }
+                var functionBody = void 0;
+                _b = parseFunctionBody(tokens, position, parsers), position = _b[0], functionBody = _b[1];
+                functionOverloades.push({
+                    arguments: functionArguments,
+                    body: functionBody,
+                    arity: arity,
+                });
+                tkn = token.as(tokens[position], "EOF", { type: "paren" });
+                if (tkn.value !== ")" && tkn.value !== "(") {
+                    throw new LitsError("Expected ( or ) token, got " + tkn, tkn.sourceCodeInfo);
+                }
+            }
+            return [position + 1, functionOverloades];
+        }
+        else if (tkn.value === "[") {
+            var functionArguments = void 0;
+            _c = parseFunctionArguments(tokens, position, parsers), position = _c[0], functionArguments = _c[1];
+            var arity = functionArguments.restArgument
+                ? { min: functionArguments.mandatoryArguments.length }
+                : functionArguments.mandatoryArguments.length;
+            var functionBody = void 0;
+            _d = parseFunctionBody(tokens, position, parsers), position = _d[0], functionBody = _d[1];
+            return [
+                position,
+                [
+                    {
+                        arguments: functionArguments,
+                        body: functionBody,
+                        arity: arity,
+                    },
+                ],
+            ];
+        }
+        else {
+            throw new LitsError("Expected [ or ( token, got " + tkn, tkn.sourceCodeInfo);
+        }
+    }
+    function parseFunctionArguments(tokens, position, parsers) {
+        var _a;
+        var parseArgument = parsers.parseArgument, parseBindings = parsers.parseBindings;
+        var bindings = [];
+        var restArgument = undefined;
+        var mandatoryArguments = [];
+        var argNames = {};
+        var state = "mandatory";
+        var tkn = token.as(tokens[position], "EOF");
+        position += 1;
+        tkn = token.as(tokens[position], "EOF");
+        while (!(tkn.type === "paren" && tkn.value === "]")) {
+            if (state === "let") {
+                _a = parseBindings(tokens, position), position = _a[0], bindings = _a[1];
+                break;
+            }
+            else {
+                var _b = parseArgument(tokens, position), newPosition = _b[0], node = _b[1];
+                position = newPosition;
+                tkn = token.as(tokens[position], "EOF");
+                if (node.type === "Modifier") {
+                    switch (node.value) {
+                        case "&":
+                            if (state === "rest") {
+                                throw new LitsError("& can only appear once", tkn.sourceCodeInfo);
+                            }
+                            state = "rest";
+                            break;
+                        case "&let":
+                            if (state === "rest" && !restArgument) {
+                                throw new LitsError("No rest argument was spcified", tkn.sourceCodeInfo);
+                            }
+                            state = "let";
+                            break;
+                        default:
+                            throw new LitsError("Illegal modifier: " + node.value, tkn.sourceCodeInfo);
+                    }
+                }
+                else {
+                    if (argNames[node.name]) {
+                        throw new LitsError("Duplicate argument \"" + node.name + "\"", tkn.sourceCodeInfo);
+                    }
+                    else {
+                        argNames[node.name] = true;
+                    }
+                    switch (state) {
+                        case "mandatory":
+                            mandatoryArguments.push(node.name);
+                            break;
+                        case "rest":
+                            if (restArgument !== undefined) {
+                                throw new LitsError("Can only specify one rest argument", tkn.sourceCodeInfo);
+                            }
+                            restArgument = node.name;
+                            break;
+                    }
+                }
+            }
+        }
+        if (state === "rest" && restArgument === undefined) {
+            throw new LitsError("Missing rest argument name", tkn.sourceCodeInfo);
+        }
+        position += 1;
+        var args = {
+            mandatoryArguments: mandatoryArguments,
+            restArgument: restArgument,
+            bindings: bindings,
+        };
+        return [position, args];
+    }
+
+    function asX(value, sourceCodeInfo) {
         if (value === undefined) {
             throw new LitsError("Unexpected nil", sourceCodeInfo);
         }
@@ -356,42 +755,10 @@ var Lits = (function (exports) {
             throw new LitsError("Unexpected nil", sourceCodeInfo);
         }
     }
-    function isString(value) {
-        return typeof value === "string";
-    }
-    function assertString(value, sourceCodeInfo) {
-        if (!isString(value)) {
-            throw new LitsError("Expected string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-    }
     function assertStringOrRegExp(value, sourceCodeInfo) {
         if (!(value instanceof RegExp || typeof value === "string")) {
             throw new LitsError("Expected RegExp or string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
         }
-    }
-    function assertNonEmptyString(value, sourceCodeInfo) {
-        assertString(value, sourceCodeInfo);
-        if (value.length === 0) {
-            throw new LitsError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-    }
-    function isChar(value) {
-        return isString(value) && value.length === 1;
-    }
-    function assertChar(value, sourceCodeInfo) {
-        if (!isChar(value)) {
-            throw new LitsError("Expected char, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-    }
-    function asChar(value, sourceCodeInfo) {
-        assertChar(value, sourceCodeInfo);
-        return value;
-    }
-    function asNonEmptyString(value, sourceCodeInfo) {
-        if (typeof value !== "string" || value.length === 0) {
-            throw new LitsError("Expected non empty string, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-        return value;
     }
     function isRegExp(value) {
         return value instanceof RegExp;
@@ -447,7 +814,7 @@ var Lits = (function (exports) {
         if (!collection.is(coll)) {
             return false;
         }
-        if (isString(coll) || array.is(coll)) {
+        if (string.is(coll) || array.is(coll)) {
             if (!number.is(key, { integer: true })) {
                 return false;
             }
@@ -576,7 +943,7 @@ var Lits = (function (exports) {
                 return false;
             }
             for (var i = 0; i < aKeys.length; i += 1) {
-                var key = asNotUndefined(aKeys[i], sourceCodeInfo);
+                var key = string.as(aKeys[i], sourceCodeInfo);
                 if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), sourceCodeInfo)) {
                     return false;
                 }
@@ -618,372 +985,10 @@ var Lits = (function (exports) {
         }, {});
     }
 
-    var andSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
-            var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
-            return [
-                newPosition + 1,
-                {
-                    type: "SpecialExpression",
-                    name: "and",
-                    params: params,
-                    token: firstToken,
-                },
-            ];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var value = true;
-            for (var _i = 0, _b = node.params; _i < _b.length; _i++) {
-                var param = _b[_i];
-                value = evaluateAstNode(param, contextStack);
-                if (!value) {
-                    break;
-                }
-            }
-            return value;
-        },
-    };
-
-    function parseConditions(tokens, position, parseToken) {
-        var _a, _b;
-        var conditions = [];
-        var tkn = asNotUndefined(tokens[position], "EOF");
-        while (!(tkn.type === "paren" && tkn.value === ")")) {
-            var test_1 = void 0;
-            _a = parseToken(tokens, position), position = _a[0], test_1 = _a[1];
-            var form = void 0;
-            _b = parseToken(tokens, position), position = _b[0], form = _b[1];
-            conditions.push({ test: test_1, form: form });
-            tkn = asNotUndefined(tokens[position], "EOF");
-        }
-        return [position, conditions];
-    }
-    var condSpecialExpression = {
-        parse: function (tokens, position, _a) {
-            var _b;
-            var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
-            var conditions;
-            _b = parseConditions(tokens, position, parseToken), position = _b[0], conditions = _b[1];
-            return [
-                position + 1,
-                {
-                    type: "SpecialExpression",
-                    name: "cond",
-                    conditions: conditions,
-                    params: [],
-                    token: firstToken,
-                },
-            ];
-        },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            for (var _i = 0, _b = node.conditions; _i < _b.length; _i++) {
-                var condition = _b[_i];
-                var value = evaluateAstNode(condition.test, contextStack);
-                if (!value) {
-                    continue;
-                }
-                return evaluateAstNode(condition.form, contextStack);
-            }
-            return null;
-        },
-    };
-
-    var reservedNamesRecord = {
-        true: { value: true },
-        false: { value: false },
-        nil: { value: null },
-    };
-    var reservedNames = Object.keys(reservedNamesRecord);
-
-    function assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo) {
-        if (typeof name !== "string") {
-            return;
-        }
-        if (builtin.specialExpressions[name]) {
-            throw new LitsError("Cannot define variable " + name + ", it's a special expression", sourceCodeInfo);
-        }
-        if (builtin.normalExpressions[name]) {
-            throw new LitsError("Cannot define variable " + name + ", it's a builtin function", sourceCodeInfo);
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (reservedNamesRecord[name]) {
-            throw new LitsError("Cannot define variable " + name + ", it's a reserved name", sourceCodeInfo);
-        }
-        if (contextStack.globalContext[name]) {
-            throw new LitsError("Name already defined \"" + name + "\"", sourceCodeInfo);
-        }
-    }
-
-    function createParser(expressionName) {
-        return function (tokens, position, parsers) {
-            var _a, _b;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
-            var parseToken = parsers.parseToken;
-            var functionName = undefined;
-            if (expressionName === "defn" || expressionName === "defns") {
-                _a = parseToken(tokens, position), position = _a[0], functionName = _a[1];
-                if (expressionName === "defn") {
-                    nameNode.assert(functionName, functionName.token.sourceCodeInfo);
-                }
-            }
-            var functionOverloades;
-            _b = parseFunctionOverloades(tokens, position, parsers), position = _b[0], functionOverloades = _b[1];
-            if (expressionName === "defn" || expressionName === "defns") {
-                return [
-                    position,
-                    {
-                        type: "SpecialExpression",
-                        name: expressionName,
-                        functionName: functionName,
-                        params: [],
-                        overloads: functionOverloades,
-                        token: firstToken,
-                    },
-                ];
-            }
-            return [
-                position,
-                {
-                    type: "SpecialExpression",
-                    name: expressionName,
-                    params: [],
-                    overloads: functionOverloades,
-                    token: firstToken,
-                },
-            ];
-        };
-    }
-    function getFunctionName(expressionName, node, contextStack, evaluateAstNode) {
-        var sourceCodeInfo = node.token.sourceCodeInfo;
-        if (expressionName === "defn") {
-            var name_1 = node.functionName.value;
-            assertString(name_1, sourceCodeInfo);
-            return name_1;
-        }
-        if (expressionName === "defns") {
-            var name_2 = evaluateAstNode(node.functionName, contextStack);
-            assertString(name_2, sourceCodeInfo);
-            return name_2;
-        }
-        return undefined;
-    }
-    function createEvaluator(expressionName) {
-        return function (node, contextStack, _a) {
-            var _b;
-            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var name = getFunctionName(expressionName, node, contextStack, evaluateAstNode);
-            assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo);
-            var evaluatedFunctionOverloades = [];
-            for (var _i = 0, _c = node.overloads; _i < _c.length; _i++) {
-                var functionOverload = _c[_i];
-                var functionContext = {};
-                for (var _d = 0, _e = functionOverload.arguments.bindings; _d < _e.length; _d++) {
-                    var binding = _e[_d];
-                    var bindingValueNode = binding.value;
-                    var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
-                    functionContext[binding.name] = { value: bindingValue };
-                }
-                var evaluatedFunctionOverload = {
-                    arguments: {
-                        mandatoryArguments: functionOverload.arguments.mandatoryArguments,
-                        restArgument: functionOverload.arguments.restArgument,
-                    },
-                    arity: functionOverload.arity,
-                    body: functionOverload.body,
-                    functionContext: functionContext,
-                };
-                evaluatedFunctionOverloades.push(evaluatedFunctionOverload);
-            }
-            var litsFunction = (_b = {},
-                _b[FUNCTION_SYMBOL] = true,
-                _b.type = "user-defined",
-                _b.name = name,
-                _b.overloads = evaluatedFunctionOverloades,
-                _b);
-            if (expressionName === "fn") {
-                return litsFunction;
-            }
-            contextStack.globalContext[name] = { value: litsFunction };
-            return null;
-        };
-    }
-    var defnSpecialExpression = {
-        parse: createParser("defn"),
-        evaluate: createEvaluator("defn"),
-    };
-    var defnsSpecialExpression = {
-        parse: createParser("defns"),
-        evaluate: createEvaluator("defns"),
-    };
-    var fnSpecialExpression = {
-        parse: createParser("fn"),
-        evaluate: createEvaluator("fn"),
-    };
-    function arityOk(overloadedFunctions, arity) {
-        if (typeof arity === "number") {
-            return overloadedFunctions.every(function (fun) {
-                if (typeof fun.arity === "number") {
-                    return fun.arity !== arity;
-                }
-                return fun.arity.min > arity;
-            });
-        }
-        return overloadedFunctions.every(function (fun) {
-            if (typeof fun.arity === "number") {
-                return fun.arity < arity.min;
-            }
-            return false;
-        });
-    }
-    function parseFunctionBody(tokens, position, _a) {
-        var _b;
-        var parseToken = _a.parseToken;
-        var tkn = asNotUndefined(tokens[position], "EOF");
-        var body = [];
-        while (!(tkn.type === "paren" && tkn.value === ")")) {
-            var bodyNode = void 0;
-            _b = parseToken(tokens, position), position = _b[0], bodyNode = _b[1];
-            body.push(bodyNode);
-            tkn = asNotUndefined(tokens[position], "EOF");
-        }
-        if (body.length === 0) {
-            throw new LitsError("Missing body in function", tkn.sourceCodeInfo);
-        }
-        return [position + 1, body];
-    }
-    function parseFunctionOverloades(tokens, position, parsers) {
-        var _a, _b, _c, _d;
-        var tkn = asNotUndefined(tokens[position], "EOF");
-        if (tkn.type === "paren" && tkn.value === "(") {
-            var functionOverloades = [];
-            while (!(tkn.type === "paren" && tkn.value === ")")) {
-                position += 1;
-                tkn = asNotUndefined(tokens[position], "EOF");
-                var functionArguments = void 0;
-                _a = parseFunctionArguments(tokens, position, parsers), position = _a[0], functionArguments = _a[1];
-                var arity = functionArguments.restArgument
-                    ? { min: functionArguments.mandatoryArguments.length }
-                    : functionArguments.mandatoryArguments.length;
-                if (!arityOk(functionOverloades, arity)) {
-                    throw new LitsError("All overloaded functions must have different arity", tkn.sourceCodeInfo);
-                }
-                var functionBody = void 0;
-                _b = parseFunctionBody(tokens, position, parsers), position = _b[0], functionBody = _b[1];
-                functionOverloades.push({
-                    arguments: functionArguments,
-                    body: functionBody,
-                    arity: arity,
-                });
-                tkn = asNotUndefined(tokens[position], "EOF");
-                if (!(tkn.type === "paren" && (tkn.value === ")" || tkn.value === "("))) {
-                    throw new UnexpectedTokenError(") or (", tkn);
-                }
-            }
-            return [position + 1, functionOverloades];
-        }
-        else if (tkn.type === "paren" && tkn.value === "[") {
-            var functionArguments = void 0;
-            _c = parseFunctionArguments(tokens, position, parsers), position = _c[0], functionArguments = _c[1];
-            var arity = functionArguments.restArgument
-                ? { min: functionArguments.mandatoryArguments.length }
-                : functionArguments.mandatoryArguments.length;
-            var functionBody = void 0;
-            _d = parseFunctionBody(tokens, position, parsers), position = _d[0], functionBody = _d[1];
-            return [
-                position,
-                [
-                    {
-                        arguments: functionArguments,
-                        body: functionBody,
-                        arity: arity,
-                    },
-                ],
-            ];
-        }
-        else {
-            throw new UnexpectedTokenError("[ or (", tkn);
-        }
-    }
-    function parseFunctionArguments(tokens, position, parsers) {
-        var _a;
-        var parseArgument = parsers.parseArgument, parseBindings = parsers.parseBindings;
-        var bindings = [];
-        var restArgument = undefined;
-        var mandatoryArguments = [];
-        var argNames = {};
-        var state = "mandatory";
-        var tkn = asNotUndefined(tokens[position], "EOF");
-        position += 1;
-        tkn = asNotUndefined(tokens[position], "EOF");
-        while (!(tkn.type === "paren" && tkn.value === "]")) {
-            if (state === "let") {
-                _a = parseBindings(tokens, position), position = _a[0], bindings = _a[1];
-                break;
-            }
-            else {
-                var _b = parseArgument(tokens, position), newPosition = _b[0], node = _b[1];
-                position = newPosition;
-                tkn = asNotUndefined(tokens[position], "EOF");
-                if (node.type === "Modifier") {
-                    switch (node.value) {
-                        case "&":
-                            if (state === "rest") {
-                                throw new LitsError("& can only appear once", tkn.sourceCodeInfo);
-                            }
-                            state = "rest";
-                            break;
-                        case "&let":
-                            if (state === "rest" && !restArgument) {
-                                throw new LitsError("No rest argument was spcified", tkn.sourceCodeInfo);
-                            }
-                            state = "let";
-                            break;
-                        default:
-                            throw new LitsError("Illegal modifier: " + node.value, tkn.sourceCodeInfo);
-                    }
-                }
-                else {
-                    if (argNames[node.name]) {
-                        throw new LitsError("Duplicate argument \"" + node.name + "\"", tkn.sourceCodeInfo);
-                    }
-                    else {
-                        argNames[node.name] = true;
-                    }
-                    switch (state) {
-                        case "mandatory":
-                            mandatoryArguments.push(node.name);
-                            break;
-                        case "rest":
-                            if (restArgument !== undefined) {
-                                throw new LitsError("Can only specify one rest argument", tkn.sourceCodeInfo);
-                            }
-                            restArgument = node.name;
-                            break;
-                    }
-                }
-            }
-        }
-        if (state === "rest" && restArgument === undefined) {
-            throw new LitsError("Missing rest argument name", tkn.sourceCodeInfo);
-        }
-        position += 1;
-        var args = {
-            mandatoryArguments: mandatoryArguments,
-            restArgument: restArgument,
-            bindings: bindings,
-        };
-        return [position, args];
-    }
-
     var defSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             nameNode.assert(params[0], firstToken.sourceCodeInfo);
             return [
@@ -1001,7 +1006,7 @@ var Lits = (function (exports) {
             var sourceCodeInfo = node.token.sourceCodeInfo;
             var name = nameNode.as(node.params[0], sourceCodeInfo).value;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
-            var value = evaluateAstNode(asNotUndefined(node.params[1], sourceCodeInfo), contextStack);
+            var value = evaluateAstNode(astNode.as(node.params[1], sourceCodeInfo), contextStack);
             contextStack.globalContext[name] = { value: value };
             return value;
         },
@@ -1011,7 +1016,7 @@ var Lits = (function (exports) {
     var defsSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -1026,10 +1031,10 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
             var sourceCodeInfo = node.token.sourceCodeInfo;
-            var name = evaluateAstNode(asNotUndefined(node.params[0], sourceCodeInfo), contextStack);
-            assertString(name, sourceCodeInfo);
+            var name = evaluateAstNode(astNode.as(node.params[0], sourceCodeInfo), contextStack);
+            string.assert(name, sourceCodeInfo);
             assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo);
-            var value = evaluateAstNode(asNotUndefined(node.params[1], sourceCodeInfo), contextStack);
+            var value = evaluateAstNode(astNode.as(node.params[1], sourceCodeInfo), contextStack);
             contextStack.globalContext[name] = { value: value };
             return value;
         },
@@ -1040,18 +1045,18 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b;
             var parseToken = _a.parseToken;
-            var tkn = asNotUndefined(tokens[position], "EOF");
+            var tkn = token.as(tokens[position], "EOF");
             var node = {
                 type: "SpecialExpression",
                 name: "do",
                 params: [],
                 token: tkn,
             };
-            while (!(tkn.type === "paren" && tkn.value === ")")) {
+            while (!token.is(tkn, { type: "paren", value: ")" })) {
                 var bodyNode = void 0;
                 _b = parseToken(tokens, position), position = _b[0], bodyNode = _b[1];
                 node.params.push(bodyNode);
-                tkn = asNotUndefined(tokens[position], "EOF");
+                tkn = token.as(tokens[position], "EOF");
             }
             return [position + 1, node];
         },
@@ -1077,7 +1082,7 @@ var Lits = (function (exports) {
             binding: bindingNode,
             modifiers: [],
         };
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         while (tkn.type === "modifier") {
             switch (tkn.value) {
                 case "&let":
@@ -1104,7 +1109,7 @@ var Lits = (function (exports) {
                 default:
                     throw new LitsError("Illegal modifier: " + tkn.value, tkn.sourceCodeInfo);
             }
-            tkn = asNotUndefined(tokens[position], "EOF");
+            tkn = token.as(tokens[position], "EOF");
         }
         return [position, loopBinding];
     }
@@ -1119,34 +1124,28 @@ var Lits = (function (exports) {
     }
     function parseLoopBindings(tokens, position, parsers) {
         var _a;
-        var tkn = asNotUndefined(tokens[position], "EOF");
-        if (!(tkn.type === "paren" && tkn.value === "[")) {
-            throw new UnexpectedTokenError("[", tkn);
-        }
+        token.assert(tokens[position], "EOF", { type: "paren", value: "[" });
         position += 1;
         var loopBindings = [];
-        tkn = asNotUndefined(tokens[position], "EOF");
-        while (!(tkn.type === "paren" && tkn.value === "]")) {
+        var tkn = token.as(tokens[position], "EOF");
+        while (!token.is(tkn, { type: "paren", value: "]" })) {
             var loopBinding = void 0;
             _a = parseLoopBinding(tokens, position, parsers), position = _a[0], loopBinding = _a[1];
             loopBindings.push(loopBinding);
-            tkn = asNotUndefined(tokens[position], "EOF");
+            tkn = token.as(tokens[position], "EOF");
         }
         return [position + 1, loopBindings];
     }
     var forSpecialExpression = {
         parse: function (tokens, position, parsers) {
             var _a, _b;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var parseToken = parsers.parseToken;
             var loopBindings;
             _a = parseLoopBindings(tokens, position, parsers), position = _a[0], loopBindings = _a[1];
             var expression;
             _b = parseToken(tokens, position), position = _b[0], expression = _b[1];
-            var tkn = asNotUndefined(tokens[position], "EOF");
-            if (!(tkn.type === "paren" && tkn.value === ")")) {
-                throw new UnexpectedTokenError(")", tkn);
-            }
+            token.assert(tokens[position], "EOF", { type: "paren", value: ")" });
             var node = {
                 name: "for",
                 type: "SpecialExpression",
@@ -1160,7 +1159,7 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var sourceCodeInfo = node.token.sourceCodeInfo;
             var loopBindings = node.loopBindings, params = node.params;
-            var expression = asNotUndefined(params[0], sourceCodeInfo);
+            var expression = astNode.as(params[0], sourceCodeInfo);
             var result = [];
             var bindingIndices = loopBindings.map(function () { return 0; });
             var abort = false;
@@ -1169,7 +1168,7 @@ var Lits = (function (exports) {
                 var newContextStack = contextStack.withContext(context);
                 var skip = false;
                 bindingsLoop: for (var bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-                    var _b = asNotUndefined(loopBindings[bindingIndex], sourceCodeInfo), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
+                    var _b = asX(loopBindings[bindingIndex], sourceCodeInfo), binding = _b.binding, letBindings = _b.letBindings, whenNode = _b.whenNode, whileNode = _b.whileNode, modifiers = _b.modifiers;
                     var coll = collection.as(evaluateAstNode(binding.value, newContextStack), sourceCodeInfo);
                     var seq = sequence.is(coll) ? coll : Object.entries(coll);
                     if (seq.length === 0) {
@@ -1177,7 +1176,7 @@ var Lits = (function (exports) {
                         abort = true;
                         break;
                     }
-                    var index = asNotUndefined(bindingIndices[bindingIndex], sourceCodeInfo);
+                    var index = asX(bindingIndices[bindingIndex], sourceCodeInfo);
                     if (index >= seq.length) {
                         skip = true;
                         if (bindingIndex === 0) {
@@ -1185,7 +1184,7 @@ var Lits = (function (exports) {
                             break;
                         }
                         bindingIndices[bindingIndex] = 0;
-                        bindingIndices[bindingIndex - 1] = asNotUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1;
+                        bindingIndices[bindingIndex - 1] = asX(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1;
                         break;
                     }
                     if (context[binding.name]) {
@@ -1198,17 +1197,17 @@ var Lits = (function (exports) {
                         var modifier = modifiers_1[_i];
                         switch (modifier) {
                             case "&let":
-                                addToContext(asNotUndefined(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo);
+                                addToContext(asX(letBindings, sourceCodeInfo), context, newContextStack, evaluateAstNode, sourceCodeInfo);
                                 break;
                             case "&when":
-                                if (!evaluateAstNode(asNotUndefined(whenNode, sourceCodeInfo), newContextStack)) {
-                                    bindingIndices[bindingIndex] = asNotUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1;
+                                if (!evaluateAstNode(astNode.as(whenNode, sourceCodeInfo), newContextStack)) {
+                                    bindingIndices[bindingIndex] = asX(bindingIndices[bindingIndex], sourceCodeInfo) + 1;
                                     skip = true;
                                     break bindingsLoop;
                                 }
                                 break;
                             case "&while":
-                                if (!evaluateAstNode(asNotUndefined(whileNode, sourceCodeInfo), newContextStack)) {
+                                if (!evaluateAstNode(astNode.as(whileNode, sourceCodeInfo), newContextStack)) {
                                     bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY;
                                     skip = true;
                                     break bindingsLoop;
@@ -1230,7 +1229,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
@@ -1241,7 +1240,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "if-let",
-                binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
+                binding: asX(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1255,11 +1254,11 @@ var Lits = (function (exports) {
             if (bindingValue) {
                 locals[node.binding.name] = { value: bindingValue };
                 var newContextStack = contextStack.withContext(locals);
-                var thenForm = asNotUndefined(node.params[0], sourceCodeInfo);
+                var thenForm = astNode.as(node.params[0], sourceCodeInfo);
                 return evaluateAstNode(thenForm, newContextStack);
             }
             if (node.params.length === 2) {
-                var elseForm = asNotUndefined(node.params[1], sourceCodeInfo);
+                var elseForm = astNode.as(node.params[1], sourceCodeInfo);
                 return evaluateAstNode(elseForm, contextStack);
             }
             return null;
@@ -1270,7 +1269,7 @@ var Lits = (function (exports) {
     var ifNotSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -1286,12 +1285,12 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var sourceCodeInfo = node.token.sourceCodeInfo;
             var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (!evaluateAstNode(asNotUndefined(conditionNode, sourceCodeInfo), contextStack)) {
-                return evaluateAstNode(asNotUndefined(trueNode, sourceCodeInfo), contextStack);
+            if (!evaluateAstNode(astNode.as(conditionNode, sourceCodeInfo), contextStack)) {
+                return evaluateAstNode(astNode.as(trueNode, sourceCodeInfo), contextStack);
             }
             else {
                 if (node.params.length === 3) {
-                    return evaluateAstNode(asNotUndefined(falseNode, sourceCodeInfo), contextStack);
+                    return evaluateAstNode(astNode.as(falseNode, sourceCodeInfo), contextStack);
                 }
                 else {
                     return null;
@@ -1304,7 +1303,7 @@ var Lits = (function (exports) {
     var ifSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -1320,12 +1319,12 @@ var Lits = (function (exports) {
             var evaluateAstNode = _a.evaluateAstNode;
             var sourceCodeInfo = node.token.sourceCodeInfo;
             var _b = node.params, conditionNode = _b[0], trueNode = _b[1], falseNode = _b[2];
-            if (evaluateAstNode(asNotUndefined(conditionNode, sourceCodeInfo), contextStack)) {
-                return evaluateAstNode(asNotUndefined(trueNode, sourceCodeInfo), contextStack);
+            if (evaluateAstNode(astNode.as(conditionNode, sourceCodeInfo), contextStack)) {
+                return evaluateAstNode(astNode.as(trueNode, sourceCodeInfo), contextStack);
             }
             else {
                 if (node.params.length === 3) {
-                    return evaluateAstNode(asNotUndefined(falseNode, sourceCodeInfo), contextStack);
+                    return evaluateAstNode(astNode.as(falseNode, sourceCodeInfo), contextStack);
                 }
                 else {
                     return null;
@@ -1339,7 +1338,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             var params;
@@ -1376,7 +1375,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseTokens = _a.parseTokens, parseBindings = _a.parseBindings;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             var params;
@@ -1413,7 +1412,7 @@ var Lits = (function (exports) {
                             throw new LitsError("recur expected " + node.bindings.length + " parameters, got " + params_1.length, sourceCodeInfo);
                         }
                         node.bindings.forEach(function (binding, index) {
-                            asNotUndefined(bindingContext[binding.name], sourceCodeInfo).value = any.as(params_1[index], sourceCodeInfo);
+                            asX(bindingContext[binding.name], sourceCodeInfo).value = any.as(params_1[index], sourceCodeInfo);
                         });
                         return "continue";
                     }
@@ -1432,7 +1431,7 @@ var Lits = (function (exports) {
     var orSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             return [
                 newPosition + 1,
@@ -1462,7 +1461,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b;
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var params;
             _b = parseTokens(tokens, position), position = _b[0], params = _b[1];
             var node = {
@@ -1483,13 +1482,10 @@ var Lits = (function (exports) {
     var throwSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseToken(tokens, position), newPosition = _b[0], messageNode = _b[1];
             position = newPosition;
-            var tkn = asNotUndefined(tokens[position], "EOF");
-            if (!(tkn.type === "paren" && tkn.value === ")")) {
-                throw new UnexpectedTokenError(")", tkn);
-            }
+            token.assert(tokens[position], "EOF", { type: "paren", value: ")" });
             position += 1;
             var node = {
                 type: "SpecialExpression",
@@ -1502,7 +1498,9 @@ var Lits = (function (exports) {
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
-            var message = asNonEmptyString(evaluateAstNode(node.messageNode, contextStack), node.token.sourceCodeInfo);
+            var message = string.as(evaluateAstNode(node.messageNode, contextStack), node.token.sourceCodeInfo, {
+                nonEmpty: true,
+            });
             throw new UserDefinedError(message, node.token.sourceCodeInfo);
         },
     };
@@ -1510,7 +1508,7 @@ var Lits = (function (exports) {
     var timeSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseToken(tokens, position), newPosition = _b[0], astNode = _b[1];
             var node = {
                 type: "SpecialExpression",
@@ -1538,38 +1536,23 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c, _d;
             var parseToken = _a.parseToken;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var tryExpression;
             _b = parseToken(tokens, position), position = _b[0], tryExpression = _b[1];
-            var tkn = asNotUndefined(tokens[position], "EOF");
-            if (!(tkn.type === "paren" && tkn.value === "(")) {
-                throw new UnexpectedTokenError("(", tkn);
-            }
+            token.assert(tokens[position], "EOF", { type: "paren", value: "(" });
             position += 1;
-            tkn = asNotUndefined(tokens[position], "EOF");
-            if (!(tkn.type === "paren" && tkn.value === "(")) {
-                throw new UnexpectedTokenError("(", tkn);
-            }
+            token.assert(tokens[position], "EOF", { type: "paren", value: "(" });
             position += 1;
             var error;
             _c = parseToken(tokens, position), position = _c[0], error = _c[1];
             nameNode.assert(error, error.token.sourceCodeInfo);
-            tkn = asNotUndefined(tokens[position], "EOF");
-            if (!(tkn.type === "paren" && tkn.value === ")")) {
-                throw new UnexpectedTokenError(")", tkn);
-            }
+            token.assert(tokens[position], "EOF", { type: "paren", value: ")" });
             position += 1;
             var catchExpression;
             _d = parseToken(tokens, position), position = _d[0], catchExpression = _d[1];
-            tkn = asNotUndefined(tokens[position], "EOF");
-            if (!(tkn.type === "paren" && tkn.value === ")")) {
-                throw new UnexpectedTokenError(")", tkn);
-            }
+            token.assert(tokens[position], "EOF", { type: "paren", value: ")" });
             position += 1;
-            tkn = asNotUndefined(tokens[position], "EOF");
-            if (!(tkn.type === "paren" && tkn.value === ")")) {
-                throw new UnexpectedTokenError(")", tkn);
-            }
+            token.assert(tokens[position], "EOF", { type: "paren", value: ")" });
             position += 1;
             var node = {
                 type: "SpecialExpression",
@@ -1590,7 +1573,7 @@ var Lits = (function (exports) {
             }
             catch (error) {
                 var newContext = (_b = {},
-                    _b[node.error.value] = { value: asNotUndefined(error, node.token.sourceCodeInfo) },
+                    _b[node.error.value] = { value: any.as(error, node.token.sourceCodeInfo) },
                     _b);
                 return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext));
             }
@@ -1601,7 +1584,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
@@ -1612,7 +1595,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "when-first",
-                binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
+                binding: asX(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1645,7 +1628,7 @@ var Lits = (function (exports) {
         parse: function (tokens, position, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var bindings;
             _b = parseBindings(tokens, position), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
@@ -1656,7 +1639,7 @@ var Lits = (function (exports) {
             var node = {
                 type: "SpecialExpression",
                 name: "when-let",
-                binding: asNotUndefined(bindings[0], firstToken.sourceCodeInfo),
+                binding: asX(bindings[0], firstToken.sourceCodeInfo),
                 params: params,
                 token: firstToken,
             };
@@ -1684,7 +1667,7 @@ var Lits = (function (exports) {
     var whenNotSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             var node = {
                 type: "SpecialExpression",
@@ -1714,7 +1697,7 @@ var Lits = (function (exports) {
     var whenSpecialExpression = {
         parse: function (tokens, position, _a) {
             var parseTokens = _a.parseTokens;
-            var firstToken = asNotUndefined(tokens[position], "EOF");
+            var firstToken = token.as(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
             var node = {
                 type: "SpecialExpression",
@@ -1867,7 +1850,7 @@ var Lits = (function (exports) {
             }
             else {
                 object.assert(resultColl, sourceCodeInfo);
-                assertString(key, sourceCodeInfo);
+                string.assert(key, sourceCodeInfo);
                 if (!collHasKey(result.coll, key)) {
                     resultColl[key] = {};
                 }
@@ -1885,7 +1868,7 @@ var Lits = (function (exports) {
             }
         }
         else if (object.is(coll)) {
-            assertString(key, sourceCodeInfo);
+            string.assert(key, sourceCodeInfo);
             if (collHasKey(coll, key)) {
                 return toAny(coll[key]);
             }
@@ -1900,7 +1883,7 @@ var Lits = (function (exports) {
     }
     function update(coll, key, fn, params, sourceCodeInfo, contextStack, executeFunction) {
         if (object.is(coll)) {
-            assertString(key, sourceCodeInfo);
+            string.assert(key, sourceCodeInfo);
             var result = __assign({}, coll);
             result[key] = executeFunction(fn, __spreadArray([result[key]], params), sourceCodeInfo, contextStack);
             return result;
@@ -1924,12 +1907,16 @@ var Lits = (function (exports) {
             else {
                 var result = coll.split("").map(function (elem, index) {
                     if (intKey_1 === index) {
-                        return asChar(executeFunction(fn, __spreadArray([elem], params), sourceCodeInfo, contextStack), sourceCodeInfo);
+                        return string.as(executeFunction(fn, __spreadArray([elem], params), sourceCodeInfo, contextStack), sourceCodeInfo, {
+                            char: true,
+                        });
                     }
                     return elem;
                 });
                 if (intKey_1 === coll.length) {
-                    result[intKey_1] = asChar(executeFunction(fn, __spreadArray([undefined], params), sourceCodeInfo, contextStack), sourceCodeInfo);
+                    result[intKey_1] = string.as(executeFunction(fn, __spreadArray([undefined], params), sourceCodeInfo, contextStack), sourceCodeInfo, {
+                        char: true,
+                    });
                 }
                 return result.join("");
             }
@@ -1943,14 +1930,14 @@ var Lits = (function (exports) {
             number.assert(key, sourceCodeInfo, { gte: 0 });
             number.assert(key, sourceCodeInfo, { lte: coll.length });
             if (typeof coll === "string") {
-                assertChar(value, sourceCodeInfo);
+                string.assert(value, sourceCodeInfo, { char: true });
                 return "" + coll.slice(0, key) + value + coll.slice(key + 1);
             }
             var copy_1 = __spreadArray([], coll);
             copy_1[key] = value;
             return copy_1;
         }
-        assertString(key, sourceCodeInfo);
+        string.assert(key, sourceCodeInfo);
         var copy = __assign({}, coll);
         copy[key] = value;
         return copy;
@@ -2025,8 +2012,8 @@ var Lits = (function (exports) {
                 if (array.is(coll)) {
                     return coll.includes(value);
                 }
-                if (isString(coll)) {
-                    return isString(value) ? coll.split("").includes(value) : false;
+                if (string.is(coll)) {
+                    return string.is(value) ? coll.split("").includes(value) : false;
                 }
                 return Object.values(coll).includes(value);
             },
@@ -2046,10 +2033,10 @@ var Lits = (function (exports) {
                     }
                     return false;
                 }
-                if (isString(coll)) {
+                if (string.is(coll)) {
                     for (var _b = 0, seq_2 = seq; _b < seq_2.length; _b++) {
                         var value = seq_2[_b];
-                        if (isChar(value) ? coll.split("").includes(value) : false) {
+                        if (string.is(value, { char: true }) ? coll.split("").includes(value) : false) {
                             return true;
                         }
                     }
@@ -2079,10 +2066,10 @@ var Lits = (function (exports) {
                     }
                     return true;
                 }
-                if (isString(coll)) {
+                if (string.is(coll)) {
                     for (var _b = 0, seq_5 = seq; _b < seq_5.length; _b++) {
                         var value = seq_5[_b];
-                        if (!isChar(value) || !coll.split("").includes(value)) {
+                        if (!string.is(value, { char: true }) || !coll.split("").includes(value)) {
                             return false;
                         }
                     }
@@ -2126,7 +2113,7 @@ var Lits = (function (exports) {
                     innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, sourceCodeInfo);
                 }
                 else {
-                    assertString(parentKey, sourceCodeInfo);
+                    string.assert(parentKey, sourceCodeInfo);
                     innerCollMeta.parent[parentKey] = assoc(innerCollMeta.coll, lastKey, value, sourceCodeInfo);
                 }
                 return coll;
@@ -2163,7 +2150,7 @@ var Lits = (function (exports) {
                     innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, sourceCodeInfo, contextStack, executeFunction);
                 }
                 else {
-                    assertString(parentKey, sourceCodeInfo);
+                    string.assert(parentKey, sourceCodeInfo);
                     innerCollMeta.parent[parentKey] = update(innerCollMeta.coll, lastKey, fn, params, sourceCodeInfo, contextStack, executeFunction);
                 }
                 return coll;
@@ -2179,9 +2166,9 @@ var Lits = (function (exports) {
                         return result.concat(arr);
                     }, []);
                 }
-                else if (isString(params[0])) {
+                else if (string.is(params[0])) {
                     return params.reduce(function (result, s) {
-                        assertString(s, sourceCodeInfo);
+                        string.assert(s, sourceCodeInfo);
                         return "" + result + s;
                     }, "");
                 }
@@ -2198,7 +2185,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
                 collection.assert(first, sourceCodeInfo);
-                if (isString(first)) {
+                if (string.is(first)) {
                     return first.length === 0;
                 }
                 if (Array.isArray(first)) {
@@ -2217,7 +2204,7 @@ var Lits = (function (exports) {
                 if (Array.isArray(coll)) {
                     return coll.every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                if (isString(coll)) {
+                if (string.is(coll)) {
                     return coll.split("").every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
@@ -2233,7 +2220,7 @@ var Lits = (function (exports) {
                 if (Array.isArray(coll)) {
                     return coll.some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                if (isString(coll)) {
+                if (string.is(coll)) {
                     return coll.split("").some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
@@ -2249,7 +2236,7 @@ var Lits = (function (exports) {
                 if (Array.isArray(coll)) {
                     return !coll.some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                if (isString(coll)) {
+                if (string.is(coll)) {
                     return !coll.split("").some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
@@ -2265,7 +2252,7 @@ var Lits = (function (exports) {
                 if (Array.isArray(coll)) {
                     return !coll.every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
-                if (isString(coll)) {
+                if (string.is(coll)) {
                     return !coll.split("").every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                 }
                 return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
@@ -2279,7 +2266,7 @@ var Lits = (function (exports) {
         var fn = params[0], firstList = params[1];
         litsFunction.assert(fn, sourceCodeInfo);
         sequence.assert(firstList, sourceCodeInfo);
-        var isStringSeq = isString(firstList);
+        var isStringSeq = string.is(firstList);
         var length = firstList.length;
         if (params.length === 2) {
             if (array.is(firstList)) {
@@ -2290,7 +2277,7 @@ var Lits = (function (exports) {
                     .split("")
                     .map(function (elem) {
                     var newVal = executeFunction(fn, [elem], sourceCodeInfo, contextStack);
-                    assertChar(newVal, sourceCodeInfo);
+                    string.assert(newVal, sourceCodeInfo, { char: true });
                     return newVal;
                 })
                     .join("");
@@ -2299,7 +2286,7 @@ var Lits = (function (exports) {
         else {
             params.slice(2).forEach(function (collParam) {
                 if (isStringSeq) {
-                    assertString(collParam, sourceCodeInfo);
+                    string.assert(collParam, sourceCodeInfo);
                 }
                 else {
                     array.assert(collParam, sourceCodeInfo);
@@ -2313,7 +2300,7 @@ var Lits = (function (exports) {
                 var _loop_1 = function (i) {
                     var fnParams = params.slice(1).map(function (l) { return l[i]; });
                     var newValue = executeFunction(fn, fnParams, sourceCodeInfo, contextStack);
-                    assertChar(newValue, sourceCodeInfo);
+                    string.assert(newValue, sourceCodeInfo, { char: true });
                     result += newValue;
                 };
                 for (var i = 0; i < length; i += 1) {
@@ -2343,7 +2330,7 @@ var Lits = (function (exports) {
                 if (Array.isArray(seq)) {
                     return __spreadArray([elem], seq);
                 }
-                assertChar(elem, sourceCodeInfo);
+                string.assert(elem, sourceCodeInfo, { char: true });
                 return "" + elem + seq;
             },
             validate: function (node) { return assertLength(2, node); },
@@ -2397,7 +2384,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0];
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     return seq.substr(0, seq.length - 1);
                 }
                 var copy = __spreadArray([], seq);
@@ -2412,7 +2399,7 @@ var Lits = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 litsFunction.assert(fn, sourceCodeInfo);
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     var index = seq.split("").findIndex(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); });
                     return index !== -1 ? index : null;
                 }
@@ -2428,8 +2415,8 @@ var Lits = (function (exports) {
                 var seq = _a[0], value = _a[1];
                 any.assert(value, sourceCodeInfo);
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
-                    assertString(value, sourceCodeInfo);
+                if (string.is(seq)) {
+                    string.assert(value, sourceCodeInfo);
                     var index = seq.indexOf(value);
                     return index !== -1 ? index : null;
                 }
@@ -2444,7 +2431,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], values = _a.slice(1);
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     assertCharArray(values, sourceCodeInfo);
                     return __spreadArray([seq], values).join("");
                 }
@@ -2468,7 +2455,7 @@ var Lits = (function (exports) {
                     else if (arr.length === 1) {
                         return toAny(arr[0]);
                     }
-                    if (isString(arr)) {
+                    if (string.is(arr)) {
                         var chars = arr.split("");
                         return chars.slice(1).reduce(function (result, elem) {
                             var val = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
@@ -2485,8 +2472,8 @@ var Lits = (function (exports) {
                     var val = params[1], seq = params[2];
                     any.assert(val, sourceCodeInfo);
                     sequence.assert(seq, sourceCodeInfo);
-                    if (isString(seq)) {
-                        assertString(val, sourceCodeInfo);
+                    if (string.is(seq)) {
+                        string.assert(val, sourceCodeInfo);
                         if (seq.length === 0) {
                             return val;
                         }
@@ -2521,11 +2508,11 @@ var Lits = (function (exports) {
                     else if (seq.length === 1) {
                         return toAny(seq[0]);
                     }
-                    if (isString(seq)) {
+                    if (string.is(seq)) {
                         var chars = seq.split("");
                         return chars.slice(0, chars.length - 1).reduceRight(function (result, elem) {
                             var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
-                            assertString(newVal, sourceCodeInfo);
+                            string.assert(newVal, sourceCodeInfo);
                             return newVal;
                         }, chars[chars.length - 1]);
                     }
@@ -2539,7 +2526,7 @@ var Lits = (function (exports) {
                     var val = params[1], seq = params[2];
                     any.assert(val, sourceCodeInfo);
                     sequence.assert(seq, sourceCodeInfo);
-                    if (isString(seq)) {
+                    if (string.is(seq)) {
                         if (seq.length === 0) {
                             return val;
                         }
@@ -2643,7 +2630,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0];
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     return seq.substr(1);
                 }
                 var copy = __spreadArray([], seq);
@@ -2678,7 +2665,7 @@ var Lits = (function (exports) {
                 if (seq.length === 0) {
                     return null;
                 }
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     return (_c = seq.split("").find(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); })) !== null && _c !== void 0 ? _c : null;
                 }
                 return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], sourceCodeInfo, contextStack); }));
@@ -2692,7 +2679,7 @@ var Lits = (function (exports) {
                 var seq = defaultComparer ? params[0] : params[1];
                 var comparer = defaultComparer ? null : params[0];
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     var result_1 = seq.split("");
                     if (defaultComparer) {
                         result_1.sort(compare);
@@ -2730,7 +2717,7 @@ var Lits = (function (exports) {
                 var keyfn = any.as(params[0], sourceCodeInfo);
                 var comparer = defaultComparer ? null : params[1];
                 var seq = sequence.as(defaultComparer ? params[1] : params[2], sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     var result_2 = seq.split("");
                     if (defaultComparer) {
                         result_2.sort(function (a, b) {
@@ -2810,7 +2797,7 @@ var Lits = (function (exports) {
                         break;
                     }
                 }
-                return isString(seq) ? result.join("") : result;
+                return string.is(seq) ? result.join("") : result;
             },
             validate: function (node) { return assertLength(2, node); },
         },
@@ -2855,7 +2842,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], values = _a.slice(1);
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     assertCharArray(values, sourceCodeInfo);
                     return __spreadArray(__spreadArray([], values, true), [seq]).join("");
                 }
@@ -2870,7 +2857,7 @@ var Lits = (function (exports) {
                 var prob = _a[0], seq = _a[1];
                 number.assert(prob, sourceCodeInfo, { finite: true });
                 sequence.assert(seq, sourceCodeInfo);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     return seq
                         .split("")
                         .filter(function () { return Math.random() < prob; })
@@ -2890,7 +2877,7 @@ var Lits = (function (exports) {
                     return null;
                 }
                 var index = Math.floor(Math.random() * seq.length);
-                if (isString(seq)) {
+                if (string.is(seq)) {
                     return toAny(seq.split("")[index]);
                 }
                 return toAny(seq[index]);
@@ -2901,7 +2888,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var input = _a[0];
                 sequence.assert(input, sourceCodeInfo);
-                var array = isString(input) ? __spreadArray([], input.split("")) : __spreadArray([], input);
+                var array = string.is(input) ? __spreadArray([], input.split("")) : __spreadArray([], input);
                 var remainingLength = array.length;
                 var arrayElement;
                 var pickedIndex;
@@ -2915,7 +2902,7 @@ var Lits = (function (exports) {
                     array[remainingLength] = toAny(array[pickedIndex]);
                     array[pickedIndex] = arrayElement;
                 }
-                return isString(input) ? array.join("") : array;
+                return string.is(input) ? array.join("") : array;
             },
             validate: function (node) { return assertLength(1, node); },
         },
@@ -2994,9 +2981,9 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0];
                 sequence.assert(seq, sourceCodeInfo);
-                var arr = isString(seq) ? seq.split("") : seq;
+                var arr = string.is(seq) ? seq.split("") : seq;
                 return arr.reduce(function (result, val) {
-                    assertString(val, sourceCodeInfo);
+                    string.assert(val, sourceCodeInfo);
                     if (collHasKey(result, val)) {
                         result[val] = result[val] + 1;
                     }
@@ -3017,7 +3004,7 @@ var Lits = (function (exports) {
                 var arr = Array.isArray(seq) ? seq : seq.split("");
                 return arr.reduce(function (result, val) {
                     var key = executeFunction(fn, [val], sourceCodeInfo, contextStack);
-                    assertString(key, sourceCodeInfo);
+                    string.assert(key, sourceCodeInfo);
                     if (!collHasKey(result, key)) {
                         result[key] = [];
                     }
@@ -3058,7 +3045,7 @@ var Lits = (function (exports) {
                 var executeFunction = _b.executeFunction;
                 litsFunction.assert(fn, sourceCodeInfo);
                 sequence.assert(seq, sourceCodeInfo);
-                var isStringSeq = isString(seq);
+                var isStringSeq = string.is(seq);
                 var oldValue = undefined;
                 var result = (isStringSeq ? seq.split("") : seq).reduce(function (result, elem) {
                     var value = executeFunction(fn, [elem], sourceCodeInfo, contextStack);
@@ -3076,7 +3063,7 @@ var Lits = (function (exports) {
     };
     function partition(n, step, seq, pad, sourceCodeInfo) {
         number.assert(step, sourceCodeInfo, { positive: true });
-        var isStringSeq = isString(seq);
+        var isStringSeq = string.is(seq);
         var result = [];
         var start = 0;
         outer: while (start < seq.length) {
@@ -3741,7 +3728,7 @@ var Lits = (function (exports) {
             evaluate: function (params, sourceCodeInfo) {
                 var value = params[0];
                 var message = params.length === 2 ? params[1] : "" + value;
-                assertString(message, sourceCodeInfo);
+                string.assert(message, sourceCodeInfo);
                 if (!value) {
                     throw new AssertionError(message, sourceCodeInfo);
                 }
@@ -3793,7 +3780,7 @@ var Lits = (function (exports) {
                 for (var i = 0; i < params.length; i += 2) {
                     var key = params[i];
                     var value = params[i + 1];
-                    assertString(key, sourceCodeInfo);
+                    string.assert(key, sourceCodeInfo);
                     result[key] = value;
                 }
                 return result;
@@ -3828,7 +3815,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var obj = _a[0], key = _a[1];
                 object.assert(obj, sourceCodeInfo);
-                assertString(key, sourceCodeInfo);
+                string.assert(key, sourceCodeInfo);
                 if (collHasKey(obj, key)) {
                     return [key, obj[key]];
                 }
@@ -3840,7 +3827,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var obj = _a[0], key = _a[1];
                 object.assert(obj, sourceCodeInfo);
-                assertString(key, sourceCodeInfo);
+                string.assert(key, sourceCodeInfo);
                 var result = toAny(obj[key]);
                 delete obj[key];
                 return result;
@@ -3873,7 +3860,7 @@ var Lits = (function (exports) {
                 return rest.reduce(function (result, obj) {
                     object.assert(obj, sourceCodeInfo);
                     Object.entries(obj).forEach(function (entry) {
-                        var key = asNotUndefined(entry[0], sourceCodeInfo);
+                        var key = string.as(entry[0], sourceCodeInfo);
                         var val = toAny(entry[1]);
                         if (collHasKey(result, key)) {
                             result[key] = executeFunction(fn, [result[key], val], sourceCodeInfo, contextStack);
@@ -3895,7 +3882,7 @@ var Lits = (function (exports) {
                 var length = Math.min(keys.length, values.length);
                 var result = {};
                 for (var i = 0; i < length; i += 1) {
-                    var key = asNotUndefined(keys[i], sourceCodeInfo);
+                    var key = string.as(keys[i], sourceCodeInfo);
                     result[key] = toAny(values[i]);
                 }
                 return result;
@@ -4088,11 +4075,11 @@ var Lits = (function (exports) {
         regexp: {
             evaluate: function (params, sourceCodeInfo) {
                 var first = params[0], second = params[1];
-                assertString(first, sourceCodeInfo);
+                string.assert(first, sourceCodeInfo);
                 if (params.length === 1) {
                     return new RegExp(first);
                 }
-                assertString(second, sourceCodeInfo);
+                string.assert(second, sourceCodeInfo);
                 return new RegExp(first, second);
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
@@ -4101,7 +4088,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], second = _a[1];
                 assertRegExp(first, sourceCodeInfo);
-                assertString(second, sourceCodeInfo);
+                string.assert(second, sourceCodeInfo);
                 var match = first.exec(second);
                 if (match) {
                     return __spreadArray([], match);
@@ -4112,11 +4099,11 @@ var Lits = (function (exports) {
         },
         replace: {
             evaluate: function (_a, sourceCodeInfo) {
-                var string = _a[0], regexp = _a[1], value = _a[2];
-                assertString(string, sourceCodeInfo);
+                var str = _a[0], regexp = _a[1], value = _a[2];
+                string.assert(str, sourceCodeInfo);
                 assertRegExp(regexp, sourceCodeInfo);
-                assertString(value, sourceCodeInfo);
-                return string.replace(regexp, value);
+                string.assert(value, sourceCodeInfo);
+                return str.replace(regexp, value);
             },
             validate: function (node) { return assertLength(3, node); },
         },
@@ -4126,7 +4113,7 @@ var Lits = (function (exports) {
         subs: {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], second = _a[1], third = _a[2];
-                assertString(first, sourceCodeInfo);
+                string.assert(first, sourceCodeInfo);
                 number.assert(second, sourceCodeInfo, { integer: true, nonNegative: true });
                 if (third === undefined) {
                     return first.substring(second);
@@ -4138,10 +4125,10 @@ var Lits = (function (exports) {
         },
         'string-repeat': {
             evaluate: function (_a, sourceCodeInfo) {
-                var string = _a[0], count = _a[1];
-                assertString(string, sourceCodeInfo);
+                var str = _a[0], count = _a[1];
+                string.assert(str, sourceCodeInfo);
                 number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
-                return string.repeat(count);
+                return str.repeat(count);
             },
             validate: function (node) { return assertLength(2, node); },
         },
@@ -4162,7 +4149,7 @@ var Lits = (function (exports) {
         number: {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 var number = Number(str);
                 if (Number.isNaN(number)) {
                     throw new LitsError("Could not convert '" + str + "' to a number", sourceCodeInfo);
@@ -4204,15 +4191,15 @@ var Lits = (function (exports) {
         'to-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertNonEmptyString(str, sourceCodeInfo);
-                return asNotUndefined(str.codePointAt(0), sourceCodeInfo);
+                string.assert(str, sourceCodeInfo, { nonEmpty: true });
+                return asX(str.codePointAt(0), sourceCodeInfo);
             },
             validate: function (node) { return assertLength(1, node); },
         },
         'lower-case': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 return str.toLowerCase();
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4220,7 +4207,7 @@ var Lits = (function (exports) {
         'upper-case': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 return str.toUpperCase();
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4228,7 +4215,7 @@ var Lits = (function (exports) {
         trim: {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 return str.trim();
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4236,7 +4223,7 @@ var Lits = (function (exports) {
         'trim-left': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 return str.replace(/^\s+/, "");
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4244,7 +4231,7 @@ var Lits = (function (exports) {
         'trim-right': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 return str.replace(/\s+$/, "");
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4253,8 +4240,8 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var stringList = _a[0], delimiter = _a[1];
                 array.assert(stringList, sourceCodeInfo);
-                stringList.forEach(function (str) { return assertString(str, sourceCodeInfo); });
-                assertString(delimiter, sourceCodeInfo);
+                stringList.forEach(function (str) { return string.assert(str, sourceCodeInfo); });
+                string.assert(delimiter, sourceCodeInfo);
                 return stringList.join(delimiter);
             },
             validate: function (node) { return assertLength(2, node); },
@@ -4262,7 +4249,7 @@ var Lits = (function (exports) {
         split: {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], delimiter = _a[1], limit = _a[2];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 assertStringOrRegExp(delimiter, sourceCodeInfo);
                 if (limit !== undefined) {
                     number.assert(limit, sourceCodeInfo, { integer: true, nonNegative: true });
@@ -4274,10 +4261,10 @@ var Lits = (function (exports) {
         'pad-left': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], length = _a[1], padString = _a[2];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 number.assert(length, sourceCodeInfo, { integer: true });
                 if (padString !== undefined) {
-                    assertString(padString, sourceCodeInfo);
+                    string.assert(padString, sourceCodeInfo);
                 }
                 return str.padStart(length, padString);
             },
@@ -4286,10 +4273,10 @@ var Lits = (function (exports) {
         'pad-right': {
             evaluate: function (_a, sourceCodeInfo) {
                 var str = _a[0], length = _a[1], padString = _a[2];
-                assertString(str, sourceCodeInfo);
+                string.assert(str, sourceCodeInfo);
                 number.assert(length, sourceCodeInfo, { integer: true });
                 if (padString !== undefined) {
-                    assertString(padString, sourceCodeInfo);
+                    string.assert(padString, sourceCodeInfo);
                 }
                 return str.padEnd(length, padString);
             },
@@ -4298,7 +4285,7 @@ var Lits = (function (exports) {
         template: {
             evaluate: function (_a, sourceCodeInfo) {
                 var templateString = _a[0], placeholders = _a.slice(1);
-                assertString(templateString, sourceCodeInfo);
+                string.assert(templateString, sourceCodeInfo);
                 var templateStrings = templateString.split("||||");
                 if (templateStrings.length === 1) {
                     assertStringArray(placeholders, sourceCodeInfo);
@@ -4328,7 +4315,7 @@ var Lits = (function (exports) {
             var re = new RegExp("(?<=^|[^$]|\\$\\$)\\$" + (i + 1), "g");
             if (re.test(templateString)) {
                 var placeholder = placeholders[i];
-                assertString(placeholder, sourceCodeInfo);
+                string.assert(placeholder, sourceCodeInfo);
                 templateString = templateString.replace(re, placeholder);
             }
         }
@@ -4525,7 +4512,7 @@ var Lits = (function (exports) {
                 for (var i = 0; i < length_1; i += 1) {
                     if (i < nbrOfMandatoryArgs) {
                         var param = toAny(params[i]);
-                        var key = asNotUndefined(args.mandatoryArguments[i], sourceCodeInfo);
+                        var key = string.as(args.mandatoryArguments[i], sourceCodeInfo);
                         newContext[key] = { value: param };
                     }
                     else {
@@ -4615,7 +4602,7 @@ var Lits = (function (exports) {
         },
         builtin: function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            var normalExpression = asNotUndefined(normalExpressions[fn.name], sourceCodeInfo);
+            var normalExpression = asX(normalExpressions[fn.name], sourceCodeInfo);
             return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction: executeFunction });
         },
     };
@@ -4671,7 +4658,7 @@ var Lits = (function (exports) {
         return node.value;
     }
     function evaluateReservedName(node) {
-        return asNotUndefined(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value;
+        return asX(reservedNamesRecord[node.value], node.token.sourceCodeInfo).value;
     }
     function evaluateName(node, contextStack) {
         var _a;
@@ -4723,7 +4710,7 @@ var Lits = (function (exports) {
         if (object.is(fn)) {
             return evalueateObjectAsFunction(fn, params, sourceCodeInfo);
         }
-        if (isString(fn)) {
+        if (string.is(fn)) {
             return evaluateStringAsFunction(fn, params, sourceCodeInfo);
         }
         if (number.is(fn)) {
@@ -4739,7 +4726,7 @@ var Lits = (function (exports) {
         return normalExpression.evaluate(params, node.token.sourceCodeInfo, contextStack, { executeFunction: executeFunction });
     }
     function evaluateSpecialExpression(node, contextStack) {
-        var specialExpression = asNotUndefined(builtin.specialExpressions[node.name], node.token.sourceCodeInfo);
+        var specialExpression = asX(builtin.specialExpressions[node.name], node.token.sourceCodeInfo);
         return specialExpression.evaluate(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
     }
     function evalueateObjectAsFunction(fn, params, sourceCodeInfo) {
@@ -4747,7 +4734,7 @@ var Lits = (function (exports) {
             throw new LitsError("Object as function requires one string parameter", sourceCodeInfo);
         }
         var key = params[0];
-        assertString(key, sourceCodeInfo);
+        string.assert(key, sourceCodeInfo);
         return toAny(fn[key]);
     }
     function evaluateArrayAsFunction(fn, params, sourceCodeInfo) {
@@ -4782,36 +4769,36 @@ var Lits = (function (exports) {
     }
 
     var parseNumber = function (tokens, position) {
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         return [position + 1, { type: "Number", value: Number(tkn.value), token: tkn }];
     };
     var parseString = function (tokens, position) {
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         return [position + 1, { type: "String", value: tkn.value, token: tkn }];
     };
     var parseName = function (tokens, position) {
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         return [position + 1, { type: "Name", value: tkn.value, token: tkn }];
     };
     var parseReservedName = function (tokens, position) {
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         return [position + 1, { type: "ReservedName", value: tkn.value, token: tkn }];
     };
     var parseTokens = function (tokens, position) {
         var _a;
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         var astNodes = [];
         var astNode;
-        while (!(tkn.type === "paren" && (tkn.value === ")" || tkn.value === "]"))) {
+        while (!(tkn.value === ")" || tkn.value === "]")) {
             _a = parseToken(tokens, position), position = _a[0], astNode = _a[1];
             astNodes.push(astNode);
-            tkn = asNotUndefined(tokens[position], "EOF");
+            tkn = token.as(tokens[position], "EOF");
         }
         return [position, astNodes];
     };
     var parseExpression = function (tokens, position) {
         position += 1; // Skip parenthesis
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         if (tkn.type === "name" && builtin.specialExpressions[tkn.value]) {
             return parseSpecialExpression(tokens, position);
         }
@@ -4819,15 +4806,15 @@ var Lits = (function (exports) {
     };
     var parseArrayLitteral = function (tokens, position) {
         var _a;
-        var firstToken = asNotUndefined(tokens[position], "EOF");
+        var firstToken = token.as(tokens[position], "EOF");
         position = position + 1;
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         var params = [];
         var param;
         while (!(tkn.type === "paren" && tkn.value === "]")) {
             _a = parseToken(tokens, position), position = _a[0], param = _a[1];
             params.push(param);
-            tkn = asNotUndefined(tokens[position], "EOF");
+            tkn = token.as(tokens[position], "EOF");
         }
         position = position + 1;
         var node = {
@@ -4840,15 +4827,15 @@ var Lits = (function (exports) {
     };
     var parseObjectLitteral = function (tokens, position) {
         var _a;
-        var firstToken = asNotUndefined(tokens[position], "EOF");
+        var firstToken = token.as(tokens[position], "EOF");
         position = position + 1;
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         var params = [];
         var param;
         while (!(tkn.type === "paren" && tkn.value === "}")) {
             _a = parseToken(tokens, position), position = _a[0], param = _a[1];
             params.push(param);
-            tkn = asNotUndefined(tokens[position], "EOF");
+            tkn = token.as(tokens[position], "EOF");
         }
         position = position + 1;
         var node = {
@@ -4861,7 +4848,7 @@ var Lits = (function (exports) {
         return [position, node];
     };
     var parseRegexpShorthand = function (tokens, position) {
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         var stringNode = {
             type: "String",
             value: tkn.value,
@@ -4883,12 +4870,12 @@ var Lits = (function (exports) {
     };
     var placeholderRegexp = /^%([1-9][0-9]?$)/;
     var parseFnShorthand = function (tokens, position) {
-        var firstToken = asNotUndefined(tokens[position], "EOF");
+        var firstToken = token.as(tokens[position], "EOF");
         position += 2;
         var _a = parseNormalExpression(tokens, position), newPosition = _a[0], normalExpressionNode = _a[1];
         var arity = 0;
         for (var pos = position + 1; pos < newPosition - 1; pos += 1) {
-            var tkn = asNotUndefined(tokens[pos], "EOF");
+            var tkn = token.as(tokens[pos], "EOF");
             if (tkn.type === "name") {
                 var match = placeholderRegexp.exec(tkn.value);
                 if (match) {
@@ -4926,7 +4913,7 @@ var Lits = (function (exports) {
         return [newPosition, node];
     };
     var parseArgument = function (tokens, position) {
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         if (tkn.type === "name") {
             return [position + 1, { type: "Argument", name: tkn.value, token: tkn }];
         }
@@ -4935,33 +4922,27 @@ var Lits = (function (exports) {
             return [position + 1, { type: "Modifier", value: value, token: tkn }];
         }
         else {
-            throw new UnexpectedTokenError("), name or modifier", tkn);
+            throw new LitsError("Expected name or modifier token, got " + tkn, tkn.sourceCodeInfo);
         }
     };
     var parseBindings = function (tokens, position) {
         var _a;
-        var tkn = asNotUndefined(tokens[position], "EOF");
-        if (!(tkn.type === "paren" && tkn.value === "[")) {
-            throw new UnexpectedTokenError("[", tkn);
-        }
+        var tkn = token.as(tokens[position], "EOF", { type: "paren", value: "[" });
         position += 1;
-        tkn = asNotUndefined(tokens[position], "EOF");
+        tkn = token.as(tokens[position], "EOF");
         var bindings = [];
         var binding;
         while (!(tkn.type === "paren" && tkn.value === "]")) {
             _a = parseBinding(tokens, position), position = _a[0], binding = _a[1];
             bindings.push(binding);
-            tkn = asNotUndefined(tokens[position], "EOF");
+            tkn = token.as(tokens[position], "EOF");
         }
         position += 1;
         return [position, bindings];
     };
     var parseBinding = function (tokens, position) {
         var _a;
-        var firstToken = asNotUndefined(tokens[position], "EOF");
-        if (firstToken.type !== "name") {
-            throw new UnexpectedTokenError("name", firstToken);
-        }
+        var firstToken = token.as(tokens[position], "EOF", { type: "name" });
         var name = firstToken.value;
         position += 1;
         var value;
@@ -5004,9 +4985,9 @@ var Lits = (function (exports) {
         return [position, node];
     };
     var parseSpecialExpression = function (tokens, position) {
-        var _a = asNotUndefined(tokens[position], "EOF"), expressionName = _a.value, sourceCodeInfo = _a.sourceCodeInfo;
+        var _a = token.as(tokens[position], "EOF"), expressionName = _a.value, sourceCodeInfo = _a.sourceCodeInfo;
         position += 1;
-        var _b = asNotUndefined(builtin.specialExpressions[expressionName], sourceCodeInfo), parse = _b.parse, validate = _b.validate;
+        var _b = asX(builtin.specialExpressions[expressionName], sourceCodeInfo), parse = _b.parse, validate = _b.validate;
         var _c = parse(tokens, position, {
             parseExpression: parseExpression,
             parseTokens: parseTokens,
@@ -5019,7 +5000,7 @@ var Lits = (function (exports) {
         return [positionAfterParse, node];
     };
     var parseToken = function (tokens, position) {
-        var tkn = asNotUndefined(tokens[position], "EOF");
+        var tkn = token.as(tokens[position], "EOF");
         var nodeDescriptor = undefined;
         switch (tkn.type) {
             case "number":
@@ -5233,7 +5214,7 @@ var Lits = (function (exports) {
         var hasDecimals = firstChar === ".";
         var i;
         for (i = position + 1; i < input.length; i += 1) {
-            var char = asNotUndefined(input[i], sourceCodeInfo);
+            var char = string.as(input[i], sourceCodeInfo, { char: true });
             if (endOfNumberRegExp.test(char)) {
                 break;
             }

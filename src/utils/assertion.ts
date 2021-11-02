@@ -3,12 +3,11 @@ import { Any, Arr, Coll, Obj, Seq } from '../interface'
 import { AstNode, FUNCTION_SYMBOL, LitsFunction, NameNode, NodeType } from '../parser/interface'
 import { SourceCodeInfo } from '../tokenizer/interface'
 import { isAstNode } from './astNodeAsserter'
+import { string } from './stringAssertion'
 
 export { number } from './numberAssertion'
-
-function isString(value: unknown): value is string {
-  return typeof value === `string`
-}
+export { token } from './tokenAssertion'
+export { string } from './stringAssertion'
 
 class Asserter<T> {
   private typeName: string
@@ -46,7 +45,7 @@ export const stringOrNumber: Asserter<string | number> = new Asserter(
   value => typeof value === `string` || typeof value === `number`,
 )
 export const any: Asserter<Any> = new Asserter(`Any`, value => value !== undefined)
-export const sequence: Asserter<Seq> = new Asserter(`Seq`, value => Array.isArray(value) || isString(value))
+export const sequence: Asserter<Seq> = new Asserter(`Seq`, value => Array.isArray(value) || string.is(value))
 export const object: Asserter<Obj> = new Asserter(
   `Obj`,
   value =>

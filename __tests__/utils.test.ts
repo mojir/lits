@@ -1,26 +1,30 @@
 import { AstNode, FUNCTION_SYMBOL, LitsFunction, NameNode, NormalExpressionNode } from '../src/parser/interface'
 import { SourceCodeInfo } from '../src/tokenizer/interface'
 import {
-  asNotUndefined,
   assertLengthEven,
   assertRegExp,
-  assertString,
-  asNonEmptyString,
   assertLength,
   assertStringOrRegExp,
   collHasKey,
   isRegExp,
   isNormalExpressionNodeName,
   deepEqual,
-  assertNonEmptyString,
   assertNotUndefined,
   toNonNegativeInteger,
-  assertChar,
-  asChar,
   cloneColl,
-  asString,
+  asX,
 } from '../src/utils'
-import { any, collection, litsFunction, number, object, sequence, array, nameNode } from '../src/utils/assertion'
+import {
+  any,
+  collection,
+  litsFunction,
+  number,
+  object,
+  sequence,
+  array,
+  nameNode,
+  string,
+} from '../src/utils/assertion'
 
 const sourceCodeInfo: SourceCodeInfo = `EOF`
 describe(`utils`, () => {
@@ -104,13 +108,13 @@ describe(`utils`, () => {
     nameNode.as(node, node.token.sourceCodeInfo)
   })
   test(`asNotUndefined`, () => {
-    expect(() => asNotUndefined(undefined, `EOF`)).toThrow()
-    expect(asNotUndefined(null, `EOF`)).toBe(null)
-    expect(asNotUndefined(false, `EOF`)).toBe(false)
-    expect(asNotUndefined(true, `EOF`)).toBe(true)
-    expect(asNotUndefined(0, `EOF`)).toBe(0)
+    expect(() => asX(undefined, `EOF`)).toThrow()
+    expect(asX(null, `EOF`)).toBe(null)
+    expect(asX(false, `EOF`)).toBe(false)
+    expect(asX(true, `EOF`)).toBe(true)
+    expect(asX(0, `EOF`)).toBe(0)
     const obj = {}
-    expect(asNotUndefined(obj, `EOF`)).toBe(obj)
+    expect(asX(obj, `EOF`)).toBe(obj)
   })
   test(`assertNotUndefined`, () => {
     expect(() => assertNotUndefined(undefined, `EOF`)).toThrow()
@@ -122,16 +126,16 @@ describe(`utils`, () => {
     expect(() => assertNotUndefined({}, `EOF`)).not.toThrow()
   })
   test(`asNonEmptyString`, () => {
-    expect(asNonEmptyString(`1`, sourceCodeInfo)).toBe(`1`)
-    expect(() => asNonEmptyString(``, sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString(0, sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString(1, sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString(true, sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString(false, sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString(null, sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString(undefined, sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString([], sourceCodeInfo)).toThrow()
-    expect(() => asNonEmptyString({}, sourceCodeInfo)).toThrow()
+    expect(string.as(`1`, sourceCodeInfo, { nonEmpty: true })).toBe(`1`)
+    expect(() => string.as(``, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as(0, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as(1, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as(true, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as(false, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as(null, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as(undefined, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as([], sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.as({}, sourceCodeInfo, { nonEmpty: true })).toThrow()
   })
 
   test(`assertArr`, () => {
@@ -410,41 +414,41 @@ describe(`utils`, () => {
     expect(() => number.assert(undefined, sourceCodeInfo, { nonZero: true })).toThrow()
   })
   test(`assertString`, () => {
-    expect(() => assertString(``, sourceCodeInfo)).not.toThrow()
-    expect(() => assertString(`1`, sourceCodeInfo)).not.toThrow()
-    expect(() => assertString(0, sourceCodeInfo)).toThrow()
-    expect(() => assertString(1, sourceCodeInfo)).toThrow()
-    expect(() => assertString(true, sourceCodeInfo)).toThrow()
-    expect(() => assertString(false, sourceCodeInfo)).toThrow()
-    expect(() => assertString(null, sourceCodeInfo)).toThrow()
-    expect(() => assertString(undefined, sourceCodeInfo)).toThrow()
-    expect(() => assertString([], sourceCodeInfo)).toThrow()
-    expect(() => assertString({}, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(``, sourceCodeInfo)).not.toThrow()
+    expect(() => string.assert(`1`, sourceCodeInfo)).not.toThrow()
+    expect(() => string.assert(0, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(1, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(true, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(false, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(null, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(undefined, sourceCodeInfo)).toThrow()
+    expect(() => string.assert([], sourceCodeInfo)).toThrow()
+    expect(() => string.assert({}, sourceCodeInfo)).toThrow()
   })
   test(`asString`, () => {
-    expect(() => asString(``, sourceCodeInfo)).not.toThrow()
-    expect(() => asString(`1`, sourceCodeInfo)).not.toThrow()
-    expect(() => asString(0, sourceCodeInfo)).toThrow()
-    expect(() => asString(1, sourceCodeInfo)).toThrow()
-    expect(() => asString(true, sourceCodeInfo)).toThrow()
-    expect(() => asString(false, sourceCodeInfo)).toThrow()
-    expect(() => asString(null, sourceCodeInfo)).toThrow()
-    expect(() => asString(undefined, sourceCodeInfo)).toThrow()
-    expect(() => asString([], sourceCodeInfo)).toThrow()
-    expect(() => asString({}, sourceCodeInfo)).toThrow()
+    expect(() => string.as(``, sourceCodeInfo)).not.toThrow()
+    expect(() => string.as(`1`, sourceCodeInfo)).not.toThrow()
+    expect(() => string.as(0, sourceCodeInfo)).toThrow()
+    expect(() => string.as(1, sourceCodeInfo)).toThrow()
+    expect(() => string.as(true, sourceCodeInfo)).toThrow()
+    expect(() => string.as(false, sourceCodeInfo)).toThrow()
+    expect(() => string.as(null, sourceCodeInfo)).toThrow()
+    expect(() => string.as(undefined, sourceCodeInfo)).toThrow()
+    expect(() => string.as([], sourceCodeInfo)).toThrow()
+    expect(() => string.as({}, sourceCodeInfo)).toThrow()
   })
   test(`assertNonEmptyString`, () => {
-    expect(() => assertNonEmptyString(`1`, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonEmptyString(`abc`, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonEmptyString(``, sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString(0, sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString(1, sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString(true, sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString(false, sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString(null, sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString(undefined, sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString([], sourceCodeInfo)).toThrow()
-    expect(() => assertNonEmptyString({}, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(`1`, sourceCodeInfo, { nonEmpty: true })).not.toThrow()
+    expect(() => string.assert(`abc`, sourceCodeInfo, { nonEmpty: true })).not.toThrow()
+    expect(() => string.assert(``, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert(0, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert(1, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert(true, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert(false, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert(null, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert(undefined, sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert([], sourceCodeInfo, { nonEmpty: true })).toThrow()
+    expect(() => string.assert({}, sourceCodeInfo, { nonEmpty: true })).toThrow()
   })
 
   test(`assertStringOrArray`, () => {
@@ -666,24 +670,24 @@ describe(`utils`, () => {
     expect(() => number.assert(0, sourceCodeInfo, { lte: 10 })).not.toThrow()
   })
   test(`assertChar`, () => {
-    expect(() => assertChar(`2`, sourceCodeInfo)).not.toThrow()
-    expect(() => assertChar(`Albert`, sourceCodeInfo)).toThrow()
-    expect(() => assertChar(0, sourceCodeInfo)).toThrow()
-    expect(() => assertChar(null, sourceCodeInfo)).toThrow()
-    expect(() => assertChar(true, sourceCodeInfo)).toThrow()
-    expect(() => assertChar(false, sourceCodeInfo)).toThrow()
-    expect(() => assertChar([`a`], sourceCodeInfo)).toThrow()
-    expect(() => assertChar({ a: `a` }, sourceCodeInfo)).toThrow()
+    expect(() => string.assert(`2`, sourceCodeInfo, { char: true })).not.toThrow()
+    expect(() => string.assert(`Albert`, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.assert(0, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.assert(null, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.assert(true, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.assert(false, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.assert([`a`], sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.assert({ a: `a` }, sourceCodeInfo, { char: true })).toThrow()
   })
   test(`asChar`, () => {
-    expect(asChar(`2`, sourceCodeInfo)).toBe(`2`)
-    expect(() => asChar(`Albert`, sourceCodeInfo)).toThrow()
-    expect(() => asChar(0, sourceCodeInfo)).toThrow()
-    expect(() => asChar(null, sourceCodeInfo)).toThrow()
-    expect(() => asChar(true, sourceCodeInfo)).toThrow()
-    expect(() => asChar(false, sourceCodeInfo)).toThrow()
-    expect(() => asChar([`a`], sourceCodeInfo)).toThrow()
-    expect(() => asChar({ a: `a` }, sourceCodeInfo)).toThrow()
+    expect(string.as(`2`, sourceCodeInfo, { char: true })).toBe(`2`)
+    expect(() => string.as(`Albert`, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.as(0, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.as(null, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.as(true, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.as(false, sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.as([`a`], sourceCodeInfo, { char: true })).toThrow()
+    expect(() => string.as({ a: `a` }, sourceCodeInfo, { char: true })).toThrow()
   })
 
   test(`asColl`, () => {
