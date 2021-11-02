@@ -1,5 +1,5 @@
 import { NormalExpressionNode } from '../../../parser/interface'
-import { assertLength, assertFiniteNumber } from '../../../utils'
+import { assertLength } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { collection, litsFunction, number, object, sequence, array } from '../../../utils/assertion'
 
@@ -36,7 +36,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'zero?': {
     evaluate: ([first], sourceCodeInfo): boolean => {
-      assertFiniteNumber(first, sourceCodeInfo)
+      number.assert(first, sourceCodeInfo, { finite: true })
       return first === 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -44,7 +44,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'pos?': {
     evaluate: ([first], sourceCodeInfo): boolean => {
-      assertFiniteNumber(first, sourceCodeInfo)
+      number.assert(first, sourceCodeInfo, { finite: true })
       return first > 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -52,7 +52,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'neg?': {
     evaluate: ([first], sourceCodeInfo): boolean => {
-      assertFiniteNumber(first, sourceCodeInfo)
+      number.assert(first, sourceCodeInfo, { finite: true })
       return first < 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -60,7 +60,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'even?': {
     evaluate: ([first], sourceCodeInfo): boolean => {
-      assertFiniteNumber(first, sourceCodeInfo)
+      number.assert(first, sourceCodeInfo, { finite: true })
       return first % 2 === 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),
@@ -68,7 +68,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
 
   'odd?': {
     evaluate: ([first], sourceCodeInfo): boolean => {
-      assertFiniteNumber(first, sourceCodeInfo)
+      number.assert(first, sourceCodeInfo, { finite: true })
       return number.is(first, { integer: true }) && first % 2 !== 0
     },
     validate: (node: NormalExpressionNode): void => assertLength(1, node),

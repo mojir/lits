@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 
 import { Arr } from './interface'
-import { AstNode, NodeType } from './parser/interface'
 import { Token, SourceCodeInfo } from './tokenizer/interface'
 
 export class RecurSignal extends Error {
@@ -74,25 +73,25 @@ export class UnexpectedTokenError extends Error {
   }
 }
 
-export class UnexpectedNodeTypeError extends Error {
-  public line: number | null
-  public column: number | null
-  constructor(
-    expectedNodeType: NodeType | `ExpressionNode`,
-    actualNode: AstNode | undefined,
-    sourceCodeInfo: SourceCodeInfo,
-  ) {
-    super(
-      `Expected a ${expectedNodeType} node, got ${
-        actualNode ? `a ${actualNode.type} node` : `undefined`
-      } ${sourceCodeInfo}`,
-    )
-    this.line = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.line
-    this.column = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.column
-    Object.setPrototypeOf(this, UnexpectedNodeTypeError.prototype)
-    this.name = `UnexpectedNodeTypeError`
-  }
-}
+// export class UnexpectedNodeTypeError extends Error {
+//   public line: number | null
+//   public column: number | null
+//   constructor(
+//     expectedNodeType: NodeType | `ExpressionNode`,
+//     actualNode: AstNode | undefined,
+//     sourceCodeInfo: SourceCodeInfo,
+//   ) {
+//     super(
+//       `Expected a ${expectedNodeType} node, got ${
+//         actualNode ? `a ${actualNode.type} node` : `undefined`
+//       } ${sourceCodeInfo}`,
+//     )
+//     this.line = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.line
+//     this.column = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.column
+//     Object.setPrototypeOf(this, UnexpectedNodeTypeError.prototype)
+//     this.name = `UnexpectedNodeTypeError`
+//   }
+// }
 
 export class UndefinedSymbolError extends Error {
   public line: number | null

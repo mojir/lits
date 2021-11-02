@@ -1,10 +1,9 @@
-import { LitsError, UnexpectedNodeTypeError } from '../errors'
+import { LitsError } from '../errors'
 import { Context } from '../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../interface'
 import {
   AstNode,
   ExpressionNode,
-  NameNode,
   NormalExpressionNode,
   NormalExpressionNodeName,
   SpecialExpressionNode,
@@ -12,17 +11,6 @@ import {
 import { SourceCodeInfo } from '../tokenizer/interface'
 
 import { any, array, collection, number, object } from './assertion'
-
-export function asNameNode(node: AstNode | undefined, sourceCodeInfo: SourceCodeInfo): NameNode {
-  assertNameNode(node, sourceCodeInfo)
-  return node
-}
-
-export function assertNameNode(node: AstNode | undefined, sourceCodeInfo: SourceCodeInfo): asserts node is NameNode {
-  if (node === undefined || node.type !== `Name`) {
-    throw new UnexpectedNodeTypeError(`Name`, node, sourceCodeInfo)
-  }
-}
 
 export function asNotUndefined<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): T {
   if (value === undefined) {
@@ -34,78 +22,6 @@ export function asNotUndefined<T>(value: T | undefined, sourceCodeInfo: SourceCo
 export function assertNotUndefined<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): asserts value is T {
   if (value === undefined) {
     throw new LitsError(`Unexpected nil`, sourceCodeInfo)
-  }
-}
-
-export function assertFiniteNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  if (typeof value !== `number` || !isFinite(value)) {
-    throw new LitsError(`Expected number, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-}
-
-export function asFiniteNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  return value
-}
-
-export function assertPositiveNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value <= 0) {
-    throw new LitsError(`Expected positive number, got ${value}`, sourceCodeInfo)
-  }
-}
-
-export function assertNegativeNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value >= 0) {
-    throw new LitsError(`Expected negative number, got ${value}`, sourceCodeInfo)
-  }
-}
-
-export function assertNonNegativeNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value < 0) {
-    throw new LitsError(`Expected non negative number, got ${value}`, sourceCodeInfo)
-  }
-}
-
-export function assertNonNegativeInteger(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertNonNegativeNumber(value, sourceCodeInfo)
-  number.assert(value, sourceCodeInfo, { integer: true })
-}
-
-export function assertNonPositiveNumber(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value > 0) {
-    throw new LitsError(`Expected non positive number, got ${value}`, sourceCodeInfo)
-  }
-}
-
-export function assertNumberGte(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value < x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number equal or grater than ${x}`, sourceCodeInfo)
-  }
-}
-
-export function assertNumberGt(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value <= x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number grater than ${x}`, sourceCodeInfo)
-  }
-}
-
-export function assertNumberLte(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value > x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number equal or less than ${x}`, sourceCodeInfo)
-  }
-}
-
-export function assertNumberLt(value: unknown, x: number, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value >= x) {
-    throw new LitsError(`Expected parameter (${value}) to be a number less than ${x}`, sourceCodeInfo)
   }
 }
 
@@ -168,13 +84,6 @@ export function isRegExp(value: unknown): value is RegExp {
 export function assertRegExp(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is RegExp {
   if (!(value instanceof RegExp)) {
     throw new LitsError(`Expected RegExp, got: ${value} type="${typeof value}"`, sourceCodeInfo)
-  }
-}
-
-export function assertNumberNotZero(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is number {
-  assertFiniteNumber(value, sourceCodeInfo)
-  if (value === 0) {
-    throw new LitsError(`Expected non zero value`, sourceCodeInfo)
   }
 }
 
@@ -387,12 +296,6 @@ export function deepEqual(a: Any, b: Any, sourceCodeInfo: SourceCodeInfo): boole
 
 export function toNonNegativeInteger(number: number): number {
   return Math.max(0, Math.ceil(number))
-}
-
-export function assertMax(value: number, maxNumber: number, sourceCodeInfo: SourceCodeInfo): void {
-  if (value > maxNumber) {
-    throw new LitsError(`Expected number less than or equal to ${maxNumber}'`, sourceCodeInfo)
-  }
 }
 
 export function toAny(value: unknown): Any {

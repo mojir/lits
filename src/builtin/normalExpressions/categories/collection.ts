@@ -5,9 +5,6 @@ import { SourceCodeInfo } from '../../../tokenizer/interface'
 import {
   assertChar,
   assertLength,
-  assertMax,
-  assertNumberGte,
-  assertNumberLte,
   assertString,
   isString,
   toNonNegativeInteger,
@@ -105,7 +102,7 @@ function update(
   } else {
     number.assert(key, sourceCodeInfo)
     const intKey = toNonNegativeInteger(key)
-    assertMax(intKey, coll.length, sourceCodeInfo)
+    number.assert(intKey, sourceCodeInfo, { lte: coll.length })
     if (Array.isArray(coll)) {
       const result = coll.map((elem, index) => {
         if (intKey === index) {
@@ -140,8 +137,8 @@ function assoc(coll: Coll, key: string | number, value: Any, sourceCodeInfo: Sou
   stringOrNumber.assert(key, sourceCodeInfo)
   if (Array.isArray(coll) || typeof coll === `string`) {
     number.assert(key, sourceCodeInfo, { integer: true })
-    assertNumberGte(key, 0, sourceCodeInfo)
-    assertNumberLte(key, coll.length, sourceCodeInfo)
+    number.assert(key, sourceCodeInfo, { gte: 0 })
+    number.assert(key, sourceCodeInfo, { lte: coll.length })
     if (typeof coll === `string`) {
       assertChar(value, sourceCodeInfo)
       return `${coll.slice(0, key)}${value}${coll.slice(key + 1)}`

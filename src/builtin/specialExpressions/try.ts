@@ -1,8 +1,9 @@
-import { UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
+import { UnexpectedTokenError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { asNotUndefined } from '../../utils'
+import { nameNode } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface TrySpecialExpressionNode extends SpecialExpressionNode {
@@ -32,9 +33,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     position += 1
     let error: AstNode
     ;[position, error] = parseToken(tokens, position)
-    if (error.type !== `Name`) {
-      throw new UnexpectedNodeTypeError(`Name`, error, error.token.sourceCodeInfo)
-    }
+    nameNode.assert(error, error.token.sourceCodeInfo)
 
     token = asNotUndefined(tokens[position], `EOF`)
     if (!(token.type === `paren` && token.value === `)`)) {

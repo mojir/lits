@@ -1,7 +1,8 @@
 import { LitsError } from '../errors'
 import { Any, Arr, Coll, Obj, Seq } from '../interface'
-import { FUNCTION_SYMBOL, LitsFunction } from '../parser/interface'
+import { AstNode, FUNCTION_SYMBOL, LitsFunction, NameNode, NodeType } from '../parser/interface'
 import { SourceCodeInfo } from '../tokenizer/interface'
+import { isAstNode } from './astNodeAsserter'
 
 export { number } from './numberAssertion'
 
@@ -59,3 +60,11 @@ export const object: Asserter<Obj> = new Asserter(
 )
 export const collection: Asserter<Coll> = new Asserter(`Coll`, value => sequence.is(value) || object.is(value))
 export const array: Asserter<Arr> = new Asserter(`Arr`, value => Array.isArray(value))
+export const astNode: Asserter<AstNode> = new Asserter(`AstNode`, isAstNode)
+export const nameNode: Asserter<NameNode> = new Asserter(`NameNode`, value => {
+  if (!isAstNode(value)) {
+    return false
+  }
+  const nodeType: NodeType = `Name`
+  return value.type === nodeType
+})

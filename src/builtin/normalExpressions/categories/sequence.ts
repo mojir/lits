@@ -3,7 +3,6 @@ import { Any, Arr, Obj, Seq } from '../../../interface'
 import { SourceCodeInfo } from '../../../tokenizer/interface'
 import {
   assertLength,
-  assertFiniteNumber,
   assertChar,
   assertString,
   assertCharArray,
@@ -12,7 +11,6 @@ import {
   toAny,
   toNonNegativeInteger,
   collHasKey,
-  assertPositiveNumber,
 } from '../../../utils'
 import { any, litsFunction, number, sequence, array } from '../../../utils/assertion'
 import { BuiltinNormalExpressions, NormalExpressionEvaluator } from '../../interface'
@@ -296,7 +294,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   nthrest: {
     evaluate: ([seq, count], sourceCodeInfo): Arr | string => {
       sequence.assert(seq, sourceCodeInfo)
-      assertFiniteNumber(count, sourceCodeInfo)
+      number.assert(count, sourceCodeInfo, { finite: true })
       const integerCount = Math.max(Math.ceil(count), 0)
       if (Array.isArray(seq)) {
         return seq.slice(integerCount)
@@ -325,7 +323,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   nthnext: {
     evaluate: ([seq, count], sourceCodeInfo): Arr | string | null => {
       sequence.assert(seq, sourceCodeInfo)
-      assertFiniteNumber(count, sourceCodeInfo)
+      number.assert(count, sourceCodeInfo, { finite: true })
       const integerCount = Math.max(Math.ceil(count), 0)
       if (seq.length <= count) {
         return null
@@ -418,7 +416,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
           litsFunction.assert(comparer, sourceCodeInfo)
           result.sort((a, b) => {
             const compareValue = executeFunction(comparer, [a, b], sourceCodeInfo, contextStack)
-            assertFiniteNumber(compareValue, sourceCodeInfo)
+            number.assert(compareValue, sourceCodeInfo, { finite: true })
             return compareValue
           })
         }
@@ -432,7 +430,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         result.sort((a, b) => {
           litsFunction.assert(comparer, sourceCodeInfo)
           const compareValue = executeFunction(comparer, [a, b], sourceCodeInfo, contextStack)
-          assertFiniteNumber(compareValue, sourceCodeInfo)
+          number.assert(compareValue, sourceCodeInfo, { finite: true })
           return compareValue
         })
       }
@@ -462,7 +460,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
             const aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack)
             const bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack)
             const compareValue = executeFunction(comparer, [aKey, bKey], sourceCodeInfo, contextStack)
-            assertFiniteNumber(compareValue, sourceCodeInfo)
+            number.assert(compareValue, sourceCodeInfo, { finite: true })
             return compareValue
           })
         }
@@ -482,7 +480,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
           const aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack)
           const bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack)
           const compareValue = executeFunction(comparer, [aKey, bKey], sourceCodeInfo, contextStack)
-          assertFiniteNumber(compareValue, sourceCodeInfo)
+          number.assert(compareValue, sourceCodeInfo, { finite: true })
           return compareValue
         })
       }
@@ -576,7 +574,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   },
   'random-sample!': {
     evaluate: ([prob, seq], sourceCodeInfo): Seq => {
-      assertFiniteNumber(prob, sourceCodeInfo)
+      number.assert(prob, sourceCodeInfo, { finite: true })
       sequence.assert(seq, sourceCodeInfo)
 
       if (isString(seq)) {
@@ -676,7 +674,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   },
   'split-at': {
     evaluate: ([pos, seq], sourceCodeInfo): Seq => {
-      assertFiniteNumber(pos, sourceCodeInfo)
+      number.assert(pos, sourceCodeInfo, { finite: true })
       const intPos = toNonNegativeInteger(pos)
       sequence.assert(seq, sourceCodeInfo)
       return [seq.slice(0, intPos), seq.slice(intPos)]
@@ -791,7 +789,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 }
 
 function partition(n: number, step: number, seq: Seq, pad: Arr | undefined, sourceCodeInfo: SourceCodeInfo) {
-  assertPositiveNumber(step, sourceCodeInfo)
+  number.assert(step, sourceCodeInfo, { positive: true })
   const isStringSeq = isString(seq)
 
   const result: Arr[] = []

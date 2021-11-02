@@ -12,14 +12,7 @@ import {
 import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
-import {
-  asNotUndefined,
-  assertNonNegativeInteger,
-  assertString,
-  isNormalExpressionNodeName,
-  isString,
-  toAny,
-} from '../utils'
+import { asNotUndefined, assertString, isNormalExpressionNodeName, isString, toAny } from '../utils'
 import { Context, EvaluateAstNode, ExecuteFunction } from './interface'
 import { Any, Arr, Obj } from '../interface'
 import { ContextStack } from './interface'
@@ -180,7 +173,7 @@ function evaluateArrayAsFunction(fn: Arr, params: Arr, sourceCodeInfo: SourceCod
     throw new LitsError(`Array as function requires one non negative integer parameter`, sourceCodeInfo)
   }
   const index = params[0]
-  assertNonNegativeInteger(index, sourceCodeInfo)
+  number.assert(index, sourceCodeInfo, { integer: true, nonNegative: true })
   return toAny(fn[index])
 }
 

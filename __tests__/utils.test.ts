@@ -1,24 +1,11 @@
 import { AstNode, FUNCTION_SYMBOL, LitsFunction, NameNode, NormalExpressionNode } from '../src/parser/interface'
 import { SourceCodeInfo } from '../src/tokenizer/interface'
 import {
-  asNameNode,
   asNotUndefined,
   assertLengthEven,
-  assertNameNode,
-  assertNegativeNumber,
-  assertNonNegativeNumber,
-  assertNonPositiveNumber,
-  assertFiniteNumber,
-  assertNumberGt,
-  assertNumberGte,
-  assertNumberLt,
-  assertNumberLte,
-  assertNumberNotZero,
-  assertPositiveNumber,
   assertRegExp,
   assertString,
   asNonEmptyString,
-  asFiniteNumber,
   assertLength,
   assertStringOrRegExp,
   collHasKey,
@@ -28,13 +15,12 @@ import {
   assertNonEmptyString,
   assertNotUndefined,
   toNonNegativeInteger,
-  assertMax,
   assertChar,
   asChar,
   cloneColl,
   asString,
 } from '../src/utils'
-import { any, collection, litsFunction, number, object, sequence, array } from '../src/utils/assertion'
+import { any, collection, litsFunction, number, object, sequence, array, nameNode } from '../src/utils/assertion'
 
 const sourceCodeInfo: SourceCodeInfo = `EOF`
 describe(`utils`, () => {
@@ -89,9 +75,9 @@ describe(`utils`, () => {
   })
   test(`asNameNode`, () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(() => asNameNode(undefined, {} as any)).toThrow()
+    expect(() => nameNode.as(undefined, {} as any)).toThrow()
     expect(() =>
-      asNameNode(
+      nameNode.as(
         {
           type: `Number`,
           value: 12,
@@ -100,22 +86,22 @@ describe(`utils`, () => {
         { line: 0, column: 0, sourceCodeLine: null },
       ),
     ).toThrow()
-    const nameNode: NameNode = {
+    const node: NameNode = {
       type: `Name`,
       value: `a-name`,
       token: { type: `name`, sourceCodeInfo: { line: 0, column: 0, sourceCodeLine: null }, value: `X` },
     }
-    expect(asNameNode(nameNode, nameNode.token.sourceCodeInfo)).toBe(nameNode)
+    expect(nameNode.as(node, node.token.sourceCodeInfo)).toBe(node)
   })
   test(`assertNameNode`, () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(() => assertNameNode(undefined, {} as any)).toThrow()
-    const nameNode: NameNode = {
+    expect(() => nameNode.assert(undefined, {} as any)).toThrow()
+    const node: NameNode = {
       type: `Name`,
       value: `a-name`,
       token: { type: `name`, sourceCodeInfo: { line: 0, column: 0, sourceCodeLine: null }, value: `X` },
     }
-    asNameNode(nameNode, nameNode.token.sourceCodeInfo)
+    nameNode.as(node, node.token.sourceCodeInfo)
   })
   test(`asNotUndefined`, () => {
     expect(() => asNotUndefined(undefined, `EOF`)).toThrow()
@@ -277,151 +263,151 @@ describe(`utils`, () => {
     expect(() => litsFunction.assert({}, sourceCodeInfo)).toThrow()
   })
   test(`assertPositiveNumber`, () => {
-    expect(() => assertPositiveNumber(-1, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber(-0.5, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber(0, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber(0.5, sourceCodeInfo)).not.toThrow()
-    expect(() => assertPositiveNumber(1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertPositiveNumber(`1`, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber([], sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber({}, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber(true, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber(false, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber(null, sourceCodeInfo)).toThrow()
-    expect(() => assertPositiveNumber(undefined, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(-1, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert(-0.5, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert(0.5, sourceCodeInfo, { positive: true })).not.toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { positive: true })).not.toThrow()
+    expect(() => number.assert(`1`, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert({}, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert(true, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert(null, sourceCodeInfo, { positive: true })).toThrow()
+    expect(() => number.assert(undefined, sourceCodeInfo, { positive: true })).toThrow()
   })
   test(`assertNegativeNumber`, () => {
-    expect(() => assertNegativeNumber(-1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNegativeNumber(-0.5, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNegativeNumber(0, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber(0.5, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber(1, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber(`1`, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber([], sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber({}, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber(true, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber(false, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber(null, sourceCodeInfo)).toThrow()
-    expect(() => assertNegativeNumber(undefined, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(-1, sourceCodeInfo, { negative: true })).not.toThrow()
+    expect(() => number.assert(-0.5, sourceCodeInfo, { negative: true })).not.toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert(0.5, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert(`1`, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert({}, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert(true, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert(null, sourceCodeInfo, { negative: true })).toThrow()
+    expect(() => number.assert(undefined, sourceCodeInfo, { negative: true })).toThrow()
   })
   test(`assertNonNegativeNumber`, () => {
-    expect(() => assertNonNegativeNumber(-1, sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber(-1.1, sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber(0, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonNegativeNumber(0.1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonNegativeNumber(1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonNegativeNumber(1.1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonNegativeNumber(`1`, sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber([], sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber({}, sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber(true, sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber(false, sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber(null, sourceCodeInfo)).toThrow()
-    expect(() => assertNonNegativeNumber(undefined, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(-1, sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert(-1.1, sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { nonNegative: true })).not.toThrow()
+    expect(() => number.assert(0.1, sourceCodeInfo, { nonNegative: true })).not.toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { nonNegative: true })).not.toThrow()
+    expect(() => number.assert(1.1, sourceCodeInfo, { nonNegative: true })).not.toThrow()
+    expect(() => number.assert(`1`, sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert({}, sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert(true, sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert(null, sourceCodeInfo, { nonNegative: true })).toThrow()
+    expect(() => number.assert(undefined, sourceCodeInfo, { nonNegative: true })).toThrow()
   })
   test(`assertNonPositiveNumber`, () => {
-    expect(() => assertNonPositiveNumber(-1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonPositiveNumber(-1.1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonPositiveNumber(0, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNonPositiveNumber(0.1, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber(1, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber(1.1, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber(`1`, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber([], sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber({}, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber(true, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber(false, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber(null, sourceCodeInfo)).toThrow()
-    expect(() => assertNonPositiveNumber(undefined, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(-1, sourceCodeInfo, { nonPositive: true })).not.toThrow()
+    expect(() => number.assert(-1.1, sourceCodeInfo, { nonPositive: true })).not.toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { nonPositive: true })).not.toThrow()
+    expect(() => number.assert(0.1, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert(1.1, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert(`1`, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert({}, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert(true, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert(null, sourceCodeInfo, { nonPositive: true })).toThrow()
+    expect(() => number.assert(undefined, sourceCodeInfo, { nonPositive: true })).toThrow()
   })
   test(`assertFiniteNumber`, () => {
-    expect(() => assertFiniteNumber(-1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertFiniteNumber(-1.1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertFiniteNumber(0, sourceCodeInfo)).not.toThrow()
-    expect(() => assertFiniteNumber(0.1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertFiniteNumber(1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertFiniteNumber(1.1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertFiniteNumber(Math.asin(2), sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber(1 / 0, sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber(`1`, sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber([], sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber({}, sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber(true, sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber(false, sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber(null, sourceCodeInfo)).toThrow()
-    expect(() => assertFiniteNumber(undefined, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(-1, sourceCodeInfo, { finite: true })).not.toThrow()
+    expect(() => number.assert(-1.1, sourceCodeInfo, { finite: true })).not.toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { finite: true })).not.toThrow()
+    expect(() => number.assert(0.1, sourceCodeInfo, { finite: true })).not.toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { finite: true })).not.toThrow()
+    expect(() => number.assert(1.1, sourceCodeInfo, { finite: true })).not.toThrow()
+    expect(() => number.assert(Math.asin(2), sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert(1 / 0, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert(`1`, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert({}, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert(true, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert(null, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.assert(undefined, sourceCodeInfo, { finite: true })).toThrow()
   })
   test(`asFiniteNumber`, () => {
-    expect(asFiniteNumber(-1, sourceCodeInfo)).toBe(-1)
-    expect(asFiniteNumber(-1.1, sourceCodeInfo)).toBe(-1.1)
-    expect(asFiniteNumber(0, sourceCodeInfo)).toBe(0)
-    expect(asFiniteNumber(0.1, sourceCodeInfo)).toBe(0.1)
-    expect(asFiniteNumber(1, sourceCodeInfo)).toBe(1)
-    expect(asFiniteNumber(1.1, sourceCodeInfo)).toBe(1.1)
-    expect(() => asFiniteNumber(Math.asin(2), sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber(1 / 0, sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber(`1`, sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber(`1`, sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber([], sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber({}, sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber(true, sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber(false, sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber(null, sourceCodeInfo)).toThrow()
-    expect(() => asFiniteNumber(undefined, sourceCodeInfo)).toThrow()
+    expect(number.as(-1, sourceCodeInfo, { finite: true })).toBe(-1)
+    expect(number.as(-1.1, sourceCodeInfo, { finite: true })).toBe(-1.1)
+    expect(number.as(0, sourceCodeInfo, { finite: true })).toBe(0)
+    expect(number.as(0.1, sourceCodeInfo, { finite: true })).toBe(0.1)
+    expect(number.as(1, sourceCodeInfo, { finite: true })).toBe(1)
+    expect(number.as(1.1, sourceCodeInfo, { finite: true })).toBe(1.1)
+    expect(() => number.as(Math.asin(2), sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as(1 / 0, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as(`1`, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as(`1`, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as([], sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as({}, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as(true, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as(false, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as(null, sourceCodeInfo, { finite: true })).toThrow()
+    expect(() => number.as(undefined, sourceCodeInfo, { finite: true })).toThrow()
   })
   test(`assertNumberGt`, () => {
-    expect(() => assertNumberGt(0, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGt(0.5, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGt(1, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGt(1.5, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberGt(2, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberGt(`2`, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGt([], 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGt(false, 1, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { gt: 1 })).toThrow()
+    expect(() => number.assert(0.5, sourceCodeInfo, { gt: 1 })).toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { gt: 1 })).toThrow()
+    expect(() => number.assert(1.5, sourceCodeInfo, { gt: 1 })).not.toThrow()
+    expect(() => number.assert(2, sourceCodeInfo, { gt: 1 })).not.toThrow()
+    expect(() => number.assert(`2`, sourceCodeInfo, { gt: 1 })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { gt: 1 })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { gt: 1 })).toThrow()
   })
   test(`assertNumberGte`, () => {
-    expect(() => assertNumberGte(0, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGte(0.5, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGte(1, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberGte(1.5, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberGte(2, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberGte(`2`, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGte([], 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberGte(false, 1, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { gte: 1 })).toThrow()
+    expect(() => number.assert(0.5, sourceCodeInfo, { gte: 1 })).toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { gte: 1 })).not.toThrow()
+    expect(() => number.assert(1.5, sourceCodeInfo, { gte: 1 })).not.toThrow()
+    expect(() => number.assert(2, sourceCodeInfo, { gte: 1 })).not.toThrow()
+    expect(() => number.assert(`2`, sourceCodeInfo, { gte: 1 })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { gte: 1 })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { gte: 1 })).toThrow()
   })
   test(`assertNumberLt`, () => {
-    expect(() => assertNumberLt(0, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberLt(0.5, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberLt(1, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLt(1.5, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLt(2, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLt(`2`, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLt([], 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLt(false, 1, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { lt: 1 })).not.toThrow()
+    expect(() => number.assert(0.5, sourceCodeInfo, { lt: 1 })).not.toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { lt: 1 })).toThrow()
+    expect(() => number.assert(1.5, sourceCodeInfo, { lt: 1 })).toThrow()
+    expect(() => number.assert(2, sourceCodeInfo, { lt: 1 })).toThrow()
+    expect(() => number.assert(`2`, sourceCodeInfo, { lt: 1 })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { lt: 1 })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { lt: 1 })).toThrow()
   })
   test(`assertNumberLte`, () => {
-    expect(() => assertNumberLte(0, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberLte(0.5, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberLte(1, 1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberLte(1.5, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLte(2, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLte(`2`, 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLte([], 1, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberLte(false, 1, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { lte: 1 })).not.toThrow()
+    expect(() => number.assert(0.5, sourceCodeInfo, { lte: 1 })).not.toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { lte: 1 })).not.toThrow()
+    expect(() => number.assert(1.5, sourceCodeInfo, { lte: 1 })).toThrow()
+    expect(() => number.assert(2, sourceCodeInfo, { lte: 1 })).toThrow()
+    expect(() => number.assert(`2`, sourceCodeInfo, { lte: 1 })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { lte: 1 })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { lte: 1 })).toThrow()
   })
   test(`assertNumberNotZero`, () => {
-    expect(() => assertNumberNotZero(-1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberNotZero(-0.5, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberNotZero(0, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberNotZero(0.5, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberNotZero(1, sourceCodeInfo)).not.toThrow()
-    expect(() => assertNumberNotZero(`1`, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberNotZero([], sourceCodeInfo)).toThrow()
-    expect(() => assertNumberNotZero({}, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberNotZero(true, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberNotZero(false, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberNotZero(null, sourceCodeInfo)).toThrow()
-    expect(() => assertNumberNotZero(undefined, sourceCodeInfo)).toThrow()
+    expect(() => number.assert(-1, sourceCodeInfo, { nonZero: true })).not.toThrow()
+    expect(() => number.assert(-0.5, sourceCodeInfo, { nonZero: true })).not.toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { nonZero: true })).toThrow()
+    expect(() => number.assert(0.5, sourceCodeInfo, { nonZero: true })).not.toThrow()
+    expect(() => number.assert(1, sourceCodeInfo, { nonZero: true })).not.toThrow()
+    expect(() => number.assert(`1`, sourceCodeInfo, { nonZero: true })).toThrow()
+    expect(() => number.assert([], sourceCodeInfo, { nonZero: true })).toThrow()
+    expect(() => number.assert({}, sourceCodeInfo, { nonZero: true })).toThrow()
+    expect(() => number.assert(true, sourceCodeInfo, { nonZero: true })).toThrow()
+    expect(() => number.assert(false, sourceCodeInfo, { nonZero: true })).toThrow()
+    expect(() => number.assert(null, sourceCodeInfo, { nonZero: true })).toThrow()
+    expect(() => number.assert(undefined, sourceCodeInfo, { nonZero: true })).toThrow()
   })
   test(`assertString`, () => {
     expect(() => assertString(``, sourceCodeInfo)).not.toThrow()
@@ -673,11 +659,11 @@ describe(`utils`, () => {
     expect(toNonNegativeInteger(4.0)).toBe(4)
   })
   test(`assertMax`, () => {
-    expect(() => assertMax(12, 10, sourceCodeInfo)).toThrow()
-    expect(() => assertMax(-12, -10, sourceCodeInfo)).not.toThrow()
-    expect(() => assertMax(-8, -10, sourceCodeInfo)).toThrow()
-    expect(() => assertMax(10, 10, sourceCodeInfo)).not.toThrow()
-    expect(() => assertMax(0, 10, sourceCodeInfo)).not.toThrow()
+    expect(() => number.assert(12, sourceCodeInfo, { lte: 10 })).toThrow()
+    expect(() => number.assert(-12, sourceCodeInfo, { lte: -10 })).not.toThrow()
+    expect(() => number.assert(-8, sourceCodeInfo, { lte: -10 })).toThrow()
+    expect(() => number.assert(10, sourceCodeInfo, { lte: 10 })).not.toThrow()
+    expect(() => number.assert(0, sourceCodeInfo, { lte: 10 })).not.toThrow()
   })
   test(`assertChar`, () => {
     expect(() => assertChar(`2`, sourceCodeInfo)).not.toThrow()

@@ -121,18 +121,25 @@ var Lits = (function (exports) {
         }
         return UnexpectedTokenError;
     }(Error));
-    var UnexpectedNodeTypeError = /** @class */ (function (_super) {
-        __extends(UnexpectedNodeTypeError, _super);
-        function UnexpectedNodeTypeError(expectedNodeType, actualNode, sourceCodeInfo) {
-            var _this = _super.call(this, "Expected a " + expectedNodeType + " node, got " + (actualNode ? "a " + actualNode.type + " node" : "undefined") + " " + sourceCodeInfo) || this;
-            _this.line = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.line;
-            _this.column = sourceCodeInfo === "EOF" ? null : sourceCodeInfo.column;
-            Object.setPrototypeOf(_this, UnexpectedNodeTypeError.prototype);
-            _this.name = "UnexpectedNodeTypeError";
-            return _this;
-        }
-        return UnexpectedNodeTypeError;
-    }(Error));
+    // export class UnexpectedNodeTypeError extends Error {
+    //   public line: number | null
+    //   public column: number | null
+    //   constructor(
+    //     expectedNodeType: NodeType | `ExpressionNode`,
+    //     actualNode: AstNode | undefined,
+    //     sourceCodeInfo: SourceCodeInfo,
+    //   ) {
+    //     super(
+    //       `Expected a ${expectedNodeType} node, got ${
+    //         actualNode ? `a ${actualNode.type} node` : `undefined`
+    //       } ${sourceCodeInfo}`,
+    //     )
+    //     this.line = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.line
+    //     this.column = sourceCodeInfo === `EOF` ? null : sourceCodeInfo.column
+    //     Object.setPrototypeOf(this, UnexpectedNodeTypeError.prototype)
+    //     this.name = `UnexpectedNodeTypeError`
+    //   }
+    // }
     var UndefinedSymbolError = /** @class */ (function (_super) {
         __extends(UndefinedSymbolError, _super);
         function UndefinedSymbolError(symbolName, sourceCodeInfo) {
@@ -148,11 +155,85 @@ var Lits = (function (exports) {
 
     var FUNCTION_SYMBOL = Symbol("function");
 
-    function getNumberTypeName(options) {
-        if (options.integer) {
-            return "integer";
+    var astTypes = {
+        Number: true,
+        String: true,
+        NormalExpression: true,
+        SpecialExpression: true,
+        Name: true,
+        Modifier: true,
+        ReservedName: true,
+        Binding: true,
+        Argument: true,
+        Partial: true,
+    };
+    function isAstNode(value) {
+        if (value === null || typeof value !== "object") {
+            return false;
         }
-        return "number";
+        if (!value.token) {
+            return false;
+        }
+        if (!astTypes[value.type]) {
+            return false;
+        }
+        return true;
+    }
+    // function assert(
+    //   value: unknown,
+    //   sourceCodeInfo: SourceCodeInfo,
+    //   options: AstNodeOptions = {},
+    // ): asserts value is AstNode {
+    //   if (!is(value, options)) {
+    //     throw new LitsError(`Expected AstNode${options.type ? ` (${options.type})` : ``}, got ${value}`, sourceCodeInfo)
+    //   }
+    // }
+    // function as(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): number {
+    //   assert(value, sourceCodeInfo, options)
+    //   return value
+    // }
+    // export const number: {
+    //   is: (value: unknown, options?: NumberOptions) => value is number
+    //   as: (value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions) => number
+    //   assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions): asserts value is number
+    // } = {
+    //   is,
+    //   as,
+    //   assert,
+    // }
+
+    function getRangeString(options) {
+        if ((typeof options.gt === "number" || typeof options.gte === "number") &&
+            (typeof options.lt === "number" || typeof options.lte === "number")) {
+            return "" + (typeof options.gt === "number" ? options.gt + " < n " : options.gte + " <= n ") + (typeof options.lt === "number" ? "< " + options.lt : "<= " + options.lte);
+        }
+        if (typeof options.gt === "number" || typeof options.gte === "number") {
+            return "" + (typeof options.gt === "number" ? "n > " + options.gt : "n >= " + options.gte);
+        }
+        if (typeof options.lt === "number" || typeof options.lte === "number") {
+            return "" + (typeof options.lt === "number" ? "n < " + options.lt : "n <= " + options.lte);
+        }
+        return "";
+    }
+    function getNumberTypeName(options) {
+        if (options.zero) {
+            return "zero";
+        }
+        var sign = options.positive
+            ? "positive"
+            : options.negative
+                ? "negative"
+                : options.nonNegative
+                    ? "non negative"
+                    : options.nonPositive
+                        ? "non positive"
+                        : options.nonZero
+                            ? "non zero"
+                            : "";
+        var numberType = options.integer ? "integer" : "number";
+        var finite = options.finite ? "finite" : "";
+        var range = getRangeString(options);
+        return [sign, finite, numberType, range].filter(function (x) { return !!x; }).join(" ");
     }
     function is(value, options) {
         if (options === void 0) { options = {}; }
@@ -160,6 +241,39 @@ var Lits = (function (exports) {
             return false;
         }
         if (options.integer && !Number.isInteger(value)) {
+            return false;
+        }
+        if (options.finite && !Number.isFinite(value)) {
+            return false;
+        }
+        if (options.zero && value !== 0) {
+            return false;
+        }
+        if (options.nonZero && value === 0) {
+            return false;
+        }
+        if (options.positive && value <= 0) {
+            return false;
+        }
+        if (options.negative && value >= 0) {
+            return false;
+        }
+        if (options.nonPositive && value > 0) {
+            return false;
+        }
+        if (options.nonNegative && value < 0) {
+            return false;
+        }
+        if (typeof options.gt === "number" && value <= options.gt) {
+            return false;
+        }
+        if (typeof options.gte === "number" && value < options.gte) {
+            return false;
+        }
+        if (typeof options.lt === "number" && value >= options.lt) {
+            return false;
+        }
+        if (typeof options.lte === "number" && value > options.lte) {
             return false;
         }
         return true;
@@ -222,16 +336,15 @@ var Lits = (function (exports) {
     });
     var collection = new Asserter("Coll", function (value) { return sequence.is(value) || object.is(value); });
     var array = new Asserter("Arr", function (value) { return Array.isArray(value); });
-
-    function asNameNode(node, sourceCodeInfo) {
-        assertNameNode(node, sourceCodeInfo);
-        return node;
-    }
-    function assertNameNode(node, sourceCodeInfo) {
-        if (node === undefined || node.type !== "Name") {
-            throw new UnexpectedNodeTypeError("Name", node, sourceCodeInfo);
+    new Asserter("AstNode", isAstNode);
+    var nameNode = new Asserter("NameNode", function (value) {
+        if (!isAstNode(value)) {
+            return false;
         }
-    }
+        var nodeType = "Name";
+        return value.type === nodeType;
+    });
+
     function asNotUndefined(value, sourceCodeInfo) {
         if (value === undefined) {
             throw new LitsError("Unexpected nil", sourceCodeInfo);
@@ -241,45 +354,6 @@ var Lits = (function (exports) {
     function assertNotUndefined(value, sourceCodeInfo) {
         if (value === undefined) {
             throw new LitsError("Unexpected nil", sourceCodeInfo);
-        }
-    }
-    function assertFiniteNumber(value, sourceCodeInfo) {
-        if (typeof value !== "number" || !isFinite(value)) {
-            throw new LitsError("Expected number, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-    }
-    function assertPositiveNumber(value, sourceCodeInfo) {
-        assertFiniteNumber(value, sourceCodeInfo);
-        if (value <= 0) {
-            throw new LitsError("Expected positive number, got " + value, sourceCodeInfo);
-        }
-    }
-    function assertNegativeNumber(value, sourceCodeInfo) {
-        assertFiniteNumber(value, sourceCodeInfo);
-        if (value >= 0) {
-            throw new LitsError("Expected negative number, got " + value, sourceCodeInfo);
-        }
-    }
-    function assertNonNegativeNumber(value, sourceCodeInfo) {
-        assertFiniteNumber(value, sourceCodeInfo);
-        if (value < 0) {
-            throw new LitsError("Expected non negative number, got " + value, sourceCodeInfo);
-        }
-    }
-    function assertNonNegativeInteger(value, sourceCodeInfo) {
-        assertNonNegativeNumber(value, sourceCodeInfo);
-        number.assert(value, sourceCodeInfo, { integer: true });
-    }
-    function assertNumberGte(value, x, sourceCodeInfo) {
-        assertFiniteNumber(value, sourceCodeInfo);
-        if (value < x) {
-            throw new LitsError("Expected parameter (" + value + ") to be a number equal or grater than " + x, sourceCodeInfo);
-        }
-    }
-    function assertNumberLte(value, x, sourceCodeInfo) {
-        assertFiniteNumber(value, sourceCodeInfo);
-        if (value > x) {
-            throw new LitsError("Expected parameter (" + value + ") to be a number equal or less than " + x, sourceCodeInfo);
         }
     }
     function isString(value) {
@@ -325,12 +399,6 @@ var Lits = (function (exports) {
     function assertRegExp(value, sourceCodeInfo) {
         if (!(value instanceof RegExp)) {
             throw new LitsError("Expected RegExp, got: " + value + " type=\"" + typeof value + "\"", sourceCodeInfo);
-        }
-    }
-    function assertNumberNotZero(value, sourceCodeInfo) {
-        assertFiniteNumber(value, sourceCodeInfo);
-        if (value === 0) {
-            throw new LitsError("Expected non zero value", sourceCodeInfo);
         }
     }
     function assertLength(count, node) {
@@ -520,11 +588,6 @@ var Lits = (function (exports) {
     function toNonNegativeInteger(number) {
         return Math.max(0, Math.ceil(number));
     }
-    function assertMax(value, maxNumber, sourceCodeInfo) {
-        if (value > maxNumber) {
-            throw new LitsError("Expected number less than or equal to " + maxNumber + "'", sourceCodeInfo);
-        }
-    }
     function toAny(value) {
         return (value !== null && value !== void 0 ? value : null);
     }
@@ -664,8 +727,8 @@ var Lits = (function (exports) {
             var functionName = undefined;
             if (expressionName === "defn" || expressionName === "defns") {
                 _a = parseToken(tokens, position), position = _a[0], functionName = _a[1];
-                if (expressionName === "defn" && functionName.type !== "Name") {
-                    throw new UnexpectedNodeTypeError("Name", functionName, functionName.token.sourceCodeInfo);
+                if (expressionName === "defn") {
+                    nameNode.assert(functionName, functionName.token.sourceCodeInfo);
                 }
             }
             var functionOverloades;
@@ -922,7 +985,7 @@ var Lits = (function (exports) {
             var parseTokens = _a.parseTokens;
             var firstToken = asNotUndefined(tokens[position], "EOF");
             var _b = parseTokens(tokens, position), newPosition = _b[0], params = _b[1];
-            assertNameNode(params[0], firstToken.sourceCodeInfo);
+            nameNode.assert(params[0], firstToken.sourceCodeInfo);
             return [
                 newPosition + 1,
                 {
@@ -936,7 +999,7 @@ var Lits = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
             var sourceCodeInfo = node.token.sourceCodeInfo;
-            var name = asNameNode(node.params[0], sourceCodeInfo).value;
+            var name = nameNode.as(node.params[0], sourceCodeInfo).value;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
             var value = evaluateAstNode(asNotUndefined(node.params[1], sourceCodeInfo), contextStack);
             contextStack.globalContext[name] = { value: value };
@@ -1490,9 +1553,7 @@ var Lits = (function (exports) {
             position += 1;
             var error;
             _c = parseToken(tokens, position), position = _c[0], error = _c[1];
-            if (error.type !== "Name") {
-                throw new UnexpectedNodeTypeError("Name", error, error.token.sourceCodeInfo);
-            }
+            nameNode.assert(error, error.token.sourceCodeInfo);
             token = asNotUndefined(tokens[position], "EOF");
             if (!(token.type === "paren" && token.value === ")")) {
                 throw new UnexpectedTokenError(")", token);
@@ -1685,7 +1746,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], count = _a[1];
                 number.assert(num, sourceCodeInfo, { integer: true });
-                assertNonNegativeInteger(count, sourceCodeInfo);
+                number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num << count;
             },
             validate: function (node) { return assertLength(2, node); },
@@ -1694,7 +1755,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], count = _a[1];
                 number.assert(num, sourceCodeInfo, { integer: true });
-                assertNonNegativeInteger(count, sourceCodeInfo);
+                number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num >> count;
             },
             validate: function (node) { return assertLength(2, node); },
@@ -1755,7 +1816,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
                 number.assert(num, sourceCodeInfo, { integer: true });
-                assertNonNegativeInteger(index, sourceCodeInfo);
+                number.assert(index, sourceCodeInfo, { integer: true, nonNegative: true });
                 var mask = 1 << index;
                 return (num ^= mask);
             },
@@ -1765,7 +1826,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
                 number.assert(num, sourceCodeInfo, { integer: true });
-                assertNonNegativeInteger(index, sourceCodeInfo);
+                number.assert(index, sourceCodeInfo, { integer: true, nonNegative: true });
                 var mask = 1 << index;
                 return (num |= mask);
             },
@@ -1775,7 +1836,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
                 number.assert(num, sourceCodeInfo, { integer: true });
-                assertNonNegativeInteger(index, sourceCodeInfo);
+                number.assert(index, sourceCodeInfo, { integer: true, nonNegative: true });
                 var mask = 1 << index;
                 return (num &= ~mask);
             },
@@ -1785,7 +1846,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var num = _a[0], index = _a[1];
                 number.assert(num, sourceCodeInfo, { integer: true });
-                assertNonNegativeInteger(index, sourceCodeInfo);
+                number.assert(index, sourceCodeInfo, { integer: true, nonNegative: true });
                 var mask = 1 << index;
                 return !!(num & mask);
             },
@@ -1847,7 +1908,7 @@ var Lits = (function (exports) {
         else {
             number.assert(key, sourceCodeInfo);
             var intKey_1 = toNonNegativeInteger(key);
-            assertMax(intKey_1, coll.length, sourceCodeInfo);
+            number.assert(intKey_1, sourceCodeInfo, { lte: coll.length });
             if (Array.isArray(coll)) {
                 var result = coll.map(function (elem, index) {
                     if (intKey_1 === index) {
@@ -1879,8 +1940,8 @@ var Lits = (function (exports) {
         stringOrNumber.assert(key, sourceCodeInfo);
         if (Array.isArray(coll) || typeof coll === "string") {
             number.assert(key, sourceCodeInfo, { integer: true });
-            assertNumberGte(key, 0, sourceCodeInfo);
-            assertNumberLte(key, coll.length, sourceCodeInfo);
+            number.assert(key, sourceCodeInfo, { gte: 0 });
+            number.assert(key, sourceCodeInfo, { lte: coll.length });
             if (typeof coll === "string") {
                 assertChar(value, sourceCodeInfo);
                 return "" + coll.slice(0, key) + value + coll.slice(key + 1);
@@ -2517,7 +2578,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], count = _a[1];
                 sequence.assert(seq, sourceCodeInfo);
-                assertFiniteNumber(count, sourceCodeInfo);
+                number.assert(count, sourceCodeInfo, { finite: true });
                 var integerCount = Math.max(Math.ceil(count), 0);
                 if (Array.isArray(seq)) {
                     return seq.slice(integerCount);
@@ -2547,7 +2608,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var seq = _a[0], count = _a[1];
                 sequence.assert(seq, sourceCodeInfo);
-                assertFiniteNumber(count, sourceCodeInfo);
+                number.assert(count, sourceCodeInfo, { finite: true });
                 var integerCount = Math.max(Math.ceil(count), 0);
                 if (seq.length <= count) {
                     return null;
@@ -2640,7 +2701,7 @@ var Lits = (function (exports) {
                         litsFunction.assert(comparer, sourceCodeInfo);
                         result_1.sort(function (a, b) {
                             var compareValue = executeFunction(comparer, [a, b], sourceCodeInfo, contextStack);
-                            assertFiniteNumber(compareValue, sourceCodeInfo);
+                            number.assert(compareValue, sourceCodeInfo, { finite: true });
                             return compareValue;
                         });
                     }
@@ -2654,7 +2715,7 @@ var Lits = (function (exports) {
                     result.sort(function (a, b) {
                         litsFunction.assert(comparer, sourceCodeInfo);
                         var compareValue = executeFunction(comparer, [a, b], sourceCodeInfo, contextStack);
-                        assertFiniteNumber(compareValue, sourceCodeInfo);
+                        number.assert(compareValue, sourceCodeInfo, { finite: true });
                         return compareValue;
                     });
                 }
@@ -2684,7 +2745,7 @@ var Lits = (function (exports) {
                             var aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack);
                             var bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack);
                             var compareValue = executeFunction(comparer, [aKey, bKey], sourceCodeInfo, contextStack);
-                            assertFiniteNumber(compareValue, sourceCodeInfo);
+                            number.assert(compareValue, sourceCodeInfo, { finite: true });
                             return compareValue;
                         });
                     }
@@ -2704,7 +2765,7 @@ var Lits = (function (exports) {
                         var aKey = executeFunction(keyfn, [a], sourceCodeInfo, contextStack);
                         var bKey = executeFunction(keyfn, [b], sourceCodeInfo, contextStack);
                         var compareValue = executeFunction(comparer, [aKey, bKey], sourceCodeInfo, contextStack);
-                        assertFiniteNumber(compareValue, sourceCodeInfo);
+                        number.assert(compareValue, sourceCodeInfo, { finite: true });
                         return compareValue;
                     });
                 }
@@ -2807,7 +2868,7 @@ var Lits = (function (exports) {
         'random-sample!': {
             evaluate: function (_a, sourceCodeInfo) {
                 var prob = _a[0], seq = _a[1];
-                assertFiniteNumber(prob, sourceCodeInfo);
+                number.assert(prob, sourceCodeInfo, { finite: true });
                 sequence.assert(seq, sourceCodeInfo);
                 if (isString(seq)) {
                     return seq
@@ -2906,7 +2967,7 @@ var Lits = (function (exports) {
         'split-at': {
             evaluate: function (_a, sourceCodeInfo) {
                 var pos = _a[0], seq = _a[1];
-                assertFiniteNumber(pos, sourceCodeInfo);
+                number.assert(pos, sourceCodeInfo, { finite: true });
                 var intPos = toNonNegativeInteger(pos);
                 sequence.assert(seq, sourceCodeInfo);
                 return [seq.slice(0, intPos), seq.slice(intPos)];
@@ -3014,7 +3075,7 @@ var Lits = (function (exports) {
         },
     };
     function partition(n, step, seq, pad, sourceCodeInfo) {
-        assertPositiveNumber(step, sourceCodeInfo);
+        number.assert(step, sourceCodeInfo, { positive: true });
         var isStringSeq = isString(seq);
         var result = [];
         var start = 0;
@@ -3052,32 +3113,32 @@ var Lits = (function (exports) {
                 var from;
                 var to;
                 var step;
-                assertFiniteNumber(first, sourceCodeInfo);
+                number.assert(first, sourceCodeInfo, { finite: true });
                 if (params.length === 1) {
                     from = 0;
                     to = first;
                     step = to >= 0 ? 1 : -1;
                 }
                 else if (params.length === 2) {
-                    assertFiniteNumber(second, sourceCodeInfo);
+                    number.assert(second, sourceCodeInfo, { finite: true });
                     from = first;
                     to = second;
                     step = to >= from ? 1 : -1;
                 }
                 else {
-                    assertFiniteNumber(second, sourceCodeInfo);
-                    assertFiniteNumber(third, sourceCodeInfo);
+                    number.assert(second, sourceCodeInfo, { finite: true });
+                    number.assert(third, sourceCodeInfo, { finite: true });
                     from = first;
                     to = second;
                     step = third;
                     if (to > from) {
-                        assertPositiveNumber(step, sourceCodeInfo);
+                        number.assert(step, sourceCodeInfo, { positive: true });
                     }
                     else if (to < from) {
-                        assertNegativeNumber(step, sourceCodeInfo);
+                        number.assert(step, sourceCodeInfo, { negative: true });
                     }
                     else {
-                        assertNumberNotZero(step, sourceCodeInfo);
+                        number.assert(step, sourceCodeInfo, { nonZero: true });
                     }
                 }
                 var result = [];
@@ -3091,7 +3152,7 @@ var Lits = (function (exports) {
         repeat: {
             evaluate: function (_a, sourceCodeInfo) {
                 var count = _a[0], value = _a[1];
-                assertNonNegativeInteger(count, sourceCodeInfo);
+                number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 var result = [];
                 for (var i = 0; i < count; i += 1) {
                     result.push(value);
@@ -3251,7 +3312,7 @@ var Lits = (function (exports) {
                 if (params.length === 1 || decimals === 0) {
                     return Math.round(value);
                 }
-                assertNonNegativeInteger(decimals, sourceCodeInfo);
+                number.assert(decimals, sourceCodeInfo, { integer: true, nonNegative: true });
                 var factor = Math.pow(10, decimals);
                 return Math.round(value * factor) / factor;
             },
@@ -3903,7 +3964,7 @@ var Lits = (function (exports) {
         'zero?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, sourceCodeInfo);
+                number.assert(first, sourceCodeInfo, { finite: true });
                 return first === 0;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3911,7 +3972,7 @@ var Lits = (function (exports) {
         'pos?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, sourceCodeInfo);
+                number.assert(first, sourceCodeInfo, { finite: true });
                 return first > 0;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3919,7 +3980,7 @@ var Lits = (function (exports) {
         'neg?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, sourceCodeInfo);
+                number.assert(first, sourceCodeInfo, { finite: true });
                 return first < 0;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3927,7 +3988,7 @@ var Lits = (function (exports) {
         'even?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, sourceCodeInfo);
+                number.assert(first, sourceCodeInfo, { finite: true });
                 return first % 2 === 0;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -3935,7 +3996,7 @@ var Lits = (function (exports) {
         'odd?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0];
-                assertFiniteNumber(first, sourceCodeInfo);
+                number.assert(first, sourceCodeInfo, { finite: true });
                 return number.is(first, { integer: true }) && first % 2 !== 0;
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4066,11 +4127,11 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var first = _a[0], second = _a[1], third = _a[2];
                 assertString(first, sourceCodeInfo);
-                assertNonNegativeInteger(second, sourceCodeInfo);
+                number.assert(second, sourceCodeInfo, { integer: true, nonNegative: true });
                 if (third === undefined) {
                     return first.substring(second);
                 }
-                assertNumberGte(third, second, sourceCodeInfo);
+                number.assert(third, sourceCodeInfo, { gte: second });
                 return first.substring(second, third);
             },
             validate: function (node) { return assertLength({ min: 2, max: 3 }, node); },
@@ -4079,7 +4140,7 @@ var Lits = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var string = _a[0], count = _a[1];
                 assertString(string, sourceCodeInfo);
-                assertNonNegativeInteger(count, sourceCodeInfo);
+                number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return string.repeat(count);
             },
             validate: function (node) { return assertLength(2, node); },
@@ -4112,30 +4173,30 @@ var Lits = (function (exports) {
         },
         'number-to-string': {
             evaluate: function (params, sourceCodeInfo) {
-                var number = params[0], base = params[1];
-                assertFiniteNumber(number, sourceCodeInfo);
+                var num = params[0], base = params[1];
+                number.assert(num, sourceCodeInfo, { finite: true });
                 if (params.length === 1) {
-                    return "" + number;
+                    return "" + num;
                 }
                 else {
-                    assertFiniteNumber(base, sourceCodeInfo);
+                    number.assert(base, sourceCodeInfo, { finite: true });
                     if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
                         throw new LitsError("Expected \"number-to-string\" base argument to be 2, 8, 10 or 16, got: " + base, sourceCodeInfo);
                     }
                     if (base === 10) {
-                        return "" + number;
+                        return "" + num;
                     }
-                    assertNonNegativeInteger(number, sourceCodeInfo);
-                    return Number(number).toString(base);
+                    number.assert(num, sourceCodeInfo, { integer: true, nonNegative: true });
+                    return Number(num).toString(base);
                 }
             },
             validate: function (node) { return assertLength({ min: 1, max: 2 }, node); },
         },
         'from-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
-                var number = _a[0];
-                assertFiniteNumber(number, sourceCodeInfo);
-                var int = toNonNegativeInteger(number);
+                var num = _a[0];
+                number.assert(num, sourceCodeInfo, { finite: true });
+                var int = toNonNegativeInteger(num);
                 return String.fromCodePoint(int);
             },
             validate: function (node) { return assertLength(1, node); },
@@ -4204,7 +4265,7 @@ var Lits = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 assertStringOrRegExp(delimiter, sourceCodeInfo);
                 if (limit !== undefined) {
-                    assertNonNegativeInteger(limit, sourceCodeInfo);
+                    number.assert(limit, sourceCodeInfo, { integer: true, nonNegative: true });
                 }
                 return str.split(delimiter, limit);
             },
@@ -4245,7 +4306,7 @@ var Lits = (function (exports) {
                 }
                 else if (templateStrings.length === 2) {
                     var firstPlaceholder = placeholders[0];
-                    assertNonNegativeInteger(firstPlaceholder, sourceCodeInfo);
+                    number.assert(firstPlaceholder, sourceCodeInfo, { integer: true, nonNegative: true });
                     var stringPlaceholders = __spreadArray(["" + firstPlaceholder], placeholders.slice(1));
                     if (firstPlaceholder === 1) {
                         return applyPlaceholders(templateStrings[0], stringPlaceholders, sourceCodeInfo);
@@ -4694,7 +4755,7 @@ var Lits = (function (exports) {
             throw new LitsError("Array as function requires one non negative integer parameter", sourceCodeInfo);
         }
         var index = params[0];
-        assertNonNegativeInteger(index, sourceCodeInfo);
+        number.assert(index, sourceCodeInfo, { integer: true, nonNegative: true });
         return toAny(fn[index]);
     }
     function evaluateStringAsFunction(fn, params, sourceCodeInfo) {
@@ -4929,7 +4990,7 @@ var Lits = (function (exports) {
             };
             return [position, node_1];
         }
-        assertNameNode(fnNode, fnNode.token.sourceCodeInfo);
+        nameNode.assert(fnNode, fnNode.token.sourceCodeInfo);
         var node = {
             type: "NormalExpression",
             name: fnNode.value,

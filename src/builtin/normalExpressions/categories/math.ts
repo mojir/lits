@@ -1,5 +1,5 @@
 import { NormalExpressionNode } from '../../../parser/interface'
-import { assertLength, assertNonNegativeInteger } from '../../../utils'
+import { assertLength } from '../../../utils'
 import { number } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -134,7 +134,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       if (params.length === 1 || decimals === 0) {
         return Math.round(value)
       }
-      assertNonNegativeInteger(decimals, sourceCodeInfo)
+      number.assert(decimals, sourceCodeInfo, { integer: true, nonNegative: true })
       const factor = Math.pow(10, decimals)
       return Math.round(value * factor) / factor
     },

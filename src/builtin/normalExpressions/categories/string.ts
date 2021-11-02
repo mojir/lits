@@ -4,9 +4,6 @@ import { NormalExpressionNode } from '../../../parser/interface'
 import { SourceCodeInfo } from '../../../tokenizer/interface'
 import {
   assertLength,
-  assertNonNegativeInteger,
-  assertFiniteNumber,
-  assertNumberGte,
   assertString,
   assertStringOrRegExp,
   assertStringArray,
@@ -21,13 +18,13 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   subs: {
     evaluate: ([first, second, third], sourceCodeInfo): Any => {
       assertString(first, sourceCodeInfo)
-      assertNonNegativeInteger(second, sourceCodeInfo)
+      number.assert(second, sourceCodeInfo, { integer: true, nonNegative: true })
 
       if (third === undefined) {
         return (first as string).substring(second)
       }
 
-      assertNumberGte(third, second, sourceCodeInfo)
+      number.assert(third, sourceCodeInfo, { gte: second })
       return (first as string).substring(second, third)
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 2, max: 3 }, node),
@@ -36,7 +33,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'string-repeat': {
     evaluate: ([string, count], sourceCodeInfo): string => {
       assertString(string, sourceCodeInfo)
-      assertNonNegativeInteger(count, sourceCodeInfo)
+      number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true })
 
       return string.repeat(count)
     },
@@ -73,12 +70,12 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 
   'number-to-string': {
     evaluate: (params, sourceCodeInfo): string => {
-      const [number, base] = params
-      assertFiniteNumber(number, sourceCodeInfo)
+      const [num, base] = params
+      number.assert(num, sourceCodeInfo, { finite: true })
       if (params.length === 1) {
-        return `${number}`
+        return `${num}`
       } else {
-        assertFiniteNumber(base, sourceCodeInfo)
+        number.assert(base, sourceCodeInfo, { finite: true })
         if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
           throw new LitsError(
             `Expected "number-to-string" base argument to be 2, 8, 10 or 16, got: ${base}`,
@@ -86,19 +83,19 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
           )
         }
         if (base === 10) {
-          return `${number}`
+          return `${num}`
         }
-        assertNonNegativeInteger(number, sourceCodeInfo)
-        return Number(number).toString(base)
+        number.assert(num, sourceCodeInfo, { integer: true, nonNegative: true })
+        return Number(num).toString(base)
       }
     },
     validate: (node: NormalExpressionNode): void => assertLength({ min: 1, max: 2 }, node),
   },
 
   'from-char-code': {
-    evaluate: ([number], sourceCodeInfo): string => {
-      assertFiniteNumber(number, sourceCodeInfo)
-      const int = toNonNegativeInteger(number)
+    evaluate: ([num], sourceCodeInfo): string => {
+      number.assert(num, sourceCodeInfo, { finite: true })
+      const int = toNonNegativeInteger(num)
 
       return String.fromCodePoint(int)
     },
@@ -168,7 +165,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       assertString(str, sourceCodeInfo)
       assertStringOrRegExp(delimiter, sourceCodeInfo)
       if (limit !== undefined) {
-        assertNonNegativeInteger(limit, sourceCodeInfo)
+        number.assert(limit, sourceCodeInfo, { integer: true, nonNegative: true })
       }
       return str.split(delimiter, limit)
     },
@@ -212,7 +209,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
         return applyPlaceholders(templateStrings[0] as string, placeholders, sourceCodeInfo)
       } else if (templateStrings.length === 2) {
         const firstPlaceholder = placeholders[0]
-        assertNonNegativeInteger(firstPlaceholder, sourceCodeInfo)
+        number.assert(firstPlaceholder, sourceCodeInfo, { integer: true, nonNegative: true })
         const stringPlaceholders = [`${firstPlaceholder}`, ...placeholders.slice(1)] as string[]
         if (firstPlaceholder === 1) {
           return applyPlaceholders(templateStrings[0] as string, stringPlaceholders, sourceCodeInfo)

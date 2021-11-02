@@ -1,4 +1,4 @@
-import { LitsError, UnexpectedNodeTypeError, UnexpectedTokenError } from '../../errors'
+import { LitsError, UnexpectedTokenError } from '../../errors'
 import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interface'
 import {
   AstNode,
@@ -11,6 +11,7 @@ import {
 } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
 import { asNotUndefined, assertString } from '../../utils'
+import { nameNode } from '../../utils/assertion'
 import { BuiltinSpecialExpression, Parsers } from '../interface'
 import { Arity, assertNameNotDefined, FunctionArguments, FunctionOverload } from '../utils'
 
@@ -42,8 +43,8 @@ function createParser(expressionName: ExpressionsName): BuiltinSpecialExpression
     let functionName = undefined
     if (expressionName === `defn` || expressionName === `defns`) {
       ;[position, functionName] = parseToken(tokens, position)
-      if (expressionName === `defn` && functionName.type !== `Name`) {
-        throw new UnexpectedNodeTypeError(`Name`, functionName, functionName.token.sourceCodeInfo)
+      if (expressionName === `defn`) {
+        nameNode.assert(functionName, functionName.token.sourceCodeInfo)
       }
     }
 

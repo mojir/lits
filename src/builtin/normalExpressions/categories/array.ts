@@ -1,13 +1,6 @@
 import { Arr } from '../../../interface'
-import {
-  assertLength,
-  assertNegativeNumber,
-  assertNonNegativeInteger,
-  assertFiniteNumber,
-  assertNumberNotZero,
-  assertPositiveNumber,
-} from '../../../utils'
-import { array } from '../../../utils/assertion'
+import { assertLength } from '../../../utils'
+import { array, number } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 import { evaluateMap } from './sequence'
 export const arrayNormalExpression: BuiltinNormalExpressions = {
@@ -21,29 +14,29 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       let from: number
       let to: number
       let step: number
-      assertFiniteNumber(first, sourceCodeInfo)
+      number.assert(first, sourceCodeInfo, { finite: true })
 
       if (params.length === 1) {
         from = 0
         to = first
         step = to >= 0 ? 1 : -1
       } else if (params.length === 2) {
-        assertFiniteNumber(second, sourceCodeInfo)
+        number.assert(second, sourceCodeInfo, { finite: true })
         from = first
         to = second
         step = to >= from ? 1 : -1
       } else {
-        assertFiniteNumber(second, sourceCodeInfo)
-        assertFiniteNumber(third, sourceCodeInfo)
+        number.assert(second, sourceCodeInfo, { finite: true })
+        number.assert(third, sourceCodeInfo, { finite: true })
         from = first
         to = second
         step = third
         if (to > from) {
-          assertPositiveNumber(step, sourceCodeInfo)
+          number.assert(step, sourceCodeInfo, { positive: true })
         } else if (to < from) {
-          assertNegativeNumber(step, sourceCodeInfo)
+          number.assert(step, sourceCodeInfo, { negative: true })
         } else {
-          assertNumberNotZero(step, sourceCodeInfo)
+          number.assert(step, sourceCodeInfo, { nonZero: true })
         }
       }
 
@@ -60,7 +53,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
   repeat: {
     evaluate: ([count, value], sourceCodeInfo): Arr => {
-      assertNonNegativeInteger(count, sourceCodeInfo)
+      number.assert(count, sourceCodeInfo, { integer: true, nonNegative: true })
       const result: Arr = []
       for (let i = 0; i < count; i += 1) {
         result.push(value)

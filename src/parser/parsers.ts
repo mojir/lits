@@ -1,5 +1,5 @@
 import { Token } from '../tokenizer/interface'
-import { asNotUndefined, assertLengthEven, assertNameNode, assertNotUndefined, isExpressionNode } from '../utils'
+import { asNotUndefined, assertLengthEven, assertNotUndefined, isExpressionNode } from '../utils'
 import {
   AstNode,
   NormalExpressionNode,
@@ -24,6 +24,7 @@ import { ReservedName } from '../reservedNames'
 import { LitsError, UnexpectedTokenError } from '../errors'
 import { FnSpecialExpressionNode } from '../builtin/specialExpressions/functions'
 import { FunctionArguments } from '../builtin/utils'
+import { nameNode } from '../utils/assertion'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
@@ -274,7 +275,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
     return [position, node]
   }
 
-  assertNameNode(fnNode, fnNode.token.sourceCodeInfo)
+  nameNode.assert(fnNode, fnNode.token.sourceCodeInfo)
   const node: NormalExpressionNode = {
     type: `NormalExpression`,
     name: fnNode.value,
