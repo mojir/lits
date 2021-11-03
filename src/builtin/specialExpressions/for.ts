@@ -73,7 +73,7 @@ function addToContext(
 ) {
   for (const binding of bindings) {
     if (context[binding.name]) {
-      throw new LitsError(`Variable already defined: ${binding.name}`, sourceCodeInfo)
+      throw new LitsError(`Variable already defined: ${binding.name}.`, sourceCodeInfo)
     }
     context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
   }
@@ -155,7 +155,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
           break
         }
         if (context[binding.name]) {
-          throw new LitsError(`Variable already defined: ${binding.name}`, sourceCodeInfo)
+          throw new LitsError(`Variable already defined: ${binding.name}.`, sourceCodeInfo)
         }
         context[binding.name] = {
           value: any.as(seq[index], sourceCodeInfo),

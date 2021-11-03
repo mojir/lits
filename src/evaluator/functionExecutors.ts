@@ -18,6 +18,7 @@ import {
 import { SourceCodeInfo } from '../tokenizer/interface'
 import { toAny } from '../utils'
 import { any, asValue, string } from '../utils/assertion'
+import { valueToString } from '../utils/helpers'
 import { Context, ContextStack, EvaluateAstNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
@@ -46,7 +47,7 @@ function findOverloadFunction(
     }
   })
   if (!overloadFunction) {
-    throw new LitsError(`Unexpected number of arguments, got ${nbrOfParams}`, sourceCodeInfo)
+    throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
   }
   return overloadFunction
 }
@@ -98,7 +99,7 @@ export const functionExecutors: FunctionExecutors = {
     const { fns } = fn
     if (fns.length === 0) {
       if (params.length !== 1) {
-        throw new LitsError(`(comp) expects one argument, got ${params.length}`, sourceCodeInfo)
+        throw new LitsError(`(comp) expects one argument, got ${valueToString(params.length)}.`, sourceCodeInfo)
       }
       return any.as(params[0], sourceCodeInfo)
     }

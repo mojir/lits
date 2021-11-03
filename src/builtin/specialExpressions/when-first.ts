@@ -4,6 +4,7 @@ import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { toAny } from '../../utils'
 import { assertNumberOfParams, asValue, sequence, token } from '../../utils/assertion'
+import { valueToString } from '../../utils/helpers'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface WhenFirstSpecialExpressionNode extends SpecialExpressionNode {
@@ -18,7 +19,10 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     ;[position, bindings] = parseBindings(tokens, position)
 
     if (bindings.length !== 1) {
-      throw new LitsError(`Expected exactly one binding, got ${bindings.length}`, firstToken.sourceCodeInfo)
+      throw new LitsError(
+        `Expected exactly one binding, got ${valueToString(bindings.length)}`,
+        firstToken.sourceCodeInfo,
+      )
     }
 
     let params: AstNode[]
@@ -38,7 +42,10 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     const locals: Context = {}
     const evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack)
     if (!sequence.is(evaluatedBindingForm)) {
-      throw new LitsError(`Expected undefined or a sequence, got ${evaluatedBindingForm}`, node.token.sourceCodeInfo)
+      throw new LitsError(
+        `Expected undefined or a sequence, got ${valueToString(evaluatedBindingForm)}`,
+        node.token.sourceCodeInfo,
+      )
     }
 
     if (evaluatedBindingForm.length === 0) {

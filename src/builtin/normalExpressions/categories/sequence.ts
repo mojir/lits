@@ -47,7 +47,7 @@ export const evaluateMap: NormalExpressionEvaluator<Arr | string> = (
         array.assert(collParam, sourceCodeInfo)
       }
       if (length !== collParam.length) {
-        throw new LitsError(`All arguments to "map" must have the same length`, sourceCodeInfo)
+        throw new LitsError(`All arguments to "map" must have the same length.`, sourceCodeInfo)
       }
     })
 

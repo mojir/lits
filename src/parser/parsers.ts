@@ -24,6 +24,7 @@ import { LitsError } from '../errors'
 import { FnSpecialExpressionNode } from '../builtin/specialExpressions/functions'
 import { FunctionArguments } from '../builtin/utils'
 import { assertEventNumberOfParams, assertValue, asValue, expressionNode, nameNode, token } from '../utils/assertion'
+import { valueToString } from '../utils/helpers'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
@@ -213,7 +214,7 @@ const parseArgument: ParseArgument = (tokens, position) => {
     const value = tkn.value as ModifierName
     return [position + 1, { type: `Modifier`, value, token: tkn }]
   } else {
-    throw new LitsError(`Expected name or modifier token, got ${tkn}`, tkn.sourceCodeInfo)
+    throw new LitsError(`Expected name or modifier token, got ${valueToString(tkn)}`, tkn.sourceCodeInfo)
   }
 }
 

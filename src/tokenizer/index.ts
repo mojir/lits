@@ -42,9 +42,9 @@ const tokenizers: Tokenizer[] = [
 class TokenMetaImpl {
   line: number
   column: number
-  sourceCodeLine: string | null
+  sourceCodeLine: string
 
-  constructor(line: number, column: number, sourceCodeLine: string | null) {
+  constructor(line: number, column: number, sourceCodeLine: string) {
     this.line = line
     this.column = column
     this.sourceCodeLine = sourceCodeLine
@@ -59,7 +59,7 @@ class TokenMetaImpl {
   }
 
   private get debugInfo(): string {
-    return this.sourceCodeLine !== null ? `\n${this.column}: ${this.sourceCodeLine}${this.marker}` : ``
+    return `\n${this.column}: ${this.sourceCodeLine}${this.marker}`
   }
 
   toString() {
@@ -71,11 +71,11 @@ function getSourceCodeLine(input: string, lineNbr: number): string {
   return input.split(/\r\n|\r|\n/)[lineNbr] as string
 }
 
-function createSourceCodeInfo(input: string, position: number, debug: boolean): SourceCodeInfo {
+function createSourceCodeInfo(input: string, position: number): SourceCodeInfo {
   const lines = input.substr(0, position + 1).split(/\r\n|\r|\n/)
   const lastLine = lines[lines.length - 1] as string
 
-  const sourceCodeLine = debug ? getSourceCodeLine(input, lines.length - 1) : null
+  const sourceCodeLine = getSourceCodeLine(input, lines.length - 1)
   return new TokenMetaImpl(lines.length, lastLine.length, sourceCodeLine)
 }
 
@@ -87,7 +87,7 @@ export function tokenize(input: string, debug: boolean): Token[] {
     tokenized = false
 
     // Loop through all tokenizer until one matches
-    const sourceCodeInfo: SourceCodeInfo = createSourceCodeInfo(input, position, debug)
+    const sourceCodeInfo: SourceCodeInfo = debug ? createSourceCodeInfo(input, position) : null
     for (const tokenize of tokenizers) {
       const [nbrOfCharacters, token] = tokenize(input, position, sourceCodeInfo)
 
@@ -102,7 +102,7 @@ export function tokenize(input: string, debug: boolean): Token[] {
       }
     }
     if (!tokenized) {
-      throw new LitsError(`Unrecognized character '${input[position]}'`, sourceCodeInfo)
+      throw new LitsError(`Unrecognized character '${input[position]}'.`, sourceCodeInfo)
     }
   }
   return tokens

@@ -212,7 +212,7 @@ function addToPlayground(example) {
 function setPlayground(exampleId) {
   const example = examples.find(ex => ex.id === exampleId)
   if (!example) {
-    throw new LitsError(`Could not find example '${exampleId}'`, meta)
+    throw Error(`Could not find example '${exampleId}'`)
   }
 
   resetPlayground()

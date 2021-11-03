@@ -53,7 +53,7 @@ export const tokenizeString: Tokenizer = (input, position, sourceCodeInfo) => {
   let escape = false
   while (char !== `'` || escape) {
     if (char === undefined) {
-      throw new LitsError(`Unclosed string at position ${position}`, sourceCodeInfo)
+      throw new LitsError(`Unclosed string at position ${position}.`, sourceCodeInfo)
     }
     length += 1
     if (escape) {
@@ -110,13 +110,13 @@ export const tokenizeRegexpShorthand: Tokenizer = (input, position, sourceCodeIn
   while (input[position] === `g` || input[position] === `i`) {
     if (input[position] === `g`) {
       if (options.g) {
-        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}`, sourceCodeInfo)
+        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`, sourceCodeInfo)
       }
       length += 1
       options.g = true
     } else {
       if (options.i) {
-        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}`, sourceCodeInfo)
+        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`, sourceCodeInfo)
       }
       length += 1
       options.i = true
@@ -125,7 +125,7 @@ export const tokenizeRegexpShorthand: Tokenizer = (input, position, sourceCodeIn
   }
 
   if (nameRegExp.test(input[position] ?? ``)) {
-    throw new LitsError(`Unexpected regexp option "${input[position]}" at position ${position}`, sourceCodeInfo)
+    throw new LitsError(`Unexpected regexp option "${input[position]}" at position ${position}.`, sourceCodeInfo)
   }
 
   return [

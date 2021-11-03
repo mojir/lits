@@ -1,5 +1,6 @@
 import { LitsError } from '../errors'
 import { SourceCodeInfo } from '../tokenizer/interface'
+import { getSourceCodeInfo, valueToString } from './helpers'
 
 type SignOptions =
   | {
@@ -163,7 +164,10 @@ function is(value: unknown, options: NumberOptions = {}): value is number {
 
 function assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): asserts value is number {
   if (!is(value, options)) {
-    throw new LitsError(`Expected ${getNumberTypeName(options)}, got ${value}`, sourceCodeInfo)
+    throw new LitsError(
+      `Expected ${getNumberTypeName(options)}, got ${valueToString(value)}.`,
+      getSourceCodeInfo(value, sourceCodeInfo),
+    )
   }
 }
 

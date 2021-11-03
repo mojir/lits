@@ -1,5 +1,6 @@
 import { LitsError } from '../errors'
 import { SourceCodeInfo, Token, TokenizerType } from '../tokenizer/interface'
+import { getSourceCodeInfo, valueToString } from './helpers'
 
 type Options =
   | {
@@ -28,7 +29,11 @@ function isToken(value: unknown): value is Token {
   }
 
   const tkn = value as Token
-  if (!tkn.sourceCodeInfo || !tkn.type || typeof tkn.value !== `string`) {
+  if (!tkn.type || typeof tkn.value !== `string`) {
+    return false
+  }
+
+  if (!tkn.sourceCodeInfo && tkn.sourceCodeInfo !== null) {
     return false
   }
 
@@ -60,8 +65,8 @@ function assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options: Options
     throw new LitsError(
       `Expected ${options.type ? `${options.type}-` : ``}token${
         typeof options.value === `string` ? ` value='${options.value}'` : ``
-      }, got ${value}`,
-      sourceCodeInfo,
+      }, got ${valueToString(value)}.`,
+      getSourceCodeInfo(value, sourceCodeInfo),
     )
   }
 }

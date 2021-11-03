@@ -62,7 +62,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(str, sourceCodeInfo)
       const number = Number(str)
       if (Number.isNaN(number)) {
-        throw new LitsError(`Could not convert '${str}' to a number`, sourceCodeInfo)
+        throw new LitsError(`Could not convert '${str}' to a number.`, sourceCodeInfo)
       }
       return number
     },
@@ -218,7 +218,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
           return applyPlaceholders(templateStrings[1] as string, stringPlaceholders, sourceCodeInfo)
         }
       } else {
-        throw new LitsError(`Invalid template string, only one "||||" separator allowed`, sourceCodeInfo)
+        throw new LitsError(`Invalid template string, only one "||||" separator allowed.`, sourceCodeInfo)
       }
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 1, max: 10 }, node),

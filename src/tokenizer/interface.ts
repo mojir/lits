@@ -16,6 +16,7 @@ export type SourceCodeInfo =
       toString(): string
     }
   | `EOF`
+  | null
 
 export type Token = {
   type: TokenizerType

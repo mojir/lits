@@ -3,7 +3,6 @@ import { Any, Arr, Coll, Obj, Seq } from '../interface'
 import {
   AstNode,
   ExpressionNode,
-  FUNCTION_SYMBOL,
   LitsFunction,
   NameNode,
   NodeType,
@@ -13,6 +12,7 @@ import {
 } from '../parser/interface'
 import { SourceCodeInfo } from '../tokenizer/interface'
 import { isAstNode } from './astNodeAsserter'
+import { getSourceCodeInfo, isLitsFunction, valueToString } from './helpers'
 import { string } from './stringAssertion'
 
 export { number } from './numberAssertion'
@@ -33,7 +33,10 @@ class Asserter<T> {
 
   public assert(value: unknown, sourceCodeInfo: SourceCodeInfo): asserts value is T {
     if (!this.predicate(value)) {
-      throw new LitsError(`Expected ${this.typeName}, got ${value}`, sourceCodeInfo)
+      throw new LitsError(
+        `Expected ${this.typeName}, got ${valueToString(value)}.`,
+        getSourceCodeInfo(value, sourceCodeInfo),
+      )
     }
   }
 
@@ -43,12 +46,6 @@ class Asserter<T> {
   }
 }
 
-export function isLitsFunction(func: unknown): func is LitsFunction {
-  if (func === null || typeof func !== `object`) {
-    return false
-  }
-  return !!(func as LitsFunction)[FUNCTION_SYMBOL]
-}
 export const litsFunction: Asserter<LitsFunction> = new Asserter(`LitsFunction`, isLitsFunction)
 export const stringOrNumber: Asserter<string | number> = new Asserter(
   `string or number`,
@@ -118,30 +115,31 @@ export function assertNumberOfParams(
   node: NormalExpressionNode | SpecialExpressionNode,
 ): void {
   const length = node.params.length
+  const { sourceCodeInfo } = node.token
   if (typeof count === `number`) {
     if (length !== count) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected ${count}, got ${length}`,
+        `Wrong number of arguments to "${node.name}", expected ${count}, got ${valueToString(length)}.`,
         node.token.sourceCodeInfo,
       )
     }
   } else {
     const { min, max } = count
     if (min === undefined && max === undefined) {
-      throw new LitsError(`Min or max must be specified`, node.token.sourceCodeInfo)
+      throw new LitsError(`Min or max must be specified.`, sourceCodeInfo)
     }
 
     if (typeof min === `number` && length < min) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected at least ${min}, got ${length}`,
-        node.token.sourceCodeInfo,
+        `Wrong number of arguments to "${node.name}", expected at least ${min}, got ${valueToString(length)}.`,
+        sourceCodeInfo,
       )
     }
 
     if (typeof max === `number` && length > max) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected at most ${max}, got ${length}`,
-        node.token.sourceCodeInfo,
+        `Wrong number of arguments to "${node.name}", expected at most ${max}, got ${valueToString(length)}.`,
+        sourceCodeInfo,
       )
     }
   }
@@ -150,19 +148,22 @@ export function assertNumberOfParams(
 export function assertEventNumberOfParams(node: NormalExpressionNode): void {
   const length = node.params.length
   if (length % 2 !== 0) {
-    throw new LitsError(`Wrong number of arguments, expected an even number, got ${length}`, node.token.sourceCodeInfo)
+    throw new LitsError(
+      `Wrong number of arguments, expected an even number, got ${valueToString(length)}.`,
+      node.token.sourceCodeInfo,
+    )
   }
 }
 
 export function asValue<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): T {
   if (value === undefined) {
-    throw new LitsError(`Unexpected nil`, sourceCodeInfo)
+    throw new LitsError(`Unexpected nil`, getSourceCodeInfo(value, sourceCodeInfo))
   }
   return value
 }
 
 export function assertValue<T>(value: T | undefined, sourceCodeInfo: SourceCodeInfo): asserts value is T {
   if (value === undefined) {
-    throw new LitsError(`Unexpected nil`, sourceCodeInfo)
+    throw new LitsError(`Unexpected nil.`, getSourceCodeInfo(value, sourceCodeInfo))
   }
 }

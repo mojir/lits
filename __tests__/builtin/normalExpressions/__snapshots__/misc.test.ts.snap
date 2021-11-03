@@ -3,6 +3,7 @@
 exports[`misc functions debug! debug value. 1`] = `
 "*** LITS DEBUG ***
 {
+  \\"sourceCodeInfo\\": null,
   \\"type\\": \\"user-defined\\",
   \\"overloads\\": [
     {
@@ -23,11 +24,7 @@ exports[`misc functions debug! debug value. 1`] = `
               \\"token\\": {
                 \\"type\\": \\"name\\",
                 \\"value\\": \\"%1\\",
-                \\"sourceCodeInfo\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 13,
-                  \\"sourceCodeLine\\": null
-                }
+                \\"sourceCodeInfo\\": null
               }
             },
             {
@@ -36,22 +33,14 @@ exports[`misc functions debug! debug value. 1`] = `
               \\"token\\": {
                 \\"type\\": \\"number\\",
                 \\"value\\": \\"2\\",
-                \\"sourceCodeInfo\\": {
-                  \\"line\\": 1,
-                  \\"column\\": 16,
-                  \\"sourceCodeLine\\": null
-                }
+                \\"sourceCodeInfo\\": null
               }
             }
           ],
           \\"token\\": {
             \\"type\\": \\"name\\",
             \\"value\\": \\">\\",
-            \\"sourceCodeInfo\\": {
-              \\"line\\": 1,
-              \\"column\\": 11,
-              \\"sourceCodeLine\\": null
-            }
+            \\"sourceCodeInfo\\": null
           }
         }
       ],

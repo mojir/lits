@@ -1,4 +1,5 @@
 import { toNonNegativeInteger } from '../utils'
+import { valueToString } from '../utils/helpers'
 
 type CacheEntry<T> = {
   key: string
@@ -15,7 +16,7 @@ export class Cache<T> {
   constructor(maxSize: number) {
     this.maxSize = toNonNegativeInteger(maxSize)
     if (this.maxSize < 1) {
-      throw Error(`1 is the minimum maxSize, got ${maxSize}`)
+      throw Error(`1 is the minimum maxSize, got ${valueToString(maxSize)}`)
     }
   }
 

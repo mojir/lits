@@ -1,5 +1,6 @@
 import { LitsError } from '../errors'
 import { SourceCodeInfo } from '../tokenizer/interface'
+import { getSourceCodeInfo, valueToString } from './helpers'
 
 type Options =
   | {
@@ -30,8 +31,10 @@ function is(value: unknown, options: Options = {}): value is string {
 function assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options: Options = {}): asserts value is string {
   if (!is(value, options)) {
     throw new LitsError(
-      `Expected ${options.nonEmpty ? `non empty string` : options.char ? `character` : `string`}, got ${value}`,
-      sourceCodeInfo,
+      `Expected ${options.nonEmpty ? `non empty string` : options.char ? `character` : `string`}, got ${valueToString(
+        value,
+      )}.`,
+      getSourceCodeInfo(value, sourceCodeInfo),
     )
   }
 }

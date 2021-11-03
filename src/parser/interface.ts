@@ -3,7 +3,7 @@ import { Arity } from '../builtin/utils'
 import { Context } from '../evaluator/interface'
 import { Any, Arr } from '../interface'
 import { ReservedName } from '../reservedNames'
-import { Token } from '../tokenizer/interface'
+import { SourceCodeInfo, Token } from '../tokenizer/interface'
 
 export const FUNCTION_SYMBOL = Symbol(`function`)
 
@@ -19,65 +19,61 @@ export type EvaluatedFunctionOverload = {
   functionContext: Context
 }
 
-export type UserDefinedFunction = {
+type GenericLitsFunction = {
   [FUNCTION_SYMBOL]: true
+  sourceCodeInfo: SourceCodeInfo
+  type: string
+}
+
+export interface UserDefinedFunction extends GenericLitsFunction {
   type: `user-defined`
   name: string | undefined
   overloads: EvaluatedFunctionOverload[]
 }
 
-export type PartialFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface PartialFunction extends GenericLitsFunction {
   type: `partial`
   fn: Any
   params: Arr
 }
 
-export type CompFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface CompFunction extends GenericLitsFunction {
   type: `comp`
   fns: Arr
 }
 
-export type ConstantlyFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface ConstantlyFunction extends GenericLitsFunction {
   type: `constantly`
   value: Any
 }
 
-export type JuxtFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface JuxtFunction extends GenericLitsFunction {
   type: `juxt`
   fns: Arr
 }
 
-export type ComplementFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface ComplementFunction extends GenericLitsFunction {
   type: `complement`
   fn: Any
 }
 
-export type EveryPredFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface EveryPredFunction extends GenericLitsFunction {
   type: `every-pred`
   fns: Arr
 }
 
-export type SomePredFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface SomePredFunction extends GenericLitsFunction {
   type: `some-pred`
   fns: Arr
 }
 
-export type FNilFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface FNilFunction extends GenericLitsFunction {
   type: `fnil`
   fn: Any
   params: Arr
 }
 
-export type BuiltinFunction = {
-  [FUNCTION_SYMBOL]: true
+export interface BuiltinFunction extends GenericLitsFunction {
   type: `builtin`
   name: string
 }

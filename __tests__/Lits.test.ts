@@ -192,4 +192,14 @@ describe(`regressions`, () => {
       expect((error as any).column).toBe(12)
     }
   })
+  test(`unexpected argument`, () => {
+    try {
+      lits.run(`(+ 1 + 2)`)
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const anyError = error as any
+      expect(anyError.line).toBe(1)
+      expect(anyError.column).toBe(6)
+    }
+  })
 })

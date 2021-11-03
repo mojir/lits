@@ -29,19 +29,19 @@ export function assertNameNotDefined<T>(
     return
   }
   if (builtin.specialExpressions[name]) {
-    throw new LitsError(`Cannot define variable ${name}, it's a special expression`, sourceCodeInfo)
+    throw new LitsError(`Cannot define variable ${name}, it's a special expression.`, sourceCodeInfo)
   }
 
   if (builtin.normalExpressions[name]) {
-    throw new LitsError(`Cannot define variable ${name}, it's a builtin function`, sourceCodeInfo)
+    throw new LitsError(`Cannot define variable ${name}, it's a builtin function.`, sourceCodeInfo)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((reservedNamesRecord as any)[name]) {
-    throw new LitsError(`Cannot define variable ${name}, it's a reserved name`, sourceCodeInfo)
+    throw new LitsError(`Cannot define variable ${name}, it's a reserved name.`, sourceCodeInfo)
   }
 
   if (contextStack.globalContext[name]) {
-    throw new LitsError(`Name already defined "${name}"`, sourceCodeInfo)
+    throw new LitsError(`Name already defined "${name}".`, sourceCodeInfo)
   }
 }

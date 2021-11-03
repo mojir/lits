@@ -404,9 +404,9 @@ describe(`specialExpressions`, () => {
       expect(() => lits.run(`(throw 'An error' 10)`)).toThrow()
       try {
         lits.run(`(throw (subs 'An error' 3))`)
-        throw Error()
+        fail()
       } catch (error) {
-        expect((error as UserDefinedError).message).toBe(`error (1:8)`)
+        expect((error as UserDefinedError).message).toBe(`error`)
       }
     })
   })

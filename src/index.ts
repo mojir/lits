@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-export { isLitsFunction } from './utils/assertion'
+export { isLitsFunction } from './utils/helpers'
 export { LitsFunction } from './parser/interface'
 export { Context } from './evaluator/interface'
 export { Ast } from './parser/interface'

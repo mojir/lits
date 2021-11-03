@@ -11,6 +11,7 @@ import {
 } from '../../parser/interface'
 import { Token } from '../../tokenizer/interface'
 import { nameNode, string, token } from '../../utils/assertion'
+import { valueToString } from '../../utils/helpers'
 import { BuiltinSpecialExpression, Parsers } from '../interface'
 import { Arity, assertNameNotDefined, FunctionArguments, FunctionOverload } from '../utils'
 
@@ -126,6 +127,7 @@ function createEvaluator(expressionName: ExpressionsName): BuiltinSpecialExpress
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: node.token.sourceCodeInfo,
       type: `user-defined`,
       name,
       overloads: evaluatedFunctionOverloades,
@@ -220,7 +222,7 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
 
       tkn = token.as(tokens[position], `EOF`, { type: `paren` })
       if (tkn.value !== `)` && tkn.value !== `(`) {
-        throw new LitsError(`Expected ( or ) token, got ${tkn}`, tkn.sourceCodeInfo)
+        throw new LitsError(`Expected ( or ) token, got ${valueToString(tkn)}.`, tkn.sourceCodeInfo)
       }
     }
 
@@ -244,7 +246,7 @@ function parseFunctionOverloades(tokens: Token[], position: number, parsers: Par
       ],
     ]
   } else {
-    throw new LitsError(`Expected [ or ( token, got ${tkn}`, tkn.sourceCodeInfo)
+    throw new LitsError(`Expected [ or ( token, got ${valueToString(tkn)}`, tkn.sourceCodeInfo)
   }
 }
 

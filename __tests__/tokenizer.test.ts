@@ -17,12 +17,10 @@ describe(`Tokenizer`, () => {
   })
 
   test(`comments`, () => {
-    expect(tokenize(`'Hi' ;This is a string`, false)).toEqual([
-      { type: `string`, value: `Hi`, sourceCodeInfo: { line: 1, column: 1, sourceCodeLine: null } },
-    ])
+    expect(tokenize(`'Hi' ;This is a string`, false)).toEqual([{ type: `string`, value: `Hi`, sourceCodeInfo: null }])
     expect(tokenize(`'Hi' ;This is a string\n'there'`, false)).toEqual([
-      { type: `string`, value: `Hi`, sourceCodeInfo: { line: 1, column: 1, sourceCodeLine: null } },
-      { type: `string`, value: `there`, sourceCodeInfo: { line: 2, column: 1, sourceCodeLine: null } },
+      { type: `string`, value: `Hi`, sourceCodeInfo: null },
+      { type: `string`, value: `there`, sourceCodeInfo: null },
     ])
   })
 
@@ -34,17 +32,17 @@ describe(`Tokenizer`, () => {
       expect(tokenize(`'He\\'j'`, false)[0]).toEqual({
         type: `string`,
         value: `He'j`,
-        sourceCodeInfo: { line: 1, column: 1, sourceCodeLine: null },
+        sourceCodeInfo: null,
       })
       expect(tokenize(`'He\\\\j'`, false)[0]).toEqual({
         type: `string`,
         value: `He\\j`,
-        sourceCodeInfo: { line: 1, column: 1, sourceCodeLine: null },
+        sourceCodeInfo: null,
       })
       expect(tokenize(`'H\\ej'`, false)[0]).toEqual({
         type: `string`,
         value: `H\\ej`,
-        sourceCodeInfo: { line: 1, column: 1, sourceCodeLine: null },
+        sourceCodeInfo: null,
       })
     })
   })

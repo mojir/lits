@@ -3,6 +3,7 @@ import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { any, asValue, token } from '../../utils/assertion'
+import { valueToString } from '../../utils/helpers'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface LoopSpecialExpressionNode extends SpecialExpressionNode {
@@ -48,7 +49,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
           const params = error.params
           if (params.length !== node.bindings.length) {
             throw new LitsError(
-              `recur expected ${node.bindings.length} parameters, got ${params.length}`,
+              `recur expected ${node.bindings.length} parameters, got ${valueToString(params.length)}`,
               sourceCodeInfo,
             )
           }

@@ -1,5 +1,6 @@
 import { SourceCodeInfo } from '../src/tokenizer/interface'
 import { collHasKey, deepEqual, toNonNegativeInteger, cloneColl } from '../src/utils'
+import { valueToString } from '../src/utils/helpers'
 
 const sourceCodeInfo: SourceCodeInfo = `EOF`
 describe(`utils`, () => {
@@ -69,6 +70,12 @@ describe(`utils`, () => {
       expect(original).not.toBe(second)
       second.a[0] = 10
       expect(original.a[0]).toBe(1)
+    })
+  })
+
+  describe(`helpers`, () => {
+    test(`valueToString`, () => {
+      expect(valueToString(new Error())).toBe(`Error`)
     })
   })
 })

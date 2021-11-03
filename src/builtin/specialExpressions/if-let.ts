@@ -3,6 +3,7 @@ import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams, astNode, asValue, token } from '../../utils/assertion'
+import { valueToString } from '../../utils/helpers'
 import { BuiltinSpecialExpression } from '../interface'
 
 interface IfLetSpecialExpressionNode extends SpecialExpressionNode {
@@ -17,7 +18,10 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
     ;[position, bindings] = parseBindings(tokens, position)
 
     if (bindings.length !== 1) {
-      throw new LitsError(`Expected exactly one binding, got ${bindings.length}`, firstToken.sourceCodeInfo)
+      throw new LitsError(
+        `Expected exactly one binding, got ${valueToString(bindings.length)}`,
+        firstToken.sourceCodeInfo,
+      )
     }
 
     let params: AstNode[]

@@ -58,6 +58,7 @@ describe(`utils`, () => {
     expect(() => litsFunction.as(undefined, sourceCodeInfo)).toThrow()
     const lf: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: `EOF`,
       type: `user-defined`,
       name: undefined,
       overloads: [
@@ -245,6 +246,7 @@ describe(`utils`, () => {
   test(`assertLitsFunction`, () => {
     const lf: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: `EOF`,
       type: `user-defined`,
       name: undefined,
       overloads: [
@@ -479,6 +481,7 @@ describe(`utils`, () => {
   test(`isLitsFunction`, () => {
     const lf1: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: `EOF`,
       type: `user-defined`,
       name: undefined,
       overloads: [
@@ -494,22 +497,26 @@ describe(`utils`, () => {
     }
     const lf2: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: `EOF`,
       type: `builtin`,
       name: `+`,
     }
     const lf3: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: `EOF`,
       type: `partial`,
       fn: { a: 10, b: 20 },
       params: [],
     }
     const lf4: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: `EOF`,
       type: `comp`,
       fns: [`x`],
     }
     const lf5: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: `EOF`,
       type: `constantly`,
       value: 10,
     }
@@ -691,11 +698,17 @@ describe(`utils`, () => {
       ...tkn,
     }
     delete nonTkn2.sourceCodeInfo
+
+    const nonTkn3: any = {
+      ...tkn,
+    }
+    delete nonTkn3.type
     expect(token.is(tkn)).toBe(true)
     expect(token.is(nonTkn)).toBe(false)
     expect(() => token.assert(tkn, `EOF`)).not.toThrow()
     expect(() => token.assert(nonTkn, `EOF`)).toThrow()
     expect(() => token.assert(nonTkn2, `EOF`)).toThrow()
+    expect(() => token.assert(nonTkn3, `EOF`)).toThrow()
     expect(() => token.assert(tkn, `EOF`, { type: `name` })).not.toThrow()
     expect(() => token.assert(tkn, `EOF`, { type: `number` })).toThrow()
     expect(() => token.assert(tkn, `EOF`, { type: `name`, value: `Albert` })).not.toThrow()
