@@ -45,11 +45,11 @@ export class Lits {
     return contextStack.globalContext
   }
 
-  private tokenize(program: string): Token[] {
+  public tokenize(program: string): Token[] {
     return tokenize(program, this.debug)
   }
 
-  private parse(tokens: Token[]): Ast {
+  public parse(tokens: Token[]): Ast {
     return parse(tokens)
   }
 
