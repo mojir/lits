@@ -214,7 +214,7 @@ const parseArgument: ParseArgument = (tokens, position) => {
     const value = tkn.value as ModifierName
     return [position + 1, { type: `Modifier`, value, token: tkn }]
   } else {
-    throw new LitsError(`Expected name or modifier token, got ${valueToString(tkn)}`, tkn.sourceCodeInfo)
+    throw new LitsError(`Expected name or modifier token, got ${valueToString(tkn)}.`, tkn.sourceCodeInfo)
   }
 }
 

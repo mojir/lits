@@ -14,20 +14,20 @@
       minimizeAll()
     }
   })
-  document.getElementById('lisp-textarea').addEventListener('keydown', keydownHandler)
+  document.getElementById('lits-textarea').addEventListener('keydown', keydownHandler)
   document
-    .getElementById('lisp-textarea')
-    .addEventListener('input', e => localStorage.setItem('lisp-textarea', e.target.value))
-  document.getElementById('context-textarea').addEventListener('keydown', keydownHandler)
+    .getElementById('lits-textarea')
+    .addEventListener('input', e => localStorage.setItem('lits-textarea', e.target.value))
+  document.getElementById('params-textarea').addEventListener('keydown', keydownHandler)
   document
-    .getElementById('context-textarea')
-    .addEventListener('input', e => localStorage.setItem('context-textarea', e.target.value))
+    .getElementById('params-textarea')
+    .addEventListener('input', e => localStorage.setItem('params-textarea', e.target.value))
 
   var id = location.hash.substring(1) || 'index'
   showPage(id, 'replace')
 
-  document.getElementById('lisp-textarea').value = localStorage.getItem('lisp-textarea') || ''
-  document.getElementById('context-textarea').value = localStorage.getItem('context-textarea') || ''
+  document.getElementById('lits-textarea').value = localStorage.getItem('lits-textarea') || ''
+  document.getElementById('params-textarea').value = localStorage.getItem('params-textarea') || ''
 })()
 
 function keydownHandler(e) {
@@ -79,15 +79,15 @@ window.addEventListener('popstate', () => {
 })
 
 function play() {
-  var code = document.getElementById('lisp-textarea').value
-  var contextString = document.getElementById('context-textarea').value
+  var code = document.getElementById('lits-textarea').value
+  var paramsString = document.getElementById('params-textarea').value
   var output = document.getElementById('output-textarea')
   output.value = ''
-  var context
+  var params
   try {
-    context = contextString.trim().length > 0 ? JSON.parse(contextString) : {}
+    params = paramsString.trim().length > 0 ? JSON.parse(paramsString) : {}
   } catch (e) {
-    output.value = 'Error: Could not parse context'
+    output.value = 'Error: Could not parse params'
     output.classList.add('error')
     return
   }
@@ -113,7 +113,7 @@ function play() {
     output.scrollTop = output.scrollHeight
   }
   try {
-    result = lits.run(code, { globals: context })
+    result = lits.run(code, params)
   } catch (error) {
     output.value = error
     output.classList.add('error')
@@ -189,16 +189,16 @@ function stringifyValue(value) {
 }
 
 function resetPlayground() {
-  document.getElementById('context-textarea').value = ''
-  document.getElementById('lisp-textarea').value = ''
+  document.getElementById('params-textarea').value = ''
+  document.getElementById('lits-textarea').value = ''
   document.getElementById('output-textarea').value = ''
-  localStorage.setItem('lisp-textarea', '')
-  localStorage.setItem('context-textarea', '')
+  localStorage.setItem('lits-textarea', '')
+  localStorage.setItem('params-textarea', '')
 }
 
 function addToPlayground(example) {
   example = example.replace(/___single_quote___/g, "'").replace(/___double_quote___/g, '"')
-  var textarea = document.getElementById('lisp-textarea')
+  var textarea = document.getElementById('lits-textarea')
 
   if (textarea.value) {
     textarea.value = textarea.value + `\n\n${example}`
@@ -206,7 +206,7 @@ function addToPlayground(example) {
     textarea.value = example
   }
 
-  localStorage.setItem('lisp-textarea', textarea.value)
+  localStorage.setItem('lits-textarea', textarea.value)
 }
 
 function setPlayground(exampleId) {
@@ -217,26 +217,26 @@ function setPlayground(exampleId) {
 
   resetPlayground()
 
-  if (example.context) {
-    const value = JSON.stringify(example.context, null, 2)
-    document.getElementById('context-textarea').value = value
-    localStorage.setItem('context-textarea', value)
+  if (example.params) {
+    const value = JSON.stringify(example.params, (_k, v) => (v === undefined ? null : v), 2)
+    document.getElementById('params-textarea').value = value
+    localStorage.setItem('params-textarea', value)
   }
 
   if (example.code) {
-    document.getElementById('lisp-textarea').value = example.code
-    localStorage.setItem('lisp-textarea', example.code)
+    document.getElementById('lits-textarea').value = example.code
+    localStorage.setItem('lits-textarea', example.code)
   }
 }
 
 function maximizeContext() {
   minimizeAll()
-  document.body.classList.add('maximized-context')
+  document.body.classList.add('maximized-params')
 }
 
 function maximizeLisp() {
   minimizeAll()
-  document.body.classList.add('maximized-lisp')
+  document.body.classList.add('maximized-lits')
 }
 
 function maximizeOutput() {
@@ -245,20 +245,20 @@ function maximizeOutput() {
 }
 
 function minimizeAll() {
-  document.body.classList.remove('maximized-context')
-  document.body.classList.remove('maximized-lisp')
+  document.body.classList.remove('maximized-params')
+  document.body.classList.remove('maximized-lits')
   document.body.classList.remove('maximized-output')
 }
 
 function toggleMaximized(textArea) {
-  if (textArea.id === 'lisp-textarea') {
-    if (document.body.classList.contains('maximized-lisp')) {
+  if (textArea.id === 'lits-textarea') {
+    if (document.body.classList.contains('maximized-lits')) {
       minimizeAll()
     } else {
       maximizeLisp()
     }
-  } else if (textArea.id === 'context-textarea') {
-    if (document.body.classList.contains('maximized-context')) {
+  } else if (textArea.id === 'params-textarea') {
+    if (document.body.classList.contains('maximized-params')) {
       minimizeAll()
     } else {
       maximizeContext()

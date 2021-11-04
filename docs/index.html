@@ -15,7 +15,7 @@
   <div class="row">
     <div class="column"></div>
     <div class="column header">Lits</div>
-    <div class="column right version"><span>v1.0.0-alpha.11</span></div>
+    <div class="column right version"><span>v1.0.0-alpha.12</span></div>
   </div>
 </header>
   <main id="main-panel" class="fancy-scroll">
@@ -24,13 +24,18 @@
   <h1>Welcome to Lits!</h1>
   <br />
     <div class="text">
-    <p>Lits is a Lisp dialect made to work well in a browser or Node environment.</p>
-    <p>Quite a lot in Lits is not what you're used to if you've done some Lisp before.</p>
+    <p>Lits is a Lisp dialect made to work well in a browser or Node environment. It's heavily inspired by Clojure, most of the core functions from Clojure have been ported.</p>
+    <p>Some outstanding features / shortcommings worth mentioning.</p>
     <ul>
-      <li>Only two sequence type exists: <pre>array</pre> and <pre>string</pre>.</li>
+      <li>All datatypes in Lits are immutable.</li>
+      <li>All functions are <a href="https://www.sitepoint.com/functional-programming-pure-functions/">pure</a>, unless the built-in function name ends with a !. See <pre>write!</pre> or <pre>rand!</pre> for example.</li>
+      <li>All datatypes in Lits mapps directly to Javascript's types.</li>
+      <li>No lazy evaluation.</li>
       <li>No quotes.</li>
       <li>No macros.</li>
-      <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
+      <li>No keyword symbols. <pre>:foo</pre> is just a shourthand for <pre>'foo'</pre>.</li>
+      <li>Dynamic scoping, no lexical scoping</li>
+      <li>Strings look like <pre>'A string'</pre>, not <pre>"A string"</pre>. This desition was made to make it more convenient to embed lits code in json-files.</li>
       <li>100% test coverage</li>
     </ul>
     <p>You can see some examples and find documentation of all built-in function to the left.</p>
@@ -62,11 +67,11 @@
       <li>
         <div class="row example-item">
           <div class="column wide">
-            <div class="example-name">Context in use</div>
-            <div class="example-description">Simple example using context.</div>
+            <div class="example-name">Params in use</div>
+            <div class="example-description">Simple example using params.</div>
           </div>
           <div class="column right">
-            <span class="button" onclick="setPlayground('simple-context-example')">Show in playground</span>
+            <span class="button" onclick="setPlayground('simple-params-example')">Show in playground</span>
           </div>
         </div>
       </li>
@@ -1366,8 +1371,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,5,8] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 'Albert') <span class="gray">=> "Aler" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,3,5] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 'Albert') <span class="gray">=> "lber" </span> </span></pre>
   </div>
 </div>
 
@@ -1386,7 +1391,7 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 9 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (rand-nth! 'Albert') <span class="gray">=> "e" </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (rand-nth! 'Albert') <span class="gray">=> "b" </span> </span></pre>
   </div>
 </div>
 
@@ -1404,8 +1409,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [9,6,5,8,10,4,2,3,7,1] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___single_quote___Albert Mojir___single_quote___)')"> <span class="icon-button">▶</span> (shuffle 'Albert Mojir') <span class="gray">=> "lrrjMibteAo " </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [7,10,2,3,9,4,5,1,6,8] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___single_quote___Albert Mojir___single_quote___)')"> <span class="icon-button">▶</span> (shuffle 'Albert Mojir') <span class="gray">=> "eArirMbo ltj" </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -2339,9 +2344,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.27836229653776234 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.007492620611993068 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 2.116686441234869 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.6714876672118919 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.0010630196250089674 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.5719232151211504 </span> </span></pre>
   </div>
 </div>
 
@@ -2360,8 +2365,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 8 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 20 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 5 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 68 </span> </span></pre>
   </div>
 </div>
 
@@ -3010,7 +3015,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1635930505013 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1636047083123 </span> </span></pre>
   </div>
 </div>
 
@@ -3095,8 +3100,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(try (assert 0 ___single_quote___Expected a positive value___single_quote___) ((e) e))')"> <span class="icon-button">▶</span> (try (assert 0 'Expected a positive value') ((e) e)) <span class="gray">=> AssertionError: Expected a positive value (1:7)
-7: (try (assert 0 'Expected a positive value') ((e) e))
-         ^ </span> </span></pre>
+(try (assert 0 'Expected a positive value') ((e) e))
+      ^ </span> </span></pre>
   </div>
 </div>
 
@@ -3114,7 +3119,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(lits-version)')"> <span class="icon-button">▶</span> (lits-version) <span class="gray">=> "1.0.0-alpha.11" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(lits-version)')"> <span class="icon-button">▶</span> (lits-version) <span class="gray">=> "1.0.0-alpha.12" </span> </span></pre>
   </div>
 </div>
 
@@ -4158,14 +4163,14 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(try (throw ___single_quote___You shall not pass!___single_quote___) ((e) e))')"> <span class="icon-button">▶</span> (try (throw 'You shall not pass!') ((e) e)) <span class="gray">=> UserDefinedError: You shall not pass! (1:13)
-13: (try (throw 'You shall not pass!') ((e) e))
-                ^ </span> </span></pre>
+(try (throw 'You shall not pass!') ((e) e))
+            ^ </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(try (throw (subs ___single_quote___You shall not pass!___single_quote___ 0 3)) ((e) e))')"> <span class="icon-button">▶</span> (try (throw (subs 'You shall not pass!' 0 3)) ((e) e)) <span class="gray">=> UserDefinedError: You (1:13)
-13: (try (throw (subs 'You shall not pass!' 0 3)) ((e) e))
-                ^ </span> </span></pre>
+(try (throw (subs 'You shall not pass!' 0 3)) ((e) e))
+            ^ </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(try (throw ___single_quote___You shall not pass!___single_quote___) ((error) error))')"> <span class="icon-button">▶</span> (try (throw 'You shall not pass!') ((error) error)) <span class="gray">=> UserDefinedError: You shall not pass! (1:13)
-13: (try (throw 'You shall not pass!') ((error) error))
-                ^ </span> </span></pre>
+(try (throw 'You shall not pass!') ((error) error))
+            ^ </span> </span></pre>
   </div>
 </div>
 
@@ -5228,26 +5233,26 @@
     </div>
   </div>
   <div class="row">
-    <div class="column" id="context">
+    <div class="column" id="params">
       <div class="row">
-        <div class="column textarea-header"><label for="context-textarea">Context (JSON)</label></div>
+        <div class="column textarea-header"><label for="params-textarea">Params (JSON)</label></div>
         <div class="column right">
-          <span id="maximize-context" class="icon-button" onclick="maximizeContext()">▲</span>
-          <span id="minimize-context" class="icon-button" onclick="minimizeAll()">▼</span>
+          <span id="maximize-params" class="icon-button" onclick="maximizeContext()">▲</span>
+          <span id="minimize-params" class="icon-button" onclick="minimizeAll()">▼</span>
         </div>
       </div>
-      <textarea id="context-textarea" class="fancy-scroll" spellcheck="false"></textarea>
+      <textarea id="params-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
 
-    <div class="column wider" id="lisp">
+    <div class="column wider" id="lits">
       <div class="row">
-        <div class="column textarea-header"><label for="lisp-textarea">Lisp</label></div>
+        <div class="column textarea-header"><label for="lits-textarea">Lisp</label></div>
         <div class="column right">
-          <span id="maximize-lisp" class="icon-button" onclick="maximizeLisp()">▲</span>
-          <span id="minimize-lisp" class="icon-button" onclick="minimizeAll()">▼</span>
+          <span id="maximize-lits" class="icon-button" onclick="maximizeLisp()">▲</span>
+          <span id="minimize-lits" class="icon-button" onclick="minimizeAll()">▼</span>
         </div>
       </div>
-      <textarea id="lisp-textarea" class="fancy-scroll" spellcheck="false"></textarea>
+      <textarea id="lits-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
 
     <div class="column wide" id="output">

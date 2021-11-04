@@ -3,6 +3,7 @@
 exports[`misc functions debug! debug value. 1`] = `
 "*** LITS DEBUG ***
 {
+  \\"__LITS_FUNCTION__\\": true,
   \\"sourceCodeInfo\\": null,
   \\"type\\": \\"user-defined\\",
   \\"overloads\\": [

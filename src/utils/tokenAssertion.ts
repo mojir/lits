@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
 import { SourceCodeInfo, Token, TokenizerType } from '../tokenizer/interface'
-import { getSourceCodeInfo, valueToString } from './helpers'
+import { getSourceCodeInfo, isToken, valueToString } from './helpers'
 
 type Options =
   | {
@@ -11,34 +11,6 @@ type Options =
       type?: never
       value?: never
     }
-
-const tokenTypes: Record<TokenizerType, true> = {
-  fnShorthand: true,
-  modifier: true,
-  name: true,
-  number: true,
-  paren: true,
-  regexpShorthand: true,
-  reservedName: true,
-  string: true,
-}
-
-function isToken(value: unknown): value is Token {
-  if (typeof value !== `object` || value === null) {
-    return false
-  }
-
-  const tkn = value as Token
-  if (!tkn.type || typeof tkn.value !== `string`) {
-    return false
-  }
-
-  if (!tkn.sourceCodeInfo && tkn.sourceCodeInfo !== null) {
-    return false
-  }
-
-  return !!tokenTypes[tkn.type]
-}
 
 function is(value: unknown, options: Options = {}): value is Token {
   if (!isToken(value)) {

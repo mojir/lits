@@ -5,7 +5,7 @@ import { Any, Arr } from '../interface'
 import { ReservedName } from '../reservedNames'
 import { SourceCodeInfo, Token } from '../tokenizer/interface'
 
-export const FUNCTION_SYMBOL = Symbol(`function`)
+export const FUNCTION_SYMBOL = `__LITS_FUNCTION__`
 
 export type EvaluatedFunctionArguments = {
   mandatoryArguments: string[]

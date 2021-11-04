@@ -8,10 +8,10 @@ module.exports = [
     `.trim(),
   },
   {
-    id: 'simple-context-example',
-    name: 'Context in use',
-    description: 'Simple example using context.',
-    context: { x: 15, y: 97 },
+    id: 'simple-params-example',
+    name: 'Params in use',
+    description: 'Simple example using params.',
+    params: { globals: { x: 15, y: 97 } },
     code: `
 (+ x y)
     `.trim(),
@@ -113,10 +113,12 @@ module.exports = [
     id: 'translations-lib',
     name: 'Translations lib',
     description: 'A Lits take on i18n.',
-    context: {
-      TRANSLATIONS: {
-        'welcome-message': 'Welcome, $1',
-        'count-chairs': '$1 chair||||$1 chairs',
+    params: {
+      globals: {
+        TRANSLATIONS: {
+          'welcome-message': 'Welcome, $1',
+          'count-chairs': '$1 chair||||$1 chairs',
+        },
       },
     },
     code: `

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const { version } = require('../../package.json')
-const { functionReference, categories } = require('../../cli/reference')
+const { functionReference, categorizedFunctions } = require('../../cli/reference')
 const examples = require('./examples')
 const Lits = require('../../dist/index')
 const path = require('path')
@@ -77,26 +77,26 @@ function getPlayground() {
     </div>
   </div>
   <div class="row">
-    <div class="column" id="context">
+    <div class="column" id="params">
       <div class="row">
-        <div class="column textarea-header"><label for="context-textarea">Context (JSON)</label></div>
+        <div class="column textarea-header"><label for="params-textarea">Params (JSON)</label></div>
         <div class="column right">
-          <span id="maximize-context" class="icon-button" onclick="maximizeContext()">▲</span>
-          <span id="minimize-context" class="icon-button" onclick="minimizeAll()">▼</span>
+          <span id="maximize-params" class="icon-button" onclick="maximizeContext()">▲</span>
+          <span id="minimize-params" class="icon-button" onclick="minimizeAll()">▼</span>
         </div>
       </div>
-      <textarea id="context-textarea" class="fancy-scroll" spellcheck="false"></textarea>
+      <textarea id="params-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
 
-    <div class="column wider" id="lisp">
+    <div class="column wider" id="lits">
       <div class="row">
-        <div class="column textarea-header"><label for="lisp-textarea">Lisp</label></div>
+        <div class="column textarea-header"><label for="lits-textarea">Lisp</label></div>
         <div class="column right">
-          <span id="maximize-lisp" class="icon-button" onclick="maximizeLisp()">▲</span>
-          <span id="minimize-lisp" class="icon-button" onclick="minimizeAll()">▼</span>
+          <span id="maximize-lits" class="icon-button" onclick="maximizeLisp()">▲</span>
+          <span id="minimize-lits" class="icon-button" onclick="minimizeAll()">▼</span>
         </div>
       </div>
-      <textarea id="lisp-textarea" class="fancy-scroll" spellcheck="false"></textarea>
+      <textarea id="lits-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
 
     <div class="column wide" id="output">
@@ -120,13 +120,18 @@ function getIndexPage() {
   <h1>Welcome to Lits!</h1>
   <br />
     <div class="text">
-    <p>Lits is a Lisp dialect made to work well in a browser or Node environment.</p>
-    <p>Quite a lot in Lits is not what you're used to if you've done some Lisp before.</p>
+    <p>Lits is a Lisp dialect made to work well in a browser or Node environment. It's heavily inspired by Clojure, most of the core functions from Clojure have been ported.</p>
+    <p>Some outstanding features / shortcommings worth mentioning.</p>
     <ul>
-      <li>Only two sequence type exists: <pre>array</pre> and <pre>string</pre>.</li>
+      <li>All datatypes in Lits are immutable.</li>
+      <li>All functions are <a href="https://www.sitepoint.com/functional-programming-pure-functions/">pure</a>, unless the built-in function name ends with a !. See <pre>write!</pre> or <pre>rand!</pre> for example.</li>
+      <li>All datatypes in Lits mapps directly to Javascript's types.</li>
+      <li>No lazy evaluation.</li>
       <li>No quotes.</li>
       <li>No macros.</li>
-      <li>No keyword symbols e.g. <pre>:foo</pre>.</li>
+      <li>No keyword symbols. <pre>:foo</pre> is just a shourthand for <pre>'foo'</pre>.</li>
+      <li>Dynamic scoping, no lexical scoping</li>
+      <li>Strings look like <pre>'A string'</pre>, not <pre>"A string"</pre>. This desition was made to make it more convenient to embed lits code in json-files.</li>
       <li>100% test coverage</li>
     </ul>
     <p>You can see some examples and find documentation of all built-in function to the left.</p>
@@ -226,7 +231,7 @@ function getSideBar() {
   <br />
   <label class="link" onclick="showPage('example-page')">Examples</label>
   <br />
-  ${categories
+  ${categorizedFunctions
     .map(categoryKey => {
       return `
         <label>${categoryKey}</label>

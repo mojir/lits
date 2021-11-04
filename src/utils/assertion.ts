@@ -11,8 +11,7 @@ import {
   SpecialExpressionNode,
 } from '../parser/interface'
 import { SourceCodeInfo } from '../tokenizer/interface'
-import { isAstNode } from './astNodeAsserter'
-import { getSourceCodeInfo, isLitsFunction, valueToString } from './helpers'
+import { getSourceCodeInfo, isAstNode, isLitsFunction, valueToString } from './helpers'
 import { string } from './stringAssertion'
 
 export { number } from './numberAssertion'

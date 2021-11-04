@@ -54,12 +54,13 @@ class TokenMetaImpl {
     return `(${this.line}:${this.column})`
   }
 
-  private get marker(): string {
-    return `\n${` `.repeat(this.column - 1 + `${this.column}`.length + 2)}^`
+  private getMarker(unindent: number): string {
+    return `\n${` `.repeat(this.column - 1 - unindent)}^`
   }
 
   private get debugInfo(): string {
-    return `\n${this.column}: ${this.sourceCodeLine}${this.marker}`
+    const unindent = this.sourceCodeLine.replace(/^( *).*/, `$1`).length
+    return `\n${this.sourceCodeLine.substr(unindent)}${this.getMarker(unindent)}`
   }
 
   toString() {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { functionReference, categoryNames } from '../cli/reference'
+import { functionReference, categories } from '../cli/reference'
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
 
 function getLinkName(name: string): string {
@@ -23,7 +23,7 @@ describe(`functionReference`, () => {
   Object.entries(functionReference).forEach(([key, obj]: [key: string, obj: any]) => {
     test(key, () => {
       expect(obj.name).toBe(key)
-      expect(categoryNames.includes(obj.category)).toBe(true)
+      expect(categories.includes(obj.category)).toBe(true)
       expect(obj.linkName).toEqual(getLinkName(key))
       expect(obj.description.length).toBeGreaterThanOrEqual(1)
       expect(obj.returns.type.length).toBeGreaterThanOrEqual(1)

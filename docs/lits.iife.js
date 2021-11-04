@@ -1,14 +1,8 @@
 var Lits = (function (exports) {
   'use strict';
 
-  var FUNCTION_SYMBOL = Symbol("function");
+  var FUNCTION_SYMBOL = "__LITS_FUNCTION__";
 
-  function isLitsFunction(func) {
-      if (func === null || typeof func !== "object") {
-          return false;
-      }
-      return !!func[FUNCTION_SYMBOL];
-  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
   function getSourceCodeInfo(anyValue, sourceCodeInfo) {
       return (anyValue === null || anyValue === void 0 ? void 0 : anyValue.sourceCodeInfo) || sourceCodeInfo;
@@ -17,6 +11,12 @@ var Lits = (function (exports) {
       if (isLitsFunction(value)) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return "<function " + (value.name || "\u03BB") + ">";
+      }
+      if (isToken(value)) {
+          return value.type + "-token \"" + value.value + "\"";
+      }
+      if (isAstNode(value)) {
+          return value.type + "-node";
       }
       if (value === null) {
           return "null";
@@ -28,6 +28,59 @@ var Lits = (function (exports) {
           return value.toString();
       }
       return JSON.stringify(value);
+  }
+  var tokenTypes = {
+      fnShorthand: true,
+      modifier: true,
+      name: true,
+      number: true,
+      paren: true,
+      regexpShorthand: true,
+      reservedName: true,
+      string: true,
+  };
+  function isToken(value) {
+      if (typeof value !== "object" || value === null) {
+          return false;
+      }
+      var tkn = value;
+      if (!tkn.type || typeof tkn.value !== "string") {
+          return false;
+      }
+      if (!tkn.sourceCodeInfo && tkn.sourceCodeInfo !== null) {
+          return false;
+      }
+      return !!tokenTypes[tkn.type];
+  }
+  var astTypes = {
+      Number: true,
+      String: true,
+      NormalExpression: true,
+      SpecialExpression: true,
+      Name: true,
+      Modifier: true,
+      ReservedName: true,
+      Binding: true,
+      Argument: true,
+      Partial: true,
+  };
+  function isAstNode(value) {
+      if (value === null || typeof value !== "object") {
+          return false;
+      }
+      if (!value.token) {
+          return false;
+      }
+      if (!astTypes[value.type]) {
+          return false;
+      }
+      return true;
+  }
+  function isLitsFunction(func) {
+      if (func === null || typeof func !== "object") {
+          return false;
+      }
+      return !!func[FUNCTION_SYMBOL];
   }
 
   /*! *****************************************************************************
@@ -150,31 +203,6 @@ var Lits = (function (exports) {
       }
       return UndefinedSymbolError;
   }(Error));
-
-  var astTypes = {
-      Number: true,
-      String: true,
-      NormalExpression: true,
-      SpecialExpression: true,
-      Name: true,
-      Modifier: true,
-      ReservedName: true,
-      Binding: true,
-      Argument: true,
-      Partial: true,
-  };
-  function isAstNode(value) {
-      if (value === null || typeof value !== "object") {
-          return false;
-      }
-      if (!value.token) {
-          return false;
-      }
-      if (!astTypes[value.type]) {
-          return false;
-      }
-      return true;
-  }
 
   function is$2(value, options) {
       if (options === void 0) { options = {}; }
@@ -299,29 +327,6 @@ var Lits = (function (exports) {
       assert: assert$1,
   };
 
-  var tokenTypes = {
-      fnShorthand: true,
-      modifier: true,
-      name: true,
-      number: true,
-      paren: true,
-      regexpShorthand: true,
-      reservedName: true,
-      string: true,
-  };
-  function isToken(value) {
-      if (typeof value !== "object" || value === null) {
-          return false;
-      }
-      var tkn = value;
-      if (!tkn.type || typeof tkn.value !== "string") {
-          return false;
-      }
-      if (!tkn.sourceCodeInfo && tkn.sourceCodeInfo !== null) {
-          return false;
-      }
-      return !!tokenTypes[tkn.type];
-  }
   function is(value, options) {
       if (options === void 0) { options = {}; }
       if (!isToken(value)) {
@@ -3580,7 +3585,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0-alpha.11";
+  var version = "1.0.0-alpha.12";
 
   var miscNormalExpression = {
       'not=': {
@@ -4933,7 +4938,7 @@ var Lits = (function (exports) {
           return [position + 1, { type: "Modifier", value: value, token: tkn }];
       }
       else {
-          throw new LitsError("Expected name or modifier token, got " + valueToString$1(tkn), tkn.sourceCodeInfo);
+          throw new LitsError("Expected name or modifier token, got " + valueToString$1(tkn) + ".", tkn.sourceCodeInfo);
       }
   };
   var parseBindings = function (tokens, position) {
@@ -5365,16 +5370,13 @@ var Lits = (function (exports) {
           enumerable: false,
           configurable: true
       });
-      Object.defineProperty(TokenMetaImpl.prototype, "marker", {
-          get: function () {
-              return "\n" + " ".repeat(this.column - 1 + ("" + this.column).length + 2) + "^";
-          },
-          enumerable: false,
-          configurable: true
-      });
+      TokenMetaImpl.prototype.getMarker = function (unindent) {
+          return "\n" + " ".repeat(this.column - 1 - unindent) + "^";
+      };
       Object.defineProperty(TokenMetaImpl.prototype, "debugInfo", {
           get: function () {
-              return "\n" + this.column + ": " + this.sourceCodeLine + this.marker;
+              var unindent = this.sourceCodeLine.replace(/^( *).*/, "$1").length;
+              return "\n" + this.sourceCodeLine.substr(unindent) + this.getMarker(unindent);
           },
           enumerable: false,
           configurable: true

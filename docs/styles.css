@@ -86,7 +86,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .column {
-  flex: 20;
+  flex: 15;
 }
 
 .column.scoll {
@@ -106,7 +106,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .column.wider {
-  flex: 50;
+  flex: 35;
 }
 
 .column.right {
@@ -249,21 +249,21 @@ input[type="submit"]:hover{
   box-shadow: 6px 3px 8px #111111;
 }
 
-#lisp-textarea, #context-textarea, #output-textarea {
+#lits-textarea, #params-textarea, #output-textarea {
   height: 240px;
 }
 
-#maximize-context {
+#maximize-params {
   display: inline;
 }
-#minimize-context {
+#minimize-params {
   display: none;
 }
 
-#maximize-lisp {
+#maximize-lits {
   display: inline;
 }
-#minimize-lisp {
+#minimize-lits {
   display: none;
 }
 
@@ -274,17 +274,17 @@ input[type="submit"]:hover{
   display: none;
 }
 
-.maximized-context #maximize-context {
+.maximized-params #maximize-params {
   display: none;
 }
-.maximized-context #minimize-context {
+.maximized-params #minimize-params {
   display: inline;
 }
 
-.maximized-lisp #maximize-lisp {
+.maximized-lits #maximize-lits {
   display: none;
 }
-.maximized-lisp #minimize-lisp {
+.maximized-lits #minimize-lits {
   display: inline;
 }
 
@@ -295,8 +295,8 @@ input[type="submit"]:hover{
   display: inline;
 }
 
-.maximized-context #context,
-.maximized-lisp #lisp,
+.maximized-params #params,
+.maximized-lits #lits,
 .maximized-output #output {
   position: fixed;
   top: 0;
@@ -307,8 +307,8 @@ input[type="submit"]:hover{
   margin: 0;
   background-color: #333333;
 }
-.maximized-context #context textarea,
-.maximized-lisp #lisp textarea,
+.maximized-params #params textarea,
+.maximized-lits #lits textarea,
 .maximized-output #output textarea {
   height: calc(100% - 20px);
   margin-bottom: 1rem;
@@ -461,11 +461,11 @@ h4, h2, h1 {
   padding: 0 0.15rem;
 }
 
-#playground #context-textarea, #playground #lisp-textarea {
+#playground #params-textarea, #playground #lits-textarea {
   background-color: #222222;
 }
 
-#lisp, #output {
+#lits, #output {
   margin-left: 0.5rem;
 }
 

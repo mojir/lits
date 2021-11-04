@@ -699,6 +699,7 @@ describe(`utils`, () => {
     }
     delete nonTkn2.sourceCodeInfo
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const nonTkn3: any = {
       ...tkn,
     }

@@ -27,7 +27,7 @@ const functionReference = Object.assign(
   bitwiseReference,
 )
 
-const categoryNames = [
+const categories = [
   `Special expression`,
   `Predicate`,
   `Sequence`,
@@ -42,17 +42,17 @@ const categoryNames = [
   `Misc`,
 ]
 
-const categories = Object.values(functionReference)
+const categorizedFunctions = Object.values(functionReference)
   .reduce((result, item) => {
     if (!result.includes(item.category)) {
       result.push(item.category)
     }
     return result
   }, [])
-  .sort((a, b) => categoryNames.indexOf(a) - categoryNames.indexOf(b))
+  .sort((a, b) => categories.indexOf(a) - categories.indexOf(b))
 
 module.exports = {
   functionReference,
+  categorizedFunctions,
   categories,
-  categoryNames,
 }
