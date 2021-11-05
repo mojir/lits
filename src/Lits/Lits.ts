@@ -16,7 +16,7 @@ type LitsParams = {
 
 type LitsConfig = {
   astCacheSize?: number
-  debug?: true
+  debug?: boolean
 }
 
 export class Lits {
