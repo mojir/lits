@@ -3591,7 +3591,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0-alpha.15";
+  var version = "1.0.0-alpha.16";
 
   var miscNormalExpression = {
       'not=': {
@@ -5078,7 +5078,7 @@ var Lits = (function (exports) {
 
   var NO_MATCH = [0, undefined];
   // A name (function or variable) can contain a lot of different characters
-  var nameRegExp = /[@%0-9a-zA-ZàáâãăäāåæćčçèéêĕëēìíîĭïðłñòóôõöőøšùúûüűýÿþÀÁÂÃĂÄĀÅÆĆČÇÈÉÊĔËĒÌÍÎĬÏÐŁÑÒÓÔÕÖŐØŠÙÚÛÜŰÝÞß_^?=!$%<>.+*/-]/;
+  var nameRegExp = /[@%0-9a-zA-ZàáâãăäāåæćčçèéêĕëēìíîĭïðłñòóôõöőøšùúûüűýÿþÀÁÂÃĂÄĀÅÆĆČÇÈÉÊĔËĒÌÍÎĬÏÐŁÑÒÓÔÕÖŐØŠÙÚÛÜŰÝÞß_^?=!$%<>+*/-]/;
   var whitespaceRegExp = /\s|,/;
   var skipWhiteSpace = function (input, current) {
       return whitespaceRegExp.test(input[current]) ? [1, undefined] : NO_MATCH;
