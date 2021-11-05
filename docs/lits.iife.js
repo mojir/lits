@@ -538,8 +538,12 @@ var Lits = (function (exports) {
       true: { value: true },
       false: { value: false },
       nil: { value: null },
-      null: { value: null },
-      undefined: { value: null },
+      null: { value: null, forbidden: true },
+      undefined: { value: null, forbidden: true },
+      '===': { value: null, forbidden: true },
+      '!==': { value: null, forbidden: true },
+      '&&': { value: null, forbidden: true },
+      '||': { value: null, forbidden: true },
   };
   var reservedNames = Object.keys(reservedNamesRecord);
 
@@ -3587,7 +3591,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0-alpha.14";
+  var version = "1.0.0-alpha.15";
 
   var miscNormalExpression = {
       'not=': {
@@ -5288,18 +5292,18 @@ var Lits = (function (exports) {
       return [length, { type: "number", value: value, sourceCodeInfo: sourceCodeInfo }];
   };
   var tokenizeReservedName = function (input, position, sourceCodeInfo) {
-      for (var _i = 0, _a = Object.keys(reservedNamesRecord); _i < _a.length; _i++) {
-          var reservedName = _a[_i];
+      for (var _i = 0, _a = Object.entries(reservedNamesRecord); _i < _a.length; _i++) {
+          var _b = _a[_i], reservedName = _b[0], forbidden = _b[1].forbidden;
           var length_2 = reservedName.length;
           var nextChar = input[position + length_2];
           if (nextChar && nameRegExp.test(nextChar)) {
               continue;
           }
           var name_1 = input.substr(position, length_2);
-          if (name_1 === "undefined" || name_1 === "null") {
-              throw new LitsError(name_1 + " is forbidden!", sourceCodeInfo);
-          }
           if (name_1 === reservedName) {
+              if (forbidden) {
+                  throw new LitsError(name_1 + " is forbidden!", sourceCodeInfo);
+              }
               return [length_2, { type: "reservedName", value: reservedName, sourceCodeInfo: sourceCodeInfo }];
           }
       }

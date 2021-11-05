@@ -16,6 +16,18 @@ describe(`Tokenizer`, () => {
     expect(tokens.length).toBeGreaterThan(0)
   })
 
+  test(`forbidden reserved names`, () => {
+    expect(() => tokenize(`nil`, false)).not.toThrow()
+    expect(() => tokenize(`false`, false)).not.toThrow()
+    expect(() => tokenize(`true`, false)).not.toThrow()
+    expect(() => tokenize(`null`, false)).toThrow()
+    expect(() => tokenize(`undefined`, false)).toThrow()
+    expect(() => tokenize(`===`, false)).toThrow()
+    expect(() => tokenize(`!==`, false)).toThrow()
+    expect(() => tokenize(`&&`, false)).toThrow()
+    expect(() => tokenize(`||`, false)).toThrow()
+  })
+
   test(`comments`, () => {
     expect(tokenize(`'Hi' ;This is a string`, false)).toEqual([{ type: `string`, value: `Hi`, sourceCodeInfo: null }])
     expect(tokenize(`'Hi' ;This is a string\n'there'`, false)).toEqual([

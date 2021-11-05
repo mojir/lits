@@ -225,17 +225,17 @@ export const tokenizeNumber: Tokenizer = (input, position, sourceCodeInfo) => {
 }
 
 export const tokenizeReservedName: Tokenizer = (input, position, sourceCodeInfo) => {
-  for (const reservedName of Object.keys(reservedNamesRecord)) {
+  for (const [reservedName, { forbidden }] of Object.entries(reservedNamesRecord)) {
     const length = reservedName.length
     const nextChar = input[position + length]
     if (nextChar && nameRegExp.test(nextChar)) {
       continue
     }
     const name = input.substr(position, length)
-    if (name === `undefined` || name === `null`) {
-      throw new LitsError(`${name} is forbidden!`, sourceCodeInfo)
-    }
     if (name === reservedName) {
+      if (forbidden) {
+        throw new LitsError(`${name} is forbidden!`, sourceCodeInfo)
+      }
       return [length, { type: `reservedName`, value: reservedName, sourceCodeInfo }]
     }
   }
