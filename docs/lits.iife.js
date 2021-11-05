@@ -538,6 +538,8 @@ var Lits = (function (exports) {
       true: { value: true },
       false: { value: false },
       nil: { value: null },
+      null: { value: null },
+      undefined: { value: null },
   };
   var reservedNames = Object.keys(reservedNamesRecord);
 
@@ -3585,7 +3587,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0-alpha.13";
+  var version = "1.0.0-alpha.14";
 
   var miscNormalExpression = {
       'not=': {
@@ -5293,7 +5295,11 @@ var Lits = (function (exports) {
           if (nextChar && nameRegExp.test(nextChar)) {
               continue;
           }
-          if (input.substr(position, length_2) === reservedName) {
+          var name_1 = input.substr(position, length_2);
+          if (name_1 === "undefined" || name_1 === "null") {
+              throw new LitsError(name_1 + " is forbidden!", sourceCodeInfo);
+          }
+          if (name_1 === reservedName) {
               return [length_2, { type: "reservedName", value: reservedName, sourceCodeInfo: sourceCodeInfo }];
           }
       }
