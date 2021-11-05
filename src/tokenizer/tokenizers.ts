@@ -231,7 +231,11 @@ export const tokenizeReservedName: Tokenizer = (input, position, sourceCodeInfo)
     if (nextChar && nameRegExp.test(nextChar)) {
       continue
     }
-    if (input.substr(position, length) === reservedName) {
+    const name = input.substr(position, length)
+    if (name === `undefined` || name === `null`) {
+      throw new LitsError(`${name} is forbidden!`, sourceCodeInfo)
+    }
+    if (name === reservedName) {
       return [length, { type: `reservedName`, value: reservedName, sourceCodeInfo }]
     }
   }
