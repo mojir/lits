@@ -10,7 +10,7 @@
   },
   "scripts": {
     "lint": "eslint \"src/**/*.ts\" \"__tests__/**/*.ts\" \"cli/**/*.js\" \"cli/**/*.js\"",
-    "build": "node ./scripts/generateVersion.js && rm -rf dist && rollup -c",
+    "build": "node ./scripts/generateVersion.js && rm -rf dist && rollup -c && npm run build-docs",
     "test": "jest --collect-coverage",
     "compile": "tsc -p ./tsconfig.json --noEmit",
     "lits": "node ./cli/index.js",
