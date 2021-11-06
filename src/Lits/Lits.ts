@@ -8,7 +8,7 @@ import { Token } from '../tokenizer/interface'
 import { createContextFromValues } from '../utils'
 import { Cache } from './Cache'
 
-type LitsParams = {
+export type LitsParams = {
   contexts?: Context[]
   globals?: Obj
   globalContext?: Context
