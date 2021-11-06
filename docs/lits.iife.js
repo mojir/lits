@@ -3591,7 +3591,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0-alpha.17";
+  var version = "1.0.0-alpha.18";
 
   var miscNormalExpression = {
       'not=': {
