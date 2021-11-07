@@ -130,6 +130,7 @@ lits.run('(+ 1 2 3 4)'); // returns 10
 * random-sample!
 * reduce
 * reduce-right
+* reductions
 * remove
 * rest
 * reverse
@@ -161,6 +162,8 @@ lits.run('(+ 1 2 3 4)'); // returns 10
 * has-every?
 * has-some?
 * not-any?
+* not-empty
+* not-empty?
 * not-every?
 * update
 * update-in
