@@ -135,7 +135,8 @@ module.exports = {
       `(write! (object :a 10))`,
       `(write! [:a :b :c])`,
       `(write! #'^start')`,
-      `(write! nil true false)`,
+      `(write! nil true
+        false)`,
     ],
   },
   'inst-ms': {
@@ -265,6 +266,8 @@ module.exports = {
       `(equal? [1 true nil] [1 true nil])`,
       `(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})`,
       `(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})`,
+      `(= 0.3 (+ 0.1 0.2))`,
+      `(equal? 0.3 (+ 0.1 0.2))`,
     ],
   },
 }
