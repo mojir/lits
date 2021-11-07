@@ -392,15 +392,41 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
   'empty?': {
-    evaluate: ([first], sourceCodeInfo): boolean => {
-      collection.assert(first, sourceCodeInfo)
-      if (string.is(first)) {
-        return first.length === 0
+    evaluate: ([coll], sourceCodeInfo): boolean => {
+      collection.assert(coll, sourceCodeInfo)
+      if (string.is(coll)) {
+        return coll.length === 0
       }
-      if (Array.isArray(first)) {
-        return first.length === 0
+      if (Array.isArray(coll)) {
+        return coll.length === 0
       }
-      return Object.keys(first).length === 0
+      return Object.keys(coll).length === 0
+    },
+    validate: node => assertNumberOfParams(1, node),
+  },
+  'not-empty?': {
+    evaluate: ([coll], sourceCodeInfo): boolean => {
+      collection.assert(coll, sourceCodeInfo)
+      if (string.is(coll)) {
+        return coll.length > 0
+      }
+      if (Array.isArray(coll)) {
+        return coll.length > 0
+      }
+      return Object.keys(coll).length > 0
+    },
+    validate: node => assertNumberOfParams(1, node),
+  },
+  'not-empty': {
+    evaluate: ([coll], sourceCodeInfo): Coll | null => {
+      collection.assert(coll, sourceCodeInfo)
+      if (string.is(coll)) {
+        return coll.length > 0 ? coll : null
+      }
+      if (Array.isArray(coll)) {
+        return coll.length > 0 ? coll : null
+      }
+      return Object.keys(coll).length > 0 ? coll : null
     },
     validate: node => assertNumberOfParams(1, node),
   },

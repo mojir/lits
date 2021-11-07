@@ -168,7 +168,7 @@ module.exports = {
       `(object? 42)`,
       `(object? 10.1)`,
       `(object? (fn [x y] (+ x y)))`,
-      `(object? (regexp '^start'))`,
+      `(object? #'^start')`,
       `(object? 'false')`,
       `(object? [1 2 3])`,
     ],
@@ -237,6 +237,7 @@ module.exports = {
     description: `Returns \`true\` if \`value\` is a regexp, otherwise \`false\`.`,
     examples: [
       `(regexp? (regexp '^start'))`,
+      `(regexp? #'^start')`,
       `(regexp? -12)`,
       `(regexp? (object))`,
       `(regexp? 10.1)`,

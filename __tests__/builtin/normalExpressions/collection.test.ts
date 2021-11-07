@@ -303,6 +303,44 @@ describe(`collection functions`, () => {
     })
   })
 
+  describe(`not-empty?`, () => {
+    test(`samples`, () => {
+      expect(lits.run(`(not-empty? [])`)).toBe(false)
+      expect(lits.run(`(not-empty? [0])`)).toBe(true)
+      expect(lits.run(`(not-empty? {})`)).toBe(false)
+      expect(lits.run(`(not-empty? {:a 2})`)).toBe(true)
+      expect(lits.run(`(not-empty? '')`)).toBe(false)
+      expect(lits.run(`(not-empty? 'Albert')`)).toBe(true)
+      expect(() => lits.run(`(not-empty?)`)).toThrow()
+      expect(() => lits.run(`(not-empty?)`)).toThrow()
+      expect(() => lits.run(`(not-empty? true)`)).toThrow()
+      expect(() => lits.run(`(not-empty? false)`)).toThrow()
+      expect(() => lits.run(`(not-empty? nil)`)).toThrow()
+      expect(() => lits.run(`(not-empty? undefined)`)).toThrow()
+      expect(() => lits.run(`(not-empty? 10)`)).toThrow()
+      expect(() => lits.run(`(not-empty? (regexp '^start'))`)).toThrow()
+    })
+  })
+
+  describe(`not-empty`, () => {
+    test(`samples`, () => {
+      expect(lits.run(`(not-empty [])`)).toBe(null)
+      expect(lits.run(`(not-empty [0])`)).toEqual([0])
+      expect(lits.run(`(not-empty {})`)).toBe(null)
+      expect(lits.run(`(not-empty {:a 2})`)).toEqual({ a: 2 })
+      expect(lits.run(`(not-empty '')`)).toBe(null)
+      expect(lits.run(`(not-empty 'Albert')`)).toEqual(`Albert`)
+      expect(() => lits.run(`(not-empty)`)).toThrow()
+      expect(() => lits.run(`(not-empty)`)).toThrow()
+      expect(() => lits.run(`(not-empty true)`)).toThrow()
+      expect(() => lits.run(`(not-empty false)`)).toThrow()
+      expect(() => lits.run(`(not-empty nil)`)).toThrow()
+      expect(() => lits.run(`(not-empty undefined)`)).toThrow()
+      expect(() => lits.run(`(not-empty 10)`)).toThrow()
+      expect(() => lits.run(`(not-empty (regexp '^start'))`)).toThrow()
+    })
+  })
+
   describe(`every?`, () => {
     test(`samples`, () => {
       expect(lits.run(`(every? number? [1 2 3])`)).toBe(true)

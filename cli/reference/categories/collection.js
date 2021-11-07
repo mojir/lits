@@ -289,6 +289,52 @@ module.exports = {
     description: `Returns \`true\` if \`coll\` is empty, otherwise \`false\`.`,
     examples: [`(empty? [])`, `(empty? [1 2 3])`, `(empty? {})`, `(empty? {:a 2})`, `(empty? '')`, `(empty? 'Albert')`],
   },
+  'not-empty?': {
+    name: `not-empty?`,
+    category: `Collection`,
+    linkName: `not-empty_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection or string`,
+      },
+    ],
+    description: `Returns \`false\` if \`coll\` is empty, otherwise \`true\`.`,
+    examples: [
+      `(not-empty? [])`,
+      `(not-empty? [1 2 3])`,
+      `(not-empty? {})`,
+      `(not-empty? {:a 2})`,
+      `(not-empty? '')`,
+      `(not-empty? 'Albert')`,
+    ],
+  },
+  'not-empty': {
+    name: `not-empty`,
+    category: `Collection`,
+    linkName: `not-empty`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection or string`,
+      },
+    ],
+    description: `Returns \`null\` if \`coll\` is empty, otherwise \`coll\`.`,
+    examples: [
+      `(not-empty [])`,
+      `(not-empty [1 2 3])`,
+      `(not-empty {})`,
+      `(not-empty {:a 2})`,
+      `(not-empty '')`,
+      `(not-empty 'Albert')`,
+    ],
+  },
   'every?': {
     name: `every?`,
     category: `Collection`,

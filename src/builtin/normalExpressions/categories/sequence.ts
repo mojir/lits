@@ -178,6 +178,69 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2 }, node),
   },
+  reductions: {
+    evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any[] => {
+      const fn = params[0]
+      litsFunction.assert(fn, sourceCodeInfo)
+
+      if (params.length === 2) {
+        const [, arr] = params
+        sequence.assert(arr, sourceCodeInfo)
+        if (arr.length === 0) {
+          return [executeFunction(fn, [], sourceCodeInfo, contextStack)]
+        } else if (arr.length === 1) {
+          return [toAny(arr[0])]
+        }
+        if (string.is(arr)) {
+          const chars = arr.split(``)
+          const resultArray: Any[] = [any.as(chars[0], sourceCodeInfo)]
+          chars.slice(1).reduce((result: Any, elem) => {
+            const newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack)
+            resultArray.push(newVal)
+            return newVal
+          }, any.as(chars[0], sourceCodeInfo))
+          return resultArray
+        } else {
+          const resultArray: Any[] = [toAny(arr[0])]
+          arr.slice(1).reduce((result: Any, elem) => {
+            const newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack)
+            resultArray.push(newVal)
+            return newVal
+          }, toAny(arr[0]))
+          return resultArray
+        }
+      } else {
+        const [, val, seq] = params
+        any.assert(val, sourceCodeInfo)
+        sequence.assert(seq, sourceCodeInfo)
+        if (string.is(seq)) {
+          string.assert(val, sourceCodeInfo)
+          if (seq.length === 0) {
+            return [val]
+          }
+          const resultArray: Any[] = [val]
+          seq.split(``).reduce((result: Any, elem) => {
+            const newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack)
+            resultArray.push(newVal)
+            return newVal
+          }, val)
+          return resultArray
+        } else {
+          if (seq.length === 0) {
+            return [val]
+          }
+          const resultArray: Any[] = [val]
+          seq.reduce((result: Any, elem) => {
+            const newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack)
+            resultArray.push(newVal)
+            return newVal
+          }, val)
+          return resultArray
+        }
+      }
+    },
+    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+  },
   reduce: {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       const fn = params[0]

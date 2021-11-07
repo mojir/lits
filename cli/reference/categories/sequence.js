@@ -137,10 +137,10 @@ module.exports = {
     description: `Returns a shallow copy of a portion of \`array\` into a new array selected from index \`start\` (inclusive) to index \`end\` (exclusive). If \`start\` is not provided it defaults to \`0\`. If \`end\` is not provided, the rest of the array will be copied.`,
     examples: [`(slice [1 2 3 4 5] 2 4)`, `(slice [1 2 3 4 5] 2)`],
   },
-  reduce: {
-    name: `reduce`,
+  reductions: {
+    name: `reductions`,
     category: `Sequence`,
-    linkName: `reduce`,
+    linkName: `reductions`,
     returns: {
       type: `array`,
     },
@@ -158,7 +158,37 @@ module.exports = {
         type: `any`,
       },
     ],
-    description: `Runs \`reducer\` function on each element of the \`array\`, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
+    description: `Returns an array of the intermediate values of the reduction (see \`reduce\`) of \`seq\` by \`reducer\`.`,
+    examples: [
+      `(reductions + [1 2 3])`,
+      `(reductions + 0 [1 2 3])`,
+      `(reductions + 0 [])`,
+      `(reductions (fn [result value] (+ result (if (even? value) value 0))) 0 [1 2 3 4 5 6 7 8 9])`,
+    ],
+  },
+  reduce: {
+    name: `reduce`,
+    category: `Sequence`,
+    linkName: `reduce`,
+    returns: {
+      type: `sequence`,
+    },
+    arguments: [
+      {
+        name: `reducer`,
+        type: `function`,
+      },
+      {
+        name: `startValue`,
+        type: `any`,
+        description: `optional`,
+      },
+      {
+        name: `seq`,
+        type: `Seq`,
+      },
+    ],
+    description: `Runs \`reducer\` function on each element of the \`seq\`, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the \`seq\` is a single value.`,
     examples: [
       `(reduce + [1 2 3])`,
       `(reduce + 0 [1 2 3])`,
@@ -171,13 +201,9 @@ module.exports = {
     category: `Sequence`,
     linkName: `reduce-right`,
     returns: {
-      type: `array`,
+      type: `sequence`,
     },
     arguments: [
-      {
-        name: `array`,
-        type: `array`,
-      },
       {
         name: `reducer`,
         type: `function`,
@@ -186,8 +212,12 @@ module.exports = {
         name: `startValue`,
         type: `any`,
       },
+      {
+        name: `seq`,
+        type: `Seq`,
+      },
     ],
-    description: `Runs \`reducer\` function on each element of the \`array\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.`,
+    description: `Runs \`reducer\` function on each element of the \`seq\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the \`seq\` is a single value.`,
     examples: [`(reduce-right str [:A :B :C] '')`],
   },
   map: {

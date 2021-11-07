@@ -134,7 +134,7 @@ module.exports = {
       `(write! 100 'items')`,
       `(write! (object :a 10))`,
       `(write! [:a :b :c])`,
-      `(write! (regexp '^start'))`,
+      `(write! #'^start')`,
       `(write! nil true false)`,
     ],
   },

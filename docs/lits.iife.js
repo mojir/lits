@@ -2196,15 +2196,43 @@ var Lits = (function (exports) {
       },
       'empty?': {
           evaluate: function (_a, sourceCodeInfo) {
-              var first = _a[0];
-              collection.assert(first, sourceCodeInfo);
-              if (string.is(first)) {
-                  return first.length === 0;
+              var coll = _a[0];
+              collection.assert(coll, sourceCodeInfo);
+              if (string.is(coll)) {
+                  return coll.length === 0;
               }
-              if (Array.isArray(first)) {
-                  return first.length === 0;
+              if (Array.isArray(coll)) {
+                  return coll.length === 0;
               }
-              return Object.keys(first).length === 0;
+              return Object.keys(coll).length === 0;
+          },
+          validate: function (node) { return assertNumberOfParams(1, node); },
+      },
+      'not-empty?': {
+          evaluate: function (_a, sourceCodeInfo) {
+              var coll = _a[0];
+              collection.assert(coll, sourceCodeInfo);
+              if (string.is(coll)) {
+                  return coll.length > 0;
+              }
+              if (Array.isArray(coll)) {
+                  return coll.length > 0;
+              }
+              return Object.keys(coll).length > 0;
+          },
+          validate: function (node) { return assertNumberOfParams(1, node); },
+      },
+      'not-empty': {
+          evaluate: function (_a, sourceCodeInfo) {
+              var coll = _a[0];
+              collection.assert(coll, sourceCodeInfo);
+              if (string.is(coll)) {
+                  return coll.length > 0 ? coll : null;
+              }
+              if (Array.isArray(coll)) {
+                  return coll.length > 0 ? coll : null;
+              }
+              return Object.keys(coll).length > 0 ? coll : null;
           },
           validate: function (node) { return assertNumberOfParams(1, node); },
       },
@@ -2453,6 +2481,73 @@ var Lits = (function (exports) {
               }
           },
           validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+      },
+      reductions: {
+          evaluate: function (params, sourceCodeInfo, contextStack, _a) {
+              var executeFunction = _a.executeFunction;
+              var fn = params[0];
+              litsFunction.assert(fn, sourceCodeInfo);
+              if (params.length === 2) {
+                  var arr = params[1];
+                  sequence.assert(arr, sourceCodeInfo);
+                  if (arr.length === 0) {
+                      return [executeFunction(fn, [], sourceCodeInfo, contextStack)];
+                  }
+                  else if (arr.length === 1) {
+                      return [toAny(arr[0])];
+                  }
+                  if (string.is(arr)) {
+                      var chars = arr.split("");
+                      var resultArray_1 = [any.as(chars[0], sourceCodeInfo)];
+                      chars.slice(1).reduce(function (result, elem) {
+                          var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
+                          resultArray_1.push(newVal);
+                          return newVal;
+                      }, any.as(chars[0], sourceCodeInfo));
+                      return resultArray_1;
+                  }
+                  else {
+                      var resultArray_2 = [toAny(arr[0])];
+                      arr.slice(1).reduce(function (result, elem) {
+                          var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
+                          resultArray_2.push(newVal);
+                          return newVal;
+                      }, toAny(arr[0]));
+                      return resultArray_2;
+                  }
+              }
+              else {
+                  var val = params[1], seq = params[2];
+                  any.assert(val, sourceCodeInfo);
+                  sequence.assert(seq, sourceCodeInfo);
+                  if (string.is(seq)) {
+                      string.assert(val, sourceCodeInfo);
+                      if (seq.length === 0) {
+                          return [val];
+                      }
+                      var resultArray_3 = [val];
+                      seq.split("").reduce(function (result, elem) {
+                          var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
+                          resultArray_3.push(newVal);
+                          return newVal;
+                      }, val);
+                      return resultArray_3;
+                  }
+                  else {
+                      if (seq.length === 0) {
+                          return [val];
+                      }
+                      var resultArray_4 = [val];
+                      seq.reduce(function (result, elem) {
+                          var newVal = executeFunction(fn, [result, elem], sourceCodeInfo, contextStack);
+                          resultArray_4.push(newVal);
+                          return newVal;
+                      }, val);
+                      return resultArray_4;
+                  }
+              }
+          },
+          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
       },
       reduce: {
           evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -3591,7 +3686,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0-alpha.18";
+  var version = "1.0.0-alpha.19";
 
   var miscNormalExpression = {
       'not=': {
