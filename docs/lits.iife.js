@@ -3686,7 +3686,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0-alpha.19";
+  var version = "1.0.0-alpha.20";
 
   var miscNormalExpression = {
       'not=': {
@@ -4396,7 +4396,7 @@ var Lits = (function (exports) {
               string.assert(templateString, sourceCodeInfo);
               var templateStrings = templateString.split("||||");
               if (templateStrings.length === 1) {
-                  stringArray.assert(placeholders, sourceCodeInfo);
+                  array.assert(placeholders, sourceCodeInfo);
                   return applyPlaceholders(templateStrings[0], placeholders, sourceCodeInfo);
               }
               else if (templateStrings.length === 2) {
@@ -4422,9 +4422,8 @@ var Lits = (function (exports) {
       for (var i = 0; i < 9; i += 1) {
           var re = new RegExp("(?<=^|[^$]|\\$\\$)\\$" + (i + 1), "g");
           if (re.test(templateString)) {
-              var placeholder = placeholders[i];
-              string.assert(placeholder, sourceCodeInfo);
-              templateString = templateString.replace(re, placeholder);
+              var placeHolder = stringOrNumber.as(placeholders[i], sourceCodeInfo);
+              templateString = templateString.replace(re, typeof placeHolder === "number" ? "" + placeHolder : placeHolder);
           }
       }
       return templateString.replace(doubleDollarRegexp, "$");

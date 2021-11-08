@@ -1,6 +1,6 @@
 {
   "name": "lits-parser",
-  "version": "1.0.0-alpha.19",
+  "version": "1.0.0-alpha.20",
   "description": "A lisp implementation in Typescript",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

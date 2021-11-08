@@ -202,11 +202,11 @@ describe(`string functions`, () => {
       expect(lits.run(`(template 'Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 and $10' :A :B :C :D :E :F :G :H :I)`)).toBe(
         `Hi A, B, C, D, E, F, G, H, I and A0`,
       )
+      expect(lits.run(`(template '$1', 0)`)).toBe(`0`)
       expect(() =>
         lits.run(`(template 'Hi $1, $2, $3, $4, $5, $6, $7, $8, $9 $10' :A :B :C :D :E :F :G :H :I :J)`),
       ).toThrow()
       expect(() => lits.run(`(template)`)).toThrow()
-      expect(() => lits.run(`(template '$1', 0)`)).toThrow()
       expect(() => lits.run(`(template '$1', true)`)).toThrow()
       expect(() => lits.run(`(template '$1', false)`)).toThrow()
       expect(() => lits.run(`(template '$1', nil)`)).toThrow()

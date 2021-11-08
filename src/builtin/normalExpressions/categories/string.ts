@@ -9,9 +9,9 @@ import {
   array,
   string,
   assertNumberOfParams,
-  stringArray,
   stringOrRegExp,
   asValue,
+  stringOrNumber,
 } from '../../../utils/assertion'
 import { BuiltinNormalExpressions } from '../../interface'
 
@@ -206,7 +206,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       string.assert(templateString, sourceCodeInfo)
       const templateStrings = templateString.split(`||||`)
       if (templateStrings.length === 1) {
-        stringArray.assert(placeholders, sourceCodeInfo)
+        array.assert(placeholders, sourceCodeInfo)
         return applyPlaceholders(templateStrings[0] as string, placeholders, sourceCodeInfo)
       } else if (templateStrings.length === 2) {
         const firstPlaceholder = placeholders[0]
@@ -226,13 +226,12 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 }
 
 const doubleDollarRegexp = /\$\$/g
-function applyPlaceholders(templateString: string, placeholders: string[], sourceCodeInfo: SourceCodeInfo): string {
+function applyPlaceholders(templateString: string, placeholders: unknown[], sourceCodeInfo: SourceCodeInfo): string {
   for (let i = 0; i < 9; i += 1) {
     const re = new RegExp(`(?<=^|[^$]|\\$\\$)\\$${i + 1}`, `g`)
     if (re.test(templateString)) {
-      const placeholder = placeholders[i]
-      string.assert(placeholder, sourceCodeInfo)
-      templateString = templateString.replace(re, placeholder)
+      const placeHolder = stringOrNumber.as(placeholders[i], sourceCodeInfo)
+      templateString = templateString.replace(re, typeof placeHolder === `number` ? `${placeHolder}` : placeHolder)
     }
   }
   return templateString.replace(doubleDollarRegexp, `$`)
