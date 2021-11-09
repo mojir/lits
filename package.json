@@ -1,5 +1,5 @@
 {
-  "name": "lits-parser",
+  "name": "@youcruit/lits",
   "version": "1.0.0",
   "description": "A lisp implementation in Typescript",
   "main": "dist/index.js",
@@ -56,7 +56,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mojir/lits.git"
+    "url": "git+https://github.com/YouCruit/lits.git"
   },
   "keywords": [
     "LISP"
@@ -66,9 +66,6 @@
   },
   "author": "Albert Mojir",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mojir/lits/issues"
-  },
-  "homepage": "https://mojir.github.io/lits/#index",
+  "homepage": "https://youcruit.github.io/lits",
   "dependencies": {}
 }

@@ -2,10 +2,10 @@ A lisp implementation in Typescript. Could be used in browser, node.js or as a C
 
 # REPL
 ## Documentation
-[mojir.github.io/lits](https://mojir.github.io/lits)
+[Lits playground](https://youcruit.github.io/lits/#index)
 ## Install
 ```
-npm i -g lits-parser
+npm i -g @youcruit/lits
 ```
 ## Repl usage
 Start the lits REPL in a terminal by enter `lits`
@@ -41,13 +41,13 @@ $ lits -e "(/ 81 9)"
 ## Install api
 
 ```
-npm i lits-parser
+npm i @youcruit/lits
 ```
 
 ## How to use?
 
 ```ts
-import { Lits } from 'lits-parser'
+import { Lits } from '@youcruit/lits'
 
 const lits = new Lits()
 lits.run('(+ 1 2 3 4)'); // returns 10
