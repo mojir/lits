@@ -3686,7 +3686,7 @@ var Lits = (function (exports) {
       },
   };
 
-  var version = "1.0.0";
+  var version = "1.0.1";
 
   var miscNormalExpression = {
       'not=': {
@@ -4420,13 +4420,17 @@ var Lits = (function (exports) {
   var doubleDollarRegexp = /\$\$/g;
   function applyPlaceholders(templateString, placeholders, sourceCodeInfo) {
       for (var i = 0; i < 9; i += 1) {
-          var re = new RegExp("(?<=^|[^$]|\\$\\$)\\$" + (i + 1), "g");
+          // Matches $1, $2, ..., $9
+          // Does not match $$1
+          // But does match $$$1, (since the two first '$' will later be raplaced with a single '$'
+          var re = new RegExp("(\\$\\$|[^$]|^)\\$" + (i + 1), "g");
           if (re.test(templateString)) {
               var placeHolder = stringOrNumber.as(placeholders[i], sourceCodeInfo);
-              templateString = templateString.replace(re, typeof placeHolder === "number" ? "" + placeHolder : placeHolder);
+              templateString = templateString.replace(re, "$1" + placeHolder);
           }
       }
-      return templateString.replace(doubleDollarRegexp, "$");
+      templateString = templateString.replace(doubleDollarRegexp, "$");
+      return templateString;
   }
 
   var functionalNormalExpression = {

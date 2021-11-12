@@ -191,10 +191,14 @@ describe(`string functions`, () => {
       expect(lits.run(`(template 'Hi' 'Carl')`)).toBe(`Hi`)
       expect(lits.run(`(template 'Hi, $1', 'Carl')`)).toBe(`Hi, Carl`)
       expect(lits.run(`(template 'Hi, $$$1', 'Carl')`)).toBe(`Hi, $Carl`)
+      expect(lits.run(`(template 'Hi, $$1', 'Carl')`)).toBe(`Hi, $1`)
       expect(lits.run(`(template 'Hi, $1' 'Carl')`)).toBe(`Hi, Carl`)
       expect(lits.run(`(template 'Hi, $1' 'Carl' 'Larry')`)).toBe(`Hi, Carl`)
       expect(lits.run(`(template 'Hi, $1 and $2' 'Carl' 'Larry')`)).toBe(`Hi, Carl and Larry`)
       expect(lits.run(`(template 'Hi, $1 and $3' 'Carl' 'Larry' 'Sofi')`)).toBe(`Hi, Carl and Sofi`)
+      expect(lits.run(`(template '$1', 'Carl')`)).toBe(`Carl`)
+      expect(lits.run(`(template '$$1', 'Carl')`)).toBe(`$1`)
+      expect(lits.run(`(template '$$$1', 'Carl')`)).toBe(`$Carl`)
       expect(lits.run(`(template 'Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9' :A :B :C :D :E :F :G :H :I)`)).toBe(
         `Hi A, B, C, D, E, F, G, H and I`,
       )

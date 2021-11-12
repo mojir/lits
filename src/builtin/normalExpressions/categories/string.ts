@@ -228,11 +228,15 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
 const doubleDollarRegexp = /\$\$/g
 function applyPlaceholders(templateString: string, placeholders: unknown[], sourceCodeInfo: SourceCodeInfo): string {
   for (let i = 0; i < 9; i += 1) {
-    const re = new RegExp(`(?<=^|[^$]|\\$\\$)\\$${i + 1}`, `g`)
+    // Matches $1, $2, ..., $9
+    // Does not match $$1
+    // But does match $$$1, (since the two first '$' will later be raplaced with a single '$'
+    const re = new RegExp(`(\\$\\$|[^$]|^)\\$${i + 1}`, `g`)
     if (re.test(templateString)) {
       const placeHolder = stringOrNumber.as(placeholders[i], sourceCodeInfo)
-      templateString = templateString.replace(re, typeof placeHolder === `number` ? `${placeHolder}` : placeHolder)
+      templateString = templateString.replace(re, `$1${placeHolder}`)
     }
   }
-  return templateString.replace(doubleDollarRegexp, `$`)
+  templateString = templateString.replace(doubleDollarRegexp, `$`)
+  return templateString
 }
