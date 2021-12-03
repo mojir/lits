@@ -3,6 +3,7 @@
 /* eslint-disable no-undef */
 ;(function () {
   lits = new Lits.Lits({ debug: true })
+  console.log('START')
 
   window.addEventListener('keydown', function (evt) {
     if (evt.key === 'F2') {
@@ -26,8 +27,19 @@
   var id = location.hash.substring(1) || 'index'
   showPage(id, 'replace')
 
-  document.getElementById('lits-textarea').value = localStorage.getItem('lits-textarea') || ''
-  document.getElementById('params-textarea').value = localStorage.getItem('params-textarea') || ''
+  var urlParams = new URLSearchParams(window.location.search)
+
+  var program = urlParams.get('program')
+  var litsTextArea = document.getElementById('lits-textarea')
+  if (program) {
+    litsTextArea.value = decodeURIComponent(program)
+  } else {
+    litsTextArea.value = localStorage.getItem('lits-textarea') || ''
+  }
+
+  paramsTextArea.value = localStorage.getItem('params-textarea') || ''
+
+  play()
 })()
 
 function keydownHandler(e) {
@@ -133,6 +145,7 @@ function play() {
   output.value = newContent
 }
 function showPage(id, historyEvent) {
+  console.log('showPage')
   inactivateAll()
 
   const page = document.getElementById(id)

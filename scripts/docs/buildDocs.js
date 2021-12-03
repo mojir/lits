@@ -256,7 +256,7 @@ function getSideBar() {
 }
 
 function setupDocDir() {
-  fs.rmdirSync(DOC_DIR, { recursive: true, force: true })
+  fs.rmSync(DOC_DIR, { recursive: true, force: true })
   fs.mkdirSync(DOC_DIR)
 }
 
