@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+#wrapper {
+  display: none;
+}
+
 body {
   margin: 0;
   padding: 1rem;
@@ -7,6 +11,13 @@ body {
   font-size: 1.1rem;
   background-color: #222222;
   color: #cccccc;
+}
+
+body.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 textarea {
@@ -215,14 +226,12 @@ input[type="submit"]:hover{
   position: fixed;
   left: 290px;
   top: 95px;
-  bottom: 335px;
   right: 1rem;
   overflow-y: auto;
 }
 
 #sidebar {
   position: fixed;
-  bottom: 335px;
   left: 0;
   width: 250px;
   top: 95px;
@@ -233,85 +242,21 @@ input[type="submit"]:hover{
 }
 
 #playground {
-  -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -ms-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 310px;
   background-color: #333333;
-  border-top: 2px solid #444444;
-  padding: 0.5rem 0.5rem;
+  padding: 0 0.5rem 0.5rem 0.5rem;
   box-shadow: 6px 3px 8px #111111;
 }
 
-#lits-textarea, #params-textarea, #output-textarea {
-  height: 240px;
-}
-
-#maximize-params {
-  display: inline;
-}
-#minimize-params {
-  display: none;
-}
-
-#maximize-lits {
-  display: inline;
-}
-#minimize-lits {
-  display: none;
-}
-
-#maximize-output {
-  display: inline;
-}
-#minimize-output {
-  display: none;
-}
-
-.maximized-params #maximize-params {
-  display: none;
-}
-.maximized-params #minimize-params {
-  display: inline;
-}
-
-.maximized-lits #maximize-lits {
-  display: none;
-}
-.maximized-lits #minimize-lits {
-  display: inline;
-}
-
-.maximized-output #maximize-output {
-  display: none;
-}
-.maximized-output #minimize-output {
-  display: inline;
-}
-
-.maximized-params #params,
-.maximized-lits #lits,
-.maximized-output #output {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 0.5rem;
-  margin: 0;
-  background-color: #333333;
-}
-.maximized-params #params textarea,
-.maximized-lits #lits textarea,
-.maximized-output #output textarea {
-  height: calc(100% - 20px);
-  margin-bottom: 1rem;
+#playground #resize-bar {
+  height: 4px;
+  background-color: #444444;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  cursor: row-resize;
 }
 
 
@@ -455,6 +400,7 @@ h4, h2, h1 {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 0.75rem;
+  margin-top: 0.25rem;
   background-color: #333333;
   color: #dddddd;
   color: #dddddd;

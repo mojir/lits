@@ -1,9 +1,76 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-;(function () {
+
+var defaultProgram = `(defn factorial [x]
+  (if (= x 1)
+    1
+    (* x (factorial (dec x)))
+  )
+)
+
+(factorial 10)
+`
+var playgroundHeight = 315
+
+function layout() {
+  var wrapper = document.getElementById('wrapper')
+  var playground = document.getElementById('playground')
+  var sidebar = document.getElementById('sidebar')
+  var mainPanel = document.getElementById('main-panel')
+  var paramsTextarea = document.getElementById('params-textarea')
+  var litsTextarea = document.getElementById('lits-textarea')
+  var outputTextarea = document.getElementById('output-textarea')
+
+  const textAreaHeight = playgroundHeight - 77
+  const topPanelsBottom = playgroundHeight + 20
+
+  playground.style.height = playgroundHeight + 'px'
+  paramsTextarea.style.height = textAreaHeight + 'px'
+  litsTextarea.style.height = textAreaHeight + 'px'
+  outputTextarea.style.height = textAreaHeight + 'px'
+
+  sidebar.style.bottom = topPanelsBottom + 'px'
+  mainPanel.style.bottom = topPanelsBottom + 'px'
+
+  wrapper.style.display = 'block'
+}
+
+var moveParams = null
+
+window.onload = function () {
   lits = new Lits.Lits({ debug: true })
   console.log('START')
+
+  document.getElementById('resize-bar').onmousedown = event => {
+    console.log('onmousedown')
+    moveParams = {
+      startMoveY: event.clientY,
+      heightBeforeMove: playgroundHeight,
+      height: window.innerHeight,
+    }
+    console.log(moveParams)
+  }
+
+  window.onmouseup = () => {
+    console.log('onmouseup')
+    document.body.classList.remove('no-select')
+    moveParams = null
+  }
+
+  window.onmousemove = event => {
+    if (moveParams !== null) {
+      document.body.classList.add('no-select')
+      playgroundHeight = moveParams.heightBeforeMove + moveParams.startMoveY - event.clientY
+      if (playgroundHeight < 45) {
+        playgroundHeight = 45
+      }
+      if (playgroundHeight > moveParams.height - 89) {
+        playgroundHeight = moveParams.height - 89
+      }
+      layout()
+    }
+  }
 
   window.addEventListener('keydown', function (evt) {
     if (evt.key === 'F2') {
@@ -34,20 +101,17 @@
   if (program) {
     litsTextArea.value = decodeURIComponent(program)
   } else {
-    litsTextArea.value = localStorage.getItem('lits-textarea') || ''
+    litsTextArea.value = localStorage.getItem('lits-textarea') || defaultProgram
   }
 
+  var paramsTextArea = document.getElementById('params-textarea')
   paramsTextArea.value = localStorage.getItem('params-textarea') || ''
 
+  layout()
   play()
-})()
+}
 
 function keydownHandler(e) {
-  if (e.key === 'F3') {
-    toggleMaximized(this)
-    e.preventDefault()
-    return
-  }
   if (['Tab', 'Backspace', 'Enter', 'Delete'].includes(e.key)) {
     var start = this.selectionStart
     var end = this.selectionEnd
@@ -203,10 +267,11 @@ function stringifyValue(value) {
 
 function resetPlayground() {
   document.getElementById('params-textarea').value = ''
-  document.getElementById('lits-textarea').value = ''
+  document.getElementById('lits-textarea').value = defaultProgram
   document.getElementById('output-textarea').value = ''
   localStorage.setItem('lits-textarea', '')
   localStorage.setItem('params-textarea', '')
+  play()
 }
 
 function addToPlayground(example) {
@@ -239,42 +304,5 @@ function setPlayground(exampleId) {
   if (example.code) {
     document.getElementById('lits-textarea').value = example.code
     localStorage.setItem('lits-textarea', example.code)
-  }
-}
-
-function maximizeContext() {
-  minimizeAll()
-  document.body.classList.add('maximized-params')
-}
-
-function maximizeLisp() {
-  minimizeAll()
-  document.body.classList.add('maximized-lits')
-}
-
-function maximizeOutput() {
-  minimizeAll()
-  document.body.classList.add('maximized-output')
-}
-
-function minimizeAll() {
-  document.body.classList.remove('maximized-params')
-  document.body.classList.remove('maximized-lits')
-  document.body.classList.remove('maximized-output')
-}
-
-function toggleMaximized(textArea) {
-  if (textArea.id === 'lits-textarea') {
-    if (document.body.classList.contains('maximized-lits')) {
-      minimizeAll()
-    } else {
-      maximizeLisp()
-    }
-  } else if (textArea.id === 'params-textarea') {
-    if (document.body.classList.contains('maximized-params')) {
-      minimizeAll()
-    } else {
-      maximizeContext()
-    }
   }
 }

@@ -10,7 +10,8 @@
 </head>
 
 <body>
-  
+  <div id="wrapper">
+    
 <header id="top-bar">
   <div class="row">
     <div class="column"></div>
@@ -18,8 +19,8 @@
     <div class="column right version"><span>v1.0.2</span></div>
   </div>
 </header>
-  <main id="main-panel" class="fancy-scroll">
-    
+    <main id="main-panel" class="fancy-scroll">
+      
 <div id="index" class="content">
   <h1>Welcome to Lits!</h1>
   <br />
@@ -45,7 +46,7 @@
   </div>
 </div>
 
-    
+      
 <div id="example-page" class="content">
   <h1>Examples</h1>
   <br />
@@ -183,7 +184,7 @@
   </ul>
 </div>
 
-    
+      
 <div id="count" class="content function">
   <div class="function-header">count</div>
   
@@ -1440,8 +1441,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [4,5,6,8,10] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 'Albert') <span class="gray">=> "Albet" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [1,2,3,5,6,7,9] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(random-sample! 0.5 ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (random-sample! 0.5 'Albert') <span class="gray">=> "Ale" </span> </span></pre>
   </div>
 </div>
 
@@ -1459,8 +1460,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 4 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-nth! ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (rand-nth! 'Albert') <span class="gray">=> "r" </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand-nth! [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (rand-nth! [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> 8 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-nth! ___single_quote___Albert___single_quote___)')"> <span class="icon-button">▶</span> (rand-nth! 'Albert') <span class="gray">=> "l" </span> </span></pre>
   </div>
 </div>
 
@@ -1478,8 +1479,8 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [3,1,4,7,2,10,8,6,5,9] </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(shuffle ___single_quote___Albert Mojir___single_quote___)')"> <span class="icon-button">▶</span> (shuffle 'Albert Mojir') <span class="gray">=> "MrtiAlorebj " </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(shuffle [1 2 3 4 5 6 7 8 9 10])')"> <span class="icon-button">▶</span> (shuffle [1 2 3 4 5 6 7 8 9 10]) <span class="gray">=> [7,9,1,3,2,8,6,10,4,5] </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(shuffle ___single_quote___Albert Mojir___single_quote___)')"> <span class="icon-button">▶</span> (shuffle 'Albert Mojir') <span class="gray">=> "iAMrlebortj " </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1 2])')"> <span class="icon-button">▶</span> (shuffle [1 2]) <span class="gray">=> [2,1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [1])')"> <span class="icon-button">▶</span> (shuffle [1]) <span class="gray">=> [1] </span> </span></pre>
 <pre><span class="example" onclick="addToPlayground('(shuffle [])')"> <span class="icon-button">▶</span> (shuffle []) <span class="gray">=> [] </span> </span></pre>
@@ -2413,9 +2414,9 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.7859259115587958 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.0055400865306489576 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.5157872064020945 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(rand! 1)')"> <span class="icon-button">▶</span> (rand! 1) <span class="gray">=> 0.584562400003743 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 0.01)')"> <span class="icon-button">▶</span> (rand! 0.01) <span class="gray">=> 0.0043129899751640725 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand! 2.5)')"> <span class="icon-button">▶</span> (rand! 2.5) <span class="gray">=> 1.9106266559262215 </span> </span></pre>
   </div>
 </div>
 
@@ -2434,8 +2435,8 @@
   <label>Examples</label>
   <div class="indent">
     <pre><span class="example" onclick="addToPlayground('(rand-int! 1)')"> <span class="icon-button">▶</span> (rand-int! 1) <span class="gray">=> 0 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 3 </span> </span></pre>
-<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 17 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 10.12)')"> <span class="icon-button">▶</span> (rand-int! 10.12) <span class="gray">=> 9 </span> </span></pre>
+<pre><span class="example" onclick="addToPlayground('(rand-int! 123)')"> <span class="icon-button">▶</span> (rand-int! 123) <span class="gray">=> 15 </span> </span></pre>
   </div>
 </div>
 
@@ -3086,7 +3087,7 @@
 
   <label>Examples</label>
   <div class="indent">
-    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1638536918724 </span> </span></pre>
+    <pre><span class="example" onclick="addToPlayground('(inst-ms)')"> <span class="icon-button">▶</span> (inst-ms) <span class="gray">=> 1638826565278 </span> </span></pre>
   </div>
 </div>
 
@@ -5015,8 +5016,8 @@
   </div>
 </div>
 
-  </main>
-  
+    </main>
+    
 <nav id="sidebar" class="fancy-scroll">
   <label class="link" onclick="showPage('index')">Home</label>
   <br />
@@ -5299,8 +5300,9 @@
         </ul>
 </nav>
 
-  
+    
 <div id="playground">
+  <div id="resize-bar"></div>
   <div class="header row">
     <div class="column">Playground</span></div>
     <div class="column">
@@ -5316,10 +5318,6 @@
     <div class="column" id="params">
       <div class="row">
         <div class="column textarea-header"><label for="params-textarea">Params (JSON)</label></div>
-        <div class="column right">
-          <span id="maximize-params" class="icon-button" onclick="maximizeContext()">▲</span>
-          <span id="minimize-params" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
       </div>
       <textarea id="params-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
@@ -5327,10 +5325,6 @@
     <div class="column wider" id="lits">
       <div class="row">
         <div class="column textarea-header"><label for="lits-textarea">Lisp</label></div>
-        <div class="column right">
-          <span id="maximize-lits" class="icon-button" onclick="maximizeLisp()">▲</span>
-          <span id="minimize-lits" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
       </div>
       <textarea id="lits-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
@@ -5338,16 +5332,13 @@
     <div class="column wide" id="output">
       <div class="row">
         <div class="column textarea-header"><label for="output-textarea">Result</label></div>
-        <div class="column right">
-          <span id="maximize-output" class="icon-button" onclick="maximizeOutput()">▲</span>
-          <span id="minimize-output" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
       </div>
       <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>
   </div>
 </div>
 
+  </div>
   <script src="lits.iife.js"></script>
   <script src='examples.js'></script>
   <script src='scripts.js'></script>

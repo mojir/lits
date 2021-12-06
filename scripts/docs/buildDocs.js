@@ -20,16 +20,18 @@ function writeIndexPage() {
 <html lang="en">
 ${getHtmlHeader()}
 <body>
-  ${getTopBar({ back: false })}
-  <main id="main-panel" class="fancy-scroll">
-    ${getIndexPage()}
-    ${getExamplePage()}
-    ${Object.values(functionReference)
-      .map(obj => getDocumentationContent(obj))
-      .join('\n')}
-  </main>
-  ${getSideBar()}
-  ${getPlayground()}
+  <div id="wrapper">
+    ${getTopBar({ back: false })}
+    <main id="main-panel" class="fancy-scroll">
+      ${getIndexPage()}
+      ${getExamplePage()}
+      ${Object.values(functionReference)
+        .map(obj => getDocumentationContent(obj))
+        .join('\n')}
+    </main>
+    ${getSideBar()}
+    ${getPlayground()}
+  </div>
   <script src="lits.iife.js"></script>
   <script src='examples.js'></script>
   <script src='scripts.js'></script>
@@ -65,6 +67,7 @@ function getHtmlHeader() {
 function getPlayground() {
   return `
 <div id="playground">
+  <div id="resize-bar"></div>
   <div class="header row">
     <div class="column">Playground</span></div>
     <div class="column">
@@ -80,10 +83,6 @@ function getPlayground() {
     <div class="column" id="params">
       <div class="row">
         <div class="column textarea-header"><label for="params-textarea">Params (JSON)</label></div>
-        <div class="column right">
-          <span id="maximize-params" class="icon-button" onclick="maximizeContext()">▲</span>
-          <span id="minimize-params" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
       </div>
       <textarea id="params-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
@@ -91,10 +90,6 @@ function getPlayground() {
     <div class="column wider" id="lits">
       <div class="row">
         <div class="column textarea-header"><label for="lits-textarea">Lisp</label></div>
-        <div class="column right">
-          <span id="maximize-lits" class="icon-button" onclick="maximizeLisp()">▲</span>
-          <span id="minimize-lits" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
       </div>
       <textarea id="lits-textarea" class="fancy-scroll" spellcheck="false"></textarea>
     </div>
@@ -102,10 +97,6 @@ function getPlayground() {
     <div class="column wide" id="output">
       <div class="row">
         <div class="column textarea-header"><label for="output-textarea">Result</label></div>
-        <div class="column right">
-          <span id="maximize-output" class="icon-button" onclick="maximizeOutput()">▲</span>
-          <span id="minimize-output" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
       </div>
       <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>
