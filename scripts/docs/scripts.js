@@ -11,7 +11,6 @@ var defaultProgram = `(defn factorial [x]
 
 (factorial 10)
 `
-var playgroundHeight = 315
 
 function layout() {
   var wrapper = document.getElementById('wrapper')
@@ -39,6 +38,9 @@ function layout() {
 var moveParams = null
 
 window.onload = function () {
+  var storedPlaygroundHeight = localStorage.getItem('playground-height')
+  playgroundHeight = storedPlaygroundHeight ? Number(storedPlaygroundHeight) : 315
+
   lits = new Lits.Lits({ debug: true })
 
   document.getElementById('resize-bar').onmousedown = event => {
@@ -64,6 +66,7 @@ window.onload = function () {
       if (playgroundHeight > moveParams.height - 89) {
         playgroundHeight = moveParams.height - 89
       }
+      localStorage.setItem('playground-height', playgroundHeight)
       layout()
     }
   }
