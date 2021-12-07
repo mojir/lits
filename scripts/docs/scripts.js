@@ -12,17 +12,17 @@ var defaultProgram = `(defn factorial [x]
 (factorial 10)
 `
 
-var DEFAULT_PLAYGROUND_HEIGHT = 500
-var DEFAULT_RESIZE_DIVIDER1_X_PERCENT = 25
-var DEFAULT_RESIZE_DIVIDER2_X_PERCENT = 75
+const DEFAULT_PLAYGROUND_HEIGHT = 500
+const DEFAULT_RESIZE_DIVIDER1_X_PERCENT = 25
+const DEFAULT_RESIZE_DIVIDER2_X_PERCENT = 75
 
-var moveParams = null
-var playgroundHeight = null
-var resizeDivider1XPercent = null
-var resizeDivider2XPercent = null
-var windowHeight = null
-var windowWidth = null
-var availablePanelsWidth = null
+let moveParams = null
+let playgroundHeight = null
+let resizeDivider1XPercent = null
+let resizeDivider2XPercent = null
+let windowHeight = null
+let windowWidth = null
+let availablePanelsWidth = null
 
 function calculateDimensions() {
   windowHeight = window.innerHeight
@@ -33,25 +33,25 @@ function calculateDimensions() {
 function layout() {
   calculateDimensions()
 
-  var wrapper = document.getElementById('wrapper')
-  var playground = document.getElementById('playground')
-  var sidebar = document.getElementById('sidebar')
-  var mainPanel = document.getElementById('main-panel')
-  var paramsTextarea = document.getElementById('params-textarea')
-  var litsTextarea = document.getElementById('lits-textarea')
-  var outputTextarea = document.getElementById('output-textarea')
-  var paramsPanel = document.getElementById('params-panel')
-  var litsPanel = document.getElementById('lits-panel')
-  var outputPanel = document.getElementById('output-panel')
-  var resizeDivider1 = document.getElementById('resize-divider-1')
-  var resizeDivider2 = document.getElementById('resize-divider-2')
+  const wrapper = document.getElementById('wrapper')
+  const playground = document.getElementById('playground')
+  const sidebar = document.getElementById('sidebar')
+  const mainPanel = document.getElementById('main-panel')
+  const paramsTextarea = document.getElementById('params-textarea')
+  const litsTextarea = document.getElementById('lits-textarea')
+  const outputTextarea = document.getElementById('output-textarea')
+  const paramsPanel = document.getElementById('params-panel')
+  const litsPanel = document.getElementById('lits-panel')
+  const outputPanel = document.getElementById('output-panel')
+  const resizeDivider1 = document.getElementById('resize-divider-1')
+  const resizeDivider2 = document.getElementById('resize-divider-2')
 
-  var textAreaHeight = playgroundHeight - 77
-  var topPanelsBottom = playgroundHeight + 8
+  const textAreaHeight = playgroundHeight - 77
+  const topPanelsBottom = playgroundHeight + 8
 
-  var paramsPanelWidth = (availablePanelsWidth * resizeDivider1XPercent) / 100
-  var outputPanelWidth = (availablePanelsWidth * (100 - resizeDivider2XPercent)) / 100
-  var litsPanelWidth = availablePanelsWidth - paramsPanelWidth - outputPanelWidth
+  const paramsPanelWidth = (availablePanelsWidth * resizeDivider1XPercent) / 100
+  const outputPanelWidth = (availablePanelsWidth * (100 - resizeDivider2XPercent)) / 100
+  const litsPanelWidth = availablePanelsWidth - paramsPanelWidth - outputPanelWidth
 
   playground.style.height = playgroundHeight + 'px'
   resizeDivider1.style.height = playgroundHeight - 78 + 'px'
