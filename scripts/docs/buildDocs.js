@@ -67,36 +67,37 @@ function getHtmlHeader() {
 function getPlayground() {
   return `
 <div id="playground">
-  <div id="resize-bar"></div>
+  <div id="resize-playground"></div>
   <div class="header row">
-    <div class="column">Playground</span></div>
-    <div class="column">
-      <center>
+    <div class="column"></span></div>
+    <div class="column"><center>Playground</center></span></div>
+    <div class="column right">
       <span class="button" onclick="play()">Run [F2]</span>
       <span class="button" onclick="resetPlayground()">Reset</span>
-      </center>
-    </div>
-    <div class="column right">
     </div>
   </div>
-  <div class="row">
-    <div class="column" id="params">
-      <div class="row">
-        <div class="column textarea-header"><label for="params-textarea">Params (JSON)</label></div>
+  <div id="panels-container">
+    <div id="params-panel">
+      <div class="column textarea-header">
+        <label for="params-textarea">Params (JSON)</label>
       </div>
       <textarea id="params-textarea" class="fancy-scroll" spellcheck="false"></textarea>
-    </div>
+    </div
 
-    <div class="column wider" id="lits">
-      <div class="row">
-        <div class="column textarea-header"><label for="lits-textarea">Lisp</label></div>
+    ><div id="resize-divider-1"></div
+
+    ><div id="lits-panel">
+      <div class="column textarea-header">
+        <label for="lits-textarea">Lisp</label>
       </div>
       <textarea id="lits-textarea" class="fancy-scroll" spellcheck="false"></textarea>
-    </div>
+    </div
 
-    <div class="column wide" id="output">
-      <div class="row">
-        <div class="column textarea-header"><label for="output-textarea">Result</label></div>
+    ><div id="resize-divider-2"></div
+
+    ><div id="output-panel">
+      <div class="column textarea-header">
+        <label for="output-textarea">Result</label>
       </div>
       <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>

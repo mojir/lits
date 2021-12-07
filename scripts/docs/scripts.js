@@ -11,8 +11,23 @@ var defaultProgram = `(defn factorial [x]
 
 (factorial 10)
 `
+var moveParams = null
+var playgroundHeight = null
+var resizeDivider1XPercent = null
+var resizeDivider2XPercent = null
+var windowHeight = null
+var windowWidth = null
+var availablePanelsWidth = null
+
+function calculateDimensions() {
+  windowHeight = window.innerHeight
+  windowWidth = window.innerWidth
+  availablePanelsWidth = windowWidth - 26
+}
 
 function layout() {
+  calculateDimensions()
+
   var wrapper = document.getElementById('wrapper')
   var playground = document.getElementById('playground')
   var sidebar = document.getElementById('sidebar')
@@ -20,14 +35,31 @@ function layout() {
   var paramsTextarea = document.getElementById('params-textarea')
   var litsTextarea = document.getElementById('lits-textarea')
   var outputTextarea = document.getElementById('output-textarea')
+  var paramsPanel = document.getElementById('params-panel')
+  var litsPanel = document.getElementById('lits-panel')
+  var outputPanel = document.getElementById('output-panel')
+  var resizeDivider1 = document.getElementById('resize-divider-1')
+  var resizeDivider2 = document.getElementById('resize-divider-2')
 
-  const textAreaHeight = playgroundHeight - 77
-  const topPanelsBottom = playgroundHeight + 20
+  var textAreaHeight = playgroundHeight - 77
+  var topPanelsBottom = playgroundHeight + 20
+
+  var paramsPanelWidth = (availablePanelsWidth * resizeDivider1XPercent) / 100
+  var outputPanelWidth = (availablePanelsWidth * (100 - resizeDivider2XPercent)) / 100
+  var litsPanelWidth = availablePanelsWidth - paramsPanelWidth - outputPanelWidth
 
   playground.style.height = playgroundHeight + 'px'
+  resizeDivider1.style.height = playgroundHeight - 78 + 'px'
+  resizeDivider2.style.height = playgroundHeight - 78 + 'px'
+  resizeDivider1.style.marginTop = '20px'
+  resizeDivider2.style.marginTop = '20px'
   paramsTextarea.style.height = textAreaHeight + 'px'
   litsTextarea.style.height = textAreaHeight + 'px'
   outputTextarea.style.height = textAreaHeight + 'px'
+
+  paramsPanel.style.width = paramsPanelWidth + 'px'
+  litsPanel.style.width = litsPanelWidth + 'px'
+  outputPanel.style.width = outputPanelWidth + 'px'
 
   sidebar.style.bottom = topPanelsBottom + 'px'
   mainPanel.style.bottom = topPanelsBottom + 'px'
@@ -35,40 +67,101 @@ function layout() {
   wrapper.style.display = 'block'
 }
 
-var moveParams = null
+function resetPlayground() {
+  document.getElementById('params-textarea').value = ''
+  document.getElementById('lits-textarea').value = ''
+  document.getElementById('output-textarea').value = ''
+  localStorage.removeItem('lits-textarea')
+  localStorage.removeItem('params-textarea')
+  localStorage.removeItem('playground-height')
+  localStorage.removeItem('resize-divider-1-percent')
+  localStorage.removeItem('resize-divider-2-percent')
+  playgroundHeight = 315
+  resizeDivider1XPercent = 25
+  resizeDivider2XPercent = 75
+  layout()
+}
 
 window.onload = function () {
   var storedPlaygroundHeight = localStorage.getItem('playground-height')
+  var storedResizeDivider1XPercent = localStorage.getItem('resize-divider-1-percent')
+  var storedResizeDivider2XPercent = localStorage.getItem('resize-divider-2-percent')
+
   playgroundHeight = storedPlaygroundHeight ? Number(storedPlaygroundHeight) : 315
+  resizeDivider1XPercent = storedResizeDivider1XPercent ? Number(storedResizeDivider1XPercent) : 25
+  resizeDivider2XPercent = storedResizeDivider2XPercent ? Number(storedResizeDivider2XPercent) : 75
 
   lits = new Lits.Lits({ debug: true })
 
-  document.getElementById('resize-bar').onmousedown = event => {
+  document.getElementById('resize-playground').onmousedown = event => {
     moveParams = {
+      id: 'playground',
       startMoveY: event.clientY,
       heightBeforeMove: playgroundHeight,
-      height: window.innerHeight,
     }
   }
 
+  document.getElementById('resize-divider-1').onmousedown = event => {
+    moveParams = {
+      id: 'resize-divider-1',
+      startMoveX: event.clientX,
+      percentBeforeMove: resizeDivider1XPercent,
+    }
+  }
+
+  document.getElementById('resize-divider-2').onmousedown = event => {
+    moveParams = {
+      id: 'resize-divider-2',
+      startMoveX: event.clientX,
+      percentBeforeMove: resizeDivider2XPercent,
+    }
+  }
+
+  window.onresize = layout
   window.onmouseup = () => {
     document.body.classList.remove('no-select')
     moveParams = null
   }
 
   window.onmousemove = event => {
-    if (moveParams !== null) {
-      document.body.classList.add('no-select')
+    if (moveParams === null) {
+      return
+    }
+
+    document.body.classList.add('no-select')
+
+    if (moveParams.id === 'playground') {
       playgroundHeight = moveParams.heightBeforeMove + moveParams.startMoveY - event.clientY
       if (playgroundHeight < 45) {
         playgroundHeight = 45
       }
-      if (playgroundHeight > moveParams.height - 89) {
-        playgroundHeight = moveParams.height - 89
+      if (playgroundHeight > windowHeight - 89) {
+        playgroundHeight = windowHeight - 89
       }
       localStorage.setItem('playground-height', playgroundHeight)
-      layout()
+    } else if (moveParams.id === 'resize-divider-1') {
+      resizeDivider1XPercent =
+        moveParams.percentBeforeMove + ((event.clientX - moveParams.startMoveX) / availablePanelsWidth) * 100
+      if (resizeDivider1XPercent < 10) {
+        resizeDivider1XPercent = 10
+      }
+      if (resizeDivider1XPercent > resizeDivider2XPercent - 10) {
+        resizeDivider1XPercent = resizeDivider2XPercent - 10
+      }
+      localStorage.setItem('resize-divider-1-percent', resizeDivider1XPercent)
+    } else if (moveParams.id === 'resize-divider-2') {
+      resizeDivider2XPercent =
+        moveParams.percentBeforeMove + ((event.clientX - moveParams.startMoveX) / availablePanelsWidth) * 100
+      if (resizeDivider2XPercent < resizeDivider1XPercent + 10) {
+        resizeDivider2XPercent = resizeDivider1XPercent + 10
+      }
+      if (resizeDivider2XPercent > 90) {
+        resizeDivider2XPercent = 90
+      }
+      localStorage.setItem('resize-divider-2-percent', resizeDivider2XPercent)
     }
+
+    layout()
   }
 
   window.addEventListener('keydown', function (evt) {
@@ -263,15 +356,6 @@ function stringifyValue(value) {
   return JSON.stringify(value)
 }
 
-function resetPlayground() {
-  document.getElementById('params-textarea').value = ''
-  document.getElementById('lits-textarea').value = defaultProgram
-  document.getElementById('output-textarea').value = ''
-  localStorage.setItem('lits-textarea', '')
-  localStorage.setItem('params-textarea', '')
-  play()
-}
-
 function addToPlayground(example) {
   example = example.replace(/___single_quote___/g, "'").replace(/___double_quote___/g, '"')
   var textarea = document.getElementById('lits-textarea')
@@ -291,8 +375,6 @@ function setPlayground(exampleId) {
     throw Error(`Could not find example '${exampleId}'`)
   }
 
-  resetPlayground()
-
   if (example.params) {
     const value = JSON.stringify(example.params, (_k, v) => (v === undefined ? null : v), 2)
     document.getElementById('params-textarea').value = value
@@ -303,4 +385,6 @@ function setPlayground(exampleId) {
     document.getElementById('lits-textarea').value = example.code
     localStorage.setItem('lits-textarea', example.code)
   }
+
+  play()
 }

@@ -104,7 +104,7 @@ a:link, a:visited, a:hover, a:active {
   overflow: auto;
 }
 
-.r-row {
+/* .r-row {
   flex-direction: column;
 }
 
@@ -119,14 +119,14 @@ a:link, a:visited, a:hover, a:active {
 .column.wider {
   flex: 35;
 }
-
+*/
 .column.right {
   text-align: right;
 }
-
+/*
 .column.small {
   flex: 0;
-}
+} */
 
 .gray {
   color: gray;
@@ -136,7 +136,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .button {
-  -webkit-user-select: none; /* Safari */        
+  -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
@@ -251,14 +251,32 @@ input[type="submit"]:hover{
   box-shadow: 6px 3px 8px #111111;
 }
 
-#playground #resize-bar {
-  height: 4px;
+#playground #panels-container {
+  width: 100%;
+  white-space: nowrap;
+}
+
+
+#playground #params-panel, #playground #lits-panel, #playground #output-panel {
+  display: inline-block;
+}
+
+#playground #resize-playground {
+  display: block;
+  height: 5px;
   background-color: #444444;
   margin-left: -0.5rem;
   margin-right: -0.5rem;
   cursor: row-resize;
 }
 
+#playground #resize-divider-1, #playground #resize-divider-2 {
+  display: inline-block;
+  max-width: 5px;
+  width: 5px;
+  margin: 20px 0px 5px 0px;
+  cursor: col-resize;
+}
 
 .text {
   font-family: Roboto;
@@ -409,10 +427,6 @@ h4, h2, h1 {
 
 #playground #params-textarea, #playground #lits-textarea {
   background-color: #222222;
-}
-
-#lits, #output {
-  margin-left: 0.5rem;
 }
 
 #output-textarea {
