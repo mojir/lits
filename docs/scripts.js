@@ -11,6 +11,11 @@ var defaultProgram = `(defn factorial [x]
 
 (factorial 10)
 `
+
+var DEFAULT_PLAYGROUND_HEIGHT = 500
+var DEFAULT_RESIZE_DIVIDER1_X_PERCENT = 25
+var DEFAULT_RESIZE_DIVIDER2_X_PERCENT = 75
+
 var moveParams = null
 var playgroundHeight = null
 var resizeDivider1XPercent = null
@@ -42,7 +47,7 @@ function layout() {
   var resizeDivider2 = document.getElementById('resize-divider-2')
 
   var textAreaHeight = playgroundHeight - 77
-  var topPanelsBottom = playgroundHeight + 20
+  var topPanelsBottom = playgroundHeight + 8
 
   var paramsPanelWidth = (availablePanelsWidth * resizeDivider1XPercent) / 100
   var outputPanelWidth = (availablePanelsWidth * (100 - resizeDivider2XPercent)) / 100
@@ -76,9 +81,9 @@ function resetPlayground() {
   localStorage.removeItem('playground-height')
   localStorage.removeItem('resize-divider-1-percent')
   localStorage.removeItem('resize-divider-2-percent')
-  playgroundHeight = 315
-  resizeDivider1XPercent = 25
-  resizeDivider2XPercent = 75
+  playgroundHeight = DEFAULT_PLAYGROUND_HEIGHT
+  resizeDivider1XPercent = DEFAULT_RESIZE_DIVIDER1_X_PERCENT
+  resizeDivider2XPercent = DEFAULT_RESIZE_DIVIDER2_X_PERCENT
   layout()
 }
 
@@ -87,9 +92,13 @@ window.onload = function () {
   var storedResizeDivider1XPercent = localStorage.getItem('resize-divider-1-percent')
   var storedResizeDivider2XPercent = localStorage.getItem('resize-divider-2-percent')
 
-  playgroundHeight = storedPlaygroundHeight ? Number(storedPlaygroundHeight) : 315
-  resizeDivider1XPercent = storedResizeDivider1XPercent ? Number(storedResizeDivider1XPercent) : 25
-  resizeDivider2XPercent = storedResizeDivider2XPercent ? Number(storedResizeDivider2XPercent) : 75
+  playgroundHeight = storedPlaygroundHeight ? Number(storedPlaygroundHeight) : DEFAULT_PLAYGROUND_HEIGHT
+  resizeDivider1XPercent = storedResizeDivider1XPercent
+    ? Number(storedResizeDivider1XPercent)
+    : DEFAULT_RESIZE_DIVIDER1_X_PERCENT
+  resizeDivider2XPercent = storedResizeDivider2XPercent
+    ? Number(storedResizeDivider2XPercent)
+    : DEFAULT_RESIZE_DIVIDER2_X_PERCENT
 
   lits = new Lits.Lits({ debug: true })
 

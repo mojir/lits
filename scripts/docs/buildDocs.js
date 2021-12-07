@@ -127,7 +127,7 @@ function getIndexPage() {
       <li>100% test coverage</li>
     </ul>
     <p>You can see some examples and find documentation of all built-in function to the left.</p>
-    <p>For more instruction on how to install and use Lits as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lits">https://github.com/mojir/lits</a></p>
+    <p>For more instruction on how to install and use Lits as a cli or a typescript lib, checkout <a href="https://github.com/YouCruit/lits">https://github.com/YouCruit/lits</a></p>
     <p/>
     <p>Happy coding!</p>
   </div>
