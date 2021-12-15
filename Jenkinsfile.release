@@ -1,0 +1,97 @@
+@Library("youcruit-jenkinslib") _
+
+pipeline {
+    parameters {
+            choice(name: 'RELEASE_TYPE', choices: ['', 'BUGFIX', 'FEATURE', 'JUST_FOR_KICKS'], description: 'What kind of release is this')
+            string(name: 'Description', defaultValue: 'I was lazy so sue me!', description: 'Whats included in this release')
+    }
+
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(
+            logRotator(
+                numToKeepStr: '30',
+                artifactDaysToKeepStr: '20',
+                artifactNumToKeepStr: '30',
+                daysToKeepStr: '20',
+            )
+        )
+        timestamps()
+    }
+
+    agent {
+        label 'youcruitbuilder'
+    }
+
+    environment {
+        PROJECT = "form-ml-projects"
+    }
+
+    stages {
+        stage('Checkout') {
+            options {
+                timeout(time: 2, unit: 'MINUTES')
+            }
+            steps {
+                checkout scm
+            }
+        }
+        stage("Build and Release") {
+            when {
+                expression { return params.RELEASE_TYPE != '' }
+            }
+            options {
+                timeout(time: 30, unit: 'MINUTES')
+            }
+            environment {
+                NPM_ARTIFACTORY_AUTH = credentials("NPM_ARTIFACTORY_AUTH")
+                NPM_ARTIFACTORY_EMAIL = "teknik+jenkins@youcruit.com"
+            }
+            steps {
+                configFileProvider([configFile(fileId: 'org.jenkinsci.plugins.configfiles.custom.CustomConfig1448492140289', targetLocation: "${env.HOME}/.ssh/id_rsa")]) {
+                    script {
+                        sh 'chmod 0600 "$HOME"/.ssh/id_rsa'
+                        sh 'ci-scripts/release_pipeline.sh'
+                        currentBuild.description = "Released ${env.PROJECT}"
+                    }
+                }
+            }
+        }
+        /*
+        stage('Merge master into release and develop') {
+             when {
+                expression { return params.RELEASE_TYPE != '' }
+            }
+            steps {
+                script {
+                    configFileProvider([configFile(fileId: 'org.jenkinsci.plugins.configfiles.custom.CustomConfig1448492140289', targetLocation: "${env.HOME}/.ssh/id_rsa")]) {
+                        catchError(buildResult: "UNSTABLE", stageResult: "FAILURE") {
+                            sh '''
+                                chmod 0600 "$HOME"/.ssh/id_rsa
+
+                                git clean -fd
+                                git fetch origin --no-tags -- +refs/heads/*:refs/remotes/origin/*
+
+                                git checkout -B release origin/release
+                                git merge --ff --no-edit origin/master
+                                git push origin release:release
+
+                                git checkout -B develop origin/develop
+                                git merge --ff --no-edit release
+                                git push origin develop:develop
+                            '''
+                        }
+                    }
+                 }
+            }
+        }
+         */
+    }
+    post {
+        failure {
+            script {
+                currentBuild.description = "Released FAILED"
+            }
+        }
+    }
+}
