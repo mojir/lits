@@ -73,3 +73,5 @@ test-report.xml
 
 # Idea
 .idea/
+
+.vscode/
