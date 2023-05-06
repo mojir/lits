@@ -4,6 +4,7 @@ const arrayReference = require(`./categories/array`)
 const sequenceReference = require(`./categories/sequence`)
 const mathReference = require(`./categories/math`)
 const miscReference = require(`./categories/misc`)
+const assertReference = require(`./categories/assert`)
 const objectReference = require(`./categories/object`)
 const predicateReference = require(`./categories/predicate`)
 const regularExpressionReference = require(`./categories/regularExpression`)
@@ -25,6 +26,7 @@ const functionReference = Object.assign(
   specialExpressionsReference,
   stringReference,
   bitwiseReference,
+  assertReference,
 )
 
 const categories = [
@@ -40,6 +42,7 @@ const categories = [
   `Regular expression`,
   `Bitwise`,
   `Misc`,
+  `Assert`,
 ]
 
 const categorizedFunctions = Object.values(functionReference)

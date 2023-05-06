@@ -15,7 +15,7 @@ import {
   SomePredFunction,
   UserDefinedFunction,
 } from '../parser/interface'
-import { SourceCodeInfo } from '../tokenizer/interface'
+import { DebugInfo } from '../tokenizer/interface'
 import { toAny } from '../utils'
 import { any, asValue, string } from '../utils/assertion'
 import { valueToString } from '../utils/helpers'
@@ -27,7 +27,7 @@ type FunctionExecutors = Record<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fn: any,
     params: Arr,
-    sourceCodeInfo: SourceCodeInfo,
+    debugInfo: DebugInfo | undefined,
     contextStack: ContextStack,
     helpers: { evaluateAstNode: EvaluateAstNode; executeFunction: ExecuteFunction },
   ) => Any
@@ -36,7 +36,7 @@ type FunctionExecutors = Record<
 function findOverloadFunction(
   overloads: EvaluatedFunctionOverload[],
   nbrOfParams: number,
-  sourceCodeInfo: SourceCodeInfo,
+  debugInfo?: DebugInfo,
 ): EvaluatedFunctionOverload {
   const overloadFunction = overloads.find(overload => {
     const arity = overload.arity
@@ -47,15 +47,15 @@ function findOverloadFunction(
     }
   })
   if (!overloadFunction) {
-    throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, sourceCodeInfo)
+    throw new LitsError(`Unexpected number of arguments, got ${valueToString(nbrOfParams)}.`, debugInfo)
   }
   return overloadFunction
 }
 
 export const functionExecutors: FunctionExecutors = {
-  'user-defined': (fn: UserDefinedFunction, params, sourceCodeInfo, contextStack, { evaluateAstNode }) => {
+  'user-defined': (fn: UserDefinedFunction, params, debugInfo, contextStack, { evaluateAstNode }) => {
     for (;;) {
-      const overloadFunction = findOverloadFunction(fn.overloads, params.length, sourceCodeInfo)
+      const overloadFunction = findOverloadFunction(fn.overloads, params.length, debugInfo)
       const args = overloadFunction.arguments
       const nbrOfMandatoryArgs: number = args.mandatoryArguments.length
 
@@ -66,7 +66,7 @@ export const functionExecutors: FunctionExecutors = {
       for (let i = 0; i < length; i += 1) {
         if (i < nbrOfMandatoryArgs) {
           const param = toAny(params[i])
-          const key = string.as(args.mandatoryArguments[i], sourceCodeInfo)
+          const key = string.as(args.mandatoryArguments[i], debugInfo)
           newContext[key] = { value: param }
         } else {
           rest.push(toAny(params[i]))
@@ -92,37 +92,37 @@ export const functionExecutors: FunctionExecutors = {
       }
     }
   },
-  partial: (fn: PartialFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    return executeFunction(fn.fn, [...fn.params, ...params], sourceCodeInfo, contextStack)
+  partial: (fn: PartialFunction, params, debugInfo, contextStack, { executeFunction }) => {
+    return executeFunction(fn.fn, [...fn.params, ...params], contextStack, debugInfo)
   },
-  comp: (fn: CompFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+  comp: (fn: CompFunction, params, debugInfo, contextStack, { executeFunction }) => {
     const { fns } = fn
     if (fns.length === 0) {
       if (params.length !== 1) {
-        throw new LitsError(`(comp) expects one argument, got ${valueToString(params.length)}.`, sourceCodeInfo)
+        throw new LitsError(`(comp) expects one argument, got ${valueToString(params.length)}.`, debugInfo)
       }
-      return any.as(params[0], sourceCodeInfo)
+      return any.as(params[0], debugInfo)
     }
     return any.as(
       fns.reduceRight((result: Arr, fn) => {
-        return [executeFunction(toAny(fn), result, sourceCodeInfo, contextStack)]
+        return [executeFunction(toAny(fn), result, contextStack, debugInfo)]
       }, params)[0],
-      sourceCodeInfo,
+      debugInfo,
     )
   },
   constantly: (fn: ConstantlyFunction) => {
     return fn.value
   },
-  juxt: (fn: JuxtFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    return fn.fns.map(fn => executeFunction(toAny(fn), params, sourceCodeInfo, contextStack))
+  juxt: (fn: JuxtFunction, params, debugInfo, contextStack, { executeFunction }) => {
+    return fn.fns.map(fn => executeFunction(toAny(fn), params, contextStack, debugInfo))
   },
-  complement: (fn: ComplementFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    return !executeFunction(fn.fn, params, sourceCodeInfo, contextStack)
+  complement: (fn: ComplementFunction, params, debugInfo, contextStack, { executeFunction }) => {
+    return !executeFunction(fn.fn, params, contextStack, debugInfo)
   },
-  'every-pred': (fn: EveryPredFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+  'every-pred': (fn: EveryPredFunction, params, debugInfo, contextStack, { executeFunction }) => {
     for (const f of fn.fns) {
       for (const param of params) {
-        const result = executeFunction(toAny(f), [param], sourceCodeInfo, contextStack)
+        const result = executeFunction(toAny(f), [param], contextStack, debugInfo)
         if (!result) {
           return false
         }
@@ -130,10 +130,10 @@ export const functionExecutors: FunctionExecutors = {
     }
     return true
   },
-  'some-pred': (fn: SomePredFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+  'some-pred': (fn: SomePredFunction, params, debugInfo, contextStack, { executeFunction }) => {
     for (const f of fn.fns) {
       for (const param of params) {
-        const result = executeFunction(toAny(f), [param], sourceCodeInfo, contextStack)
+        const result = executeFunction(toAny(f), [param], contextStack, debugInfo)
         if (result) {
           return true
         }
@@ -141,12 +141,12 @@ export const functionExecutors: FunctionExecutors = {
     }
     return false
   },
-  fnil: (fn: FNilFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+  fnil: (fn: FNilFunction, params, debugInfo, contextStack, { executeFunction }) => {
     const fniledParams = params.map((param, index) => (param === null ? toAny(fn.params[index]) : param))
-    return executeFunction(toAny(fn.fn), fniledParams, sourceCodeInfo, contextStack)
+    return executeFunction(toAny(fn.fn), fniledParams, contextStack, debugInfo)
   },
-  builtin: (fn: BuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    const normalExpression = asValue(normalExpressions[fn.name], sourceCodeInfo)
-    return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction })
+  builtin: (fn: BuiltinFunction, params, debugInfo, contextStack, { executeFunction }) => {
+    const normalExpression = asValue(normalExpressions[fn.name], debugInfo)
+    return normalExpression.evaluate(params, debugInfo, contextStack, { executeFunction })
   },
 }

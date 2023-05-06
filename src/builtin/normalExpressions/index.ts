@@ -5,6 +5,7 @@ import { arrayNormalExpression } from './categories/array'
 import { sequenceNormalExpression } from './categories/sequence'
 import { mathNormalExpression } from './categories/math'
 import { miscNormalExpression } from './categories/misc'
+import { assertNormalExpression } from './categories/assert'
 import { objectNormalExpression } from './categories/object'
 import { predicatesNormalExpression } from './categories/predicates'
 import { regexpNormalExpression } from './categories/regexp'
@@ -18,6 +19,7 @@ export const normalExpressions: BuiltinNormalExpressions = {
   ...sequenceNormalExpression,
   ...mathNormalExpression,
   ...miscNormalExpression,
+  ...assertNormalExpression,
   ...objectNormalExpression,
   ...predicatesNormalExpression,
   ...regexpNormalExpression,

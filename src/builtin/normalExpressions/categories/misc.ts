@@ -1,10 +1,11 @@
-import { AssertionError } from '../../../errors'
 import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
 import { Any } from '../../../interface'
 import { compare, deepEqual } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
-import { any, assertNumberOfParams, litsFunction, string } from '../../../utils/assertion'
+import { any, assertNumberOfParams, litsFunction, number, string } from '../../../utils/assertion'
+const uuidTemplate = `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+const xyRegexp = /[xy]/g
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
   'not=': {
@@ -34,8 +35,8 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
   'equal?': {
-    evaluate: ([a, b], sourceCodeInfo): boolean => {
-      return deepEqual(any.as(a, sourceCodeInfo), any.as(b, sourceCodeInfo), sourceCodeInfo)
+    evaluate: ([a, b], debugInfo): boolean => {
+      return deepEqual(any.as(a, debugInfo), any.as(b, debugInfo), debugInfo)
     },
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
@@ -98,26 +99,42 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => !first,
     validate: node => assertNumberOfParams(1, node),
   },
-  'inst-ms': {
+  'inst-ms!': {
     evaluate: (): number => {
       return Date.now()
     },
     validate: node => assertNumberOfParams(0, node),
   },
+  'inst-ms->iso-date-time': {
+    evaluate: ([ms], debugInfo): string => {
+      number.assert(ms, debugInfo)
+      return new Date(ms).toISOString()
+    },
+    validate: node => assertNumberOfParams(1, node),
+  },
+  'iso-date-time->inst-ms': {
+    evaluate: ([dateTime], debugInfo): number => {
+      string.assert(dateTime, debugInfo)
+      const ms = new Date(dateTime).valueOf()
+      number.assert(ms, debugInfo, { finite: true })
+      return ms
+    },
+    validate: node => assertNumberOfParams(1, node),
+  },
   'write!': {
-    evaluate: (params, sourceCodeInfo): Any => {
+    evaluate: (params, debugInfo): Any => {
       // eslint-disable-next-line no-console
       console.log(...params)
 
       if (params.length > 0) {
-        return any.as(params[params.length - 1], sourceCodeInfo)
+        return any.as(params[params.length - 1], debugInfo)
       }
 
       return null
     },
   },
   'debug!': {
-    evaluate: (params, sourceCodeInfo, contextStack): Any => {
+    evaluate: (params, debugInfo, contextStack): Any => {
       if (params.length === 0) {
         // eslint-disable-next-line no-console
         console.warn(`*** LITS DEBUG ***\n${contextStackToString(contextStack)}\n`)
@@ -125,7 +142,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       // eslint-disable-next-line no-console
       console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
-      return any.as(params[0], sourceCodeInfo)
+      return any.as(params[0], debugInfo)
     },
     validate: node => assertNumberOfParams({ max: 1 }, node),
   },
@@ -141,19 +158,17 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  assert: {
-    evaluate: (params, sourceCodeInfo): Any => {
-      const value = params[0]
-      const message = params.length === 2 ? params[1] : `${value}`
-      string.assert(message, sourceCodeInfo)
-      if (!value) {
-        throw new AssertionError(message, sourceCodeInfo)
-      }
-      return any.as(value, sourceCodeInfo)
+  'uuid!': {
+    evaluate: (): string => {
+      return uuidTemplate.replace(xyRegexp, character => {
+        const randomNbr = Math.floor(Math.random() * 16)
+        const newValue = character === `x` ? randomNbr : (randomNbr & 0x3) | 0x8
+        return newValue.toString(16)
+      })
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    validate: node => assertNumberOfParams(0, node),
   },
-  'lits-version': {
+  'lits-version!': {
     evaluate: (): Any => {
       return version
     },

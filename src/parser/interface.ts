@@ -1,11 +1,14 @@
 import { SpecialExpressionName } from '../builtin/interface'
-import { Arity } from '../builtin/utils'
+import { Condition } from '../builtin/specialExpressions/cond'
+import { LoopBindingNode } from '../builtin/specialExpressions/loops'
+import { Arity, FunctionOverload } from '../builtin/utils'
 import { Context } from '../evaluator/interface'
 import { Any, Arr } from '../interface'
 import { ReservedName } from '../reservedNames'
-import { SourceCodeInfo, Token } from '../tokenizer/interface'
+import { DebugInfo, Token } from '../tokenizer/interface'
 
 export const FUNCTION_SYMBOL = `__LITS_FUNCTION__`
+export const REGEXP_SYMBOL = `__REGEXP__`
 
 export type EvaluatedFunctionArguments = {
   mandatoryArguments: string[]
@@ -21,8 +24,15 @@ export type EvaluatedFunctionOverload = {
 
 type GenericLitsFunction = {
   [FUNCTION_SYMBOL]: true
-  sourceCodeInfo: SourceCodeInfo
+  debugInfo?: DebugInfo
   type: string
+}
+
+export interface RegularExpression {
+  [REGEXP_SYMBOL]: true
+  debugInfo?: DebugInfo
+  source: string
+  flags: string
 }
 
 export interface UserDefinedFunction extends GenericLitsFunction {
@@ -108,7 +118,7 @@ export type ModifierName = `&` | `&let` | `&when` | `&while`
 
 interface GenericNode {
   type: NodeType
-  token: Token
+  token?: Token
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
@@ -175,6 +185,16 @@ export interface SpecialExpressionNode extends GenericNode {
   type: `SpecialExpression`
   name: SpecialExpressionName
   params: AstNode[]
+  binding?: BindingNode
+  bindings?: BindingNode[]
+  conditions?: Condition[]
+  functionName?: AstNode
+  overloads?: FunctionOverload[]
+  loopBindings?: LoopBindingNode[]
+  messageNode?: AstNode
+  tryExpression?: AstNode
+  error?: NameNode
+  catchExpression?: AstNode
 }
 
 export type AstNode =
@@ -183,8 +203,8 @@ export type AstNode =
   | ReservedNameNode
   | NameNode
   | NormalExpressionNode
-  | SpecialExpressionNode
   | ModifierNode
+  | SpecialExpressionNode
 
 export type Ast = {
   type: `Program`

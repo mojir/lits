@@ -1,20 +1,22 @@
-import { ContextStack, EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
+import { ContextStack, EvaluateAstNode, ExecuteFunction, LookUpResult } from '../evaluator/interface'
 import {
   ParseArgument,
   ParseBindings,
   ParseExpression,
   ParseTokens,
   ParseToken,
-  SpecialExpressionNode,
   ParseBinding,
+  NameNode,
+  SpecialExpressionNode,
 } from '../parser/interface'
-import { Token, SourceCodeInfo } from '../tokenizer/interface'
+import { Token, DebugInfo } from '../tokenizer/interface'
 import { NormalExpressionNode } from '../parser/interface'
 import { Any, Arr } from '../interface'
+import { AnalyzeAst, AnalyzeResult } from '../analyze/interface'
 
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
-  sourceCodeInfo: SourceCodeInfo,
+  debugInfo: DebugInfo | undefined,
   contextStack: ContextStack,
   { executeFunction }: { executeFunction: ExecuteFunction },
 ) => T
@@ -25,7 +27,7 @@ type BuiltinNormalExpression<T> = {
   validate?: ValidateNode
 }
 
-export type Parsers = {
+export type ParserHelpers = {
   parseExpression: ParseExpression
   parseTokens: ParseTokens
   parseToken: ParseToken
@@ -40,24 +42,32 @@ export type BuiltinSpecialExpressions = Record<string, BuiltinSpecialExpression<
 type EvaluateHelpers = {
   evaluateAstNode: EvaluateAstNode
   builtin: Builtin
+  lookUp(nameNode: NameNode, contextStack: ContextStack): LookUpResult
 }
-export type BuiltinSpecialExpression<T, N extends SpecialExpressionNode = SpecialExpressionNode> = {
-  parse: (tokens: Token[], position: number, parsers: Parsers) => [number, N]
-  evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
-  validate?: (node: N) => void
+export type BuiltinSpecialExpression<T> = {
+  parse: (tokens: Token[], position: number, parsers: ParserHelpers) => [number, SpecialExpressionNode]
+  evaluate: (node: SpecialExpressionNode, contextStack: ContextStack, helpers: EvaluateHelpers) => T
+  validate?: (node: SpecialExpressionNode) => void
+  analyze(
+    node: SpecialExpressionNode,
+    contextStack: ContextStack,
+    params: { analyzeAst: AnalyzeAst; builtin: Builtin },
+  ): AnalyzeResult
 }
 
 export type SpecialExpressionName =
   | `and`
   | `block`
+  | `comment`
   | `cond`
   | `def`
   | `defn`
   | `defns`
   | `defs`
   | `do`
-  | `for`
+  | `doseq`
   | `fn`
+  | `for`
   | `function`
   | `if-let`
   | `if-not`
@@ -76,6 +86,8 @@ export type SpecialExpressionName =
   | `when-let`
   | `when-not`
   | `when`
+  | `declared?`
+  | `??`
 
 export type Builtin = {
   normalExpressions: BuiltinNormalExpressions

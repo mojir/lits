@@ -1,3 +1,5 @@
+import { LocationGetter } from '../Lits/Lits'
+
 export type TokenizerType =
   | `paren`
   | `number`
@@ -8,21 +10,25 @@ export type TokenizerType =
   | `regexpShorthand`
   | `fnShorthand`
 
-export type SourceCodeInfo =
-  | {
-      line: number
-      column: number
-      sourceCodeLine: string | null
-      toString(): string
-    }
-  | `EOF`
-  | null
+export type SourceCodeInfo = {
+  line: number
+  column: number
+  code: string
+  getLocation?: LocationGetter
+}
+
+export type DebugInfo = SourceCodeInfo | `EOF`
 
 export type Token = {
   type: TokenizerType
   value: string
   options?: Record<string, boolean>
-  sourceCodeInfo: SourceCodeInfo
+  debugInfo?: DebugInfo
 }
 export type TokenDescriptor = [length: number, token: Token | undefined]
-export type Tokenizer = (input: string, position: number, sourceCodeInfo: SourceCodeInfo) => TokenDescriptor
+export type Tokenizer = (input: string, position: number, debugInfo?: DebugInfo) => TokenDescriptor
+
+export type TokenizeParams = {
+  debug: boolean
+  getLocation?: LocationGetter
+}

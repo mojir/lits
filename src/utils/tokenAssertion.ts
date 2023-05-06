@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
-import { SourceCodeInfo, Token, TokenizerType } from '../tokenizer/interface'
-import { getSourceCodeInfo, isToken, valueToString } from './helpers'
+import { DebugInfo, Token, TokenizerType } from '../tokenizer/interface'
+import { getDebugInfo, isToken, valueToString } from './helpers'
 
 type Options =
   | {
@@ -28,30 +28,30 @@ function is(value: unknown, options: Options = {}): value is Token {
   return true
 }
 
-function assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options: Options = {}): asserts value is Token {
+function assert(value: unknown, debugInfo: DebugInfo | undefined, options: Options = {}): asserts value is Token {
   if (!is(value, options)) {
     if (isToken(value)) {
-      sourceCodeInfo = value.sourceCodeInfo
+      debugInfo = value.debugInfo
     }
 
     throw new LitsError(
       `Expected ${options.type ? `${options.type}-` : ``}token${
         typeof options.value === `string` ? ` value='${options.value}'` : ``
       }, got ${valueToString(value)}.`,
-      getSourceCodeInfo(value, sourceCodeInfo),
+      getDebugInfo(value, debugInfo),
     )
   }
 }
 
-function as(value: unknown, sourceCodeInfo: SourceCodeInfo, options: Options = {}): Token {
-  assert(value, sourceCodeInfo, options)
+function as(value: unknown, debugInfo: DebugInfo, options: Options = {}): Token {
+  assert(value, debugInfo, options)
   return value
 }
 
 export const token: {
   is: (value: unknown, options?: Options) => value is Token
-  as: (value: unknown, sourceCodeInfo: SourceCodeInfo, options?: Options) => Token
-  assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options?: Options): asserts value is Token
+  as: (value: unknown, debugInfo: DebugInfo, options?: Options) => Token
+  assert(value: unknown, debugInfo: DebugInfo, options?: Options): asserts value is Token
 } = {
   is,
   as,

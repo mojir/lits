@@ -36,4 +36,21 @@ export default [
     ],
     plugins,
   },
+  {
+    input: 'src/testFramework/index.ts',
+    external: ['fs', 'path'],
+    output: [
+      {
+        file: 'dist/testFramework.esm.js',
+        format: 'esm',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/testFramework.js',
+        format: 'cjs',
+        sourcemap: true,
+      },
+    ],
+    plugins,
+  },
 ]

@@ -4,7 +4,47 @@ exports[`misc functions debug! debug value. 1`] = `
 "*** LITS DEBUG ***
 {
   \\"__LITS_FUNCTION__\\": true,
-  \\"sourceCodeInfo\\": null,
+  \\"type\\": \\"user-defined\\",
+  \\"overloads\\": [
+    {
+      \\"arguments\\": {
+        \\"mandatoryArguments\\": [
+          \\"%1\\"
+        ]
+      },
+      \\"arity\\": 1,
+      \\"body\\": [
+        {
+          \\"type\\": \\"NormalExpression\\",
+          \\"name\\": \\">\\",
+          \\"params\\": [
+            {
+              \\"type\\": \\"Name\\",
+              \\"value\\": \\"%1\\"
+            },
+            {
+              \\"type\\": \\"Number\\",
+              \\"value\\": 2
+            }
+          ]
+        }
+      ],
+      \\"functionContext\\": {}
+    }
+  ]
+}
+"
+`;
+
+exports[`misc functions debug! debug value. 2`] = `
+"*** LITS DEBUG ***
+{
+  \\"__LITS_FUNCTION__\\": true,
+  \\"debugInfo\\": {
+    \\"code\\": \\"(debug! #(> %1 2))\\",
+    \\"line\\": 1,
+    \\"column\\": 9
+  },
   \\"type\\": \\"user-defined\\",
   \\"overloads\\": [
     {
@@ -25,7 +65,11 @@ exports[`misc functions debug! debug value. 1`] = `
               \\"token\\": {
                 \\"type\\": \\"name\\",
                 \\"value\\": \\"%1\\",
-                \\"sourceCodeInfo\\": null
+                \\"debugInfo\\": {
+                  \\"code\\": \\"(debug! #(> %1 2))\\",
+                  \\"line\\": 1,
+                  \\"column\\": 13
+                }
               }
             },
             {
@@ -34,14 +78,22 @@ exports[`misc functions debug! debug value. 1`] = `
               \\"token\\": {
                 \\"type\\": \\"number\\",
                 \\"value\\": \\"2\\",
-                \\"sourceCodeInfo\\": null
+                \\"debugInfo\\": {
+                  \\"code\\": \\"(debug! #(> %1 2))\\",
+                  \\"line\\": 1,
+                  \\"column\\": 16
+                }
               }
             }
           ],
           \\"token\\": {
             \\"type\\": \\"name\\",
             \\"value\\": \\">\\",
-            \\"sourceCodeInfo\\": null
+            \\"debugInfo\\": {
+              \\"code\\": \\"(debug! #(> %1 2))\\",
+              \\"line\\": 1,
+              \\"column\\": 11
+            }
           }
         }
       ],
@@ -53,6 +105,24 @@ exports[`misc functions debug! debug value. 1`] = `
 `;
 
 exports[`misc functions debug! multiple contexts 1`] = `
+"*** LITS DEBUG ***
+Context 0
+  z  10
+
+Context 1 - Global context
+  y  20
+
+Context 2
+  x     10
+  foo   <user-defined function foo>
+  bar   <user-defined function λ>
+  plus  <builtin function +>
+
+
+"
+`;
+
+exports[`misc functions debug! multiple contexts 2`] = `
 "*** LITS DEBUG ***
 Context 0
   z  10

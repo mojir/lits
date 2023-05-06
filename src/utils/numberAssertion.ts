@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
-import { SourceCodeInfo } from '../tokenizer/interface'
-import { getSourceCodeInfo, valueToString } from './helpers'
+import { DebugInfo } from '../tokenizer/interface'
+import { getDebugInfo, valueToString } from './helpers'
 
 type SignOptions =
   | {
@@ -162,24 +162,24 @@ function is(value: unknown, options: NumberOptions = {}): value is number {
   return true
 }
 
-function assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): asserts value is number {
+function assert(value: unknown, debugInfo?: DebugInfo, options: NumberOptions = {}): asserts value is number {
   if (!is(value, options)) {
     throw new LitsError(
       `Expected ${getNumberTypeName(options)}, got ${valueToString(value)}.`,
-      getSourceCodeInfo(value, sourceCodeInfo),
+      getDebugInfo(value, debugInfo),
     )
   }
 }
 
-function as(value: unknown, sourceCodeInfo: SourceCodeInfo, options: NumberOptions = {}): number {
-  assert(value, sourceCodeInfo, options)
+function as(value: unknown, debugInfo: DebugInfo | undefined, options: NumberOptions = {}): number {
+  assert(value, debugInfo, options)
   return value
 }
 
 export const number: {
   is: (value: unknown, options?: NumberOptions) => value is number
-  as: (value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions) => number
-  assert(value: unknown, sourceCodeInfo: SourceCodeInfo, options?: NumberOptions): asserts value is number
+  as: (value: unknown, debugInfo: DebugInfo | undefined, options?: NumberOptions) => number
+  assert(value: unknown, debugInfo: DebugInfo | undefined, options?: NumberOptions): asserts value is number
 } = {
   is,
   as,

@@ -1,0 +1,4 @@
+; @include success-program.lits
+
+; @test
+(assert= (sub 1 2) -1)

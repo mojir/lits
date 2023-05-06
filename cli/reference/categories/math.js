@@ -54,6 +54,7 @@ module.exports = {
     name: `/`,
     category: `Math`,
     linkName: `_slash`,
+    clojureDocs: `_fs`,
     returns: {
       type: `number`,
     },
@@ -163,6 +164,7 @@ module.exports = {
     name: `sqrt`,
     category: `Math`,
     linkName: `sqrt`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -179,6 +181,7 @@ module.exports = {
     name: `cbrt`,
     category: `Math`,
     linkName: `cbrt`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -195,6 +198,7 @@ module.exports = {
     name: `pow`,
     category: `Math`,
     linkName: `pow`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -215,6 +219,7 @@ module.exports = {
     name: `exp`,
     category: `Math`,
     linkName: `exp`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -231,6 +236,7 @@ module.exports = {
     name: `round`,
     category: `Math`,
     linkName: `round`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -260,6 +266,7 @@ module.exports = {
     name: `trunc`,
     category: `Math`,
     linkName: `trunc`,
+    clojureDocs: null,
     returns: {
       type: `integer`,
     },
@@ -276,6 +283,7 @@ module.exports = {
     name: `floor`,
     category: `Math`,
     linkName: `floor`,
+    clojureDocs: null,
     returns: {
       type: `integer`,
     },
@@ -292,6 +300,7 @@ module.exports = {
     name: `ceil`,
     category: `Math`,
     linkName: `ceil`,
+    clojureDocs: null,
     returns: {
       type: `integer`,
     },
@@ -342,6 +351,7 @@ module.exports = {
     name: `abs`,
     category: `Math`,
     linkName: `abs`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -358,6 +368,7 @@ module.exports = {
     name: `sign`,
     category: `Math`,
     linkName: `sign`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -374,6 +385,7 @@ module.exports = {
     name: `positive-infinity`,
     category: `Math`,
     linkName: `positive-infinity`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -385,6 +397,7 @@ module.exports = {
     name: `negative-infinity`,
     category: `Math`,
     linkName: `negative-infinity`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -396,6 +409,7 @@ module.exports = {
     name: `max-safe-integer`,
     category: `Math`,
     linkName: `max-safe-integer`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -407,6 +421,7 @@ module.exports = {
     name: `min-safe-integer`,
     category: `Math`,
     linkName: `min-safe-integer`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -418,6 +433,7 @@ module.exports = {
     name: `max-value`,
     category: `Math`,
     linkName: `max-value`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -429,6 +445,7 @@ module.exports = {
     name: `min-value`,
     category: `Math`,
     linkName: `min-value`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -440,6 +457,7 @@ module.exports = {
     name: `epsilon`,
     category: `Math`,
     linkName: `epsilon`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -462,6 +480,7 @@ module.exports = {
     name: `e`,
     category: `Math`,
     linkName: `e`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -473,6 +492,7 @@ module.exports = {
     name: `pi`,
     category: `Math`,
     linkName: `pi`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -484,6 +504,7 @@ module.exports = {
     name: `log`,
     category: `Math`,
     linkName: `log`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -500,6 +521,7 @@ module.exports = {
     name: `log2`,
     category: `Math`,
     linkName: `log2`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -516,6 +538,7 @@ module.exports = {
     name: `log10`,
     category: `Math`,
     linkName: `log10`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -532,6 +555,7 @@ module.exports = {
     name: `rand!`,
     category: `Math`,
     linkName: `rand_exclamation`,
+    clojureDocs: `rand`,
     returns: {
       type: `number`,
     },
@@ -549,6 +573,7 @@ module.exports = {
     name: `rand-int!`,
     category: `Math`,
     linkName: `rand-int_exclamation`,
+    clojureDocs: `rand-int`,
     returns: {
       type: `number`,
     },
@@ -566,6 +591,7 @@ module.exports = {
     name: `sin`,
     category: `Math`,
     linkName: `sin`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -582,6 +608,7 @@ module.exports = {
     name: `cos`,
     category: `Math`,
     linkName: `cos`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -598,6 +625,7 @@ module.exports = {
     name: `tan`,
     category: `Math`,
     linkName: `tan`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -614,6 +642,7 @@ module.exports = {
     name: `asin`,
     category: `Math`,
     linkName: `asin`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -630,6 +659,7 @@ module.exports = {
     name: `acos`,
     category: `Math`,
     linkName: `acos`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -646,6 +676,7 @@ module.exports = {
     name: `atan`,
     category: `Math`,
     linkName: `atan`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -662,6 +693,7 @@ module.exports = {
     name: `sinh`,
     category: `Math`,
     linkName: `sinh`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -678,6 +710,7 @@ module.exports = {
     name: `cosh`,
     category: `Math`,
     linkName: `cosh`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -694,6 +727,7 @@ module.exports = {
     name: `tanh`,
     category: `Math`,
     linkName: `tanh`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -710,6 +744,7 @@ module.exports = {
     name: `asinh`,
     category: `Math`,
     linkName: `asinh`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -726,6 +761,7 @@ module.exports = {
     name: `acosh`,
     category: `Math`,
     linkName: `acosh`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -742,6 +778,7 @@ module.exports = {
     name: `atanh`,
     category: `Math`,
     linkName: `atanh`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },

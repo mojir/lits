@@ -20,16 +20,18 @@ function writeIndexPage() {
 <html lang="en">
 ${getHtmlHeader()}
 <body>
-  ${getTopBar({ back: false })}
-  <main id="main-panel" class="fancy-scroll">
-    ${getIndexPage()}
-    ${getExamplePage()}
-    ${Object.values(functionReference)
-      .map(obj => getDocumentationContent(obj))
-      .join('\n')}
-  </main>
-  ${getSideBar()}
-  ${getPlayground()}
+  <div id="wrapper">
+    ${getTopBar({ back: false })}
+    <main id="main-panel" class="fancy-scroll">
+      ${getIndexPage()}
+      ${getExamplePage()}
+      ${Object.values(functionReference)
+        .map(obj => getDocumentationContent(obj))
+        .join('\n')}
+    </main>
+    ${getSideBar()}
+    ${getPlayground()}
+  </div>
   <script src="lits.iife.js"></script>
   <script src='examples.js'></script>
   <script src='scripts.js'></script>
@@ -65,47 +67,44 @@ function getHtmlHeader() {
 function getPlayground() {
   return `
 <div id="playground">
+  <div id="resize-playground"></div>
   <div class="header row">
-    <div class="column">Playground</span></div>
-    <div class="column">
-      <center>
-      <span class="button" onclick="play()">Run [F2]</span>
-      <span class="button" onclick="resetPlayground()">Reset</span>
-      </center>
-    </div>
+    <div class="column shrink">Playground</span></div>
     <div class="column right">
+      <span class="button" onclick="run()">Run [F2]</span>
+      <span class="button" onclick="analyze()">Analyze [F3]</span>
+      <span class="button" onclick="tokenize(false)">Tokenize [F4]</span>
+      <span class="button" onclick="tokenize(true)">Tokenize (debug) [F5]</span>
+      <span class="button" onclick="parse(false)">Parse [F6]</span>
+      <span class="button" onclick="parse(true)">Parse (debug) [F7]</span>
+      <span class="button" onclick="resetPlayground()">Reset</span>
     </div>
   </div>
-  <div class="row">
-    <div class="column" id="params">
-      <div class="row">
-        <div class="column textarea-header"><label for="params-textarea">Params (JSON)</label></div>
-        <div class="column right">
-          <span id="maximize-params" class="icon-button" onclick="maximizeContext()">▲</span>
-          <span id="minimize-params" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
+  <div id="panels-container">
+    <div id="params-panel">
+      <div class="column textarea-header">
+        <label for="params-textarea">Params (JSON)</label>
+        <a onclick="resetParams()">Clear</a>
       </div>
       <textarea id="params-textarea" class="fancy-scroll" spellcheck="false"></textarea>
-    </div>
+    </div
 
-    <div class="column wider" id="lits">
-      <div class="row">
-        <div class="column textarea-header"><label for="lits-textarea">Lisp</label></div>
-        <div class="column right">
-          <span id="maximize-lits" class="icon-button" onclick="maximizeLisp()">▲</span>
-          <span id="minimize-lits" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
+    ><div id="resize-divider-1"></div
+
+    ><div id="lits-panel">
+      <div class="column textarea-header">
+        <label for="lits-textarea">Lisp</label>
+        <a onclick="resetLits()">Clear</a>
       </div>
       <textarea id="lits-textarea" class="fancy-scroll" spellcheck="false"></textarea>
-    </div>
+    </div
 
-    <div class="column wide" id="output">
-      <div class="row">
-        <div class="column textarea-header"><label for="output-textarea">Result</label></div>
-        <div class="column right">
-          <span id="maximize-output" class="icon-button" onclick="maximizeOutput()">▲</span>
-          <span id="minimize-output" class="icon-button" onclick="minimizeAll()">▼</span>
-        </div>
+    ><div id="resize-divider-2"></div
+
+    ><div id="output-panel">
+      <div class="column textarea-header">
+        <label for="output-textarea">Result</label>
+        <a onclick="resetOutput()">Clear</a>
       </div>
       <textarea id="output-textarea" class="fancy-scroll" readonly spellcheck="false" ></textarea>
     </div>
@@ -129,13 +128,12 @@ function getIndexPage() {
       <li>No lazy evaluation.</li>
       <li>No quotes.</li>
       <li>No macros.</li>
-      <li>No keyword symbols. <pre>:foo</pre> is just a shourthand for <pre>'foo'</pre>.</li>
+      <li>No keyword symbols. <pre>:foo</pre> is just a shorthand for <pre>"foo"</pre>.</li>
       <li>Dynamic scoping, no lexical scoping</li>
-      <li>Strings look like <pre>'A string'</pre>, not <pre>"A string"</pre>. This desition was made to make it more convenient to embed lits code in json-files.</li>
       <li>100% test coverage</li>
     </ul>
     <p>You can see some examples and find documentation of all built-in function to the left.</p>
-    <p>For more instruction on how to install and use Lits as a cli or a typescript lib, checkout <a href="https://github.com/mojir/lits">https://github.com/mojir/lits</a></p>
+    <p>For more instruction on how to install and use Lits as a cli or a typescript lib, checkout <a href="https://github.com/YouCruit/lits">https://github.com/YouCruit/lits</a></p>
     <p/>
     <p>Happy coding!</p>
   </div>
@@ -172,11 +170,24 @@ function getExamplePage() {
 }
 
 function getDocumentationContent(docObj) {
-  const { name, description, returns, linkName, specialExpression, examples, arguments: args } = docObj
+  const { name, description, returns, linkName, specialExpression, examples, arguments: args, clojureDocs } = docObj
+  const clojureDocsLink =
+    clojureDocs === null
+      ? null
+      : `https://clojuredocs.org/clojure.core/${clojureDocs !== undefined ? clojureDocs : name.replace('?', '_q')}`
   const formattedDescription = formatDescription(description)
   return `
 <div id="${linkName}" class="content function">
-  <div class="function-header">${name}</div>
+
+  <div class="function-header row">
+    <div class="column">${name}</div>
+    ${
+      clojureDocsLink
+        ? `<div class="column right"><a target="_blank" class="link" href="${clojureDocsLink}">Clojure docs</a></div>`
+        : ``
+    }
+  </div>
+
   ${specialExpression ? '<h3>Special Expression</h3>' : ''}
   <p>${formattedDescription}</p>
   <label>Syntax</label>
@@ -256,7 +267,7 @@ function getSideBar() {
 }
 
 function setupDocDir() {
-  fs.rmdirSync(DOC_DIR, { recursive: true, force: true })
+  fs.rmSync(DOC_DIR, { recursive: true, force: true })
   fs.mkdirSync(DOC_DIR)
 }
 
@@ -306,6 +317,7 @@ function formatDescription(value) {
   value = value.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
   value = value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
   value = value.replace(/\*(.*?)\*/g, '<em>$1</em>')
+  value = value.replace(/\n/g, '<br />')
   return value
 }
 

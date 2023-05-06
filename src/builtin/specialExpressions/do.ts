@@ -4,19 +4,15 @@ import { AstNode, SpecialExpressionNode } from '../../parser/interface'
 import { token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
-interface doSpecialExpressionNode extends SpecialExpressionNode {
-  name: `do`
-}
-
 export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseToken }) => {
     let tkn = token.as(tokens[position], `EOF`)
 
-    const node: doSpecialExpressionNode = {
+    const node: SpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `do`,
       params: [],
-      token: tkn,
+      token: tkn.debugInfo ? tkn : undefined,
     }
 
     while (!token.is(tkn, { type: `paren`, value: `)` })) {
@@ -28,7 +24,6 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castDoExpressionNode(node)
     const newContext: Context = {}
 
     const newContextStack = contextStack.withContext(newContext)
@@ -38,8 +33,5 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return result
   },
-}
-
-function castDoExpressionNode(_node: SpecialExpressionNode): asserts _node is doSpecialExpressionNode {
-  return
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
 }

@@ -9,30 +9,37 @@ module.exports = {
     arguments: [
       {
         name: `input`,
-        type: `string | array`,
+        type: `string | array | nil`,
       },
       {
         name: `index`,
         type: `integer`,
       },
+      {
+        name: `notFound`,
+        type: `any`,
+        description: `optional`,
+      },
     ],
-    description: `Accesses element \`index\` of \`input\`. Negative \`index\` counts backwards. Accessing out-of-bounds indices returns \`nil\`.`,
+    description: `Accesses element \`index\` of \`input\`. Accessing out-of-bounds indices returns \`notFound\` or \`nil\`.`,
     examples: [
       `(nth [1 2 3] 1)`,
       `(nth [1 2 3] 3)`,
       `(nth [1 2 3] -1)`,
-      `(nth [1 2 3] -1)`,
-      `(nth 'A string' 1)`,
-      `(nth 'A string' 3)`,
-      `(nth 'A string' -3)`,
-      `(nth 'A string' 30)`,
-      `(nth 'A string' -30)`,
+      `(nth [1 2 3] 3 99)`,
+      `(nth "A string" 1)`,
+      `(nth "A string" 3)`,
+      `(nth "A string" -3)`,
+      `(nth "A string" 30 :X)`,
+      `(nth nil 1)`,
+      `(nth nil 1 "Default value")`,
     ],
   },
   push: {
     name: `push`,
     category: `Sequence`,
     linkName: `push`,
+    clojureDocs: null,
     returns: {
       type: `array`,
     },
@@ -74,6 +81,7 @@ module.exports = {
     name: `unshift`,
     category: `Sequence`,
     linkName: `unshift`,
+    clojureDocs: null,
     returns: {
       type: `array`,
     },
@@ -95,6 +103,7 @@ module.exports = {
     name: `shift`,
     category: `Sequence`,
     linkName: `shift`,
+    clojureDocs: null,
     returns: {
       type: `array`,
     },
@@ -115,6 +124,7 @@ module.exports = {
     name: `slice`,
     category: `Sequence`,
     linkName: `slice`,
+    clojureDocs: null,
     returns: {
       type: `array`,
     },
@@ -200,6 +210,7 @@ module.exports = {
     name: `reduce-right`,
     category: `Sequence`,
     linkName: `reduce-right`,
+    clojureDocs: null,
     returns: {
       type: `sequence`,
     },
@@ -218,7 +229,7 @@ module.exports = {
       },
     ],
     description: `Runs \`reducer\` function on each element of the \`seq\` (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the \`seq\` is a single value.`,
-    examples: [`(reduce-right str [:A :B :C] '')`],
+    examples: [`(reduce-right str [:A :B :C] "")`],
   },
   map: {
     name: `map`,
@@ -240,7 +251,7 @@ module.exports = {
     ],
     description: `Creates a new array populated with the results of calling \`mapper\` on every elements in the calling \`sequence\`s.`,
     examples: [
-      `(map str ['Albert' 'Mojir' 42])`,
+      `(map str ["Albert" "Mojir" 42])`,
       `(map str [])`,
       `(map + [1 2 3] [1 2 3])`,
       `(map max [2 6 3] [2 4 7] [1 6 2])`,
@@ -264,12 +275,13 @@ module.exports = {
       },
     ],
     description: `Creates a new array with all elements that pass the test implemented by \`filter\`.`,
-    examples: [`(filter string? ['Albert' 'Mojir' 160 [1 2]])`, `(filter (fn [x] (> x 10)) [5 10 15 20])`],
+    examples: [`(filter string? ["Albert" "Mojir" 160 [1 2]])`, `(filter (fn [x] (> x 10)) [5 10 15 20])`],
   },
   position: {
     name: `position`,
     category: `Sequence`,
     linkName: `position`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -285,7 +297,7 @@ module.exports = {
     ],
     description: `Returns the index of the first elements that pass the test implemented by \`finder\`. If no element was found, \`nil\` is returned.`,
     examples: [
-      `(position string? ['Albert' 'Mojir' 160 [1 2]])`,
+      `(position string? ["Albert" "Mojir" 160 [1 2]])`,
       `(position (fn [x] (> x 10)) [5 10 15 20])`,
       `(position (fn [x] (> x 100)) [5 10 15 20])`,
     ],
@@ -294,6 +306,7 @@ module.exports = {
     name: `index-of`,
     category: `Sequence`,
     linkName: `index-of`,
+    clojureDocs: null,
     returns: {
       type: `number`,
     },
@@ -309,7 +322,7 @@ module.exports = {
     ],
     description: `Returns the index of \`value\` in array. If element is not present in \`array\` \`nil\` is returned.`,
     examples: [
-      `(index-of ['Albert' 'Mojir' 160 [1 2]] 'Mojir')`,
+      `(index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")`,
       `(index-of [5 10 15 20] 15)`,
       `(index-of [5 10 15 20] 1)`,
     ],
@@ -333,7 +346,7 @@ module.exports = {
     ],
     description: `Returns the first elements that pass the test implemented by \`finder\`. I no element was found, \`nil\` is returned.`,
     examples: [
-      `(some string? ['Albert' 'Mojir' 160 [1 2]])`,
+      `(some string? ["Albert" "Mojir" 160 [1 2]])`,
       `(some (fn [x] (> x 10)) [5 10 15 20])`,
       `(some (fn [x] (> x 10)) [1 2 3 4])`,
       `(some (fn [x] (> x 10)) [])`,
@@ -353,7 +366,7 @@ module.exports = {
       },
     ],
     description: `If \`input\` is an array, creates a new array with the elements from \`input\` in reversed order. If \`input\` is a string, returns new reversed string.`,
-    examples: [`(reverse ['Albert' 'Mojir' 160 [1 2]])`, `(reverse [])`, `(reverse 'Albert')`],
+    examples: [`(reverse ["Albert" "Mojir" 160 [1 2]])`, `(reverse [])`, `(reverse "Albert")`],
   },
   first: {
     name: `first`,
@@ -369,7 +382,7 @@ module.exports = {
       },
     ],
     description: `Returns the first element of \`array\`. If \`array\` is empty, \`nil\` is returned.`,
-    examples: [`(first ['Albert' 'Mojir' 160 [1 2]])`, `(first [])`],
+    examples: [`(first ["Albert" "Mojir" 160 [1 2]])`, `(first [])`],
   },
   second: {
     name: `second`,
@@ -385,7 +398,7 @@ module.exports = {
       },
     ],
     description: `Returns the second element of \`array\`. If \`array\` has less than two elements, \`nil\` is returned.`,
-    examples: [`(second ['Albert' 'Mojir' 160 [1 2]])`, `(second [1])`, `(second [])`],
+    examples: [`(second ["Albert" "Mojir" 160 [1 2]])`, `(second [1])`, `(second [])`],
   },
   last: {
     name: `last`,
@@ -401,7 +414,7 @@ module.exports = {
       },
     ],
     description: `Returns the last element of \`array\`. If \`array\` is empty, \`nil\` is returned.`,
-    examples: [`(last ['Albert' 'Mojir' 160 [1 2]])`, `(last [1 2])`, `(last [1])`, `(last [])`],
+    examples: [`(last ["Albert" "Mojir" 160 [1 2]])`, `(last [1 2])`, `(last [1])`, `(last [])`],
   },
   rest: {
     name: `rest`,
@@ -418,12 +431,12 @@ module.exports = {
     ],
     description: `If \`input\` is an array, returns a new array with all but the first element from \`input\`. If \`input\` has less than two elements, an empty array is returned. For string \`input\` returns all but the first characters in \`input\`.`,
     examples: [
-      `(rest ['Albert' 'Mojir' 160 [1 2]])`,
-      `(rest ['Albert'])`,
+      `(rest ["Albert" "Mojir" 160 [1 2]])`,
+      `(rest ["Albert"])`,
       `(rest [])`,
-      `(rest 'Albert')`,
+      `(rest "Albert")`,
       `(rest :A)`,
-      `(rest '')`,
+      `(rest "")`,
     ],
   },
   nthrest: {
@@ -441,11 +454,11 @@ module.exports = {
     ],
     description: `If \`input\` is an array, returns a new array with all but the first \`count\` elements from \`input\`. For string \`input\` returns all but the first \`count\` characters in \`input\`.`,
     examples: [
-      `(nthrest ['Albert' 'Mojir' 160 [1 2]] 2)`,
-      `(nthrest 'Albert' 3)`,
-      `(nthrest 'Albert' 6)`,
+      `(nthrest ["Albert" "Mojir" 160 [1 2]] 2)`,
+      `(nthrest "Albert" 3)`,
+      `(nthrest "Albert" 6)`,
       `(nthrest [] 0)`,
-      `(nthrest '' 0)`,
+      `(nthrest "" 0)`,
     ],
   },
   next: {
@@ -463,12 +476,12 @@ module.exports = {
     ],
     description: `If \`input\` is an array, returns a new array with all but the first element from \`input\`. If \`input\` has less than two elements, \`nil\` is returned. For string \`input\` returns all but the first characters in \`input\`. If length of string \`input\` is less than two, \`nil\` is returned.`,
     examples: [
-      `(next ['Albert' 'Mojir' 160 [1 2]])`,
-      `(next ['Albert'])`,
+      `(next ["Albert" "Mojir" 160 [1 2]])`,
+      `(next ["Albert"])`,
       `(next [])`,
-      `(next 'Albert')`,
+      `(next "Albert")`,
       `(next :A)`,
-      `(next '')`,
+      `(next "")`,
     ],
   },
   nthnext: {
@@ -486,11 +499,11 @@ module.exports = {
     ],
     description: `If \`input\` is an array, returns a new array with all but the first \`count\` elements from \`input\`. If \`input\` has less or equal than \`count\` elements, \`nil\` returned. For string \`input\` returns all but the first \`count\` characters in \`input\`. If length of string \`input\` is less or equal than \`count\`, \`nil\` is returned.`,
     examples: [
-      `(nthnext ['Albert' 'Mojir' 160 [1 2]] 2)`,
-      `(nthnext 'Albert' 3)`,
-      `(nthnext 'Albert' 6)`,
+      `(nthnext ["Albert" "Mojir" 160 [1 2]] 2)`,
+      `(nthnext "Albert" 3)`,
+      `(nthnext "Albert" 6)`,
       `(nthnext [] 0)`,
-      `(nthnext '' 0)`,
+      `(nthnext "" 0)`,
     ],
   },
   cons: {
@@ -507,7 +520,7 @@ module.exports = {
       },
     ],
     description: `Constructs a new array with \`element\` as first element and \`rest\` as the rest.`,
-    examples: [`(cons 'Hi' ['Albert' 'Mojir' 160 [1 2]])`, `(cons 'Hi' [])`],
+    examples: [`(cons "Hi" ["Albert" "Mojir" 160 [1 2]])`, `(cons "Hi" [])`],
   },
   take: {
     name: `take`,
@@ -527,7 +540,7 @@ module.exports = {
       },
     ],
     description: `Constructs a new array/string with the \`count\` first elements from \`input\`.`,
-    examples: [`(take 3 [1 2 3 4 5])`, `(take 0 [1 2 3 4 5])`, `(take 2 'Albert')`, `(take 50 'Albert')`],
+    examples: [`(take 3 [1 2 3 4 5])`, `(take 0 [1 2 3 4 5])`, `(take 2 "Albert")`, `(take 50 "Albert")`],
   },
 
   'take-last': {
@@ -590,7 +603,7 @@ module.exports = {
       },
     ],
     description: `Constructs a new array/string with the \`count\` first elements dropped from \`input\`.`,
-    examples: [`(drop 3 [1 2 3 4 5])`, `(drop 0 [1 2 3 4 5])`, `(drop 2 'Albert')`, `(drop 50 'Albert')`],
+    examples: [`(drop 3 [1 2 3 4 5])`, `(drop 0 [1 2 3 4 5])`, `(drop 2 "Albert")`, `(drop 50 "Albert")`],
   },
 
   'drop-last': {
@@ -602,12 +615,12 @@ module.exports = {
     },
     arguments: [
       {
-        name: `array`,
-        type: `array`,
-      },
-      {
         name: `count`,
         type: `integer`,
+      },
+      {
+        name: `array`,
+        type: `array`,
       },
     ],
     description: `Constructs a new array with the \`count\` last elements dropped from \`array\`.`,
@@ -683,12 +696,13 @@ module.exports = {
       },
     ],
     description: `Returns a sorted sequence of the items in \`seq\`, where the sort order is determined by comparing \`(keyfn item)\`. If no \`comparer\` is supplied, uses builtin \`compare\`.`,
-    examples: [`(sort-by count ['Albert' 'Mojir' 'Nina'])`, `(sort-by lower-case 'Albert')`],
+    examples: [`(sort-by count ["Albert" "Mojir" "Nina"])`, `(sort-by lower-case "Albert")`],
   },
   join: {
     name: `join`,
     category: `Sequence`,
     linkName: `join`,
+    clojureDocs: null,
     returns: {
       type: `string`,
     },
@@ -703,12 +717,13 @@ module.exports = {
       },
     ],
     description: `Returns a new string by concatenating all of the elements in \`array\`, separated by \`delimiter\`.`,
-    examples: [`(join ['Albert' 'Mojir'] ' ')`, `(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ', ')`],
+    examples: [`(join ["Albert" "Mojir"] " ")`, `(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")`],
   },
   'random-sample!': {
     name: `random-sample!`,
     category: `Sequence`,
     linkName: `random-sample_exclamation`,
+    clojureDocs: `random-sample`,
     returns: {
       type: `array`,
     },
@@ -724,28 +739,30 @@ module.exports = {
       },
     ],
     description: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
-    examples: [`(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])`, `(random-sample! 0.5 'Albert')`],
+    examples: [`(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])`, `(random-sample! 0.5 "Albert")`],
   },
   'rand-nth!': {
     name: `rand-nth!`,
     category: `Sequence`,
     linkName: `rand-nth_exclamation`,
+    clojureDocs: `rand-nth`,
     returns: {
       type: `any`,
     },
     arguments: [
       {
-        name: `array`,
-        type: `array`,
+        name: `seq`,
+        type: `seq`,
       },
     ],
-    description: `Returns an array. Each element from \`array\` has the probability \`prob\` to be included in the result.`,
-    examples: [`(rand-nth! [1 2 3 4 5 6 7 8 9 10])`, `(rand-nth! 'Albert')`],
+    description: `Returns a random element from \`seq\`. Returns \`nil\` if \`seq\` is empty.`,
+    examples: [`(rand-nth! [1 2 3 4 5 6 7 8 9 10])`, `(rand-nth! "Albert")`, `(rand-nth! [])`],
   },
-  shuffle: {
-    name: `shuffle`,
+  'shuffle!': {
+    name: `shuffle!`,
     category: `Sequence`,
-    linkName: `shuffle`,
+    linkName: `shuffle_exclamation`,
+    clojureDocs: `shuffle`,
     returns: {
       type: `Seq`,
     },
@@ -757,11 +774,11 @@ module.exports = {
     ],
     description: `Returns a shuffled copy of \`input\`.`,
     examples: [
-      `(shuffle [1 2 3 4 5 6 7 8 9 10])`,
-      `(shuffle 'Albert Mojir')`,
-      `(shuffle [1 2])`,
-      `(shuffle [1])`,
-      `(shuffle [])`,
+      `(shuffle! [1 2 3 4 5 6 7 8 9 10])`,
+      `(shuffle! "Albert Mojir")`,
+      `(shuffle! [1 2])`,
+      `(shuffle! [1])`,
+      `(shuffle! [])`,
     ],
   },
   distinct: {
@@ -778,7 +795,7 @@ module.exports = {
       },
     ],
     description: `Returns a copy of \`input\` with no duplicates.`,
-    examples: [`(distinct [1 2 3 1 3 5])`, `(distinct 'Albert Mojir')`, `(distinct [])`, `(distinct '')`],
+    examples: [`(distinct [1 2 3 1 3 5])`, `(distinct "Albert Mojir")`, `(distinct [])`, `(distinct "")`],
   },
 
   remove: {
@@ -799,13 +816,14 @@ module.exports = {
       },
     ],
     description: `Returns a new sequence of items in \`input\` for witch \`(pred item)\` returns a falsy value.`,
-    examples: [`(remove even? [1 2 3 1 3 5])`, `(remove #(has? 'aoueiyAOUEIY' %1) 'Albert Mojir')`],
+    examples: [`(remove even? [1 2 3 1 3 5])`, `(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")`],
   },
 
   'remove-at': {
     name: `remove-at`,
     category: `Sequence`,
     linkName: `remove-at`,
+    clojureDocs: null,
     returns: {
       type: `Seq`,
     },
@@ -820,7 +838,7 @@ module.exports = {
       },
     ],
     description: `Returns a new sequence of all items in \`input\` except item at \`index\`.`,
-    examples: [`(remove-at 0 [1 2 3 1 3 5])`, `(remove-at -1 [1 2 3 1 3 5])`, `(remove-at 6 'Albert Mojir')`],
+    examples: [`(remove-at 0 [1 2 3 1 3 5])`, `(remove-at -1 [1 2 3 1 3 5])`, `(remove-at 6 "Albert Mojir")`],
   },
 
   'split-at': {
@@ -841,7 +859,7 @@ module.exports = {
       },
     ],
     description: `Returns a new array/string of \`[(take pos input) (drop pos input)]\`.`,
-    examples: [`(split-at 2 [1 2 3 4 5])`, `(split-at 2 'Albert')`],
+    examples: [`(split-at 2 [1 2 3 4 5])`, `(split-at 2 "Albert")`],
   },
 
   'split-with': {
@@ -862,7 +880,7 @@ module.exports = {
       },
     ],
     description: `Returns a new array/string of \`[(take-while pos input) (drop-while pos input)]\`.`,
-    examples: [`(split-with #(> %1 3) [1 2 3 4 5])`, `(split-with #(<= %1 :Z) 'Albert')`],
+    examples: [`(split-with #(> %1 3) [1 2 3 4 5])`, `(split-with #(<= %1 :Z) "Albert")`],
   },
 
   frequencies: {
@@ -880,8 +898,8 @@ module.exports = {
     ],
     description: `Returns an object from distinct items in \`seq\` to the number of times they appear. Note that all items in \`seq\` must be valid object keys i.e. strings.`,
     examples: [
-      `(frequencies ['Albert' 'Mojir' 'Nina' 'Mojir'])`,
-      `(frequencies 'Pneumonoultramicroscopicsilicovolcanoconiosis')`,
+      `(frequencies ["Albert" "Mojir" "Nina" "Mojir"])`,
+      `(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")`,
     ],
   },
 
@@ -904,8 +922,8 @@ module.exports = {
     ],
     description: `Returns an object of the elements of \`seq\` keyed by the result of \`fn\` on each element. The value at each key will be an array of the corresponding elements.`,
     examples: [
-      `(group-by 'name' [{'name' 'Albert'} {'name' 'Albert'} {'name' 'Mojir'}])`,
-      `(group-by (fn [char] (if (has? 'aoueiAOUEI' char) 'vowel' 'other')) 'Albert Mojir')`,
+      `(group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}])`,
+      `(group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir")`,
     ],
   },
 
@@ -950,8 +968,8 @@ module.exports = {
       `(partition 10 10 [1 2 3 4])`,
       `(partition 10 10 [] [1 2 3 4])`,
       `(partition 10 10 nil [1 2 3 4])`,
-      `(partition 5 'superfragilistic')`,
-      `(partition 5 5 nil 'superfragilistic')`,
+      `(partition 5 "superfragilistic")`,
+      `(partition 5 5 nil "superfragilistic")`,
       `(def foo [5 6 7 8]) (partition 2 1 foo foo)`,
     ],
   },
@@ -1007,7 +1025,7 @@ module.exports = {
     examples: [
       `(partition-by #(= 3 %1) [1 2 3 4 5])`,
       `(partition-by odd? [1 1 1 2 2 3 3])`,
-      `(partition-by identity 'Leeeeeerrroyyy')`,
+      `(partition-by identity "Leeeeeerrroyyy")`,
     ],
   },
 }

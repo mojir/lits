@@ -3,6 +3,7 @@ module.exports = {
     name: `array`,
     category: `Array`,
     linkName: `array`,
+    clojureDocs: `vector`,
     returns: {
       type: `array`,
     },
@@ -68,7 +69,7 @@ module.exports = {
       },
     ],
     description: `Returns an array with \`value\` repeated \`count\` times.`,
-    examples: [`(repeat 3 10)`, `(repeat 0 10)`, `(repeat 5 'Albert')`],
+    examples: [`(repeat 3 10)`, `(repeat 0 10)`, `(repeat 5 "Albert")`],
   },
   flatten: {
     name: `flatten`,

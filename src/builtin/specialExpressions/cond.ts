@@ -4,13 +4,12 @@ import { Token } from '../../tokenizer/interface'
 import { token } from '../../utils/tokenAssertion'
 import { BuiltinSpecialExpression } from '../interface'
 
-type Condition = {
+export type Condition = {
   test: AstNode
   form: AstNode
 }
 
-interface CondSpecialExpressionNode extends SpecialExpressionNode {
-  name: `cond`
+type CondNode = SpecialExpressionNode & {
   conditions: Condition[]
 }
 
@@ -45,14 +44,12 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any> = {
         name: `cond`,
         conditions,
         params: [],
-        token: firstToken,
+        token: firstToken.debugInfo ? firstToken : undefined,
       },
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castCondExpressionNode(node)
-
-    for (const condition of node.conditions) {
+    for (const condition of (node as CondNode).conditions) {
       const value = evaluateAstNode(condition.test, contextStack)
       if (!value) {
         continue
@@ -61,8 +58,8 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return null
   },
-}
-
-function castCondExpressionNode(_node: SpecialExpressionNode): asserts _node is CondSpecialExpressionNode {
-  return
+  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+    const astNodes = (node as CondNode).conditions.flatMap(condition => [condition.test, condition.form])
+    return analyzeAst(astNodes, contextStack, builtin)
+  },
 }

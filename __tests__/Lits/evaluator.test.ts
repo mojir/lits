@@ -1,8 +1,8 @@
-import { tokenize } from '../src/tokenizer'
-import { parse } from '../src/parser'
-import { createContextStack, evaluate, evaluateAstNode } from '../src/evaluator'
-import { Lits } from '../src'
-import { Context } from '../src/evaluator/interface'
+import { tokenize } from '../../src/tokenizer'
+import { parse } from '../../src/parser'
+import { createContextStack, evaluate, evaluateAstNode } from '../../src/evaluator'
+import { Lits } from '../../src'
+import { Context } from '../../src/evaluator/interface'
 
 let lits: Lits
 
@@ -20,21 +20,21 @@ const simpleProgram = `
 
 const formatPhoneNumber = `
 (if (string? $data)
-  (let [phoneNumber (if (= '+' (nth $data 0)) (subs $data 2) $data)]
+  (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)]
     (cond
       (> (count phoneNumber) 6)
-        (str '(' (subs phoneNumber 0 3) ') ' (subs phoneNumber 3 6) '-' (subs phoneNumber 6))
+        (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3 6) "-" (subs phoneNumber 6))
 
       (> (count phoneNumber) 3)
-        (str '(' (subs phoneNumber 0 3) ') ' (subs phoneNumber 3))
+        (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))
 
       (> (count phoneNumber) 0)
-        (str '(' (subs phoneNumber 0))
+        (str "(" (subs phoneNumber 0))
 
       true phoneNumber
     )
   )
-  ''
+  ""
 )
 `
 
@@ -50,13 +50,13 @@ const context: Context = {
 
 describe(`Evaluator`, () => {
   test(`super simple program`, () => {
-    const tokens = tokenize(`(+ 10 kalle)`, true)
+    const tokens = tokenize(`(+ 10 kalle)`, { debug: true })
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))
     expect(result).toBe(15)
   })
   test(`simple program`, () => {
-    const tokens = tokenize(simpleProgram, true)
+    const tokens = tokenize(simpleProgram, { debug: true })
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))
     expect(result).toBe(13 * 24 * 60 * 60 * 1000)
@@ -64,31 +64,31 @@ describe(`Evaluator`, () => {
   test(`if statement (true)`, () => {
     const tokens = tokenize(
       `
-      (if (= (get info 'gender') 'male') 'It\\'s a boy' 'It\\'s not a girl')
+      (if (= (get info "gender") "male") "It\\"s a boy" "It\\"s not a girl")
     `,
-      true,
+      { debug: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))
-    expect(result).toBe(`It's a boy`)
+    expect(result).toBe(`It"s a boy`)
   })
   test(`if statement (false)`, () => {
     const tokens = tokenize(
       `
-      (if (= (get info 'gender') 'female') 'It\\'s a girl' 'It\\'s not a girl')
+      (if (= (get info "gender") "female") "It\\"s a girl" "It\\"s not a girl")
     `,
-      true,
+      { debug: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))
-    expect(result).toBe(`It's not a girl`)
+    expect(result).toBe(`It"s not a girl`)
   })
   test(`> statement`, () => {
     const tokens = tokenize(
       `
       (> 0 -1)
     `,
-      true,
+      { debug: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))
@@ -99,7 +99,7 @@ describe(`Evaluator`, () => {
       `
       [(not= 0 -1) (not= 1 1)]
     `,
-      true,
+      { debug: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack([context]))
@@ -155,7 +155,26 @@ test(`evaluateAstNode`, () => {
       {
         type: `Modifier`,
         value: `&`,
-        token: { type: `name`, sourceCodeInfo: { line: 0, column: 0, sourceCodeLine: null }, value: `X` },
+        token: { type: `name`, value: `X` },
+      },
+      createContextStack(),
+    ),
+  ).toThrow()
+  expect(() =>
+    evaluateAstNode(
+      {
+        type: `Modifier`,
+        value: `&`,
+      },
+      createContextStack(),
+    ),
+  ).toThrow()
+  expect(() =>
+    evaluateAstNode(
+      {
+        type: `Modifier`,
+        value: `&`,
+        token: { type: `name`, debugInfo: { code: ``, column: 1, line: 1 }, value: `X` },
       },
       createContextStack(),
     ),

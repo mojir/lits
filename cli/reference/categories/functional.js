@@ -33,7 +33,7 @@ module.exports = {
       },
     ],
     description: `Returns \`value\`.`,
-    examples: [`(identity 1)`, `(identity 'Albert')`, `(identity {:a 1})`, `(identity nil)`],
+    examples: [`(identity 1)`, `(identity "Albert")`, `(identity {:a 1})`, `(identity nil)`],
   },
   partial: {
     name: `partial`,
@@ -79,7 +79,7 @@ module.exports = {
     examples: [
       `(def negative-quotient (comp - /)) (negative-quotient 9 3)`,
       `(#((apply comp first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)`,
-      `(def x {'bar' {'foo' 42}}) ((comp 'foo' 'bar') x)`,
+      `(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)`,
     ],
   },
   constantly: {
@@ -154,15 +154,16 @@ module.exports = {
     ],
     description: `Takes a number of \`predicates\` and returns a function that returns true if all of the \`predicates\` return a truthy true value against all of its arguments, else it returns false.`,
     examples: [
-      `((every-pred string? #(> (count %1) 3)) 'Albert' 'Mojir')`,
-      `((every-pred string? #(> (count %1) 3)) 'Albert' :M)`,
-      `((every-pred string? #(> (count %1) 3)) 'Albert' [1 2 3])`,
+      `((every-pred string? #(> (count %1) 3)) "Albert" "Mojir")`,
+      `((every-pred string? #(> (count %1) 3)) "Albert" :M)`,
+      `((every-pred string? #(> (count %1) 3)) "Albert" [1 2 3])`,
     ],
   },
   'some-pred': {
     name: `some-pred`,
     category: `Functional`,
     linkName: `some-pred`,
+    clojureDocs: null,
     returns: {
       type: `Function`,
     },
@@ -175,7 +176,7 @@ module.exports = {
     ],
     description: `Takes a number of \`predicates\` and returns a function that returns true if at least one of the \`predicates\` return a truthy true value against at least one of its arguments, else it returns false.`,
     examples: [
-      `((some-pred string? #(> (count %1) 3)) 'Albert' 'Mojir')`,
+      `((some-pred string? #(> (count %1) 3)) "Albert" "Mojir")`,
       `((some-pred string? #(> (count %1) 3)) :A :M)`,
       `((some-pred string? #(> (count %1) 3)) :A [1 2 3])`,
       `((some-pred string? #(> (count %1) 3)) [1 2 3] [2])`,

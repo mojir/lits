@@ -13,7 +13,7 @@ module.exports = {
       },
     ],
     description: `Returns \`true\` if \`value\` is a \`boolean\`, otherwise \`false\`.`,
-    examples: [`(boolean? true)`, `(boolean? false)`, `(boolean? [1 2 3])`, `(boolean? 0)`, `(boolean? 'A string')`],
+    examples: [`(boolean? true)`, `(boolean? false)`, `(boolean? [1 2 3])`, `(boolean? 0)`, `(boolean? "A string")`],
   },
   'nil?': {
     name: `nil?`,
@@ -29,7 +29,7 @@ module.exports = {
       },
     ],
     description: `Returns \`true\` if \`value\` is \`nil\`, otherwise \`false\`.`,
-    examples: [`(nil? nil)`, `(nil? false)`, `(nil? [1 2 3])`, `(nil? 0)`, `(nil? 'A string')`],
+    examples: [`(nil? nil)`, `(nil? false)`, `(nil? [1 2 3])`, `(nil? 0)`, `(nil? "A string")`],
   },
   'number?': {
     name: `number?`,
@@ -51,7 +51,7 @@ module.exports = {
       `(number? -0.12)`,
       `(number? false)`,
       `(number? [1 2 3])`,
-      `(number? 'A string')`,
+      `(number? "A string")`,
     ],
   },
   'string?': {
@@ -69,9 +69,9 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is a string, otherwise \`false\`.`,
     examples: [
-      `(string? '')`,
-      `(string? 'A string')`,
-      `(string? (if true 'A string' false))`,
+      `(string? "")`,
+      `(string? "A string")`,
+      `(string? (if true "A string" false))`,
       `(string? false)`,
       `(string? [1 2 3])`,
       `(string? 100)`,
@@ -81,6 +81,7 @@ module.exports = {
     name: `function?`,
     category: `Predicate`,
     linkName: `function_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -96,7 +97,7 @@ module.exports = {
       `(function? /)`,
       `(function? (fn [x y] (+ x y)))`,
       `(function? false)`,
-      `(function? 'false')`,
+      `(function? "false")`,
       `(function? [1 2 3])`,
     ],
   },
@@ -121,7 +122,7 @@ module.exports = {
       `(integer? 10.1)`,
       `(integer? (fn [x y] (+ x y)))`,
       `(integer? false)`,
-      `(integer? 'false')`,
+      `(integer? "false")`,
       `(integer? [1 2 3])`,
     ],
   },
@@ -129,6 +130,7 @@ module.exports = {
     name: `array?`,
     category: `Predicate`,
     linkName: `array_question`,
+    clojureDocs: `vector_q`,
     returns: {
       type: `boolean`,
     },
@@ -152,6 +154,7 @@ module.exports = {
     name: `object?`,
     category: `Predicate`,
     linkName: `object_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -168,8 +171,8 @@ module.exports = {
       `(object? 42)`,
       `(object? 10.1)`,
       `(object? (fn [x y] (+ x y)))`,
-      `(object? #'^start')`,
-      `(object? 'false')`,
+      `(object? #"^start")`,
+      `(object? "false")`,
       `(object? [1 2 3])`,
     ],
   },
@@ -177,6 +180,7 @@ module.exports = {
     name: `coll?`,
     category: `Predicate`,
     linkName: `coll_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -191,7 +195,7 @@ module.exports = {
       `(coll? [])`,
       `(coll? [1 2 3])`,
       `(coll? (object :a 10))`,
-      `(coll? 'Albert')`,
+      `(coll? "Albert")`,
       `(coll? 42)`,
       `(coll? 10.1)`,
       `(coll? (fn [x y] (+ x y)))`,
@@ -201,6 +205,7 @@ module.exports = {
     name: `seq?`,
     category: `Predicate`,
     linkName: `seq_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -215,7 +220,7 @@ module.exports = {
       `(seq? [])`,
       `(seq? [1 2 3])`,
       `(seq? (object :a 10))`,
-      `(seq? 'Albert')`,
+      `(seq? "Albert")`,
       `(seq? 42)`,
       `(seq? 10.1)`,
       `(seq? (fn [x y] (+ x y)))`,
@@ -225,6 +230,7 @@ module.exports = {
     name: `regexp?`,
     category: `Predicate`,
     linkName: `regexp_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -236,14 +242,14 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is a regexp, otherwise \`false\`.`,
     examples: [
-      `(regexp? (regexp '^start'))`,
-      `(regexp? #'^start')`,
+      `(regexp? (regexp "^start"))`,
+      `(regexp? #"^start")`,
       `(regexp? -12)`,
       `(regexp? (object))`,
       `(regexp? 10.1)`,
       `(regexp? (fn [x y] (+ x y)))`,
       `(regexp? false)`,
-      `(regexp? 'false')`,
+      `(regexp? "false")`,
       `(regexp? [1 2 3])`,
     ],
   },
@@ -331,6 +337,7 @@ module.exports = {
     name: `finite?`,
     category: `Predicate`,
     linkName: `finite_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -347,6 +354,7 @@ module.exports = {
     name: `nan?`,
     category: `Predicate`,
     linkName: `nan_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -363,6 +371,7 @@ module.exports = {
     name: `negative-infinity?`,
     category: `Predicate`,
     linkName: `negative-infinity_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -384,6 +393,7 @@ module.exports = {
     name: `positive-infinity?`,
     category: `Predicate`,
     linkName: `positive-infinity_question`,
+    clojureDocs: null,
     returns: {
       type: `boolean`,
     },
@@ -432,5 +442,45 @@ module.exports = {
     ],
     description: `Returns \`true\` if \`value\` is \`true\`, otherwise \`false\`.`,
     examples: [`(true? false)`, `(true? true)`, `(true? 1)`, `(true? 0)`],
+  },
+  'empty?': {
+    name: `empty?`,
+    category: `Predicate`,
+    linkName: `empty_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection or string`,
+      },
+    ],
+    description: `Returns \`true\` if \`coll\` is empty, otherwise \`false\`.`,
+    examples: [`(empty? [])`, `(empty? [1 2 3])`, `(empty? {})`, `(empty? {:a 2})`, `(empty? "")`, `(empty? "Albert")`],
+  },
+  'not-empty?': {
+    name: `not-empty?`,
+    category: `Predicate`,
+    linkName: `not-empty_question`,
+    clojureDocs: null,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `coll`,
+        type: `collection or string`,
+      },
+    ],
+    description: `Returns \`false\` if \`coll\` is empty, otherwise \`true\`.`,
+    examples: [
+      `(not-empty? [])`,
+      `(not-empty? [1 2 3])`,
+      `(not-empty? {})`,
+      `(not-empty? {:a 2})`,
+      `(not-empty? "")`,
+      `(not-empty? "Albert")`,
+    ],
   },
 }
