@@ -1,18 +1,18 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Lits } from '../src'
-import { createContextStack, evaluate } from '../src/evaluator'
-import { Context } from '../src/evaluator/interface'
+import { ContextStack, createContextFromValues } from '../src/ContextStack'
+import { Context } from '../src/ContextStack/interface'
+import { evaluate } from '../src/evaluator'
 import { Obj } from '../src/interface'
 import { parse } from '../src/parser'
 import { tokenize } from '../src/tokenizer'
-import { createContextFromValues } from '../src/utils'
 
 const ITERATIONS = 25000
 const program = `(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))`
 const globals: Obj = { x: 20, y: 30 }
 const context = createContextFromValues(globals)
-const contextStack = createContextStack([context])
+const contextStack = ContextStack.createFromParams({ globals })
 const jsExpression = `((x - y) * (y - x)) + ((x / y) * (y / x))`
 
 // Some baseline values for javascript eval to compare with
@@ -42,7 +42,7 @@ ${label}: ${averageTime} µs
 Factor: ${Math.round((100 * averageTime) / averageRefTime) / 100} (${averageRefTime} µs)`)
 }
 
-xdescribe(`performace`, () => {
+describe.skip(`performace`, () => {
   test(`tokenise`, () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1) {

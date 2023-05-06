@@ -1,5 +1,5 @@
 import { LitsError } from '../errors'
-import { LocationGetter } from '../Lits/Lits'
+import { LocationGetter } from '../Lits/interface'
 import { Token, Tokenizer, DebugInfo, TokenizeParams } from './interface'
 import {
   skipComment,
@@ -18,6 +18,7 @@ import {
   tokenizeRegexpShorthand,
   tokenizeFnShorthand,
   tokenizeSymbolString,
+  tokenizeTypeName,
 } from './tokenizers'
 
 // All tokenizers, order matters!
@@ -30,6 +31,7 @@ const tokenizers: Tokenizer[] = [
   tokenizeRightBracket,
   tokenizeLeftCurly,
   tokenizeRightCurly,
+  tokenizeTypeName,
   tokenizeString,
   tokenizeSymbolString,
   tokenizeNumber,

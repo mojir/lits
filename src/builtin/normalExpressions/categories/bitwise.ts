@@ -10,7 +10,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
 
       return num << count
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `bit-shift-left`, debugInfo),
   },
   'bit-shift-right': {
     evaluate: ([num, count], debugInfo): number => {
@@ -19,14 +19,14 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
 
       return num >> count
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `bit-shift-right`, debugInfo),
   },
   'bit-not': {
     evaluate: ([num], debugInfo): number => {
       number.assert(num, debugInfo, { integer: true })
       return ~num
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `bit-not`, debugInfo),
   },
   'bit-and': {
     evaluate: ([first, ...rest], debugInfo): number => {
@@ -37,7 +37,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result & value
       }, first)
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `bit-and`, debugInfo),
   },
   'bit-and-not': {
     evaluate: ([first, ...rest], debugInfo): number => {
@@ -48,7 +48,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result & ~value
       }, first)
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `bit-and-not`, debugInfo),
   },
   'bit-or': {
     evaluate: ([first, ...rest], debugInfo): number => {
@@ -59,7 +59,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result | value
       }, first)
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `bit-or`, debugInfo),
   },
   'bit-xor': {
     evaluate: ([first, ...rest], debugInfo): number => {
@@ -70,7 +70,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
         return result ^ value
       }, first)
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `bit-xor`, debugInfo),
   },
   'bit-flip': {
     evaluate: ([num, index], debugInfo): number => {
@@ -80,7 +80,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num ^= mask)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `bit-flip`, debugInfo),
   },
   'bit-set': {
     evaluate: ([num, index], debugInfo): number => {
@@ -90,7 +90,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num |= mask)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `bit-set`, debugInfo),
   },
   'bit-clear': {
     evaluate: ([num, index], debugInfo): number => {
@@ -100,7 +100,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return (num &= ~mask)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `bit-clear`, debugInfo),
   },
   'bit-test': {
     evaluate: ([num, index], debugInfo): boolean => {
@@ -110,6 +110,6 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
       const mask = 1 << index
       return !!(num & mask)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `bit-test`, debugInfo),
   },
 }

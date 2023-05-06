@@ -6,10 +6,8 @@ import {
   LitsFunction,
   NameNode,
   NodeType,
-  NormalExpressionNode,
   NormalExpressionNodeWithName,
   RegularExpression,
-  SpecialExpressionNode,
 } from '../parser/interface'
 import { DebugInfo } from '../tokenizer/interface'
 import { getDebugInfo, isAstNode, isLitsFunction, isRegularExpression, valueToString } from './helpers'
@@ -27,17 +25,33 @@ class Asserter<T> {
     this.predicate = predicate
   }
 
-  public is(value: unknown): value is T {
+  public is: (value: unknown) => value is T = (value: unknown): value is T => {
     return this.predicate(value)
   }
 
-  public assert(value: unknown, debugInfo?: DebugInfo): asserts value is T {
+  public isNot: (value: unknown) => boolean = (value: unknown): boolean => {
+    return !this.predicate(value)
+  }
+
+  public assert: (value: unknown, debugInfo?: DebugInfo) => asserts value is T = (
+    value: unknown,
+    debugInfo?: DebugInfo,
+  ): asserts value is T => {
     if (!this.predicate(value)) {
       throw new LitsError(`Expected ${this.typeName}, got ${valueToString(value)}.`, getDebugInfo(value, debugInfo))
     }
   }
 
-  public as(value: unknown, debugInfo?: DebugInfo): T {
+  public assertNot: (value: unknown, debugInfo?: DebugInfo) => asserts value is T = (
+    value: unknown,
+    debugInfo?: DebugInfo,
+  ): asserts value is T => {
+    if (!this.predicate(value)) {
+      throw new LitsError(`Expected ${this.typeName}, got ${valueToString(value)}.`, getDebugInfo(value, debugInfo))
+    }
+  }
+
+  public as: (value: unknown, debugInfo?: DebugInfo) => T = (value: unknown, debugInfo?: DebugInfo): T => {
     this.assert(value, debugInfo)
     return value
   }
@@ -56,6 +70,7 @@ export const object: Asserter<Obj> = new Asserter(
     !(
       value === null ||
       typeof value !== `object` ||
+      (value as Record<string, unknown>).__TYPE__ ||
       Array.isArray(value) ||
       value instanceof RegExp ||
       isLitsFunction(value) ||
@@ -104,21 +119,22 @@ export const expressionNode: Asserter<ExpressionNode> = new Asserter(`expression
     value.type === `NormalExpression` ||
     value.type === `SpecialExpression` ||
     value.type === `Number` ||
-    value.type === `String`
+    value.type === `String` ||
+    value.type === `TypeName`
   )
 })
 
 export function assertNumberOfParams(
   count: number | { min?: number; max?: number },
-  node: NormalExpressionNode | SpecialExpressionNode,
+  arity: number,
+  name: string,
+  debugInfo: DebugInfo | undefined,
 ): void {
-  const length = node.params.length
-  const debugInfo = node.token?.debugInfo
   if (typeof count === `number`) {
-    if (length !== count) {
+    if (arity !== count) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected ${count}, got ${valueToString(length)}.`,
-        node.token?.debugInfo,
+        `Wrong number of arguments to "${name}", expected ${count}, got ${valueToString(arity)}.`,
+        debugInfo,
       )
     }
   } else {
@@ -127,28 +143,27 @@ export function assertNumberOfParams(
       throw new LitsError(`Min or max must be specified.`, debugInfo)
     }
 
-    if (typeof min === `number` && length < min) {
+    if (typeof min === `number` && arity < min) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected at least ${min}, got ${valueToString(length)}.`,
+        `Wrong number of arguments to "${name}", expected at least ${min}, got ${valueToString(arity)}.`,
         debugInfo,
       )
     }
 
-    if (typeof max === `number` && length > max) {
+    if (typeof max === `number` && arity > max) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.name}", expected at most ${max}, got ${valueToString(length)}.`,
+        `Wrong number of arguments to "${name}", expected at most ${max}, got ${valueToString(arity)}.`,
         debugInfo,
       )
     }
   }
 }
 
-export function assertEventNumberOfParams(node: NormalExpressionNode): void {
-  const length = node.params.length
-  if (length % 2 !== 0) {
+export function assertEvenNumberOfParams(arity: number, name: string, debugInfo: DebugInfo | undefined): void {
+  if (arity % 2 !== 0) {
     throw new LitsError(
-      `Wrong number of arguments, expected an even number, got ${valueToString(length)}.`,
-      node.token?.debugInfo,
+      `Wrong number of arguments to ${name}, expected an even number, got ${valueToString(arity)}.`,
+      debugInfo,
     )
   }
 }
@@ -163,5 +178,24 @@ export function asValue<T>(value: T | undefined, debugInfo?: DebugInfo): T {
 export function assertValue<T>(value: T | undefined, debugInfo?: DebugInfo): asserts value is T {
   if (value === undefined) {
     throw new LitsError(`Unexpected nil.`, getDebugInfo(value, debugInfo))
+  }
+}
+
+export function assertNotNull<T>(value: T | null, debugInfo?: DebugInfo): asserts value is T {
+  if (value === null) {
+    throw new LitsError(`Unexpected null.`, getDebugInfo(value, debugInfo))
+  }
+}
+
+export function asNotNull<T>(value: T | null, debugInfo?: DebugInfo): T {
+  if (value === null) {
+    throw new LitsError(`Unexpected null.`, getDebugInfo(value, debugInfo))
+  }
+  return value
+}
+
+export function assertNull(value: unknown, debugInfo?: DebugInfo): asserts value is null {
+  if (value !== null) {
+    throw new LitsError(`Unexpected value, expected null got ${value}.`, getDebugInfo(value, debugInfo))
   }
 }

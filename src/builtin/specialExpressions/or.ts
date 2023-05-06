@@ -1,5 +1,6 @@
+import { Type } from '../../types/Type'
 import { Any } from '../../interface'
-import { token } from '../../utils/assertion'
+import { asValue, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any> = {
@@ -17,16 +18,34 @@ export const orSpecialExpression: BuiltinSpecialExpression<Any> = {
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
+    const possibleValues: Any[] = []
     let value: Any = false
+
+    if (node.params.length === 0) {
+      return false
+    }
 
     for (const param of node.params) {
       value = evaluateAstNode(param, contextStack)
-      if (value) {
+      if ((Type.isType(value) && value.is(Type.truthy)) || value) {
+        possibleValues.push(value)
         break
+      } else if (Type.isType(value) && value.intersects(Type.truthy)) {
+        possibleValues.push(value)
       }
     }
 
-    return value
+    if (possibleValues.length === 0) {
+      return value
+    } else if (possibleValues.length === 1) {
+      return asValue(possibleValues[0])
+    } else {
+      return Type.or(...possibleValues.map(Type.of))
+    }
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+
+  validateArity: () => undefined,
+
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) =>
+    findUndefinedSymbols(node.params, contextStack, builtin),
 }

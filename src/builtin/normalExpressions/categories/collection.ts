@@ -1,5 +1,7 @@
 import { LitsFunction } from '../../..'
-import { ContextStack, ExecuteFunction } from '../../../evaluator/interface'
+import { Type } from '../../../types/Type'
+import { ContextStack } from '../../../ContextStack'
+import { ExecuteFunction } from '../../../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../../../interface'
 import { DebugInfo } from '../../../tokenizer/interface'
 import { toNonNegativeInteger, toAny, collHasKey, cloneColl } from '../../../utils'
@@ -141,81 +143,144 @@ function assoc(coll: Coll, key: string | number, value: Any, debugInfo?: DebugIn
 export const collectionNormalExpression: BuiltinNormalExpressions = {
   get: {
     evaluate: (params, debugInfo) => {
-      const [coll, key] = params
-      const defaultValue = toAny(params[2])
-      stringOrNumber.assert(key, debugInfo)
-      if (coll === null) {
-        return defaultValue
+      if (params.every(Type.isNotType)) {
+        const [coll, key] = params
+        const defaultValue = toAny(params[2])
+        stringOrNumber.assert(key, debugInfo)
+        if (coll === null) {
+          return defaultValue
+        }
+        collection.assert(coll, debugInfo)
+        const result = get(coll, key)
+        return result === undefined ? defaultValue : result
+      } else {
+        const collType = Type.of(params[0])
+        const keyType = Type.of(params[1])
+        const defaultValueType = Type.isType(params[2])
+          ? params[2]
+          : params[2] === undefined
+          ? Type.nil
+          : Type.of(params[2])
+
+        collType.assertIs(Type.or(Type.array, Type.string, Type.object).nilable(), debugInfo)
+        keyType.assertIs(Type.or(Type.string, Type.float, Type.nil), debugInfo)
+
+        if (collType.is(Type.nil)) {
+          return defaultValueType
+        }
+
+        if (collType.is(Type.string)) {
+          return Type.or(Type.string.nilable(), defaultValueType)
+        }
+
+        return Type.unknown
       }
-      collection.assert(coll, debugInfo)
-      const result = get(coll, key)
-      return result === undefined ? defaultValue : result
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `get`, debugInfo),
   },
   'get-in': {
     evaluate: (params, debugInfo): Any => {
-      let coll = toAny(params[0])
-      const keys = params[1] ?? [] // nil behaves as empty array
-      const defaultValue = toAny(params[2])
-      array.assert(keys, debugInfo)
-      for (const key of keys) {
-        stringOrNumber.assert(key, debugInfo)
-        if (collection.is(coll)) {
-          const nextValue = get(coll, key)
-          if (nextValue !== undefined) {
-            coll = nextValue
+      if (params.every(Type.isNotType)) {
+        let coll = toAny(params[0])
+        const keys = params[1] ?? [] // nil behaves as empty array
+        const defaultValue = toAny(params[2])
+        array.assert(keys, debugInfo)
+        for (const key of keys) {
+          stringOrNumber.assert(key, debugInfo)
+          if (collection.is(coll)) {
+            const nextValue = get(coll, key)
+            if (nextValue !== undefined) {
+              coll = nextValue
+            } else {
+              return defaultValue
+            }
           } else {
             return defaultValue
           }
-        } else {
-          return defaultValue
         }
+        return coll
+      } else {
+        const collType = Type.of(params[0])
+        const keysType = Type.of(params[1])
+        collType.assertIs(Type.or(Type.array, Type.string, Type.object).nilable(), debugInfo)
+        keysType.assertIs(Type.array.nilable(), debugInfo)
+
+        if (keysType.is(Type.nil)) {
+          return collType
+        }
+
+        return Type.unknown
       }
-      return coll
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `___`, debugInfo),
   },
   count: {
-    evaluate: ([coll], debugInfo): number => {
-      if (typeof coll === `string`) {
-        return coll.length
+    evaluate: ([coll], debugInfo): number | Type => {
+      if (Type.isNotType(coll)) {
+        if (typeof coll === `string`) {
+          return coll.length
+        }
+        collection.assert(coll, debugInfo)
+        if (Array.isArray(coll)) {
+          return coll.length
+        }
+        return Object.keys(coll).length
+      } else {
+        const collType = Type.of(coll)
+        collType.assertIs(Type.or(Type.array, Type.string, Type.object), debugInfo)
+        return collType.is(Type.or(Type.emptyArray, Type.emptyString, Type.emptyObject))
+          ? Type.zero
+          : collType.is(Type.or(Type.nonEmptyArray, Type.nonEmptyString, Type.nonEmptyObject))
+          ? Type.positiveInteger
+          : Type.nonNegativeInteger
       }
-      collection.assert(coll, debugInfo)
-      if (Array.isArray(coll)) {
-        return coll.length
-      }
-      return Object.keys(coll).length
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `count`, debugInfo),
   },
   'contains?': {
-    evaluate: ([coll, key], debugInfo): boolean => {
-      collection.assert(coll, debugInfo)
-      stringOrNumber.assert(key, debugInfo)
-      if (sequence.is(coll)) {
-        if (!number.is(key, { integer: true })) {
-          return false
+    evaluate: (params, debugInfo): boolean | Type => {
+      if (params.every(Type.isNotType)) {
+        const [coll, key] = params
+        collection.assert(coll, debugInfo)
+        stringOrNumber.assert(key, debugInfo)
+        if (sequence.is(coll)) {
+          if (!number.is(key, { integer: true })) {
+            return false
+          }
+          number.assert(key, debugInfo, { integer: true })
+          return key >= 0 && key < coll.length
         }
-        number.assert(key, debugInfo, { integer: true })
-        return key >= 0 && key < coll.length
+        return !!Object.getOwnPropertyDescriptor(coll, key)
+      } else {
+        const collType = Type.of(params[0])
+        return collType.is(Type.or(Type.emptyArray, Type.emptyString, Type.emptyObject)) ? Type.false : Type.boolean
       }
-      return !!Object.getOwnPropertyDescriptor(coll, key)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `contains?`, debugInfo),
   },
   'has?': {
-    evaluate: ([coll, value], debugInfo): boolean => {
-      collection.assert(coll, debugInfo)
-      if (array.is(coll)) {
-        return coll.includes(value)
+    evaluate: (params, debugInfo): boolean | Type => {
+      if (params.every(Type.isNotType)) {
+        const [coll, value] = params
+        collection.assert(coll, debugInfo)
+
+        if ((array.is(coll) && coll.some(Type.isType)) || (object.is(coll) && Object.values(coll).some(Type.isType))) {
+          return Type.boolean
+        }
+
+        if (array.is(coll)) {
+          return coll.includes(value)
+        }
+        if (string.is(coll)) {
+          return string.is(value) ? coll.split(``).includes(value) : false
+        }
+        return Object.values(coll).includes(value)
+      } else {
+        const collType = Type.of(params[0])
+        return collType.is(Type.or(Type.emptyArray, Type.emptyString, Type.emptyObject)) ? Type.false : Type.boolean
       }
-      if (string.is(coll)) {
-        return string.is(value) ? coll.split(``).includes(value) : false
-      }
-      return Object.values(coll).includes(value)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `has?`, debugInfo),
   },
   'has-some?': {
     evaluate: ([coll, seq], debugInfo): boolean => {
@@ -244,7 +309,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return false
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `has-some?`, debugInfo),
   },
   'has-every?': {
     evaluate: ([coll, seq], debugInfo): boolean => {
@@ -273,7 +338,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `has-every?`, debugInfo),
   },
   assoc: {
     evaluate: ([coll, key, value], debugInfo): Coll => {
@@ -282,7 +347,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       any.assert(value, debugInfo)
       return assoc(coll, key, value, debugInfo)
     },
-    validate: node => assertNumberOfParams(3, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(3, arity, `assoc`, debugInfo),
   },
   'assoc-in': {
     evaluate: ([originalColl, keys, value], debugInfo): Coll => {
@@ -310,7 +375,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return coll
     },
-    validate: node => assertNumberOfParams(3, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(3, arity, `assoc-in`, debugInfo),
   },
   update: {
     evaluate: ([coll, key, fn, ...params], debugInfo, contextStack, { executeFunction }): Coll => {
@@ -319,7 +384,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       litsFunction.assert(fn, debugInfo)
       return update(coll, key, fn, params, contextStack, executeFunction, debugInfo)
     },
-    validate: node => assertNumberOfParams({ min: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 3 }, arity, `update`, debugInfo),
   },
   'update-in': {
     evaluate: ([originalColl, keys, fn, ...params], debugInfo, contextStack, { executeFunction }): Coll => {
@@ -363,7 +428,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return coll
     },
-    validate: node => assertNumberOfParams({ min: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 3 }, arity, `update-in`, debugInfo),
   },
   concat: {
     evaluate: (params, debugInfo): Any => {
@@ -385,7 +450,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }, {})
       }
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `concat`, debugInfo),
   },
   'not-empty': {
     evaluate: ([coll], debugInfo): Coll | null => {
@@ -398,7 +463,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return Object.keys(coll).length > 0 ? coll : null
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `not-empty`, debugInfo),
   },
   'every?': {
     evaluate: ([fn, coll], debugInfo, contextStack, { executeFunction }): boolean => {
@@ -413,7 +478,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, debugInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `every?`, debugInfo),
   },
   'any?': {
     evaluate: ([fn, coll], debugInfo, contextStack, { executeFunction }): boolean => {
@@ -428,7 +493,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, debugInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `any?`, debugInfo),
   },
   'not-any?': {
     evaluate: ([fn, coll], debugInfo, contextStack, { executeFunction }): boolean => {
@@ -443,7 +508,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return !Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, debugInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `not-any?`, debugInfo),
   },
   'not-every?': {
     evaluate: ([fn, coll], debugInfo, contextStack, { executeFunction }): boolean => {
@@ -458,6 +523,6 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return !Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, debugInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `not-every?`, debugInfo),
   },
 }

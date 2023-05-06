@@ -1,18 +1,17 @@
 import { LitsFunction } from '..'
-import { analyzeAst } from '../analyze'
-import { AnalyzeResult } from '../analyze/interface'
+import { findUndefinedSymbols } from '../analyze/undefinedSymbols'
+import { UndefinedSymbolEntry } from '../analyze/undefinedSymbols/interface'
 import { builtin } from '../builtin'
-import { createContextStack, evaluate } from '../evaluator'
-import { Context, ContextStack } from '../evaluator/interface'
+import { ContextStack } from '../ContextStack'
+import { Context } from '../ContextStack/interface'
+import { evaluate } from '../evaluator'
 import { Any, Obj } from '../interface'
 import { parse } from '../parser'
 import { Ast } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import { Token } from '../tokenizer/interface'
-import { createContextFromValues } from '../utils'
 import { Cache } from './Cache'
-
-export type LocationGetter = (line: number, col: number) => string
+import { LitsParams, LocationGetter } from './interface'
 
 export type LitsRuntimeInfo = {
   astCache: Cache | null
@@ -20,12 +19,7 @@ export type LitsRuntimeInfo = {
   debug: boolean
 }
 
-export type LitsParams = {
-  contexts?: Context[]
-  globals?: Obj
-  globalContext?: Context
-  getLocation?: LocationGetter
-}
+export { Type } from '../types/Type'
 
 type LitsConfig = {
   initialCache?: Record<string, Ast>
@@ -67,18 +61,18 @@ export class Lits {
   }
 
   public context(program: string, params: LitsParams = {}): Context {
-    const contextStack = createContextStackFromParams(params)
+    const contextStack = ContextStack.createFromParams(params)
     const ast = this.generateAst(program, params.getLocation)
     evaluate(ast, contextStack)
     return contextStack.globalContext
   }
 
-  public analyze(program: string): AnalyzeResult {
+  public findUndefinedSymbols(program: string): Set<UndefinedSymbolEntry> {
     const params: LitsParams = {}
-    const contextStack = createContextStackFromParams(params)
+    const contextStack = ContextStack.createFromParams(params)
     const ast = this.generateAst(program, params.getLocation)
 
-    return analyzeAst(ast.body, contextStack, builtin)
+    return findUndefinedSymbols(ast.body, contextStack, builtin)
   }
 
   public tokenize(program: string, getLocation?: LocationGetter): Token[] {
@@ -90,7 +84,7 @@ export class Lits {
   }
 
   private evaluate(ast: Ast, params: LitsParams): Any {
-    const contextStack = createContextStackFromParams(params)
+    const contextStack = ContextStack.createFromParams(params)
     return evaluate(ast, contextStack)
   }
 
@@ -131,11 +125,4 @@ export class Lits {
     this.astCache?.set(program, ast)
     return ast
   }
-}
-
-function createContextStackFromParams(params: LitsParams): ContextStack {
-  const globalContext: Context = params.globalContext ?? {}
-  Object.assign(globalContext, createContextFromValues(params.globals))
-  const contextStack = createContextStack([globalContext, ...(params.contexts ?? [])])
-  return contextStack
 }

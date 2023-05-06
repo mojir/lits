@@ -1,4 +1,5 @@
 import { Lits } from '../../../src'
+import { Type } from '../../../src/Lits/Lits'
 
 describe(`collection functions`, () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
@@ -18,6 +19,12 @@ describe(`collection functions`, () => {
         expect(() => lits.run(`(count true)`)).toThrow()
         expect(() => lits.run(`(count nil)`)).toThrow()
         expect(() => lits.run(`(count undefined)`)).toThrow()
+      })
+
+      test(`type.`, () => {
+        expect(lits.run(`(count ::empty-array)`)).toEqual(Type.zero)
+        expect(lits.run(`(count ::empty-object)`)).toEqual(Type.zero)
+        expect(lits.run(`(count ::non-empty-string)`)).toEqual(Type.positiveInteger)
       })
     })
 
@@ -83,14 +90,18 @@ describe(`collection functions`, () => {
         expect(lits.run(`(get-in nil [1])`)).toBe(null)
         expect(lits.run(`(get-in [] [])`)).toEqual([])
         expect(lits.run(`(get-in [1 2] [1])`)).toBe(2)
+        expect(lits.run(`(get-in [1 2] nil)`)).toEqual([1, 2])
+        expect(lits.run(`(get-in [] nil)`)).toEqual([])
         expect(lits.run(`(get-in [1 2] [1 2])`)).toBe(null)
         expect(lits.run(`(get-in [] [1])`)).toBe(null)
         expect(lits.run(`(get-in 2 [1])`)).toBe(null)
         expect(lits.run(`(get-in 2 [])`)).toBe(2)
 
+        expect(lits.run(`(get-in "" [])`)).toBe(``)
         expect(lits.run(`(get-in "Albert" [])`)).toBe(`Albert`)
         expect(lits.run(`(get-in "Albert" [0])`)).toBe(`A`)
         expect(lits.run(`(get-in "Albert" [:0])`)).toBe(null)
+        expect(lits.run(`(get-in "Albert" nil)`)).toBe(`Albert`)
 
         expect(lits.run(`(get-in "Albert" nil "DEFAULT")`)).toBe(`Albert`)
 
@@ -344,6 +355,7 @@ describe(`collection functions`, () => {
         expect(lits.run(`(every? #(even? (second %1)) {:a 2 :b 4})`)).toBe(true)
         expect(lits.run(`(every? #(even? (second %1)) {:a 2 :b 3})`)).toBe(false)
         expect(lits.run(`(every? #(even? (second %1)) {:a 2 :b 3})`)).toBe(false)
+
         expect(() => lits.run(`(every? +)`)).toThrow()
         expect(() => lits.run(`(every?)`)).toThrow()
         expect(() => lits.run(`(every? number? [1] 2)`)).toThrow()
@@ -363,6 +375,7 @@ describe(`collection functions`, () => {
         expect(lits.run(`(not-every? #(even? (second %1)) {:a 2 :b 4})`)).toBe(false)
         expect(lits.run(`(not-every? #(even? (second %1)) {:a 2 :b 3})`)).toBe(true)
         expect(lits.run(`(not-every? #(even? (second %1)) {:a 2 :b 3})`)).toBe(true)
+
         expect(() => lits.run(`(not-every? +)`)).toThrow()
         expect(() => lits.run(`(not-every?)`)).toThrow()
         expect(() => lits.run(`(not-every? number? [1] 2)`)).toThrow()
@@ -385,6 +398,7 @@ describe(`collection functions`, () => {
         expect(lits.run(`(any? #(even? (second %1)) {:a 2 :b 4})`)).toBe(true)
         expect(lits.run(`(any? #(even? (second %1)) {:a 2 :b 3})`)).toBe(true)
         expect(lits.run(`(any? #(even? (second %1)) {:a 1 :b 3})`)).toBe(false)
+
         expect(() => lits.run(`(any? +)`)).toThrow()
         expect(() => lits.run(`(any?)`)).toThrow()
         expect(() => lits.run(`(any? number? [1] 2)`)).toThrow()
@@ -407,6 +421,7 @@ describe(`collection functions`, () => {
         expect(lits.run(`(not-any? #(even? (second %1)) {:a 2 :b 4})`)).toBe(false)
         expect(lits.run(`(not-any? #(even? (second %1)) {:a 2 :b 3})`)).toBe(false)
         expect(lits.run(`(not-any? #(even? (second %1)) {:a 1 :b 3})`)).toBe(true)
+
         expect(() => lits.run(`(not-any? +)`)).toThrow()
         expect(() => lits.run(`(not-any?)`)).toThrow()
         expect(() => lits.run(`(not-any? number? [1] 2)`)).toThrow()

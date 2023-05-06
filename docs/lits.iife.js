@@ -45,6 +45,7 @@ var Lits = (function (exports) {
       regexpShorthand: true,
       reservedName: true,
       string: true,
+      typeName: true,
   };
   function isToken(value) {
       if (typeof value !== "object" || value === null) {
@@ -67,6 +68,7 @@ var Lits = (function (exports) {
       Binding: true,
       Argument: true,
       Partial: true,
+      TypeName: true,
   };
   function isAstNode(value) {
       if (value === null || typeof value !== "object") {
@@ -415,21 +417,30 @@ var Lits = (function (exports) {
 
   var Asserter = /** @class */ (function () {
       function Asserter(typeName, predicate) {
+          var _this = this;
+          this.is = function (value) {
+              return _this.predicate(value);
+          };
+          this.isNot = function (value) {
+              return !_this.predicate(value);
+          };
+          this.assert = function (value, debugInfo) {
+              if (!_this.predicate(value)) {
+                  throw new LitsError("Expected ".concat(_this.typeName, ", got ").concat(valueToString$1(value), "."), getDebugInfo(value, debugInfo));
+              }
+          };
+          this.assertNot = function (value, debugInfo) {
+              if (!_this.predicate(value)) {
+                  throw new LitsError("Expected ".concat(_this.typeName, ", got ").concat(valueToString$1(value), "."), getDebugInfo(value, debugInfo));
+              }
+          };
+          this.as = function (value, debugInfo) {
+              _this.assert(value, debugInfo);
+              return value;
+          };
           this.typeName = typeName;
           this.predicate = predicate;
       }
-      Asserter.prototype.is = function (value) {
-          return this.predicate(value);
-      };
-      Asserter.prototype.assert = function (value, debugInfo) {
-          if (!this.predicate(value)) {
-              throw new LitsError("Expected ".concat(this.typeName, ", got ").concat(valueToString$1(value), "."), getDebugInfo(value, debugInfo));
-          }
-      };
-      Asserter.prototype.as = function (value, debugInfo) {
-          this.assert(value, debugInfo);
-          return value;
-      };
       return Asserter;
   }());
   var litsFunction = new Asserter("LitsFunction", isLitsFunction);
@@ -439,6 +450,7 @@ var Lits = (function (exports) {
   var object = new Asserter("Obj", function (value) {
       return !(value === null ||
           typeof value !== "object" ||
+          value.__TYPE__ ||
           Array.isArray(value) ||
           value instanceof RegExp ||
           isLitsFunction(value) ||
@@ -472,15 +484,13 @@ var Lits = (function (exports) {
       return (value.type === "NormalExpression" ||
           value.type === "SpecialExpression" ||
           value.type === "Number" ||
-          value.type === "String");
+          value.type === "String" ||
+          value.type === "TypeName");
   });
-  function assertNumberOfParams(count, node) {
-      var _a, _b;
-      var length = node.params.length;
-      var debugInfo = (_a = node.token) === null || _a === void 0 ? void 0 : _a.debugInfo;
+  function assertNumberOfParams(count, arity, name, debugInfo) {
       if (typeof count === "number") {
-          if (length !== count) {
-              throw new LitsError("Wrong number of arguments to \"".concat(node.name, "\", expected ").concat(count, ", got ").concat(valueToString$1(length), "."), (_b = node.token) === null || _b === void 0 ? void 0 : _b.debugInfo);
+          if (arity !== count) {
+              throw new LitsError("Wrong number of arguments to \"".concat(name, "\", expected ").concat(count, ", got ").concat(valueToString$1(arity), "."), debugInfo);
           }
       }
       else {
@@ -488,19 +498,17 @@ var Lits = (function (exports) {
           if (min === undefined && max === undefined) {
               throw new LitsError("Min or max must be specified.", debugInfo);
           }
-          if (typeof min === "number" && length < min) {
-              throw new LitsError("Wrong number of arguments to \"".concat(node.name, "\", expected at least ").concat(min, ", got ").concat(valueToString$1(length), "."), debugInfo);
+          if (typeof min === "number" && arity < min) {
+              throw new LitsError("Wrong number of arguments to \"".concat(name, "\", expected at least ").concat(min, ", got ").concat(valueToString$1(arity), "."), debugInfo);
           }
-          if (typeof max === "number" && length > max) {
-              throw new LitsError("Wrong number of arguments to \"".concat(node.name, "\", expected at most ").concat(max, ", got ").concat(valueToString$1(length), "."), debugInfo);
+          if (typeof max === "number" && arity > max) {
+              throw new LitsError("Wrong number of arguments to \"".concat(name, "\", expected at most ").concat(max, ", got ").concat(valueToString$1(arity), "."), debugInfo);
           }
       }
   }
-  function assertEventNumberOfParams(node) {
-      var _a;
-      var length = node.params.length;
-      if (length % 2 !== 0) {
-          throw new LitsError("Wrong number of arguments, expected an even number, got ".concat(valueToString$1(length), "."), (_a = node.token) === null || _a === void 0 ? void 0 : _a.debugInfo);
+  function assertEvenNumberOfParams(arity, name, debugInfo) {
+      if (arity % 2 !== 0) {
+          throw new LitsError("Wrong number of arguments to ".concat(name, ", expected an even number, got ").concat(valueToString$1(arity), "."), debugInfo);
       }
   }
   function asValue(value, debugInfo) {
@@ -514,6 +522,1096 @@ var Lits = (function (exports) {
           throw new LitsError("Unexpected nil.", getDebugInfo(value, debugInfo));
       }
   }
+  function assertNotNull(value, debugInfo) {
+      if (value === null) {
+          throw new LitsError("Unexpected null.", getDebugInfo(value, debugInfo));
+      }
+  }
+  function asNotNull(value, debugInfo) {
+      if (value === null) {
+          throw new LitsError("Unexpected null.", getDebugInfo(value, debugInfo));
+      }
+      return value;
+  }
+  function assertNull(value, debugInfo) {
+      if (value !== null) {
+          throw new LitsError("Unexpected value, expected null got ".concat(value, "."), getDebugInfo(value, debugInfo));
+      }
+  }
+
+  function collHasKey(coll, key) {
+      if (!collection.is(coll)) {
+          return false;
+      }
+      if (string.is(coll) || array.is(coll)) {
+          if (!number.is(key, { integer: true })) {
+              return false;
+          }
+          return key >= 0 && key < coll.length;
+      }
+      return !!Object.getOwnPropertyDescriptor(coll, key);
+  }
+  var sortOrderByType = {
+      boolean: 0,
+      number: 1,
+      string: 2,
+      array: 3,
+      object: 4,
+      regexp: 5,
+      unknown: 6,
+      null: 7,
+  };
+  function getType(value) {
+      if (value === null) {
+          return "null";
+      }
+      else if (typeof value === "boolean") {
+          return "boolean";
+      }
+      else if (typeof value === "number") {
+          return "number";
+      }
+      else if (typeof value === "string") {
+          return "string";
+      }
+      else if (array.is(value)) {
+          return "array";
+      }
+      else if (object.is(value)) {
+          return "object";
+      }
+      else if (regularExpression.is(value)) {
+          return "regexp";
+      }
+      else {
+          return "unknown";
+      }
+  }
+  function compare(a, b) {
+      var aType = getType(a);
+      var bType = getType(b);
+      if (aType !== bType) {
+          return Math.sign(sortOrderByType[aType] - sortOrderByType[bType]);
+      }
+      switch (aType) {
+          case "null":
+              return 0;
+          case "boolean":
+              if (a === b) {
+                  return 0;
+              }
+              return a === false ? -1 : 1;
+          case "number":
+              return Math.sign(a - b);
+          case "string": {
+              var aString = a;
+              var bString = b;
+              return aString < bString ? -1 : aString > bString ? 1 : 0;
+          }
+          case "array": {
+              var aArray = a;
+              var bArray = b;
+              if (aArray.length < bArray.length) {
+                  return -1;
+              }
+              else if (aArray.length > bArray.length) {
+                  return 1;
+              }
+              for (var i = 0; i < aArray.length; i += 1) {
+                  var innerComp = compare(aArray[i], bArray[i]);
+                  if (innerComp !== 0) {
+                      return innerComp;
+                  }
+              }
+              return 0;
+          }
+          case "object": {
+              var aObj = a;
+              var bObj = b;
+              return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length);
+          }
+          case "regexp": {
+              var aString = a.source;
+              var bString = b.source;
+              return aString < bString ? -1 : aString > bString ? 1 : 0;
+          }
+          case "unknown":
+              return 0;
+      }
+  }
+  function deepEqual(a, b, debugInfo) {
+      if (a === b) {
+          return true;
+      }
+      if (typeof a === "number" && typeof b === "number") {
+          return Math.abs(a - b) < Number.EPSILON;
+      }
+      if (array.is(a) && array.is(b)) {
+          if (a.length !== b.length) {
+              return false;
+          }
+          for (var i = 0; i < a.length; i += 1) {
+              if (!deepEqual(any.as(a[i], debugInfo), any.as(b[i], debugInfo), debugInfo)) {
+                  return false;
+              }
+          }
+          return true;
+      }
+      if (isRegularExpression(a) && isRegularExpression(b)) {
+          return a.source === b.source && a.flags === b.flags;
+      }
+      if (typeof a === "object" && a !== null && typeof b === "object" && b !== null) {
+          var aObj = a;
+          var bObj = b;
+          var aKeys = Object.keys(aObj);
+          var bKeys = Object.keys(bObj);
+          if (aKeys.length !== bKeys.length) {
+              return false;
+          }
+          for (var i = 0; i < aKeys.length; i += 1) {
+              var key = string.as(aKeys[i], debugInfo);
+              if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), debugInfo)) {
+                  return false;
+              }
+          }
+          return true;
+      }
+      return false;
+  }
+  function toNonNegativeInteger(number) {
+      return Math.max(0, Math.ceil(number));
+  }
+  function toAny(value) {
+      return (value !== null && value !== void 0 ? value : null);
+  }
+  function clone(value) {
+      if (object.is(value)) {
+          return Object.entries(value).reduce(function (result, entry) {
+              var _a = __read(entry, 2), key = _a[0], val = _a[1];
+              result[key] = clone(val);
+              return result;
+          }, {});
+      }
+      if (array.is(value)) {
+          return value.map(function (item) { return clone(item); });
+      }
+      return value;
+  }
+  function cloneColl(value) {
+      return clone(value);
+  }
+  var MAX_NUMBER = Math.pow(2, 52);
+  var MIN_NUMBER = -Math.pow(2, 52);
+
+  var Size;
+  (function (Size) {
+      Size[Size["Empty"] = 0] = "Empty";
+      Size[Size["NonEmpty"] = 1] = "NonEmpty";
+      Size[Size["Unknown"] = 2] = "Unknown";
+  })(Size || (Size = {}));
+  var ArrayVariant = /** @class */ (function () {
+      function ArrayVariant(size, type) {
+          this.size = size;
+          this.type = type;
+      }
+      ArrayVariant.createEmpty = function () {
+          return new ArrayVariant(Size.Empty, null);
+      };
+      ArrayVariant.createNonEmpty = function (type) {
+          return new ArrayVariant(Size.NonEmpty, type);
+      };
+      ArrayVariant.create = function (type) {
+          return new ArrayVariant(Size.Unknown, type);
+      };
+      ArrayVariant.or = function (a, b) {
+          return simplifyArrayVariants(__spreadArray(__spreadArray([], __read((a !== null && a !== void 0 ? a : [])), false), __read((b !== null && b !== void 0 ? b : [])), false));
+      };
+      ArrayVariant.and = function (a, b) {
+          if (a === null || b === null) {
+              return null;
+          }
+          return simplifyArrayVariants(a.flatMap(function (aVariant) {
+              var e_1, _a;
+              var _b, _c;
+              var aType = (_b = aVariant.type) !== null && _b !== void 0 ? _b : ArrayVariant.unknownType;
+              var aSize = aVariant.size;
+              var variants = [];
+              try {
+                  for (var b_1 = __values(b), b_1_1 = b_1.next(); !b_1_1.done; b_1_1 = b_1.next()) {
+                      var bVariant = b_1_1.value;
+                      var bType = (_c = bVariant.type) !== null && _c !== void 0 ? _c : ArrayVariant.unknownType;
+                      var bSize = bVariant.size;
+                      if (aType.equals(bType)) {
+                          var size = aSize === Size.Empty && bSize !== Size.NonEmpty
+                              ? Size.Empty
+                              : aSize === Size.NonEmpty && bSize !== Size.Empty
+                                  ? Size.NonEmpty
+                                  : aSize === Size.Unknown
+                                      ? bSize
+                                      : null;
+                          if (size === null) {
+                              return [];
+                          }
+                          variants.push(new ArrayVariant(size, aType));
+                      }
+                  }
+              }
+              catch (e_1_1) { e_1 = { error: e_1_1 }; }
+              finally {
+                  try {
+                      if (b_1_1 && !b_1_1.done && (_a = b_1.return)) _a.call(b_1);
+                  }
+                  finally { if (e_1) throw e_1.error; }
+              }
+              return variants;
+          }));
+      };
+      ArrayVariant.equals = function (a, b) {
+          if (!a && !b) {
+              return true;
+          }
+          if (!a || !b) {
+              return false;
+          }
+          if (a.length !== b.length) {
+              return false;
+          }
+          return a.every(function (aVariant) {
+              var e_2, _a;
+              var aSize = aVariant.size;
+              var aType = aVariant.type;
+              try {
+                  for (var b_2 = __values(b), b_2_1 = b_2.next(); !b_2_1.done; b_2_1 = b_2.next()) {
+                      var bVariant = b_2_1.value;
+                      var bSize = bVariant.size;
+                      var bType = bVariant.type;
+                      if (aSize === bSize) {
+                          if (!aType && !bType) {
+                              return true;
+                          }
+                          if (!aType || !bType) {
+                              continue;
+                          }
+                          if (aType.equals(bType)) {
+                              return true;
+                          }
+                      }
+                  }
+              }
+              catch (e_2_1) { e_2 = { error: e_2_1 }; }
+              finally {
+                  try {
+                      if (b_2_1 && !b_2_1.done && (_a = b_2.return)) _a.call(b_2);
+                  }
+                  finally { if (e_2) throw e_2.error; }
+              }
+              return false;
+          });
+      };
+      ArrayVariant.is = function (a, b, unknownType) {
+          var simpleA = simplifyArrayVariants(a);
+          var simpleB = simplifyArrayVariants(b);
+          if (!simpleA && !simpleB) {
+              return true;
+          }
+          if (!simpleA || !simpleB) {
+              return false;
+          }
+          return simpleA.every(function (aElem) {
+              var _a;
+              var aType = (_a = aElem.type) !== null && _a !== void 0 ? _a : unknownType;
+              return simpleB.some(function (bElem) {
+                  var bType = bElem.type;
+                  if (!bType) {
+                      return true;
+                  }
+                  if (!aType.is(bType)) {
+                      return false;
+                  }
+                  return bElem.size === Size.Unknown || bElem.size === aElem.size;
+              });
+          });
+      };
+      ArrayVariant.exclude = function (aTypeVariants, bTypeVariants) {
+          if (!aTypeVariants) {
+              return null;
+          }
+          if (!bTypeVariants) {
+              return aTypeVariants;
+          }
+          return simplifyArrayVariants(aTypeVariants.flatMap(function (aVariant) {
+              var e_3, _a;
+              var _b, _c;
+              var typeVariant = aVariant.clone();
+              try {
+                  for (var bTypeVariants_1 = __values(bTypeVariants), bTypeVariants_1_1 = bTypeVariants_1.next(); !bTypeVariants_1_1.done; bTypeVariants_1_1 = bTypeVariants_1.next()) {
+                      var bVariant = bTypeVariants_1_1.value;
+                      var bSize = bVariant.size;
+                      if (bSize === Size.Empty || bSize === Size.Unknown) {
+                          if (typeVariant.size === Size.Empty) {
+                              return [];
+                          }
+                          else {
+                              typeVariant.size = Size.NonEmpty;
+                          }
+                          typeVariant.size = bSize === Size.Empty ? Size.NonEmpty : Size.Empty;
+                      }
+                      if (((_b = typeVariant.type) !== null && _b !== void 0 ? _b : ArrayVariant.unknownType).equals((_c = bVariant.type) !== null && _c !== void 0 ? _c : ArrayVariant.unknownType)) {
+                          switch (typeVariant.size) {
+                              case Size.Empty:
+                                  return bSize !== Size.NonEmpty ? [] : typeVariant;
+                              case Size.NonEmpty:
+                                  return bSize !== Size.Empty ? [] : typeVariant;
+                              case Size.Unknown:
+                                  if (bSize === Size.Unknown) {
+                                      return [];
+                                  }
+                                  typeVariant.size = bSize === Size.Empty ? Size.NonEmpty : Size.Empty;
+                                  return typeVariant;
+                          }
+                      }
+                  }
+              }
+              catch (e_3_1) { e_3 = { error: e_3_1 }; }
+              finally {
+                  try {
+                      if (bTypeVariants_1_1 && !bTypeVariants_1_1.done && (_a = bTypeVariants_1.return)) _a.call(bTypeVariants_1);
+                  }
+                  finally { if (e_3) throw e_3.error; }
+              }
+              return typeVariant;
+          }));
+      };
+      ArrayVariant.prototype.clone = function () {
+          return new ArrayVariant(this.size, this.type);
+      };
+      ArrayVariant.Size = Size;
+      return ArrayVariant;
+  }());
+  function simplifyArrayVariants(arrayVariants) {
+      var _a, _b;
+      if (!arrayVariants || arrayVariants.length === 0) {
+          return null;
+      }
+      // Sorting is important, see below
+      var input = __spreadArray([], __read(arrayVariants), false).sort(function (a, b) { return b.size - a.size; });
+      var resultArrayVariants = [];
+      var size = arrayVariants.length;
+      for (var i = 0; i < size; i += 1) {
+          var aVariant = input[i];
+          if (!aVariant) {
+              continue;
+          }
+          var aType = (_a = aVariant.type) !== null && _a !== void 0 ? _a : ArrayVariant.unknownType;
+          var resultVariant = aVariant.clone();
+          for (var j = i + 1; j < size; j += 1) {
+              var bVariant = input[j];
+              if (!bVariant) {
+                  continue;
+              }
+              var bType = (_b = bVariant.type) !== null && _b !== void 0 ? _b : ArrayVariant.unknownType;
+              var bSize = bVariant.size;
+              if (aType.equals(bType)) {
+                  if (resultVariant.size === Size.Unknown || bSize === Size.Unknown || resultVariant.size !== bSize) {
+                      resultVariant.size = Size.Unknown;
+                  }
+                  input[j] = null;
+              }
+              // This would not work unless input is reversed sorted by Size
+              if (bSize === Size.Empty) {
+                  if (resultVariant.size === Size.NonEmpty) {
+                      resultVariant.size = Size.Unknown;
+                  }
+              }
+          }
+          resultArrayVariants.push(resultVariant);
+      }
+      var emptyArrayFound = false;
+      return resultArrayVariants.filter(function (variant) {
+          if (emptyArrayFound && variant.size === Size.Empty) {
+              return false;
+          }
+          if (variant.size !== Size.NonEmpty) {
+              emptyArrayFound = true;
+          }
+          return true;
+      });
+  }
+
+  var typeNames = [
+      "never",
+      "nil",
+      "nan",
+      "positive-infinity",
+      "negative-infinity",
+      "infinity",
+      "empty-string",
+      "non-empty-string",
+      "string",
+      "positive-zero",
+      "negative-zero",
+      "zero",
+      "number",
+      "float",
+      "positive-float",
+      "negative-float",
+      "positive-number",
+      "negative-number",
+      "non-zero-number",
+      "non-positive-number",
+      "non-negative-number",
+      "non-zero-float",
+      "non-positive-float",
+      "non-negative-float",
+      "integer",
+      "non-zero-integer",
+      "positive-integer",
+      "negative-integer",
+      "non-positive-integer",
+      "non-negative-integer",
+      "true",
+      "false",
+      "boolean",
+      "empty-array",
+      "non-empty-array",
+      "array",
+      "empty-object",
+      "non-empty-object",
+      "object",
+      "regexp",
+      "function",
+      "unknown",
+      "truthy",
+      "falsy",
+  ];
+  function isTypeName(typeName) {
+      return typeNames.includes(typeName);
+  }
+  var typeToBitRecord = {
+      nil: 1 << 0,
+      nan: 1 << 1,
+      true: 1 << 2,
+      false: 1 << 3,
+      'positive-zero': 1 << 4,
+      'negative-zero': 1 << 5,
+      'positive-integer': 1 << 6,
+      'negative-integer': 1 << 7,
+      'positive-non-integer': 1 << 8,
+      'negative-non-integer': 1 << 9,
+      'positive-infinity': 1 << 10,
+      'negative-infinity': 1 << 11,
+      'empty-string': 1 << 12,
+      'non-empty-string': 1 << 13,
+      array: 1 << 14,
+      'empty-object': 1 << 16,
+      'non-empty-object': 1 << 17,
+      regexp: 1 << 18,
+      function: 1 << 19,
+  };
+  var allBitValues = Object.values(typeToBitRecord);
+  // All bits set to 1
+  var UNKNWON_BITS = allBitValues.reduce(function (result, bit) { return result | bit; }, 0);
+  var FALSY_BITS = typeToBitRecord.nil |
+      typeToBitRecord["positive-zero"] |
+      typeToBitRecord["negative-zero"] |
+      typeToBitRecord["empty-string"] |
+      typeToBitRecord.false |
+      typeToBitRecord.nan;
+  // All non falsy bits
+  var TRUTHY_BITS = UNKNWON_BITS & ~FALSY_BITS;
+  // Used for stringify Type only
+  var orderedTypeNames = [
+      "unknown",
+      "number",
+      "non-zero-number",
+      "float",
+      "non-zero-number",
+      "non-zero-float",
+      "non-positive-number",
+      "non-positive-float",
+      "non-negative-number",
+      "non-negative-float",
+      "positive-number",
+      "positive-float",
+      "negative-number",
+      "negative-float",
+      "integer",
+      "non-zero-integer",
+      "non-positive-integer",
+      "non-negative-integer",
+      "positive-integer",
+      "negative-integer",
+      "zero",
+      "positive-zero",
+      "negative-zero",
+      "infinity",
+      "positive-infinity",
+      "negative-infinity",
+      "nan",
+      "boolean",
+      "true",
+      "false",
+      "array",
+      "empty-array",
+      "non-empty-array",
+      "object",
+      "empty-object",
+      "non-empty-object",
+      "string",
+      "non-empty-string",
+      "empty-string",
+      "regexp",
+      "function",
+      "nil",
+      "truthy",
+      "falsy",
+  ];
+  var arrayTypeNames = ["array", "empty-array", "non-empty-array"];
+  var builtinTypesBitMasks = {
+      never: 0,
+      nil: typeToBitRecord.nil,
+      'empty-string': typeToBitRecord["empty-string"],
+      'non-empty-string': typeToBitRecord["non-empty-string"],
+      string: typeToBitRecord["empty-string"] | typeToBitRecord["non-empty-string"],
+      // Numbers
+      number: typeToBitRecord["positive-zero"] |
+          typeToBitRecord["negative-zero"] |
+          typeToBitRecord["positive-non-integer"] |
+          typeToBitRecord["positive-integer"] |
+          typeToBitRecord["negative-non-integer"] |
+          typeToBitRecord["negative-integer"] |
+          typeToBitRecord["positive-infinity"] |
+          typeToBitRecord["negative-infinity"],
+      float: typeToBitRecord["positive-zero"] |
+          typeToBitRecord["negative-zero"] |
+          typeToBitRecord["positive-non-integer"] |
+          typeToBitRecord["positive-integer"] |
+          typeToBitRecord["negative-non-integer"] |
+          typeToBitRecord["negative-integer"],
+      nan: typeToBitRecord.nan,
+      'positive-infinity': typeToBitRecord["positive-infinity"],
+      'negative-infinity': typeToBitRecord["negative-infinity"],
+      infinity: typeToBitRecord["negative-infinity"] | typeToBitRecord["positive-infinity"],
+      'positive-zero': typeToBitRecord["positive-zero"],
+      'negative-zero': typeToBitRecord["negative-zero"],
+      zero: typeToBitRecord["positive-zero"] | typeToBitRecord["negative-zero"],
+      'non-zero-number': typeToBitRecord["negative-non-integer"] |
+          typeToBitRecord["negative-integer"] |
+          typeToBitRecord["positive-non-integer"] |
+          typeToBitRecord["positive-integer"] |
+          typeToBitRecord["positive-infinity"] |
+          typeToBitRecord["negative-infinity"],
+      'non-zero-float': typeToBitRecord["negative-non-integer"] |
+          typeToBitRecord["negative-integer"] |
+          typeToBitRecord["positive-non-integer"] |
+          typeToBitRecord["positive-integer"],
+      'positive-number': typeToBitRecord["positive-non-integer"] |
+          typeToBitRecord["positive-integer"] |
+          typeToBitRecord["positive-infinity"],
+      'negative-number': typeToBitRecord["negative-non-integer"] |
+          typeToBitRecord["negative-integer"] |
+          typeToBitRecord["negative-infinity"],
+      'non-positive-number': typeToBitRecord["positive-zero"] |
+          typeToBitRecord["negative-zero"] |
+          typeToBitRecord["negative-non-integer"] |
+          typeToBitRecord["negative-integer"] |
+          typeToBitRecord["negative-infinity"],
+      'non-negative-number': typeToBitRecord["positive-zero"] |
+          typeToBitRecord["negative-zero"] |
+          typeToBitRecord["positive-non-integer"] |
+          typeToBitRecord["positive-integer"] |
+          typeToBitRecord["positive-infinity"],
+      'positive-float': typeToBitRecord["positive-non-integer"] | typeToBitRecord["positive-integer"],
+      'non-positive-float': typeToBitRecord["positive-zero"] |
+          typeToBitRecord["negative-zero"] |
+          typeToBitRecord["negative-non-integer"] |
+          typeToBitRecord["negative-integer"],
+      'negative-float': typeToBitRecord["negative-non-integer"] | typeToBitRecord["negative-integer"],
+      'non-negative-float': typeToBitRecord["positive-zero"] |
+          typeToBitRecord["negative-zero"] |
+          typeToBitRecord["positive-non-integer"] |
+          typeToBitRecord["positive-integer"],
+      integer: typeToBitRecord["positive-zero"] |
+          typeToBitRecord["negative-zero"] |
+          typeToBitRecord["positive-integer"] |
+          typeToBitRecord["negative-integer"],
+      'non-zero-integer': typeToBitRecord["negative-integer"] | typeToBitRecord["positive-integer"],
+      'positive-integer': typeToBitRecord["positive-integer"],
+      'negative-integer': typeToBitRecord["negative-integer"],
+      'non-positive-integer': typeToBitRecord["positive-zero"] | typeToBitRecord["negative-zero"] | typeToBitRecord["negative-integer"],
+      'non-negative-integer': typeToBitRecord["positive-zero"] | typeToBitRecord["negative-zero"] | typeToBitRecord["positive-integer"],
+      true: typeToBitRecord.true,
+      false: typeToBitRecord.false,
+      boolean: typeToBitRecord.true | typeToBitRecord.false,
+      'empty-array': typeToBitRecord.array,
+      'non-empty-array': typeToBitRecord.array,
+      array: typeToBitRecord.array,
+      'empty-object': typeToBitRecord["empty-object"],
+      'non-empty-object': typeToBitRecord["non-empty-object"],
+      object: typeToBitRecord["empty-object"] | typeToBitRecord["non-empty-object"],
+      regexp: typeToBitRecord.regexp,
+      function: typeToBitRecord.function,
+      unknown: UNKNWON_BITS,
+      truthy: TRUTHY_BITS,
+      falsy: FALSY_BITS,
+  };
+  function stringifyBitMask(bitmask) {
+      var mask = "";
+      for (var index = 19; index >= 0; index -= 1) {
+          var bitValue = 1 << index;
+          var zeroOrOne = bitmask & bitValue ? "1" : "0";
+          var space = index !== 19 && (index + 1) % 4 === 0 ? " " : "";
+          mask += "".concat(space).concat(zeroOrOne);
+      }
+      return mask;
+  }
+
+  var Type = /** @class */ (function () {
+      function Type(bitmask, arrayVariants) {
+          if (arrayVariants === void 0) { arrayVariants = null; }
+          this.__TYPE__ = true;
+          if (bitmask & builtinTypesBitMasks.array) {
+              assertNotNull(arrayVariants);
+          }
+          if (!(bitmask & builtinTypesBitMasks.array)) {
+              assertNull(arrayVariants);
+          }
+          this.arrayVariants = arrayVariants;
+          if (bitmask & typeToBitRecord["positive-non-integer"]) {
+              bitmask |= typeToBitRecord["positive-integer"];
+          }
+          if (bitmask & typeToBitRecord["negative-non-integer"]) {
+              bitmask |= typeToBitRecord["negative-integer"];
+          }
+          this.bitmask = bitmask;
+      }
+      Type.isType = function (value) {
+          return value instanceof Type;
+      };
+      Type.assertType = function (value, debugInfo) {
+          if (!(value instanceof Type)) {
+              throw new LitsError("Expected instance of Type, got ".concat(value), debugInfo);
+          }
+      };
+      Type.asType = function (value, debugInfo) {
+          if (!(value instanceof Type)) {
+              throw new LitsError("Expected instance of Type, got ".concat(value), debugInfo);
+          }
+          return value;
+      };
+      Type.isNotType = function (value) {
+          return !(value instanceof Type);
+      };
+      Type.of = function (input) {
+          any.assert(input);
+          if (input instanceof Type) {
+              return input;
+          }
+          if (input === null) {
+              return Type.nil;
+          }
+          else if (input === true) {
+              return Type.true;
+          }
+          else if (input === false) {
+              return Type.false;
+          }
+          else if (Number.isNaN(input)) {
+              return Type.nan;
+          }
+          else if (input === Infinity) {
+              return Type.positiveInfinity;
+          }
+          else if (input === -Infinity) {
+              return Type.negativeInfinity;
+          }
+          else if (typeof input === "string") {
+              return input ? Type.nonEmptyString : Type["emptyString"];
+          }
+          else if (typeof input === "number") {
+              return input === 0
+                  ? Object.is(input, -0)
+                      ? Type.negativeZero
+                      : Type.positiveZero
+                  : input > MAX_NUMBER
+                      ? Type.positiveInfinity
+                      : input < MIN_NUMBER
+                          ? Type.negativeInfinity
+                          : Number.isInteger(input)
+                              ? input > 0
+                                  ? Type.positiveInteger
+                                  : Type.negativeInteger
+                              : input > 0
+                                  ? Type.positiveFloat
+                                  : Type.negativeFloat;
+          }
+          else if (array.is(input)) {
+              if (input.length === 0) {
+                  return Type.emptyArray;
+              }
+              var type = Type.or.apply(Type, __spreadArray([], __read(input.map(function (i) { return Type.of(i); })), false));
+              return Type.createNonEmpyTypedArray(type);
+          }
+          else if (object.is(input)) {
+              return Object.keys(input).length === 0 ? Type.emptyObject : Type.nonEmptyObject;
+          }
+          else if (regularExpression.is(input)) {
+              return Type.regexp;
+          }
+          else if (litsFunction.is(input)) {
+              return Type.function;
+          }
+          throw Error("Unexpected error, could not figure out type of ".concat(input));
+      };
+      Type.or = function () {
+          var types = [];
+          for (var _i = 0; _i < arguments.length; _i++) {
+              types[_i] = arguments[_i];
+          }
+          var bitmask = types.reduce(function (result, type) {
+              return result | type.bitmask;
+          }, 0);
+          var arrayVariants = types.reduce(function (result, type) { return ArrayVariant.or(result, type.arrayVariants); }, null);
+          return new Type(bitmask, arrayVariants);
+      };
+      Type.and = function () {
+          var _a, _b;
+          var types = [];
+          for (var _i = 0; _i < arguments.length; _i++) {
+              types[_i] = arguments[_i];
+          }
+          var bitmask = types.reduce(function (result, type) {
+              return result & type.bitmask;
+          }, UNKNWON_BITS);
+          var first = (_b = (_a = types[0]) === null || _a === void 0 ? void 0 : _a.arrayVariants) !== null && _b !== void 0 ? _b : null;
+          var arrayVariants = types
+              .slice(1)
+              .reduce(function (result, type) { return ArrayVariant.and(result, type.arrayVariants); }, first);
+          return new Type(bitmask, arrayVariants);
+      };
+      Type.exclude = function (first) {
+          var rest = [];
+          for (var _i = 1; _i < arguments.length; _i++) {
+              rest[_i - 1] = arguments[_i];
+          }
+          return rest.reduce(function (result, type) {
+              if (result.bitmask & typeToBitRecord.array && type.bitmask & typeToBitRecord.array) {
+                  var arrayVariants = ArrayVariant.exclude(result.arrayVariants, type.arrayVariants);
+                  var bitmask = arrayVariants
+                      ? (result.bitmask & ~type.bitmask) | typeToBitRecord.array
+                      : result.bitmask & ~(type.bitmask | typeToBitRecord.array);
+                  return new Type(bitmask, arrayVariants);
+              }
+              else {
+                  return new Type(result.bitmask & ~type.bitmask, result.arrayVariants);
+              }
+          }, first);
+      };
+      Type.is = function (a, bType) {
+          var aType = Type.of(a);
+          var bitmaskA = aType.bitmask;
+          var bitmaskB = bType.bitmask;
+          var bitmaskOK = !!(bitmaskA & bitmaskB && !(bitmaskA & ~bitmaskB));
+          if (!bitmaskOK) {
+              return false;
+          }
+          return bitmaskA & typeToBitRecord.array
+              ? ArrayVariant.is(aType.arrayVariants, bType.arrayVariants, Type.unknown)
+              : true;
+      };
+      Type.equals = function (a, b) {
+          var rest = [];
+          for (var _i = 2; _i < arguments.length; _i++) {
+              rest[_i - 2] = arguments[_i];
+          }
+          return __spreadArray([b], __read(rest), false).every(function (type) {
+              return a.bitmask === type.bitmask && ArrayVariant.equals(a.arrayVariants, type.arrayVariants);
+          });
+      };
+      Type.intersects = function (a, b) {
+          return a.and(b).bitmask !== 0;
+      };
+      Type.toValue = function (type) {
+          if (Type.isType(type)) {
+              if (type.equals(Type.positiveZero)) {
+                  return 0;
+              }
+              if (type.equals(Type.negativeZero)) {
+                  return -0;
+              }
+              if (type.equals(Type.nan)) {
+                  return NaN;
+              }
+              if (type.equals(Type.positiveInfinity)) {
+                  return Infinity;
+              }
+              if (type.equals(Type.negativeInfinity)) {
+                  return -Infinity;
+              }
+              if (type.equals(Type.emptyString)) {
+                  return "";
+              }
+              if (type.equals(Type.true)) {
+                  return true;
+              }
+              if (type.equals(Type.false)) {
+                  return false;
+              }
+              if (type.equals(Type.nil)) {
+                  return null;
+              }
+              if (type.equals(Type.emptyArray)) {
+                  return [];
+              }
+              if (type.equals(Type.emptyObject)) {
+                  return {};
+              }
+          }
+          return type;
+      };
+      Type.toNumberOrNan = function (type) {
+          if (type.equals(Type.positiveZero)) {
+              return 0;
+          }
+          if (type.equals(Type.negativeZero)) {
+              return -0;
+          }
+          if (type.equals(Type.nan)) {
+              return NaN;
+          }
+          if (type.equals(Type.positiveInfinity)) {
+              return Infinity;
+          }
+          if (type.equals(Type.negativeInfinity)) {
+              return -Infinity;
+          }
+          return type;
+      };
+      Type.toSingelBits = function (type) {
+          var result = [];
+          Object.values(typeToBitRecord).forEach(function (bitValue) {
+              if (type.bitmask & bitValue) {
+                  result.push(bitValue);
+              }
+          });
+          return result;
+      };
+      Type.split = function (type) {
+          return Type.toSingelBits(type).flatMap(function (bits) {
+              if (bits === builtinTypesBitMasks.array && type.arrayVariants) {
+                  return type.arrayVariants.map(function (arrayVariant) { return new Type(bits, [arrayVariant]); });
+              }
+              return new Type(bits);
+          });
+      };
+      Type.prototype.or = function () {
+          var types = [];
+          for (var _i = 0; _i < arguments.length; _i++) {
+              types[_i] = arguments[_i];
+          }
+          return Type.or.apply(Type, __spreadArray([this], __read(types), false));
+      };
+      Type.prototype.and = function () {
+          var types = [];
+          for (var _i = 0; _i < arguments.length; _i++) {
+              types[_i] = arguments[_i];
+          }
+          return Type.and.apply(Type, __spreadArray([this], __read(types), false));
+      };
+      Type.prototype.exclude = function () {
+          var types = [];
+          for (var _i = 0; _i < arguments.length; _i++) {
+              types[_i] = arguments[_i];
+          }
+          return Type.exclude.apply(Type, __spreadArray([this], __read(types), false));
+      };
+      Type.prototype.is = function (type) {
+          if (type.isNever()) {
+              return this.isNever();
+          }
+          return Type.is(this, type);
+      };
+      Type.prototype.intersects = function (type) {
+          return Type.intersects(this, type);
+      };
+      Type.prototype.intersectsNonNumber = function () {
+          return !!(this.bitmask & ~builtinTypesBitMasks.number);
+      };
+      Type.prototype.assertIs = function (type, debugInfo) {
+          if (!this.is(type)) {
+              throw new LitsError("Expected to be of type ".concat(type.toString(), ", but was ").concat(this.toString()), debugInfo);
+          }
+      };
+      Type.prototype.assertEquals = function (type, debugInfo) {
+          if (!this.equals(type)) {
+              throw new LitsError("Expected to be ".concat(type.toString(), ", but was ").concat(this.toString()), debugInfo);
+          }
+      };
+      Type.prototype.assertIntersects = function (type, debugInfo) {
+          if (!this.intersects(type)) {
+              throw new LitsError("Expected to intersect ".concat(type.toString(), ", but was ").concat(this.toString()), debugInfo);
+          }
+      };
+      Type.prototype.equals = function (type) {
+          var rest = [];
+          for (var _i = 1; _i < arguments.length; _i++) {
+              rest[_i - 1] = arguments[_i];
+          }
+          return Type.equals.apply(Type, __spreadArray([this, type], __read(rest), false));
+      };
+      Type.prototype.nilable = function () {
+          return this.or(Type.nil);
+      };
+      Type.prototype.isNever = function () {
+          return this.bitmask === 0;
+      };
+      Type.prototype.negateNumber = function () {
+          var bitmask = this.bitmask;
+          if (this.bitmask & typeToBitRecord["positive-infinity"] && !(this.bitmask & typeToBitRecord["negative-infinity"])) {
+              bitmask = (bitmask | typeToBitRecord["negative-infinity"]) & ~typeToBitRecord["positive-infinity"];
+          }
+          if (this.bitmask & typeToBitRecord["negative-infinity"] && !(this.bitmask & typeToBitRecord["positive-infinity"])) {
+              bitmask = (bitmask | typeToBitRecord["positive-infinity"]) & ~typeToBitRecord["negative-infinity"];
+          }
+          if (this.bitmask & typeToBitRecord["negative-integer"] && !(this.bitmask & typeToBitRecord["positive-integer"])) {
+              bitmask = (bitmask | typeToBitRecord["positive-integer"]) & ~typeToBitRecord["negative-integer"];
+          }
+          if (this.bitmask & typeToBitRecord["negative-non-integer"] &&
+              !(this.bitmask & typeToBitRecord["positive-non-integer"])) {
+              bitmask = (bitmask | typeToBitRecord["positive-non-integer"]) & ~typeToBitRecord["negative-non-integer"];
+          }
+          if (this.bitmask & typeToBitRecord["positive-integer"] && !(this.bitmask & typeToBitRecord["negative-integer"])) {
+              bitmask = (bitmask | typeToBitRecord["negative-integer"]) & ~typeToBitRecord["positive-integer"];
+          }
+          if (this.bitmask & typeToBitRecord["positive-non-integer"] &&
+              !(this.bitmask & typeToBitRecord["negative-non-integer"])) {
+              bitmask = (bitmask | typeToBitRecord["negative-non-integer"]) & ~typeToBitRecord["positive-non-integer"];
+          }
+          if (this.bitmask & typeToBitRecord["positive-zero"] && !(this.bitmask & typeToBitRecord["negative-zero"])) {
+              bitmask = (bitmask | typeToBitRecord["negative-zero"]) & ~typeToBitRecord["positive-zero"];
+          }
+          if (this.bitmask & typeToBitRecord["negative-zero"] && !(this.bitmask & typeToBitRecord["positive-zero"])) {
+              bitmask = (bitmask | typeToBitRecord["positive-zero"]) & ~typeToBitRecord["negative-zero"];
+          }
+          return new Type(bitmask, this.arrayVariants);
+      };
+      Type.prototype.isUnknown = function () {
+          return this.bitmask === UNKNWON_BITS;
+      };
+      Type.prototype.isInteger = function () {
+          return (this.intersects(Type.float) &&
+              !(this.bitmask & (typeToBitRecord["positive-non-integer"] | typeToBitRecord["negative-non-integer"])));
+      };
+      Type.prototype.toSingelBits = function () {
+          return Type.toSingelBits(this);
+      };
+      Type.prototype.split = function () {
+          return Type.split(this);
+      };
+      Type.prototype.toValue = function () {
+          return Type.toValue(this);
+      };
+      Type.prototype.toNumberValue = function () {
+          return Type.toNumberOrNan(this);
+      };
+      Type.prototype.toString = function (_a) {
+          var _b = _a === void 0 ? { showDetails: true } : _a, showDetails = _b.showDetails;
+          var suffix = " [Bitmask = ".concat(stringifyBitMask(this.bitmask), "  (").concat(this.bitmask, ")]");
+          var typeString = this.getTypeString(showDetails);
+          return "".concat(typeString).concat(showDetails ? suffix : "");
+      };
+      Type.prototype.getTypeString = function (showDetails) {
+          var e_1, _a;
+          var typeStrings = [];
+          var bits = this.bitmask;
+          try {
+              for (var orderedTypeNames_1 = __values(orderedTypeNames), orderedTypeNames_1_1 = orderedTypeNames_1.next(); !orderedTypeNames_1_1.done; orderedTypeNames_1_1 = orderedTypeNames_1.next()) {
+                  var typeName = orderedTypeNames_1_1.value;
+                  if (bits === 0) {
+                      break;
+                  }
+                  var bitmask = builtinTypesBitMasks[typeName];
+                  if ((bits & bitmask) === bitmask) {
+                      if (arrayTypeNames.includes(typeName)) {
+                          asNotNull(this.arrayVariants).forEach(function (elem) {
+                              var arrayTypeName = elem.size === ArrayVariant.Size.Empty
+                                  ? "empty-array"
+                                  : elem.size === ArrayVariant.Size.NonEmpty
+                                      ? "non-empty-array"
+                                      : "array";
+                              var innerArrayTypeString = elem.type ? "<".concat(elem.type.toString({ showDetails: showDetails }), ">") : "";
+                              typeStrings.push("::".concat(arrayTypeName).concat(innerArrayTypeString));
+                          });
+                      }
+                      else {
+                          typeStrings.push("::".concat(typeName));
+                      }
+                      bits &= ~bitmask;
+                  }
+              }
+          }
+          catch (e_1_1) { e_1 = { error: e_1_1 }; }
+          finally {
+              try {
+                  if (orderedTypeNames_1_1 && !orderedTypeNames_1_1.done && (_a = orderedTypeNames_1.return)) _a.call(orderedTypeNames_1);
+              }
+              finally { if (e_1) throw e_1.error; }
+          }
+          return typeStrings.length > 0 ? typeStrings.join(" | ") : "::never";
+      };
+      Type.never = new Type(builtinTypesBitMasks.never);
+      Type.nil = new Type(builtinTypesBitMasks.nil);
+      Type.nan = new Type(builtinTypesBitMasks.nan);
+      Type.positiveInfinity = new Type(builtinTypesBitMasks["positive-infinity"]);
+      Type.negativeInfinity = new Type(builtinTypesBitMasks["negative-infinity"]);
+      Type.infinity = new Type(builtinTypesBitMasks["infinity"]);
+      Type.emptyString = new Type(builtinTypesBitMasks["empty-string"]);
+      Type.nonEmptyString = new Type(builtinTypesBitMasks["non-empty-string"]);
+      Type.string = new Type(builtinTypesBitMasks.string);
+      Type.number = new Type(builtinTypesBitMasks.number);
+      Type.positiveZero = new Type(builtinTypesBitMasks["positive-zero"]);
+      Type.negativeZero = new Type(builtinTypesBitMasks["negative-zero"]);
+      Type.zero = new Type(builtinTypesBitMasks.zero);
+      Type.nonZeroNumber = new Type(builtinTypesBitMasks["non-zero-number"]);
+      Type.positiveNumber = new Type(builtinTypesBitMasks["positive-number"]);
+      Type.negativeNumber = new Type(builtinTypesBitMasks["negative-number"]);
+      Type.nonPositiveNumber = new Type(builtinTypesBitMasks["non-positive-number"]);
+      Type.nonNegativeNumber = new Type(builtinTypesBitMasks["non-negative-number"]);
+      Type.float = new Type(builtinTypesBitMasks.float);
+      Type.integer = new Type(builtinTypesBitMasks.integer);
+      Type.nonZeroFloat = new Type(builtinTypesBitMasks["non-zero-float"]);
+      Type.positiveFloat = new Type(builtinTypesBitMasks["positive-float"]);
+      Type.negativeFloat = new Type(builtinTypesBitMasks["negative-float"]);
+      Type.nonPositiveFloat = new Type(builtinTypesBitMasks["non-positive-float"]);
+      Type.nonNegativeFloat = new Type(builtinTypesBitMasks["non-negative-float"]);
+      Type.nonZeroInteger = new Type(builtinTypesBitMasks["non-zero-integer"]);
+      Type.positiveInteger = new Type(builtinTypesBitMasks["positive-integer"]);
+      Type.negativeInteger = new Type(builtinTypesBitMasks["negative-integer"]);
+      Type.nonPositiveInteger = new Type(builtinTypesBitMasks["non-positive-integer"]);
+      Type.nonNegativeInteger = new Type(builtinTypesBitMasks["non-negative-integer"]);
+      Type.true = new Type(builtinTypesBitMasks.true);
+      Type.false = new Type(builtinTypesBitMasks.false);
+      Type.boolean = new Type(builtinTypesBitMasks.boolean);
+      Type.emptyArray = new Type(builtinTypesBitMasks.array, [ArrayVariant.createEmpty()]);
+      Type.nonEmptyArray = new Type(builtinTypesBitMasks.array, [ArrayVariant.createNonEmpty(null)]);
+      Type.array = new Type(builtinTypesBitMasks.array, [ArrayVariant.create(null)]);
+      Type.createTypedArray = function (type) {
+          return new Type(builtinTypesBitMasks.array, [ArrayVariant.create(type)]);
+      };
+      Type.createNonEmpyTypedArray = function (type) {
+          return new Type(builtinTypesBitMasks.array, [ArrayVariant.createNonEmpty(type)]);
+      };
+      Type.emptyObject = new Type(builtinTypesBitMasks["empty-object"]);
+      Type.nonEmptyObject = new Type(builtinTypesBitMasks["non-empty-object"]);
+      Type.object = new Type(builtinTypesBitMasks.object);
+      Type.regexp = new Type(builtinTypesBitMasks.regexp);
+      Type.truthy = new Type(builtinTypesBitMasks.truthy, [ArrayVariant.create(null)]);
+      Type.falsy = new Type(builtinTypesBitMasks.falsy);
+      Type.unknown = new Type(builtinTypesBitMasks.unknown, [ArrayVariant.create(null)]);
+      Type.function = new Type(builtinTypesBitMasks.function);
+      return Type;
+  }());
+  ArrayVariant.unknownType = Type.unknown;
 
   var andSpecialExpression = {
       parse: function (tokens, position, _a) {
@@ -533,13 +1631,17 @@ var Lits = (function (exports) {
       evaluate: function (node, contextStack, _a) {
           var e_1, _b;
           var evaluateAstNode = _a.evaluateAstNode;
+          var possibleValues = [];
           var value = true;
           try {
               for (var _c = __values(node.params), _d = _c.next(); !_d.done; _d = _c.next()) {
                   var param = _d.value;
                   value = evaluateAstNode(param, contextStack);
-                  if (!value) {
+                  if ((Type.isType(value) && value.is(Type.falsy)) || !value) {
                       break;
+                  }
+                  else if (Type.isType(value)) {
+                      possibleValues.push(value);
                   }
               }
           }
@@ -550,11 +1652,20 @@ var Lits = (function (exports) {
               }
               finally { if (e_1) throw e_1.error; }
           }
-          return value;
+          if (possibleValues.length === 0) {
+              return value;
+          }
+          else if (possibleValues.length === 1) {
+              return asValue(possibleValues[0]);
+          }
+          else {
+              return Type.or.apply(Type, __spreadArray([], __read(possibleValues.map(Type.of)), false));
+          }
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -612,39 +1723,38 @@ var Lits = (function (exports) {
           }
           return null;
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var astNodes = node.conditions.flatMap(function (condition) { return [condition.test, condition.form]; });
-          return analyzeAst(astNodes, contextStack, builtin);
+          return findUndefinedSymbols(astNodes, contextStack, builtin);
       },
   };
 
-  function joinAnalyzeResults() {
+  function joinUndefinedSymbols() {
       var e_1, _a;
-      var results = [];
+      var undefinedSymbolsSets = [];
       for (var _i = 0; _i < arguments.length; _i++) {
-          results[_i] = arguments[_i];
+          undefinedSymbolsSets[_i] = arguments[_i];
       }
-      var result = {
-          undefinedSymbols: new Set(),
-      };
+      var undefinedSymbols = new Set();
       try {
-          for (var results_1 = __values(results), results_1_1 = results_1.next(); !results_1_1.done; results_1_1 = results_1.next()) {
-              var input = results_1_1.value;
-              input.undefinedSymbols.forEach(function (symbol) { return result.undefinedSymbols.add(symbol); });
+          for (var undefinedSymbolsSets_1 = __values(undefinedSymbolsSets), undefinedSymbolsSets_1_1 = undefinedSymbolsSets_1.next(); !undefinedSymbolsSets_1_1.done; undefinedSymbolsSets_1_1 = undefinedSymbolsSets_1.next()) {
+              var set = undefinedSymbolsSets_1_1.value;
+              set.forEach(function (symbol) { return undefinedSymbols.add(symbol); });
           }
       }
       catch (e_1_1) { e_1 = { error: e_1_1 }; }
       finally {
           try {
-              if (results_1_1 && !results_1_1.done && (_a = results_1.return)) _a.call(results_1);
+              if (undefinedSymbolsSets_1_1 && !undefinedSymbolsSets_1_1.done && (_a = undefinedSymbolsSets_1.return)) _a.call(undefinedSymbolsSets_1);
           }
           finally { if (e_1) throw e_1.error; }
       }
-      return result;
+      return undefinedSymbols;
   }
   function addAnalyzeResults(target, source) {
-      source.undefinedSymbols.forEach(function (symbol) { return target.undefinedSymbols.add(symbol); });
+      source.forEach(function (symbol) { return target.add(symbol); });
   }
 
   var reservedNamesRecord = {
@@ -706,7 +1816,7 @@ var Lits = (function (exports) {
           var _b;
           var _c, _d;
           var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-          var name = getFunctionName("defn", node, contextStack, evaluateAstNode);
+          var name = node.functionName.value;
           assertNameNotDefined(name, contextStack, builtin, (_c = node.token) === null || _c === void 0 ? void 0 : _c.debugInfo);
           var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
           var litsFunction = (_b = {},
@@ -719,12 +1829,13 @@ var Lits = (function (exports) {
           contextStack.globalContext[name] = { value: litsFunction };
           return null;
       },
-      analyze: function (node, contextStack, _a) {
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
           var _b;
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           contextStack.globalContext[node.functionName.value] = { value: true };
           var newContext = (_b = {}, _b[node.functionName.value] = { value: true }, _b);
-          return addOverloadsUndefinedSymbols(node.overloads, contextStack, analyzeAst, builtin, newContext);
+          return addOverloadsUndefinedSymbols(node.overloads, contextStack, findUndefinedSymbols, builtin, newContext);
       },
   };
   var defnsSpecialExpression = {
@@ -752,7 +1863,7 @@ var Lits = (function (exports) {
           var _b;
           var _c, _d;
           var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-          var name = getFunctionName("defns", node, contextStack, evaluateAstNode);
+          var name = getDefnsFunctionName(node, contextStack, evaluateAstNode);
           assertNameNotDefined(name, contextStack, builtin, (_c = node.token) === null || _c === void 0 ? void 0 : _c.debugInfo);
           var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
           var litsFunction = (_b = {},
@@ -765,9 +1876,10 @@ var Lits = (function (exports) {
           contextStack.globalContext[name] = { value: litsFunction };
           return null;
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return addOverloadsUndefinedSymbols(node.overloads, contextStack, analyzeAst, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return addOverloadsUndefinedSymbols(node.overloads, contextStack, findUndefinedSymbols, builtin);
       },
   };
   var fnSpecialExpression = {
@@ -801,17 +1913,15 @@ var Lits = (function (exports) {
               _b);
           return litsFunction;
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return addOverloadsUndefinedSymbols(node.overloads, contextStack, analyzeAst, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return addOverloadsUndefinedSymbols(node.overloads, contextStack, findUndefinedSymbols, builtin);
       },
   };
-  function getFunctionName(expressionName, node, contextStack, evaluateAstNode) {
+  function getDefnsFunctionName(node, contextStack, evaluateAstNode) {
       var _a;
       var debugInfo = (_a = node.token) === null || _a === void 0 ? void 0 : _a.debugInfo;
-      if (expressionName === "defn") {
-          return node.functionName.value;
-      }
       var name = evaluateAstNode(node.functionName, contextStack);
       string.assert(name, debugInfo);
       return name;
@@ -859,16 +1969,16 @@ var Lits = (function (exports) {
       }
       return evaluatedFunctionOverloades;
   }
-  function addOverloadsUndefinedSymbols(overloads, contextStack, analyzeAst, builtin, functionNameContext) {
+  function addOverloadsUndefinedSymbols(overloads, contextStack, findUndefinedSymbols, builtin, functionNameContext) {
       var e_3, _a;
-      var result = { undefinedSymbols: new Set() };
+      var result = new Set();
       var contextStackWithFunctionName = functionNameContext
           ? contextStack.withContext(functionNameContext)
           : contextStack;
       var _loop_1 = function (overload) {
           var newContext = {};
           overload.arguments.bindings.forEach(function (binding) {
-              var bindingResult = analyzeAst(binding.value, contextStack, builtin);
+              var bindingResult = findUndefinedSymbols(binding.value, contextStack, builtin);
               addAnalyzeResults(result, bindingResult);
               newContext[binding.name] = { value: true };
           });
@@ -879,7 +1989,7 @@ var Lits = (function (exports) {
               newContext[overload.arguments.restArgument] = { value: true };
           }
           var newContextStack = contextStackWithFunctionName.withContext(newContext);
-          var overloadResult = analyzeAst(overload.body, newContextStack, builtin);
+          var overloadResult = findUndefinedSymbols(overload.body, newContextStack, builtin);
           addAnalyzeResults(result, overloadResult);
       };
       try {
@@ -1072,13 +2182,13 @@ var Lits = (function (exports) {
           contextStack.globalContext[name] = { value: value };
           return value;
       },
-      validate: function (node) { return assertNumberOfParams(2, node); },
-      analyze: function (node, contextStack, _a) {
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "def", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
           var _b;
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var debugInfo = (_b = node.token) === null || _b === void 0 ? void 0 : _b.debugInfo;
           var subNode = astNode.as(node.params[1], debugInfo);
-          var result = analyzeAst(subNode, contextStack, builtin);
+          var result = findUndefinedSymbols(subNode, contextStack, builtin);
           var name = nameNode.as(node.params[0], debugInfo).value;
           assertNameNotDefined(name, contextStack, builtin, debugInfo);
           contextStack.globalContext[name] = { value: true };
@@ -1112,12 +2222,12 @@ var Lits = (function (exports) {
           contextStack.globalContext[name] = { value: value };
           return value;
       },
-      validate: function (node) { return assertNumberOfParams(2, node); },
-      analyze: function (node, contextStack, _a) {
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "defs", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
           var _b;
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var subNode = astNode.as(node.params[1], (_b = node.token) === null || _b === void 0 ? void 0 : _b.debugInfo);
-          return analyzeAst(subNode, contextStack, builtin);
+          return findUndefinedSymbols(subNode, contextStack, builtin);
       },
   };
 
@@ -1161,9 +2271,10 @@ var Lits = (function (exports) {
           }
           return result;
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -1295,7 +2406,7 @@ var Lits = (function (exports) {
                               break;
                           case "&while":
                               if (!evaluateAstNode(astNode.as(whileNode, debugInfo), newContextStack)) {
-                                  bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY;
+                                  bindingIndices[bindingIndex] = Infinity;
                                   skip = true;
                                   break bindingsLoop;
                               }
@@ -1321,40 +2432,36 @@ var Lits = (function (exports) {
       }
       return returnResult ? result : null;
   }
-  function analyze(node, contextStack, analyzeAst, builtin) {
-      var result = {
-          undefinedSymbols: new Set(),
-      };
+  function analyze(node, contextStack, findUndefinedSymbols, builtin) {
+      var result = new Set();
       var newContext = {};
       var loopBindings = node.loopBindings;
       loopBindings.forEach(function (loopBinding) {
           var binding = loopBinding.binding, letBindings = loopBinding.letBindings, whenNode = loopBinding.whenNode, whileNode = loopBinding.whileNode;
-          analyzeAst(binding.value, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(function (symbol) {
-              return result.undefinedSymbols.add(symbol);
+          findUndefinedSymbols(binding.value, contextStack.withContext(newContext), builtin).forEach(function (symbol) {
+              return result.add(symbol);
           });
           newContext[binding.name] = { value: true };
           if (letBindings) {
               letBindings.forEach(function (letBinding) {
-                  analyzeAst(letBinding.value, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(function (symbol) {
-                      return result.undefinedSymbols.add(symbol);
+                  findUndefinedSymbols(letBinding.value, contextStack.withContext(newContext), builtin).forEach(function (symbol) {
+                      return result.add(symbol);
                   });
                   newContext[letBinding.name] = { value: true };
               });
           }
           if (whenNode) {
-              analyzeAst(whenNode, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(function (symbol) {
-                  return result.undefinedSymbols.add(symbol);
+              findUndefinedSymbols(whenNode, contextStack.withContext(newContext), builtin).forEach(function (symbol) {
+                  return result.add(symbol);
               });
           }
           if (whileNode) {
-              analyzeAst(whileNode, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(function (symbol) {
-                  return result.undefinedSymbols.add(symbol);
+              findUndefinedSymbols(whileNode, contextStack.withContext(newContext), builtin).forEach(function (symbol) {
+                  return result.add(symbol);
               });
           }
       });
-      analyzeAst(node.params, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(function (symbol) {
-          return result.undefinedSymbols.add(symbol);
-      });
+      findUndefinedSymbols(node.params, contextStack.withContext(newContext), builtin).forEach(function (symbol) { return result.add(symbol); });
       return result;
   }
   var forSpecialExpression = {
@@ -1377,9 +2484,10 @@ var Lits = (function (exports) {
           return [position + 1, node];
       },
       evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateAstNode); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyze(node, contextStack, analyzeAst, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return analyze(node, contextStack, findUndefinedSymbols, builtin);
       },
   };
   var doseqSpecialExpression = {
@@ -1405,9 +2513,10 @@ var Lits = (function (exports) {
           evaluateLoop(false, node, contextStack, helpers.evaluateAstNode);
           return null;
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyze(node, contextStack, analyzeAst, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return analyze(node, contextStack, findUndefinedSymbols, builtin);
       },
   };
 
@@ -1450,14 +2559,14 @@ var Lits = (function (exports) {
           }
           return null;
       },
-      validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      analyze: function (node, contextStack, _a) {
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "if-let", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
           var _b;
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var newContext = (_b = {}, _b[node.binding.name] = { value: true }, _b);
-          var bindingResult = analyzeAst(node.binding.value, contextStack, builtin);
-          var paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin);
-          return joinAnalyzeResults(bindingResult, paramsResult);
+          var bindingResult = findUndefinedSymbols(node.binding.value, contextStack, builtin);
+          var paramsResult = findUndefinedSymbols(node.params, contextStack.withContext(newContext), builtin);
+          return joinUndefinedSymbols(bindingResult, paramsResult);
       },
   };
 
@@ -1493,10 +2602,10 @@ var Lits = (function (exports) {
               }
           }
       },
-      validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "if-not", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -1520,10 +2629,11 @@ var Lits = (function (exports) {
           var evaluateAstNode = _a.evaluateAstNode;
           var debugInfo = (_b = node.token) === null || _b === void 0 ? void 0 : _b.debugInfo;
           var _c = __read(node.params, 3), conditionNode = _c[0], trueNode = _c[1], falseNode = _c[2];
-          if (evaluateAstNode(astNode.as(conditionNode, debugInfo), contextStack)) {
+          var conditionValue = evaluateAstNode(astNode.as(conditionNode, debugInfo), contextStack);
+          if ((Type.isType(conditionNode) && conditionNode.is(Type.truthy)) || !!conditionValue) {
               return evaluateAstNode(astNode.as(trueNode, debugInfo), contextStack);
           }
-          else {
+          else if ((Type.isType(conditionNode) && conditionNode.is(Type.falsy)) || !conditionValue) {
               if (node.params.length === 3) {
                   return evaluateAstNode(astNode.as(falseNode, debugInfo), contextStack);
               }
@@ -1531,11 +2641,16 @@ var Lits = (function (exports) {
                   return null;
               }
           }
+          else {
+              var trueBranchValue = evaluateAstNode(astNode.as(trueNode, debugInfo), contextStack);
+              var falseBranchValue = evaluateAstNode(astNode.as(falseNode, debugInfo), contextStack);
+              return Type.or(Type.of(trueBranchValue), Type.of(falseBranchValue));
+          }
       },
-      validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "if", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -1593,8 +2708,9 @@ var Lits = (function (exports) {
           }
           return result;
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var newContext = node.bindings
               .map(function (binding) { return binding.name; })
               .reduce(function (context, name) {
@@ -1604,12 +2720,12 @@ var Lits = (function (exports) {
           var bindingContext = {};
           var bindingResults = node.bindings.map(function (bindingNode) {
               var valueNode = bindingNode.value;
-              var bindingsResult = analyzeAst(valueNode, contextStack.withContext(bindingContext), builtin);
+              var bindingsResult = findUndefinedSymbols(valueNode, contextStack.withContext(bindingContext), builtin);
               bindingContext[bindingNode.name] = { value: true };
               return bindingsResult;
           });
-          var paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin);
-          return joinAnalyzeResults.apply(void 0, __spreadArray(__spreadArray([], __read(bindingResults), false), [paramsResult], false));
+          var paramsResult = findUndefinedSymbols(node.params, contextStack.withContext(newContext), builtin);
+          return joinUndefinedSymbols.apply(void 0, __spreadArray(__spreadArray([], __read(bindingResults), false), [paramsResult], false));
       },
   };
 
@@ -1679,8 +2795,9 @@ var Lits = (function (exports) {
                   return state_1.value;
           }
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var newContext = node.bindings
               .map(function (binding) { return binding.name; })
               .reduce(function (context, name) {
@@ -1688,9 +2805,9 @@ var Lits = (function (exports) {
               return context;
           }, {});
           var bindingValueNodes = node.bindings.map(function (binding) { return binding.value; });
-          var bindingsResult = analyzeAst(bindingValueNodes, contextStack, builtin);
-          var paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin);
-          return joinAnalyzeResults(bindingsResult, paramsResult);
+          var bindingsResult = findUndefinedSymbols(bindingValueNodes, contextStack, builtin);
+          var paramsResult = findUndefinedSymbols(node.params, contextStack.withContext(newContext), builtin);
+          return joinUndefinedSymbols(bindingsResult, paramsResult);
       },
   };
 
@@ -1712,13 +2829,21 @@ var Lits = (function (exports) {
       evaluate: function (node, contextStack, _a) {
           var e_1, _b;
           var evaluateAstNode = _a.evaluateAstNode;
+          var possibleValues = [];
           var value = false;
+          if (node.params.length === 0) {
+              return false;
+          }
           try {
               for (var _c = __values(node.params), _d = _c.next(); !_d.done; _d = _c.next()) {
                   var param = _d.value;
                   value = evaluateAstNode(param, contextStack);
-                  if (value) {
+                  if ((Type.isType(value) && value.is(Type.truthy)) || value) {
+                      possibleValues.push(value);
                       break;
+                  }
+                  else if (Type.isType(value) && value.intersects(Type.truthy)) {
+                      possibleValues.push(value);
                   }
               }
           }
@@ -1729,11 +2854,20 @@ var Lits = (function (exports) {
               }
               finally { if (e_1) throw e_1.error; }
           }
-          return value;
+          if (possibleValues.length === 0) {
+              return value;
+          }
+          else if (possibleValues.length === 1) {
+              return asValue(possibleValues[0]);
+          }
+          else {
+              return Type.or.apply(Type, __spreadArray([], __read(possibleValues.map(Type.of)), false));
+          }
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -1757,9 +2891,10 @@ var Lits = (function (exports) {
           var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
           throw new RecurSignal(params);
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -1788,9 +2923,10 @@ var Lits = (function (exports) {
           });
           throw new UserDefinedError(message, (_c = node.token) === null || _c === void 0 ? void 0 : _c.debugInfo);
       },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.messageNode, contextStack, builtin);
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.messageNode, contextStack, builtin);
       },
   };
 
@@ -1819,10 +2955,10 @@ var Lits = (function (exports) {
           console.log("Elapsed time: ".concat(totalTime, " ms"));
           return result;
       },
-      validate: function (node) { return assertNumberOfParams(1, node); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "time!", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -1877,190 +3013,19 @@ var Lits = (function (exports) {
               return evaluateAstNode(catchExpression, contextStack.withContext(newContext));
           }
       },
-      analyze: function (node, contextStack, _a) {
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
           var _b;
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var _c = node, tryExpression = _c.tryExpression, catchExpression = _c.catchExpression, errorNode = _c.error;
-          var tryResult = analyzeAst(tryExpression, contextStack, builtin);
+          var tryResult = findUndefinedSymbols(tryExpression, contextStack, builtin);
           var newContext = (_b = {},
               _b[errorNode.value] = { value: true },
               _b);
-          var catchResult = analyzeAst(catchExpression, contextStack.withContext(newContext), builtin);
-          return joinAnalyzeResults(tryResult, catchResult);
+          var catchResult = findUndefinedSymbols(catchExpression, contextStack.withContext(newContext), builtin);
+          return joinUndefinedSymbols(tryResult, catchResult);
       },
   };
-
-  function collHasKey(coll, key) {
-      if (!collection.is(coll)) {
-          return false;
-      }
-      if (string.is(coll) || array.is(coll)) {
-          if (!number.is(key, { integer: true })) {
-              return false;
-          }
-          return key >= 0 && key < coll.length;
-      }
-      return !!Object.getOwnPropertyDescriptor(coll, key);
-  }
-  var sortOrderByType = {
-      boolean: 0,
-      number: 1,
-      string: 2,
-      array: 3,
-      object: 4,
-      regexp: 5,
-      unknown: 6,
-      null: 7,
-  };
-  function getType(value) {
-      if (value === null) {
-          return "null";
-      }
-      else if (typeof value === "boolean") {
-          return "boolean";
-      }
-      else if (typeof value === "number") {
-          return "number";
-      }
-      else if (typeof value === "string") {
-          return "string";
-      }
-      else if (array.is(value)) {
-          return "array";
-      }
-      else if (object.is(value)) {
-          return "object";
-      }
-      else if (regularExpression.is(value)) {
-          return "regexp";
-      }
-      else {
-          return "unknown";
-      }
-  }
-  function compare(a, b) {
-      var aType = getType(a);
-      var bType = getType(b);
-      if (aType !== bType) {
-          return Math.sign(sortOrderByType[aType] - sortOrderByType[bType]);
-      }
-      switch (aType) {
-          case "null":
-              return 0;
-          case "boolean":
-              if (a === b) {
-                  return 0;
-              }
-              return a === false ? -1 : 1;
-          case "number":
-              return Math.sign(a - b);
-          case "string": {
-              var aString = a;
-              var bString = b;
-              return aString < bString ? -1 : aString > bString ? 1 : 0;
-          }
-          case "array": {
-              var aArray = a;
-              var bArray = b;
-              if (aArray.length < bArray.length) {
-                  return -1;
-              }
-              else if (aArray.length > bArray.length) {
-                  return 1;
-              }
-              for (var i = 0; i < aArray.length; i += 1) {
-                  var innerComp = compare(aArray[i], bArray[i]);
-                  if (innerComp !== 0) {
-                      return innerComp;
-                  }
-              }
-              return 0;
-          }
-          case "object": {
-              var aObj = a;
-              var bObj = b;
-              return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length);
-          }
-          case "regexp": {
-              var aString = a.source;
-              var bString = b.source;
-              return aString < bString ? -1 : aString > bString ? 1 : 0;
-          }
-          case "unknown":
-              return 0;
-      }
-  }
-  function deepEqual(a, b, debugInfo) {
-      if (a === b) {
-          return true;
-      }
-      if (typeof a === "number" && typeof b === "number") {
-          return Math.abs(a - b) < Number.EPSILON;
-      }
-      if (array.is(a) && array.is(b)) {
-          if (a.length !== b.length) {
-              return false;
-          }
-          for (var i = 0; i < a.length; i += 1) {
-              if (!deepEqual(any.as(a[i], debugInfo), any.as(b[i], debugInfo), debugInfo)) {
-                  return false;
-              }
-          }
-          return true;
-      }
-      if (isRegularExpression(a) && isRegularExpression(b)) {
-          return a.source === b.source && a.flags === b.flags;
-      }
-      if (typeof a === "object" && a !== null && typeof b === "object" && b !== null) {
-          var aObj = a;
-          var bObj = b;
-          var aKeys = Object.keys(aObj);
-          var bKeys = Object.keys(bObj);
-          if (aKeys.length !== bKeys.length) {
-              return false;
-          }
-          for (var i = 0; i < aKeys.length; i += 1) {
-              var key = string.as(aKeys[i], debugInfo);
-              if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), debugInfo)) {
-                  return false;
-              }
-          }
-          return true;
-      }
-      return false;
-  }
-  function toNonNegativeInteger(number) {
-      return Math.max(0, Math.ceil(number));
-  }
-  function toAny(value) {
-      return (value !== null && value !== void 0 ? value : null);
-  }
-  function clone(value) {
-      if (object.is(value)) {
-          return Object.entries(value).reduce(function (result, entry) {
-              var _a = __read(entry, 2), key = _a[0], val = _a[1];
-              result[key] = clone(val);
-              return result;
-          }, {});
-      }
-      if (array.is(value)) {
-          return value.map(function (item) { return clone(item); });
-      }
-      return value;
-  }
-  function cloneColl(value) {
-      return clone(value);
-  }
-  function createContextFromValues(values) {
-      if (!values) {
-          return {};
-      }
-      return Object.entries(values).reduce(function (context, _a) {
-          var _b = __read(_a, 2), key = _b[0], value = _b[1];
-          context[key] = { value: toAny(value) };
-          return context;
-      }, {});
-  }
 
   var whenFirstSpecialExpression = {
       parse: function (tokens, position, _a) {
@@ -2115,15 +3080,15 @@ var Lits = (function (exports) {
           }
           return result;
       },
-      validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
-      analyze: function (node, contextStack, _a) {
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
           var _b;
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var binding = node.binding;
           var newContext = (_b = {}, _b[binding.name] = { value: true }, _b);
-          var bindingResult = analyzeAst(binding.value, contextStack, builtin);
-          var paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin);
-          return joinAnalyzeResults(bindingResult, paramsResult);
+          var bindingResult = findUndefinedSymbols(binding.value, contextStack, builtin);
+          var paramsResult = findUndefinedSymbols(node.params, contextStack.withContext(newContext), builtin);
+          return joinUndefinedSymbols(bindingResult, paramsResult);
       },
   };
 
@@ -2175,15 +3140,15 @@ var Lits = (function (exports) {
           }
           return result;
       },
-      validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
-      analyze: function (node, contextStack, _a) {
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function (node, contextStack, _a) {
           var _b;
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
           var binding = node.binding;
           var newContext = (_b = {}, _b[binding.name] = { value: true }, _b);
-          var bindingResult = analyzeAst(binding.value, contextStack, builtin);
-          var paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin);
-          return joinAnalyzeResults(bindingResult, paramsResult);
+          var bindingResult = findUndefinedSymbols(binding.value, contextStack, builtin);
+          var paramsResult = findUndefinedSymbols(node.params, contextStack.withContext(newContext), builtin);
+          return joinUndefinedSymbols(bindingResult, paramsResult);
       },
   };
 
@@ -2225,10 +3190,10 @@ var Lits = (function (exports) {
           }
           return result;
       },
-      validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "when-not", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -2270,10 +3235,10 @@ var Lits = (function (exports) {
           }
           return result;
       },
-      validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "when", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -2285,7 +3250,7 @@ var Lits = (function (exports) {
               number.assert(count, debugInfo, { integer: true, nonNegative: true });
               return num << count;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "bit-shift-left", debugInfo); },
       },
       'bit-shift-right': {
           evaluate: function (_a, debugInfo) {
@@ -2294,7 +3259,7 @@ var Lits = (function (exports) {
               number.assert(count, debugInfo, { integer: true, nonNegative: true });
               return num >> count;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "bit-shift-right", debugInfo); },
       },
       'bit-not': {
           evaluate: function (_a, debugInfo) {
@@ -2302,7 +3267,7 @@ var Lits = (function (exports) {
               number.assert(num, debugInfo, { integer: true });
               return ~num;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "bit-not", debugInfo); },
       },
       'bit-and': {
           evaluate: function (_a, debugInfo) {
@@ -2313,7 +3278,7 @@ var Lits = (function (exports) {
                   return result & value;
               }, first);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "bit-and", debugInfo); },
       },
       'bit-and-not': {
           evaluate: function (_a, debugInfo) {
@@ -2324,7 +3289,7 @@ var Lits = (function (exports) {
                   return result & ~value;
               }, first);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "bit-and-not", debugInfo); },
       },
       'bit-or': {
           evaluate: function (_a, debugInfo) {
@@ -2335,7 +3300,7 @@ var Lits = (function (exports) {
                   return result | value;
               }, first);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "bit-or", debugInfo); },
       },
       'bit-xor': {
           evaluate: function (_a, debugInfo) {
@@ -2346,7 +3311,7 @@ var Lits = (function (exports) {
                   return result ^ value;
               }, first);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "bit-xor", debugInfo); },
       },
       'bit-flip': {
           evaluate: function (_a, debugInfo) {
@@ -2356,7 +3321,7 @@ var Lits = (function (exports) {
               var mask = 1 << index;
               return (num ^= mask);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "bit-flip", debugInfo); },
       },
       'bit-set': {
           evaluate: function (_a, debugInfo) {
@@ -2366,7 +3331,7 @@ var Lits = (function (exports) {
               var mask = 1 << index;
               return (num |= mask);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "bit-set", debugInfo); },
       },
       'bit-clear': {
           evaluate: function (_a, debugInfo) {
@@ -2376,7 +3341,7 @@ var Lits = (function (exports) {
               var mask = 1 << index;
               return (num &= ~mask);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "bit-clear", debugInfo); },
       },
       'bit-test': {
           evaluate: function (_a, debugInfo) {
@@ -2386,7 +3351,7 @@ var Lits = (function (exports) {
               var mask = 1 << index;
               return !!(num & mask);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "bit-test", debugInfo); },
       },
   };
 
@@ -2490,98 +3455,156 @@ var Lits = (function (exports) {
   var collectionNormalExpression = {
       get: {
           evaluate: function (params, debugInfo) {
-              var _a = __read(params, 2), coll = _a[0], key = _a[1];
-              var defaultValue = toAny(params[2]);
-              stringOrNumber.assert(key, debugInfo);
-              if (coll === null) {
-                  return defaultValue;
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), coll = _a[0], key = _a[1];
+                  var defaultValue = toAny(params[2]);
+                  stringOrNumber.assert(key, debugInfo);
+                  if (coll === null) {
+                      return defaultValue;
+                  }
+                  collection.assert(coll, debugInfo);
+                  var result = get(coll, key);
+                  return result === undefined ? defaultValue : result;
               }
-              collection.assert(coll, debugInfo);
-              var result = get(coll, key);
-              return result === undefined ? defaultValue : result;
+              else {
+                  var collType = Type.of(params[0]);
+                  var keyType = Type.of(params[1]);
+                  var defaultValueType = Type.isType(params[2])
+                      ? params[2]
+                      : params[2] === undefined
+                          ? Type.nil
+                          : Type.of(params[2]);
+                  collType.assertIs(Type.or(Type.array, Type.string, Type.object).nilable(), debugInfo);
+                  keyType.assertIs(Type.or(Type.string, Type.float, Type.nil), debugInfo);
+                  if (collType.is(Type.nil)) {
+                      return defaultValueType;
+                  }
+                  if (collType.is(Type.string)) {
+                      return Type.or(Type.string.nilable(), defaultValueType);
+                  }
+                  return Type.unknown;
+              }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "get", debugInfo); },
       },
       'get-in': {
           evaluate: function (params, debugInfo) {
               var e_1, _a;
               var _b;
-              var coll = toAny(params[0]);
-              var keys = (_b = params[1]) !== null && _b !== void 0 ? _b : []; // nil behaves as empty array
-              var defaultValue = toAny(params[2]);
-              array.assert(keys, debugInfo);
-              try {
-                  for (var keys_1 = __values(keys), keys_1_1 = keys_1.next(); !keys_1_1.done; keys_1_1 = keys_1.next()) {
-                      var key = keys_1_1.value;
-                      stringOrNumber.assert(key, debugInfo);
-                      if (collection.is(coll)) {
-                          var nextValue = get(coll, key);
-                          if (nextValue !== undefined) {
-                              coll = nextValue;
+              if (params.every(Type.isNotType)) {
+                  var coll = toAny(params[0]);
+                  var keys = (_b = params[1]) !== null && _b !== void 0 ? _b : []; // nil behaves as empty array
+                  var defaultValue = toAny(params[2]);
+                  array.assert(keys, debugInfo);
+                  try {
+                      for (var keys_1 = __values(keys), keys_1_1 = keys_1.next(); !keys_1_1.done; keys_1_1 = keys_1.next()) {
+                          var key = keys_1_1.value;
+                          stringOrNumber.assert(key, debugInfo);
+                          if (collection.is(coll)) {
+                              var nextValue = get(coll, key);
+                              if (nextValue !== undefined) {
+                                  coll = nextValue;
+                              }
+                              else {
+                                  return defaultValue;
+                              }
                           }
                           else {
                               return defaultValue;
                           }
                       }
-                      else {
-                          return defaultValue;
+                  }
+                  catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                  finally {
+                      try {
+                          if (keys_1_1 && !keys_1_1.done && (_a = keys_1.return)) _a.call(keys_1);
                       }
+                      finally { if (e_1) throw e_1.error; }
                   }
+                  return coll;
               }
-              catch (e_1_1) { e_1 = { error: e_1_1 }; }
-              finally {
-                  try {
-                      if (keys_1_1 && !keys_1_1.done && (_a = keys_1.return)) _a.call(keys_1);
+              else {
+                  var collType = Type.of(params[0]);
+                  var keysType = Type.of(params[1]);
+                  collType.assertIs(Type.or(Type.array, Type.string, Type.object).nilable(), debugInfo);
+                  keysType.assertIs(Type.array.nilable(), debugInfo);
+                  if (keysType.is(Type.nil)) {
+                      return collType;
                   }
-                  finally { if (e_1) throw e_1.error; }
+                  return Type.unknown;
               }
-              return coll;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "___", debugInfo); },
       },
       count: {
           evaluate: function (_a, debugInfo) {
               var _b = __read(_a, 1), coll = _b[0];
-              if (typeof coll === "string") {
-                  return coll.length;
+              if (Type.isNotType(coll)) {
+                  if (typeof coll === "string") {
+                      return coll.length;
+                  }
+                  collection.assert(coll, debugInfo);
+                  if (Array.isArray(coll)) {
+                      return coll.length;
+                  }
+                  return Object.keys(coll).length;
               }
-              collection.assert(coll, debugInfo);
-              if (Array.isArray(coll)) {
-                  return coll.length;
+              else {
+                  var collType = Type.of(coll);
+                  collType.assertIs(Type.or(Type.array, Type.string, Type.object), debugInfo);
+                  return collType.is(Type.or(Type.emptyArray, Type.emptyString, Type.emptyObject))
+                      ? Type.zero
+                      : collType.is(Type.or(Type.nonEmptyArray, Type.nonEmptyString, Type.nonEmptyObject))
+                          ? Type.positiveInteger
+                          : Type.nonNegativeInteger;
               }
-              return Object.keys(coll).length;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "count", debugInfo); },
       },
       'contains?': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), coll = _b[0], key = _b[1];
-              collection.assert(coll, debugInfo);
-              stringOrNumber.assert(key, debugInfo);
-              if (sequence.is(coll)) {
-                  if (!number.is(key, { integer: true })) {
-                      return false;
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), coll = _a[0], key = _a[1];
+                  collection.assert(coll, debugInfo);
+                  stringOrNumber.assert(key, debugInfo);
+                  if (sequence.is(coll)) {
+                      if (!number.is(key, { integer: true })) {
+                          return false;
+                      }
+                      number.assert(key, debugInfo, { integer: true });
+                      return key >= 0 && key < coll.length;
                   }
-                  number.assert(key, debugInfo, { integer: true });
-                  return key >= 0 && key < coll.length;
+                  return !!Object.getOwnPropertyDescriptor(coll, key);
               }
-              return !!Object.getOwnPropertyDescriptor(coll, key);
+              else {
+                  var collType = Type.of(params[0]);
+                  return collType.is(Type.or(Type.emptyArray, Type.emptyString, Type.emptyObject)) ? Type.false : Type.boolean;
+              }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "contains?", debugInfo); },
       },
       'has?': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), coll = _b[0], value = _b[1];
-              collection.assert(coll, debugInfo);
-              if (array.is(coll)) {
-                  return coll.includes(value);
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), coll = _a[0], value = _a[1];
+                  collection.assert(coll, debugInfo);
+                  if ((array.is(coll) && coll.some(Type.isType)) || (object.is(coll) && Object.values(coll).some(Type.isType))) {
+                      return Type.boolean;
+                  }
+                  if (array.is(coll)) {
+                      return coll.includes(value);
+                  }
+                  if (string.is(coll)) {
+                      return string.is(value) ? coll.split("").includes(value) : false;
+                  }
+                  return Object.values(coll).includes(value);
               }
-              if (string.is(coll)) {
-                  return string.is(value) ? coll.split("").includes(value) : false;
+              else {
+                  var collType = Type.of(params[0]);
+                  return collType.is(Type.or(Type.emptyArray, Type.emptyString, Type.emptyObject)) ? Type.false : Type.boolean;
               }
-              return Object.values(coll).includes(value);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "has?", debugInfo); },
       },
       'has-some?': {
           evaluate: function (_a, debugInfo) {
@@ -2642,7 +3665,7 @@ var Lits = (function (exports) {
               }
               return false;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "has-some?", debugInfo); },
       },
       'has-every?': {
           evaluate: function (_a, debugInfo) {
@@ -2703,7 +3726,7 @@ var Lits = (function (exports) {
               }
               return true;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "has-every?", debugInfo); },
       },
       assoc: {
           evaluate: function (_a, debugInfo) {
@@ -2713,7 +3736,7 @@ var Lits = (function (exports) {
               any.assert(value, debugInfo);
               return assoc(coll, key, value, debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams(3, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(3, arity, "assoc", debugInfo); },
       },
       'assoc-in': {
           evaluate: function (_a, debugInfo) {
@@ -2738,7 +3761,7 @@ var Lits = (function (exports) {
               }
               return coll;
           },
-          validate: function (node) { return assertNumberOfParams(3, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(3, arity, "assoc-in", debugInfo); },
       },
       update: {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -2749,7 +3772,7 @@ var Lits = (function (exports) {
               litsFunction.assert(fn, debugInfo);
               return update(coll, key, fn, params, contextStack, executeFunction, debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 3 }, arity, "update", debugInfo); },
       },
       'update-in': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -2775,7 +3798,7 @@ var Lits = (function (exports) {
               }
               return coll;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 3 }, arity, "update-in", debugInfo); },
       },
       concat: {
           evaluate: function (params, debugInfo) {
@@ -2799,7 +3822,7 @@ var Lits = (function (exports) {
                   }, {});
               }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "concat", debugInfo); },
       },
       'not-empty': {
           evaluate: function (_a, debugInfo) {
@@ -2813,7 +3836,7 @@ var Lits = (function (exports) {
               }
               return Object.keys(coll).length > 0 ? coll : null;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "not-empty", debugInfo); },
       },
       'every?': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -2829,7 +3852,7 @@ var Lits = (function (exports) {
               }
               return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, debugInfo); });
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "every?", debugInfo); },
       },
       'any?': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -2845,7 +3868,7 @@ var Lits = (function (exports) {
               }
               return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, debugInfo); });
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "any?", debugInfo); },
       },
       'not-any?': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -2861,7 +3884,7 @@ var Lits = (function (exports) {
               }
               return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, debugInfo); });
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "not-any?", debugInfo); },
       },
       'not-every?': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -2877,7 +3900,7 @@ var Lits = (function (exports) {
               }
               return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, debugInfo); });
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "not-every?", debugInfo); },
       },
   };
 
@@ -2953,7 +3976,7 @@ var Lits = (function (exports) {
               string.assert(elem, debugInfo, { char: true });
               return "".concat(elem).concat(seq);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "cons", debugInfo); },
       },
       nth: {
           evaluate: function (params, debugInfo) {
@@ -2966,7 +3989,7 @@ var Lits = (function (exports) {
               sequence.assert(seq, debugInfo);
               return i >= 0 && i < seq.length ? toAny(seq[i]) : defaultValue;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "nth", debugInfo); },
       },
       filter: {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -2982,7 +4005,7 @@ var Lits = (function (exports) {
                   .filter(function (elem) { return executeFunction(fn, [elem], contextStack, debugInfo); })
                   .join("");
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "filter", debugInfo); },
       },
       first: {
           evaluate: function (_a, debugInfo) {
@@ -2990,7 +4013,7 @@ var Lits = (function (exports) {
               sequence.assert(array, debugInfo);
               return toAny(array[0]);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "first", debugInfo); },
       },
       last: {
           evaluate: function (_a, debugInfo) {
@@ -2998,11 +4021,11 @@ var Lits = (function (exports) {
               sequence.assert(first, debugInfo);
               return toAny(first[first.length - 1]);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "last", debugInfo); },
       },
       map: {
           evaluate: evaluateMap,
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "map", debugInfo); },
       },
       pop: {
           evaluate: function (_a, debugInfo) {
@@ -3015,7 +4038,7 @@ var Lits = (function (exports) {
               copy.pop();
               return copy;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "pop", debugInfo); },
       },
       position: {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3032,7 +4055,7 @@ var Lits = (function (exports) {
                   return index !== -1 ? index : null;
               }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "position", debugInfo); },
       },
       'index-of': {
           evaluate: function (_a, debugInfo) {
@@ -3049,7 +4072,7 @@ var Lits = (function (exports) {
                   return index !== -1 ? index : null;
               }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "index-of", debugInfo); },
       },
       push: {
           evaluate: function (_a, debugInfo) {
@@ -3063,7 +4086,7 @@ var Lits = (function (exports) {
                   return __spreadArray(__spreadArray([], __read(seq), false), __read(values), false);
               }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "push", debugInfo); },
       },
       reductions: {
           evaluate: function (params, debugInfo, contextStack, _a) {
@@ -3130,7 +4153,7 @@ var Lits = (function (exports) {
                   }
               }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "reductions", debugInfo); },
       },
       reduce: {
           evaluate: function (params, debugInfo, contextStack, _a) {
@@ -3183,7 +4206,7 @@ var Lits = (function (exports) {
                   }
               }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "reduce", debugInfo); },
       },
       'reduce-right': {
           evaluate: function (params, debugInfo, contextStack, _a) {
@@ -3236,7 +4259,7 @@ var Lits = (function (exports) {
                   }
               }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "reduce-right", debugInfo); },
       },
       rest: {
           evaluate: function (_a, debugInfo) {
@@ -3250,7 +4273,7 @@ var Lits = (function (exports) {
               }
               return first.substr(1);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "rest", debugInfo); },
       },
       nthrest: {
           evaluate: function (_a, debugInfo) {
@@ -3263,7 +4286,7 @@ var Lits = (function (exports) {
               }
               return seq.substr(integerCount);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "nthrest", debugInfo); },
       },
       next: {
           evaluate: function (_a, debugInfo) {
@@ -3280,7 +4303,7 @@ var Lits = (function (exports) {
               }
               return first.substr(1);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "next", debugInfo); },
       },
       nthnext: {
           evaluate: function (_a, debugInfo) {
@@ -3296,7 +4319,7 @@ var Lits = (function (exports) {
               }
               return seq.substr(integerCount);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "nthnext", debugInfo); },
       },
       reverse: {
           evaluate: function (_a, debugInfo) {
@@ -3307,7 +4330,7 @@ var Lits = (function (exports) {
               }
               return first.split("").reverse().join("");
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "reverse", debugInfo); },
       },
       second: {
           evaluate: function (_a, debugInfo) {
@@ -3315,7 +4338,7 @@ var Lits = (function (exports) {
               sequence.assert(array, debugInfo);
               return toAny(array[1]);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "second", debugInfo); },
       },
       shift: {
           evaluate: function (_a, debugInfo) {
@@ -3328,7 +4351,7 @@ var Lits = (function (exports) {
               copy.shift();
               return copy;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "shift", debugInfo); },
       },
       slice: {
           evaluate: function (params, debugInfo) {
@@ -3344,7 +4367,7 @@ var Lits = (function (exports) {
               number.assert(to, debugInfo, { integer: true });
               return seq.slice(from, to);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 3 }, arity, "slice", debugInfo); },
       },
       some: {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3361,7 +4384,7 @@ var Lits = (function (exports) {
               }
               return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], contextStack, debugInfo); }));
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "some", debugInfo); },
       },
       sort: {
           evaluate: function (params, debugInfo, contextStack, _a) {
@@ -3399,7 +4422,7 @@ var Lits = (function (exports) {
               }
               return result;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "sort", debugInfo); },
       },
       'sort-by': {
           evaluate: function (params, debugInfo, contextStack, _a) {
@@ -3449,7 +4472,7 @@ var Lits = (function (exports) {
               }
               return result;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "sort-by", debugInfo); },
       },
       take: {
           evaluate: function (_a, debugInfo) {
@@ -3459,7 +4482,7 @@ var Lits = (function (exports) {
               var num = Math.max(Math.ceil(n), 0);
               return input.slice(0, num);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "take", debugInfo); },
       },
       'take-last': {
           evaluate: function (_a, debugInfo) {
@@ -3470,7 +4493,7 @@ var Lits = (function (exports) {
               var from = array.length - num;
               return array.slice(from);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "take-last", debugInfo); },
       },
       'take-while': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3500,7 +4523,7 @@ var Lits = (function (exports) {
               }
               return string.is(seq) ? result.join("") : result;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "take-while", debugInfo); },
       },
       drop: {
           evaluate: function (_a, debugInfo) {
@@ -3510,7 +4533,7 @@ var Lits = (function (exports) {
               sequence.assert(input, debugInfo);
               return input.slice(num);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "drop", debugInfo); },
       },
       'drop-last': {
           evaluate: function (_a, debugInfo) {
@@ -3521,7 +4544,7 @@ var Lits = (function (exports) {
               var from = array.length - num;
               return array.slice(0, from);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "drop-last", debugInfo); },
       },
       'drop-while': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3537,7 +4560,7 @@ var Lits = (function (exports) {
               var from = charArray.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack, debugInfo); });
               return charArray.slice(from).join("");
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "drop-while", debugInfo); },
       },
       unshift: {
           evaluate: function (_a, debugInfo) {
@@ -3551,7 +4574,7 @@ var Lits = (function (exports) {
               copy.unshift.apply(copy, __spreadArray([], __read(values), false));
               return copy;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "unshift", debugInfo); },
       },
       'random-sample!': {
           evaluate: function (_a, debugInfo) {
@@ -3568,7 +4591,7 @@ var Lits = (function (exports) {
                   return seq.filter(function () { return Math.random() < prob; });
               }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "random-sample!", debugInfo); },
       },
       'rand-nth!': {
           evaluate: function (_a, debugInfo) {
@@ -3583,7 +4606,7 @@ var Lits = (function (exports) {
               }
               return toAny(seq[index]);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "rand-nth!", debugInfo); },
       },
       'shuffle!': {
           evaluate: function (_a, debugInfo) {
@@ -3605,7 +4628,7 @@ var Lits = (function (exports) {
               }
               return string.is(input) ? array.join("") : array;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "shuffle!", debugInfo); },
       },
       distinct: {
           evaluate: function (_a, debugInfo) {
@@ -3616,7 +4639,7 @@ var Lits = (function (exports) {
               }
               return Array.from(new Set(input.split(""))).join("");
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "distinct", debugInfo); },
       },
       remove: {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3632,7 +4655,7 @@ var Lits = (function (exports) {
                   .filter(function (elem) { return !executeFunction(fn, [elem], contextStack, debugInfo); })
                   .join("");
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "remove", debugInfo); },
       },
       'remove-at': {
           evaluate: function (_a, debugInfo) {
@@ -3650,7 +4673,7 @@ var Lits = (function (exports) {
               }
               return "".concat(input.substring(0, index)).concat(input.substring(index + 1));
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "remove-at", debugInfo); },
       },
       'split-at': {
           evaluate: function (_a, debugInfo) {
@@ -3660,7 +4683,7 @@ var Lits = (function (exports) {
               sequence.assert(seq, debugInfo);
               return [seq.slice(0, intPos), seq.slice(intPos)];
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "split-at", debugInfo); },
       },
       'split-with': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3676,7 +4699,7 @@ var Lits = (function (exports) {
               }
               return [seq.slice(0, index), seq.slice(index)];
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "split-with", debugInfo); },
       },
       frequencies: {
           evaluate: function (_a, debugInfo) {
@@ -3694,7 +4717,7 @@ var Lits = (function (exports) {
                   return result;
               }, {});
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "frequencies", debugInfo); },
       },
       'group-by': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3713,7 +4736,7 @@ var Lits = (function (exports) {
                   return result;
               }, {});
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "group-by", debugInfo); },
       },
       partition: {
           evaluate: function (params, debugInfo) {
@@ -3728,7 +4751,7 @@ var Lits = (function (exports) {
               var pad = len === 4 ? (params[2] === null ? [] : array.as(params[2], debugInfo)) : undefined;
               return partition(n, step, seq, pad, debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 4 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 4 }, arity, "partition", debugInfo); },
       },
       'partition-all': {
           evaluate: function (params, debugInfo) {
@@ -3738,7 +4761,7 @@ var Lits = (function (exports) {
               var step = len >= 3 ? toNonNegativeInteger(number.as(params[1], debugInfo)) : n;
               return partition(n, step, seq, [], debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "partition-all", debugInfo); },
       },
       'partition-by': {
           evaluate: function (_a, debugInfo, contextStack, _b) {
@@ -3759,7 +4782,7 @@ var Lits = (function (exports) {
               }, []);
               return isStringSeq ? result.map(function (elem) { return elem.join(""); }) : result;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "partition-by", debugInfo); },
       },
   };
   function partition(n, step, seq, pad, debugInfo) {
@@ -3794,60 +4817,85 @@ var Lits = (function (exports) {
   var arrayNormalExpression = {
       array: {
           evaluate: function (params) { return params; },
+          validateArity: function () { return undefined; },
       },
       range: {
           evaluate: function (params, debugInfo) {
-              var _a = __read(params, 3), first = _a[0], second = _a[1], third = _a[2];
-              var from;
-              var to;
-              var step;
-              number.assert(first, debugInfo, { finite: true });
-              if (params.length === 1) {
-                  from = 0;
-                  to = first;
-                  step = to >= 0 ? 1 : -1;
-              }
-              else if (params.length === 2) {
-                  number.assert(second, debugInfo, { finite: true });
-                  from = first;
-                  to = second;
-                  step = to >= from ? 1 : -1;
-              }
-              else {
-                  number.assert(second, debugInfo, { finite: true });
-                  number.assert(third, debugInfo, { finite: true });
-                  from = first;
-                  to = second;
-                  step = third;
-                  if (to > from) {
-                      number.assert(step, debugInfo, { positive: true });
+              if (params.every(function (param) { return !(param instanceof Type); })) {
+                  var _a = __read(params, 3), first = _a[0], second = _a[1], third = _a[2];
+                  var from = void 0;
+                  var to = void 0;
+                  var step = void 0;
+                  number.assert(first, debugInfo, { finite: true });
+                  if (params.length === 1) {
+                      from = 0;
+                      to = first;
+                      step = to >= 0 ? 1 : -1;
                   }
-                  else if (to < from) {
-                      number.assert(step, debugInfo, { negative: true });
+                  else if (params.length === 2) {
+                      number.assert(second, debugInfo, { finite: true });
+                      from = first;
+                      to = second;
+                      step = to >= from ? 1 : -1;
                   }
                   else {
-                      number.assert(step, debugInfo, { nonZero: true });
+                      number.assert(second, debugInfo, { finite: true });
+                      number.assert(third, debugInfo, { finite: true });
+                      from = first;
+                      to = second;
+                      step = third;
+                      if (to > from) {
+                          number.assert(step, debugInfo, { positive: true });
+                      }
+                      else if (to < from) {
+                          number.assert(step, debugInfo, { negative: true });
+                      }
+                      else {
+                          number.assert(step, debugInfo, { nonZero: true });
+                      }
                   }
+                  var result = [];
+                  for (var i = from; step < 0 ? i > to : i < to; i += step) {
+                      result.push(i);
+                  }
+                  return result;
               }
-              var result = [];
-              for (var i = from; step < 0 ? i > to : i < to; i += step) {
-                  result.push(i);
+              else {
+                  var paramTypes = params.map(function (param) {
+                      var type = Type.of(param);
+                      type.assertIs(Type.float, debugInfo);
+                      return type;
+                  });
+                  var fromType = asValue(paramTypes[0]);
+                  if (paramTypes.length === 1) {
+                      // Here we always know if it is emptyArray or nonEmptyArray
+                      return fromType.is(Type.zero) ? Type.emptyArray : Type.nonEmptyArray;
+                  }
+                  var toType = asValue(paramTypes[1]);
+                  // If both from and to are zero -> emptyArray, otherwise we don't know -> array
+                  return fromType.is(Type.zero) && toType.is(Type.zero) ? Type.emptyArray : Type.array;
               }
-              return result;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 3 }, arity, "range", debugInfo); },
       },
       repeat: {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), count = _b[0], value = _b[1];
-              number.assert(count, debugInfo, { integer: true, nonNegative: true });
-              var result = [];
-              for (var i = 0; i < count; i += 1) {
-                  result.push(value);
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), count = _a[0], value = _a[1];
+                  number.assert(count, debugInfo, { integer: true, nonNegative: true });
+                  var result = [];
+                  for (var i = 0; i < count; i += 1) {
+                      result.push(value);
+                  }
+                  return result;
               }
-              return result;
+              else {
+                  var countType = Type.of(params[0]);
+                  countType.assertIs(Type.nonNegativeInteger, debugInfo);
+                  return countType.is(Type.zero) ? Type.emptyArray : Type.nonEmptyArray;
+              }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "repeat", debugInfo); },
       },
       flatten: {
           evaluate: function (_a) {
@@ -3855,9 +4903,9 @@ var Lits = (function (exports) {
               if (!array.is(seq)) {
                   return [];
               }
-              return seq.flat(Number.POSITIVE_INFINITY);
+              return seq.flat(Infinity);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "flatten", debugInfo); },
       },
       mapcat: {
           evaluate: function (params, debugInfo, contextStack, helpers) {
@@ -3868,416 +4916,1968 @@ var Lits = (function (exports) {
               array.assert(mapResult, debugInfo);
               return mapResult.flat(1);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "mapcat", debugInfo); },
       },
   };
 
   var mathNormalExpression = {
       inc: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return first + 1;
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  return first + 1;
+              }
+              else {
+                  var paramType = Type.of(first);
+                  if (paramType.is(Type.zero)) {
+                      return 1;
+                  }
+                  var types = [];
+                  if (paramType.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (paramType.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (paramType.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (paramType.intersects(Type.zero)) {
+                      types.push(Type.positiveInteger);
+                  }
+                  if (paramType.intersects(Type.negativeFloat)) {
+                      if (paramType.isInteger()) {
+                          types.push(Type.nonPositiveInteger);
+                      }
+                      else {
+                          types.push(Type.float);
+                      }
+                  }
+                  if (paramType.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveInfinity);
+                      if (paramType.isInteger()) {
+                          types.push(Type.positiveInteger);
+                      }
+                      else {
+                          types.push(Type.positiveFloat);
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "inc", debugInfo); },
       },
       dec: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return first - 1;
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  return first - 1;
+              }
+              else {
+                  var paramType = Type.of(first);
+                  if (paramType.is(Type.zero)) {
+                      return -1;
+                  }
+                  var types = [];
+                  if (paramType.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (paramType.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (paramType.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (paramType.intersects(Type.zero)) {
+                      types.push(Type.negativeInteger);
+                  }
+                  if (paramType.intersects(Type.positiveFloat)) {
+                      if (paramType.isInteger()) {
+                          types.push(Type.nonNegativeInteger);
+                      }
+                      else {
+                          types.push(Type.float);
+                      }
+                  }
+                  if (paramType.intersects(Type.negativeFloat)) {
+                      types.push(Type.negativeInfinity);
+                      if (paramType.isInteger()) {
+                          types.push(Type.negativeInteger);
+                      }
+                      else {
+                          types.push(Type.negativeFloat);
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "dec", debugInfo); },
       },
       '+': {
           evaluate: function (params, debugInfo) {
-              return params.reduce(function (result, param) {
-                  number.assert(param, debugInfo);
-                  return result + param;
-              }, 0);
-          },
-      },
-      '*': {
-          evaluate: function (params, debugInfo) {
-              return params.reduce(function (result, param) {
-                  number.assert(param, debugInfo);
-                  return result * param;
-              }, 1);
-          },
-      },
-      '/': {
-          evaluate: function (params, debugInfo) {
-              if (params.length === 0) {
-                  return 1;
+              if (params.every(function (param) { return !(param instanceof Type); })) {
+                  return params.reduce(function (result, param) {
+                      if (!number.is(param)) {
+                          return NaN;
+                      }
+                      return result + param;
+                  }, 0);
               }
-              var _a = __read(params), first = _a[0], rest = _a.slice(1);
-              number.assert(first, debugInfo);
-              if (rest.length === 0) {
-                  number.assert(first, debugInfo);
-                  return 1 / first;
+              else {
+                  return getTypeOfSum(params, debugInfo);
               }
-              return rest.reduce(function (result, param) {
-                  number.assert(param, debugInfo);
-                  return result / param;
-              }, first);
           },
+          validateArity: function () { return undefined; },
       },
       '-': {
           evaluate: function (params, debugInfo) {
-              if (params.length === 0) {
-                  return 0;
+              if (params.every(function (param) { return !(param instanceof Type); })) {
+                  if (params.length === 0) {
+                      return 0;
+                  }
+                  var _a = __read(params), first = _a[0], rest = _a.slice(1);
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  if (rest.length === 0) {
+                      return -first;
+                  }
+                  return rest.reduce(function (result, param) {
+                      if (!number.is(param)) {
+                          return NaN;
+                      }
+                      return result - param;
+                  }, first);
               }
-              var _a = __read(params), first = _a[0], rest = _a.slice(1);
-              number.assert(first, debugInfo);
-              if (rest.length === 0) {
-                  return -first;
+              else {
+                  var firstParam = asValue(params[0]);
+                  if (params.length === 1) {
+                      return negate(firstParam);
+                  }
+                  var rest = params.slice(1).map(negate);
+                  return getTypeOfSum(__spreadArray([firstParam], __read(rest), false), debugInfo);
               }
-              return rest.reduce(function (result, param) {
-                  number.assert(param, debugInfo);
-                  return result - param;
-              }, first);
           },
+          validateArity: function () { return undefined; },
+      },
+      '*': {
+          evaluate: function (params) {
+              if (params.every(function (param) { return !(param instanceof Type); })) {
+                  return params.reduce(function (result, param) {
+                      if (!number.is(param)) {
+                          return NaN;
+                      }
+                      return result * param;
+                  }, 1);
+              }
+              else {
+                  var paramTypes = params.map(function (param) { return Type.of(param); });
+                  return getTypeOfProduct(paramTypes);
+              }
+          },
+          validateArity: function () { return undefined; },
+      },
+      '/': {
+          evaluate: function (params) {
+              if (params.every(function (param) { return !(param instanceof Type); })) {
+                  if (params.length === 0) {
+                      return 1;
+                  }
+                  var _a = __read(params), first = _a[0], rest = _a.slice(1);
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  if (rest.length === 0) {
+                      return 1 / first;
+                  }
+                  return rest.reduce(function (result, param) {
+                      if (!number.is(param)) {
+                          return NaN;
+                      }
+                      return result / param;
+                  }, first);
+              }
+              else {
+                  var paramTypes = params.map(function (param) { return Type.of(param); });
+                  return getTypeOfDivision(paramTypes).toNumberValue();
+              }
+          },
+          validateArity: function () { return undefined; },
       },
       quot: {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), dividend = _b[0], divisor = _b[1];
-              number.assert(dividend, debugInfo);
-              number.assert(divisor, debugInfo);
-              var quotient = Math.trunc(dividend / divisor);
-              return quotient;
+          evaluate: function (params) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), dividend = _a[0], divisor = _a[1];
+                  if (!number.is(dividend)) {
+                      return NaN;
+                  }
+                  if (!number.is(divisor)) {
+                      return NaN;
+                  }
+                  return Math.trunc(dividend / divisor);
+              }
+              else {
+                  var a = Type.of(params[0]);
+                  var b = Type.of(params[1]);
+                  var types = [];
+                  if (a.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.or(b).intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.positiveInfinity) && b.exclude(Type.nan).intersects(Type.number)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (a.intersects(Type.negativeInfinity) && b.exclude(Type.nan).intersects(Type.number)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (b.intersects(Type.positiveInfinity.or(Type.negativeInfinity))) {
+                      if (a.intersects(Type.float)) {
+                          types.push(Type.zero);
+                      }
+                  }
+                  if (a.intersects(Type.positiveZero) && b.intersects(Type.nonZeroFloat)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (a.intersects(Type.negativeZero) && b.intersects(Type.nonZeroFloat)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (b.intersects(Type.positiveZero)) {
+                      if (a.intersects(Type.zero)) {
+                          types.push(Type.nan);
+                      }
+                      if (a.intersects(Type.positiveFloat)) {
+                          types.push(Type.positiveInfinity);
+                      }
+                      if (a.intersects(Type.negativeFloat)) {
+                          types.push(Type.negativeInfinity);
+                      }
+                  }
+                  if (b.intersects(Type.negativeZero)) {
+                      if (a.intersects(Type.zero)) {
+                          types.push(Type.nan);
+                      }
+                      if (a.intersects(Type.positiveFloat)) {
+                          types.push(Type.negativeInfinity);
+                      }
+                      if (a.intersects(Type.negativeFloat)) {
+                          types.push(Type.positiveInfinity);
+                      }
+                  }
+                  if (a.intersects(Type.positiveFloat)) {
+                      if (b.intersects(Type.positiveFloat)) {
+                          types.push(Type.nonNegativeInteger);
+                          types.push(Type.positiveInfinity);
+                      }
+                      if (b.intersects(Type.negativeFloat)) {
+                          types.push(Type.nonPositiveInteger);
+                          types.push(Type.negativeInfinity);
+                      }
+                  }
+                  if (a.intersects(Type.negativeFloat)) {
+                      if (b.intersects(Type.negativeFloat)) {
+                          types.push(Type.nonNegativeInteger);
+                          types.push(Type.positiveInfinity);
+                      }
+                      if (b.intersects(Type.positiveFloat)) {
+                          types.push(Type.nonPositiveInteger);
+                          types.push(Type.negativeInfinity);
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "quot", debugInfo); },
       },
       mod: {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), dividend = _b[0], divisor = _b[1];
-              number.assert(dividend, debugInfo);
-              number.assert(divisor, debugInfo);
-              var quotient = Math.floor(dividend / divisor);
-              return dividend - divisor * quotient;
+          evaluate: function (params) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), dividend = _a[0], divisor = _a[1];
+                  if (!number.is(dividend)) {
+                      return NaN;
+                  }
+                  if (!number.is(divisor)) {
+                      return NaN;
+                  }
+                  var quotient = Math.floor(dividend / divisor);
+                  if (quotient === 0) {
+                      return dividend;
+                  }
+                  return dividend - divisor * quotient;
+              }
+              else {
+                  var a = Type.of(params[0]);
+                  var b = Type.of(params[1]);
+                  var types = [];
+                  if (a.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.nan) || a.intersects(Type.infinity)) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersects(Type.positiveInfinity) && a.intersects(Type.float)) {
+                      types.push(Type.zero);
+                  }
+                  if (b.intersects(Type.negativeInfinity) && a.intersects(Type.float)) {
+                      types.push(Type.zero);
+                  }
+                  if (b.intersects(Type.zero)) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersects(Type.negativeFloat) && a.intersects(Type.float)) {
+                      types.push(Type.nonPositiveFloat);
+                  }
+                  if (b.intersects(Type.positiveFloat) && a.intersects(Type.float)) {
+                      types.push(Type.nonNegativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "mod", debugInfo); },
       },
       rem: {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), dividend = _b[0], divisor = _b[1];
-              number.assert(dividend, debugInfo);
-              number.assert(divisor, debugInfo);
-              var quotient = Math.trunc(dividend / divisor);
-              return dividend - divisor * quotient;
+          evaluate: function (params) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), dividend = _a[0], divisor = _a[1];
+                  if (!number.is(dividend)) {
+                      return NaN;
+                  }
+                  if (!number.is(divisor)) {
+                      return NaN;
+                  }
+                  var quotient = Math.trunc(dividend / divisor);
+                  if (quotient === 0) {
+                      return dividend;
+                  }
+                  return dividend - divisor * quotient;
+              }
+              else {
+                  var a = Type.of(params[0]);
+                  var b = Type.of(params[1]);
+                  var types = [];
+                  if (a.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.or(b).intersects(Type.nan.or(Type.infinity))) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersects(Type.zero)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.negativeFloat) && b.intersects(Type.float)) {
+                      types.push(Type.nonPositiveFloat);
+                  }
+                  if (a.intersects(Type.positiveFloat) && b.intersects(Type.float)) {
+                      types.push(Type.nonNegativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "rem", debugInfo); },
       },
       sqrt: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return Math.sqrt(first);
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  // Handle Math.sqrt(-0) ==> -0, which I think is wrong.
+                  return first === 0 ? 0 : Math.sqrt(first);
+              }
+              else {
+                  var type = Type.of(first);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.nan.or(Type.negativeInfinity))) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (type.intersects(Type.zero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "sqrt", debugInfo); },
       },
       cbrt: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return Math.cbrt(first);
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  return Math.cbrt(first);
+              }
+              else {
+                  var type = Type.of(first);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (type.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.negativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "cbrt", debugInfo); },
       },
       pow: {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), first = _b[0], second = _b[1];
-              number.assert(first, debugInfo);
-              number.assert(second, debugInfo);
-              return Math.pow(first, second);
+          evaluate: function (params) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  if (!number.is(second)) {
+                      return NaN;
+                  }
+                  if (first === 1 && !Number.isNaN(second)) {
+                      return 1;
+                  }
+                  if (first < 0 && first >= -1 && second === -Infinity) {
+                      return NaN;
+                  }
+                  if (first <= -1 && second === Infinity) {
+                      return NaN;
+                  }
+                  return Math.pow(first, second);
+              }
+              else {
+                  var a = asValue(Type.of(params[0]));
+                  var b = asValue(Type.of(params[1]));
+                  var types = [];
+                  var ones = 0;
+                  if (a.or(b).intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.nan)) {
+                      if (b.intersects(Type.zero)) {
+                          types.push(Type.positiveInteger);
+                      }
+                      if (!b.exclude(Type.zero).isNever()) {
+                          types.push(Type.nan);
+                      }
+                  }
+                  if (b.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.positiveInfinity)) {
+                      if (b.intersects(Type.positiveInfinity.or(Type.positiveFloat))) {
+                          types.push(Type.positiveInfinity);
+                      }
+                      if (b.intersects(Type.negativeInfinity.or(Type.negativeFloat))) {
+                          types.push(Type.positiveZero);
+                      }
+                      if (b.intersects(Type.zero)) {
+                          types.push(Type.positiveInteger);
+                          ones += 1;
+                      }
+                  }
+                  if (a.intersects(Type.negativeInfinity)) {
+                      if (b.intersects(Type.positiveInfinity)) {
+                          types.push(Type.nan);
+                      }
+                      if (b.intersects(Type.positiveFloat)) {
+                          types.push(Type.positiveInfinity);
+                          types.push(Type.negativeInfinity);
+                      }
+                      if (b.intersects(Type.negativeInfinity.or(Type.negativeFloat))) {
+                          types.push(Type.positiveZero);
+                      }
+                      if (b.intersects(Type.negativeInteger)) {
+                          types.push(Type.negativeZero);
+                      }
+                      if (b.intersects(Type.zero)) {
+                          types.push(Type.positiveInteger);
+                          ones += 1;
+                      }
+                  }
+                  if (b.intersects(Type.positiveInfinity)) {
+                      if (a.intersects(Type.zero)) {
+                          types.push(Type.zero);
+                      }
+                      if (a.intersects(Type.positiveFloat)) {
+                          types.push(Type.positiveInfinity);
+                          types.push(Type.positiveInteger);
+                          if (!a.isInteger()) {
+                              types.push(Type.zero);
+                          }
+                      }
+                      if (a.intersects(Type.negativeFloat)) {
+                          types.push(Type.nan);
+                          if (!a.isInteger()) {
+                              types.push(Type.zero);
+                          }
+                      }
+                  }
+                  if (b.intersects(Type.negativeInfinity)) {
+                      if (a.intersects(Type.zero)) {
+                          types.push(Type.positiveInfinity);
+                      }
+                      if (a.intersects(Type.positiveFloat)) {
+                          types.push(Type.positiveInteger);
+                          types.push(Type.zero);
+                          if (!a.isInteger()) {
+                              types.push(Type.positiveInfinity);
+                          }
+                      }
+                      if (a.intersects(Type.negativeFloat)) {
+                          types.push(Type.nan);
+                          types.push(Type.zero);
+                      }
+                  }
+                  if (a.intersects(Type.positiveZero)) {
+                      if (b.intersects(Type.zero)) {
+                          types.push(Type.positiveInteger);
+                          ones += 1;
+                      }
+                      if (b.intersects(Type.positiveFloat)) {
+                          types.push(Type.positiveZero);
+                      }
+                      if (b.intersects(Type.negativeFloat)) {
+                          types.push(Type.positiveInfinity);
+                      }
+                  }
+                  if (a.intersects(Type.negativeZero)) {
+                      if (b.intersects(Type.zero)) {
+                          types.push(Type.positiveInteger);
+                          ones += 1;
+                      }
+                      if (b.intersects(Type.positiveFloat)) {
+                          types.push(Type.positiveZero);
+                          types.push(Type.negativeZero);
+                      }
+                      if (b.intersects(Type.negativeFloat)) {
+                          types.push(Type.positiveInfinity);
+                          types.push(Type.negativeInfinity);
+                      }
+                  }
+                  if (b.intersects(Type.zero)) {
+                      if (a.intersects(Type.float)) {
+                          types.push(Type.positiveInteger);
+                          ones += 1;
+                      }
+                  }
+                  if (a.intersects(Type.positiveFloat)) {
+                      if (b.intersects(Type.positiveFloat)) {
+                          types.push(Type.positiveInfinity);
+                      }
+                      if (a.isInteger()) {
+                          if (b.intersects(Type.positiveFloat)) {
+                              if (b.isInteger()) {
+                                  types.push(Type.positiveInteger);
+                              }
+                              else {
+                                  types.push(Type.positiveFloat);
+                              }
+                          }
+                          if (b.intersects(Type.negativeFloat)) {
+                              types.push(Type.positiveFloat);
+                              types.push(Type.positiveZero);
+                          }
+                      }
+                      else {
+                          if (b.intersects(Type.positiveFloat)) {
+                              types.push(Type.positiveFloat);
+                          }
+                          if (b.intersects(Type.negativeFloat)) {
+                              types.push(Type.positiveFloat);
+                              types.push(Type.positiveZero);
+                          }
+                      }
+                  }
+                  if (a.intersects(Type.negativeFloat)) {
+                      if (b.intersects(Type.positiveInteger)) {
+                          types.push(Type.infinity);
+                      }
+                      if (b.intersects(Type.float) && !b.isInteger()) {
+                          types.push(Type.nan);
+                      }
+                      if (a.isInteger()) {
+                          if (b.intersects(Type.positiveInteger)) {
+                              types.push(Type.positiveInteger);
+                              types.push(Type.negativeInteger);
+                          }
+                          if (b.intersects(Type.negativeInteger)) {
+                              types.push(Type.positiveFloat);
+                              types.push(Type.negativeFloat);
+                              types.push(Type.zero);
+                          }
+                      }
+                      else {
+                          if (b.intersects(Type.nonZeroInteger)) {
+                              types.push(Type.positiveFloat);
+                              types.push(Type.negativeFloat);
+                          }
+                      }
+                  }
+                  if (ones > 0 && types.every(function (t) { return t.equals(Type.positiveInteger); })) {
+                      if (types.length === ones) {
+                          return 1;
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "pow", debugInfo); },
       },
       round: {
-          evaluate: function (params, debugInfo) {
-              var _a = __read(params, 2), value = _a[0], decimals = _a[1];
-              number.assert(value, debugInfo);
-              if (params.length === 1 || decimals === 0) {
-                  return Math.round(value);
+          evaluate: function (params) {
+              var _a;
+              if (params.every(Type.isNotType)) {
+                  var _b = __read(params, 2), value = _b[0], decimals = _b[1];
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  if (params.length === 1 || decimals === 0) {
+                      return Math.round(value);
+                  }
+                  if (!number.is(decimals)) {
+                      return NaN;
+                  }
+                  if (!number.is(decimals, { integer: true, nonNegative: true })) {
+                      return NaN;
+                  }
+                  var factor = Math.pow(10, decimals);
+                  if (factor === Infinity) {
+                      return value;
+                  }
+                  return Math.round(value * factor) / factor;
               }
-              number.assert(decimals, debugInfo, { integer: true, nonNegative: true });
-              var factor = Math.pow(10, decimals);
-              return Math.round(value * factor) / factor;
+              else {
+                  var a = asValue(Type.of(params[0]));
+                  var b = asValue(Type.of((_a = params[1]) !== null && _a !== void 0 ? _a : 0));
+                  var types = [];
+                  if (a.or(b).intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (!b.isInteger() || b.intersects(Type.negativeFloat)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.positiveInfinity) && !b.intersects(Type.nan.or(Type.infinity))) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (a.intersects(Type.negativeInfinity) && !b.intersects(Type.nan.or(Type.infinity))) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (a.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersects(Type.nan.or(Type.infinity))) {
+                      types.push(Type.nan);
+                  }
+                  if (b.intersects(Type.nonNegativeInteger)) {
+                      if (a.intersects(Type.zero)) {
+                          types.push(Type.zero);
+                      }
+                      if (a.intersects(Type.positiveFloat)) {
+                          if (a.isInteger()) {
+                              types.push(Type.positiveInteger);
+                          }
+                          else {
+                              if (b.intersects(Type.zero)) {
+                                  types.push(Type.nonNegativeInteger);
+                              }
+                              if (b.intersects(Type.nonZeroFloat)) {
+                                  types.push(Type.nonNegativeFloat);
+                              }
+                          }
+                      }
+                      if (a.intersects(Type.negativeFloat)) {
+                          if (a.isInteger()) {
+                              types.push(Type.negativeInteger);
+                          }
+                          else {
+                              if (b.intersects(Type.zero)) {
+                                  types.push(Type.nonPositiveInteger);
+                              }
+                              if (b.intersects(Type.nonZeroFloat)) {
+                                  types.push(Type.nonPositiveFloat);
+                              }
+                          }
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "round", debugInfo); },
       },
       trunc: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return Math.trunc(first);
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  return Math.trunc(first);
+              }
+              else {
+                  var a = Type.of(first);
+                  var types = [];
+                  if (a.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (a.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (a.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.zero)) {
+                      types.push(Type.zero);
+                  }
+                  if (a.intersects(Type.positiveFloat)) {
+                      if (a.isInteger()) {
+                          types.push(Type.positiveInteger);
+                      }
+                      else {
+                          types.push(Type.nonNegativeInteger);
+                      }
+                  }
+                  if (a.intersects(Type.negativeFloat)) {
+                      if (a.isInteger()) {
+                          types.push(Type.negativeInteger);
+                      }
+                      else {
+                          types.push(Type.nonPositiveInteger);
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "trunc", debugInfo); },
       },
       floor: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return Math.floor(first);
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  return Math.floor(first);
+              }
+              else {
+                  var a = Type.of(first);
+                  var types = [];
+                  if (a.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (a.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (a.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.zero)) {
+                      types.push(Type.zero);
+                  }
+                  if (a.intersects(Type.positiveFloat)) {
+                      if (a.isInteger()) {
+                          types.push(Type.positiveInteger);
+                      }
+                      else {
+                          types.push(Type.nonNegativeInteger);
+                      }
+                  }
+                  if (a.intersects(Type.negativeFloat)) {
+                      types.push(Type.negativeInteger);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "floor", debugInfo); },
       },
       ceil: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return Math.ceil(first);
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  return Math.ceil(first);
+              }
+              else {
+                  var a = Type.of(first);
+                  var types = [];
+                  if (a.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (a.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (a.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.zero)) {
+                      types.push(Type.zero);
+                  }
+                  if (a.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveInteger);
+                  }
+                  if (a.intersects(Type.negativeFloat)) {
+                      if (a.isInteger()) {
+                          types.push(Type.negativeInteger);
+                      }
+                      else {
+                          types.push(Type.nonPositiveInteger);
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "ceil", debugInfo); },
       },
       'rand!': {
-          evaluate: function (parameters, debugInfo) {
-              var num = number.as(parameters.length === 1 ? parameters[0] : 1, debugInfo);
-              return Math.random() * num;
+          evaluate: function () {
+              return Math.random();
           },
-          validate: function (node) { return assertNumberOfParams({ min: 0, max: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "rand!", debugInfo); },
       },
       'rand-int!': {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
-              number.assert(first, debugInfo);
-              return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first);
+              if (Type.isNotType(first)) {
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first);
+              }
+              else {
+                  var a = Type.of(first);
+                  var types = [];
+                  if (a.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (a.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (a.intersects(Type.nan)) {
+                      types.push(Type.nan);
+                  }
+                  if (a.intersects(Type.zero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (a.intersects(Type.positiveFloat)) {
+                      types.push(Type.nonNegativeInteger);
+                  }
+                  if (a.intersects(Type.negativeFloat)) {
+                      types.push(Type.nonPositiveInteger);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "rand-int!", debugInfo); },
       },
       min: {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a), first = _b[0], rest = _b.slice(1);
-              number.assert(first, debugInfo);
-              if (rest.length === 0) {
-                  return first;
+          evaluate: function (params) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params), first = _a[0], rest = _a.slice(1);
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  if (rest.length === 0) {
+                      return first;
+                  }
+                  return rest.reduce(function (min, value) {
+                      if (!number.is(value)) {
+                          return NaN;
+                      }
+                      return Math.min(min, value);
+                  }, first);
               }
-              return rest.reduce(function (min, value) {
-                  number.assert(value, debugInfo);
-                  return Math.min(min, value);
-              }, first);
+              else {
+                  var paramTypes = params.map(Type.of);
+                  var combinedType = Type.or.apply(Type, __spreadArray([], __read(paramTypes), false));
+                  var hasNonNumber = combinedType.intersectsNonNumber();
+                  var hasNan = combinedType.intersects(Type.nan);
+                  var numberTypes = paramTypes.map(function (t) { return t.and(Type.number); });
+                  // If an argument is nan (and nan only) or a non number
+                  if (numberTypes.some(function (t) { return t.is(Type.nan) || t.is(Type.never); })) {
+                      return NaN;
+                  }
+                  var smallestMax = numberTypes.reduce(function (result, t) {
+                      var max = t.intersects(Type.positiveInfinity)
+                          ? 2
+                          : t.intersects(Type.positiveFloat)
+                              ? 1
+                              : t.intersects(Type.zero)
+                                  ? 0
+                                  : t.intersects(Type.negativeFloat)
+                                      ? -1
+                                      : -2;
+                      return Math.min(result, max);
+                  }, 2);
+                  var exclude = Type.or(smallestMax < 2 ? Type.positiveInfinity : Type.never, smallestMax < 1 ? Type.positiveFloat : Type.never, smallestMax < 0 ? Type.zero : Type.never, smallestMax < -1 ? Type.negativeFloat : Type.never);
+                  var result = Type.or.apply(Type, __spreadArray([], __read(numberTypes), false)).exclude(exclude);
+                  return (hasNonNumber || hasNan ? result.or(Type.nan) : result).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "min", debugInfo); },
       },
       max: {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a), first = _b[0], rest = _b.slice(1);
-              number.assert(first, debugInfo);
-              if (rest.length === 0) {
-                  return first;
+          evaluate: function (params) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params), first = _a[0], rest = _a.slice(1);
+                  if (!number.is(first)) {
+                      return NaN;
+                  }
+                  if (rest.length === 0) {
+                      return first;
+                  }
+                  return rest.reduce(function (min, value) {
+                      if (!number.is(value)) {
+                          return NaN;
+                      }
+                      return Math.max(min, value);
+                  }, first);
               }
-              return rest.reduce(function (min, value) {
-                  number.assert(value, debugInfo);
-                  return Math.max(min, value);
-              }, first);
+              else {
+                  var paramTypes = params.map(Type.of);
+                  var combinedType = Type.or.apply(Type, __spreadArray([], __read(paramTypes), false));
+                  var hasNonNumber = combinedType.intersectsNonNumber();
+                  var hasNan = combinedType.intersects(Type.nan);
+                  var numberTypes = paramTypes.map(function (t) { return t.and(Type.number); });
+                  // If an argument is nan (and nan only) or a non number
+                  if (numberTypes.some(function (t) { return t.is(Type.nan) || t.is(Type.never); })) {
+                      return NaN;
+                  }
+                  var largestMin = numberTypes.reduce(function (result, t) {
+                      var min = t.intersects(Type.negativeInfinity)
+                          ? -2
+                          : t.intersects(Type.negativeFloat)
+                              ? -1
+                              : t.intersects(Type.zero)
+                                  ? 0
+                                  : t.intersects(Type.positiveFloat)
+                                      ? 1
+                                      : 2;
+                      return Math.max(result, min);
+                  }, -2);
+                  var exclude = Type.or(largestMin > -2 ? Type.negativeInfinity : Type.never, largestMin > -1 ? Type.negativeFloat : Type.never, largestMin > 0 ? Type.zero : Type.never, largestMin > 1 ? Type.positiveFloat : Type.never);
+                  var result = Type.or.apply(Type, __spreadArray([], __read(numberTypes), false)).exclude(exclude);
+                  return (hasNonNumber || hasNan ? result.or(Type.nan) : result).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "max", debugInfo); },
       },
       abs: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.abs(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.abs(value);
+              }
+              else {
+                  var paramType = Type.of(value);
+                  var types = [];
+                  if (paramType.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  var numberType = paramType.and(Type.number);
+                  var absType = numberType.or(numberType.negateNumber()).exclude(Type.negativeFloat.or(Type.negativeInfinity));
+                  types.push(absType);
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "abs", debugInfo); },
       },
       sign: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.sign(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.sign(value);
+              }
+              else {
+                  var paramType = Type.of(value);
+                  var types = [];
+                  if (paramType.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (paramType.intersects(Type.negativeNumber)) {
+                      types.push(Type.negativeInteger);
+                  }
+                  if (paramType.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (paramType.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (paramType.intersects(Type.positiveNumber)) {
+                      types.push(Type.positiveInteger);
+                  }
+                  var resultType = Type.or.apply(Type, __spreadArray([], __read(types), false));
+                  if (resultType.equals(Type.positiveInteger)) {
+                      return 1;
+                  }
+                  if (resultType.equals(Type.negativeInteger)) {
+                      return -1;
+                  }
+                  return resultType.toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
-      },
-      'max-safe-integer': {
-          evaluate: function () {
-              return Number.MAX_SAFE_INTEGER;
-          },
-          validate: function (node) { return assertNumberOfParams(0, node); },
-      },
-      'min-safe-integer': {
-          evaluate: function () {
-              return Number.MIN_SAFE_INTEGER;
-          },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "sign", debugInfo); },
       },
       'max-value': {
           evaluate: function () {
-              return Number.MAX_VALUE;
+              return MAX_NUMBER;
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "max-value", debugInfo); },
       },
       'min-value': {
           evaluate: function () {
-              return Number.MIN_VALUE;
+              return MIN_NUMBER;
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "min-value", debugInfo); },
       },
-      epsilon: {
+      infinity: {
           evaluate: function () {
-              return Number.EPSILON;
+              return Infinity;
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
-      },
-      'positive-infinity': {
-          evaluate: function () {
-              return Number.POSITIVE_INFINITY;
-          },
-          validate: function (node) { return assertNumberOfParams(0, node); },
-      },
-      'negative-infinity': {
-          evaluate: function () {
-              return Number.NEGATIVE_INFINITY;
-          },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "positive-infinity", debugInfo); },
       },
       nan: {
           evaluate: function () {
-              return Number.NaN;
+              return NaN;
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "nan", debugInfo); },
       },
       e: {
           evaluate: function () {
               return Math.E;
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "e", debugInfo); },
       },
       pi: {
           evaluate: function () {
               return Math.PI;
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "pi", debugInfo); },
       },
       exp: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.exp(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.exp(value);
+              }
+              else {
+                  var paramType = Type.of(value);
+                  if (paramType.is(Type.zero)) {
+                      return 1;
+                  }
+                  var types = [];
+                  if (paramType.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (paramType.intersects(Type.negativeInfinity)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (paramType.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (paramType.intersects(Type.negativeFloat)) {
+                      types.push(Type.nonNegativeFloat);
+                  }
+                  if (paramType.intersects(Type.zero)) {
+                      types.push(Type.positiveInteger);
+                  }
+                  if (paramType.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveNumber);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "exp", debugInfo); },
       },
       log: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.log(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.log(value);
+              }
+              else {
+                  return evaluateLogType(Type.of(value));
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "log", debugInfo); },
       },
       log2: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.log2(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.log2(value);
+              }
+              else {
+                  return evaluateLogType(Type.of(value));
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "log2", debugInfo); },
       },
       log10: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.log10(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.log10(value);
+              }
+              else {
+                  return evaluateLogType(Type.of(value));
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "log10", debugInfo); },
       },
       sin: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.sin(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.sin(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.nonZeroFloat)) {
+                      types.push(Type.nonZeroFloat); // Math.PI only close to real pi, hence never 0
+                  }
+                  if (type.intersects(Type.infinity)) {
+                      types.push(Type.nan);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "sin", debugInfo); },
       },
       asin: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.asin(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.asin(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.nonZeroNumber)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.negativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "asin", debugInfo); },
       },
       sinh: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.sinh(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.sinh(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.positiveNumber)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  if (type.intersects(Type.negativeNumber)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.negativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "sinh", debugInfo); },
       },
       asinh: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.asinh(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.asinh(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (type.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInfinity);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.negativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "asinh", debugInfo); },
       },
       cos: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.cos(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.cos(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  if (type.is(Type.zero)) {
+                      return 1;
+                  }
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.float)) {
+                      types.push(Type.nonZeroFloat); // Math.PI only close to real pi, hence never 0
+                  }
+                  if (type.intersects(Type.infinity)) {
+                      types.push(Type.nan);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "cos", debugInfo); },
       },
       acos: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.acos(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.acos(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.zero)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  if (type.intersects(Type.nonZeroNumber)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.nonNegativeFloat);
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "acos", debugInfo); },
       },
       cosh: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.cosh(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.cosh(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  if (type.is(Type.zero)) {
+                      return 1;
+                  }
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.zero)) {
+                      types.push(Type.positiveInteger);
+                  }
+                  if (type.intersects(Type.nonZeroNumber)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (type.intersects(Type.nonZeroFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "cosh", debugInfo); },
       },
       acosh: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.acosh(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.acosh(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInfinity);
+                  }
+                  if (type.intersects(Type.negativeInfinity)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.zero)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.nonNegativeFloat);
+                      if (!type.isInteger()) {
+                          types.push(Type.nan);
+                      }
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.nan);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "acosh", debugInfo); },
       },
       tan: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.tan(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.tan(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.nonZeroFloat)) {
+                      types.push(Type.nonZeroFloat); // Math.PI only close to real pi, hence never 0
+                  }
+                  if (type.intersects(Type.infinity)) {
+                      types.push(Type.nan);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "tan", debugInfo); },
       },
       atan: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.atan(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.atan(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  if (type.equals(Type.positiveInfinity)) {
+                      return Math.PI / 2;
+                  }
+                  if (type.equals(Type.negativeInfinity)) {
+                      return -Math.PI / 2;
+                  }
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.positiveNumber)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  if (type.intersects(Type.negativeNumber)) {
+                      types.push(Type.negativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "atan", debugInfo); },
       },
       tanh: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.tanh(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.tanh(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  if (type.equals(Type.positiveInfinity)) {
+                      return 1;
+                  }
+                  if (type.equals(Type.negativeInfinity)) {
+                      return -1;
+                  }
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.positiveInfinity)) {
+                      types.push(Type.positiveInteger);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.positiveFloat);
+                  }
+                  if (type.intersects(Type.negativeInfinity)) {
+                      types.push(Type.negativeInteger);
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.negativeFloat);
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "tanh", debugInfo); },
       },
       atanh: {
-          evaluate: function (_a, debugInfo) {
+          evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return Math.atanh(value);
+              if (Type.isNotType(value)) {
+                  if (!number.is(value)) {
+                      return NaN;
+                  }
+                  return Math.atanh(value);
+              }
+              else {
+                  var type = Type.of(value);
+                  var types = [];
+                  if (type.intersectsNonNumber()) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveInfinity)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.negativeInfinity)) {
+                      types.push(Type.nan);
+                  }
+                  if (type.intersects(Type.positiveZero)) {
+                      types.push(Type.positiveZero);
+                  }
+                  if (type.intersects(Type.negativeZero)) {
+                      types.push(Type.negativeZero);
+                  }
+                  if (type.intersects(Type.positiveFloat)) {
+                      types.push(Type.nan);
+                      types.push(Type.positiveInfinity);
+                      if (!type.isInteger()) {
+                          types.push(Type.positiveFloat);
+                      }
+                  }
+                  if (type.intersects(Type.negativeFloat)) {
+                      types.push(Type.nan);
+                      types.push(Type.negativeInfinity);
+                      if (!type.isInteger()) {
+                          types.push(Type.negativeFloat);
+                      }
+                  }
+                  return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+              }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "atanh", debugInfo); },
       },
   };
+  function getTypeOfSum(paramTypes, debugInfo) {
+      paramTypes.sort(function (a, b) { return (Type.isType(a) ? 1 : Type.isType(b) ? -1 : 0); });
+      var first = paramTypes[0];
+      any.assert(first);
+      if (paramTypes.length === 1) {
+          Type.assertType(first, debugInfo);
+          return first.toNumberValue();
+      }
+      var rest = paramTypes.slice(1);
+      var sum = rest.reduce(function (a, b) { return getTypeOfBinarySum(a, b); }, first);
+      if (Type.isType(sum)) {
+          return sum.toNumberValue();
+      }
+      number.assert(sum, debugInfo);
+      return sum;
+  }
+  function getTypeOfBinarySum(a, b) {
+      any.assert(a);
+      any.assert(b);
+      var aVal = Type.toValue(a);
+      var bVal = Type.toValue(b);
+      if (number.is(aVal) && number.is(bVal)) {
+          return aVal + bVal;
+      }
+      var aType = Type.of(a);
+      var bType = Type.of(b);
+      if (aType.is(Type.zero) && number.is(bVal) && bVal !== 0) {
+          return bVal;
+      }
+      if (number.is(aVal) && aVal !== 0 && bType.is(Type.zero)) {
+          return aVal;
+      }
+      var types = [];
+      if (aType.or(bType).intersectsNonNumber()) {
+          types.push(Type.nan);
+      }
+      if (aType.intersects(Type.positiveInfinity)) {
+          if (bType.intersects(Type.positiveInfinity)) {
+              types.push(Type.positiveInfinity);
+          }
+          if (bType.intersects(Type.negativeInfinity)) {
+              types.push(Type.nan);
+          }
+          if (bType.intersects(Type.float)) {
+              types.push(Type.positiveInfinity);
+          }
+      }
+      if (aType.intersects(Type.negativeInfinity)) {
+          if (bType.intersects(Type.positiveInfinity)) {
+              types.push(Type.nan);
+          }
+          if (bType.intersects(Type.negativeInfinity)) {
+              types.push(Type.negativeInfinity);
+          }
+          if (bType.intersects(Type.float)) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      if (bType.intersects(Type.positiveInfinity)) {
+          if (aType.intersects(Type.float)) {
+              types.push(Type.positiveInfinity);
+          }
+      }
+      if (bType.intersects(Type.negativeInfinity)) {
+          if (aType.intersects(Type.float)) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      var baseType = aType.isInteger() && bType.isInteger() ? Type.integer : Type.float;
+      if (aType.intersects(Type.positiveFloat)) {
+          if (bType.intersects(Type.zero)) {
+              types.push(Type.positiveFloat.and(baseType));
+          }
+          if (bType.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveFloat.and(baseType));
+              types.push(Type.positiveInfinity);
+          }
+          if (bType.intersects(Type.negativeFloat)) {
+              types.push(Type.float.and(baseType));
+          }
+      }
+      if (aType.intersects(Type.negativeFloat)) {
+          if (bType.intersects(Type.zero)) {
+              types.push(Type.negativeFloat.and(baseType));
+          }
+          if (bType.intersects(Type.positiveFloat)) {
+              types.push(Type.float.and(baseType));
+          }
+          if (bType.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeFloat.and(baseType));
+              types.push(Type.negativeInfinity);
+          }
+      }
+      if (aType.intersects(Type.zero)) {
+          if (bType.intersects(Type.zero)) {
+              if (aType.intersects(Type.positiveZero) && bType.intersects(Type.positiveZero)) {
+                  types.push(Type.positiveZero);
+              }
+              if (aType.intersects(Type.positiveZero) && bType.intersects(Type.negativeZero)) {
+                  types.push(Type.positiveZero);
+              }
+              if (aType.intersects(Type.negativeZero) && bType.intersects(Type.positiveZero)) {
+                  types.push(Type.positiveZero);
+              }
+              if (aType.intersects(Type.negativeZero) && bType.intersects(Type.negativeZero)) {
+                  types.push(Type.negativeZero);
+              }
+          }
+          if (bType.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveFloat.and(baseType));
+          }
+          if (bType.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeFloat.and(baseType));
+          }
+      }
+      return Type.or.apply(Type, __spreadArray([], __read(types), false));
+  }
+  function getTypeOfProduct(paramTypes) {
+      var first = asValue(paramTypes[0]);
+      if (paramTypes.length === 1) {
+          return first.toNumberValue();
+      }
+      return paramTypes
+          .slice(1)
+          .reduce(function (a, b) { return getTypeOfBinaryProduct(a, b); }, first)
+          .toNumberValue();
+  }
+  function getTypeOfBinaryProduct(a, b) {
+      var types = [];
+      if (a.or(b).intersectsNonNumber()) {
+          types.push(Type.nan);
+      }
+      if (a.intersects(Type.infinity) && b.intersects(Type.zero)) {
+          types.push(Type.nan);
+      }
+      if (b.intersects(Type.infinity) && a.intersects(Type.zero)) {
+          types.push(Type.nan);
+      }
+      if (a.intersects(Type.positiveInfinity)) {
+          if (b.intersects(Type.positiveInfinity) || b.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+          if (b.intersects(Type.negativeInfinity) || b.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      if (a.intersects(Type.negativeInfinity)) {
+          if (b.intersects(Type.negativeInfinity) || b.intersects(Type.negativeFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+          if (b.intersects(Type.positiveInfinity) || b.intersects(Type.positiveFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      if (b.intersects(Type.positiveInfinity)) {
+          if (a.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+          if (a.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      if (b.intersects(Type.negativeInfinity)) {
+          if (a.intersects(Type.positiveFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+          if (a.intersects(Type.negativeFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+      }
+      if (a.intersects(Type.positiveZero)) {
+          if (b.intersects(Type.positiveZero) || b.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveZero);
+          }
+          if (b.intersects(Type.negativeZero) || b.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeZero);
+          }
+      }
+      if (a.intersects(Type.negativeZero)) {
+          if (b.intersects(Type.positiveZero) || b.intersects(Type.positiveFloat)) {
+              types.push(Type.negativeZero);
+          }
+          if (b.intersects(Type.negativeZero) || b.intersects(Type.negativeFloat)) {
+              types.push(Type.positiveZero);
+          }
+      }
+      if (b.intersects(Type.positiveZero)) {
+          if (a.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveZero);
+          }
+          if (a.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeZero);
+          }
+      }
+      if (b.intersects(Type.negativeZero)) {
+          if (a.intersects(Type.positiveFloat)) {
+              types.push(Type.negativeZero);
+          }
+          if (a.intersects(Type.negativeFloat)) {
+              types.push(Type.positiveZero);
+          }
+      }
+      var baseType = a.isInteger() && b.isInteger() ? Type.integer : Type.float;
+      var aNeg = a.intersects(Type.negativeFloat);
+      var aPos = a.intersects(Type.positiveFloat);
+      var bNeg = b.intersects(Type.negativeFloat);
+      var bPos = b.intersects(Type.positiveFloat);
+      if ((aNeg && bNeg) || (aPos && bPos)) {
+          types.push(Type.positiveFloat.and(baseType));
+          types.push(Type.positiveInfinity);
+      }
+      if ((aNeg && bPos) || (aPos && bNeg)) {
+          types.push(Type.negativeFloat.and(baseType));
+          types.push(Type.negativeInfinity);
+      }
+      return Type.or.apply(Type, __spreadArray([], __read(types), false));
+  }
+  function getTypeOfDivision(paramTypes) {
+      if (paramTypes.length === 1) {
+          paramTypes.unshift(Type.positiveInteger);
+      }
+      var first = asValue(paramTypes[0]);
+      var nanType = first.exclude(Type.nan).intersectsNonNumber() ? Type.nan : Type.never;
+      return paramTypes
+          .slice(1)
+          .reduce(function (a, b) { return getTypeOfBinaryDivision(a, b); }, first)
+          .or(nanType);
+  }
+  function getTypeOfBinaryDivision(a, b) {
+      var types = [];
+      if (a.intersectsNonNumber() || b.intersectsNonNumber()) {
+          types.push(Type.nan);
+      }
+      if (a.intersects(Type.zero) && b.intersects(Type.zero)) {
+          types.push(Type.nan);
+      }
+      if (a.intersects(Type.positiveZero)) {
+          if (b.intersects(Type.positiveNumber)) {
+              types.push(Type.positiveZero);
+          }
+          if (b.intersects(Type.negativeNumber)) {
+              types.push(Type.negativeZero);
+          }
+      }
+      if (a.intersects(Type.negativeZero)) {
+          if (b.intersects(Type.positiveNumber)) {
+              types.push(Type.negativeZero);
+          }
+          if (b.intersects(Type.negativeNumber)) {
+              types.push(Type.positiveZero);
+          }
+      }
+      if (b.intersects(Type.positiveZero)) {
+          if (a.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+          if (a.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      if (b.intersects(Type.negativeZero)) {
+          if (a.intersects(Type.positiveFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+          if (a.intersects(Type.negativeFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+      }
+      if (a.intersects(Type.positiveInfinity)) {
+          if (b.intersects(Type.positiveZero) || b.intersects(Type.positiveFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+          if (b.intersects(Type.negativeZero) || b.intersects(Type.negativeFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      if (a.intersects(Type.negativeInfinity)) {
+          if (b.intersects(Type.positiveZero) || b.intersects(Type.positiveFloat)) {
+              types.push(Type.negativeInfinity);
+          }
+          if (b.intersects(Type.negativeZero) || b.intersects(Type.negativeFloat)) {
+              types.push(Type.positiveInfinity);
+          }
+      }
+      if (b.intersects(Type.positiveInfinity)) {
+          if (a.intersects(Type.positiveNumber) || a.intersects(Type.positiveZero)) {
+              types.push(Type.positiveZero);
+          }
+          if (a.intersects(Type.negativeNumber) || a.intersects(Type.positiveZero)) {
+              types.push(Type.negativeZero);
+          }
+      }
+      if (b.intersects(Type.negativeInfinity)) {
+          if (a.intersects(Type.positiveNumber) || a.intersects(Type.positiveZero)) {
+              types.push(Type.negativeZero);
+          }
+          if (a.intersects(Type.negativeNumber) || a.intersects(Type.positiveZero)) {
+              types.push(Type.positiveZero);
+          }
+      }
+      var aNeg = a.intersects(Type.negativeFloat);
+      var aPos = a.intersects(Type.positiveFloat);
+      var bNeg = b.intersects(Type.negativeFloat);
+      var bPos = b.intersects(Type.positiveFloat);
+      if ((aNeg && bNeg) || (aPos && bPos)) {
+          types.push(Type.positiveFloat);
+          if (!b.isInteger()) {
+              types.push(Type.positiveInfinity);
+          }
+      }
+      if ((aNeg && bPos) || (aPos && bNeg)) {
+          types.push(Type.negativeFloat);
+          if (!b.isInteger()) {
+              types.push(Type.negativeInfinity);
+          }
+      }
+      return Type.or.apply(Type, __spreadArray([], __read(types), false));
+  }
+  function negate(value) {
+      return Type.isType(value) ? value.negateNumber().toNumberValue() : number.is(value) ? -value : NaN;
+  }
+  function evaluateLogType(paramType) {
+      var types = [];
+      if (paramType.intersectsNonNumber()) {
+          types.push(Type.nan);
+      }
+      if (paramType.intersects(Type.negativeNumber)) {
+          types.push(Type.nan);
+      }
+      if (paramType.intersects(Type.zero)) {
+          types.push(Type.negativeInfinity);
+      }
+      if (paramType.intersects(Type.positiveFloat)) {
+          types.push(Type.float);
+      }
+      if (paramType.intersects(Type.positiveInfinity)) {
+          types.push(Type.positiveInfinity);
+      }
+      return Type.or.apply(Type, __spreadArray([], __read(types), false)).toNumberValue();
+  }
 
   var version = "1.0.0";
 
@@ -4295,7 +6895,7 @@ var Lits = (function (exports) {
               }
               return true;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "not=", debugInfo); },
       },
       '=': {
           evaluate: function (_a) {
@@ -4318,14 +6918,14 @@ var Lits = (function (exports) {
               }
               return true;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "=", debugInfo); },
       },
       'equal?': {
           evaluate: function (_a, debugInfo) {
               var _b = __read(_a, 2), a = _b[0], b = _b[1];
               return deepEqual(any.as(a, debugInfo), any.as(b, debugInfo), debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "equal?", debugInfo); },
       },
       '>': {
           evaluate: function (_a) {
@@ -4350,7 +6950,7 @@ var Lits = (function (exports) {
               }
               return true;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, ">", debugInfo); },
       },
       '<': {
           evaluate: function (_a) {
@@ -4375,7 +6975,7 @@ var Lits = (function (exports) {
               }
               return true;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "<", debugInfo); },
       },
       '>=': {
           evaluate: function (_a) {
@@ -4400,7 +7000,7 @@ var Lits = (function (exports) {
               }
               return true;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, ">=", debugInfo); },
       },
       '<=': {
           evaluate: function (_a) {
@@ -4425,20 +7025,20 @@ var Lits = (function (exports) {
               }
               return true;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "<=", debugInfo); },
       },
       not: {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return !first;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "not", debugInfo); },
       },
       'inst-ms!': {
           evaluate: function () {
               return Date.now();
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "inst-ms!", debugInfo); },
       },
       'inst-ms->iso-date-time': {
           evaluate: function (_a, debugInfo) {
@@ -4446,7 +7046,7 @@ var Lits = (function (exports) {
               number.assert(ms, debugInfo);
               return new Date(ms).toISOString();
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "inst-ms->iso-date-time", debugInfo); },
       },
       'iso-date-time->inst-ms': {
           evaluate: function (_a, debugInfo) {
@@ -4456,7 +7056,7 @@ var Lits = (function (exports) {
               number.assert(ms, debugInfo, { finite: true });
               return ms;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "iso-date-time->inst-ms", debugInfo); },
       },
       'write!': {
           evaluate: function (params, debugInfo) {
@@ -4467,6 +7067,7 @@ var Lits = (function (exports) {
               }
               return null;
           },
+          validateArity: function () { return undefined; },
       },
       'debug!': {
           evaluate: function (params, debugInfo, contextStack) {
@@ -4479,21 +7080,21 @@ var Lits = (function (exports) {
               console.warn("*** LITS DEBUG ***\n".concat(JSON.stringify(params[0], null, 2), "\n"));
               return any.as(params[0], debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams({ max: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ max: 1 }, arity, "debug!", debugInfo); },
       },
       boolean: {
           evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
               return !!value;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "boolean", debugInfo); },
       },
       compare: {
           evaluate: function (_a) {
               var _b = __read(_a, 2), a = _b[0], b = _b[1];
               return compare(a, b);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "compare", debugInfo); },
       },
       'uuid!': {
           evaluate: function () {
@@ -4503,13 +7104,13 @@ var Lits = (function (exports) {
                   return newValue.toString(16);
               });
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "uuid!", debugInfo); },
       },
       'lits-version!': {
           evaluate: function () {
               return version;
           },
-          validate: function (node) { return assertNumberOfParams(0, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(0, arity, "lits-version!", debugInfo); },
       },
   };
   function contextStackToString(contextStack) {
@@ -4545,227 +7146,355 @@ var Lits = (function (exports) {
   var assertNormalExpression = {
       assert: {
           evaluate: function (params, debugInfo) {
-              var value = params[0];
-              var message = params.length === 2 ? params[1] : "".concat(value);
-              string.assert(message, debugInfo);
-              if (!value) {
-                  throw new AssertionError(message, debugInfo);
+              if (params.every(Type.isNotType)) {
+                  var value = params[0];
+                  var message = params.length === 2 ? params[1] : "".concat(value);
+                  string.assert(message, debugInfo);
+                  if (!value) {
+                      throw new AssertionError(message, debugInfo);
+                  }
+                  return any.as(value, debugInfo);
               }
-              return any.as(value, debugInfo);
+              else {
+                  var valueType = Type.of(params[0]);
+                  valueType.assertIs(Type.truthy, debugInfo);
+                  return valueType;
+              }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert", debugInfo); },
       },
       'assert=': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (first !== second) {
-                  throw new AssertionError("Expected ".concat(first, " to be ").concat(second, ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert-not=': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (first === second) {
-                  throw new AssertionError("Expected ".concat(first, " not to be ").concat(second, ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert-equal': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (!deepEqual(any.as(first, debugInfo), any.as(second, debugInfo), debugInfo)) {
-                  throw new AssertionError("Expected\n".concat(JSON.stringify(first, null, 2), "\nto deep equal\n").concat(JSON.stringify(second, null, 2), ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert-not-equal': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (deepEqual(any.as(first, debugInfo), any.as(second, debugInfo), debugInfo)) {
-                  throw new AssertionError("Expected ".concat(JSON.stringify(first), " not to deep equal ").concat(JSON.stringify(second), ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert>': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (compare(first, second) <= 0) {
-                  throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert>=': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (compare(first, second) < 0) {
-                  throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert<': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (compare(first, second) >= 0) {
-                  throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert<=': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (compare(first, second) > 0) {
-                  throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
-      },
-      'assert-true': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), first = _b[0], message = _b[1];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (first !== true) {
-                  throw new AssertionError("Expected ".concat(first, " to be true.").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      },
-      'assert-false': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), first = _b[0], message = _b[1];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (first !== false) {
-                  throw new AssertionError("Expected ".concat(first, " to be false.").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      },
-      'assert-truthy': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), first = _b[0], message = _b[1];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (!first) {
-                  throw new AssertionError("Expected ".concat(first, " to be truthy.").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      },
-      'assert-falsy': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), first = _b[0], message = _b[1];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (first) {
-                  throw new AssertionError("Expected ".concat(first, " to be falsy.").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      },
-      'assert-nil': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 2), first = _b[0], message = _b[1];
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              if (first !== null) {
-                  throw new AssertionError("Expected ".concat(first, " to be nil.").concat(message), debugInfo);
-              }
-              return null;
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      },
-      'assert-throws': {
-          evaluate: function (_a, debugInfo, contextStack, _b) {
-              var _c = __read(_a, 2), func = _c[0], message = _c[1];
-              var executeFunction = _b.executeFunction;
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              litsFunction.assert(func, debugInfo);
-              try {
-                  executeFunction(func, [], contextStack, debugInfo);
-              }
-              catch (_d) {
-                  return null;
-              }
-              throw new AssertionError("Expected function to throw.".concat(message), debugInfo);
-          },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      },
-      'assert-throws-error': {
-          evaluate: function (_a, debugInfo, contextStack, _b) {
-              var _c = __read(_a, 3), func = _c[0], throwMessage = _c[1], message = _c[2];
-              var executeFunction = _b.executeFunction;
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              string.assert(throwMessage, debugInfo);
-              litsFunction.assert(func, debugInfo);
-              try {
-                  executeFunction(func, [], contextStack, debugInfo);
-              }
-              catch (error) {
-                  var errorMessage = error.shortMessage;
-                  if (errorMessage !== throwMessage) {
-                      throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\", but thrown \"").concat(errorMessage, "\".").concat(message), debugInfo);
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (first !== second) {
+                      throw new AssertionError("Expected ".concat(first, " to be ").concat(second, ".").concat(message), debugInfo);
                   }
                   return null;
               }
-              throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\".").concat(message), debugInfo);
+              else {
+                  var aType = Type.of(params[0]);
+                  var bType = Type.of(params[1]);
+                  aType.assertIntersects(bType, debugInfo);
+                  return Type.nil;
+              }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert=", debugInfo); },
+      },
+      'assert-not=': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (first === second) {
+                      throw new AssertionError("Expected ".concat(first, " not to be ").concat(second, ".").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert-not=", debugInfo); },
+      },
+      'assert-equal': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (!deepEqual(any.as(first, debugInfo), any.as(second, debugInfo), debugInfo)) {
+                      throw new AssertionError("Expected\n".concat(JSON.stringify(first, null, 2), "\nto deep equal\n").concat(JSON.stringify(second, null, 2), ".").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  var aType = Type.of(params[0]);
+                  var bType = Type.of(params[1]);
+                  aType.assertIntersects(bType, debugInfo);
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert-equal", debugInfo); },
+      },
+      'assert-not-equal': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (deepEqual(any.as(first, debugInfo), any.as(second, debugInfo), debugInfo)) {
+                      throw new AssertionError("Expected ".concat(JSON.stringify(first), " not to deep equal ").concat(JSON.stringify(second), ".").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert-not-equal", debugInfo); },
+      },
+      'assert>': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (compare(first, second) <= 0) {
+                      throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert>", debugInfo); },
+      },
+      'assert>=': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (compare(first, second) < 0) {
+                      throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert>=", debugInfo); },
+      },
+      'assert<': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (compare(first, second) >= 0) {
+                      throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert<", debugInfo); },
+      },
+      'assert<=': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var _a = __read(params, 2), first = _a[0], second = _a[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (compare(first, second) > 0) {
+                      throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert<=", debugInfo); },
+      },
+      'assert-true': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var first = params[0];
+                  var message = params[0];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (first !== true) {
+                      throw new AssertionError("Expected ".concat(first, " to be true.").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  var type = Type.of(params[0]);
+                  type.assertIntersects(Type.false, debugInfo);
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert-true", debugInfo); },
+      },
+      'assert-false': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var first = params[0];
+                  var message = params[0];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (first !== false) {
+                      throw new AssertionError("Expected ".concat(first, " to be false.").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  var type = Type.of(params[0]);
+                  type.assertIntersects(Type.false, debugInfo);
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert-false", debugInfo); },
+      },
+      'assert-truthy': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var first = params[0];
+                  var message = params[0];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (!first) {
+                      throw new AssertionError("Expected ".concat(first, " to be truthy.").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  var type = Type.of(params[0]);
+                  type.assertIntersects(Type.truthy, debugInfo);
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert-truthy", debugInfo); },
+      },
+      'assert-falsy': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var first = params[0];
+                  var message = params[0];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (first) {
+                      throw new AssertionError("Expected ".concat(first, " to be falsy.").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  var type = Type.of(params[0]);
+                  type.assertIntersects(Type.falsy, debugInfo);
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert-falsy", debugInfo); },
+      },
+      'assert-nil': {
+          evaluate: function (params, debugInfo) {
+              if (params.every(Type.isNotType)) {
+                  var first = params[0];
+                  var message = params[0];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  if (first !== null) {
+                      throw new AssertionError("Expected ".concat(first, " to be nil.").concat(message), debugInfo);
+                  }
+                  return null;
+              }
+              else {
+                  var type = Type.of(params[0]);
+                  type.assertIntersects(Type.nil, debugInfo);
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert-nil", debugInfo); },
+      },
+      'assert-throws': {
+          evaluate: function (params, debugInfo, contextStack, _a) {
+              var executeFunction = _a.executeFunction;
+              if (params.every(Type.isNotType)) {
+                  var func = params[0];
+                  var message = params[1];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  litsFunction.assert(func, debugInfo);
+                  try {
+                      executeFunction(func, [], contextStack, debugInfo);
+                  }
+                  catch (_b) {
+                      return null;
+                  }
+                  throw new AssertionError("Expected function to throw.".concat(message), debugInfo);
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert-throws", debugInfo); },
+      },
+      'assert-throws-error': {
+          evaluate: function (params, debugInfo, contextStack, _a) {
+              var executeFunction = _a.executeFunction;
+              if (params.every(Type.isNotType)) {
+                  var _b = __read(params, 2), func = _b[0], throwMessage = _b[1];
+                  var message = params[2];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  string.assert(throwMessage, debugInfo);
+                  litsFunction.assert(func, debugInfo);
+                  try {
+                      executeFunction(func, [], contextStack, debugInfo);
+                  }
+                  catch (error) {
+                      var errorMessage = error.shortMessage;
+                      if (errorMessage !== throwMessage) {
+                          throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\", but thrown \"").concat(errorMessage, "\".").concat(message), debugInfo);
+                      }
+                      return null;
+                  }
+                  throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\".").concat(message), debugInfo);
+              }
+              else {
+                  return Type.nil;
+              }
+          },
+          validateArity: function (arity, debugInfo) {
+              return assertNumberOfParams({ min: 2, max: 3 }, arity, "assert-throws-error", debugInfo);
+          },
       },
       'assert-not-throws': {
-          evaluate: function (_a, debugInfo, contextStack, _b) {
-              var _c = __read(_a, 2), func = _c[0], message = _c[1];
-              var executeFunction = _b.executeFunction;
-              message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
-              litsFunction.assert(func, debugInfo);
-              try {
-                  executeFunction(func, [], contextStack, debugInfo);
+          evaluate: function (params, debugInfo, contextStack, _a) {
+              var executeFunction = _a.executeFunction;
+              if (params.every(Type.isNotType)) {
+                  var func = params[0];
+                  var message = params[0];
+                  message = typeof message === "string" && message ? " \"".concat(message, "\"") : "";
+                  litsFunction.assert(func, debugInfo);
+                  try {
+                      executeFunction(func, [], contextStack, debugInfo);
+                  }
+                  catch (_b) {
+                      throw new AssertionError("Expected function not to throw.".concat(message), debugInfo);
+                  }
+                  return null;
               }
-              catch (_d) {
-                  throw new AssertionError("Expected function not to throw.".concat(message), debugInfo);
+              else {
+                  return Type.nil;
               }
-              return null;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+          validateArity: function (arity, debugInfo) {
+              return assertNumberOfParams({ min: 1, max: 2 }, arity, "assert-not-throws", debugInfo);
+          },
       },
   };
 
   var objectNormalExpression = {
       object: {
           evaluate: function (params, debugInfo) {
-              var result = {};
-              for (var i = 0; i < params.length; i += 2) {
-                  var key = params[i];
-                  var value = params[i + 1];
-                  string.assert(key, debugInfo);
-                  result[key] = value;
+              if (params.every(Type.isNotType)) {
+                  var result = {};
+                  for (var i = 0; i < params.length; i += 2) {
+                      var key = params[i];
+                      var value = params[i + 1];
+                      string.assert(key, debugInfo);
+                      result[key] = value;
+                  }
+                  return result;
               }
-              return result;
+              else {
+                  return params.length > 0 ? Type.nonEmptyObject : Type.emptyObject;
+              }
           },
-          validate: function (node) { return assertEventNumberOfParams(node); },
+          validateArity: function (arity, debugInfo) { return assertEvenNumberOfParams(arity, "object", debugInfo); },
       },
       keys: {
           evaluate: function (_a, debugInfo) {
@@ -4773,7 +7502,7 @@ var Lits = (function (exports) {
               object.assert(first, debugInfo);
               return Object.keys(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "keys", debugInfo); },
       },
       vals: {
           evaluate: function (_a, debugInfo) {
@@ -4781,7 +7510,7 @@ var Lits = (function (exports) {
               object.assert(first, debugInfo);
               return Object.values(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "vals", debugInfo); },
       },
       entries: {
           evaluate: function (_a, debugInfo) {
@@ -4789,7 +7518,7 @@ var Lits = (function (exports) {
               object.assert(first, debugInfo);
               return Object.entries(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "entries", debugInfo); },
       },
       find: {
           evaluate: function (_a, debugInfo) {
@@ -4801,7 +7530,7 @@ var Lits = (function (exports) {
               }
               return null;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "find", debugInfo); },
       },
       dissoc: {
           evaluate: function (_a, debugInfo) {
@@ -4812,7 +7541,7 @@ var Lits = (function (exports) {
               delete newObj[key];
               return newObj;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "dissoc", debugInfo); },
       },
       merge: {
           evaluate: function (params, debugInfo) {
@@ -4826,7 +7555,7 @@ var Lits = (function (exports) {
                   return __assign(__assign({}, result), obj);
               }, __assign({}, first));
           },
-          validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
+          validateArity: function () { return undefined; },
       },
       'merge-with': {
           evaluate: function (params, debugInfo, contextStack, _a) {
@@ -4852,7 +7581,7 @@ var Lits = (function (exports) {
                   return result;
               }, __assign({}, first));
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "merge-with", debugInfo); },
       },
       zipmap: {
           evaluate: function (_a, debugInfo) {
@@ -4867,7 +7596,7 @@ var Lits = (function (exports) {
               }
               return result;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "zipmap", debugInfo); },
       },
       'select-keys': {
           evaluate: function (_a, debugInfo) {
@@ -4881,7 +7610,7 @@ var Lits = (function (exports) {
                   return result;
               }, {});
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "select-keys", debugInfo); },
       },
   };
 
@@ -4891,42 +7620,42 @@ var Lits = (function (exports) {
               var _b = __read(_a, 1), first = _b[0];
               return litsFunction.is(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "function?", debugInfo); },
       },
       'string?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return typeof first === "string";
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "string?", debugInfo); },
       },
       'number?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return typeof first === "number";
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "number?", debugInfo); },
       },
       'integer?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return typeof first === "number" && number.is(first, { integer: true });
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "integer?", debugInfo); },
       },
       'boolean?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return typeof first === "boolean";
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "boolean?", debugInfo); },
       },
       'nil?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return first === null || first === undefined;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "nil?", debugInfo); },
       },
       'zero?': {
           evaluate: function (_a, debugInfo) {
@@ -4934,7 +7663,7 @@ var Lits = (function (exports) {
               number.assert(first, debugInfo, { finite: true });
               return first === 0;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "zero?", debugInfo); },
       },
       'pos?': {
           evaluate: function (_a, debugInfo) {
@@ -4942,7 +7671,7 @@ var Lits = (function (exports) {
               number.assert(first, debugInfo, { finite: true });
               return first > 0;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "pos?", debugInfo); },
       },
       'neg?': {
           evaluate: function (_a, debugInfo) {
@@ -4950,7 +7679,7 @@ var Lits = (function (exports) {
               number.assert(first, debugInfo, { finite: true });
               return first < 0;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "neg?", debugInfo); },
       },
       'even?': {
           evaluate: function (_a, debugInfo) {
@@ -4958,7 +7687,7 @@ var Lits = (function (exports) {
               number.assert(first, debugInfo, { finite: true });
               return first % 2 === 0;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "even?", debugInfo); },
       },
       'odd?': {
           evaluate: function (_a, debugInfo) {
@@ -4966,42 +7695,42 @@ var Lits = (function (exports) {
               number.assert(first, debugInfo, { finite: true });
               return number.is(first, { integer: true }) && first % 2 !== 0;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "odd?", debugInfo); },
       },
       'array?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return array.is(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "array?", debugInfo); },
       },
       'coll?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return collection.is(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "coll?", debugInfo); },
       },
       'seq?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return sequence.is(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "seq?", debugInfo); },
       },
       'object?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), first = _b[0];
               return object.is(first);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "object?", debugInfo); },
       },
       'regexp?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
               return isRegularExpression(value);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "regexp?", debugInfo); },
       },
       'finite?': {
           evaluate: function (_a, debugInfo) {
@@ -5009,7 +7738,7 @@ var Lits = (function (exports) {
               number.assert(value, debugInfo);
               return Number.isFinite(value);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "finite?", debugInfo); },
       },
       'nan?': {
           evaluate: function (_a, debugInfo) {
@@ -5017,37 +7746,21 @@ var Lits = (function (exports) {
               number.assert(value, debugInfo);
               return Number.isNaN(value);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
-      },
-      'positive-infinity?': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return value === Number.POSITIVE_INFINITY;
-          },
-          validate: function (node) { return assertNumberOfParams(1, node); },
-      },
-      'negative-infinity?': {
-          evaluate: function (_a, debugInfo) {
-              var _b = __read(_a, 1), value = _b[0];
-              number.assert(value, debugInfo);
-              return value === Number.NEGATIVE_INFINITY;
-          },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "nan?", debugInfo); },
       },
       'true?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
               return value === true;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "true?", debugInfo); },
       },
       'false?': {
           evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
               return value === false;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "false?", debugInfo); },
       },
       'empty?': {
           evaluate: function (_a, debugInfo) {
@@ -5061,7 +7774,7 @@ var Lits = (function (exports) {
               }
               return Object.keys(coll).length === 0;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "empty?", debugInfo); },
       },
       'not-empty?': {
           evaluate: function (_a, debugInfo) {
@@ -5075,26 +7788,31 @@ var Lits = (function (exports) {
               }
               return Object.keys(coll).length > 0;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "not-empty?", debugInfo); },
       },
   };
 
   var regexpNormalExpression = {
       regexp: {
-          evaluate: function (_a, debugInfo) {
-              var _b;
-              var _c = __read(_a, 2), sourceArg = _c[0], flagsArg = _c[1];
-              string.assert(sourceArg, debugInfo);
-              var source = sourceArg || "(?:)";
-              var flags = string.is(flagsArg) ? flagsArg : "";
-              return _b = {},
-                  _b[REGEXP_SYMBOL] = true,
-                  _b.debugInfo = debugInfo,
-                  _b.source = source,
-                  _b.flags = flags,
-                  _b;
+          evaluate: function (params, debugInfo) {
+              var _a;
+              if (params.every(Type.isNotType)) {
+                  var _b = __read(params, 2), sourceArg = _b[0], flagsArg = _b[1];
+                  string.assert(sourceArg, debugInfo);
+                  var source = sourceArg || "(?:)";
+                  var flags = string.is(flagsArg) ? flagsArg : "";
+                  return _a = {},
+                      _a[REGEXP_SYMBOL] = true,
+                      _a.debugInfo = debugInfo,
+                      _a.source = source,
+                      _a.flags = flags,
+                      _a;
+              }
+              else {
+                  return Type.regexp;
+              }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "regexp", debugInfo); },
       },
       match: {
           evaluate: function (_a, debugInfo) {
@@ -5108,7 +7826,7 @@ var Lits = (function (exports) {
               }
               return null;
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "match", debugInfo); },
       },
       replace: {
           evaluate: function (_a, debugInfo) {
@@ -5119,7 +7837,7 @@ var Lits = (function (exports) {
               var regExp = new RegExp(regexp.source, regexp.flags);
               return str.replace(regExp, value);
           },
-          validate: function (node) { return assertNumberOfParams(3, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(3, arity, "replace", debugInfo); },
       },
   };
 
@@ -5135,7 +7853,7 @@ var Lits = (function (exports) {
               number.assert(third, debugInfo, { gte: second });
               return first.substring(second, third);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "subs", debugInfo); },
       },
       'string-repeat': {
           evaluate: function (_a, debugInfo) {
@@ -5144,7 +7862,7 @@ var Lits = (function (exports) {
               number.assert(count, debugInfo, { integer: true, nonNegative: true });
               return str.repeat(count);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "string-repeat", debugInfo); },
       },
       str: {
           evaluate: function (params) {
@@ -5159,6 +7877,7 @@ var Lits = (function (exports) {
                   return result + paramStr;
               }, "");
           },
+          validateArity: function () { return undefined; },
       },
       number: {
           evaluate: function (_a, debugInfo) {
@@ -5170,7 +7889,7 @@ var Lits = (function (exports) {
               }
               return number;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "number", debugInfo); },
       },
       'number-to-string': {
           evaluate: function (params, debugInfo) {
@@ -5191,7 +7910,7 @@ var Lits = (function (exports) {
                   return Number(num).toString(base);
               }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "number-to-string", debugInfo); },
       },
       'from-char-code': {
           evaluate: function (_a, debugInfo) {
@@ -5205,7 +7924,7 @@ var Lits = (function (exports) {
                   throw new LitsError(error, debugInfo);
               }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "from-char-code", debugInfo); },
       },
       'to-char-code': {
           evaluate: function (_a, debugInfo) {
@@ -5213,7 +7932,7 @@ var Lits = (function (exports) {
               string.assert(str, debugInfo, { nonEmpty: true });
               return asValue(str.codePointAt(0), debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "to-char-code", debugInfo); },
       },
       'lower-case': {
           evaluate: function (_a, debugInfo) {
@@ -5221,7 +7940,7 @@ var Lits = (function (exports) {
               string.assert(str, debugInfo);
               return str.toLowerCase();
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "lower-case", debugInfo); },
       },
       'upper-case': {
           evaluate: function (_a, debugInfo) {
@@ -5229,7 +7948,7 @@ var Lits = (function (exports) {
               string.assert(str, debugInfo);
               return str.toUpperCase();
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "upper-case", debugInfo); },
       },
       trim: {
           evaluate: function (_a, debugInfo) {
@@ -5237,7 +7956,7 @@ var Lits = (function (exports) {
               string.assert(str, debugInfo);
               return str.trim();
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "trim", debugInfo); },
       },
       'trim-left': {
           evaluate: function (_a, debugInfo) {
@@ -5245,7 +7964,7 @@ var Lits = (function (exports) {
               string.assert(str, debugInfo);
               return str.replace(/^\s+/, "");
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "trim-left", debugInfo); },
       },
       'trim-right': {
           evaluate: function (_a, debugInfo) {
@@ -5253,7 +7972,7 @@ var Lits = (function (exports) {
               string.assert(str, debugInfo);
               return str.replace(/\s+$/, "");
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "trim-right", debugInfo); },
       },
       join: {
           evaluate: function (_a, debugInfo) {
@@ -5263,7 +7982,7 @@ var Lits = (function (exports) {
               string.assert(delimiter, debugInfo);
               return stringList.join(delimiter);
           },
-          validate: function (node) { return assertNumberOfParams(2, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "join", debugInfo); },
       },
       split: {
           evaluate: function (_a, debugInfo) {
@@ -5278,7 +7997,7 @@ var Lits = (function (exports) {
                   : new RegExp(stringOrRegExpValue.source, stringOrRegExpValue.flags);
               return str.split(delimiter, limit);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "split", debugInfo); },
       },
       'pad-left': {
           evaluate: function (_a, debugInfo) {
@@ -5290,7 +8009,7 @@ var Lits = (function (exports) {
               }
               return str.padStart(length, padString);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "pad-left", debugInfo); },
       },
       'pad-right': {
           evaluate: function (_a, debugInfo) {
@@ -5302,7 +8021,7 @@ var Lits = (function (exports) {
               }
               return str.padEnd(length, padString);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2, max: 3 }, arity, "pad-right", debugInfo); },
       },
       template: {
           evaluate: function (_a, debugInfo) {
@@ -5333,7 +8052,7 @@ var Lits = (function (exports) {
                   }
               }
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1, max: 10 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 10 }, arity, "template", debugInfo); },
       },
       'encode-base64': {
           evaluate: function (_a, debugInfo) {
@@ -5343,7 +8062,7 @@ var Lits = (function (exports) {
                   return String.fromCharCode(parseInt(p1, 16));
               }));
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "encode-base64", debugInfo); },
       },
       'decode-base64': {
           evaluate: function (_a, debugInfo) {
@@ -5360,7 +8079,7 @@ var Lits = (function (exports) {
                   throw new LitsError(error, debugInfo);
               }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "decode-base64", debugInfo); },
       },
       'encode-uri-component': {
           evaluate: function (_a, debugInfo) {
@@ -5368,7 +8087,7 @@ var Lits = (function (exports) {
               string.assert(value, debugInfo);
               return encodeURIComponent(value);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "encode-uri-component", debugInfo); },
       },
       'decode-uri-component': {
           evaluate: function (_a, debugInfo) {
@@ -5381,7 +8100,7 @@ var Lits = (function (exports) {
                   throw new LitsError(error, debugInfo);
               }
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "decode-uri-component", debugInfo); },
       },
   };
   var doubleDollarRegexp = /\$\$/g;
@@ -5412,14 +8131,14 @@ var Lits = (function (exports) {
               var applyArray = __spreadArray(__spreadArray([], __read(params.slice(0, -1)), false), __read(last), false);
               return executeFunction(func, applyArray, contextStack, debugInfo);
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "apply", debugInfo); },
       },
       identity: {
           evaluate: function (_a) {
               var _b = __read(_a, 1), value = _b[0];
               return toAny(value);
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "identity", debugInfo); },
       },
       partial: {
           evaluate: function (_a, debugInfo) {
@@ -5433,7 +8152,7 @@ var Lits = (function (exports) {
                   _b.params = params,
                   _b;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "partial", debugInfo); },
       },
       comp: {
           evaluate: function (fns, debugInfo) {
@@ -5451,6 +8170,7 @@ var Lits = (function (exports) {
                   _a.fns = fns,
                   _a;
           },
+          validateArity: function () { return undefined; },
       },
       constantly: {
           evaluate: function (_a, debugInfo) {
@@ -5463,7 +8183,7 @@ var Lits = (function (exports) {
                   _b.value = toAny(value),
                   _b;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "constantly", debugInfo); },
       },
       juxt: {
           evaluate: function (fns, debugInfo) {
@@ -5475,7 +8195,7 @@ var Lits = (function (exports) {
                   _a.fns = fns,
                   _a;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "juxt", debugInfo); },
       },
       complement: {
           evaluate: function (_a, debugInfo) {
@@ -5488,7 +8208,7 @@ var Lits = (function (exports) {
                   _b.fn = toAny(fn),
                   _b;
           },
-          validate: function (node) { return assertNumberOfParams(1, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "complement", debugInfo); },
       },
       'every-pred': {
           evaluate: function (fns, debugInfo) {
@@ -5500,7 +8220,7 @@ var Lits = (function (exports) {
                   _a.fns = fns,
                   _a;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "every-pred", debugInfo); },
       },
       'some-pred': {
           evaluate: function (fns, debugInfo) {
@@ -5512,7 +8232,7 @@ var Lits = (function (exports) {
                   _a.fns = fns,
                   _a;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "some-pred", debugInfo); },
       },
       fnil: {
           evaluate: function (_a, debugInfo) {
@@ -5526,11 +8246,92 @@ var Lits = (function (exports) {
                   _b.params = params,
                   _b;
           },
-          validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 2 }, arity, "fnil", debugInfo); },
       },
   };
 
-  var normalExpressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
+  var typeNormalExpression = {
+      'type-of': {
+          evaluate: function (_a, debugInfo) {
+              var _b = __read(_a, 1), value = _b[0];
+              any.assert(value, debugInfo);
+              return Type.of(value);
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "type-of", debugInfo); },
+      },
+      'type-to-value': {
+          evaluate: function (_a, debugInfo) {
+              var _b = __read(_a, 1), value = _b[0];
+              any.assert(value, debugInfo);
+              if (Type.isType(value)) {
+                  return Type.toValue(value);
+              }
+              else {
+                  return value;
+              }
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "type-of", debugInfo); },
+      },
+      'type-split': {
+          evaluate: function (_a, debugInfo) {
+              var _b = __read(_a, 1), value = _b[0];
+              Type.assertType(value, debugInfo);
+              return Type.split(value);
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "type-of", debugInfo); },
+      },
+      'type-or': {
+          evaluate: function (params, debugInfo) {
+              params.forEach(function (param) { return Type.assertType(param, debugInfo); });
+              return Type.or.apply(Type, __spreadArray([], __read(params), false));
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "type-or", debugInfo); },
+      },
+      'type-and': {
+          evaluate: function (params, debugInfo) {
+              params.forEach(function (param) { return Type.assertType(param, debugInfo); });
+              return Type.and.apply(Type, __spreadArray([], __read(params), false));
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "type-and", debugInfo); },
+      },
+      'type-exclude': {
+          evaluate: function (params, debugInfo) {
+              params.forEach(function (param) { return Type.assertType(param, debugInfo); });
+              var first = Type.asType(params[0], debugInfo);
+              return Type.exclude.apply(Type, __spreadArray([first], __read(params.slice(1)), false));
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1 }, arity, "type-exclude", debugInfo); },
+      },
+      'type-is?': {
+          evaluate: function (_a, debugInfo) {
+              var _b = __read(_a, 2), first = _b[0], second = _b[1];
+              any.assert(first, debugInfo);
+              Type.assertType(second, debugInfo);
+              return Type.is(first, second);
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "type-is?", debugInfo); },
+      },
+      'type-equals?': {
+          evaluate: function (_a, debugInfo) {
+              var _b = __read(_a, 2), first = _b[0], second = _b[1];
+              Type.assertType(first, debugInfo);
+              Type.assertType(second, debugInfo);
+              return Type.equals(first, second);
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "type-equals?", debugInfo); },
+      },
+      'type-intersects?': {
+          evaluate: function (_a, debugInfo) {
+              var _b = __read(_a, 2), first = _b[0], second = _b[1];
+              Type.assertType(first, debugInfo);
+              Type.assertType(second, debugInfo);
+              return Type.intersects(first, second);
+          },
+          validateArity: function (arity, debugInfo) { return assertNumberOfParams(2, arity, "type-intersects?", debugInfo); },
+      },
+  };
+
+  var normalExpressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression), typeNormalExpression);
 
   var commentSpecialExpression = {
       parse: function (tokens, position, _a) {
@@ -5552,7 +8353,8 @@ var Lits = (function (exports) {
           return [position + 1, node];
       },
       evaluate: function () { return null; },
-      analyze: function () { return ({ undefinedSymbols: new Set() }); },
+      validateArity: function () { return undefined; },
+      findUndefinedSymbols: function () { return new Set(); },
   };
 
   var declaredSpecialExpression = {
@@ -5576,10 +8378,10 @@ var Lits = (function (exports) {
           var lookUpResult = lookUp(astNode, contextStack);
           return !!(lookUpResult.builtinFunction || lookUpResult.contextEntry || lookUpResult.specialExpression);
       },
-      validate: function (node) { return assertNumberOfParams(1, node); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams(1, arity, "declared?", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -5610,10 +8412,10 @@ var Lits = (function (exports) {
           var firstResult = evaluateAstNode(firstNode, contextStack);
           return firstResult ? firstResult : secondNode ? evaluateAstNode(secondNode, contextStack) : firstResult;
       },
-      validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-      analyze: function (node, contextStack, _a) {
-          var analyzeAst = _a.analyzeAst, builtin = _a.builtin;
-          return analyzeAst(node.params, contextStack, builtin);
+      validateArity: function (arity, debugInfo) { return assertNumberOfParams({ min: 1, max: 2 }, arity, "declared?", debugInfo); },
+      findUndefinedSymbols: function (node, contextStack, _a) {
+          var findUndefinedSymbols = _a.findUndefinedSymbols, builtin = _a.builtin;
+          return findUndefinedSymbols(node.params, contextStack, builtin);
       },
   };
 
@@ -5658,6 +8460,183 @@ var Lits = (function (exports) {
   };
   var normalExpressionKeys = Object.keys(normalExpressions);
   var specialExpressionKeys = Object.keys(specialExpressions);
+
+  function lookUp(node, contextStack) {
+      var e_1, _a, _b;
+      var _c;
+      var value = node.value;
+      var debugInfo = (_c = node.token) === null || _c === void 0 ? void 0 : _c.debugInfo;
+      try {
+          for (var _d = __values(contextStack.stack), _e = _d.next(); !_e.done; _e = _d.next()) {
+              var context = _e.value;
+              var variable = context[value];
+              if (variable) {
+                  return {
+                      builtinFunction: null,
+                      contextEntry: variable,
+                      specialExpression: null,
+                  };
+              }
+          }
+      }
+      catch (e_1_1) { e_1 = { error: e_1_1 }; }
+      finally {
+          try {
+              if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+          }
+          finally { if (e_1) throw e_1.error; }
+      }
+      if (builtin.normalExpressions[value]) {
+          var builtinFunction = (_b = {},
+              _b[FUNCTION_SYMBOL] = true,
+              _b.debugInfo = debugInfo,
+              _b.type = "builtin",
+              _b.name = value,
+              _b);
+          return {
+              builtinFunction: builtinFunction,
+              contextEntry: null,
+              specialExpression: null,
+          };
+      }
+      if (builtin.specialExpressions[value]) {
+          return {
+              specialExpression: true,
+              builtinFunction: null,
+              contextEntry: null,
+          };
+      }
+      return {
+          specialExpression: null,
+          builtinFunction: null,
+          contextEntry: null,
+      };
+  }
+
+  var findUndefinedSymbols = function (astNode, contextStack, builtin) {
+      var e_1, _a;
+      var astNodes = Array.isArray(astNode) ? astNode : [astNode];
+      var undefinedSymbols = new Set();
+      try {
+          for (var astNodes_1 = __values(astNodes), astNodes_1_1 = astNodes_1.next(); !astNodes_1_1.done; astNodes_1_1 = astNodes_1.next()) {
+              var subNode = astNodes_1_1.value;
+              var innerUndefinedSymbols = calculateUndefinedSymbolsOnAstNode(subNode, contextStack, builtin);
+              innerUndefinedSymbols.forEach(function (symbol) { return undefinedSymbols.add(symbol); });
+          }
+      }
+      catch (e_1_1) { e_1 = { error: e_1_1 }; }
+      finally {
+          try {
+              if (astNodes_1_1 && !astNodes_1_1.done && (_a = astNodes_1.return)) _a.call(astNodes_1);
+          }
+          finally { if (e_1) throw e_1.error; }
+      }
+      return undefinedSymbols;
+  };
+  function calculateUndefinedSymbolsOnAstNode(astNode, contextStack, builtin) {
+      var e_2, _a;
+      var _b;
+      var emptySet = new Set();
+      switch (astNode.type) {
+          case "Name": {
+              var lookUpResult = lookUp(astNode, contextStack);
+              if (!lookUpResult.builtinFunction && !lookUpResult.contextEntry && !lookUpResult.specialExpression) {
+                  return new Set([{ symbol: astNode.value, token: astNode.token }]);
+              }
+              return emptySet;
+          }
+          case "TypeName":
+          case "String":
+          case "Number":
+          case "Modifier":
+          case "ReservedName":
+              return emptySet;
+          case "NormalExpression": {
+              var undefinedSymbols_1 = new Set();
+              var expression = astNode.expression, name_1 = astNode.name, token = astNode.token;
+              if (typeof name_1 === "string") {
+                  var lookUpResult = lookUp({ type: "Name", value: name_1, token: token }, contextStack);
+                  if (lookUpResult.builtinFunction === null &&
+                      lookUpResult.contextEntry === null &&
+                      lookUpResult.specialExpression === null) {
+                      undefinedSymbols_1.add({ symbol: name_1, token: astNode.token });
+                  }
+              }
+              if (expression) {
+                  switch (expression.type) {
+                      case "String":
+                      case "Number":
+                          break;
+                      case "NormalExpression":
+                      case "SpecialExpression": {
+                          var innerUndefinedSymbols = calculateUndefinedSymbolsOnAstNode(expression, contextStack, builtin);
+                          innerUndefinedSymbols.forEach(function (symbol) { return undefinedSymbols_1.add(symbol); });
+                          break;
+                      }
+                  }
+              }
+              try {
+                  for (var _c = __values(astNode.params), _d = _c.next(); !_d.done; _d = _c.next()) {
+                      var subNode = _d.value;
+                      var subNodeResult = findUndefinedSymbols(subNode, contextStack, builtin);
+                      subNodeResult.forEach(function (symbol) { return undefinedSymbols_1.add(symbol); });
+                  }
+              }
+              catch (e_2_1) { e_2 = { error: e_2_1 }; }
+              finally {
+                  try {
+                      if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
+                  }
+                  finally { if (e_2) throw e_2.error; }
+              }
+              return undefinedSymbols_1;
+          }
+          case "SpecialExpression": {
+              var specialExpression = asValue(builtin.specialExpressions[astNode.name], (_b = astNode.token) === null || _b === void 0 ? void 0 : _b.debugInfo);
+              var result = specialExpression.findUndefinedSymbols(astNode, contextStack, {
+                  findUndefinedSymbols: findUndefinedSymbols,
+                  builtin: builtin,
+              });
+              return result;
+          }
+      }
+  }
+
+  function createContextFromValues(values) {
+      if (!values) {
+          return {};
+      }
+      return Object.entries(values).reduce(function (context, _a) {
+          var _b = __read(_a, 2), key = _b[0], value = _b[1];
+          context[key] = { value: toAny(value) };
+          return context;
+      }, {});
+  }
+  var ContextStack = /** @class */ (function () {
+      function ContextStack(contexts, globalContextIndex) {
+          this.stack = contexts;
+          this.numberOfImportedContexts = contexts.length - (globalContextIndex + 1);
+          this.globalContext = contexts[globalContextIndex];
+      }
+      ContextStack.create = function (contexts) {
+          if (contexts === void 0) { contexts = []; }
+          if (contexts.length === 0) {
+              contexts.push({});
+          }
+          return new ContextStack(contexts, 0);
+      };
+      ContextStack.createFromParams = function (params) {
+          var _a, _b;
+          var globalContext = (_a = params.globalContext) !== null && _a !== void 0 ? _a : {};
+          Object.assign(globalContext, createContextFromValues(params.globals));
+          var contextStack = ContextStack.create(__spreadArray([globalContext], __read(((_b = params.contexts) !== null && _b !== void 0 ? _b : [])), false));
+          return contextStack;
+      };
+      ContextStack.prototype.withContext = function (context) {
+          return new ContextStack(__spreadArray([context], __read(this.stack), false), this.stack.length - this.numberOfImportedContexts);
+      };
+      return ContextStack;
+  }());
 
   function findOverloadFunction(overloads, nbrOfParams, debugInfo) {
       var overloadFunction = overloads.find(function (overload) {
@@ -5826,28 +8805,11 @@ var Lits = (function (exports) {
       builtin: function (fn, params, debugInfo, contextStack, _a) {
           var executeFunction = _a.executeFunction;
           var normalExpression = asValue(normalExpressions[fn.name], debugInfo);
+          normalExpression.validateArity(params.length, debugInfo);
           return normalExpression.evaluate(params, debugInfo, contextStack, { executeFunction: executeFunction });
       },
   };
 
-  function createContextStack(contexts) {
-      if (contexts === void 0) { contexts = []; }
-      if (contexts.length === 0) {
-          contexts.push({});
-      }
-      return new ContextStackImpl(contexts, 0);
-  }
-  var ContextStackImpl = /** @class */ (function () {
-      function ContextStackImpl(contexts, globalContextIndex) {
-          this.stack = contexts;
-          this.numberOfImportedContexts = contexts.length - (globalContextIndex + 1);
-          this.globalContext = contexts[globalContextIndex];
-      }
-      ContextStackImpl.prototype.withContext = function (context) {
-          return new ContextStackImpl(__spreadArray([context], __read(this.stack), false), this.stack.length - this.numberOfImportedContexts);
-      };
-      return ContextStackImpl;
-  }());
   function evaluate(ast, contextStack) {
       var e_1, _a;
       var result = null;
@@ -5864,7 +8826,13 @@ var Lits = (function (exports) {
           }
           finally { if (e_1) throw e_1.error; }
       }
-      return result;
+      return typeof result === "number" ? toSafeNumber(result) : result;
+  }
+  function toSafeNumber(value) {
+      if (value <= MAX_NUMBER && value >= MIN_NUMBER) {
+          return value;
+      }
+      return Math.sign(value) * Infinity;
   }
   var evaluateAstNode = function (node, contextStack) {
       var _a;
@@ -5873,6 +8841,8 @@ var Lits = (function (exports) {
               return evaluateNumber(node);
           case "String":
               return evaluateString(node);
+          case "TypeName":
+              return evaluateTypeName(node);
           case "Name":
               return evaluateName(node, contextStack);
           case "ReservedName":
@@ -5886,10 +8856,102 @@ var Lits = (function (exports) {
       }
   };
   function evaluateNumber(node) {
-      return node.value;
+      return toSafeNumber(node.value);
   }
   function evaluateString(node) {
       return node.value;
+  }
+  function evaluateTypeName(node) {
+      switch (node.value) {
+          case "never":
+              return Type.never;
+          case "nil":
+              return Type.nil;
+          case "nan":
+              return Type.nan;
+          case "empty-string":
+              return Type.emptyString;
+          case "non-empty-string":
+              return Type.nonEmptyString;
+          case "string":
+              return Type.string;
+          case "number":
+              return Type.number;
+          case "positive-number":
+              return Type.positiveNumber;
+          case "negative-number":
+              return Type.negativeNumber;
+          case "non-zero-number":
+              return Type.nonZeroNumber;
+          case "non-positive-number":
+              return Type.nonPositiveNumber;
+          case "non-negative-number":
+              return Type.nonNegativeNumber;
+          case "float":
+              return Type.float;
+          case "positive-infinity":
+              return Type.positiveInfinity;
+          case "negative-infinity":
+              return Type.negativeInfinity;
+          case "infinity":
+              return Type.infinity;
+          case "positive-zero":
+              return Type.positiveZero;
+          case "negative-zero":
+              return Type.negativeZero;
+          case "zero":
+              return Type.zero;
+          case "non-zero-float":
+              return Type.nonZeroFloat;
+          case "positive-float":
+              return Type.positiveFloat;
+          case "negative-float":
+              return Type.negativeFloat;
+          case "non-positive-float":
+              return Type.nonPositiveFloat;
+          case "non-negative-float":
+              return Type.nonNegativeFloat;
+          case "integer":
+              return Type.integer;
+          case "non-zero-integer":
+              return Type.nonZeroInteger;
+          case "positive-integer":
+              return Type.positiveInteger;
+          case "negative-integer":
+              return Type.negativeInteger;
+          case "non-positive-integer":
+              return Type.nonPositiveInteger;
+          case "non-negative-integer":
+              return Type.nonNegativeInteger;
+          case "true":
+              return Type.true;
+          case "false":
+              return Type.false;
+          case "boolean":
+              return Type.boolean;
+          case "empty-array":
+              return Type.emptyArray;
+          case "non-empty-array":
+              return Type.nonEmptyArray;
+          case "array":
+              return Type.array;
+          case "empty-object":
+              return Type.emptyObject;
+          case "non-empty-object":
+              return Type.nonEmptyObject;
+          case "object":
+              return Type.object;
+          case "regexp":
+              return Type.regexp;
+          case "function":
+              return Type.function;
+          case "unknown":
+              return Type.unknown;
+          case "truthy":
+              return Type.truthy;
+          case "falsy":
+              return Type.falsy;
+      }
   }
   function evaluateReservedName(node) {
       var _a;
@@ -5906,59 +8968,8 @@ var Lits = (function (exports) {
       }
       throw new UndefinedSymbolError(node.value, (_a = node.token) === null || _a === void 0 ? void 0 : _a.debugInfo);
   }
-  function lookUp(node, contextStack) {
-      var e_2, _a, _b;
-      var _c;
-      var value = node.value;
-      var debugInfo = (_c = node.token) === null || _c === void 0 ? void 0 : _c.debugInfo;
-      try {
-          for (var _d = __values(contextStack.stack), _e = _d.next(); !_e.done; _e = _d.next()) {
-              var context = _e.value;
-              var variable = context[value];
-              if (variable) {
-                  return {
-                      builtinFunction: null,
-                      contextEntry: variable,
-                      specialExpression: null,
-                  };
-              }
-          }
-      }
-      catch (e_2_1) { e_2 = { error: e_2_1 }; }
-      finally {
-          try {
-              if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
-          }
-          finally { if (e_2) throw e_2.error; }
-      }
-      if (builtin.normalExpressions[value]) {
-          var builtinFunction = (_b = {},
-              _b[FUNCTION_SYMBOL] = true,
-              _b.debugInfo = debugInfo,
-              _b.type = "builtin",
-              _b.name = value,
-              _b);
-          return {
-              builtinFunction: builtinFunction,
-              contextEntry: null,
-              specialExpression: null,
-          };
-      }
-      if (builtin.specialExpressions[value]) {
-          return {
-              specialExpression: true,
-              builtinFunction: null,
-              contextEntry: null,
-          };
-      }
-      return {
-          specialExpression: null,
-          builtinFunction: null,
-          contextEntry: null,
-      };
-  }
   function evaluateNormalExpression(node, contextStack) {
-      var e_3, _a;
+      var e_2, _a;
       var _b, _c;
       var params = node.params.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
       var debugInfo = (_b = node.token) === null || _b === void 0 ? void 0 : _b.debugInfo;
@@ -5973,12 +8984,12 @@ var Lits = (function (exports) {
                   return executeFunction(fn, params, contextStack, debugInfo);
               }
           }
-          catch (e_3_1) { e_3 = { error: e_3_1 }; }
+          catch (e_2_1) { e_2 = { error: e_2_1 }; }
           finally {
               try {
                   if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
               }
-              finally { if (e_3) throw e_3.error; }
+              finally { if (e_2) throw e_2.error; }
           }
           return evaluateBuiltinNormalExpression(node, params, contextStack);
       }
@@ -6002,6 +9013,9 @@ var Lits = (function (exports) {
       }
       if (number.is(fn)) {
           return evaluateNumberAsFunction(fn, params, debugInfo);
+      }
+      if (Type.isType(fn)) {
+          return evaluateTypeAsFunction(fn, params, debugInfo);
       }
       throw new NotAFunctionError(fn, debugInfo);
   };
@@ -6056,100 +9070,28 @@ var Lits = (function (exports) {
       sequence.assert(param, debugInfo);
       return toAny(param[fn]);
   }
-
-  var analyzeAst = function (astNode, contextStack, builtin) {
-      var e_1, _a;
-      var astNodes = Array.isArray(astNode) ? astNode : [astNode];
-      var analyzeResult = {
-          undefinedSymbols: new Set(),
-      };
-      try {
-          for (var astNodes_1 = __values(astNodes), astNodes_1_1 = astNodes_1.next(); !astNodes_1_1.done; astNodes_1_1 = astNodes_1.next()) {
-              var subNode = astNodes_1_1.value;
-              var result = analyzeAstNode(subNode, contextStack, builtin);
-              result.undefinedSymbols.forEach(function (symbol) { return analyzeResult.undefinedSymbols.add(symbol); });
-          }
+  function evaluateTypeAsFunction(typeFunction, params, debugInfo) {
+      if (params.length !== 1) {
+          throw new LitsError("ArrayType as function requires one parameter.", debugInfo);
       }
-      catch (e_1_1) { e_1 = { error: e_1_1 }; }
-      finally {
-          try {
-              if (astNodes_1_1 && !astNodes_1_1.done && (_a = astNodes_1.return)) _a.call(astNodes_1);
+      if (typeFunction.is(Type.array)) {
+          var size = asValue(asNotNull(typeFunction.arrayVariants)[0]).size;
+          if (size === ArrayVariant.Size.Empty) {
+              return Type.emptyArray;
           }
-          finally { if (e_1) throw e_1.error; }
+          var type = Type.of(params[0]);
+          return size === ArrayVariant.Size.Unknown ? Type.createTypedArray(type) : Type.createNonEmpyTypedArray(type);
       }
-      return analyzeResult;
-  };
-  function analyzeAstNode(astNode, contextStack, builtin) {
-      var e_2, _a;
-      var _b;
-      var emptySet = new Set();
-      switch (astNode.type) {
-          case "Name": {
-              var lookUpResult = lookUp(astNode, contextStack);
-              if (!lookUpResult.builtinFunction && !lookUpResult.contextEntry && !lookUpResult.specialExpression) {
-                  return { undefinedSymbols: new Set([{ symbol: astNode.value, token: astNode.token }]) };
-              }
-              return { undefinedSymbols: emptySet };
-          }
-          case "String":
-          case "Number":
-          case "Modifier":
-          case "ReservedName":
-              return { undefinedSymbols: emptySet };
-          case "NormalExpression": {
-              var undefinedSymbols_1 = new Set();
-              var expression = astNode.expression, name_1 = astNode.name, token = astNode.token;
-              if (typeof name_1 === "string") {
-                  var lookUpResult = lookUp({ type: "Name", value: name_1, token: token }, contextStack);
-                  if (lookUpResult.builtinFunction === null &&
-                      lookUpResult.contextEntry === null &&
-                      lookUpResult.specialExpression === null) {
-                      undefinedSymbols_1.add({ symbol: name_1, token: astNode.token });
-                  }
-              }
-              if (expression) {
-                  switch (expression.type) {
-                      case "String":
-                      case "Number":
-                          break;
-                      case "NormalExpression":
-                      case "SpecialExpression": {
-                          var subResult = analyzeAstNode(expression, contextStack, builtin);
-                          subResult.undefinedSymbols.forEach(function (symbol) { return undefinedSymbols_1.add(symbol); });
-                          break;
-                      }
-                  }
-              }
-              try {
-                  for (var _c = __values(astNode.params), _d = _c.next(); !_d.done; _d = _c.next()) {
-                      var subNode = _d.value;
-                      var subNodeResult = analyzeAst(subNode, contextStack, builtin);
-                      subNodeResult.undefinedSymbols.forEach(function (symbol) { return undefinedSymbols_1.add(symbol); });
-                  }
-              }
-              catch (e_2_1) { e_2 = { error: e_2_1 }; }
-              finally {
-                  try {
-                      if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
-                  }
-                  finally { if (e_2) throw e_2.error; }
-              }
-              return { undefinedSymbols: undefinedSymbols_1 };
-          }
-          case "SpecialExpression": {
-              var specialExpression = asValue(builtin.specialExpressions[astNode.name], (_b = astNode.token) === null || _b === void 0 ? void 0 : _b.debugInfo);
-              var result = specialExpression.analyze(astNode, contextStack, {
-                  analyzeAst: analyzeAst,
-                  builtin: builtin,
-              });
-              return result;
-          }
-      }
+      throw new LitsError("Type as function requires type to be ::array or ::object.", debugInfo);
   }
 
   var parseNumber = function (tokens, position) {
       var tkn = token.as(tokens[position], "EOF");
       return [position + 1, { type: "Number", value: Number(tkn.value), token: tkn.debugInfo ? tkn : undefined }];
+  };
+  var parseTypeName = function (tokens, position) {
+      var tkn = token.as(tokens[position], "EOF");
+      return [position + 1, { type: "TypeName", value: tkn.value, token: tkn.debugInfo ? tkn : undefined }];
   };
   var parseString = function (tokens, position) {
       var tkn = token.as(tokens[position], "EOF");
@@ -6209,6 +9151,7 @@ var Lits = (function (exports) {
   };
   var parseObjectLitteral = function (tokens, position) {
       var _a;
+      var _b;
       var firstToken = token.as(tokens[position], "EOF");
       position = position + 1;
       var tkn = token.as(tokens[position], "EOF");
@@ -6226,7 +9169,7 @@ var Lits = (function (exports) {
           params: params,
           token: firstToken.debugInfo ? firstToken : undefined,
       };
-      assertEventNumberOfParams(node);
+      assertEvenNumberOfParams(node.params.length, "object", (_b = node.token) === null || _b === void 0 ? void 0 : _b.debugInfo);
       return [position, node];
   };
   var parseRegexpShorthand = function (tokens, position) {
@@ -6362,23 +9305,24 @@ var Lits = (function (exports) {
       };
       var builtinExpression = builtin.normalExpressions[node.name];
       if (builtinExpression) {
-          (_c = builtinExpression.validate) === null || _c === void 0 ? void 0 : _c.call(builtinExpression, node);
+          builtinExpression.validateArity(node.params.length, (_c = node.token) === null || _c === void 0 ? void 0 : _c.debugInfo);
       }
       return [position, node];
   };
   var parseSpecialExpression = function (tokens, position) {
-      var _a = token.as(tokens[position], "EOF"), expressionName = _a.value, debugInfo = _a.debugInfo;
+      var _a;
+      var _b = token.as(tokens[position], "EOF"), expressionName = _b.value, debugInfo = _b.debugInfo;
       position += 1;
-      var _b = asValue(builtin.specialExpressions[expressionName], debugInfo), parse = _b.parse, validate = _b.validate;
-      var _c = __read(parse(tokens, position, {
+      var _c = asValue(builtin.specialExpressions[expressionName], debugInfo), parse = _c.parse, validateArity = _c.validateArity;
+      var _d = __read(parse(tokens, position, {
           parseExpression: parseExpression,
           parseTokens: parseTokens,
           parseToken: parseToken,
           parseBinding: parseBinding,
           parseBindings: parseBindings,
           parseArgument: parseArgument,
-      }), 2), positionAfterParse = _c[0], node = _c[1];
-      validate === null || validate === void 0 ? void 0 : validate(node);
+      }), 2), positionAfterParse = _d[0], node = _d[1];
+      validateArity(node.params.length, (_a = node.token) === null || _a === void 0 ? void 0 : _a.debugInfo);
       return [positionAfterParse, node];
   };
   var parseToken = function (tokens, position) {
@@ -6387,6 +9331,9 @@ var Lits = (function (exports) {
       switch (tkn.type) {
           case "number":
               nodeDescriptor = parseNumber(tokens, position);
+              break;
+          case "typeName":
+              nodeDescriptor = parseTypeName(tokens, position);
               break;
           case "string":
               nodeDescriptor = parseString(tokens, position);
@@ -6525,6 +9472,25 @@ var Lits = (function (exports) {
           return NO_MATCH;
       }
       return [length, { type: "string", value: value, debugInfo: debugInfo }];
+  };
+  var tokenizeTypeName = function (input, position, debugInfo) {
+      if (input[position] !== ":" || input[position + 1] !== ":") {
+          return NO_MATCH;
+      }
+      var value = "";
+      var length = 2;
+      var char = input[position + length];
+      while (char && nameRegExp.test(char)) {
+          length += 1;
+          value += char;
+          char = input[position + length];
+      }
+      if (isTypeName(value)) {
+          return [length, { type: "typeName", value: value, debugInfo: debugInfo }];
+      }
+      else {
+          throw new LitsError("Unrecognized typename ".concat(value, "."), debugInfo);
+      }
   };
   var tokenizeRegexpShorthand = function (input, position, debugInfo) {
       var _a;
@@ -6738,6 +9704,7 @@ var Lits = (function (exports) {
       tokenizeRightBracket,
       tokenizeLeftCurly,
       tokenizeRightCurly,
+      tokenizeTypeName,
       tokenizeString,
       tokenizeSymbolString,
       tokenizeNumber,
@@ -6911,16 +9878,16 @@ var Lits = (function (exports) {
       };
       Lits.prototype.context = function (program, params) {
           if (params === void 0) { params = {}; }
-          var contextStack = createContextStackFromParams(params);
+          var contextStack = ContextStack.createFromParams(params);
           var ast = this.generateAst(program, params.getLocation);
           evaluate(ast, contextStack);
           return contextStack.globalContext;
       };
-      Lits.prototype.analyze = function (program) {
+      Lits.prototype.findUndefinedSymbols = function (program) {
           var params = {};
-          var contextStack = createContextStackFromParams(params);
+          var contextStack = ContextStack.createFromParams(params);
           var ast = this.generateAst(program, params.getLocation);
-          return analyzeAst(ast.body, contextStack, builtin);
+          return findUndefinedSymbols(ast.body, contextStack, builtin);
       };
       Lits.prototype.tokenize = function (program, getLocation) {
           return tokenize(program, { debug: this.debug, getLocation: getLocation });
@@ -6929,7 +9896,7 @@ var Lits = (function (exports) {
           return parse(tokens);
       };
       Lits.prototype.evaluate = function (ast, params) {
-          var contextStack = createContextStackFromParams(params);
+          var contextStack = ContextStack.createFromParams(params);
           return evaluate(ast, contextStack);
       };
       Lits.prototype.apply = function (fn, fnParams, params) {
@@ -6966,13 +9933,6 @@ var Lits = (function (exports) {
       };
       return Lits;
   }());
-  function createContextStackFromParams(params) {
-      var _a, _b;
-      var globalContext = (_a = params.globalContext) !== null && _a !== void 0 ? _a : {};
-      Object.assign(globalContext, createContextFromValues(params.globals));
-      var contextStack = createContextStack(__spreadArray([globalContext], __read(((_b = params.contexts) !== null && _b !== void 0 ? _b : [])), false));
-      return contextStack;
-  }
 
   exports.Lits = Lits;
   exports.isLitsFunction = isLitsFunction;

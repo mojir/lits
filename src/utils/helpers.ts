@@ -44,6 +44,7 @@ const tokenTypes: Record<TokenizerType, true> = {
   regexpShorthand: true,
   reservedName: true,
   string: true,
+  typeName: true,
 }
 
 export function isToken(value: unknown): value is Token {
@@ -70,6 +71,7 @@ const astTypes: Record<NodeType, true> = {
   Binding: true,
   Argument: true,
   Partial: true,
+  TypeName: true,
 }
 
 export function isAstNode(value: unknown): value is AstNode {

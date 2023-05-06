@@ -1,6 +1,6 @@
-import { joinAnalyzeResults } from '../../analyze/utils'
+import { joinUndefinedSymbols } from '../../analyze/undefinedSymbols/utils'
 import { LitsError } from '../../errors'
-import { Context } from '../../evaluator/interface'
+import { Context } from '../../ContextStack/interface'
 import { Any } from '../../interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { any, nameNode, token } from '../../utils/assertion'
@@ -68,13 +68,14 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
       return evaluateAstNode(catchExpression, contextStack.withContext(newContext))
     }
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+  validateArity: () => undefined,
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) => {
     const { tryExpression, catchExpression, error: errorNode } = node as TryNode
-    const tryResult = analyzeAst(tryExpression, contextStack, builtin)
+    const tryResult = findUndefinedSymbols(tryExpression, contextStack, builtin)
     const newContext: Context = {
       [errorNode.value]: { value: true },
     }
-    const catchResult = analyzeAst(catchExpression, contextStack.withContext(newContext), builtin)
-    return joinAnalyzeResults(tryResult, catchResult)
+    const catchResult = findUndefinedSymbols(catchExpression, contextStack.withContext(newContext), builtin)
+    return joinUndefinedSymbols(tryResult, catchResult)
   },
 }

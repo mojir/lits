@@ -22,6 +22,7 @@ export const declaredSpecialExpression: BuiltinSpecialExpression<boolean> = {
     const lookUpResult = lookUp(astNode, contextStack)
     return !!(lookUpResult.builtinFunction || lookUpResult.contextEntry || lookUpResult.specialExpression)
   },
-  validate: node => assertNumberOfParams(1, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `declared?`, debugInfo),
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) =>
+    findUndefinedSymbols(node.params, contextStack, builtin),
 }

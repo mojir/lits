@@ -29,6 +29,7 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any> = {
     const firstResult = evaluateAstNode(firstNode, contextStack)
     return firstResult ? firstResult : secondNode ? evaluateAstNode(secondNode, contextStack) : firstResult
   },
-  validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1, max: 2 }, arity, `declared?`, debugInfo),
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) =>
+    findUndefinedSymbols(node.params, contextStack, builtin),
 }

@@ -1,4 +1,4 @@
-import { LocationGetter } from '../Lits/Lits'
+import { LocationGetter } from '../Lits/interface'
 
 export type TokenizerType =
   | `paren`
@@ -9,6 +9,7 @@ export type TokenizerType =
   | `modifier`
   | `regexpShorthand`
   | `fnShorthand`
+  | `typeName`
 
 export type SourceCodeInfo = {
   line: number

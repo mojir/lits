@@ -1,9 +1,10 @@
-import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
 import { Any } from '../../../interface'
 import { compare, deepEqual } from '../../../utils'
 import { BuiltinNormalExpressions } from '../../interface'
 import { version } from '../../../version'
 import { any, assertNumberOfParams, litsFunction, number, string } from '../../../utils/assertion'
+import { ContextStack } from '../../../ContextStack'
+import { Context, ContextEntry } from '../../../ContextStack/interface'
 const uuidTemplate = `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
 const xyRegexp = /[xy]/g
 
@@ -20,7 +21,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `not=`, debugInfo),
   },
   '=': {
     evaluate: ([first, ...rest]): boolean => {
@@ -32,13 +33,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `=`, debugInfo),
   },
   'equal?': {
     evaluate: ([a, b], debugInfo): boolean => {
       return deepEqual(any.as(a, debugInfo), any.as(b, debugInfo), debugInfo)
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `equal?`, debugInfo),
   },
   '>': {
     evaluate: ([first, ...rest]): boolean => {
@@ -51,7 +52,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `>`, debugInfo),
   },
 
   '<': {
@@ -65,7 +66,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `<`, debugInfo),
   },
 
   '>=': {
@@ -79,7 +80,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `>=`, debugInfo),
   },
 
   '<=': {
@@ -93,24 +94,24 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `<=`, debugInfo),
   },
   not: {
     evaluate: ([first]): boolean => !first,
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `not`, debugInfo),
   },
   'inst-ms!': {
     evaluate: (): number => {
       return Date.now()
     },
-    validate: node => assertNumberOfParams(0, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(0, arity, `inst-ms!`, debugInfo),
   },
   'inst-ms->iso-date-time': {
     evaluate: ([ms], debugInfo): string => {
       number.assert(ms, debugInfo)
       return new Date(ms).toISOString()
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `inst-ms->iso-date-time`, debugInfo),
   },
   'iso-date-time->inst-ms': {
     evaluate: ([dateTime], debugInfo): number => {
@@ -119,7 +120,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       number.assert(ms, debugInfo, { finite: true })
       return ms
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `iso-date-time->inst-ms`, debugInfo),
   },
   'write!': {
     evaluate: (params, debugInfo): Any => {
@@ -132,6 +133,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
+    validateArity: () => undefined,
   },
   'debug!': {
     evaluate: (params, debugInfo, contextStack): Any => {
@@ -144,19 +146,19 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
       return any.as(params[0], debugInfo)
     },
-    validate: node => assertNumberOfParams({ max: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ max: 1 }, arity, `debug!`, debugInfo),
   },
   boolean: {
     evaluate: ([value]): boolean => {
       return !!value
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `boolean`, debugInfo),
   },
   compare: {
     evaluate: ([a, b]): number => {
       return compare(a, b)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `compare`, debugInfo),
   },
   'uuid!': {
     evaluate: (): string => {
@@ -166,13 +168,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
         return newValue.toString(16)
       })
     },
-    validate: node => assertNumberOfParams(0, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(0, arity, `uuid!`, debugInfo),
   },
   'lits-version!': {
     evaluate: (): Any => {
       return version
     },
-    validate: node => assertNumberOfParams(0, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(0, arity, `lits-version!`, debugInfo),
   },
 }
 

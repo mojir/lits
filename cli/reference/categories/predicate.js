@@ -367,50 +367,6 @@ module.exports = {
     description: `Returns \`true\` if \`number\` is NaN (not a number), otherwise \`false\`.`,
     examples: [`(nan? 1.0)`, `(nan? (/ 1 0))`, `(nan? (/ -1 0))`, `(nan? (sqrt -1))`],
   },
-  'negative-infinity?': {
-    name: `negative-infinity?`,
-    category: `Predicate`,
-    linkName: `negative-infinity_question`,
-    clojureDocs: null,
-    returns: {
-      type: `boolean`,
-    },
-    arguments: [
-      {
-        name: `number`,
-        type: `number`,
-      },
-    ],
-    description: `Returns \`true\` if \`number\` equals negative infinity, otherwise \`false\`.`,
-    examples: [
-      `(negative-infinity? 1.0)`,
-      `(negative-infinity? (/ 1 0))`,
-      `(negative-infinity? (/ -1 0))`,
-      `(negative-infinity? (sqrt -1))`,
-    ],
-  },
-  'positive-infinity?': {
-    name: `positive-infinity?`,
-    category: `Predicate`,
-    linkName: `positive-infinity_question`,
-    clojureDocs: null,
-    returns: {
-      type: `boolean`,
-    },
-    arguments: [
-      {
-        name: `number`,
-        type: `number`,
-      },
-    ],
-    description: `Returns \`true\` if \`number\` equals positive infinity, otherwise \`false\`.`,
-    examples: [
-      `(positive-infinity? 1.0)`,
-      `(positive-infinity? (/ 1 0))`,
-      `(positive-infinity? (/ -1 0))`,
-      `(positive-infinity? (sqrt -1))`,
-    ],
-  },
   'false?': {
     name: `false?`,
     category: `Predicate`,

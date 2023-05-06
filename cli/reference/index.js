@@ -11,6 +11,7 @@ const regularExpressionReference = require(`./categories/regularExpression`)
 const specialExpressionsReference = require(`./categories/specialExpressions`)
 const stringReference = require(`./categories/string`)
 const bitwiseReference = require(`./categories/bitwise`)
+const typeReference = require(`./categories/type`)
 
 const functionReference = Object.assign(
   {},
@@ -27,6 +28,7 @@ const functionReference = Object.assign(
   stringReference,
   bitwiseReference,
   assertReference,
+  typeReference,
 )
 
 const categories = [
@@ -43,6 +45,7 @@ const categories = [
   `Bitwise`,
   `Misc`,
   `Assert`,
+  `Type`,
 ]
 
 const categorizedFunctions = Object.values(functionReference)

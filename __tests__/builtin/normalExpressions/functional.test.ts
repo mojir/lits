@@ -19,9 +19,9 @@ describe(`functional functions`, () => {
       test(`samples`, () => {
         expect(lits.run(`(apply + [1 2 3 4])`)).toBe(10)
         expect(lits.run(`(apply + 1 2 [ 3 4])`)).toBe(10)
+        expect(lits.run(`(apply + [1 2] [3 4])`)).toBeNaN()
         expect(() => lits.run(`(apply +)`)).toThrow()
         expect(() => lits.run(`(apply + 2 3)`)).toThrow()
-        expect(() => lits.run(`(apply + [1 2] [3 4])`)).toThrow()
       })
     })
 
@@ -43,8 +43,8 @@ describe(`functional functions`, () => {
       test(`samples`, () => {
         expect(lits.run(`((partial + 1) 2)`)).toBe(3)
         expect(lits.run(`((partial (partial + 1) 2) 2)`)).toBe(5)
-        expect(() => lits.run(`((partial true))`)).toThrow()
         expect(() => lits.run(`((partial mod 1))`)).toThrow()
+        expect(() => lits.run(`((partial true))`)).toThrow()
       })
     })
 

@@ -21,7 +21,7 @@ import {
   asValue,
   assertValue,
   regularExpression,
-  assertEventNumberOfParams,
+  assertEvenNumberOfParams,
   assertNumberOfParams,
   stringOrRegExp,
   normalExpressionNodeWithName,
@@ -207,51 +207,61 @@ describe(`utils`, () => {
   }
 
   test(`assertLengthEven`, () => {
-    expect(() => assertEventNumberOfParams(node([]))).not.toThrow()
-    expect(() => assertEventNumberOfParams(node([0]))).toThrow()
-    expect(() => assertEventNumberOfParams(node([0, 1]))).not.toThrow()
-    expect(() => assertEventNumberOfParams(node([0, 1, 2]))).toThrow()
-    expect(() => assertEventNumberOfParams(node([0, 1, 2, 3]))).not.toThrow()
-    expect(() => assertEventNumberOfParams(node([0, 1, 2, 3, 4]))).toThrow()
-    expect(() => assertEventNumberOfParams(node([0, 1, 2, 3, 4, 5]))).not.toThrow()
+    expect(() => assertEvenNumberOfParams(node([]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertEvenNumberOfParams(node([0]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertEvenNumberOfParams(node([0, 1]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertEvenNumberOfParams(node([0, 1, 2]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertEvenNumberOfParams(node([0, 1, 2, 3]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertEvenNumberOfParams(node([0, 1, 2, 3, 4]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertEvenNumberOfParams(node([0, 1, 2, 3, 4, 5]).params.length, `foo`, undefined)).not.toThrow()
   })
 
   test(`assertLength`, () => {
-    expect(() => assertNumberOfParams(0, node([]))).not.toThrow()
-    expect(() => assertNumberOfParams(0, node([1]))).toThrow()
-    expect(() => assertNumberOfParams(1, node([1]))).not.toThrow()
-    expect(() => assertNumberOfParams(1, node([]))).toThrow()
-    expect(() => assertNumberOfParams(1, node([1, 2]))).toThrow()
-    expect(() => assertNumberOfParams(2, node([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams(2, node([1]))).toThrow()
-    expect(() => assertNumberOfParams(2, node([1, 2, 3]))).toThrow()
-    expect(() => assertNumberOfParams({}, node([]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2, 3, 4, 5]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2, 3, 4]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2, 3]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, node([1]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1 }, node([]))).toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2, 3, 4, 5]))).toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2, 3, 4]))).toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2, 3]))).not.toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, node([1]))).not.toThrow()
-    expect(() => assertNumberOfParams({ max: 3 }, node([]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1, 2]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3]))).not.toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3, 4]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3, 4, 5]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3, 4, 5, 6]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3, 4]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3, 4, 5]))).toThrow()
-    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3, 4, 5, 6]))).toThrow()
+    expect(() => assertNumberOfParams(0, node([]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams(0, node([1]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams(1, node([1]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams(1, node([]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams(1, node([1, 2]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams(2, node([1, 2]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams(2, node([1]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams(2, node([1, 2, 3]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({}, node([]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2, 3, 4, 5]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2, 3, 4]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2, 3]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, node([1, 2]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, node([1]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1 }, node([]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2, 3, 4, 5]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2, 3, 4]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2, 3]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, node([1, 2]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, node([1]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ max: 3 }, node([]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1, 2]).params.length, `foo`, undefined)).not.toThrow()
+    expect(() =>
+      assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3]).params.length, `foo`, undefined),
+    ).not.toThrow()
+    expect(() => assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3, 4]).params.length, `foo`, undefined)).toThrow()
+    expect(() =>
+      assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3, 4, 5]).params.length, `foo`, undefined),
+    ).toThrow()
+    expect(() =>
+      assertNumberOfParams({ min: 1, max: 3 }, node([1, 2, 3, 4, 5, 6]).params.length, `foo`, undefined),
+    ).toThrow()
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3]).params.length, `foo`, undefined)).toThrow()
+    expect(() => assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3, 4]).params.length, `foo`, undefined)).toThrow()
+    expect(() =>
+      assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3, 4, 5]).params.length, `foo`, undefined),
+    ).toThrow()
+    expect(() =>
+      assertNumberOfParams({ min: 3, max: 1 }, node([1, 2, 3, 4, 5, 6]).params.length, `foo`, undefined),
+    ).toThrow()
   })
 
   test(`assertLitsFunction`, () => {

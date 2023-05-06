@@ -1,4 +1,6 @@
 import { normalExpressions } from '../builtin/normalExpressions'
+import { ContextStack } from '../ContextStack'
+import { Context } from '../ContextStack/interface'
 import { LitsError, RecurSignal } from '../errors'
 import { Any, Arr } from '../interface'
 import {
@@ -19,7 +21,7 @@ import { DebugInfo } from '../tokenizer/interface'
 import { toAny } from '../utils'
 import { any, asValue, string } from '../utils/assertion'
 import { valueToString } from '../utils/helpers'
-import { Context, ContextStack, EvaluateAstNode, ExecuteFunction } from './interface'
+import { EvaluateAstNode, ExecuteFunction } from './interface'
 
 type FunctionExecutors = Record<
   LitsFunctionType,
@@ -147,6 +149,7 @@ export const functionExecutors: FunctionExecutors = {
   },
   builtin: (fn: BuiltinFunction, params, debugInfo, contextStack, { executeFunction }) => {
     const normalExpression = asValue(normalExpressions[fn.name], debugInfo)
+    normalExpression.validateArity(params.length, debugInfo)
     return normalExpression.evaluate(params, debugInfo, contextStack, { executeFunction })
   },
 }

@@ -1,8 +1,8 @@
 import { tokenize } from '../../src/tokenizer'
 import { parse } from '../../src/parser'
-import { createContextStack, evaluate, evaluateAstNode } from '../../src/evaluator'
-import { Lits } from '../../src'
-import { Context } from '../../src/evaluator/interface'
+import { evaluate, evaluateAstNode } from '../../src/evaluator'
+import { Context, Lits } from '../../src'
+import { ContextStack } from '../../src/ContextStack'
 
 let lits: Lits
 
@@ -52,13 +52,13 @@ describe(`Evaluator`, () => {
   test(`super simple program`, () => {
     const tokens = tokenize(`(+ 10 kalle)`, { debug: true })
     const ast = parse(tokens)
-    const result = evaluate(ast, createContextStack([context]))
+    const result = evaluate(ast, ContextStack.create([context]))
     expect(result).toBe(15)
   })
   test(`simple program`, () => {
     const tokens = tokenize(simpleProgram, { debug: true })
     const ast = parse(tokens)
-    const result = evaluate(ast, createContextStack([context]))
+    const result = evaluate(ast, ContextStack.create([context]))
     expect(result).toBe(13 * 24 * 60 * 60 * 1000)
   })
   test(`if statement (true)`, () => {
@@ -69,7 +69,7 @@ describe(`Evaluator`, () => {
       { debug: true },
     )
     const ast = parse(tokens)
-    const result = evaluate(ast, createContextStack([context]))
+    const result = evaluate(ast, ContextStack.create([context]))
     expect(result).toBe(`It"s a boy`)
   })
   test(`if statement (false)`, () => {
@@ -80,7 +80,7 @@ describe(`Evaluator`, () => {
       { debug: true },
     )
     const ast = parse(tokens)
-    const result = evaluate(ast, createContextStack([context]))
+    const result = evaluate(ast, ContextStack.create([context]))
     expect(result).toBe(`It"s not a girl`)
   })
   test(`> statement`, () => {
@@ -91,7 +91,7 @@ describe(`Evaluator`, () => {
       { debug: true },
     )
     const ast = parse(tokens)
-    const result = evaluate(ast, createContextStack([context]))
+    const result = evaluate(ast, ContextStack.create([context]))
     expect(result).toBe(true)
   })
   test(`not= statement 1`, () => {
@@ -102,7 +102,7 @@ describe(`Evaluator`, () => {
       { debug: true },
     )
     const ast = parse(tokens)
-    const result = evaluate(ast, createContextStack([context]))
+    const result = evaluate(ast, ContextStack.create([context]))
     expect(result).toEqual([true, false])
   })
 
@@ -157,7 +157,7 @@ test(`evaluateAstNode`, () => {
         value: `&`,
         token: { type: `name`, value: `X` },
       },
-      createContextStack(),
+      ContextStack.create(),
     ),
   ).toThrow()
   expect(() =>
@@ -166,7 +166,7 @@ test(`evaluateAstNode`, () => {
         type: `Modifier`,
         value: `&`,
       },
-      createContextStack(),
+      ContextStack.create(),
     ),
   ).toThrow()
   expect(() =>
@@ -176,7 +176,7 @@ test(`evaluateAstNode`, () => {
         value: `&`,
         token: { type: `name`, debugInfo: { code: ``, column: 1, line: 1 }, value: `X` },
       },
-      createContextStack(),
+      ContextStack.create(),
     ),
   ).toThrow()
 })

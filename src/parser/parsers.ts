@@ -17,19 +17,27 @@ import {
   ParseBindings,
   NormalExpressionNodeWithName,
   ParseBinding,
+  TypeNameNode,
 } from './interface'
 import { builtin } from '../builtin'
 import { ReservedName } from '../reservedNames'
 import { LitsError } from '../errors'
 import { FnNode } from '../builtin/specialExpressions/functions'
 import { FunctionArguments } from '../builtin/utils'
-import { assertEventNumberOfParams, assertValue, asValue, expressionNode, nameNode, token } from '../utils/assertion'
+import { assertEvenNumberOfParams, assertValue, asValue, expressionNode, nameNode, token } from '../utils/assertion'
 import { valueToString } from '../utils/helpers'
+import { TypeName } from '../types/typeUtils'
 
 type ParseNumber = (tokens: Token[], position: number) => [number, NumberNode]
 export const parseNumber: ParseNumber = (tokens: Token[], position: number) => {
   const tkn = token.as(tokens[position], `EOF`)
   return [position + 1, { type: `Number`, value: Number(tkn.value), token: tkn.debugInfo ? tkn : undefined }]
+}
+
+type ParseTypeName = (tokens: Token[], position: number) => [number, TypeNameNode]
+export const parseTypeName: ParseTypeName = (tokens: Token[], position: number) => {
+  const tkn = token.as(tokens[position], `EOF`)
+  return [position + 1, { type: `TypeName`, value: tkn.value as TypeName, token: tkn.debugInfo ? tkn : undefined }]
 }
 
 type ParseString = (tokens: Token[], position: number) => [number, StringNode]
@@ -124,7 +132,7 @@ const parseObjectLitteral: ParseObjectLitteral = (tokens, position) => {
     token: firstToken.debugInfo ? firstToken : undefined,
   }
 
-  assertEventNumberOfParams(node)
+  assertEvenNumberOfParams(node.params.length, `object`, node.token?.debugInfo)
 
   return [position, node]
 }
@@ -283,7 +291,7 @@ const parseNormalExpression: ParseNormalExpression = (tokens, position) => {
   const builtinExpression = builtin.normalExpressions[node.name]
 
   if (builtinExpression) {
-    builtinExpression.validate?.(node)
+    builtinExpression.validateArity(node.params.length, node.token?.debugInfo)
   }
 
   return [position, node]
@@ -293,7 +301,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
   const { value: expressionName, debugInfo } = token.as(tokens[position], `EOF`)
   position += 1
 
-  const { parse, validate } = asValue(builtin.specialExpressions[expressionName], debugInfo)
+  const { parse, validateArity } = asValue(builtin.specialExpressions[expressionName], debugInfo)
 
   const [positionAfterParse, node] = parse(tokens, position, {
     parseExpression,
@@ -304,7 +312,7 @@ const parseSpecialExpression: ParseSpecialExpression = (tokens, position) => {
     parseArgument,
   })
 
-  validate?.(node)
+  validateArity(node.params.length, node.token?.debugInfo)
 
   return [positionAfterParse, node]
 }
@@ -315,6 +323,9 @@ export const parseToken: ParseToken = (tokens, position) => {
   switch (tkn.type) {
     case `number`:
       nodeDescriptor = parseNumber(tokens, position)
+      break
+    case `typeName`:
+      nodeDescriptor = parseTypeName(tokens, position)
       break
     case `string`:
       nodeDescriptor = parseString(tokens, position)

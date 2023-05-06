@@ -1,4 +1,4 @@
-import { Context } from '../../evaluator/interface'
+import { Context } from '../../ContextStack/interface'
 import { Any } from '../../interface'
 import { AstNode, SpecialExpressionNode } from '../../parser/interface'
 import { token } from '../../utils/assertion'
@@ -33,5 +33,7 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return result
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  validateArity: () => undefined,
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) =>
+    findUndefinedSymbols(node.params, contextStack, builtin),
 }

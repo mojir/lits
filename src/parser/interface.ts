@@ -1,8 +1,9 @@
+import { TypeName } from '../types/typeUtils'
 import { SpecialExpressionName } from '../builtin/interface'
 import { Condition } from '../builtin/specialExpressions/cond'
 import { LoopBindingNode } from '../builtin/specialExpressions/loops'
 import { Arity, FunctionOverload } from '../builtin/utils'
-import { Context } from '../evaluator/interface'
+import { Context } from '../ContextStack/interface'
 import { Any, Arr } from '../interface'
 import { ReservedName } from '../reservedNames'
 import { DebugInfo, Token } from '../tokenizer/interface'
@@ -113,6 +114,7 @@ export type NodeType =
   | `Binding`
   | `Argument`
   | `Partial`
+  | `TypeName`
 
 export type ModifierName = `&` | `&let` | `&when` | `&while`
 
@@ -150,6 +152,11 @@ export interface ModifierNode extends GenericNode {
 export interface ReservedNameNode extends GenericNode {
   type: `ReservedName`
   value: ReservedName
+}
+
+export interface TypeNameNode extends GenericNode {
+  type: `TypeName`
+  value: TypeName
 }
 
 interface NormalExpressionNodeBase extends GenericNode {
@@ -205,6 +212,7 @@ export type AstNode =
   | NormalExpressionNode
   | ModifierNode
   | SpecialExpressionNode
+  | TypeNameNode
 
 export type Ast = {
   type: `Program`

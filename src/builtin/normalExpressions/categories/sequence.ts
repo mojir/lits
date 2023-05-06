@@ -82,7 +82,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       string.assert(elem, debugInfo, { char: true })
       return `${elem}${seq}`
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `cons`, debugInfo),
   },
   nth: {
     evaluate: (params, debugInfo): Any => {
@@ -97,7 +97,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       sequence.assert(seq, debugInfo)
       return i >= 0 && i < seq.length ? toAny(seq[i]) : defaultValue
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `nth`, debugInfo),
   },
   filter: {
     evaluate: ([fn, seq]: Arr, debugInfo, contextStack, { executeFunction }): Seq => {
@@ -111,25 +111,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         .filter(elem => executeFunction(fn, [elem], contextStack, debugInfo))
         .join(``)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `filter`, debugInfo),
   },
   first: {
     evaluate: ([array], debugInfo): Any => {
       sequence.assert(array, debugInfo)
       return toAny(array[0])
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `first`, debugInfo),
   },
   last: {
     evaluate: ([first], debugInfo): Any => {
       sequence.assert(first, debugInfo)
       return toAny(first[first.length - 1])
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `last`, debugInfo),
   },
   map: {
     evaluate: evaluateMap,
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `map`, debugInfo),
   },
   pop: {
     evaluate: ([seq], debugInfo): Seq => {
@@ -141,7 +141,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       copy.pop()
       return copy
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `pop`, debugInfo),
   },
   position: {
     evaluate: ([fn, seq]: Arr, debugInfo, contextStack, { executeFunction }): number | null => {
@@ -155,7 +155,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return index !== -1 ? index : null
       }
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `position`, debugInfo),
   },
   'index-of': {
     evaluate: ([seq, value], debugInfo): number | null => {
@@ -170,7 +170,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return index !== -1 ? index : null
       }
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `index-of`, debugInfo),
   },
   push: {
     evaluate: ([seq, ...values], debugInfo): Seq => {
@@ -182,7 +182,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return [...seq, ...values]
       }
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `push`, debugInfo),
   },
   reductions: {
     evaluate: (params: Arr, debugInfo, contextStack, { executeFunction }): Any[] => {
@@ -245,7 +245,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         }
       }
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `reductions`, debugInfo),
   },
   reduce: {
     evaluate: (params: Arr, debugInfo, contextStack, { executeFunction }): Any => {
@@ -294,7 +294,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         }
       }
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `reduce`, debugInfo),
   },
   'reduce-right': {
     evaluate: (params: Arr, debugInfo, contextStack, { executeFunction }): Any => {
@@ -343,7 +343,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         }
       }
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `reduce-right`, debugInfo),
   },
   rest: {
     evaluate: ([first], debugInfo): Arr | string => {
@@ -357,7 +357,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return first.substr(1)
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `rest`, debugInfo),
   },
   nthrest: {
     evaluate: ([seq, count], debugInfo): Arr | string => {
@@ -369,7 +369,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return seq.substr(integerCount)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `nthrest`, debugInfo),
   },
   next: {
     evaluate: ([first], debugInfo): Arr | string | null => {
@@ -386,7 +386,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return first.substr(1)
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `next`, debugInfo),
   },
   nthnext: {
     evaluate: ([seq, count], debugInfo): Arr | string | null => {
@@ -401,7 +401,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return seq.substr(integerCount)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `nthnext`, debugInfo),
   },
   reverse: {
     evaluate: ([first], debugInfo): Any => {
@@ -411,14 +411,14 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return first.split(``).reverse().join(``)
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `reverse`, debugInfo),
   },
   second: {
     evaluate: ([array], debugInfo): Any => {
       sequence.assert(array, debugInfo)
       return toAny(array[1])
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `second`, debugInfo),
   },
   shift: {
     evaluate: ([seq], debugInfo): Any => {
@@ -430,7 +430,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       copy.shift()
       return copy
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `shift`, debugInfo),
   },
   slice: {
     evaluate: (params, debugInfo): Any => {
@@ -450,7 +450,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       number.assert(to, debugInfo, { integer: true })
       return seq.slice(from, to)
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1, max: 3 }, arity, `slice`, debugInfo),
   },
   some: {
     evaluate: ([fn, seq]: Arr, debugInfo, contextStack, { executeFunction }): Any => {
@@ -467,7 +467,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return toAny(seq.find(elem => executeFunction(fn, [elem], contextStack, debugInfo)))
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `some`, debugInfo),
   },
   sort: {
     evaluate: (params: Arr, debugInfo, contextStack, { executeFunction }): Seq => {
@@ -504,7 +504,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1, max: 2 }, arity, `sort`, debugInfo),
   },
   'sort-by': {
     evaluate: (params: Arr, debugInfo, contextStack, { executeFunction }): Seq => {
@@ -554,7 +554,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `sort-by`, debugInfo),
   },
   take: {
     evaluate: ([n, input], debugInfo): Seq => {
@@ -563,7 +563,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const num = Math.max(Math.ceil(n), 0)
       return input.slice(0, num)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `take`, debugInfo),
   },
   'take-last': {
     evaluate: ([n, array], debugInfo): Seq => {
@@ -573,7 +573,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const from = array.length - num
       return array.slice(from)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `take-last`, debugInfo),
   },
   'take-while': {
     evaluate: ([fn, seq]: Arr, debugInfo, contextStack, { executeFunction }): Any => {
@@ -590,7 +590,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return string.is(seq) ? result.join(``) : result
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `take-while`, debugInfo),
   },
   drop: {
     evaluate: ([n, input], debugInfo): Seq => {
@@ -599,7 +599,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       sequence.assert(input, debugInfo)
       return input.slice(num)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `drop`, debugInfo),
   },
   'drop-last': {
     evaluate: ([n, array], debugInfo): Seq => {
@@ -610,7 +610,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const from = array.length - num
       return array.slice(0, from)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `drop-last`, debugInfo),
   },
   'drop-while': {
     evaluate: ([fn, seq]: Arr, debugInfo, contextStack, { executeFunction }): Any => {
@@ -625,7 +625,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       const from = charArray.findIndex(elem => !executeFunction(fn, [elem], contextStack, debugInfo))
       return charArray.slice(from).join(``)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `drop-while`, debugInfo),
   },
   unshift: {
     evaluate: ([seq, ...values], debugInfo): Seq => {
@@ -638,7 +638,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       copy.unshift(...values)
       return copy
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `unshift`, debugInfo),
   },
   'random-sample!': {
     evaluate: ([prob, seq], debugInfo): Seq => {
@@ -654,7 +654,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return seq.filter(() => Math.random() < prob)
       }
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `random-sample!`, debugInfo),
   },
   'rand-nth!': {
     evaluate: ([seq], debugInfo): Any => {
@@ -670,7 +670,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return toAny(seq[index])
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `rand-nth!`, debugInfo),
   },
   'shuffle!': {
     evaluate: ([input], debugInfo): Seq => {
@@ -695,7 +695,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return string.is(input) ? array.join(``) : array
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `shuffle!`, debugInfo),
   },
   distinct: {
     evaluate: ([input], debugInfo): Seq => {
@@ -705,7 +705,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return Array.from(new Set(input.split(``))).join(``)
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `distinct`, debugInfo),
   },
   remove: {
     evaluate: ([fn, input], debugInfo, contextStack, { executeFunction }): Seq => {
@@ -719,7 +719,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         .filter(elem => !executeFunction(fn, [elem], contextStack, debugInfo))
         .join(``)
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `remove`, debugInfo),
   },
   'remove-at': {
     evaluate: ([index, input], debugInfo): Seq => {
@@ -738,7 +738,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return `${input.substring(0, index)}${input.substring(index + 1)}`
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `remove-at`, debugInfo),
   },
   'split-at': {
     evaluate: ([pos, seq], debugInfo): Seq => {
@@ -747,7 +747,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       sequence.assert(seq, debugInfo)
       return [seq.slice(0, intPos), seq.slice(intPos)]
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `split-at`, debugInfo),
   },
 
   'split-with': {
@@ -762,7 +762,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       }
       return [seq.slice(0, index), seq.slice(index)]
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `split-with`, debugInfo),
   },
 
   frequencies: {
@@ -781,7 +781,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return result
       }, {})
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `frequencies`, debugInfo),
   },
 
   'group-by': {
@@ -800,7 +800,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return result
       }, {})
     },
-    validate: node => assertNumberOfParams(2, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(2, arity, `group-by`, debugInfo),
   },
 
   partition: {
@@ -818,7 +818,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return partition(n, step, seq, pad, debugInfo)
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 4 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 4 }, arity, `partition`, debugInfo),
   },
 
   'partition-all': {
@@ -830,7 +830,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return partition(n, step, seq, [], debugInfo)
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `partition-all`, debugInfo),
   },
 
   'partition-by': {
@@ -852,7 +852,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       return isStringSeq ? result.map(elem => (elem as Arr).join(``)) : result
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2, max: 3 }, arity, `partition-by`, debugInfo),
   },
 }
 

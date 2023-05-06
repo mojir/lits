@@ -1,3 +1,4 @@
+import { isTypeName } from '../types/typeUtils'
 import { LitsError } from '../errors'
 import { ModifierName } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
@@ -93,6 +94,26 @@ export const tokenizeSymbolString: Tokenizer = (input, position, debugInfo) => {
     return NO_MATCH
   }
   return [length, { type: `string`, value, debugInfo }]
+}
+
+export const tokenizeTypeName: Tokenizer = (input, position, debugInfo) => {
+  if (input[position] !== `:` || input[position + 1] !== `:`) {
+    return NO_MATCH
+  }
+
+  let value = ``
+  let length = 2
+  let char = input[position + length]
+  while (char && nameRegExp.test(char)) {
+    length += 1
+    value += char
+    char = input[position + length]
+  }
+  if (isTypeName(value)) {
+    return [length, { type: `typeName`, value, debugInfo }]
+  } else {
+    throw new LitsError(`Unrecognized typename ${value}.`, debugInfo)
+  }
 }
 
 export const tokenizeRegexpShorthand: Tokenizer = (input, position, debugInfo) => {

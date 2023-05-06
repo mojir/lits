@@ -23,14 +23,14 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
       const applyArray = [...params.slice(0, -1), ...last]
       return executeFunction(func, applyArray, contextStack, debugInfo)
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `apply`, debugInfo),
   },
 
   identity: {
     evaluate: ([value]): Any => {
       return toAny(value)
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `identity`, debugInfo),
   },
 
   partial: {
@@ -43,7 +43,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         params,
       }
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `partial`, debugInfo),
   },
 
   comp: {
@@ -61,6 +61,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fns,
       }
     },
+    validateArity: () => undefined,
   },
 
   constantly: {
@@ -72,7 +73,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         value: toAny(value),
       }
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `constantly`, debugInfo),
   },
 
   juxt: {
@@ -84,7 +85,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fns,
       }
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `juxt`, debugInfo),
   },
 
   complement: {
@@ -96,7 +97,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fn: toAny(fn),
       }
     },
-    validate: node => assertNumberOfParams(1, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `complement`, debugInfo),
   },
 
   'every-pred': {
@@ -108,7 +109,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fns,
       }
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `every-pred`, debugInfo),
   },
 
   'some-pred': {
@@ -120,7 +121,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         fns,
       }
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 1 }, arity, `some-pred`, debugInfo),
   },
 
   fnil: {
@@ -133,6 +134,6 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
         params,
       }
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    validateArity: (arity, debugInfo) => assertNumberOfParams({ min: 2 }, arity, `fnil`, debugInfo),
   },
 }

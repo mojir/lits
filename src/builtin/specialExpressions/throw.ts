@@ -31,6 +31,7 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
     })
     throw new UserDefinedError(message, node.token?.debugInfo)
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) =>
-    analyzeAst((node as ThrowNode).messageNode, contextStack, builtin),
+  validateArity: () => undefined,
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) =>
+    findUndefinedSymbols((node as ThrowNode).messageNode, contextStack, builtin),
 }

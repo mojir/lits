@@ -1,5 +1,5 @@
-import { joinAnalyzeResults } from '../../analyze/utils'
-import { Context } from '../../evaluator/interface'
+import { joinUndefinedSymbols } from '../../analyze/undefinedSymbols/utils'
+import { Context } from '../../ContextStack/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { token } from '../../utils/assertion'
@@ -42,7 +42,8 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return result
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+  validateArity: () => undefined,
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) => {
     const newContext = (node as LetNode).bindings
       .map(binding => binding.name)
       .reduce((context: Context, name) => {
@@ -52,12 +53,12 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
     const bindingContext: Context = {}
     const bindingResults = (node as LetNode).bindings.map(bindingNode => {
       const valueNode = bindingNode.value
-      const bindingsResult = analyzeAst(valueNode, contextStack.withContext(bindingContext), builtin)
+      const bindingsResult = findUndefinedSymbols(valueNode, contextStack.withContext(bindingContext), builtin)
       bindingContext[bindingNode.name] = { value: true }
       return bindingsResult
     })
 
-    const paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin)
-    return joinAnalyzeResults(...bindingResults, paramsResult)
+    const paramsResult = findUndefinedSymbols(node.params, contextStack.withContext(newContext), builtin)
+    return joinUndefinedSymbols(...bindingResults, paramsResult)
   },
 }

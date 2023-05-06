@@ -381,53 +381,17 @@ module.exports = {
     description: `Returns \`1\` if \`number > 0\`, \`-1\` if \`number < 0\`, \`0\` if \`number = 0\` or \`-0\` if \`number = -0\`.`,
     examples: [`(sign -2.3)`, `(sign -0)`, `(sign 0)`, `(sign 12312)`],
   },
-  'positive-infinity': {
-    name: `positive-infinity`,
+  infinity: {
+    name: `infinity`,
     category: `Math`,
-    linkName: `positive-infinity`,
+    linkName: `infinity`,
     clojureDocs: null,
     returns: {
       type: `number`,
     },
     arguments: [],
-    description: `Returns a number representing positive positive-infinity.`,
-    examples: [`(positive-infinity)`],
-  },
-  'negative-infinity': {
-    name: `negative-infinity`,
-    category: `Math`,
-    linkName: `negative-infinity`,
-    clojureDocs: null,
-    returns: {
-      type: `number`,
-    },
-    arguments: [],
-    description: `Returns a number representing negative infinity.`,
-    examples: [`(negative-infinity)`],
-  },
-  'max-safe-integer': {
-    name: `max-safe-integer`,
-    category: `Math`,
-    linkName: `max-safe-integer`,
-    clojureDocs: null,
-    returns: {
-      type: `number`,
-    },
-    arguments: [],
-    description: `Returns a number representing the maximum safe integer.`,
-    examples: [`(max-safe-integer)`],
-  },
-  'min-safe-integer': {
-    name: `min-safe-integer`,
-    category: `Math`,
-    linkName: `min-safe-integer`,
-    clojureDocs: null,
-    returns: {
-      type: `number`,
-    },
-    arguments: [],
-    description: `Returns a number representing the minimum safe integer.`,
-    examples: [`(min-safe-integer)`],
+    description: `Returns a number representing positive infinity.`,
+    examples: [`(infinity)`],
   },
   'max-value': {
     name: `max-value`,
@@ -452,18 +416,6 @@ module.exports = {
     arguments: [],
     description: `Returns a number representing the smallest positive numeric value.`,
     examples: [`(min-value)`],
-  },
-  epsilon: {
-    name: `epsilon`,
-    category: `Math`,
-    linkName: `epsilon`,
-    clojureDocs: null,
-    returns: {
-      type: `number`,
-    },
-    arguments: [],
-    description: `Returns a number representing the difference between 1 and the smallest floating point number greater than 1.`,
-    examples: [`(epsilon)`],
   },
   nan: {
     name: `nan`,
@@ -559,15 +511,9 @@ module.exports = {
     returns: {
       type: `number`,
     },
-    arguments: [
-      {
-        name: `number`,
-        type: `positive number`,
-        description: `optional`,
-      },
-    ],
-    description: `Returns a semi random number between \`0\` (inclusive) and \`number\` (default 1) (exclusive).`,
-    examples: [`(rand! 1)`, `(rand! 0.01)`, `(rand! 2.5)`],
+    arguments: [],
+    description: `Returns a semi random number between \`0\` (inclusive) and 1 (exclusive).`,
+    examples: [`(rand!)`],
   },
   'rand-int!': {
     name: `rand-int!`,
@@ -580,12 +526,11 @@ module.exports = {
     arguments: [
       {
         name: `number`,
-        type: `positive number`,
         description: `optional`,
       },
     ],
     description: `Returns a semi random integer between \`0\` (inclusive) and \`number\` (exclusive).`,
-    examples: [`(rand-int! 1)`, `(rand-int! 10.12)`, `(rand-int! 123)`],
+    examples: [`(rand-int! 1)`, `(rand-int! 10.12)`, `(rand-int! 123)`, `(rand-int! -123)`],
   },
   sin: {
     name: `sin`,

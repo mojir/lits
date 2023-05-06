@@ -96,10 +96,7 @@ module.exports = {
       },
     ],
     description: `Returns a function that takes any number of arguments and returns \`value\`.`,
-    examples: [
-      `(def always-true (constantly true)) (always-true 9 3)`,
-      `(#((apply constantly first (repeat %2 rest)) %1) [1 2 3 4 5 6 7] 3)`,
-    ],
+    examples: [`(def always-true (constantly true)) (always-true 9 3)`],
   },
   juxt: {
     name: `juxt`,

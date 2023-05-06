@@ -1,40 +1,43 @@
-import { Builtin } from '../builtin/interface'
-import { lookUp } from '../evaluator'
-import { ContextStack } from '../evaluator/interface'
-import { AstNode } from '../parser/interface'
-import { asValue } from '../utils/assertion'
-import { AnalyzeAst, AnalyzeResult, UndefinedSymbolEntry } from './interface'
+import { Builtin } from '../../builtin/interface'
+import { ContextStack } from '../../ContextStack'
+import { lookUp } from '../../lookup'
+import { AstNode } from '../../parser/interface'
+import { asValue } from '../../utils/assertion'
+import { FindUndefinedSymbols, UndefinedSymbolEntry } from './interface'
 
-export const analyzeAst: AnalyzeAst = (astNode, contextStack, builtin: Builtin) => {
+export const findUndefinedSymbols: FindUndefinedSymbols = (astNode, contextStack, builtin: Builtin) => {
   const astNodes = Array.isArray(astNode) ? astNode : [astNode]
 
-  const analyzeResult: AnalyzeResult = {
-    undefinedSymbols: new Set<UndefinedSymbolEntry>(),
-  }
+  const undefinedSymbols = new Set<UndefinedSymbolEntry>()
 
   for (const subNode of astNodes) {
-    const result = analyzeAstNode(subNode, contextStack, builtin)
-    result.undefinedSymbols.forEach(symbol => analyzeResult.undefinedSymbols.add(symbol))
+    const innerUndefinedSymbols = calculateUndefinedSymbolsOnAstNode(subNode, contextStack, builtin)
+    innerUndefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
   }
 
-  return analyzeResult
+  return undefinedSymbols
 }
 
-function analyzeAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin): AnalyzeResult {
+function calculateUndefinedSymbolsOnAstNode(
+  astNode: AstNode,
+  contextStack: ContextStack,
+  builtin: Builtin,
+): Set<UndefinedSymbolEntry> {
   const emptySet = new Set<UndefinedSymbolEntry>()
   switch (astNode.type) {
     case `Name`: {
       const lookUpResult = lookUp(astNode, contextStack)
       if (!lookUpResult.builtinFunction && !lookUpResult.contextEntry && !lookUpResult.specialExpression) {
-        return { undefinedSymbols: new Set([{ symbol: astNode.value, token: astNode.token }]) }
+        return new Set([{ symbol: astNode.value, token: astNode.token }])
       }
-      return { undefinedSymbols: emptySet }
+      return emptySet
     }
+    case `TypeName`:
     case `String`:
     case `Number`:
     case `Modifier`:
     case `ReservedName`:
-      return { undefinedSymbols: emptySet }
+      return emptySet
     case `NormalExpression`: {
       const undefinedSymbols = new Set<UndefinedSymbolEntry>()
       const { expression, name, token } = astNode
@@ -55,23 +58,23 @@ function analyzeAstNode(astNode: AstNode, contextStack: ContextStack, builtin: B
             break
           case `NormalExpression`:
           case `SpecialExpression`: {
-            const subResult = analyzeAstNode(expression, contextStack, builtin)
-            subResult.undefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
+            const innerUndefinedSymbols = calculateUndefinedSymbolsOnAstNode(expression, contextStack, builtin)
+            innerUndefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
             break
           }
         }
       }
 
       for (const subNode of astNode.params) {
-        const subNodeResult = analyzeAst(subNode, contextStack, builtin)
-        subNodeResult.undefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
+        const subNodeResult = findUndefinedSymbols(subNode, contextStack, builtin)
+        subNodeResult.forEach(symbol => undefinedSymbols.add(symbol))
       }
-      return { undefinedSymbols }
+      return undefinedSymbols
     }
     case `SpecialExpression`: {
       const specialExpression = asValue(builtin.specialExpressions[astNode.name], astNode.token?.debugInfo)
-      const result = specialExpression.analyze(astNode, contextStack, {
-        analyzeAst,
+      const result = specialExpression.findUndefinedSymbols(astNode, contextStack, {
+        findUndefinedSymbols,
         builtin,
       })
       return result

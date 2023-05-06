@@ -1,4 +1,3 @@
-import { Context } from '../evaluator/interface'
 import { Any, Arr, Coll, Obj } from '../interface'
 import { RegularExpression } from '../parser/interface'
 import { DebugInfo } from '../tokenizer/interface'
@@ -172,12 +171,5 @@ export function cloneColl<T extends Coll>(value: T): T {
   return clone(value)
 }
 
-export function createContextFromValues(values?: Obj): Context {
-  if (!values) {
-    return {}
-  }
-  return Object.entries(values).reduce((context: Context, [key, value]) => {
-    context[key] = { value: toAny(value) }
-    return context
-  }, {})
-}
+export const MAX_NUMBER = Math.pow(2, 52)
+export const MIN_NUMBER = -Math.pow(2, 52)

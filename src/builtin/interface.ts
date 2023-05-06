@@ -1,4 +1,4 @@
-import { ContextStack, EvaluateAstNode, ExecuteFunction, LookUpResult } from '../evaluator/interface'
+import { EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
 import {
   ParseArgument,
   ParseBindings,
@@ -10,9 +10,10 @@ import {
   SpecialExpressionNode,
 } from '../parser/interface'
 import { Token, DebugInfo } from '../tokenizer/interface'
-import { NormalExpressionNode } from '../parser/interface'
 import { Any, Arr } from '../interface'
-import { AnalyzeAst, AnalyzeResult } from '../analyze/interface'
+import { FindUndefinedSymbols, UndefinedSymbolEntry } from '../analyze/undefinedSymbols/interface'
+import { ContextStack } from '../ContextStack'
+import { LookUpResult } from '../lookup/interface'
 
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
@@ -20,11 +21,11 @@ export type NormalExpressionEvaluator<T> = (
   contextStack: ContextStack,
   { executeFunction }: { executeFunction: ExecuteFunction },
 ) => T
-type ValidateNode = (node: NormalExpressionNode) => void
+type ValidateArity = (arity: number, debugInfo: DebugInfo | undefined) => void
 
 type BuiltinNormalExpression<T> = {
   evaluate: NormalExpressionEvaluator<T>
-  validate?: ValidateNode
+  validateArity: ValidateArity
 }
 
 export type ParserHelpers = {
@@ -44,15 +45,16 @@ type EvaluateHelpers = {
   builtin: Builtin
   lookUp(nameNode: NameNode, contextStack: ContextStack): LookUpResult
 }
+
 export type BuiltinSpecialExpression<T> = {
   parse: (tokens: Token[], position: number, parsers: ParserHelpers) => [number, SpecialExpressionNode]
   evaluate: (node: SpecialExpressionNode, contextStack: ContextStack, helpers: EvaluateHelpers) => T
-  validate?: (node: SpecialExpressionNode) => void
-  analyze(
+  validateArity: ValidateArity
+  findUndefinedSymbols(
     node: SpecialExpressionNode,
     contextStack: ContextStack,
-    params: { analyzeAst: AnalyzeAst; builtin: Builtin },
-  ): AnalyzeResult
+    params: { findUndefinedSymbols: FindUndefinedSymbols; builtin: Builtin },
+  ): Set<UndefinedSymbolEntry>
 }
 
 export type SpecialExpressionName =

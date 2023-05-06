@@ -22,5 +22,7 @@ export const recurSpecialExpression: BuiltinSpecialExpression<null> = {
     const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
     throw new RecurSignal(params)
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  validateArity: () => undefined,
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) =>
+    findUndefinedSymbols(node.params, contextStack, builtin),
 }

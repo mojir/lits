@@ -58,8 +58,9 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return null
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+  validateArity: () => undefined,
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) => {
     const astNodes = (node as CondNode).conditions.flatMap(condition => [condition.test, condition.form])
-    return analyzeAst(astNodes, contextStack, builtin)
+    return findUndefinedSymbols(astNodes, contextStack, builtin)
   },
 }

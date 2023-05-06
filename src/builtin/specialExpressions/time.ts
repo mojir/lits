@@ -29,6 +29,7 @@ export const timeSpecialExpression: BuiltinSpecialExpression<Any> = {
 
     return result
   },
-  validate: node => assertNumberOfParams(1, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  validateArity: (arity, debugInfo) => assertNumberOfParams(1, arity, `time!`, debugInfo),
+  findUndefinedSymbols: (node, contextStack, { findUndefinedSymbols, builtin }) =>
+    findUndefinedSymbols(node.params, contextStack, builtin),
 }
