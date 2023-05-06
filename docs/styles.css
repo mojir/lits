@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+#wrapper {
+  display: none;
+}
+
 body {
   margin: 0;
   padding: 1rem;
@@ -7,6 +11,13 @@ body {
   font-size: 1.1rem;
   background-color: #222222;
   color: #cccccc;
+}
+
+body.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 textarea {
@@ -89,11 +100,16 @@ a:link, a:visited, a:hover, a:active {
   flex: 15;
 }
 
+.column.shrink {
+  flex: 0;
+
+}
+
 .column.scoll {
   overflow: auto;
 }
 
-.r-row {
+/* .r-row {
   flex-direction: column;
 }
 
@@ -108,14 +124,14 @@ a:link, a:visited, a:hover, a:active {
 .column.wider {
   flex: 35;
 }
-
+*/
 .column.right {
   text-align: right;
 }
-
+/*
 .column.small {
   flex: 0;
-}
+} */
 
 .gray {
   color: gray;
@@ -125,7 +141,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 .button {
-  -webkit-user-select: none; /* Safari */        
+  -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
@@ -215,14 +231,12 @@ input[type="submit"]:hover{
   position: fixed;
   left: 290px;
   top: 95px;
-  bottom: 335px;
   right: 1rem;
   overflow-y: auto;
 }
 
 #sidebar {
   position: fixed;
-  bottom: 335px;
   left: 0;
   width: 250px;
   top: 95px;
@@ -233,87 +247,41 @@ input[type="submit"]:hover{
 }
 
 #playground {
-  -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -ms-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 310px;
   background-color: #333333;
-  border-top: 2px solid #444444;
-  padding: 0.5rem 0.5rem;
+  padding: 0 0.5rem 0.5rem 0.5rem;
   box-shadow: 6px 3px 8px #111111;
 }
 
-#lits-textarea, #params-textarea, #output-textarea {
-  height: 240px;
+#playground #panels-container {
+  width: 100%;
+  white-space: nowrap;
 }
 
-#maximize-params {
-  display: inline;
-}
-#minimize-params {
-  display: none;
+
+#playground #params-panel, #playground #lits-panel, #playground #output-panel {
+  display: inline-block;
 }
 
-#maximize-lits {
-  display: inline;
-}
-#minimize-lits {
-  display: none;
-}
-
-#maximize-output {
-  display: inline;
-}
-#minimize-output {
-  display: none;
+#playground #resize-playground {
+  display: block;
+  height: 5px;
+  background-color: #444444;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  cursor: row-resize;
 }
 
-.maximized-params #maximize-params {
-  display: none;
+#playground #resize-divider-1, #playground #resize-divider-2 {
+  display: inline-block;
+  max-width: 5px;
+  width: 5px;
+  margin: 20px 0px 5px 0px;
+  cursor: col-resize;
 }
-.maximized-params #minimize-params {
-  display: inline;
-}
-
-.maximized-lits #maximize-lits {
-  display: none;
-}
-.maximized-lits #minimize-lits {
-  display: inline;
-}
-
-.maximized-output #maximize-output {
-  display: none;
-}
-.maximized-output #minimize-output {
-  display: inline;
-}
-
-.maximized-params #params,
-.maximized-lits #lits,
-.maximized-output #output {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 0.5rem;
-  margin: 0;
-  background-color: #333333;
-}
-.maximized-params #params textarea,
-.maximized-lits #lits textarea,
-.maximized-output #output textarea {
-  height: calc(100% - 20px);
-  margin-bottom: 1rem;
-}
-
 
 .text {
   font-family: Roboto;
@@ -455,6 +423,7 @@ h4, h2, h1 {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 0.75rem;
+  margin-top: 0.25rem;
   background-color: #333333;
   color: #dddddd;
   color: #dddddd;
@@ -465,23 +434,26 @@ h4, h2, h1 {
   background-color: #222222;
 }
 
-#lits, #output {
-  margin-left: 0.5rem;
-}
-
 #output-textarea {
   margin-bottom: 1px;
 }
 
 #playground .textarea-header {
   white-space: nowrap;
-  font-weight: bold;
   padding-left: 0.25rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 #playground .textarea-header label {
+  font-weight: bold;
   margin: 0;
   padding: 0;
+}
+
+#playground .textarea-header a {
+  margin: 0;
+  padding-right: 5px;
 }
 
 #index pre, span.pre {
@@ -509,6 +481,12 @@ h4, h2, h1 {
   margin-left: -1rem;
   margin-right: -1.5rem;
 }
+
+.content .function-header .link {
+  font-size: 1.2rem;
+  text-decoration: underline;
+}
+
 
 .content .sub-header {
   background-color: #333333;

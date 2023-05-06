@@ -1,0 +1,3 @@
+(defn add [a b] (plus a b))
+(defn sub [a b] (- a b))
+(assert plus)

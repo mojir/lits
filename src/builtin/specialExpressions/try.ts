@@ -1,11 +1,13 @@
+import { joinAnalyzeResults } from '../../analyze/utils'
+import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
 import { any, nameNode, token } from '../../utils/assertion'
+import { getDebugInfo } from '../../utils/helpers'
 import { BuiltinSpecialExpression } from '../interface'
 
-interface TrySpecialExpressionNode extends SpecialExpressionNode {
-  name: `try`
+type TryNode = SpecialExpressionNode & {
   tryExpression: AstNode
   error: NameNode
   catchExpression: AstNode
@@ -20,15 +22,19 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     token.assert(tokens[position], `EOF`, { type: `paren`, value: `(` })
     position += 1
 
-    token.assert(tokens[position], `EOF`, { type: `paren`, value: `(` })
-    position += 1
+    let catchNode: AstNode
+    ;[position, catchNode] = parseToken(tokens, position)
+    nameNode.assert(catchNode, catchNode.token?.debugInfo)
+    if (catchNode.value !== `catch`) {
+      throw new LitsError(
+        `Expected 'catch', got '${catchNode.value}'.`,
+        getDebugInfo(catchNode, catchNode.token?.debugInfo),
+      )
+    }
 
     let error: AstNode
     ;[position, error] = parseToken(tokens, position)
-    nameNode.assert(error, error.token.sourceCodeInfo)
-
-    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
-    position += 1
+    nameNode.assert(error, error.token?.debugInfo)
 
     let catchExpression: AstNode
     ;[position, catchExpression] = parseToken(tokens, position)
@@ -39,31 +45,36 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
     position += 1
 
-    const node: TrySpecialExpressionNode = {
+    const node: TryNode = {
       type: `SpecialExpression`,
       name: `try`,
       params: [],
       tryExpression,
       catchExpression,
       error,
-      token: firstToken,
+      token: firstToken.debugInfo ? firstToken : undefined,
     }
 
     return [position, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castTryExpressionNode(node)
+    const { tryExpression, catchExpression, error: errorNode } = node as TryNode
     try {
-      return evaluateAstNode(node.tryExpression, contextStack)
+      return evaluateAstNode(tryExpression, contextStack)
     } catch (error) {
       const newContext: Context = {
-        [node.error.value]: { value: any.as(error, node.token.sourceCodeInfo) },
+        [errorNode.value]: { value: any.as(error, node.token?.debugInfo) },
       } as Context
-      return evaluateAstNode(node.catchExpression, contextStack.withContext(newContext))
+      return evaluateAstNode(catchExpression, contextStack.withContext(newContext))
     }
   },
-}
-
-function castTryExpressionNode(_node: SpecialExpressionNode): asserts _node is TrySpecialExpressionNode {
-  return
+  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+    const { tryExpression, catchExpression, error: errorNode } = node as TryNode
+    const tryResult = analyzeAst(tryExpression, contextStack, builtin)
+    const newContext: Context = {
+      [errorNode.value]: { value: true },
+    }
+    const catchResult = analyzeAst(catchExpression, contextStack.withContext(newContext), builtin)
+    return joinAnalyzeResults(tryResult, catchResult)
+  },
 }

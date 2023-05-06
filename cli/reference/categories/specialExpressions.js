@@ -15,8 +15,8 @@ module.exports = {
     description: `Computes logical 'and' function. \`forms\` evaluation starts from left. Value from the first form that decides result is returned so \`forms\` at end of argument array may not evaluated.`,
     examples: [
       `(and 1 1)`,
-      `(and (> 3 2) 'string')`,
-      `(and (< 3 2) 'string')`,
+      `(and (> 3 2) "string")`,
+      `(and (< 3 2) "string")`,
       `(and true true true true)`,
       `(and true true 0 true)`,
     ],
@@ -38,8 +38,8 @@ module.exports = {
     description: `Computes logical 'or' function. \`forms\` evaluation starts from left. Value from the first form that decides result is returned so forms at end of argument array may not evaluated.`,
     examples: [
       `(or 1 1)`,
-      `(or (> 3 2) 'string')`,
-      `(or (< 3 2) 'string')`,
+      `(or (> 3 2) "string")`,
+      `(or (< 3 2) "string")`,
       `(or true true true true)`,
       `(or 1 2 3 4)`,
     ],
@@ -63,13 +63,14 @@ module.exports = {
       },
     ],
     description: `Bind \`value\` to \`variable\`. If \`variable\` isn't defined, a new global variable is created.`,
-    examples: [`(def a (object))`, `(def a (object :x 10 :y true :z 'A string'))`],
+    examples: [`(def a (object))`, `(def a (object :x 10 :y true :z "A string"))`],
     specialExpression: true,
   },
   defs: {
     name: `defs`,
     category: `Special expression`,
     linkName: `defs`,
+    clojureDocs: null,
     returns: {
       type: `any`,
     },
@@ -86,7 +87,7 @@ module.exports = {
     description: `Creates a variable with name set to \`variable\` evaluated and value set to \`value\`. If a variable with name \`variable\` isn't found a new global variable is created.`,
     examples: [
       `(defs :a :b)`,
-      `(defs (str :a :1) (object :x 10 :y true :z 'A string')) a1`,
+      `(defs (str :a :1) (object :x 10 :y true :z "A string")) a1`,
       `(defs :a :b) (defs a :c) b`,
     ],
     specialExpression: true,
@@ -136,8 +137,8 @@ module.exports = {
     ],
     description: `Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, the then-form is evaluated (without variable accessable).`,
     examples: [
-      `(if-let [a (> (count 'Albert') 4)] (write! (str a 'is big enough')) (write! 'Sorry, not big enough.'))`,
-      `(if-let [a (> (count 'Albert') 10)] (write! (str a 'is big enough')) (write! 'Sorry, not big enough.'))`,
+      `(if-let [a (> (count "Albert") 4)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
+      `(if-let [a (> (count "Albert") 10)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
     ],
     specialExpression: true,
   },
@@ -160,8 +161,8 @@ module.exports = {
     ],
     description: `Binds one local variable. If it evaluates to a truthy value the then-form is executed with the variable accessable. If the bound variable evaluates to false, \`nil\` is returned.`,
     examples: [
-      `(when-let [a (> (count 'Albert') 4)] (write! (str a 'is big enough')) (write! 'Sorry, not big enough.'))`,
-      `(when-let [a (> (count 'Albert') 10)] (write! (str a 'is big enough')) (write! 'Sorry, not big enough.'))`,
+      `(when-let [a (> (count "Albert") 4)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
+      `(when-let [a (> (count "Albert") 10)] (write! (str a "is big enough")) (write! "Sorry, not big enough."))`,
     ],
     specialExpression: true,
   },
@@ -185,8 +186,8 @@ module.exports = {
     description: `Roughly the same as \`(when (seq xs) (let [x (first xs)] body))\`.`,
     examples: [
       `(when-first [x [1 2 3]] (write! 10) (write! 20) x)`,
-      `(when-first [x 'Albert'] x)`,
-      `(when-first [x ''] x)`,
+      `(when-first [x "Albert"] x)`,
+      `(when-first [x ""] x)`,
       `(when-first [x []] x)`,
     ],
     specialExpression: true,
@@ -245,6 +246,7 @@ module.exports = {
     name: `defns`,
     category: `Special expression`,
     linkName: `defns`,
+    clojureDocs: null,
     returns: {
       type: `function`,
     },
@@ -264,9 +266,9 @@ module.exports = {
     ],
     description: `Creates a named global function with its name set to \`name\` evaluated. When called, evaluation of the last expression in the body is returned.`,
     examples: [
-      `(defns 'hyp' [a b] (sqrt (+ (* a a) (* b b)))) hyp`,
+      `(defns "hyp" [a b] (sqrt (+ (* a a) (* b b)))) hyp`,
       `(defns (str :h :y :p) [a b] (sqrt (+ (* a a) (* b b)))) (hyp 3 4)`,
-      `(defns 'sumOfSquares' [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
+      `(defns "sumOfSquares" [& s] (apply + (map (fn [x] (* x x)) s))) (sumOfSquares 1 2 3 4 5)`,
     ],
     specialExpression: true,
   },
@@ -274,6 +276,7 @@ module.exports = {
     name: `try`,
     category: `Special expression`,
     linkName: `try`,
+    clojureDocs: null,
     returns: {
       type: `any`,
     },
@@ -288,13 +291,18 @@ module.exports = {
       },
     ],
     description: `Executes tryExpression. If that throws, the catchBlock gets executed. See examples for details.`,
-    examples: [`(try (/ 2 4) ((error) (/ 2 1)))`, `(try (/ 2 0) ((error) (/ 2 1)))`, `(try (/ 2 0) ((error) error))`],
+    examples: [
+      `(try (/ 2 4) (catch error (/ 2 1)))`,
+      `(try (/ 2 0) (catch error (/ 2 1)))`,
+      `(try (/ 2 0) (catch error error))`,
+    ],
     specialExpression: true,
   },
   throw: {
     name: `throw`,
     category: `Special expression`,
     linkName: `throw`,
+    clojureDocs: null,
     returns: {
       type: `nothing`,
     },
@@ -306,9 +314,9 @@ module.exports = {
     ],
     description: `Throws \`UserDefinedError\` with message set to \`message\` evaluated. \`message\` must evaluate to a \`string\`.`,
     examples: [
-      `(try (throw 'You shall not pass!') ((e) e))`,
-      `(try (throw (subs 'You shall not pass!' 0 3)) ((e) e))`,
-      `(try (throw 'You shall not pass!') ((error) error))`,
+      `(try (throw "You shall not pass!") (catch e e))`,
+      `(try (throw (subs "You shall not pass!" 0 3)) (catch e e))`,
+      `(try (throw "You shall not pass!") (catch error error))`,
     ],
     specialExpression: true,
   },
@@ -336,10 +344,10 @@ module.exports = {
     ],
     description: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is truthy. I test is falsy and no \`else\` branch exists, \`nil\` is returned.`,
     examples: [
-      `(if true (write! 'TRUE') (write! 'FALSE'))`,
-      `(if false (write! 'TRUE') (write! 'FALSE'))`,
-      `(if true (write! 'TRUE'))`,
-      `(if false (write! 'TRUE'))`,
+      `(if true (write! "TRUE") (write! "FALSE"))`,
+      `(if false (write! "TRUE") (write! "FALSE"))`,
+      `(if true (write! "TRUE"))`,
+      `(if false (write! "TRUE"))`,
     ],
     specialExpression: true,
   },
@@ -367,10 +375,10 @@ module.exports = {
     ],
     description: `Either \`then\` or \`else\` branch is taken. Then branch is selected when \`test\` result is falsy. I test is falsy and no \`else\` branch exists, \`nil\` is returned.`,
     examples: [
-      `(if-not true (write! 'TRUE') (write! 'FALSE'))`,
-      `(if-not false (write! 'TRUE') (write! 'FALSE'))`,
-      `(if-not true (write! 'TRUE'))`,
-      `(if-not false (write! 'TRUE'))`,
+      `(if-not true (write! "TRUE") (write! "FALSE"))`,
+      `(if-not false (write! "TRUE") (write! "FALSE"))`,
+      `(if-not true (write! "TRUE"))`,
+      `(if-not false (write! "TRUE"))`,
     ],
     specialExpression: true,
   },
@@ -387,10 +395,10 @@ module.exports = {
         type: `variants`,
       },
     ],
-    description: `Used for branching. Variants are tested sequentially from the top. I no branch is tested truthy, \`nil\` is returned.`,
+    description: `Used for branching. Variants are tested sequentially from the top. If no branch is tested truthy, \`nil\` is returned.`,
     examples: [
-      `(cond false (write! 'FALSE') nil (write! 'nil') true (write! 'TRUE'))`,
-      `(cond false (write! 'FALSE') nil (write! 'nil'))`,
+      `(cond false (write! "FALSE") nil (write! "nil") true (write! "TRUE"))`,
+      `(cond false (write! "FALSE") nil (write! "nil"))`,
     ],
     specialExpression: true,
   },
@@ -414,8 +422,8 @@ module.exports = {
     ],
     description: `If \`test\` yields a thruthy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a falsy value, the forms are not evaluated, and \`nil\` is returned. If no \`form\` is provided, \`nil\` is returned.`,
     examples: [
-      `(when true (write! 'Hi') (write! 'There'))`,
-      `(when false (write! 'Hi') (write! 'There'))`,
+      `(when true (write! "Hi") (write! "There"))`,
+      `(when false (write! "Hi") (write! "There"))`,
       `(when true)`,
       `(when false)`,
     ],
@@ -441,11 +449,28 @@ module.exports = {
     ],
     description: `If \`test\` yields a falsy value, the forms are evaluated in order from left to right and the value returned by the last \`form\` is returned. Otherwise, if \`test\` yields a truthy value, the forms are not evaluated, and \`nil\` is returned. If no \`form\` is provided, \`nil\` is returned.`,
     examples: [
-      `(when-not true (write! 'Hi') (write! 'There'))`,
-      `(when-not false (write! 'Hi') (write! 'There'))`,
+      `(when-not true (write! "Hi") (write! "There"))`,
+      `(when-not false (write! "Hi") (write! "There"))`,
       `(when-not true)`,
       `(when-not false)`,
     ],
+    specialExpression: true,
+  },
+  comment: {
+    name: `comment`,
+    category: `Special expression`,
+    linkName: `comment`,
+    returns: {
+      type: `nil`,
+    },
+    arguments: [
+      {
+        name: `forms`,
+        type: `form[]`,
+      },
+    ],
+    description: `All \`forms\` within \`comment\` are read and must be valid \`lits\` but they are not eveluated. \`nil\` is returned.`,
+    examples: [`(comment (write! "Hi") (write! "Albert"))`, `(comment)`],
     specialExpression: true,
   },
   do: {
@@ -462,7 +487,7 @@ module.exports = {
       },
     ],
     description: `Calls \`forms\` in the order they have been written. Resulting value is the value of the last form.`,
-    examples: [`(do (write! 'Hi') (write! 'Albert'))`, `(do)`],
+    examples: [`(do (write! "Hi") (write! "Albert"))`, `(do)`],
     specialExpression: true,
   },
   recur: {
@@ -514,6 +539,7 @@ module.exports = {
     name: `time!`,
     category: `Special expression`,
     linkName: `time_exclamation`,
+    clojureDocs: `time`,
     returns: {
       type: `any`,
     },
@@ -525,6 +551,27 @@ module.exports = {
     ],
     description: `Prints the time it took to evaluate \`form\`. Returns \`form\` evaluated.`,
     examples: [`(defn fib [x] (if (<= x 2) 1 (+ (fib (dec x)) (fib (- x 2))))) (time! (fib 10))`],
+    specialExpression: true,
+  },
+  doseq: {
+    name: `doseq`,
+    category: `Special expression`,
+    linkName: `doseq`,
+    returns: {
+      type: `nil`,
+    },
+    arguments: [
+      {
+        name: `bindings`,
+        type: `bindings`,
+      },
+      {
+        name: `expression`,
+        type: `form`,
+      },
+    ],
+    description: `Same syntax as \`for\`, but returns \`nil\`. Use for side effects. Consumes less memory than \`for\`.`,
+    examples: [`(doseq [x [1 2 4]] (write! x))`],
     specialExpression: true,
   },
   for: {
@@ -546,7 +593,7 @@ module.exports = {
     ],
     description: `List comprehension. Takes an array of one or more \`bindings\`, each followed by zero or more modifiers, and returns an array of evaluations of \`expression\`. Collections are iterated in a nested fashion, rightmost fastest. Supported modifiers are: &let &while and &when.`,
     examples: [
-      `(for [x 'Al' y [1 2]] (repeat y x))`,
+      `(for [x "Al" y [1 2]] (repeat y x))`,
       `(for [x {:a 10 :b 20} y [1 2]] (repeat y x))`,
       `(for [x [1 2] y [1 10]] (* x y))`,
       `(for [x [1 2] &let [z (* x x x)]] z)`,
@@ -555,6 +602,62 @@ module.exports = {
       `(for [x [0 1 2 3 4 5] &let [y (* x 3)] &while (odd? y)] y)`,
       `(for [x [1 2 3] y [1 2 3] &while (<= x y) z [1 2 3]] [x y z])`,
       `(for [x [1 2 3] y [1 2 3] z [1 2 3] &while (<= x y)] [x y z])`,
+    ],
+    specialExpression: true,
+  },
+  'declared?': {
+    name: `declared?`,
+    category: `Special expression`,
+    linkName: `declared_question`,
+    returns: {
+      type: `boolean`,
+    },
+    arguments: [
+      {
+        name: `name`,
+        type: `string`,
+      },
+    ],
+    description: `Returns \`true\` if name is a declared variable or a builtin function.`,
+    examples: [
+      `(declared? foo)`,
+      `(def foo :foo) (declared? foo)`,
+      `(declared? +)`,
+      `(def foo nil) (declared? foo)`,
+      `(declared? if)`,
+    ],
+    specialExpression: true,
+  },
+
+  '??': {
+    name: `??`,
+    category: `Special expression`,
+    linkName: `_question_question`,
+    returns: {
+      type: `any`,
+    },
+    arguments: [
+      {
+        name: `test`,
+        type: `any`,
+      },
+      {
+        name: `default`,
+        type: `any`,
+        description: `optional`,
+      },
+    ],
+    description: `Sort of like \`or\` with a couple of differences.\n\n1. \`test\` does not need to be declared (defaults to \`nil\`)\n2. Accept exactly one or two parameters.`,
+    examples: [
+      `(?? foo)`,
+      `(def foo :foo) (?? foo)`,
+      `(?? +)`,
+      `(def foo nil) (?? foo)`,
+      `(?? foo 1)`,
+      `(?? "")`,
+      `(?? 0)`,
+      `(?? 0 1)`,
+      `(?? 2 1)`,
     ],
     specialExpression: true,
   },

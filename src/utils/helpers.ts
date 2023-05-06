@@ -1,9 +1,15 @@
-import { AstNode, FUNCTION_SYMBOL, LitsFunction, NodeType } from '../parser/interface'
-import { SourceCodeInfo, Token, TokenizerType } from '../tokenizer/interface'
+import { AstNode, FUNCTION_SYMBOL, LitsFunction, NodeType, REGEXP_SYMBOL, RegularExpression } from '../parser/interface'
+import { DebugInfo, SourceCodeInfo, Token, TokenizerType } from '../tokenizer/interface'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
-export function getSourceCodeInfo(anyValue: any, sourceCodeInfo: SourceCodeInfo): SourceCodeInfo {
-  return anyValue?.sourceCodeInfo || sourceCodeInfo
+export function getDebugInfo(anyValue: any, debugInfo?: DebugInfo): DebugInfo | undefined {
+  return anyValue?.debugInfo ?? debugInfo
+}
+
+export function getCodeMarker(sourceCodeInfo: SourceCodeInfo): string {
+  const leftPadding = sourceCodeInfo.column - 1
+  const rightPadding = sourceCodeInfo.code.length - leftPadding - 1
+  return `${` `.repeat(Math.max(leftPadding, 0))}^${` `.repeat(Math.max(rightPadding, 0))}`
 }
 
 export function valueToString(value: unknown): string {
@@ -50,10 +56,6 @@ export function isToken(value: unknown): value is Token {
     return false
   }
 
-  if (!tkn.sourceCodeInfo && tkn.sourceCodeInfo !== null) {
-    return false
-  }
-
   return !!tokenTypes[tkn.type]
 }
 
@@ -74,9 +76,6 @@ export function isAstNode(value: unknown): value is AstNode {
   if (value === null || typeof value !== `object`) {
     return false
   }
-  if (!(value as AstNode).token) {
-    return false
-  }
   if (!astTypes[(value as AstNode).type]) {
     return false
   }
@@ -88,4 +87,11 @@ export function isLitsFunction(func: unknown): func is LitsFunction {
     return false
   }
   return !!(func as LitsFunction)[FUNCTION_SYMBOL]
+}
+
+export function isRegularExpression(regexp: unknown): regexp is RegularExpression {
+  if (regexp === null || typeof regexp !== `object`) {
+    return false
+  }
+  return !!(regexp as RegularExpression)[REGEXP_SYMBOL]
 }

@@ -4,7 +4,7 @@ import { defnSpecialExpression, defnsSpecialExpression, fnSpecialExpression } fr
 import { defSpecialExpression } from './specialExpressions/def'
 import { defsSpecialExpression } from './specialExpressions/defs'
 import { doSpecialExpression } from './specialExpressions/do'
-import { forSpecialExpression } from './specialExpressions/for'
+import { forSpecialExpression, doseqSpecialExpression } from './specialExpressions/loops'
 import { ifLetSpecialExpression } from './specialExpressions/if-let'
 import { ifNotSpecialExpression } from './specialExpressions/if-not'
 import { ifSpecialExpression } from './specialExpressions/if'
@@ -21,15 +21,20 @@ import { whenNotSpecialExpression } from './specialExpressions/when-not'
 import { whenSpecialExpression } from './specialExpressions/when'
 import { Builtin, BuiltinSpecialExpressions } from './interface'
 import { normalExpressions } from './normalExpressions'
+import { commentSpecialExpression } from './specialExpressions/comment'
+import { declaredSpecialExpression } from './specialExpressions/declared'
+import { qqSpecialExpression } from './specialExpressions/qq'
 
 export const specialExpressions: BuiltinSpecialExpressions = {
   and: andSpecialExpression,
+  comment: commentSpecialExpression,
   cond: condSpecialExpression,
   def: defSpecialExpression,
   defn: defnSpecialExpression,
   defns: defnsSpecialExpression,
   defs: defsSpecialExpression,
   do: doSpecialExpression,
+  doseq: doseqSpecialExpression,
   for: forSpecialExpression,
   fn: fnSpecialExpression,
   if: ifSpecialExpression,
@@ -46,6 +51,8 @@ export const specialExpressions: BuiltinSpecialExpressions = {
   'when-first': whenFirstSpecialExpression,
   'when-let': whenLetSpecialExpression,
   'when-not': whenNotSpecialExpression,
+  'declared?': declaredSpecialExpression,
+  '??': qqSpecialExpression,
 }
 
 Object.keys(specialExpressions).forEach(key => {

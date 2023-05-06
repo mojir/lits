@@ -1,0 +1,5 @@
+(def obj-a {:id :id1 :val :value1})
+(def obj-b {:id :id2 :val :value2})
+
+; @test equals
+(assert-equal obj-a obj-b)

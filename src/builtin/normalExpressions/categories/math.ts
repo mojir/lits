@@ -4,77 +4,78 @@ import { BuiltinNormalExpressions } from '../../interface'
 
 export const mathNormalExpression: BuiltinNormalExpressions = {
   inc: {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return first + 1
     },
     validate: node => assertNumberOfParams(1, node),
   },
 
   dec: {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return first - 1
     },
     validate: node => assertNumberOfParams(1, node),
   },
 
   '+': {
-    evaluate: (params, sourceCodeInfo): number => {
+    evaluate: (params, debugInfo): number => {
       return params.reduce((result: number, param) => {
-        number.assert(param, sourceCodeInfo)
+        number.assert(param, debugInfo)
         return result + param
       }, 0)
     },
   },
 
   '*': {
-    evaluate: (params, sourceCodeInfo): number => {
+    evaluate: (params, debugInfo): number => {
       return params.reduce((result: number, param) => {
-        number.assert(param, sourceCodeInfo)
+        number.assert(param, debugInfo)
         return result * param
       }, 1)
     },
   },
 
   '/': {
-    evaluate: (params, sourceCodeInfo): number => {
+    evaluate: (params, debugInfo): number => {
       if (params.length === 0) {
         return 1
       }
       const [first, ...rest] = params
-      number.assert(first, sourceCodeInfo)
+      number.assert(first, debugInfo)
       if (rest.length === 0) {
-        number.assert(first, sourceCodeInfo)
+        number.assert(first, debugInfo)
         return 1 / first
       }
       return rest.reduce((result: number, param) => {
-        number.assert(param, sourceCodeInfo)
+        number.assert(param, debugInfo)
         return result / param
       }, first)
     },
   },
 
   '-': {
-    evaluate: ([first, ...rest], sourceCodeInfo): number => {
-      if (!first) {
+    evaluate: (params, debugInfo): number => {
+      if (params.length === 0) {
         return 0
       }
-      number.assert(first, sourceCodeInfo)
+      const [first, ...rest] = params
+      number.assert(first, debugInfo)
       if (rest.length === 0) {
         return -first
       }
       return rest.reduce((result: number, param) => {
-        number.assert(param, sourceCodeInfo)
+        number.assert(param, debugInfo)
         return result - param
       }, first)
     },
   },
 
   quot: {
-    evaluate: ([dividend, divisor], sourceCodeInfo): number => {
-      number.assert(dividend, sourceCodeInfo)
-      number.assert(divisor, sourceCodeInfo)
+    evaluate: ([dividend, divisor], debugInfo): number => {
+      number.assert(dividend, debugInfo)
+      number.assert(divisor, debugInfo)
       const quotient = Math.trunc(dividend / divisor)
       return quotient
     },
@@ -82,9 +83,9 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   mod: {
-    evaluate: ([dividend, divisor], sourceCodeInfo): number => {
-      number.assert(dividend, sourceCodeInfo)
-      number.assert(divisor, sourceCodeInfo)
+    evaluate: ([dividend, divisor], debugInfo): number => {
+      number.assert(dividend, debugInfo)
+      number.assert(divisor, debugInfo)
       const quotient = Math.floor(dividend / divisor)
       return dividend - divisor * quotient
     },
@@ -92,9 +93,9 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   rem: {
-    evaluate: ([dividend, divisor], sourceCodeInfo): number => {
-      number.assert(dividend, sourceCodeInfo)
-      number.assert(divisor, sourceCodeInfo)
+    evaluate: ([dividend, divisor], debugInfo): number => {
+      number.assert(dividend, debugInfo)
+      number.assert(divisor, debugInfo)
       const quotient = Math.trunc(dividend / divisor)
       return dividend - divisor * quotient
     },
@@ -102,38 +103,38 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   sqrt: {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return Math.sqrt(first)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   cbrt: {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return Math.cbrt(first)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   pow: {
-    evaluate: ([first, second], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
-      number.assert(second, sourceCodeInfo)
+    evaluate: ([first, second], debugInfo): number => {
+      number.assert(first, debugInfo)
+      number.assert(second, debugInfo)
       return Math.pow(first, second)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
   },
 
   round: {
-    evaluate: (params, sourceCodeInfo): number => {
+    evaluate: (params, debugInfo): number => {
       const [value, decimals] = params
-      number.assert(value, sourceCodeInfo)
+      number.assert(value, debugInfo)
       if (params.length === 1 || decimals === 0) {
         return Math.round(value)
       }
-      number.assert(decimals, sourceCodeInfo, { integer: true, nonNegative: true })
+      number.assert(decimals, debugInfo, { integer: true, nonNegative: true })
       const factor = Math.pow(10, decimals)
       return Math.round(value * factor) / factor
     },
@@ -141,54 +142,54 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   trunc: {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return Math.trunc(first)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   floor: {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return Math.floor(first)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   ceil: {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return Math.ceil(first)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   'rand!': {
-    evaluate: (parameters, sourceCodeInfo): number => {
-      const num = number.as(parameters.length === 1 ? parameters[0] : 1, sourceCodeInfo)
+    evaluate: (parameters, debugInfo): number => {
+      const num = number.as(parameters.length === 1 ? parameters[0] : 1, debugInfo)
       return Math.random() * num
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 0, max: 1 }, node),
   },
 
   'rand-int!': {
-    evaluate: ([first], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first], debugInfo): number => {
+      number.assert(first, debugInfo)
       return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   min: {
-    evaluate: ([first, ...rest], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first, ...rest], debugInfo): number => {
+      number.assert(first, debugInfo)
       if (rest.length === 0) {
         return first
       }
 
       return rest.reduce((min: number, value) => {
-        number.assert(value, sourceCodeInfo)
+        number.assert(value, debugInfo)
         return Math.min(min, value)
       }, first)
     },
@@ -196,14 +197,14 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   max: {
-    evaluate: ([first, ...rest], sourceCodeInfo): number => {
-      number.assert(first, sourceCodeInfo)
+    evaluate: ([first, ...rest], debugInfo): number => {
+      number.assert(first, debugInfo)
       if (rest.length === 0) {
         return first
       }
 
       return rest.reduce((min: number, value) => {
-        number.assert(value, sourceCodeInfo)
+        number.assert(value, debugInfo)
         return Math.max(min, value)
       }, first)
     },
@@ -211,16 +212,16 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   abs: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.abs(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   sign: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.sign(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
@@ -297,128 +298,128 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
   },
 
   exp: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.exp(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   log: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.log(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   log2: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.log2(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   log10: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.log10(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   sin: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.sin(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   asin: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.asin(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   sinh: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.sinh(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   asinh: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.asinh(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   cos: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.cos(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   acos: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.acos(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   cosh: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.cosh(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   acosh: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.acosh(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   tan: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.tan(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   atan: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.atan(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   tanh: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.tanh(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
   atanh: {
-    evaluate: ([value], sourceCodeInfo): number => {
-      number.assert(value, sourceCodeInfo)
+    evaluate: ([value], debugInfo): number => {
+      number.assert(value, debugInfo)
       return Math.atanh(value)
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),

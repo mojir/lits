@@ -3,28 +3,22 @@ import { SpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams, astNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
-interface WhenSpecialExpressionNode extends SpecialExpressionNode {
-  name: `when`
-}
-
 export const whenSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
     const firstToken = token.as(tokens[position], `EOF`)
     const [newPosition, params] = parseTokens(tokens, position)
-    const node: WhenSpecialExpressionNode = {
+    const node: SpecialExpressionNode = {
       type: `SpecialExpression`,
       name: `when`,
       params,
-      token: firstToken,
+      token: firstToken.debugInfo ? firstToken : undefined,
     }
 
     return [newPosition + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castWhenExpressionNode(node)
-
     const [whenExpression, ...body] = node.params
-    astNode.assert(whenExpression, node.token.sourceCodeInfo)
+    astNode.assert(whenExpression, node.token?.debugInfo)
 
     if (!evaluateAstNode(whenExpression, contextStack)) {
       return null
@@ -37,8 +31,5 @@ export const whenSpecialExpression: BuiltinSpecialExpression<Any> = {
     return result
   },
   validate: node => assertNumberOfParams({ min: 1 }, node),
-}
-
-function castWhenExpressionNode(_node: SpecialExpressionNode): asserts _node is WhenSpecialExpressionNode {
-  return
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
 }

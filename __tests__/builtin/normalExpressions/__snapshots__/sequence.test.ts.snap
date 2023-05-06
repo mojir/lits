@@ -30,8 +30,74 @@ Array [
   Object {
     "a": 1,
   },
-  /ABC/,
-  /abc/,
+  Object {
+    "__REGEXP__": true,
+    "debugInfo": undefined,
+    "flags": "",
+    "source": "ABC",
+  },
+  Object {
+    "__REGEXP__": true,
+    "debugInfo": undefined,
+    "flags": "",
+    "source": "abc",
+  },
+  null,
+]
+`;
+
+exports[`sequence functions sort samples 2`] = `
+Array [
+  false,
+  true,
+  -100,
+  1,
+  2,
+  "Albert",
+  "albert",
+  Array [],
+  Array [
+    0,
+    1,
+    2,
+  ],
+  Array [
+    1,
+    2,
+    3,
+  ],
+  Array [
+    0,
+    0,
+    0,
+    0,
+  ],
+  Object {},
+  Object {
+    "a": 1,
+  },
+  Object {
+    "__REGEXP__": true,
+    "debugInfo": Object {
+      "code": "(sort [1 true 2 false  -100 nil (regexp \\"abc\\") (regexp \\"ABC\\") [] [1 2 3] [0 1 2] [0 0 0 0] {:a 1} {} \\"Albert\\" \\"albert\\"])",
+      "column": 49,
+      "getLocation": undefined,
+      "line": 1,
+    },
+    "flags": "",
+    "source": "ABC",
+  },
+  Object {
+    "__REGEXP__": true,
+    "debugInfo": Object {
+      "code": "(sort [1 true 2 false  -100 nil (regexp \\"abc\\") (regexp \\"ABC\\") [] [1 2 3] [0 1 2] [0 0 0 0] {:a 1} {} \\"Albert\\" \\"albert\\"])",
+      "column": 34,
+      "getLocation": undefined,
+      "line": 1,
+    },
+    "flags": "",
+    "source": "abc",
+  },
   null,
 ]
 `;

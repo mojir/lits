@@ -1,3 +1,4 @@
+import { joinAnalyzeResults } from '../../analyze/utils'
 import { LitsError } from '../../errors'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
@@ -7,8 +8,7 @@ import { assertNumberOfParams, asValue, sequence, token } from '../../utils/asse
 import { valueToString } from '../../utils/helpers'
 import { BuiltinSpecialExpression } from '../interface'
 
-interface WhenFirstSpecialExpressionNode extends SpecialExpressionNode {
-  name: `when-first`
+type WhenFirstNode = SpecialExpressionNode & {
   binding: BindingNode
 }
 
@@ -19,32 +19,29 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     ;[position, bindings] = parseBindings(tokens, position)
 
     if (bindings.length !== 1) {
-      throw new LitsError(
-        `Expected exactly one binding, got ${valueToString(bindings.length)}`,
-        firstToken.sourceCodeInfo,
-      )
+      throw new LitsError(`Expected exactly one binding, got ${valueToString(bindings.length)}`, firstToken.debugInfo)
     }
 
     let params: AstNode[]
     ;[position, params] = parseTokens(tokens, position)
 
-    const node: WhenFirstSpecialExpressionNode = {
+    const node: WhenFirstNode = {
       type: `SpecialExpression`,
       name: `when-first`,
-      binding: asValue(bindings[0], firstToken.sourceCodeInfo),
+      binding: asValue(bindings[0], firstToken.debugInfo),
       params,
-      token: firstToken,
+      token: firstToken.debugInfo ? firstToken : undefined,
     }
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castWhenFirstExpressionNode(node)
     const locals: Context = {}
-    const evaluatedBindingForm = evaluateAstNode(node.binding.value, contextStack)
+    const { binding } = node as WhenFirstNode
+    const evaluatedBindingForm = evaluateAstNode(binding.value, contextStack)
     if (!sequence.is(evaluatedBindingForm)) {
       throw new LitsError(
         `Expected undefined or a sequence, got ${valueToString(evaluatedBindingForm)}`,
-        node.token.sourceCodeInfo,
+        node.token?.debugInfo,
       )
     }
 
@@ -53,7 +50,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
 
     const bindingValue = toAny(evaluatedBindingForm[0])
-    locals[node.binding.name] = { value: bindingValue }
+    locals[binding.name] = { value: bindingValue }
     const newContextStack = contextStack.withContext(locals)
 
     let result: Any = null
@@ -63,8 +60,11 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any> = {
     return result
   },
   validate: node => assertNumberOfParams({ min: 0 }, node),
-}
-
-function castWhenFirstExpressionNode(_node: SpecialExpressionNode): asserts _node is WhenFirstSpecialExpressionNode {
-  return
+  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+    const { binding } = node as WhenFirstNode
+    const newContext: Context = { [binding.name]: { value: true } }
+    const bindingResult = analyzeAst(binding.value, contextStack, builtin)
+    const paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin)
+    return joinAnalyzeResults(bindingResult, paramsResult)
+  },
 }

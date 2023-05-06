@@ -1,11 +1,11 @@
+import { joinAnalyzeResults } from '../../analyze/utils'
 import { Context } from '../../evaluator/interface'
 import { Any } from '../../interface'
 import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
 import { token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 
-interface LetSpecialExpressionNode extends SpecialExpressionNode {
-  name: `let`
+type LetNode = SpecialExpressionNode & {
   bindings: BindingNode[]
 }
 
@@ -18,20 +18,19 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
     let params: AstNode[]
     ;[position, params] = parseTokens(tokens, position)
 
-    const node: LetSpecialExpressionNode = {
+    const node: LetNode = {
       type: `SpecialExpression`,
       name: `let`,
       params,
       bindings,
-      token: firstToken,
+      token: firstToken.debugInfo ? firstToken : undefined,
     }
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castLetExpressionNode(node)
     const locals: Context = {}
     const newContextStack = contextStack.withContext(locals)
-    for (const binding of node.bindings) {
+    for (const binding of (node as LetNode).bindings) {
       const bindingValueNode = binding.value
       const bindingValue = evaluateAstNode(bindingValueNode, newContextStack)
       locals[binding.name] = { value: bindingValue }
@@ -43,8 +42,22 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
     }
     return result
   },
-}
+  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+    const newContext = (node as LetNode).bindings
+      .map(binding => binding.name)
+      .reduce((context: Context, name) => {
+        context[name] = { value: true }
+        return context
+      }, {})
+    const bindingContext: Context = {}
+    const bindingResults = (node as LetNode).bindings.map(bindingNode => {
+      const valueNode = bindingNode.value
+      const bindingsResult = analyzeAst(valueNode, contextStack.withContext(bindingContext), builtin)
+      bindingContext[bindingNode.name] = { value: true }
+      return bindingsResult
+    })
 
-function castLetExpressionNode(_node: SpecialExpressionNode): asserts _node is LetSpecialExpressionNode {
-  return
+    const paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin)
+    return joinAnalyzeResults(...bindingResults, paramsResult)
+  },
 }

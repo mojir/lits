@@ -1,11 +1,6 @@
 import { Any } from '../../interface'
-import { SpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams, astNode, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
-
-interface IfSpecialExpressionNode extends SpecialExpressionNode {
-  name: `if`
-}
 
 export const ifSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
@@ -17,28 +12,24 @@ export const ifSpecialExpression: BuiltinSpecialExpression<Any> = {
         type: `SpecialExpression`,
         name: `if`,
         params,
-        token: firstToken,
+        token: firstToken.debugInfo ? firstToken : undefined,
       },
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    castIfExpressionNode(node)
-    const sourceCodeInfo = node.token.sourceCodeInfo
+    const debugInfo = node.token?.debugInfo
 
     const [conditionNode, trueNode, falseNode] = node.params
-    if (evaluateAstNode(astNode.as(conditionNode, sourceCodeInfo), contextStack)) {
-      return evaluateAstNode(astNode.as(trueNode, sourceCodeInfo), contextStack)
+    if (evaluateAstNode(astNode.as(conditionNode, debugInfo), contextStack)) {
+      return evaluateAstNode(astNode.as(trueNode, debugInfo), contextStack)
     } else {
       if (node.params.length === 3) {
-        return evaluateAstNode(astNode.as(falseNode, sourceCodeInfo), contextStack)
+        return evaluateAstNode(astNode.as(falseNode, debugInfo), contextStack)
       } else {
         return null
       }
     }
   },
   validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
-}
-
-function castIfExpressionNode(_node: SpecialExpressionNode): asserts _node is IfSpecialExpressionNode {
-  return
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
 }

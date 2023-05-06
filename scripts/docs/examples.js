@@ -23,37 +23,37 @@ module.exports = [
     code: `
 (defn formatPhoneNumber [$data]
   (if (string? $data)
-    (let [phoneNumber (if (= '+' (nth $data 0)) (subs $data 2) $data)]
+    (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)]
       (cond
         (> (count phoneNumber) 6)
           (str
-            '('
+            "("
             (subs phoneNumber 0 3)
-            ') '
+            ") "
             (subs phoneNumber 3 6)
-            '-'
+            "-"
             (subs phoneNumber 6))
 
         (> (count phoneNumber) 3)
-          (str '(' (subs phoneNumber 0 3) ') ' (subs phoneNumber 3))
+          (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))
 
         (> (count phoneNumber) 0)
-          (str '(' (subs phoneNumber 0))
+          (str "(" (subs phoneNumber 0))
 
         true
           phoneNumber
       )
     )
-    ''
+    ""
   )
 )
 
 (write! formatPhoneNumber)
 (write! (formatPhoneNumber 123234))
-(write! (formatPhoneNumber '123234'))
-(write! (formatPhoneNumber '1232343456'))
-(write! (formatPhoneNumber '+11232343456789'))
-(write! (formatPhoneNumber '+11232343456'))
+(write! (formatPhoneNumber "123234"))
+(write! (formatPhoneNumber "1232343456"))
+(write! (formatPhoneNumber "+11232343456789"))
+(write! (formatPhoneNumber "+11232343456"))
 `.trim(),
   },
   {
@@ -94,11 +94,11 @@ module.exports = [
     description: 'Function with multiple arities.',
     code: `
 (defn foo
-  ([] 'No parameters')
-  ([x] 'One parameter')
-  ([x y] 'Two parameters')
-  ([x y z] 'Three parameters')
-  ([x y z å & rest] 'Four or more parameters')
+  ([] "No parameters")
+  ([x] "One parameter")
+  ([x y] "Two parameters")
+  ([x y z] "Three parameters")
+  ([x y z å & rest] "Four or more parameters")
 )
 
 (write! (foo))
@@ -133,7 +133,7 @@ module.exports = [
   )
 )
 
-(write! (welcome-message 'Albert'))
+(write! (welcome-message "Albert"))
 (write! (count-chairs 12))
 (write! (count-chairs 1))
 `.trim(),
@@ -145,7 +145,7 @@ module.exports = [
     description: 'Check if string is formatted as an ISO date string.',
     code: `
 (defn isoDateString? [$data]
-  (if-let [m (match (regexp '^(\\d{4})-(\\d{2})-(\\d{2})$') $data)]
+  (if-let [m (match (regexp "^(\\d{4})-(\\d{2})-(\\d{2})$") $data)]
     (let
       [
         year (number (m 1))
@@ -181,8 +181,8 @@ module.exports = [
   )
 )
 
-(write! (isoDateString? '1978-12-21'))
-(write! (isoDateString? '197-12-21'))
+(write! (isoDateString? "1978-12-21"))
+(write! (isoDateString? "197-12-21"))
 `.trim(),
   },
 
@@ -198,8 +198,8 @@ module.exports = [
 )
 
 (def arr [
-  {:label 'Name' :value 'name'}
-  {:label 'Age' :value 'age'}
+  {:label "Name" :value "name"}
+  {:label "Age" :value "age"}
 ])
 
 (label-from-value arr :name)
@@ -208,7 +208,7 @@ module.exports = [
 
   {
     id: 'labels-from-values',
-    name: 'label-from-value',
+    name: 'labels-from-values',
     description: 'Find labels to corresponding values in array of {label value}-objects.',
     code: `
 (defn labels-from-values [$array $values]
@@ -229,9 +229,9 @@ module.exports = [
 )
 
 (def arr [
-  {:label 'Name' :value 'name'}
-  {:label 'Age' :value 'age'}
-  {:label 'Email' :value 'email'}
+  {:label "Name" :value "name"}
+  {:label "Age" :value "age"}
+  {:label "Email" :value "email"}
 ])
 
 (labels-from-values arr [:name :age])

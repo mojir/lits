@@ -1,12 +1,7 @@
 import { Any } from '../../interface'
-import { SpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams, astNode, string, token } from '../../utils/assertion'
 import { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
-
-interface DefsSpecialExpressionNode extends SpecialExpressionNode {
-  name: `defs`
-}
 
 export const defsSpecialExpression: BuiltinSpecialExpression<Any> = {
   parse: (tokens, position, { parseTokens }) => {
@@ -18,27 +13,26 @@ export const defsSpecialExpression: BuiltinSpecialExpression<Any> = {
         type: `SpecialExpression`,
         name: `defs`,
         params,
-        token: firstToken,
+        token: firstToken.debugInfo ? firstToken : undefined,
       },
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
-    castDefsExpressionNode(node)
-    const sourceCodeInfo = node.token.sourceCodeInfo
-    const name = evaluateAstNode(astNode.as(node.params[0], sourceCodeInfo), contextStack)
-    string.assert(name, sourceCodeInfo)
+    const debugInfo = node.token?.debugInfo
+    const name = evaluateAstNode(astNode.as(node.params[0], debugInfo), contextStack)
+    string.assert(name, debugInfo)
 
-    assertNameNotDefined(name, contextStack, builtin, node.token.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, node.token?.debugInfo)
 
-    const value = evaluateAstNode(astNode.as(node.params[1], sourceCodeInfo), contextStack)
+    const value = evaluateAstNode(astNode.as(node.params[1], debugInfo), contextStack)
 
     contextStack.globalContext[name] = { value }
 
     return value
   },
   validate: node => assertNumberOfParams(2, node),
-}
-
-function castDefsExpressionNode(_node: SpecialExpressionNode): asserts _node is DefsSpecialExpressionNode {
-  return
+  analyze: (node, contextStack, { analyzeAst, builtin }) => {
+    const subNode = astNode.as(node.params[1], node.token?.debugInfo)
+    return analyzeAst(subNode, contextStack, builtin)
+  },
 }

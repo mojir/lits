@@ -1,0 +1,10 @@
+; @include one-success-program.lits
+
+; Setup code
+(def one 1)
+
+; @test add
+(assert= (add one 2) 3)
+
+; @test sub
+(assert= (sub one 2) -1)

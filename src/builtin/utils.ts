@@ -2,7 +2,7 @@ import { LitsError } from '../errors'
 import { ContextStack } from '../evaluator/interface'
 import { AstNode, BindingNode } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
-import { SourceCodeInfo } from '../tokenizer/interface'
+import { DebugInfo } from '../tokenizer/interface'
 import { Builtin } from './interface'
 
 export type Arity = number | { min: number }
@@ -23,25 +23,25 @@ export function assertNameNotDefined<T>(
   name: T,
   contextStack: ContextStack,
   builtin: Builtin,
-  sourceCodeInfo: SourceCodeInfo,
+  debugInfo?: DebugInfo,
 ): asserts name is T {
   if (typeof name !== `string`) {
     return
   }
   if (builtin.specialExpressions[name]) {
-    throw new LitsError(`Cannot define variable ${name}, it's a special expression.`, sourceCodeInfo)
+    throw new LitsError(`Cannot define variable ${name}, it's a special expression.`, debugInfo)
   }
 
   if (builtin.normalExpressions[name]) {
-    throw new LitsError(`Cannot define variable ${name}, it's a builtin function.`, sourceCodeInfo)
+    throw new LitsError(`Cannot define variable ${name}, it's a builtin function.`, debugInfo)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((reservedNamesRecord as any)[name]) {
-    throw new LitsError(`Cannot define variable ${name}, it's a reserved name.`, sourceCodeInfo)
+    throw new LitsError(`Cannot define variable ${name}, it's a reserved name.`, debugInfo)
   }
 
   if (contextStack.globalContext[name]) {
-    throw new LitsError(`Name already defined "${name}".`, sourceCodeInfo)
+    throw new LitsError(`Name already defined "${name}".`, debugInfo)
   }
 }

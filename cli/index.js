@@ -7,6 +7,7 @@ const path = require(`path`)
 const fs = require(`fs`)
 const homeDir = require(`os`).homedir()
 const { Lits, normalExpressionKeys, specialExpressionKeys, reservedNames, isLitsFunction } = require(`../dist/index`)
+const { runTest } = require(`../dist/testFramework`)
 
 const historyResults = []
 const lits = new Lits({ debug: true })
@@ -36,8 +37,28 @@ if (config.expression) {
   const content = fs.readFileSync(config.filename, { encoding: `utf-8` })
   execute(content)
   process.exit(0)
+} else if (config.testFilename) {
+  runLitsTest(config.testFilename, config.testNamePattern)
+  process.exit(0)
 } else {
   runREPL()
+}
+
+function runLitsTest(testPath, testNamePattern) {
+  if (!testPath.match(/\.test\.lits/)) {
+    console.error(`Test file must end with .test.lits`)
+    process.exit(1)
+  }
+  const { success, tap } = runTest({
+    testPath,
+    testNamePattern: testNamePattern && new RegExp(testNamePattern),
+  })
+
+  console.log(`\n${tap}`)
+
+  if (!success) {
+    process.exit(1)
+  }
 }
 
 function execute(expression) {
@@ -127,6 +148,21 @@ function processArguments(args) {
     const option = args[i]
     const argument = args[i + 1]
     switch (option) {
+      case `test`:
+        if (!argument) {
+          console.error(`Missing filename after test`)
+          process.exit(1)
+        }
+        config.testFilename = argument
+        break
+      case `-t`:
+      case `--testNamePattern`:
+        if (!argument) {
+          console.error(`Missing test name pattern after -t`)
+          process.exit(1)
+        }
+        config.testNamePattern = argument
+        break
       case `-f`:
         if (!argument) {
           console.error(`Missing filename after -f`)
@@ -192,6 +228,17 @@ function processArguments(args) {
   }
   if (config.filename && config.expression) {
     console.error(`Cannot both specify -f and -e`)
+    process.exit(1)
+  }
+  if (config.test) {
+    if (config.filename) {
+      console.error(`Illegal option -f`)
+      process.exit(1)
+    }
+    if (config.expression) {
+      console.error(`Illegal option -e`)
+      process.exit(1)
+    }
   }
   return config
 }
