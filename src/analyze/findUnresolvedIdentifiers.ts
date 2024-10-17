@@ -43,20 +43,6 @@ function findUnresolvedIdentifiersInAstNode(astNode: AstNode, contextStack: Cont
         if (lookUpResult === null)
           unresolvedIdentifiers.add({ symbol: name, token: astNode.debugData?.token })
       }
-      // if (expression) {
-      //   switch (expression.t) {
-      //     case AstNodeType.String:
-      //     case AstNodeType.Number:
-      //       break
-      //     case AstNodeType.NormalExpression:
-      //     case AstNodeType.SpecialExpression: {
-      //       const subResult = findUnresolvedIdentifiersInAstNode(expression, contextStack, builtin)
-      //       subResult.forEach(symbol => unresolvedIdentifiers.add(symbol))
-      //       break
-      //     }
-      //   }
-      // }
-
       for (const subNode of astNode.p) {
         const innerUnresolvedIdentifiers = findUnresolvedIdentifiersInAstNode(subNode, contextStack, builtin)
         innerUnresolvedIdentifiers.forEach(symbol => unresolvedIdentifiers.add(symbol))

@@ -33,6 +33,16 @@ function isIdempotent(normalExpressionName: string): boolean {
 }
 
 export function calculateOutcomes(contextStack: ContextStack, astNodes: AstNode[]): Outcomes | null {
+  for (let i = 0; i < astNodes.length; i++) {
+    const usingAstNode = astNodes.slice(i)
+    const outcomes = calculateOutcomesInner(contextStack, usingAstNode)
+    if (outcomes !== null)
+      return outcomes
+  }
+  return null
+}
+
+export function calculateOutcomesInner(contextStack: ContextStack, astNodes: AstNode[]): Outcomes | null {
   const possibleAsts = calculatePossibleAsts(contextStack.clone(), astNodes)
 
   if (possibleAsts === null)
@@ -105,7 +115,8 @@ function calculatePossibleAstNodes(contextStack: ContextStack, astNode: AstNode,
       calculatePossibleAstNodes: (node: AstNode, identifiers?: string[]) => calculatePossibleAstNodes(newContextStack.clone(), node, identifiers),
       combinateAstNodes: (nodes: AstNode[], identifiers?: string[]) =>
         combinate(nodes.map(node => calculatePossibleAstNodes(newContextStack.clone(), node, identifiers))),
-      isAstComputable: (node: AstNode | AstNode[] | AstNode[][]) => calculateOutcomes(newContextStack.clone(), Array.isArray(node) ? node.flat() : [node]) !== null,
+      isAstComputable: (node: AstNode | AstNode[] | AstNode[][]) =>
+        calculateOutcomesInner(newContextStack, Array.isArray(node) ? node.flat() : [node]) !== null,
       addGlobalIdentifier: (name: string) => newContextStack.globalContext[name] = { value: null },
     }
 

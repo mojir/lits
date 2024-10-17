@@ -6860,19 +6860,6 @@ var Playground = (function (exports) {
                         unresolvedIdentifiers_1.add({ symbol: name_1, token: (_c = astNode.debugData) === null || _c === void 0 ? void 0 : _c.token });
                 }
                 try {
-                    // if (expression) {
-                    //   switch (expression.t) {
-                    //     case AstNodeType.String:
-                    //     case AstNodeType.Number:
-                    //       break
-                    //     case AstNodeType.NormalExpression:
-                    //     case AstNodeType.SpecialExpression: {
-                    //       const subResult = findUnresolvedIdentifiersInAstNode(expression, contextStack, builtin)
-                    //       subResult.forEach(symbol => unresolvedIdentifiers.add(symbol))
-                    //       break
-                    //     }
-                    //   }
-                    // }
                     for (var _f = __values(astNode.p), _g = _f.next(); !_g.done; _g = _f.next()) {
                         var subNode = _g.value;
                         var innerUnresolvedIdentifiers = findUnresolvedIdentifiersInAstNode(subNode, contextStack, builtin);
@@ -7168,12 +7155,32 @@ var Playground = (function (exports) {
 
     var calculateTryOutcomes = function (_a) {
         var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
-        return combinate([
-            calculatePossibleAstNodes(astNode.p[0]),
-            calculatePossibleAstNodes(astNode.ce),
-            calculatePossibleAstNodes(astNode.e),
-        ])
-            .map(function (combination) { return (__assign(__assign({}, astNode), { te: combination[0], ce: combination[1], e: asNameNode(combination[2]) })); });
+        var _b = calculatePossibleAstNodes(astNode.p[0]).reduce(function (acc, node) {
+            if (node.n === 'throw') {
+                acc.throws.push(node.p[0]);
+            }
+            else {
+                acc.vals.push(node);
+            }
+            return acc;
+        }, { vals: [], throws: [] }), vals = _b.vals, throws = _b.throws;
+        var catches = throws.flatMap(function (throwNode) {
+            var letNode = {
+                t: AstNodeType.SpecialExpression,
+                n: 'let',
+                bs: [{
+                        t: AstNodeType.Binding,
+                        n: astNode.e.v,
+                        v: throwNode,
+                        debugData: undefined,
+                        p: [],
+                    }],
+                p: [astNode.ce],
+                debugData: undefined,
+            };
+            return calculatePossibleAstNodes(letNode);
+        });
+        return __spreadArray(__spreadArray([], __read(vals), false), __read(catches), false);
     };
 
     var calculateWhenFirstOutcomes = function (_a) {
@@ -7313,6 +7320,15 @@ var Playground = (function (exports) {
             || normalExpressionName === 'write!';
     }
     function calculateOutcomes(contextStack, astNodes) {
+        for (var i = 0; i < astNodes.length; i++) {
+            var usingAstNode = astNodes.slice(i);
+            var outcomes = calculateOutcomesInner(contextStack, usingAstNode);
+            if (outcomes !== null)
+                return outcomes;
+        }
+        return null;
+    }
+    function calculateOutcomesInner(contextStack, astNodes) {
         var e_1, _a;
         var possibleAsts = calculatePossibleAsts(contextStack.clone(), astNodes);
         if (possibleAsts === null)
@@ -7385,7 +7401,9 @@ var Playground = (function (exports) {
                 combinateAstNodes: function (nodes, identifiers) {
                     return combinate(nodes.map(function (node) { return calculatePossibleAstNodes(newContextStack.clone(), node, identifiers); }));
                 },
-                isAstComputable: function (node) { return calculateOutcomes(newContextStack.clone(), Array.isArray(node) ? node.flat() : [node]) !== null; },
+                isAstComputable: function (node) {
+                    return calculateOutcomesInner(newContextStack, Array.isArray(node) ? node.flat() : [node]) !== null;
+                },
                 addGlobalIdentifier: function (name) { return newContextStack.globalContext[name] = { value: null }; },
             };
             // eslint-disable-next-line ts/no-unsafe-argument
