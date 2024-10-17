@@ -21,8 +21,8 @@ function isHistoryEnabled() {
   catch (e) {
     console.error(`No history for you!
 If you would like to enable history persistence, make sure the directory "${path.resolve(
-      historyDir,
-    )}" exists and is writable.
+  historyDir,
+)}" exists and is writable.
 `)
     return false
   }

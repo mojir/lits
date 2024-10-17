@@ -257,7 +257,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
 (has-some?
   [1 2 3]
   [0])`,
-  `
+      `
   (has-some?
   [1 2 3]
   [0 1])`,
@@ -572,7 +572,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
 (every?
   number?
   "")`,
-  `
+      `
 (every?
   number?
   {})`,
@@ -823,13 +823,13 @@ objects will be created - and the corresponding keys must be of type string.`,
   [:a :foo]
   (fn [val]
     (if (nil? val) "?" "!")))`,
-    `
+      `
 (update-in
   {:a {:foo :bar}}
   [:a :baz]
   (fn [val]
     (if (nil? val) "?" "!")))`,
-    `
+      `
 (update-in
   {:a [1 2 3]}
   [:a 1]

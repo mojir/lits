@@ -7,12 +7,12 @@ const lits = new Lits({ debug: true })
 describe('unparseAst', () => {
   describe('these programs should not change', () => {
     const programs = [
-`
+      `
 1
 2
 3
 `.trim(),
-`
+      `
 (+ 1
    2
    ;; Comment
@@ -36,11 +36,11 @@ describe('unparseAst', () => {
   describe('these sample programs should work', () => {
     const programs = [
       [
-`
+        `
 (+ 1 2
 )
 `.trim(),
-`
+        `
 (+ 1 2)
 `.trim(),
       ],

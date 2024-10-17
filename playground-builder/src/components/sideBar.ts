@@ -44,13 +44,13 @@ export function getSideBar() {
               ${
                 categoryCollections[categoryKey]
                   ? categoryCollections[categoryKey]
-                      .sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0))
-                      .map((obj) => {
-                        const linkName = obj.linkName
-                        const name = escape(obj.title)
-                        return `<a id="${linkName}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${linkName}', 'smooth')">${name}</a>`
-                      })
-                      .join('\n')
+                    .sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0))
+                    .map((obj) => {
+                      const linkName = obj.linkName
+                      const name = escape(obj.title)
+                      return `<a id="${linkName}_link" ${styles('scroll-my-2', 'pl-2')} onclick="Playground.showPage('${linkName}', 'smooth')">${name}</a>`
+                    })
+                    .join('\n')
                   : ''
               }
             </div>

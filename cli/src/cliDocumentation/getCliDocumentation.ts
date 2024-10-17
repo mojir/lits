@@ -28,7 +28,7 @@ ${clojureDocsLink}
 ${isFunctionReference(reference)
   ? `Arguments
 ${getArgumentInfo(fmt, reference)}`
-: ''}
+  : ''}
 
 Examples
 ${getCliFunctionExamples(fmt, reference)}`

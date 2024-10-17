@@ -44,7 +44,7 @@ export function createStyles<T extends string>(extraStyles: Record<T, string[]>)
       if (c.includes(':'))
         return c
       else
-      return basicStyles[c as CssClass] || extraStyles[c as T]
+        return basicStyles[c as CssClass] || extraStyles[c as T]
     }).join(' ')}"`
   }
 }

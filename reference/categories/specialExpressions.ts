@@ -572,14 +572,14 @@ and the value returned by the last expression is returned.
 Otherwise, if $test yields a falsy value, the expressions are not evaluated,
 and \`nil\` is returned. If no $expressions are provided, \`nil\` is returned.`,
     examples: [
-    `(when true
+      `(when true
       (write! "Hi")
       (write! "There"))`,
-    `(when false
+      `(when false
       (write! "Hi")
       (write! "There"))`,
-    '(when true)',
-    '(when false)',
+      '(when true)',
+      '(when false)',
     ],
   },
   'when-not': {
@@ -649,11 +649,11 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     ],
     description: 'Evaluates $expressions. Resulting value is the value of the last expression.',
     examples: [
-    `
+      `
 (do 
   (write! "Hi")
   (write! "Albert"))`,
-    '(do)',
+      '(do)',
     ],
   },
   'recur': {
@@ -674,14 +674,14 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     ],
     description: 'Recursevly calls enclosing function or loop with its evaluated $expressions.',
     examples: [
-    `
+      `
 (defn foo [n]
   (write! n)
   (when (not (zero? n))
     (recur
       (dec n))))
 (foo 3)`,
-    `
+      `
 (
   (fn [n]
     (write! n)
@@ -689,7 +689,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
       (recur
         (dec n))))
   3)`,
-    `
+      `
 (
   loop [n 3]
     (write! n)
@@ -720,13 +720,13 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     ],
     description: 'Executes $expressions with initial $bindings. The $bindings will be replaced with the recur parameters for subsequent recursions.',
     examples: [
-    `
+      `
 (loop [n 3]
   (write! n)
   (when
     (not (zero? n))
     (recur (dec n))))`,
-    `
+      `
 (loop [n 3]
   (write! n)
   (if
@@ -809,50 +809,50 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
   
   Collections are iterated in a nested fashion, rightmost fastest. Supported modifiers are: &let &while and &when.`,
     examples: [
-    `
+      `
 (for [x "Al" y [1 2]]
   (repeat y x))`,
-    `
+      `
 (for [x {:a 10 :b 20} y [1 2]]
   (repeat y x))`,
-    `
+      `
 (for [x [1 2] y [1 10]]
   (* x y))`,
-    `
+      `
 (for
   [x [1 2]
   &let [z (* x x x)]]
   
   z)`,
-    `
+      `
 (for
   [x [0 1 2 3 4 5]
   &let [y (* x 3)]
   &when (even? y)]
   
   y)`,
-    `
+      `
 (for
   [x [0 1 2 3 4 5]
   &let [y (* x 3)]
   &while (even? y)]
   
   y)`,
-    `
+      `
 (for
   [x [0 1 2 3 4 5]
   &let [y (* x 3)]
   &while (odd? y)]
   
   y)`,
-    `
+      `
 (for
   [x [1 2 3] y [1 2 3]
   &while (<= x y)
   z [1 2 3]]
   
   [x y z])`,
-    `
+      `
 (for
   [x [1 2 3] y [1 2 3] z [1 2 3]
   &while (<= x y)]
@@ -878,14 +878,14 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     description: 'Returns `true` if $n is a declared variable or a builtin function, otherwise `false`.',
     examples: [
       '(declared? foo)',
-    `
+      `
 (def foo :foo)
 (declared? foo)`,
-    '(declared? +)',
-    `
+      '(declared? +)',
+      `
 (def foo nil)
 (declared? foo)`,
-    '(declared? if)',
+      '(declared? if)',
     ],
   },
   '??': {
@@ -910,21 +910,21 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     description: 'If $test is declared and evaluated to non `nil` value $test is result, else $default is returned. If $default is not provided, `nil` is returned.',
     examples: [
       '(?? foo)',
-    `
+      `
 (def foo :foo)
 (?? foo)`,
-    '(?? +)',
-    `
+      '(?? +)',
+      `
 (def foo nil)
 (?? foo)`,
-`
+      `
 (def foo nil)
 (?? foo :bar)`,
-'(?? foo 1)',
-'(?? "")',
-'(?? 0)',
-'(?? 0 1)',
-'(?? 2 1)',
+      '(?? foo 1)',
+      '(?? "")',
+      '(?? 0)',
+      '(?? 0 1)',
+      '(?? 2 1)',
     ],
   },
 }

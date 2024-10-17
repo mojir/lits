@@ -22,12 +22,12 @@ export function applyMetaTokens(
   }
   else {
     const result = `${
-        metaTokensToString(metaTokens.leadingMetaTokens, value)
-      }${
-        value
-      }${
-        metaTokens?.inlineCommentToken ? ` ${metaTokens.inlineCommentToken.v}\n` : ''
-      }`
+      metaTokensToString(metaTokens.leadingMetaTokens, value)
+    }${
+      value
+    }${
+      metaTokens?.inlineCommentToken ? ` ${metaTokens.inlineCommentToken.v}\n` : ''
+    }`
     return result.split('\n').map((line, index) =>
       `${line && (!options.inlined || index > 0) ? options.indent : ''}${line}`,
     ).join('\n')

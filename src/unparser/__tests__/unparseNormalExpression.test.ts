@@ -33,7 +33,7 @@ describe('unparseNormalExpression', () => {
     testFormatter(
       p => lits.format(p, { lineLength: 1 }),
       program,
-  `
+      `
 [(+
   1)]
 `.trim(),

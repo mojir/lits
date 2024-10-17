@@ -71,7 +71,7 @@ describe('unparse let', () => {
     testFormatter(
       program => lits.format(program, { lineLength: 8, debug: false }),
       sampleProgramWithComments,
-  `
+      `
 (let [a
       10
       b

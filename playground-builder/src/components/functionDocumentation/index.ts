@@ -34,12 +34,12 @@ function getDocumentation(reference: Reference) {
 
     ${functionReferences
       ? getSection(
-          'See also',
-          getSeeAlsoLinks(functionReferences),
-          'my-3',
-          'text-base',
-          'text-color-gray-400',
-        )
+        'See also',
+        getSeeAlsoLinks(functionReferences),
+        'my-3',
+        'text-base',
+        'text-color-gray-400',
+      )
       : ''}
 
     ${
