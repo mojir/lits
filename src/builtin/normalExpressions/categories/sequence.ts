@@ -139,7 +139,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([seq], sourceCodeInfo): Seq => {
       assertSeq(seq, sourceCodeInfo)
       if (typeof seq === 'string')
-        return seq.substr(0, seq.length - 1)
+        return seq.substring(0, seq.length - 1)
 
       const copy = [...seq]
       copy.pop()
@@ -388,7 +388,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
         return first.slice(1)
       }
-      return first.substr(1)
+      return first.substring(1)
     },
     validate: node => assertNumberOfParams(1, node),
   },
@@ -400,7 +400,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       if (Array.isArray(seq))
         return seq.slice(integerCount)
 
-      return seq.substr(integerCount)
+      return seq.substring(integerCount)
     },
     validate: node => assertNumberOfParams(2, node),
   },
@@ -416,7 +416,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       if (first.length <= 1)
         return null
 
-      return first.substr(1)
+      return first.substring(1)
     },
     validate: node => assertNumberOfParams(1, node),
   },
@@ -431,7 +431,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       if (Array.isArray(seq))
         return seq.slice(integerCount)
 
-      return seq.substr(integerCount)
+      return seq.substring(integerCount)
     },
     validate: node => assertNumberOfParams(2, node),
   },
@@ -462,7 +462,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([seq], sourceCodeInfo): Any => {
       assertSeq(seq, sourceCodeInfo)
       if (typeof seq === 'string')
-        return seq.substr(1)
+        return seq.substring(1)
 
       const copy = [...seq]
       copy.shift()

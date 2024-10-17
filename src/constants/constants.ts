@@ -9,6 +9,7 @@ export enum AstNodeType {
   Binding = 208,
   Argument = 209,
   Partial = 210,
+  Comment = 211,
 }
 
 export const astNodeTypeName = new Map([
@@ -38,6 +39,8 @@ export enum TokenType {
   RegexpShorthand = 107,
   FnShorthand = 108,
   CollectionAccessor = 109,
+  Comment = 110,
+  NewLine = 111,
 }
 
 export const tokenTypeName = new Map([
@@ -50,6 +53,8 @@ export const tokenTypeName = new Map([
   [TokenType.RegexpShorthand, 'RegexpShorthand'],
   [TokenType.FnShorthand, 'FnShorthand'],
   [TokenType.CollectionAccessor, 'CollectionAccessor'],
+  [TokenType.Comment, 'Comment'],
+  [TokenType.NewLine, 'NewLine'],
 ])
 
 export function isTokenType(type: unknown): type is TokenType {

@@ -2,7 +2,7 @@
 import { describe, it } from 'vitest'
 import { Lits } from '../src'
 import { evaluate } from '../src/evaluator'
-import { ContextStack } from '../src/evaluator/ContextStack'
+import { ContextStackImpl } from '../src/evaluator/ContextStack'
 import type { Obj } from '../src/interface'
 import { parse } from '../src/parser'
 import { tokenize } from '../src/tokenizer'
@@ -10,7 +10,7 @@ import { tokenize } from '../src/tokenizer'
 const ITERATIONS = 25000
 const program = '(+ (* (- x y) (- y x)) (* (/ x y) (/ y x)))'
 const hostValues: Obj = { x: 20, y: 30 }
-const contextStack = new ContextStack({ contexts: [{}], values: hostValues })
+const contextStack = new ContextStackImpl({ contexts: [{}], values: hostValues })
 const jsExpression = '((x - y) * (y - x)) + ((x / y) * (y / x))'
 
 // Some baseline values for javascript eval to compare with

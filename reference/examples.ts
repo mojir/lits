@@ -5,8 +5,7 @@ export interface Example {
   code: string
   context?: {
     values?: Record<string, unknown>
-    lazyValues?: Record<string, { read: string }>
-    jsFunctions?: Record<string, { fn: string }>
+    jsFunctions?: Record<string, string>
   }
 }
 
@@ -47,9 +46,8 @@ export const examples: Example[] = [
     name: 'Using context',
     description: 'Simple example using a context.',
     context: {
-      values: { x: 15 },
-      lazyValues: { y: { read: 'EVAL:() => 42' } },
-      jsFunctions: { plus: { fn: 'EVAL:(a, b) => a + b' } },
+      values: { x: 15, y: 27 },
+      jsFunctions: { plus: '(a, b) => a + b' },
     },
     code: `
 (plus x y)
@@ -144,7 +142,7 @@ export const examples: Example[] = [
   ([x] "One parameter")
   ([x y] "Two parameters")
   ([x y z] "Three parameters")
-  ([x y z å & rest] "Four or more parameters")
+  ([x y z zz & rest] "Four or more parameters")
 )
 
 (write! (foo))

@@ -1,27 +1,35 @@
+import { AstNodeType, TokenType } from '../../constants/constants'
 import type { Any } from '../../interface'
-import { AstNodeType } from '../../constants/constants'
-import type { SpecialExpressionNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams } from '../../typeGuards'
 import { assertAstNode } from '../../typeGuards/astNode'
 import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
-export const whenNotSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream, position, { parseTokens }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const [newPosition, params] = parseTokens(tokenStream, position)
-    const node: SpecialExpressionNode = {
+export interface WhenNotNode extends CommonSpecialExpressionNode<'when-not'> {}
+
+export const whenNotSpecialExpression: BuiltinSpecialExpression<Any, WhenNotNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
+    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: WhenNotNode = {
       t: AstNodeType.SpecialExpression,
       n: 'when-not',
       p: params,
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
+
+    assertNumberOfParams({ min: 1 }, node)
 
     return [newPosition + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const [whenExpression, ...body] = node.p
-    assertAstNode(whenExpression, node.tkn?.sourceCodeInfo)
+    assertAstNode(whenExpression, node.debugData?.token.debugData?.sourceCodeInfo)
 
     if (evaluateAstNode(whenExpression, contextStack))
       return null
@@ -32,6 +40,5 @@ export const whenNotSpecialExpression: BuiltinSpecialExpression<Any> = {
 
     return result
   },
-  validate: node => assertNumberOfParams({ min: 1 }, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
 }

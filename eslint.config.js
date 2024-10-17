@@ -10,6 +10,7 @@ const config = antfu({
       'ts/restrict-template-expressions': ['off'],
       'no-labels': ['off'],
       'no-restricted-syntax': ['off'],
+      'ts/strict-boolean-expressions': ['off'],
       'quotes': ['error', 'single', { avoidEscape: true }],
       'ts/no-shadow': 'error',
       'ts/consistent-type-imports': 'error',

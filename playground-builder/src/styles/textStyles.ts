@@ -26,6 +26,9 @@ export function getTextStyles(css: CssTemplateFunction) {
     'text-4xl': css`
     font-size: 2.25rem;
   `,
+    'text-huge': css`
+    font-size: 12rem;
+  `,
     'font-bold': css`
     font-weight: bold;
   `,

@@ -8,6 +8,8 @@ export enum Color {
   Beige = '#dcdcaa',
   SkyLavender = '#c5cbe3',
   Pink = '#cc8f77',
+  Orange = '#ffa500',
+  Crimson = '#dc143c',
   White = '#ffffff',
   Gray_50 = 'rgb(250 250 250)',
   Gray_100 = 'rgb(245 245 245)',
@@ -53,6 +55,12 @@ export function getColorStyles(css: CssTemplateFunction) {
     `,
     'text-color-Pink': css`
       color: ${Color.Pink};
+    `,
+    'text-color-Orange': css`
+      color: ${Color.Orange};
+    `,
+    'text-color-Crimson': css`
+      color: ${Color.Crimson};
     `,
     'text-color-inherit': css`
       color: inherit;

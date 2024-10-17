@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { tokenize } from '../../src/tokenizer'
 import { TokenType } from '../../src/constants/constants'
+import type { TokenStream } from '../../src/tokenizer/interface'
 
 describe('tokenizer', () => {
   it('simple expressions', () => {
@@ -31,18 +32,22 @@ describe('tokenizer', () => {
   })
 
   it('comments', () => {
-    expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual({ tokens: [{ t: TokenType.String, v: 'Hi' }] })
-    expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual({
+    expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual<TokenStream>({
+      hasDebugData: false,
+      tokens: [{ t: TokenType.String, v: 'Hi', debugData: undefined }],
+    })
+    expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual<TokenStream>({
+      hasDebugData: false,
       tokens: [
-        { t: TokenType.String, v: 'Hi' },
-        { t: TokenType.String, v: 'there' },
+        { t: TokenType.String, v: 'Hi', debugData: undefined },
+        { t: TokenType.String, v: 'there', debugData: undefined },
       ],
     })
   })
 
   describe('strings', () => {
     it('unclosed string', () => {
-      expect(() => tokenize('"Hej', { debug: false })).toThrow()
+      expect(() => tokenize('"Hi', { debug: false })).toThrow()
     })
     it('escaped string', () => {
       expect(tokenize('"He\\"j"', { debug: false }).tokens[0]).toEqual({
@@ -62,76 +67,124 @@ describe('tokenizer', () => {
 
   describe('regexpShorthand', () => {
     it('samples', () => {
-      expect(tokenize('#"Hej"', { debug: true, filePath: 'foo.lits' })).toEqual({
+      expect(tokenize('#"Hi"', { debug: true, filePath: 'foo.lits' })).toEqual<TokenStream>({
+        hasDebugData: true,
         tokens: [
           {
             t: TokenType.RegexpShorthand,
-            v: 'Hej',
+            v: 'Hi',
             o: {},
-            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hej"', filePath: 'foo.lits' },
+            debugData: {
+              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
+              metaTokens: {
+                inlineCommentToken: null,
+                leadingMetaTokens: [],
+              },
+            },
           },
         ],
         filePath: 'foo.lits',
       })
-      expect(tokenize('#"Hej"g', { debug: true })).toEqual({
+      expect(tokenize('#"Hi"g', { debug: true })).toEqual<TokenStream>({
+        hasDebugData: true,
         tokens: [
           {
             t: TokenType.RegexpShorthand,
-            v: 'Hej',
+            v: 'Hi',
             o: { g: true },
-            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hej"g', getLocation: undefined },
+            debugData: {
+              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
+              metaTokens: {
+                inlineCommentToken: null,
+                leadingMetaTokens: [],
+              },
+            },
           },
         ],
       })
-      expect(tokenize('#"Hej"i', { debug: true })).toEqual({
+      expect(tokenize('#"Hi"i', { debug: true })).toEqual<TokenStream>({
+        hasDebugData: true,
         tokens: [
           {
             t: TokenType.RegexpShorthand,
-            v: 'Hej',
+            v: 'Hi',
             o: { i: true },
-            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hej"i', getLocation: undefined },
+            debugData: {
+              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
+              metaTokens: {
+                inlineCommentToken: null,
+                leadingMetaTokens: [],
+              },
+            },
           },
         ],
       })
-      expect(tokenize('#"Hej"gi', { debug: true })).toEqual({
+      expect(tokenize('#"Hi"gi', { debug: true })).toEqual<TokenStream>({
+        hasDebugData: true,
         tokens: [
           {
             t: TokenType.RegexpShorthand,
-            v: 'Hej',
+            v: 'Hi',
             o: { i: true, g: true },
-            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hej"gi', getLocation: undefined },
+            debugData: {
+              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
+              metaTokens: {
+                inlineCommentToken: null,
+                leadingMetaTokens: [],
+              },
+            },
           },
         ],
       })
-      expect(tokenize('#"Hej"ig', { debug: true })).toEqual({
+      expect(tokenize('#"Hi"ig', { debug: true })).toEqual<TokenStream>({
+        hasDebugData: true,
         tokens: [
           {
             t: TokenType.RegexpShorthand,
-            v: 'Hej',
+            v: 'Hi',
             o: { i: true, g: true },
-            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hej"ig', getLocation: undefined },
+            debugData: {
+              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
+              metaTokens: {
+                inlineCommentToken: null,
+                leadingMetaTokens: [],
+              },
+            },
           },
         ],
       })
-      expect(() => tokenize('#"Hej"gg', { debug: true })).toThrow()
-      expect(() => tokenize('#"Hej"ii', { debug: true })).toThrow()
+      expect(() => tokenize('#"Hi"gg', { debug: true })).toThrow()
+      expect(() => tokenize('#"Hi"ii', { debug: true })).toThrow()
       expect(() => tokenize('#1', { debug: true })).toThrow()
     })
   })
 
   describe('fnShorthand', () => {
     it('samples', () => {
-      expect(tokenize('#(', { debug: true })).toEqual({
+      expect(tokenize('#(', { debug: true })).toEqual<TokenStream>({
+        hasDebugData: true,
         tokens: [
           {
             t: TokenType.FnShorthand,
             v: '#',
-            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
+            debugData: {
+              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
+              metaTokens: {
+                inlineCommentToken: null,
+                leadingMetaTokens: [],
+              },
+            },
           },
           {
             t: TokenType.Bracket,
             v: '(',
-            sourceCodeInfo: { position: { line: 1, column: 2 }, code: '#(' },
+            debugData: {
+              sourceCodeInfo: { position: { line: 1, column: 2 }, code: '#(' },
+              metaTokens: {
+                inlineCommentToken: null,
+                leadingMetaTokens: [],
+              },
+            },
           },
         ],
       })
@@ -169,3 +222,157 @@ describe('tokenizer', () => {
     })
   })
 })
+
+type TokenTypeName = keyof typeof TokenType
+type TokenPrefix =
+  | '' // No leading tokens
+  | ';' // One leading comment
+  | ';+' // Two or more leading comments
+  | '_;' // Leading newline and one leading comment
+  | '_;+' // Leading newline and two or more leading comments
+  | '__;' // Two leading newlines and one leading comment
+  | '__;+' // Two leading newlines and two or more leading comments
+  | '_' // One leading newline
+  | '__' // Two leading newlines
+type TokenSuffix =
+  | '' // No inline comment
+  | ';' // Inline comment
+
+type TokenDescription = `${TokenPrefix}${TokenTypeName}${TokenSuffix}`
+describe('tokenize comments and new lines with debug', () => {
+  const samples: [string, TokenDescription[]][] = [
+    ['1 ;; One', ['Number;']],
+    ['\n1', ['_Number']],
+    ['\n1 ;; One', ['_Number;']],
+    ['\n;Her it comes  \n 1 ;; One', ['_;Number;']],
+    ['\n\n1 ;; One', ['__Number;']],
+    ['\n\n;Here it comes \n 1 ;; One', ['__;Number;']],
+    ['\n\n;Here it comes \n ;Here it comes \n 1 ;; One', ['__;+Number;']],
+    ['\n\n;Here it comes \n ;Here it comes \n ;Here it comes \n 1 ;; One', ['__;+Number;']],
+    ['\n\n', []],
+    [`;; One
+;; Two
+
+;;Leading
+(+
+  ;One
+  1
+  ;Two, as comment node
+
+  2) ; Adding one and two
+;; Soon done...
+
+;; very soon done..
+
+
+;; very soon done..
+
+
+
+;; The end`, [
+      'Comment',
+      'Comment',
+      '_;Bracket',
+      'Name',
+      '_;Number',
+      '_Comment',
+      '_Number',
+      'Bracket;',
+      'Comment',
+      '_Comment',
+      '__Comment',
+      '__Comment',
+    ]],
+    [`
+;; A
+(round ;; B
+  ;; C
+  (+ ;; D
+    ;; E
+    1 ;; F
+    ;; G 
+    2 ;; H
+    ;; I
+    (/ 3 4) 5)) ;; J`, [
+      '_;Bracket',
+      'Name;',
+      ';Bracket',
+      'Name;',
+      ';Number;',
+      ';Number;',
+      ';Bracket',
+      'Name',
+      'Number',
+      'Number',
+      'Bracket',
+      'Number',
+      'Bracket',
+      'Bracket;',
+    ]],
+  ]
+  testSamples(samples, true)
+})
+
+describe('tokenize comments and new lines without debug', () => {
+  const samples: [string, TokenDescription[]][] = [
+    ['1 ;; One', ['Number']],
+    ['\n1', ['Number']],
+    ['\n1 ;; One', ['Number']],
+    ['\n;Her it comes  \n 1 ;; One', ['Number']],
+    ['\n\n1 ;; One', ['Number']],
+    ['\n\n;Here it comes \n 1 ;; One', ['Number']],
+    ['\n\n;Here it comes \n ;Here it comes \n 1 ;; One', ['Number']],
+    ['\n\n;Here it comes \n ;Here it comes \n ;Here it comes \n 1 ;; One', ['Number']],
+    ['\n\n', []],
+    [`;; One
+;; Two
+
+;;Leading
+(+
+  ;One
+  1
+  ;Two, as comment node
+
+  2) ; Adding one and two
+;; Soon done...
+
+;; very soon done..
+
+
+;; very soon done..
+
+
+
+;; The end`, ['Bracket', 'Name', 'Number', 'Number', 'Bracket']],
+
+  ]
+  testSamples(samples, false)
+})
+
+function testSamples(samples: [string, TokenDescription[]][], debug: boolean) {
+  for (const sampel of samples) {
+    const [input, expected] = sampel
+    it(input, () => {
+      const tokenStream = tokenize(input, { debug })
+      const actual = tokenStream.tokens.map<TokenDescription>((token) => {
+        const tokenName = TokenType[token.t] as keyof typeof TokenType
+        const prefix: TokenPrefix = token.debugData?.metaTokens.leadingMetaTokens?.reduce<TokenPrefix>((acc, metaToken) => {
+          if (metaToken.t === TokenType.NewLine)
+            return `${acc}_` as TokenPrefix
+          if (metaToken.t === TokenType.Comment) {
+            return acc.endsWith(';')
+              ? `${acc}+` as TokenPrefix
+              : acc.endsWith('+')
+                ? acc
+                : `${acc};` as TokenPrefix
+          }
+          return acc
+        }, '') ?? ''
+        const suffix: TokenSuffix = token.debugData?.metaTokens.inlineCommentToken ? ';' : ''
+
+        return `${prefix}${tokenName}${suffix}`
+      })
+      expect(actual).toEqual(expected)
+    })
+  }
+}

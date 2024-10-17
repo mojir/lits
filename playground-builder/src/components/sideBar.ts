@@ -43,7 +43,7 @@ export function getSideBar() {
             <div ${styles('flex', 'flex-col', 'ml-2', 'text-color-gray-400', 'text-base')}>
               ${
                 categoryCollections[categoryKey]
-                  ? categoryCollections[categoryKey]!
+                  ? categoryCollections[categoryKey]
                       .sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0))
                       .map((obj) => {
                         const linkName = obj.linkName

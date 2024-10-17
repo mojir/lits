@@ -62,25 +62,35 @@ describe('parser', () => {
     const tokens = tokenize('foo#1.a', { debug: false })
     const ast = parse(tokens)
     expect(ast).toEqual<Ast>({
+      hasDebugData: false,
       b: [
         {
           t: AstNodeType.NormalExpression,
-          e: {
-            t: AstNodeType.NormalExpression,
-            n: 'foo',
-            p: [
-              {
-                t: AstNodeType.Number,
-                v: 1,
-              },
-            ],
-          },
           p: [
+            {
+              t: AstNodeType.NormalExpression,
+              n: 'foo',
+              p: [
+                {
+                  t: AstNodeType.Number,
+                  v: 1,
+                  debugData: undefined,
+                  p: [],
+                  n: undefined,
+                },
+              ],
+              debugData: undefined,
+            },
             {
               t: AstNodeType.String,
               v: 'a',
+              debugData: undefined,
+              p: [],
+              n: undefined,
             },
           ],
+          debugData: undefined,
+          n: undefined,
         },
       ],
     })
@@ -90,64 +100,87 @@ describe('parser', () => {
     const tokens = tokenize('(#(identity %1) [1 2 3])#1', { debug: false })
     const ast = parse(tokens)
     expect(ast).toEqual<Ast>({
+      hasDebugData: false,
       b: [
         {
           t: 203,
-          e: {
-            t: 203,
-            e: {
-              t: 204,
-              n: 'fn',
-              p: [],
-              o: [
+          p: [
+            {
+              t: 203,
+              p: [
                 {
-                  as: {
-                    b: [],
-                    m: ['%1'],
-                  },
-                  b: [
+                  t: 204,
+                  n: 'fn',
+                  p: [],
+                  o: [
                     {
-                      t: 203,
-                      n: 'identity',
-                      p: [
+                      as: {
+                        b: [],
+                        m: ['%1'],
+                      },
+                      b: [
                         {
-                          t: 205,
-                          v: '%1',
+                          t: 203,
+                          n: 'identity',
+                          p: [
+                            {
+                              t: 205,
+                              v: '%1',
+                              debugData: undefined,
+                              p: [],
+                              n: undefined,
+                            },
+                          ],
+                          debugData: undefined,
                         },
                       ],
+                      a: 1,
                     },
                   ],
-                  a: 1,
+                  debugData: undefined,
+                },
+                {
+                  t: 203,
+                  n: 'array',
+                  p: [
+                    {
+                      t: 201,
+                      v: 1,
+                      debugData: undefined,
+                      p: [],
+                      n: undefined,
+                    },
+                    {
+                      t: 201,
+                      v: 2,
+                      debugData: undefined,
+                      p: [],
+                      n: undefined,
+                    },
+                    {
+                      t: 201,
+                      v: 3,
+                      debugData: undefined,
+                      p: [],
+                      n: undefined,
+                    },
+                  ],
+                  debugData: undefined,
                 },
               ],
+              n: undefined,
+              debugData: undefined,
             },
-            p: [
-              {
-                t: 203,
-                n: 'array',
-                p: [
-                  {
-                    t: 201,
-                    v: 1,
-                  },
-                  {
-                    t: 201,
-                    v: 2,
-                  },
-                  {
-                    t: 201,
-                    v: 3,
-                  },
-                ],
-              },
-            ],
-          },
-          p: [
             {
               t: 201,
               v: 1,
+              debugData: undefined,
+              p: [],
+              n: undefined,
             },
           ],
+          debugData: undefined,
+          n: undefined,
         },
       ],
     })
@@ -155,14 +188,17 @@ describe('parser', () => {
 
   it('parseToken unknown token', () => {
     const tokenStream: TokenStream = {
+      hasDebugData: false,
       tokens: [
         {
           t: TokenType.CollectionAccessor,
           v: '',
+          debugData: undefined,
         },
         {
           t: TokenType.Modifier,
           v: '',
+          debugData: undefined,
         },
       ],
     }

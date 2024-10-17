@@ -1,5 +1,6 @@
 import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
+import type { QqNode } from '../builtin/specialExpressions/qq'
 import { AstNodeType, TokenType } from '../constants/constants'
 import type {
   AstNode,
@@ -8,7 +9,6 @@ import type {
   NormalExpressionNode,
   NormalExpressionNodeWithName,
   NumberNode,
-  SpecialExpressionNode,
   StringNode,
 } from '../parser/interface'
 import type { Token } from '../tokenizer/interface'
@@ -31,7 +31,7 @@ import {
 } from './astNode'
 
 describe('astNode type guards', () => {
-  const tkn: Token = { t: TokenType.Name, v: 'X' }
+  const tkn: Token = { t: TokenType.Name, v: 'X', debugData: undefined }
   const invalidAstNodes: unknown[] = [
     {
       tkn,
@@ -51,46 +51,69 @@ describe('astNode type guards', () => {
     null,
     [],
   ]
-  const specialExpressionNode: SpecialExpressionNode = {
+  const specialExpressionNode: QqNode = {
     t: AstNodeType.SpecialExpression,
     n: '??',
-    p: [],
+    p: [{
+      t: AstNodeType.ReservedName,
+      v: 'nil',
+      debugData: undefined,
+      p: [],
+      n: undefined,
+    }, {
+      t: AstNodeType.ReservedName,
+      v: 'nil',
+      debugData: undefined,
+      p: [],
+      n: undefined,
+    }],
+    debugData: undefined,
   }
   const nameNode: NameNode = {
     t: AstNodeType.Name,
-    tkn,
+    debugData: { token: tkn, lastToken: tkn },
     v: 'A name',
+    p: [],
+    n: undefined,
   }
   const numberNode: NumberNode = {
     t: AstNodeType.Number,
     v: 12,
-    tkn,
+    debugData: { token: tkn, lastToken: tkn },
+    p: [],
+    n: undefined,
   }
   const stringNode: StringNode = {
     t: AstNodeType.String,
     v: 'foo',
-    tkn: { t: TokenType.Name, v: 'X' },
+    debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: tkn },
+    p: [],
+    n: undefined,
   }
   const normalExpressionNodeWithName: NormalExpressionNodeWithName = {
     t: AstNodeType.NormalExpression,
     p: [],
     n: 'object',
-    tkn: { t: TokenType.Name, v: 'X' },
+    debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: tkn },
   }
   const normalExpressionNodeWithoutName: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
-    p: [],
-    e: {
+    n: undefined,
+    p: [{
       t: AstNodeType.NormalExpression,
       n: '+',
       p: [
         {
           t: AstNodeType.Number,
           v: 2,
-          tkn: { t: TokenType.Name, v: 'X' },
+          debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: tkn },
+          p: [],
+          n: undefined,
         },
       ],
-    },
+      debugData: undefined,
+    }],
+    debugData: undefined,
   }
 
   const expressionNodes: ExpressionNode[] = [

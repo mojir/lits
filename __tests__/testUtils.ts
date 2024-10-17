@@ -1,9 +1,9 @@
 import { expect } from 'vitest'
 import type { Context, LitsFunction, LitsParams } from '../src'
 import { Lits } from '../src'
-import type { AnalyzeResult } from '../src/analyze/interface'
+import type { Analysis } from '../src/analyze'
 import type { LitsError } from '../src/errors'
-import { ContextStack } from '../src/evaluator/ContextStack'
+import { ContextStackImpl } from '../src/evaluator/ContextStack'
 import type { Obj } from '../src/interface'
 import { isUnknownRecord } from '../src/typeGuards'
 import { isLitsFunction } from '../src/typeGuards/litsFunction'
@@ -118,8 +118,8 @@ export function regexpEquals(udr: unknown, r: RegExp): boolean {
   return udr.s === r.source && sortedRFlags === sortedUdrFlags
 }
 
-export function getUndefinedSymbolNames(result: AnalyzeResult): Set<string> {
-  const names = [...result.undefinedSymbols].map(entry => entry.symbol)
+export function getUndefinedSymbolNames(result: Analysis): Set<string> {
+  const names = [...result.unresolvedIdentifiers].map(entry => entry.symbol)
   return new Set<string>(names)
 }
 
@@ -158,10 +158,10 @@ export function getLitsVariants() {
       expect(result1).toStrictEqual(result2)
       return result1
     },
-    analyze(program: string): AnalyzeResult {
+    analyze(program: string): Analysis {
       const results = variants.map(l => l.analyze(program))
-      const result1 = results[0] as AnalyzeResult
-      const result2 = results[1] as AnalyzeResult
+      const result1 = results[0] as Analysis
+      const result2 = results[1] as Analysis
       const us1 = getUndefinedSymbolNames(result1)
       const us2 = getUndefinedSymbolNames(result2)
       expect(us1).toStrictEqual(us2)
@@ -171,5 +171,5 @@ export function getLitsVariants() {
 }
 
 export function createContextStackWithGlobalContext(context: Context) {
-  return new ContextStack({ contexts: [context] })
+  return new ContextStackImpl({ contexts: [context] })
 }

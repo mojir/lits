@@ -1,18 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import { AstNodeType } from '../../src'
-import { ContextStack } from '../../src/evaluator/ContextStack'
+import { ContextStackImpl } from '../../src/evaluator/ContextStack'
 import type { NameNode } from '../../src/parser/interface'
 
-function getNameNode(name: string): NameNode {
+function createNameNode(name: string): NameNode {
   return {
     t: AstNodeType.Name,
     v: name,
+    debugData: undefined,
+    p: [],
+    n: undefined,
   }
 }
 
 describe('contextStack', () => {
   it('create', () => {
-    const contextStack = new ContextStack({
+    const contextStack = new ContextStackImpl({
       contexts: [{}],
       lazyValues: {
         foo: { read: () => 'foo' },
@@ -22,7 +25,7 @@ describe('contextStack', () => {
 
     const contextStack2 = contextStack.create({}, { foo: { read: () => 'xxx' } })
 
-    expect(contextStack2.lookUp(getNameNode('foo'))).toEqual({ value: 'xxx' })
-    expect(contextStack2.lookUp(getNameNode('bar'))).toEqual({ value: 'bar' })
+    expect(contextStack2.lookUp(createNameNode('foo'))).toEqual({ value: 'xxx' })
+    expect(contextStack2.lookUp(createNameNode('bar'))).toEqual({ value: 'bar' })
   })
 })

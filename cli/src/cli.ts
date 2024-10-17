@@ -135,10 +135,10 @@ function setReplHistoryVariables() {
 function parseOption(args: string[], i: number) {
   const option = args[i]!
 
-  if (/^-[a-zA-Z]$/.test(option))
+  if (/^-[a-z]$/i.test(option))
     return { option, argument: args[i + 1], count: 2 }
 
-  const match = /^(--[a-zA-Z-]+)(?:=(.*))?$/.exec(option)
+  const match = /^(--[a-z-]+)(?:=(.*))?$/i.exec(option)
   if (match)
     return { option: match[1], argument: match[2], count: 1 }
 

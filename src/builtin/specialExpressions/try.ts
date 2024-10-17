@@ -1,24 +1,23 @@
 import { joinAnalyzeResults } from '../../analyze/utils'
+import { AstNodeType, TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import { AstNodeType, TokenType } from '../../constants/constants'
-import type { AstNode, NameNode, SpecialExpressionNode } from '../../parser/interface'
+import type { AstNode, CommonSpecialExpressionNode, NameNode } from '../../parser/interface'
+import { assertNumberOfParams } from '../../typeGuards'
 import { assertNameNode } from '../../typeGuards/astNode'
-import { asToken, assertToken } from '../../typeGuards/token'
-import type { BuiltinSpecialExpression } from '../interface'
 import { asAny } from '../../typeGuards/lits'
+import { asToken, assertToken } from '../../typeGuards/token'
 import { getSourceCodeInfo } from '../../utils/debug/getSourceCodeInfo'
+import type { BuiltinSpecialExpression } from '../interface'
 
-type TryNode = SpecialExpressionNode & {
-  te: AstNode
+export interface TryNode extends CommonSpecialExpressionNode<'try'> {
   e: NameNode
   ce: AstNode
 }
 
-export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream, position, { parseToken }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
+  parse: (tokenStream, position, firstToken, { parseToken }) => {
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokenStream, position)
 
@@ -27,17 +26,17 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
 
     let catchNode: AstNode
     ;[position, catchNode] = parseToken(tokenStream, position)
-    assertNameNode(catchNode, catchNode.tkn?.sourceCodeInfo)
+    assertNameNode(catchNode, catchNode.debugData?.token.debugData?.sourceCodeInfo)
     if (catchNode.v !== 'catch') {
       throw new LitsError(
         `Expected 'catch', got '${catchNode.v}'.`,
-        getSourceCodeInfo(catchNode, catchNode.tkn?.sourceCodeInfo),
+        getSourceCodeInfo(catchNode, catchNode.debugData?.token.debugData?.sourceCodeInfo),
       )
     }
 
     let error: AstNode
     ;[position, error] = parseToken(tokenStream, position)
-    assertNameNode(error, error.tkn?.sourceCodeInfo)
+    assertNameNode(error, error.debugData?.token.debugData?.sourceCodeInfo)
 
     let catchExpression: AstNode
     ;[position, catchExpression] = parseToken(tokenStream, position)
@@ -45,40 +44,43 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any> = {
     assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
     position += 1
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
-    position += 1
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
     const node: TryNode = {
       t: AstNodeType.SpecialExpression,
       n: 'try',
-      p: [],
-      te: tryExpression,
+      p: [tryExpression],
       ce: catchExpression,
       e: error,
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
 
-    return [position, node]
+    assertNumberOfParams(1, node)
+
+    return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const { te: tryExpression, ce: catchExpression, e: errorNode } = node as TryNode
+    const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
     try {
-      return evaluateAstNode(tryExpression, contextStack)
+      return evaluateAstNode(tryExpressions[0]!, contextStack)
     }
     catch (error) {
       const newContext: Context = {
-        [errorNode.v]: { value: asAny(error, node.tkn?.sourceCodeInfo) },
+        [errorNode.v]: { value: asAny(error, node.debugData?.token.debugData?.sourceCodeInfo) },
       }
       return evaluateAstNode(catchExpression, contextStack.create(newContext))
     }
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    const { te: tryExpression, ce: catchExpression, e: errorNode } = node as TryNode
-    const tryResult = analyzeAst(tryExpression, contextStack, builtin)
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+    const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
+    const tryResult = findUnresolvedIdentifiers(tryExpressions, contextStack, builtin)
     const newContext: Context = {
       [errorNode.v]: { value: true },
     }
-    const catchResult = analyzeAst(catchExpression, contextStack.create(newContext), builtin)
+    const catchResult = findUnresolvedIdentifiers([catchExpression], contextStack.create(newContext), builtin)
     return joinAnalyzeResults(tryResult, catchResult)
   },
 }

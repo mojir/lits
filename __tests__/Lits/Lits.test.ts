@@ -6,6 +6,7 @@ import { Cache } from '../../src/Lits/Cache'
 import type { LazyValue } from '../../src/Lits/Lits'
 import { AstNodeType, TokenType } from '../../src/constants/constants'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
+import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
 
 describe('tEST', () => {
   let lits: Lits
@@ -39,7 +40,7 @@ describe('lazy host values as function', () => {
       },
       foo: {
         read: () => ({
-          __fn: true,
+          [FUNCTION_SYMBOL]: true,
           t: 301,
           o: [
             {
@@ -103,6 +104,7 @@ describe('context', () => {
   it('a function - initial cache', () => {
     const initialCache: Record<string, Ast> = {
       '(pow 2 4)': {
+        hasDebugData: true,
         b: [
           {
             t: AstNodeType.NormalExpression,
@@ -111,24 +113,43 @@ describe('context', () => {
               {
                 t: AstNodeType.Number,
                 v: 2,
-                tkn: {
+                debugData: { token: {
                   t: TokenType.Number,
                   v: '2',
-                },
+                  debugData: undefined,
+                }, lastToken: {
+                  t: TokenType.Number,
+                  v: '2',
+                  debugData: undefined,
+                } },
+                p: [],
+                n: undefined,
               },
               {
                 t: AstNodeType.Number,
                 v: 4,
-                tkn: {
+                debugData: { token: {
                   t: TokenType.Number,
                   v: '4',
-                },
+                  debugData: undefined,
+                }, lastToken: {
+                  t: TokenType.Number,
+                  v: '4',
+                  debugData: undefined,
+                } },
+                p: [],
+                n: undefined,
               },
             ],
-            tkn: {
+            debugData: { token: {
               t: TokenType.Name,
               v: 'pow',
-            },
+              debugData: undefined,
+            }, lastToken: {
+              t: TokenType.Name,
+              v: 'pow',
+              debugData: undefined,
+            } },
           },
         ],
       },
@@ -182,10 +203,14 @@ describe('context', () => {
 
 function ast(n: number): Ast {
   return {
+    hasDebugData: false,
     b: [
       {
         t: AstNodeType.Number,
         v: n,
+        debugData: undefined,
+        p: [],
+        n: undefined,
       },
     ],
   }
@@ -281,7 +306,7 @@ describe('regressions', () => {
       // eslint-disable-next-line ts/no-unsafe-member-access
       expect((error as any).sourceCodeInfo.position.line).toBe(3)
       // eslint-disable-next-line ts/no-unsafe-member-access
-      expect((error as any).sourceCodeInfo.position.column).toBe(10)
+      expect((error as any).sourceCodeInfo.position.column).toBe(9)
     }
   })
   it('name not recognized', () => {
@@ -328,7 +353,7 @@ describe('regressions', () => {
       // eslint-disable-next-line ts/no-unsafe-member-access
       expect((error as any).sourceCodeInfo.position.line).toBe(6)
       // eslint-disable-next-line ts/no-unsafe-member-access
-      expect((error as any).sourceCodeInfo.position.column).toBe(12)
+      expect((error as any).sourceCodeInfo.position.column).toBe(11)
     }
     if (failed)
       throw new Error('Expected error')

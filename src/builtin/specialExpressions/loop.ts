@@ -1,38 +1,43 @@
 import { joinAnalyzeResults } from '../../analyze/utils'
+import { AstNodeType, TokenType } from '../../constants/constants'
 import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import { AstNodeType } from '../../constants/constants'
-import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { valueToString } from '../../utils/debug/debugTools'
-import { asToken } from '../../typeGuards/token'
-import type { BuiltinSpecialExpression } from '../interface'
+import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
+import { asToken } from '../../typeGuards/token'
+import { valueToString } from '../../utils/debug/debugTools'
+import type { BuiltinSpecialExpression } from '../interface'
 
-type LoopNode = SpecialExpressionNode & { bs: BindingNode[] }
+export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
+  bs: BindingNode[]
+}
 
-export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream, position, { parseTokens, parseBindings }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket, parseBindings }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokenStream, position)
 
     let params: AstNode[]
-    ;[position, params] = parseTokens(tokenStream, position)
+    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
     const node: LoopNode = {
       t: AstNodeType.SpecialExpression,
       n: 'loop',
       p: params,
       bs: bindings,
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = node.tkn?.sourceCodeInfo
-    const bindingContext: Context = (node as LoopNode).bs.reduce((result: Context, binding) => {
+    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const bindingContext: Context = node.bs.reduce((result: Context, binding) => {
       result[binding.n] = { value: evaluateAstNode(binding.v, contextStack) }
       return result
     }, {})
@@ -47,13 +52,13 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
       catch (error) {
         if (error instanceof RecurSignal) {
           const params = error.params
-          if (params.length !== (node as LoopNode).bs.length) {
+          if (params.length !== node.bs.length) {
             throw new LitsError(
-              `recur expected ${(node as LoopNode).bs.length} parameters, got ${valueToString(params.length)}`,
+              `recur expected ${node.bs.length} parameters, got ${valueToString(params.length)}`,
               sourceCodeInfo,
             )
           }
-          ;(node as LoopNode).bs.forEach((binding, index) => {
+          ;node.bs.forEach((binding, index) => {
             asNonUndefined(bindingContext[binding.n], sourceCodeInfo).value = asAny(params[index], sourceCodeInfo)
           })
           continue
@@ -63,17 +68,17 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any> = {
       return result
     }
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    const newContext = (node as LoopNode).bs
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+    const newContext = node.bs
       .map(binding => binding.n)
       .reduce((context: Context, name) => {
         context[name] = { value: true }
         return context
       }, {})
 
-    const bindingValueNodes = (node as LoopNode).bs.map(binding => binding.v)
-    const bindingsResult = analyzeAst(bindingValueNodes, contextStack, builtin)
-    const paramsResult = analyzeAst(node.p, contextStack.create(newContext), builtin)
+    const bindingValueNodes = node.bs.map(binding => binding.v)
+    const bindingsResult = findUnresolvedIdentifiers(bindingValueNodes, contextStack, builtin)
+    const paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin)
     return joinAnalyzeResults(bindingsResult, paramsResult)
   },
 }

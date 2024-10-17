@@ -1,14 +1,12 @@
-import type { SpecialExpressionName } from '../builtin/interface'
-import type { Condition } from '../builtin/specialExpressions/cond'
-import type { LoopBindingNode } from '../builtin/specialExpressions/loops'
-import type { Arity, FunctionOverload } from '../builtin/utils'
+import type { JsFunction, LazyValue } from '../Lits/Lits'
+import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
+import type { Arity } from '../builtin/utils'
+import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
 import type { ReservedName } from '../reservedNames'
 import type { SourceCodeInfo, Token, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
-import type { AstNodeType, FunctionType } from '../constants/constants'
-import type { JsFunction, LazyValue } from '../Lits/Lits'
 
 export interface EvaluatedFunctionArguments {
   mandatoryArguments: string[]
@@ -114,9 +112,15 @@ export type LitsFunctionType = LitsFunction['t']
 
 export type ModifierName = '&' | '&let' | '&when' | '&while'
 
-interface GenericNode {
+export interface GenericNode {
   t: AstNodeType // type
-  tkn?: Token
+  p: AstNode[] // params
+  n: string | undefined // name
+  debugData: {
+    token: Token
+    lastToken: Token
+    nameToken?: Token
+  } | undefined
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
@@ -124,7 +128,7 @@ export type ParseBinding = (tokens: TokenStream, position: number) => [number, B
 export type ParseBindings = (tokens: TokenStream, position: number) => [number, BindingNode[]]
 export type ParseArgument = (tokens: TokenStream, position: number) => [number, ArgumentNode | ModifierNode]
 export type ParseExpression = (tokens: TokenStream, position: number) => [number, ExpressionNode]
-export type ParseTokens = (tokens: TokenStream, position: number) => [number, AstNode[]]
+export type ParseTokensUntilClosingBracket = (tokens: TokenStream, position: number) => [number, AstNode[]]
 export type ParseToken = (tokens: TokenStream, position: number) => [number, AstNode]
 
 export interface NumberNode extends GenericNode {
@@ -148,19 +152,21 @@ export interface ReservedNameNode extends GenericNode {
   v: ReservedName // reservedName
 }
 
-interface NormalExpressionNodeBase extends GenericNode {
+interface CommonNormalExpressionNode extends GenericNode {
   t: AstNodeType.NormalExpression // type
-  p: AstNode[] // params
 }
 
-export interface NormalExpressionNodeWithName extends NormalExpressionNodeBase {
+export interface CommonSpecialExpressionNode<T extends SpecialExpressionName> extends GenericNode {
+  t: AstNodeType.SpecialExpression // type
+  n: T // name
+}
+
+export interface NormalExpressionNodeWithName extends CommonNormalExpressionNode {
   n: string // name
-  e?: ExpressionNode // expressionNode
 }
 
-interface NormalExpressionNodeExpression extends NormalExpressionNodeBase {
-  n?: never // name
-  e: ExpressionNode // expressionNode
+interface NormalExpressionNodeExpression extends CommonNormalExpressionNode {
+  n: undefined // name not present. E.g. ([1 2 3] 2)
 }
 
 export type NormalExpressionNode = NormalExpressionNodeWithName | NormalExpressionNodeExpression
@@ -177,20 +183,9 @@ export interface ArgumentNode extends GenericNode {
   d?: AstNode // defaultValue
 }
 
-export interface SpecialExpressionNode extends GenericNode {
-  t: AstNodeType.SpecialExpression // type
-  n: SpecialExpressionName // name
-  p: AstNode[] // params
-  b?: BindingNode // binding
-  bs?: BindingNode[] // bindings
-  c?: Condition[] // conditions
-  f?: AstNode // functionName
-  o?: FunctionOverload[] // overloads
-  l?: LoopBindingNode[] // loopBindings
-  m?: AstNode // messageNode
-  te?: AstNode // tryExpression
-  e?: NameNode // error
-  ce?: AstNode // catchExpression
+export interface CommentNode extends GenericNode {
+  t: AstNodeType.Comment // type
+  v: string // value
 }
 
 export type AstNode =
@@ -198,6 +193,7 @@ export type AstNode =
   | StringNode
   | ReservedNameNode
   | NameNode
+  | CommentNode
   | NormalExpressionNode
   | ModifierNode
   | SpecialExpressionNode
@@ -205,4 +201,5 @@ export type AstNode =
 type AstBody = AstNode[]
 export interface Ast {
   b: AstBody // body
+  hasDebugData: boolean
 }

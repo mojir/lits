@@ -1,18 +1,30 @@
 import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
-import type { NormalExpressionNode, SpecialExpressionNode } from '../parser/interface'
+import type { GenericNode } from '../parser/interface'
+import { withoutCommentNodes } from '../removeCommentNodes'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 
-export function assertEventNumberOfParams(node: NormalExpressionNode): void {
-  const length = node.p.length
+type Count = number | { min?: number, max?: number }
+
+export function assertEvenNumberOfParams(node: GenericNode): void {
+  const length = withoutCommentNodes(node.p).length
   if (length % 2 !== 0) {
     throw new LitsError(
       `Wrong number of arguments, expected an even number, got ${valueToString(length)}.`,
-      node.tkn?.sourceCodeInfo,
+      node.debugData?.token.debugData?.sourceCodeInfo,
     )
   }
+}
+
+export function assertNumberOfParams(count: Count, node: GenericNode): void {
+  assertCount({
+    count,
+    length: withoutCommentNodes(node.p).length,
+    name: node.n ?? 'expression',
+    sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
+  })
 }
 
 export function isNonUndefined<T>(value: T | undefined): value is T {
@@ -52,17 +64,12 @@ export function asUnknownRecord(value: unknown, sourceCodeInfo?: SourceCodeInfo)
   return value
 }
 
-export function assertNumberOfParams(
-  count: number | { min?: number, max?: number },
-  node: NormalExpressionNode | SpecialExpressionNode,
-): void {
-  const length = node.p.length
-  const sourceCodeInfo = node.tkn?.sourceCodeInfo
+function assertCount({ count, length, name, sourceCodeInfo }: { name: string | undefined, count: Count, length: number, sourceCodeInfo?: SourceCodeInfo }): void {
   if (typeof count === 'number') {
     if (length !== count) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.n}", expected ${count}, got ${valueToString(length)}.`,
-        node.tkn?.sourceCodeInfo,
+        `Wrong number of arguments to "${name}", expected ${count}, got ${valueToString(length)}.`,
+        sourceCodeInfo,
       )
     }
   }
@@ -73,14 +80,14 @@ export function assertNumberOfParams(
 
     if (typeof min === 'number' && length < min) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.n}", expected at least ${min}, got ${valueToString(length)}.`,
+        `Wrong number of arguments to "${name}", expected at least ${min}, got ${valueToString(length)}.`,
         sourceCodeInfo,
       )
     }
 
     if (typeof max === 'number' && length > max) {
       throw new LitsError(
-        `Wrong number of arguments to "${node.n}", expected at most ${max}, got ${valueToString(length)}.`,
+        `Wrong number of arguments to "${name}", expected at most ${max}, got ${valueToString(length)}.`,
         sourceCodeInfo,
       )
     }

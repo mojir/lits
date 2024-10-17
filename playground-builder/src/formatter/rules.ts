@@ -30,7 +30,7 @@ export function createVariableRule(
   }
 }
 
-const numberRegExp = /^[0-9]+(\.[0-9]+)?/
+const numberRegExp = /^\d+(?:\.\d+)?/
 export const numberRule: FormatterRule = (text, index) => {
   const startMatch = numberRegExp.exec(text.slice(index))
   if (startMatch) {
@@ -117,7 +117,7 @@ const commentRule = createRule({
 
 const litsKeywordRule = createRule({
   name: 'functionName',
-  startPattern: /^\b(nil|true|false)\b/,
+  startPattern: /^(nil|true|false)\b/,
   startTag: `<span ${styles('text-color-gray-200')}>`,
   endTag: '</span>',
   keepPatterns: true,
@@ -127,7 +127,7 @@ const litsKeywordRule = createRule({
 
 const inlineCodeKeywordRule = createRule({
   name: 'inlineCodeKeywordRule',
-  startPattern: /^\b(null|true|false|nil|falsy|truthy)\b/,
+  startPattern: /^(null|true|false|nil|falsy|truthy)\b/,
   startTag: `<span ${styles('text-color-gray-200')}>`,
   endTag: '</span>',
   keepPatterns: true,

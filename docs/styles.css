@@ -84,14 +84,24 @@ a:hover {
   color: rgb(245 245 245);
 }
 
-#output-result .error {
+a.disabled {
+  color: #444;
+  cursor: default;
+}
+
+#output-result .error,
+#output-result .warn {
   color: #cf2b2b;
   white-space: pre-wrap;
 }
 
 #output-result .output {
-  color: #cc8f77;
+  color: #ca9d8b;
   white-space: pre-wrap;
+}
+#output-result .output::before {
+  content: '> ';
+  color: #ca9d8b;
 }
 
 #output-result .analyze {
@@ -117,7 +127,7 @@ a:hover {
 
 #output-result .comment {
   color: rgb(115 115 115);
-  white-space: nowrap;
+  white-space: pre-wrap;
 }
 
 #output-result a.share-link {
@@ -139,44 +149,8 @@ a:hover {
   width: 100%;
 }
 
-.button {
-  -webkit-user-select: none;
-  /* Safari */
-  -moz-user-select: none;
-  /* Firefox */
-  -ms-user-select: none;
-  /* IE10+/Edge */
-  user-select: none;
-  /* Standard */
-  margin: 0 0.5rem;
-  cursor: pointer;
-  border: solid 1px #555555;
-  background: #444444;
-  color: #cccccc;
-  border-radius: 5px;
-  text-decoration: none;
-  padding: 6px 12px;
-  font-size: 1rem;
-  line-height: 14px;
-  -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -ms-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
-  box-shadow: rgb(38 38 38) 5px 5px 5px;
-}
-
-.button:hover,
-input[type="submit"]:hover {
-  -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -ms-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
-  border: solid 1px #cccccc;
-  background: #444444;
-  color: #cccccc;
-  box-shadow: rgb(38 38 38) 0px 0px 0px;
+button:focus {
+  outline-color: rgb(82 82 82);
 }
 
 .fancy-scroll-background::-webkit-scrollbar-track {

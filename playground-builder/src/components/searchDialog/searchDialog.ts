@@ -86,6 +86,6 @@ export function getSearchDialog() {
           </div>
         </div>
       </div>
-    <div>
+    </div>
     `
 }

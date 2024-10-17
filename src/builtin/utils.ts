@@ -4,6 +4,7 @@ import type { AstNode, BindingNode } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import type { Builtin } from './interface'
+import type { SpecialExpressionName } from '.'
 
 export type Arity = number | { min: number }
 
@@ -28,7 +29,7 @@ export function assertNameNotDefined<T>(
   if (typeof name !== 'string')
     return
 
-  if (builtin.specialExpressions[name])
+  if (builtin.specialExpressions[name as SpecialExpressionName])
     throw new LitsError(`Cannot define variable ${name}, it's a special expression.`, sourceCodeInfo)
 
   if (builtin.normalExpressions[name])

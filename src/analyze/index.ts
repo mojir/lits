@@ -1,75 +1,35 @@
+import type { LitsParams } from '../Lits/Lits'
+import { builtin } from '../builtin'
 import type { Builtin } from '../builtin/interface'
-import type { ContextStack } from '../evaluator/ContextStack'
-import { AstNodeType } from '../constants/constants'
-import type { AstNode } from '../parser/interface'
-import { asNonUndefined } from '../typeGuards'
-import type { AnalyzeAst, AnalyzeResult, UndefinedSymbolEntry } from './interface'
+import { type ContextStack, createContextStack } from '../evaluator/ContextStack'
+import type { Ast, AstNode } from '../parser/interface'
+import type { Token } from '../tokenizer/interface'
+import { calculateOutcomes } from './calculateOutcomes'
+import { findUnresolvedIdentifiers } from './findUnresolvedIdentifiers'
 
-export const analyzeAst: AnalyzeAst = (astNode, contextStack, builtin: Builtin) => {
-  const astNodes = Array.isArray(astNode) ? astNode : [astNode]
-
-  const analyzeResult: AnalyzeResult = {
-    undefinedSymbols: new Set<UndefinedSymbolEntry>(),
-  }
-
-  for (const subNode of astNodes) {
-    const result = analyzeAstNode(subNode, contextStack, builtin)
-    result.undefinedSymbols.forEach(symbol => analyzeResult.undefinedSymbols.add(symbol))
-  }
-
-  return analyzeResult
+export interface UnresolvedIdentifier {
+  symbol: string
+  token: Token | undefined
 }
 
-function analyzeAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin): AnalyzeResult {
-  const emptySet = new Set<UndefinedSymbolEntry>()
-  switch (astNode.t) {
-    case AstNodeType.Name: {
-      const lookUpResult = contextStack.lookUp(astNode)
-      if (lookUpResult === null)
-        return { undefinedSymbols: new Set([{ symbol: astNode.v, token: astNode.tkn }]) }
+// A set of unresolved identifiers
+export type UnresolvedIdentifiers = Set<UnresolvedIdentifier>
 
-      return { undefinedSymbols: emptySet }
-    }
-    case AstNodeType.String:
-    case AstNodeType.Number:
-    case AstNodeType.Modifier:
-    case AstNodeType.ReservedName:
-      return { undefinedSymbols: emptySet }
-    case AstNodeType.NormalExpression: {
-      const undefinedSymbols = new Set<UndefinedSymbolEntry>()
-      const { e: expression, n: name, tkn: token } = astNode
-      if (typeof name === 'string') {
-        const lookUpResult = contextStack.lookUp({ t: AstNodeType.Name, v: name, tkn: token })
-        if (lookUpResult === null)
-          undefinedSymbols.add({ symbol: name, token: astNode.tkn })
-      }
-      if (expression) {
-        switch (expression.t) {
-          case AstNodeType.String:
-          case AstNodeType.Number:
-            break
-          case AstNodeType.NormalExpression:
-          case AstNodeType.SpecialExpression: {
-            const subResult = analyzeAstNode(expression, contextStack, builtin)
-            subResult.undefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
-            break
-          }
-        }
-      }
+// A set of potential outcomes from evaluating the AST
+export type Outcomes = unknown[]
 
-      for (const subNode of astNode.p) {
-        const subNodeResult = analyzeAst(subNode, contextStack, builtin)
-        subNodeResult.undefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
-      }
-      return { undefinedSymbols }
-    }
-    case AstNodeType.SpecialExpression: {
-      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], astNode.tkn?.sourceCodeInfo)
-      const result = specialExpression.analyze(astNode, contextStack, {
-        analyzeAst,
-        builtin,
-      })
-      return result
-    }
+// The result of analyzing an AST
+export interface Analysis {
+  unresolvedIdentifiers: UnresolvedIdentifiers
+  outcomes: Outcomes | null
+}
+
+// A function that finds unresolved identifiers in an AST node or array of AST nodes
+export type FindUnresolvedIdentifiers = (ast: Ast | AstNode[], contextStack: ContextStack, builtin: Builtin) => UnresolvedIdentifiers
+
+export function analyze(ast: Ast, params: LitsParams): Analysis {
+  return {
+    unresolvedIdentifiers: findUnresolvedIdentifiers(ast, createContextStack(params), builtin),
+    outcomes: calculateOutcomes(createContextStack(params), ast.b),
   }
 }

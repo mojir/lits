@@ -48,8 +48,10 @@ export class NotAFunctionError extends LitsError {
 }
 
 export class UserDefinedError extends LitsError {
-  constructor(message: string | Error, sourceCodeInfo?: SourceCodeInfo) {
+  public userMessage: string
+  constructor(message: string, sourceCodeInfo?: SourceCodeInfo) {
     super(message, sourceCodeInfo)
+    this.userMessage = message
     Object.setPrototypeOf(this, UserDefinedError.prototype)
     this.name = 'UserDefinedError'
   }

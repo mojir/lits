@@ -1,37 +1,40 @@
-import { UserDefinedError } from '../../errors'
 import { AstNodeType, TokenType } from '../../constants/constants'
-import type { AstNode, SpecialExpressionNode } from '../../parser/interface'
+import { UserDefinedError } from '../../errors'
+import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import { assertNumberOfParams } from '../../typeGuards'
+import { asString } from '../../typeGuards/string'
 import { asToken, assertToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
-import { asString } from '../../typeGuards/string'
 
-type ThrowNode = SpecialExpressionNode & {
-  m: AstNode
-}
+export interface ThrowNode extends CommonSpecialExpressionNode<'throw'> {}
 
-export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokenStream, position, { parseToken }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const [newPosition, messageNode] = parseToken(tokenStream, position)
+export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
+    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
     position = newPosition
 
     assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
-    position += 1
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
     const node: ThrowNode = {
       t: AstNodeType.SpecialExpression,
       n: 'throw',
-      p: [],
-      m: messageNode,
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      p: params,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
-    return [position, node]
+
+    assertNumberOfParams(1, node)
+
+    return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const message = asString(evaluateAstNode((node as ThrowNode).m, contextStack), node.tkn?.sourceCodeInfo, {
+    const message = asString(evaluateAstNode(node.p[0]!, contextStack), node.debugData?.token.debugData?.sourceCodeInfo, {
       nonEmpty: true,
     })
-    throw new UserDefinedError(message, node.tkn?.sourceCodeInfo)
+    throw new UserDefinedError(message, node.debugData?.token.debugData?.sourceCodeInfo)
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst((node as ThrowNode).m, contextStack, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
 }

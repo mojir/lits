@@ -3,7 +3,7 @@ import { formatDescription } from './components/functionDocumentation/descriptio
 import { getFunctionSignature } from './components/functionDocumentation/functionSignature'
 import { styles } from './styles'
 
-const shortDescriptionRegExp = /(.*?)( {2}\n|\n\n|$)/
+const shortDescriptionRegExp = /(.*?) {2}\n|\n\n|$/
 export interface SearchResultEntry {
   title: string
   search: string

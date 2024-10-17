@@ -6,6 +6,7 @@ import { isNumber } from '../typeGuards/number'
 import { asString } from '../typeGuards/string'
 import { isUnknownRecord } from '../typeGuards'
 import { FunctionType } from '../constants/constants'
+import { FUNCTION_SYMBOL } from './symbols'
 
 export function collHasKey(coll: unknown, key: string | number): boolean {
   if (!isColl(coll))
@@ -168,11 +169,19 @@ export function cloneColl<T extends Coll>(value: T): T {
 
 export function createNativeJsFunction(fn: (...args: any[]) => unknown, name?: string): NativeJsFunction {
   return {
-    __fn: true,
+    [FUNCTION_SYMBOL]: true,
     f: {
       fn,
     },
     n: name,
     t: FunctionType.NativeJsFunction,
   }
+}
+
+export function arrayToPairs<T>(arr: T[]): T[][] {
+  const pairs: T[][] = []
+  for (let i = 0; i < arr.length; i += 2)
+    pairs.push([arr[i]!, arr[i + 1]!])
+
+  return pairs
 }

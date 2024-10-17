@@ -52,6 +52,8 @@ type customColors =
   | '-Beige'
   | '-Pink'
   | '-SkyLavender'
+  | '-Orange'
+  | '-Crimson'
 
 export type CssClass =
   | 'flex'
@@ -113,6 +115,7 @@ export type CssClass =
   | 'text-2xl'
   | 'text-3xl'
   | 'text-4xl'
+  | 'text-huge'
   | 'font-bold'
   | 'font-sans'
   | 'font-mono'

@@ -71,10 +71,10 @@ not ok 2 sub
   ---
   error: "AssertionError"
   message: "Expected 3 to be -1."
-  location: "${path.resolve(__dirname, 'one-success.test.lits')}:10:2"
+  location: "${path.resolve(__dirname, 'one-success.test.lits')}:10:1"
   code:
     - "(assert= (sub one 2) -1)"
-    - " ^                      "
+    - "^                       "
   ...
 `)
   })
@@ -88,10 +88,10 @@ not ok 1 add
   ---
   error: "AssertionError"
   message: "Expected -1 to be 3."
-  location: "${path.resolve(__dirname, 'failure-test.lits')}:7:2"
+  location: "${path.resolve(__dirname, 'failure-test.lits')}:7:1"
   code:
     - "(assert= (add one 2) 3)"
-    - " ^                     "
+    - "^                      "
   ...
 ok 2 sub # skip - Not matching testNamePattern /ad/
 `)
@@ -106,19 +106,19 @@ not ok 1 add
   ---
   error: "AssertionError"
   message: "Expected -1 to be 3."
-  location: "${path.resolve(__dirname, 'failure-test.lits')}:7:2"
+  location: "${path.resolve(__dirname, 'failure-test.lits')}:7:1"
   code:
     - "(assert= (add one 2) 3)"
-    - " ^                     "
+    - "^                      "
   ...
 not ok 2 sub
   ---
   error: "AssertionError"
   message: "Expected 3 to be -1."
-  location: "${path.resolve(__dirname, 'failure-test.lits')}:10:2"
+  location: "${path.resolve(__dirname, 'failure-test.lits')}:10:1"
   code:
     - "(assert= (sub one 2) -1)"
-    - " ^                      "
+    - "^                       "
   ...
 `)
   })
@@ -134,10 +134,10 @@ not ok 1 add
   ---
   error: "UndefinedSymbolError"
   message: "Undefined symbol '++'."
-  location: "${path.resolve(__dirname, 'broken-plus-lib.lits')}:1:19"
+  location: "${path.resolve(__dirname, 'broken-plus-lib.lits')}:1:18"
   code:
     - "(defn plus [a b] (++ a b))"
-    - "                  ^       "
+    - "                 ^        "
   ...
 ok 2 sub
 `)
@@ -162,10 +162,10 @@ not ok 1 equals
       "id": "id2",
       "val": "value2"
     }.
-  location: "${path.resolve(__dirname, 'object-diff.test.lits')}:5:2"
+  location: "${path.resolve(__dirname, 'object-diff.test.lits')}:5:1"
   code:
     - "(assert-equal obj-a obj-b)"
-    - " ^                        "
+    - "^                         "
   ...
 `)
   })

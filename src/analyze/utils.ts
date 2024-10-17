@@ -1,15 +1,19 @@
-import type { AnalyzeResult } from './interface'
+import type { UnresolvedIdentifier, UnresolvedIdentifiers } from '.'
 
-export function joinAnalyzeResults(...results: AnalyzeResult[]): AnalyzeResult {
-  const result: AnalyzeResult = {
-    undefinedSymbols: new Set(),
-  }
-  for (const input of results)
-    input.undefinedSymbols.forEach(symbol => result.undefinedSymbols.add(symbol))
+export function joinAnalyzeResults(...results: UnresolvedIdentifiers[]): UnresolvedIdentifiers {
+  const result = new Set<UnresolvedIdentifier>()
+  for (const identifier of results)
+    identifier.forEach(symbol => result.add(symbol))
 
   return result
 }
 
-export function addAnalyzeResults(target: AnalyzeResult, source: AnalyzeResult): void {
-  source.undefinedSymbols.forEach(symbol => target.undefinedSymbols.add(symbol))
+export function addAnalyzeResults(target: UnresolvedIdentifiers, source: UnresolvedIdentifiers): void {
+  source.forEach(symbol => target.add(symbol))
+}
+
+export function combinate<T>(arrays: T[][]): T[][] {
+  return arrays.reduce((acc: T[][], curr) => {
+    return acc.flatMap(a => curr.map(c => [...a, c]))
+  }, [[]])
 }

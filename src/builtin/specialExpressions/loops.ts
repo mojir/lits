@@ -1,20 +1,27 @@
-import type { AnalyzeAst, AnalyzeResult } from '../../analyze/interface'
+import type { SpecialExpressionNode } from '..'
+import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '../../analyze'
+import { AstNodeType, TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
-import { AstNodeType, TokenType } from '../../constants/constants'
-import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
+import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import type { SourceCodeInfo, TokenStream } from '../../tokenizer/interface'
+import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
+import { asAny, asColl, isSeq } from '../../typeGuards/lits'
 import { asToken, assertToken, isToken } from '../../typeGuards/token'
 import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
-import { asAny, asColl, isSeq } from '../../typeGuards/lits'
-import { asNonUndefined } from '../../typeGuards'
 
-type LoopNode = SpecialExpressionNode & {
+export interface ForNode extends CommonSpecialExpressionNode<'for'> {
   l: LoopBindingNode[]
 }
+
+export interface DoSeqNode extends CommonSpecialExpressionNode<'doseq'> {
+  l: LoopBindingNode[]
+}
+
+type LoopNode = ForNode | DoSeqNode
 
 export interface LoopBindingNode {
   b: BindingNode // Binding
@@ -41,28 +48,28 @@ function parseLoopBinding(
   while (tkn.t === TokenType.Modifier) {
     switch (tkn.v) {
       case '&let':
-        if (loopBinding.l)
-          throw new LitsError('Only one &let modifier allowed', tkn.sourceCodeInfo)
-
+        if (loopBinding.l) {
+          throw new LitsError('Only one &let modifier allowed', tkn.debugData?.sourceCodeInfo)
+        }
         ;[position, loopBinding.l] = parseBindings(tokenStream, position + 1)
         loopBinding.m.push('&let')
         break
       case '&when':
-        if (loopBinding.wn)
-          throw new LitsError('Only one &when modifier allowed', tkn.sourceCodeInfo)
-
+        if (loopBinding.wn) {
+          throw new LitsError('Only one &when modifier allowed', tkn.debugData?.sourceCodeInfo)
+        }
         ;[position, loopBinding.wn] = parseToken(tokenStream, position + 1)
         loopBinding.m.push('&when')
         break
       case '&while':
-        if (loopBinding.we)
-          throw new LitsError('Only one &while modifier allowed', tkn.sourceCodeInfo)
-
+        if (loopBinding.we) {
+          throw new LitsError('Only one &while modifier allowed', tkn.debugData?.sourceCodeInfo)
+        }
         ;[position, loopBinding.we] = parseToken(tokenStream, position + 1)
         loopBinding.m.push('&while')
         break
       default:
-        throw new LitsError(`Illegal modifier: ${tkn.v}`, tkn.sourceCodeInfo)
+        throw new LitsError(`Illegal modifier: ${tkn.v}`, tkn.debugData?.sourceCodeInfo)
     }
     tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
   }
@@ -109,9 +116,8 @@ function evaluateLoop(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ) {
-  const sourceCodeInfo = node.tkn?.sourceCodeInfo
+  const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
   const { l: loopBindings, p: params } = node as LoopNode
-  const expression = asAstNode(params[0], sourceCodeInfo)
 
   const result: Arr = []
 
@@ -182,103 +188,108 @@ function evaluateLoop(
       }
     }
     if (!skip) {
-      const value = evaluateAstNode(expression, newContextStack)
+      const value = evaluateAstNode(params[0]!, newContextStack)
       if (returnResult)
         result.push(value)
 
-      bindingIndices[bindingIndices.length - 1] += 1
+      if (bindingIndices.length > 0)
+        bindingIndices[bindingIndices.length - 1]! += 1
     }
   }
   return returnResult ? result : null
 }
 
 function analyze(
-  node: SpecialExpressionNode,
+  node: LoopNode,
   contextStack: ContextStack,
-  analyzeAst: AnalyzeAst,
+  findUnresolvedIdentifiers: FindUnresolvedIdentifiers,
   builtin: Builtin,
-): AnalyzeResult {
-  const result: AnalyzeResult = {
-    undefinedSymbols: new Set(),
-  }
+): UnresolvedIdentifiers {
+  const result = new Set<UnresolvedIdentifier>()
   const newContext: Context = {}
-  const { l: loopBindings } = node as LoopNode
+  const { l: loopBindings } = node
   loopBindings.forEach((loopBinding) => {
     const { b: binding, l: letBindings, wn: whenNode, we: whileNode } = loopBinding
-    analyzeAst(binding.v, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
-      result.undefinedSymbols.add(symbol),
+    findUnresolvedIdentifiers([binding.v], contextStack.create(newContext), builtin).forEach(symbol =>
+      result.add(symbol),
     )
     newContext[binding.n] = { value: true }
     if (letBindings) {
       letBindings.forEach((letBinding) => {
-        analyzeAst(letBinding.v, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
-          result.undefinedSymbols.add(symbol),
+        findUnresolvedIdentifiers([letBinding.v], contextStack.create(newContext), builtin).forEach(symbol =>
+          result.add(symbol),
         )
         newContext[letBinding.n] = { value: true }
       })
     }
     if (whenNode) {
-      analyzeAst(whenNode, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
-        result.undefinedSymbols.add(symbol),
+      findUnresolvedIdentifiers([whenNode], contextStack.create(newContext), builtin).forEach(symbol =>
+        result.add(symbol),
       )
     }
     if (whileNode) {
-      analyzeAst(whileNode, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
-        result.undefinedSymbols.add(symbol),
+      findUnresolvedIdentifiers([whileNode], contextStack.create(newContext), builtin).forEach(symbol =>
+        result.add(symbol),
       )
     }
   })
-  analyzeAst(node.p, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
-    result.undefinedSymbols.add(symbol),
+  findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin).forEach(symbol =>
+    result.add(symbol),
   )
   return result
 }
 
-export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream: TokenStream, position: number, parsers: ParserHelpers) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const { parseToken } = parsers
+export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
+  parse: (tokenStream, position, firstToken, parsers) => {
+    const { parseTokensUntilClosingBracket } = parsers
     let loopBindings: LoopBindingNode[]
     ;[position, loopBindings] = parseLoopBindings(tokenStream, position, parsers)
 
-    let expression: AstNode
-    ;[position, expression] = parseToken(tokenStream, position)
+    let params: AstNode[]
+    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
-
-    const node: LoopNode = {
+    const node: ForNode = {
       n: 'for',
       t: AstNodeType.SpecialExpression,
       l: loopBindings,
-      p: [expression],
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      p: params,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
+
+    assertNumberOfParams(1, node)
 
     return [position + 1, node]
   },
   evaluate: (node, contextStack, helpers) => evaluateLoop(true, node, contextStack, helpers.evaluateAstNode),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyze(node, contextStack, analyzeAst, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => analyze(node, contextStack, findUnresolvedIdentifiers, builtin),
 }
 
-export const doseqSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokenStream: TokenStream, position: number, parsers: ParserHelpers) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const { parseToken } = parsers
+export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> = {
+  parse: (tokenStream, position, firstToken, parsers) => {
+    const { parseTokensUntilClosingBracket } = parsers
     let loopBindings: LoopBindingNode[]
     ;[position, loopBindings] = parseLoopBindings(tokenStream, position, parsers)
 
-    let expression: AstNode
-    ;[position, expression] = parseToken(tokenStream, position)
+    let params: AstNode[]
+    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
-
-    const node: LoopNode = {
+    const node: DoSeqNode = {
       n: 'doseq',
       t: AstNodeType.SpecialExpression,
       l: loopBindings,
-      p: [expression],
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      p: params,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
+
+    assertNumberOfParams(1, node)
 
     return [position + 1, node]
   },
@@ -286,5 +297,5 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null> = {
     evaluateLoop(false, node, contextStack, helpers.evaluateAstNode)
     return null
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyze(node, contextStack, analyzeAst, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => analyze(node, contextStack, findUnresolvedIdentifiers, builtin),
 }

@@ -8,21 +8,14 @@ export function getStartPage(): string {
     <div ${styles('flex', 'justify-end', 'mr-2')}>
       v${version}
     </div>
-    <div ${styles('flex', 'justify-center')}>
-      <span ${styles('whitespace-pre', 'font-mono', 'text-xl')}>${`
-░▒▓█▓▒░      ░▒▓█▓▒░▒▓████████▓▒░▒▓███████▓▒░
-░▒▓█▓▒░      ░▒▓█▓▒░  ░▒▓█▓▒░  ░▒▓█▓▒░       
-░▒▓█▓▒░      ░▒▓█▓▒░  ░▒▓█▓▒░  ░▒▓█▓▒░       
-░▒▓█▓▒░      ░▒▓█▓▒░  ░▒▓█▓▒░   ░▒▓██████▓▒░ 
-░▒▓█▓▒░      ░▒▓█▓▒░  ░▒▓█▓▒░         ░▒▓█▓▒░
-░▒▓█▓▒░      ░▒▓█▓▒░  ░▒▓█▓▒░         ░▒▓█▓▒░
-░▒▓████████▓▒░▒▓█▓▒░  ░▒▓█▓▒░  ░▒▓███████▓▒░ `.trimStart()}
-      </span>
+    <div ${styles('flex', 'text-center', 'flex-col')}>
+      <div ${styles('text-huge')}>&lambda;its</div>
+      <div ${styles('text-4xl')}>/lits/</div>
     </div>
-    <div ${styles('flex', 'justify-center', 'my-4')}>
+    <div ${styles('flex', 'justify-center', 'mt-8', 'mb-4')}>
       <div ${styles('font-sans', 'max-width: 600px;', 'text-color-gray-300', 'flex', 'flex-col')}>
-        <div ${styles('mt-4')}>Lits is a Lisp dialect implemented in TypeScript, drawing heavy inspiration from Clojure. Most core functions have been ported to Lits, ensuring a robust and familiar experience for Clojure users.</div>
-        <div ${styles('mt-4')}>Key features of Lits include:</div>
+        <div ${styles('mt-4')}>&lambda;its is a Lisp dialect implemented in TypeScript, drawing heavy inspiration from Clojure. Most core functions have been ported to &lambda;its, ensuring a robust and familiar experience for Clojure users.</div>
+        <div ${styles('mt-4')}>Key features of &lambda;its include:</div>
         <div ${styles('mt-4', 'ml-8', 'flex', 'flex-col', 'text-base', 'gap-2')}>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
@@ -35,7 +28,7 @@ export function getStartPage(): string {
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
               <span ${styles('font-bold')}>Immutability:</span>
-              <span ${styles('text-color-gray-400')}>All datatypes in Lits are immutable.</span>
+              <span ${styles('text-color-gray-400')}>All datatypes in &lambda;its are immutable.</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
@@ -49,21 +42,21 @@ export function getStartPage(): string {
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
               <span ${styles('font-bold')}>Type Mapping:</span>
-              <span ${styles('text-color-gray-400')}>All datatypes in Lits map directly to JavaScript types.</span>
+              <span ${styles('text-color-gray-400')}>All datatypes in &lambda;its map directly to JavaScript types.</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
               <span ${styles('font-bold')}>Evaluation:</span>
-              <span ${styles('text-color-gray-400')}>Lits does not support lazy evaluation.</span>
+              <span ${styles('text-color-gray-400')}>&lambda;its does not support lazy evaluation.</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
               <span ${styles('font-bold')}>Macros:</span>
-              <span ${styles('text-color-gray-400')}>Macros are not supported in Lits.</span>
+              <span ${styles('text-color-gray-400')}>Macros are not supported in &lambda;its.</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
@@ -77,11 +70,11 @@ export function getStartPage(): string {
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
               <span ${styles('font-bold')}>Scoping:</span>
-              <span ${styles('text-color-gray-400')}>Lits uses <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Dynamic_scope">dynamic scoping</a>, not <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Lexical_scope">lexical scoping</a>.</span>
+              <span ${styles('text-color-gray-400')}>&lambda;its uses <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Dynamic_scope">dynamic scoping</a>, not <a class="external-link" href="https://en.wikipedia.org/wiki/Scope_(computer_science)#Lexical_scope">lexical scoping</a>.</span>
             </div>
           </div>
         </div>
-        <div ${styles('mt-4')}>For more information, visit the <a class="external-link" href="https://github.com/YouCruit/lits">Lits GitHub repository</a></div>
+        <div ${styles('mt-4')}>For more information, visit the <a class="external-link" href="https://github.com/YouCruit/lits">&lambda;its GitHub repository</a></div>
         <div ${styles('mt-4')}>Happy coding!</div>
       </div>
     </div>

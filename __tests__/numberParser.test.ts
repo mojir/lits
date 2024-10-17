@@ -30,7 +30,7 @@ describe('parse numbers', () => {
       numberSamples.forEach((sample) => {
         it(`number sample: ${sample}`, () => {
           expect(tokenizeNumber(sample, 0)).toEqual([sample.length, { t: TokenType.Number, v: sample }])
-          expect(lits.run(sample)).toEqual(Number(sample))
+          expect(lits.run(sample) === Number(sample)).toBe(true)
         })
       })
     })

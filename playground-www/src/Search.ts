@@ -1,3 +1,4 @@
+import { getState, saveState } from './state'
 import { asNotNull } from './utils'
 
 type OnCloseCallback = () => void
@@ -6,6 +7,7 @@ let ctrlKeyTimer: number = 0
 let ctrlKeyStarted: number | null = null
 let selectedIndex: number | null = null
 let onCloseCallback: OnCloseCallback | null = null
+let previouslyFocusedPanel = getState('focused-panel')
 
 const searchInput = asNotNull(document.getElementById('search-input')) as HTMLInputElement
 const searchResult = asNotNull(document.getElementById('search-result')) as HTMLDivElement
@@ -126,6 +128,7 @@ function resetCtrlKey() {
 }
 
 function openSearch() {
+  previouslyFocusedPanel = getState('focused-panel')
   searchOverlay.style.display = 'block'
   if (searchResult.children.length === 0)
     updateSearchResult(searchInput.value)
@@ -133,8 +136,11 @@ function openSearch() {
 }
 
 function closeSearch() {
-  searchOverlay.style.display = 'none'
-  onCloseCallback?.()
+  if (searchOverlay.style.display === 'block') {
+    searchOverlay.style.display = 'none'
+    saveState({ 'focused-panel': previouslyFocusedPanel })
+    onCloseCallback?.()
+  }
 }
 
 function isOpen() {

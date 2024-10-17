@@ -1,9 +1,10 @@
 import type { BuiltinFunction, ExtraData, NameNode, NativeJsFunction } from '../parser/interface'
-import { builtin } from '../builtin'
+import type { SpecialExpressionName } from '../builtin'
+import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import { toAny } from '../utils'
 import type { Any } from '../interface'
 import { UndefinedSymbolError } from '../errors'
-import type { LazyValue } from '../Lits/Lits'
+import type { LazyValue, LitsParams } from '../Lits/Lits'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
 import { FunctionType } from '../constants/constants'
 import { asNonUndefined } from '../typeGuards'
@@ -11,7 +12,9 @@ import { isBuiltinFunction } from '../typeGuards/litsFunction'
 import { isContextEntry } from './interface'
 import type { Context, LookUpResult } from './interface'
 
-export class ContextStack {
+export type ContextStack = ContextStackImpl
+
+export class ContextStackImpl {
   private contexts: Context[]
   public globalContext: Context
   private values?: Record<string, unknown>
@@ -37,7 +40,7 @@ export class ContextStack {
 
   public create(context: Context, extraData?: ExtraData): ContextStack {
     const globalContext = this.globalContext
-    const contextStack = new ContextStack({
+    const contextStack = new ContextStackImpl({
       contexts: [context, ...this.contexts],
       values: this.values,
       lazyValues: extraData ? { ...this.lazyValues, ...extraData } : this.lazyValues,
@@ -45,6 +48,16 @@ export class ContextStack {
     })
     contextStack.globalContext = globalContext
     return contextStack
+  }
+
+  public clone(): ContextStack {
+    // eslint-disable-next-line ts/no-unsafe-argument
+    return new ContextStackImpl(JSON.parse(JSON.stringify({
+      contexts: this.contexts,
+      values: this.values,
+      lazyValues: this.lazyValues,
+      nativeJsFunctions: this.nativeJsFunctions,
+    })))
   }
 
   public getValue(name: string): unknown {
@@ -66,7 +79,7 @@ export class ContextStack {
 
   public lookUp(node: NameNode): LookUpResult {
     const value = node.v
-    const sourceCodeInfo = node.tkn?.sourceCodeInfo
+    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
 
     for (const context of this.contexts) {
       const contextEntry = context[value]
@@ -95,7 +108,7 @@ export class ContextStack {
       return builtinFunction
     }
 
-    if (builtin.specialExpressions[value])
+    if (builtin.specialExpressions[value as SpecialExpressionName])
       return 'specialExpression'
 
     const nativeJsFunction = this.nativeJsFunctions?.[value]
@@ -116,6 +129,37 @@ export class ContextStack {
     else if (isBuiltinFunction(lookUpResult))
       return lookUpResult
 
-    throw new UndefinedSymbolError(node.v, node.tkn?.sourceCodeInfo)
+    throw new UndefinedSymbolError(node.v, node.debugData?.token.debugData?.sourceCodeInfo)
   }
+}
+
+export function createContextStack(params: LitsParams = {}): ContextStack {
+  const globalContext = params.globalContext ?? {}
+  // Contexts are checked from left to right
+  const contexts = params.contexts ? [globalContext, ...params.contexts] : [globalContext]
+  const contextStack = new ContextStackImpl({
+    contexts,
+    values: params.values,
+    lazyValues: params.lazyValues,
+    nativeJsFunctions:
+      params.jsFunctions
+      && Object.entries(params.jsFunctions).reduce((acc: Record<string, NativeJsFunction>, [name, jsFunction]) => {
+        if (specialExpressionKeys.includes(name)) {
+          console.warn(`Cannot shadow special expression "${name}", ignoring.`)
+          return acc
+        }
+        if (normalExpressionKeys.includes(name)) {
+          console.warn(`Cannot shadow builtin function "${name}", ignoring.`)
+          return acc
+        }
+        acc[name] = {
+          t: FunctionType.NativeJsFunction,
+          f: jsFunction,
+          n: name,
+          [FUNCTION_SYMBOL]: true,
+        }
+        return acc
+      }, {}),
+  })
+  return contextStack
 }

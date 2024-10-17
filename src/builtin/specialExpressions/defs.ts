@@ -1,42 +1,53 @@
-import type { Any } from '../../interface'
-import { AstNodeType } from '../../constants/constants'
-import { asAstNode } from '../../typeGuards/astNode'
+import { AstNodeType, TokenType } from '../../constants/constants'
+import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import { assertNumberOfParams } from '../../typeGuards'
+import { assertString } from '../../typeGuards/string'
 import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
-import { assertString } from '../../typeGuards/string'
-import { assertNumberOfParams } from '../../typeGuards'
 
-export const defsSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream, position, { parseTokens }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const [newPosition, params] = parseTokens(tokenStream, position)
-    return [
-      newPosition + 1,
-      {
-        t: AstNodeType.SpecialExpression,
-        n: 'defs',
-        p: params,
-        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+export interface DefsNode extends CommonSpecialExpressionNode<'defs'> {}
+
+export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
+    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: DefsNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'defs',
+      p: params,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
       },
-    ]
+    }
+
+    assertNumberOfParams(2, node)
+
+    return [newPosition + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
-    const sourceCodeInfo = node.tkn?.sourceCodeInfo
-    const name = evaluateAstNode(asAstNode(node.p[0], sourceCodeInfo), contextStack)
+    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const name = evaluateAstNode(node.p[0]!, contextStack)
     assertString(name, sourceCodeInfo)
 
-    assertNameNotDefined(name, contextStack, builtin, node.tkn?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, node.debugData?.token.debugData?.sourceCodeInfo)
 
-    const value = evaluateAstNode(asAstNode(node.p[1], sourceCodeInfo), contextStack)
+    contextStack.globalContext[name] = {
+      value: evaluateAstNode(node.p[1]!, contextStack),
+    }
 
-    contextStack.globalContext[name] = { value }
-
-    return value
+    return null
   },
-  validate: node => assertNumberOfParams(2, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    const subNode = asAstNode(node.p[1], node.tkn?.sourceCodeInfo)
-    return analyzeAst(subNode, contextStack, builtin)
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin, evaluateAstNode }) => {
+    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const subNode = node.p[1]!
+    const result = findUnresolvedIdentifiers([subNode], contextStack, builtin)
+    const name = evaluateAstNode(node.p[0]!, contextStack)
+    assertString(name, sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
+    contextStack.globalContext[name] = { value: true }
+    return result
   },
 }

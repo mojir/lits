@@ -1,17 +1,7 @@
 import { FunctionType } from '../src/constants/constants'
 import type { UnknownRecord } from '../src/interface'
+import { isRegularExpression } from '../src/typeGuards/lits'
 import { isLitsFunction } from '../src/typeGuards/litsFunction'
-
-export function throttle<T extends (...args: any[]) => void>(func: T) {
-  let openForBusiness = true
-  return function (this: any, ...args: Parameters<T>) {
-    if (openForBusiness) {
-      requestAnimationFrame(() => openForBusiness = true)
-      openForBusiness = false
-      func.apply(this, args)
-    }
-  }
-}
 
 export function stringifyValue(value: unknown, html: boolean): string {
   const gt = html ? '&gt;' : '>'
@@ -39,6 +29,9 @@ export function stringifyValue(value: unknown, html: boolean): string {
 
   if (typeof value === 'number' && Number.isNaN(value))
     return 'NaN'
+
+  if (isRegularExpression(value))
+    return `/${value.s}/${value.f}`
 
   return JSON.stringify(value, null, 2)
 }

@@ -1,15 +1,14 @@
-import { analyzeAst } from '../analyze'
-import type { AnalyzeResult } from '../analyze/interface'
-import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin'
-import { FunctionType } from '../constants/constants'
+import type { Analysis } from '../analyze'
+import { analyze } from '../analyze'
 import { evaluate } from '../evaluator'
-import { ContextStack } from '../evaluator/ContextStack'
+import { createContextStack } from '../evaluator/ContextStack'
 import type { Context } from '../evaluator/interface'
 import type { Any, Obj } from '../interface'
 import { parse } from '../parser'
-import type { Ast, LitsFunction, NativeJsFunction } from '../parser/interface'
+import type { Ast, LitsFunction } from '../parser/interface'
 import { tokenize } from '../tokenizer'
-import type { TokenStream } from '../tokenizer/interface'
+import type { TokenStream, TokenizeParams } from '../tokenizer/interface'
+import { unparseAst } from '../unparser/unparse'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -35,12 +34,17 @@ export interface LitsParams {
   lazyValues?: Record<string, LazyValue>
   jsFunctions?: Record<string, JsFunction>
   filePath?: string
+  debug?: boolean
 }
 
 interface LitsConfig {
   initialCache?: Record<string, Ast>
   astCacheSize?: number | null
   debug?: boolean
+}
+
+type FormatParams = LitsParams & {
+  lineLength?: number
 }
 
 export class Lits {
@@ -71,28 +75,31 @@ export class Lits {
   }
 
   public run(program: string, params: LitsParams = {}): unknown {
-    const ast = this.generateAst(program, params.filePath)
-    const result = this.evaluate(ast, params)
-    return result
+    const ast = this.generateAst(program, params)
+    return this.evaluate(ast, params)
+  }
+
+  public format(program: string, params: FormatParams = {}): string {
+    const lineLength = params.lineLength ?? 80
+    const ast = this.generateAst(program, params)
+    return unparseAst(ast, lineLength)
   }
 
   public context(program: string, params: LitsParams = {}): Context {
     const contextStack = createContextStack(params)
-    const ast = this.generateAst(program, params.filePath)
+    const ast = this.generateAst(program, params)
     evaluate(ast, contextStack)
     return contextStack.globalContext
   }
 
-  public analyze(program: string): AnalyzeResult {
-    const params: LitsParams = {}
-    const contextStack = createContextStack(params)
-    const ast = this.generateAst(program, params.filePath)
+  public analyze(program: string, params: LitsParams = {}): Analysis {
+    const ast = this.generateAst(program, params)
 
-    return analyzeAst(ast.b, contextStack, builtin)
+    return analyze(ast, params)
   }
 
-  public tokenize(program: string, filePath?: string): TokenStream {
-    return tokenize(program, { debug: this.debug, filePath })
+  public tokenize(program: string, tokenizeParams: TokenizeParams = {}): TokenStream {
+    return tokenize(program, { ...tokenizeParams, debug: tokenizeParams.debug ?? this.debug })
   }
 
   public parse(tokenStream: TokenStream): Ast {
@@ -112,7 +119,7 @@ export class Lits {
       })
       .join(' ')
     const program = `(${fnName} ${paramsString})`
-    const ast = this.generateAst(program, params.filePath)
+    const ast = this.generateAst(program, params)
 
     const hostValues: Obj = fnParams.reduce(
       (result: Obj, param, index) => {
@@ -127,48 +134,15 @@ export class Lits {
     return this.evaluate(ast, params)
   }
 
-  private generateAst(untrimmedProgram: string, filePath?: string): Ast {
-    const program = untrimmedProgram.trim()
-
+  private generateAst(program: string, params: LitsParams): Ast {
     if (this.astCache) {
       const cachedAst = this.astCache.get(program)
       if (cachedAst)
         return cachedAst
     }
-    const tokenStream = this.tokenize(program, filePath)
+    const tokenStream = this.tokenize(program, { debug: params.debug ?? this.debug, filePath: params.filePath })
     const ast: Ast = this.parse(tokenStream)
     this.astCache?.set(program, ast)
     return ast
   }
-}
-
-export function createContextStack(params: LitsParams = {}): ContextStack {
-  const globalContext = params.globalContext ?? {}
-  // Contexts are checked from left to right
-  const contexts = params.contexts ? [globalContext, ...params.contexts] : [globalContext]
-  const contextStack = new ContextStack({
-    contexts,
-    values: params.values,
-    lazyValues: params.lazyValues,
-    nativeJsFunctions:
-      params.jsFunctions
-      && Object.entries(params.jsFunctions).reduce((acc: Record<string, NativeJsFunction>, [name, jsFunction]) => {
-        if (specialExpressionKeys.includes(name)) {
-          console.warn(`Cannot shadow special expression "${name}", ignoring.`)
-          return acc
-        }
-        if (normalExpressionKeys.includes(name)) {
-          console.warn(`Cannot shadow builtin function "${name}", ignoring.`)
-          return acc
-        }
-        acc[name] = {
-          t: FunctionType.NativeJsFunction,
-          f: jsFunction,
-          n: name,
-          __fn: true,
-        }
-        return acc
-      }, {}),
-  })
-  return contextStack
 }

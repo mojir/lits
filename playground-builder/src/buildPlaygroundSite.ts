@@ -2,7 +2,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { getAllDocumentationItems } from './components/functionDocumentation'
 import { getSearchDialog } from './components/searchDialog/searchDialog'
-import { randomNumbers } from './utils/utils'
+import { randomNumbers } from './randomNumbers'
 import { getStartPage } from './components/startPage'
 import { getExamplePage } from './components/examplePage'
 import { getPlayground } from './components/playground'
@@ -19,32 +19,31 @@ writeIndexPage()
 function writeIndexPage() {
   const page = `<!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Lits</title>
-  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
-  <meta name="description" content="A reference and a playground for Lits - a Typescript Lisp implementation">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
-</script>
+  <head>
+    <title>Playground</title>
+    <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+    <meta name="description" content="A reference and a playground for &lambda;its - a Lisp implementation in Typescript">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+  </head>
 
-</head>
-<body>
-  <div id="wrapper" ${styles('hidden')}>
-    <main id="main-panel" class="fancy-scroll">
-      ${getStartPage()}
-      ${getExamplePage()}
-      ${getAllDocumentationItems()}
-    </main>
-    ${getSideBar()}
-    ${getPlayground()}
-  </div>
-  ${getSearchDialog()}
+  <body>
+    <div id="wrapper" ${styles('hidden')}>
+      <main id="main-panel" class="fancy-scroll">
+        ${getStartPage()}
+        ${getExamplePage()}
+        ${getAllDocumentationItems()}
+      </main>
+      ${getSideBar()}
+      ${getPlayground()}
+    </div>
+    ${getSearchDialog()}
 
-  <script src='playground.js'></script>
-  <script>
-    window.Playground.allSearchResultEntries = JSON.parse(atob('${btoa(JSON.stringify(allSearchResultEntries))}'))
-  </script>
-</body>
+    <script src='playground.js'></script>
+    <script>
+      window.Playground.allSearchResultEntries = JSON.parse(atob('${btoa(JSON.stringify(allSearchResultEntries))}'))
+    </script>
+  </body>
 </html>
 `
   fs.writeFileSync(path.join(DOC_DIR, 'index.html'), page, { encoding: 'utf-8' })

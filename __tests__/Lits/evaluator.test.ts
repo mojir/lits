@@ -5,7 +5,8 @@ import { evaluate, evaluateAstNode } from '../../src/evaluator'
 import { Lits } from '../../src'
 import type { Context } from '../../src/evaluator/interface'
 import { AstNodeType, TokenType } from '../../src/constants/constants'
-import { type LazyValue, createContextStack } from '../../src/Lits/Lits'
+import type { LazyValue } from '../../src/Lits/Lits'
+import { createContextStack } from '../../src/evaluator/ContextStack'
 
 let lits: Lits
 
@@ -169,7 +170,9 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
-        tkn: { t: TokenType.Name, v: 'X' },
+        debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: { t: TokenType.Name, v: 'X', debugData: undefined } },
+        p: [],
+        n: undefined,
       },
       createContextStack(),
     ),
@@ -179,6 +182,9 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
+        debugData: undefined,
+        p: [],
+        n: undefined,
       },
       createContextStack(),
     ),
@@ -188,7 +194,26 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
-        tkn: { t: TokenType.Name, sourceCodeInfo: { code: '', position: { column: 1, line: 1 } }, v: 'X' },
+        debugData: {
+          token: {
+            t: TokenType.Name,
+            v: 'X',
+            debugData: {
+              sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
+              metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
+            },
+          },
+          lastToken: {
+            t: TokenType.Name,
+            v: 'X',
+            debugData: {
+              sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
+              metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
+            },
+          },
+        },
+        p: [],
+        n: undefined,
       },
       createContextStack(),
     ),

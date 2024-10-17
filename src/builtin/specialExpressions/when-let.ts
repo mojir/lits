@@ -1,45 +1,48 @@
 import { joinAnalyzeResults } from '../../analyze/utils'
+import { AstNodeType, TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import { AstNodeType } from '../../constants/constants'
-import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { valueToString } from '../../utils/debug/debugTools'
+import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import { asNonUndefined } from '../../typeGuards'
 import { asToken } from '../../typeGuards/token'
+import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
-import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
 
-type WhenLetNode = SpecialExpressionNode & {
+export interface WhenLetNode extends CommonSpecialExpressionNode<'when-let'> {
   b: BindingNode
 }
 
-export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream, position, { parseBindings, parseTokens }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode> = {
+  parse: (tokenStream, position, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokenStream, position)
 
     if (bindings.length !== 1) {
       throw new LitsError(
         `Expected exactly one binding, got ${valueToString(bindings.length)}`,
-        firstToken.sourceCodeInfo,
+        firstToken.debugData?.sourceCodeInfo,
       )
     }
 
     let params: AstNode[]
-    ;[position, params] = parseTokens(tokenStream, position)
+    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
     const node: WhenLetNode = {
       t: AstNodeType.SpecialExpression,
       n: 'when-let',
-      b: asNonUndefined(bindings[0], firstToken.sourceCodeInfo),
+      b: asNonUndefined(bindings[0], firstToken.debugData?.sourceCodeInfo),
       p: params,
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const { b: binding } = node as WhenLetNode
+    const { b: binding } = node
     const locals: Context = {}
     const bindingValue = evaluateAstNode(binding.v, contextStack)
     if (!bindingValue)
@@ -54,12 +57,11 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any> = {
 
     return result
   },
-  validate: node => assertNumberOfParams({ min: 0 }, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    const { b: binding } = node as WhenLetNode
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+    const { b: binding } = node
     const newContext: Context = { [binding.n]: { value: true } }
-    const bindingResult = analyzeAst(binding.v, contextStack, builtin)
-    const paramsResult = analyzeAst(node.p, contextStack.create(newContext), builtin)
+    const bindingResult = findUnresolvedIdentifiers([binding.v], contextStack, builtin)
+    const paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin)
     return joinAnalyzeResults(bindingResult, paramsResult)
   },
 }

@@ -5,6 +5,7 @@ import { parseToken } from './parsers'
 export function parse(tokenStream: TokenStream): Ast {
   const ast: Ast = {
     b: [],
+    hasDebugData: tokenStream.hasDebugData,
   }
 
   let position = 0

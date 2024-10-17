@@ -30,7 +30,9 @@ describe('lits type guards', () => {
     const node: AstNode = {
       t: AstNodeType.Name,
       v: 'test',
-      tkn: { t: TokenType.Name, v: 'X' },
+      debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: { t: TokenType.Name, v: 'X', debugData: undefined } },
+      p: [],
+      n: undefined,
     }
 
     const valid = [node, 1, 'bar', null, [], {}]

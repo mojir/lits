@@ -1,30 +1,33 @@
-import { AstNodeType } from '../../constants/constants'
-import type { SpecialExpressionNode } from '../../parser/interface'
+import { AstNodeType, TokenType } from '../../constants/constants'
+import type { CommonSpecialExpressionNode, NameNode } from '../../parser/interface'
 import { assertNumberOfParams } from '../../typeGuards'
-import { assertNameNode } from '../../typeGuards/astNode'
 import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
-export const declaredSpecialExpression: BuiltinSpecialExpression<boolean> = {
-  parse: (tokenStream, position, { parseTokens }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const [newPosition, params] = parseTokens(tokenStream, position)
-    const node: SpecialExpressionNode = {
+export interface DeclaredNode extends CommonSpecialExpressionNode<'declared?'> {}
+
+export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, DeclaredNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
+    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: DeclaredNode = {
       t: AstNodeType.SpecialExpression,
       n: 'declared?',
       p: params,
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
+
+    assertNumberOfParams(1, node)
 
     return [newPosition + 1, node]
   },
   evaluate: (node, contextStack) => {
-    const [astNode] = node.p
-    assertNameNode(astNode, node.tkn?.sourceCodeInfo)
-
-    const lookUpResult = contextStack.lookUp(astNode)
+    const lookUpResult = contextStack.lookUp(node.p[0] as NameNode)
     return lookUpResult !== null
   },
-  validate: node => assertNumberOfParams(1, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
 }

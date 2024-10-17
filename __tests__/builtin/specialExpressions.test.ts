@@ -4,6 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
 import { Lits } from '../../src'
 import { UserDefinedError } from '../../src/errors'
 import { getLitsVariants, getUndefinedSymbolNames } from '../testUtils'
+import { findUnresolvedIdentifiers } from '../../src/analyze/findUnresolvedIdentifiers'
+import { createContextStack } from '../../src/evaluator/ContextStack'
+import { builtin } from '../../src/builtin'
 
 const lits = getLitsVariants()
 
@@ -43,7 +46,7 @@ describe('specialExpressions', () => {
     }
     catch (error) {
       expect((error as UserDefinedError).message).toBe(
-        'error\n(throw (subs "An error" 3))\n       ^                   ',
+        'error\n(throw (subs "An error" 3))\n^                          ',
       )
     }
     if (failed)
@@ -66,10 +69,10 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(defs (object) 10)')).toThrow()
       expect(() => lits.run('(defs a 10)')).toThrow()
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(defs "foo" (+ a b))'))).toEqual(new Set(['a', 'b']))
-        expect(getUndefinedSymbolNames(lits.analyze('(defs "foo" (+ a b)) foo'))).toEqual(new Set(['a', 'b', 'foo']))
+        expect(getUndefinedSymbolNames(lits.analyze('(defs "foo" (+ a b)) foo'))).toEqual(new Set(['a', 'b']))
       })
     })
   })
@@ -105,7 +108,7 @@ describe('specialExpressions', () => {
       expect(logSpy).toHaveBeenNthCalledWith(2, 'B')
       expect(logSpy).toHaveBeenNthCalledWith(3, 'A')
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(def foo (+ a b))'))).toEqual(new Set(['a', 'b']))
         expect(getUndefinedSymbolNames(lits.analyze('(def foo (+ a b)) foo'))).toEqual(new Set(['a', 'b']))
@@ -143,7 +146,7 @@ describe('specialExpressions', () => {
       expect(logSpy).toHaveBeenCalledWith('B')
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(if (> a b) a b)'))).toEqual(new Set(['a', 'b']))
         expect(getUndefinedSymbolNames(lits.analyze('(if (> a b) c d)'))).toEqual(new Set(['a', 'b', 'c', 'd']))
@@ -181,7 +184,7 @@ describe('specialExpressions', () => {
       expect(logSpy).toHaveBeenCalledWith('A')
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(if-not (> a b) a b)'))).toEqual(new Set(['a', 'b']))
         expect(getUndefinedSymbolNames(lits.analyze('(if-not (> a b) c d)'))).toEqual(new Set(['a', 'b', 'c', 'd']))
@@ -199,7 +202,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(if-let [a (> (count "Albert") 10)])')).toThrow()
       expect(() => lits.run('(if-let [a (> (count "Albert") 10) b 20] 1 2)')).toThrow()
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(if-let [a (> (count name) 4)] a b)'))).toEqual(
           new Set(['name', 'b']),
@@ -218,7 +221,7 @@ describe('specialExpressions', () => {
       expect(lits.run('(when-let [a (> (count "Albert") 4)] 10 20)')).toBe(20)
       expect(() => lits.run('(when-let [a (> (count "Albert") 10) b 20] 1)')).toThrow()
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(when-let [a (> (count name) 4)] a b c)'))).toEqual(
           new Set(['name', 'b', 'c']),
@@ -287,7 +290,7 @@ describe('specialExpressions', () => {
         `),
       ).toBe('A')
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(let [a (> (count name) 4)] a b)'))).toEqual(
           new Set(['name', 'b']),
@@ -335,7 +338,7 @@ describe('specialExpressions', () => {
         expect(logSpy).not.toHaveBeenCalledWith(0)
       })
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(and false b)'))).toEqual(new Set(['b']))
       })
@@ -373,7 +376,7 @@ describe('specialExpressions', () => {
         expect(logSpy).toHaveBeenNthCalledWith(2, 0)
       })
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(or true b (+ c d))'))).toEqual(new Set(['b', 'c', 'd']))
       })
@@ -398,7 +401,7 @@ describe('specialExpressions', () => {
       ).toBe(10)
       expect(logSpy).not.toHaveBeenCalled()
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(cond true a false b (> a 1) c :else d)'))).toEqual(
           new Set(['a', 'b', 'c', 'd']),
@@ -438,7 +441,7 @@ describe('specialExpressions', () => {
       expect(lits.run('(defn applyWithVal [fun val] (fun val)) (applyWithVal inc 10)')).toBe(11)
       expect(lits.run('(defn applyWithVal [fun val] (fun val)) (applyWithVal inc 10)')).toBe(11)
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a] (if (= a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
           new Set(),
@@ -470,14 +473,14 @@ describe('specialExpressions', () => {
       expect(lits.run('(defns "sumOneToN" [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
       expect(lits.run('(defns "applyWithVal" [fun val] (fun val)) (applyWithVal inc 10)')).toBe(11)
     })
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a] (if (= a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
-          new Set(['foo']),
+          new Set([]),
         )
         expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a b] (str a b c))'))).toEqual(new Set(['c']))
         expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a b] (str a b c)) (foo x y)'))).toEqual(
-          new Set(['c', 'x', 'y', 'foo']),
+          new Set(['c', 'x', 'y']),
         )
         expect(getUndefinedSymbolNames(lits.analyze('(defns :add ([a b & rest] (+ a b)) ([a] 10))'))).toEqual(new Set())
       })
@@ -505,7 +508,7 @@ describe('specialExpressions', () => {
       expect(lits.run('(#(if %1 %2 %3) 0 4 6)')).toBe(6)
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(fn [a b] (str a b c))'))).toEqual(new Set(['c']))
         expect(getUndefinedSymbolNames(lits.analyze('(def foo (fn [a b] (str a b c))) (foo 1 x)'))).toEqual(
@@ -531,7 +534,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(try (/ 2 4) (catch error 1 )2)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(try (/ a b) (catch error (str error x)))'))).toEqual(
           new Set(['a', 'b', 'x']),
@@ -548,7 +551,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(throw "An error" 10)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(throw (/ a b))'))).toEqual(new Set(['a', 'b']))
       })
@@ -564,7 +567,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(when)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(when (/ a b) f g h)'))).toEqual(
           new Set(['a', 'b', 'f', 'g', 'h']),
@@ -582,7 +585,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(when-not)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(when-not (/ a b) f g h)'))).toEqual(
           new Set(['a', 'b', 'f', 'g', 'h']),
@@ -604,7 +607,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(when-first x 10)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(when-first [x "Albert"] x)'))).toEqual(new Set())
         expect(getUndefinedSymbolNames(lits.analyze('(when-first [x b] x y)'))).toEqual(new Set(['b', 'y']))
@@ -619,7 +622,7 @@ describe('specialExpressions', () => {
       expect(lits.run('(comment)')).toBeNull()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(comment [x "Albert"] x)'))).toEqual(new Set())
         expect(getUndefinedSymbolNames(lits.analyze('(comment (+ a b c))'))).toEqual(new Set())
@@ -634,7 +637,7 @@ describe('specialExpressions', () => {
       expect(lits.run('(do)')).toBeNull()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(do [a 2 3] "[1]" (+ 1 b))'))).toEqual(new Set(['a', 'b']))
       })
@@ -660,14 +663,16 @@ describe('specialExpressions', () => {
       expect(() => lits.run('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n) 1 2))) 3)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
+        const lits2 = new Lits()
+
         expect(
-          getUndefinedSymbolNames(lits.analyze('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)')),
+          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)')).b, createContextStack(), builtin),
         ).toEqual(new Set())
         expect(
-          getUndefinedSymbolNames(lits.analyze('((fn [n] (write! n) (when (not (zero? n)) (recur (- n a)))) 3)')),
-        ).toEqual(new Set(['a']))
+          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (when (not (zero? n)) (recur (- n a)))) 3)')).b, createContextStack(), builtin),
+        ).toEqual(new Set([{ symbol: 'a' }]))
       })
     })
   })
@@ -688,7 +693,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(loop [n 3] (write! n) (when (not (zero? n)) (throw (dec n))))')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
           getUndefinedSymbolNames(lits.analyze('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))')),
@@ -706,11 +711,11 @@ describe('specialExpressions', () => {
   })
   describe('time!', () => {
     it('samples', () => {
-      expect(lits.run('(time! (+ 1 2)')).toBe(3)
+      expect(lits.run('(time! (+ 1 2))')).toBe(3)
       expect(lastLog).toMatch(/Elapsed time: \d+ ms/)
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(time! (foo x z))'))).toEqual(new Set(['foo', 'x', 'z']))
       })
@@ -742,7 +747,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(doseq [x [0 1 2 3 4 5] x [10 20]] x)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
           getUndefinedSymbolNames(lits.analyze('(doseq [x [0 1 2 3 4 5] &let [y (* x 3)] &when (even? y)] y)')),
@@ -822,7 +827,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(for [x [0 1 2 3 4 5] x [10 20]] x)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
           getUndefinedSymbolNames(lits.analyze('(for [x [0 1 2 3 4 5] &let [y (* x 3)] &when (even? y)] y)')),
@@ -850,7 +855,7 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('undefinedSymbols', () => {
+  describe('unresolvedIdentifiers', () => {
     it('samples', () => {
       expect(getUndefinedSymbolNames(lits.analyze('(declared? x)'))).toEqual(new Set(['x']))
     })
@@ -872,7 +877,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(?? foo bar)')).toThrow()
     })
 
-    describe('undefinedSymbols', () => {
+    describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(getUndefinedSymbolNames(lits.analyze('(?? x)'))).toEqual(new Set(['x']))
         expect(getUndefinedSymbolNames(lits.analyze('(?? x y)'))).toEqual(new Set(['x', 'y']))

@@ -1,20 +1,29 @@
+import { AstNodeType, TokenType } from '../../constants/constants'
 import type { Any } from '../../interface'
-import { AstNodeType } from '../../constants/constants'
+import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
-export const andSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream, position, { parseTokens }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const [newPosition, params] = parseTokens(tokenStream, position)
+export interface AndNode extends CommonSpecialExpressionNode<'and'> {}
+
+export const andSpecialExpression: BuiltinSpecialExpression<Any, AndNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
+    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: AndNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'and',
+      p: params,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
+    }
+
     return [
       newPosition + 1,
-      {
-        t: AstNodeType.SpecialExpression,
-        n: 'and',
-        p: params,
-        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
-      },
+      node,
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
@@ -28,5 +37,5 @@ export const andSpecialExpression: BuiltinSpecialExpression<Any> = {
 
     return value
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
 }

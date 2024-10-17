@@ -1,20 +1,25 @@
+import { AstNodeType, TokenType } from '../../constants/constants'
 import { RecurSignal } from '../../errors'
-import { AstNodeType } from '../../constants/constants'
-import type { SpecialExpressionNode } from '../../parser/interface'
+import type { AstNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
-export const recurSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokenStream, position, { parseTokens }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    let params
-    ;[position, params] = parseTokens(tokenStream, position)
+export interface RecurNode extends CommonSpecialExpressionNode<'recur'> {}
 
-    const node: SpecialExpressionNode = {
+export const recurSpecialExpression: BuiltinSpecialExpression<null, RecurNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
+    let params: AstNode[]
+    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: RecurNode = {
       t: AstNodeType.SpecialExpression,
       n: 'recur',
       p: params,
-      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
     }
 
     return [position + 1, node]
@@ -23,5 +28,5 @@ export const recurSpecialExpression: BuiltinSpecialExpression<null> = {
     const params = node.p.map(paramNode => evaluateAstNode(paramNode, contextStack))
     throw new RecurSignal(params)
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
 }

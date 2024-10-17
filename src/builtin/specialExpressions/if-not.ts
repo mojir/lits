@@ -1,26 +1,34 @@
+import { AstNodeType, TokenType } from '../../constants/constants'
 import type { Any } from '../../interface'
-import { AstNodeType } from '../../constants/constants'
+import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
-export const ifNotSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokenStream, position, { parseTokens }) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    const [newPosition, params] = parseTokens(tokenStream, position)
-    return [
-      newPosition + 1,
-      {
-        t: AstNodeType.SpecialExpression,
-        n: 'if-not',
-        p: params,
-        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
+export interface IfNotNode extends CommonSpecialExpressionNode<'if-not'> {}
+
+export const ifNotSpecialExpression: BuiltinSpecialExpression<Any, IfNotNode> = {
+  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
+    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: IfNotNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'if-not',
+      p: params,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
       },
-    ]
+    }
+
+    assertNumberOfParams({ min: 2, max: 3 }, node)
+
+    return [newPosition + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = node.tkn?.sourceCodeInfo
+    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
 
     const [conditionNode, trueNode, falseNode] = node.p
     if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
@@ -33,6 +41,5 @@ export const ifNotSpecialExpression: BuiltinSpecialExpression<Any> = {
         return null
     }
   },
-  validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
 }

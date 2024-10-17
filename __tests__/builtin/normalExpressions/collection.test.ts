@@ -467,11 +467,11 @@ describe('collection functions', () => {
 
   describe('update-in', () => {
     it('samples', () => {
-      // expect(
-      //   lits.run(
-      //     `(def x "Albert") (update-in x [3] (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))`,
-      //   ),
-      // ).toEqual(`Albfrt`)
+      expect(
+        lits.run(
+          '(def x "Albert") (update-in x [3] (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))',
+        ),
+      ).toEqual('Albfrt')
       expect(
         lits.run(
           '(def x "Albert") (update-in x [6] (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))',

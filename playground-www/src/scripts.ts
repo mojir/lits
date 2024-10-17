@@ -1,14 +1,33 @@
 /* eslint-disable no-console */
-import { stringifyValue, throttle } from '../../common/utils'
+import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
-import type { LitsParams } from '../../src'
-import { Lits } from '../../src'
+import { Lits, type LitsParams } from '../../src'
+import { UserDefinedError } from '../../src/errors'
+import type { UnknownRecord } from '../../src/interface'
+import type { JsFunction } from '../../src/Lits/Lits'
 import { asUnknownRecord } from '../../src/typeGuards'
 import { Search } from './Search'
-import { decodeState as applyEncodedState, clearAllStates, clearState, encodeState, getState, saveState } from './state'
+import {
+  applyEncodedState,
+  clearAllStates,
+  clearState,
+  encodeState,
+  getState,
+  redoContext,
+  redoLitsCode,
+  saveState,
+  setContextHistoryListener,
+  setLitsCodeHistoryListener,
+  undoContext,
+  undoLitsCode,
+} from './state'
+import { isMac, throttle } from './utils'
 
-const lits = new Lits({ debug: true })
-const litsNoDebug = new Lits({ debug: false })
+const getLits: (forceDebug?: 'debug') => Lits = (() => {
+  const lits = new Lits({ debug: true })
+  const litsNoDebug = new Lits({ debug: false })
+  return (forceDebug?: 'debug') => forceDebug || getState('debug') ? lits : litsNoDebug
+})()
 
 const elements = {
   wrapper: document.getElementById('wrapper') as HTMLElement,
@@ -19,12 +38,24 @@ const elements = {
   litsPanel: document.getElementById('lits-panel') as HTMLElement,
   outputPanel: document.getElementById('output-panel') as HTMLElement,
   moreMenu: document.getElementById('more-menu') as HTMLElement,
+  addContextMenu: document.getElementById('add-context-menu') as HTMLElement,
+  newContextName: document.getElementById('new-context-name') as HTMLInputElement,
+  newContextValue: document.getElementById('new-context-value') as HTMLTextAreaElement,
+  newContextError: document.getElementById('new-context-error') as HTMLSpanElement,
   contextTextArea: document.getElementById('context-textarea') as HTMLTextAreaElement,
   outputResult: document.getElementById('output-result') as HTMLElement,
   litsTextArea: document.getElementById('lits-textarea') as HTMLTextAreaElement,
   resizePlayground: document.getElementById('resize-playground') as HTMLElement,
   resizeDevider1: document.getElementById('resize-divider-1') as HTMLElement,
   resizeDevider2: document.getElementById('resize-divider-2') as HTMLElement,
+  toggleDebugMenuLabel: document.getElementById('toggle-debug-menu-label') as HTMLSpanElement,
+  litsPanelDebugInfo: document.getElementById('lits-panel-debug-info') as HTMLDivElement,
+  contextUndoButton: document.getElementById('context-undo-button') as HTMLAnchorElement,
+  contextRedoButton: document.getElementById('context-redo-button') as HTMLAnchorElement,
+  litsCodeUndoButton: document.getElementById('lits-code-undo-button') as HTMLAnchorElement,
+  litsCodeRedoButton: document.getElementById('lits-code-redo-button') as HTMLAnchorElement,
+  contextTitle: document.getElementById('context-title') as HTMLDivElement,
+  litsCodeTitle: document.getElementById('lits-code-title') as HTMLDivElement,
 }
 
 type MoveParams = {
@@ -37,9 +68,18 @@ type MoveParams = {
   percentBeforeMove: number
 }
 
-type OutputType = 'error' | 'output' | 'result' | 'analyze' | 'tokenize' | 'parse' | 'comment'
+type OutputType =
+  | 'error'
+  | 'output'
+  | 'result'
+  | 'analyze'
+  | 'tokenize'
+  | 'parse'
+  | 'comment'
+  | 'warn'
 
 let moveParams: MoveParams | null = null
+let ignoreSelectionChange = false
 
 function calculateDimensions() {
   return {
@@ -48,12 +88,27 @@ function calculateDimensions() {
   }
 }
 
-export function toggleMoreMenu() {
-  elements.moreMenu.style.display = elements.moreMenu.style.display === 'block' ? 'none' : 'block'
+export function openMoreMenu() {
+  elements.moreMenu.style.display = 'block'
 }
 
 export function closeMoreMenu() {
   elements.moreMenu.style.display = 'none'
+}
+
+export function openAddContextMenu() {
+  elements.newContextName.value = getState('new-context-name')
+  elements.newContextValue.value = getState('new-context-value')
+  elements.addContextMenu.style.display = 'block'
+  elements.newContextName.focus()
+}
+
+export function closeAddContextMenu() {
+  elements.addContextMenu.style.display = 'none'
+  elements.newContextError.style.display = 'none'
+  elements.newContextError.textContent = ''
+  elements.newContextName.value = ''
+  elements.newContextValue.value = ''
 }
 
 export function share() {
@@ -69,19 +124,18 @@ export function share() {
 
 function onDocumentClick(event: Event) {
   const target = event.target as HTMLInputElement | undefined
-  if (target?.closest('#more-menu'))
-    return
 
-  if (elements.moreMenu.style.display === 'block') {
-    event.stopPropagation()
+  if (!target?.closest('#more-menu') && elements.moreMenu.style.display === 'block')
     closeMoreMenu()
-  }
+
+  if (!target?.closest('#add-context-menu') && elements.addContextMenu.style.display === 'block')
+    closeAddContextMenu()
 }
 
-function layout() {
-  const { windowWidth } = calculateDimensions()
+const layout = throttle(() => {
+  const { windowWidth, windowHeight } = calculateDimensions()
 
-  const playgroundHeight = getState('playground-height')
+  const playgroundHeight = Math.min(getState('playground-height'), windowHeight)
 
   const contextPanelWidth = (windowWidth * getState('resize-divider-1-percent')) / 100
   const outputPanelWidth = (windowWidth * (100 - getState('resize-divider-2-percent'))) / 100
@@ -94,7 +148,43 @@ function layout() {
   elements.sidebar.style.bottom = `${playgroundHeight}px`
   elements.mainPanel.style.bottom = `${playgroundHeight}px`
   elements.wrapper.style.display = 'block'
-}
+})
+
+export const undoContextHistory = throttle(() => {
+  ignoreSelectionChange = true
+  if (undoContext()) {
+    applyState()
+    focusContext()
+  }
+  setTimeout(() => ignoreSelectionChange = false)
+})
+
+export const redoContextHistory = throttle(() => {
+  ignoreSelectionChange = true
+  if (redoContext()) {
+    applyState()
+    focusContext()
+  }
+  setTimeout(() => ignoreSelectionChange = false)
+})
+
+export const undoLitsCodeHistory = throttle(() => {
+  ignoreSelectionChange = true
+  if (undoLitsCode()) {
+    applyState()
+    focusLitsCode()
+  }
+  setTimeout(() => ignoreSelectionChange = false)
+})
+
+export const redoLitsCodeHistory = throttle(() => {
+  ignoreSelectionChange = true
+  if (redoLitsCode()) {
+    applyState()
+    focusLitsCode()
+  }
+  setTimeout(() => ignoreSelectionChange = false)
+})
 
 export function resetPlayground() {
   clearAllStates()
@@ -106,24 +196,33 @@ export function resetPlayground() {
   Search.clearSearch()
 
   layout()
+  updateCSS()
 }
 
 export function resetContext() {
-  const context = getState('context')
-  if (context === '') {
-    setContext(getState('context-trash-bin'))
-  }
-  else {
-    saveState('context-trash-bin', context)
-    elements.contextTextArea.value = ''
-    clearState('context')
-  }
+  elements.contextTextArea.value = ''
+  clearState('context', 'context-scroll-top', 'context-selection-start', 'context-selection-end')
+  focusContext()
 }
 
-function setContext(value: string) {
+function setContext(value: string, pushToHistory: boolean, scroll?: 'top' | 'bottom') {
   elements.contextTextArea.value = value
-  elements.contextTextArea.scrollTop = 0
-  saveState('context', value)
+
+  if (pushToHistory) {
+    saveState({
+      'context': value,
+      'context-selection-start': elements.contextTextArea.selectionStart,
+      'context-selection-end': elements.contextTextArea.selectionEnd,
+    }, true)
+  }
+  else {
+    saveState({ context: value }, false)
+  }
+
+  if (scroll === 'top')
+    elements.contextTextArea.scrollTo(0, 0)
+  else if (scroll === 'bottom')
+    elements.contextTextArea.scrollTo({ top: elements.contextTextArea.scrollHeight, behavior: 'smooth' })
 }
 
 function getParsedContext(): Record<string, unknown> {
@@ -135,13 +234,44 @@ function getParsedContext(): Record<string, unknown> {
   }
 }
 
-export function addParam() {
+export function addContextEntry() {
+  const name = elements.newContextName.value
+  if (name === '') {
+    elements.newContextError.textContent = 'Name is required'
+    elements.newContextError.style.display = 'block'
+    elements.newContextName.focus()
+    return
+  }
+
+  const value = elements.newContextValue.value
+
+  try {
+    const parsedValue = JSON.parse(value) as unknown
+    const context = getParsedContext()
+    const values: UnknownRecord = Object.assign({}, context.values)
+    values[name] = parsedValue
+    context.values = values
+    setContext(JSON.stringify(context, null, 2), true)
+
+    closeAddContextMenu()
+  }
+  catch (e) {
+    elements.newContextError.textContent = 'Invalid JSON'
+    elements.newContextError.style.display = 'block'
+    elements.newContextValue.focus()
+  }
+
+  clearState('new-context-name')
+  clearState('new-context-value')
+}
+
+export function addSampleContext() {
   const context = getParsedContext()
   const values = {
-    n: 42,
-    s: 'foo bar',
-    arr: ['foo', 'bar', 1, 2, true, false, null],
-    obj: {
+    'a-number': 42,
+    'a-string': 'foo bar',
+    'an-array': ['foo', 'bar', 1, 2, true, false, null],
+    'an-object': {
       name: 'John Doe',
       age: 42,
       married: true,
@@ -155,30 +285,36 @@ export function addParam() {
     },
   }
 
-  context.values = Object.assign(values, context.values)
+  const jsFunctions = {
+    'prompt!': '(title) => prompt(title)',
+  }
 
-  setContext(JSON.stringify(context, null, 2))
+  context.values = Object.assign(values, context.values)
+  context.jsFunctions = Object.assign(jsFunctions, context.jsFunctions)
+
+  setContext(JSON.stringify(context, null, 2), true)
 }
 
-export function resetLitsCode(force = false) {
-  const litsCode = getState('lits-code')
-  if (litsCode === '' && !force) {
-    setLitsCode(getState('lits-code-trash-bin'), 'top')
+export function resetLitsCode() {
+  elements.litsTextArea.value = ''
+  clearState('lits-code', 'lits-code-scroll-top', 'lits-code-selection-start', 'lits-code-selection-end')
+  focusLitsCode()
+}
+
+function setLitsCode(value: string, pushToHistory: boolean, scroll?: 'top' | 'bottom') {
+  elements.litsTextArea.value = value
+
+  if (pushToHistory) {
+    saveState({
+      'lits-code': value,
+      'lits-code-selection-start': elements.litsTextArea.selectionStart,
+      'lits-code-selection-end': elements.litsTextArea.selectionEnd,
+    }, true)
   }
   else {
-    if (force)
-      saveState('lits-code-trash-bin', '')
-    else
-      saveState('lits-code-trash-bin', litsCode)
-
-    elements.litsTextArea.value = ''
-    clearState('lits-code')
+    saveState({ 'lits-code': value }, false)
   }
-}
 
-function setLitsCode(value: string, scroll?: 'top' | 'bottom') {
-  elements.litsTextArea.value = value
-  saveState('lits-code', value)
   if (scroll === 'top')
     elements.litsTextArea.scrollTo(0, 0)
   else if (scroll === 'bottom')
@@ -189,36 +325,21 @@ function appendLitsCode(value: string) {
   const oldContent = getState('lits-code').trimEnd()
 
   const newContent = oldContent ? `${oldContent}\n\n${value}` : value.trim()
-  setLitsCode(newContent, 'bottom')
+  setLitsCode(newContent, true, 'bottom')
 }
 
-export function resetOutput(force = false) {
-  const output = getState('output')
-  if (output === '' && !force) {
-    const trash = getState('output-trash-bin')
-    elements.outputResult.innerHTML = trash
-    saveState('output', trash)
-
-    elements.outputResult.scrollTop = elements.outputResult.scrollHeight
-  }
-  else {
-    if (force)
-      saveState('output-trash-bin', '')
-    else
-      saveState('output-trash-bin', output)
-
-    elements.outputResult.innerHTML = ''
-    clearState('output')
-  }
+export function resetOutput() {
+  elements.outputResult.innerHTML = ''
+  clearState('output')
 }
 
 function hasOutput() {
   return getState('output').trim() !== ''
 }
 
-function setOutput(value: string) {
+function setOutput(value: string, pushToHistory: boolean) {
   elements.outputResult.innerHTML = value
-  saveState('output', value)
+  saveState({ output: value }, pushToHistory)
 }
 
 function appendOutput(output: unknown, className: OutputType) {
@@ -240,10 +361,46 @@ function addOutputElement(element: HTMLElement) {
   elements.outputResult.appendChild(element)
   elements.outputResult.scrollTop = elements.outputResult.scrollHeight
 
-  saveState('output', elements.outputResult.innerHTML)
+  saveState({ output: elements.outputResult.innerHTML })
 }
 
 window.onload = function () {
+  elements.contextUndoButton.classList.add('disabled')
+  elements.contextRedoButton.classList.add('disabled')
+  elements.litsCodeUndoButton.classList.add('disabled')
+  elements.litsCodeRedoButton.classList.add('disabled')
+  setContextHistoryListener((status) => {
+    if (status.canUndo) {
+      elements.contextUndoButton.classList.remove('disabled')
+    }
+    else {
+      elements.contextUndoButton.classList.add('disabled')
+    }
+
+    if (status.canRedo) {
+      elements.contextRedoButton.classList.remove('disabled')
+    }
+    else {
+      elements.contextRedoButton.classList.add('disabled')
+    }
+  })
+
+  setLitsCodeHistoryListener((status) => {
+    if (status.canUndo) {
+      elements.litsCodeUndoButton.classList.remove('disabled')
+    }
+    else {
+      elements.litsCodeUndoButton.classList.add('disabled')
+    }
+
+    if (status.canRedo) {
+      elements.litsCodeRedoButton.classList.remove('disabled')
+    }
+    else {
+      elements.litsCodeRedoButton.classList.add('disabled')
+    }
+  })
+
   document.addEventListener('click', onDocumentClick, true)
 
   elements.resizePlayground.onmousedown = (event) => {
@@ -270,13 +427,13 @@ window.onload = function () {
     }
   }
 
-  window.onresize = throttle(layout)
+  window.onresize = layout
   window.onmouseup = () => {
     document.body.classList.remove('no-select')
     moveParams = null
   }
 
-  window.onmousemove = throttle((event: MouseEvent) => {
+  window.onmousemove = (event: MouseEvent) => {
     const { windowHeight, windowWidth } = calculateDimensions()
     if (moveParams === null)
       return
@@ -291,7 +448,8 @@ window.onload = function () {
       if (playgroundHeight > windowHeight)
         playgroundHeight = windowHeight
 
-      saveState('playground-height', playgroundHeight)
+      saveState({ 'playground-height': playgroundHeight })
+      layout()
     }
     else if (moveParams.id === 'resize-divider-1') {
       let resizeDivider1XPercent
@@ -302,7 +460,8 @@ window.onload = function () {
       if (resizeDivider1XPercent > getState('resize-divider-2-percent') - 10)
         resizeDivider1XPercent = getState('resize-divider-2-percent') - 10
 
-      saveState('resize-divider-1-percent', resizeDivider1XPercent)
+      saveState({ 'resize-divider-1-percent': resizeDivider1XPercent })
+      layout()
     }
     else if (moveParams.id === 'resize-divider-2') {
       let resizeDivider2XPercent
@@ -313,88 +472,160 @@ window.onload = function () {
       if (resizeDivider2XPercent > 90)
         resizeDivider2XPercent = 90
 
-      saveState('resize-divider-2-percent', resizeDivider2XPercent)
+      saveState({ 'resize-divider-2-percent': resizeDivider2XPercent })
+      layout()
     }
-    layout()
-  })
+  }
 
   window.addEventListener('keydown', (evt) => {
     if (Search.handleKeyDown(evt))
       return
 
-    if (evt.key === 'F5') {
-      evt.preventDefault()
-      run()
+    if (evt.ctrlKey) {
+      switch (evt.key) {
+        case 'r':
+          evt.preventDefault()
+          run()
+          break
+        case 'a':
+          evt.preventDefault()
+          analyze()
+          break
+        case 't':
+          evt.preventDefault()
+          tokenize()
+          break
+        case 'p':
+          evt.preventDefault()
+          parse()
+          break
+        case 'f':
+          evt.preventDefault()
+          format()
+          break
+        case 'd':
+          evt.preventDefault()
+          toggleDebug()
+          break
+        case '1':
+          evt.preventDefault()
+          focusContext()
+          break
+        case '2':
+          evt.preventDefault()
+          focusLitsCode()
+          break
+      }
     }
     if (evt.key === 'Escape') {
       closeMoreMenu()
+      closeAddContextMenu()
       evt.preventDefault()
     }
+    if (((isMac() && evt.metaKey) || (!isMac && evt.ctrlKey)) && !evt.shiftKey && evt.key === 'z') {
+      evt.preventDefault()
+      if (document.activeElement === elements.contextTextArea)
+        undoContextHistory()
+      else if (document.activeElement === elements.litsTextArea)
+        undoLitsCodeHistory()
+    }
+    if (((isMac() && evt.metaKey) || (!isMac && evt.ctrlKey)) && evt.shiftKey && evt.key === 'z') {
+      evt.preventDefault()
+      if (document.activeElement === elements.contextTextArea)
+        redoContextHistory()
+      else if (document.activeElement === elements.litsTextArea)
+        redoLitsCodeHistory()
+    }
   })
-  elements.contextTextArea.addEventListener('keydown', keydownHandler)
-  elements.contextTextArea.addEventListener('input', (event: Event) => {
-    const target = event.target as HTMLInputElement | undefined
-    if (target)
-      setContext(target.value)
+  elements.contextTextArea.addEventListener('keydown', (evt) => {
+    keydownHandler(evt, () => setContext(elements.contextTextArea.value, true))
+  })
+  elements.contextTextArea.addEventListener('input', () => {
+    setContext(elements.contextTextArea.value, true)
   })
   elements.contextTextArea.addEventListener('scroll', () => {
-    saveState('context-scroll-top', elements.contextTextArea.scrollTop)
+    saveState({ 'context-scroll-top': elements.contextTextArea.scrollTop })
+  })
+  elements.contextTextArea.addEventListener('selectionchange', () => {
+    if (!ignoreSelectionChange) {
+      saveState({
+        'context-selection-start': elements.contextTextArea.selectionStart,
+        'context-selection-end': elements.contextTextArea.selectionEnd,
+      })
+    }
+  })
+  elements.contextTextArea.addEventListener('focusin', () => {
+    saveState({ 'focused-panel': 'context' })
+    updateCSS()
+  })
+  elements.contextTextArea.addEventListener('focusout', () => {
+    saveState({ 'focused-panel': null })
+    updateCSS()
   })
 
-  elements.litsTextArea.addEventListener('keydown', keydownHandler)
-  elements.litsTextArea.addEventListener('input', (event: Event) => {
-    const target = event.target as HTMLInputElement | undefined
-    if (target)
-      setLitsCode(target.value)
+  elements.litsTextArea.addEventListener('keydown', (evt) => {
+    keydownHandler(evt, () => setLitsCode(elements.litsTextArea.value, true))
+  })
+  elements.litsTextArea.addEventListener('input', () => {
+    setLitsCode(elements.litsTextArea.value, true)
   })
   elements.litsTextArea.addEventListener('scroll', () => {
-    saveState('lits-code-scroll-top', elements.litsTextArea.scrollTop)
+    saveState({ 'lits-code-scroll-top': elements.litsTextArea.scrollTop })
+  })
+  elements.litsTextArea.addEventListener('selectionchange', () => {
+    if (!ignoreSelectionChange) {
+      saveState({
+        'lits-code-selection-start': elements.litsTextArea.selectionStart,
+        'lits-code-selection-end': elements.litsTextArea.selectionEnd,
+      })
+    }
+  })
+  elements.litsTextArea.addEventListener('focusin', () => {
+    saveState({ 'focused-panel': 'lits-code' })
+    updateCSS()
+  })
+  elements.litsTextArea.addEventListener('focusout', () => {
+    saveState({ 'focused-panel': null })
+    updateCSS()
   })
 
   elements.outputResult.addEventListener('scroll', () => {
-    saveState('output-scroll-top', elements.outputResult.scrollTop)
+    saveState({ 'output-scroll-top': elements.outputResult.scrollTop })
   })
 
-  const urlParams = new URLSearchParams(window.location.search)
+  elements.newContextName.addEventListener('input', () => {
+    saveState({ 'new-context-name': elements.newContextName.value })
+  })
+  elements.newContextValue.addEventListener('input', () => {
+    saveState({ 'new-context-value': elements.newContextValue.value })
+  })
 
-  const urlState = urlParams.get('state')
-  if (urlState) {
-    applyEncodedState(urlState)
-    urlParams.delete('state')
-    history.replaceState(null, '', `${location.pathname}${urlParams.toString() ? '?' : ''}${urlParams.toString()}`)
-  }
-
-  setContext(getState('context'))
-  setLitsCode(getState('lits-code'), 'top')
-  setOutput(getState('output'))
-
-  setTimeout(() => {
-    elements.contextTextArea.scrollTop = getState('context-scroll-top')
-    elements.litsTextArea.scrollTop = getState('lits-code-scroll-top')
-    elements.outputResult.scrollTop = getState('output-scroll-top')
-  }, 0)
+  applyState(true)
 
   const id = location.hash.substring(1) || 'index'
   showPage(id, 'instant', 'replace')
 
-  layout()
+  Search.onClose(() => {
+    applyState()
+  })
 }
 
-function keydownHandler(evt: KeyboardEvent) {
-  if (evt.key === 'Enter' && evt.ctrlKey) {
-    evt.preventDefault()
-    const target = evt.target as HTMLTextAreaElement
-    const { selectionStart, selectionEnd } = target
-    if (selectionEnd > selectionStart) {
-      const program = target.value.substring(selectionStart, selectionEnd)
-      run(program)
-    }
-    else {
-      run()
-    }
-    return
-  }
+function getDataFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search)
+  const urlState = urlParams.get('state')
+  if (urlState) {
+    addOutputSeparator()
+    if (applyEncodedState(urlState))
+      appendOutput(`Data parsed from url parameter state: ${urlState}`, 'comment')
+    else
+      appendOutput(`Invalid url parameter state: ${urlState}`, 'error')
 
+    urlParams.delete('state')
+    history.replaceState(null, '', `${location.pathname}${urlParams.toString() ? '?' : ''}${urlParams.toString()}`)
+  }
+}
+
+function keydownHandler(evt: KeyboardEvent, onChange: () => void): void {
   if (['Tab', 'Backspace', 'Enter', 'Delete'].includes(evt.key)) {
     const target = evt.target as HTMLTextAreaElement
     const start = target.selectionStart
@@ -403,32 +634,41 @@ function keydownHandler(evt: KeyboardEvent) {
     const indexOfReturn = target.value.lastIndexOf('\n', start - 1)
     const rowLength = start - indexOfReturn - 1
     const onTabStop = rowLength % 2 === 0
-    if (evt.key === 'Tab') {
-      evt.preventDefault()
-      if (!evt.shiftKey) {
-        target.value = target.value.substring(0, start) + (onTabStop ? '  ' : ' ') + target.value.substring(end)
-        target.selectionStart = target.selectionEnd = start + (onTabStop ? 2 : 1)
-      }
-    }
-    if (evt.key === 'Backspace') {
-      if (onTabStop && start === end && target.value.substr(start - 2, 2) === '  ') {
+    switch (evt.key) {
+      case 'Tab':
         evt.preventDefault()
-        target.value = target.value.substring(0, start - 2) + target.value.substring(end)
-        target.selectionStart = target.selectionEnd = start - 2
-      }
-    }
-    if (evt.key === 'Enter') {
-      evt.preventDefault()
-      const spaceCount = target.value.substring(indexOfReturn + 1, start).replace(/^( *).*/, '$1').length
-      target.value = `${target.value.substring(0, start)}\n${' '.repeat(spaceCount)}${target.value.substring(end)}`
-      target.selectionStart = target.selectionEnd = start + 1 + spaceCount
-    }
-    if (evt.key === 'Delete') {
-      if (onTabStop && start === end && target.value.substr(start, 2) === '  ') {
+        if (!evt.shiftKey) {
+          target.value = target.value.substring(0, start) + (onTabStop ? '  ' : ' ') + target.value.substring(end)
+          target.selectionStart = target.selectionEnd = start + (onTabStop ? 2 : 1)
+          onChange()
+        }
+        break
+      case 'Backspace':
+        if (onTabStop && start === end && target.value.substring(start - 2, start + 2) === '  ') {
+          evt.preventDefault()
+          target.value = target.value.substring(0, start - 2) + target.value.substring(end)
+          target.selectionStart = target.selectionEnd = start - 2
+          onChange()
+        }
+        break
+      case 'Enter': {
         evt.preventDefault()
-        target.value = target.value.substring(0, start) + target.value.substring(end + 2)
-        target.selectionStart = target.selectionEnd = start
+        // eslint-disable-next-line regexp/optimal-quantifier-concatenation
+        const spaceCount = target.value.substring(indexOfReturn + 1, start).replace(/^( *).*/, '$1').length
+        target.value = `${target.value.substring(0, start)}\n${' '.repeat(spaceCount)}${target.value.substring(end)}`
+        target.selectionStart = target.selectionEnd = start + 1 + spaceCount
+        onChange()
+        break
       }
+
+      case 'Delete':
+        if (onTabStop && start === end && target.value.substring(start, start + 2) === '  ') {
+          evt.preventDefault()
+          target.value = target.value.substring(0, start) + target.value.substring(end + 2)
+          target.selectionStart = target.selectionEnd = start
+          onChange()
+        }
+        break
     }
   }
 }
@@ -450,152 +690,277 @@ function truncateCode(text: string, count = 1000) {
   else
     return `${oneLiner.substring(0, count - 3)}...`
 }
-export function run(program?: string) {
+export function run() {
   addOutputSeparator()
-  const code = program || getState('lits-code')
+  const selectedCode = getSelectedLitsCode()
+  const code = selectedCode.code || getState('lits-code')
+  const title = selectedCode.code ? 'Run selection' : 'Run'
 
-  if (program)
-    appendOutput(`Run selection: ${truncateCode(code)}`, 'comment')
-  else
-    appendOutput(`Run: ${truncateCode(code)}`, 'comment')
+  appendOutput(`${title}: ${truncateCode(code)}`, 'comment')
 
-  const contextString = getState('context')
-  let context: LitsParams
+  const litsParams = getLitsParamsFromContext()
+
+  const hijacker = hijackConsole()
   try {
-    context
-      = contextString.trim().length > 0
-        ? JSON.parse(contextString, (_, val) =>
-          // eslint-disable-next-line no-eval, ts/no-unsafe-return
-          typeof val === 'string' && val.startsWith('EVAL:') ? eval(val.substring(5)) : val) as LitsParams
-        : {}
-  }
-  catch {
-    appendOutput(`Error: Could not parse context: ${contextString}`, 'error')
-    return
-  }
-  let result
-  const oldLog = console.log
-  console.log = function (...args) {
-    const logRow = args.map(arg => stringifyValue(arg, false)).join(' ')
-    appendOutput(logRow, 'output')
-  }
-  const oldWarn = console.warn
-  console.warn = function (...args: unknown[]) {
-    oldWarn.apply(console, args)
-    appendOutput(args[0], 'output')
-  }
-  try {
-    result = lits.run(code, context)
+    const result = getLits().run(code, litsParams)
+    const content = stringifyValue(result, false)
+    appendOutput(content, 'result')
   }
   catch (error) {
     appendOutput(error, 'error')
-    return
   }
   finally {
-    console.log = oldLog
-    console.warn = oldWarn
+    hijacker.releaseConsole()
+    focusLitsCode()
   }
-  const content = stringifyValue(result, false)
-
-  appendOutput(content, 'result')
 }
 
 export function analyze() {
   addOutputSeparator()
-  const code = getState('lits-code')
-  appendOutput(`Analyze: ${truncateCode(code)}`, 'comment')
-  let result
-  const oldLog = console.log
-  console.log = function (...args) {
-    const logRow = args.map(arg => stringifyValue(arg, false)).join(' ')
-    appendOutput(logRow, 'output')
-  }
-  const oldWarn = console.warn
-  console.warn = function (...args: unknown[]) {
-    oldWarn.apply(console, args)
-    appendOutput(args[0], 'output')
-  }
+
+  const selectedCode = getSelectedLitsCode()
+  const code = selectedCode.code || getState('lits-code')
+  const title = selectedCode.code ? 'Analyze selection' : 'Analyze'
+
+  appendOutput(`${title}: ${truncateCode(code)}`, 'comment')
+
+  const litsParams = getLitsParamsFromContext()
+  const hijacker = hijackConsole()
   try {
-    result = lits.analyze(code)
+    const result = getLits('debug').analyze(code, litsParams)
+    const unresolvedIdentifiers = [...new Set([...result.unresolvedIdentifiers].map(s => s.symbol))].join(', ')
+    const unresolvedIdentifiersOutput = `Unresolved identifiers: ${unresolvedIdentifiers || '-'}`
+
+    const possibleOutcomes = result.outcomes && result.outcomes
+      .map(o => o instanceof UserDefinedError
+        ? `${o.name}${o.userMessage ? `("${o.userMessage}")` : ''}`
+        : o instanceof Error
+          ? o.name
+          : stringifyValue(o, false),
+      ).join(', ')
+    const possibleOutcomesString = `Possible outcomes: ${possibleOutcomes || '-'}`
+
+    appendOutput(`${unresolvedIdentifiersOutput}\n${possibleOutcomesString}`, 'analyze')
   }
   catch (error) {
     appendOutput(error, 'error')
-    return
   }
   finally {
-    console.log = oldLog
-    console.warn = oldWarn
+    hijacker.releaseConsole()
+    focusLitsCode()
   }
-  const undefinedSymbols = [...result.undefinedSymbols].map(s => s.symbol).join(', ')
-  const content = undefinedSymbols
-    ? `Undefined symbols: ${undefinedSymbols}`
-    : 'No undefined symbols'
-
-  appendOutput(content, 'analyze')
 }
 
 export function parse() {
   addOutputSeparator()
-  const code = getState('lits-code')
-  appendOutput(`Parse: ${truncateCode(code)}`, 'comment')
-  let result
-  const oldLog = console.log
-  console.log = function (...args) {
-    const logRow = args.map(arg => stringifyValue(arg, false)).join(' ')
-    appendOutput(logRow, 'output')
-  }
-  const oldWarn = console.warn
-  console.warn = function (...args) {
-    oldWarn.apply(console, args)
-    appendOutput(args[0], 'output')
-  }
+
+  const selectedCode = getSelectedLitsCode()
+  const code = selectedCode.code || getState('lits-code')
+  const title = selectedCode.code ? 'Parse selection' : 'Parse'
+
+  appendOutput(`${title}${getState('debug') ? ' (debug):' : ':'} ${truncateCode(code)}`, 'comment')
+
+  const hijacker = hijackConsole()
   try {
-    const tokens = litsNoDebug.tokenize(code)
-    result = litsNoDebug.parse(tokens)
+    const tokens = getLits().tokenize(code)
+    const result = getLits().parse(tokens)
+    const content = JSON.stringify(result, null, 2)
+    appendOutput(content, 'parse')
   }
   catch (error) {
     appendOutput(error, 'error')
-    return
   }
   finally {
-    console.log = oldLog
-    console.warn = oldWarn
+    hijacker.releaseConsole()
+    focusLitsCode()
   }
-  const content = JSON.stringify(result, null, 2)
-
-  appendOutput(content, 'parse')
 }
 
 export function tokenize() {
   addOutputSeparator()
-  const code = getState('lits-code')
-  appendOutput(`Tokenize: ${truncateCode(code)}`, 'comment')
 
-  let result
-  const oldLog = console.log
-  console.log = function (...args: unknown[]) {
-    const logRow = args.map(arg => stringifyValue(arg, false)).join(' ')
-    appendOutput(logRow, 'output')
-  }
-  const oldWarn = console.warn
-  console.warn = function (...args: unknown[]) {
-    oldWarn.apply(console, args)
-    appendOutput(args[0], 'output')
-  }
+  const selectedCode = getSelectedLitsCode()
+  const code = selectedCode.code || getState('lits-code')
+  const title = selectedCode.code ? 'Tokenize selection' : 'Tokenize'
+
+  appendOutput(`${title}${getState('debug') ? ' (debug):' : ':'} ${truncateCode(code)}`, 'comment')
+
+  const hijacker = hijackConsole()
   try {
-    result = litsNoDebug.tokenize(code)
+    const result = getLits().tokenize(code)
+    const content = JSON.stringify(result, null, 2)
+    appendOutput(content, 'tokenize')
   }
   catch (error) {
     appendOutput(error, 'error')
     return
   }
   finally {
-    console.log = oldLog
-    console.warn = oldWarn
+    hijacker.releaseConsole()
+    focusLitsCode()
   }
-  const content = JSON.stringify(result, null, 2)
+}
 
-  appendOutput(content, 'tokenize')
+export function format() {
+  addOutputSeparator()
+
+  const selectedCode = getSelectedLitsCode()
+  const code = selectedCode.code || getState('lits-code')
+  const title = selectedCode.code ? 'Format selection' : 'Format'
+
+  appendOutput(`${title}: ${truncateCode(code)}`, 'comment')
+
+  const hijacker = hijackConsole()
+  let result: string = ''
+  try {
+    result = getLits('debug').format(code, { lineLength: getLitsCodeCols() })
+    if (selectedCode.code) {
+      setLitsCode(`${selectedCode.leadingCode}${result}${selectedCode.trailingCode}`, true)
+    }
+    else {
+      setLitsCode(result, true)
+    }
+  }
+  catch (error) {
+    appendOutput(error, 'error')
+    return
+  }
+  finally {
+    hijacker.releaseConsole()
+    if (selectedCode.code) {
+      saveState({
+        'focused-panel': 'lits-code',
+        'lits-code-selection-start': selectedCode.selectionStart,
+        'lits-code-selection-end': selectedCode.selectionStart + result.length,
+      })
+    }
+    else {
+      saveState({
+        'focused-panel': 'lits-code',
+        'lits-code-selection-start': selectedCode.selectionStart,
+        'lits-code-selection-end': selectedCode.selectionEnd,
+      })
+    }
+    applyState()
+  }
+}
+
+export function toggleDebug() {
+  const debug = !getState('debug')
+  saveState({ debug })
+  updateCSS()
+  addOutputSeparator()
+  appendOutput(`Debug mode toggled ${debug ? 'ON' : 'OFF'}`, 'comment')
+  focusLitsCode()
+}
+
+export function focusContext() {
+  elements.contextTextArea.focus()
+}
+
+export function focusLitsCode() {
+  elements.litsTextArea.focus()
+}
+
+function getLitsParamsFromContext(): LitsParams {
+  const contextString = getState('context')
+  try {
+    const parsedContext
+      = contextString.trim().length > 0
+        ? JSON.parse(contextString) as UnknownRecord
+        : {}
+
+    const parsedJsFunctions = asUnknownRecord(parsedContext.jsFunctions ?? {})
+
+    const values = asUnknownRecord(parsedContext.values ?? {})
+
+    const jsFunctions: Record<string, JsFunction> = Object.entries(parsedJsFunctions).reduce((acc: Record<string, JsFunction>, [key, value]) => {
+      if (typeof value !== 'string') {
+        console.log(key, value)
+        throw new TypeError(`Invalid jsFunction value. "${key}" should be a javascript function string`)
+      }
+
+      // eslint-disable-next-line no-eval
+      const fn = eval(value) as (...args: any[]) => unknown
+
+      if (typeof fn !== 'function') {
+        throw new TypeError(`Invalid jsFunction value. "${key}" should be a javascript function`)
+      }
+
+      acc[key] = {
+        fn,
+      }
+      return acc
+    }, {})
+
+    return {
+      values,
+      jsFunctions,
+    }
+  }
+  catch (err) {
+    appendOutput(`Error: ${(err as Error).message}\nCould not parse context:\n${contextString}`, 'error')
+    return {}
+  }
+}
+function getSelectedLitsCode(): {
+  code: string
+  leadingCode: string
+  trailingCode: string
+  selectionStart: number
+  selectionEnd: number
+} {
+  const selectionStart = getState('lits-code-selection-start')
+  const selectionEnd = getState('lits-code-selection-end')
+
+  return {
+    leadingCode: elements.litsTextArea.value.substring(0, selectionStart),
+    trailingCode: elements.litsTextArea.value.substring(selectionEnd),
+    code: elements.litsTextArea.value.substring(selectionStart, selectionEnd),
+    selectionStart,
+    selectionEnd,
+  }
+}
+
+function applyState(scrollToTop = false) {
+  const contextTextAreaSelectionStart = getState('context-selection-start')
+  const contextTextAreaSelectionEnd = getState('context-selection-end')
+  const litsTextAreaSelectionStart = getState('lits-code-selection-start')
+  const litsTextAreaSelectionEnd = getState('lits-code-selection-end')
+
+  setOutput(getState('output'), false)
+  getDataFromUrl()
+
+  setContext(getState('context'), false)
+  elements.contextTextArea.selectionStart = contextTextAreaSelectionStart
+  elements.contextTextArea.selectionEnd = contextTextAreaSelectionEnd
+
+  setLitsCode(getState('lits-code'), false, scrollToTop ? 'top' : undefined)
+  elements.litsTextArea.selectionStart = litsTextAreaSelectionStart
+  elements.litsTextArea.selectionEnd = litsTextAreaSelectionEnd
+
+  updateCSS()
+  layout()
+
+  setTimeout(() => {
+    if (getState('focused-panel') === 'context')
+      focusContext()
+    else if (getState('focused-panel') === 'lits-code')
+      focusLitsCode()
+
+    elements.contextTextArea.scrollTop = getState('context-scroll-top')
+    elements.litsTextArea.scrollTop = getState('lits-code-scroll-top')
+    elements.outputResult.scrollTop = getState('output-scroll-top')
+  }, 0)
+}
+
+function updateCSS() {
+  const debug = getState('debug')
+  elements.toggleDebugMenuLabel.textContent = debug ? 'Debug: ON' : 'Debug: OFF'
+  elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none'
+
+  elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : ''
+  elements.contextTitle.style.color = (getState('focused-panel') === 'context') ? 'white' : ''
 }
 
 export function showPage(id: string, scroll: 'smooth' | 'instant' | 'none', historyEvent: 'replace' | 'push' | 'none' = 'push') {
@@ -646,6 +1011,8 @@ function inactivateAll() {
 export function addToPlayground(name: string, encodedExample: string) {
   const example = atob(encodedExample)
   appendLitsCode(`;; Example - ${name} ;;\n\n${example}\n`)
+  saveState({ 'focused-panel': 'lits-code' })
+  applyState()
 }
 
 export function setPlayground(name: string, encodedExample: string) {
@@ -656,7 +1023,7 @@ export function setPlayground(name: string, encodedExample: string) {
     ? JSON.stringify(example.context, (_k, v) => (v === undefined ? null : v), 2)
     : ''
 
-  setContext(context)
+  setContext(context, true, 'top')
 
   const code = example.code ? example.code : ''
   const size = Math.max(name.length + 10, 40)
@@ -668,5 +1035,56 @@ ${`;;${' '.repeat(paddingLeft)}${name}${' '.repeat(paddingRight)};;`}
 ${`;;${'-'.repeat(size)};;`}
 
 ${code}
-`.trimStart(), 'top')
+`.trimStart(), true, 'top')
+  saveState({ 'focused-panel': 'lits-code' })
+  applyState()
+}
+
+function hijackConsole() {
+  const oldLog = console.log
+  console.log = function (...args: unknown[]) {
+    const logRow = args.map(arg => stringifyValue(arg, false)).join(' ')
+    appendOutput(logRow, 'output')
+  }
+  const oldWarn = console.warn
+  console.warn = function (...args: unknown[]) {
+    oldWarn.apply(console, args)
+    appendOutput(args[0], 'warn')
+  }
+  const oldError = console.error
+  console.warn = function (...args: unknown[]) {
+    oldError.apply(console, args)
+    appendOutput(args[0], 'error')
+  }
+  return {
+    releaseConsole: () => {
+      console.log = oldLog
+      console.warn = oldWarn
+    },
+  }
+}
+
+function getLitsCodeCols(): number {
+  // Create a temporary element
+  const { font, paddingLeft, paddingRight } = window.getComputedStyle(elements.litsTextArea)
+  const tempElement = document.createElement('span')
+  tempElement.style.font = font
+  tempElement.style.visibility = 'hidden'
+  tempElement.style.whiteSpace = 'pre'
+  tempElement.textContent = 'M' // Use a common monospace character
+
+  // Append the element to the body
+  document.body.appendChild(tempElement)
+
+  // Measure the width of the character
+  const characterWidth = tempElement.getBoundingClientRect().width
+
+  const textAreawidth = elements.litsTextArea.clientWidth
+    - Number.parseInt(paddingLeft)
+    - Number.parseInt(paddingRight)
+
+  // Remove the temporary element
+  document.body.removeChild(tempElement)
+
+  return Math.max(1, Math.floor(textAreawidth / characterWidth))
 }

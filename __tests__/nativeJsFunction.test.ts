@@ -3,6 +3,7 @@ import { FunctionType, Lits } from '../src'
 import type { JsFunction } from '../src/Lits/Lits'
 import { LitsError } from '../src/errors'
 import type { NativeJsFunction } from '../src/parser/interface'
+import { FUNCTION_SYMBOL } from '../src/utils/symbols'
 
 const jsFunctions: Record<string, JsFunction> = {
   tripple: {
@@ -42,7 +43,7 @@ const nativeJsFunction: NativeJsFunction = {
   },
   n: 'square',
   t: FunctionType.NativeJsFunction,
-  __fn: true,
+  [FUNCTION_SYMBOL]: true,
 }
 const values = {
   obj: {

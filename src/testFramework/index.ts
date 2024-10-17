@@ -114,7 +114,7 @@ function readIncludeDirectives(filePath: string): string[] {
       const relativeFilePath = includeMatch[1] as string
       acc.push(path.resolve(dirname, relativeFilePath))
     }
-    if (!line.match(/^\s*(?:;.*)$/))
+    if (!line.match(/^\s*;.*$/))
       okToInclude = false
 
     return acc
@@ -128,6 +128,7 @@ function getTestChunks(testPath: string): TestChunk[] {
   let setupCode = ''
   return testProgram.split('\n').reduce((result: TestChunk[], line, index) => {
     const currentLineNbr = index + 1
+    // eslint-disable-next-line regexp/no-super-linear-backtracking
     const testNameAnnotationMatch = line.match(/^\s*;+\s*@(?:(skip)-)?test\s*(.*)$/)
     if (testNameAnnotationMatch) {
       const directive = (testNameAnnotationMatch[1] ?? '').toUpperCase()

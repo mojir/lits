@@ -1,4 +1,7 @@
+import type { FindUnresolvedIdentifiers, UnresolvedIdentifiers } from '../analyze'
+import type { ContextStack } from '../evaluator/ContextStack'
 import type { EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
+import type { Any, Arr } from '../interface'
 import type {
   NormalExpressionNode,
   ParseArgument,
@@ -6,13 +9,10 @@ import type {
   ParseBindings,
   ParseExpression,
   ParseToken,
-  ParseTokens,
-  SpecialExpressionNode,
+  ParseTokensUntilClosingBracket,
 } from '../parser/interface'
-import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
-import type { Any, Arr } from '../interface'
-import type { AnalyzeAst, AnalyzeResult } from '../analyze/interface'
-import type { ContextStack } from '../evaluator/ContextStack'
+import type { SourceCodeInfo, Token, TokenStream } from '../tokenizer/interface'
+import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
 
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
@@ -29,7 +29,7 @@ interface BuiltinNormalExpression<T> {
 
 export interface ParserHelpers {
   parseExpression: ParseExpression
-  parseTokens: ParseTokens
+  parseTokensUntilClosingBracket: ParseTokensUntilClosingBracket
   parseToken: ParseToken
   parseBinding: ParseBinding
   parseBindings: ParseBindings
@@ -37,56 +37,20 @@ export interface ParserHelpers {
 }
 
 export type BuiltinNormalExpressions = Record<string, BuiltinNormalExpression<Any>>
-export type BuiltinSpecialExpressions = Record<string, BuiltinSpecialExpression<Any>>
 
 interface EvaluateHelpers {
   evaluateAstNode: EvaluateAstNode
   builtin: Builtin
 }
-export interface BuiltinSpecialExpression<T> {
-  parse: (tokenStream: TokenStream, position: number, parsers: ParserHelpers) => [number, SpecialExpressionNode]
-  evaluate: (node: SpecialExpressionNode, contextStack: ContextStack, helpers: EvaluateHelpers) => T
-  validate?: (node: SpecialExpressionNode) => void
-  analyze: (
-    node: SpecialExpressionNode,
+export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
+  parse: (tokenStream: TokenStream, position: number, firstToken: Token, parsers: ParserHelpers) => [number, N]
+  evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
+  findUnresolvedIdentifiers: (
+    node: N,
     contextStack: ContextStack,
-    params: { analyzeAst: AnalyzeAst, builtin: Builtin },
-  ) => AnalyzeResult
+    params: { findUnresolvedIdentifiers: FindUnresolvedIdentifiers, builtin: Builtin, evaluateAstNode: EvaluateAstNode },
+  ) => UnresolvedIdentifiers
 }
-
-export type SpecialExpressionName =
-  | 'and'
-  | 'block'
-  | 'comment'
-  | 'cond'
-  | 'def'
-  | 'defn'
-  | 'defns'
-  | 'defs'
-  | 'do'
-  | 'doseq'
-  | 'fn'
-  | 'for'
-  | 'function'
-  | 'if-let'
-  | 'if-not'
-  | 'if'
-  | 'let'
-  | 'loop'
-  | 'or'
-  | 'partial'
-  | 'recur'
-  | 'return-from'
-  | 'return'
-  | 'throw'
-  | 'time!'
-  | 'try'
-  | 'when-first'
-  | 'when-let'
-  | 'when-not'
-  | 'when'
-  | 'declared?'
-  | '??'
 
 export interface Builtin {
   normalExpressions: BuiltinNormalExpressions

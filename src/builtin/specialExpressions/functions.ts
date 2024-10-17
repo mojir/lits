@@ -1,74 +1,81 @@
-import type { AnalyzeAst, AnalyzeResult } from '../../analyze/interface'
+import type { SpecialExpressionNode } from '..'
+import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '../../analyze'
 import { addAnalyzeResults } from '../../analyze/utils'
+import { AstNodeType, FunctionType, TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
-import { AstNodeType, FunctionType, TokenType } from '../../constants/constants'
 import type {
   AstNode,
   BindingNode,
+  CommonSpecialExpressionNode,
   EvaluatedFunctionOverload,
   LitsFunction,
   NameNode,
-  SpecialExpressionNode,
 } from '../../parser/interface'
 import type { TokenStream } from '../../tokenizer/interface'
-import { assertNameNode } from '../../typeGuards/astNode'
+import { asAstNode, assertNameNode } from '../../typeGuards/astNode'
+import { asString, assertString } from '../../typeGuards/string'
+import { asToken } from '../../typeGuards/token'
 import { valueToString } from '../../utils/debug/debugTools'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
-import { asToken } from '../../typeGuards/token'
 import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
 import type { Arity, FunctionArguments, FunctionOverload } from '../utils'
 import { assertNameNotDefined } from '../utils'
-import { asString } from '../../typeGuards/string'
 
-type DefnNode = SpecialExpressionNode & {
+export interface DefnNode extends CommonSpecialExpressionNode<'defn'> {
   f: NameNode
   o: FunctionOverload[]
 }
 
-type DefnsNode = SpecialExpressionNode & {
+export interface DefnsNode extends CommonSpecialExpressionNode<'defns'> {
   f: AstNode
   o: FunctionOverload[]
 }
 
-export type FnNode = SpecialExpressionNode & {
+export interface FnNode extends CommonSpecialExpressionNode<'fn'> {
+  p: AstNode[]
   o: FunctionOverload[]
 }
 
-export const defnSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokenStream, position, parsers) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
+  parse: (tokenStream, position, firstToken, parsers) => {
     const { parseToken } = parsers
     let functionName
     ;[position, functionName] = parseToken(tokenStream, position)
-    assertNameNode(functionName, functionName.tkn?.sourceCodeInfo)
+    assertNameNode(functionName, functionName.debugData?.token.debugData?.sourceCodeInfo)
 
     let functionOverloades: FunctionOverload[]
     ;[position, functionOverloades] = parseFunctionOverloades(tokenStream, position, parsers)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: DefnNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'defn',
+      f: functionName,
+      p: [],
+      o: functionOverloades,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
+    }
 
     return [
-      position,
-      {
-        t: AstNodeType.SpecialExpression,
-        n: 'defn',
-        f: functionName,
-        p: [],
-        o: functionOverloades,
-        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
-      },
+      position + 1,
+      node,
     ]
   },
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = getFunctionName('defn', node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack, builtin, node.tkn?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, node.debugData?.token.debugData?.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.tkn?.sourceCodeInfo,
+      sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -77,45 +84,50 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null> = {
     contextStack.globalContext[name] = { value: litsFunction }
     return null
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    contextStack.globalContext[(node as DefnNode).f.v] = { value: true }
-    const newContext: Context = { [(node as DefnNode).f.v]: { value: true } }
-    return addOverloadsUndefinedSymbols((node as DefnNode).o, contextStack, analyzeAst, builtin, newContext)
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+    contextStack.globalContext[node.f.v] = { value: true }
+    const newContext: Context = { [node.f.v]: { value: true } }
+    return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext)
   },
 }
 
-export const defnsSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokenStream, position, parsers) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> = {
+  parse: (tokenStream, position, firstToken, parsers) => {
     const { parseToken } = parsers
     let functionName: AstNode
     ;[position, functionName] = parseToken(tokenStream, position)
 
     let functionOverloades: FunctionOverload[]
     ;[position, functionOverloades] = parseFunctionOverloades(tokenStream, position, parsers)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: DefnsNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'defns',
+      p: [],
+      f: functionName,
+      o: functionOverloades,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
+    }
 
     return [
-      position,
-      {
-        t: AstNodeType.SpecialExpression,
-        n: 'defns',
-        f: functionName,
-        p: [],
-        o: functionOverloades,
-        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
-      },
+      position + 1,
+      node,
     ]
   },
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = getFunctionName('defns', node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack, builtin, node.tkn?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, node.debugData?.token.debugData?.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.tkn?.sourceCodeInfo,
+      sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -124,26 +136,38 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null> = {
     contextStack.globalContext[name] = { value: litsFunction }
     return null
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) =>
-    addOverloadsUndefinedSymbols((node as DefnsNode).o, contextStack, analyzeAst, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin, evaluateAstNode }) => {
+    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack)
+    assertString(name, sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
+    contextStack.globalContext[name] = { value: true }
+    const newContext = { [name]: { value: true } }
+
+    return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext)
+  },
 }
 
-export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction> = {
-  parse: (tokenStream, position, parsers) => {
-    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
-
+export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
+  parse: (tokenStream, position, firstToken, parsers) => {
     let functionOverloades: FunctionOverload[]
     ;[position, functionOverloades] = parseFunctionOverloades(tokenStream, position, parsers)
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+
+    const node: FnNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'fn',
+      p: [],
+      o: functionOverloades,
+      debugData: firstToken.debugData && {
+        token: firstToken,
+        lastToken,
+      },
+    }
 
     return [
-      position,
-      {
-        t: AstNodeType.SpecialExpression,
-        n: 'fn',
-        p: [],
-        o: functionOverloades,
-        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
-      },
+      position + 1,
+      node,
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
@@ -151,7 +175,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction> = {
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.tkn?.sourceCodeInfo,
+      sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: undefined,
       o: evaluatedFunctionOverloades,
@@ -159,8 +183,8 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction> = {
 
     return litsFunction
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) =>
-    addOverloadsUndefinedSymbols((node as FnNode).o, contextStack, analyzeAst, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) =>
+    addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin),
 }
 
 function getFunctionName(
@@ -169,9 +193,9 @@ function getFunctionName(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ): string {
-  const sourceCodeInfo = node.tkn?.sourceCodeInfo
+  const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
   if (expressionName === 'defn')
-    return ((node as DefnNode).f as NameNode).v
+    return ((node as DefnNode).f).v
 
   const name = evaluateAstNode((node as DefnsNode).f, contextStack)
   return asString(name, sourceCodeInfo)
@@ -206,19 +230,19 @@ function evaluateFunctionOverloades(
   return evaluatedFunctionOverloades
 }
 
-function addOverloadsUndefinedSymbols(
+function addOverloadsUnresolvedIdentifiers(
   overloads: FunctionOverload[],
   contextStack: ContextStack,
-  analyzeAst: AnalyzeAst,
+  findUnresolvedIdentifiers: FindUnresolvedIdentifiers,
   builtin: Builtin,
   functionNameContext?: Context,
-): AnalyzeResult {
-  const result: AnalyzeResult = { undefinedSymbols: new Set() }
+): UnresolvedIdentifiers {
+  const result = new Set<UnresolvedIdentifier>()
   const contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack
   for (const overload of overloads) {
     const newContext: Context = {}
     overload.as.b.forEach((binding) => {
-      const bindingResult = analyzeAst(binding.v, contextStack, builtin)
+      const bindingResult = findUnresolvedIdentifiers([binding.v], contextStack, builtin)
       addAnalyzeResults(result, bindingResult)
       newContext[binding.n] = { value: true }
     })
@@ -229,7 +253,7 @@ function addOverloadsUndefinedSymbols(
       newContext[overload.as.r] = { value: true }
 
     const newContextStack = contextStackWithFunctionName.create(newContext)
-    const overloadResult = analyzeAst(overload.b, newContextStack, builtin)
+    const overloadResult = findUnresolvedIdentifiers(overload.b, newContextStack, builtin)
     addAnalyzeResults(result, overloadResult)
   }
   return result
@@ -266,9 +290,9 @@ function parseFunctionBody(
     tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
   }
   if (body.length === 0)
-    throw new LitsError('Missing body in function', tkn.sourceCodeInfo)
+    throw new LitsError('Missing body in function', tkn.debugData?.sourceCodeInfo)
 
-  return [position + 1, body]
+  return [position, body]
 }
 
 function parseFunctionOverloades(
@@ -287,7 +311,7 @@ function parseFunctionOverloades(
       const arity: Arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length
 
       if (!arityOk(functionOverloades, arity))
-        throw new LitsError('All overloaded functions must have different arity', tkn.sourceCodeInfo)
+        throw new LitsError('All overloaded functions must have different arity', tkn.debugData?.sourceCodeInfo)
 
       let functionBody: AstNode[]
       ;[position, functionBody] = parseFunctionBody(tokenStream, position, parsers)
@@ -297,12 +321,13 @@ function parseFunctionOverloades(
         a: arity,
       })
 
-      tkn = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket })
+      tkn = asToken(tokenStream.tokens[position + 1], tokenStream.filePath, { type: TokenType.Bracket })
       if (tkn.v !== ')' && tkn.v !== '(')
-        throw new LitsError(`Expected ( or ) token, got ${valueToString(tkn)}.`, tkn.sourceCodeInfo)
+        throw new LitsError(`Expected ( or ) token, got ${valueToString(tkn)}.`, tkn.debugData?.sourceCodeInfo)
+      position += 1
     }
 
-    return [position + 1, functionOverloades]
+    return [position, functionOverloades]
   }
   else if (tkn.v === '[') {
     let functionArguments: FunctionArguments
@@ -322,7 +347,7 @@ function parseFunctionOverloades(
     ]
   }
   else {
-    throw new LitsError(`Expected [ or ( token, got ${valueToString(tkn)}`, tkn.sourceCodeInfo)
+    throw new LitsError(`Expected [ or ( token, got ${valueToString(tkn)}`, tkn.debugData?.sourceCodeInfo)
   }
 }
 
@@ -355,18 +380,18 @@ function parseFunctionArguments(
         switch (node.v) {
           case '&':
             if (state === 'rest')
-              throw new LitsError('& can only appear once', tkn.sourceCodeInfo)
+              throw new LitsError('& can only appear once', tkn.debugData?.sourceCodeInfo)
 
             state = 'rest'
             break
           case '&let':
             if (state === 'rest' && !restArgument)
-              throw new LitsError('No rest argument was specified', tkn.sourceCodeInfo)
+              throw new LitsError('No rest argument was specified', tkn.debugData?.sourceCodeInfo)
 
             state = 'let'
             break
           default:
-            throw new LitsError(`Illegal modifier: ${node.v}`, tkn.sourceCodeInfo)
+            throw new LitsError(`Illegal modifier: ${node.v}`, tkn.debugData?.sourceCodeInfo)
         }
       }
       else {
@@ -376,7 +401,7 @@ function parseFunctionArguments(
             break
           case 'rest':
             if (restArgument !== undefined)
-              throw new LitsError('Can only specify one rest argument', tkn.sourceCodeInfo)
+              throw new LitsError('Can only specify one rest argument', tkn.debugData?.sourceCodeInfo)
 
             restArgument = node.n
             break
@@ -386,7 +411,7 @@ function parseFunctionArguments(
   }
 
   if (state === 'rest' && restArgument === undefined)
-    throw new LitsError('Missing rest argument name', tkn.sourceCodeInfo)
+    throw new LitsError('Missing rest argument name', tkn.debugData?.sourceCodeInfo)
 
   position += 1
 

@@ -8,6 +8,7 @@ describe('token type guard', () => {
     const tkn: Token = {
       t: TokenType.Name,
       v: 'Albert',
+      debugData: undefined,
     }
     const nonTkn1 = {
       ...tkn,

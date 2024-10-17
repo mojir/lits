@@ -33,7 +33,8 @@
     "src/**/*",
     "types/**/*",
     "cli/**/*",
-    "common/clojureDocs.ts"],
+    "common/clojureDocs.ts"
+  ],
   "exclude": [
     "**/*.test.ts",
     "__tests__"
