@@ -1,63 +1,64 @@
 import { joinAnalyzeResults } from '../../analyze/utils'
-import { Context } from '../../evaluator/interface'
-import { Any } from '../../interface'
-import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import type { Context } from '../../evaluator/interface'
+import type { Any } from '../../interface'
+import { AstNodeType } from '../../constants/constants'
+import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 type LetNode = SpecialExpressionNode & {
-  bindings: BindingNode[]
+  bs: BindingNode[]
 }
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens, position, { parseBindings, parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
+  parse: (tokenStream, position, { parseBindings, parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
     let bindings: BindingNode[]
-    ;[position, bindings] = parseBindings(tokens, position)
+    ;[position, bindings] = parseBindings(tokenStream, position)
 
     let params: AstNode[]
-    ;[position, params] = parseTokens(tokens, position)
+    ;[position, params] = parseTokens(tokenStream, position)
 
     const node: LetNode = {
-      type: `SpecialExpression`,
-      name: `let`,
-      params,
-      bindings,
-      token: firstToken.debugInfo ? firstToken : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'let',
+      p: params,
+      bs: bindings,
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const locals: Context = {}
-    const newContextStack = contextStack.withContext(locals)
-    for (const binding of (node as LetNode).bindings) {
-      const bindingValueNode = binding.value
+    const newContextStack = contextStack.create(locals)
+    for (const binding of (node as LetNode).bs) {
+      const bindingValueNode = binding.v
       const bindingValue = evaluateAstNode(bindingValueNode, newContextStack)
-      locals[binding.name] = { value: bindingValue }
+      locals[binding.n] = { value: bindingValue }
     }
 
     let result: Any = null
-    for (const astNode of node.params) {
+    for (const astNode of node.p)
       result = evaluateAstNode(astNode, newContextStack)
-    }
+
     return result
   },
   analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    const newContext = (node as LetNode).bindings
-      .map(binding => binding.name)
+    const newContext = (node as LetNode).bs
+      .map(binding => binding.n)
       .reduce((context: Context, name) => {
         context[name] = { value: true }
         return context
       }, {})
     const bindingContext: Context = {}
-    const bindingResults = (node as LetNode).bindings.map(bindingNode => {
-      const valueNode = bindingNode.value
-      const bindingsResult = analyzeAst(valueNode, contextStack.withContext(bindingContext), builtin)
-      bindingContext[bindingNode.name] = { value: true }
+    const bindingResults = (node as LetNode).bs.map((bindingNode) => {
+      const valueNode = bindingNode.v
+      const bindingsResult = analyzeAst(valueNode, contextStack.create(bindingContext), builtin)
+      bindingContext[bindingNode.n] = { value: true }
       return bindingsResult
     })
 
-    const paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin)
+    const paramsResult = analyzeAst(node.p, contextStack.create(newContext), builtin)
     return joinAnalyzeResults(...bindingResults, paramsResult)
   },
 }

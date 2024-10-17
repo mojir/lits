@@ -1,36 +1,37 @@
 import { UserDefinedError } from '../../errors'
-import { AstNode, SpecialExpressionNode } from '../../parser/interface'
-import { string, token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import { AstNodeType, TokenType } from '../../constants/constants'
+import type { AstNode, SpecialExpressionNode } from '../../parser/interface'
+import { asToken, assertToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
+import { asString } from '../../typeGuards/string'
 
 type ThrowNode = SpecialExpressionNode & {
-  messageNode: AstNode
+  m: AstNode
 }
 
 export const throwSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokens, position, { parseToken }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
-    const [newPosition, messageNode] = parseToken(tokens, position)
+  parse: (tokenStream, position, { parseToken }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+    const [newPosition, messageNode] = parseToken(tokenStream, position)
     position = newPosition
 
-    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
+    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
     position += 1
 
     const node: ThrowNode = {
-      type: `SpecialExpression`,
-      name: `throw`,
-      params: [],
-      messageNode,
-      token: firstToken.debugInfo ? firstToken : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'throw',
+      p: [],
+      m: messageNode,
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
     return [position, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const message = string.as(evaluateAstNode((node as ThrowNode).messageNode, contextStack), node.token?.debugInfo, {
+    const message = asString(evaluateAstNode((node as ThrowNode).m, contextStack), node.tkn?.sourceCodeInfo, {
       nonEmpty: true,
     })
-    throw new UserDefinedError(message, node.token?.debugInfo)
+    throw new UserDefinedError(message, node.tkn?.sourceCodeInfo)
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) =>
-    analyzeAst((node as ThrowNode).messageNode, contextStack, builtin),
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst((node as ThrowNode).m, contextStack, builtin),
 }

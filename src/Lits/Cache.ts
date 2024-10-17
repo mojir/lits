@@ -1,8 +1,8 @@
-import { Ast } from '../parser/interface'
+import type { Ast } from '../parser/interface'
 import { toNonNegativeInteger } from '../utils'
-import { valueToString } from '../utils/helpers'
+import { valueToString } from '../utils/debug/debugTools'
 
-type CacheEntry = {
+interface CacheEntry {
   key: string
   value: Ast
   nextEntry: CacheEntry | undefined
@@ -16,9 +16,8 @@ export class Cache {
   private maxSize: number | null
   constructor(maxSize: number | null) {
     this.maxSize = maxSize === null ? null : toNonNegativeInteger(maxSize)
-    if (typeof this.maxSize === `number` && this.maxSize < 1) {
-      throw Error(`1 is the minimum maxSize, got ${valueToString(maxSize)}`)
-    }
+    if (typeof this.maxSize === 'number' && this.maxSize < 1)
+      throw new Error(`1 is the minimum maxSize, got ${valueToString(maxSize)}`)
   }
 
   public getContent(): Record<string, Ast> {
@@ -48,26 +47,24 @@ export class Cache {
   }
 
   public set(key: string, value: Ast): void {
-    if (this.has(key)) {
-      throw Error(`AstCache - key already present: ${key}`)
-    }
+    if (this.has(key))
+      throw new Error(`AstCache - key already present: ${key}`)
+
     const newEntry: CacheEntry = { value, nextEntry: undefined, key }
 
     this.cache[key] = newEntry
     this._size += 1
 
-    if (this.lastEntry) {
+    if (this.lastEntry)
       this.lastEntry.nextEntry = newEntry
-    }
+
     this.lastEntry = newEntry
 
-    if (!this.firstEntry) {
+    if (!this.firstEntry)
       this.firstEntry = this.lastEntry
-    }
 
-    while (this.maxSize !== null && this.size > this.maxSize) {
+    while (this.maxSize !== null && this.size > this.maxSize)
       this.dropFirstEntry()
-    }
   }
 
   private dropFirstEntry(): void {

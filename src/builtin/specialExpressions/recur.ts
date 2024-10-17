@@ -1,26 +1,27 @@
 import { RecurSignal } from '../../errors'
-import { SpecialExpressionNode } from '../../parser/interface'
-import { token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import { AstNodeType } from '../../constants/constants'
+import type { SpecialExpressionNode } from '../../parser/interface'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 export const recurSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokens, position, { parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
+  parse: (tokenStream, position, { parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
     let params
-    ;[position, params] = parseTokens(tokens, position)
+    ;[position, params] = parseTokens(tokenStream, position)
 
     const node: SpecialExpressionNode = {
-      type: `SpecialExpression`,
-      name: `recur`,
-      params,
-      token: firstToken.debugInfo ? firstToken : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'recur',
+      p: params,
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
 
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
+    const params = node.p.map(paramNode => evaluateAstNode(paramNode, contextStack))
     throw new RecurSignal(params)
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
 }

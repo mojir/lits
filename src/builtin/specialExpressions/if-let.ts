@@ -1,59 +1,65 @@
 import { joinAnalyzeResults } from '../../analyze/utils'
 import { LitsError } from '../../errors'
-import { Context } from '../../evaluator/interface'
-import { Any } from '../../interface'
-import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { assertNumberOfParams, astNode, asValue, token } from '../../utils/assertion'
-import { valueToString } from '../../utils/helpers'
-import { BuiltinSpecialExpression } from '../interface'
+import type { Context } from '../../evaluator/interface'
+import type { Any } from '../../interface'
+import { AstNodeType } from '../../constants/constants'
+import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
+import { asAstNode } from '../../typeGuards/astNode'
+import { valueToString } from '../../utils/debug/debugTools'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
+import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
 
 type IfLetNode = SpecialExpressionNode & {
-  binding: BindingNode
+  b: BindingNode
 }
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens, position, { parseBindings, parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
+  parse: (tokenStream, position, { parseBindings, parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
     let bindings: BindingNode[]
-    ;[position, bindings] = parseBindings(tokens, position)
+    ;[position, bindings] = parseBindings(tokenStream, position)
 
     if (bindings.length !== 1) {
-      throw new LitsError(`Expected exactly one binding, got ${valueToString(bindings.length)}`, firstToken.debugInfo)
+      throw new LitsError(
+        `Expected exactly one binding, got ${valueToString(bindings.length)}`,
+        firstToken.sourceCodeInfo,
+      )
     }
 
     let params: AstNode[]
-    ;[position, params] = parseTokens(tokens, position)
+    ;[position, params] = parseTokens(tokenStream, position)
 
     const node: IfLetNode = {
-      type: `SpecialExpression`,
-      name: `if-let`,
-      binding: asValue(bindings[0], firstToken.debugInfo),
-      params,
-      token: firstToken.debugInfo ? firstToken : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'if-let',
+      b: asNonUndefined(bindings[0], firstToken.sourceCodeInfo),
+      p: params,
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const debugInfo = node.token?.debugInfo
+    const sourceCodeInfo = node.tkn?.sourceCodeInfo
     const locals: Context = {}
-    const bindingValue = evaluateAstNode((node as IfLetNode).binding.value, contextStack)
+    const bindingValue = evaluateAstNode((node as IfLetNode).b.v, contextStack)
     if (bindingValue) {
-      locals[(node as IfLetNode).binding.name] = { value: bindingValue }
-      const newContextStack = contextStack.withContext(locals)
-      const thenForm = astNode.as(node.params[0], debugInfo)
+      locals[(node as IfLetNode).b.n] = { value: bindingValue }
+      const newContextStack = contextStack.create(locals)
+      const thenForm = asAstNode(node.p[0], sourceCodeInfo)
       return evaluateAstNode(thenForm, newContextStack)
     }
-    if (node.params.length === 2) {
-      const elseForm = astNode.as(node.params[1], debugInfo)
+    if (node.p.length === 2) {
+      const elseForm = asAstNode(node.p[1], sourceCodeInfo)
       return evaluateAstNode(elseForm, contextStack)
     }
     return null
   },
   validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    const newContext: Context = { [(node as IfLetNode).binding.name]: { value: true } }
-    const bindingResult = analyzeAst((node as IfLetNode).binding.value, contextStack, builtin)
-    const paramsResult = analyzeAst(node.params, contextStack.withContext(newContext), builtin)
+    const newContext: Context = { [(node as IfLetNode).b.n]: { value: true } }
+    const bindingResult = analyzeAst((node as IfLetNode).b.v, contextStack, builtin)
+    const paramsResult = analyzeAst(node.p, contextStack.create(newContext), builtin)
     return joinAnalyzeResults(bindingResult, paramsResult)
   },
 }

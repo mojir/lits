@@ -1,35 +1,38 @@
-import { Any } from '../../interface'
-import { assertNumberOfParams, astNode, token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import type { Any } from '../../interface'
+import { AstNodeType } from '../../constants/constants'
+import { assertNumberOfParams } from '../../typeGuards'
+import { asAstNode } from '../../typeGuards/astNode'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 export const ifNotSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens, position, { parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
-    const [newPosition, params] = parseTokens(tokens, position)
+  parse: (tokenStream, position, { parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+    const [newPosition, params] = parseTokens(tokenStream, position)
     return [
       newPosition + 1,
       {
-        type: `SpecialExpression`,
-        name: `if-not`,
-        params,
-        token: firstToken.debugInfo ? firstToken : undefined,
+        t: AstNodeType.SpecialExpression,
+        n: 'if-not',
+        p: params,
+        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
       },
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const debugInfo = node.token?.debugInfo
+    const sourceCodeInfo = node.tkn?.sourceCodeInfo
 
-    const [conditionNode, trueNode, falseNode] = node.params
-    if (!evaluateAstNode(astNode.as(conditionNode, debugInfo), contextStack)) {
-      return evaluateAstNode(astNode.as(trueNode, debugInfo), contextStack)
-    } else {
-      if (node.params.length === 3) {
-        return evaluateAstNode(astNode.as(falseNode, debugInfo), contextStack)
-      } else {
+    const [conditionNode, trueNode, falseNode] = node.p
+    if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
+      return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack)
+    }
+    else {
+      if (node.p.length === 3)
+        return evaluateAstNode(asAstNode(falseNode, sourceCodeInfo), contextStack)
+      else
         return null
-      }
     }
   },
   validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
 }

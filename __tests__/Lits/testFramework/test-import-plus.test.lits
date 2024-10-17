@@ -1,4 +1,3 @@
-; @include plus-lib.lits 
 ; @include success-program-using-plus.lits
 
 ; Setup code

@@ -1,22 +1,43 @@
-A lisp implementation in Typescript. Could be used in browser, node.js or as a CLI.
 
-# REPL
+
+# Lits
+
+Lits is a programming language and REPL (Read-Eval-Print Loop) that allows you to evaluate Lisp expressions. It provides a playground for experimenting with Lits and an API for integrating Lits into your own projects.
+
+Lits is a Lisp dialect implemented in TypeScript, drawing heavy inspiration from Clojure. Most core functions have been ported to Lits, ensuring a robust and familiar experience for Clojure users.
+
+* **Dependencies**: No third party dependencies.
+* **Immutability**: All datatypes in Lits are immutable.
+* **Pure Functions**: Functions are [pure](https://en.wikipedia.org/wiki/Pure_function) by default. Functions with side effects have names ending in an exclamation mark (!), such as `write!` or `rand!`
+* **Type Mapping**: All datatypes in Lits map directly to JavaScript types.
+* **Evaluation**: Lits does not support lazy evaluation.
+* **Macros**:Macros are not supported in Lits.
+* **Keyword Symbols**: There are no keyword symbols. The notation `:foo` is simply shorthand for the string `"foo"`
+* **Scoping**: Lits uses [dynamic scoping](https://en.wikipedia.org/wiki/Scope_(computer_science)#Dynamic_scope) not [lexical scoping](https://en.wikipedia.org/wiki/Scope_(computer_science)#Lexical_scope)
+
 ## Documentation
-[mojir.github.io/lits](https://mojir.github.io/lits)
-## Install
+
+You can find the Lits playground [here](https://youcruit.github.io/lits/#index). The playground allows you to interactively write and evaluate Lits expressions.
+
+## Installation
+
+To install Lits globally, run the following command:
+
 ```
-npm i -g lits-parser
+npm i -g @youcruit/lits
 ```
 ## Repl usage
-Start the lits REPL in a terminal by enter `lits`
+Initiate the Lits REPL in a terminal by typing `lits`. If Lits hasn't been installed globally, you can use `npx lits` instead.
+
 * Tab completion
 * History stored on file
+
 ```
 $ lits
 Type "`help" for more information.
-LITS> (+ 7 4)
+> (+ 7 4)
 11
-LITS> (let ((day (* 24 60 60 1000))) (* 7 day)) ; Ever wondered how many milliseconds there are in a week?
+> (let ((day (* 24 60 60 1000))) (* 7 day)) ; Ever wondered how many milliseconds there are in a week?
 604800000
 ```
 ```
@@ -24,13 +45,14 @@ $ lits --help
 Usage: lits [options]
 
 Options:
-  -g ...                          Global variables as a JSON string
-  -G ...                          Global variables file (.json file)
-  -f ...                          .lits file
-  -e ...                          Lits expression
-  -h, --help                      Show this help
-  -h, --help <builtin function>   Show help for <builtin function>
-  -v, --version                   Print lits version
+  -c, --context=...               Context as a JSON string
+  -C, --context-file=...          Context file (.json file)
+  -e, --eval=...                  Evaluate Lits expression
+  -f, --file=...                  Evaluate .lits file
+  -p, --test-pattern=...          Test name pattern, used together with --test
+  -t, --test=...                  Test .test.lits file
+  --help                          Show this help
+  --version                       Print lits version
 ```
 ```
 $ lits -e "(/ 81 9)"
@@ -41,255 +63,84 @@ $ lits -e "(/ 81 9)"
 ## Install api
 
 ```
-npm i lits-parser
+npm i @youcruit/lits
 ```
 
 ## How to use?
 
 ```ts
-import { Lits } from 'lits-parser'
+import { Lits } from '@youcruit/lits'
 
 const lits = new Lits()
-lits.run('(+ 1 2 3 4)'); // returns 10
+lits.run("(+ 1 2 3 4)"); // returns 10
 ```
 
-# Builtin Functions
-## Special functions
-* and
-* cond
-* def
-* defn
-* defns
-* defs
-* do
-* fn
-* for
-* if
-* if-let
-* if-not
-* let
-* loop
-* or
-* recur
-* throw
-* time!
-* try
-* when
-* when-first
-* when-let
-* when-not
-## Normal functions
-### Predicate
-* array?
-* boolean?
-* coll?
-* even?
-* false?
-* finite?
-* function?
-* integer?
-* nan?
-* neg?
-* negative-infinity?
-* nil?
-* number?
-* object?
-* odd?
-* pos?
-* positive-infinity?
-* regexp?
-* seq?
-* string?
-* true?
-* zero?
-### Sequence
-* cons
-* distinct
-* drop
-* drop-last
-* drop-while
-* filter
-* first
-* frequencies
-* group-by
-* index-of
-* join
-* last
-* map
-* next
-* nth
-* nthnext
-* nthrest
-* partition
-* partition-all
-* partition-by
-* pop
-* position
-* push
-* rand-nth!
-* random-sample!
-* reduce
-* reduce-right
-* reductions
-* remove
-* rest
-* reverse
-* second
-* shift
-* shuffle
-* slice
-* some
-* sort
-* sort-by
-* split-at
-* split-with
-* take
-* take-last
-* take-while
-* unshift
-### Collection
-* any?
-* assoc
-* assoc-in
-* concat
-* contains?
-* count
-* empty?
-* every?
-* get
-* get-in
-* has?
-* has-every?
-* has-some?
-* not-any?
-* not-empty
-* not-empty?
-* not-every?
-* update
-* update-in
-* Array
-* array
-* flatten
-* mapcat
-* range
-* repeat
-### Object
-* dissoc
-* entries
-* find
-* keys
-* merge
-* merge-with
-* object
-* select-keys
-* vals
-* zipmap
-### String
-* from-char-code
-* lower-case
-* number
-* number-to-string
-* pad-left
-* pad-right
-* split
-* str
-* string-repeat
-* subs
-* template
-* to-char-code
-* trim
-* trim-left
-* trim-right
-* upper-case
-### Math
-* &ast;
-* &plus;
-* &minus;
-* /
-* abs
-* acos
-* acosh
-* asin
-* asinh
-* atan
-* atanh
-* cbrt
-* ceil
-* cos
-* cosh
-* dec
-* e
-* epsilon
-* exp
-* floor
-* inc
-* log
-* log10
-* log2
-* max
-* max-safe-integer
-* max-value
-* min
-* min-safe-integer
-* min-value
-* mod
-* nan
-* negative-infinity
-* pi
-* positive-infinity
-* pow
-* quot
-* rand!
-* rand-int!
-* rem
-* round
-* sign
-* sin
-* sinh
-* sqrt
-* tan
-* tanh
-* trunc
-### Functional
-* apply
-* comp
-* complement
-* constantly
-* every-pred
-* fnil
-* identity
-* juxt
-* partial
-* some-pred
-### Regular expression
-* match
-* regexp
-* replace
-### Bitwise
-* bit-and
-* bit-and-not
-* bit-clear
-* bit-flip
-* bit-not
-* bit-or
-* bit-set
-* bit-shift-left
-* bit-shift-right
-* bit-test
-* bit-xor
-### Misc
-* <
-* <=
-* =
-* &gt;
-* &gt;=
-* assert
-* boolean
-* compare
-* debug!
-* equal?
-* inst-ms
-* lits-version
-* not
-* not=
-* write!
+## Tokenization and Parsing
+Lits provides two important functions for working with Lisp expressions: `lits.tokenize` and `lits.parse`.
+
+### lits.tokenize
+The `lits.tokenize` function takes a string as input and returns a `TokenStream`. Tokens are the individual components of a Lisp expression, such as parentheses, symbols, numbers, and strings. Here's an example usage:
+
+```
+const lits = new Lits()
+const expression = "(+ 1 2)";
+const tokens = lits.tokenize(expression);
+console.log(tokens);
+// Output: {
+  "tokens": [
+    {
+      "t": 101,
+      "v": "("
+    },
+    {
+      "t": 103,
+      "v": "+"
+    },
+    {
+      "t": 102,
+      "v": "1"
+    },
+    {
+      "t": 102,
+      "v": "2"
+    },
+    {
+      "t": 101,
+      "v": ")"
+    }
+  ]
+}
+```
+
+### Lits.parse
+The `lits.parse` function accepts a `TokenStream` as an argument and returns an Abstract Syntax Tree (AST). By compiling Lits expressions into an AST, you can significantly enhance the evaluation speed, achieving approximately a tenfold improvement. 
+
+The AST is represented as a JSON document, which facilitates straightforward serialization.
+
+To evaluate an AST, utilize the `lits.evaluate` function.
+
+```
+const lits = new Lits()
+const expression = "(+ 1 2)";
+const tokens = lits.tokenize(expression);
+const ast = lits.parse(tokens)
+console.log(tokens);
+// Output: {
+  "b": [
+    {
+      "t": 203,
+      "n": "+",
+      "p": [
+        {
+          "t": 201,
+          "v": 1
+        },
+        {
+          "t": 201,
+          "v": 2
+        }
+      ]
+    }
+  ]
+}
+```

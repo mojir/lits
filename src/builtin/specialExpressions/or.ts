@@ -1,32 +1,32 @@
-import { Any } from '../../interface'
-import { token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import type { Any } from '../../interface'
+import { AstNodeType } from '../../constants/constants'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens, position, { parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
-    const [newPosition, params] = parseTokens(tokens, position)
+  parse: (tokenStream, position, { parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+    const [newPosition, params] = parseTokens(tokenStream, position)
     return [
       newPosition + 1,
       {
-        type: `SpecialExpression`,
-        name: `or`,
-        params,
-        token: firstToken.debugInfo ? firstToken : undefined,
+        t: AstNodeType.SpecialExpression,
+        n: 'or',
+        p: params,
+        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
       },
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = false
 
-    for (const param of node.params) {
+    for (const param of node.p) {
       value = evaluateAstNode(param, contextStack)
-      if (value) {
+      if (value)
         break
-      }
     }
 
     return value
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
 }

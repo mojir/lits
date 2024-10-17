@@ -1,37 +1,38 @@
-import { Context } from '../../evaluator/interface'
-import { Any } from '../../interface'
-import { AstNode, SpecialExpressionNode } from '../../parser/interface'
-import { token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import type { Context } from '../../evaluator/interface'
+import type { Any } from '../../interface'
+import { AstNodeType, TokenType } from '../../constants/constants'
+import type { AstNode, SpecialExpressionNode } from '../../parser/interface'
+import { asToken, isToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens, position, { parseToken }) => {
-    let tkn = token.as(tokens[position], `EOF`)
+  parse: (tokenStream, position, { parseToken }) => {
+    let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
 
     const node: SpecialExpressionNode = {
-      type: `SpecialExpression`,
-      name: `do`,
-      params: [],
-      token: tkn.debugInfo ? tkn : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'do',
+      p: [],
+      tkn: tkn.sourceCodeInfo ? tkn : undefined,
     }
 
-    while (!token.is(tkn, { type: `paren`, value: `)` })) {
+    while (!isToken(tkn, { type: TokenType.Bracket, value: ')' })) {
       let bodyNode: AstNode
-      ;[position, bodyNode] = parseToken(tokens, position)
-      node.params.push(bodyNode)
-      tkn = token.as(tokens[position], `EOF`)
+      ;[position, bodyNode] = parseToken(tokenStream, position)
+      node.p.push(bodyNode)
+      tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
     }
     return [position + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const newContext: Context = {}
 
-    const newContextStack = contextStack.withContext(newContext)
+    const newContextStack = contextStack.create(newContext)
     let result: Any = null
-    for (const form of node.params) {
+    for (const form of node.p)
       result = evaluateAstNode(form, newContextStack)
-    }
+
     return result
   },
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
 }

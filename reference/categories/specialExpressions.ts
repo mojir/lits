@@ -1,0 +1,930 @@
+import type { SpecialExpressionsApiName } from '../api.ts'
+import type { FunctionReference } from '../index.ts'
+
+export const specialExpressionsReference: Record<SpecialExpressionsApiName, FunctionReference<'Special expression'>> = {
+  'and': {
+    title: 'and',
+    category: 'Special expression',
+    linkName: 'and',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['expressions'] },
+    ],
+    description: `
+Computes logical \`and\` function. Evaluation of $expressions starts from left.
+As soon as a \`expression\` evaluates to a falsy value, the result is returned.
+
+If all expressions evaluate to truthy values, the value of the last expression is returned.`,
+    examples: [
+      '(and 1 1)',
+      '(and (> 3 2) "string")',
+      '(and (< 3 2) "string")',
+      '(and true true true true)',
+      '(and true true 0 true)',
+    ],
+  },
+
+  'or': {
+    title: 'or',
+    category: 'Special expression',
+    linkName: 'or',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['expressions'] },
+    ],
+    description: `
+Computes logical \`or\` function. Evaluation of $expressions evaluation starts from left.
+As soon as a \`expression\` evaluates to a truthy value, the result is returned.
+
+If all expressions evaluate to falsy values, the value of the last expression is returned.`,
+    examples: [
+      '(or 1 1)',
+      '(or (> 3 2) "string")',
+      '(or (< 3 2) "string")',
+      '(or true true true true)',
+      '(or 1 2 3 4)',
+    ],
+  },
+  'def': {
+    title: 'def',
+    category: 'Special expression',
+    linkName: 'def',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      n: {
+        type: '*name',
+      },
+      value: {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['n', 'value'] },
+    ],
+    description: `Bind $value to variable $n.
+
+If $n is already defined, an error is thrown.`,
+    examples: [
+      '(def a (object))',
+      '(def a (object :x 10 :y true :z "A string"))',
+    ],
+  },
+  'defs': {
+    title: 'defs',
+    category: 'Special expression',
+    linkName: 'defs',
+    clojureDocs: null,
+    returns: {
+      type: 'any',
+    },
+    args: {
+      name: {
+        type: '*expression',
+      },
+      value: {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['name', 'value'] },
+    ],
+    description: `
+Creates a variable with name set to $name evaluated and value set to $value.
+
+If a variable with name $name is already defined, an error is thrown.`,
+    examples: [
+      '(defs :a :b)',
+      `
+(defs (str :a :1) (object :x 10 :y true :z "A string"))
+a1`,
+      `
+(defs :a :b)
+(defs a :c)
+b`,
+    ],
+  },
+  'let': {
+    title: 'let',
+    category: 'Special expression',
+    linkName: 'let',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      bindings: {
+        type: '*binding',
+        rest: true,
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['bindings', 'expressions'] },
+    ],
+    description: `
+Binds local variables. The variables lives only within $expressions.
+It returns evaluation of the last expression in $expressions.`,
+    examples: [`
+  (let [a (+ 1 2 3 4) 
+        b (* 1 2 3 4)]
+    (write! a b))`],
+  },
+  'if-let': {
+    title: 'if-let',
+    category: 'Special expression',
+    linkName: 'if-let',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      'binding': {
+        type: '*binding',
+      },
+      'then-expr': {
+        type: '*expression',
+      },
+      'else-expr': {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['binding', 'then-expr'] },
+      { argumentNames: ['binding', 'then-expr', 'else-expr'] },
+    ],
+    description: `
+Binds one local variable. If it evaluates to a truthy value
+$then-expr is executed with the variable accessable.
+If the bound variable evaluates to false, the $else-expr is evaluated
+(without variable accessable).`,
+    examples: [
+      `
+(if-let [a (> (count "Albert") 4)]
+  (write! (str a ", is big enough"))
+  (write! "Sorry, not big enough."))`,
+      `
+(if-let [a (> (count "Albert") 10)]
+  (write! (str a ", is big enough"))
+  (write! "Sorry, not big enough."))`,
+    ],
+  },
+  'when-let': {
+    title: 'when-let',
+    category: 'Special expression',
+    linkName: 'when-let',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      binding: {
+        type: '*binding',
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['binding', 'expressions'] },
+    ],
+    description: `
+Binds one local variable. If it evaluates to a truthy value
+$expressions is executed with the variable accessable.
+If the bound variable evaluates to a falsy value, \`nil\` is returned.`,
+    examples: [
+      `
+(when-let [a (> (count "Albert") 4)]
+  (write! a))`,
+    ],
+  },
+  'when-first': {
+    title: 'when-first',
+    category: 'Special expression',
+    linkName: 'when-first',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      binding: {
+        type: '*binding',
+        rest: true,
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['binding', 'expressions'] },
+    ],
+    description: 'When the binding value in $binding is a non empty sequence, the first element of that sequence (instead of the sequence itself) is bound to the variable.',
+    examples: [
+      `
+(when-first [x [1 2 3]]
+  (write! x)
+  x)`,
+      `
+(when-first [x "Albert"]
+  (write! x)
+  x)`,
+      `
+(when-first [x [0]]
+  (write! x)
+  x)`,
+      `
+(when-first [x [nil]]
+  (write! x)
+  x)`,
+      `
+(when-first [x []]
+  (write! x)
+  x)`,
+    ],
+  },
+
+  'fn': {
+    title: 'fn',
+    category: 'Special expression',
+    linkName: 'fn',
+    returns: {
+      type: 'function',
+    },
+    args: {
+      args: {
+        type: '*arguments',
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['args', 'expressions'] },
+    ],
+    description: 'Creates a function. When called, evaluation of the last expression in the body is returned.',
+    examples: [
+      `
+(fn [a b]
+  (sqrt
+    (+
+      (* a a)
+      (* b b))))`,
+      `
+(
+  (fn [a b]
+    (sqrt
+      (+
+        (* a a)
+        (* b b))))
+  3
+  4)`,
+    ],
+  },
+  'defn': {
+    title: 'defn',
+    category: 'Special expression',
+    linkName: 'defn',
+    returns: {
+      type: 'function',
+    },
+    args: {
+      n: {
+        type: '*name',
+      },
+      args: {
+        type: '*arguments',
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['n', 'args', 'expressions'] },
+    ],
+    description: 'Creates a named global function. When called, evaluation of the last expression in the body is returned.',
+    examples: [
+      `
+(defn hyp [a b]
+  (sqrt
+    (+
+      (* a a)
+      (* b b))))
+hyp`,
+      `
+(defn hyp [a b]
+  (sqrt
+    (+
+      (* a a)
+      (* b b))))
+(hyp 3 4)`,
+      `
+(defn sumOfSquares [& s]
+  (apply
+    +
+    (map
+      (fn [x] (* x x))
+      s)))
+(sumOfSquares 1 2 3 4 5)`,
+    ],
+  },
+  'defns': {
+    title: 'defns',
+    category: 'Special expression',
+    linkName: 'defns',
+    clojureDocs: null,
+    returns: {
+      type: 'function',
+    },
+    args: {
+      name: {
+        type: '*expression',
+      },
+      args: {
+        type: '*arguments',
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['name', 'args', 'expressions'] },
+    ],
+    description: 'Creates a named global function with its name set to $name evaluated. When called, evaluation of the last expression in the body is returned.',
+    examples: [
+      `
+(defns "hyp" [a b]
+  (sqrt
+    (+
+      (* a a)
+      (* b b))))
+hyp`,
+      `
+(defns
+  (str :h :y :p)
+  [a b]
+  (sqrt
+    (+
+      (* a a)
+      (* b b))))
+(hyp 3 4)`,
+      `
+(defns "sumOfSquares" [& s]
+  (apply
+    +
+    (map
+      (fn [x] (* x x))
+      s)))
+(sumOfSquares 1 2 3 4 5)`,
+    ],
+  },
+  'try': {
+    title: 'try',
+    category: 'Special expression',
+    linkName: 'try',
+    clojureDocs: null,
+    returns: {
+      type: 'any',
+    },
+    args: {
+      exp: {
+        type: '*expression',
+      },
+      catch: {
+        type: '*catch-expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['exp', 'catch'] },
+    ],
+    description: 'Executes $exp. If that throws, the $catch `body` gets executed. See examples for details.',
+    examples: [
+      `
+(try
+  (/ 2 4)
+  (catch error "Oops!"))`,
+      `
+(try
+  (foo)
+  (catch error "Oops!"))`,
+      `
+(try
+  (foo)
+  (catch error error))`,
+    ],
+  },
+  'throw': {
+    title: 'throw',
+    category: 'Special expression',
+    linkName: 'throw',
+    clojureDocs: null,
+    returns: {
+      type: 'never',
+    },
+    args: {
+      expr: {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['expr'] },
+    ],
+    description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
+    examples: [
+      '(throw "You shall not pass!")',
+      '(throw (subs "You shall not pass!" 0 3))',
+    ],
+  },
+  'if': {
+    title: 'if',
+    category: 'Special expression',
+    linkName: 'if',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      'test': {
+        type: 'any',
+      },
+      'then-expr': {
+        type: 'any',
+      },
+      'else-expr': {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['test', 'then-expr'] },
+      { argumentNames: ['test', 'then-expr', 'else-expr'] },
+    ],
+    description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is truthy. If $test is falsy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+    examples: [
+      '(if true (write! "TRUE") (write! "FALSE"))',
+      '(if false (write! "TRUE") (write! "FALSE"))',
+      '(if true (write! "TRUE"))',
+      '(if false (write! "TRUE"))',
+    ],
+  },
+  'if-not': {
+    title: 'if-not',
+    category: 'Special expression',
+    linkName: 'if-not',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      'test': {
+        type: 'any',
+      },
+      'then-expr': {
+        type: 'any',
+      },
+      'else-expr': {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['test', 'then-expr'] },
+      { argumentNames: ['test', 'then-expr', 'else-expr'] },
+    ],
+    description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+    examples: [
+      '(if-not true (write! "TRUE") (write! "FALSE"))',
+      '(if-not false (write! "TRUE") (write! "FALSE"))',
+      '(if-not true (write! "TRUE"))',
+      '(if-not false (write! "TRUE"))',
+    ],
+  },
+  'cond': {
+    title: 'cond',
+    category: 'Special expression',
+    linkName: 'cond',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      conds: {
+        type: '*conditions',
+      },
+    },
+    variants: [
+      { argumentNames: ['conds'] },
+    ],
+    description: 'Used for branching. $conds are tested sequentially from the top. If no branch is tested truthy, `nil` is returned.',
+    examples: [
+      `
+(cond
+  false (write! "FALSE")
+  nil (write! "nil")
+  :else (write! "TRUE"))`,
+      `
+(cond
+  false (write! "FALSE")
+  nil (write! "nil")
+  true (write! "TRUE"))`,
+      `
+(cond
+  false (write! "FALSE")
+  nil (write! "nil"))`,
+    ],
+  },
+  'when': {
+    title: 'when',
+    category: 'Special expression',
+    linkName: 'when',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      test: {
+        type: '*expression',
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['test', 'expressions'] },
+    ],
+    description: `If $test yields a thruthy value, the expressions are evaluated
+and the value returned by the last expression is returned.
+Otherwise, if $test yields a falsy value, the expressions are not evaluated,
+and \`nil\` is returned. If no $expressions are provided, \`nil\` is returned.`,
+    examples: [
+    `(when true
+      (write! "Hi")
+      (write! "There"))`,
+    `(when false
+      (write! "Hi")
+      (write! "There"))`,
+    '(when true)',
+    '(when false)',
+    ],
+  },
+  'when-not': {
+    title: 'when-not',
+    category: 'Special expression',
+    linkName: 'when-not',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      test: {
+        type: '*expression',
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['test', 'expressions'] },
+    ],
+    description: `If $test yields a falsy value, the expressions are evaluated
+and the value returned by the last \`expression\` is returned.
+Otherwise, if $test yields a truthy value, the $expressions are not evaluated,
+and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`,
+    examples: [
+      '(when-not true (write! "Hi") (write! "There"))',
+      '(when-not false (write! "Hi") (write! "There"))',
+      '(when-not true)',
+      '(when-not false)',
+    ],
+  },
+  'comment': {
+    title: 'comment',
+    category: 'Special expression',
+    linkName: 'comment',
+    returns: {
+      type: 'nil',
+    },
+    args: {
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['expressions'] },
+    ],
+    description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `nil` is returned.',
+    examples: ['(comment (write! "Hi") (write! "Albert"))', '(comment)'],
+  },
+  'do': {
+    title: 'do',
+    category: 'Special expression',
+    linkName: 'do',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['expressions'] },
+    ],
+    description: 'Evaluates $expressions. Resulting value is the value of the last expression.',
+    examples: [
+    `
+(do 
+  (write! "Hi")
+  (write! "Albert"))`,
+    '(do)',
+    ],
+  },
+  'recur': {
+    title: 'recur',
+    category: 'Special expression',
+    linkName: 'recur',
+    returns: {
+      type: 'nil',
+    },
+    args: {
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['expressions'] },
+    ],
+    description: 'Recursevly calls enclosing function or loop with its evaluated $expressions.',
+    examples: [
+    `
+(defn foo [n]
+  (write! n)
+  (when (not (zero? n))
+    (recur
+      (dec n))))
+(foo 3)`,
+    `
+(
+  (fn [n]
+    (write! n)
+    (when (not (zero? n))
+      (recur
+        (dec n))))
+  3)`,
+    `
+(
+  loop [n 3]
+    (write! n)
+    (when
+      (not (zero? n))
+      (recur (dec n))))`,
+    ],
+  },
+  'loop': {
+    title: 'loop',
+    category: 'Special expression',
+    linkName: 'loop',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      bindings: {
+        type: '*binding',
+        rest: true,
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['bindings', 'expressions'] },
+    ],
+    description: 'Executes $expressions with initial $bindings. The $bindings will be replaced with the recur parameters for subsequent recursions.',
+    examples: [
+    `
+(loop [n 3]
+  (write! n)
+  (when
+    (not (zero? n))
+    (recur (dec n))))`,
+    `
+(loop [n 3]
+  (write! n)
+  (if
+    (not (zero? n))
+    (recur (dec n))
+    n))`,
+    ],
+  },
+  'time!': {
+    title: 'time!',
+    category: 'Special expression',
+    linkName: 'time_exclamation',
+    clojureDocs: 'time',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      expression: {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['expression'] },
+    ],
+    description: 'Prints the time it took to evaluate $expression. Returns $expression evaluated.',
+    examples: [`
+(defn fib [x]
+  (if
+    (<= x 2)
+    1
+    (+ 
+      (fib (dec x))
+      (fib (- x 2)))))
+(time! (fib 20))`],
+  },
+
+  'doseq': {
+    title: 'doseq',
+    category: 'Special expression',
+    linkName: 'doseq',
+    returns: {
+      type: 'nil',
+    },
+    args: {
+      bindings: {
+        type: '*for-binding',
+        rest: true,
+      },
+      expr: {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['vars', 'expr'] },
+    ],
+    description: 'Same syntax as `for`, but returns `nil`. Use for side effects. Consumes less memory than `for`.',
+    examples: ['(doseq [x [1 2 4]] (write! x))'],
+  },
+  'for': {
+    title: 'for',
+    category: 'Special expression',
+    linkName: 'for',
+    returns: {
+      type: 'any',
+      array: true,
+    },
+    args: {
+      bindings: {
+        type: '*for-binding',
+        rest: true,
+      },
+      expr: {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['vars', 'expr'] },
+    ],
+    description: `List comprehension. Takes one or more $bindings, each followed by zero or more modifiers, and returns an array of evaluations of $expr.
+  
+  Collections are iterated in a nested fashion, rightmost fastest. Supported modifiers are: &let &while and &when.`,
+    examples: [
+    `
+(for [x "Al" y [1 2]]
+  (repeat y x))`,
+    `
+(for [x {:a 10 :b 20} y [1 2]]
+  (repeat y x))`,
+    `
+(for [x [1 2] y [1 10]]
+  (* x y))`,
+    `
+(for
+  [x [1 2]
+  &let [z (* x x x)]]
+  
+  z)`,
+    `
+(for
+  [x [0 1 2 3 4 5]
+  &let [y (* x 3)]
+  &when (even? y)]
+  
+  y)`,
+    `
+(for
+  [x [0 1 2 3 4 5]
+  &let [y (* x 3)]
+  &while (even? y)]
+  
+  y)`,
+    `
+(for
+  [x [0 1 2 3 4 5]
+  &let [y (* x 3)]
+  &while (odd? y)]
+  
+  y)`,
+    `
+(for
+  [x [1 2 3] y [1 2 3]
+  &while (<= x y)
+  z [1 2 3]]
+  
+  [x y z])`,
+    `
+(for
+  [x [1 2 3] y [1 2 3] z [1 2 3]
+  &while (<= x y)]
+  
+  [x y z])`,
+    ],
+  },
+  'declared?': {
+    title: 'declared?',
+    category: 'Special expression',
+    linkName: 'declared_question',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      n: {
+        type: '*name',
+      },
+    },
+    variants: [
+      { argumentNames: ['n'] },
+    ],
+    description: 'Returns `true` if $n is a declared variable or a builtin function, otherwise `false`.',
+    examples: [
+      '(declared? foo)',
+    `
+(def foo :foo)
+(declared? foo)`,
+    '(declared? +)',
+    `
+(def foo nil)
+(declared? foo)`,
+    '(declared? if)',
+    ],
+  },
+  '??': {
+    title: '??',
+    category: 'Special expression',
+    linkName: '_question_question',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      test: {
+        type: '*expression',
+      },
+      default: {
+        type: '*expression',
+      },
+    },
+    variants: [
+      { argumentNames: ['test'] },
+      { argumentNames: ['test', 'default'] },
+    ],
+    description: 'If $test is declared and evaluated to non `nil` value $test is result, else $default is returned. If $default is not provided, `nil` is returned.',
+    examples: [
+      '(?? foo)',
+    `
+(def foo :foo)
+(?? foo)`,
+    '(?? +)',
+    `
+(def foo nil)
+(?? foo)`,
+`
+(def foo nil)
+(?? foo :bar)`,
+'(?? foo 1)',
+'(?? "")',
+'(?? 0)',
+'(?? 0 1)',
+'(?? 2 1)',
+    ],
+  },
+}

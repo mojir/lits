@@ -1,34 +1,28 @@
-import { LocationGetter } from '../Lits/Lits'
+import type { TokenType } from '../constants/constants'
 
-export type TokenizerType =
-  | `paren`
-  | `number`
-  | `name`
-  | `string`
-  | `reservedName`
-  | `modifier`
-  | `regexpShorthand`
-  | `fnShorthand`
-
-export type SourceCodeInfo = {
-  line: number
-  column: number
-  code: string
-  getLocation?: LocationGetter
+export interface SourceCodeInfo {
+  position?: {
+    line: number
+    column: number
+  }
+  code?: string
+  filePath?: string
 }
 
-export type DebugInfo = SourceCodeInfo | `EOF`
-
-export type Token = {
-  type: TokenizerType
-  value: string
-  options?: Record<string, boolean>
-  debugInfo?: DebugInfo
+export interface Token {
+  t: TokenType // type
+  v: string // value
+  o?: Record<string, boolean> // options
+  sourceCodeInfo?: SourceCodeInfo // sourceCodeInfo
 }
 export type TokenDescriptor = [length: number, token: Token | undefined]
-export type Tokenizer = (input: string, position: number, debugInfo?: DebugInfo) => TokenDescriptor
+export type Tokenizer = (input: string, position: number, sourceCodeInfo?: SourceCodeInfo) => TokenDescriptor
+export interface TokenStream {
+  tokens: Token[]
+  filePath?: string
+}
 
-export type TokenizeParams = {
+export interface TokenizeParams {
   debug: boolean
-  getLocation?: LocationGetter
+  filePath?: string
 }

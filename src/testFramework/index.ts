@@ -1,23 +1,23 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { AbstractLitsError } from '../errors'
+import fs from 'node:fs'
+import path from 'node:path'
+import { LitsError } from '../errors'
+import type { Context } from '../evaluator/interface'
 import { Lits } from '../Lits/Lits'
-import { getCodeMarker } from '../utils/helpers'
+import type { SourceCodeInfo } from '../tokenizer/interface'
+import { getCodeMarker } from '../utils/debug/debugTools'
 
-const fs = require(`fs`)
-const path = require(`path`)
-
-type TestChunk = {
+interface TestChunk {
   name: string
   program: string
-  directive: `SKIP` | null
+  directive: 'SKIP' | null
 }
 
-export type RunTestParams = {
+export interface RunTestParams {
   testPath: string
   testNamePattern?: RegExp
 }
 
-export type TestResult = {
+export interface TestResult {
   /**
    * Test report
    * http://testanything.org/
@@ -26,50 +26,41 @@ export type TestResult = {
   success: boolean
 }
 
-function getIncludesLocation(line: number, col: number, sourceMappign: IncludesResult[`sourceMapping`]): string {
-  for (const fileInfo of sourceMappign) {
-    if (line <= fileInfo.start + fileInfo.size) {
-      return `${fileInfo.file}:${line - fileInfo.start + 1}:${col}`
-    }
-  }
-  /* istanbul ignore next */
-  throw Error(`Broken source code mapping`)
-}
-
-export function runTest({ testPath, testNamePattern }: RunTestParams): TestResult {
-  const test = readLitsFile(testPath)
-  const includes = getIncludes(testPath, test)
+export function runTest({ testPath: filePath, testNamePattern }: RunTestParams): TestResult {
+  const includedFilePaths = getIncludedFilePaths(filePath)
   const testResult: TestResult = {
-    tap: `TAP version 13\n`,
+    tap: 'TAP version 13\n',
     success: true,
   }
   try {
-    const testChunks = getTestChunks(test)
+    const testChunks = getTestChunks(filePath)
     testResult.tap += `1..${testChunks.length}\n`
     testChunks.forEach((testChunkProgram, index) => {
       const testNumber = index + 1
       if (testNamePattern && !testNamePattern.test(testChunkProgram.name)) {
         testResult.tap += `ok ${testNumber} ${testChunkProgram.name} # skip - Not matching testNamePattern ${testNamePattern}\n`
-      } else if (testChunkProgram.directive === `SKIP`) {
+      }
+      else if (testChunkProgram.directive === 'SKIP') {
         testResult.tap += `ok ${testNumber} ${testChunkProgram.name} # skip\n`
-      } else {
+      }
+      else {
         try {
           const lits = new Lits({ debug: true })
-          const context = lits.context(includes.code, {
-            getLocation: (line, col) => getIncludesLocation(line, col, includes.sourceMapping),
-          })
+          const contexts = getContexts(includedFilePaths, lits)
           lits.run(testChunkProgram.program, {
-            contexts: [context],
-            getLocation: (line, col) => `${testPath}:${line}:${col}`,
+            contexts,
+            filePath,
           })
           testResult.tap += `ok ${testNumber} ${testChunkProgram.name}\n`
-        } catch (error) {
+        }
+        catch (error) {
           testResult.success = false
           testResult.tap += `not ok ${testNumber} ${testChunkProgram.name}${getErrorYaml(error)}`
         }
       }
     })
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     testResult.tap += `Bail out! ${getErrorMessage(error)}\n`
     testResult.success = false
   }
@@ -77,84 +68,98 @@ export function runTest({ testPath, testNamePattern }: RunTestParams): TestResul
 }
 
 function readLitsFile(litsPath: string): string {
-  if (!litsPath.endsWith(`.lits`)) {
-    throw Error(`Expected .lits file, got ${litsPath}`)
-  }
-  return fs.readFileSync(litsPath, { encoding: `utf-8` })
+  if (!litsPath.endsWith('.lits'))
+    throw new Error(`Expected .lits file, got ${litsPath}`)
+
+  return fs.readFileSync(litsPath, { encoding: 'utf-8' })
 }
 
-type IncludesResult = { code: string; sourceMapping: Array<{ file: string; start: number; size: number }> }
-function getIncludes(testPath: string, test: string): IncludesResult {
-  const dirname = path.dirname(testPath)
+function getContexts(includedFilePaths: string[], lits: Lits): Context[] {
+  return includedFilePaths.reduce((acc: Context[], filePath) => {
+    const fileContent = readLitsFile(filePath)
+    acc.push(lits.context(fileContent, { filePath, contexts: acc }))
+    return acc
+  }, [])
+}
+
+function getIncludedFilePaths(absoluteFilePath: string): string[] {
+  const result: string[] = []
+  getIncludesRecursively(absoluteFilePath, result)
+  return result.reduce((acc: string[], entry: string) => {
+    if (!acc.includes(entry))
+      acc.push(entry)
+
+    return acc
+  }, [])
+
+  function getIncludesRecursively(filePath: string, includedFilePaths: string[]): void {
+    const includeFilePaths = readIncludeDirectives(filePath)
+    includeFilePaths.forEach((includeFilePath) => {
+      getIncludesRecursively(includeFilePath, includedFilePaths)
+      includedFilePaths.push(includeFilePath)
+    })
+  }
+}
+
+function readIncludeDirectives(filePath: string): string[] {
+  const fileContent = readLitsFile(filePath)
+  const dirname = path.dirname(filePath)
   let okToInclude = true
-  let currentLine = 1
-  return test.split(`\n`).reduce(
-    (result: IncludesResult, line) => {
-      const includeMatch = line.match(/^\s*;+\s*@include\s*(\S+)\s*$/)
-      if (includeMatch) {
-        if (!okToInclude) {
-          throw Error(`@include must be in the beginning of file`)
-        }
-        const relativeFilePath = includeMatch[1] as string
-        const filePath = path.resolve(dirname, relativeFilePath)
-        const fileContent = readLitsFile(filePath)
-        result.code += `${fileContent}\n`
-        const size = result.code.split(`\n`).length
-        result.sourceMapping.push({
-          file: filePath,
-          start: currentLine,
-          size,
-        })
-        currentLine += size
-      }
-      if (!line.match(/^\s*(?:;.*)$/)) {
-        okToInclude = false
-      }
-      return result
-    },
-    { code: ``, sourceMapping: [] },
-  )
+  return fileContent.split('\n').reduce((acc: string[], line) => {
+    const includeMatch = line.match(/^\s*;+\s*@include\s*(\S+)\s*$/)
+    if (includeMatch) {
+      if (!okToInclude)
+        throw new Error(`@include must be in the beginning of file: ${filePath}:${line + 1}`)
+
+      const relativeFilePath = includeMatch[1] as string
+      acc.push(path.resolve(dirname, relativeFilePath))
+    }
+    if (!line.match(/^\s*(?:;.*)$/))
+      okToInclude = false
+
+    return acc
+  }, [])
 }
 
 // Splitting test file based on @test annotations
-function getTestChunks(testProgram: string): TestChunk[] {
+function getTestChunks(testPath: string): TestChunk[] {
+  const testProgram = readLitsFile(testPath)
   let currentTest: TestChunk | undefined
-  let setupCode = ``
-  return testProgram.split(`\n`).reduce((result: TestChunk[], line, index) => {
+  let setupCode = ''
+  return testProgram.split('\n').reduce((result: TestChunk[], line, index) => {
     const currentLineNbr = index + 1
     const testNameAnnotationMatch = line.match(/^\s*;+\s*@(?:(skip)-)?test\s*(.*)$/)
     if (testNameAnnotationMatch) {
-      const directive = (testNameAnnotationMatch[1] ?? ``).toUpperCase()
+      const directive = (testNameAnnotationMatch[1] ?? '').toUpperCase()
       const testName = testNameAnnotationMatch[2]
-      if (!testName) {
-        throw Error(`Missing test name on line ${currentLineNbr}`)
-      }
-      if (result.find(chunk => chunk.name === testName)) {
-        throw Error(`Duplicate test name ${testName}`)
-      }
+      if (!testName)
+        throw new Error(`Missing test name on line ${currentLineNbr}`)
+
+      if (result.find(chunk => chunk.name === testName))
+        throw new Error(`Duplicate test name ${testName}`)
+
       currentTest = {
-        directive: (directive || null) as TestChunk[`directive`],
+        directive: (directive || null) as TestChunk['directive'],
         name: testName,
         // Adding new-lines to make lits debug information report correct rows
         program:
-          setupCode + [...Array(currentLineNbr + 2 - setupCode.split(`\n`).length).keys()].map(() => ``).join(`\n`),
+          setupCode + [...Array(currentLineNbr + 2 - setupCode.split('\n').length).keys()].map(() => '').join('\n'),
       }
       result.push(currentTest)
       return result
     }
-    if (!currentTest) {
+    if (!currentTest)
       setupCode += `${line}\n`
-    } else {
+    else
       currentTest.program += `${line}\n`
-    }
+
     return result
   }, [])
 }
 
 export function getErrorYaml(error: unknown): string {
   const message = getErrorMessage(error)
-  // This is a fallback, should not happen (Lits should be throwing AbstractLitsErrors)
-  /* istanbul ignore next */
+  /* v8 ignore next 7 */
   if (!isAbstractLitsError(error)) {
     return `
   ---
@@ -163,9 +168,9 @@ export function getErrorYaml(error: unknown): string {
 `
   }
 
-  const debugInfo = error.debugInfo
-  /* istanbul ignore next */
-  if (!debugInfo || typeof debugInfo === `string`) {
+  const sourceCodeInfo = error.sourceCodeInfo
+  /* v8 ignore next 8 */
+  if (!sourceCodeInfo || typeof sourceCodeInfo === 'string') {
     return `
   ---
   message: ${JSON.stringify(message)}
@@ -174,32 +179,43 @@ export function getErrorYaml(error: unknown): string {
 `
   }
 
-  const getLocation = debugInfo.getLocation ?? ((line: number, column: number) => `(${line}:${column})`)
-  const location = getLocation(debugInfo.line, debugInfo.column)
-  const formattedMessage = message.includes(`\n`)
-    ? `|\n    ${message.split(/\r?\n/).join(`\n    `)}`
+  const formattedMessage = message.includes('\n')
+    ? `|\n    ${message.split(/\r?\n/).join('\n    ')}`
     : JSON.stringify(message)
   return `
   ---
   error: ${JSON.stringify(error.name)}
   message: ${formattedMessage}
-  location: ${JSON.stringify(location)}
+  location: ${JSON.stringify(getLocation(sourceCodeInfo))}
   code:
-    - "${debugInfo.code}"
-    - "${getCodeMarker(debugInfo)}"
+    - "${sourceCodeInfo.code}"
+    - "${getCodeMarker(sourceCodeInfo)}"
   ...
 `
+}
+
+function getLocation(sourceCodeInfo: SourceCodeInfo): string {
+  const terms: string[] = []
+  if (sourceCodeInfo.filePath)
+    terms.push(sourceCodeInfo.filePath)
+
+  if (sourceCodeInfo.position) {
+    terms.push(`${sourceCodeInfo.position.line}`)
+    terms.push(`${sourceCodeInfo.position.column}`)
+  }
+
+  return terms.join(':')
 }
 
 function getErrorMessage(error: unknown): string {
   if (!isAbstractLitsError(error)) {
     // error should always be an Error (other cases is just for kicks)
-    /* istanbul ignore next */
-    return typeof error === `string` ? error : error instanceof Error ? error.message : `Unknown error`
+    /* v8 ignore next 1 */
+    return typeof error === 'string' ? error : error instanceof Error ? error.message : 'Unknown error'
   }
   return error.shortMessage
 }
 
-function isAbstractLitsError(error: unknown): error is AbstractLitsError {
-  return error instanceof AbstractLitsError
+function isAbstractLitsError(error: unknown): error is LitsError {
+  return error instanceof LitsError
 }

@@ -1,9 +1,9 @@
-import { Builtin } from '../builtin/interface'
-import { lookUp } from '../evaluator'
-import { ContextStack } from '../evaluator/interface'
-import { AstNode } from '../parser/interface'
-import { asValue } from '../utils/assertion'
-import { AnalyzeAst, AnalyzeResult, UndefinedSymbolEntry } from './interface'
+import type { Builtin } from '../builtin/interface'
+import type { ContextStack } from '../evaluator/ContextStack'
+import { AstNodeType } from '../constants/constants'
+import type { AstNode } from '../parser/interface'
+import { asNonUndefined } from '../typeGuards'
+import type { AnalyzeAst, AnalyzeResult, UndefinedSymbolEntry } from './interface'
 
 export const analyzeAst: AnalyzeAst = (astNode, contextStack, builtin: Builtin) => {
   const astNodes = Array.isArray(astNode) ? astNode : [astNode]
@@ -22,39 +22,34 @@ export const analyzeAst: AnalyzeAst = (astNode, contextStack, builtin: Builtin) 
 
 function analyzeAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin): AnalyzeResult {
   const emptySet = new Set<UndefinedSymbolEntry>()
-  switch (astNode.type) {
-    case `Name`: {
-      const lookUpResult = lookUp(astNode, contextStack)
-      if (!lookUpResult.builtinFunction && !lookUpResult.contextEntry && !lookUpResult.specialExpression) {
-        return { undefinedSymbols: new Set([{ symbol: astNode.value, token: astNode.token }]) }
-      }
+  switch (astNode.t) {
+    case AstNodeType.Name: {
+      const lookUpResult = contextStack.lookUp(astNode)
+      if (lookUpResult === null)
+        return { undefinedSymbols: new Set([{ symbol: astNode.v, token: astNode.tkn }]) }
+
       return { undefinedSymbols: emptySet }
     }
-    case `String`:
-    case `Number`:
-    case `Modifier`:
-    case `ReservedName`:
+    case AstNodeType.String:
+    case AstNodeType.Number:
+    case AstNodeType.Modifier:
+    case AstNodeType.ReservedName:
       return { undefinedSymbols: emptySet }
-    case `NormalExpression`: {
+    case AstNodeType.NormalExpression: {
       const undefinedSymbols = new Set<UndefinedSymbolEntry>()
-      const { expression, name, token } = astNode
-      if (typeof name === `string`) {
-        const lookUpResult = lookUp({ type: `Name`, value: name, token }, contextStack)
-        if (
-          lookUpResult.builtinFunction === null &&
-          lookUpResult.contextEntry === null &&
-          lookUpResult.specialExpression === null
-        ) {
-          undefinedSymbols.add({ symbol: name, token: astNode.token })
-        }
+      const { e: expression, n: name, tkn: token } = astNode
+      if (typeof name === 'string') {
+        const lookUpResult = contextStack.lookUp({ t: AstNodeType.Name, v: name, tkn: token })
+        if (lookUpResult === null)
+          undefinedSymbols.add({ symbol: name, token: astNode.tkn })
       }
       if (expression) {
-        switch (expression.type) {
-          case `String`:
-          case `Number`:
+        switch (expression.t) {
+          case AstNodeType.String:
+          case AstNodeType.Number:
             break
-          case `NormalExpression`:
-          case `SpecialExpression`: {
+          case AstNodeType.NormalExpression:
+          case AstNodeType.SpecialExpression: {
             const subResult = analyzeAstNode(expression, contextStack, builtin)
             subResult.undefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
             break
@@ -62,14 +57,14 @@ function analyzeAstNode(astNode: AstNode, contextStack: ContextStack, builtin: B
         }
       }
 
-      for (const subNode of astNode.params) {
+      for (const subNode of astNode.p) {
         const subNodeResult = analyzeAst(subNode, contextStack, builtin)
         subNodeResult.undefinedSymbols.forEach(symbol => undefinedSymbols.add(symbol))
       }
       return { undefinedSymbols }
     }
-    case `SpecialExpression`: {
-      const specialExpression = asValue(builtin.specialExpressions[astNode.name], astNode.token?.debugInfo)
+    case AstNodeType.SpecialExpression: {
+      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], astNode.tkn?.sourceCodeInfo)
       const result = specialExpression.analyze(astNode, contextStack, {
         analyzeAst,
         builtin,

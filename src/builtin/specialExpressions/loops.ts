@@ -1,65 +1,70 @@
-import { AnalyzeAst, AnalyzeResult } from '../../analyze/interface'
+import type { AnalyzeAst, AnalyzeResult } from '../../analyze/interface'
 import { LitsError } from '../../errors'
-import { Context, ContextStack, EvaluateAstNode } from '../../evaluator/interface'
-import { Any, Arr } from '../../interface'
-import { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
-import { Token, DebugInfo } from '../../tokenizer/interface'
-import { any, astNode, asValue, collection, sequence, token } from '../../utils/assertion'
-import { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
+import type { ContextStack } from '../../evaluator/ContextStack'
+import type { Context, EvaluateAstNode } from '../../evaluator/interface'
+import type { Any, Arr } from '../../interface'
+import { AstNodeType, TokenType } from '../../constants/constants'
+import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/interface'
+import type { SourceCodeInfo, TokenStream } from '../../tokenizer/interface'
+import { asAstNode } from '../../typeGuards/astNode'
+import { asToken, assertToken, isToken } from '../../typeGuards/token'
+import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
+import { asAny, asColl, isSeq } from '../../typeGuards/lits'
+import { asNonUndefined } from '../../typeGuards'
 
 type LoopNode = SpecialExpressionNode & {
-  loopBindings: LoopBindingNode[]
+  l: LoopBindingNode[]
 }
 
-export type LoopBindingNode = {
-  binding: BindingNode
-  modifiers: Array<`&let` | `&when` | `&while`>
-  letBindings?: BindingNode[]
-  whenNode?: AstNode
-  whileNode?: AstNode
+export interface LoopBindingNode {
+  b: BindingNode // Binding
+  m: Array<'&let' | '&when' | '&while'> // Modifiers
+  l?: BindingNode[] // Let-Bindings
+  wn?: AstNode // When Node
+  we?: AstNode // While Node
 }
 
 function parseLoopBinding(
-  tokens: Token[],
+  tokenStream: TokenStream,
   position: number,
   { parseBinding, parseBindings, parseToken }: ParserHelpers,
 ): [number, LoopBindingNode] {
   let bindingNode: BindingNode
-  ;[position, bindingNode] = parseBinding(tokens, position)
+  ;[position, bindingNode] = parseBinding(tokenStream, position)
 
   const loopBinding: LoopBindingNode = {
-    binding: bindingNode,
-    modifiers: [],
+    b: bindingNode,
+    m: [],
   }
 
-  let tkn = token.as(tokens[position], `EOF`)
-  while (tkn.type === `modifier`) {
-    switch (tkn.value) {
-      case `&let`:
-        if (loopBinding.letBindings) {
-          throw new LitsError(`Only one &let modifier allowed`, tkn.debugInfo)
-        }
-        ;[position, loopBinding.letBindings] = parseBindings(tokens, position + 1)
-        loopBinding.modifiers.push(`&let`)
+  let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
+  while (tkn.t === TokenType.Modifier) {
+    switch (tkn.v) {
+      case '&let':
+        if (loopBinding.l)
+          throw new LitsError('Only one &let modifier allowed', tkn.sourceCodeInfo)
+
+        ;[position, loopBinding.l] = parseBindings(tokenStream, position + 1)
+        loopBinding.m.push('&let')
         break
-      case `&when`:
-        if (loopBinding.whenNode) {
-          throw new LitsError(`Only one &when modifier allowed`, tkn.debugInfo)
-        }
-        ;[position, loopBinding.whenNode] = parseToken(tokens, position + 1)
-        loopBinding.modifiers.push(`&when`)
+      case '&when':
+        if (loopBinding.wn)
+          throw new LitsError('Only one &when modifier allowed', tkn.sourceCodeInfo)
+
+        ;[position, loopBinding.wn] = parseToken(tokenStream, position + 1)
+        loopBinding.m.push('&when')
         break
-      case `&while`:
-        if (loopBinding.whileNode) {
-          throw new LitsError(`Only one &while modifier allowed`, tkn.debugInfo)
-        }
-        ;[position, loopBinding.whileNode] = parseToken(tokens, position + 1)
-        loopBinding.modifiers.push(`&while`)
+      case '&while':
+        if (loopBinding.we)
+          throw new LitsError('Only one &while modifier allowed', tkn.sourceCodeInfo)
+
+        ;[position, loopBinding.we] = parseToken(tokenStream, position + 1)
+        loopBinding.m.push('&while')
         break
       default:
-        throw new LitsError(`Illegal modifier: ${tkn.value}`, tkn.debugInfo)
+        throw new LitsError(`Illegal modifier: ${tkn.v}`, tkn.sourceCodeInfo)
     }
-    tkn = token.as(tokens[position], `EOF`)
+    tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
   }
   return [position, loopBinding]
 }
@@ -69,28 +74,32 @@ function addToContext(
   context: Context,
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
-  debugInfo?: DebugInfo,
+  sourceCodeInfo?: SourceCodeInfo,
 ) {
   for (const binding of bindings) {
-    if (context[binding.name]) {
-      throw new LitsError(`Variable already defined: ${binding.name}.`, debugInfo)
-    }
-    context[binding.name] = { value: evaluateAstNode(binding.value, contextStack) }
+    if (context[binding.n])
+      throw new LitsError(`Variable already defined: ${binding.n}.`, sourceCodeInfo)
+
+    context[binding.n] = { value: evaluateAstNode(binding.v, contextStack) }
   }
 }
 
-function parseLoopBindings(tokens: Token[], position: number, parsers: ParserHelpers): [number, LoopBindingNode[]] {
-  token.assert(tokens[position], `EOF`, { type: `paren`, value: `[` })
+function parseLoopBindings(
+  tokenStream: TokenStream,
+  position: number,
+  parsers: ParserHelpers,
+): [number, LoopBindingNode[]] {
+  assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: '[' })
   position += 1
 
   const loopBindings: LoopBindingNode[] = []
 
-  let tkn = token.as(tokens[position], `EOF`)
-  while (!token.is(tkn, { type: `paren`, value: `]` })) {
+  let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
+  while (!isToken(tkn, { type: TokenType.Bracket, value: ']' })) {
     let loopBinding: LoopBindingNode
-    ;[position, loopBinding] = parseLoopBinding(tokens, position, parsers)
+    ;[position, loopBinding] = parseLoopBinding(tokenStream, position, parsers)
     loopBindings.push(loopBinding)
-    tkn = token.as(tokens[position], `EOF`)
+    tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
   }
   return [position + 1, loopBindings]
 }
@@ -100,9 +109,9 @@ function evaluateLoop(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ) {
-  const debugInfo = node.token?.debugInfo
-  const { loopBindings, params } = node as LoopNode
-  const expression = astNode.as(params[0], debugInfo)
+  const sourceCodeInfo = node.tkn?.sourceCodeInfo
+  const { l: loopBindings, p: params } = node as LoopNode
+  const expression = asAstNode(params[0], sourceCodeInfo)
 
   const result: Arr = []
 
@@ -110,18 +119,24 @@ function evaluateLoop(
   let abort = false
   while (!abort) {
     const context: Context = {}
-    const newContextStack = contextStack.withContext(context)
+    const newContextStack = contextStack.create(context)
     let skip = false
     bindingsLoop: for (let bindingIndex = 0; bindingIndex < loopBindings.length; bindingIndex += 1) {
-      const { binding, letBindings, whenNode, whileNode, modifiers } = asValue(loopBindings[bindingIndex], debugInfo)
-      const coll = collection.as(evaluateAstNode(binding.value, newContextStack), debugInfo)
-      const seq = sequence.is(coll) ? coll : Object.entries(coll)
+      const {
+        b: binding,
+        l: letBindings,
+        wn: whenNode,
+        we: whileNode,
+        m: modifiers,
+      } = asNonUndefined(loopBindings[bindingIndex], sourceCodeInfo)
+      const coll = asColl(evaluateAstNode(binding.v, newContextStack), sourceCodeInfo)
+      const seq = isSeq(coll) ? coll : Object.entries(coll)
       if (seq.length === 0) {
         skip = true
         abort = true
         break
       }
-      const index = asValue(bindingIndices[bindingIndex], debugInfo)
+      const index = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo)
       if (index >= seq.length) {
         skip = true
         if (bindingIndex === 0) {
@@ -129,29 +144,35 @@ function evaluateLoop(
           break
         }
         bindingIndices[bindingIndex] = 0
-        bindingIndices[bindingIndex - 1] = asValue(bindingIndices[bindingIndex - 1], debugInfo) + 1
+        bindingIndices[bindingIndex - 1] = asNonUndefined(bindingIndices[bindingIndex - 1], sourceCodeInfo) + 1
         break
       }
-      if (context[binding.name]) {
-        throw new LitsError(`Variable already defined: ${binding.name}.`, debugInfo)
-      }
-      context[binding.name] = {
-        value: any.as(seq[index], debugInfo),
+      if (context[binding.n])
+        throw new LitsError(`Variable already defined: ${binding.n}.`, sourceCodeInfo)
+
+      context[binding.n] = {
+        value: asAny(seq[index], sourceCodeInfo),
       }
       for (const modifier of modifiers) {
         switch (modifier) {
-          case `&let`:
-            addToContext(asValue(letBindings, debugInfo), context, newContextStack, evaluateAstNode, debugInfo)
+          case '&let':
+            addToContext(
+              asNonUndefined(letBindings, sourceCodeInfo),
+              context,
+              newContextStack,
+              evaluateAstNode,
+              sourceCodeInfo,
+            )
             break
-          case `&when`:
-            if (!evaluateAstNode(astNode.as(whenNode, debugInfo), newContextStack)) {
-              bindingIndices[bindingIndex] = asValue(bindingIndices[bindingIndex], debugInfo) + 1
+          case '&when':
+            if (!evaluateAstNode(asAstNode(whenNode, sourceCodeInfo), newContextStack)) {
+              bindingIndices[bindingIndex] = asNonUndefined(bindingIndices[bindingIndex], sourceCodeInfo) + 1
               skip = true
               break bindingsLoop
             }
             break
-          case `&while`:
-            if (!evaluateAstNode(astNode.as(whileNode, debugInfo), newContextStack)) {
+          case '&while':
+            if (!evaluateAstNode(asAstNode(whileNode, sourceCodeInfo), newContextStack)) {
               bindingIndices[bindingIndex] = Number.POSITIVE_INFINITY
               skip = true
               break bindingsLoop
@@ -162,9 +183,9 @@ function evaluateLoop(
     }
     if (!skip) {
       const value = evaluateAstNode(expression, newContextStack)
-      if (returnResult) {
+      if (returnResult)
         result.push(value)
-      }
+
       bindingIndices[bindingIndices.length - 1] += 1
     }
   }
@@ -181,56 +202,56 @@ function analyze(
     undefinedSymbols: new Set(),
   }
   const newContext: Context = {}
-  const { loopBindings } = node as LoopNode
-  loopBindings.forEach(loopBinding => {
-    const { binding, letBindings, whenNode, whileNode } = loopBinding
-    analyzeAst(binding.value, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(symbol =>
+  const { l: loopBindings } = node as LoopNode
+  loopBindings.forEach((loopBinding) => {
+    const { b: binding, l: letBindings, wn: whenNode, we: whileNode } = loopBinding
+    analyzeAst(binding.v, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
       result.undefinedSymbols.add(symbol),
     )
-    newContext[binding.name] = { value: true }
+    newContext[binding.n] = { value: true }
     if (letBindings) {
-      letBindings.forEach(letBinding => {
-        analyzeAst(letBinding.value, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(symbol =>
+      letBindings.forEach((letBinding) => {
+        analyzeAst(letBinding.v, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
           result.undefinedSymbols.add(symbol),
         )
-        newContext[letBinding.name] = { value: true }
+        newContext[letBinding.n] = { value: true }
       })
     }
     if (whenNode) {
-      analyzeAst(whenNode, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(symbol =>
+      analyzeAst(whenNode, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
         result.undefinedSymbols.add(symbol),
       )
     }
     if (whileNode) {
-      analyzeAst(whileNode, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(symbol =>
+      analyzeAst(whileNode, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
         result.undefinedSymbols.add(symbol),
       )
     }
   })
-  analyzeAst(node.params, contextStack.withContext(newContext), builtin).undefinedSymbols.forEach(symbol =>
+  analyzeAst(node.p, contextStack.create(newContext), builtin).undefinedSymbols.forEach(symbol =>
     result.undefinedSymbols.add(symbol),
   )
   return result
 }
 
 export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens: Token[], position: number, parsers: ParserHelpers) => {
-    const firstToken = token.as(tokens[position], `EOF`)
+  parse: (tokenStream: TokenStream, position: number, parsers: ParserHelpers) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
     const { parseToken } = parsers
     let loopBindings: LoopBindingNode[]
-    ;[position, loopBindings] = parseLoopBindings(tokens, position, parsers)
+    ;[position, loopBindings] = parseLoopBindings(tokenStream, position, parsers)
 
     let expression: AstNode
-    ;[position, expression] = parseToken(tokens, position)
+    ;[position, expression] = parseToken(tokenStream, position)
 
-    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
+    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
     const node: LoopNode = {
-      name: `for`,
-      type: `SpecialExpression`,
-      loopBindings,
-      params: [expression],
-      token: firstToken.debugInfo ? firstToken : undefined,
+      n: 'for',
+      t: AstNodeType.SpecialExpression,
+      l: loopBindings,
+      p: [expression],
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
 
     return [position + 1, node]
@@ -240,23 +261,23 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any> = {
 }
 
 export const doseqSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokens: Token[], position: number, parsers: ParserHelpers) => {
-    const firstToken = token.as(tokens[position], `EOF`)
+  parse: (tokenStream: TokenStream, position: number, parsers: ParserHelpers) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
     const { parseToken } = parsers
     let loopBindings: LoopBindingNode[]
-    ;[position, loopBindings] = parseLoopBindings(tokens, position, parsers)
+    ;[position, loopBindings] = parseLoopBindings(tokenStream, position, parsers)
 
     let expression: AstNode
-    ;[position, expression] = parseToken(tokens, position)
+    ;[position, expression] = parseToken(tokenStream, position)
 
-    token.assert(tokens[position], `EOF`, { type: `paren`, value: `)` })
+    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
 
     const node: LoopNode = {
-      name: `doseq`,
-      type: `SpecialExpression`,
-      loopBindings,
-      params: [expression],
-      token: firstToken.debugInfo ? firstToken : undefined,
+      n: 'doseq',
+      t: AstNodeType.SpecialExpression,
+      l: loopBindings,
+      p: [expression],
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
 
     return [position + 1, node]

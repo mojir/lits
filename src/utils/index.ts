@@ -1,24 +1,26 @@
-import { Context } from '../evaluator/interface'
-import { Any, Arr, Coll, Obj } from '../interface'
-import { RegularExpression } from '../parser/interface'
-import { DebugInfo } from '../tokenizer/interface'
-import { any, array, collection, number, object, regularExpression, string } from './assertion'
-import { isRegularExpression } from './helpers'
+import type { Any, Arr, Coll, Obj } from '../interface'
+import type { NativeJsFunction, RegularExpression } from '../parser/interface'
+import type { SourceCodeInfo } from '../tokenizer/interface'
+import { asAny, isColl, isObj, isRegularExpression } from '../typeGuards/lits'
+import { isNumber } from '../typeGuards/number'
+import { asString } from '../typeGuards/string'
+import { isUnknownRecord } from '../typeGuards'
+import { FunctionType } from '../constants/constants'
 
 export function collHasKey(coll: unknown, key: string | number): boolean {
-  if (!collection.is(coll)) {
+  if (!isColl(coll))
     return false
-  }
-  if (string.is(coll) || array.is(coll)) {
-    if (!number.is(key, { integer: true })) {
+
+  if (typeof coll === 'string' || Array.isArray(coll)) {
+    if (!isNumber(key, { integer: true }))
       return false
-    }
+
     return key >= 0 && key < coll.length
   }
   return !!Object.getOwnPropertyDescriptor(coll, key)
 }
 
-type Type = `null` | `boolean` | `number` | `string` | `object` | `array` | `regexp` | `unknown`
+type Type = 'null' | 'boolean' | 'number' | 'string' | 'object' | 'array' | 'regexp' | 'unknown'
 
 const sortOrderByType: Record<Type, number> = {
   boolean: 0,
@@ -32,122 +34,113 @@ const sortOrderByType: Record<Type, number> = {
 }
 
 function getType(value: unknown): Type {
-  if (value === null) {
-    return `null`
-  } else if (typeof value === `boolean`) {
-    return `boolean`
-  } else if (typeof value === `number`) {
-    return `number`
-  } else if (typeof value === `string`) {
-    return `string`
-  } else if (array.is(value)) {
-    return `array`
-  } else if (object.is(value)) {
-    return `object`
-  } else if (regularExpression.is(value)) {
-    return `regexp`
-  } else {
-    return `unknown`
-  }
+  if (value === null)
+    return 'null'
+  else if (typeof value === 'boolean')
+    return 'boolean'
+  else if (typeof value === 'number')
+    return 'number'
+  else if (typeof value === 'string')
+    return 'string'
+  else if (Array.isArray(value))
+    return 'array'
+  else if (isObj(value))
+    return 'object'
+  else if (isRegularExpression(value))
+    return 'regexp'
+  else
+    return 'unknown'
 }
 
 export function compare(a: unknown, b: unknown): number {
   const aType = getType(a)
   const bType = getType(b)
-  if (aType !== bType) {
+  if (aType !== bType)
     return Math.sign(sortOrderByType[aType] - sortOrderByType[bType])
-  }
 
   switch (aType) {
-    case `null`:
+    case 'null':
       return 0
-    case `boolean`:
-      if (a === b) {
+    case 'boolean':
+      if (a === b)
         return 0
-      }
+
       return a === false ? -1 : 1
-    case `number`:
+    case 'number':
       return Math.sign((a as number) - (b as number))
-    case `string`: {
+    case 'string': {
       const aString = a as string
       const bString = b as string
       return aString < bString ? -1 : aString > bString ? 1 : 0
     }
-    case `array`: {
+    case 'array': {
       const aArray = a as Arr
       const bArray = b as Arr
-      if (aArray.length < bArray.length) {
+      if (aArray.length < bArray.length)
         return -1
-      } else if (aArray.length > bArray.length) {
+      else if (aArray.length > bArray.length)
         return 1
-      }
+
       for (let i = 0; i < aArray.length; i += 1) {
         const innerComp = compare(aArray[i], bArray[i])
-        if (innerComp !== 0) {
+        if (innerComp !== 0)
           return innerComp
-        }
       }
       return 0
     }
-    case `object`: {
+    case 'object': {
       const aObj = a as Obj
       const bObj = b as Obj
       return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length)
     }
-    case `regexp`: {
-      const aString = (a as RegularExpression).source
-      const bString = (b as RegularExpression).source
+    case 'regexp': {
+      const aString = (a as RegularExpression).s
+      const bString = (b as RegularExpression).s
       return aString < bString ? -1 : aString > bString ? 1 : 0
     }
-    case `unknown`:
+    case 'unknown':
       return 0
   }
 }
 
-export function deepEqual(a: Any, b: Any, debugInfo?: DebugInfo): boolean {
-  if (a === b) {
+export function deepEqual(a: Any, b: Any, sourceCodeInfo?: SourceCodeInfo): boolean {
+  if (a === b)
     return true
-  }
 
-  if (typeof a === `number` && typeof b === `number`) {
+  if (typeof a === 'number' && typeof b === 'number')
     return Math.abs(a - b) < Number.EPSILON
-  }
 
-  if (array.is(a) && array.is(b)) {
-    if (a.length !== b.length) {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length)
       return false
-    }
+
     for (let i = 0; i < a.length; i += 1) {
-      if (!deepEqual(any.as(a[i], debugInfo), any.as(b[i], debugInfo), debugInfo)) {
+      if (!deepEqual(asAny(a[i], sourceCodeInfo), asAny(b[i], sourceCodeInfo), sourceCodeInfo))
         return false
-      }
     }
     return true
   }
-  if (isRegularExpression(a) && isRegularExpression(b)) {
-    return a.source === b.source && a.flags === b.flags
-  }
-  if (typeof a === `object` && a !== null && typeof b === `object` && b !== null) {
-    const aObj = a as Record<string, unknown>
-    const bObj = b as Record<string, unknown>
-    const aKeys = Object.keys(aObj)
-    const bKeys = Object.keys(bObj)
-    if (aKeys.length !== bKeys.length) {
+  if (isRegularExpression(a) && isRegularExpression(b))
+    return a.s === b.s && a.f === b.f
+
+  if (isUnknownRecord(a) && isUnknownRecord(b)) {
+    const aKeys = Object.keys(a)
+    const bKeys = Object.keys(b)
+    if (aKeys.length !== bKeys.length)
       return false
-    }
+
     for (let i = 0; i < aKeys.length; i += 1) {
-      const key = string.as(aKeys[i], debugInfo)
-      if (!deepEqual(toAny(aObj[key]), toAny(bObj[key]), debugInfo)) {
+      const key = asString(aKeys[i], sourceCodeInfo)
+      if (!deepEqual(toAny(a[key]), toAny(b[key]), sourceCodeInfo))
         return false
-      }
     }
     return true
   }
   return false
 }
 
-export function toNonNegativeInteger(number: number): number {
-  return Math.max(0, Math.ceil(number))
+export function toNonNegativeInteger(num: number): number {
+  return Math.max(0, Math.ceil(num))
 }
 
 export function toAny(value: unknown): Any {
@@ -155,16 +148,17 @@ export function toAny(value: unknown): Any {
 }
 
 function clone<T>(value: T): T {
-  if (object.is(value)) {
+  if (isObj(value)) {
     return Object.entries(value).reduce((result: Obj, entry) => {
       const [key, val] = entry
       result[key] = clone(val)
       return result
     }, {}) as T
   }
-  if (array.is(value)) {
+  if (Array.isArray(value))
+    // eslint-disable-next-line ts/no-unsafe-return
     return value.map(item => clone(item)) as unknown as T
-  }
+
   return value
 }
 
@@ -172,12 +166,13 @@ export function cloneColl<T extends Coll>(value: T): T {
   return clone(value)
 }
 
-export function createContextFromValues(values?: Obj): Context {
-  if (!values) {
-    return {}
+export function createNativeJsFunction(fn: (...args: any[]) => unknown, name?: string): NativeJsFunction {
+  return {
+    __fn: true,
+    f: {
+      fn,
+    },
+    n: name,
+    t: FunctionType.NativeJsFunction,
   }
-  return Object.entries(values).reduce((context: Context, [key, value]) => {
-    context[key] = { value: toAny(value) }
-    return context
-  }, {})
 }

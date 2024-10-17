@@ -1,30 +1,33 @@
-import { Any } from '../../interface'
-import { assertNumberOfParams, astNode, nameNode, token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import type { Any } from '../../interface'
+import { AstNodeType } from '../../constants/constants'
+import { assertNumberOfParams } from '../../typeGuards'
+import { asAstNode, asNameNode, assertNameNode } from '../../typeGuards/astNode'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
 
 export const defSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens, position, { parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
-    const [newPosition, params] = parseTokens(tokens, position)
-    nameNode.assert(params[0], firstToken.debugInfo)
+  parse: (tokenStream, position, { parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+    const [newPosition, params] = parseTokens(tokenStream, position)
+    assertNameNode(params[0], firstToken.sourceCodeInfo)
     return [
       newPosition + 1,
       {
-        type: `SpecialExpression`,
-        name: `def`,
-        params,
-        token: firstToken.debugInfo ? firstToken : undefined,
+        t: AstNodeType.SpecialExpression,
+        n: 'def',
+        p: params,
+        tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
       },
     ]
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
-    const debugInfo = node.token?.debugInfo
-    const name = nameNode.as(node.params[0], debugInfo).value
+    const sourceCodeInfo = node.tkn?.sourceCodeInfo
+    const name = asNameNode(node.p[0], sourceCodeInfo).v
 
-    assertNameNotDefined(name, contextStack, builtin, debugInfo)
+    assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
 
-    const value = evaluateAstNode(astNode.as(node.params[1], debugInfo), contextStack)
+    const value = evaluateAstNode(asAstNode(node.p[1], sourceCodeInfo), contextStack)
 
     contextStack.globalContext[name] = { value }
 
@@ -32,11 +35,11 @@ export const defSpecialExpression: BuiltinSpecialExpression<Any> = {
   },
   validate: node => assertNumberOfParams(2, node),
   analyze: (node, contextStack, { analyzeAst, builtin }) => {
-    const debugInfo = node.token?.debugInfo
-    const subNode = astNode.as(node.params[1], debugInfo)
+    const sourceCodeInfo = node.tkn?.sourceCodeInfo
+    const subNode = asAstNode(node.p[1], sourceCodeInfo)
     const result = analyzeAst(subNode, contextStack, builtin)
-    const name = nameNode.as(node.params[0], debugInfo).value
-    assertNameNotDefined(name, contextStack, builtin, debugInfo)
+    const name = asNameNode(node.p[0], sourceCodeInfo).v
+    assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
     contextStack.globalContext[name] = { value: true }
     return result
   },

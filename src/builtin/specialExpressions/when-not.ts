@@ -1,35 +1,37 @@
-import { Any } from '../../interface'
-import { SpecialExpressionNode } from '../../parser/interface'
-import { assertNumberOfParams, astNode, token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import type { Any } from '../../interface'
+import { AstNodeType } from '../../constants/constants'
+import type { SpecialExpressionNode } from '../../parser/interface'
+import { assertNumberOfParams } from '../../typeGuards'
+import { assertAstNode } from '../../typeGuards/astNode'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 export const whenNotSpecialExpression: BuiltinSpecialExpression<Any> = {
-  parse: (tokens, position, { parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
-    const [newPosition, params] = parseTokens(tokens, position)
+  parse: (tokenStream, position, { parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+    const [newPosition, params] = parseTokens(tokenStream, position)
     const node: SpecialExpressionNode = {
-      type: `SpecialExpression`,
-      name: `when-not`,
-      params,
-      token: firstToken.debugInfo ? firstToken : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'when-not',
+      p: params,
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
 
     return [newPosition + 1, node]
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const [whenExpression, ...body] = node.params
-    astNode.assert(whenExpression, node.token?.debugInfo)
+    const [whenExpression, ...body] = node.p
+    assertAstNode(whenExpression, node.tkn?.sourceCodeInfo)
 
-    if (evaluateAstNode(whenExpression, contextStack)) {
+    if (evaluateAstNode(whenExpression, contextStack))
       return null
-    }
 
     let result: Any = null
-    for (const form of body) {
+    for (const form of body)
       result = evaluateAstNode(form, contextStack)
-    }
+
     return result
   },
   validate: node => assertNumberOfParams({ min: 1 }, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
 }

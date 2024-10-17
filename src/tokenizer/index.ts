@@ -1,22 +1,23 @@
 import { LitsError } from '../errors'
-import { LocationGetter } from '../Lits/Lits'
-import { Token, Tokenizer, DebugInfo, TokenizeParams } from './interface'
+import type { SourceCodeInfo, Token, TokenStream, TokenizeParams, Tokenizer } from './interface'
+import { getSugar } from './sugar'
 import {
   skipComment,
   skipWhiteSpace,
+  tokenizeCollectionAccessor,
+  tokenizeFnShorthand,
   tokenizeLeftBracket,
   tokenizeLeftCurly,
   tokenizeLeftParen,
   tokenizeModifier,
   tokenizeName,
   tokenizeNumber,
+  tokenizeRegexpShorthand,
   tokenizeReservedName,
   tokenizeRightBracket,
   tokenizeRightCurly,
   tokenizeRightParen,
   tokenizeString,
-  tokenizeRegexpShorthand,
-  tokenizeFnShorthand,
   tokenizeSymbolString,
 } from './tokenizers'
 
@@ -38,13 +39,14 @@ const tokenizers: Tokenizer[] = [
   tokenizeModifier,
   tokenizeRegexpShorthand,
   tokenizeFnShorthand,
+  tokenizeCollectionAccessor,
 ]
 
 function getSourceCodeLine(input: string, lineNbr: number): string {
   return input.split(/\r\n|\r|\n/)[lineNbr] as string
 }
 
-function createDebugInfo(input: string, position: number, getLocation?: LocationGetter): DebugInfo {
+function createSourceCodeInfo(input: string, position: number, filePath?: string): SourceCodeInfo {
   const lines = input.substr(0, position + 1).split(/\r\n|\r|\n/)
   const lastLine = lines[lines.length - 1] as string
 
@@ -53,13 +55,15 @@ function createDebugInfo(input: string, position: number, getLocation?: Location
   const column = lastLine.length
   return {
     code,
-    line,
-    column,
-    getLocation,
+    position: {
+      line,
+      column,
+    },
+    filePath,
   }
 }
 
-export function tokenize(input: string, params: TokenizeParams): Token[] {
+export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const tokens: Token[] = []
   let position = 0
   let tokenized = false
@@ -67,25 +71,37 @@ export function tokenize(input: string, params: TokenizeParams): Token[] {
     tokenized = false
 
     // Loop through all tokenizer until one matches
-    const debugInfo: DebugInfo | undefined = params.debug
-      ? createDebugInfo(input, position, params.getLocation)
+    const sourceCodeInfo: SourceCodeInfo | undefined = params.debug
+      ? createSourceCodeInfo(input, position, params.filePath)
       : undefined
-    for (const tokenize of tokenizers) {
-      const [nbrOfCharacters, token] = tokenize(input, position, debugInfo)
+    for (const tokenizer of tokenizers) {
+      const [nbrOfCharacters, token] = tokenizer(input, position, sourceCodeInfo)
 
       // tokenizer matched
       if (nbrOfCharacters > 0) {
         tokenized = true
         position += nbrOfCharacters
-        if (token) {
+        if (token)
           tokens.push(token)
-        }
+
         break
       }
     }
-    if (!tokenized) {
-      throw new LitsError(`Unrecognized character '${input[position]}'.`, debugInfo)
-    }
+    if (!tokenized)
+      throw new LitsError(`Unrecognized character '${input[position]}'.`, sourceCodeInfo)
   }
-  return tokens
+
+  const tokenStream = {
+    tokens,
+    filePath: params.filePath,
+  }
+
+  applySugar(tokenStream)
+
+  return tokenStream
+}
+
+function applySugar(tokenStream: TokenStream) {
+  const sugar = getSugar()
+  sugar.forEach(sugarFn => sugarFn(tokenStream))
 }

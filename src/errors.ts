@@ -1,11 +1,12 @@
-import { Arr } from './interface'
-import { DebugInfo } from './tokenizer/interface'
-import { getCodeMarker, valueToString } from './utils/helpers'
+import type { Arr } from './interface'
+import type { SourceCodeInfo } from './tokenizer/interface'
+import { getCodeMarker, valueToString } from './utils/debug/debugTools'
 
-function getLitsErrorMessage(message: string, debugInfo?: DebugInfo) {
-  return `${message}${
-    debugInfo ? `\n${debugInfo === `EOF` ? `EOF` : `${debugInfo.code}\n${getCodeMarker(debugInfo)}`}` : ``
-  }`
+function getLitsErrorMessage(message: string, sourceCodeInfo?: SourceCodeInfo) {
+  const filePathLine = sourceCodeInfo?.filePath ? `\n${sourceCodeInfo.filePath}` : ''
+  const codeLine = sourceCodeInfo?.code ? `\n${sourceCodeInfo.code}` : ''
+  const codeMarker = sourceCodeInfo && codeLine ? `\n${getCodeMarker(sourceCodeInfo)}` : ''
+  return `${message}${filePathLine}${codeLine}${codeMarker}`
 }
 
 export class RecurSignal extends Error {
@@ -13,66 +14,66 @@ export class RecurSignal extends Error {
   constructor(params: Arr) {
     super(`recur, params: ${params}`)
     Object.setPrototypeOf(this, RecurSignal.prototype)
-    this.name = `RecurSignal`
+    this.name = 'RecurSignal'
     this.params = params
   }
 }
 
-export abstract class AbstractLitsError extends Error {
-  public debugInfo?: DebugInfo
-  public shortMessage: string
-  constructor(message: string | Error, debugInfo?: DebugInfo) {
-    if (message instanceof Error) {
-      message = `${message.name}${message.message ? `: ${message.message}` : ``}`
-    }
-    super(getLitsErrorMessage(message, debugInfo))
+export class LitsError extends Error {
+  public readonly sourceCodeInfo?: SourceCodeInfo
+  public readonly shortMessage: string
+  constructor(message: string | Error, sourceCodeInfo?: SourceCodeInfo) {
+    if (message instanceof Error)
+      message = `${message.name}${message.message}`
+
+    super(getLitsErrorMessage(message, sourceCodeInfo))
     this.shortMessage = message
-    this.debugInfo = debugInfo
-    Object.setPrototypeOf(this, AbstractLitsError.prototype)
-    this.name = `AbstractLitsError`
-  }
-}
-
-export class LitsError extends AbstractLitsError {
-  constructor(message: string | Error, debugInfo?: DebugInfo) {
-    super(message, debugInfo)
+    this.sourceCodeInfo = sourceCodeInfo
     Object.setPrototypeOf(this, LitsError.prototype)
-    this.name = `LitsError`
+    this.name = 'LitsError'
+  }
+
+  public getCodeMarker(): string | undefined {
+    return this.sourceCodeInfo && getCodeMarker(this.sourceCodeInfo)
   }
 }
 
-export class NotAFunctionError extends AbstractLitsError {
-  constructor(fn: unknown, debugInfo?: DebugInfo) {
+export class NotAFunctionError extends LitsError {
+  constructor(fn: unknown, sourceCodeInfo?: SourceCodeInfo) {
     const message = `Expected function, got ${valueToString(fn)}.`
-    super(message, debugInfo)
+    super(message, sourceCodeInfo)
     Object.setPrototypeOf(this, NotAFunctionError.prototype)
-    this.name = `NotAFunctionError`
+    this.name = 'NotAFunctionError'
   }
 }
 
-export class UserDefinedError extends AbstractLitsError {
-  constructor(message: string | Error, debugInfo?: DebugInfo) {
-    super(message, debugInfo)
+export class UserDefinedError extends LitsError {
+  constructor(message: string | Error, sourceCodeInfo?: SourceCodeInfo) {
+    super(message, sourceCodeInfo)
     Object.setPrototypeOf(this, UserDefinedError.prototype)
-    this.name = `UserDefinedError`
+    this.name = 'UserDefinedError'
   }
 }
 
-export class AssertionError extends AbstractLitsError {
-  constructor(message: string | Error, debugInfo?: DebugInfo) {
-    super(message, debugInfo)
+export class AssertionError extends LitsError {
+  constructor(message: string | Error, sourceCodeInfo?: SourceCodeInfo) {
+    super(message, sourceCodeInfo)
     Object.setPrototypeOf(this, AssertionError.prototype)
-    this.name = `AssertionError`
+    this.name = 'AssertionError'
   }
 }
 
-export class UndefinedSymbolError extends AbstractLitsError {
+export class UndefinedSymbolError extends LitsError {
   public symbol: string
-  constructor(symbolName: string, debugInfo?: DebugInfo) {
+  constructor(symbolName: string, sourceCodeInfo?: SourceCodeInfo) {
     const message = `Undefined symbol '${symbolName}'.`
-    super(message, debugInfo)
+    super(message, sourceCodeInfo)
     this.symbol = symbolName
     Object.setPrototypeOf(this, UndefinedSymbolError.prototype)
-    this.name = `UndefinedSymbolError`
+    this.name = 'UndefinedSymbolError'
   }
+}
+
+export function isLitsError(error: unknown): error is LitsError {
+  return error instanceof LitsError
 }

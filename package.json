@@ -1,81 +1,62 @@
 {
-  "name": "lits-parser",
-  "version": "1.0.0",
-  "description": "A lisp implementation in Typescript",
+  "name": "@youcruit/lits",
+  "version": "1.0.67",
+  "description": "Lits is a Lisp dialect implemented in TypeScript",
+  "author": "Albert Mojir",
+  "license": "MIT",
+  "homepage": "https://youcruit.github.io/lits",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YouCruit/lits.git"
+  },
+  "keywords": [
+    "Lits",
+    "Lisp",
+    "Functional",
+    "Pure",
+    "Typescript",
+    "Web",
+    "Compiler",
+    "AST",
+    "Interpreter",
+    "Clojure"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "iife": "dist/lits.iife.js",
   "bin": {
-    "lits": "cli/index.js"
-  },
-  "scripts": {
-    "lint": "eslint \"src/**/*.ts\" \"__tests__/**/*.ts\" \"cli/**/*.js\" \"cli/**/*.js\"",
-    "build": "node ./scripts/generateVersion.js && rm -rf dist && rollup -c && npm run build-docs",
-    "test": "jest --collect-coverage",
-    "compile": "tsc -p ./tsconfig.json --noEmit",
-    "lits": "node ./cli/index.js",
-    "build-docs": "node ./scripts/docs/buildDocs.js",
-    "open-docs": "open-cli ./docs/index.html",
-    "open-lcov": "open-cli ./coverage/lcov-report/index.html"
+    "lits": "dist/cli/cli.js"
   },
   "files": [
-    "dist",
-    "cli/**/*"
+    "dist"
   ],
-  "jest": {
-    "testResultsProcessor": "jest-junit",
-    "transform": {
-      ".ts": "ts-jest"
-    },
-    "testRegex": "/__tests__/.*\\.test\\.ts$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "coveragePathIgnorePatterns": [
-      "src/errors.ts",
-      "src/index.ts"
-    ]
+  "scripts": {
+    "test": "vitest run --coverage",
+    "vitest": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "tsc": "tsc -p ./tsconfig.compile.json --noEmit",
+    "check": "npm run lint && npm run tsc",
+    "clean": "npm run clean-lits && npm run clean-playground",
+    "clean-lits": "rm -rf dist build",
+    "clean-playground": "rm -rf playground-builder/build playground-www/build",
+    "build": "npm run build-lits && npm run build-cli && npm run build-playground",
+    "build-lits": "npm run clean-lits && rollup -c",
+    "build-playground": "npm run clean-playground && rollup -c rollup.config.playground-builder.js && rollup -c rollup.config.playground-www.js && node ./playground-builder/build/buildPlaygroundSite.js",
+    "build-cli": "rollup -c rollup.config.cli.js",
+    "lits": "node ./dist/cli/cli.js",
+    "playground": "open-cli ./docs/index.html",
+    "lcov": "open-cli ./coverage/index.html"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.18.0",
-    "@typescript-eslint/parser": "^5.18.0",
-    "eslint": "^8.12.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^27.1.1",
-    "jest-junit": "^13.1.0",
-    "open-cli": "^7.0.1",
-    "prettier": "^2.4.0",
-    "rollup": "^2.38.2",
-    "rollup-plugin-gzip": "^3.0.1",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.32.0",
-    "ts-jest": "^27.0.5",
-    "ts-node": "^10.2.1",
-    "tslib": "^2.3.1",
-    "typescript": "^4.7.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mojir/lits.git"
-  },
-  "keywords": [
-    "LISP"
-  ],
-  "jest-junit": {
-    "outputName": "test-report.xml"
-  },
-  "author": "Albert Mojir",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mojir/lits/issues"
-  },
-  "homepage": "https://mojir.github.io/lits/#index",
-  "dependencies": {}
+    "@antfu/eslint-config": "2.16.1",
+    "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-typescript": "11.1.6",
+    "@vitest/coverage-v8": "1.6.0",
+    "open-cli": "8.0.0",
+    "rollup": "4.17.2",
+    "tslib": "2.6.2",
+    "typescript": "5.4.5",
+    "vitest": "1.6.0"
+  }
 }

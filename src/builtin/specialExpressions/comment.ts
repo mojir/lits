@@ -1,23 +1,24 @@
-import { AstNode, SpecialExpressionNode } from '../../parser/interface'
-import { token } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import { AstNodeType, TokenType } from '../../constants/constants'
+import type { AstNode, SpecialExpressionNode } from '../../parser/interface'
+import { asToken, isToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 export const commentSpecialExpression: BuiltinSpecialExpression<null> = {
-  parse: (tokens, position, { parseToken }) => {
-    let tkn = token.as(tokens[position], `EOF`)
+  parse: (tokenStream, position, { parseToken }) => {
+    let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
 
     const node: SpecialExpressionNode = {
-      type: `SpecialExpression`,
-      name: `comment`,
-      params: [],
-      token: tkn.debugInfo ? tkn : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'comment',
+      p: [],
+      tkn: tkn.sourceCodeInfo ? tkn : undefined,
     }
 
-    while (!token.is(tkn, { type: `paren`, value: `)` })) {
+    while (!isToken(tkn, { type: TokenType.Bracket, value: ')' })) {
       let bodyNode: AstNode
-      ;[position, bodyNode] = parseToken(tokens, position)
-      node.params.push(bodyNode)
-      tkn = token.as(tokens[position], `EOF`)
+      ;[position, bodyNode] = parseToken(tokenStream, position)
+      node.p.push(bodyNode)
+      tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
     }
     return [position + 1, node]
   },

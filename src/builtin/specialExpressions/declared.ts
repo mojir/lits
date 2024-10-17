@@ -1,27 +1,30 @@
-import { SpecialExpressionNode } from '../../parser/interface'
-import { assertNumberOfParams, token, nameNode } from '../../utils/assertion'
-import { BuiltinSpecialExpression } from '../interface'
+import { AstNodeType } from '../../constants/constants'
+import type { SpecialExpressionNode } from '../../parser/interface'
+import { assertNumberOfParams } from '../../typeGuards'
+import { assertNameNode } from '../../typeGuards/astNode'
+import { asToken } from '../../typeGuards/token'
+import type { BuiltinSpecialExpression } from '../interface'
 
 export const declaredSpecialExpression: BuiltinSpecialExpression<boolean> = {
-  parse: (tokens, position, { parseTokens }) => {
-    const firstToken = token.as(tokens[position], `EOF`)
-    const [newPosition, params] = parseTokens(tokens, position)
+  parse: (tokenStream, position, { parseTokens }) => {
+    const firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath)
+    const [newPosition, params] = parseTokens(tokenStream, position)
     const node: SpecialExpressionNode = {
-      type: `SpecialExpression`,
-      name: `declared?`,
-      params,
-      token: firstToken.debugInfo ? firstToken : undefined,
+      t: AstNodeType.SpecialExpression,
+      n: 'declared?',
+      p: params,
+      tkn: firstToken.sourceCodeInfo ? firstToken : undefined,
     }
 
     return [newPosition + 1, node]
   },
-  evaluate: (node, contextStack, { lookUp }) => {
-    const [astNode] = node.params
-    nameNode.assert(astNode, node.token?.debugInfo)
+  evaluate: (node, contextStack) => {
+    const [astNode] = node.p
+    assertNameNode(astNode, node.tkn?.sourceCodeInfo)
 
-    const lookUpResult = lookUp(astNode, contextStack)
-    return !!(lookUpResult.builtinFunction || lookUpResult.contextEntry || lookUpResult.specialExpression)
+    const lookUpResult = contextStack.lookUp(astNode)
+    return lookUpResult !== null
   },
   validate: node => assertNumberOfParams(1, node),
-  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.params, contextStack, builtin),
+  analyze: (node, contextStack, { analyzeAst, builtin }) => analyzeAst(node.p, contextStack, builtin),
 }

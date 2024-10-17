@@ -1,186 +1,102 @@
-import {
+import type {
+  Ast,
+  AstNode,
   NormalExpressionNode,
-  NameNode,
-  NumberNode,
-  StringNode,
-  ReservedNameNode,
-  FUNCTION_SYMBOL,
   NormalExpressionNodeWithName,
-  BuiltinFunction,
+  NumberNode,
+  ReservedNameNode,
   SpecialExpressionNode,
+  StringNode,
 } from '../parser/interface'
-import { Ast } from '../parser/interface'
 import { builtin } from '../builtin'
 import { reservedNamesRecord } from '../reservedNames'
 import { toAny } from '../utils'
-import { Context, EvaluateAstNode, ExecuteFunction, LookUpResult } from './interface'
-import { Any, Arr, Obj } from '../interface'
-import { ContextStack } from './interface'
-import { functionExecutors } from './functionExecutors'
-import { DebugInfo } from '../tokenizer/interface'
+import type { Any, Arr, Obj } from '../interface'
+import type { SourceCodeInfo } from '../tokenizer/interface'
 import { LitsError, NotAFunctionError, UndefinedSymbolError } from '../errors'
-import {
-  asValue,
-  litsFunction,
-  normalExpressionNodeWithName,
-  number,
-  object,
-  sequence,
-  string,
-} from '../utils/assertion'
-import { valueToString } from '../utils/helpers'
-
-export function createContextStack(contexts: Context[] = []): ContextStack {
-  if (contexts.length === 0) {
-    contexts.push({})
-  }
-
-  return new ContextStackImpl(contexts, 0)
-}
-
-class ContextStackImpl implements ContextStack {
-  public stack: Context[]
-  public globalContext: Context
-  public numberOfImportedContexts: number
-  constructor(contexts: Context[], globalContextIndex: number) {
-    this.stack = contexts
-    this.numberOfImportedContexts = contexts.length - (globalContextIndex + 1)
-    this.globalContext = contexts[globalContextIndex] as Context
-  }
-
-  public withContext(context: Context): ContextStack {
-    return new ContextStackImpl([context, ...this.stack], this.stack.length - this.numberOfImportedContexts)
-  }
-}
+import { AstNodeType } from '../constants/constants'
+import { isNormalExpressionNodeWithName } from '../typeGuards/astNode'
+import { valueToString } from '../utils/debug/debugTools'
+import { isLitsFunction } from '../typeGuards/litsFunction'
+import { assertNumber, isNumber } from '../typeGuards/number'
+import { asNonUndefined } from '../typeGuards'
+import { asAny, assertSeq, isObj } from '../typeGuards/lits'
+import { assertString } from '../typeGuards/string'
+import type { ContextStack } from './ContextStack'
+import { functionExecutors } from './functionExecutors'
 
 export function evaluate(ast: Ast, contextStack: ContextStack): Any {
   let result: Any = null
-  for (const node of ast.body) {
+  for (const node of ast.b)
     result = evaluateAstNode(node, contextStack)
-  }
+
   return result
 }
 
-export const evaluateAstNode: EvaluateAstNode = (node, contextStack) => {
-  switch (node.type) {
-    case `Number`:
+export function evaluateAstNode(node: AstNode, contextStack: ContextStack): Any {
+  switch (node.t) {
+    case AstNodeType.Number:
       return evaluateNumber(node)
-    case `String`:
+    case AstNodeType.String:
       return evaluateString(node)
-    case `Name`:
-      return evaluateName(node, contextStack)
-    case `ReservedName`:
+    case AstNodeType.Name:
+      return contextStack.evaluateName(node)
+    case AstNodeType.ReservedName:
       return evaluateReservedName(node)
-    case `NormalExpression`:
+    case AstNodeType.NormalExpression:
       return evaluateNormalExpression(node, contextStack)
-    case `SpecialExpression`:
+    case AstNodeType.SpecialExpression:
       return evaluateSpecialExpression(node, contextStack)
     default:
-      throw new LitsError(`${node.type}-node cannot be evaluated`, node.token?.debugInfo)
+      throw new LitsError(`${node.t}-node cannot be evaluated`, node.tkn?.sourceCodeInfo)
   }
 }
 
 function evaluateNumber(node: NumberNode): number {
-  return node.value
+  return node.v
 }
 
 function evaluateString(node: StringNode): string {
-  return node.value
+  return node.v
 }
 
 function evaluateReservedName(node: ReservedNameNode): Any {
-  return asValue(reservedNamesRecord[node.value], node.token?.debugInfo).value
-}
-
-function evaluateName(node: NameNode, contextStack: ContextStack): Any {
-  const lookUpResult = lookUp(node, contextStack)
-  if (lookUpResult.contextEntry) {
-    return lookUpResult.contextEntry.value
-  } else if (lookUpResult.builtinFunction) {
-    return lookUpResult.builtinFunction
-  }
-  throw new UndefinedSymbolError(node.value, node.token?.debugInfo)
-}
-
-export function lookUp(node: NameNode, contextStack: ContextStack): LookUpResult {
-  const value = node.value
-  const debugInfo = node.token?.debugInfo
-
-  for (const context of contextStack.stack) {
-    const variable = context[value]
-    if (variable) {
-      return {
-        builtinFunction: null,
-        contextEntry: variable,
-        specialExpression: null,
-      }
-    }
-  }
-  if (builtin.normalExpressions[value]) {
-    const builtinFunction: BuiltinFunction = {
-      [FUNCTION_SYMBOL]: true,
-      debugInfo,
-      type: `builtin`,
-      name: value,
-    }
-    return {
-      builtinFunction,
-      contextEntry: null,
-      specialExpression: null,
-    }
-  }
-
-  if (builtin.specialExpressions[value]) {
-    return {
-      specialExpression: true,
-      builtinFunction: null,
-      contextEntry: null,
-    }
-  }
-
-  return {
-    specialExpression: null,
-    builtinFunction: null,
-    contextEntry: null,
-  }
+  return asNonUndefined(reservedNamesRecord[node.v], node.tkn?.sourceCodeInfo).value
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
-  const params = node.params.map(paramNode => evaluateAstNode(paramNode, contextStack))
-  const debugInfo = node.token?.debugInfo
-  if (normalExpressionNodeWithName.is(node)) {
-    for (const context of contextStack.stack) {
-      const fn = context[node.name]?.value
-      if (fn === undefined) {
-        continue
-      }
-      return executeFunction(fn, params, contextStack, debugInfo)
-    }
+  const params = node.p.map(paramNode => evaluateAstNode(paramNode, contextStack))
+  const sourceCodeInfo = node.tkn?.sourceCodeInfo
+  if (isNormalExpressionNodeWithName(node)) {
+    const value = contextStack.getValue(node.n)
+    if (value !== undefined)
+      return executeFunction(asAny(value), params, contextStack, sourceCodeInfo)
 
     return evaluateBuiltinNormalExpression(node, params, contextStack)
-  } else {
-    const fn = evaluateAstNode(node.expression, contextStack)
-    return executeFunction(fn, params, contextStack, debugInfo)
+  }
+  else {
+    const fn = evaluateAstNode(node.e, contextStack)
+    return executeFunction(fn, params, contextStack, sourceCodeInfo)
   }
 }
 
-const executeFunction: ExecuteFunction = (fn, params, contextStack, debugInfo) => {
-  if (litsFunction.is(fn)) {
-    return functionExecutors[fn.type](fn, params, debugInfo, contextStack, { evaluateAstNode, executeFunction })
-  }
-  if (Array.isArray(fn)) {
-    return evaluateArrayAsFunction(fn, params, debugInfo)
-  }
-  if (object.is(fn)) {
-    return evalueateObjectAsFunction(fn, params, debugInfo)
-  }
-  if (string.is(fn)) {
-    return evaluateStringAsFunction(fn, params, debugInfo)
-  }
-  if (number.is(fn)) {
-    return evaluateNumberAsFunction(fn, params, debugInfo)
-  }
-  throw new NotAFunctionError(fn, debugInfo)
+function executeFunction(fn: Any, params: Arr, contextStack: ContextStack, sourceCodeInfo?: SourceCodeInfo): Any {
+  if (isLitsFunction(fn))
+    return functionExecutors[fn.t](fn, params, sourceCodeInfo, contextStack, { evaluateAstNode, executeFunction })
+
+  if (Array.isArray(fn))
+    return evaluateArrayAsFunction(fn, params, sourceCodeInfo)
+
+  if (isObj(fn))
+    return evalueateObjectAsFunction(fn, params, sourceCodeInfo)
+
+  if (typeof fn === 'string')
+    return evaluateStringAsFunction(fn, params, sourceCodeInfo)
+
+  if (isNumber(fn))
+    return evaluateNumberAsFunction(fn, params, sourceCodeInfo)
+
+  throw new NotAFunctionError(fn, sourceCodeInfo)
 }
 
 function evaluateBuiltinNormalExpression(
@@ -188,58 +104,60 @@ function evaluateBuiltinNormalExpression(
   params: Arr,
   contextStack: ContextStack,
 ): Any {
-  const normalExpression = builtin.normalExpressions[node.name]
-  if (!normalExpression) {
-    throw new UndefinedSymbolError(node.name, node.token?.debugInfo)
-  }
+  const normalExpression = builtin.normalExpressions[node.n]
+  if (!normalExpression)
+    throw new UndefinedSymbolError(node.n, node.tkn?.sourceCodeInfo)
 
-  return normalExpression.evaluate(params, node.token?.debugInfo, contextStack, { executeFunction })
+  return normalExpression.evaluate(params, node.tkn?.sourceCodeInfo, contextStack, { executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
-  const specialExpression = asValue(builtin.specialExpressions[node.name], node.token?.debugInfo)
+  const specialExpression = asNonUndefined(builtin.specialExpressions[node.n], node.tkn?.sourceCodeInfo)
 
-  return specialExpression.evaluate(node, contextStack, { evaluateAstNode, builtin, lookUp })
+  return specialExpression.evaluate(node, contextStack, { evaluateAstNode, builtin })
 }
 
-function evalueateObjectAsFunction(fn: Obj, params: Arr, debugInfo?: DebugInfo): Any {
-  if (params.length !== 1) {
-    throw new LitsError(`Object as function requires one string parameter.`, debugInfo)
-  }
+function evalueateObjectAsFunction(fn: Obj, params: Arr, sourceCodeInfo?: SourceCodeInfo): Any {
+  if (params.length !== 1)
+    throw new LitsError('Object as function requires one string parameter.', sourceCodeInfo)
+
   const key = params[0]
-  string.assert(key, debugInfo)
+  assertString(key, sourceCodeInfo)
   return toAny(fn[key])
 }
 
-function evaluateArrayAsFunction(fn: Arr, params: Arr, debugInfo?: DebugInfo): Any {
-  if (params.length !== 1) {
-    throw new LitsError(`Array as function requires one non negative integer parameter.`, debugInfo)
-  }
+function evaluateArrayAsFunction(fn: Arr, params: Arr, sourceCodeInfo?: SourceCodeInfo): Any {
+  if (params.length !== 1)
+    throw new LitsError('Array as function requires one non negative integer parameter.', sourceCodeInfo)
+
   const index = params[0]
-  number.assert(index, debugInfo, { integer: true, nonNegative: true })
+  assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })
   return toAny(fn[index])
 }
 
-function evaluateStringAsFunction(fn: string, params: Arr, debugInfo?: DebugInfo): Any {
-  if (params.length !== 1) {
-    throw new LitsError(`String as function requires one Obj parameter.`, debugInfo)
-  }
+function evaluateStringAsFunction(fn: string, params: Arr, sourceCodeInfo?: SourceCodeInfo): Any {
+  if (params.length !== 1)
+    throw new LitsError('String as function requires one Obj parameter.', sourceCodeInfo)
+
   const param = toAny(params[0])
-  if (object.is(param)) {
-    return toAny((param as Obj)[fn])
-  }
-  if (number.is(param, { integer: true })) {
+  if (isObj(param))
+    return toAny((param)[fn])
+
+  if (isNumber(param, { integer: true }))
     return toAny(fn[param])
-  }
-  throw new LitsError(`string as function expects Obj or integer parameter, got ${valueToString(param)}`, debugInfo)
+
+  throw new LitsError(
+    `string as function expects Obj or integer parameter, got ${valueToString(param)}`,
+    sourceCodeInfo,
+  )
 }
 
-function evaluateNumberAsFunction(fn: number, params: Arr, debugInfo?: DebugInfo): Any {
-  number.assert(fn, debugInfo, { integer: true })
-  if (params.length !== 1) {
-    throw new LitsError(`Number as function requires one Arr parameter.`, debugInfo)
-  }
+function evaluateNumberAsFunction(fn: number, params: Arr, sourceCodeInfo?: SourceCodeInfo): Any {
+  assertNumber(fn, sourceCodeInfo, { integer: true })
+  if (params.length !== 1)
+    throw new LitsError('Number as function requires one Arr parameter.', sourceCodeInfo)
+
   const param = params[0]
-  sequence.assert(param, debugInfo)
+  assertSeq(param, sourceCodeInfo)
   return toAny(param[fn])
 }

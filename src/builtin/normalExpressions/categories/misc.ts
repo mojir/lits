@@ -1,10 +1,13 @@
-import { Context, ContextEntry, ContextStack } from '../../../evaluator/interface'
-import { Any } from '../../../interface'
+import type { Any } from '../../../interface'
 import { compare, deepEqual } from '../../../utils'
-import { BuiltinNormalExpressions } from '../../interface'
-import { version } from '../../../version'
-import { any, assertNumberOfParams, litsFunction, number, string } from '../../../utils/assertion'
-const uuidTemplate = `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+import type { BuiltinNormalExpressions } from '../../interface'
+import { version } from '../../../../package.json'
+import { asAny, assertAny } from '../../../typeGuards/lits'
+import { assertNumber } from '../../../typeGuards/number'
+import { assertString } from '../../../typeGuards/string'
+import { assertNumberOfParams } from '../../../typeGuards'
+
+const uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
 const xyRegexp = /[xy]/g
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
@@ -12,9 +15,8 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: (params): boolean => {
       for (let i = 0; i < params.length - 1; i += 1) {
         for (let j = i + 1; j < params.length; j += 1) {
-          if (params[i] === params[j]) {
+          if (params[i] === params[j])
             return false
-          }
         }
       }
 
@@ -25,9 +27,8 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   '=': {
     evaluate: ([first, ...rest]): boolean => {
       for (const param of rest) {
-        if (param !== first) {
+        if (param !== first)
           return false
-        }
       }
 
       return true
@@ -35,8 +36,8 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
   'equal?': {
-    evaluate: ([a, b], debugInfo): boolean => {
-      return deepEqual(any.as(a, debugInfo), any.as(b, debugInfo), debugInfo)
+    evaluate: ([a, b], sourceCodeInfo): boolean => {
+      return deepEqual(asAny(a, sourceCodeInfo), asAny(b, sourceCodeInfo), sourceCodeInfo)
     },
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
@@ -44,9 +45,9 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
-        if (compare(currentValue, param) <= 0) {
+        if (compare(currentValue, param) <= 0)
           return false
-        }
+
         currentValue = param
       }
       return true
@@ -58,9 +59,9 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
-        if (compare(currentValue, param) >= 0) {
+        if (compare(currentValue, param) >= 0)
           return false
-        }
+
         currentValue = param
       }
       return true
@@ -72,9 +73,9 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
-        if (compare(currentValue, param) < 0) {
+        if (compare(currentValue, param) < 0)
           return false
-        }
+
         currentValue = param
       }
       return true
@@ -86,16 +87,16 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
       for (const param of rest) {
-        if (compare(currentValue, param) > 0) {
+        if (compare(currentValue, param) > 0)
           return false
-        }
+
         currentValue = param
       }
       return true
     },
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
-  not: {
+  'not': {
     evaluate: ([first]): boolean => !first,
     validate: node => assertNumberOfParams(1, node),
   },
@@ -106,53 +107,39 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(0, node),
   },
   'inst-ms->iso-date-time': {
-    evaluate: ([ms], debugInfo): string => {
-      number.assert(ms, debugInfo)
+    evaluate: ([ms], sourceCodeInfo): string => {
+      assertNumber(ms, sourceCodeInfo)
       return new Date(ms).toISOString()
     },
     validate: node => assertNumberOfParams(1, node),
   },
   'iso-date-time->inst-ms': {
-    evaluate: ([dateTime], debugInfo): number => {
-      string.assert(dateTime, debugInfo)
+    evaluate: ([dateTime], sourceCodeInfo): number => {
+      assertString(dateTime, sourceCodeInfo)
       const ms = new Date(dateTime).valueOf()
-      number.assert(ms, debugInfo, { finite: true })
+      assertNumber(ms, sourceCodeInfo, { finite: true })
       return ms
     },
     validate: node => assertNumberOfParams(1, node),
   },
   'write!': {
-    evaluate: (params, debugInfo): Any => {
+    evaluate: (params, sourceCodeInfo): Any => {
       // eslint-disable-next-line no-console
       console.log(...params)
 
-      if (params.length > 0) {
-        return any.as(params[params.length - 1], debugInfo)
-      }
+      if (params.length > 0)
+        return asAny(params[params.length - 1], sourceCodeInfo)
 
       return null
     },
   },
-  'debug!': {
-    evaluate: (params, debugInfo, contextStack): Any => {
-      if (params.length === 0) {
-        // eslint-disable-next-line no-console
-        console.warn(`*** LITS DEBUG ***\n${contextStackToString(contextStack)}\n`)
-        return null
-      }
-      // eslint-disable-next-line no-console
-      console.warn(`*** LITS DEBUG ***\n${JSON.stringify(params[0], null, 2)}\n`)
-      return any.as(params[0], debugInfo)
-    },
-    validate: node => assertNumberOfParams({ max: 1 }, node),
-  },
-  boolean: {
+  'boolean': {
     evaluate: ([value]): boolean => {
       return !!value
     },
     validate: node => assertNumberOfParams(1, node),
   },
-  compare: {
+  'compare': {
     evaluate: ([a, b]): number => {
       return compare(a, b)
     },
@@ -160,9 +147,9 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
   'uuid!': {
     evaluate: (): string => {
-      return uuidTemplate.replace(xyRegexp, character => {
+      return uuidTemplate.replace(xyRegexp, (character) => {
         const randomNbr = Math.floor(Math.random() * 16)
-        const newValue = character === `x` ? randomNbr : (randomNbr & 0x3) | 0x8
+        const newValue = character === 'x' ? randomNbr : (randomNbr & 0x3) | 0x8
         return newValue.toString(16)
       })
     },
@@ -174,37 +161,23 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(0, node),
   },
-}
+  'json-parse': {
+    evaluate: ([first], sourceCodeInfo): Any => {
+      assertString(first, sourceCodeInfo)
+      // eslint-disable-next-line ts/no-unsafe-return
+      return JSON.parse(first)
+    },
+    validate: node => assertNumberOfParams(1, node),
+  },
+  'json-stringify': {
+    evaluate: ([first, second], sourceCodeInfo): string => {
+      assertAny(first, sourceCodeInfo)
+      if (second === undefined)
+        return JSON.stringify(first)
 
-function contextStackToString(contextStack: ContextStack): string {
-  return contextStack.stack.reduce((result, context, index) => {
-    return `${result}Context ${index}${
-      context === contextStack.globalContext ? ` - Global context` : ``
-    }\n${contextToString(context)}\n`
-  }, ``)
-}
-
-function contextToString(context: Context) {
-  if (Object.keys(context).length === 0) {
-    return `  <empty>\n`
-  }
-  const maxKeyLength = Math.max(...Object.keys(context).map(key => key.length))
-  return Object.entries(context).reduce((result, entry) => {
-    const key = `${entry[0]}`.padEnd(maxKeyLength + 2, ` `)
-    return `${result}  ${key}${valueToString(entry[1])}\n`
-  }, ``)
-}
-
-function valueToString(contextEntry: ContextEntry): string {
-  const { value } = contextEntry
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const name: string | undefined = (value as any).name
-  if (litsFunction.is(value)) {
-    if (name) {
-      return `<${value.type} function ${name}>`
-    } else {
-      return `<${value.type} function λ>`
-    }
-  }
-  return JSON.stringify(contextEntry.value)
+      assertNumber(second, sourceCodeInfo)
+      return JSON.stringify(first, null, second)
+    },
+    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+  },
 }

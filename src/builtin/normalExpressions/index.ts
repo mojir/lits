@@ -1,4 +1,4 @@
-import { BuiltinNormalExpressions } from '../interface'
+import type { BuiltinNormalExpressions } from '../interface'
 import { bitwiseNormalExpression } from './categories/bitwise'
 import { collectionNormalExpression } from './categories/collection'
 import { arrayNormalExpression } from './categories/array'

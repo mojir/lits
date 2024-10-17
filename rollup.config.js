@@ -1,19 +1,17 @@
-import typescript from 'rollup-plugin-typescript2'
-// import gzipPlugin from 'rollup-plugin-gzip'
-// import { terser } from 'rollup-plugin-terser'
-import pkg from './package.json'
+const typescript = require('@rollup/plugin-typescript')
+const jsonPlugin = require('@rollup/plugin-json')
+const pkg = require('./package.json')
 
 const input = 'src/index.ts'
 
 const plugins = [
   typescript({
-    typescript: require('typescript'),
+    tsconfig: 'tsconfig.json',
   }),
-  // terser(),
-  // gzipPlugin(),
+  jsonPlugin(),
 ]
 
-export default [
+module.exports = [
   {
     input,
     output: [
@@ -38,7 +36,7 @@ export default [
   },
   {
     input: 'src/testFramework/index.ts',
-    external: ['fs', 'path'],
+    external: ['node:fs', 'node:path'],
     output: [
       {
         file: 'dist/testFramework.esm.js',
