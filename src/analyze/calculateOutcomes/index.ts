@@ -33,6 +33,21 @@ function isIdempotent(normalExpressionName: string): boolean {
 }
 
 export function calculateOutcomes(contextStack: ContextStack, astNodes: AstNode[]): Outcomes | null {
+  // First, we try to calculate outcomes for the whole astNodes array.
+  // If that fails, we try to calculate outcomes for the array without the first element.
+  // If that fails, we try to calculate outcomes for the array without the first two elements.
+  // And so on.
+
+  // This makes it possible to calculate outcomes for e.g.
+  // (write! x) x
+
+  // Problems occur for e.g.
+  // (def x 1) (write! x) x
+  // This should output [1], but since (write! x) fails to calculate outcomes, we get null.
+
+  // Ok, but not optimal
+  // The contract is that when an array is returned, it must be correct.
+  // But returning null (indicating that the calculation failed) is always a way out.
   for (let i = 0; i < astNodes.length; i++) {
     const usingAstNode = astNodes.slice(i)
     const outcomes = calculateOutcomesInner(contextStack, usingAstNode)
