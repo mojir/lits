@@ -17,14 +17,14 @@ Lits is a Lisp dialect implemented in TypeScript, drawing heavy inspiration from
 
 ## Documentation
 
-You can find the Lits playground [here](https://youcruit.github.io/lits/#index). The playground allows you to interactively write and evaluate Lits expressions.
+You can find the Lits playground [here](https://mojir.github.io/lits/#index). The playground allows you to interactively write and evaluate Lits expressions.
 
 ## Installation
 
 To install Lits globally, run the following command:
 
 ```
-npm i -g @youcruit/lits
+npm i -g @mojir/lits
 ```
 ## Repl usage
 Initiate the Lits REPL in a terminal by typing `lits`. If Lits hasn't been installed globally, you can use `npx lits` instead.
@@ -63,13 +63,13 @@ $ lits -e "(/ 81 9)"
 ## Install api
 
 ```
-npm i @youcruit/lits
+npm i @mojir/lits
 ```
 
 ## How to use?
 
 ```ts
-import { Lits } from '@youcruit/lits'
+import { Lits } from '@mojir/lits'
 
 const lits = new Lits()
 lits.run("(+ 1 2 3 4)"); // returns 10

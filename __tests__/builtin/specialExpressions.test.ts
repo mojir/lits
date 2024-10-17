@@ -9,7 +9,7 @@ const lits = getLitsVariants()
 
 describe('specialExpressions', () => {
   let oldLog: () => void
-  let logSpy: Mock<any, any>
+  let logSpy: Mock<any>
   let lastLog: unknown
   beforeEach(() => {
     oldLog = console.log
