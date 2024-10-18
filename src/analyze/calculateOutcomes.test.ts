@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Lits } from '..'
 import { createContextStack } from '../evaluator/ContextStack'
 import { isUnknownRecord } from '../typeGuards'
-import { FUNCTION_SYMBOL } from '../utils/symbols'
+import { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 import { calculateOutcomes } from './calculateOutcomes'
 
 const lits = new Lits()
@@ -348,7 +348,6 @@ describe('calculateOutcomes.', () => {
 
   describe('misc.', () => {
     testSamples([
-      // We cannot compute outcomes, because the function is recursive
       [`(defn factorial [x]
           (if (= x 1)
             1
@@ -357,6 +356,7 @@ describe('calculateOutcomes.', () => {
         )
 
         (factorial 5)`, [120]],
+
       [`(def l [7 39 45 0 23 1 50 100 12 -5])
       (defn numberComparer [a b]
         (cond
@@ -378,17 +378,18 @@ describe('calculateOutcomes.', () => {
         50,
         100,
       ]]],
+
       [`(let [foo (if x 1 2)]
           (if (not foo) 1 2)
         )`, [2]],
-      ['(xxx false "heads" "tails")', null],
-    ])
-  })
 
-  describe('calculateOutcomes misc.', () => {
-    testSamples([
+      ['(xxx false "heads" "tails")', null],
+
       ['(+ x 2) (if x :a :b)', ['a', 'b']],
-      // ['(if x :a :b)', ['a', 'b']],
+
+      ['(if x {} [])', [{}, []]],
+
+      ['(if x #"foo" [])', [RegExp, []]],
     ])
   })
 })
@@ -405,13 +406,16 @@ function testSamples(samples: TestSample[]) {
 
       else {
         const outcomes = calculateOutcomes(contextStack, ast.b)?.map((outcome) => {
-          return isUnknownRecord(outcome) && outcome[FUNCTION_SYMBOL] === true
+          return isUnknownRecord(outcome) && outcome[FUNCTION_SYMBOL]
             ? Function
-            : outcome instanceof Error
-              ? Error
-              : outcome
+            : isUnknownRecord(outcome) && outcome[REGEXP_SYMBOL]
+              ? RegExp
+              : outcome instanceof Error
+                ? Error
+                : outcome
         })
-        expect(new Set(outcomes)).toEqual(new Set(expectedOutcomes))
+        expect(new Set(outcomes?.map(outcome => JSON.stringify(outcome))))
+          .toEqual(new Set(expectedOutcomes.map(outcome => JSON.stringify(outcome))))
       }
     })
   })

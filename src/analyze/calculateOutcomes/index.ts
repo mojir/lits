@@ -75,12 +75,7 @@ export function calculateOutcomesInner(contextStack: ContextStack, astNodes: Ast
       hasDebugData: true,
     }
     try {
-      const outcome = evaluate(ast, contextStack.clone())
-
-      if ([...outcomes].some(o => JSON.stringify(o) === JSON.stringify(outcome)))
-        continue
-
-      outcomes.push(outcome)
+      outcomes.push(evaluate(ast, contextStack.clone()))
     }
     catch (e) {
       outcomes.push(e)
