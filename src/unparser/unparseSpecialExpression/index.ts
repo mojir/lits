@@ -5,6 +5,7 @@ import type { UnparseOptions } from '../UnparseOptions'
 import { unparseNormalExpressionNode } from '../unparseNormalExpression'
 import { unparseCond } from './unparseCond'
 import { unparseDo } from './unparseDo'
+import { unparseIfLet } from './unparseIfLet'
 import { unparseLet } from './unparseLet'
 
 // type ExpressionWithSingleParamNode = Pick<NormalExpressionNode, 'debug' | 'n'> & { p: AstNode }
@@ -26,7 +27,7 @@ const specialExpressionUnparser = {
   // 'doseq': (astNode: DoSeqNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
   // 'fn': (astNode: FnNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
   // 'for': (astNode: ForNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-  // 'if-let': (astNode: IfLetNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
+  'if-let': unparseIfLet,
   'if': unparseNormalExpressionNode,
   'if-not': unparseNormalExpressionNode,
   'let': unparseLet,

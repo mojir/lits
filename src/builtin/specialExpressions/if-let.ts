@@ -3,19 +3,24 @@ import { AstNodeType, TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import type { AstNode, BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
 import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
-import { asAstNode } from '../../typeGuards/astNode'
+import { asAstNode, asNormalExpressionNode } from '../../typeGuards/astNode'
 import { asToken } from '../../typeGuards/token'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface IfLetNode extends CommonSpecialExpressionNode<'if-let'> {
   b: BindingNode
+  debugData: CommonSpecialExpressionNode<'let'>['debugData'] & ({
+    bindingArray: NormalExpressionNode
+  } | undefined)
 }
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = {
-  parse: (tokenStream, position, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
+  parse: (tokenStream, position, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
+    const bindingArray = firstToken.debugData?.sourceCodeInfo ? asNormalExpressionNode(parseToken(tokenStream, position)[1]) : undefined
+
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokenStream, position)
 
@@ -35,9 +40,10 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
       n: 'if-let',
       b: asNonUndefined(bindings[0], firstToken.debugData?.sourceCodeInfo),
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: firstToken.debugData?.sourceCodeInfo && bindingArray && {
         token: firstToken,
         lastToken,
+        bindingArray,
       },
     }
 
