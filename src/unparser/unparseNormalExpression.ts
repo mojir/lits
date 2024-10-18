@@ -7,7 +7,7 @@ import { unparseObjectLiteral } from './unparseObjectLiteral'
 import { unparseParams } from './unparseParams'
 import { applyMetaTokens } from './utils'
 
-export function unparseNormalExpressionNode(node: ExpressionWithParamsNode, options: UnparseOptions): string {
+export function unparseNormalExpression(node: ExpressionWithParamsNode, options: UnparseOptions): string {
   if (isNormalExpressionNode(node)) {
     if (node.debugData?.token.t === TokenType.Bracket && node.debugData.token.v === '[')
       return unparseArrayLiteral(node, options)

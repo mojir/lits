@@ -1,7 +1,7 @@
 import { AstNodeType } from '../constants/constants'
 import type { Ast, AstNode, NormalExpressionNode } from '../parser/interface'
 import { UnparseOptions } from './UnparseOptions'
-import { unparseNormalExpressionNode } from './unparseNormalExpression'
+import { unparseNormalExpression } from './unparseNormalExpression'
 import { applyMetaTokens, ensureNewlineSeparator } from './utils'
 import { unparseSpecialExpression } from './unparseSpecialExpression'
 
@@ -22,7 +22,7 @@ const unparse: Unparse = (node: AstNode, options: UnparseOptions) => {
     case AstNodeType.Comment:
       return `${applyMetaTokens(node.v, node.debugData?.token.debugData?.metaTokens, options)}\n`
     case AstNodeType.NormalExpression: {
-      return unparseNormalExpressionNode(node, options)
+      return unparseNormalExpression(node, options)
     }
     case AstNodeType.SpecialExpression:
       return unparseSpecialExpression(node, options)

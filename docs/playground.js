@@ -5350,12 +5350,13 @@ var Playground = (function (exports) {
     var ifLetSpecialExpression = {
         parse: function (tokenStream, position, firstToken, _a) {
             var _b, _c;
-            var _d, _e;
-            var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
+            var _d, _e, _f, _g;
+            var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseToken = _a.parseToken;
+            var bindingArray = ((_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo) ? asNormalExpressionNode(parseToken(tokenStream, position)[1]) : undefined;
             var bindings;
             _b = __read(parseBindings(tokenStream, position), 2), position = _b[0], bindings = _b[1];
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
             }
             var params;
             _c = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _c[0], params = _c[1];
@@ -5363,11 +5364,12 @@ var Playground = (function (exports) {
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'if-let',
-                b: asNonUndefined(bindings[0], (_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo),
+                b: asNonUndefined(bindings[0], (_f = firstToken.debugData) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo),
                 p: params,
-                debugData: firstToken.debugData && {
+                debugData: ((_g = firstToken.debugData) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo) && bindingArray && {
                     token: firstToken,
                     lastToken: lastToken,
+                    bindingArray: bindingArray,
                 },
             };
             assertNumberOfParams({ min: 1, max: 2 }, node);
@@ -7320,6 +7322,18 @@ var Playground = (function (exports) {
             || normalExpressionName === 'write!';
     }
     function calculateOutcomes(contextStack, astNodes) {
+        // First, we try to calculate outcomes for the whole astNodes array.
+        // If that fails, we try to calculate outcomes for the array without the first element.
+        // If that fails, we try to calculate outcomes for the array without the first two elements.
+        // And so on.
+        // This makes it possible to calculate outcomes for e.g.
+        // (write! x) x
+        // Problems occur for e.g.
+        // (def x 1) (write! x) x
+        // This should output [1], but since (write! x) fails to calculate outcomes, we get null.
+        // Ok, but not optimal
+        // The contract is that when an array is returned, it must be correct.
+        // But returning null (indicating that the calculation failed) is always a way out.
         for (var i = 0; i < astNodes.length; i++) {
             var usingAstNode = astNodes.slice(i);
             var outcomes = calculateOutcomesInner(contextStack, usingAstNode);
@@ -7334,30 +7348,22 @@ var Playground = (function (exports) {
         if (possibleAsts === null)
             return null;
         var outcomes = [];
-        var _loop_1 = function (possibleAst) {
-            var unresolvedIdentifiers = findUnresolvedIdentifiers(possibleAst, contextStack.clone(), builtin);
-            if (unresolvedIdentifiers.size !== 0)
-                return { value: null };
-            var ast = {
-                b: possibleAst,
-                hasDebugData: true,
-            };
-            try {
-                var outcome_1 = evaluate(ast, contextStack.clone());
-                if (__spreadArray([], __read(outcomes), false).some(function (o) { return JSON.stringify(o) === JSON.stringify(outcome_1); }))
-                    return "continue";
-                outcomes.push(outcome_1);
-            }
-            catch (e) {
-                outcomes.push(e);
-            }
-        };
         try {
             for (var possibleAsts_1 = __values(possibleAsts), possibleAsts_1_1 = possibleAsts_1.next(); !possibleAsts_1_1.done; possibleAsts_1_1 = possibleAsts_1.next()) {
                 var possibleAst = possibleAsts_1_1.value;
-                var state_1 = _loop_1(possibleAst);
-                if (typeof state_1 === "object")
-                    return state_1.value;
+                var unresolvedIdentifiers = findUnresolvedIdentifiers(possibleAst, contextStack.clone(), builtin);
+                if (unresolvedIdentifiers.size !== 0)
+                    return null;
+                var ast = {
+                    b: possibleAst,
+                    hasDebugData: true,
+                };
+                try {
+                    outcomes.push(evaluate(ast, contextStack.clone()));
+                }
+                catch (e) {
+                    outcomes.push(e);
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -8790,7 +8796,7 @@ var Playground = (function (exports) {
         return startBracket + unparseMultilineParams(node.p, multilineOptions) + endBracket;
     }
 
-    function unparseNormalExpressionNode(node, options) {
+    function unparseNormalExpression(node, options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         if (isNormalExpressionNode(node)) {
             if (((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.t) === TokenType.Bracket && node.debugData.token.v === '[')
@@ -8895,6 +8901,46 @@ var Playground = (function (exports) {
         }
     }
 
+    function unparseIfLet(node, options) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var startBracket = applyMetaTokens('(', (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.metaTokens, options);
+        var endBracket = applyMetaTokens(')', (_e = (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.lastToken) === null || _d === void 0 ? void 0 : _d.debugData) === null || _e === void 0 ? void 0 : _e.metaTokens, options.inline());
+        var name = applyMetaTokens(node.n, (_h = (_g = (_f = node.debugData) === null || _f === void 0 ? void 0 : _f.nameToken) === null || _g === void 0 ? void 0 : _g.debugData) === null || _h === void 0 ? void 0 : _h.metaTokens, options.inline());
+        var letArray = node.debugData ? node.debugData.bindingArray : createLetArray$1(node.b);
+        var inc = name.includes('\n') ? 1 : name.length + 2;
+        var unparsedLetArray = unparseBindings(letArray, options.inc(inc).inline());
+        var prefix = "".concat(startBracket + name, " ").concat(unparsedLetArray);
+        var inline = !(name + unparsedLetArray).includes('\n');
+        return unparseParams({
+            params: node.p,
+            options: options,
+            prefix: prefix,
+            inline: inline,
+            endBracket: endBracket,
+            body: true,
+            noMultilineInline: true,
+        });
+    }
+    function createLetArray$1(bindingNode) {
+        var params = [
+            {
+                t: AstNodeType.Name,
+                n: undefined,
+                p: [],
+                debugData: undefined,
+                v: bindingNode.n,
+            },
+            bindingNode.v,
+        ];
+        var node = {
+            t: AstNodeType.NormalExpression,
+            n: 'array',
+            p: params,
+            debugData: undefined,
+        };
+        return node;
+    }
+
     function unparseLet(node, options) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         var startBracket = applyMetaTokens('(', (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.metaTokens, options);
@@ -8935,38 +8981,53 @@ var Playground = (function (exports) {
         return node;
     }
 
+    function unparseIfOrWhenLike(node, options) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var startBracket = applyMetaTokens('(', (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.metaTokens, options);
+        var endBracket = applyMetaTokens(')', (_e = (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.lastToken) === null || _d === void 0 ? void 0 : _d.debugData) === null || _e === void 0 ? void 0 : _e.metaTokens, options.inline());
+        var nameOptions = startBracket.endsWith('\n') ? options.noInline().inc() : options.inline().inc();
+        var name = applyMetaTokens(node.n, (_h = (_g = (_f = node.debugData) === null || _f === void 0 ? void 0 : _f.nameToken) === null || _g === void 0 ? void 0 : _g.debugData) === null || _h === void 0 ? void 0 : _h.metaTokens, nameOptions);
+        var inc = name.includes('\n') ? 1 : name.length + 2;
+        var unparsedCondition = options.unparse(node.p[0], options.inc(inc).inline());
+        var prefix = "".concat(startBracket + name, " ").concat(unparsedCondition);
+        var params = node.p.slice(1);
+        // const inline = !(name + unparsedCondition).includes('\n')
+        var inline = false;
+        return unparseParams({ params: params, options: options, prefix: prefix, inline: inline, name: name, endBracket: endBracket, body: node.n === 'when' || node.n === 'when-not' });
+    }
+
     // type ExpressionWithSingleParamNode = Pick<NormalExpressionNode, 'debug' | 'n'> & { p: AstNode }
     // function expressionWithSingleParamUnparser(astNode: ExpressionWithSingleParamNode, options: UnparseOptions) {
     //   return unparseNormalExpressionNode({ ...astNode, p: [astNode.p] }, options)
     // }
     var specialExpressionUnparser = {
-        'and': unparseNormalExpressionNode,
-        'comment': unparseNormalExpressionNode,
+        'and': unparseNormalExpression,
+        'comment': unparseNormalExpression,
         'cond': unparseCond,
-        'declared?': unparseNormalExpressionNode,
+        'declared?': unparseNormalExpression,
         // 'defn': (astNode: DefnNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-        'def': unparseNormalExpressionNode,
+        'def': unparseNormalExpression,
         // 'defns': (astNode: DefnsNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-        'defs': unparseNormalExpressionNode,
+        'defs': unparseNormalExpression,
         'do': unparseDo,
         // 'doseq': (astNode: DoSeqNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
         // 'fn': (astNode: FnNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
         // 'for': (astNode: ForNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-        // 'if-let': (astNode: IfLetNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-        'if': unparseNormalExpressionNode,
-        'if-not': unparseNormalExpressionNode,
+        'if-let': unparseIfLet,
+        'if': unparseIfOrWhenLike,
+        'if-not': unparseIfOrWhenLike,
         'let': unparseLet,
         // 'loop': (astNode: LoopNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-        'or': unparseNormalExpressionNode,
-        '??': unparseNormalExpressionNode,
-        'recur': unparseNormalExpressionNode,
-        'time!': unparseNormalExpressionNode,
-        'throw': unparseNormalExpressionNode,
+        'or': unparseNormalExpression,
+        '??': unparseNormalExpression,
+        'recur': unparseNormalExpression,
+        'time!': unparseNormalExpression,
+        'throw': unparseNormalExpression,
         // 'try': (astNode: TryNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
         // 'when-first': (astNode: WhenFirstNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
         // 'when-let': (astNode: WhenLetNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-        // 'when': (astNode: WhenNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
-        // 'when-not': (astNode: WhenNotNode, options: UnparseOptions) => unparseNormalExpressionNode({ ...astNode, t }, options),
+        'when': unparseIfOrWhenLike,
+        'when-not': unparseIfOrWhenLike,
     };
     function unparseSpecialExpression(node, options) {
         var unparser = specialExpressionUnparser[node.n];
@@ -8988,7 +9049,7 @@ var Playground = (function (exports) {
             case AstNodeType.Comment:
                 return "".concat(applyMetaTokens(node.v, (_k = (_j = node.debugData) === null || _j === void 0 ? void 0 : _j.token.debugData) === null || _k === void 0 ? void 0 : _k.metaTokens, options), "\n");
             case AstNodeType.NormalExpression: {
-                return unparseNormalExpressionNode(node, options);
+                return unparseNormalExpression(node, options);
             }
             case AstNodeType.SpecialExpression:
                 return unparseSpecialExpression(node, options);
