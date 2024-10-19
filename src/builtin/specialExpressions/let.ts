@@ -16,7 +16,7 @@ export interface LetNode extends CommonSpecialExpressionNode<'let'> {
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
   parse: (tokenStream, position, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
-    const bindingArray = firstToken.debugData?.sourceCodeInfo ? asNormalExpressionNode(parseToken(tokenStream, position)[1]) : undefined
+    const bindingArray = firstToken.debugData?.sourceCodeInfo && asNormalExpressionNode(parseToken(tokenStream, position)[1])
 
     let bindings: BindingNode[]
     ;[position, bindings] = parseBindings(tokenStream, position)

@@ -137,59 +137,39 @@ function formatSampleProgram(lineLength: number): string {
   if (lineLength >= sampleProgram.length || lineLength === 0)
     return `${sampleProgram}`
 
-  if (lineLength >= 19) {
+  if (lineLength >= 15) {
     return `
-(if-let [foo 3, bar 4]
+(if-let [foo 3]
   foo
-  (bar 1 2)
-  baz)
-`.trim()
-  }
-
-  if (lineLength >= 12) {
-    return `
-(if-let [foo 3
-      bar 4]
-  foo
-  (bar 1 2)
-  baz)
+  (bar 1 2))
 `.trim()
   }
 
   if (lineLength >= 11) {
     return `
 (if-let [foo
-      3
-      bar
-      4]
+         3]
   foo
-  (bar 1 2)
-  baz)
+  (bar 1 2))
 `.trim()
   }
 
   if (lineLength >= 9) {
     return `
 (if-let [foo
-      3
-      bar
-      4]
+         3]
   foo
   (bar 1
-       2)
-  baz)
+       2))
 `.trim()
   }
 
   return `
 (if-let [foo
-      3
-      bar
-      4]
+         3]
   foo
   (bar
    1
-   2)
-  baz)
+   2))
 `.trim()
 }
