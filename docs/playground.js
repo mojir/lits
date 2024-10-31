@@ -5446,7 +5446,7 @@ var Playground = (function (exports) {
             var _b, _c;
             var _d, _e;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseToken = _a.parseToken;
-            var bindingArray = ((_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo) ? asNormalExpressionNode(parseToken(tokenStream, position)[1]) : undefined;
+            var bindingArray = ((_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo) && asNormalExpressionNode(parseToken(tokenStream, position)[1]);
             var bindings;
             _b = __read(parseBindings(tokenStream, position), 2), position = _b[0], bindings = _b[1];
             var params;
