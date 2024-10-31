@@ -23,6 +23,7 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "iife": "dist/lits.iife.js",
+  "types": "dist/src/index.d.ts",
   "bin": {
     "lits": "dist/cli/cli.js"
   },

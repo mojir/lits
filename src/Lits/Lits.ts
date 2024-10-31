@@ -106,7 +106,7 @@ export class Lits {
     return parse(tokenStream)
   }
 
-  private evaluate(ast: Ast, params: LitsParams): Any {
+  public evaluate(ast: Ast, params: LitsParams): Any {
     const contextStack = createContextStack(params)
     return evaluate(ast, contextStack)
   }
