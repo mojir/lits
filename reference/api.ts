@@ -1,4 +1,4 @@
-import { normalExpressionKeys, specialExpressionKeys } from '../src'
+import { normalExpressionKeys, specialExpressionKeys } from "../src/builtin"
 
 export const api = {
   collection: [

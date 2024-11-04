@@ -3360,7 +3360,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "1.2.0";
+    var version = "1.2.1";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -6509,7 +6509,7 @@ var Playground = (function (exports) {
         return contextStack;
     }
 
-    var _a;
+    var _a$1;
     function findOverloadFunction(overloads, nbrOfParams, sourceCodeInfo) {
         var overloadFunction = overloads.find(function (overload) {
             var arity = overload.a;
@@ -6522,8 +6522,8 @@ var Playground = (function (exports) {
             throw new LitsError("Unexpected number of arguments, got ".concat(valueToString(nbrOfParams), "."), sourceCodeInfo);
         return overloadFunction;
     }
-    var functionExecutors = (_a = {},
-        _a[FunctionType.NativeJsFunction] = function (fn, params, sourceCodeInfo) {
+    var functionExecutors = (_a$1 = {},
+        _a$1[FunctionType.NativeJsFunction] = function (fn, params, sourceCodeInfo) {
             var _a;
             try {
                 // eslint-disable-next-line ts/no-unsafe-assignment
@@ -6540,7 +6540,7 @@ var Playground = (function (exports) {
                 throw new LitsError("Native function throwed: \"".concat(message, "\""), sourceCodeInfo);
             }
         },
-        _a[FunctionType.UserDefined] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.UserDefined] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
             for (;;) {
@@ -6589,11 +6589,11 @@ var Playground = (function (exports) {
                 }
             }
         },
-        _a[FunctionType.Partial] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.Partial] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             return executeFunction(fn.f, __spreadArray(__spreadArray([], __read(fn.p), false), __read(params), false), contextStack, sourceCodeInfo);
         },
-        _a[FunctionType.Comp] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.Comp] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             var f = fn.f;
             if (f.length === 0) {
@@ -6605,18 +6605,18 @@ var Playground = (function (exports) {
                 return [executeFunction(toAny(fun), result, contextStack, sourceCodeInfo)];
             }, params)[0], sourceCodeInfo);
         },
-        _a[FunctionType.Constantly] = function (fn) {
+        _a$1[FunctionType.Constantly] = function (fn) {
             return fn.v;
         },
-        _a[FunctionType.Juxt] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.Juxt] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             return fn.f.map(function (fun) { return executeFunction(toAny(fun), params, contextStack, sourceCodeInfo); });
         },
-        _a[FunctionType.Complement] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.Complement] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             return !executeFunction(fn.f, params, contextStack, sourceCodeInfo);
         },
-        _a[FunctionType.EveryPred] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.EveryPred] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var e_2, _b, e_3, _c;
             var executeFunction = _a.executeFunction;
             try {
@@ -6648,7 +6648,7 @@ var Playground = (function (exports) {
             }
             return true;
         },
-        _a[FunctionType.SomePred] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.SomePred] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var e_4, _b, e_5, _c;
             var executeFunction = _a.executeFunction;
             try {
@@ -6680,17 +6680,17 @@ var Playground = (function (exports) {
             }
             return false;
         },
-        _a[FunctionType.Fnil] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.Fnil] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             var fniledParams = params.map(function (param, index) { return (param === null ? toAny(fn.p[index]) : param); });
             return executeFunction(toAny(fn.f), fniledParams, contextStack, sourceCodeInfo);
         },
-        _a[FunctionType.Builtin] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a$1[FunctionType.Builtin] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
             var normalExpression = asNonUndefined(normalExpressions[fn.n], sourceCodeInfo);
             return normalExpression.evaluate(params, sourceCodeInfo, contextStack, { executeFunction: executeFunction });
         },
-        _a);
+        _a$1);
 
     function evaluate(ast, contextStack) {
         var e_1, _a;
@@ -9227,6 +9227,6797 @@ var Playground = (function (exports) {
         };
         return Lits;
     }());
+
+    var collectionReference = {
+        'count': {
+            title: 'count',
+            category: 'Collection',
+            linkName: 'count',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                coll: {
+                    type: ['collection', 'string', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['coll'] },
+            ],
+            description: 'Returns number of elements in $coll.',
+            examples: [
+                '(count [1 2 3])',
+                '(count [])',
+                '(count (object :a 1))',
+                '(count "")',
+                '(count "Albert")',
+                '(count nil)',
+            ],
+        },
+        'get': {
+            title: 'get',
+            category: 'Collection',
+            linkName: 'get',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'coll': {
+                    type: 'collection',
+                },
+                'key': {
+                    type: ['string', 'integer'],
+                },
+                'not-found': {
+                    type: 'any',
+                    description: 'Default value to return if $key is not found.',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'key'] },
+                { argumentNames: ['coll', 'key', 'not-found'] },
+            ],
+            description: 'Returns value in $coll mapped at \`key\`.',
+            examples: [
+                "\n(get\n  [1 2 3]\n  1)",
+                "\n(get\n  []\n  1)",
+                "\n(get\n  []\n  1\n  \"default\")",
+                "\n(get\n  (object :a 1)\n  :a)",
+                "\n(get\n  (object :a 1)\n  :b)",
+                "\n(get\n  (object :a 1)\n  :b\n  \"default\")",
+                "\n(get\n  nil\n  :a)",
+                "\n(get\n  nil\n  :b\n  \"default\")",
+            ],
+        },
+        'get-in': {
+            title: 'get-in',
+            category: 'Collection',
+            linkName: 'get-in',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'coll': {
+                    type: 'collection',
+                },
+                'keys': {
+                    type: 'array',
+                },
+                'not-found': {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'keys'] },
+                { argumentNames: ['coll', 'keys', 'not-found'] },
+            ],
+            description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `nil` is returned.',
+            examples: [
+                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :a 0])",
+                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0])",
+                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0]\n  \"Lisa\")",
+            ],
+        },
+        'contains?': {
+            title: 'contains?',
+            category: 'Collection',
+            linkName: 'contains_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: ['collection', 'nil'],
+                },
+                key: {
+                    type: ['string', 'number'],
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'key'] },
+            ],
+            description: 'Returns `true` if $coll contains $key, otherwise returns `false`.',
+            examples: [
+                "\n(contains?\n  []\n  1)",
+                "\n(contains?\n  [1]\n  1)",
+                "\n(contains?\n  [1 2 3]\n  1)",
+                "\n(contains?\n  {}\n  :a)",
+                "\n(contains?\n  {:a 1 :b 2}\n  :a)",
+            ],
+        },
+        'has?': {
+            title: 'has?',
+            category: 'Collection',
+            linkName: 'has_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: ['collection', 'nil'],
+                },
+                value: {
+                    type: ['any'],
+                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'value'] },
+            ],
+            description: 'Returns `true` if $coll has $value, otherwise returns `false`.',
+            examples: [
+                "\n(has?\n  [1 2 3]\n  1)",
+                "\n(has?\n  [1 2 3]\n  0)",
+                "\n(has?\n  {:a 1 :b 2}\n  1)",
+                "\n(has?\n  {:a 1 :b 2}\n  0)",
+                "\n(has?\n  \"Albert\"\n  :A)",
+                "\n(has?\n  \"Albert\"\n  :a)",
+                "\n(has?\n  nil\n  :a)",
+            ],
+        },
+        'has-some?': {
+            title: 'has-some?',
+            category: 'Collection',
+            linkName: 'has-some_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                values: {
+                    type: 'any',
+                    array: true,
+                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'values'] },
+            ],
+            description: 'Returns `true` if $coll has any of the elements in $values, otherwise returns `false`.',
+            examples: [
+                "\n(has-some?\n  []\n  [])",
+                "\n(has-some?\n  [1 2 3]\n  [])",
+                "\n(has-some?\n  [1 2 3]\n  [0])",
+                "\n  (has-some?\n  [1 2 3]\n  [0 1])",
+                "\n(has-some?\n  (object :a 1 :b 2)\n  [0])",
+                "\n(has-some?\n  (object :a 1 :b 2)\n  [0 1])",
+                "\n(has-some?\n  \"Albert\"\n  \"xyz\")",
+                "\n(has-some?\n  \"Albert\"\n  \"xyzl\")",
+                "\n(has-some?\n  [:a :b :c :d]\n  \"xyz\")",
+                "\n(has-some?\n  [:a :b :c :d]\n  \"xyzc\")",
+                "\n(has-some?\n  nil\n  [1])",
+                "\n(has-some?\n  nil\n  \"\")",
+            ],
+        },
+        'has-every?': {
+            title: 'has-every?',
+            category: 'Collection',
+            linkName: 'has-every_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                values: {
+                    type: 'any',
+                    array: true,
+                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'values'] },
+            ],
+            description: 'Returns `true` if $coll has all of the elements in $values, otherwise returns `false`.',
+            examples: [
+                "\n(has-every?\n  []\n  [])",
+                "\n(has-every?\n  [1 2 3]\n  [])",
+                "\n(has-every?\n  [1 2 3]\n  [0 1])",
+                "\n(has-every?\n  [1 2 3]\n  [1 2])",
+                "\n(has-every?\n  (object :a 1 :b 2)\n  [0 1])",
+                "\n(has-every?\n  (object :a 1 :b 2)\n  [1 2])",
+                "\n(has-every?\n  \"Albert\"\n  \"xyz\")",
+                "\n(has-every?\n  \"Albert\"\n  \"treblA\")",
+                "\n(has-every?\n  [:a :b :c :d]\n  \"xyz\")",
+                "\n(has-every?\n  [:a :b :c :d]\n  \"dcba\")",
+                "\n(has-every?\n  nil\n  \"abc\")",
+                "\n(has-every?\n  nil\n  [0, 1, nil])",
+                "\n(has-every?\n  nil\n  nil)",
+                "\n(has-every?\n  [1, 2, 3]\n  nil)",
+            ],
+        },
+        'assoc': {
+            title: 'assoc',
+            category: 'Collection',
+            linkName: 'assoc',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                key: {
+                    type: ['string', 'number'],
+                },
+                value: {
+                    type: 'any',
+                },
+                kvs: {
+                    type: 'any',
+                    description: 'Key-value pairs to associate.',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'key', 'value'] },
+                { argumentNames: ['coll', 'key', 'value', 'kvs'] },
+            ],
+            description: "\nAdd or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.  \nIf $coll is an 'array', $key must be `number` satisfying `0 <=` $key `<= length`.",
+            examples: [
+                "\n(assoc\n  [1 2 3]\n  1\n  \"Two\")",
+                "\n(assoc\n  [1 2 3]\n  3\n  \"Four\")",
+                "\n(assoc\n  {:a 1 :b 2}\n  :a\n  \"One\")",
+                "\n(assoc\n  {:a 1 :b 2}\n  :c\n  \"Three\")",
+                "\n(assoc\n  :Albert\n  6\n  :a)",
+            ],
+        },
+        'assoc-in': {
+            title: 'assoc-in',
+            category: 'Collection',
+            linkName: 'assoc-in',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                keys: {
+                    type: ['number', 'string'],
+                    array: true,
+                },
+                value: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'keys', 'value'] },
+            ],
+            description: "\nAssociates a value in the nested collection $coll, where $keys is an array of keys and $value is the new value.\n\nIf any levels do not exist, objects will be created - and the corresponding keys must be of type string.",
+            examples: [
+                "\n(assoc-in\n  {}\n  [:a :b :c]\n  \"Albert\")",
+                "\n(assoc-in\n  [1 2 [1 2 3]]\n  [2 1]\n  \"Albert\")",
+                "\n(assoc-in\n  [1 2 {\"name\" \"albert\"}]\n  [2 \"name\" 0]\n  :A)",
+            ],
+        },
+        'concat': {
+            title: 'concat',
+            category: 'Collection',
+            linkName: 'concat',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                colls: {
+                    type: 'collection',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['coll'] },
+                { argumentNames: ['coll', 'colls'] },
+            ],
+            description: 'Concatenates collections into one collection.',
+            examples: [
+                '(concat :A :l :b :e :r :t)',
+                '(concat [1 2] [3 4])',
+                '(concat [] [3 4])',
+                '(concat [1 2] [])',
+                '(concat [1 2] [3 4] [5 6])',
+                '(concat [])',
+                '(concat {:a 1 :b 2} {:b 1 :c 2})',
+                '(concat {} {:a 1})',
+            ],
+        },
+        'not-empty': {
+            title: 'not-empty',
+            category: 'Collection',
+            linkName: 'not-empty',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: ['collection', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['coll'] },
+            ],
+            description: 'Returns `nil` if $coll is empty or `nil`, otherwise $coll.',
+            examples: [
+                '(not-empty [])',
+                '(not-empty [1 2 3])',
+                '(not-empty {})',
+                '(not-empty {:a 2})',
+                '(not-empty "")',
+                '(not-empty "Albert")',
+                '(not-empty nil)',
+            ],
+        },
+        'every?': {
+            title: 'every?',
+            category: 'Collection',
+            linkName: 'every_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                fn: {
+                    type: 'function',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fn'] },
+            ],
+            description: 'Returns `true` if all entries in $coll pass the test implemented by $fn, otherwise returns `false`.',
+            examples: [
+                "\n(every?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
+                "\n(every?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
+                "\n(every?\n  number?\n  [])",
+                "\n(every?\n  number?\n  \"\")",
+                "\n(every?\n  number?\n  {})",
+                "\n(every?\n  #(even? (second %))\n  {:a 2 :b 4})",
+                "\n(every?\n  #(even? (second %))\n  {:a 2 :b 3})",
+            ],
+        },
+        'not-every?': {
+            title: 'not-every?',
+            category: 'Collection',
+            linkName: 'not-every_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                fn: {
+                    type: 'function',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fn'] },
+            ],
+            description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
+            examples: [
+                "\n(not-every?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
+                "\n(not-every?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
+                "\n(not-every?\n  number?\n  [])",
+                "\n(not-every?\n  number?\n  \"\")",
+                "\n(not-every?\n  number?\n  {})",
+                "\n(not-every?\n  #(even? (second %))\n  {:a 2 :b 4})",
+                "\n(not-every?\n  #(even? (second %))\n  {:a 2 :b 3})",
+            ],
+        },
+        'any?': {
+            title: 'any?',
+            category: 'Collection',
+            linkName: 'any_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                fn: {
+                    type: 'function',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fn'] },
+            ],
+            description: 'Returns `true` if any element in $coll pass the test implemented by $fn, otherwise returns `false`.',
+            examples: [
+                "\n(any?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
+                "\n(any?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
+                "\n(any?\n  number?\n  [])",
+                "\n(any?\n  number?\n  \"\")",
+                "\n(any?\n  number?\n  {})",
+                "\n(any?\n  #(even? (second %))\n  {:a 2 :b 3})",
+                "\n(any?\n  #(even? (second %))\n  {:a 1 :b 3})",
+            ],
+        },
+        'not-any?': {
+            title: 'not-any?',
+            category: 'Collection',
+            linkName: 'not-any_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                coll: {
+                    type: 'collection',
+                },
+                fn: {
+                    type: 'function',
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'fn'] },
+            ],
+            description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
+            examples: [
+                "\n(not-any?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
+                "\n(not-any?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
+                "\n(not-any?\n  number?\n  [])",
+                "\n(not-any?\n  number?\n  \"\")",
+                "\n(not-any?\n  number?\n  {})",
+                "\n(not-any?\n  #(even? (second %))\n  {:a 2 :b 3})",
+                "\n(not-any?\n  #(even? (second %))\n  {:a 1 :b 3})",
+            ],
+        },
+        'update': {
+            title: 'update',
+            category: 'Collection',
+            linkName: 'update',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                'coll': {
+                    type: 'collection',
+                },
+                'key': {
+                    type: ['string', 'number'],
+                },
+                'fn': {
+                    type: 'function',
+                },
+                'fn-args': {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'value', 'fn'] },
+                { argumentNames: ['coll', 'value', 'fn', 'fn-args'] },
+            ],
+            description: "\nUpdates a value in the $coll collection, where $key is a key. $fn is a function\nthat will take the old value and any supplied $fn-args and\nreturn the new value.\nIf the key does not exist, `nil` is passed as the old value.",
+            examples: [
+                "\n(def x {:a 1 :b 2})\n(update x :a inc)",
+                "\n(def x {:a 1 :b 2})\n(update\n  x\n  :c\n  (fn [val]\n    (if (nil? val) 0 (inc val))))",
+            ],
+        },
+        'update-in': {
+            title: 'update-in',
+            category: 'Collection',
+            linkName: 'update-in',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                'coll': {
+                    type: 'collection',
+                },
+                'keys': {
+                    type: 'array',
+                },
+                'fn': {
+                    type: 'function',
+                },
+                'fn-args': {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['coll', 'keys', 'fn'] },
+                { argumentNames: ['coll', 'keys', 'fn', 'fn-args'] },
+            ],
+            description: "Updates a value in the $coll collection, where $keys is an array of\nkeys and $fn is a function that will take the old value and\nany supplied $fn-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
+            examples: [
+                "\n(update-in\n  {:a [1 2 3]}\n  [:a 1]\n  (fn [val]\n    (when (nil? val) 0)))",
+                "\n(update-in\n  {:a {:foo :bar}}\n  [:a :foo]\n  (fn [val]\n    (if (nil? val) \"?\" \"!\")))",
+                "\n(update-in\n  {:a {:foo :bar}}\n  [:a :baz]\n  (fn [val]\n    (if (nil? val) \"?\" \"!\")))",
+                "\n(update-in\n  {:a [1 2 3]}\n  [:a 1]\n  *\n  10\n  10\n  10)",
+            ],
+        },
+    };
+
+    var functionalReference = {
+        'apply': {
+            title: 'apply',
+            category: 'Functional',
+            linkName: 'apply',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                args: {
+                    type: 'array',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'args'] },
+            ],
+            description: 'Call supplied function $fn with specified arguments $args.',
+            examples: [
+                "\n(apply + [1 2 3])",
+                "\n(apply\n  (fn [x y]\n    (sqrt\n      (+\n        (* x x)\n        (* y y))))\n  [3 4])",
+            ],
+        },
+        'identity': {
+            title: 'identity',
+            category: 'Functional',
+            linkName: 'identity',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns $x.',
+            examples: ['(identity 1)', '(identity "Albert")', '(identity {:a 1})', '(identity nil)'],
+        },
+        'partial': {
+            title: 'partial',
+            category: 'Functional',
+            linkName: 'partial',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                args: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'args'] },
+            ],
+            description: "Takes a function $fn and a optional number arguments $args to $fn.\nIt returns a function that takes the additional additional arguments.\nWhen called, the returned function calls `(`$fn `...`$args` ...additional_arguments)`.",
+            examples: [
+                '(partial + 100)',
+                "\n(def plusMany (partial + 100 1000))\n(plusMany 1 10)",
+                "\n(def addHundred (partial + 100))\n(addHundred 10)",
+            ],
+        },
+        'comp': {
+            title: 'comp',
+            category: 'Functional',
+            linkName: 'comp',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                fns: {
+                    type: 'function',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['fns'] },
+            ],
+            description: "Takes a variable number of functions and returns a function that is the composition of those.\n\n  The returned function takes a variable number of arguments,\n  applies the rightmost function to the args,\n  the next function (right-to-left) to the result, etc.",
+            examples: [
+                "\n(def negative-quotient (comp - /))\n(negative-quotient 9 3)",
+                "\n(\n  #((apply comp first (repeat %2 rest)) %1)\n  [1 2 3 4 5 6 7]\n  3)",
+                "\n(def x {\"bar\" {\"foo\" 42}})\n((comp \"foo\" \"bar\") x)",
+            ],
+        },
+        'constantly': {
+            title: 'constantly',
+            category: 'Functional',
+            linkName: 'constantly',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns a function that takes any number of arguments and always returns $x.',
+            examples: [
+                "\n(def always-true (constantly true))\n(always-true 9 3)",
+                "\n(\n  #((apply constantly first (repeat %2 rest)) %1)\n  [1 2 3 4 5 6 7]\n  3)",
+            ],
+        },
+        'juxt': {
+            title: 'juxt',
+            category: 'Functional',
+            linkName: 'juxt',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                fns: {
+                    type: 'function',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['fn'] },
+                { argumentNames: ['fn', 'fns'] },
+            ],
+            description: "Takes one or many function and returns a function that is the juxtaposition of those functions.  \nThe returned function takes a variable number of args,\nand returns a vector containing the result of applying each function to the args (left-to-right).",
+            examples: [
+                "\n(\n  (juxt + * min max)\n  3\n  4\n  6)",
+                "\n(\n  (juxt :a :b)\n  {:a 1, :b 2, :c 3, :d 4})",
+                "\n(apply\n  (juxt + * min max)\n  (range 1 11))",
+            ],
+        },
+        'complement': {
+            title: 'complement',
+            category: 'Functional',
+            linkName: 'complement',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn'] },
+            ],
+            description: 'Takes a function $fn and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
+            examples: ['((complement >) 1 3)', '((complement <) 1 3)', '((complement +) 1 3)', '((complement +) 0 0)'],
+        },
+        'every-pred': {
+            title: 'every-pred',
+            category: 'Functional',
+            linkName: 'every-pred',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                fns: {
+                    type: 'function',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['fn'] },
+                { argumentNames: ['fn', 'fns'] },
+            ],
+            description: "\nTakes a number of predicates and returns a function that returns `true` if all predicates\nreturn a truthy value against all of its arguments, else it returns `false`.",
+            examples: [
+                "\n(\n  (every-pred string? #(> (count %1) 3))\n  \"Albert\"\n  \"Mojir\")",
+                "\n(\n  (every-pred string? #(> (count %1) 3))\n  \"Albert\"\n  :M)",
+                "\n(\n  (every-pred string? #(> (count %1) 3))\n  \"Albert\"\n  [1 2 3])",
+            ],
+        },
+        'some-pred': {
+            title: 'some-pred',
+            category: 'Functional',
+            linkName: 'some-pred',
+            clojureDocs: null,
+            returns: {
+                type: 'function',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                fns: {
+                    type: 'function',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['fn'] },
+                { argumentNames: ['fn', 'fns'] },
+            ],
+            description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
+            examples: [
+                '((some-pred string? #(> (count %1) 3)) "Albert" "Mojir")',
+                '((some-pred string? #(> (count %1) 3)) :A :M)',
+                '((some-pred string? #(> (count %1) 3)) :A [1 2 3])',
+                '((some-pred string? #(> (count %1) 3)) [1 2 3] [2])',
+            ],
+        },
+        'fnil': {
+            title: 'fnil',
+            category: 'Functional',
+            linkName: 'fnil',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                arg: {
+                    type: 'any',
+                },
+                args: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'arg'] },
+                { argumentNames: ['fn', 'arg', 'args'] },
+            ],
+            description: 'Takes a function $fn, and returns a function that calls $fn, replacing a nil argument to the corresponding argument.',
+            examples: [
+                '((fnil + 1 2) 0 0)',
+                '((fnil + 1 2) nil 0)',
+                '((fnil + 1 2) 0 nil)',
+                '((fnil + 1 2) nil nil)',
+                '((fnil + 1 2) nil nil 3 4)',
+            ],
+        },
+    };
+
+    var arrayReference = {
+        array: {
+            title: 'array',
+            category: 'Array',
+            linkName: 'array',
+            clojureDocs: 'vector',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                values: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['values'] },
+            ],
+            description: 'Makes new array from $values.',
+            examples: [
+                '(array 1 2 3)',
+                '(array (array nil false true))',
+                '[]',
+                '[1 2 3]',
+                '[[nil false true]]',
+                '[]',
+                '([1 2 3] 1)',
+                '([1 2 3 4 5 6 7 8 9] 3)',
+            ],
+        },
+        range: {
+            title: 'range',
+            category: 'Array',
+            linkName: 'range',
+            returns: {
+                type: 'number',
+                array: true,
+            },
+            args: {
+                start: {
+                    type: 'number',
+                },
+                end: {
+                    type: 'number',
+                },
+                step: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['end'] },
+                { argumentNames: ['start', 'end'] },
+                { argumentNames: ['start', 'end', 'step'] },
+            ],
+            description: "$range creates an array with a range of numbers from $start to $end (exclusive), by $step.\n\n$start defaults to 0.  \n$step defaults to 1.",
+            examples: [
+                '(range 4)',
+                '(range 1 4)',
+                '(range 0.4 4.9)',
+                "\n(range\n  0.25 ;; start value\n  1    ;; end value (exclusive)\n  0.25 ;; step value\n)",
+            ],
+        },
+        repeat: {
+            title: 'repeat',
+            category: 'Array',
+            linkName: 'repeat',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                },
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [{
+                    argumentNames: ['n', 'x'],
+                }],
+            description: 'Returns an array with $x repeated $n times.',
+            examples: [
+                '(repeat 3 10)',
+                '(repeat 0 10)',
+                '(repeat 5 "Albert")',
+            ],
+        },
+        flatten: {
+            title: 'flatten',
+            category: 'Array',
+            linkName: 'flatten',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                x: {
+                    type: ['array', 'any'],
+                    description: 'If $x is not an array, `[ ]` is returned.',
+                },
+            },
+            variants: [{
+                    argumentNames: ['x'],
+                }],
+            description: 'Takes a nested array $x and flattens it.',
+            examples: [
+                '(flatten [1 2 [3 4] 5])',
+                "\n(let [foo :bar]\n  (flatten\n    [1\n     \" 2 A \"\n     [foo [4 [:ABC]]] 6]))",
+                '(flatten 12)',
+            ],
+        },
+        mapcat: {
+            title: 'mapcat',
+            category: 'Array',
+            linkName: 'mapcat',
+            returns: {
+                type: 'collection',
+            },
+            args: {
+                f: {
+                    type: 'function',
+                },
+                colls: {
+                    type: 'collection',
+                    array: true,
+                },
+            },
+            variants: [{
+                    argumentNames: ['f', 'colls'],
+                }],
+            description: 'Returns the result of applying concat to the result of applying map to $f and $colls.',
+            examples: [
+                '(mapcat reverse [[3 2 1 0] [6 5 4] [9 8 7]])',
+                '(mapcat reverse [[3 2 1 0] [6 [5] 4] [9 8 7]])',
+                '(defn foo [n] [(- n 1) n (+ n 1)]) (mapcat foo [1 2 3])',
+                '(mapcat #(remove even? %1) [[1 2] [2 2] [2 3]])',
+            ],
+        },
+    };
+
+    var sequenceReference = {
+        'nth': {
+            title: 'nth',
+            category: 'Sequence',
+            linkName: 'nth',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'seq': {
+                    type: ['sequence', 'nil'],
+                },
+                'n': {
+                    type: 'integer',
+                },
+                'not-found': {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'n'] },
+                { argumentNames: ['seq', 'n', 'not-found'] },
+            ],
+            description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `nil`.',
+            examples: [
+                '(nth [1 2 3] 1)',
+                '(nth [1 2 3] 3)',
+                '(nth [1 2 3] -1)',
+                '(nth [1 2 3] 3 99)',
+                '(nth "A string" 1)',
+                '(nth "A string" 3)',
+                '(nth "A string" -3)',
+                '(nth "A string" 30 :X)',
+                '(nth nil 1)',
+                '(nth nil 1 "Default value")',
+            ],
+        },
+        'push': {
+            title: 'push',
+            category: 'Sequence',
+            linkName: 'push',
+            clojureDocs: null,
+            returns: {
+                type: 'sequence',
+                array: true,
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                    array: true,
+                },
+                values: {
+                    type: 'any',
+                    rest: true,
+                    description: 'At least one.',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'values'] },
+            ],
+            description: 'Returns copy of $seq with $values added to the end of it.',
+            examples: [
+                '(push [1 2 3] 4)',
+                '(push [1 2 3] 4 5 6)',
+                '(def l [1 2 3]) (push l 4) l',
+            ],
+        },
+        'pop': {
+            title: 'pop',
+            category: 'Sequence',
+            linkName: 'pop',
+            returns: {
+                type: ['sequence', 'nil'],
+                array: true,
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                    array: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns a copy of $seq with last element removed. If $seq is empty `nil` is returned.',
+            examples: [
+                '(pop [1 2 3])',
+                '(pop [])',
+            ],
+        },
+        'unshift': {
+            title: 'unshift',
+            category: 'Sequence',
+            linkName: 'unshift',
+            clojureDocs: null,
+            returns: {
+                type: 'sequence',
+                array: true,
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                    array: true,
+                },
+                values: {
+                    type: 'any',
+                    array: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'values'] },
+            ],
+            description: 'Returns copy of $seq with $values added to the beginning.',
+            examples: [
+                '(unshift [1 2 3] 4)',
+                '(unshift [1 2 3] 4 5 6)',
+                "\n(def l [1 2 3])\n(unshift l 4)\nl",
+            ],
+        },
+        'shift': {
+            title: 'shift',
+            category: 'Sequence',
+            linkName: 'shift',
+            clojureDocs: null,
+            returns: {
+                type: ['sequence', 'nil'],
+                array: true,
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                    array: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns a copy of $seq with first element removed. If $seq is empty `nil` is returned.',
+            examples: [
+                '(shift [1 2 3])',
+                '(shift [])',
+            ],
+        },
+        'slice': {
+            title: 'slice',
+            category: 'Sequence',
+            linkName: 'slice',
+            clojureDocs: null,
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                    array: true,
+                },
+                start: {
+                    type: 'integer',
+                    description: 'Defaults to `0`.',
+                },
+                end: {
+                    type: 'integer',
+                    description: 'Defaults lenght of sequence + 1.',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+                { argumentNames: ['seq', 'start'] },
+                { argumentNames: ['seq', 'start', 'end'] },
+            ],
+            description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $end (exclusive).',
+            examples: [
+                '(slice [1 2 3 4 5] 2 4)',
+                '(slice [1 2 3 4 5] 2)',
+            ],
+        },
+        'reductions': {
+            title: 'reductions',
+            category: 'Sequence',
+            linkName: 'reductions',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                    array: true,
+                },
+                start: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['fn', 'start', 'seq'] },
+            ],
+            description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $seq by $fn.',
+            examples: [
+                '(reductions + [1 2 3])',
+                '(reductions + 10 [1 2 3])',
+                '(reductions + 0 [])',
+                "\n(reductions\n  (fn [result value] (+ result (if (even? value) value 0)))\n  0\n  [1 2 3 4 5 6 7 8 9])",
+            ],
+        },
+        'reduce': {
+            title: 'reduce',
+            category: 'Sequence',
+            linkName: 'reduce',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+                start: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['fn', 'start', 'seq'] },
+            ],
+            description: 'Runs $fn function on each element of the $seq, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
+            examples: [
+                '(reduce + [1 2 3])',
+                '(reduce + 0 [1 2 3])',
+                '(reduce + 0 [])',
+                "\n(reduce\n  (fn [result value] (+ result (if (even? value) value 0)))\n  0\n  [1 2 3 4 5 6 7 8 9])",
+            ],
+        },
+        'reduce-right': {
+            title: 'reduce-right',
+            category: 'Sequence',
+            linkName: 'reduce-right',
+            clojureDocs: null,
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+                start: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['fn', 'start', 'seq'] },
+            ],
+            description: 'Runs $fn function on each element of the $seq (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
+            examples: [
+                '(reduce-right str [:A :B :C] "")',
+            ],
+        },
+        'map': {
+            title: 'map',
+            category: 'Sequence',
+            linkName: 'map',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Creates a new array populated with the results of calling $fn on every elements in $seq.',
+            examples: [
+                '(map str ["Albert" "Mojir" 42])',
+                '(map str [])',
+                '(map + [1 2 3] [1 2 3])',
+                '(map max [2 6 3] [2 4 7] [1 6 2])',
+            ],
+        },
+        'filter': {
+            title: 'filter',
+            category: 'Sequence',
+            linkName: 'filter',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Creates a new array with all elements that pass the test implemented by $fn.',
+            examples: [
+                "\n(filter\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
+                "\n(filter\n  (fn [x] (> x 10))\n  [5 10 15 20])",
+            ],
+        },
+        'position': {
+            title: 'position',
+            category: 'Sequence',
+            linkName: 'position',
+            clojureDocs: null,
+            returns: {
+                type: ['number', 'nil'],
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: ['sequence', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `nil` is returned.',
+            examples: [
+                "\n(position\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
+                "\n(position\n  (fn [x] (> x 10))\n  [5 10 15 20])",
+                "\n(position\n  (fn [x] (> x 100))\n  [5 10 15 20])",
+                "\n(position\n  (fn [x] (> x 100))\n  nil)",
+            ],
+        },
+        'index-of': {
+            title: 'index-of',
+            category: 'Sequence',
+            linkName: 'index-of',
+            clojureDocs: null,
+            returns: {
+                type: ['number', 'nil'],
+            },
+            args: {
+                seq: {
+                    type: ['sequence', 'nil'],
+                },
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'x'] },
+            ],
+            description: 'Returns the index of $x in $seq. If element is not present in $seq `nil` is returned.',
+            examples: [
+                '(index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
+                '(index-of [5 10 15 20] 15)',
+                '(index-of [5 10 15 20] 1)',
+                '(index-of nil 1)',
+            ],
+        },
+        'some': {
+            title: 'some',
+            category: 'Sequence',
+            linkName: 'some',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: ['sequence', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `nil` is returned.',
+            examples: [
+                "\n(some\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
+                "\n(some\n  (fn [x] (> x 10))\n  [5 10 15 20])",
+                "\n(some\n  (fn [x] (> x 10))\n  [1 2 3 4])",
+                "\n(some\n  (fn [x] (> x 10))\n  [])",
+                "\n(some\n  (fn [x] (> x 10))\n  nil)",
+            ],
+        },
+        'reverse': {
+            title: 'reverse',
+            category: 'Sequence',
+            linkName: 'reverse',
+            returns: {
+                type: ['sequence', 'nil'],
+            },
+            args: {
+                seq: {
+                    type: ['sequence', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
+            examples: [
+                '(reverse ["Albert" "Mojir" 160 [1 2]])',
+                '(reverse [])',
+                '(reverse "Albert")',
+                '(reverse nil)',
+            ],
+        },
+        'first': {
+            title: 'first',
+            category: 'Sequence',
+            linkName: 'first',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                seq: {
+                    type: ['sequence', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns the first element of $seq. If $seq is empty or `nil`, `nil` is returned.',
+            examples: [
+                '(first ["Albert" "Mojir" 160 [1 2]])',
+                '(first [])',
+                '(first nil)',
+            ],
+        },
+        'second': {
+            title: 'second',
+            category: 'Sequence',
+            linkName: 'second',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                seq: {
+                    type: ['sequence', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns the second element of $seq. If $seq has less than two elements or is `nil`, `nil` is returned.',
+            examples: [
+                '(second ["Albert" "Mojir" 160 [1 2]])',
+                '(second [1])',
+                '(second [])',
+                '(second nil)',
+            ],
+        },
+        'last': {
+            title: 'last',
+            category: 'Sequence',
+            linkName: 'last',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                seq: {
+                    type: ['sequence', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns the last element of $seq. If $seq is empty, `nil` is returned.',
+            examples: [
+                '(last ["Albert" "Mojir" 160 [1 2]])',
+                '(last [1 2])',
+                '(last [1])',
+                '(last [])',
+                '(last nil)',
+            ],
+        },
+        'rest': {
+            title: 'rest',
+            category: 'Sequence',
+            linkName: 'rest',
+            returns: {
+                type: ['sequence', 'nil'],
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: "If $seq is an array, returns a new array with all but the first element from $seq.\nIf $seq has less than two elements, an empty array is returned.\nFor string $seq returns all but the first characters in $seq.",
+            examples: [
+                '(rest ["Albert" "Mojir" 160 [1 2]])',
+                '(rest ["Albert"])',
+                '(rest [])',
+                '(rest "Albert")',
+                '(rest :A)',
+                '(rest "")',
+            ],
+        },
+        'nthrest': {
+            title: 'nthrest',
+            category: 'Sequence',
+            linkName: 'nthrest',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+                n: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'n'] },
+            ],
+            description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. For string $seq returns all but the first $n characters in $seq.',
+            examples: [
+                '(nthrest ["Albert" "Mojir" 160 [1 2]] 2)',
+                '(nthrest "Albert" 3)',
+                '(nthrest "Albert" 10)',
+                '(nthrest [] 0)',
+                '(nthrest "" 0)',
+            ],
+        },
+        'next': {
+            title: 'next',
+            category: 'Sequence',
+            linkName: 'next',
+            returns: {
+                type: ['sequence', 'nil'],
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `nil` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `nil` is returned.',
+            examples: [
+                '(next ["Albert" "Mojir" 160 [1 2]])',
+                '(next ["Albert"])',
+                '(next [])',
+                '(next "Albert")',
+                '(next :A)',
+                '(next "")',
+            ],
+        },
+        'nthnext': {
+            title: 'nthnext',
+            category: 'Sequence',
+            linkName: 'nthnext',
+            returns: {
+                type: ['sequence', 'nil'],
+                array: true,
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+                n: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'n'] },
+            ],
+            description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. If $seq has less or equal than $n elements, `nil` returned. For string $seq returns all but the first $n characters in $seq. If length of string $seq is less or equal than $n, `nil` is returned.',
+            examples: [
+                '(nthnext ["Albert" "Mojir" 160 [1 2]] 2)',
+                '(nthnext "Albert" 3)',
+                '(nthnext "Albert" 6)',
+                '(nthnext [] 0)',
+                '(nthnext "" 0)',
+            ],
+        },
+        'cons': {
+            title: 'cons',
+            category: 'Sequence',
+            linkName: 'cons',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'seq'] },
+            ],
+            description: 'Constructs a new array with $x as first element and $seq as the rest.',
+            examples: [
+                '(cons "Hi" ["Albert" "Mojir" 160 [1 2]])',
+                '(cons "Hi" [])',
+            ],
+        },
+        'take': {
+            title: 'take',
+            category: 'Sequence',
+            linkName: 'take',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+            ],
+            description: 'Constructs a new array/string with the $n first elements from $seq.',
+            examples: [
+                '(take 3 [1 2 3 4 5])',
+                '(take 0 [1 2 3 4 5])',
+                '(take 2 "Albert")',
+                '(take 50 "Albert")',
+            ],
+        },
+        'take-last': {
+            title: 'take-last',
+            category: 'Sequence',
+            linkName: 'take-last',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+            ],
+            description: 'Constructs a new array with the $n last elements from $seq.',
+            examples: [
+                '(take-last 3 [1 2 3 4 5])',
+                '(take-last 0 [1 2 3 4 5])',
+            ],
+        },
+        'take-while': {
+            title: 'take-while',
+            category: 'Sequence',
+            linkName: 'take-while',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
+            examples: [
+                "\n(take-while\n  (fn [x] (< x 3))\n  [1 2 3 2 1])",
+                "\n(take-while\n  (fn [x] (> x 3))\n  [1 2 3 2 1])",
+            ],
+        },
+        'drop': {
+            title: 'drop',
+            category: 'Sequence',
+            linkName: 'drop',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+            ],
+            description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
+            examples: [
+                '(drop 3 [1 2 3 4 5])',
+                '(drop 0 [1 2 3 4 5])',
+                '(drop 2 "Albert")',
+                '(drop 50 "Albert")',
+            ],
+        },
+        'drop-last': {
+            title: 'drop-last',
+            category: 'Sequence',
+            linkName: 'drop-last',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                n: {
+                    type: 'integer',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+            ],
+            description: 'Constructs a new array with the $n last elements dropped from $seq.',
+            examples: [
+                '(drop-last 3 [1 2 3 4 5])',
+                '(drop-last 0 [1 2 3 4 5])',
+            ],
+        },
+        'drop-while': {
+            title: 'drop-while',
+            category: 'Sequence',
+            linkName: 'drop-while',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
+            examples: [
+                "\n(drop-while\n  (fn [x] (< x 3))\n  [1 2 3 2 1])",
+                "\n(drop-while\n  (fn [x] (> x 3))\n  [1 2 3 2 1])",
+            ],
+        },
+        'sort': {
+            title: 'sort',
+            category: 'Sequence',
+            linkName: 'sort',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns a new sequence with the elements from $seq sorted according to $fn. If no $fn is supplied, builtin `compare` will be used.',
+            examples: [
+                '(sort [3 1 2])',
+                "\n(sort\n  (fn [a b] (cond (< a b) -1 (> a b) 1 true -1))\n  [3 1 2])",
+                "\n(sort\n  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1))\n  [3 1 2])",
+            ],
+        },
+        'sort-by': {
+            title: 'sort-by',
+            category: 'Sequence',
+            linkName: 'sort-by',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                keyfn: {
+                    type: 'function',
+                },
+                comp: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'keyfn'] },
+                { argumentNames: ['seq', 'keyfn', 'comp'] },
+            ],
+            description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
+            examples: [
+                '(sort-by count ["Albert" "Mojir" "Nina"])',
+                '(sort-by lower-case #(compare %2 %1) "Albert")',
+            ],
+        },
+        'random-sample!': {
+            title: 'random-sample!',
+            category: 'Sequence',
+            linkName: 'random-sample_exclamation',
+            clojureDocs: 'random-sample',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                prob: {
+                    type: 'number',
+                    description: 'Probability of including an element from $seq. Between 0 and 1.',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['prob', 'seq'] },
+            ],
+            description: 'Each element from $seq has the probability $prob to be included in the result.',
+            examples: [
+                '(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])',
+                '(random-sample! 0.5 "Albert")',
+            ],
+        },
+        'rand-nth!': {
+            title: 'rand-nth!',
+            category: 'Sequence',
+            linkName: 'rand-nth_exclamation',
+            clojureDocs: 'rand-nth',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns a random element from $seq. Returns `nil` if $seq is empty.',
+            examples: [
+                '(rand-nth! [1 2 3 4 5 6 7 8 9 10])',
+                '(rand-nth! "Albert")',
+                '(rand-nth! [])',
+            ],
+        },
+        'shuffle!': {
+            title: 'shuffle!',
+            category: 'Sequence',
+            linkName: 'shuffle_exclamation',
+            clojureDocs: 'shuffle',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns a shuffled copy of $seq.',
+            examples: [
+                '(shuffle! [1 2 3 4 5 6 7 8 9 10])',
+                '(shuffle! "Albert Mojir")',
+                '(shuffle! [1 2])',
+                '(shuffle! [1])',
+                '(shuffle! [])',
+            ],
+        },
+        'distinct': {
+            title: 'distinct',
+            category: 'Sequence',
+            linkName: 'distinct',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns a copy of $seq with no duplicates.',
+            examples: [
+                '(distinct [1 2 3 1 3 5])',
+                '(distinct "Albert Mojir")',
+                '(distinct [])',
+                '(distinct "")',
+            ],
+        },
+        'remove': {
+            title: 'remove',
+            category: 'Sequence',
+            linkName: 'remove',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns a new sequence of items in $seq for witch ``(pred item)`` returns a falsy value.',
+            examples: [
+                '(remove even? [1 2 3 1 3 5])',
+                '(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")',
+            ],
+        },
+        'remove-at': {
+            title: 'remove-at',
+            category: 'Sequence',
+            linkName: 'remove-at',
+            clojureDocs: null,
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                n: {
+                    type: 'number',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+            ],
+            description: 'Returns a new sequence of all items in $seq except item at position $n.',
+            examples: [
+                '(remove-at 0 [1 2 3 1 3 5])',
+                '(remove-at -1 [1 2 3 1 3 5])',
+                '(remove-at 6 "Albert Mojir")',
+            ],
+        },
+        'split-at': {
+            title: 'split-at',
+            category: 'Sequence',
+            linkName: 'split-at',
+            returns: {
+                type: 'sequence',
+                array: true,
+            },
+            args: {
+                n: {
+                    type: 'number',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+            ],
+            description: 'Returns a pair of sequence ``[(take pos input) (drop pos input)]``.',
+            examples: [
+                '(split-at 2 [1 2 3 4 5])',
+                '(split-at 2 "Albert")',
+            ],
+        },
+        'split-with': {
+            title: 'split-with',
+            category: 'Sequence',
+            linkName: 'split-with',
+            returns: {
+                type: 'sequence',
+                array: true,
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns a pair of sequences ``[(take-while fn input) (drop-while fn input)]``.',
+            examples: [
+                '(split-with #(> %1 3) [1 2 3 4 5])',
+                '(split-with #(<= %1 :Z) "Albert")',
+            ],
+        },
+        'frequencies': {
+            title: 'frequencies',
+            category: 'Sequence',
+            linkName: 'frequencies',
+            returns: {
+                type: 'object',
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['seq'] },
+            ],
+            description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
+            examples: [
+                '(frequencies ["Albert" "Mojir" "Nina" "Mojir"])',
+                '(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")',
+            ],
+        },
+        'group-by': {
+            title: 'group-by',
+            category: 'Sequence',
+            linkName: 'group-by',
+            returns: {
+                type: 'object',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
+            examples: [
+                '(group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}])',
+                '(group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir")',
+            ],
+        },
+        'partition': {
+            title: 'partition',
+            category: 'Sequence',
+            linkName: 'partition',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                n: {
+                    type: 'number',
+                },
+                step: {
+                    type: 'number',
+                },
+                pad: {
+                    type: 'array',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+                { argumentNames: ['n', 'step', 'seq'] },
+                { argumentNames: ['n', 'step', 'pad', 'seq'] },
+            ],
+            description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
+            examples: [
+                '(partition 4 (range 20))',
+                '(partition 4 (range 22))',
+                '(partition 4 6 (range 20))',
+                '(partition 4 3 (range 20))',
+                '(partition 3 6 [:a] (range 20))',
+                '(partition 4 6 [:a] (range 20))',
+                '(partition 4 6 [:a :b :c :d] (range 20))',
+                '(partition 3 1 [:a :b :c :d :e :f])',
+                '(partition 10 [1 2 3 4])',
+                '(partition 10 10 [1 2 3 4])',
+                '(partition 10 10 [] [1 2 3 4])',
+                '(partition 10 10 nil [1 2 3 4])',
+                '(partition 5 "superfragilistic")',
+                '(partition 5 5 nil "superfragilistic")',
+                '(def foo [5 6 7 8]) (partition 2 1 foo foo)',
+            ],
+        },
+        'partition-all': {
+            title: 'partition-all',
+            category: 'Sequence',
+            linkName: 'partition-all',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                n: {
+                    type: 'number',
+                },
+                step: {
+                    type: 'number',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'seq'] },
+                { argumentNames: ['n', 'step', 'seq'] },
+            ],
+            description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
+            examples: [
+                '(partition-all 4 [0 1 2 3 4 5 6 7 8 9])',
+                '(partition 4 [0 1 2 3 4 5 6 7 8 9])',
+                '(partition-all 2 4 [0 1 2 3 4 5 6 7 8 9])',
+            ],
+        },
+        'partition-by': {
+            title: 'partition-by',
+            category: 'Sequence',
+            linkName: 'partition-by',
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                seq: {
+                    type: 'sequence',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'seq'] },
+            ],
+            description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
+            examples: [
+                '(partition-by #(= 3 %1) [1 2 3 4 5])',
+                '(partition-by odd? [1 1 1 2 2 3 3])',
+                '(partition-by identity "Leeeeeerrroyyy")',
+            ],
+        },
+    };
+
+    var mathReference = { '+': {
+            title: '+',
+            category: 'Math',
+            linkName: '_plus',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                xs: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['xs'] },
+            ],
+            description: 'Computes sum of $xs.',
+            examples: ['(+)', '(+ 1)', '(+ 2 4)', '(+ 1 2 3 4)', '(+ (+ 2 3) (+ 5 6))'],
+        }, '-': {
+            title: '-',
+            category: 'Math',
+            linkName: '_minus',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                xs: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['xs'] },
+            ],
+            description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
+            examples: ['(-)', '(- 1)', '(- 2 4)', '(- 4 3 2 1)'],
+        }, '*': {
+            title: '*',
+            category: 'Math',
+            linkName: '_star',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                xs: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['xs'] },
+            ],
+            description: 'Computes product of $xs.',
+            examples: ['(*)', '(* 2)', '(* 2 4)', '(* 1 2 3 4)'],
+        }, '/': {
+            title: '/',
+            category: 'Math',
+            linkName: '_slash',
+            clojureDocs: '_fs',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                xs: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['xs'] },
+            ],
+            description: 'Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining $xs.',
+            examples: ['(/)', '(/ 2)', '(/ 2 4)', '(/ 4 3 2 1)'],
+        }, 'mod': {
+            title: 'mod',
+            category: 'Math',
+            linkName: 'mod',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'number',
+                },
+                b: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Modulus of `dividend` and `divisor`. Truncates toward negative infinity.',
+            examples: ['(mod 5 3)', '(mod 5.2 3.1)', '(mod -5 3)', '(mod 5 -3)', '(mod -5 -3)'],
+        }, 'rem': {
+            title: 'rem',
+            category: 'Math',
+            linkName: 'rem',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'number',
+                },
+                b: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Remainder of dividing `dividend` and `divisor`.',
+            examples: ['(rem 5 3)', '(rem 5.2 3.1)', '(rem -5 3)', '(rem 5 -3)', '(rem -5 -3)'],
+        }, 'quot': {
+            title: 'quot',
+            category: 'Math',
+            linkName: 'quot',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'number',
+                },
+                b: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Quotient of dividing `dividend` and `divisor`.',
+            examples: ['(quot 5 3)', '(quot 5.2 3.1)', '(quot -5 3)', '(quot 5 -3)', '(quot -5 -3)'],
+        }, 'inc': {
+            title: 'inc',
+            category: 'Math',
+            linkName: 'inc',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Adds one to $x.',
+            examples: ['(inc 0)', '(inc 1)', '(inc 100.1)'],
+        }, 'dec': {
+            title: 'dec',
+            category: 'Math',
+            linkName: 'dec',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Subtracts one from $x.',
+            examples: ['(dec 0)', '(dec 1)', '(dec 100.1)'],
+        }, 'sqrt': {
+            title: 'sqrt',
+            category: 'Math',
+            linkName: 'sqrt',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Computes square root of $x.',
+            examples: ['(sqrt 0)', '(sqrt 9)', '(sqrt 2)'],
+        }, 'cbrt': {
+            title: 'cbrt',
+            category: 'Math',
+            linkName: 'cbrt',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Computes cube root of $x.',
+            examples: ['(cbrt 0)', '(cbrt 27)', '(cbrt 2)', '(cbrt 1)'],
+        }, 'pow': {
+            title: 'pow',
+            category: 'Math',
+            linkName: 'pow',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'number',
+                },
+                b: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Computes returns $a raised to the power of $b.',
+            examples: ['(pow 2 3)', '(pow 2 0)', '(pow 2 -3)', '(pow -2 3)', '(pow -2 -3)'],
+        }, 'exp': {
+            title: 'exp',
+            category: 'Math',
+            linkName: 'exp',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Computes `e` rasied to the power of $x.',
+            examples: ['(exp 3)', '(exp 0)', '(exp -3)', '(exp 3)'],
+        }, 'round': {
+            title: 'round',
+            category: 'Math',
+            linkName: 'round',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+                decimals: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'decimals'] },
+            ],
+            description: 'Returns rounded $x. If $decimals is provided it return a number with that many decimals.',
+            examples: [
+                '(round 2)',
+                '(round 2.49)',
+                '(round 2.5)',
+                '(round -2.49)',
+                '(round -2.5)',
+                '(round -2.501)',
+                '(round 1.23456789 4)',
+            ],
+        }, 'trunc': {
+            title: 'trunc',
+            category: 'Math',
+            linkName: 'trunc',
+            clojureDocs: null,
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the integer part of $x by removing any fractional digits.',
+            examples: ['(trunc 2)', '(trunc 2.49)', '(trunc 2.5)', '(trunc -2.49)', '(trunc -2.5)', '(trunc -2.501)'],
+        }, 'floor': {
+            title: 'floor',
+            category: 'Math',
+            linkName: 'floor',
+            clojureDocs: null,
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the largest `integer` less than or equal to $x.',
+            examples: ['(floor 2)', '(floor 2.49)', '(floor 2.5)', '(floor -2.49)', '(floor -2.5)', '(floor -2.501)'],
+        }, 'ceil': {
+            title: 'ceil',
+            category: 'Math',
+            linkName: 'ceil',
+            clojureDocs: null,
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the smallest `integer` larger than or equal to $x.',
+            examples: ['(ceil 2)', '(ceil 2.49)', '(ceil 2.5)', '(ceil -2.49)', '(ceil -2.5)', '(ceil -2.501)'],
+        }, 'min': {
+            title: 'min',
+            category: 'Math',
+            linkName: 'min',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                xs: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['xs'] },
+            ],
+            description: 'Returns the smallest number of the arguments.',
+            examples: ['(min 2 0 1)', '(min 2 -1 1)', '(min 2.5)'],
+        }, 'max': {
+            title: 'max',
+            category: 'Math',
+            linkName: 'max',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                xs: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['xs'] },
+            ],
+            description: 'Returns the largest number of the arguments.',
+            examples: ['(max 2 0 1)', '(max 2 -1 1)', '(max 2.5)'],
+        }, 'abs': {
+            title: 'abs',
+            category: 'Math',
+            linkName: 'abs',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the absolute value of $x.',
+            examples: ['(abs -2.3)', '(abs 0)', '(abs 2.5)'],
+        }, 'sign': {
+            title: 'sign',
+            category: 'Math',
+            linkName: 'sign',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `1` if $x `> 0`, `-1` if $x `< 0`, `0` if $x `= 0` or `-0` if $x `= -0`.',
+            examples: ['(sign -2.3)', '(sign -0)', '(sign 0)', '(sign 12312)'],
+        }, 'positive-infinity': {
+            title: 'positive-infinity',
+            category: 'Math',
+            linkName: 'positive-infinity',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing positive positive-infinity.',
+            examples: ['(positive-infinity)'],
+        }, 'negative-infinity': {
+            title: 'negative-infinity',
+            category: 'Math',
+            linkName: 'negative-infinity',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing negative infinity.',
+            examples: ['(negative-infinity)'],
+        }, 'max-safe-integer': {
+            title: 'max-safe-integer',
+            category: 'Math',
+            linkName: 'max-safe-integer',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing the maximum safe integer.',
+            examples: ['(max-safe-integer)'],
+        }, 'min-safe-integer': {
+            title: 'min-safe-integer',
+            category: 'Math',
+            linkName: 'min-safe-integer',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing the minimum safe integer.',
+            examples: ['(min-safe-integer)'],
+        }, 'max-value': {
+            title: 'max-value',
+            category: 'Math',
+            linkName: 'max-value',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing the maximum numeric value.',
+            examples: ['(max-value)'],
+        }, 'min-value': {
+            title: 'min-value',
+            category: 'Math',
+            linkName: 'min-value',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing the smallest positive numeric value.',
+            examples: ['(min-value)'],
+        }, 'epsilon': {
+            title: 'epsilon',
+            category: 'Math',
+            linkName: 'epsilon',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing the difference between 1 and the smallest floating point number greater than 1.',
+            examples: ['(epsilon)'],
+        }, 'nan': {
+            title: 'nan',
+            category: 'Math',
+            linkName: 'nan',
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns a number representing Not-A-Number.',
+            examples: ['(nan)'],
+        }, 'e': {
+            title: 'e',
+            category: 'Math',
+            linkName: 'e',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns Euler\'s number, the base of natural logarithms, e.',
+            examples: ['(e)'],
+        }, 'pi': {
+            title: 'pi',
+            category: 'Math',
+            linkName: 'pi',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns Pi, the ratio of the circumference of a circle to its diameter.',
+            examples: ['(pi)'],
+        }, 'log': {
+            title: 'log',
+            category: 'Math',
+            linkName: 'log',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the natural logarithm (base e) of $x.',
+            examples: ['(log 0.01)', '(log (exp 12))', '(log 2.5)'],
+        }, 'log2': {
+            title: 'log2',
+            category: 'Math',
+            linkName: 'log2',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the base `2` logarithm of a number.',
+            examples: ['(log2 0.01)', '(log2 (pow 2 12))', '(log2 2.5)'],
+        }, 'log10': {
+            title: 'log10',
+            category: 'Math',
+            linkName: 'log10',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the `10` logarithm of a number.',
+            examples: ['(log10 0.01)', '(log10 (pow 10 12))', '(log10 2.5)'],
+        }, 'rand!': {
+            title: 'rand!',
+            category: 'Math',
+            linkName: 'rand_exclamation',
+            clojureDocs: 'rand',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                    description: 'Positive number',
+                },
+            },
+            variants: [
+                { argumentNames: [] },
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns a semi random number between `0` (inclusive) and $x (default 1) (exclusive).',
+            examples: ['(rand! 1)', '(rand! 0.01)', '(rand! 2.5)'],
+        }, 'rand-int!': {
+            title: 'rand-int!',
+            category: 'Math',
+            linkName: 'rand-int_exclamation',
+            clojureDocs: 'rand-int',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                    description: 'Positive number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns a semi random integer between `0` (inclusive) and $x (exclusive).',
+            examples: ['(rand-int! 1)', '(rand-int! 10.12)', '(rand-int! 123)'],
+        }, 'sin': {
+            title: 'sin',
+            category: 'Math',
+            linkName: 'sin',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the sine of $x. $x must be specified in radians.',
+            examples: ['(sin 0)', '(sin 1)', '(sin (pi))', '(sin -0.5)'],
+        }, 'cos': {
+            title: 'cos',
+            category: 'Math',
+            linkName: 'cos',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the cosine of $x. $x must be specified in radians.',
+            examples: ['(cos 0)', '(cos 1)', '(cos (pi))', '(cos -0.5)'],
+        }, 'tan': {
+            title: 'tan',
+            category: 'Math',
+            linkName: 'tan',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the tangent of $x. $x must be specified in radians.',
+            examples: ['(tan 0)', '(tan 1)', '(tan (pi))', '(tan -0.5)'],
+        }, 'asin': {
+            title: 'asin',
+            category: 'Math',
+            linkName: 'asin',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the arcsine (in radians) of $x.',
+            examples: ['(asin 0)', '(asin 1)', '(asin -0.5)'],
+        }, 'acos': {
+            title: 'acos',
+            category: 'Math',
+            linkName: 'acos',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the arccosine (in radians) of $x.',
+            examples: ['(acos 0)', '(acos 1)', '(acos -0.5)'],
+        }, 'atan': {
+            title: 'atan',
+            category: 'Math',
+            linkName: 'atan',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the arctangent (in radians) of $x.',
+            examples: ['(atan 0)', '(atan 1)', '(atan -0.5)'],
+        }, 'sinh': {
+            title: 'sinh',
+            category: 'Math',
+            linkName: 'sinh',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the hyperbolic sine of $x.',
+            examples: ['(sinh 0)', '(sinh 1)', '(sinh -0.5)'],
+        }, 'cosh': {
+            title: 'cosh',
+            category: 'Math',
+            linkName: 'cosh',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the hyperbolic cosine of $x.',
+            examples: ['(cosh 0)', '(cosh 1)', '(cosh -0.5)'],
+        }, 'tanh': {
+            title: 'tanh',
+            category: 'Math',
+            linkName: 'tanh',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the hyperbolic tangent of $x.',
+            examples: ['(tanh 0)', '(tanh 1)', '(tanh -0.5)', '(tanh 50)'],
+        }, 'asinh': {
+            title: 'asinh',
+            category: 'Math',
+            linkName: 'asinh',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the hyperbolic arcsine of $x.',
+            examples: ['(asinh 0)', '(asinh 0.9)', '(asinh -0.5)'],
+        }, 'acosh': {
+            title: 'acosh',
+            category: 'Math',
+            linkName: 'acosh',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the hyperbolic arccosine of $x.',
+            examples: ['(acosh 1)', '(acosh 2)', '(acosh 100)'],
+        }, 'atanh': {
+            title: 'atanh',
+            category: 'Math',
+            linkName: 'atanh',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns the hyperbolic arctangent of $x.',
+            examples: ['(atanh 0)', '(atanh 0.9)', '(atanh -0.5)'],
+        } };
+
+    var miscReference = {
+        'not=': {
+            title: 'not=',
+            category: 'Misc',
+            linkName: 'not_equal',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+                ys: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(not= a b)` is same as `(not (= a b))`.',
+            examples: ['(not= 3)', '(not= 3 2)', '(not= :3 3)', '(not= 3 3 2)', '(not= :3 :2 :1 :0)', '(not= 0 -0)'],
+        },
+        '=': {
+            title: '=',
+            category: 'Misc',
+            linkName: '_equal',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+                ys: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Compares `values` according to \'equal\' predicate. Result is `true` if every specified value is equal to each other, otherwise result is `false`.',
+            examples: ['(= 1 1)', '(= 1.01 1)', '(= :1 1)', '(= :2 :2 :2 :2)', '(= 2 2 1 2)'],
+        },
+        '<': {
+            title: '<',
+            category: 'Misc',
+            linkName: '_lt',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+                ys: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Returns `true` if the number $x and $ys are in increasing order, `false` otherwise.',
+            examples: ['(< 0 1)', '(< 1 1.01)', '(< 1 1)', '(< 1 2 2 3)', '(< :a :b)', '(< [9] [1 2])'],
+        },
+        '>': {
+            title: '>',
+            category: 'Misc',
+            linkName: '_gt',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+                ys: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Returns `true` if the number $x and $ys are in decreasing order, `false` otherwise.',
+            examples: ['(> 1 0)', '(> 1.01 1)', '(> 1 1)', '(> 4 3 2 1)', '(> 3 2 2 1)'],
+        },
+        '<=': {
+            title: '<=',
+            category: 'Misc',
+            linkName: '_lte',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+                ys: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
+            examples: ['(<= 0 1)', '(<= 1 1.01)', '(<= 1 1)', '(<= 1 2 3 4)', '(<= 1 2 2 3)'],
+        },
+        '>=': {
+            title: '>=',
+            category: 'Misc',
+            linkName: '_gte',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+                ys: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
+            examples: ['(>= 1 0)', '(>= 1.01 1)', '(>= 1 1)', '(>= 4 3 2 1)', '(>= 3 2 2 1)'],
+        },
+        'not': {
+            title: 'not',
+            category: 'Misc',
+            linkName: 'not',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
+            examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
+        },
+        'write!': {
+            title: 'write!',
+            category: 'Misc',
+            linkName: 'write_exclamation',
+            clojureDocs: null,
+            returns: {
+                type: 'any',
+            },
+            args: {
+                values: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['values'] },
+            ],
+            description: 'It logs the $values and then returns the last argument. If called with no arguments `nil` is returned.',
+            examples: [
+                '(write! "A string")',
+                '(write! 100 "items")',
+                '(write! (object :a 10))',
+                '(write! [:a :b :c])',
+                '(write! #"^start")',
+                '(write! nil true false)',
+            ],
+        },
+        'inst-ms!': {
+            title: 'inst-ms!',
+            category: 'Misc',
+            linkName: 'inst-ms_exclamation',
+            clojureDocs: 'inst-ms',
+            returns: {
+                type: 'number',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns milliseconds elapsed since the UNIX epoch.',
+            examples: ['(inst-ms!)'],
+        },
+        'iso-date-time->inst-ms': {
+            title: 'iso-date-time->inst-ms',
+            category: 'Misc',
+            linkName: 'iso-date-time-_gtinst-ms',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                iso: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['iso'] },
+            ],
+            description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
+            examples: [
+                '(iso-date-time->inst-ms "2022-04-12T09:37:10.899Z")',
+                '(iso-date-time->inst-ms "1980-01-01")',
+            ],
+        },
+        'inst-ms->iso-date-time': {
+            title: 'inst-ms->iso-date-time',
+            category: 'Misc',
+            linkName: 'inst-ms-_gtiso-date-time',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                ms: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['ms'] },
+            ],
+            description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
+            examples: [
+                '(inst-ms->iso-date-time 1649756230899)',
+                '(inst-ms->iso-date-time 0)',
+            ],
+        },
+        'boolean': {
+            title: 'boolean',
+            category: 'Misc',
+            linkName: 'boolean',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Coerces $x to boolean.',
+            examples: [
+                '(boolean 0)',
+                '(boolean 1)',
+                '(boolean nil)',
+                '(boolean "Albert")',
+            ],
+        },
+        'compare': {
+            title: 'compare',
+            category: 'Misc',
+            linkName: 'compare',
+            returns: {
+                type: 'number',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Compares two values. Returns `-1` if $a < $b, `1` if $a > $b and `0` if $a and $b have the same sort order.',
+            examples: [
+                '(compare 0 1)',
+                '(compare "Albert" "Mojir")',
+                '(compare 1 :1)',
+                '(compare [1 2 3] [2 3])',
+                '(compare [1 2 3] [2 3 4])',
+                '(compare {:a 1 :b 2} {:a 1})',
+                '(compare {:a 1} [2 3])',
+                '(compare + -)',
+            ],
+        },
+        'lits-version!': {
+            title: 'lits-version!',
+            category: 'Misc',
+            linkName: 'lits-version_exclamation',
+            returns: {
+                type: 'string',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns the lits version.',
+            examples: ['(lits-version!)'],
+        },
+        'uuid!': {
+            title: 'uuid!',
+            category: 'Misc',
+            linkName: 'uuid_exclamation',
+            returns: {
+                type: 'string',
+            },
+            args: {},
+            variants: [
+                { argumentNames: [] },
+            ],
+            description: 'Returns random UUID string.',
+            examples: ['(uuid!)'],
+        },
+        'equal?': {
+            title: 'equal?',
+            category: 'Misc',
+            linkName: 'equal_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+            ],
+            description: 'Returns true if $a and $b are structually equal.',
+            examples: [
+                '(equal? {:a 10 :b 20} {:b 20 :a 10})',
+                '(equal? [1 true nil] [1 true nil])',
+                '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
+                '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
+                '(= 0.3 (+ 0.1 0.2))',
+                '(equal? 0.3 (+ 0.1 0.2))',
+            ],
+        },
+        'json-parse': {
+            title: 'json-parse',
+            category: 'Misc',
+            linkName: 'json-parse',
+            clojureDocs: null,
+            returns: {
+                type: 'any',
+            },
+            args: {
+                x: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `JSON.parse(`$x`)`.',
+            examples: [
+                '(json-parse "[1, 2, 3]")',
+            ],
+        },
+        'json-stringify': {
+            title: 'json-stringify',
+            category: 'Misc',
+            linkName: 'json-stringify',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+                indent: {
+                    type: 'integer',
+                    description: 'Number of spaces to use for indentation.',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'indent'] },
+            ],
+            description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
+            examples: [
+                '(json-stringify [1, 2, 3])',
+                '(json-stringify {:a {:b 10}} 2)',
+            ],
+        },
+    };
+
+    var assertReference = { 'assert': {
+            title: 'assert',
+            category: 'Assert',
+            linkName: 'assert',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                value: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['value'] },
+                { argumentNames: ['value', 'message'] },
+            ],
+            description: 'If $value is falsy it throws `AssertionError` with $message. If no $message is provided, message is set to $value.',
+            examples: ['(assert 0 "Expected a positive value")'],
+        }, 'assert=': {
+            title: 'assert=',
+            category: 'Assert',
+            linkName: 'assert_equal',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is not the same as $b it throws `AssertionError`.',
+            examples: [
+                '(assert= 0 1 "Expected same values")',
+                '(assert= 0 1)',
+                '(assert= 1 1)',
+            ],
+        }, 'assert-not=': {
+            title: 'assert-not=',
+            category: 'Assert',
+            linkName: 'assert-not_equal',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is the same as $b it throws `AssertionError`.',
+            examples: [
+                '(assert-not= 0 0 "Expected different values")',
+                '(assert-not= 0 0)',
+                '(assert-not= 0 1)',
+            ],
+        }, 'assert-equal': {
+            title: 'assert-equal',
+            category: 'Assert',
+            linkName: 'assert-equal',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is not deep equal to $b it throws `AssertionError`.',
+            examples: [
+                '(assert-equal { :a 1 } { :a 2 } "Expected equal values")',
+                '(assert-equal { :a 1 } { :a 2 })',
+                '(assert-equal { :a 1 } { :a 1 })',
+            ],
+        }, 'assert-not-equal': {
+            title: 'assert-not-equal',
+            category: 'Assert',
+            linkName: 'assert-not-equal',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is not deep equal to $b it throws `AssertionError`.',
+            examples: [
+                '(assert-not-equal { :a 2 } { :a 2 } "Expected different values")',
+                '(assert-not-equal { :a 2 } { :a 2 })',
+                '(assert-not-equal { :a 1 } { :a 2 })',
+            ],
+        }, 'assert>': {
+            title: 'assert>',
+            category: 'Assert',
+            linkName: 'assert_gt',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is not greater than $b it throws `AssertionError`.',
+            examples: [
+                '(assert> 0 1 "Expected greater value")',
+                '(assert> 0 0)',
+                '(assert> 1 0)',
+            ],
+        }, 'assert<': {
+            title: 'assert<',
+            category: 'Assert',
+            linkName: 'assert_lt',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is not less than $b it throws `AssertionError`.',
+            examples: [
+                '(assert< 1 0 "Expected smaller value value")',
+                '(assert< 1 1)',
+                '(assert< 0 1)',
+            ],
+        }, 'assert>=': {
+            title: 'assert>=',
+            category: 'Assert',
+            linkName: 'assert_gte',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is less than $b it throws `AssertionError`.',
+            examples: [
+                '(assert>= 0 1 "Expected greater value")',
+                '(assert>= 0 1)',
+                '(assert>= 1 1)',
+            ],
+        }, 'assert<=': {
+            title: 'assert<=',
+            category: 'Assert',
+            linkName: 'assert_lte',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                a: {
+                    type: 'any',
+                },
+                b: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'message'] },
+            ],
+            description: 'If $a is grater than $b it throws `AssertionError`.',
+            examples: [
+                '(assert<= 1 0 "Expected smaller value value")',
+                '(assert<= 1 0)',
+                '(assert<= 1 1)',
+            ],
+        }, 'assert-true': {
+            title: 'assert-true',
+            category: 'Assert',
+            linkName: 'assert-true',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                value: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['value'] },
+                { argumentNames: ['value', 'message'] },
+            ],
+            description: 'If $value is not `true` it throws `AssertionError`.',
+            examples: [
+                '(assert-true false "Expected true")',
+                '(assert-true false)',
+                '(assert-true true)',
+            ],
+        }, 'assert-false': {
+            title: 'assert-false',
+            category: 'Assert',
+            linkName: 'assert-false',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                value: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['value'] },
+                { argumentNames: ['value', 'message'] },
+            ],
+            description: 'If $value is not `false` it throws `AssertionError`.',
+            examples: [
+                '(assert-false true "Expected false")',
+                '(assert-false true)',
+                '(assert-false false)',
+            ],
+        }, 'assert-truthy': {
+            title: 'assert-truthy',
+            category: 'Assert',
+            linkName: 'assert-truthy',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                value: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['value'] },
+                { argumentNames: ['value', 'message'] },
+            ],
+            description: 'If $value is not `truthy` it throws `AssertionError`.',
+            examples: [
+                '(assert-truthy false "Expected truthy")',
+                '(assert-truthy false)',
+                '(assert-truthy 0)',
+                '(assert-truthy nil)',
+                '(assert-truthy "")',
+                '(assert-truthy true)',
+                '(assert-truthy 1)',
+                '(assert-truthy :x)',
+                '(assert-truthy [])',
+                '(assert-truthy {})',
+            ],
+        }, 'assert-falsy': {
+            title: 'assert-falsy',
+            category: 'Assert',
+            linkName: 'assert-falsy',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                value: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['value'] },
+                { argumentNames: ['value', 'message'] },
+            ],
+            description: 'If $value is not `falsy` it throws `AssertionError`.',
+            examples: [
+                '(assert-falsy true "Expected falsy")',
+                '(assert-falsy :x)',
+                '(assert-falsy [])',
+                '(assert-falsy {})',
+                '(assert-falsy 1)',
+                '(assert-falsy false)',
+                '(assert-falsy 0)',
+                '(assert-falsy nil)',
+                '(assert-falsy "")',
+            ],
+        }, 'assert-nil': {
+            title: 'assert-nil',
+            category: 'Assert',
+            linkName: 'assert-nil',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                value: {
+                    type: 'any',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['value'] },
+                { argumentNames: ['value', 'message'] },
+            ],
+            description: 'If $value is not `nil` it throws `AssertionError`.',
+            examples: [
+                '(assert-nil nil)',
+                '(assert-nil true "Expected nil")',
+                '(assert-nil :x)',
+                '(assert-nil [])',
+                '(assert-nil {})',
+                '(assert-nil 1)',
+                '(assert-nil false)',
+                '(assert-nil 0)',
+                '(assert-nil "")',
+            ],
+        }, 'assert-throws': {
+            title: 'assert-throws',
+            category: 'Assert',
+            linkName: 'assert-throws',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn'] },
+                { argumentNames: ['fn', 'message'] },
+            ],
+            description: 'If $fn does not throw, it throws `AssertionError`.',
+            examples: ['(assert-throws #(throw "Error"))', '(assert-throws #(identity "Error"))'],
+        }, 'assert-throws-error': {
+            title: 'assert-throws-error',
+            category: 'Assert',
+            linkName: 'assert-throws-error',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                'fn': {
+                    type: 'function',
+                },
+                'error-message': {
+                    type: 'string',
+                },
+                'message': {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['value', 'error-message'] },
+                { argumentNames: ['value', 'error-message', 'message'] },
+            ],
+            description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
+            examples: [
+                '(assert-throws-error #(throw :Error) :Error)',
+                '(assert-throws-error #(throw "Something else") :Error "Hej alla barn")',
+                '(assert-throws-error #(identity :Error) :Error)',
+            ],
+        }, 'assert-not-throws': {
+            title: 'assert-not-throws',
+            category: 'Assert',
+            linkName: 'assert-not-throws',
+            clojureDocs: null,
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                message: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['fn'] },
+                { argumentNames: ['fn', 'message'] },
+            ],
+            description: 'If $fn throws, it throws `AssertionError`.',
+            examples: ['(assert-not-throws #(identity "Error"))', '(assert-not-throws #(throw "Error"))'],
+        } };
+
+    var objectReference = {
+        'dissoc': {
+            title: 'dissoc',
+            category: 'Object',
+            linkName: 'dissoc',
+            returns: {
+                type: 'object',
+            },
+            args: {
+                obj: {
+                    type: 'object',
+                },
+                key: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['obj', 'key'] },
+            ],
+            description: 'Return shallow copy of $obj with $key deleted.',
+            examples: [
+                '(dissoc (object :x 10 :y 20) :x)',
+                '(dissoc { :x 10 } :y)',
+                "\n(def o { :a 5 }) (dissoc o :a)\no",
+            ],
+        },
+        'object': {
+            title: 'object',
+            category: 'Object',
+            linkName: 'object',
+            clojureDocs: null,
+            returns: {
+                type: 'object',
+            },
+            args: {
+                kvps: {
+                    type: 'any',
+                    rest: true,
+                    description: 'key - value pairs, where key is a string',
+                },
+            },
+            variants: [
+                { argumentNames: ['kvps'] },
+            ],
+            description: 'Constructs a new object. Object members are created from the $kvps key-value pairs. Requires an even number of arguments.',
+            examples: [
+                '(object)',
+                '(object :x 10 :y true :z "A string")',
+                '{}',
+                '{:a 1 :b 2}',
+            ],
+        },
+        'keys': {
+            title: 'keys',
+            category: 'Object',
+            linkName: 'keys',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                obj: {
+                    type: 'object',
+                },
+            },
+            variants: [
+                { argumentNames: ['obj'] },
+            ],
+            description: 'Returns array of all keys in $obj.',
+            examples: [
+                '(keys (object))',
+                '(keys (object :x 10 :y true :z "A string"))',
+            ],
+        },
+        'vals': {
+            title: 'vals',
+            category: 'Object',
+            linkName: 'vals',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                obj: {
+                    type: 'object',
+                },
+            },
+            variants: [
+                { argumentNames: ['obj'] },
+            ],
+            description: 'Returns array of all values in $obj.',
+            examples: [
+                '(vals (object))',
+                '(vals (object :x 10 :y true :z "A string"))',
+            ],
+        },
+        'entries': {
+            title: 'entries',
+            category: 'Object',
+            linkName: 'entries',
+            clojureDocs: null,
+            returns: {
+                type: 'array',
+            },
+            args: {
+                obj: {
+                    type: 'object',
+                },
+            },
+            variants: [
+                { argumentNames: ['obj'] },
+            ],
+            description: 'Returns nested array of all key - value pairs in $obj.',
+            examples: [
+                '(entries (object))',
+                '(entries (object :x 10 :y true :z "A string"))',
+            ],
+        },
+        'find': {
+            title: 'find',
+            category: 'Object',
+            linkName: 'find',
+            returns: {
+                type: ['array', 'nil'],
+            },
+            args: {
+                obj: {
+                    type: 'object',
+                },
+                key: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['obj', 'key'] },
+            ],
+            description: 'Returns entry (key-value pair) for $key, or `nil` if $key not present in $obj.',
+            examples: [
+                '(find (object :a 1 :b 2) :b)',
+                '(find (object :a 1 :b 2) :c)',
+            ],
+        },
+        'merge': {
+            title: 'merge',
+            category: 'Object',
+            linkName: 'merge',
+            returns: {
+                type: 'object',
+            },
+            args: {
+                objs: {
+                    type: 'object',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['objs'] },
+            ],
+            description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.  \nIf no arguments are provided `nil` is returned.",
+            examples: [
+                '(merge (object :x 10) (object :y 20))',
+                '(merge (object :x 10) (object :x 15 :y 20))',
+            ],
+        },
+        'merge-with': {
+            title: 'merge-with',
+            category: 'Object',
+            linkName: 'merge-with',
+            returns: {
+                type: 'object',
+            },
+            args: {
+                fn: {
+                    type: 'function',
+                },
+                objs: {
+                    type: 'object',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['fn', 'objs'] },
+            ],
+            description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fn is used to calculate the new value.\n\nIf no arguments are provided `nil` is returned.",
+            examples: [
+                '(merge-with + (object :x 10) (object :y 20))',
+                '(merge-with + (object :x 10) (object :x 15 :y 20))',
+                '(merge-with - (object :x 10) (object :x 20) (object :x 30) (object :x 40))',
+            ],
+        },
+        'zipmap': {
+            title: 'zipmap',
+            category: 'Object',
+            linkName: 'zipmap',
+            returns: {
+                type: 'object',
+            },
+            args: {
+                keys: {
+                    type: 'string',
+                    array: true,
+                },
+                values: {
+                    type: 'any',
+                    array: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['keys', 'values'] },
+            ],
+            description: 'Returns a new object created by mapping $keys to $values.',
+            examples: [
+                '(zipmap [:a :b :c] [10 nil [1 2 3]])',
+                '(zipmap [:a :b :c] [1])',
+                '(zipmap [] [10 nil [1 2 3]])',
+            ],
+        },
+        'select-keys': {
+            title: 'select-keys',
+            category: 'Object',
+            linkName: 'select-keys',
+            returns: {
+                type: 'object',
+            },
+            args: {
+                obj: {
+                    type: 'object',
+                },
+                keys: {
+                    type: 'string',
+                    array: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['obj', 'keys'] },
+            ],
+            description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
+            examples: [
+                '(select-keys {:a 1 :b 2 :c 3} [:a :b])',
+                '(select-keys {:a 1} [:a :b])',
+            ],
+        },
+    };
+
+    var predicateReference = {
+        'boolean?': {
+            title: 'boolean?',
+            category: 'Predicate',
+            linkName: 'boolean_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is a `boolean`, otherwise `false`.',
+            examples: [
+                '(boolean? true)',
+                '(boolean? false)',
+                '(boolean? [1 2 3])',
+                '(boolean? 0)',
+                '(boolean? "A string")',
+            ],
+        },
+        'nil?': {
+            title: 'nil?',
+            category: 'Predicate',
+            linkName: 'nil_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is `nil`, otherwise `false`.',
+            examples: [
+                '(nil? nil)',
+                '(nil? false)',
+                '(nil? [1 2 3])',
+                '(nil? 0)',
+                '(nil? "A string")',
+            ],
+        },
+        'number?': {
+            title: 'number?',
+            category: 'Predicate',
+            linkName: 'number_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is a number, otherwise `false`.',
+            examples: [
+                '(number? 0)',
+                '(number? 2)',
+                '(number? -0.12)',
+                '(number? false)',
+                '(number? [1 2 3])',
+                '(number? "A string")',
+            ],
+        },
+        'string?': {
+            title: 'string?',
+            category: 'Predicate',
+            linkName: 'string_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is a string, otherwise `false`.',
+            examples: [
+                '(string? "")',
+                '(string? "A string")',
+                '(string? (if true "A string" false))',
+                '(string? false)',
+                '(string? [1 2 3])',
+                '(string? 100)',
+            ],
+        },
+        'function?': {
+            title: 'function?',
+            category: 'Predicate',
+            linkName: 'function_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is a function, otherwise `false`.',
+            examples: [
+                '(function? +)',
+                '(function? /)',
+                '(function? (fn [x y] (+ x y)))',
+                '(function? false)',
+                '(function? "false")',
+                '(function? [1 2 3])',
+            ],
+        },
+        'integer?': {
+            title: 'integer?',
+            category: 'Predicate',
+            linkName: 'integer_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is an integer, otherwise `false`.',
+            examples: [
+                '(integer? 0)',
+                '(integer? -12)',
+                '(integer? 42)',
+                '(integer? 10.1)',
+                '(integer? (fn [x y] (+ x y)))',
+                '(integer? false)',
+                '(integer? "false")',
+                '(integer? [1 2 3])',
+            ],
+        },
+        'array?': {
+            title: 'array?',
+            category: 'Predicate',
+            linkName: 'array_question',
+            clojureDocs: 'vector_q',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is an array, otherwise `false`.',
+            examples: [
+                '(array? [])',
+                '(array? [1 2 3])',
+                '(array? (object :a 10))',
+                '(array? 42)',
+                '(array? 10.1)',
+                '(array? (fn [x y] (+ x y)))',
+            ],
+        },
+        'object?': {
+            title: 'object?',
+            category: 'Predicate',
+            linkName: 'object_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is an object, otherwise `false`.',
+            examples: [
+                '(object? (object :a 10))',
+                '(object? (object))',
+                '(object? 42)',
+                '(object? 10.1)',
+                '(object? (fn [x y] (+ x y)))',
+                '(object? #"^start")',
+                '(object? "false")',
+                '(object? [1 2 3])',
+            ],
+        },
+        'coll?': {
+            title: 'coll?',
+            category: 'Predicate',
+            linkName: 'coll_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is a Coll i.e. an array, an object or a string, otherwise `false`.',
+            examples: [
+                '(coll? [])',
+                '(coll? [1 2 3])',
+                '(coll? (object :a 10))',
+                '(coll? "Albert")',
+                '(coll? 42)',
+                '(coll? 10.1)',
+                '(coll? (fn [x y] (+ x y)))',
+            ],
+        },
+        'seq?': {
+            title: 'seq?',
+            category: 'Predicate',
+            linkName: 'seq_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is a Seq i.e. an array or a string, otherwise `false`.',
+            examples: [
+                '(seq? [])',
+                '(seq? [1 2 3])',
+                '(seq? (object :a 10))',
+                '(seq? "Albert")',
+                '(seq? 42)',
+                '(seq? 10.1)',
+                '(seq? (fn [x y] (+ x y)))',
+            ],
+        },
+        'regexp?': {
+            title: 'regexp?',
+            category: 'Predicate',
+            linkName: 'regexp_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is a regexp, otherwise `false`.',
+            examples: [
+                '(regexp? (regexp "^start"))',
+                '(regexp? #"^start")',
+                '(regexp? -12)',
+                '(regexp? (object))',
+                '(regexp? 10.1)',
+                '(regexp? (fn [x y] (+ x y)))',
+                '(regexp? false)',
+                '(regexp? "false")',
+                '(regexp? [1 2 3])',
+            ],
+        },
+        'zero?': {
+            title: 'zero?',
+            category: 'Predicate',
+            linkName: 'zero_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is `0`, otherwise `false`.',
+            examples: [
+                '(zero? 0)',
+                '(zero? -0.0)',
+                '(zero? 1)',
+                '(zero? 0.1)',
+            ],
+        },
+        'pos?': {
+            title: 'pos?',
+            category: 'Predicate',
+            linkName: 'pos_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is greater than `0`, otherwise `false`.',
+            examples: [
+                '(pos? 0)',
+                '(pos? -0.0)',
+                '(pos? 1)',
+                '(pos? -0.1)',
+            ],
+        },
+        'neg?': {
+            title: 'neg?',
+            category: 'Predicate',
+            linkName: 'neg_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is less than `0`, otherwise `false`.',
+            examples: [
+                '(neg? 0)',
+                '(neg? -0.0)',
+                '(neg? 1)',
+                '(neg? -0.1)',
+            ],
+        },
+        'even?': {
+            title: 'even?',
+            category: 'Predicate',
+            linkName: 'even_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is even, otherwise `false`.',
+            examples: [
+                '(even? 0)',
+                '(even? -0.0)',
+                '(even? -1)',
+                '(even? 2.1)',
+            ],
+        },
+        'odd?': {
+            title: 'odd?',
+            category: 'Predicate',
+            linkName: 'odd_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is odd, otherwise `false`.',
+            examples: [
+                '(odd? 1.0)',
+                '(odd? 1.001)',
+                '(odd? -1)',
+                '(odd? 2.1)',
+            ],
+        },
+        'finite?': {
+            title: 'finite?',
+            category: 'Predicate',
+            linkName: 'finite_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is finite, otherwise `false`.',
+            examples: [
+                '(finite? 1.0)',
+                '(finite? (/ 1 0))',
+                '(finite? (/ -1 0))',
+                '(finite? (sqrt -1))',
+            ],
+        },
+        'nan?': {
+            title: 'nan?',
+            category: 'Predicate',
+            linkName: 'nan_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is NaN (not a number), otherwise `false`.',
+            examples: [
+                '(nan? 1.0)',
+                '(nan? (/ 1 0))',
+                '(nan? (/ -1 0))',
+                '(nan? (sqrt -1))',
+            ],
+        },
+        'negative-infinity?': {
+            title: 'negative-infinity?',
+            category: 'Predicate',
+            linkName: 'negative-infinity_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
+            examples: [
+                '(negative-infinity? 1.0)',
+                '(negative-infinity? (/ 1 0))',
+                '(negative-infinity? (/ -1 0))',
+                '(negative-infinity? (sqrt -1))',
+            ],
+        },
+        'positive-infinity?': {
+            title: 'positive-infinity?',
+            category: 'Predicate',
+            linkName: 'positive-infinity_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
+            examples: [
+                '(positive-infinity? 1.0)',
+                '(positive-infinity? (/ 1 0))',
+                '(positive-infinity? (/ -1 0))',
+                '(positive-infinity? (sqrt -1))',
+            ],
+        },
+        'false?': {
+            title: 'false?',
+            category: 'Predicate',
+            linkName: 'false_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is `true`, otherwise `false`.',
+            examples: [
+                '(false? false)',
+                '(false? true)',
+                '(false? 1)',
+                '(false? 0)',
+            ],
+        },
+        'true?': {
+            title: 'true?',
+            category: 'Predicate',
+            linkName: 'true_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is `true`, otherwise `false`.',
+            examples: [
+                '(true? false)',
+                '(true? true)',
+                '(true? 1)',
+                '(true? 0)',
+            ],
+        },
+        'empty?': {
+            title: 'empty?',
+            category: 'Predicate',
+            linkName: 'empty_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: ['collection', 'string', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `true` if $x is empty or `nil`, otherwise `false`.',
+            examples: [
+                '(empty? [])',
+                '(empty? [1 2 3])',
+                '(empty? {})',
+                '(empty? {:a 2})',
+                '(empty? "")',
+                '(empty? "Albert")',
+                '(empty? nil)',
+            ],
+        },
+        'not-empty?': {
+            title: 'not-empty?',
+            category: 'Predicate',
+            linkName: 'not-empty_question',
+            clojureDocs: null,
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: ['collection', 'string', 'nil'],
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns `false` if $x is empty or `nil`, otherwise `true`.',
+            examples: [
+                '(not-empty? [])',
+                '(not-empty? [1 2 3])',
+                '(not-empty? {})',
+                '(not-empty? {:a 2})',
+                '(not-empty? "")',
+                '(not-empty? "Albert")',
+                '(not-empty? nil)',
+            ],
+        },
+    };
+
+    var regularExpressionReference = {
+        regexp: {
+            title: 'regexp',
+            category: 'Regular expression',
+            linkName: 'regexp',
+            clojureDocs: null,
+            returns: {
+                type: 'regexp',
+            },
+            args: {
+                pattern: {
+                    type: 'string',
+                },
+                flags: {
+                    type: 'string',
+                    description: 'Optional flags for the regular expression. Possible values are the same as Javascript RegExp takes.',
+                },
+            },
+            variants: [
+                { argumentNames: ['pattern'] },
+                { argumentNames: ['pattern', 'flags'] },
+            ],
+            description: 'Creates a RegExp from $pattern and $flags.',
+            examples: [
+                '(regexp "^\\s*(.*)$")',
+                '#"^\\s*(.*)$"',
+                '(regexp "albert" :i)',
+                '#"albert"ig',
+            ],
+        },
+        match: {
+            title: 'match',
+            category: 'Regular expression',
+            linkName: 'match',
+            clojureDocs: null,
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                r: {
+                    type: 'regexp',
+                },
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['r', 's'] },
+            ],
+            description: "Matches $s against regular expression $r.\nIf $s is a string and matches the regular expression, a `match`-array is returned, otherwise `nil` is returned.",
+            examples: [
+                '(match (regexp "^\\s*(.*)$") "  A string")',
+                '(match #"albert"i "My name is Albert")',
+                '(match #"albert"i "My name is Ben")',
+                '(match #"albert"i nil)',
+                '(match #"albert"i 1)',
+                '(match #"albert"i {})',
+            ],
+        },
+        replace: {
+            title: 'replace',
+            category: 'Regular expression',
+            linkName: 'replace',
+            clojureDocs: null,
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+                r: {
+                    type: 'regexp',
+                },
+                x: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s', 'r', 'x'] },
+            ],
+            description: 'Returns a new string with some or all matches of regular expression $r replaced by $x.',
+            examples: [
+                '(replace "Duck" (regexp :u) :i)',
+                '(replace "abcABC" (regexp :a "gi") "-")',
+                '(replace "abcABC" #"a"gi "-")',
+            ],
+        },
+    };
+
+    var specialExpressionsReference = {
+        'and': {
+            title: 'and',
+            category: 'Special expression',
+            linkName: 'and',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['expressions'] },
+            ],
+            description: "\nComputes logical `and` function. Evaluation of $expressions starts from left.\nAs soon as a `expression` evaluates to a falsy value, the result is returned.\n\nIf all expressions evaluate to truthy values, the value of the last expression is returned.",
+            examples: [
+                '(and 1 1)',
+                '(and (> 3 2) "string")',
+                '(and (< 3 2) "string")',
+                '(and true true true true)',
+                '(and true true 0 true)',
+            ],
+        },
+        'or': {
+            title: 'or',
+            category: 'Special expression',
+            linkName: 'or',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['expressions'] },
+            ],
+            description: "\nComputes logical `or` function. Evaluation of $expressions evaluation starts from left.\nAs soon as a `expression` evaluates to a truthy value, the result is returned.\n\nIf all expressions evaluate to falsy values, the value of the last expression is returned.",
+            examples: [
+                '(or 1 1)',
+                '(or (> 3 2) "string")',
+                '(or (< 3 2) "string")',
+                '(or true true true true)',
+                '(or 1 2 3 4)',
+            ],
+        },
+        'def': {
+            title: 'def',
+            category: 'Special expression',
+            linkName: 'def',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                n: {
+                    type: '*name',
+                },
+                value: {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'value'] },
+            ],
+            description: "Bind $value to variable $n.\n\nIf $n is already defined, an error is thrown.",
+            examples: [
+                '(def a (object))',
+                '(def a (object :x 10 :y true :z "A string"))',
+            ],
+        },
+        'defs': {
+            title: 'defs',
+            category: 'Special expression',
+            linkName: 'defs',
+            clojureDocs: null,
+            returns: {
+                type: 'any',
+            },
+            args: {
+                name: {
+                    type: '*expression',
+                },
+                value: {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['name', 'value'] },
+            ],
+            description: "\nCreates a variable with name set to $name evaluated and value set to $value.\n\nIf a variable with name $name is already defined, an error is thrown.",
+            examples: [
+                '(defs :a :b)',
+                "\n(defs (str :a :1) (object :x 10 :y true :z \"A string\"))\na1",
+                "\n(defs :a :b)\n(defs a :c)\nb",
+            ],
+        },
+        'let': {
+            title: 'let',
+            category: 'Special expression',
+            linkName: 'let',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                bindings: {
+                    type: '*binding',
+                    rest: true,
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['bindings', 'expressions'] },
+            ],
+            description: "\nBinds local variables. The variables lives only within $expressions.\nIt returns evaluation of the last expression in $expressions.",
+            examples: ["\n  (let [a (+ 1 2 3 4) \n        b (* 1 2 3 4)]\n    (write! a b))"],
+        },
+        'if-let': {
+            title: 'if-let',
+            category: 'Special expression',
+            linkName: 'if-let',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'binding': {
+                    type: '*binding',
+                },
+                'then-expr': {
+                    type: '*expression',
+                },
+                'else-expr': {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['binding', 'then-expr'] },
+                { argumentNames: ['binding', 'then-expr', 'else-expr'] },
+            ],
+            description: "\nBinds one local variable. If it evaluates to a truthy value\n$then-expr is executed with the variable accessable.\nIf the bound variable evaluates to false, the $else-expr is evaluated\n(without variable accessable).",
+            examples: [
+                "\n(if-let [a (> (count \"Albert\") 4)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
+                "\n(if-let [a (> (count \"Albert\") 10)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
+            ],
+        },
+        'when-let': {
+            title: 'when-let',
+            category: 'Special expression',
+            linkName: 'when-let',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                binding: {
+                    type: '*binding',
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['binding', 'expressions'] },
+            ],
+            description: "\nBinds one local variable. If it evaluates to a truthy value\n$expressions is executed with the variable accessable.\nIf the bound variable evaluates to a falsy value, `nil` is returned.",
+            examples: [
+                "\n(when-let [a (> (count \"Albert\") 4)]\n  (write! a))",
+            ],
+        },
+        'when-first': {
+            title: 'when-first',
+            category: 'Special expression',
+            linkName: 'when-first',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                binding: {
+                    type: '*binding',
+                    rest: true,
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['binding', 'expressions'] },
+            ],
+            description: 'When the binding value in $binding is a non empty sequence, the first element of that sequence (instead of the sequence itself) is bound to the variable.',
+            examples: [
+                "\n(when-first [x [1 2 3]]\n  (write! x)\n  x)",
+                "\n(when-first [x \"Albert\"]\n  (write! x)\n  x)",
+                "\n(when-first [x [0]]\n  (write! x)\n  x)",
+                "\n(when-first [x [nil]]\n  (write! x)\n  x)",
+                "\n(when-first [x []]\n  (write! x)\n  x)",
+            ],
+        },
+        'fn': {
+            title: 'fn',
+            category: 'Special expression',
+            linkName: 'fn',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                args: {
+                    type: '*arguments',
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['args', 'expressions'] },
+            ],
+            description: 'Creates a function. When called, evaluation of the last expression in the body is returned.',
+            examples: [
+                "\n(fn [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))",
+                "\n(\n  (fn [a b]\n    (sqrt\n      (+\n        (* a a)\n        (* b b))))\n  3\n  4)",
+            ],
+        },
+        'defn': {
+            title: 'defn',
+            category: 'Special expression',
+            linkName: 'defn',
+            returns: {
+                type: 'function',
+            },
+            args: {
+                n: {
+                    type: '*name',
+                },
+                args: {
+                    type: '*arguments',
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'args', 'expressions'] },
+            ],
+            description: 'Creates a named global function. When called, evaluation of the last expression in the body is returned.',
+            examples: [
+                "\n(defn hyp [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\nhyp",
+                "\n(defn hyp [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\n(hyp 3 4)",
+                "\n(defn sumOfSquares [& s]\n  (apply\n    +\n    (map\n      (fn [x] (* x x))\n      s)))\n(sumOfSquares 1 2 3 4 5)",
+            ],
+        },
+        'defns': {
+            title: 'defns',
+            category: 'Special expression',
+            linkName: 'defns',
+            clojureDocs: null,
+            returns: {
+                type: 'function',
+            },
+            args: {
+                name: {
+                    type: '*expression',
+                },
+                args: {
+                    type: '*arguments',
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['name', 'args', 'expressions'] },
+            ],
+            description: 'Creates a named global function with its name set to $name evaluated. When called, evaluation of the last expression in the body is returned.',
+            examples: [
+                "\n(defns \"hyp\" [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\nhyp",
+                "\n(defns\n  (str :h :y :p)\n  [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\n(hyp 3 4)",
+                "\n(defns \"sumOfSquares\" [& s]\n  (apply\n    +\n    (map\n      (fn [x] (* x x))\n      s)))\n(sumOfSquares 1 2 3 4 5)",
+            ],
+        },
+        'try': {
+            title: 'try',
+            category: 'Special expression',
+            linkName: 'try',
+            clojureDocs: null,
+            returns: {
+                type: 'any',
+            },
+            args: {
+                exp: {
+                    type: '*expression',
+                },
+                catch: {
+                    type: '*catch-expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['exp', 'catch'] },
+            ],
+            description: 'Executes $exp. If that throws, the $catch `body` gets executed. See examples for details.',
+            examples: [
+                "\n(try\n  (/ 2 4)\n  (catch error \"Oops!\"))",
+                "\n(try\n  (foo)\n  (catch error \"Oops!\"))",
+                "\n(try\n  (foo)\n  (catch error error))",
+            ],
+        },
+        'throw': {
+            title: 'throw',
+            category: 'Special expression',
+            linkName: 'throw',
+            clojureDocs: null,
+            returns: {
+                type: 'never',
+            },
+            args: {
+                expr: {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['expr'] },
+            ],
+            description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
+            examples: [
+                '(throw "You shall not pass!")',
+                '(throw (subs "You shall not pass!" 0 3))',
+            ],
+        },
+        'if': {
+            title: 'if',
+            category: 'Special expression',
+            linkName: 'if',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'test': {
+                    type: 'any',
+                },
+                'then-expr': {
+                    type: 'any',
+                },
+                'else-expr': {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['test', 'then-expr'] },
+                { argumentNames: ['test', 'then-expr', 'else-expr'] },
+            ],
+            description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is truthy. If $test is falsy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+            examples: [
+                '(if true (write! "TRUE") (write! "FALSE"))',
+                '(if false (write! "TRUE") (write! "FALSE"))',
+                '(if true (write! "TRUE"))',
+                '(if false (write! "TRUE"))',
+            ],
+        },
+        'if-not': {
+            title: 'if-not',
+            category: 'Special expression',
+            linkName: 'if-not',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                'test': {
+                    type: 'any',
+                },
+                'then-expr': {
+                    type: 'any',
+                },
+                'else-expr': {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['test', 'then-expr'] },
+                { argumentNames: ['test', 'then-expr', 'else-expr'] },
+            ],
+            description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+            examples: [
+                '(if-not true (write! "TRUE") (write! "FALSE"))',
+                '(if-not false (write! "TRUE") (write! "FALSE"))',
+                '(if-not true (write! "TRUE"))',
+                '(if-not false (write! "TRUE"))',
+            ],
+        },
+        'cond': {
+            title: 'cond',
+            category: 'Special expression',
+            linkName: 'cond',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                conds: {
+                    type: '*conditions',
+                },
+            },
+            variants: [
+                { argumentNames: ['conds'] },
+            ],
+            description: 'Used for branching. $conds are tested sequentially from the top. If no branch is tested truthy, `nil` is returned.',
+            examples: [
+                "\n(cond\n  false (write! \"FALSE\")\n  nil (write! \"nil\")\n  :else (write! \"TRUE\"))",
+                "\n(cond\n  false (write! \"FALSE\")\n  nil (write! \"nil\")\n  true (write! \"TRUE\"))",
+                "\n(cond\n  false (write! \"FALSE\")\n  nil (write! \"nil\"))",
+            ],
+        },
+        'when': {
+            title: 'when',
+            category: 'Special expression',
+            linkName: 'when',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                test: {
+                    type: '*expression',
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['test', 'expressions'] },
+            ],
+            description: "If $test yields a thruthy value, the expressions are evaluated\nand the value returned by the last expression is returned.\nOtherwise, if $test yields a falsy value, the expressions are not evaluated,\nand `nil` is returned. If no $expressions are provided, `nil` is returned.",
+            examples: [
+                "(when true\n      (write! \"Hi\")\n      (write! \"There\"))",
+                "(when false\n      (write! \"Hi\")\n      (write! \"There\"))",
+                '(when true)',
+                '(when false)',
+            ],
+        },
+        'when-not': {
+            title: 'when-not',
+            category: 'Special expression',
+            linkName: 'when-not',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                test: {
+                    type: '*expression',
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['test', 'expressions'] },
+            ],
+            description: "If $test yields a falsy value, the expressions are evaluated\nand the value returned by the last `expression` is returned.\nOtherwise, if $test yields a truthy value, the $expressions are not evaluated,\nand `nil` is returned. If no `expression` is provided, `nil` is returned.",
+            examples: [
+                '(when-not true (write! "Hi") (write! "There"))',
+                '(when-not false (write! "Hi") (write! "There"))',
+                '(when-not true)',
+                '(when-not false)',
+            ],
+        },
+        'comment': {
+            title: 'comment',
+            category: 'Special expression',
+            linkName: 'comment',
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['expressions'] },
+            ],
+            description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `nil` is returned.',
+            examples: ['(comment (write! "Hi") (write! "Albert"))', '(comment)'],
+        },
+        'do': {
+            title: 'do',
+            category: 'Special expression',
+            linkName: 'do',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['expressions'] },
+            ],
+            description: 'Evaluates $expressions. Resulting value is the value of the last expression.',
+            examples: [
+                "\n(do \n  (write! \"Hi\")\n  (write! \"Albert\"))",
+                '(do)',
+            ],
+        },
+        'recur': {
+            title: 'recur',
+            category: 'Special expression',
+            linkName: 'recur',
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['expressions'] },
+            ],
+            description: 'Recursevly calls enclosing function or loop with its evaluated $expressions.',
+            examples: [
+                "\n(defn foo [n]\n  (write! n)\n  (when (not (zero? n))\n    (recur\n      (dec n))))\n(foo 3)",
+                "\n(\n  (fn [n]\n    (write! n)\n    (when (not (zero? n))\n      (recur\n        (dec n))))\n  3)",
+                "\n(\n  loop [n 3]\n    (write! n)\n    (when\n      (not (zero? n))\n      (recur (dec n))))",
+            ],
+        },
+        'loop': {
+            title: 'loop',
+            category: 'Special expression',
+            linkName: 'loop',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                bindings: {
+                    type: '*binding',
+                    rest: true,
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['bindings', 'expressions'] },
+            ],
+            description: 'Executes $expressions with initial $bindings. The $bindings will be replaced with the recur parameters for subsequent recursions.',
+            examples: [
+                "\n(loop [n 3]\n  (write! n)\n  (when\n    (not (zero? n))\n    (recur (dec n))))",
+                "\n(loop [n 3]\n  (write! n)\n  (if\n    (not (zero? n))\n    (recur (dec n))\n    n))",
+            ],
+        },
+        'time!': {
+            title: 'time!',
+            category: 'Special expression',
+            linkName: 'time_exclamation',
+            clojureDocs: 'time',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                expression: {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['expression'] },
+            ],
+            description: 'Prints the time it took to evaluate $expression. Returns $expression evaluated.',
+            examples: ["\n(defn fib [x]\n  (if\n    (<= x 2)\n    1\n    (+ \n      (fib (dec x))\n      (fib (- x 2)))))\n(time! (fib 20))"],
+        },
+        'doseq': {
+            title: 'doseq',
+            category: 'Special expression',
+            linkName: 'doseq',
+            returns: {
+                type: 'nil',
+            },
+            args: {
+                bindings: {
+                    type: '*for-binding',
+                    rest: true,
+                },
+                expr: {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['vars', 'expr'] },
+            ],
+            description: 'Same syntax as `for`, but returns `nil`. Use for side effects. Consumes less memory than `for`.',
+            examples: ['(doseq [x [1 2 4]] (write! x))'],
+        },
+        'for': {
+            title: 'for',
+            category: 'Special expression',
+            linkName: 'for',
+            returns: {
+                type: 'any',
+                array: true,
+            },
+            args: {
+                bindings: {
+                    type: '*for-binding',
+                    rest: true,
+                },
+                expr: {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['vars', 'expr'] },
+            ],
+            description: "List comprehension. Takes one or more $bindings, each followed by zero or more modifiers, and returns an array of evaluations of $expr.\n  \n  Collections are iterated in a nested fashion, rightmost fastest. Supported modifiers are: &let &while and &when.",
+            examples: [
+                "\n(for [x \"Al\" y [1 2]]\n  (repeat y x))",
+                "\n(for [x {:a 10 :b 20} y [1 2]]\n  (repeat y x))",
+                "\n(for [x [1 2] y [1 10]]\n  (* x y))",
+                "\n(for\n  [x [1 2]\n  &let [z (* x x x)]]\n  \n  z)",
+                "\n(for\n  [x [0 1 2 3 4 5]\n  &let [y (* x 3)]\n  &when (even? y)]\n  \n  y)",
+                "\n(for\n  [x [0 1 2 3 4 5]\n  &let [y (* x 3)]\n  &while (even? y)]\n  \n  y)",
+                "\n(for\n  [x [0 1 2 3 4 5]\n  &let [y (* x 3)]\n  &while (odd? y)]\n  \n  y)",
+                "\n(for\n  [x [1 2 3] y [1 2 3]\n  &while (<= x y)\n  z [1 2 3]]\n  \n  [x y z])",
+                "\n(for\n  [x [1 2 3] y [1 2 3] z [1 2 3]\n  &while (<= x y)]\n  \n  [x y z])",
+            ],
+        },
+        'declared?': {
+            title: 'declared?',
+            category: 'Special expression',
+            linkName: 'declared_question',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                n: {
+                    type: '*name',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+            ],
+            description: 'Returns `true` if $n is a declared variable or a builtin function, otherwise `false`.',
+            examples: [
+                '(declared? foo)',
+                "\n(def foo :foo)\n(declared? foo)",
+                '(declared? +)',
+                "\n(def foo nil)\n(declared? foo)",
+                '(declared? if)',
+            ],
+        },
+        '??': {
+            title: '??',
+            category: 'Special expression',
+            linkName: '_question_question',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                test: {
+                    type: '*expression',
+                },
+                default: {
+                    type: '*expression',
+                },
+            },
+            variants: [
+                { argumentNames: ['test'] },
+                { argumentNames: ['test', 'default'] },
+            ],
+            description: 'If $test is declared and evaluated to non `nil` value $test is result, else $default is returned. If $default is not provided, `nil` is returned.',
+            examples: [
+                '(?? foo)',
+                "\n(def foo :foo)\n(?? foo)",
+                '(?? +)',
+                "\n(def foo nil)\n(?? foo)",
+                "\n(def foo nil)\n(?? foo :bar)",
+                '(?? foo 1)',
+                '(?? "")',
+                '(?? 0)',
+                '(?? 0 1)',
+                '(?? 2 1)',
+            ],
+        },
+    };
+
+    var stringReference = {
+        'subs': {
+            title: 'subs',
+            category: 'String',
+            linkName: 'subs',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+                start: {
+                    type: 'integer',
+                },
+                end: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['s', 'start', 'end'] },
+                { argumentNames: ['s', 'start'] },
+            ],
+            description: 'Extracts characters from $start up to but not including $end.',
+            examples: [
+                '(subs "A string" 2)',
+                '(subs "A string" 2 5)',
+                '(subs "A string" 2 100)',
+                '(subs "A string" 100)',
+            ],
+        },
+        'string-repeat': {
+            title: 'string-repeat',
+            category: 'String',
+            linkName: 'string-repeat',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+                n: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['s', 'n'] },
+            ],
+            description: 'Repeates $s $n times.',
+            examples: [
+                '(string-repeat "*" 10)',
+                '(string-repeat "***" 0)',
+            ],
+        },
+        'str': {
+            title: 'str',
+            category: 'String',
+            linkName: 'str',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                values: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['values'] },
+            ],
+            description: 'Concatenats $values into one string. If `value` equals `nil` empty string is returned.',
+            examples: [
+                '(str "A string" ", and another string" " ...and more")',
+                '(str "Just one string")',
+                '(str)',
+                '(str 0 false true nil #"^kalle" [1 2 3] {:a :a})',
+            ],
+        },
+        'number': {
+            title: 'number',
+            category: 'String',
+            linkName: 'number',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Parses $s to a number.',
+            examples: [
+                '(number "10")',
+                '(number "010")',
+                '(number "-1.01")',
+            ],
+        },
+        'number-to-string': {
+            title: 'number-to-string',
+            category: 'String',
+            linkName: 'number-to-string',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                n: {
+                    type: 'number',
+                },
+                base: {
+                    type: 'number',
+                    description: '2, 8, 10 or 16',
+                },
+            },
+            variants: [
+                { argumentNames: ['n'] },
+                { argumentNames: ['n', 'base'] },
+            ],
+            description: 'Converts $n to a string. If $base is not equal to `10`, $n must be a non negative integer.',
+            examples: [
+                '(number-to-string 10)',
+                '(number-to-string -1.01)',
+                '(number-to-string -.01)',
+                '(number-to-string 15 2)',
+                '(number-to-string 15 8)',
+                '(number-to-string 15 16)',
+            ],
+        },
+        'lower-case': {
+            title: 'lower-case',
+            category: 'String',
+            linkName: 'lower-case',
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns $s converted to lower case.',
+            examples: [
+                '(lower-case "Albert")',
+                '(lower-case "")',
+            ],
+        },
+        'upper-case': {
+            title: 'upper-case',
+            category: 'String',
+            linkName: 'upper-case',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns $s converted to upper case.',
+            examples: [
+                '(upper-case "Albert")',
+                '(upper-case "")',
+            ],
+        },
+        'trim': {
+            title: 'trim',
+            category: 'String',
+            linkName: 'trim',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns a new string with leading and trailing whitespaces removed.',
+            examples: [
+                '(trim "  Albert  ")',
+                '(trim "   ")',
+                '(trim "")',
+            ],
+        },
+        'trim-left': {
+            title: 'trim-left',
+            category: 'String',
+            linkName: 'trim-left',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns a new string with leading whitespaces removed.',
+            examples: [
+                '(trim-left "  Albert  ")',
+                '(trim-left "   ")',
+                '(trim-left "")',
+            ],
+        },
+        'trim-right': {
+            title: 'trim-right',
+            category: 'String',
+            linkName: 'trim-right',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns a new string with trailing whitespaces removed.',
+            examples: [
+                '(trim-right "  Albert  ")',
+                '(trim-right "   ")',
+                '(trim-right "")',
+            ],
+        },
+        'pad-left': {
+            title: 'pad-left',
+            category: 'String',
+            linkName: 'pad-left',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+                length: {
+                    type: 'integer',
+                },
+                padString: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s', 'length'] },
+                { argumentNames: ['s', 'length', 'padString'] },
+            ],
+            description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
+            examples: [
+                '(pad-left "Albert" 20)',
+                '(pad-left "Albert" 20 "-*-")',
+                '(pad-left "Albert" 5)',
+                '(pad-left "Albert" -1)',
+            ],
+        },
+        'pad-right': {
+            title: 'pad-right',
+            category: 'String',
+            linkName: 'pad-right',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+                length: {
+                    type: 'integer',
+                },
+                padString: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s', 'length'] },
+                { argumentNames: ['s', 'length', 'padString'] },
+            ],
+            description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
+            examples: [
+                '(pad-right "Albert" 20)',
+                '(pad-right "Albert" 20 "-*-")',
+                '(pad-right "Albert" 5)',
+                '(pad-right "Albert" -1)',
+            ],
+        },
+        'split': {
+            title: 'split',
+            category: 'String',
+            linkName: 'split',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+                delimiter: {
+                    type: 'string',
+                },
+                limit: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['s', 'delimiter'] },
+                { argumentNames: ['s', 'delimiter', 'limit'] },
+            ],
+            description: 'Divides $s into an array of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
+            examples: [
+                '(split "Albert Mojir" " ")',
+                '(split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]"))',
+                '(split "0123456789" "")',
+                '(map number (split "0123456789" "" 5))',
+            ],
+        },
+        'template': {
+            title: 'template',
+            category: 'String',
+            linkName: 'template',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+                params: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['s', 'params'] },
+            ],
+            description: 'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
+            examples: [
+                '(template "Hi, $1 and $2" "Carl" "Larry")',
+                '(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" :A :B :C :D :E :F :G :H :I)',
+                '(template "$1 book||||$1 books" 0)',
+                '(template "$1 book||||$1 books" 1)',
+                '(template "$1 book||||$1 books" 2)',
+                '(template "No book||||$1 book||||$1 books" 0)',
+                '(template "No book||||$1 book||||$1 books" 1)',
+                '(template "No book||||$1 book||||$1 books" 10)',
+                '(template "No book||||One book||||Two books||||Three books||||$1 books" 0)',
+                '(template "No book||||One book||||Two books||||Three books||||$1 books" 1)',
+                '(template "No book||||One book||||Two books||||Three books||||$1 books" 2)',
+                '(template "No book||||One book||||Two books||||Three books||||$1 books" 3)',
+                '(template "No book||||One book||||Two books||||Three books||||$1 books" 4)',
+            ],
+        },
+        'to-char-code': {
+            title: 'to-char-code',
+            category: 'String',
+            linkName: 'to-char-code',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                c: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['c'] },
+            ],
+            description: 'Return code point for first character in $c.',
+            examples: [
+                '(to-char-code :A)',
+                '(to-char-code "Albert")',
+            ],
+        },
+        'from-char-code': {
+            title: 'from-char-code',
+            category: 'String',
+            linkName: 'from-char-code',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                code: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['code'] },
+            ],
+            description: 'Return character for code point $code.',
+            examples: [
+                '(from-char-code 65)',
+                '(from-char-code 0)',
+            ],
+        },
+        'encode-base64': {
+            title: 'encode-base64',
+            category: 'String',
+            linkName: 'encode-base64',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns a Base64 encoded string from $s.',
+            examples: [
+                '(encode-base64 "Albert")',
+            ],
+        },
+        'decode-base64': {
+            title: 'decode-base64',
+            category: 'String',
+            linkName: 'decode-base64',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                base64string: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['base64string'] },
+            ],
+            description: 'Returns a Base64 decoded string from $base64string.',
+            examples: [
+                '(decode-base64 "QWxiZXJ0IPCfkLs=")',
+            ],
+        },
+        'encode-uri-component': {
+            title: 'encode-uri-component',
+            category: 'String',
+            linkName: 'encode-uri-component',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns an escaped `URI` string.',
+            examples: [
+                '(encode-uri-component "Hi everyone!?")',
+            ],
+        },
+        'decode-uri-component': {
+            title: 'decode-uri-component',
+            category: 'String',
+            linkName: 'decode-uri-component',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                s: {
+                    type: 'string',
+                },
+            },
+            variants: [
+                { argumentNames: ['s'] },
+            ],
+            description: 'Returns an un-escaped `URI` string.',
+            examples: [
+                '(decode-uri-component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
+            ],
+        },
+        'join': {
+            title: 'join',
+            category: 'String',
+            linkName: 'join',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                arr: {
+                    type: 'array',
+                },
+                delimiter: {
+                    type: 'string',
+                },
+            },
+            variants: [{
+                    argumentNames: ['arr', 'delimiter'],
+                }],
+            description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
+            examples: [
+                '(join ["Albert" "Mojir"] " ")',
+                '(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")',
+            ],
+        },
+    };
+
+    var bitwiseReference = { 'bit-shift-left': {
+            title: 'bit-shift-left',
+            category: 'Bitwise',
+            linkName: 'bit-shift-left',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                n: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'n'] },
+            ],
+            description: 'Shifts $x arithmetically left by $n bit positions.',
+            examples: ['(bit-shift-left 1 10)', '(bit-shift-left -4 2)'],
+        }, 'bit-shift-right': {
+            title: 'bit-shift-right',
+            category: 'Bitwise',
+            linkName: 'bit-shift-right',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                n: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'n'] },
+            ],
+            description: 'Shifts $x arithmetically right by $n bit positions.',
+            examples: ['(bit-shift-right 2048 10)', '(bit-shift-right 4 10)'],
+        }, 'bit-not': {
+            title: 'bit-not',
+            category: 'Bitwise',
+            linkName: 'bit-not',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Returns bitwise `not` of $x.',
+            examples: ['(bit-not 0)', '(bit-not 255)'],
+        }, 'bit-and': {
+            title: 'bit-and',
+            category: 'Bitwise',
+            linkName: 'bit-and',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                y: {
+                    type: 'integer',
+                },
+                rest: {
+                    type: 'integer',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'y'] },
+                { argumentNames: ['x', 'y', 'rest'] },
+            ],
+            description: 'Returns bitwise `and` of all arguments.',
+            examples: [
+                '(bit-and 0b0011 0b0110)',
+                '(bit-and 0b0011 0b0110 0b1001)',
+            ],
+        }, 'bit-and-not': {
+            title: 'bit-and-not',
+            category: 'Bitwise',
+            linkName: 'bit-and-not',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                y: {
+                    type: 'integer',
+                },
+                rest: {
+                    type: 'integer',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'y'] },
+                { argumentNames: ['x', 'y', 'rest'] },
+            ],
+            description: 'Returns bitwise `and` with complement.',
+            examples: ['(bit-and-not 0b0011 0b0110)', '(bit-and-not 0b0011 0b0110 0b1001)'],
+        }, 'bit-or': {
+            title: 'bit-or',
+            category: 'Bitwise',
+            linkName: 'bit-or',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                y: {
+                    type: 'integer',
+                },
+                rest: {
+                    type: 'integer',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'y'] },
+                { argumentNames: ['x', 'y', 'rest'] },
+            ],
+            description: 'Returns bitwise `or` of all arguments.',
+            examples: ['(bit-or 0b0011 0b0110)', '(bit-or 0b1000 0b0100 0b0010)'],
+        }, 'bit-xor': {
+            title: 'bit-xor',
+            category: 'Bitwise',
+            linkName: 'bit-xor',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                y: {
+                    type: 'integer',
+                },
+                rest: {
+                    type: 'integer',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'y'] },
+                { argumentNames: ['x', 'y', 'rest'] },
+            ],
+            description: 'Returns bitwise `xor` of all arguments.',
+            examples: ['(bit-xor 0b0011 0b0110)', '(bit-xor 0b11110000 0b00111100 0b10101010)'],
+        }, 'bit-flip': {
+            title: 'bit-flip',
+            category: 'Bitwise',
+            linkName: 'bit-flip',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                n: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'n'] },
+            ],
+            description: 'Flips bit number $n.',
+            examples: ['(bit-flip 0b0011 1)', '(bit-flip 0b1100 1)'],
+        }, 'bit-clear': {
+            title: 'bit-clear',
+            category: 'Bitwise',
+            linkName: 'bit-clear',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                n: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'n'] },
+            ],
+            description: 'Clears bit number $n.',
+            examples: ['(bit-clear 0b0011 1)', '(bit-clear 0b1100 1)'],
+        }, 'bit-set': {
+            title: 'bit-set',
+            category: 'Bitwise',
+            linkName: 'bit-set',
+            returns: {
+                type: 'integer',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                n: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'n'] },
+            ],
+            description: 'Sets bit number $n.',
+            examples: ['(bit-set 0b0011 1)', '(bit-set 0b1100 1)'],
+        }, 'bit-test': {
+            title: 'bit-test',
+            category: 'Bitwise',
+            linkName: 'bit-test',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'integer',
+                },
+                n: {
+                    type: 'integer',
+                },
+            },
+            variants: [
+                { argumentNames: ['x', 'n'] },
+            ],
+            description: 'Checks if bit number $n is set.',
+            examples: ['(bit-test 0b0011 1)', '(bit-test 0b1100 1)'],
+        } };
+
+    var shorthand = {
+        _short_regexp: {
+            shorthand: true,
+            title: '#"pattern"',
+            category: 'Shorthand',
+            linkName: '_short_regexp',
+            clojureDocs: null,
+            description: 'Shorthand for ``(regexp pattern)``',
+            examples: [
+                '#"^\\s*(.*)$"',
+                '#"albert"ig',
+            ],
+            seeAlso: ['regexp'],
+        },
+        _short_fn: {
+            shorthand: true,
+            title: '#(expression)',
+            category: 'Shorthand',
+            linkName: '_short_fn',
+            clojureDocs: null,
+            description: "\nShorthand for ``(fn [args] (expression))``.\n`%1, %2, %3, ...` are shorthand for the first, second, third, ... argument.\n\nYou can reference the first argument using either `%1` or `%`.\nHowever, please note that `%1` and `%` are mutually exclusive and cannot be used simultaneously.\nE.g. ``#(* % %1)`` is not valid.",
+            examples: [
+                '#(+ %1 %2)',
+                '#(* % %)',
+            ],
+            seeAlso: ['fn'],
+        },
+        _short_string: {
+            shorthand: true,
+            title: ':abc',
+            category: 'Shorthand',
+            linkName: '_short_string',
+            clojureDocs: null,
+            description: 'Shorthand for ``"abc"``. The string can only contain `name` characters',
+            examples: [
+                ':abc',
+                ':a-b',
+            ],
+        },
+        _short_dot: {
+            shorthand: true,
+            title: 'foo.bar',
+            category: 'Shorthand',
+            linkName: '_short_dot',
+            clojureDocs: null,
+            description: 'Shorthand for ``(foo "bar")``.',
+            examples: [
+                "\n(def foo {:bar {:baz 42}})\nfoo.bar.baz",
+            ],
+        },
+        _short_hash: {
+            shorthand: true,
+            title: 'foo#3',
+            category: 'Shorthand',
+            linkName: '_short_hash',
+            clojureDocs: null,
+            description: 'Shorthand for ``(foo 3)``.',
+            examples: [
+                "\n(def foo {:bar [1 2 3]})\nfoo.bar#2",
+            ],
+        },
+    };
+
+    var datatype = {
+        _type_number: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'number',
+            category: 'Datatype',
+            linkName: '_type_number',
+            description: 'A number',
+            examples: [
+                '42',
+                '3.14',
+            ],
+        },
+        _type_string: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'string',
+            category: 'Datatype',
+            linkName: '_type_string',
+            description: 'A string',
+            examples: [
+                '"hello"',
+                '""',
+            ],
+        },
+        _type_object: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'object',
+            category: 'Datatype',
+            linkName: '_type_object',
+            description: 'An object, a collection of key-value pairs where keys are strings',
+            examples: [
+                '{}',
+                '{:a 1 :b 2}',
+            ],
+        },
+        _type_array: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'array',
+            category: 'Datatype',
+            linkName: '_type_array',
+            description: 'An array, a collection of values',
+            examples: [
+                '[]',
+                '[1 2 3]',
+                '[:a nil true]',
+            ],
+        },
+        _type_boolean: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'boolean',
+            category: 'Datatype',
+            linkName: '_type_boolean',
+            description: 'A boolean',
+            examples: [
+                'true',
+                'false',
+            ],
+        },
+        _type_function: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'function',
+            category: 'Datatype',
+            linkName: '_type_function',
+            description: 'A function',
+            examples: [
+                '(fn [x] (+ x 1))',
+                '(fn [] 42)',
+                '#(+ %1 %2)',
+            ],
+        },
+        _type_integer: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'integer',
+            category: 'Datatype',
+            linkName: '_type_integer',
+            description: 'An integer',
+            examples: [
+                '42',
+                '-42',
+            ],
+        },
+        _type_any: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'any',
+            category: 'Datatype',
+            linkName: '_type_any',
+            description: 'Any value',
+            examples: [
+                '42',
+                '"hello"',
+                'true',
+                'nil',
+            ],
+        },
+        _type_nil: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'nil',
+            category: 'Datatype',
+            linkName: '_type_nil',
+            description: 'The value nil',
+            examples: [
+                'nil',
+            ],
+        },
+        _type_collection: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'collection',
+            category: 'Datatype',
+            linkName: '_type_collection',
+            description: 'A collection, an object, an array or a string',
+            examples: [
+                '{:foo 42}',
+                '[1, 2, 3]',
+                '"hello"',
+            ],
+        },
+        _type_sequence: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'sequence',
+            category: 'Datatype',
+            linkName: '_type_sequence',
+            description: 'A sequence, an array or a string',
+            examples: [
+                '[1 2 3]',
+                '"hello"',
+            ],
+        },
+        _type_regexp: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'regexp',
+            category: 'Datatype',
+            linkName: '_type_regexp',
+            description: 'A regular expression',
+            examples: [
+                '(regexp "^\\s*(.*)$")',
+                '#"albert"ig',
+            ],
+        },
+        _type_never: {
+            datatype: true,
+            clojureDocs: null,
+            title: 'never',
+            category: 'Datatype',
+            linkName: '_type_never',
+            description: 'A value that can never be created',
+            examples: [
+                '(throw "error")',
+            ],
+        },
+    };
+
+    var functionReference = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, collectionReference), arrayReference), sequenceReference), mathReference), functionalReference), miscReference), objectReference), predicateReference), regularExpressionReference), specialExpressionsReference), stringReference), bitwiseReference), assertReference);
+    var apiReference = __assign(__assign(__assign({}, functionReference), shorthand), datatype);
+    Object.values(apiReference).forEach(function (ref) {
+        ref.title = ref.title.replace(/"/g, '&quot;');
+    });
+
+    var e_1, _a, e_2, _b;
+    var api = {
+        collection: [
+            'count',
+            'get',
+            'get-in',
+            'contains?',
+            'has?',
+            'has-some?',
+            'has-every?',
+            'assoc',
+            'assoc-in',
+            'concat',
+            'not-empty',
+            'every?',
+            'not-every?',
+            'any?',
+            'not-any?',
+            'update',
+            'update-in',
+        ],
+        array: [
+            'array',
+            'range',
+            'repeat',
+            'flatten',
+            'mapcat',
+        ],
+        sequence: [
+            'nth',
+            'push',
+            'pop',
+            'unshift',
+            'shift',
+            'slice',
+            'reductions',
+            'reduce',
+            'reduce-right',
+            'map',
+            'filter',
+            'position',
+            'index-of',
+            'some',
+            'reverse',
+            'first',
+            'second',
+            'last',
+            'rest',
+            'nthrest',
+            'next',
+            'nthnext',
+            'cons',
+            'take',
+            'take-last',
+            'take-while',
+            'drop',
+            'drop-last',
+            'drop-while',
+            'sort',
+            'sort-by',
+            'random-sample!',
+            'rand-nth!',
+            'shuffle!',
+            'distinct',
+            'remove',
+            'remove-at',
+            'split-at',
+            'split-with',
+            'frequencies',
+            'group-by',
+            'partition',
+            'partition-all',
+            'partition-by',
+        ],
+        math: [
+            '+',
+            '-',
+            '*',
+            '/',
+            'mod',
+            'rem',
+            'quot',
+            'inc',
+            'dec',
+            'sqrt',
+            'cbrt',
+            'pow',
+            'exp',
+            'round',
+            'trunc',
+            'floor',
+            'ceil',
+            'min',
+            'max',
+            'abs',
+            'sign',
+            'positive-infinity',
+            'negative-infinity',
+            'max-safe-integer',
+            'min-safe-integer',
+            'max-value',
+            'min-value',
+            'epsilon',
+            'nan',
+            'e',
+            'pi',
+            'log',
+            'log2',
+            'log10',
+            'rand!',
+            'rand-int!',
+            'sin',
+            'cos',
+            'tan',
+            'asin',
+            'acos',
+            'atan',
+            'sinh',
+            'cosh',
+            'tanh',
+            'asinh',
+            'acosh',
+            'atanh',
+        ],
+        functional: [
+            'apply',
+            'identity',
+            'partial',
+            'comp',
+            'constantly',
+            'juxt',
+            'complement',
+            'every-pred',
+            'some-pred',
+            'fnil',
+        ],
+        misc: [
+            'not=',
+            '=',
+            '<',
+            '>',
+            '<=',
+            '>=',
+            'not',
+            'write!',
+            'inst-ms!',
+            'iso-date-time->inst-ms',
+            'inst-ms->iso-date-time',
+            'boolean',
+            'compare',
+            'lits-version!',
+            'uuid!',
+            'equal?',
+            'json-parse',
+            'json-stringify',
+        ],
+        object: [
+            'dissoc',
+            'object',
+            'keys',
+            'vals',
+            'entries',
+            'find',
+            'merge',
+            'merge-with',
+            'zipmap',
+            'select-keys',
+        ],
+        predicate: [
+            'boolean?',
+            'nil?',
+            'number?',
+            'string?',
+            'function?',
+            'integer?',
+            'array?',
+            'object?',
+            'coll?',
+            'seq?',
+            'regexp?',
+            'zero?',
+            'pos?',
+            'neg?',
+            'even?',
+            'odd?',
+            'finite?',
+            'nan?',
+            'negative-infinity?',
+            'positive-infinity?',
+            'false?',
+            'true?',
+            'empty?',
+            'not-empty?',
+        ],
+        regularExpression: [
+            'regexp',
+            'match',
+            'replace',
+        ],
+        specialExpressions: [
+            'and',
+            'or',
+            'def',
+            'defs',
+            'let',
+            'if-let',
+            'when-let',
+            'when-first',
+            'fn',
+            'defn',
+            'defns',
+            'try',
+            'throw',
+            'if',
+            'if-not',
+            'cond',
+            'when',
+            'when-not',
+            'comment',
+            'do',
+            'recur',
+            'loop',
+            'time!',
+            'doseq',
+            'for',
+            'declared?',
+            '??',
+        ],
+        string: [
+            'subs',
+            'string-repeat',
+            'str',
+            'number',
+            'number-to-string',
+            'lower-case',
+            'upper-case',
+            'trim',
+            'trim-left',
+            'trim-right',
+            'pad-left',
+            'pad-right',
+            'split',
+            'template',
+            'to-char-code',
+            'from-char-code',
+            'encode-base64',
+            'decode-base64',
+            'encode-uri-component',
+            'decode-uri-component',
+            'join',
+        ],
+        bitwise: [
+            'bit-shift-left',
+            'bit-shift-right',
+            'bit-not',
+            'bit-and',
+            'bit-and-not',
+            'bit-or',
+            'bit-xor',
+            'bit-flip',
+            'bit-clear',
+            'bit-set',
+            'bit-test',
+        ],
+        assert: [
+            'assert',
+            'assert=',
+            'assert-not=',
+            'assert-equal',
+            'assert-not-equal',
+            'assert>',
+            'assert<',
+            'assert>=',
+            'assert<=',
+            'assert-true',
+            'assert-false',
+            'assert-truthy',
+            'assert-falsy',
+            'assert-nil',
+            'assert-throws',
+            'assert-throws-error',
+            'assert-not-throws',
+        ],
+        shorthand: [
+            '_short_regexp',
+            '_short_fn',
+            '_short_string',
+            '_short_dot',
+            '_short_hash',
+        ],
+        datatype: [
+            '_type_number',
+            '_type_string',
+            '_type_object',
+            '_type_array',
+            '_type_boolean',
+            '_type_function',
+            '_type_integer',
+            '_type_any',
+            '_type_nil',
+            '_type_collection',
+            '_type_sequence',
+            '_type_regexp',
+            '_type_never',
+        ],
+    };
+    var functionNames = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(api.collection), false), __read(api.array), false), __read(api.sequence), false), __read(api.math), false), __read(api.functional), false), __read(api.misc), false), __read(api.object), false), __read(api.predicate), false), __read(api.regularExpression), false), __read(api.specialExpressions), false), __read(api.string), false), __read(api.bitwise), false), __read(api.assert), false);
+    var apiNames = __spreadArray(__spreadArray(__spreadArray([], __read(functionNames), false), __read(api.shorthand), false), __read(api.datatype), false);
+    var functionNamesFromLitsSrc = __spreadArray(__spreadArray([], __read(normalExpressionKeys), false), __read(specialExpressionKeys), false);
+    try {
+        for (var functionNamesFromLitsSrc_1 = __values(functionNamesFromLitsSrc), functionNamesFromLitsSrc_1_1 = functionNamesFromLitsSrc_1.next(); !functionNamesFromLitsSrc_1_1.done; functionNamesFromLitsSrc_1_1 = functionNamesFromLitsSrc_1.next()) {
+            var functionName = functionNamesFromLitsSrc_1_1.value;
+            if (!apiNames.includes(functionName))
+                throw new Error("Function name \"".concat(functionName, "\" is not included in the API"));
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (functionNamesFromLitsSrc_1_1 && !functionNamesFromLitsSrc_1_1.done && (_a = functionNamesFromLitsSrc_1.return)) _a.call(functionNamesFromLitsSrc_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    try {
+        for (var functionNames_1 = __values(functionNames), functionNames_1_1 = functionNames_1.next(); !functionNames_1_1.done; functionNames_1_1 = functionNames_1.next()) {
+            var functionName = functionNames_1_1.value;
+            if (!functionNamesFromLitsSrc.includes(functionName))
+                throw new Error("Function name \"".concat(functionName, "\" is not included in the Lits source"));
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (functionNames_1_1 && !functionNames_1_1.done && (_b = functionNames_1.return)) _b.call(functionNames_1);
+        }
+        finally { if (e_2) throw e_2.error; }
+    }
 
     var getLits = (function () {
         var lits = new Lits({ debug: true });

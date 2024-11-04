@@ -89,7 +89,7 @@ export function isDatatypeReference<T extends Category>(ref: Reference<T>): ref 
   return 'datatype' in ref
 }
 
-const functionReference: Record<FunctionName, FunctionReference> = {
+export const functionReference: Record<FunctionName, FunctionReference> = {
   ...collectionReference,
   ...arrayReference,
   ...sequenceReference,
