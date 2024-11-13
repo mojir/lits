@@ -26,7 +26,6 @@ export interface LazyValue {
 
 export interface JsFunction {
   fn: (...args: any[]) => unknown
-  [key: string]: unknown
 }
 
 export interface LitsParams {
