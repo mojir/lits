@@ -3360,7 +3360,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "1.2.1";
+    var version = "1.2.2-alpha.3";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -8546,6 +8546,12 @@ var Playground = (function (exports) {
             throw new LitsError("Expected newline token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
     }
 
+    function transformTokens(tokenStram, transformer) {
+        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) {
+                return __assign(__assign({}, token), { v: transformer(token.v) });
+            }) });
+    }
+
     var UnparseOptions = /** @class */ (function () {
         function UnparseOptions(unparse, lineLength, col, inlined, locked) {
             if (col === void 0) { col = 0; }
@@ -9064,6 +9070,51 @@ var Playground = (function (exports) {
         return result.trim();
     }
 
+    function isNoSpaceNeededBefore(token) {
+        switch (token.t) {
+            case TokenType.Bracket:
+                return [')', ']'].includes(token.v);
+            case TokenType.CollectionAccessor:
+                return true;
+            case TokenType.NewLine:
+                return true;
+            default:
+                return false;
+        }
+    }
+    function isNoSpaceNeededAfter(token) {
+        switch (token.t) {
+            case TokenType.Bracket:
+                return ['(', '['].includes(token.v);
+            case TokenType.CollectionAccessor:
+                return true;
+            case TokenType.FnShorthand:
+                return true;
+            case TokenType.NewLine:
+                return true;
+            case TokenType.RegexpShorthand:
+                return true;
+            default:
+                return false;
+        }
+    }
+    function untokenize(tokenStream) {
+        var lastToken;
+        return tokenStream.tokens.reduce(function (acc, token) {
+            var joiner = !lastToken || isNoSpaceNeededAfter(lastToken) || isNoSpaceNeededBefore(token) ? '' : ' ';
+            lastToken = token;
+            return "".concat(acc).concat(joiner).concat(untokenizeToken(token));
+        }, '');
+    }
+    function untokenizeToken(token) {
+        switch (token.t) {
+            case TokenType.String:
+                return "\"".concat(token.v, "\"");
+            default:
+                return token.v;
+        }
+    }
+
     var Cache = /** @class */ (function () {
         function Cache(maxSize) {
             this.cache = {};
@@ -9194,6 +9245,12 @@ var Playground = (function (exports) {
         Lits.prototype.evaluate = function (ast, params) {
             var contextStack = createContextStack(params);
             return evaluate(ast, contextStack);
+        };
+        Lits.prototype.transform = function (tokenStream, transformer) {
+            return transformTokens(tokenStream, transformer);
+        };
+        Lits.prototype.untokenize = function (tokenStream) {
+            return untokenize(tokenStream);
         };
         Lits.prototype.apply = function (fn, fnParams, params) {
             var _a;

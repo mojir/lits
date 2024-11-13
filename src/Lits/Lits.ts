@@ -8,7 +8,9 @@ import { parse } from '../parser'
 import type { Ast, LitsFunction } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import type { TokenStream, TokenizeParams } from '../tokenizer/interface'
+import { transformTokens } from '../transformer'
 import { unparseAst } from '../unparser/unparse'
+import { untokenize } from '../untokenizer'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -109,6 +111,14 @@ export class Lits {
   public evaluate(ast: Ast, params: LitsParams): Any {
     const contextStack = createContextStack(params)
     return evaluate(ast, contextStack)
+  }
+
+  public transform(tokenStream: TokenStream, transformer: (name: string) => string): TokenStream {
+    return transformTokens(tokenStream, transformer)
+  }
+
+  public untokenize(tokenStream: TokenStream): string {
+    return untokenize(tokenStream)
   }
 
   public apply(fn: LitsFunction, fnParams: unknown[], params: LitsParams = {}): Any {
