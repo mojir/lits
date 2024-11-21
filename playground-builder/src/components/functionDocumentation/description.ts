@@ -1,11 +1,11 @@
 import { type FunctionReference, type Reference, isFunctionReference } from '../../../../reference'
-import { nameCharacters } from '../../../../src/tokenizer/tokenizers'
+import { nameCharacterClass } from '../../../../src/tokenizer/tokenizers'
 import { createFormatter } from '../../../../common/createFormatter'
 import { createVariableRule, mdRules } from '../../formatter/rules'
 import { styles } from '../../styles'
 import { findAllOccurrences } from '../../../../common/utils'
 
-const variableRegExp = new RegExp(`\\$${nameCharacters}+`, 'g')
+const variableRegExp = new RegExp(`\\$${nameCharacterClass}+`, 'g')
 
 export function formatDescription(description: string, reference: Reference): string {
   if (isFunctionReference(reference))

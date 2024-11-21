@@ -7,9 +7,9 @@ import type { Token, TokenDebugData, TokenDescriptor, Tokenizer } from './interf
 
 const NO_MATCH: TokenDescriptor = [0, undefined]
 
-export const nameCharacters = '[\\w@%^?=!$<>+*/-]'
+export const nameCharacterClass = '[\\w@%^?=!$<>+*/-]'
 
-const nameRegExp = new RegExp(nameCharacters)
+const nameRegExp = new RegExp(nameCharacterClass)
 const whitespaceRegExp = /\s|,/
 const newLineRegExp = /\n/
 
