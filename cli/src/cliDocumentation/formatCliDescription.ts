@@ -1,11 +1,11 @@
 import { type FunctionReference, type Reference, isFunctionReference } from '../../../reference'
-import { nameCharacterClass } from '../../../src/tokenizer/tokenizers'
 import { findAllOccurrences } from '../../../common/utils'
 import { createFormatter } from '../../../common/createFormatter'
 import { createVariableRule, getMdRules } from '../cliFormatterRules'
 import type { Colorizer } from '../colorizer'
+import { identifierCharacterClass, identifierFirstCharacterClass } from '../../../src/identifier'
 
-const variableRegExp = new RegExp(`\\$${nameCharacterClass}+`, 'g')
+const variableRegExp = new RegExp(`\\$${identifierFirstCharacterClass}${identifierCharacterClass}*`, 'g')
 
 export function formatCliDescription(fmt: Colorizer, description: string, reference: Reference): string {
   if (isFunctionReference(reference))

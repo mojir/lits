@@ -3360,7 +3360,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "1.2.2-alpha.5";
+    var version = "2.2.2-alpha.6";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -7977,9 +7977,10 @@ var Playground = (function (exports) {
         return [applyCollectionAccessors];
     }
 
+    var identifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
+
     var NO_MATCH = [0, undefined];
-    var nameCharacterClass = '[\\w@%^?=!$<>+*/-]';
-    var nameRegExp = new RegExp(nameCharacterClass);
+    var nameRegExp = new RegExp(identifierCharacterClass);
     var whitespaceRegExp = /\s|,/;
     var newLineRegExp = /\n/;
     var tokenizeNewLine = function (input, current, debugData) {

@@ -16,8 +16,8 @@ import type { Reference } from '../../reference'
 import { apiReference, isFunctionReference } from '../../reference'
 import { asAny } from '../../src/typeGuards/lits'
 import type { UnknownRecord } from '../../src/interface'
-import { nameCharacterClass } from '../../src/tokenizer/tokenizers'
 import { stringifyValue } from '../../common/utils'
+import { identifierCharacterClass, identifierFirstCharacterClass } from '../../src/identifier'
 import { ColorEnum, createColorizer } from './colorizer'
 import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignature'
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
@@ -45,9 +45,9 @@ const lits = new Lits({ debug: true })
 const formatValue = getInlineCodeFormatter(fmt)
 
 const commands = ['`help', '`quit', '`builtins', '`context']
-const expressionRegExp = new RegExp(`^(.*\\(\\s*)(${nameCharacterClass}*)$`)
-const nameRegExp = new RegExp(`^(.*?)(${nameCharacterClass}*)$`)
-const helpRegExp = new RegExp(`^\`help\\s+(${nameCharacterClass}+)\\s*$`)
+const expressionRegExp = new RegExp(`^(.*\\(\\s*)(${identifierFirstCharacterClass}${identifierCharacterClass}*)$`)
+const nameRegExp = new RegExp(`^(.*?)(${identifierFirstCharacterClass}${identifierCharacterClass}*)$`)
+const helpRegExp = new RegExp(`^\`help\\s+(${identifierFirstCharacterClass}${identifierCharacterClass}+)\\s*$`)
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const config = processArguments(process.argv.slice(2))

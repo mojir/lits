@@ -1,5 +1,6 @@
 import { TokenType } from '../constants/constants'
 import { LitsError } from '../errors'
+import { identifierCharacterClass } from '../identifier'
 import type { ModifierName } from '../parser/interface'
 import { reservedNamesRecord } from '../reservedNames'
 import { asString } from '../typeGuards/string'
@@ -7,9 +8,7 @@ import type { Token, TokenDebugData, TokenDescriptor, Tokenizer } from './interf
 
 const NO_MATCH: TokenDescriptor = [0, undefined]
 
-export const nameCharacterClass = '[\\w@%^?=!$<>+*/-]'
-
-const nameRegExp = new RegExp(nameCharacterClass)
+const nameRegExp = new RegExp(identifierCharacterClass)
 const whitespaceRegExp = /\s|,/
 const newLineRegExp = /\n/
 
