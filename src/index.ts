@@ -25,4 +25,4 @@ export { apiReference, isDatatypeReference, isFunctionReference, isNormalExpress
 export type { Argument, CommonReference, DatatypeReference, FunctionReference, Reference, ShorthandReference } from '../reference'
 export type { ApiName, FunctionName, ShorthandName, DatatypeName } from '../reference/api'
 export { isApiName, isDataType } from '../reference/api'
-export { type Identifier, assertIdentifier, isIdentifier } from './identifier'
+export { identifierCharacterClass, identifierFirstCharacterClass } from './identifier'
