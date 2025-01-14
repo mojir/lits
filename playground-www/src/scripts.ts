@@ -803,46 +803,7 @@ export function tokenize() {
 
 export function format() {
   addOutputSeparator()
-
-  const selectedCode = getSelectedLitsCode()
-  const code = selectedCode.code || getState('lits-code')
-  const title = selectedCode.code ? 'Format selection' : 'Format'
-
-  appendOutput(`${title}: ${truncateCode(code)}`, 'comment')
-
-  const hijacker = hijackConsole()
-  let result: string = ''
-  try {
-    result = getLits('debug').format(code, { lineLength: getLitsCodeCols() })
-    if (selectedCode.code) {
-      setLitsCode(`${selectedCode.leadingCode}${result}${selectedCode.trailingCode}`, true)
-    }
-    else {
-      setLitsCode(result, true)
-    }
-  }
-  catch (error) {
-    appendOutput(error, 'error')
-    return
-  }
-  finally {
-    hijacker.releaseConsole()
-    if (selectedCode.code) {
-      saveState({
-        'focused-panel': 'lits-code',
-        'lits-code-selection-start': selectedCode.selectionStart,
-        'lits-code-selection-end': selectedCode.selectionStart + result.length,
-      })
-    }
-    else {
-      saveState({
-        'focused-panel': 'lits-code',
-        'lits-code-selection-start': selectedCode.selectionStart,
-        'lits-code-selection-end': selectedCode.selectionEnd,
-      })
-    }
-    applyState()
-  }
+  appendOutput('Not implemented', 'error')
 }
 
 export function toggleDebug() {
@@ -1062,29 +1023,4 @@ function hijackConsole() {
       console.warn = oldWarn
     },
   }
-}
-
-function getLitsCodeCols(): number {
-  // Create a temporary element
-  const { font, paddingLeft, paddingRight } = window.getComputedStyle(elements.litsTextArea)
-  const tempElement = document.createElement('span')
-  tempElement.style.font = font
-  tempElement.style.visibility = 'hidden'
-  tempElement.style.whiteSpace = 'pre'
-  tempElement.textContent = 'M' // Use a common monospace character
-
-  // Append the element to the body
-  document.body.appendChild(tempElement)
-
-  // Measure the width of the character
-  const characterWidth = tempElement.getBoundingClientRect().width
-
-  const textAreawidth = elements.litsTextArea.clientWidth
-    - Number.parseInt(paddingLeft)
-    - Number.parseInt(paddingRight)
-
-  // Remove the temporary element
-  document.body.removeChild(tempElement)
-
-  return Math.max(1, Math.floor(textAreawidth / characterWidth))
 }

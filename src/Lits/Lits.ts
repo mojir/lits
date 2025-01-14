@@ -8,7 +8,6 @@ import { parse } from '../parser'
 import type { Ast, LitsFunction } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import type { TokenStream, TokenizeParams } from '../tokenizer/interface'
-import { unparseAst } from '../unparser/unparse'
 import { Cache } from './Cache'
 
 export interface LitsRuntimeInfo {
@@ -43,10 +42,6 @@ interface LitsConfig {
   debug?: boolean
 }
 
-type FormatParams = LitsParams & {
-  lineLength?: number
-}
-
 export class Lits {
   private astCache: Cache | null
   private astCacheSize: number | null
@@ -77,12 +72,6 @@ export class Lits {
   public run(program: string, params: LitsParams = {}): unknown {
     const ast = this.generateAst(program, params)
     return this.evaluate(ast, params)
-  }
-
-  public format(program: string, params: FormatParams = {}): string {
-    const lineLength = params.lineLength ?? 80
-    const ast = this.generateAst(program, params)
-    return unparseAst(ast, lineLength)
   }
 
   public context(program: string, params: LitsParams = {}): Context {
