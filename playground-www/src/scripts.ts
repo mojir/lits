@@ -810,39 +810,23 @@ export function format() {
 
   appendOutput(`${title}: ${truncateCode(code)}`, 'comment')
 
-  const hijacker = hijackConsole()
-  let result: string = ''
-  try {
-    result = getLits('debug').format(code, { lineLength: getLitsCodeCols() })
-    if (selectedCode.code) {
-      setLitsCode(`${selectedCode.leadingCode}${result}${selectedCode.trailingCode}`, true)
-    }
-    else {
-      setLitsCode(result, true)
-    }
+  setLitsCode(code, true)
+
+  if (selectedCode.code) {
+    saveState({
+      'focused-panel': 'lits-code',
+      'lits-code-selection-start': selectedCode.selectionStart,
+      'lits-code-selection-end': selectedCode.selectionStart + code.length,
+    })
   }
-  catch (error) {
-    appendOutput(error, 'error')
-    return
+  else {
+    saveState({
+      'focused-panel': 'lits-code',
+      'lits-code-selection-start': selectedCode.selectionStart,
+      'lits-code-selection-end': selectedCode.selectionEnd,
+    })
   }
-  finally {
-    hijacker.releaseConsole()
-    if (selectedCode.code) {
-      saveState({
-        'focused-panel': 'lits-code',
-        'lits-code-selection-start': selectedCode.selectionStart,
-        'lits-code-selection-end': selectedCode.selectionStart + result.length,
-      })
-    }
-    else {
-      saveState({
-        'focused-panel': 'lits-code',
-        'lits-code-selection-start': selectedCode.selectionStart,
-        'lits-code-selection-end': selectedCode.selectionEnd,
-      })
-    }
-    applyState()
-  }
+  applyState()
 }
 
 export function toggleDebug() {
@@ -1062,29 +1046,4 @@ function hijackConsole() {
       console.warn = oldWarn
     },
   }
-}
-
-function getLitsCodeCols(): number {
-  // Create a temporary element
-  const { font, paddingLeft, paddingRight } = window.getComputedStyle(elements.litsTextArea)
-  const tempElement = document.createElement('span')
-  tempElement.style.font = font
-  tempElement.style.visibility = 'hidden'
-  tempElement.style.whiteSpace = 'pre'
-  tempElement.textContent = 'M' // Use a common monospace character
-
-  // Append the element to the body
-  document.body.appendChild(tempElement)
-
-  // Measure the width of the character
-  const characterWidth = tempElement.getBoundingClientRect().width
-
-  const textAreawidth = elements.litsTextArea.clientWidth
-    - Number.parseInt(paddingLeft)
-    - Number.parseInt(paddingRight)
-
-  // Remove the temporary element
-  document.body.removeChild(tempElement)
-
-  return Math.max(1, Math.floor(textAreawidth / characterWidth))
 }
