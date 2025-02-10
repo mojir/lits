@@ -1,13 +1,13 @@
 import { styles } from '../styles'
 import { type TextFormatter, createFormatter } from '../../../common/createFormatter'
-import { identifierCharacterClass, identifierFirstCharacterClass } from '../../../src/identifier'
+import { postfixIdentifierCharacterClass, postfixIdentifierFirstCharacterClass } from '../../../src/identifier'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
   count: number
   formattedText: string
 }
 
-const variableRegExp = new RegExp(`^\\$${identifierFirstCharacterClass}${identifierCharacterClass}*`)
+const variableRegExp = new RegExp(`^\\$${postfixIdentifierFirstCharacterClass}${postfixIdentifierCharacterClass}*`)
 
 const noMatch = { count: 0, formattedText: '' }
 
@@ -37,11 +37,11 @@ export const numberRule: FormatterRule = (text, index) => {
     const count = startMatch[0].length
     const characterBefor = text[index - 1]
     const characterAfter = text[index + count]
-    if (characterBefor && new RegExp(identifierCharacterClass).test(characterBefor))
+    if (characterBefor && new RegExp(postfixIdentifierCharacterClass).test(characterBefor))
       return noMatch
     if (characterBefor && numberRegExp.test(characterBefor))
       return noMatch
-    if (characterAfter && new RegExp(identifierCharacterClass).test(characterAfter))
+    if (characterAfter && new RegExp(postfixIdentifierCharacterClass).test(characterAfter))
       return noMatch
     if (characterAfter && numberRegExp.test(characterAfter))
       return noMatch
@@ -76,7 +76,7 @@ const stringRule = createRule({
 
 const shortcutStringRule = createRule({
   name: 'string',
-  startPattern: new RegExp(`^:${identifierCharacterClass}+`),
+  startPattern: new RegExp(`^:${postfixIdentifierCharacterClass}+`),
   startTag: `<span ${styles('text-color-Pink')}>`,
   endTag: '</span>',
   keepPatterns: true,
@@ -86,7 +86,7 @@ const shortcutStringRule = createRule({
 
 const functionNameRule = createRule({
   name: 'functionName',
-  startPattern: new RegExp(`^\\((?=${identifierCharacterClass}+)`),
+  startPattern: new RegExp(`^\\((?=${postfixIdentifierCharacterClass}+)`),
   endPattern: /^[) \n]/,
   startTag: `<span ${styles('text-color-Blue')}>`,
   endTag: '</span>',
@@ -97,7 +97,7 @@ const functionNameRule = createRule({
 
 const nameRule = createRule({
   name: 'functionName',
-  startPattern: new RegExp(`^${identifierCharacterClass}+`),
+  startPattern: new RegExp(`^${postfixIdentifierCharacterClass}+`),
   startTag: `<span ${styles('text-color-Mint')}>`,
   endTag: '</span>',
   keepPatterns: true,

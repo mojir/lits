@@ -8,7 +8,7 @@ import type { Context } from '../../src'
 import {
   Lits,
   normalExpressionKeys,
-  reservedNames,
+  postfixReservedNames,
   specialExpressionKeys,
 } from '../../src'
 import { runTest } from '../../src/testFramework'
@@ -17,7 +17,7 @@ import { apiReference, isFunctionReference } from '../../reference'
 import { asAny } from '../../src/typeGuards/lits'
 import type { UnknownRecord } from '../../src/interface'
 import { stringifyValue } from '../../common/utils'
-import { identifierCharacterClass, identifierFirstCharacterClass } from '../../src/identifier'
+import { postfixIdentifierCharacterClass, postfixIdentifierFirstCharacterClass } from '../../src/identifier'
 import { ColorEnum, createColorizer } from './colorizer'
 import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignature'
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
@@ -45,9 +45,9 @@ const lits = new Lits({ debug: true })
 const formatValue = getInlineCodeFormatter(fmt)
 
 const commands = ['`help', '`quit', '`builtins', '`context']
-const expressionRegExp = new RegExp(`^(.*\\(\\s*)(${identifierFirstCharacterClass}${identifierCharacterClass}*)$`)
-const nameRegExp = new RegExp(`^(.*?)(${identifierFirstCharacterClass}${identifierCharacterClass}*)$`)
-const helpRegExp = new RegExp(`^\`help\\s+(${identifierFirstCharacterClass}${identifierCharacterClass}+)\\s*$`)
+const expressionRegExp = new RegExp(`^(.*\\(\\s*)(${postfixIdentifierFirstCharacterClass}${postfixIdentifierCharacterClass}*)$`)
+const nameRegExp = new RegExp(`^(.*?)(${postfixIdentifierFirstCharacterClass}${postfixIdentifierCharacterClass}*)$`)
+const helpRegExp = new RegExp(`^\`help\\s+(${postfixIdentifierFirstCharacterClass}${postfixIdentifierCharacterClass}+)\\s*$`)
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const config = processArguments(process.argv.slice(2))
@@ -397,7 +397,7 @@ function completer(line: string) {
   if (expressionMatch)
     return [expressions.filter(c => c.startsWith(expressionMatch[2]!)).map(c => `${expressionMatch[1]}${c} `), line]
 
-  const names = Array.from(new Set([...reservedNames, ...Object.keys(config.context)]))
+  const names = Array.from(new Set([...postfixReservedNames, ...Object.keys(config.context)]))
   const nameMatch = nameRegExp.exec(line)
 
   if (nameMatch)

@@ -3,9 +3,9 @@ import { findAllOccurrences } from '../../../common/utils'
 import { createFormatter } from '../../../common/createFormatter'
 import { createVariableRule, getMdRules } from '../cliFormatterRules'
 import type { Colorizer } from '../colorizer'
-import { identifierCharacterClass, identifierFirstCharacterClass } from '../../../src/identifier'
+import { postfixIdentifierCharacterClass, postfixIdentifierFirstCharacterClass } from '../../../src/identifier'
 
-const variableRegExp = new RegExp(`\\$${identifierFirstCharacterClass}${identifierCharacterClass}*`, 'g')
+const variableRegExp = new RegExp(`\\$${postfixIdentifierFirstCharacterClass}${postfixIdentifierCharacterClass}*`, 'g')
 
 export function formatCliDescription(fmt: Colorizer, description: string, reference: Reference): string {
   if (isFunctionReference(reference))

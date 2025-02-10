@@ -25,6 +25,7 @@ export interface Token<T extends TokenType = TokenType> {
   o?: Record<string, boolean> // options
   debugData: TokenDebugData | undefined
 }
+
 export type TokenDescriptor = [length: number, token: Token | undefined]
 export type Tokenizer = (input: string, position: number, debugData?: TokenDebugData) => TokenDescriptor
 export interface TokenStream {
@@ -36,4 +37,5 @@ export interface TokenStream {
 export interface TokenizeParams {
   debug?: boolean
   filePath?: string
+  infix?: boolean
 }

@@ -5,7 +5,6 @@ import type { FunctionArguments } from '../builtin/utils'
 import { AstNodeType, TokenType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
-import type { ReservedName } from '../reservedNames'
 import type { Token, TokenStream } from '../tokenizer/interface'
 import { asNonUndefined, assertEvenNumberOfParams, assertNonUndefined, assertUnreachable } from '../typeGuards'
 import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
@@ -80,7 +79,7 @@ function parseReservedName(tokenStream: TokenStream, position: number): [number,
     position + 1,
     {
       t: AstNodeType.ReservedName,
-      v: tkn.v as ReservedName,
+      v: tkn.v,
       p: [],
       n: undefined,
       debugData: tkn.debugData?.sourceCodeInfo
@@ -96,7 +95,7 @@ function parseComment(tokenStream: TokenStream, position: number): [number, Comm
     position + 1,
     {
       t: AstNodeType.Comment,
-      v: tkn.v as ReservedName,
+      v: tkn.v,
       p: [],
       n: undefined,
       debugData: tkn.debugData?.sourceCodeInfo
@@ -495,6 +494,9 @@ export function parseToken(tokenStream: TokenStream, position: number): [number,
     case TokenType.CollectionAccessor:
     case TokenType.Modifier:
     case TokenType.NewLine:
+    case TokenType.Infix:
+    case TokenType.Postfix:
+    case TokenType.InfixOperator:
       break
     /* v8 ignore next 2 */
     default:

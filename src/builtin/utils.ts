@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { AstNode, BindingNode } from '../parser/interface'
-import { reservedNamesRecord } from '../reservedNames'
+import { postfixReservedNamesRecord } from '../tokenizer/postfix/reservedNames'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import type { Builtin } from './interface'
 import type { SpecialExpressionName } from '.'
@@ -36,7 +36,7 @@ export function assertNameNotDefined<T>(
     throw new LitsError(`Cannot define variable ${name}, it's a builtin function.`, sourceCodeInfo)
 
   // eslint-disable-next-line ts/no-unsafe-member-access
-  if ((reservedNamesRecord as any)[name])
+  if ((postfixReservedNamesRecord as any)[name])
     throw new LitsError(`Cannot define variable ${name}, it's a reserved name.`, sourceCodeInfo)
 
   if (contextStack.globalContext[name])

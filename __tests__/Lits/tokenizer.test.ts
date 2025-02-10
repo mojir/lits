@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { tokenize } from '../../src/tokenizer'
 import { TokenType } from '../../src/constants/constants'
+import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
 
 describe('tokenizer', () => {

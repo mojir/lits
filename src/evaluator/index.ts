@@ -9,7 +9,7 @@ import type {
 } from '../parser/interface'
 import type { SpecialExpressionNode } from '../builtin'
 import { builtin } from '../builtin'
-import { reservedNamesRecord } from '../reservedNames'
+import { postfixReservedNamesRecord } from '../tokenizer/postfix/reservedNames'
 import { toAny } from '../utils'
 import type { Any, Arr, Obj } from '../interface'
 import type { SourceCodeInfo } from '../tokenizer/interface'
@@ -66,7 +66,7 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedNameNode): Any {
-  return asNonUndefined(reservedNamesRecord[node.v], node.debugData?.token.debugData?.sourceCodeInfo).value
+  return asNonUndefined(postfixReservedNamesRecord[node.v], node.debugData?.token.debugData?.sourceCodeInfo).value
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {

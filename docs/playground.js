@@ -626,6 +626,9 @@ var Playground = (function (exports) {
         TokenType[TokenType["CollectionAccessor"] = 109] = "CollectionAccessor";
         TokenType[TokenType["Comment"] = 110] = "Comment";
         TokenType[TokenType["NewLine"] = 111] = "NewLine";
+        TokenType[TokenType["Infix"] = 112] = "Infix";
+        TokenType[TokenType["Postfix"] = 113] = "Postfix";
+        TokenType[TokenType["InfixOperator"] = 114] = "InfixOperator";
     })(TokenType || (TokenType = {}));
     var tokenTypeName = new Map([
         [TokenType.Bracket, 'Bracket'],
@@ -4741,7 +4744,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var reservedNamesRecord = {
+    var postfixReservedNamesRecord = {
         'true': { value: true },
         'false': { value: false },
         'nil': { value: null },
@@ -4761,7 +4764,7 @@ var Playground = (function (exports) {
         if (builtin.normalExpressions[name])
             throw new LitsError("Cannot define variable ".concat(name, ", it's a builtin function."), sourceCodeInfo);
         // eslint-disable-next-line ts/no-unsafe-member-access
-        if (reservedNamesRecord[name])
+        if (postfixReservedNamesRecord[name])
             throw new LitsError("Cannot define variable ".concat(name, ", it's a reserved name."), sourceCodeInfo);
         if (contextStack.globalContext[name])
             throw new LitsError("Name already defined \"".concat(name, "\"."), sourceCodeInfo);
@@ -6740,7 +6743,7 @@ var Playground = (function (exports) {
     }
     function evaluateReservedName(node) {
         var _a, _b;
-        return asNonUndefined(reservedNamesRecord[node.v], (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo).value;
+        return asNonUndefined(postfixReservedNamesRecord[node.v], (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo).value;
     }
     function evaluateNormalExpression(node, contextStack) {
         var _a, _b;
@@ -7850,6 +7853,9 @@ var Playground = (function (exports) {
             case TokenType.CollectionAccessor:
             case TokenType.Modifier:
             case TokenType.NewLine:
+            case TokenType.Infix:
+            case TokenType.Postfix:
+            case TokenType.InfixOperator:
                 break;
             /* v8 ignore next 2 */
             default:
@@ -7879,6 +7885,578 @@ var Playground = (function (exports) {
             ast.b.push(node);
         }
         return ast;
+    }
+
+    var postfixIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
+    var infixIdentifierCharacterClass = '[\\w$:]';
+    var infixIdentifierFirstCharacterClass = '[a-zA-Z_$]';
+
+    var NO_MATCH = [0, undefined];
+    var newLineRegExp = /\n/;
+    var tokenizeNewLine = function (input, current, debugData) {
+        return newLineRegExp.test(input[current])
+            ? [1, { t: TokenType.NewLine, v: '\n', debugData: debugData }]
+            : NO_MATCH;
+    };
+    var tokenizeComment = function (input, current, debugData) {
+        if (input[current] === ';') {
+            var length_1 = 0;
+            var value = '';
+            while (input[current + length_1] !== '\n' && current + length_1 < input.length) {
+                value += input[current + length_1];
+                length_1 += 1;
+            }
+            if (input[current + length_1] === '\n' && current + length_1 < input.length)
+                length_1 += 1;
+            return [length_1, { t: TokenType.Comment, v: value.trim(), debugData: debugData }];
+        }
+        return NO_MATCH;
+    };
+    var tokenizeLeftParen = function (input, position, debugData) {
+        return tokenizeCharacter(TokenType.Bracket, '(', input, position, debugData);
+    };
+    var tokenizeRightParen = function (input, position, debugData) {
+        return tokenizeCharacter(TokenType.Bracket, ')', input, position, debugData);
+    };
+    var tokenizeLeftBracket = function (input, position, debugData) {
+        return tokenizeCharacter(TokenType.Bracket, '[', input, position, debugData);
+    };
+    var tokenizeRightBracket = function (input, position, debugData) {
+        return tokenizeCharacter(TokenType.Bracket, ']', input, position, debugData);
+    };
+    var tokenizeLeftCurly = function (input, position, debugData) {
+        return tokenizeCharacter(TokenType.Bracket, '{', input, position, debugData);
+    };
+    var tokenizeRightCurly = function (input, position, debugData) {
+        return tokenizeCharacter(TokenType.Bracket, '}', input, position, debugData);
+    };
+    var tokenizeString = function (input, position, debugData) {
+        if (input[position] !== '"')
+            return NO_MATCH;
+        var value = '';
+        var length = 1;
+        var char = input[position + length];
+        var escape = false;
+        while (char !== '"' || escape) {
+            if (char === undefined)
+                throw new LitsError("Unclosed string at position ".concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+            length += 1;
+            if (escape) {
+                escape = false;
+                if (char === '"' || char === '\\') {
+                    value += char;
+                }
+                else {
+                    value += '\\';
+                    value += char;
+                }
+            }
+            else {
+                if (char === '\\')
+                    escape = true;
+                else
+                    value += char;
+            }
+            char = input[position + length];
+        }
+        return [length + 1, { t: TokenType.String, v: value, debugData: debugData }];
+    };
+    var tokenizeCollectionAccessor = function (input, position, debugData) {
+        var char = input[position];
+        if (char !== '.' && char !== '#')
+            return NO_MATCH;
+        return [
+            1,
+            {
+                t: TokenType.CollectionAccessor,
+                v: char,
+                debugData: debugData,
+            },
+        ];
+    };
+    var tokenizeRegexpShorthand = function (input, position, debugData) {
+        if (input[position] !== '#')
+            return NO_MATCH;
+        var _a = __read(tokenizeString(input, position + 1, debugData), 2), stringLength = _a[0], token = _a[1];
+        if (!token)
+            return NO_MATCH;
+        position += stringLength + 1;
+        var length = stringLength + 1;
+        var options = {};
+        while (input[position] === 'g' || input[position] === 'i') {
+            if (input[position] === 'g') {
+                if (options.g)
+                    throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+                length += 1;
+                options.g = true;
+            }
+            else {
+                if (options.i)
+                    throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+                length += 1;
+                options.i = true;
+            }
+            position += 1;
+        }
+        return [
+            length,
+            {
+                t: TokenType.RegexpShorthand,
+                v: token.v,
+                o: options,
+                debugData: debugData,
+            },
+        ];
+    };
+    var endOfNumberRegExp = /[\s)\]},#]/;
+    var decimalNumberRegExp = /\d/;
+    var octalNumberRegExp = /[0-7]/;
+    var hexNumberRegExp = /[0-9a-f]/i;
+    var binaryNumberRegExp = /[01]/;
+    var firstCharRegExp = /[0-9.-]/;
+    var tokenizeNumber = function (input, position, debugData) {
+        var type = 'decimal';
+        var firstChar = input[position];
+        if (!firstCharRegExp.test(firstChar))
+            return NO_MATCH;
+        var hasDecimals = firstChar === '.';
+        var i;
+        for (i = position + 1; i < input.length; i += 1) {
+            var char = asString(input[i], debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { char: true });
+            if (endOfNumberRegExp.test(char))
+                break;
+            if (char === '.') {
+                var nextChar = input[i + 1];
+                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
+                    break;
+            }
+            if (i === position + 1 && firstChar === '0') {
+                if (char === 'b' || char === 'B') {
+                    type = 'binary';
+                    continue;
+                }
+                if (char === 'o' || char === 'O') {
+                    type = 'octal';
+                    continue;
+                }
+                if (char === 'x' || char === 'X') {
+                    type = 'hex';
+                    continue;
+                }
+            }
+            if (type === 'decimal' && hasDecimals) {
+                if (!decimalNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'binary') {
+                if (!binaryNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'octal') {
+                if (!octalNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'hex') {
+                if (!hexNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else {
+                if (char === '.') {
+                    hasDecimals = true;
+                    continue;
+                }
+                if (!decimalNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+        }
+        var length = i - position;
+        var value = input.substring(position, i);
+        if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
+            return NO_MATCH;
+        return [length, { t: TokenType.Number, v: value, debugData: debugData }];
+    };
+    function tokenizeCharacter(type, value, input, position, debugData) {
+        if (value === input[position])
+            return [1, { t: type, v: value, debugData: debugData }];
+        else
+            return NO_MATCH;
+    }
+
+    var nameRegExp = new RegExp(postfixIdentifierCharacterClass);
+    var whitespaceRegExp$1 = /\s|,/;
+    var skipWhiteSpace$1 = function (input, current) {
+        return whitespaceRegExp$1.test(input[current]) ? [1, undefined] : NO_MATCH;
+    };
+    var tokenizeFnShorthand = function (input, position, debugData) {
+        if (input.slice(position, position + 2) !== '#(')
+            return NO_MATCH;
+        return [
+            1,
+            {
+                t: TokenType.FnShorthand,
+                v: '#',
+                debugData: debugData,
+            },
+        ];
+    };
+    var tokenizeReservedName$1 = function (input, position, debugData) {
+        var e_1, _a;
+        try {
+            for (var _b = __values(Object.entries(postfixReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
+                var length_1 = reservedName.length;
+                var nextChar = input[position + length_1];
+                if (nextChar && nameRegExp.test(nextChar))
+                    continue;
+                var name_1 = input.substring(position, position + length_1);
+                if (name_1 === reservedName) {
+                    if (forbidden)
+                        throw new LitsError("".concat(name_1, " is forbidden!"), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+                    return [length_1, { t: TokenType.ReservedName, v: reservedName, debugData: debugData }];
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return NO_MATCH;
+    };
+    var tokenizeName$1 = function (input, position, debugData) {
+        return tokenizePattern(TokenType.Name, nameRegExp, input, position, debugData);
+    };
+    var tokenizeSymbolString = function (input, position, debugData) {
+        if (input[position] !== ':')
+            return NO_MATCH;
+        var value = '';
+        var length = 1;
+        var char = input[position + length];
+        while (char && nameRegExp.test(char)) {
+            length += 1;
+            value += char;
+            char = input[position + length];
+        }
+        if (length === 1)
+            return NO_MATCH;
+        return [length, { t: TokenType.String, v: value, debugData: debugData, o: { s: true } }];
+    };
+    var tokenizeModifier = function (input, position, debugData) {
+        var e_2, _a;
+        var modifiers = ['&', '&let', '&when', '&while'];
+        try {
+            for (var modifiers_1 = __values(modifiers), modifiers_1_1 = modifiers_1.next(); !modifiers_1_1.done; modifiers_1_1 = modifiers_1.next()) {
+                var modifier = modifiers_1_1.value;
+                var length_2 = modifier.length;
+                var charAfterModifier = input[position + length_2];
+                if (input.substring(position, position + length_2) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
+                    var value = modifier;
+                    return [length_2, { t: TokenType.Modifier, v: value, debugData: debugData }];
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (modifiers_1_1 && !modifiers_1_1.done && (_a = modifiers_1.return)) _a.call(modifiers_1);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return NO_MATCH;
+    };
+    var tokenizeInfixDirective = function (input, position, debugData) {
+        if (input[position] !== '$') {
+            return NO_MATCH;
+        }
+        var nextChar = input[position + 1];
+        if (nextChar && nameRegExp.test(nextChar)) {
+            return NO_MATCH;
+        }
+        return [1, { t: TokenType.Infix, v: '$', debugData: debugData }];
+    };
+    function tokenizePattern(type, pattern, input, position, debugData) {
+        var char = input[position];
+        var length = 0;
+        var value = '';
+        if (!char || !pattern.test(char))
+            return NO_MATCH;
+        while (char && pattern.test(char)) {
+            value += char;
+            length += 1;
+            char = input[position + length];
+        }
+        return [length, { t: type, v: value, debugData: debugData }];
+    }
+    // All tokenizers, order matters!
+    var tokenizers$1 = [
+        tokenizeInfixDirective,
+        skipWhiteSpace$1,
+        tokenizeComment,
+        tokenizeLeftParen,
+        tokenizeRightParen,
+        tokenizeLeftBracket,
+        tokenizeRightBracket,
+        tokenizeLeftCurly,
+        tokenizeRightCurly,
+        tokenizeString,
+        tokenizeSymbolString,
+        tokenizeNumber,
+        tokenizeReservedName$1,
+        tokenizeName$1,
+        tokenizeModifier,
+        tokenizeRegexpShorthand,
+        tokenizeFnShorthand,
+        tokenizeCollectionAccessor,
+    ];
+    var newLineTokenizers$1 = [
+        tokenizeNewLine,
+        skipWhiteSpace$1,
+    ];
+    var commentTokenizers$1 = [
+        tokenizeNewLine,
+        skipWhiteSpace$1,
+        tokenizeComment,
+    ];
+
+    function getSourceCodeLine$1(input, lineNbr) {
+        return input.split(/\r\n|\r|\n/)[lineNbr];
+    }
+    function createSourceCodeInfo$1(input, position, filePath) {
+        var lines = input.substring(0, position + 1).split(/\r\n|\r|\n/);
+        var lastLine = lines[lines.length - 1];
+        var code = getSourceCodeLine$1(input, lines.length - 1);
+        var line = lines.length;
+        var column = lastLine.length;
+        return {
+            code: code,
+            position: {
+                line: line,
+                column: column,
+            },
+            filePath: filePath,
+        };
+    }
+    function getNextPostfixToken(input, position, params) {
+        var e_1, _a, _b;
+        var debug = !!params.debug;
+        var initialPosition = position;
+        var _c = __read(readLeadingNewLineTokens$1(input, position, params), 2), leadingNewLineTokensLength = _c[0], leadingNewLineTokens = _c[1];
+        position += leadingNewLineTokensLength;
+        if (position >= input.length)
+            return [position - initialPosition, undefined];
+        var _d = __read(readLeadingCommentTokens$1(input, position, params), 2), leadingCommentTokensLength = _d[0], leadingCommentTokens = _d[1];
+        position += leadingCommentTokensLength;
+        if (position >= input.length)
+            return [position - initialPosition, undefined];
+        var leadingMetaTokens = __spreadArray(__spreadArray([], __read(leadingNewLineTokens), false), __read(leadingCommentTokens), false);
+        // Loop through all tokenizer until one matches
+        var debugData = debug
+            ? {
+                sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                metaTokens: { inlineCommentToken: null, leadingMetaTokens: leadingMetaTokens },
+            }
+            : undefined;
+        var tryNext = true;
+        while (tryNext) {
+            if (position >= input.length) {
+                return [position - initialPosition, undefined];
+            }
+            tryNext = false;
+            try {
+                for (var tokenizers_1 = (e_1 = void 0, __values(tokenizers$1)), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
+                    var tokenizer = tokenizers_1_1.value;
+                    var _e = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _e[0], token = _e[1];
+                    position += nbrOfCharacters;
+                    if (nbrOfCharacters === 0) {
+                        continue;
+                    }
+                    if (!token) {
+                        tryNext = true;
+                        break;
+                    }
+                    var inlineCommentToken = null;
+                    if (!isCommentToken$1(token)) {
+                        _b = __read(readInlineCommentToken$1(input, position, params), 2), position = _b[0], inlineCommentToken = _b[1];
+                    }
+                    if (token.debugData) {
+                        token.debugData.metaTokens.inlineCommentToken = inlineCommentToken;
+                    }
+                    if (!isCommentToken$1(token) || debug) {
+                        return [position - initialPosition, token];
+                    }
+                    tryNext = true;
+                    break;
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (tokenizers_1_1 && !tokenizers_1_1.done && (_a = tokenizers_1.return)) _a.call(tokenizers_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }
+        throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+    }
+    function readLeadingNewLineTokens$1(input, position, params) {
+        var e_2, _a;
+        var newLineTokens = [];
+        var initialPosition = position;
+        var tokenized = false;
+        while (position < input.length) {
+            tokenized = false;
+            var debugData = params.debug
+                ? {
+                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
+                }
+                : undefined;
+            try {
+                // Loop through all tokenizer until one matches
+                for (var newLineTokenizers_1 = (e_2 = void 0, __values(newLineTokenizers$1)), newLineTokenizers_1_1 = newLineTokenizers_1.next(); !newLineTokenizers_1_1.done; newLineTokenizers_1_1 = newLineTokenizers_1.next()) {
+                    var tokenizer = newLineTokenizers_1_1.value;
+                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    // tokenizer matched
+                    if (nbrOfCharacters > 0) {
+                        tokenized = true;
+                        position += nbrOfCharacters;
+                        if (token) {
+                            assertNewLineToken$1(token);
+                            if (newLineTokens.length < 2)
+                                newLineTokens.push(token);
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (newLineTokenizers_1_1 && !newLineTokenizers_1_1.done && (_a = newLineTokenizers_1.return)) _a.call(newLineTokenizers_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            if (!tokenized)
+                // All newline tokens read!
+                return [position - initialPosition, newLineTokens];
+        }
+        // Ending up here means that no non newline token was found. I.e. this cannot be leading newline tokens
+        return [position - initialPosition, []];
+    }
+    function readLeadingCommentTokens$1(input, position, params) {
+        var e_3, _a;
+        var initialPosition = position;
+        var commentTokens = [];
+        var tokenized = false;
+        while (position < input.length) {
+            tokenized = false;
+            var debugData = params.debug
+                ? {
+                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
+                }
+                : undefined;
+            try {
+                // Loop through all tokenizer until one matches
+                for (var commentTokenizers_1 = (e_3 = void 0, __values(commentTokenizers$1)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
+                    var tokenizer = commentTokenizers_1_1.value;
+                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    // tokenizer matched
+                    if (nbrOfCharacters > 0) {
+                        tokenized = true;
+                        position += nbrOfCharacters;
+                        if (token) {
+                            assertMetaToken$1(token);
+                            // If a newline token is found, then this is not a leading comment
+                            if (isNewLineToken$1(token))
+                                return [0, []];
+                            commentTokens.push(token);
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (commentTokenizers_1_1 && !commentTokenizers_1_1.done && (_a = commentTokenizers_1.return)) _a.call(commentTokenizers_1);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            if (!tokenized)
+                // All metatokens read!
+                return [position - initialPosition, commentTokens];
+        }
+        // Ending up here means that no non meta token was found. I.e. this cannot be leading meta tokens
+        return [0, []];
+    }
+    function readInlineCommentToken$1(input, position, params) {
+        var e_4, _a;
+        var rollbackPosition = position;
+        var tokenized = false;
+        while (position < input.length) {
+            tokenized = false;
+            var debugData = params.debug
+                ? {
+                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
+                }
+                : undefined;
+            try {
+                // Loop through all tokenizer until one matches
+                for (var commentTokenizers_2 = (e_4 = void 0, __values(commentTokenizers$1)), commentTokenizers_2_1 = commentTokenizers_2.next(); !commentTokenizers_2_1.done; commentTokenizers_2_1 = commentTokenizers_2.next()) {
+                    var tokenizer = commentTokenizers_2_1.value;
+                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    // tokenizer matched
+                    if (nbrOfCharacters > 0) {
+                        tokenized = true;
+                        position += nbrOfCharacters;
+                        if (token) {
+                            if (isNewLineToken$1(token))
+                                return [rollbackPosition, null];
+                            assertCommentToken$1(token);
+                            return [position, token];
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            finally {
+                try {
+                    if (commentTokenizers_2_1 && !commentTokenizers_2_1.done && (_a = commentTokenizers_2.return)) _a.call(commentTokenizers_2);
+                }
+                finally { if (e_4) throw e_4.error; }
+            }
+            if (!tokenized)
+                // All metatokens read! Return undefined if not debug mode
+                return [rollbackPosition, null];
+        }
+        // Ending up here means that no comment token was found and end of tokens reached
+        return [position, null];
+    }
+    function isMetaToken$1(token) {
+        return !!token && (token.t === TokenType.NewLine || token.t === TokenType.Comment);
+    }
+    function assertMetaToken$1(token) {
+        if (!isMetaToken$1(token))
+            throw new LitsError("Expected meta token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
+    }
+    function isCommentToken$1(token) {
+        return !!token && token.t === TokenType.Comment;
+    }
+    function assertCommentToken$1(token) {
+        if (!isCommentToken$1(token))
+            throw new LitsError("Expected comment token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
+    }
+    function isNewLineToken$1(token) {
+        return !!token && token.t === TokenType.NewLine;
+    }
+    function assertNewLineToken$1(token) {
+        if (!isNewLineToken$1(token))
+            throw new LitsError("Expected newline token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
     }
 
     var applyCollectionAccessors = function (tokenStream) {
@@ -7977,241 +8555,63 @@ var Playground = (function (exports) {
         return [applyCollectionAccessors];
     }
 
-    var identifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
+    var prefixInfixNamesRecord = {
+        'true': { value: true },
+        'false': { value: false },
+        'nil': { value: null },
+        'null': { value: null, forbidden: true },
+        'undefined': { value: null, forbidden: true },
+        '===': { value: null, forbidden: true },
+        '!==': { value: null, forbidden: true },
+        // 'and': { value: null, forbidden: true },
+        // 'or': { value: null, forbidden: true },
+        'def': { value: null, forbidden: true },
+        'defs': { value: null, forbidden: true },
+        'let': { value: null, forbidden: true },
+        'if-let': { value: null, forbidden: true },
+        'when-let': { value: null, forbidden: true },
+        'when-first': { value: null, forbidden: true },
+        'fn': { value: null, forbidden: true },
+        'defn': { value: null, forbidden: true },
+        'defns': { value: null, forbidden: true },
+        'try': { value: null, forbidden: true },
+        'throw': { value: null, forbidden: true },
+        // 'if': { value: null, forbidden: true },
+        // 'if-not': { value: null, forbidden: true },
+        // 'cond': { value: null, forbidden: true },
+        // 'when': { value: null, forbidden: true },
+        // 'when-not': { value: null, forbidden: true },
+        // 'comment': { value: null, forbidden: true },
+        // 'do': { value: null, forbidden: true },
+        'recur': { value: null, forbidden: true },
+        'loop': { value: null, forbidden: true },
+        'time!': { value: null, forbidden: true },
+        'doseq': { value: null, forbidden: true },
+        'for': { value: null, forbidden: true },
+        // 'declared?': { value: null, forbidden: true },
+        // '??': { value: null, forbidden: true },
+    };
 
-    var NO_MATCH = [0, undefined];
-    var nameRegExp = new RegExp(identifierCharacterClass);
-    var whitespaceRegExp = /\s|,/;
-    var newLineRegExp = /\n/;
-    var tokenizeNewLine = function (input, current, debugData) {
-        return newLineRegExp.test(input[current])
-            ? [1, { t: TokenType.NewLine, v: '\n', debugData: debugData }]
-            : NO_MATCH;
-    };
-    var tokenizeComment = function (input, current, debugData) {
-        if (input[current] === ';') {
-            var length_1 = 0;
-            var value = '';
-            while (input[current + length_1] !== '\n' && current + length_1 < input.length) {
-                value += input[current + length_1];
-                length_1 += 1;
-            }
-            if (input[current + length_1] === '\n' && current + length_1 < input.length)
-                length_1 += 1;
-            return [length_1, { t: TokenType.Comment, v: value.trim(), debugData: debugData }];
-        }
-        return NO_MATCH;
-    };
+    var identifierRegExp = new RegExp(infixIdentifierCharacterClass);
+    var identifierFirstCharacterRegExp = new RegExp(infixIdentifierFirstCharacterClass);
+    var whitespaceRegExp = /\s/;
     var skipWhiteSpace = function (input, current) {
         return whitespaceRegExp.test(input[current]) ? [1, undefined] : NO_MATCH;
-    };
-    var tokenizeLeftParen = function (input, position, debugData) {
-        return tokenizeCharacter(TokenType.Bracket, '(', input, position, debugData);
-    };
-    var tokenizeRightParen = function (input, position, debugData) {
-        return tokenizeCharacter(TokenType.Bracket, ')', input, position, debugData);
-    };
-    var tokenizeLeftBracket = function (input, position, debugData) {
-        return tokenizeCharacter(TokenType.Bracket, '[', input, position, debugData);
-    };
-    var tokenizeRightBracket = function (input, position, debugData) {
-        return tokenizeCharacter(TokenType.Bracket, ']', input, position, debugData);
-    };
-    var tokenizeLeftCurly = function (input, position, debugData) {
-        return tokenizeCharacter(TokenType.Bracket, '{', input, position, debugData);
-    };
-    var tokenizeRightCurly = function (input, position, debugData) {
-        return tokenizeCharacter(TokenType.Bracket, '}', input, position, debugData);
-    };
-    var tokenizeString = function (input, position, debugData) {
-        if (input[position] !== '"')
-            return NO_MATCH;
-        var value = '';
-        var length = 1;
-        var char = input[position + length];
-        var escape = false;
-        while (char !== '"' || escape) {
-            if (char === undefined)
-                throw new LitsError("Unclosed string at position ".concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-            length += 1;
-            if (escape) {
-                escape = false;
-                if (char === '"' || char === '\\') {
-                    value += char;
-                }
-                else {
-                    value += '\\';
-                    value += char;
-                }
-            }
-            else {
-                if (char === '\\')
-                    escape = true;
-                else
-                    value += char;
-            }
-            char = input[position + length];
-        }
-        return [length + 1, { t: TokenType.String, v: value, debugData: debugData }];
-    };
-    var tokenizeCollectionAccessor = function (input, position, debugData) {
-        var char = input[position];
-        if (char !== '.' && char !== '#')
-            return NO_MATCH;
-        return [
-            1,
-            {
-                t: TokenType.CollectionAccessor,
-                v: char,
-                debugData: debugData,
-            },
-        ];
-    };
-    var tokenizeSymbolString = function (input, position, debugData) {
-        if (input[position] !== ':')
-            return NO_MATCH;
-        var value = '';
-        var length = 1;
-        var char = input[position + length];
-        while (char && nameRegExp.test(char)) {
-            length += 1;
-            value += char;
-            char = input[position + length];
-        }
-        if (length === 1)
-            return NO_MATCH;
-        return [length, { t: TokenType.String, v: value, debugData: debugData, o: { s: true } }];
-    };
-    var tokenizeRegexpShorthand = function (input, position, debugData) {
-        var _a;
-        if (input[position] !== '#')
-            return NO_MATCH;
-        var _b = __read(tokenizeString(input, position + 1, debugData), 2), stringLength = _b[0], token = _b[1];
-        if (!token)
-            return NO_MATCH;
-        position += stringLength + 1;
-        var length = stringLength + 1;
-        var options = {};
-        while (input[position] === 'g' || input[position] === 'i') {
-            if (input[position] === 'g') {
-                if (options.g)
-                    throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                length += 1;
-                options.g = true;
-            }
-            else {
-                if (options.i)
-                    throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                length += 1;
-                options.i = true;
-            }
-            position += 1;
-        }
-        if (nameRegExp.test((_a = input[position]) !== null && _a !== void 0 ? _a : ''))
-            throw new LitsError("Unexpected regexp option \"".concat(input[position], "\" at position ").concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-        return [
-            length,
-            {
-                t: TokenType.RegexpShorthand,
-                v: token.v,
-                o: options,
-                debugData: debugData,
-            },
-        ];
-    };
-    var tokenizeFnShorthand = function (input, position, debugData) {
-        if (input.slice(position, position + 2) !== '#(')
-            return NO_MATCH;
-        return [
-            1,
-            {
-                t: TokenType.FnShorthand,
-                v: '#',
-                debugData: debugData,
-            },
-        ];
-    };
-    var endOfNumberRegExp = /[\s)\]},#]/;
-    var decimalNumberRegExp = /\d/;
-    var octalNumberRegExp = /[0-7]/;
-    var hexNumberRegExp = /[0-9a-f]/i;
-    var binaryNumberRegExp = /[01]/;
-    var firstCharRegExp = /[0-9.-]/;
-    var tokenizeNumber = function (input, position, debugData) {
-        var type = 'decimal';
-        var firstChar = input[position];
-        if (!firstCharRegExp.test(firstChar))
-            return NO_MATCH;
-        var hasDecimals = firstChar === '.';
-        var i;
-        for (i = position + 1; i < input.length; i += 1) {
-            var char = asString(input[i], debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { char: true });
-            if (endOfNumberRegExp.test(char))
-                break;
-            if (char === '.') {
-                var nextChar = input[i + 1];
-                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
-                    break;
-            }
-            if (i === position + 1 && firstChar === '0') {
-                if (char === 'b' || char === 'B') {
-                    type = 'binary';
-                    continue;
-                }
-                if (char === 'o' || char === 'O') {
-                    type = 'octal';
-                    continue;
-                }
-                if (char === 'x' || char === 'X') {
-                    type = 'hex';
-                    continue;
-                }
-            }
-            if (type === 'decimal' && hasDecimals) {
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'binary') {
-                if (!binaryNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'octal') {
-                if (!octalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'hex') {
-                if (!hexNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else {
-                if (char === '.') {
-                    hasDecimals = true;
-                    continue;
-                }
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-        }
-        var length = i - position;
-        var value = input.substring(position, i);
-        if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
-            return NO_MATCH;
-        return [length, { t: TokenType.Number, v: value, debugData: debugData }];
     };
     var tokenizeReservedName = function (input, position, debugData) {
         var e_1, _a;
         try {
-            for (var _b = __values(Object.entries(reservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values(Object.entries(prefixInfixNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
-                var length_2 = reservedName.length;
-                var nextChar = input[position + length_2];
-                if (nextChar && nameRegExp.test(nextChar))
+                var length_1 = reservedName.length;
+                var nextChar = input[position + length_1];
+                if (nextChar && identifierRegExp.test(nextChar))
                     continue;
-                var name_1 = input.substring(position, position + length_2);
+                var name_1 = input.substring(position, position + length_1);
                 if (name_1 === reservedName) {
                     if (forbidden)
                         throw new LitsError("".concat(name_1, " is forbidden!"), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                    return [length_2, { t: TokenType.ReservedName, v: reservedName, debugData: debugData }];
+                    return [length_1, { t: TokenType.ReservedName, v: reservedName, debugData: debugData }];
                 }
             }
         }
@@ -8224,56 +8624,44 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
+    // tokenizePattern(TokenType.Name, nameRegExp, input, position, debugData)
     var tokenizeName = function (input, position, debugData) {
-        return tokenizePattern(TokenType.Name, nameRegExp, input, position, debugData);
-    };
-    var tokenizeModifier = function (input, position, debugData) {
-        var e_2, _a;
-        var modifiers = ['&', '&let', '&when', '&while'];
-        try {
-            for (var modifiers_1 = __values(modifiers), modifiers_1_1 = modifiers_1.next(); !modifiers_1_1.done; modifiers_1_1 = modifiers_1.next()) {
-                var modifier = modifiers_1_1.value;
-                var length_3 = modifier.length;
-                var charAfterModifier = input[position + length_3];
-                if (input.substring(position, position + length_3) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
-                    var value = modifier;
-                    return [length_3, { t: TokenType.Modifier, v: value, debugData: debugData }];
-                }
-            }
+        var initialPosition = position;
+        var value = input[position];
+        if (!value || !identifierFirstCharacterRegExp.test(value))
+            return NO_MATCH;
+        position += 1;
+        var char = input[position];
+        while (char && identifierRegExp.test(char)) {
+            value += char;
+            position += 1;
+            char = input[position];
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (modifiers_1_1 && !modifiers_1_1.done && (_a = modifiers_1.return)) _a.call(modifiers_1);
-            }
-            finally { if (e_2) throw e_2.error; }
+        return [position - initialPosition, { t: TokenType.Name, v: value, debugData: debugData }];
+    };
+    var tokenizeOperator = function (input, position, debugData) {
+        var _a;
+        var twoChars = input.slice(position, position + 2);
+        var nextChar = input[position + 2];
+        if (['==', '!=', '>=', '<=', '&&', '||'].includes(twoChars) && [' ', '\n', undefined].includes(nextChar)) {
+            return [2, { t: TokenType.InfixOperator, v: twoChars, debugData: debugData }];
+        }
+        var oneChar = (_a = input[position]) !== null && _a !== void 0 ? _a : '';
+        nextChar = input[position + 1];
+        if (['<', '>', '+', '-', '*', '/', '%', '^', '!', '=', '&', '|'].includes(oneChar) && [' ', '\n', undefined].includes(nextChar)) {
+            return [1, { t: TokenType.InfixOperator, v: oneChar, debugData: debugData }];
         }
         return NO_MATCH;
     };
-    function tokenizeCharacter(type, value, input, position, debugData) {
-        if (value === input[position])
-            return [1, { t: type, v: value, debugData: debugData }];
-        else
-            return NO_MATCH;
-    }
-    function tokenizePattern(type, pattern, input, position, debugData) {
-        var char = input[position];
-        var length = 0;
-        var value = '';
-        if (!char || !pattern.test(char))
-            return NO_MATCH;
-        while (char && pattern.test(char)) {
-            value += char;
-            length += 1;
-            char = input[position + length];
-        }
-        return [length, { t: type, v: value, debugData: debugData }];
-    }
-
+    var tokenizePostfixDirective = function (input, position, debugData) {
+        return tokenizeCharacter(TokenType.Bracket, '@', input, position, debugData);
+    };
     // All tokenizers, order matters!
     var tokenizers = [
         skipWhiteSpace,
         tokenizeComment,
+        tokenizePostfixDirective,
+        tokenizeOperator,
         tokenizeLeftParen,
         tokenizeRightParen,
         tokenizeLeftBracket,
@@ -8281,15 +8669,22 @@ var Playground = (function (exports) {
         tokenizeLeftCurly,
         tokenizeRightCurly,
         tokenizeString,
-        tokenizeSymbolString,
         tokenizeNumber,
         tokenizeReservedName,
         tokenizeName,
-        tokenizeModifier,
         tokenizeRegexpShorthand,
-        tokenizeFnShorthand,
         tokenizeCollectionAccessor,
     ];
+    var newLineTokenizers = [
+        tokenizeNewLine,
+        skipWhiteSpace,
+    ];
+    var commentTokenizers = [
+        tokenizeNewLine,
+        skipWhiteSpace,
+        tokenizeComment,
+    ];
+
     function getSourceCodeLine(input, lineNbr) {
         return input.split(/\r\n|\r|\n/)[lineNbr];
     }
@@ -8308,80 +8703,72 @@ var Playground = (function (exports) {
             filePath: filePath,
         };
     }
-    function tokenize$1(input, params) {
-        var _a, _b, e_1, _c, _d;
+    function getNextInfixToken(input, position, params) {
+        var e_1, _a, _b;
         var debug = !!params.debug;
-        var tokens = [];
-        var position = 0;
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var leadingNewLineTokens = void 0;
-            _a = __read(readLeadingNewLineTokens(input, position, params), 2), position = _a[0], leadingNewLineTokens = _a[1];
-            if (position >= input.length)
-                break;
-            var leadingCommentTokens = void 0;
-            _b = __read(readLeadingCommentTokens(input, position, params), 2), position = _b[0], leadingCommentTokens = _b[1];
-            if (position >= input.length)
-                break;
-            var leadingMetaTokens = __spreadArray(__spreadArray([], __read(leadingNewLineTokens), false), __read(leadingCommentTokens), false);
-            // Loop through all tokenizer until one matches
-            var debugData = debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: leadingMetaTokens },
-                }
-                : undefined;
+        var initialPosition = position;
+        var _c = __read(readLeadingNewLineTokens(input, position, params), 2), leadingNewLineTokensLength = _c[0], leadingNewLineTokens = _c[1];
+        position += leadingNewLineTokensLength;
+        if (position >= input.length)
+            return [position - initialPosition, undefined];
+        var _d = __read(readLeadingCommentTokens(input, position, params), 2), leadingCommentTokensLength = _d[0], leadingCommentTokens = _d[1];
+        position += leadingCommentTokensLength;
+        if (position >= input.length)
+            return [position - initialPosition, undefined];
+        var leadingMetaTokens = __spreadArray(__spreadArray([], __read(leadingNewLineTokens), false), __read(leadingCommentTokens), false);
+        // Loop through all tokenizer until one matches
+        var debugData = debug
+            ? {
+                sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
+                metaTokens: { inlineCommentToken: null, leadingMetaTokens: leadingMetaTokens },
+            }
+            : undefined;
+        var tryNext = true;
+        while (tryNext) {
+            if (position >= input.length) {
+                return [position - initialPosition, undefined];
+            }
+            tryNext = false;
             try {
                 for (var tokenizers_1 = (e_1 = void 0, __values(tokenizers)), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
                     var tokenizer = tokenizers_1_1.value;
                     var _e = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _e[0], token = _e[1];
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            var inlineCommentToken = null;
-                            if (!isCommentToken(token))
-                                _d = __read(readInlineCommentToken(input, position, params), 2), position = _d[0], inlineCommentToken = _d[1];
-                            if (token.debugData)
-                                token.debugData.metaTokens.inlineCommentToken = inlineCommentToken;
-                            if (!isCommentToken(token) || debug)
-                                tokens.push(token);
-                        }
+                    position += nbrOfCharacters;
+                    if (nbrOfCharacters === 0) {
+                        continue;
+                    }
+                    if (!token) {
+                        tryNext = true;
                         break;
                     }
+                    var inlineCommentToken = null;
+                    if (!isCommentToken(token)) {
+                        _b = __read(readInlineCommentToken(input, position, params), 2), position = _b[0], inlineCommentToken = _b[1];
+                    }
+                    if (token.debugData) {
+                        token.debugData.metaTokens.inlineCommentToken = inlineCommentToken;
+                    }
+                    if (!isCommentToken(token) || debug) {
+                        return [position - initialPosition, token];
+                    }
+                    tryNext = true;
+                    break;
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (tokenizers_1_1 && !tokenizers_1_1.done && (_c = tokenizers_1.return)) _c.call(tokenizers_1);
+                    if (tokenizers_1_1 && !tokenizers_1_1.done && (_a = tokenizers_1.return)) _a.call(tokenizers_1);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
-            if (!tokenized)
-                throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
         }
-        var tokenStream = {
-            tokens: tokens,
-            filePath: params.filePath,
-            hasDebugData: debug,
-        };
-        applySugar(tokenStream);
-        return tokenStream;
+        throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
     }
-    function applySugar(tokenStream) {
-        var sugar = getSugar();
-        sugar.forEach(function (sugarFn) { return sugarFn(tokenStream); });
-    }
-    var newLineTokenizers = [
-        tokenizeNewLine,
-        skipWhiteSpace,
-    ];
     function readLeadingNewLineTokens(input, position, params) {
         var e_2, _a;
         var newLineTokens = [];
+        var initialPosition = position;
         var tokenized = false;
         while (position < input.length) {
             tokenized = false;
@@ -8418,20 +8805,15 @@ var Playground = (function (exports) {
             }
             if (!tokenized)
                 // All newline tokens read!
-                return [position, newLineTokens];
+                return [position - initialPosition, newLineTokens];
         }
         // Ending up here means that no non newline token was found. I.e. this cannot be leading newline tokens
-        return [position, []];
+        return [position - initialPosition, []];
     }
-    var metaTokenizers = [
-        tokenizeNewLine,
-        skipWhiteSpace,
-        tokenizeComment,
-    ];
     function readLeadingCommentTokens(input, position, params) {
         var e_3, _a;
+        var initialPosition = position;
         var commentTokens = [];
-        var rollbackPosition = position;
         var tokenized = false;
         while (position < input.length) {
             tokenized = false;
@@ -8443,8 +8825,8 @@ var Playground = (function (exports) {
                 : undefined;
             try {
                 // Loop through all tokenizer until one matches
-                for (var metaTokenizers_1 = (e_3 = void 0, __values(metaTokenizers)), metaTokenizers_1_1 = metaTokenizers_1.next(); !metaTokenizers_1_1.done; metaTokenizers_1_1 = metaTokenizers_1.next()) {
-                    var tokenizer = metaTokenizers_1_1.value;
+                for (var commentTokenizers_1 = (e_3 = void 0, __values(commentTokenizers)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
+                    var tokenizer = commentTokenizers_1_1.value;
                     var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
                     // tokenizer matched
                     if (nbrOfCharacters > 0) {
@@ -8454,7 +8836,7 @@ var Playground = (function (exports) {
                             assertMetaToken(token);
                             // If a newline token is found, then this is not a leading comment
                             if (isNewLineToken(token))
-                                return [rollbackPosition, []];
+                                return [0, []];
                             commentTokens.push(token);
                         }
                         break;
@@ -8464,22 +8846,17 @@ var Playground = (function (exports) {
             catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
-                    if (metaTokenizers_1_1 && !metaTokenizers_1_1.done && (_a = metaTokenizers_1.return)) _a.call(metaTokenizers_1);
+                    if (commentTokenizers_1_1 && !commentTokenizers_1_1.done && (_a = commentTokenizers_1.return)) _a.call(commentTokenizers_1);
                 }
                 finally { if (e_3) throw e_3.error; }
             }
             if (!tokenized)
                 // All metatokens read!
-                return [position, commentTokens];
+                return [position - initialPosition, commentTokens];
         }
         // Ending up here means that no non meta token was found. I.e. this cannot be leading meta tokens
-        return [rollbackPosition, []];
+        return [0, []];
     }
-    var commentTokenizers = [
-        tokenizeNewLine,
-        skipWhiteSpace,
-        tokenizeComment,
-    ];
     function readInlineCommentToken(input, position, params) {
         var e_4, _a;
         var rollbackPosition = position;
@@ -8494,8 +8871,8 @@ var Playground = (function (exports) {
                 : undefined;
             try {
                 // Loop through all tokenizer until one matches
-                for (var commentTokenizers_1 = (e_4 = void 0, __values(commentTokenizers)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
-                    var tokenizer = commentTokenizers_1_1.value;
+                for (var commentTokenizers_2 = (e_4 = void 0, __values(commentTokenizers)), commentTokenizers_2_1 = commentTokenizers_2.next(); !commentTokenizers_2_1.done; commentTokenizers_2_1 = commentTokenizers_2.next()) {
+                    var tokenizer = commentTokenizers_2_1.value;
                     var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
                     // tokenizer matched
                     if (nbrOfCharacters > 0) {
@@ -8514,7 +8891,7 @@ var Playground = (function (exports) {
             catch (e_4_1) { e_4 = { error: e_4_1 }; }
             finally {
                 try {
-                    if (commentTokenizers_1_1 && !commentTokenizers_1_1.done && (_a = commentTokenizers_1.return)) _a.call(commentTokenizers_1);
+                    if (commentTokenizers_2_1 && !commentTokenizers_2_1.done && (_a = commentTokenizers_2.return)) _a.call(commentTokenizers_2);
                 }
                 finally { if (e_4) throw e_4.error; }
             }
@@ -8545,6 +8922,38 @@ var Playground = (function (exports) {
     function assertNewLineToken(token) {
         if (!isNewLineToken(token))
             throw new LitsError("Expected newline token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
+    }
+
+    function tokenize$1(input, params) {
+        var debug = !!params.debug;
+        var mode = params.infix ? 'infix' : 'postfix';
+        var position = 0;
+        var tokenStream = {
+            tokens: [],
+            filePath: params.filePath,
+            hasDebugData: debug,
+        };
+        while (position < input.length) {
+            var _a = __read(mode === 'postfix'
+                ? getNextPostfixToken(input, position, params)
+                : getNextInfixToken(input, position, params), 2), tokenLength = _a[0], token = _a[1];
+            position += tokenLength;
+            if (token) {
+                tokenStream.tokens.push(token);
+                if (token.t === TokenType.Infix) {
+                    mode = 'infix';
+                }
+                if (token.t === TokenType.Postfix) {
+                    mode = 'postfix';
+                }
+            }
+        }
+        applySugar(tokenStream);
+        return tokenStream;
+    }
+    function applySugar(tokenStream) {
+        var sugar = getSugar();
+        sugar.forEach(function (sugarFn) { return sugarFn(tokenStream); });
     }
 
     function transformTokens(tokenStram, transformer) {

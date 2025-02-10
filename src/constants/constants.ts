@@ -41,6 +41,9 @@ export enum TokenType {
   CollectionAccessor = 109,
   Comment = 110,
   NewLine = 111,
+  Infix = 112,
+  Postfix = 113,
+  InfixOperator = 114,
 }
 
 export const tokenTypeName = new Map([

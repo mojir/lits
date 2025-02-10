@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../src'
 import { TokenType } from '../src/constants/constants'
-import { tokenizeNumber } from '../src/tokenizer/tokenizers'
+import { tokenizeNumber } from '../src/tokenizer/common/tokenizers'
 
 describe('parse numbers', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {

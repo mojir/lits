@@ -4,7 +4,7 @@ import type { Arity } from '../builtin/utils'
 import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
-import type { ReservedName } from '../reservedNames'
+import type { PostfixReservedName } from '../tokenizer/postfix/reservedNames'
 import type { SourceCodeInfo, Token, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 
@@ -149,7 +149,7 @@ export interface ModifierNode extends GenericNode {
 }
 export interface ReservedNameNode extends GenericNode {
   t: AstNodeType.ReservedName // type
-  v: ReservedName // reservedName
+  v: PostfixReservedName // reservedName
 }
 
 interface CommonNormalExpressionNode extends GenericNode {

@@ -9,6 +9,6 @@ export function transformTokens(tokenStram: TokenStream, transformer: (name: str
         v: transformer(token.v),
       }
     }),
-    
+
   }
 }
