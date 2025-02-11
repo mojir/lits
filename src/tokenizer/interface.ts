@@ -9,10 +9,10 @@ export interface SourceCodeInfo {
   filePath?: string
 }
 
-export type MetaToken = Token<TokenType.NewLine> | Token<TokenType.Comment>
+export type MetaToken = Token<'NewLine'> | Token<'Comment'>
 export interface MetaTokens {
   leadingMetaTokens: MetaToken[] // Comments on the lines before the token
-  inlineCommentToken: Token<TokenType.Comment> | null // Comment on the same line as the token
+  inlineCommentToken: Token<'Comment'> | null // Comment on the same line as the token
 }
 
 export interface TokenDebugData {
@@ -31,6 +31,7 @@ export type Tokenizer = (input: string, position: number, debugData?: TokenDebug
 export interface TokenStream {
   tokens: Token[]
   hasDebugData: boolean
+  infix?: boolean
   filePath?: string
 }
 

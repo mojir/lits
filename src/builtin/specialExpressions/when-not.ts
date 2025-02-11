@@ -1,4 +1,4 @@
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams } from '../../typeGuards'
@@ -11,7 +11,7 @@ export interface WhenNotNode extends CommonSpecialExpressionNode<'when-not'> {}
 export const whenNotSpecialExpression: BuiltinSpecialExpression<Any, WhenNotNode> = {
   parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
     const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: WhenNotNode = {
       t: AstNodeType.SpecialExpression,

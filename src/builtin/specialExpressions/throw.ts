@@ -1,4 +1,4 @@
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import { UserDefinedError } from '../../errors'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams } from '../../typeGuards'
@@ -13,8 +13,8 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
     const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
     position = newPosition
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: ThrowNode = {
       t: AstNodeType.SpecialExpression,

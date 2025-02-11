@@ -1,5 +1,5 @@
 import { joinAnalyzeResults } from '../../analyze/utils'
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
@@ -29,7 +29,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirst
 
     let params: AstNode[]
     ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: WhenFirstNode = {
       t: AstNodeType.SpecialExpression,

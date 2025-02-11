@@ -1,7 +1,7 @@
 import type { SpecialExpressionNode } from '..'
 import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '../../analyze'
 import { addAnalyzeResults } from '../../analyze/utils'
-import { AstNodeType, FunctionType, TokenType } from '../../constants/constants'
+import { AstNodeType, FunctionType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
@@ -47,7 +47,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
 
     let functionOverloades: FunctionOverload[]
     ;[position, functionOverloades] = parseFunctionOverloades(tokenStream, position, parsers)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: DefnNode = {
       t: AstNodeType.SpecialExpression,
@@ -99,7 +99,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
 
     let functionOverloades: FunctionOverload[]
     ;[position, functionOverloades] = parseFunctionOverloades(tokenStream, position, parsers)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: DefnsNode = {
       t: AstNodeType.SpecialExpression,
@@ -152,7 +152,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
   parse: (tokenStream, position, firstToken, parsers) => {
     let functionOverloades: FunctionOverload[]
     ;[position, functionOverloades] = parseFunctionOverloades(tokenStream, position, parsers)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: FnNode = {
       t: AstNodeType.SpecialExpression,
@@ -283,7 +283,7 @@ function parseFunctionBody(
 ): [number, AstNode[]] {
   let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
   const body: AstNode[] = []
-  while (!(tkn.t === TokenType.Bracket && tkn.v === ')')) {
+  while (!(tkn.t === 'Bracket' && tkn.v === ')')) {
     let bodyNode: AstNode
     ;[position, bodyNode] = parseToken(tokenStream, position)
     body.push(bodyNode)
@@ -300,10 +300,10 @@ function parseFunctionOverloades(
   position: number,
   parsers: ParserHelpers,
 ): [number, FunctionOverload[]] {
-  let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket })
+  let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket' })
   if (tkn.v === '(') {
     const functionOverloades: FunctionOverload[] = []
-    while (!(tkn.t === TokenType.Bracket && tkn.v === ')')) {
+    while (!(tkn.t === 'Bracket' && tkn.v === ')')) {
       position += 1
       tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
       let functionArguments: FunctionArguments
@@ -321,7 +321,7 @@ function parseFunctionOverloades(
         a: arity,
       })
 
-      tkn = asToken(tokenStream.tokens[position + 1], tokenStream.filePath, { type: TokenType.Bracket })
+      tkn = asToken(tokenStream.tokens[position + 1], tokenStream.filePath, { type: 'Bracket' })
       if (tkn.v !== ')' && tkn.v !== '(')
         throw new LitsError(`Expected ( or ) token, got ${valueToString(tkn)}.`, tkn.debugData?.sourceCodeInfo)
       position += 1
@@ -366,7 +366,7 @@ function parseFunctionArguments(
 
   position += 1
   tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
-  while (!(tkn.t === TokenType.Bracket && tkn.v === ']')) {
+  while (!(tkn.t === 'Bracket' && tkn.v === ']')) {
     if (state === 'let') {
       ;[position, bindings] = parseBindings(tokenStream, position)
       break

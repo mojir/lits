@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
 import type { QqNode } from '../builtin/specialExpressions/qq'
-import { AstNodeType, TokenType } from '../constants/constants'
+import { AstNodeType } from '../constants/constants'
 import type {
   AstNode,
   ExpressionNode,
@@ -31,7 +31,7 @@ import {
 } from './astNode'
 
 describe('astNode type guards', () => {
-  const tkn: Token = { t: TokenType.Name, v: 'X', debugData: undefined }
+  const tkn: Token = { t: 'Name', v: 'X', debugData: undefined }
   const invalidAstNodes: unknown[] = [
     {
       tkn,
@@ -86,7 +86,7 @@ describe('astNode type guards', () => {
   const stringNode: StringNode = {
     t: AstNodeType.String,
     v: 'foo',
-    debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: tkn },
+    debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: tkn },
     p: [],
     n: undefined,
   }
@@ -94,7 +94,7 @@ describe('astNode type guards', () => {
     t: AstNodeType.NormalExpression,
     p: [],
     n: 'object',
-    debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: tkn },
+    debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: tkn },
   }
   const normalExpressionNodeWithoutName: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
@@ -106,7 +106,7 @@ describe('astNode type guards', () => {
         {
           t: AstNodeType.Number,
           v: 2,
-          debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: tkn },
+          debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: tkn },
           p: [],
           n: undefined,
         },

@@ -1,4 +1,3 @@
-import { TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import { infixIdentifierCharacterClass, infixIdentifierFirstCharacterClass } from '../../identifier'
 import {
@@ -39,13 +38,13 @@ export const tokenizeReservedName: Tokenizer = (input, position, debugData) => {
       if (forbidden)
         throw new LitsError(`${name} is forbidden!`, debugData?.sourceCodeInfo)
 
-      return [length, { t: TokenType.ReservedName, v: reservedName, debugData }]
+      return [length, { t: 'ReservedName', v: reservedName, debugData }]
     }
   }
   return NO_MATCH
 }
 
-// tokenizePattern(TokenType.Name, nameRegExp, input, position, debugData)
+// tokenizePattern('Name', nameRegExp, input, position, debugData)
 export const tokenizeName: Tokenizer = (input, position, debugData) => {
   const initialPosition = position
   let value = input[position]
@@ -62,25 +61,25 @@ export const tokenizeName: Tokenizer = (input, position, debugData) => {
     char = input[position]
   }
 
-  return [position - initialPosition, { t: TokenType.Name, v: value, debugData }]
+  return [position - initialPosition, { t: 'Name', v: value, debugData }]
 }
 
 export const tokenizeOperator: Tokenizer = (input, position, debugData) => {
   const twoChars = input.slice(position, position + 2)
   let nextChar = input[position + 2]
   if (['==', '!=', '>=', '<=', '&&', '||'].includes(twoChars) && [' ', '\n', undefined].includes(nextChar)) {
-    return [2, { t: TokenType.InfixOperator, v: twoChars, debugData }]
+    return [2, { t: 'InfixOperator', v: twoChars, debugData }]
   }
   const oneChar = input[position] ?? ''
   nextChar = input[position + 1]
   if (['<', '>', '+', '-', '*', '/', '%', '^', '!', '=', '&', '|'].includes(oneChar) && [' ', '\n', undefined].includes(nextChar)) {
-    return [1, { t: TokenType.InfixOperator, v: oneChar, debugData }]
+    return [1, { t: 'InfixOperator', v: oneChar, debugData }]
   }
   return NO_MATCH
 }
 
 export const tokenizePostfixDirective: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter(TokenType.Bracket, '@', input, position, debugData)
+  tokenizeCharacter('Bracket', '@', input, position, debugData)
 
 // All tokenizers, order matters!
 export const tokenizers: Tokenizer[] = [

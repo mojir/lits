@@ -1,4 +1,4 @@
-import { TokenType } from '../../constants/constants'
+import type { TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import { postfixIdentifierCharacterClass } from '../../identifier'
 import type { ModifierName } from '../../parser/interface'
@@ -33,7 +33,7 @@ export const tokenizeFnShorthand: Tokenizer = (input, position, debugData) => {
   return [
     1,
     {
-      t: TokenType.FnShorthand,
+      t: 'FnShorthand',
       v: '#',
       debugData,
     },
@@ -52,14 +52,14 @@ export const tokenizeReservedName: Tokenizer = (input, position, debugData) => {
       if (forbidden)
         throw new LitsError(`${name} is forbidden!`, debugData?.sourceCodeInfo)
 
-      return [length, { t: TokenType.ReservedName, v: reservedName, debugData }]
+      return [length, { t: 'ReservedName', v: reservedName, debugData }]
     }
   }
   return NO_MATCH
 }
 
 export const tokenizeName: Tokenizer = (input, position, debugData) =>
-  tokenizePattern(TokenType.Name, nameRegExp, input, position, debugData)
+  tokenizePattern('Name', nameRegExp, input, position, debugData)
 
 const tokenizeSymbolString: Tokenizer = (input, position, debugData) => {
   if (input[position] !== ':')
@@ -76,7 +76,7 @@ const tokenizeSymbolString: Tokenizer = (input, position, debugData) => {
   if (length === 1)
     return NO_MATCH
 
-  return [length, { t: TokenType.String, v: value, debugData, o: { s: true } } satisfies Token]
+  return [length, { t: 'String', v: value, debugData, o: { s: true } } satisfies Token]
 }
 
 export const tokenizeModifier: Tokenizer = (input, position, debugData) => {
@@ -86,7 +86,7 @@ export const tokenizeModifier: Tokenizer = (input, position, debugData) => {
     const charAfterModifier = input[position + length]
     if (input.substring(position, position + length) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
       const value: ModifierName = modifier
-      return [length, { t: TokenType.Modifier, v: value, debugData }]
+      return [length, { t: 'Modifier', v: value, debugData }]
     }
   }
   return NO_MATCH
@@ -100,7 +100,7 @@ export const tokenizeInfixDirective: Tokenizer = (input, position, debugData) =>
   if (nextChar && nameRegExp.test(nextChar)) {
     return NO_MATCH
   }
-  return [1, { t: TokenType.Infix, v: '$', debugData }]
+  return [1, { t: 'Infix', v: '$', debugData }]
 }
 
 function tokenizePattern(

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../src'
-import { TokenType } from '../src/constants/constants'
 import { tokenizeNumber } from '../src/tokenizer/common/tokenizers'
 
 describe('parse numbers', () => {
@@ -29,7 +28,7 @@ describe('parse numbers', () => {
 
       numberSamples.forEach((sample) => {
         it(`number sample: ${sample}`, () => {
-          expect(tokenizeNumber(sample, 0)).toEqual([sample.length, { t: TokenType.Number, v: sample }])
+          expect(tokenizeNumber(sample, 0)).toEqual([sample.length, { t: 'Number', v: sample }])
           expect(lits.run(sample) === Number(sample)).toBe(true)
         })
       })

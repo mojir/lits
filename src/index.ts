@@ -1,4 +1,4 @@
-export { AstNodeType, TokenType, FunctionType } from './constants/constants'
+export { AstNodeType, FunctionType } from './constants/constants'
 export {
   isBuiltinFunction,
   isLitsFunction,

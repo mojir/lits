@@ -1,4 +1,3 @@
-import { TokenType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { getNextPostfixToken } from './postfix'
 import type { MetaToken, Token, TokenStream, TokenizeParams } from './interface'
@@ -7,26 +6,28 @@ import { getNextInfixToken } from './infix'
 
 export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const debug = !!params.debug
-  let mode: 'infix' | 'postfix' = params.infix ? 'infix' : 'postfix'
+  let infix = !!params.infix
   let position = 0
   const tokenStream: TokenStream = {
     tokens: [],
     filePath: params.filePath,
     hasDebugData: debug,
+    infix,
   }
 
   while (position < input.length) {
-    const [tokenLength, token] = mode === 'postfix'
-      ? getNextPostfixToken(input, position, params)
-      : getNextInfixToken(input, position, params)
-    position += tokenLength
+    const [count, token] = infix
+      ? getNextInfixToken(input, position, params)
+      : getNextPostfixToken(input, position, params)
+
+    position += count
     if (token) {
       tokenStream.tokens.push(token)
-      if (token.t === TokenType.Infix) {
-        mode = 'infix'
+      if (token.t === 'Infix') {
+        infix = true
       }
-      if (token.t === TokenType.Postfix) {
-        mode = 'postfix'
+      if (token.t === 'Postfix') {
+        infix = false
       }
     }
   }
@@ -42,7 +43,7 @@ function applySugar(tokenStream: TokenStream) {
 }
 
 export function isMetaToken(token?: Token): token is MetaToken {
-  return !!token && (token.t === TokenType.NewLine || token.t === TokenType.Comment)
+  return !!token && (token.t === 'NewLine' || token.t === 'Comment')
 }
 
 export function assertMetaToken(token?: Token): asserts token is MetaToken {
@@ -50,20 +51,20 @@ export function assertMetaToken(token?: Token): asserts token is MetaToken {
     throw new LitsError(`Expected meta token, got ${token?.t}.`)
 }
 
-export function isCommentToken(token?: Token): token is Token<TokenType.Comment> {
-  return !!token && token.t === TokenType.Comment
+export function isCommentToken(token?: Token): token is Token<'Comment'> {
+  return !!token && token.t === 'Comment'
 }
 
-export function assertCommentToken(token?: Token): asserts token is Token<TokenType.Comment> {
+export function assertCommentToken(token?: Token): asserts token is Token<'Comment'> {
   if (!isCommentToken(token))
     throw new LitsError(`Expected comment token, got ${token?.t}.`)
 }
 
-export function isNewLineToken(token?: Token): token is Token<TokenType.NewLine> {
-  return !!token && token.t === TokenType.NewLine
+export function isNewLineToken(token?: Token): token is Token<'NewLine'> {
+  return !!token && token.t === 'NewLine'
 }
 
-export function assertNewLineToken(token?: Token): asserts token is Token<TokenType.NewLine> {
+export function assertNewLineToken(token?: Token): asserts token is Token<'NewLine'> {
   if (!isNewLineToken(token))
     throw new LitsError(`Expected newline token, got ${token?.t}.`)
 }

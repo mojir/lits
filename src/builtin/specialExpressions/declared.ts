@@ -1,4 +1,4 @@
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import type { CommonSpecialExpressionNode, NameNode } from '../../parser/interface'
 import { assertNumberOfParams } from '../../typeGuards'
 import { asToken } from '../../typeGuards/token'
@@ -9,7 +9,7 @@ export interface DeclaredNode extends CommonSpecialExpressionNode<'declared?'> {
 export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, DeclaredNode> = {
   parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
     const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: DeclaredNode = {
       t: AstNodeType.SpecialExpression,

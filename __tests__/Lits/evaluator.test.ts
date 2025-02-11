@@ -4,7 +4,7 @@ import { parse } from '../../src/parser'
 import { evaluate, evaluateAstNode } from '../../src/evaluator'
 import { Lits } from '../../src'
 import type { Context } from '../../src/evaluator/interface'
-import { AstNodeType, TokenType } from '../../src/constants/constants'
+import { AstNodeType } from '../../src/constants/constants'
 import type { LazyValue } from '../../src/Lits/Lits'
 import { createContextStack } from '../../src/evaluator/ContextStack'
 
@@ -170,7 +170,7 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
-        debugData: { token: { t: TokenType.Name, v: 'X', debugData: undefined }, lastToken: { t: TokenType.Name, v: 'X', debugData: undefined } },
+        debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: { t: 'Name', v: 'X', debugData: undefined } },
         p: [],
         n: undefined,
       },
@@ -196,7 +196,7 @@ it('evaluateAstNode', () => {
         v: '&',
         debugData: {
           token: {
-            t: TokenType.Name,
+            t: 'Name',
             v: 'X',
             debugData: {
               sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
@@ -204,7 +204,7 @@ it('evaluateAstNode', () => {
             },
           },
           lastToken: {
-            t: TokenType.Name,
+            t: 'Name',
             v: 'X',
             debugData: {
               sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },

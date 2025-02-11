@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { parse } from '../../src/parser'
-import { AstNodeType, TokenType } from '../../src/constants/constants'
+import { AstNodeType } from '../../src/constants/constants'
 import type { Ast } from '../../src/parser/interface'
 import { parseToken } from '../../src/parser/parsers'
 import { tokenize } from '../../src/tokenizer'
@@ -191,12 +191,12 @@ describe('parser', () => {
       hasDebugData: false,
       tokens: [
         {
-          t: TokenType.CollectionAccessor,
+          t: 'CollectionAccessor',
           v: '',
           debugData: undefined,
         },
         {
-          t: TokenType.Modifier,
+          t: 'Modifier',
           v: '',
           debugData: undefined,
         },

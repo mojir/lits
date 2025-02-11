@@ -1,4 +1,3 @@
-import { TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { MetaToken, SourceCodeInfo, Token, TokenDebugData, TokenDescriptor, TokenizeParams } from '../interface'
 import { commentTokenizers, newLineTokenizers, tokenizers } from './tokenizers'
@@ -65,7 +64,7 @@ export function getNextPostfixToken(input: string, position: number, params: Tok
         break
       }
 
-      let inlineCommentToken: Token<TokenType.Comment> | null = null
+      let inlineCommentToken: Token<'Comment'> | null = null
       if (!isCommentToken(token)) {
         [position, inlineCommentToken] = readInlineCommentToken(input, position, params)
       }
@@ -85,7 +84,7 @@ export function getNextPostfixToken(input: string, position: number, params: Tok
 }
 
 function readLeadingNewLineTokens(input: string, position: number, params: TokenizeParams): [number, MetaToken[]] {
-  const newLineTokens: Token<TokenType.NewLine>[] = []
+  const newLineTokens: Token<'NewLine'>[] = []
 
   const initialPosition = position
 
@@ -126,7 +125,7 @@ function readLeadingNewLineTokens(input: string, position: number, params: Token
 
 function readLeadingCommentTokens(input: string, position: number, params: TokenizeParams): [number, MetaToken[]] {
   const initialPosition = position
-  const commentTokens: Token<TokenType.Comment>[] = []
+  const commentTokens: Token<'Comment'>[] = []
 
   let tokenized = false
   while (position < input.length) {
@@ -166,7 +165,7 @@ function readLeadingCommentTokens(input: string, position: number, params: Token
   return [0, []]
 }
 
-function readInlineCommentToken(input: string, position: number, params: TokenizeParams): [number, Token<TokenType.Comment> | null] {
+function readInlineCommentToken(input: string, position: number, params: TokenizeParams): [number, Token<'Comment'> | null] {
   const rollbackPosition = position
   let tokenized = false
   while (position < input.length) {
@@ -204,7 +203,7 @@ function readInlineCommentToken(input: string, position: number, params: Tokeniz
 }
 
 export function isMetaToken(token?: Token): token is MetaToken {
-  return !!token && (token.t === TokenType.NewLine || token.t === TokenType.Comment)
+  return !!token && (token.t === 'NewLine' || token.t === 'Comment')
 }
 
 export function assertMetaToken(token?: Token): asserts token is MetaToken {
@@ -212,20 +211,20 @@ export function assertMetaToken(token?: Token): asserts token is MetaToken {
     throw new LitsError(`Expected meta token, got ${token?.t}.`)
 }
 
-export function isCommentToken(token?: Token): token is Token<TokenType.Comment> {
-  return !!token && token.t === TokenType.Comment
+export function isCommentToken(token?: Token): token is Token<'Comment'> {
+  return !!token && token.t === 'Comment'
 }
 
-export function assertCommentToken(token?: Token): asserts token is Token<TokenType.Comment> {
+export function assertCommentToken(token?: Token): asserts token is Token<'Comment'> {
   if (!isCommentToken(token))
     throw new LitsError(`Expected comment token, got ${token?.t}.`)
 }
 
-export function isNewLineToken(token?: Token): token is Token<TokenType.NewLine> {
-  return !!token && token.t === TokenType.NewLine
+export function isNewLineToken(token?: Token): token is Token<'NewLine'> {
+  return !!token && token.t === 'NewLine'
 }
 
-export function assertNewLineToken(token?: Token): asserts token is Token<TokenType.NewLine> {
+export function assertNewLineToken(token?: Token): asserts token is Token<'NewLine'> {
   if (!isNewLineToken(token))
     throw new LitsError(`Expected newline token, got ${token?.t}.`)
 }

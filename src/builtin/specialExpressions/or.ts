@@ -1,4 +1,4 @@
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { asToken } from '../../typeGuards/token'
@@ -9,7 +9,7 @@ export interface OrNode extends CommonSpecialExpressionNode<'or'> {}
 export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
   parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
     const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: OrNode = {
       t: AstNodeType.SpecialExpression,

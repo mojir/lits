@@ -1,4 +1,4 @@
-import { astNodeTypeName, isAstNodeType, isFunctionType, isTokenType, tokenTypeName } from '../../constants/constants'
+import { astNodeTypeName, isAstNodeType, isFunctionType, isTokenType } from '../../constants/constants'
 import type { AstNode, LitsFunction } from '../../parser/interface'
 import type { SourceCodeInfo, Token } from '../../tokenizer/interface'
 import { FUNCTION_SYMBOL } from '../symbols'
@@ -15,7 +15,7 @@ function isUnknownRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isToken(value: unknown): value is Token {
-  return isUnknownRecord(value) && isTokenType(value.t) && typeof value.v === 'string'
+  return isUnknownRecord(value) && typeof value.t === 'string' && isTokenType(value.t) && typeof value.v === 'string'
 }
 
 function isAstNode(value: unknown): value is AstNode {
@@ -28,7 +28,7 @@ export function valueToString(value: unknown): string {
     return `<function ${(value as any).name || '\u03BB'}>`
 
   if (isToken(value))
-    return `${tokenTypeName.get(value.t)}-token "${value.v}"`
+    return `${value.t}-token "${value.v}"`
 
   if (isAstNode(value))
     return `${astNodeTypeName.get(value.t)}-node`

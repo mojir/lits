@@ -4,7 +4,7 @@ import { Lits } from '../../src'
 import { UndefinedSymbolError } from '../../src/errors'
 import { Cache } from '../../src/Lits/Cache'
 import type { LazyValue } from '../../src/Lits/Lits'
-import { AstNodeType, TokenType } from '../../src/constants/constants'
+import { AstNodeType } from '../../src/constants/constants'
 import { assertLitsFunction } from '../../src/typeGuards/litsFunction'
 import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
 
@@ -114,11 +114,11 @@ describe('context', () => {
                 t: AstNodeType.Number,
                 v: 2,
                 debugData: { token: {
-                  t: TokenType.Number,
+                  t: 'Number',
                   v: '2',
                   debugData: undefined,
                 }, lastToken: {
-                  t: TokenType.Number,
+                  t: 'Number',
                   v: '2',
                   debugData: undefined,
                 } },
@@ -129,11 +129,11 @@ describe('context', () => {
                 t: AstNodeType.Number,
                 v: 4,
                 debugData: { token: {
-                  t: TokenType.Number,
+                  t: 'Number',
                   v: '4',
                   debugData: undefined,
                 }, lastToken: {
-                  t: TokenType.Number,
+                  t: 'Number',
                   v: '4',
                   debugData: undefined,
                 } },
@@ -142,11 +142,11 @@ describe('context', () => {
               },
             ],
             debugData: { token: {
-              t: TokenType.Name,
+              t: 'Name',
               v: 'pow',
               debugData: undefined,
             }, lastToken: {
-              t: TokenType.Name,
+              t: 'Name',
               v: 'pow',
               debugData: undefined,
             } },

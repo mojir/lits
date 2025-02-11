@@ -1,6 +1,6 @@
 import type { SpecialExpressionNode } from '..'
 import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '../../analyze'
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
@@ -45,7 +45,7 @@ function parseLoopBinding(
   }
 
   let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
-  while (tkn.t === TokenType.Modifier) {
+  while (tkn.t === 'Modifier') {
     switch (tkn.v) {
       case '&let':
         if (loopBinding.l) {
@@ -96,13 +96,13 @@ function parseLoopBindings(
   position: number,
   parsers: ParserHelpers,
 ): [number, LoopBindingNode[]] {
-  assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: '[' })
+  assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '[' })
   position += 1
 
   const loopBindings: LoopBindingNode[] = []
 
   let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
-  while (!isToken(tkn, { type: TokenType.Bracket, value: ']' })) {
+  while (!isToken(tkn, { type: 'Bracket', value: ']' })) {
     let loopBinding: LoopBindingNode
     ;[position, loopBinding] = parseLoopBinding(tokenStream, position, parsers)
     loopBindings.push(loopBinding)
@@ -247,7 +247,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
 
     let params: AstNode[]
     ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: ForNode = {
       n: 'for',
@@ -276,7 +276,7 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
 
     let params: AstNode[]
     ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: DoSeqNode = {
       n: 'doseq',

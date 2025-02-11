@@ -1,5 +1,5 @@
 import { joinAnalyzeResults } from '../../analyze/utils'
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
@@ -21,7 +21,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
     let tryExpression: AstNode
     ;[position, tryExpression] = parseToken(tokenStream, position)
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: '(' })
+    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '(' })
     position += 1
 
     let catchNode: AstNode
@@ -41,10 +41,10 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
     let catchExpression: AstNode
     ;[position, catchExpression] = parseToken(tokenStream, position)
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
     position += 1
 
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: TokenType.Bracket, value: ')' })
+    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: TryNode = {
       t: AstNodeType.SpecialExpression,

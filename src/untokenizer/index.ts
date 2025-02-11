@@ -1,13 +1,12 @@
-import { TokenType } from '../constants/constants'
 import type { Token, TokenStream } from '../tokenizer/interface'
 
 function isNoSpaceNeededBefore(token: Token): boolean {
   switch (token.t) {
-    case TokenType.Bracket:
+    case 'Bracket':
       return [')', ']'].includes(token.v)
-    case TokenType.CollectionAccessor:
+    case 'CollectionAccessor':
       return true
-    case TokenType.NewLine:
+    case 'NewLine':
       return true
     default:
       return false
@@ -16,15 +15,15 @@ function isNoSpaceNeededBefore(token: Token): boolean {
 
 function isNoSpaceNeededAfter(token: Token): boolean {
   switch (token.t) {
-    case TokenType.Bracket:
+    case 'Bracket':
       return ['(', '['].includes(token.v)
-    case TokenType.CollectionAccessor:
+    case 'CollectionAccessor':
       return true
-    case TokenType.FnShorthand:
+    case 'FnShorthand':
       return true
-    case TokenType.NewLine:
+    case 'NewLine':
       return true
-    case TokenType.RegexpShorthand:
+    case 'RegexpShorthand':
       return true
     default:
       return false
@@ -42,7 +41,7 @@ export function untokenize(tokenStream: TokenStream): string {
 
 function untokenizeToken(token: Token): string {
   switch (token.t) {
-    case TokenType.String:
+    case 'String':
       return `"${token.v}"`
     default:
       return token.v

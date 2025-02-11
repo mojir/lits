@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { TokenType } from '../constants/constants'
 import type { Token } from '../tokenizer/interface'
 import { assertToken, isToken } from './token'
 
 describe('token type guard', () => {
   it('token', () => {
     const tkn: Token = {
-      t: TokenType.Name,
+      t: 'Name',
       v: 'Albert',
       debugData: undefined,
     }
@@ -25,9 +24,9 @@ describe('token type guard', () => {
     expect(() => assertToken(tkn, '')).not.toThrow()
     expect(() => assertToken(nonTkn2, '')).toThrow()
     expect(() => assertToken(nonTkn2, '')).toThrow()
-    expect(() => assertToken(tkn, '', { type: TokenType.Name })).not.toThrow()
-    expect(() => assertToken(tkn, '', { type: TokenType.Number })).toThrow()
-    expect(() => assertToken(tkn, '', { type: TokenType.Name, value: 'Albert' })).not.toThrow()
-    expect(() => assertToken(tkn, '', { type: TokenType.Name, value: 'Mojir' })).toThrow()
+    expect(() => assertToken(tkn, '', { type: 'Name' })).not.toThrow()
+    expect(() => assertToken(tkn, '', { type: 'Number' })).toThrow()
+    expect(() => assertToken(tkn, '', { type: 'Name', value: 'Albert' })).not.toThrow()
+    expect(() => assertToken(tkn, '', { type: 'Name', value: 'Mojir' })).toThrow()
   })
 })

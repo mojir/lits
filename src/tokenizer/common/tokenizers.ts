@@ -1,4 +1,4 @@
-import { TokenType } from '../../constants/constants'
+import type { TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import { asString } from '../../typeGuards/string'
 import type { TokenDebugData, TokenDescriptor, Tokenizer } from '../interface'
@@ -9,7 +9,7 @@ const newLineRegExp = /\n/
 
 export const tokenizeNewLine: Tokenizer = (input, current, debugData) =>
   newLineRegExp.test(input[current] as string)
-    ? [1, { t: TokenType.NewLine, v: '\n', debugData }]
+    ? [1, { t: 'NewLine', v: '\n', debugData }]
     : NO_MATCH
 
 export const tokenizeComment: Tokenizer = (input, current, debugData) => {
@@ -24,23 +24,23 @@ export const tokenizeComment: Tokenizer = (input, current, debugData) => {
     if (input[current + length] === '\n' && current + length < input.length)
       length += 1
 
-    return [length, { t: TokenType.Comment, v: value.trim(), debugData }]
+    return [length, { t: 'Comment', v: value.trim(), debugData }]
   }
   return NO_MATCH
 }
 
 export const tokenizeLeftParen: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter(TokenType.Bracket, '(', input, position, debugData)
+  tokenizeCharacter('Bracket', '(', input, position, debugData)
 export const tokenizeRightParen: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter(TokenType.Bracket, ')', input, position, debugData)
+  tokenizeCharacter('Bracket', ')', input, position, debugData)
 export const tokenizeLeftBracket: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter(TokenType.Bracket, '[', input, position, debugData)
+  tokenizeCharacter('Bracket', '[', input, position, debugData)
 export const tokenizeRightBracket: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter(TokenType.Bracket, ']', input, position, debugData)
+  tokenizeCharacter('Bracket', ']', input, position, debugData)
 export const tokenizeLeftCurly: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter(TokenType.Bracket, '{', input, position, debugData)
+  tokenizeCharacter('Bracket', '{', input, position, debugData)
 export const tokenizeRightCurly: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter(TokenType.Bracket, '}', input, position, debugData)
+  tokenizeCharacter('Bracket', '}', input, position, debugData)
 
 export const tokenizeString: Tokenizer = (input, position, debugData) => {
   if (input[position] !== '"')
@@ -73,7 +73,7 @@ export const tokenizeString: Tokenizer = (input, position, debugData) => {
     }
     char = input[position + length]
   }
-  return [length + 1, { t: TokenType.String, v: value, debugData }]
+  return [length + 1, { t: 'String', v: value, debugData }]
 }
 
 export const tokenizeCollectionAccessor: Tokenizer = (input, position, debugData) => {
@@ -84,7 +84,7 @@ export const tokenizeCollectionAccessor: Tokenizer = (input, position, debugData
   return [
     1,
     {
-      t: TokenType.CollectionAccessor,
+      t: 'CollectionAccessor',
       v: char,
       debugData,
     },
@@ -124,7 +124,7 @@ export const tokenizeRegexpShorthand: Tokenizer = (input, position, debugData) =
   return [
     length,
     {
-      t: TokenType.RegexpShorthand,
+      t: 'RegexpShorthand',
       v: token.v,
       o: options,
       debugData,
@@ -202,7 +202,7 @@ export const tokenizeNumber: Tokenizer = (input, position, debugData) => {
   if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
     return NO_MATCH
 
-  return [length, { t: TokenType.Number, v: value, debugData }]
+  return [length, { t: 'Number', v: value, debugData }]
 }
 
 export function tokenizeCharacter(

@@ -1,4 +1,4 @@
-import { AstNodeType, TokenType } from '../../constants/constants'
+import { AstNodeType } from '../../constants/constants'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, CommonSpecialExpressionNode } from '../../parser/interface'
@@ -17,7 +17,7 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
     }
 
     let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
-    while (!isToken(tkn, { type: TokenType.Bracket, value: ')' })) {
+    while (!isToken(tkn, { type: 'Bracket', value: ')' })) {
       let bodyNode: AstNode
       ;[position, bodyNode] = parseToken(tokenStream, position)
       node.p.push(bodyNode)

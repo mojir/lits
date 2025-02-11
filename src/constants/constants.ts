@@ -29,39 +29,27 @@ export function isAstNodeType(type: unknown): type is AstNodeType {
   return typeof type === 'number' && astNodeTypeName.has(type)
 }
 
-export enum TokenType {
-  Bracket = 101,
-  Number = 102,
-  Name = 103,
-  String = 104,
-  ReservedName = 105,
-  Modifier = 106,
-  RegexpShorthand = 107,
-  FnShorthand = 108,
-  CollectionAccessor = 109,
-  Comment = 110,
-  NewLine = 111,
-  Infix = 112,
-  Postfix = 113,
-  InfixOperator = 114,
-}
+export const tokenTypes = [
+  'Bracket',
+  'Number',
+  'Name',
+  'String',
+  'ReservedName',
+  'Modifier',
+  'RegexpShorthand',
+  'FnShorthand',
+  'CollectionAccessor',
+  'Comment',
+  'NewLine',
+  'Infix',
+  'Postfix',
+  'InfixOperator',
+] as const
 
-export const tokenTypeName = new Map([
-  [TokenType.Bracket, 'Bracket'],
-  [TokenType.Number, 'Number'],
-  [TokenType.Name, 'Name'],
-  [TokenType.String, 'String'],
-  [TokenType.ReservedName, 'ReservedName'],
-  [TokenType.Modifier, 'Modifier'],
-  [TokenType.RegexpShorthand, 'RegexpShorthand'],
-  [TokenType.FnShorthand, 'FnShorthand'],
-  [TokenType.CollectionAccessor, 'CollectionAccessor'],
-  [TokenType.Comment, 'Comment'],
-  [TokenType.NewLine, 'NewLine'],
-])
+export type TokenType = typeof tokenTypes[number]
 
-export function isTokenType(type: unknown): type is TokenType {
-  return typeof type === 'number' && tokenTypeName.has(type)
+export function isTokenType(type: string): type is TokenType {
+  return typeof type === 'string' && tokenTypes.includes(type as TokenType)
 }
 
 export enum FunctionType {

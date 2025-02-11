@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { testTypeGuars } from '../../__tests__/testUtils'
-import { AstNodeType, TokenType } from '../constants/constants'
+import { AstNodeType } from '../constants/constants'
 import type { AstNode, NormalExpressionNode } from '../parser/interface'
 import {
   asNonUndefined,
@@ -25,8 +25,8 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
     p: astNodes,
     t: AstNodeType.NormalExpression,
     debugData: {
-      token: { t: TokenType.Name, v: 'X', debugData: undefined },
-      lastToken: { t: TokenType.Name, v: 'X', debugData: undefined },
+      token: { t: 'Name', v: 'X', debugData: undefined },
+      lastToken: { t: 'Name', v: 'X', debugData: undefined },
     },
   }
 }
