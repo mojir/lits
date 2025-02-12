@@ -41,11 +41,6 @@ export function assertNonUndefined<T>(value: T | undefined, sourceCodeInfo?: Sou
     throw new LitsError('Unexpected undefined', getSourceCodeInfo(value, sourceCodeInfo))
 }
 
-/* v8 ignore next 3 */
-export function assertUnreachable(_: never): never {
-  throw new Error('This should not be reached')
-}
-
 export function isUnknownRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
 }

@@ -6,7 +6,7 @@ import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { Token, TokenStream } from '../tokenizer/interface'
-import { asNonUndefined, assertEvenNumberOfParams, assertNonUndefined, assertUnreachable } from '../typeGuards'
+import { asNonUndefined, assertEvenNumberOfParams, assertNonUndefined } from '../typeGuards'
 import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
 import { asToken } from '../typeGuards/token'
 import { valueToString } from '../utils/debug/debugTools'
@@ -500,7 +500,7 @@ export function parseToken(tokenStream: TokenStream, position: number): [number,
       break
     /* v8 ignore next 2 */
     default:
-      assertUnreachable(tkn.t)
+      throw new LitsError(`Unrecognized token: ${tkn.t satisfies never} value=${tkn.v}`, tkn.debugData?.sourceCodeInfo)
   }
   throw new LitsError(`Unrecognized token: ${tkn.t} value=${tkn.v}`, tkn.debugData?.sourceCodeInfo)
 }
