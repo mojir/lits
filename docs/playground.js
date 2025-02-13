@@ -987,10 +987,6 @@ var Playground = (function (exports) {
         if (!isNonUndefined(value))
             throw new LitsError('Unexpected undefined', getSourceCodeInfo(value, sourceCodeInfo));
     }
-    /* v8 ignore next 3 */
-    function assertUnreachable(_) {
-        throw new Error('This should not be reached');
-    }
     function isUnknownRecord(value) {
         return value !== null && typeof value === 'object' && !Array.isArray(value);
     }
@@ -4585,10 +4581,10 @@ var Playground = (function (exports) {
     }
 
     var andSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'and',
@@ -4598,10 +4594,7 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            return [
-                newPosition + 1,
-                node,
-            ];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4631,8 +4624,7 @@ var Playground = (function (exports) {
     };
 
     var commentSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
-            var _b;
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseToken = _a.parseToken;
             var node = {
                 t: AstNodeType.SpecialExpression,
@@ -4640,30 +4632,29 @@ var Playground = (function (exports) {
                 p: [],
                 debugData: undefined,
             };
-            var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
             while (!isToken(tkn, { type: 'Bracket', value: ')' })) {
-                var bodyNode = void 0;
-                _b = __read(parseToken(tokenStream, position), 2), position = _b[0], bodyNode = _b[1];
-                node.p.push(bodyNode);
-                tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+                node.p.push(parseToken(tokenStream, parseState));
+                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
             }
+            parseState.position += 1;
             node.debugData = firstToken.debugData
                 ? {
                     token: firstToken,
                     lastToken: tkn,
                 }
                 : undefined;
-            return [position + 1, node];
+            return node;
         },
         evaluate: function () { return null; },
         findUnresolvedIdentifiers: function () { return new Set(); },
     };
 
     var condSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'cond',
@@ -4674,7 +4665,7 @@ var Playground = (function (exports) {
                 },
             };
             assertEvenNumberOfParams(node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4704,10 +4695,10 @@ var Playground = (function (exports) {
     };
 
     var declaredSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'declared?',
@@ -4718,7 +4709,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams(1, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack) {
             var lookUpResult = contextStack.lookUp(node.p[0]);
@@ -4757,11 +4748,11 @@ var Playground = (function (exports) {
     }
 
     var defSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _d = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _d[0], params = _d[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'def',
@@ -4773,7 +4764,7 @@ var Playground = (function (exports) {
             };
             assertNameNode(node.p[0], (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             assertNumberOfParams(2, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -4800,10 +4791,10 @@ var Playground = (function (exports) {
     };
 
     var defsSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'defs',
@@ -4814,7 +4805,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams(2, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c, _d, _e;
@@ -4843,8 +4834,7 @@ var Playground = (function (exports) {
     };
 
     var doSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
-            var _b;
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseToken = _a.parseToken;
             var node = {
                 t: AstNodeType.SpecialExpression,
@@ -4852,20 +4842,19 @@ var Playground = (function (exports) {
                 p: [],
                 debugData: undefined,
             };
-            var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
             while (!isToken(tkn, { type: 'Bracket', value: ')' })) {
-                var bodyNode = void 0;
-                _b = __read(parseToken(tokenStream, position), 2), position = _b[0], bodyNode = _b[1];
-                node.p.push(bodyNode);
-                tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+                node.p.push(parseToken(tokenStream, parseState));
+                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
             }
+            parseState.position += 1;
             node.debugData = firstToken.debugData
                 ? {
                     token: firstToken,
                     lastToken: tkn,
                 }
                 : undefined;
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4926,16 +4915,13 @@ var Playground = (function (exports) {
     }
 
     var defnSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, parsers) {
+        parse: function (tokenStream, parseState, firstToken, parsers) {
             var _a, _b;
-            var _c, _d;
             var parseToken = parsers.parseToken;
-            var functionName;
-            _a = __read(parseToken(tokenStream, position), 2), position = _a[0], functionName = _a[1];
-            assertNameNode(functionName, (_d = (_c = functionName.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
-            var functionOverloades;
-            _b = __read(parseFunctionOverloades(tokenStream, position, parsers), 2), position = _b[0], functionOverloades = _b[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var functionName = parseToken(tokenStream, parseState);
+            assertNameNode(functionName, (_b = (_a = functionName.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'defn',
@@ -4947,10 +4933,7 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            return [
-                position + 1,
-                node,
-            ];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -4978,14 +4961,11 @@ var Playground = (function (exports) {
         },
     };
     var defnsSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, parsers) {
-            var _a, _b;
+        parse: function (tokenStream, parseState, firstToken, parsers) {
             var parseToken = parsers.parseToken;
-            var functionName;
-            _a = __read(parseToken(tokenStream, position), 2), position = _a[0], functionName = _a[1];
-            var functionOverloades;
-            _b = __read(parseFunctionOverloades(tokenStream, position, parsers), 2), position = _b[0], functionOverloades = _b[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var functionName = parseToken(tokenStream, parseState);
+            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'defns',
@@ -4997,10 +4977,7 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            return [
-                position + 1,
-                node,
-            ];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5033,11 +5010,9 @@ var Playground = (function (exports) {
         },
     };
     var fnSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, parsers) {
-            var _a;
-            var functionOverloades;
-            _a = __read(parseFunctionOverloades(tokenStream, position, parsers), 2), position = _a[0], functionOverloades = _a[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+        parse: function (tokenStream, parseState, firstToken, parsers) {
+            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'fn',
@@ -5048,10 +5023,7 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            return [
-                position + 1,
-                node,
-            ];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5172,105 +5144,90 @@ var Playground = (function (exports) {
             return false;
         });
     }
-    function parseFunctionBody(tokenStream, position, _a) {
+    function parseFunctionBody(tokenStream, parseState, _a) {
         var _b;
-        var _c;
         var parseToken = _a.parseToken;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         var body = [];
         while (!(tkn.t === 'Bracket' && tkn.v === ')')) {
-            var bodyNode = void 0;
-            _b = __read(parseToken(tokenStream, position), 2), position = _b[0], bodyNode = _b[1];
-            body.push(bodyNode);
-            tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            body.push(parseToken(tokenStream, parseState));
+            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         }
         if (body.length === 0)
-            throw new LitsError('Missing body in function', (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-        return [position, body];
+            throw new LitsError('Missing body in function', (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+        return body;
     }
-    function parseFunctionOverloades(tokenStream, position, parsers) {
-        var _a, _b, _c, _d;
-        var _e, _f, _g;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket' });
+    function parseFunctionOverloades(tokenStream, parseState, parsers) {
+        var _a, _b, _c;
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket' });
         if (tkn.v === '(') {
             var functionOverloades = [];
             while (!(tkn.t === 'Bracket' && tkn.v === ')')) {
-                position += 1;
-                tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
-                var functionArguments = void 0;
-                _a = __read(parseFunctionArguments(tokenStream, position, parsers), 2), position = _a[0], functionArguments = _a[1];
+                parseState.position++;
+                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket', value: '[' });
+                var functionArguments = parseFunctionArguments(tokenStream, parseState, parsers);
                 var arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length;
                 if (!arityOk(functionOverloades, arity))
-                    throw new LitsError('All overloaded functions must have different arity', (_e = tkn.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
-                var functionBody = void 0;
-                _b = __read(parseFunctionBody(tokenStream, position, parsers), 2), position = _b[0], functionBody = _b[1];
+                    throw new LitsError('All overloaded functions must have different arity', (_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                var functionBody = parseFunctionBody(tokenStream, parseState, parsers);
                 functionOverloades.push({
                     as: functionArguments,
                     b: functionBody,
                     a: arity,
                 });
-                tkn = asToken(tokenStream.tokens[position + 1], tokenStream.filePath, { type: 'Bracket' });
+                tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath, { type: 'Bracket' });
                 if (tkn.v !== ')' && tkn.v !== '(')
-                    throw new LitsError("Expected ( or ) token, got ".concat(valueToString(tkn), "."), (_f = tkn.debugData) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
-                position += 1;
+                    throw new LitsError("Expected ( or ) token, got ".concat(valueToString(tkn), "."), (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
-            return [position, functionOverloades];
+            return functionOverloades;
         }
         else if (tkn.v === '[') {
-            var functionArguments = void 0;
-            _c = __read(parseFunctionArguments(tokenStream, position, parsers), 2), position = _c[0], functionArguments = _c[1];
+            var functionArguments = parseFunctionArguments(tokenStream, parseState, parsers);
             var arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length;
-            var functionBody = void 0;
-            _d = __read(parseFunctionBody(tokenStream, position, parsers), 2), position = _d[0], functionBody = _d[1];
+            var functionBody = parseFunctionBody(tokenStream, parseState, parsers);
             return [
-                position,
-                [
-                    {
-                        as: functionArguments,
-                        b: functionBody,
-                        a: arity,
-                    },
-                ],
+                {
+                    as: functionArguments,
+                    b: functionBody,
+                    a: arity,
+                },
             ];
         }
         else {
-            throw new LitsError("Expected [ or ( token, got ".concat(valueToString(tkn)), (_g = tkn.debugData) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
+            throw new LitsError("Expected [ or ( token, got ".concat(valueToString(tkn)), (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
         }
     }
-    function parseFunctionArguments(tokenStream, position, parsers) {
-        var _a;
-        var _b, _c, _d, _e, _f;
+    function parseFunctionArguments(tokenStream, parseState, parsers) {
+        var _a, _b, _c, _d, _e;
         var parseArgument = parsers.parseArgument, parseBindings = parsers.parseBindings;
         var bindings = [];
         var restArgument;
         var mandatoryArguments = [];
         var state = 'mandatory';
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        position += 1;
-        tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath);
+        // let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
         while (!(tkn.t === 'Bracket' && tkn.v === ']')) {
             if (state === 'let') {
-                _a = __read(parseBindings(tokenStream, position), 2), position = _a[0], bindings = _a[1];
+                bindings = parseBindings(tokenStream, parseState);
                 break;
             }
             else {
-                var _g = __read(parseArgument(tokenStream, position), 2), newPosition = _g[0], node = _g[1];
-                position = newPosition;
-                tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+                var node = parseArgument(tokenStream, parseState);
+                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
                 if (node.t === AstNodeType.Modifier) {
                     switch (node.v) {
                         case '&':
                             if (state === 'rest')
-                                throw new LitsError('& can only appear once', (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                                throw new LitsError('& can only appear once', (_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                             state = 'rest';
                             break;
                         case '&let':
                             if (state === 'rest' && !restArgument)
-                                throw new LitsError('No rest argument was specified', (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                                throw new LitsError('No rest argument was specified', (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                             state = 'let';
                             break;
                         default:
-                            throw new LitsError("Illegal modifier: ".concat(node.v), (_d = tkn.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                            throw new LitsError("Illegal modifier: ".concat(node.v), (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                     }
                 }
                 else {
@@ -5280,29 +5237,29 @@ var Playground = (function (exports) {
                             break;
                         case 'rest':
                             if (restArgument !== undefined)
-                                throw new LitsError('Can only specify one rest argument', (_e = tkn.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+                                throw new LitsError('Can only specify one rest argument', (_d = tkn.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
                             restArgument = node.n;
                             break;
                     }
                 }
             }
         }
+        parseState.position += 1;
         if (state === 'rest' && restArgument === undefined)
-            throw new LitsError('Missing rest argument name', (_f = tkn.debugData) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
-        position += 1;
+            throw new LitsError('Missing rest argument name', (_e = tkn.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
         var args = {
             m: mandatoryArguments,
             r: restArgument,
             b: bindings,
         };
-        return [position, args];
+        return args;
     }
 
     var ifSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'if',
@@ -5313,7 +5270,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams({ min: 2, max: 3 }, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -5337,32 +5294,29 @@ var Playground = (function (exports) {
     };
 
     var ifLetSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
-            var _b, _c;
-            var _d, _e, _f, _g;
+        parse: function (tokenStream, parseState, firstToken, _a) {
+            var _b, _c, _d, _e;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseToken = _a.parseToken;
-            var bindingArray = ((_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo) ? asNormalExpressionNode(parseToken(tokenStream, position)[1]) : undefined;
-            var bindings;
-            _b = __read(parseBindings(tokenStream, position), 2), position = _b[0], bindings = _b[1];
+            var bindingArray = ((_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo) ? asNormalExpressionNode(parseToken(tokenStream, __assign({}, parseState))) : undefined;
+            var bindings = parseBindings(tokenStream, parseState);
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             }
-            var params;
-            _c = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _c[0], params = _c[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'if-let',
-                b: asNonUndefined(bindings[0], (_f = firstToken.debugData) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo),
+                b: asNonUndefined(bindings[0], (_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo),
                 p: params,
-                debugData: ((_g = firstToken.debugData) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo) && bindingArray && {
+                debugData: ((_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo) && bindingArray && {
                     token: firstToken,
                     lastToken: lastToken,
                     bindingArray: bindingArray,
                 },
             };
             assertNumberOfParams({ min: 1, max: 2 }, node);
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -5393,10 +5347,10 @@ var Playground = (function (exports) {
     };
 
     var ifNotSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'if-not',
@@ -5407,7 +5361,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams({ min: 2, max: 3 }, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -5431,28 +5385,25 @@ var Playground = (function (exports) {
     };
 
     var letSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
-            var _d, _e;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseToken = _a.parseToken;
-            var bindingArray = ((_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo) && asNormalExpressionNode(parseToken(tokenStream, position)[1]);
-            var bindings;
-            _b = __read(parseBindings(tokenStream, position), 2), position = _b[0], bindings = _b[1];
-            var params;
-            _c = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _c[0], params = _c[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var bindingArray = ((_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo) && asNormalExpressionNode(parseToken(tokenStream, __assign({}, parseState)));
+            var bindings = parseBindings(tokenStream, parseState);
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'let',
                 p: params,
                 bs: bindings,
-                debugData: ((_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo) && bindingArray && {
+                debugData: ((_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo) && bindingArray && {
                     token: firstToken,
                     lastToken: lastToken,
                     bindingArray: bindingArray,
                 },
             };
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b, e_2, _c;
@@ -5511,14 +5462,11 @@ var Playground = (function (exports) {
     };
 
     var loopSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
-            var _b, _c;
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseBindings = _a.parseBindings;
-            var bindings;
-            _b = __read(parseBindings(tokenStream, position), 2), position = _b[0], bindings = _b[1];
-            var params;
-            _c = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _c[0], params = _c[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var bindings = parseBindings(tokenStream, parseState);
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'loop',
@@ -5529,7 +5477,7 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -5594,46 +5542,47 @@ var Playground = (function (exports) {
         },
     };
 
-    function parseLoopBinding(tokenStream, position, _a) {
+    function parseLoopBinding(tokenStream, parseState, _a) {
         var _b, _c, _d, _e;
-        var _f, _g, _h, _j;
         var parseBinding = _a.parseBinding, parseBindings = _a.parseBindings, parseToken = _a.parseToken;
-        var bindingNode;
-        _b = __read(parseBinding(tokenStream, position), 2), position = _b[0], bindingNode = _b[1];
+        var bindingNode = parseBinding(tokenStream, parseState);
         var loopBinding = {
             b: bindingNode,
             m: [],
         };
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         while (tkn.t === 'Modifier') {
             switch (tkn.v) {
                 case '&let':
                     if (loopBinding.l) {
-                        throw new LitsError('Only one &let modifier allowed', (_f = tkn.debugData) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
+                        throw new LitsError('Only one &let modifier allowed', (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                     }
-                    _c = __read(parseBindings(tokenStream, position + 1), 2), position = _c[0], loopBinding.l = _c[1];
+                    parseState.position += 1;
+                    loopBinding.l = parseBindings(tokenStream, parseState);
                     loopBinding.m.push('&let');
                     break;
                 case '&when':
                     if (loopBinding.wn) {
-                        throw new LitsError('Only one &when modifier allowed', (_g = tkn.debugData) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
+                        throw new LitsError('Only one &when modifier allowed', (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                     }
-                    _d = __read(parseToken(tokenStream, position + 1), 2), position = _d[0], loopBinding.wn = _d[1];
+                    parseState.position += 1;
+                    loopBinding.wn = parseToken(tokenStream, parseState);
                     loopBinding.m.push('&when');
                     break;
                 case '&while':
                     if (loopBinding.we) {
-                        throw new LitsError('Only one &while modifier allowed', (_h = tkn.debugData) === null || _h === void 0 ? void 0 : _h.sourceCodeInfo);
+                        throw new LitsError('Only one &while modifier allowed', (_d = tkn.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
                     }
-                    _e = __read(parseToken(tokenStream, position + 1), 2), position = _e[0], loopBinding.we = _e[1];
+                    parseState.position += 1;
+                    loopBinding.we = parseToken(tokenStream, parseState);
                     loopBinding.m.push('&while');
                     break;
                 default:
-                    throw new LitsError("Illegal modifier: ".concat(tkn.v), (_j = tkn.debugData) === null || _j === void 0 ? void 0 : _j.sourceCodeInfo);
+                    throw new LitsError("Illegal modifier: ".concat(tkn.v), (_e = tkn.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
             }
-            tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         }
-        return [position, loopBinding];
+        return loopBinding;
     }
     function addToContext(bindings, context, contextStack, evaluateAstNode, sourceCodeInfo) {
         var e_1, _a;
@@ -5653,19 +5602,16 @@ var Playground = (function (exports) {
             finally { if (e_1) throw e_1.error; }
         }
     }
-    function parseLoopBindings(tokenStream, position, parsers) {
-        var _a;
-        assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '[' });
-        position += 1;
+    function parseLoopBindings(tokenStream, parseState, parsers) {
+        assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '[' });
         var loopBindings = [];
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         while (!isToken(tkn, { type: 'Bracket', value: ']' })) {
-            var loopBinding = void 0;
-            _a = __read(parseLoopBinding(tokenStream, position, parsers), 2), position = _a[0], loopBinding = _a[1];
-            loopBindings.push(loopBinding);
-            tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            loopBindings.push(parseLoopBinding(tokenStream, parseState, parsers));
+            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         }
-        return [position + 1, loopBindings];
+        parseState.position += 1;
+        return loopBindings;
     }
     function evaluateLoop(returnResult, node, contextStack, evaluateAstNode) {
         var e_2, _a;
@@ -5781,14 +5727,11 @@ var Playground = (function (exports) {
         return result;
     }
     var forSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, parsers) {
-            var _a, _b;
+        parse: function (tokenStream, parseState, firstToken, parsers) {
             var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
-            var loopBindings;
-            _a = __read(parseLoopBindings(tokenStream, position, parsers), 2), position = _a[0], loopBindings = _a[1];
-            var params;
-            _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 n: 'for',
                 t: AstNodeType.SpecialExpression,
@@ -5800,7 +5743,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams(1, node);
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateAstNode); },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
@@ -5809,14 +5752,11 @@ var Playground = (function (exports) {
         },
     };
     var doseqSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, parsers) {
-            var _a, _b;
+        parse: function (tokenStream, parseState, firstToken, parsers) {
             var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
-            var loopBindings;
-            _a = __read(parseLoopBindings(tokenStream, position, parsers), 2), position = _a[0], loopBindings = _a[1];
-            var params;
-            _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 n: 'doseq',
                 t: AstNodeType.SpecialExpression,
@@ -5828,7 +5768,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams(1, node);
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, helpers) {
             evaluateLoop(false, node, contextStack, helpers.evaluateAstNode);
@@ -5841,10 +5781,10 @@ var Playground = (function (exports) {
     };
 
     var orSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'or',
@@ -5854,7 +5794,7 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -5884,10 +5824,10 @@ var Playground = (function (exports) {
     };
 
     var qqSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: '??',
@@ -5898,7 +5838,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams({ min: 1, max: 2 }, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -5919,12 +5859,10 @@ var Playground = (function (exports) {
     };
 
     var recurSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
-            var _b;
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var params;
-            _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'recur',
@@ -5934,7 +5872,7 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5948,12 +5886,11 @@ var Playground = (function (exports) {
     };
 
     var throwSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            position = newPosition;
-            assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            assertToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'throw',
@@ -5964,7 +5901,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams(1, node);
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c, _d, _e;
@@ -5981,10 +5918,10 @@ var Playground = (function (exports) {
     };
 
     var timeSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'time!',
@@ -5995,7 +5932,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams(1, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
@@ -6014,28 +5951,21 @@ var Playground = (function (exports) {
     };
 
     var trySpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
-            var _b, _c, _d, _e;
-            var _f, _g, _h, _j, _k, _l;
+        parse: function (tokenStream, parseState, firstToken, _a) {
+            var _b, _c, _d, _e, _f, _g;
             var parseToken = _a.parseToken;
-            var tryExpression;
-            _b = __read(parseToken(tokenStream, position), 2), position = _b[0], tryExpression = _b[1];
-            assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '(' });
-            position += 1;
-            var catchNode;
-            _c = __read(parseToken(tokenStream, position), 2), position = _c[0], catchNode = _c[1];
-            assertNameNode(catchNode, (_g = (_f = catchNode.debugData) === null || _f === void 0 ? void 0 : _f.token.debugData) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
+            var tryExpression = parseToken(tokenStream, parseState);
+            assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '(' });
+            var catchNode = parseToken(tokenStream, parseState);
+            assertNameNode(catchNode, (_c = (_b = catchNode.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             if (catchNode.v !== 'catch') {
-                throw new LitsError("Expected 'catch', got '".concat(catchNode.v, "'."), getSourceCodeInfo(catchNode, (_j = (_h = catchNode.debugData) === null || _h === void 0 ? void 0 : _h.token.debugData) === null || _j === void 0 ? void 0 : _j.sourceCodeInfo));
+                throw new LitsError("Expected 'catch', got '".concat(catchNode.v, "'."), getSourceCodeInfo(catchNode, (_e = (_d = catchNode.debugData) === null || _d === void 0 ? void 0 : _d.token.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo));
             }
-            var error;
-            _d = __read(parseToken(tokenStream, position), 2), position = _d[0], error = _d[1];
-            assertNameNode(error, (_l = (_k = error.debugData) === null || _k === void 0 ? void 0 : _k.token.debugData) === null || _l === void 0 ? void 0 : _l.sourceCodeInfo);
-            var catchExpression;
-            _e = __read(parseToken(tokenStream, position), 2), position = _e[0], catchExpression = _e[1];
-            assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
-            position += 1;
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var error = parseToken(tokenStream, parseState);
+            assertNameNode(error, (_g = (_f = error.debugData) === null || _f === void 0 ? void 0 : _f.token.debugData) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
+            var catchExpression = parseToken(tokenStream, parseState);
+            assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'try',
@@ -6048,7 +5978,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams(1, node);
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -6079,10 +6009,10 @@ var Playground = (function (exports) {
     };
 
     var whenSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when',
@@ -6093,7 +6023,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams({ min: 1 }, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -6126,29 +6056,26 @@ var Playground = (function (exports) {
     };
 
     var whenFirstSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
-            var _d, _e;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var bindings;
-            _b = __read(parseBindings(tokenStream, position), 2), position = _b[0], bindings = _b[1];
+            var bindings = parseBindings(tokenStream, parseState);
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
-            var params;
-            _c = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _c[0], params = _c[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when-first',
-                b: asNonUndefined(bindings[0], (_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo),
+                b: asNonUndefined(bindings[0], (_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
                 debugData: firstToken.debugData && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
             };
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -6193,29 +6120,26 @@ var Playground = (function (exports) {
     };
 
     var whenLetSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
-            var _d, _e;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var bindings;
-            _b = __read(parseBindings(tokenStream, position), 2), position = _b[0], bindings = _b[1];
+            var bindings = parseBindings(tokenStream, parseState);
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
-            var params;
-            _c = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), position = _c[0], params = _c[1];
-            var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when-let',
-                b: asNonUndefined(bindings[0], (_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo),
+                b: asNonUndefined(bindings[0], (_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
                 debugData: firstToken.debugData && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
             };
-            return [position + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -6255,10 +6179,10 @@ var Playground = (function (exports) {
     };
 
     var whenNotSpecialExpression = {
-        parse: function (tokenStream, position, firstToken, _a) {
+        parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var _b = __read(parseTokensUntilClosingBracket(tokenStream, position), 2), newPosition = _b[0], params = _b[1];
-            var lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' });
+            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when-not',
@@ -6269,7 +6193,7 @@ var Playground = (function (exports) {
                 },
             };
             assertNumberOfParams({ min: 1 }, node);
-            return [newPosition + 1, node];
+            return node;
         },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -7414,150 +7338,124 @@ var Playground = (function (exports) {
         };
     }
 
-    function parseNumber(tokenStream, position) {
+    function parseNumber(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        return [
-            position + 1,
-            {
-                t: AstNodeType.Number,
-                v: Number(tkn.v),
-                p: [],
-                n: undefined,
-                debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
-                    ? { token: tkn, lastToken: tkn }
-                    : undefined,
-            },
-        ];
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        return {
+            t: AstNodeType.Number,
+            v: Number(tkn.v),
+            p: [],
+            n: undefined,
+            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                ? { token: tkn, lastToken: tkn }
+                : undefined,
+        };
     }
-    function parseString(tokenStream, position) {
+    function parseString(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        return [
-            position + 1,
-            {
-                t: AstNodeType.String,
-                v: tkn.v,
-                p: [],
-                n: undefined,
-                debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
-                    ? { token: tkn, lastToken: tkn }
-                    : undefined,
-            },
-        ];
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        return {
+            t: AstNodeType.String,
+            v: tkn.v,
+            p: [],
+            n: undefined,
+            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                ? { token: tkn, lastToken: tkn }
+                : undefined,
+        };
     }
-    function parseName(tokenStream, position) {
+    function parseName(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        return [
-            position + 1,
-            {
-                t: AstNodeType.Name,
-                v: tkn.v,
-                p: [],
-                n: undefined,
-                debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
-                    ? { token: tkn, lastToken: tkn }
-                    : undefined,
-            },
-        ];
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        return {
+            t: AstNodeType.Name,
+            v: tkn.v,
+            p: [],
+            n: undefined,
+            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                ? { token: tkn, lastToken: tkn }
+                : undefined,
+        };
     }
-    function parseReservedName(tokenStream, position) {
+    function parseReservedName(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        return [
-            position + 1,
-            {
-                t: AstNodeType.ReservedName,
-                v: tkn.v,
-                p: [],
-                n: undefined,
-                debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
-                    ? { token: tkn, lastToken: tkn }
-                    : undefined,
-            },
-        ];
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        return {
+            t: AstNodeType.ReservedName,
+            v: tkn.v,
+            p: [],
+            n: undefined,
+            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                ? { token: tkn, lastToken: tkn }
+                : undefined,
+        };
     }
-    function parseComment(tokenStream, position) {
+    function parseComment(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        return [
-            position + 1,
-            {
-                t: AstNodeType.Comment,
-                v: tkn.v,
-                p: [],
-                n: undefined,
-                debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
-                    ? { token: tkn, lastToken: tkn }
-                    : undefined,
-            },
-        ];
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        return {
+            t: AstNodeType.Comment,
+            v: tkn.v,
+            p: [],
+            n: undefined,
+            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                ? { token: tkn, lastToken: tkn }
+                : undefined,
+        };
     }
-    function parseTokensUntilClosingBracket(tokenStream, position) {
-        var _a;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+    function parseTokensUntilClosingBracket(tokenStream, parseState) {
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         var astNodes = [];
-        var astNode;
         while (!(tkn.t === 'Bracket' && (tkn.v === ')' || tkn.v === ']'))) {
-            _a = __read(parseToken(tokenStream, position), 2), position = _a[0], astNode = _a[1];
-            astNodes.push(astNode);
-            tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            astNodes.push(parseToken(tokenStream, parseState));
+            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         }
-        return [position, astNodes];
+        return astNodes;
     }
-    var parseExpression = function (tokenStream, position) {
-        var tkn = asToken(tokenStream.tokens[position + 1], tokenStream.filePath);
+    var parseExpression = function (tokenStream, parseState) {
+        var tkn = asToken(tokenStream.tokens[parseState.position + 1], tokenStream.filePath);
         if (tkn.t === 'Name' && builtin.specialExpressions[tkn.v])
-            return parseSpecialExpression(tokenStream, position);
-        return parseNormalExpression(tokenStream, position);
+            return parseSpecialExpression(tokenStream, parseState);
+        return parseNormalExpression(tokenStream, parseState);
     };
-    function parseArrayLitteral(tokenStream, position) {
+    function parseArrayLitteral(tokenStream, parseState) {
         var _a;
-        var _b;
-        var firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        position = position + 1;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         var params = [];
-        var param;
         while (!(tkn.t === 'Bracket' && tkn.v === ']')) {
-            _a = __read(parseToken(tokenStream, position), 2), position = _a[0], param = _a[1];
-            params.push(param);
-            tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            params.push(parseToken(tokenStream, parseState));
+            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         }
-        position = position + 1;
+        parseState.position += 1;
         var node = {
             t: AstNodeType.NormalExpression,
             n: 'array',
             p: params,
-            debugData: ((_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
+            debugData: ((_a = firstToken.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: tkn,
                 }
                 : undefined,
         };
-        return [position, node];
+        return node;
     }
-    function parseObjectLitteral(tokenStream, position) {
+    function parseObjectLitteral(tokenStream, parseState) {
         var _a;
-        var _b;
-        var firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        position = position + 1;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         var params = [];
-        var param;
         while (!(tkn.t === 'Bracket' && tkn.v === '}')) {
-            _a = __read(parseToken(tokenStream, position), 2), position = _a[0], param = _a[1];
-            params.push(param);
-            tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            params.push(parseToken(tokenStream, parseState));
+            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         }
-        position = position + 1;
+        parseState.position += 1;
         var node = {
             t: AstNodeType.NormalExpression,
             n: 'object',
             p: params,
-            debugData: ((_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
+            debugData: ((_a = firstToken.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: tkn,
@@ -7565,11 +7463,11 @@ var Playground = (function (exports) {
                 : undefined,
         };
         assertEvenNumberOfParams(node);
-        return [position, node];
+        return node;
     }
-    function parseRegexpShorthand(tokenStream, position) {
+    function parseRegexpShorthand(tokenStream, parseState) {
         var _a, _b, _c, _d;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
         var stringNode = {
             t: AstNodeType.String,
             v: tkn.v,
@@ -7606,20 +7504,17 @@ var Playground = (function (exports) {
                 }
                 : undefined,
         };
-        return [
-            position + 1,
-            node,
-        ];
+        return node;
     }
     var placeholderRegexp = /^%([1-9]\d?)?$/;
-    var parseFnShorthand = function (tokenStream, position) {
+    function parseFnShorthand(tokenStream, parseState) {
         var _a, _b, _c, _d, _e;
-        var firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        position += 1;
-        var _f = __read(parseExpression(tokenStream, position), 2), newPosition = _f[0], exprNode = _f[1];
+        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var startPos = parseState.position + 1;
+        var exprNode = parseExpression(tokenStream, parseState);
         var arity = 0;
         var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
-        for (var pos = position + 1; pos < newPosition - 1; pos += 1) {
+        for (var pos = startPos; pos < parseState.position - 1; pos += 1) {
             var tkn = asToken(tokenStream.tokens[pos], tokenStream.filePath);
             if (tkn.t === 'Name') {
                 var match = placeholderRegexp.exec(tkn.v);
@@ -7668,96 +7563,82 @@ var Playground = (function (exports) {
                 }
                 : undefined,
         };
-        return [newPosition, node];
-    };
-    var parseArgument = function (tokenStream, position) {
+        return node;
+    }
+    var parseArgument = function (tokenStream, parseState) {
         var _a, _b, _c;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
         if (tkn.t === 'Name') {
-            return [
-                position + 1,
-                {
-                    t: AstNodeType.Argument,
-                    n: tkn.v,
-                    p: [],
-                    debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
-                        ? {
-                            token: tkn,
-                            lastToken: tkn,
-                        }
-                        : undefined,
-                },
-            ];
+            return {
+                t: AstNodeType.Argument,
+                n: tkn.v,
+                p: [],
+                debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                    ? {
+                        token: tkn,
+                        lastToken: tkn,
+                    }
+                    : undefined,
+            };
         }
         else if (tkn.t === 'Modifier') {
             var value = tkn.v;
-            return [
-                position + 1,
-                {
-                    t: AstNodeType.Modifier,
-                    v: value,
-                    p: [],
-                    n: undefined,
-                    debugData: ((_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
-                        ? {
-                            token: tkn,
-                            lastToken: tkn,
-                        }
-                        : undefined,
-                },
-            ];
+            return {
+                t: AstNodeType.Modifier,
+                v: value,
+                p: [],
+                n: undefined,
+                debugData: ((_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
+                    ? {
+                        token: tkn,
+                        lastToken: tkn,
+                    }
+                    : undefined,
+            };
         }
         else {
             throw new LitsError("Expected name or modifier token, got ".concat(valueToString(tkn), "."), (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
         }
     };
-    function parseBindings(tokenStream, position) {
-        var _a;
-        var tkn = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '[' });
-        position += 1;
-        tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+    function parseBindings(tokenStream, parseState) {
+        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '[' });
+        tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         var bindings = [];
-        var binding;
         while (!(tkn.t === 'Bracket' && tkn.v === ']')) {
-            _a = __read(parseBinding(tokenStream, position), 2), position = _a[0], binding = _a[1];
-            bindings.push(binding);
-            tkn = asToken(tokenStream.tokens[position], tokenStream.filePath);
+            bindings.push(parseBinding(tokenStream, parseState));
+            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         }
-        position += 1;
-        return [position, bindings];
+        parseState.position += 1;
+        return bindings;
     }
-    function parseBinding(tokenStream, position) {
+    function parseBinding(tokenStream, parseState) {
         var _a;
-        var _b;
-        var firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Name' });
+        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Name' });
         var name = firstToken.v;
-        position += 1;
-        var value;
-        _a = __read(parseToken(tokenStream, position), 2), position = _a[0], value = _a[1];
+        var value = parseToken(tokenStream, parseState);
         var node = {
             t: AstNodeType.Binding,
             n: name,
             v: value,
             p: [],
-            debugData: ((_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
+            debugData: ((_a = firstToken.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: value.debugData.lastToken,
                 }
                 : undefined,
         };
-        return [position, node];
+        return node;
     }
-    function parseNormalExpression(tokenStream, position) {
-        var _a;
-        var _b, _c, _d, _e;
-        var startBracketToken = tokenStream.hasDebugData ? asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '(' }) : undefined;
-        position += 1;
-        var _f = __read(parseToken(tokenStream, position), 2), newPosition = _f[0], fnNode = _f[1];
-        var params;
-        _a = __read(parseTokensUntilClosingBracket(tokenStream, newPosition), 2), position = _a[0], params = _a[1];
-        var lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' });
-        position += 1;
+    function parseNormalExpression(tokenStream, parseState) {
+        var _a, _b, _c, _d;
+        var startBracketToken = tokenStream.hasDebugData
+            ? asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket', value: '(' })
+            : undefined;
+        parseState.position += 1;
+        var fnNode = parseToken(tokenStream, parseState);
+        var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+        var lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' });
         if (isExpressionNode(fnNode)) {
             var node_1 = {
                 t: AstNodeType.NormalExpression,
@@ -7770,9 +7651,9 @@ var Playground = (function (exports) {
                     }
                     : undefined,
             };
-            return [position, node_1];
+            return node_1;
         }
-        assertNameNode(fnNode, (_c = (_b = fnNode.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+        assertNameNode(fnNode, (_b = (_a = fnNode.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         var node = {
             t: AstNodeType.NormalExpression,
             n: fnNode.v,
@@ -7780,62 +7661,64 @@ var Playground = (function (exports) {
             debugData: startBracketToken
                 ? {
                     token: startBracketToken,
-                    nameToken: (_d = fnNode.debugData) === null || _d === void 0 ? void 0 : _d.token,
+                    nameToken: (_c = fnNode.debugData) === null || _c === void 0 ? void 0 : _c.token,
                     lastToken: lastToken,
                 }
                 : undefined,
         };
         var builtinExpression = builtin.normalExpressions[node.n];
         if (builtinExpression) {
-            (_e = builtinExpression.validate) === null || _e === void 0 ? void 0 : _e.call(builtinExpression, __assign(__assign({}, node), { p: withoutCommentNodes(node.p) }));
+            (_d = builtinExpression.validate) === null || _d === void 0 ? void 0 : _d.call(builtinExpression, __assign(__assign({}, node), { p: withoutCommentNodes(node.p) }));
         }
-        return [position, node];
+        return node;
     }
-    function parseSpecialExpression(tokenStream, position) {
-        var firstToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '(' });
-        position += 1;
-        var nameToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Name' });
+    function parseSpecialExpression(tokenStream, parseState) {
+        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '(' });
+        var nameToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Name' });
         var expressionName = nameToken.v, debugData = nameToken.debugData;
-        position += 1;
         var parse = asNonUndefined(builtin.specialExpressions[expressionName], debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo).parse;
-        var _a = __read(parse(tokenStream, position, firstToken, {
+        var node = parse(tokenStream, parseState, firstToken, {
             parseExpression: parseExpression,
             parseTokensUntilClosingBracket: parseTokensUntilClosingBracket,
             parseToken: parseToken,
             parseBinding: parseBinding,
             parseBindings: parseBindings,
             parseArgument: parseArgument,
-        }), 2), positionAfterParse = _a[0], node = _a[1];
-        if (node.debugData)
+        });
+        if (node.debugData) {
             node.debugData.nameToken = nameToken;
-        return [positionAfterParse, node];
+        }
+        return node;
     }
-    function parseToken(tokenStream, position) {
-        var _a;
-        var tkn = getNextParsableToken(tokenStream, position);
+    function parseToken(tokenStream, parseState) {
+        var _a, _b;
+        // if (parseState.infix) {
+        //   return
+        // }
+        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
         switch (tkn.t) {
             case 'Number':
-                return parseNumber(tokenStream, position);
+                return parseNumber(tokenStream, parseState);
             case 'String':
-                return parseString(tokenStream, position);
+                return parseString(tokenStream, parseState);
             case 'Name':
-                return parseName(tokenStream, position);
+                return parseName(tokenStream, parseState);
             case 'ReservedName':
-                return parseReservedName(tokenStream, position);
+                return parseReservedName(tokenStream, parseState);
             case 'Bracket':
                 if (tkn.v === '(')
-                    return parseExpression(tokenStream, position);
+                    return parseExpression(tokenStream, parseState);
                 else if (tkn.v === '[')
-                    return parseArrayLitteral(tokenStream, position);
+                    return parseArrayLitteral(tokenStream, parseState);
                 else if (tkn.v === '{')
-                    return parseObjectLitteral(tokenStream, position);
+                    return parseObjectLitteral(tokenStream, parseState);
                 break;
             case 'RegexpShorthand':
-                return parseRegexpShorthand(tokenStream, position);
+                return parseRegexpShorthand(tokenStream, parseState);
             case 'FnShorthand':
-                return parseFnShorthand(tokenStream, position);
+                return parseFnShorthand(tokenStream, parseState);
             case 'Comment':
-                return parseComment(tokenStream, position);
+                return parseComment(tokenStream, parseState);
             case 'CollectionAccessor':
             case 'Modifier':
             case 'NewLine':
@@ -7845,17 +7728,9 @@ var Playground = (function (exports) {
                 break;
             /* v8 ignore next 2 */
             default:
-                assertUnreachable(tkn.t);
+                throw new LitsError("Unrecognized token: ".concat(tkn.t, " ").concat(tkn.v), (_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
-        throw new LitsError("Unrecognized token: ".concat(tkn.t, " value=").concat(tkn.v), (_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-    }
-    function getNextParsableToken(tokenStream, position) {
-        var token = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        while (token.t === 'NewLine') {
-            position += 1;
-            token = asToken(tokenStream.tokens[position], tokenStream.filePath);
-        }
-        return token;
+        throw new LitsError("Unrecognized token: ".concat(tkn.t, " ").concat(tkn.v), (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
     }
 
     function parse$1(tokenStream) {
@@ -7864,11 +7739,12 @@ var Playground = (function (exports) {
             b: [],
             hasDebugData: tokenStream.hasDebugData,
         };
-        var position = 0;
-        var node;
-        while (position < tokenStream.tokens.length) {
-            _a = __read(parseToken(tokenStream, position), 2), position = _a[0], node = _a[1];
-            ast.b.push(node);
+        var parseState = {
+            position: 0,
+            infix: (_a = tokenStream.infix) !== null && _a !== void 0 ? _a : false,
+        };
+        while (parseState.position < tokenStream.tokens.length) {
+            ast.b.push(parseToken(tokenStream, parseState));
         }
         return ast;
     }

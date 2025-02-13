@@ -5,7 +5,7 @@ import type { FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
-import type { Token, TokenStream } from '../tokenizer/interface'
+import type { TokenStream } from '../tokenizer/interface'
 import { asNonUndefined, assertEvenNumberOfParams, assertNonUndefined } from '../typeGuards'
 import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
 import { asToken } from '../typeGuards/token'
@@ -429,7 +429,7 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
   // if (parseState.infix) {
   //   return
   // }
-  const tkn = getNextParsableToken(tokenStream, parseState)
+  const tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   switch (tkn.t) {
     case 'Number':
       return parseNumber(tokenStream, parseState)
@@ -466,13 +466,4 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
       throw new LitsError(`Unrecognized token: ${tkn.t satisfies never} ${tkn.v}`, tkn.debugData?.sourceCodeInfo)
   }
   throw new LitsError(`Unrecognized token: ${tkn.t} ${tkn.v}`, tkn.debugData?.sourceCodeInfo)
-}
-
-function getNextParsableToken(tokenStream: TokenStream, parseState: ParseState): Token {
-  let token = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  while (token.t === 'NewLine') {
-    parseState.position += 1
-    token = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  }
-  return token
 }
