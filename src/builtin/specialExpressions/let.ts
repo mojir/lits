@@ -2,7 +2,7 @@ import { joinAnalyzeResults } from '../../analyze/utils'
 import { AstNodeType } from '../../constants/constants'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
+import type { BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
 import { asNormalExpressionNode } from '../../typeGuards/astNode'
 import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
@@ -15,15 +15,13 @@ export interface LetNode extends CommonSpecialExpressionNode<'let'> {
 }
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
-  parse: (tokenStream, position, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
-    const bindingArray = firstToken.debugData?.sourceCodeInfo && asNormalExpressionNode(parseToken(tokenStream, position)[1])
+  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
+    const bindingArray = firstToken.debugData?.sourceCodeInfo && asNormalExpressionNode(parseToken(tokenStream, { ...parseState }))
 
-    let bindings: BindingNode[]
-    ;[position, bindings] = parseBindings(tokenStream, position)
+    const bindings = parseBindings(tokenStream, parseState)
 
-    let params: AstNode[]
-    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: LetNode = {
       t: AstNodeType.SpecialExpression,
@@ -36,7 +34,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
         bindingArray,
       },
     }
-    return [position + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const locals: Context = {}

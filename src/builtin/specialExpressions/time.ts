@@ -8,9 +8,9 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface TimeNode extends CommonSpecialExpressionNode<'time!'> {}
 
 export const timeSpecialExpression: BuiltinSpecialExpression<Any, TimeNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
-    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: TimeNode = {
       t: AstNodeType.SpecialExpression,
@@ -24,7 +24,7 @@ export const timeSpecialExpression: BuiltinSpecialExpression<Any, TimeNode> = {
 
     assertNumberOfParams(1, node)
 
-    return [newPosition + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const param = node.p[0]!

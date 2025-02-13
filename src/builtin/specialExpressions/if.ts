@@ -9,9 +9,9 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface IfNode extends CommonSpecialExpressionNode<'if'> {}
 
 export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
-    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: IfNode = {
       t: AstNodeType.SpecialExpression,
@@ -25,7 +25,7 @@ export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
 
     assertNumberOfParams({ min: 2, max: 3 }, node)
 
-    return [newPosition + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo

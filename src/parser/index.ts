@@ -1,5 +1,5 @@
 import type { TokenStream } from '../tokenizer/interface'
-import type { Ast, AstNode } from './interface'
+import type { Ast, ParseState } from './interface'
 import { parseToken } from './parsers'
 
 export function parse(tokenStream: TokenStream): Ast {
@@ -8,11 +8,13 @@ export function parse(tokenStream: TokenStream): Ast {
     hasDebugData: tokenStream.hasDebugData,
   }
 
-  let position = 0
-  let node: AstNode
-  while (position < tokenStream.tokens.length) {
-    ;[position, node] = parseToken(tokenStream, position)
-    ast.b.push(node)
+  const parseState: ParseState = {
+    position: 0,
+    infix: tokenStream.infix ?? false,
+  }
+
+  while (parseState.position < tokenStream.tokens.length) {
+    ast.b.push(parseToken(tokenStream, parseState))
   }
 
   return ast

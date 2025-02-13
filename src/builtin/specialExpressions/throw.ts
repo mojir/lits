@@ -9,12 +9,11 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface ThrowNode extends CommonSpecialExpressionNode<'throw'> {}
 
 export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
-    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    position = newPosition
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    assertToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: ThrowNode = {
       t: AstNodeType.SpecialExpression,
@@ -28,7 +27,7 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
 
     assertNumberOfParams(1, node)
 
-    return [position + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const message = asString(evaluateAstNode(node.p[0]!, contextStack), node.debugData?.token.debugData?.sourceCodeInfo, {

@@ -9,9 +9,9 @@ import { assertNameNotDefined } from '../utils'
 export interface DefsNode extends CommonSpecialExpressionNode<'defs'> {}
 
 export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
-    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: DefsNode = {
       t: AstNodeType.SpecialExpression,
@@ -25,7 +25,7 @@ export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
 
     assertNumberOfParams(2, node)
 
-    return [newPosition + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo

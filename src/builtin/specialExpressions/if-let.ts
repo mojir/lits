@@ -3,7 +3,7 @@ import { AstNodeType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
+import type { BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
 import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
 import { asAstNode, asNormalExpressionNode } from '../../typeGuards/astNode'
 import { asToken } from '../../typeGuards/token'
@@ -18,11 +18,10 @@ export interface IfLetNode extends CommonSpecialExpressionNode<'if-let'> {
 }
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = {
-  parse: (tokenStream, position, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
-    const bindingArray = firstToken.debugData?.sourceCodeInfo ? asNormalExpressionNode(parseToken(tokenStream, position)[1]) : undefined
+  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
+    const bindingArray = firstToken.debugData?.sourceCodeInfo ? asNormalExpressionNode(parseToken(tokenStream, { ...parseState })) : undefined
 
-    let bindings: BindingNode[]
-    ;[position, bindings] = parseBindings(tokenStream, position)
+    const bindings = parseBindings(tokenStream, parseState)
 
     if (bindings.length !== 1) {
       throw new LitsError(
@@ -31,9 +30,8 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
       )
     }
 
-    let params: AstNode[]
-    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: IfLetNode = {
       t: AstNodeType.SpecialExpression,
@@ -49,7 +47,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
 
     assertNumberOfParams({ min: 1, max: 2 }, node)
 
-    return [position + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo

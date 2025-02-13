@@ -1,14 +1,14 @@
 import { AstNodeType } from '../../constants/constants'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { asToken, isToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface DoNode extends CommonSpecialExpressionNode<'do'> {}
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
-  parse: (tokenStream, position, firstToken, { parseToken }) => {
+  parse: (tokenStream, parseState, firstToken, { parseToken }) => {
     const node: DoNode = {
       t: AstNodeType.SpecialExpression,
       n: 'do',
@@ -16,13 +16,12 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
       debugData: undefined,
     }
 
-    let tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
+    let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
     while (!isToken(tkn, { type: 'Bracket', value: ')' })) {
-      let bodyNode: AstNode
-      ;[position, bodyNode] = parseToken(tokenStream, position)
-      node.p.push(bodyNode)
-      tkn = asToken(tokenStream.tokens[position], tokenStream.filePath)
+      node.p.push(parseToken(tokenStream, parseState))
+      tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
     }
+    parseState.position += 1
 
     node.debugData = firstToken.debugData
       ? {
@@ -31,7 +30,7 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
         }
       : undefined
 
-    return [position + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const newContext: Context = {}

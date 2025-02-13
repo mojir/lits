@@ -8,6 +8,10 @@ import type { PostfixReservedName } from '../tokenizer/postfix/reservedNames'
 import type { SourceCodeInfo, Token, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 
+export interface ParseState {
+  position: number
+  infix: boolean
+}
 export interface EvaluatedFunctionArguments {
   mandatoryArguments: string[]
   restArgument?: string
@@ -124,12 +128,12 @@ export interface GenericNode {
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
-export type ParseBinding = (tokens: TokenStream, position: number) => [number, BindingNode]
-export type ParseBindings = (tokens: TokenStream, position: number) => [number, BindingNode[]]
-export type ParseArgument = (tokens: TokenStream, position: number) => [number, ArgumentNode | ModifierNode]
-export type ParseExpression = (tokens: TokenStream, position: number) => [number, ExpressionNode]
-export type ParseTokensUntilClosingBracket = (tokens: TokenStream, position: number) => [number, AstNode[]]
-export type ParseToken = (tokens: TokenStream, position: number) => [number, AstNode]
+export type ParseBinding = (tokens: TokenStream, parseState: ParseState) => BindingNode
+export type ParseBindings = (tokens: TokenStream, parseState: ParseState) => BindingNode[]
+export type ParseArgument = (tokens: TokenStream, parseState: ParseState) => ArgumentNode | ModifierNode
+export type ParseExpression = (tokens: TokenStream, parseState: ParseState) => ExpressionNode
+export type ParseTokensUntilClosingBracket = (tokens: TokenStream, parseState: ParseState) => AstNode[]
+export type ParseToken = (tokens: TokenStream, parseState: ParseState) => AstNode
 
 export interface NumberNode extends GenericNode {
   t: AstNodeType.Number // type

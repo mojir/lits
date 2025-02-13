@@ -17,15 +17,12 @@ export interface TryNode extends CommonSpecialExpressionNode<'try'> {
 }
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
-  parse: (tokenStream, position, firstToken, { parseToken }) => {
-    let tryExpression: AstNode
-    ;[position, tryExpression] = parseToken(tokenStream, position)
+  parse: (tokenStream, parseState, firstToken, { parseToken }) => {
+    const tryExpression = parseToken(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: '(' })
-    position += 1
+    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '(' })
 
-    let catchNode: AstNode
-    ;[position, catchNode] = parseToken(tokenStream, position)
+    const catchNode = parseToken(tokenStream, parseState)
     assertNameNode(catchNode, catchNode.debugData?.token.debugData?.sourceCodeInfo)
     if (catchNode.v !== 'catch') {
       throw new LitsError(
@@ -34,17 +31,14 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       )
     }
 
-    let error: AstNode
-    ;[position, error] = parseToken(tokenStream, position)
+    const error = parseToken(tokenStream, parseState)
     assertNameNode(error, error.debugData?.token.debugData?.sourceCodeInfo)
 
-    let catchExpression: AstNode
-    ;[position, catchExpression] = parseToken(tokenStream, position)
+    const catchExpression = parseToken(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
-    position += 1
+    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: TryNode = {
       t: AstNodeType.SpecialExpression,
@@ -60,7 +54,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
 
     assertNumberOfParams(1, node)
 
-    return [position + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const { p: tryExpressions, ce: catchExpression, e: errorNode } = node

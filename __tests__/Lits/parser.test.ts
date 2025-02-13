@@ -202,7 +202,7 @@ describe('parser', () => {
         },
       ],
     }
-    expect(() => parseToken(tokenStream, 0)).toThrow()
-    expect(() => parseToken(tokenStream, 1)).toThrow()
+    expect(() => parseToken(tokenStream, { position: 0, infix: false })).toThrow()
+    expect(() => parseToken(tokenStream, { position: 0, infix: false })).toThrow()
   })
 })

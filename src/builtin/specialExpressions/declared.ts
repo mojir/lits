@@ -7,9 +7,9 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface DeclaredNode extends CommonSpecialExpressionNode<'declared?'> {}
 
 export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, DeclaredNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
-    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: DeclaredNode = {
       t: AstNodeType.SpecialExpression,
@@ -23,7 +23,7 @@ export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, Declar
 
     assertNumberOfParams(1, node)
 
-    return [newPosition + 1, node]
+    return node
   },
   evaluate: (node, contextStack) => {
     const lookUpResult = contextStack.lookUp(node.p[0] as NameNode)

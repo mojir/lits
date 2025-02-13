@@ -7,9 +7,9 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface AndNode extends CommonSpecialExpressionNode<'and'> {}
 
 export const andSpecialExpression: BuiltinSpecialExpression<Any, AndNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
-    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: AndNode = {
       t: AstNodeType.SpecialExpression,
@@ -21,10 +21,7 @@ export const andSpecialExpression: BuiltinSpecialExpression<Any, AndNode> = {
       },
     }
 
-    return [
-      newPosition + 1,
-      node,
-    ]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = true

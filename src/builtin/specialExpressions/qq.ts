@@ -10,9 +10,9 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface QqNode extends CommonSpecialExpressionNode<'??'> {}
 
 export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket }) => {
-    const [newPosition, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[newPosition], tokenStream.filePath, { type: 'Bracket', value: ')' })
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: QqNode = {
       t: AstNodeType.SpecialExpression,
@@ -26,7 +26,7 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
 
     assertNumberOfParams({ min: 1, max: 2 }, node)
 
-    return [newPosition + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const [firstNode, secondNode] = node.p

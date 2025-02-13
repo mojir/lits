@@ -8,6 +8,7 @@ import type {
   ParseBinding,
   ParseBindings,
   ParseExpression,
+  ParseState,
   ParseToken,
   ParseTokensUntilClosingBracket,
 } from '../parser/interface'
@@ -43,7 +44,7 @@ interface EvaluateHelpers {
   builtin: Builtin
 }
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
-  parse: (tokenStream: TokenStream, position: number, firstToken: Token, parsers: ParserHelpers) => [number, N]
+  parse: (tokenStream: TokenStream, parseState: ParseState, firstToken: Token, parsers: ParserHelpers) => N
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
   findUnresolvedIdentifiers: (
     node: N,

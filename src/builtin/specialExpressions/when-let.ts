@@ -3,7 +3,7 @@ import { AstNodeType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { asNonUndefined } from '../../typeGuards'
 import { asToken } from '../../typeGuards/token'
 import { valueToString } from '../../utils/debug/debugTools'
@@ -14,9 +14,8 @@ export interface WhenLetNode extends CommonSpecialExpressionNode<'when-let'> {
 }
 
 export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode> = {
-  parse: (tokenStream, position, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
-    let bindings: BindingNode[]
-    ;[position, bindings] = parseBindings(tokenStream, position)
+  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
+    const bindings = parseBindings(tokenStream, parseState)
 
     if (bindings.length !== 1) {
       throw new LitsError(
@@ -25,9 +24,8 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode
       )
     }
 
-    let params: AstNode[]
-    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: WhenLetNode = {
       t: AstNodeType.SpecialExpression,
@@ -39,7 +37,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode
         lastToken,
       },
     }
-    return [position + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const { b: binding } = node

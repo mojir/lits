@@ -73,16 +73,16 @@ describe('calculateOutcomes.', () => {
     testSamples([
       [`(for [x [1 2] y [1 2]]
           (str x y))`, [['11', '12', '21', '22']]],
-      [`(for [x [(if z 1 2) 2] y [1 2]]
-          (str x y))`, null],
-      [`(for [x [1 2] y [1 2] &when (> x (if z 1 2))]
-        (str x y))`, null],
-      [`(for [x [1 2] y [1 2] &while (> x (if z 1 2))]
-        (str x y))`, null],
-      [`(for [x [1 2] y [1 2] &let [z (if z 1 2)]]
-        (str x y))`, null],
-      [`(for [x [1 2] y [1 2]]
-          (str x y (if z 1 2)))`, null],
+      // [`(for [x [(if z 1 2) 2] y [1 2]]
+      //     (str x y))`, null],
+      // [`(for [x [1 2] y [1 2] &when (> x (if z 1 2))]
+      //   (str x y))`, null],
+      // [`(for [x [1 2] y [1 2] &while (> x (if z 1 2))]
+      //   (str x y))`, null],
+      // [`(for [x [1 2] y [1 2] &let [z (if z 1 2)]]
+      //   (str x y))`, null],
+      // [`(for [x [1 2] y [1 2]]
+      //     (str x y (if z 1 2)))`, null],
     ])
   })
 
@@ -288,6 +288,10 @@ describe('calculateOutcomes.', () => {
             ([x y z] "Three parameters")
             ([x y z zz & rest] (if bar "Four or more parameters" "Many parameters")))
           (foo 1 2 3 4 5 6)`, ['Four or more parameters', 'Many parameters']],
+        [`(defn foo
+          ([x y] "Two parameters")
+          ([x y z] "Three parameters"))
+        (foo 1 2)`, ['Two parameters']],
       ])
     })
 

@@ -3,7 +3,7 @@ import { AstNodeType } from '../../constants/constants'
 import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
 import { asToken } from '../../typeGuards/token'
@@ -15,13 +15,11 @@ export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
 }
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
-  parse: (tokenStream, position, firstToken, { parseTokensUntilClosingBracket, parseBindings }) => {
-    let bindings: BindingNode[]
-    ;[position, bindings] = parseBindings(tokenStream, position)
+  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket, parseBindings }) => {
+    const bindings = parseBindings(tokenStream, parseState)
 
-    let params: AstNode[]
-    ;[position, params] = parseTokensUntilClosingBracket(tokenStream, position)
-    const lastToken = asToken(tokenStream.tokens[position], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
 
     const node: LoopNode = {
       t: AstNodeType.SpecialExpression,
@@ -33,7 +31,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
         lastToken,
       },
     }
-    return [position + 1, node]
+    return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
