@@ -31,7 +31,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
     }
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: IfLetNode = {
       t: AstNodeType.SpecialExpression,

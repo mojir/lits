@@ -184,7 +184,7 @@ describe('tokenizer', () => {
             },
           },
           {
-            t: 'Bracket',
+            t: 'LParen',
             v: '(',
             debugData: {
               sourceCodeInfo: { position: { line: 1, column: 2 }, code: '#(' },
@@ -279,12 +279,12 @@ describe('tokenize comments and new lines with debug', () => {
 ;; The end`, [
       'Comment',
       'Comment',
-      '_;Bracket',
+      '_;LParen',
       'Name',
       '_;Number',
       '_Comment',
       '_Number',
-      'Bracket;',
+      'RParen;',
       'Comment',
       '_Comment',
       '__Comment',
@@ -301,20 +301,20 @@ describe('tokenize comments and new lines with debug', () => {
     2 ;; H
     ;; I
     (/ 3 4) 5)) ;; J`, [
-      '_;Bracket',
+      '_;LParen',
       'Name;',
-      ';Bracket',
+      ';LParen',
       'Name;',
       ';Number;',
       ';Number;',
-      ';Bracket',
+      ';LParen',
       'Name',
       'Number',
       'Number',
-      'Bracket',
+      'RParen',
       'Number',
-      'Bracket',
-      'Bracket;',
+      'RParen',
+      'RParen;',
     ]],
   ]
   testSamples(samples, true)
@@ -350,7 +350,7 @@ describe('tokenize comments and new lines without debug', () => {
 
 
 
-;; The end`, ['Bracket', 'Name', 'Number', 'Number', 'Bracket']],
+;; The end`, ['LParen', 'Name', 'Number', 'Number', 'RParen']],
 
   ]
   testSamples(samples, false)

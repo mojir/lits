@@ -27,7 +27,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirst
     }
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: WhenFirstNode = {
       t: AstNodeType.SpecialExpression,

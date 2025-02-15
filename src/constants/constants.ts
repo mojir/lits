@@ -30,7 +30,12 @@ export function isAstNodeType(type: unknown): type is AstNodeType {
 }
 
 export const tokenTypes = [
-  'Bracket',
+  'LParen',
+  'RParen',
+  'LBrace',
+  'RBrace',
+  'LBracket',
+  'RBracket',
   'Number',
   'Name',
   'String',

@@ -2,10 +2,9 @@ import type { Token, TokenStream } from '../tokenizer/interface'
 
 function isNoSpaceNeededBefore(token: Token): boolean {
   switch (token.t) {
-    case 'Bracket':
-      return [')', ']'].includes(token.v)
+    case 'RParen':
+    case 'RBracket':
     case 'CollectionAccessor':
-      return true
     case 'NewLine':
       return true
     default:
@@ -15,14 +14,11 @@ function isNoSpaceNeededBefore(token: Token): boolean {
 
 function isNoSpaceNeededAfter(token: Token): boolean {
   switch (token.t) {
-    case 'Bracket':
-      return ['(', '['].includes(token.v)
+    case 'LParen':
+    case 'LBracket':
     case 'CollectionAccessor':
-      return true
     case 'FnShorthand':
-      return true
     case 'NewLine':
-      return true
     case 'RegexpShorthand':
       return true
     default:

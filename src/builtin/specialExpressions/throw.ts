@@ -12,8 +12,8 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket', value: ')' })
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    assertToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: ThrowNode = {
       t: AstNodeType.SpecialExpression,

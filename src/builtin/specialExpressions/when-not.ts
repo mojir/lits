@@ -11,7 +11,7 @@ export interface WhenNotNode extends CommonSpecialExpressionNode<'when-not'> {}
 export const whenNotSpecialExpression: BuiltinSpecialExpression<Any, WhenNotNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: WhenNotNode = {
       t: AstNodeType.SpecialExpression,

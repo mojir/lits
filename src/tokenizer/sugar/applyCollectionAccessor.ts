@@ -2,6 +2,7 @@ import { LitsError } from '../../errors'
 import { asNonUndefined } from '../../typeGuards'
 import { assertNumber } from '../../typeGuards/number'
 import type { SourceCodeInfo, Token, TokenStream } from '../interface'
+import type { TokenType } from '../../constants/constants'
 import type { SugarFunction } from '.'
 
 export const applyCollectionAccessors: SugarFunction = (tokenStream) => {
@@ -21,7 +22,7 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
 
   tokenStream.tokens.splice(position, 1)
   tokenStream.tokens.splice(backPosition, 0, {
-    t: 'Bracket',
+    t: 'LParen',
     v: '(',
     debugData,
   })
@@ -42,7 +43,7 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
     }
   }
   tokenStream.tokens.splice(position + 2, 0, {
-    t: 'Bracket',
+    t: 'RParen',
     v: ')',
     debugData,
   })
@@ -54,41 +55,34 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
     throw new LitsError('Array accessor # must come after a sequence', sourceCodeInfo)
 
   const prevToken = asNonUndefined(tokenStream.tokens[position - 1])
-  let openBracket: null | '(' | '[' | '{' = null
-  let closeBracket: null | ')' | ']' | '}' = null
+  let openBracket: 'LParen' | 'LBracket' | 'LBrace' | null = null satisfies TokenType | null
+  let closeBracket: 'RParen' | 'RBracket' | 'RBrace' | null = null satisfies TokenType | null
 
-  if (prevToken.t === 'Bracket') {
-    switch (prevToken.v) {
-      case ')':
-        openBracket = '('
-        closeBracket = ')'
-        break
-      case ']':
-        openBracket = '['
-        closeBracket = ']'
-        break
-      case '}':
-        openBracket = '{'
-        closeBracket = '}'
-        break
-      default:
-        throw new LitsError('# or . must be preceeded by a collection', sourceCodeInfo)
-    }
+  if (prevToken.t === 'RParen') {
+    openBracket = 'LParen'
+    closeBracket = 'RParen'
+  }
+  else if (prevToken.t === 'RBracket') {
+    openBracket = 'LBracket'
+    closeBracket = 'RBracket'
+  }
+  else if (prevToken.t === 'RBrace') {
+    openBracket = 'LBrace'
+    closeBracket = 'RBrace'
   }
 
   while (bracketCount !== 0) {
     bracketCount = bracketCount === null ? 0 : bracketCount
     position -= 1
     const tkn = asNonUndefined(tokenStream.tokens[position], sourceCodeInfo)
-    if (tkn.t === 'Bracket') {
-      if (tkn.v === openBracket)
-        bracketCount += 1
-
-      if (tkn.v === closeBracket)
-        bracketCount -= 1
+    if (tkn.t === openBracket) {
+      bracketCount += 1
+    }
+    else if (tkn.t === closeBracket) {
+      bracketCount -= 1
     }
   }
-  if (openBracket === '(' && position > 0) {
+  if (openBracket === 'LParen' && position > 0) {
     const tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1])
     if (tokenBeforeBracket.t === 'FnShorthand')
       throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo)

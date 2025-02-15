@@ -19,7 +19,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: LoopNode = {
       t: AstNodeType.SpecialExpression,

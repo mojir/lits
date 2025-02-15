@@ -9,7 +9,7 @@ export interface OrNode extends CommonSpecialExpressionNode<'or'> {}
 export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: OrNode = {
       t: AstNodeType.SpecialExpression,

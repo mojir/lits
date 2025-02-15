@@ -79,7 +79,7 @@ export const tokenizeOperator: Tokenizer = (input, position, debugData) => {
 }
 
 export const tokenizePostfixDirective: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter('Bracket', '@', input, position, debugData)
+  tokenizeCharacter('Postfix', '@', input, position, debugData)
 
 // All tokenizers, order matters!
 export const tokenizers: Tokenizer[] = [

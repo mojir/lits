@@ -21,7 +21,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: LetNode = {
       t: AstNodeType.SpecialExpression,

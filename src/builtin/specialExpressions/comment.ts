@@ -1,6 +1,6 @@
 import { AstNodeType } from '../../constants/constants'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { asToken, isToken } from '../../typeGuards/token'
+import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface CommentExpressionNode extends CommonSpecialExpressionNode<'comment'> {}
@@ -15,7 +15,7 @@ export const commentSpecialExpression: BuiltinSpecialExpression<null, CommentExp
     }
 
     let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-    while (!isToken(tkn, { type: 'Bracket', value: ')' })) {
+    while (tkn.t !== 'RParen') {
       node.p.push(parseToken(tokenStream, parseState))
       tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
     }

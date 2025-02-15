@@ -95,7 +95,7 @@ function parseComment(tokenStream: TokenStream, parseState: ParseState): Comment
 function parseTokensUntilClosingBracket(tokenStream: TokenStream, parseState: ParseState): AstNode[] {
   let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   const astNodes: AstNode[] = []
-  while (!(tkn.t === 'Bracket' && (tkn.v === ')' || tkn.v === ']'))) {
+  while (tkn.t !== 'RParen' && tkn.t !== 'RBracket') {
     astNodes.push(parseToken(tokenStream, parseState))
     tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   }
@@ -115,7 +115,7 @@ function parseArrayLitteral(tokenStream: TokenStream, parseState: ParseState): A
 
   let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   const params: AstNode[] = []
-  while (!(tkn.t === 'Bracket' && tkn.v === ']')) {
+  while (tkn.t !== 'RBracket') {
     params.push(parseToken(tokenStream, parseState))
     tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   }
@@ -142,7 +142,7 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
 
   let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   const params: AstNode[] = []
-  while (!(tkn.t === 'Bracket' && tkn.v === '}')) {
+  while (tkn.t !== 'RBrace') {
     params.push(parseToken(tokenStream, parseState))
     tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   }
@@ -316,10 +316,10 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
 }
 
 function parseBindings(tokenStream: TokenStream, parseState: ParseState): BindingNode[] {
-  let tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '[' })
+  let tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LBracket' })
   tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   const bindings: BindingNode[] = []
-  while (!(tkn.t === 'Bracket' && tkn.v === ']')) {
+  while (tkn.t !== 'RBracket') {
     bindings.push(parseBinding(tokenStream, parseState))
     tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   }
@@ -351,14 +351,14 @@ function parseBinding(tokenStream: TokenStream, parseState: ParseState): Binding
 
 function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNode {
   const startBracketToken = tokenStream.hasDebugData
-    ? asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket', value: '(' })
+    ? asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'LParen' })
     : undefined
   parseState.position += 1
   const fnNode = parseToken(tokenStream, parseState)
 
   const params = parseTokensUntilClosingBracket(tokenStream, parseState)
 
-  const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+  const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
   if (isExpressionNode(fnNode)) {
     const node: NormalExpressionNode = {
@@ -403,7 +403,7 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
 }
 
 function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState): SpecialExpressionNode {
-  const firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '(' })
+  const firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LParen' })
 
   const nameToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Name' })
   const { v: expressionName, debugData } = nameToken
@@ -439,15 +439,12 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
       return parseName(tokenStream, parseState)
     case 'ReservedName':
       return parseReservedName(tokenStream, parseState)
-    case 'Bracket':
-      if (tkn.v === '(')
-        return parseExpression(tokenStream, parseState)
-      else if (tkn.v === '[')
-        return parseArrayLitteral(tokenStream, parseState)
-      else if (tkn.v === '{')
-        return parseObjectLitteral(tokenStream, parseState)
-
-      break
+    case 'LParen':
+      return parseExpression(tokenStream, parseState)
+    case 'LBracket':
+      return parseArrayLitteral(tokenStream, parseState)
+    case 'LBrace':
+      return parseObjectLitteral(tokenStream, parseState)
     case 'RegexpShorthand':
       return parseRegexpShorthand(tokenStream, parseState)
     case 'FnShorthand':
@@ -460,6 +457,9 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
     case 'Infix':
     case 'Postfix':
     case 'InfixOperator':
+    case 'RParen':
+    case 'RBracket':
+    case 'RBrace':
       break
     /* v8 ignore next 2 */
     default:

@@ -10,7 +10,7 @@ export interface TimeNode extends CommonSpecialExpressionNode<'time!'> {}
 export const timeSpecialExpression: BuiltinSpecialExpression<Any, TimeNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: TimeNode = {
       t: AstNodeType.SpecialExpression,

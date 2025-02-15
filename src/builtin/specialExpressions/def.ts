@@ -11,7 +11,7 @@ export interface DefNode extends CommonSpecialExpressionNode<'def'> {}
 export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: DefNode = {
       t: AstNodeType.SpecialExpression,

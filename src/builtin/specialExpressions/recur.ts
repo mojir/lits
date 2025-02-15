@@ -9,7 +9,7 @@ export interface RecurNode extends CommonSpecialExpressionNode<'recur'> {}
 export const recurSpecialExpression: BuiltinSpecialExpression<null, RecurNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: RecurNode = {
       t: AstNodeType.SpecialExpression,

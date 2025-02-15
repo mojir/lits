@@ -98,12 +98,12 @@ function parseLoopBindings(
   parseState: ParseState,
   parsers: ParserHelpers,
 ): LoopBindingNode[] {
-  assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '[' })
+  assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LBracket' })
 
   const loopBindings: LoopBindingNode[] = []
 
   let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  while (!isToken(tkn, { type: 'Bracket', value: ']' })) {
+  while (!isToken(tkn, { type: 'RBracket' })) {
     loopBindings.push(parseLoopBinding(tokenStream, parseState, parsers))
     tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   }
@@ -245,7 +245,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: ForNode = {
       n: 'for',
@@ -272,7 +272,7 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: DoSeqNode = {
       n: 'doseq',

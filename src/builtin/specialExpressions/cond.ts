@@ -11,7 +11,7 @@ export interface CondNode extends CommonSpecialExpressionNode<'cond'> {}
 export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: CondNode = {
       t: AstNodeType.SpecialExpression,

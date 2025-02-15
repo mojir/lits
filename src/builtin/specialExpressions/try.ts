@@ -20,7 +20,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
   parse: (tokenStream, parseState, firstToken, { parseToken }) => {
     const tryExpression = parseToken(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: '(' })
+    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LParen' })
 
     const catchNode = parseToken(tokenStream, parseState)
     assertNameNode(catchNode, catchNode.debugData?.token.debugData?.sourceCodeInfo)
@@ -36,9 +36,9 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
 
     const catchExpression = parseToken(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: TryNode = {
       t: AstNodeType.SpecialExpression,

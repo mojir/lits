@@ -46,7 +46,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
     assertNameNode(functionName, functionName.debugData?.token.debugData?.sourceCodeInfo)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: DefnNode = {
       t: AstNodeType.SpecialExpression,
@@ -93,7 +93,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
     const functionName = parseToken(tokenStream, parseState)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: DefnsNode = {
       t: AstNodeType.SpecialExpression,
@@ -142,7 +142,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
 export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
   parse: (tokenStream, parseState, firstToken, parsers) => {
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: FnNode = {
       t: AstNodeType.SpecialExpression,
@@ -270,7 +270,7 @@ function parseFunctionBody(
 ): AstNode[] {
   let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   const body: AstNode[] = []
-  while (!(tkn.t === 'Bracket' && tkn.v === ')')) {
+  while (!(tkn.t === 'RParen')) {
     body.push(parseToken(tokenStream, parseState))
     tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   }
@@ -285,12 +285,12 @@ function parseFunctionOverloades(
   parseState: ParseState,
   parsers: ParserHelpers,
 ): FunctionOverload[] {
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket' })
+  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
   if (tkn.v === '(') {
     const functionOverloades: FunctionOverload[] = []
-    while (!(tkn.t === 'Bracket' && tkn.v === ')')) {
+    while (tkn.t !== 'RParen') {
       parseState.position++
-      tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket', value: '[' })
+      tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'LBracket' })
       const functionArguments = parseFunctionArguments(tokenStream, parseState, parsers)
       const arity: Arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length
 
@@ -304,7 +304,7 @@ function parseFunctionOverloades(
         a: arity,
       })
 
-      tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath, { type: 'Bracket' })
+      tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath)
       if (tkn.v !== ')' && tkn.v !== '(')
         throw new LitsError(`Expected ( or ) token, got ${valueToString(tkn)}.`, tkn.debugData?.sourceCodeInfo)
     }
@@ -342,7 +342,7 @@ function parseFunctionArguments(
   let tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath)
 
   // let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  while (!(tkn.t === 'Bracket' && tkn.v === ']')) {
+  while (tkn.t !== 'RBracket') {
     if (state === 'let') {
       bindings = parseBindings(tokenStream, parseState)
       break

@@ -12,7 +12,7 @@ export interface QqNode extends CommonSpecialExpressionNode<'??'> {}
 export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Bracket', value: ')' })
+    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
 
     const node: QqNode = {
       t: AstNodeType.SpecialExpression,

@@ -30,17 +30,17 @@ export const tokenizeComment: Tokenizer = (input, current, debugData) => {
 }
 
 export const tokenizeLeftParen: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter('Bracket', '(', input, position, debugData)
+  tokenizeCharacter('LParen', '(', input, position, debugData)
 export const tokenizeRightParen: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter('Bracket', ')', input, position, debugData)
+  tokenizeCharacter('RParen', ')', input, position, debugData)
 export const tokenizeLeftBracket: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter('Bracket', '[', input, position, debugData)
+  tokenizeCharacter('LBracket', '[', input, position, debugData)
 export const tokenizeRightBracket: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter('Bracket', ']', input, position, debugData)
+  tokenizeCharacter('RBracket', ']', input, position, debugData)
 export const tokenizeLeftCurly: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter('Bracket', '{', input, position, debugData)
+  tokenizeCharacter('LBrace', '{', input, position, debugData)
 export const tokenizeRightCurly: Tokenizer = (input, position, debugData) =>
-  tokenizeCharacter('Bracket', '}', input, position, debugData)
+  tokenizeCharacter('RBrace', '}', input, position, debugData)
 
 export const tokenizeString: Tokenizer = (input, position, debugData) => {
   if (input[position] !== '"')
