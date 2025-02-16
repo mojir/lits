@@ -6,15 +6,14 @@ import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { TokenStream } from '../tokenizer/interface'
-import { asNonUndefined, assertEvenNumberOfParams, assertNonUndefined } from '../typeGuards'
+import { asCommentToken, asLParenToken, asRParenToken, asRegexpShorthandToken, asReservedSymbolToken, asSymbolToken, asToken, assertLBracketToken, getTokenDebugData, isFnShorthandToken, isModifierToken, isRBraceToken, isRBracketToken, isRParenToken, isStringShorthandToken, isStringToken, isSymbolToken } from '../tokenizer/Token'
+import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
 import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
-import { asToken } from '../typeGuards/token'
 import { valueToString } from '../utils/debug/debugTools'
 import type {
   AstNode,
   BindingNode,
   CommentNode,
-  ModifierName,
   NameNode,
   NormalExpressionNode,
   NormalExpressionNodeWithName,
@@ -27,97 +26,100 @@ import type {
 } from './interface'
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
-  const tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const tkn = asToken(tokenStream.tokens[parseState.position++])
   return {
     t: AstNodeType.Number,
-    v: Number(tkn.v),
+    v: Number(tkn[1]),
     p: [],
     n: undefined,
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? { token: tkn, lastToken: tkn }
       : undefined,
   }
 }
 
 function parseString(tokenStream: TokenStream, parseState: ParseState): StringNode {
-  const tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const tkn = tokenStream.tokens[parseState.position++]
+  if (!isStringToken(tkn) && !isStringShorthandToken(tkn)) {
+    throw new LitsError(`Expected string token, got ${valueToString(tkn)}.`, getTokenDebugData(tkn)?.sourceCodeInfo)
+  }
 
   return {
     t: AstNodeType.String,
-    v: tkn.v,
+    v: tkn[1],
     p: [],
     n: undefined,
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? { token: tkn, lastToken: tkn }
       : undefined,
   }
 }
 
-function parseName(tokenStream: TokenStream, parseState: ParseState): NameNode {
-  const tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+function parseSymbol(tokenStream: TokenStream, parseState: ParseState): NameNode {
+  const tkn = asSymbolToken(tokenStream.tokens[parseState.position++])
   return {
     t: AstNodeType.Name,
-    v: tkn.v,
+    v: tkn[1],
     p: [],
     n: undefined,
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? { token: tkn, lastToken: tkn }
       : undefined,
   }
 }
 
-function parseReservedName(tokenStream: TokenStream, parseState: ParseState): ReservedNameNode {
-  const tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedNameNode {
+  const tkn = asReservedSymbolToken(tokenStream.tokens[parseState.position++])
   return {
     t: AstNodeType.ReservedName,
-    v: tkn.v,
+    v: tkn[1],
     p: [],
     n: undefined,
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? { token: tkn, lastToken: tkn }
       : undefined,
   }
 }
 
 function parseComment(tokenStream: TokenStream, parseState: ParseState): CommentNode {
-  const tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const tkn = asCommentToken(tokenStream.tokens[parseState.position++])
   return {
     t: AstNodeType.Comment,
-    v: tkn.v,
+    v: tkn[1],
     p: [],
     n: undefined,
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? { token: tkn, lastToken: tkn }
       : undefined,
   }
 }
 
 function parseTokensUntilClosingBracket(tokenStream: TokenStream, parseState: ParseState): AstNode[] {
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+  let tkn = asToken(tokenStream.tokens[parseState.position])
   const astNodes: AstNode[] = []
-  while (tkn.t !== 'RParen' && tkn.t !== 'RBracket') {
+  while (!isRParenToken(tkn) && !isRBracketToken(tkn)) {
     astNodes.push(parseToken(tokenStream, parseState))
-    tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+    tkn = asToken(tokenStream.tokens[parseState.position])
   }
   return astNodes
 }
 
 const parseExpression: ParseExpression = (tokenStream, parseState) => {
-  const tkn = asToken(tokenStream.tokens[parseState.position + 1], tokenStream.filePath)
-  if (tkn.t === 'Name' && builtin.specialExpressions[tkn.v as SpecialExpressionName])
+  const tkn = asToken(tokenStream.tokens[parseState.position + 1])
+  if (isSymbolToken(tkn) && builtin.specialExpressions[tkn[1] as SpecialExpressionName])
     return parseSpecialExpression(tokenStream, parseState)
 
   return parseNormalExpression(tokenStream, parseState)
 }
 
 function parseArrayLitteral(tokenStream: TokenStream, parseState: ParseState): AstNode {
-  const firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const firstToken = asToken(tokenStream.tokens[parseState.position++])
 
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+  let tkn = asToken(tokenStream.tokens[parseState.position])
   const params: AstNode[] = []
-  while (tkn.t !== 'RBracket') {
+  while (!isRBracketToken(tkn)) {
     params.push(parseToken(tokenStream, parseState))
-    tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+    tkn = asToken(tokenStream.tokens[parseState.position])
   }
 
   parseState.position += 1
@@ -126,7 +128,7 @@ function parseArrayLitteral(tokenStream: TokenStream, parseState: ParseState): A
     t: AstNodeType.NormalExpression,
     n: 'array',
     p: params,
-    debugData: firstToken.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
           lastToken: tkn,
@@ -138,13 +140,13 @@ function parseArrayLitteral(tokenStream: TokenStream, parseState: ParseState): A
 }
 
 function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNodeWithName {
-  const firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const firstToken = asToken(tokenStream.tokens[parseState.position++])
 
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+  let tkn = asToken(tokenStream.tokens[parseState.position])
   const params: AstNode[] = []
-  while (tkn.t !== 'RBrace') {
+  while (!isRBraceToken(tkn)) {
     params.push(parseToken(tokenStream, parseState))
-    tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+    tkn = asToken(tokenStream.tokens[parseState.position])
   }
 
   parseState.position += 1
@@ -153,7 +155,7 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
     t: AstNodeType.NormalExpression,
     n: 'object',
     p: params,
-    debugData: firstToken.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
           lastToken: tkn,
@@ -167,14 +169,14 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
 }
 
 function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNodeWithName {
-  const tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const tkn = asRegexpShorthandToken(tokenStream.tokens[parseState.position++])
 
   const stringNode: StringNode = {
     t: AstNodeType.String,
-    v: tkn.v,
+    v: tkn[1],
     p: [],
     n: undefined,
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? {
           token: tkn,
           lastToken: tkn,
@@ -182,14 +184,12 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
       : undefined,
   }
 
-  assertNonUndefined(tkn.o, tkn.debugData?.sourceCodeInfo)
-
   const optionsNode: StringNode = {
     t: AstNodeType.String,
-    v: `${tkn.o.g ? 'g' : ''}${tkn.o.i ? 'i' : ''}`,
+    v: `${tkn[2].g ? 'g' : ''}${tkn[2].i ? 'i' : ''}`,
     p: [],
     n: undefined,
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? {
           token: tkn,
           lastToken: tkn,
@@ -201,7 +201,7 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
     t: AstNodeType.NormalExpression,
     n: 'regexp',
     p: [stringNode, optionsNode],
-    debugData: tkn.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? {
           token: tkn,
           lastToken: tkn,
@@ -214,33 +214,33 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
 
 const placeholderRegexp = /^%([1-9]\d?)?$/
 function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnNode {
-  const firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const firstToken = asToken(tokenStream.tokens[parseState.position++])
   const startPos = parseState.position + 1
   const exprNode = parseExpression(tokenStream, parseState)
 
   let arity = 0
   let percent1: 'NOT_SET' | 'WITH_1' | 'NAKED' = 'NOT_SET' // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
   for (let pos = startPos; pos < parseState.position - 1; pos += 1) {
-    const tkn = asToken(tokenStream.tokens[pos], tokenStream.filePath)
-    if (tkn.t === 'Name') {
-      const match = placeholderRegexp.exec(tkn.v)
+    const tkn = asToken(tokenStream.tokens[pos])
+    if (isSymbolToken(tkn)) {
+      const match = placeholderRegexp.exec(tkn[1])
       if (match) {
         const number = match[1] ?? '1'
         if (number === '1') {
           const mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED')
           if (mixedPercent1)
-            throw new LitsError('Please make up your mind, either use % or %1', firstToken.debugData?.sourceCodeInfo)
+            throw new LitsError('Please make up your mind, either use % or %1', getTokenDebugData(firstToken)?.sourceCodeInfo)
 
           percent1 = match[1] ? 'WITH_1' : 'NAKED'
         }
 
         arity = Math.max(arity, Number(number))
         if (arity > 20)
-          throw new LitsError('Can\'t specify more than 20 arguments', firstToken.debugData?.sourceCodeInfo)
+          throw new LitsError('Can\'t specify more than 20 arguments', getTokenDebugData(firstToken)?.sourceCodeInfo)
       }
     }
-    if (tkn.t === 'FnShorthand')
-      throw new LitsError('Nested shortcut functions are not allowed', firstToken.debugData?.sourceCodeInfo)
+    if (isFnShorthandToken(tkn))
+      throw new LitsError('Nested shortcut functions are not allowed', getTokenDebugData(firstToken)?.sourceCodeInfo)
   }
 
   const mandatoryArguments: string[] = []
@@ -268,7 +268,7 @@ function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnN
         a: args.m.length,
       },
     ],
-    debugData: firstToken.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
           lastToken: exprNode.debugData!.lastToken,
@@ -280,14 +280,14 @@ function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnN
 }
 
 const parseArgument: ParseArgument = (tokenStream, parseState) => {
-  const tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath)
+  const tkn = asToken(tokenStream.tokens[parseState.position++])
 
-  if (tkn.t === 'Name') {
+  if (isSymbolToken(tkn)) {
     return {
       t: AstNodeType.Argument,
-      n: tkn.v,
+      n: tkn[1],
       p: [],
-      debugData: tkn.debugData?.sourceCodeInfo
+      debugData: getTokenDebugData(tkn)?.sourceCodeInfo
         ? {
             token: tkn,
             lastToken: tkn,
@@ -295,14 +295,13 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
         : undefined,
     }
   }
-  else if (tkn.t === 'Modifier') {
-    const value = tkn.v as ModifierName
+  else if (isModifierToken(tkn)) {
     return {
       t: AstNodeType.Modifier,
-      v: value,
+      v: tkn[1],
       p: [],
       n: undefined,
-      debugData: tkn.debugData?.sourceCodeInfo
+      debugData: getTokenDebugData(tkn)?.sourceCodeInfo
         ? {
             token: tkn,
             lastToken: tkn,
@@ -311,17 +310,17 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
     }
   }
   else {
-    throw new LitsError(`Expected name or modifier token, got ${valueToString(tkn)}.`, tkn.debugData?.sourceCodeInfo)
+    throw new LitsError(`Expected name or modifier token, got ${valueToString(tkn)}.`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
 }
 
 function parseBindings(tokenStream: TokenStream, parseState: ParseState): BindingNode[] {
-  let tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LBracket' })
-  tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+  assertLBracketToken(tokenStream.tokens[parseState.position++])
+  let tkn = asToken(tokenStream.tokens[parseState.position])
   const bindings: BindingNode[] = []
-  while (tkn.t !== 'RBracket') {
+  while (!isRBracketToken(tkn)) {
     bindings.push(parseBinding(tokenStream, parseState))
-    tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+    tkn = asToken(tokenStream.tokens[parseState.position])
   }
   parseState.position += 1
 
@@ -329,8 +328,8 @@ function parseBindings(tokenStream: TokenStream, parseState: ParseState): Bindin
 }
 
 function parseBinding(tokenStream: TokenStream, parseState: ParseState): BindingNode {
-  const firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Name' })
-  const name = firstToken.v
+  const firstToken = asSymbolToken(tokenStream.tokens[parseState.position++])
+  const name = firstToken[1]
 
   const value = parseToken(tokenStream, parseState)
 
@@ -339,7 +338,7 @@ function parseBinding(tokenStream: TokenStream, parseState: ParseState): Binding
     n: name,
     v: value,
     p: [],
-    debugData: firstToken.debugData?.sourceCodeInfo
+    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
           lastToken: value.debugData!.lastToken,
@@ -350,15 +349,13 @@ function parseBinding(tokenStream: TokenStream, parseState: ParseState): Binding
 }
 
 function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNode {
-  const startBracketToken = tokenStream.hasDebugData
-    ? asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'LParen' })
-    : undefined
+  const startBracketToken = tokenStream.hasDebugData ? asLParenToken(tokenStream.tokens[parseState.position]) : undefined
   parseState.position += 1
   const fnNode = parseToken(tokenStream, parseState)
 
   const params = parseTokensUntilClosingBracket(tokenStream, parseState)
 
-  const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+  const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
   if (isExpressionNode(fnNode)) {
     const node: NormalExpressionNode = {
@@ -376,7 +373,7 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
     return node
   }
 
-  assertNameNode(fnNode, fnNode.debugData?.token.debugData?.sourceCodeInfo)
+  assertNameNode(fnNode, getTokenDebugData(fnNode.debugData?.token)?.sourceCodeInfo)
   const node: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
     n: fnNode.v,
@@ -403,12 +400,12 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
 }
 
 function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState): SpecialExpressionNode {
-  const firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LParen' })
+  const firstToken = asLParenToken(tokenStream.tokens[parseState.position++])
 
-  const nameToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Name' })
-  const { v: expressionName, debugData } = nameToken
+  const nameToken = asSymbolToken(tokenStream.tokens[parseState.position++])
+  const expressionName = nameToken[1] as SpecialExpressionName
 
-  const { parse } = asNonUndefined(builtin.specialExpressions[expressionName as SpecialExpressionName], debugData?.sourceCodeInfo)
+  const { parse } = asNonUndefined(builtin.specialExpressions[expressionName], getTokenDebugData(nameToken)?.sourceCodeInfo)
 
   const node = parse(tokenStream, parseState, firstToken, {
     parseExpression,
@@ -429,16 +426,19 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
   // if (parseState.infix) {
   //   return
   // }
-  const tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  switch (tkn.t) {
+  const tkn = asToken(tokenStream.tokens[parseState.position])
+  const tokenType = tkn[0]
+  switch (tokenType) {
     case 'Number':
       return parseNumber(tokenStream, parseState)
     case 'String':
       return parseString(tokenStream, parseState)
-    case 'Name':
-      return parseName(tokenStream, parseState)
-    case 'ReservedName':
-      return parseReservedName(tokenStream, parseState)
+    case 'StringShorthand':
+      return parseString(tokenStream, parseState)
+    case 'Symbol':
+      return parseSymbol(tokenStream, parseState)
+    case 'ReservedSymbol':
+      return parseReservedSymbol(tokenStream, parseState)
     case 'LParen':
       return parseExpression(tokenStream, parseState)
     case 'LBracket':
@@ -463,7 +463,7 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
       break
     /* v8 ignore next 2 */
     default:
-      throw new LitsError(`Unrecognized token: ${tkn.t satisfies never} ${tkn.v}`, tkn.debugData?.sourceCodeInfo)
+      throw new LitsError(`Unrecognized token: ${tokenType satisfies never} ${tkn[1]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
-  throw new LitsError(`Unrecognized token: ${tkn.t} ${tkn.v}`, tkn.debugData?.sourceCodeInfo)
+  throw new LitsError(`Unrecognized token: ${tokenType}${tkn[1] ? ` ${tkn[1]}` : ''}`, getTokenDebugData(tkn)?.sourceCodeInfo)
 }

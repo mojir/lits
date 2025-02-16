@@ -12,7 +12,9 @@ import type {
   ParseToken,
   ParseTokensUntilClosingBracket,
 } from '../parser/interface'
-import type { SourceCodeInfo, Token, TokenStream } from '../tokenizer/interface'
+import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
+import type { Token } from '../tokenizer/Token'
+
 import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
 
 export type NormalExpressionEvaluator<T> = (

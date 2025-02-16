@@ -25,8 +25,8 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
     p: astNodes,
     t: AstNodeType.NormalExpression,
     debugData: {
-      token: { t: 'Name', v: 'X', debugData: undefined },
-      lastToken: { t: 'Name', v: 'X', debugData: undefined },
+      token: ['Symbol', 'X'],
+      lastToken: ['Symbol', 'X'],
     },
   }
 }

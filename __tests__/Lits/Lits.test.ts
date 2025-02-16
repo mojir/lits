@@ -113,43 +113,28 @@ describe('context', () => {
               {
                 t: AstNodeType.Number,
                 v: 2,
-                debugData: { token: {
-                  t: 'Number',
-                  v: '2',
-                  debugData: undefined,
-                }, lastToken: {
-                  t: 'Number',
-                  v: '2',
-                  debugData: undefined,
-                } },
+                debugData: {
+                  token: ['Number', '2'],
+                  lastToken: ['Number', '2'],
+                },
                 p: [],
                 n: undefined,
               },
               {
                 t: AstNodeType.Number,
                 v: 4,
-                debugData: { token: {
-                  t: 'Number',
-                  v: '4',
-                  debugData: undefined,
-                }, lastToken: {
-                  t: 'Number',
-                  v: '4',
-                  debugData: undefined,
-                } },
+                debugData: {
+                  token: ['Number', '4'],
+                  lastToken: ['Number', '4'],
+                },
                 p: [],
                 n: undefined,
               },
             ],
-            debugData: { token: {
-              t: 'Name',
-              v: 'pow',
-              debugData: undefined,
-            }, lastToken: {
-              t: 'Name',
-              v: 'pow',
-              debugData: undefined,
-            } },
+            debugData: {
+              token: ['Symbol', 'pow'],
+              lastToken: ['Symbol', 'pow'],
+            },
           },
         ],
       },

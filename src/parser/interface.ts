@@ -5,8 +5,9 @@ import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
 import type { PostfixReservedName } from '../tokenizer/postfix/reservedNames'
-import type { SourceCodeInfo, Token, TokenStream } from '../tokenizer/interface'
+import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
+import type { ModifierName, Token } from '../tokenizer/Token'
 
 export interface ParseState {
   position: number
@@ -113,8 +114,6 @@ export type LitsFunction =
   | FNilFunction
 
 export type LitsFunctionType = LitsFunction['t']
-
-export type ModifierName = '&' | '&let' | '&when' | '&while'
 
 export interface GenericNode {
   t: AstNodeType // type

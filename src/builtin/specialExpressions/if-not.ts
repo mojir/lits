@@ -1,9 +1,9 @@
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { assertNumberOfParams } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
-import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface IfNotNode extends CommonSpecialExpressionNode<'if-not'> {}
@@ -11,13 +11,13 @@ export interface IfNotNode extends CommonSpecialExpressionNode<'if-not'> {}
 export const ifNotSpecialExpression: BuiltinSpecialExpression<Any, IfNotNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: IfNotNode = {
       t: AstNodeType.SpecialExpression,
       n: 'if-not',
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -28,7 +28,7 @@ export const ifNotSpecialExpression: BuiltinSpecialExpression<Any, IfNotNode> = 
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
 
     const [conditionNode, trueNode, falseNode] = node.p
     if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {

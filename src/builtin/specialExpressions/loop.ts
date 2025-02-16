@@ -4,9 +4,9 @@ import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
-import { asToken } from '../../typeGuards/token'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
@@ -19,14 +19,14 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: LoopNode = {
       t: AstNodeType.SpecialExpression,
       n: 'loop',
       p: params,
       bs: bindings,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -34,7 +34,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
     const bindingContext: Context = node.bs.reduce((result: Context, binding) => {
       result[binding.n] = { value: evaluateAstNode(binding.v, contextStack) }
       return result

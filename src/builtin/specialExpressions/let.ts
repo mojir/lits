@@ -3,8 +3,8 @@ import { AstNodeType } from '../../constants/constants'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { asNormalExpressionNode } from '../../typeGuards/astNode'
-import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LetNode extends CommonSpecialExpressionNode<'let'> {
@@ -16,19 +16,19 @@ export interface LetNode extends CommonSpecialExpressionNode<'let'> {
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
   parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
-    const bindingArray = firstToken.debugData?.sourceCodeInfo && asNormalExpressionNode(parseToken(tokenStream, { ...parseState }))
+    const bindingArray = getTokenDebugData(firstToken)?.sourceCodeInfo && asNormalExpressionNode(parseToken(tokenStream, { ...parseState }))
 
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: LetNode = {
       t: AstNodeType.SpecialExpression,
       n: 'let',
       p: params,
       bs: bindings,
-      debugData: firstToken.debugData?.sourceCodeInfo && bindingArray && {
+      debugData: getTokenDebugData(firstToken)?.sourceCodeInfo && bindingArray && {
         token: firstToken,
         lastToken,
         bindingArray,

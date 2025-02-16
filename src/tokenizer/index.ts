@@ -1,8 +1,9 @@
 import { LitsError } from '../errors'
 import { getNextPostfixToken } from './postfix'
-import type { MetaToken, Token, TokenStream, TokenizeParams } from './interface'
+import type { TokenStream, TokenizeParams } from './interface'
 import { getSugar } from './sugar'
 import { getNextInfixToken } from './infix'
+import { type MetaToken, type Token, isCommentToken, isInfixToken, isNewLineToken, isPostfixToken } from './Token'
 
 export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const debug = !!params.debug
@@ -23,10 +24,10 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
     position += count
     if (token) {
       tokenStream.tokens.push(token)
-      if (token.t === 'Infix') {
+      if (isInfixToken(token)) {
         infix = true
       }
-      if (token.t === 'Postfix') {
+      if (isPostfixToken(token)) {
         infix = false
       }
     }
@@ -43,28 +44,10 @@ function applySugar(tokenStream: TokenStream) {
 }
 
 export function isMetaToken(token?: Token): token is MetaToken {
-  return !!token && (token.t === 'NewLine' || token.t === 'Comment')
+  return !!token && (isNewLineToken(token) || isCommentToken(token))
 }
 
 export function assertMetaToken(token?: Token): asserts token is MetaToken {
   if (!isMetaToken(token))
-    throw new LitsError(`Expected meta token, got ${token?.t}.`)
-}
-
-export function isCommentToken(token?: Token): token is Token<'Comment'> {
-  return !!token && token.t === 'Comment'
-}
-
-export function assertCommentToken(token?: Token): asserts token is Token<'Comment'> {
-  if (!isCommentToken(token))
-    throw new LitsError(`Expected comment token, got ${token?.t}.`)
-}
-
-export function isNewLineToken(token?: Token): token is Token<'NewLine'> {
-  return !!token && token.t === 'NewLine'
-}
-
-export function assertNewLineToken(token?: Token): asserts token is Token<'NewLine'> {
-  if (!isNewLineToken(token))
-    throw new LitsError(`Expected newline token, got ${token?.t}.`)
+    throw new LitsError(`Expected meta token, got ${token}.`)
 }

@@ -11,7 +11,7 @@ import type {
   NumberNode,
   StringNode,
 } from '../parser/interface'
-import type { Token } from '../tokenizer/interface'
+import type { Token } from '../tokenizer/Token'
 import {
   asAstNode,
   asExpressionNode,
@@ -31,7 +31,7 @@ import {
 } from './astNode'
 
 describe('astNode type guards', () => {
-  const tkn: Token = { t: 'Name', v: 'X', debugData: undefined }
+  const tkn: Token = ['Symbol', 'X']
   const invalidAstNodes: unknown[] = [
     {
       tkn,
@@ -86,7 +86,7 @@ describe('astNode type guards', () => {
   const stringNode: StringNode = {
     t: AstNodeType.String,
     v: 'foo',
-    debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: tkn },
+    debugData: { token: ['Symbol', 'X'], lastToken: tkn },
     p: [],
     n: undefined,
   }
@@ -94,7 +94,7 @@ describe('astNode type guards', () => {
     t: AstNodeType.NormalExpression,
     p: [],
     n: 'object',
-    debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: tkn },
+    debugData: { token: ['Symbol', 'X'], lastToken: tkn },
   }
   const normalExpressionNodeWithoutName: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
@@ -106,7 +106,7 @@ describe('astNode type guards', () => {
         {
           t: AstNodeType.Number,
           v: 2,
-          debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: tkn },
+          debugData: { token: ['Symbol', 'X'], lastToken: tkn },
           p: [],
           n: undefined,
         },

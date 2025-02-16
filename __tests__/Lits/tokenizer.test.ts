@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
-import type { TokenType } from '../../src/constants/constants'
+import { type TokenType, getTokenDebugData, isCommentToken, isNewLineToken } from '../../src/tokenizer/Token'
 
 describe('tokenizer', () => {
   it('simple expressions', () => {
@@ -35,14 +35,14 @@ describe('tokenizer', () => {
     expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
-      tokens: [{ t: 'String', v: 'Hi', debugData: undefined }],
+      tokens: [['String', 'Hi']],
     })
     expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
       tokens: [
-        { t: 'String', v: 'Hi', debugData: undefined },
-        { t: 'String', v: 'there', debugData: undefined },
+        ['String', 'Hi'],
+        ['String', 'there'],
       ],
     })
   })
@@ -52,18 +52,9 @@ describe('tokenizer', () => {
       expect(() => tokenize('"Hi', { debug: false })).toThrow()
     })
     it('escaped string', () => {
-      expect(tokenize('"He\\"j"', { debug: false }).tokens[0]).toEqual({
-        t: 'String',
-        v: 'He"j',
-      })
-      expect(tokenize('"He\\\\j"', { debug: false }).tokens[0]).toEqual({
-        t: 'String',
-        v: 'He\\j',
-      })
-      expect(tokenize('"H\\ej"', { debug: false }).tokens[0]).toEqual({
-        t: 'String',
-        v: 'H\\ej',
-      })
+      expect(tokenize('"He\\"j"', { debug: false }).tokens[0]).toEqual(['String', 'He"j'])
+      expect(tokenize('"He\\\\j"', { debug: false }).tokens[0]).toEqual(['String', 'He\\j'])
+      expect(tokenize('"H\\ej"', { debug: false }).tokens[0]).toEqual(['String', 'H\\ej'])
     })
   })
 
@@ -73,18 +64,13 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          {
-            t: 'RegexpShorthand',
-            v: 'Hi',
-            o: {},
-            debugData: {
-              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
-              metaTokens: {
-                inlineCommentToken: null,
-                leadingMetaTokens: [],
-              },
+          ['RegexpShorthand', 'Hi', {}, {
+            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
+            metaTokens: {
+              inlineCommentToken: null,
+              leadingMetaTokens: [],
             },
-          },
+          }],
         ],
         filePath: 'foo.lits',
       })
@@ -92,72 +78,52 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          {
-            t: 'RegexpShorthand',
-            v: 'Hi',
-            o: { g: true },
-            debugData: {
-              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
-              metaTokens: {
-                inlineCommentToken: null,
-                leadingMetaTokens: [],
-              },
+          ['RegexpShorthand', 'Hi', { g: true }, {
+            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
+            metaTokens: {
+              inlineCommentToken: null,
+              leadingMetaTokens: [],
             },
-          },
+          }],
         ],
       })
       expect(tokenize('#"Hi"i', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
         infix: false,
         tokens: [
-          {
-            t: 'RegexpShorthand',
-            v: 'Hi',
-            o: { i: true },
-            debugData: {
-              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
-              metaTokens: {
-                inlineCommentToken: null,
-                leadingMetaTokens: [],
-              },
+          ['RegexpShorthand', 'Hi', { i: true }, {
+            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
+            metaTokens: {
+              inlineCommentToken: null,
+              leadingMetaTokens: [],
             },
-          },
+          }],
         ],
       })
       expect(tokenize('#"Hi"gi', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
         infix: false,
         tokens: [
-          {
-            t: 'RegexpShorthand',
-            v: 'Hi',
-            o: { i: true, g: true },
-            debugData: {
-              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
-              metaTokens: {
-                inlineCommentToken: null,
-                leadingMetaTokens: [],
-              },
+          ['RegexpShorthand', 'Hi', { i: true, g: true }, {
+            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
+            metaTokens: {
+              inlineCommentToken: null,
+              leadingMetaTokens: [],
             },
-          },
+          }],
         ],
       })
       expect(tokenize('#"Hi"ig', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
         infix: false,
         tokens: [
-          {
-            t: 'RegexpShorthand',
-            v: 'Hi',
-            o: { i: true, g: true },
-            debugData: {
-              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
-              metaTokens: {
-                inlineCommentToken: null,
-                leadingMetaTokens: [],
-              },
+          ['RegexpShorthand', 'Hi', { i: true, g: true }, {
+            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
+            metaTokens: {
+              inlineCommentToken: null,
+              leadingMetaTokens: [],
             },
-          },
+          }],
         ],
       })
       expect(() => tokenize('#"Hi"gg', { debug: true })).toThrow()
@@ -172,28 +138,20 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          {
-            t: 'FnShorthand',
-            v: '#',
-            debugData: {
-              sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
-              metaTokens: {
-                inlineCommentToken: null,
-                leadingMetaTokens: [],
-              },
+          ['FnShorthand', {
+            sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
+            metaTokens: {
+              inlineCommentToken: null,
+              leadingMetaTokens: [],
             },
-          },
-          {
-            t: 'LParen',
-            v: '(',
-            debugData: {
-              sourceCodeInfo: { position: { line: 1, column: 2 }, code: '#(' },
-              metaTokens: {
-                inlineCommentToken: null,
-                leadingMetaTokens: [],
-              },
+          }],
+          ['LParen', {
+            sourceCodeInfo: { position: { line: 1, column: 2 }, code: '#(' },
+            metaTokens: {
+              inlineCommentToken: null,
+              leadingMetaTokens: [],
             },
-          },
+          }],
         ],
       })
       expect(() => tokenize('#', { debug: true })).toThrow()
@@ -280,7 +238,7 @@ describe('tokenize comments and new lines with debug', () => {
       'Comment',
       'Comment',
       '_;LParen',
-      'Name',
+      'Symbol',
       '_;Number',
       '_Comment',
       '_Number',
@@ -302,13 +260,13 @@ describe('tokenize comments and new lines with debug', () => {
     ;; I
     (/ 3 4) 5)) ;; J`, [
       '_;LParen',
-      'Name;',
+      'Symbol;',
       ';LParen',
-      'Name;',
+      'Symbol;',
       ';Number;',
       ';Number;',
       ';LParen',
-      'Name',
+      'Symbol',
       'Number',
       'Number',
       'RParen',
@@ -350,7 +308,7 @@ describe('tokenize comments and new lines without debug', () => {
 
 
 
-;; The end`, ['LParen', 'Name', 'Number', 'Number', 'RParen']],
+;; The end`, ['LParen', 'Symbol', 'Number', 'Number', 'RParen']],
 
   ]
   testSamples(samples, false)
@@ -362,10 +320,10 @@ function testSamples(samples: [string, TokenDescription[]][], debug: boolean) {
     it(input, () => {
       const tokenStream = tokenize(input, { debug })
       const actual = tokenStream.tokens.map<TokenDescription>((token) => {
-        const prefix: TokenPrefix = token.debugData?.metaTokens.leadingMetaTokens?.reduce<TokenPrefix>((acc, metaToken) => {
-          if (metaToken.t === 'NewLine')
+        const prefix: TokenPrefix = getTokenDebugData(token)?.metaTokens.leadingMetaTokens?.reduce<TokenPrefix>((acc, metaToken) => {
+          if (isNewLineToken(metaToken))
             return `${acc}_` as TokenPrefix
-          if (metaToken.t === 'Comment') {
+          if (isCommentToken(metaToken)) {
             return acc.endsWith(';')
               ? `${acc}+` as TokenPrefix
               : acc.endsWith('+')
@@ -374,9 +332,9 @@ function testSamples(samples: [string, TokenDescription[]][], debug: boolean) {
           }
           return acc
         }, '') ?? ''
-        const suffix: TokenSuffix = token.debugData?.metaTokens.inlineCommentToken ? ';' : ''
+        const suffix: TokenSuffix = getTokenDebugData(token)?.metaTokens.inlineCommentToken ? ';' : ''
 
-        return `${prefix}${token.t}${suffix}`
+        return `${prefix}${token[0]}${suffix}`
       })
       expect(actual).toEqual(expected)
     })

@@ -1,6 +1,7 @@
 import { astNodeTypeName, isAstNodeType, isFunctionType, isTokenType } from '../../constants/constants'
 import type { AstNode, LitsFunction } from '../../parser/interface'
-import type { SourceCodeInfo, Token } from '../../tokenizer/interface'
+import type { SourceCodeInfo } from '../../tokenizer/interface'
+import type { Token } from '../../tokenizer/Token'
 import { FUNCTION_SYMBOL } from '../symbols'
 
 function isLitsFunction(func: unknown): func is LitsFunction {
@@ -15,7 +16,7 @@ function isUnknownRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isToken(value: unknown): value is Token {
-  return isUnknownRecord(value) && typeof value.t === 'string' && isTokenType(value.t) && typeof value.v === 'string'
+  return Array.isArray(value) && value.length >= 1 && value.length <= 3 && typeof value[0] === 'string' && isTokenType(value[0])
 }
 
 function isAstNode(value: unknown): value is AstNode {
@@ -28,7 +29,7 @@ export function valueToString(value: unknown): string {
     return `<function ${(value as any).name || '\u03BB'}>`
 
   if (isToken(value))
-    return `${value.t}-token "${value.v}"`
+    return `${value[0]}-token${value[1] ? `"${value[1]}"` : ''}`
 
   if (isAstNode(value))
     return `${astNodeTypeName.get(value.t)}-node`

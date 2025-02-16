@@ -4,8 +4,8 @@ import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { asNonUndefined } from '../../typeGuards'
-import { asToken } from '../../typeGuards/token'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
@@ -20,19 +20,19 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode
     if (bindings.length !== 1) {
       throw new LitsError(
         `Expected exactly one binding, got ${valueToString(bindings.length)}`,
-        firstToken.debugData?.sourceCodeInfo,
+        getTokenDebugData(firstToken)?.sourceCodeInfo,
       )
     }
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: WhenLetNode = {
       t: AstNodeType.SpecialExpression,
       n: 'when-let',
-      b: asNonUndefined(bindings[0], firstToken.debugData?.sourceCodeInfo),
+      b: asNonUndefined(bindings[0], getTokenDebugData(firstToken)?.sourceCodeInfo),
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },

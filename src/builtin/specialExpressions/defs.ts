@@ -1,8 +1,8 @@
 import { AstNodeType } from '../../constants/constants'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { assertNumberOfParams } from '../../typeGuards'
 import { assertString } from '../../typeGuards/string'
-import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
 
@@ -11,13 +11,13 @@ export interface DefsNode extends CommonSpecialExpressionNode<'defs'> {}
 export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DefsNode = {
       t: AstNodeType.SpecialExpression,
       n: 'defs',
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -28,11 +28,11 @@ export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
-    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
     const name = evaluateAstNode(node.p[0]!, contextStack)
     assertString(name, sourceCodeInfo)
 
-    assertNameNotDefined(name, contextStack, builtin, node.debugData?.token.debugData?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
 
     contextStack.globalContext[name] = {
       value: evaluateAstNode(node.p[1]!, contextStack),
@@ -41,7 +41,7 @@ export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
     return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin, evaluateAstNode }) => {
-    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
     const subNode = node.p[1]!
     const result = findUnresolvedIdentifiers([subNode], contextStack, builtin)
     const name = evaluateAstNode(node.p[0]!, contextStack)

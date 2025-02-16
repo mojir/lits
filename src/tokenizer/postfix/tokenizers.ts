@@ -1,7 +1,5 @@
-import type { TokenType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import { postfixIdentifierCharacterClass } from '../../identifier'
-import type { ModifierName } from '../../parser/interface'
 import {
   NO_MATCH,
   tokenizeCollectionAccessor,
@@ -17,51 +15,61 @@ import {
   tokenizeRightParen,
   tokenizeString,
 } from '../common/tokenizers'
-import type { Token, TokenDebugData, TokenDescriptor, Tokenizer } from '../interface'
+import type { Tokenizer } from '../interface'
+import type { FnShorthandToken, InfixToken, ModifierName, ModifierToken, ReservedSymbolToken, StringShorthandToken, SymbolToken } from '../Token'
+import { modifierNames } from '../Token'
 import { postfixReservedNamesRecord } from './reservedNames'
 
 const nameRegExp = new RegExp(postfixIdentifierCharacterClass)
 const whitespaceRegExp = /\s|,/
 
-export const skipWhiteSpace: Tokenizer = (input, current) =>
+export const skipWhiteSpace: Tokenizer<never> = (input, current) =>
   whitespaceRegExp.test(input[current] as string) ? [1, undefined] : NO_MATCH
 
-export const tokenizeFnShorthand: Tokenizer = (input, position, debugData) => {
+export const tokenizeFnShorthand: Tokenizer<FnShorthandToken> = (input, position) => {
   if (input.slice(position, position + 2) !== '#(')
     return NO_MATCH
 
-  return [
-    1,
-    {
-      t: 'FnShorthand',
-      v: '#',
-      debugData,
-    },
-  ]
+  return [1, ['FnShorthand']]
 }
 
-export const tokenizeReservedName: Tokenizer = (input, position, debugData) => {
+export const tokenizeReservedSymbol: Tokenizer<ReservedSymbolToken> = (input, position) => {
   for (const [reservedName, { forbidden }] of Object.entries(postfixReservedNamesRecord)) {
     const length = reservedName.length
     const nextChar = input[position + length]
-    if (nextChar && nameRegExp.test(nextChar))
+    if (nextChar && nameRegExp.test(nextChar)) {
       continue
+    }
 
-    const name = input.substring(position, position + length)
-    if (name === reservedName) {
+    const symbol = input.substring(position, position + length)
+    if (symbol === reservedName) {
       if (forbidden)
-        throw new LitsError(`${name} is forbidden!`, debugData?.sourceCodeInfo)
+        throw new LitsError(`${symbol} is forbidden!`)
 
-      return [length, { t: 'ReservedName', v: reservedName, debugData }]
+      return [length, ['ReservedSymbol', reservedName]]
     }
   }
   return NO_MATCH
 }
 
-export const tokenizeName: Tokenizer = (input, position, debugData) =>
-  tokenizePattern('Name', nameRegExp, input, position, debugData)
+export const tokenizeSymbol: Tokenizer<SymbolToken> = (input, position) => {
+  let char = input[position]
+  let length = 0
+  let value = ''
 
-const tokenizeSymbolString: Tokenizer = (input, position, debugData) => {
+  if (!char || !nameRegExp.test(char))
+    return NO_MATCH
+
+  while (char && nameRegExp.test(char)) {
+    value += char
+    length += 1
+    char = input[position + length]
+  }
+
+  return [length, ['Symbol', value]]
+}
+
+const tokenizeStringShorthand: Tokenizer<StringShorthandToken> = (input, position) => {
   if (input[position] !== ':')
     return NO_MATCH
 
@@ -76,23 +84,22 @@ const tokenizeSymbolString: Tokenizer = (input, position, debugData) => {
   if (length === 1)
     return NO_MATCH
 
-  return [length, { t: 'String', v: value, debugData, o: { s: true } } satisfies Token]
+  return [length, ['StringShorthand', value]]
 }
 
-export const tokenizeModifier: Tokenizer = (input, position, debugData) => {
-  const modifiers: ModifierName[] = ['&', '&let', '&when', '&while']
-  for (const modifier of modifiers) {
-    const length = modifier.length
+export const tokenizeModifier: Tokenizer<ModifierToken> = (input, position) => {
+  for (const modifierName of modifierNames) {
+    const length = modifierName.length
     const charAfterModifier = input[position + length]
-    if (input.substring(position, position + length) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
-      const value: ModifierName = modifier
-      return [length, { t: 'Modifier', v: value, debugData }]
+    if (input.substring(position, position + length) === modifierName && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
+      const value: ModifierName = modifierName
+      return [length, ['Modifier', value]]
     }
   }
   return NO_MATCH
 }
 
-export const tokenizeInfixDirective: Tokenizer = (input, position, debugData) => {
+export const tokenizeInfixDirective: Tokenizer<InfixToken> = (input, position) => {
   if (input[position] !== '$') {
     return NO_MATCH
   }
@@ -100,34 +107,11 @@ export const tokenizeInfixDirective: Tokenizer = (input, position, debugData) =>
   if (nextChar && nameRegExp.test(nextChar)) {
     return NO_MATCH
   }
-  return [1, { t: 'Infix', v: '$', debugData }]
-}
-
-function tokenizePattern(
-  type: TokenType,
-  pattern: RegExp,
-  input: string,
-  position: number,
-  debugData?: TokenDebugData,
-): TokenDescriptor {
-  let char = input[position]
-  let length = 0
-  let value = ''
-
-  if (!char || !pattern.test(char))
-    return NO_MATCH
-
-  while (char && pattern.test(char)) {
-    value += char
-    length += 1
-    char = input[position + length]
-  }
-
-  return [length, { t: type, v: value, debugData }]
+  return [1, ['Infix']]
 }
 
 // All tokenizers, order matters!
-export const tokenizers: Tokenizer[] = [
+export const postfixTokenizers = [
   tokenizeInfixDirective,
   skipWhiteSpace,
   tokenizeComment,
@@ -138,15 +122,15 @@ export const tokenizers: Tokenizer[] = [
   tokenizeLeftCurly,
   tokenizeRightCurly,
   tokenizeString,
-  tokenizeSymbolString,
+  tokenizeStringShorthand,
   tokenizeNumber,
-  tokenizeReservedName,
-  tokenizeName,
+  tokenizeReservedSymbol,
+  tokenizeSymbol,
   tokenizeModifier,
   tokenizeRegexpShorthand,
   tokenizeFnShorthand,
   tokenizeCollectionAccessor,
-]
+] as const
 
 export const newLineTokenizers = [
   tokenizeNewLine,

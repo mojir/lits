@@ -7,10 +7,10 @@ import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
 import type { AstNode, BindingNode, CommonSpecialExpressionNode, ParseState } from '../../parser/interface'
 import type { SourceCodeInfo, TokenStream } from '../../tokenizer/interface'
+import { asRParenToken, asToken, assertLBracketToken, getTokenDebugData, isModifierToken, isRBracketToken } from '../../tokenizer/Token'
 import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
-import { asToken, assertToken, isToken } from '../../typeGuards/token'
 import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
 
 export interface ForNode extends CommonSpecialExpressionNode<'for'> {
@@ -43,12 +43,13 @@ function parseLoopBinding(
     m: [],
   }
 
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  while (tkn.t === 'Modifier') {
-    switch (tkn.v) {
+  let tkn = asToken(tokenStream.tokens[parseState.position])
+  while (isModifierToken(tkn)) {
+    const modifier = tkn[1]
+    switch (modifier) {
       case '&let':
         if (loopBinding.l) {
-          throw new LitsError('Only one &let modifier allowed', tkn.debugData?.sourceCodeInfo)
+          throw new LitsError('Only one &let modifier allowed', getTokenDebugData(tkn)?.sourceCodeInfo)
         }
         parseState.position += 1
         loopBinding.l = parseBindings(tokenStream, parseState)
@@ -56,7 +57,7 @@ function parseLoopBinding(
         break
       case '&when':
         if (loopBinding.wn) {
-          throw new LitsError('Only one &when modifier allowed', tkn.debugData?.sourceCodeInfo)
+          throw new LitsError('Only one &when modifier allowed', getTokenDebugData(tkn)?.sourceCodeInfo)
         }
         parseState.position += 1
         loopBinding.wn = parseToken(tokenStream, parseState)
@@ -64,16 +65,18 @@ function parseLoopBinding(
         break
       case '&while':
         if (loopBinding.we) {
-          throw new LitsError('Only one &while modifier allowed', tkn.debugData?.sourceCodeInfo)
+          throw new LitsError('Only one &while modifier allowed', getTokenDebugData(tkn)?.sourceCodeInfo)
         }
         parseState.position += 1
         loopBinding.we = parseToken(tokenStream, parseState)
         loopBinding.m.push('&while')
         break
+      case '&':
+        throw new LitsError(`Illegal modifier: ${modifier}`, getTokenDebugData(tkn)?.sourceCodeInfo)
       default:
-        throw new LitsError(`Illegal modifier: ${tkn.v}`, tkn.debugData?.sourceCodeInfo)
+        throw new LitsError(`Illegal modifier: ${modifier satisfies never}`, getTokenDebugData(tkn)?.sourceCodeInfo)
     }
-    tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+    tkn = asToken(tokenStream.tokens[parseState.position])
   }
   return loopBinding
 }
@@ -98,14 +101,14 @@ function parseLoopBindings(
   parseState: ParseState,
   parsers: ParserHelpers,
 ): LoopBindingNode[] {
-  assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LBracket' })
+  assertLBracketToken(tokenStream.tokens[parseState.position++])
 
   const loopBindings: LoopBindingNode[] = []
 
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  while (!isToken(tkn, { type: 'RBracket' })) {
+  let tkn = asToken(tokenStream.tokens[parseState.position])
+  while (!isRBracketToken(tkn)) {
     loopBindings.push(parseLoopBinding(tokenStream, parseState, parsers))
-    tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+    tkn = asToken(tokenStream.tokens[parseState.position])
   }
   parseState.position += 1
   return loopBindings
@@ -116,7 +119,7 @@ function evaluateLoop(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ) {
-  const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+  const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
   const { l: loopBindings, p: params } = node as LoopNode
 
   const result: Arr = []
@@ -245,14 +248,14 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: ForNode = {
       n: 'for',
       t: AstNodeType.SpecialExpression,
       l: loopBindings,
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -272,14 +275,14 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DoSeqNode = {
       n: 'doseq',
       t: AstNodeType.SpecialExpression,
       l: loopBindings,
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },

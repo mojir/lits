@@ -170,7 +170,7 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
-        debugData: { token: { t: 'Name', v: 'X', debugData: undefined }, lastToken: { t: 'Name', v: 'X', debugData: undefined } },
+        debugData: { token: ['Symbol', 'X'], lastToken: ['Symbol', 'X'] },
         p: [],
         n: undefined,
       },
@@ -195,22 +195,14 @@ it('evaluateAstNode', () => {
         t: AstNodeType.Modifier,
         v: '&',
         debugData: {
-          token: {
-            t: 'Name',
-            v: 'X',
-            debugData: {
-              sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
-              metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
-            },
-          },
-          lastToken: {
-            t: 'Name',
-            v: 'X',
-            debugData: {
-              sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
-              metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
-            },
-          },
+          token: ['Symbol', 'X', {
+            sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
+            metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
+          }],
+          lastToken: ['Symbol', 'X', {
+            sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
+            metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
+          }],
         },
         p: [],
         n: undefined,

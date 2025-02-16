@@ -5,6 +5,7 @@ import type { Ast } from '../../src/parser/interface'
 import { parseToken } from '../../src/parser/parsers'
 import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
+import type { CollectionAccessorToken } from '../../src/tokenizer/Token'
 
 const program = `
 (let [day (* 24 60 60 1000)]
@@ -189,17 +190,10 @@ describe('parser', () => {
   it('parseToken unknown token', () => {
     const tokenStream: TokenStream = {
       hasDebugData: false,
+      infix: false,
       tokens: [
-        {
-          t: 'CollectionAccessor',
-          v: '',
-          debugData: undefined,
-        },
-        {
-          t: 'Modifier',
-          v: '',
-          debugData: undefined,
-        },
+        ['CollectionAccessor', ''] as unknown as CollectionAccessorToken,
+        ['Modifier', ''] as unknown as CollectionAccessorToken,
       ],
     }
     expect(() => parseToken(tokenStream, { position: 0, infix: false })).toThrow()

@@ -9,6 +9,7 @@ import { FUNCTION_SYMBOL } from '../utils/symbols'
 import { FunctionType } from '../constants/constants'
 import { asNonUndefined } from '../typeGuards'
 import { isBuiltinFunction } from '../typeGuards/litsFunction'
+import { getTokenDebugData } from '../tokenizer/Token'
 import { isContextEntry } from './interface'
 import type { Context, LookUpResult } from './interface'
 
@@ -79,7 +80,7 @@ export class ContextStackImpl {
 
   public lookUp(node: NameNode): LookUpResult {
     const value = node.v
-    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
 
     for (const context of this.contexts) {
       const contextEntry = context[value]
@@ -129,7 +130,7 @@ export class ContextStackImpl {
     else if (isBuiltinFunction(lookUpResult))
       return lookUpResult
 
-    throw new UndefinedSymbolError(node.v, node.debugData?.token.debugData?.sourceCodeInfo)
+    throw new UndefinedSymbolError(node.v, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
   }
 }
 

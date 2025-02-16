@@ -4,6 +4,7 @@ import type { ContextStack } from '../evaluator/ContextStack'
 import type { AstNode } from '../parser/interface'
 import { asNonUndefined } from '../typeGuards'
 import { evaluateAstNode } from '../evaluator'
+import { getTokenDebugData } from '../tokenizer/Token'
 import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '.'
 
 export const findUnresolvedIdentifiers: FindUnresolvedIdentifiers = (ast, contextStack, builtin: Builtin) => {
@@ -50,7 +51,7 @@ function findUnresolvedIdentifiersInAstNode(astNode: AstNode, contextStack: Cont
       return unresolvedIdentifiers
     }
     case AstNodeType.SpecialExpression: {
-      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], astNode.debugData?.token.debugData?.sourceCodeInfo)
+      const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], getTokenDebugData(astNode.debugData?.token)?.sourceCodeInfo)
       // eslint-disable-next-line ts/no-unsafe-argument
       const unresolvedIdentifiers = specialExpression.findUnresolvedIdentifiers(astNode as any, contextStack, {
         findUnresolvedIdentifiers,

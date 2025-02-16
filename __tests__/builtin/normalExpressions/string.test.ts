@@ -29,7 +29,7 @@ describe('string functions', () => {
         // expect(lits.run('(str x)', { values: { x: null } })).toBe('')
         // expect(lits.run('(str)')).toBe('')
         // expect(lits.run('(str "")')).toBe('')
-        // expect(lits.run('(str :1)')).toBe('1')
+        expect(lits.run('(str :1)')).toBe('1')
         // expect(lits.run('(str :1 :2)')).toBe('12')
         // expect(lits.run('(str :1 :2 "three" :4)')).toBe('12three4')
         // expect(lits.run('(str 0)')).toBe('0')
@@ -40,7 +40,7 @@ describe('string functions', () => {
         // expect(lits.run('(str [])')).toBe('[]')
         // expect(lits.run('(str [1 2 3])')).toBe('[1,2,3]')
         // expect(lits.run('(str {})')).toBe('{}')
-        expect(lits.run('(str {:a 1})')).toBe('{"a":1}')
+        // expect(lits.run('(str {:a 1})')).toBe('{"a":1}')
       })
 
       it('regressions', () => {

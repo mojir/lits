@@ -4,9 +4,9 @@ import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { asNonUndefined } from '../../typeGuards'
 import { isSeq } from '../../typeGuards/lits'
-import { asToken } from '../../typeGuards/token'
 import { toAny } from '../../utils'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
@@ -22,19 +22,19 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirst
     if (bindings.length !== 1) {
       throw new LitsError(
         `Expected exactly one binding, got ${valueToString(bindings.length)}`,
-        firstToken.debugData?.sourceCodeInfo,
+        getTokenDebugData(firstToken)?.sourceCodeInfo,
       )
     }
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: WhenFirstNode = {
       t: AstNodeType.SpecialExpression,
       n: 'when-first',
-      b: asNonUndefined(bindings[0], firstToken.debugData?.sourceCodeInfo),
+      b: asNonUndefined(bindings[0], getTokenDebugData(firstToken)?.sourceCodeInfo),
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -48,7 +48,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirst
     if (!isSeq(evaluatedBindingForm)) {
       throw new LitsError(
         `Expected undefined or a sequence, got ${valueToString(evaluatedBindingForm)}`,
-        node.debugData?.token.debugData?.sourceCodeInfo,
+        getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
       )
     }
 

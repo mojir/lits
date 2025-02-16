@@ -1,5 +1,7 @@
+import { assertMetaToken } from '..'
 import { LitsError } from '../../errors'
-import type { MetaToken, SourceCodeInfo, Token, TokenDebugData, TokenDescriptor, TokenizeParams } from '../interface'
+import type { SourceCodeInfo, TokenDescriptor, TokenizeParams } from '../interface'
+import { type CommentToken, type MetaToken, type NewLineToken, type Token, type TokenDebugData, addTokenDebugData, assertCommentToken, assertNewLineToken, getTokenDebugData, isCommentToken, isNewLineToken } from '../Token'
 import { commentTokenizers, newLineTokenizers, tokenizers } from './tokenizers'
 
 function getSourceCodeLine(input: string, lineNbr: number): string {
@@ -23,7 +25,7 @@ function createSourceCodeInfo(input: string, position: number, filePath?: string
   }
 }
 
-export function getNextInfixToken(input: string, position: number, params: TokenizeParams): TokenDescriptor {
+export function getNextInfixToken(input: string, position: number, params: TokenizeParams): TokenDescriptor<Token> {
   const debug = !!params.debug
   const initialPosition = position
   const [leadingNewLineTokensLength, leadingNewLineTokens] = readLeadingNewLineTokens(input, position, params)
@@ -53,7 +55,11 @@ export function getNextInfixToken(input: string, position: number, params: Token
     }
     tryNext = false
     for (const tokenizer of tokenizers) {
-      const [nbrOfCharacters, token] = tokenizer(input, position, debugData)
+      const [nbrOfCharacters, token] = tokenizer(input, position)
+      if (token && debugData) {
+        addTokenDebugData(token, debugData)
+      }
+
       position += nbrOfCharacters
       if (nbrOfCharacters === 0) {
         continue
@@ -64,13 +70,14 @@ export function getNextInfixToken(input: string, position: number, params: Token
         break
       }
 
-      let inlineCommentToken: Token<'Comment'> | null = null
+      let inlineCommentToken: CommentToken | null = null
       if (!isCommentToken(token)) {
         [position, inlineCommentToken] = readInlineCommentToken(input, position, params)
       }
 
-      if (token.debugData) {
-        token.debugData.metaTokens.inlineCommentToken = inlineCommentToken
+      const tokenDebugData = getTokenDebugData(token)
+      if (tokenDebugData) {
+        tokenDebugData.metaTokens.inlineCommentToken = inlineCommentToken
       }
 
       if (!isCommentToken(token) || debug) {
@@ -84,7 +91,7 @@ export function getNextInfixToken(input: string, position: number, params: Token
 }
 
 function readLeadingNewLineTokens(input: string, position: number, params: TokenizeParams): [number, MetaToken[]] {
-  const newLineTokens: Token<'NewLine'>[] = []
+  const newLineTokens: NewLineToken[] = []
 
   const initialPosition = position
 
@@ -101,7 +108,10 @@ function readLeadingNewLineTokens(input: string, position: number, params: Token
 
     // Loop through all tokenizer until one matches
     for (const tokenizer of newLineTokenizers) {
-      const [nbrOfCharacters, token] = tokenizer(input, position, debugData)
+      const [nbrOfCharacters, token] = tokenizer(input, position)
+      if (token && debugData) {
+        addTokenDebugData(token, debugData)
+      }
       // tokenizer matched
       if (nbrOfCharacters > 0) {
         tokenized = true
@@ -125,7 +135,7 @@ function readLeadingNewLineTokens(input: string, position: number, params: Token
 
 function readLeadingCommentTokens(input: string, position: number, params: TokenizeParams): [number, MetaToken[]] {
   const initialPosition = position
-  const commentTokens: Token<'Comment'>[] = []
+  const commentTokens: CommentToken[] = []
 
   let tokenized = false
   while (position < input.length) {
@@ -140,7 +150,10 @@ function readLeadingCommentTokens(input: string, position: number, params: Token
 
     // Loop through all tokenizer until one matches
     for (const tokenizer of commentTokenizers) {
-      const [nbrOfCharacters, token] = tokenizer(input, position, debugData)
+      const [nbrOfCharacters, token] = tokenizer(input, position)
+      if (token && debugData) {
+        addTokenDebugData(token, debugData)
+      }
       // tokenizer matched
       if (nbrOfCharacters > 0) {
         tokenized = true
@@ -165,7 +178,7 @@ function readLeadingCommentTokens(input: string, position: number, params: Token
   return [0, []]
 }
 
-function readInlineCommentToken(input: string, position: number, params: TokenizeParams): [number, Token<'Comment'> | null] {
+function readInlineCommentToken(input: string, position: number, params: TokenizeParams): [number, CommentToken | null] {
   const rollbackPosition = position
   let tokenized = false
   while (position < input.length) {
@@ -179,7 +192,10 @@ function readInlineCommentToken(input: string, position: number, params: Tokeniz
 
     // Loop through all tokenizer until one matches
     for (const tokenizer of commentTokenizers) {
-      const [nbrOfCharacters, token] = tokenizer(input, position, debugData)
+      const [nbrOfCharacters, token] = tokenizer(input, position)
+      if (token && debugData) {
+        addTokenDebugData(token, debugData)
+      }
 
       // tokenizer matched
       if (nbrOfCharacters > 0) {
@@ -200,31 +216,4 @@ function readInlineCommentToken(input: string, position: number, params: Tokeniz
   }
   // Ending up here means that no comment token was found and end of tokens reached
   return [position, null]
-}
-
-export function isMetaToken(token?: Token): token is MetaToken {
-  return !!token && (token.t === 'NewLine' || token.t === 'Comment')
-}
-
-export function assertMetaToken(token?: Token): asserts token is MetaToken {
-  if (!isMetaToken(token))
-    throw new LitsError(`Expected meta token, got ${token?.t}.`)
-}
-
-export function isCommentToken(token?: Token): token is Token<'Comment'> {
-  return !!token && token.t === 'Comment'
-}
-
-export function assertCommentToken(token?: Token): asserts token is Token<'Comment'> {
-  if (!isCommentToken(token))
-    throw new LitsError(`Expected comment token, got ${token?.t}.`)
-}
-
-export function isNewLineToken(token?: Token): token is Token<'NewLine'> {
-  return !!token && token.t === 'NewLine'
-}
-
-export function assertNewLineToken(token?: Token): asserts token is Token<'NewLine'> {
-  if (!isNewLineToken(token))
-    throw new LitsError(`Expected newline token, got ${token?.t}.`)
 }

@@ -16,6 +16,7 @@ const config = antfu({
       'ts/consistent-type-imports': 'error',
       'ts/consistent-generic-constructors': ['error', 'constructor'],
       'ts/consistent-indexed-object-style': 'error',
+      'ts/consistent-type-definitions': 'off',
       'ts/consistent-type-assertions': [
         'error',
         {

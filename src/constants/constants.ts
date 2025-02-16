@@ -1,3 +1,5 @@
+import { type TokenType, tokenTypes } from '../tokenizer/Token'
+
 export enum AstNodeType {
   Number = 201,
   String = 202,
@@ -28,30 +30,6 @@ export const astNodeTypeName = new Map([
 export function isAstNodeType(type: unknown): type is AstNodeType {
   return typeof type === 'number' && astNodeTypeName.has(type)
 }
-
-export const tokenTypes = [
-  'LParen',
-  'RParen',
-  'LBrace',
-  'RBrace',
-  'LBracket',
-  'RBracket',
-  'Number',
-  'Name',
-  'String',
-  'ReservedName',
-  'Modifier',
-  'RegexpShorthand',
-  'FnShorthand',
-  'CollectionAccessor',
-  'Comment',
-  'NewLine',
-  'Infix',
-  'Postfix',
-  'InfixOperator',
-] as const
-
-export type TokenType = typeof tokenTypes[number]
 
 export function isTokenType(type: string): type is TokenType {
   return typeof type === 'string' && tokenTypes.includes(type as TokenType)

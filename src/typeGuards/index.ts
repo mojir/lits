@@ -3,6 +3,7 @@ import type { UnknownRecord } from '../interface'
 import type { GenericNode } from '../parser/interface'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { SourceCodeInfo } from '../tokenizer/interface'
+import { getTokenDebugData } from '../tokenizer/Token'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 
@@ -13,7 +14,7 @@ export function assertEvenNumberOfParams(node: GenericNode): void {
   if (length % 2 !== 0) {
     throw new LitsError(
       `Wrong number of arguments, expected an even number, got ${valueToString(length)}.`,
-      node.debugData?.token.debugData?.sourceCodeInfo,
+      getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
     )
   }
 }
@@ -23,7 +24,7 @@ export function assertNumberOfParams(count: Count, node: GenericNode): void {
     count,
     length: withoutCommentNodes(node.p).length,
     name: node.n ?? 'expression',
-    sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
+    sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
   })
 }
 

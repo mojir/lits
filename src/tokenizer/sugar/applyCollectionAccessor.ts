@@ -1,52 +1,46 @@
 import { LitsError } from '../../errors'
 import { asNonUndefined } from '../../typeGuards'
-import { assertNumber } from '../../typeGuards/number'
-import type { SourceCodeInfo, Token, TokenStream } from '../interface'
-import type { TokenType } from '../../constants/constants'
+import { assertNumber, isNumber } from '../../typeGuards/number'
+import type { SourceCodeInfo, TokenStream } from '../interface'
+import type { CollectionAccessorToken, StringToken, TokenType } from '../Token'
+import { addTokenDebugData, asCollectionAccessorToken, asToken, assertNumberToken, assertSymbolToken, getTokenDebugData, isCollectionAccessorToken, isFnShorthandToken, isRBraceToken, isRBracketToken, isRParenToken, isSymbolToken } from '../Token'
 import type { SugarFunction } from '.'
 
 export const applyCollectionAccessors: SugarFunction = (tokenStream) => {
-  let dotTokenIndex = tokenStream.tokens.findIndex(tkn => tkn.t === 'CollectionAccessor')
+  let dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken)
   while (dotTokenIndex >= 0) {
     applyCollectionAccessor(tokenStream, dotTokenIndex)
-    dotTokenIndex = tokenStream.tokens.findIndex(tkn => tkn.t === 'CollectionAccessor')
+    dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken)
   }
   return tokenStream
 }
 
 function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
-  const dotTkn = asNonUndefined(tokenStream.tokens[position])
-  const debugData = dotTkn.debugData
+  const dotTkn = asCollectionAccessorToken(tokenStream.tokens[position])
+  const debugData = getTokenDebugData(dotTkn)
   const backPosition = getPositionBackwards(tokenStream, position, debugData?.sourceCodeInfo)
   checkForward(tokenStream, position, dotTkn, debugData?.sourceCodeInfo)
 
   tokenStream.tokens.splice(position, 1)
-  tokenStream.tokens.splice(backPosition, 0, {
-    t: 'LParen',
-    v: '(',
-    debugData,
-  })
-  const nextTkn = asNonUndefined(tokenStream.tokens[position + 1])
-  if (dotTkn.v === '.') {
-    tokenStream.tokens[position + 1] = {
-      t: 'String',
-      v: nextTkn.v,
-      debugData: nextTkn.debugData,
+  tokenStream.tokens.splice(backPosition, 0, ['LParen'])
+  const nextTkn = asToken(tokenStream.tokens[position + 1])
+  if (dotTkn[1] === '.') {
+    assertSymbolToken(nextTkn)
+    const token: StringToken = ['String', nextTkn[1]]
+    tokenStream.tokens[position + 1] = token
+
+    const nextTkndebugData = getTokenDebugData(nextTkn)
+    if (nextTkndebugData) {
+      addTokenDebugData(token, nextTkndebugData)
     }
   }
   else {
-    assertNumber(Number(nextTkn.v), debugData?.sourceCodeInfo, { integer: true, nonNegative: true })
-    tokenStream.tokens[position + 1] = {
-      t: 'Number',
-      v: nextTkn.v,
-      debugData: nextTkn.debugData,
-    }
+    assertNumberToken(nextTkn)
+    assertNumber(Number(nextTkn[1]), debugData?.sourceCodeInfo, { integer: true, nonNegative: true })
+
+    tokenStream.tokens[position + 1] = ['Number', nextTkn[1]]
   }
-  tokenStream.tokens.splice(position + 2, 0, {
-    t: 'RParen',
-    v: ')',
-    debugData,
-  })
+  tokenStream.tokens.splice(position + 2, 0, ['RParen'])
 }
 
 function getPositionBackwards(tokenStream: TokenStream, position: number, sourceCodeInfo: SourceCodeInfo | undefined) {
@@ -58,15 +52,15 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
   let openBracket: 'LParen' | 'LBracket' | 'LBrace' | null = null satisfies TokenType | null
   let closeBracket: 'RParen' | 'RBracket' | 'RBrace' | null = null satisfies TokenType | null
 
-  if (prevToken.t === 'RParen') {
+  if (isRParenToken(prevToken)) {
     openBracket = 'LParen'
     closeBracket = 'RParen'
   }
-  else if (prevToken.t === 'RBracket') {
+  else if (isRBracketToken(prevToken)) {
     openBracket = 'LBracket'
     closeBracket = 'RBracket'
   }
-  else if (prevToken.t === 'RBrace') {
+  else if (isRBraceToken(prevToken)) {
     openBracket = 'LBrace'
     closeBracket = 'RBrace'
   }
@@ -75,16 +69,16 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
     bracketCount = bracketCount === null ? 0 : bracketCount
     position -= 1
     const tkn = asNonUndefined(tokenStream.tokens[position], sourceCodeInfo)
-    if (tkn.t === openBracket) {
+    if (tkn[0] === openBracket) {
       bracketCount += 1
     }
-    else if (tkn.t === closeBracket) {
+    else if (tkn[0] === closeBracket) {
       bracketCount -= 1
     }
   }
   if (openBracket === 'LParen' && position > 0) {
     const tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1])
-    if (tokenBeforeBracket.t === 'FnShorthand')
+    if (isFnShorthandToken(tokenBeforeBracket))
       throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo)
   }
   return position
@@ -93,14 +87,16 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
 function checkForward(
   tokenStream: TokenStream,
   position: number,
-  dotTkn: Token,
+  dotTkn: CollectionAccessorToken,
   sourceCodeInfo: SourceCodeInfo | undefined,
 ) {
-  const tkn = asNonUndefined(tokenStream.tokens[position + 1], sourceCodeInfo)
+  const tkn = tokenStream.tokens[position + 1]
 
-  if (dotTkn.v === '.' && tkn.t !== 'Name')
+  if (dotTkn[1] === '.' && !isSymbolToken(tkn)) {
     throw new LitsError('# as a collection accessor must be followed by an name', sourceCodeInfo)
+  }
 
-  if (dotTkn.v === '#' && tkn.t !== 'Number')
+  if (dotTkn[1] === '#' && isNumber(tkn)) {
     throw new LitsError('# as a collection accessor must be followed by an integer', sourceCodeInfo)
+  }
 }

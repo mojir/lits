@@ -4,10 +4,10 @@ import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, CommonSpecialExpressionNode, NameNode } from '../../parser/interface'
+import { asRParenToken, assertLParenToken, assertRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { assertNumberOfParams } from '../../typeGuards'
 import { assertNameNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
-import { asToken, assertToken } from '../../typeGuards/token'
 import { getSourceCodeInfo } from '../../utils/debug/getSourceCodeInfo'
 import type { BuiltinSpecialExpression } from '../interface'
 
@@ -20,25 +20,25 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
   parse: (tokenStream, parseState, firstToken, { parseToken }) => {
     const tryExpression = parseToken(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LParen' })
+    assertLParenToken(tokenStream.tokens[parseState.position++])
 
     const catchNode = parseToken(tokenStream, parseState)
-    assertNameNode(catchNode, catchNode.debugData?.token.debugData?.sourceCodeInfo)
+    assertNameNode(catchNode, getTokenDebugData(catchNode.debugData?.token)?.sourceCodeInfo)
     if (catchNode.v !== 'catch') {
       throw new LitsError(
         `Expected 'catch', got '${catchNode.v}'.`,
-        getSourceCodeInfo(catchNode, catchNode.debugData?.token.debugData?.sourceCodeInfo),
+        getSourceCodeInfo(catchNode, getTokenDebugData(catchNode.debugData?.token)?.sourceCodeInfo),
       )
     }
 
     const error = parseToken(tokenStream, parseState)
-    assertNameNode(error, error.debugData?.token.debugData?.sourceCodeInfo)
+    assertNameNode(error, getTokenDebugData(error.debugData?.token)?.sourceCodeInfo)
 
     const catchExpression = parseToken(tokenStream, parseState)
 
-    assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: TryNode = {
       t: AstNodeType.SpecialExpression,
@@ -46,7 +46,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       p: [tryExpression],
       ce: catchExpression,
       e: error,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -63,7 +63,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
     }
     catch (error) {
       const newContext: Context = {
-        [errorNode.v]: { value: asAny(error, node.debugData?.token.debugData?.sourceCodeInfo) },
+        [errorNode.v]: { value: asAny(error, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo) },
       }
       return evaluateAstNode(catchExpression, contextStack.create(newContext))
     }

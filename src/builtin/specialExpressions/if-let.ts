@@ -4,9 +4,9 @@ import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
 import { asAstNode, asNormalExpressionNode } from '../../typeGuards/astNode'
-import { asToken } from '../../typeGuards/token'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
@@ -19,26 +19,26 @@ export interface IfLetNode extends CommonSpecialExpressionNode<'if-let'> {
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = {
   parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
-    const bindingArray = firstToken.debugData?.sourceCodeInfo ? asNormalExpressionNode(parseToken(tokenStream, { ...parseState })) : undefined
+    const bindingArray = getTokenDebugData(firstToken)?.sourceCodeInfo ? asNormalExpressionNode(parseToken(tokenStream, { ...parseState })) : undefined
 
     const bindings = parseBindings(tokenStream, parseState)
 
     if (bindings.length !== 1) {
       throw new LitsError(
         `Expected exactly one binding, got ${valueToString(bindings.length)}`,
-        firstToken.debugData?.sourceCodeInfo,
+        getTokenDebugData(firstToken)?.sourceCodeInfo,
       )
     }
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: IfLetNode = {
       t: AstNodeType.SpecialExpression,
       n: 'if-let',
-      b: asNonUndefined(bindings[0], firstToken.debugData?.sourceCodeInfo),
+      b: asNonUndefined(bindings[0], getTokenDebugData(firstToken)?.sourceCodeInfo),
       p: params,
-      debugData: firstToken.debugData?.sourceCodeInfo && bindingArray && {
+      debugData: getTokenDebugData(firstToken)?.sourceCodeInfo && bindingArray && {
         token: firstToken,
         lastToken,
         bindingArray,
@@ -50,7 +50,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
     const locals: Context = {}
     const bindingValue = evaluateAstNode(node.b.v, contextStack)
     if (bindingValue) {

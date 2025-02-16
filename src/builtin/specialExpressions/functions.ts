@@ -15,9 +15,9 @@ import type {
   ParseState,
 } from '../../parser/interface'
 import type { TokenStream } from '../../tokenizer/interface'
+import { asLBracketToken, asRParenToken, asToken, getTokenDebugData, isLBracketToken, isLParenToken, isRBracketToken, isRParenToken } from '../../tokenizer/Token'
 import { asAstNode, assertNameNode } from '../../typeGuards/astNode'
 import { asString, assertString } from '../../typeGuards/string'
-import { asToken } from '../../typeGuards/token'
 import { valueToString } from '../../utils/debug/debugTools'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
@@ -43,10 +43,10 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   parse: (tokenStream, parseState, firstToken, parsers) => {
     const { parseToken } = parsers
     const functionName = parseToken(tokenStream, parseState)
-    assertNameNode(functionName, functionName.debugData?.token.debugData?.sourceCodeInfo)
+    assertNameNode(functionName, getTokenDebugData(functionName.debugData?.token)?.sourceCodeInfo)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DefnNode = {
       t: AstNodeType.SpecialExpression,
@@ -54,7 +54,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
       f: functionName,
       p: [],
       o: functionOverloades,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -65,13 +65,13 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = getFunctionName('defn', node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack, builtin, node.debugData?.token.debugData?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
+      sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -93,7 +93,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
     const functionName = parseToken(tokenStream, parseState)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DefnsNode = {
       t: AstNodeType.SpecialExpression,
@@ -101,7 +101,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
       p: [],
       f: functionName,
       o: functionOverloades,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -112,13 +112,13 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = getFunctionName('defns', node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack, builtin, node.debugData?.token.debugData?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
+      sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -128,7 +128,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
     return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin, evaluateAstNode }) => {
-    const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
     const name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack)
     assertString(name, sourceCodeInfo)
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
@@ -142,14 +142,14 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
 export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
   parse: (tokenStream, parseState, firstToken, parsers) => {
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: FnNode = {
       t: AstNodeType.SpecialExpression,
       n: 'fn',
       p: [],
       o: functionOverloades,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -162,7 +162,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: node.debugData?.token.debugData?.sourceCodeInfo,
+      sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: undefined,
       o: evaluatedFunctionOverloades,
@@ -180,7 +180,7 @@ function getFunctionName(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ): string {
-  const sourceCodeInfo = node.debugData?.token.debugData?.sourceCodeInfo
+  const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
   if (expressionName === 'defn')
     return ((node as DefnNode).f).v
 
@@ -268,14 +268,14 @@ function parseFunctionBody(
   parseState: ParseState,
   { parseToken }: ParserHelpers,
 ): AstNode[] {
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+  let tkn = asToken(tokenStream.tokens[parseState.position])
   const body: AstNode[] = []
-  while (!(tkn.t === 'RParen')) {
+  while (!isRParenToken(tkn)) {
     body.push(parseToken(tokenStream, parseState))
-    tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+    tkn = asToken(tokenStream.tokens[parseState.position])
   }
   if (body.length === 0)
-    throw new LitsError('Missing body in function', tkn.debugData?.sourceCodeInfo)
+    throw new LitsError('Missing body in function', getTokenDebugData(tkn)?.sourceCodeInfo)
 
   return body
 }
@@ -285,17 +285,17 @@ function parseFunctionOverloades(
   parseState: ParseState,
   parsers: ParserHelpers,
 ): FunctionOverload[] {
-  let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  if (tkn.v === '(') {
+  let tkn = asToken(tokenStream.tokens[parseState.position])
+  if (isLParenToken(tkn)) {
     const functionOverloades: FunctionOverload[] = []
-    while (tkn.t !== 'RParen') {
+    while (!isRParenToken(tkn)) {
       parseState.position++
-      tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'LBracket' })
+      tkn = asLBracketToken(tokenStream.tokens[parseState.position])
       const functionArguments = parseFunctionArguments(tokenStream, parseState, parsers)
       const arity: Arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length
 
       if (!arityOk(functionOverloades, arity))
-        throw new LitsError('All overloaded functions must have different arity', tkn.debugData?.sourceCodeInfo)
+        throw new LitsError('All overloaded functions must have different arity', getTokenDebugData(tkn)?.sourceCodeInfo)
 
       const functionBody = parseFunctionBody(tokenStream, parseState, parsers)
       functionOverloades.push({
@@ -304,14 +304,14 @@ function parseFunctionOverloades(
         a: arity,
       })
 
-      tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath)
-      if (tkn.v !== ')' && tkn.v !== '(')
-        throw new LitsError(`Expected ( or ) token, got ${valueToString(tkn)}.`, tkn.debugData?.sourceCodeInfo)
+      tkn = asToken(tokenStream.tokens[++parseState.position])
+      if (!isRParenToken(tkn) && !isLParenToken(tkn))
+        throw new LitsError(`Expected ( or ) token, got ${valueToString(tkn)}.`, getTokenDebugData(tkn)?.sourceCodeInfo)
     }
 
     return functionOverloades
   }
-  else if (tkn.v === '[') {
+  else if (isLBracketToken(tkn)) {
     const functionArguments = parseFunctionArguments(tokenStream, parseState, parsers)
     const arity: Arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length
     const functionBody = parseFunctionBody(tokenStream, parseState, parsers)
@@ -324,7 +324,7 @@ function parseFunctionOverloades(
     ]
   }
   else {
-    throw new LitsError(`Expected [ or ( token, got ${valueToString(tkn)}`, tkn.debugData?.sourceCodeInfo)
+    throw new LitsError(`Expected [ or ( token, got ${valueToString(tkn)}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
 }
 
@@ -339,34 +339,34 @@ function parseFunctionArguments(
   let restArgument: string | undefined
   const mandatoryArguments: string[] = []
   let state: 'mandatory' | 'rest' | 'let' = 'mandatory'
-  let tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath)
+  let tkn = asToken(tokenStream.tokens[++parseState.position])
 
-  // let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-  while (tkn.t !== 'RBracket') {
+  // let tkn = asToken(tokenStream.tokens[parseState.position])
+  while (!isRBracketToken(tkn)) {
     if (state === 'let') {
       bindings = parseBindings(tokenStream, parseState)
       break
     }
     else {
       const node = parseArgument(tokenStream, parseState)
-      tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
+      tkn = asToken(tokenStream.tokens[parseState.position])
 
       if (node.t === AstNodeType.Modifier) {
         switch (node.v) {
           case '&':
             if (state === 'rest')
-              throw new LitsError('& can only appear once', tkn.debugData?.sourceCodeInfo)
+              throw new LitsError('& can only appear once', getTokenDebugData(tkn)?.sourceCodeInfo)
 
             state = 'rest'
             break
           case '&let':
             if (state === 'rest' && !restArgument)
-              throw new LitsError('No rest argument was specified', tkn.debugData?.sourceCodeInfo)
+              throw new LitsError('No rest argument was specified', getTokenDebugData(tkn)?.sourceCodeInfo)
 
             state = 'let'
             break
           default:
-            throw new LitsError(`Illegal modifier: ${node.v}`, tkn.debugData?.sourceCodeInfo)
+            throw new LitsError(`Illegal modifier: ${node.v}`, getTokenDebugData(tkn)?.sourceCodeInfo)
         }
       }
       else {
@@ -376,7 +376,7 @@ function parseFunctionArguments(
             break
           case 'rest':
             if (restArgument !== undefined)
-              throw new LitsError('Can only specify one rest argument', tkn.debugData?.sourceCodeInfo)
+              throw new LitsError('Can only specify one rest argument', getTokenDebugData(tkn)?.sourceCodeInfo)
 
             restArgument = node.n
             break
@@ -387,7 +387,7 @@ function parseFunctionArguments(
   parseState.position += 1
 
   if (state === 'rest' && restArgument === undefined)
-    throw new LitsError('Missing rest argument name', tkn.debugData?.sourceCodeInfo)
+    throw new LitsError('Missing rest argument name', getTokenDebugData(tkn)?.sourceCodeInfo)
 
   const args: FunctionArguments = {
     m: mandatoryArguments,

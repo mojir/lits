@@ -1,4 +1,4 @@
-import type { TokenType } from '../constants/constants'
+import type { Token } from './Token'
 
 export interface SourceCodeInfo {
   position?: {
@@ -9,29 +9,12 @@ export interface SourceCodeInfo {
   filePath?: string
 }
 
-export type MetaToken = Token<'NewLine'> | Token<'Comment'>
-export interface MetaTokens {
-  leadingMetaTokens: MetaToken[] // Comments on the lines before the token
-  inlineCommentToken: Token<'Comment'> | null // Comment on the same line as the token
-}
-
-export interface TokenDebugData {
-  sourceCodeInfo: SourceCodeInfo
-  metaTokens: MetaTokens
-}
-export interface Token<T extends TokenType = TokenType> {
-  t: T // type
-  v: string // value
-  o?: Record<string, boolean> // options
-  debugData: TokenDebugData | undefined
-}
-
-export type TokenDescriptor = [length: number, token: Token | undefined]
-export type Tokenizer = (input: string, position: number, debugData?: TokenDebugData) => TokenDescriptor
+export type TokenDescriptor<T extends Token> = [length: number, token?: T]
+export type Tokenizer<T extends Token> = (input: string, position: number) => TokenDescriptor<T>
 export interface TokenStream {
   tokens: Token[]
   hasDebugData: boolean
-  infix?: boolean
+  infix: boolean
   filePath?: string
 }
 

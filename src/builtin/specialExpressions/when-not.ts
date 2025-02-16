@@ -1,9 +1,9 @@
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
+import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
 import { assertNumberOfParams } from '../../typeGuards'
 import { assertAstNode } from '../../typeGuards/astNode'
-import { asToken } from '../../typeGuards/token'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface WhenNotNode extends CommonSpecialExpressionNode<'when-not'> {}
@@ -11,13 +11,13 @@ export interface WhenNotNode extends CommonSpecialExpressionNode<'when-not'> {}
 export const whenNotSpecialExpression: BuiltinSpecialExpression<Any, WhenNotNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' })
+    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: WhenNotNode = {
       t: AstNodeType.SpecialExpression,
       n: 'when-not',
       p: params,
-      debugData: firstToken.debugData && {
+      debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
         lastToken,
       },
@@ -29,7 +29,7 @@ export const whenNotSpecialExpression: BuiltinSpecialExpression<Any, WhenNotNode
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const [whenExpression, ...body] = node.p
-    assertAstNode(whenExpression, node.debugData?.token.debugData?.sourceCodeInfo)
+    assertAstNode(whenExpression, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
 
     if (evaluateAstNode(whenExpression, contextStack))
       return null
