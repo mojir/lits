@@ -6,7 +6,7 @@ import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { TokenStream } from '../tokenizer/interface'
-import { asCommentToken, asLParenToken, asRParenToken, asRegexpShorthandToken, asReservedSymbolToken, asSymbolToken, asToken, assertLBracketToken, getTokenDebugData, isFnShorthandToken, isModifierToken, isRBraceToken, isRBracketToken, isRParenToken, isStringShorthandToken, isStringToken, isSymbolToken } from '../tokenizer/Token'
+import { asCommentToken, asLParenToken, asRParenToken, asRegexpShorthandToken, asReservedSymbolToken, asStringShorthandToken, asStringToken, asSymbolToken, asToken, assertLBracketToken, getTokenDebugData, isFnShorthandToken, isModifierToken, isRBraceToken, isRBracketToken, isRParenToken, isStringShorthandToken, isStringToken, isSymbolToken } from '../tokenizer/Token'
 import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
 import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
@@ -39,14 +39,33 @@ export function parseNumber(tokenStream: TokenStream, parseState: ParseState): N
 }
 
 function parseString(tokenStream: TokenStream, parseState: ParseState): StringNode {
-  const tkn = tokenStream.tokens[parseState.position++]
-  if (!isStringToken(tkn) && !isStringShorthandToken(tkn)) {
-    throw new LitsError(`Expected string token, got ${valueToString(tkn)}.`, getTokenDebugData(tkn)?.sourceCodeInfo)
-  }
+  const tkn = asStringToken(tokenStream.tokens[parseState.position++])
+  const value = tkn[1].substring(1, tkn[1].length - 1).replace(/\\{2}(.)|\\(.)/g, (_, doubleEscaped: string, singleEscaped: string) => {
+    // If it's a double escape (\\x), return \x
+    if (doubleEscaped !== undefined) {
+      return `\\${doubleEscaped}`
+    }
+    // If it's a single escape (\x), return x
+    return singleEscaped
+  })
 
   return {
     t: AstNodeType.String,
-    v: tkn[1],
+    v: value,
+    p: [],
+    n: undefined,
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
+      ? { token: tkn, lastToken: tkn }
+      : undefined,
+  }
+}
+function parseStringShorthand(tokenStream: TokenStream, parseState: ParseState): StringNode {
+  const tkn = asStringShorthandToken(tokenStream.tokens[parseState.position++])
+  const value = tkn[1].substring(1)
+
+  return {
+    t: AstNodeType.String,
+    v: value,
     p: [],
     n: undefined,
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
@@ -171,9 +190,12 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
 function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNodeWithName {
   const tkn = asRegexpShorthandToken(tokenStream.tokens[parseState.position++])
 
+  const endStringPosition = tkn[1].lastIndexOf('"')
+  const regexpString = tkn[1].substring(2, endStringPosition)
+  const optionsString = tkn[1].substring(endStringPosition + 1)
   const stringNode: StringNode = {
     t: AstNodeType.String,
-    v: tkn[1],
+    v: regexpString,
     p: [],
     n: undefined,
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
@@ -186,7 +208,7 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
 
   const optionsNode: StringNode = {
     t: AstNodeType.String,
-    v: `${tkn[2].g ? 'g' : ''}${tkn[2].i ? 'i' : ''}`,
+    v: optionsString,
     p: [],
     n: undefined,
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
@@ -434,7 +456,7 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
     case 'String':
       return parseString(tokenStream, parseState)
     case 'StringShorthand':
-      return parseString(tokenStream, parseState)
+      return parseStringShorthand(tokenStream, parseState)
     case 'Symbol':
       return parseSymbol(tokenStream, parseState)
     case 'ReservedSymbol':

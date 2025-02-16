@@ -2,7 +2,7 @@ import { LitsError } from '../../errors'
 import { asNonUndefined } from '../../typeGuards'
 import { assertNumber, isNumber } from '../../typeGuards/number'
 import type { SourceCodeInfo, TokenStream } from '../interface'
-import type { CollectionAccessorToken, StringToken, TokenType } from '../Token'
+import type { CollectionAccessorToken, StringShorthandToken, StringToken, TokenType } from '../Token'
 import { addTokenDebugData, asCollectionAccessorToken, asToken, assertNumberToken, assertSymbolToken, getTokenDebugData, isCollectionAccessorToken, isFnShorthandToken, isRBraceToken, isRBracketToken, isRParenToken, isSymbolToken } from '../Token'
 import type { SugarFunction } from '.'
 
@@ -26,7 +26,7 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
   const nextTkn = asToken(tokenStream.tokens[position + 1])
   if (dotTkn[1] === '.') {
     assertSymbolToken(nextTkn)
-    const token: StringToken = ['String', nextTkn[1]]
+    const token: StringShorthandToken = ['StringShorthand', `:${nextTkn[1]}`]
     tokenStream.tokens[position + 1] = token
 
     const nextTkndebugData = getTokenDebugData(nextTkn)

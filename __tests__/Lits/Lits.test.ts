@@ -356,4 +356,11 @@ describe('regressions', () => {
       expect(anyError.sourceCodeInfo.position.column).toBe(6)
     }
   })
+
+  it('shoud handle strings', () => {
+    expect(lits.run('"\\""')).toBe('"')
+    expect(lits.run('"\\\\."')).toBe('\\.')
+    expect(lits.run('"."')).toBe('.')
+    expect(lits.run('"hello"')).toBe('hello')
+  })
 })

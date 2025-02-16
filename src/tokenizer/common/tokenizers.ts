@@ -4,6 +4,10 @@ import type { CollectionAccessorToken, CommentToken, LBraceToken, LBracketToken,
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
 
+export function isNoMatch(tokenDescriptor: TokenDescriptor<any>): tokenDescriptor is TokenDescriptor<never> {
+  return tokenDescriptor[0] === 0
+}
+
 const newLineRegExp = /\n/
 
 export const tokenizeNewLine: Tokenizer<NewLineToken> = (input, position) =>
@@ -45,33 +49,28 @@ export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   if (input[position] !== '"')
     return NO_MATCH
 
-  let value = ''
+  let value = '"'
   let length = 1
   let char = input[position + length]
-  let escape = false
-  while (char !== '"' || escape) {
+  let escaping = false
+  while (char !== '"' || escaping) {
     if (char === undefined)
       throw new LitsError(`Unclosed string at position ${position}.`)
 
     length += 1
-    if (escape) {
-      escape = false
-      if (char === '"' || char === '\\') {
-        value += char
-      }
-      else {
-        value += '\\'
-        value += char
-      }
+    if (escaping) {
+      escaping = false
+      value += char
     }
     else {
-      if (char === '\\')
-        escape = true
-      else
-        value += char
+      if (char === '\\') {
+        escaping = true
+      }
+      value += char
     }
     char = input[position + length]
   }
+  value += '"' // closing quote
   return [length + 1, ['String', value]]
 }
 
@@ -94,26 +93,17 @@ export const tokenizeRegexpShorthand: Tokenizer<RegexpShorthandToken> = (input, 
   position += stringLength + 1
   let length = stringLength + 1
 
-  const options: Partial<Record<'g' | 'i', boolean>> = {}
+  let options = ''
   while (input[position] === 'g' || input[position] === 'i') {
-    if (input[position] === 'g') {
-      if (options.g)
-        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`)
-
-      length += 1
-      options.g = true
+    if (options.includes(input[position]!)) {
+      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`)
     }
-    else {
-      if (options.i)
-        throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`)
-
-      length += 1
-      options.i = true
-    }
+    options += input[position]!
+    length += 1
     position += 1
   }
 
-  return [length, ['RegexpShorthand', token[1], options]]
+  return [length, ['RegexpShorthand', `#${token[1]}${options}`]]
 }
 
 const endOfNumberRegExp = /[\s)\]},#]/

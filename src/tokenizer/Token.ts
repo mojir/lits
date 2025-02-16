@@ -31,21 +31,16 @@ export function addTokenDebugData(token: Token, debugData: TokenDebugData): void
 }
 
 export const simpleTokenTypes = ['LParen', 'RParen', 'LBracket', 'RBracket', 'LBrace', 'RBrace', 'FnShorthand', 'NewLine', 'Infix', 'Postfix'] as const
-export const valueTokenTypes = ['Number', 'String', 'StringShorthand', 'Symbol', 'ReservedSymbol', 'Modifier', 'CollectionAccessor', 'Comment', 'InfixOperator'] as const
-export const valueWithOptionsTokenTypes = ['RegexpShorthand'] as const
-export const tokenTypes = [...simpleTokenTypes, ...valueTokenTypes, ...valueWithOptionsTokenTypes] as const
+export const valueTokenTypes = ['Number', 'String', 'StringShorthand', 'Symbol', 'ReservedSymbol', 'Modifier', 'CollectionAccessor', 'Comment', 'InfixOperator', 'RegexpShorthand'] as const
+export const tokenTypes = [...simpleTokenTypes, ...valueTokenTypes] as const
 
 export type SimpleTokenType = typeof simpleTokenTypes[number]
 export type ValueTokenType = typeof valueTokenTypes[number]
-export type ValueWithOptionsTokenType = typeof valueWithOptionsTokenTypes[number]
 
 export type TokenType = typeof tokenTypes[number]
 
 type GenericSimpleToken<T extends SimpleTokenType> = [T] | [T, TokenDebugData]
 type GenericValueToken<T extends ValueTokenType, V extends string = string> = [T, V] | [T, V, TokenDebugData]
-type GenericValueWithOptionsToken<T extends ValueWithOptionsTokenType, O extends Record<string, boolean>, V extends string = string> =
-  | [T, V, Partial<O>]
-  | [T, V, Partial<O>, TokenDebugData]
 
 export type LParenToken = GenericSimpleToken<'LParen'>
 export type RParenToken = GenericSimpleToken<'RParen'>
@@ -63,7 +58,7 @@ export type StringShorthandToken = GenericValueToken<'StringShorthand'>
 export type SymbolToken = GenericValueToken<'Symbol'>
 export type ReservedSymbolToken = GenericValueToken<'ReservedSymbol'>
 export type ModifierToken = GenericValueToken<'Modifier', ModifierName>
-export type RegexpShorthandToken = GenericValueWithOptionsToken<'RegexpShorthand', Record<'i' | 'g' | 'm', boolean>>
+export type RegexpShorthandToken = GenericValueToken<'RegexpShorthand'>
 export type CollectionAccessorToken = GenericValueToken<'CollectionAccessor', '.' | '#'>
 export type CommentToken = GenericValueToken<'Comment'>
 export type InfixOperatorToken = GenericValueToken<'InfixOperator', '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '&&' | '||' | '^' >
@@ -79,6 +74,18 @@ export type SimpleToken =
   | NewLineToken
   | InfixToken
   | PostfixToken
+
+export type ValueToken =
+  | NumberToken
+  | StringToken
+  | StringShorthandToken
+  | SymbolToken
+  | ReservedSymbolToken
+  | ModifierToken
+  | RegexpShorthandToken
+  | CollectionAccessorToken
+  | CommentToken
+  | InfixOperatorToken
 
 export type Token =
   | SimpleToken
@@ -109,6 +116,36 @@ export function assertToken(token?: Token): asserts token is Token {
 }
 export function asToken(token?: Token): Token {
   assertToken(token)
+  return token
+}
+
+export function isSimpleToken(token?: Token): token is SimpleToken {
+  return isToken(token) && simpleTokenTypes.includes(token[0] as SimpleTokenType)
+}
+
+export function assertSimpleToken(token?: Token): asserts token is SimpleToken {
+  if (!isSimpleToken(token)) {
+    throw new LitsError(`Expected simple token, got ${token}`)
+  }
+}
+
+export function asSimpleToken(token?: Token): SimpleToken {
+  assertSimpleToken(token)
+  return token
+}
+
+export function isValueToken(token?: Token): token is ValueToken {
+  return isToken(token) && valueTokenTypes.includes(token[0] as ValueTokenType)
+}
+
+export function assertValueToken(token?: Token): asserts token is ValueToken {
+  if (!isValueToken(token)) {
+    throw new LitsError(`Expected value token, got ${token}`)
+  }
+}
+
+export function asValueToken(token?: Token): ValueToken {
+  assertValueToken(token)
   return token
 }
 

@@ -2,6 +2,7 @@ import { LitsError } from '../../errors'
 import { postfixIdentifierCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
+  isNoMatch,
   tokenizeCollectionAccessor,
   tokenizeComment,
   tokenizeLeftBracket,
@@ -17,10 +18,10 @@ import {
 } from '../common/tokenizers'
 import type { Tokenizer } from '../interface'
 import type { FnShorthandToken, InfixToken, ModifierName, ModifierToken, ReservedSymbolToken, StringShorthandToken, SymbolToken } from '../Token'
-import { modifierNames } from '../Token'
+import { asSymbolToken, modifierNames } from '../Token'
 import { postfixReservedNamesRecord } from './reservedNames'
 
-const nameRegExp = new RegExp(postfixIdentifierCharacterClass)
+const symbolRegExp = new RegExp(postfixIdentifierCharacterClass)
 const whitespaceRegExp = /\s|,/
 
 export const skipWhiteSpace: Tokenizer<never> = (input, current) =>
@@ -37,7 +38,7 @@ export const tokenizeReservedSymbol: Tokenizer<ReservedSymbolToken> = (input, po
   for (const [reservedName, { forbidden }] of Object.entries(postfixReservedNamesRecord)) {
     const length = reservedName.length
     const nextChar = input[position + length]
-    if (nextChar && nameRegExp.test(nextChar)) {
+    if (nextChar && symbolRegExp.test(nextChar)) {
       continue
     }
 
@@ -57,10 +58,10 @@ export const tokenizeSymbol: Tokenizer<SymbolToken> = (input, position) => {
   let length = 0
   let value = ''
 
-  if (!char || !nameRegExp.test(char))
+  if (!char || !symbolRegExp.test(char))
     return NO_MATCH
 
-  while (char && nameRegExp.test(char)) {
+  while (char && symbolRegExp.test(char)) {
     value += char
     length += 1
     char = input[position + length]
@@ -73,25 +74,21 @@ const tokenizeStringShorthand: Tokenizer<StringShorthandToken> = (input, positio
   if (input[position] !== ':')
     return NO_MATCH
 
-  let value = ''
-  let length = 1
-  let char = input[position + length]
-  while (char && nameRegExp.test(char)) {
-    length += 1
-    value += char
-    char = input[position + length]
+  const symbolDescription = tokenizeSymbol(input, position + 1)
+  if (isNoMatch(symbolDescription)) {
+    return symbolDescription
   }
-  if (length === 1)
-    return NO_MATCH
 
-  return [length, ['StringShorthand', value]]
+  const symbolToken = asSymbolToken(symbolDescription[1])
+
+  return [symbolDescription[0] + 1, ['StringShorthand', `:${symbolToken[1]}`]]
 }
 
 export const tokenizeModifier: Tokenizer<ModifierToken> = (input, position) => {
   for (const modifierName of modifierNames) {
     const length = modifierName.length
     const charAfterModifier = input[position + length]
-    if (input.substring(position, position + length) === modifierName && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
+    if (input.substring(position, position + length) === modifierName && (!charAfterModifier || !symbolRegExp.test(charAfterModifier))) {
       const value: ModifierName = modifierName
       return [length, ['Modifier', value]]
     }
@@ -104,7 +101,7 @@ export const tokenizeInfixDirective: Tokenizer<InfixToken> = (input, position) =
     return NO_MATCH
   }
   const nextChar = input[position + 1]
-  if (nextChar && nameRegExp.test(nextChar)) {
+  if (nextChar && symbolRegExp.test(nextChar)) {
     return NO_MATCH
   }
   return [1, ['Infix']]

@@ -35,14 +35,14 @@ describe('tokenizer', () => {
     expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
-      tokens: [['String', 'Hi']],
+      tokens: [['String', '"Hi"']],
     })
     expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
       tokens: [
-        ['String', 'Hi'],
-        ['String', 'there'],
+        ['String', '"Hi"'],
+        ['String', '"there"'],
       ],
     })
   })
@@ -52,9 +52,9 @@ describe('tokenizer', () => {
       expect(() => tokenize('"Hi', { debug: false })).toThrow()
     })
     it('escaped string', () => {
-      expect(tokenize('"He\\"j"', { debug: false }).tokens[0]).toEqual(['String', 'He"j'])
-      expect(tokenize('"He\\\\j"', { debug: false }).tokens[0]).toEqual(['String', 'He\\j'])
-      expect(tokenize('"H\\ej"', { debug: false }).tokens[0]).toEqual(['String', 'H\\ej'])
+      expect(tokenize('"He\\"j"', { debug: false }).tokens[0]).toEqual(['String', '"He\\"j"'])
+      expect(tokenize('"He\\\\j"', { debug: false }).tokens[0]).toEqual(['String', '"He\\\\j"'])
+      expect(tokenize('"H\\ej"', { debug: false }).tokens[0]).toEqual(['String', '"H\\ej"'])
     })
   })
 
@@ -64,7 +64,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', 'Hi', {}, {
+          ['RegexpShorthand', '#"Hi"', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
             metaTokens: {
               inlineCommentToken: null,
@@ -78,7 +78,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', 'Hi', { g: true }, {
+          ['RegexpShorthand', '#"Hi"g', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
             metaTokens: {
               inlineCommentToken: null,
@@ -91,7 +91,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', 'Hi', { i: true }, {
+          ['RegexpShorthand', '#"Hi"i', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
             metaTokens: {
               inlineCommentToken: null,
@@ -104,7 +104,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', 'Hi', { i: true, g: true }, {
+          ['RegexpShorthand', '#"Hi"gi', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
             metaTokens: {
               inlineCommentToken: null,
@@ -117,7 +117,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', 'Hi', { i: true, g: true }, {
+          ['RegexpShorthand', '#"Hi"ig', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
             metaTokens: {
               inlineCommentToken: null,
