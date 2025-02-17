@@ -6,7 +6,6 @@ export type ModifierName = typeof modifierNames[number]
 
 export type TokenDebugData = {
   sourceCodeInfo: SourceCodeInfo
-  metaTokens: MetaTokens
 }
 
 function isTokenDebugData(tokenDebugData: unknown): tokenDebugData is TokenDebugData {
@@ -14,7 +13,6 @@ function isTokenDebugData(tokenDebugData: unknown): tokenDebugData is TokenDebug
     typeof tokenDebugData === 'object'
     && tokenDebugData !== null
     && 'sourceCodeInfo' in tokenDebugData
-    && 'metaTokens' in tokenDebugData
   )
 }
 
@@ -30,8 +28,31 @@ export function addTokenDebugData(token: Token, debugData: TokenDebugData): void
   ;(token as unknown[]).push(debugData)
 }
 
-export const simpleTokenTypes = ['LParen', 'RParen', 'LBracket', 'RBracket', 'LBrace', 'RBrace', 'FnShorthand', 'NewLine', 'Infix', 'Postfix'] as const
-export const valueTokenTypes = ['Number', 'String', 'StringShorthand', 'Symbol', 'ReservedSymbol', 'Modifier', 'CollectionAccessor', 'Comment', 'InfixOperator', 'RegexpShorthand'] as const
+export const simpleTokenTypes = [
+  'FnShorthand',
+  'Infix',
+  'LBrace',
+  'LBracket',
+  'LParen',
+  'Postfix',
+  'RBrace',
+  'RBracket',
+  'RParen',
+] as const
+export const valueTokenTypes = [
+  'CollectionAccessor',
+  'Comment',
+  'InfixOperator',
+  'Modifier',
+  'Number',
+  'RegexpShorthand',
+  'ReservedSymbol',
+  'String',
+  'StringShorthand',
+  'Symbol',
+  'InfixWhitespace',
+  'PostfixWhitespace',
+] as const
 export const tokenTypes = [...simpleTokenTypes, ...valueTokenTypes] as const
 
 export type SimpleTokenType = typeof simpleTokenTypes[number]
@@ -49,7 +70,6 @@ export type RBracketToken = GenericSimpleToken<'RBracket'>
 export type LBraceToken = GenericSimpleToken<'LBrace'>
 export type RBraceToken = GenericSimpleToken<'RBrace'>
 export type FnShorthandToken = GenericSimpleToken<'FnShorthand'>
-export type NewLineToken = GenericSimpleToken<'NewLine'>
 export type InfixToken = GenericSimpleToken<'Infix'>
 export type PostfixToken = GenericSimpleToken<'Postfix'>
 export type NumberToken = GenericValueToken<'Number'>
@@ -61,6 +81,8 @@ export type ModifierToken = GenericValueToken<'Modifier', ModifierName>
 export type RegexpShorthandToken = GenericValueToken<'RegexpShorthand'>
 export type CollectionAccessorToken = GenericValueToken<'CollectionAccessor', '.' | '#'>
 export type CommentToken = GenericValueToken<'Comment'>
+export type InfixWhitespaceToken = GenericValueToken<'InfixWhitespace'>
+export type PostfixWhitespaceToken = GenericValueToken<'PostfixWhitespace'>
 export type InfixOperatorToken = GenericValueToken<'InfixOperator', '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '&&' | '||' | '^' >
 
 export type SimpleToken =
@@ -71,7 +93,6 @@ export type SimpleToken =
   | LBraceToken
   | RBraceToken
   | FnShorthandToken
-  | NewLineToken
   | InfixToken
   | PostfixToken
 
@@ -86,25 +107,12 @@ export type ValueToken =
   | CollectionAccessorToken
   | CommentToken
   | InfixOperatorToken
+  | InfixWhitespaceToken
+  | PostfixWhitespaceToken
 
 export type Token =
   | SimpleToken
-  | NumberToken
-  | StringToken
-  | StringShorthandToken
-  | SymbolToken
-  | ReservedSymbolToken
-  | ModifierToken
-  | RegexpShorthandToken
-  | CollectionAccessorToken
-  | CommentToken
-  | InfixOperatorToken
-
-export type MetaToken = NewLineToken | CommentToken
-export interface MetaTokens {
-  leadingMetaTokens: MetaToken[] // Comments on the lines before the token
-  inlineCommentToken: CommentToken | null // Comment on the same line as the token
-}
+  | ValueToken
 
 export function isTokenType(type: string): type is TokenType {
   return typeof type === 'string' && tokenTypes.includes(type as TokenType)
@@ -361,19 +369,6 @@ export function asCommentToken(token?: Token): CommentToken {
   return token
 }
 
-export function isNewLineToken(token?: Token): token is NewLineToken {
-  return token?.[0] === 'NewLine'
-}
-export function assertNewLineToken(token?: Token): asserts token is NewLineToken {
-  if (!isNewLineToken(token)) {
-    throwUnexpectedToken('LParen', token)
-  }
-}
-export function asNewLineToken(token?: Token): NewLineToken {
-  assertNewLineToken(token)
-  return token
-}
-
 export function isInfixToken(token?: Token): token is InfixToken {
   return token?.[0] === 'Infix'
 }
@@ -410,6 +405,32 @@ export function assertInfixOperatorToken(token?: Token): asserts token is InfixO
 }
 export function asInfixOperatorToken(token?: Token): InfixOperatorToken {
   assertInfixOperatorToken(token)
+  return token
+}
+
+export function isInfixWhitespaceToken(token?: Token): token is InfixWhitespaceToken {
+  return token?.[0] === 'InfixWhitespace'
+}
+export function assertInfixWhitespaceToken(token?: Token): asserts token is InfixWhitespaceToken {
+  if (!isInfixWhitespaceToken(token)) {
+    throwUnexpectedToken('LParen', token)
+  }
+}
+export function asInfixWhitespaceToken(token?: Token): InfixWhitespaceToken {
+  assertInfixWhitespaceToken(token)
+  return token
+}
+
+export function isPostfixWhitespaceToken(token?: Token): token is PostfixWhitespaceToken {
+  return token?.[0] === 'PostfixWhitespace'
+}
+export function assertPostfixWhitespaceToken(token?: Token): asserts token is PostfixWhitespaceToken {
+  if (!isPostfixWhitespaceToken(token)) {
+    throwUnexpectedToken('LParen', token)
+  }
+}
+export function asPostfixWhitespaceToken(token?: Token): PostfixWhitespaceToken {
+  assertPostfixWhitespaceToken(token)
   return token
 }
 

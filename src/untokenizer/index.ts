@@ -6,7 +6,8 @@ function isNoSpaceNeededBefore(token: Token): boolean {
     case 'RParen':
     case 'RBracket':
     case 'CollectionAccessor':
-    case 'NewLine':
+    case 'PostfixWhitespace':
+    case 'InfixWhitespace':
       return true
     default:
       return false
@@ -19,7 +20,8 @@ function isNoSpaceNeededAfter(token: Token): boolean {
     case 'LBracket':
     case 'CollectionAccessor':
     case 'FnShorthand':
-    case 'NewLine':
+    case 'PostfixWhitespace':
+    case 'InfixWhitespace':
     case 'RegexpShorthand':
       return true
     default:
@@ -49,7 +51,6 @@ function untokenizeToken(token: Token): string {
     case 'RBracket': return ']'
     case 'LBrace': return '{'
     case 'RBrace': return '}'
-    case 'NewLine': return ''
     case 'Infix': return '$'
     case 'Postfix': return '@'
     case 'FnShorthand': return '#'

@@ -7,7 +7,6 @@ import {
   tokenizeLeftBracket,
   tokenizeLeftCurly,
   tokenizeLeftParen,
-  tokenizeNewLine,
   tokenizeNumber,
   tokenizeRegexpShorthand,
   tokenizeRightBracket,
@@ -17,15 +16,28 @@ import {
   tokenizeString,
 } from '../common/tokenizers'
 import type { Tokenizer } from '../interface'
-import type { InfixOperatorToken, PostfixToken, ReservedSymbolToken, SymbolToken, Token } from '../Token'
+import type { InfixOperatorToken, InfixWhitespaceToken, PostfixToken, ReservedSymbolToken, SymbolToken, Token } from '../Token'
 import { prefixInfixNamesRecord } from './reservedNames'
 
 const identifierRegExp = new RegExp(infixIdentifierCharacterClass)
 const identifierFirstCharacterRegExp = new RegExp(infixIdentifierFirstCharacterClass)
 const whitespaceRegExp = /\s/
 
-export const skipWhiteSpace: Tokenizer<never> = (input, current) =>
-  whitespaceRegExp.test(input[current] as string) ? [1, undefined] : NO_MATCH
+export const tokenizeInfixWhitespace: Tokenizer<InfixWhitespaceToken> = (input, position) => {
+  let char = input[position]
+  if (!char || !whitespaceRegExp.test(char)) {
+    return NO_MATCH
+  }
+  let value = char
+  position += 1
+  char = input[position]
+  while (char && whitespaceRegExp.test(char)) {
+    value += char
+    position += 1
+    char = input[position]
+  }
+  return [value.length, ['InfixWhitespace', value]]
+}
 
 export const tokenizeReservedSymbol: Tokenizer<ReservedSymbolToken> = (input, position) => {
   for (const [reservedName, { forbidden }] of Object.entries(prefixInfixNamesRecord)) {
@@ -83,7 +95,7 @@ export const tokenizePostfixDirective: Tokenizer<PostfixToken> = (input, positio
 
 // All tokenizers, order matters!
 export const tokenizers: Tokenizer<Token>[] = [
-  skipWhiteSpace,
+  tokenizeInfixWhitespace,
   tokenizeComment,
   tokenizePostfixDirective,
   tokenizeInfixOperator,
@@ -99,15 +111,4 @@ export const tokenizers: Tokenizer<Token>[] = [
   tokenizeSymbol,
   tokenizeRegexpShorthand,
   tokenizeCollectionAccessor,
-]
-
-export const newLineTokenizers = [
-  tokenizeNewLine,
-  skipWhiteSpace,
-]
-
-export const commentTokenizers = [
-  tokenizeNewLine,
-  skipWhiteSpace,
-  tokenizeComment,
 ]

@@ -197,11 +197,9 @@ it('evaluateAstNode', () => {
         debugData: {
           token: ['Symbol', 'X', {
             sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
-            metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
           }],
           lastToken: ['Symbol', 'X', {
             sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
-            metaTokens: { leadingMetaTokens: [], inlineCommentToken: null },
           }],
         },
         p: [],

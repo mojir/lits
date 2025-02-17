@@ -8,7 +8,6 @@ import {
   tokenizeLeftBracket,
   tokenizeLeftCurly,
   tokenizeLeftParen,
-  tokenizeNewLine,
   tokenizeNumber,
   tokenizeRegexpShorthand,
   tokenizeRightBracket,
@@ -17,15 +16,28 @@ import {
   tokenizeString,
 } from '../common/tokenizers'
 import type { Tokenizer } from '../interface'
-import type { FnShorthandToken, InfixToken, ModifierName, ModifierToken, ReservedSymbolToken, StringShorthandToken, SymbolToken } from '../Token'
+import type { FnShorthandToken, InfixToken, ModifierName, ModifierToken, PostfixWhitespaceToken, ReservedSymbolToken, StringShorthandToken, SymbolToken } from '../Token'
 import { asSymbolToken, modifierNames } from '../Token'
 import { postfixReservedNamesRecord } from './reservedNames'
 
 const symbolRegExp = new RegExp(postfixIdentifierCharacterClass)
 const whitespaceRegExp = /\s|,/
 
-export const skipWhiteSpace: Tokenizer<never> = (input, current) =>
-  whitespaceRegExp.test(input[current] as string) ? [1, undefined] : NO_MATCH
+export const tokenizePostfixWhitespace: Tokenizer<PostfixWhitespaceToken> = (input, position) => {
+  let char = input[position]
+  if (!char || !whitespaceRegExp.test(char)) {
+    return NO_MATCH
+  }
+  let value = char
+  position += 1
+  char = input[position]
+  while (char && whitespaceRegExp.test(char)) {
+    value += char
+    position += 1
+    char = input[position]
+  }
+  return [value.length, ['PostfixWhitespace', value]]
+}
 
 export const tokenizeFnShorthand: Tokenizer<FnShorthandToken> = (input, position) => {
   if (input.slice(position, position + 2) !== '#(')
@@ -109,8 +121,8 @@ export const tokenizeInfixDirective: Tokenizer<InfixToken> = (input, position) =
 
 // All tokenizers, order matters!
 export const postfixTokenizers = [
+  tokenizePostfixWhitespace,
   tokenizeInfixDirective,
-  skipWhiteSpace,
   tokenizeComment,
   tokenizeLeftParen,
   tokenizeRightParen,
@@ -128,14 +140,3 @@ export const postfixTokenizers = [
   tokenizeFnShorthand,
   tokenizeCollectionAccessor,
 ] as const
-
-export const newLineTokenizers = [
-  tokenizeNewLine,
-  skipWhiteSpace,
-]
-
-export const commentTokenizers = [
-  tokenizeNewLine,
-  skipWhiteSpace,
-  tokenizeComment,
-]

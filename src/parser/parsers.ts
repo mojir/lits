@@ -481,6 +481,7 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
   //   return
   // }
   const tkn = asToken(tokenStream.tokens[parseState.position])
+
   const tokenType = tkn[0]
   switch (tokenType) {
     case 'Number':
@@ -507,13 +508,14 @@ export function parseToken(tokenStream: TokenStream, parseState: ParseState): As
       return parseComment(tokenStream, parseState)
     case 'CollectionAccessor':
     case 'Modifier':
-    case 'NewLine':
     case 'Infix':
     case 'Postfix':
     case 'InfixOperator':
     case 'RParen':
     case 'RBracket':
     case 'RBrace':
+    case 'InfixWhitespace':
+    case 'PostfixWhitespace':
       break
     /* v8 ignore next 2 */
     default:

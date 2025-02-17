@@ -1,19 +1,12 @@
 import { LitsError } from '../../errors'
 import type { TokenDescriptor, Tokenizer } from '../interface'
-import type { CollectionAccessorToken, CommentToken, LBraceToken, LBracketToken, LParenToken, NewLineToken, NumberToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, SimpleToken, StringToken } from '../Token'
+import type { CollectionAccessorToken, CommentToken, LBraceToken, LBracketToken, LParenToken, NumberToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, SimpleToken, StringToken } from '../Token'
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
 
 export function isNoMatch(tokenDescriptor: TokenDescriptor<any>): tokenDescriptor is TokenDescriptor<never> {
   return tokenDescriptor[0] === 0
 }
-
-const newLineRegExp = /\n/
-
-export const tokenizeNewLine: Tokenizer<NewLineToken> = (input, position) =>
-  newLineRegExp.test(input[position] as string)
-    ? [1, ['NewLine']]
-    : NO_MATCH
 
 export const tokenizeComment: Tokenizer<CommentToken> = (input, position) => {
   if (input[position] === ';') {
@@ -23,9 +16,6 @@ export const tokenizeComment: Tokenizer<CommentToken> = (input, position) => {
       value += input[position + length]
       length += 1
     }
-
-    if (input[position + length] === '\n' && position + length < input.length)
-      length += 1
 
     return [length, ['Comment', value.trim()]]
   }

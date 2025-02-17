@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
-import { type TokenType, getTokenDebugData, isCommentToken, isNewLineToken } from '../../src/tokenizer/Token'
 
 describe('tokenizer', () => {
   it('simple expressions', () => {
@@ -35,13 +34,16 @@ describe('tokenizer', () => {
     expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
-      tokens: [['String', '"Hi"']],
+      tokens: [['String', '"Hi"'], ['PostfixWhitespace', ' '], ['Comment', ';This is a string']],
     })
     expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
       tokens: [
         ['String', '"Hi"'],
+        ['PostfixWhitespace', ' '],
+        ['Comment', ';This is a string'],
+        ['PostfixWhitespace', '\n'],
         ['String', '"there"'],
       ],
     })
@@ -66,10 +68,6 @@ describe('tokenizer', () => {
         tokens: [
           ['RegexpShorthand', '#"Hi"', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
-            metaTokens: {
-              inlineCommentToken: null,
-              leadingMetaTokens: [],
-            },
           }],
         ],
         filePath: 'foo.lits',
@@ -80,10 +78,6 @@ describe('tokenizer', () => {
         tokens: [
           ['RegexpShorthand', '#"Hi"g', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
-            metaTokens: {
-              inlineCommentToken: null,
-              leadingMetaTokens: [],
-            },
           }],
         ],
       })
@@ -93,10 +87,6 @@ describe('tokenizer', () => {
         tokens: [
           ['RegexpShorthand', '#"Hi"i', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
-            metaTokens: {
-              inlineCommentToken: null,
-              leadingMetaTokens: [],
-            },
           }],
         ],
       })
@@ -106,10 +96,6 @@ describe('tokenizer', () => {
         tokens: [
           ['RegexpShorthand', '#"Hi"gi', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
-            metaTokens: {
-              inlineCommentToken: null,
-              leadingMetaTokens: [],
-            },
           }],
         ],
       })
@@ -119,10 +105,6 @@ describe('tokenizer', () => {
         tokens: [
           ['RegexpShorthand', '#"Hi"ig', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
-            metaTokens: {
-              inlineCommentToken: null,
-              leadingMetaTokens: [],
-            },
           }],
         ],
       })
@@ -140,17 +122,9 @@ describe('tokenizer', () => {
         tokens: [
           ['FnShorthand', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
-            metaTokens: {
-              inlineCommentToken: null,
-              leadingMetaTokens: [],
-            },
           }],
           ['LParen', {
             sourceCodeInfo: { position: { line: 1, column: 2 }, code: '#(' },
-            metaTokens: {
-              inlineCommentToken: null,
-              leadingMetaTokens: [],
-            },
           }],
         ],
       })
@@ -166,8 +140,6 @@ describe('tokenizer', () => {
         'x.y.z#1#2',
         'foo.bar',
         'foo#10',
-        'foo # 10',
-        'foo #10 #20 . bar',
         '[1 2 3]#1',
         '{:a 1}.a',
       ]
@@ -175,7 +147,7 @@ describe('tokenizer', () => {
         tokenize(sample, { debug: false })
     })
     it('illegal samples', () => {
-      const illegalSamples = ['#(indentity %1)#1', '(.bar', 'foo##1', 'foo..bar', '.bar', ').1']
+      const illegalSamples = ['#(indentity %1)#1', '(.bar', 'foo##1', 'foo..bar', '.bar', ').1', 'foo # 10', 'foo #10 #20 . bar']
       for (const sample of illegalSamples) {
         try {
           tokenize(sample, { debug: false })
@@ -188,155 +160,3 @@ describe('tokenizer', () => {
     })
   })
 })
-
-type TokenPrefix =
-  | '' // No leading tokens
-  | ';' // One leading comment
-  | ';+' // Two or more leading comments
-  | '_;' // Leading newline and one leading comment
-  | '_;+' // Leading newline and two or more leading comments
-  | '__;' // Two leading newlines and one leading comment
-  | '__;+' // Two leading newlines and two or more leading comments
-  | '_' // One leading newline
-  | '__' // Two leading newlines
-type TokenSuffix =
-  | '' // No inline comment
-  | ';' // Inline comment
-
-type TokenDescription = `${TokenPrefix}${TokenType}${TokenSuffix}`
-describe('tokenize comments and new lines with debug', () => {
-  const samples: [string, TokenDescription[]][] = [
-    ['1 ;; One', ['Number;']],
-    ['\n1', ['_Number']],
-    ['\n1 ;; One', ['_Number;']],
-    ['\n;Her it comes  \n 1 ;; One', ['_;Number;']],
-    ['\n\n1 ;; One', ['__Number;']],
-    ['\n\n;Here it comes \n 1 ;; One', ['__;Number;']],
-    ['\n\n;Here it comes \n ;Here it comes \n 1 ;; One', ['__;+Number;']],
-    ['\n\n;Here it comes \n ;Here it comes \n ;Here it comes \n 1 ;; One', ['__;+Number;']],
-    ['\n\n', []],
-    [`;; One
-;; Two
-
-;;Leading
-(+
-  ;One
-  1
-  ;Two, as comment node
-
-  2) ; Adding one and two
-;; Soon done...
-
-;; very soon done..
-
-
-;; very soon done..
-
-
-
-;; The end`, [
-      'Comment',
-      'Comment',
-      '_;LParen',
-      'Symbol',
-      '_;Number',
-      '_Comment',
-      '_Number',
-      'RParen;',
-      'Comment',
-      '_Comment',
-      '__Comment',
-      '__Comment',
-    ]],
-    [`
-;; A
-(round ;; B
-  ;; C
-  (+ ;; D
-    ;; E
-    1 ;; F
-    ;; G 
-    2 ;; H
-    ;; I
-    (/ 3 4) 5)) ;; J`, [
-      '_;LParen',
-      'Symbol;',
-      ';LParen',
-      'Symbol;',
-      ';Number;',
-      ';Number;',
-      ';LParen',
-      'Symbol',
-      'Number',
-      'Number',
-      'RParen',
-      'Number',
-      'RParen',
-      'RParen;',
-    ]],
-  ]
-  testSamples(samples, true)
-})
-
-describe('tokenize comments and new lines without debug', () => {
-  const samples: [string, TokenDescription[]][] = [
-    ['1 ;; One', ['Number']],
-    ['\n1', ['Number']],
-    ['\n1 ;; One', ['Number']],
-    ['\n;Her it comes  \n 1 ;; One', ['Number']],
-    ['\n\n1 ;; One', ['Number']],
-    ['\n\n;Here it comes \n 1 ;; One', ['Number']],
-    ['\n\n;Here it comes \n ;Here it comes \n 1 ;; One', ['Number']],
-    ['\n\n;Here it comes \n ;Here it comes \n ;Here it comes \n 1 ;; One', ['Number']],
-    ['\n\n', []],
-    [`;; One
-;; Two
-
-;;Leading
-(+
-  ;One
-  1
-  ;Two, as comment node
-
-  2) ; Adding one and two
-;; Soon done...
-
-;; very soon done..
-
-
-;; very soon done..
-
-
-
-;; The end`, ['LParen', 'Symbol', 'Number', 'Number', 'RParen']],
-
-  ]
-  testSamples(samples, false)
-})
-
-function testSamples(samples: [string, TokenDescription[]][], debug: boolean) {
-  for (const sampel of samples) {
-    const [input, expected] = sampel
-    it(input, () => {
-      const tokenStream = tokenize(input, { debug })
-      const actual = tokenStream.tokens.map<TokenDescription>((token) => {
-        const prefix: TokenPrefix = getTokenDebugData(token)?.metaTokens.leadingMetaTokens?.reduce<TokenPrefix>((acc, metaToken) => {
-          if (isNewLineToken(metaToken))
-            return `${acc}_` as TokenPrefix
-          if (isCommentToken(metaToken)) {
-            return acc.endsWith(';')
-              ? `${acc}+` as TokenPrefix
-              : acc.endsWith('+')
-                ? acc
-                : `${acc};` as TokenPrefix
-          }
-          return acc
-        }, '') ?? ''
-        const suffix: TokenSuffix = getTokenDebugData(token)?.metaTokens.inlineCommentToken ? ';' : ''
-
-        return `${prefix}${token[0]}${suffix}`
-      })
-      expect(actual).toEqual(expected)
-    })
-  }
-}
