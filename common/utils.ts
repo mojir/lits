@@ -33,6 +33,9 @@ export function stringifyValue(value: unknown, html: boolean): string {
   if (isRegularExpression(value))
     return `/${value.s}/${value.f}`
 
+  if (typeof value === 'string')
+    return `"${value}"`
+
   return JSON.stringify(value, null, 2)
 }
 

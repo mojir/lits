@@ -357,10 +357,14 @@ describe('regressions', () => {
     }
   })
 
-  it('shoud handle strings', () => {
+  it('shoud handle double quoted in strings', () => {
+    // You need to escape double quote with a backslash
     expect(lits.run('"\\""')).toBe('"')
-    expect(lits.run('"\\\\."')).toBe('\\.')
-    expect(lits.run('"."')).toBe('.')
-    expect(lits.run('"hello"')).toBe('hello')
+    // You need to escape backslash with a backslash if it is at the end of the string
+    expect(lits.run('"\\\\"')).toBe('\\')
+    // You need to escape backslash with a backslash if it is followed by a double quote
+    expect(lits.run('"\\"\\\\\\""')).toBe('"\\"')
+    // Backslash before normal character is returning the character itself
+    expect(lits.run('"\\abc"')).toBe('abc')
   })
 })

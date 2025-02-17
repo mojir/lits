@@ -613,25 +613,6 @@ var Playground = (function (exports) {
     function isAstNodeType(type) {
         return typeof type === 'number' && astNodeTypeName.has(type);
     }
-    var tokenTypes = [
-        'Bracket',
-        'Number',
-        'Name',
-        'String',
-        'ReservedName',
-        'Modifier',
-        'RegexpShorthand',
-        'FnShorthand',
-        'CollectionAccessor',
-        'Comment',
-        'NewLine',
-        'Infix',
-        'Postfix',
-        'InfixOperator',
-    ];
-    function isTokenType(type) {
-        return typeof type === 'string' && tokenTypes.includes(type);
-    }
     var FunctionType;
     (function (FunctionType) {
         FunctionType[FunctionType["UserDefined"] = 301] = "UserDefined";
@@ -662,39 +643,6 @@ var Playground = (function (exports) {
         return typeof type === 'number' && functionTypeName.has(type);
     }
 
-    var FUNCTION_SYMBOL = '^^fn^^';
-    var REGEXP_SYMBOL = '^^re^^';
-
-    function isLitsFunction$1(func) {
-        if (!isUnknownRecord$1(func))
-            return false;
-        return !!func[FUNCTION_SYMBOL] && isFunctionType(func.t);
-    }
-    function isUnknownRecord$1(value) {
-        return typeof value === 'object' && value !== null;
-    }
-    function isToken$1(value) {
-        return isUnknownRecord$1(value) && typeof value.t === 'string' && isTokenType(value.t) && typeof value.v === 'string';
-    }
-    function isAstNode$1(value) {
-        return isUnknownRecord$1(value) && isAstNodeType(value.t);
-    }
-    function valueToString(value) {
-        if (isLitsFunction$1(value))
-            // eslint-disable-next-line ts/no-unsafe-member-access
-            return "<function ".concat(value.name || '\u03BB', ">");
-        if (isToken$1(value))
-            return "".concat(value.t, "-token \"").concat(value.v, "\"");
-        if (isAstNode$1(value))
-            return "".concat(astNodeTypeName.get(value.t), "-node");
-        if (value === null)
-            return 'nil';
-        if (typeof value === 'object' && value instanceof RegExp)
-            return "".concat(value);
-        if (typeof value === 'object' && value instanceof Error)
-            return value.toString();
-        return JSON.stringify(value);
-    }
     function getCodeMarker(sourceCodeInfo) {
         if (!sourceCodeInfo.position || !sourceCodeInfo.code)
             return '';
@@ -742,7 +690,7 @@ var Playground = (function (exports) {
         __extends(NotAFunctionError, _super);
         function NotAFunctionError(fn, sourceCodeInfo) {
             var _this = this;
-            var message = "Expected function, got ".concat(valueToString(fn), ".");
+            var message = "Expected function, got ".concat(fn, ".");
             _this = _super.call(this, message, sourceCodeInfo) || this;
             Object.setPrototypeOf(_this, NotAFunctionError.prototype);
             _this.name = 'NotAFunctionError';
@@ -784,6 +732,244 @@ var Playground = (function (exports) {
         }
         return UndefinedSymbolError;
     }(LitsError));
+
+    var modifierNames = ['&', '&let', '&when', '&while'];
+    function isTokenDebugData(tokenDebugData) {
+        return (typeof tokenDebugData === 'object'
+            && tokenDebugData !== null
+            && 'sourceCodeInfo' in tokenDebugData
+            && 'metaTokens' in tokenDebugData);
+    }
+    function getTokenDebugData(token) {
+        var debugData = token === null || token === void 0 ? void 0 : token.at(-1);
+        return isTokenDebugData(debugData) ? debugData : undefined;
+    }
+    function addTokenDebugData(token, debugData) {
+        if (isTokenDebugData(token.at(-1))) {
+            throw new Error("Token already has debug data: ".concat(token));
+        }
+        token.push(debugData);
+    }
+    var simpleTokenTypes = ['LParen', 'RParen', 'LBracket', 'RBracket', 'LBrace', 'RBrace', 'FnShorthand', 'NewLine', 'Infix', 'Postfix'];
+    var valueTokenTypes = ['Number', 'String', 'StringShorthand', 'Symbol', 'ReservedSymbol', 'Modifier', 'CollectionAccessor', 'Comment', 'InfixOperator', 'RegexpShorthand'];
+    var tokenTypes = __spreadArray(__spreadArray([], __read(simpleTokenTypes), false), __read(valueTokenTypes), false);
+    function isTokenType(type) {
+        return typeof type === 'string' && tokenTypes.includes(type);
+    }
+    function isToken$1(token) {
+        return !!token;
+    }
+    function assertToken(token) {
+        if (!isToken$1(token)) {
+            throw new LitsError("Expected token, got ".concat(token));
+        }
+    }
+    function asToken(token) {
+        assertToken(token);
+        return token;
+    }
+    function isSimpleToken(token) {
+        return isToken$1(token) && simpleTokenTypes.includes(token[0]);
+    }
+    function assertSimpleToken(token) {
+        if (!isSimpleToken(token)) {
+            throw new LitsError("Expected simple token, got ".concat(token));
+        }
+    }
+    function isValueToken(token) {
+        return isToken$1(token) && valueTokenTypes.includes(token[0]);
+    }
+    function isLParenToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
+    }
+    function assertLParenToken(token) {
+        if (!isLParenToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asLParenToken(token) {
+        assertLParenToken(token);
+        return token;
+    }
+    function isRParenToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RParen';
+    }
+    function assertRParenToken(token) {
+        if (!isRParenToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asRParenToken(token) {
+        assertRParenToken(token);
+        return token;
+    }
+    function isLBracketToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'LBracket';
+    }
+    function assertLBracketToken(token) {
+        if (!isLBracketToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asLBracketToken(token) {
+        assertLBracketToken(token);
+        return token;
+    }
+    function isRBracketToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RBracket';
+    }
+    function isRBraceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RBrace';
+    }
+    function isNumberToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Number';
+    }
+    function assertNumberToken(token) {
+        if (!isNumberToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function isStringToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'String';
+    }
+    function assertStringToken(token) {
+        if (!isStringToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asStringToken(token) {
+        assertStringToken(token);
+        return token;
+    }
+    function isStringShorthandToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'StringShorthand';
+    }
+    function assertStringShorthandToken(token) {
+        if (!isStringShorthandToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asStringShorthandToken(token) {
+        assertStringShorthandToken(token);
+        return token;
+    }
+    function isSymbolToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Symbol';
+    }
+    function assertSymbolToken(token) {
+        if (!isSymbolToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asSymbolToken(token) {
+        assertSymbolToken(token);
+        return token;
+    }
+    function isReservedSymbolToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'ReservedSymbol';
+    }
+    function assertReservedSymbolToken(token) {
+        if (!isReservedSymbolToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asReservedSymbolToken(token) {
+        assertReservedSymbolToken(token);
+        return token;
+    }
+    function isModifierToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Modifier';
+    }
+    function isRegexpShorthandToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RegexpShorthand';
+    }
+    function assertRegexpShorthandToken(token) {
+        if (!isRegexpShorthandToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asRegexpShorthandToken(token) {
+        assertRegexpShorthandToken(token);
+        return token;
+    }
+    function isFnShorthandToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'FnShorthand';
+    }
+    function isCollectionAccessorToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'CollectionAccessor';
+    }
+    function assertCollectionAccessorToken(token) {
+        if (!isCollectionAccessorToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asCollectionAccessorToken(token) {
+        assertCollectionAccessorToken(token);
+        return token;
+    }
+    function isCommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Comment';
+    }
+    function assertCommentToken(token) {
+        if (!isCommentToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function asCommentToken(token) {
+        assertCommentToken(token);
+        return token;
+    }
+    function isNewLineToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'NewLine';
+    }
+    function assertNewLineToken(token) {
+        if (!isNewLineToken(token)) {
+            throwUnexpectedToken('LParen', token);
+        }
+    }
+    function isInfixToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Infix';
+    }
+    function isPostfixToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'Postfix';
+    }
+    function throwUnexpectedToken(expected, actual) {
+        throw new LitsError("Unexpected token: ".concat(actual, ", expected ").concat(expected));
+    }
+
+    var FUNCTION_SYMBOL = '^^fn^^';
+    var REGEXP_SYMBOL = '^^re^^';
+
+    function isLitsFunction$1(func) {
+        if (!isUnknownRecord$1(func))
+            return false;
+        return !!func[FUNCTION_SYMBOL] && isFunctionType(func.t);
+    }
+    function isUnknownRecord$1(value) {
+        return typeof value === 'object' && value !== null;
+    }
+    function isToken(value) {
+        return Array.isArray(value) && value.length >= 1 && value.length <= 3 && typeof value[0] === 'string' && isTokenType(value[0]);
+    }
+    function isAstNode$1(value) {
+        return isUnknownRecord$1(value) && isAstNodeType(value.t);
+    }
+    function valueToString(value) {
+        if (isLitsFunction$1(value))
+            // eslint-disable-next-line ts/no-unsafe-member-access
+            return "<function ".concat(value.name || '\u03BB', ">");
+        if (isToken(value))
+            return "".concat(value[0], "-token").concat(value[1] ? "\"".concat(value[1], "\"") : '');
+        if (isAstNode$1(value))
+            return "".concat(astNodeTypeName.get(value.t), "-node");
+        if (value === null)
+            return 'nil';
+        if (typeof value === 'object' && value instanceof RegExp)
+            return "".concat(value);
+        if (typeof value === 'object' && value instanceof Error)
+            return value.toString();
+        return JSON.stringify(value);
+    }
 
     function getSourceCodeInfo(anyValue, sourceCodeInfo) {
         var _a;
@@ -964,7 +1150,7 @@ var Playground = (function (exports) {
         var _a, _b;
         var length = withoutCommentNodes(node.p).length;
         if (length % 2 !== 0) {
-            throw new LitsError("Wrong number of arguments, expected an even number, got ".concat(valueToString(length), "."), (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            throw new LitsError("Wrong number of arguments, expected an even number, got ".concat(valueToString(length), "."), (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         }
     }
     function assertNumberOfParams(count, node) {
@@ -973,7 +1159,7 @@ var Playground = (function (exports) {
             count: count,
             length: withoutCommentNodes(node.p).length,
             name: (_a = node.n) !== null && _a !== void 0 ? _a : 'expression',
-            sourceCodeInfo: (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo,
+            sourceCodeInfo: (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo,
         });
     }
     function isNonUndefined(value) {
@@ -1119,6 +1305,8 @@ var Playground = (function (exports) {
             return 'NaN';
         if (isRegularExpression(value))
             return "/".concat(value.s, "/").concat(value.f);
+        if (typeof value === 'string')
+            return "\"".concat(value, "\"");
         return JSON.stringify(value, null, 2);
     }
 
@@ -4547,44 +4735,11 @@ var Playground = (function (exports) {
 
     var normalExpressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
 
-    function isToken(value, options) {
-        if (options === void 0) { options = {}; }
-        if (typeof value !== 'object' || value === null)
-            return false;
-        var tkn = value;
-        if (typeof tkn[1] !== 'string')
-            return false;
-        if (!isTokenType(tkn.t))
-            return false;
-        if ((options.type != null) && tkn.t !== options.type)
-            return false;
-        if (options.value && tkn[1] !== options.value)
-            return false;
-        return true;
-    }
-    function assertToken(value, filePath, options) {
-        var _a;
-        if (options === void 0) { options = {}; }
-        if (!isToken(value, options)) {
-            var sourceCodeInfo = isToken(value) && ((_a = value.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
-                ? value.debugData.sourceCodeInfo
-                : typeof filePath === 'string'
-                    ? { filePath: filePath }
-                    : undefined;
-            throw new LitsError("Expected ".concat((options.type != null) ? "".concat(options.type, "-") : '', "token").concat(typeof options.value === 'string' ? " value='".concat(options.value, "'") : '', ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
-        }
-    }
-    function asToken(value, filePath, options) {
-        if (options === void 0) { options = {}; }
-        assertToken(value, filePath, options);
-        return value;
-    }
-
     var andSpecialExpression = {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'and',
@@ -4632,18 +4787,16 @@ var Playground = (function (exports) {
                 p: [],
                 debugData: undefined,
             };
-            var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
-            while (tkn.t !== 'RParen') {
+            var tkn = asToken(tokenStream.tokens[parseState.position]);
+            while (!isRParenToken(tkn)) {
                 node.p.push(parseToken(tokenStream, parseState));
-                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+                tkn = asToken(tokenStream.tokens[parseState.position]);
             }
             parseState.position += 1;
-            node.debugData = firstToken.debugData
-                ? {
-                    token: firstToken,
-                    lastToken: tkn,
-                }
-                : undefined;
+            node.debugData = getTokenDebugData(firstToken) && {
+                token: firstToken,
+                lastToken: tkn,
+            };
             return node;
         },
         evaluate: function () { return null; },
@@ -4654,7 +4807,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'cond',
@@ -4698,7 +4851,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'declared?',
@@ -4752,7 +4905,7 @@ var Playground = (function (exports) {
             var _b, _c;
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'def',
@@ -4762,14 +4915,14 @@ var Playground = (function (exports) {
                     lastToken: lastToken,
                 },
             };
-            assertNameNode(node.p[0], (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+            assertNameNode(node.p[0], (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             assertNumberOfParams(2, node);
             return node;
         },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var name = node.p[0].v;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
             contextStack.globalContext[name] = {
@@ -4780,7 +4933,7 @@ var Playground = (function (exports) {
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
             var _b, _c;
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var subNode = asAstNode(node.p[1]);
             var result = findUnresolvedIdentifiers([subNode], contextStack, builtin);
             var name = asNameNode(node.p[0]).v;
@@ -4794,7 +4947,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'defs',
@@ -4810,10 +4963,10 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c, _d, _e;
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var name = evaluateAstNode(node.p[0], contextStack);
             assertString(name, sourceCodeInfo);
-            assertNameNotDefined(name, contextStack, builtin, (_e = (_d = node.debugData) === null || _d === void 0 ? void 0 : _d.token.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+            assertNameNotDefined(name, contextStack, builtin, (_e = getTokenDebugData((_d = node.debugData) === null || _d === void 0 ? void 0 : _d.token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
             contextStack.globalContext[name] = {
                 value: evaluateAstNode(node.p[1], contextStack),
             };
@@ -4822,7 +4975,7 @@ var Playground = (function (exports) {
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
             var _b, _c;
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var subNode = node.p[1];
             var result = findUnresolvedIdentifiers([subNode], contextStack, builtin);
             var name = evaluateAstNode(node.p[0], contextStack);
@@ -4842,18 +4995,16 @@ var Playground = (function (exports) {
                 p: [],
                 debugData: undefined,
             };
-            var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
-            while (tkn.t !== 'RParen') {
+            var tkn = asToken(tokenStream.tokens[parseState.position]);
+            while (!isRParenToken(tkn)) {
                 node.p.push(parseToken(tokenStream, parseState));
-                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+                tkn = asToken(tokenStream.tokens[parseState.position]);
             }
             parseState.position += 1;
-            node.debugData = firstToken.debugData
-                ? {
-                    token: firstToken,
-                    lastToken: tkn,
-                }
-                : undefined;
+            node.debugData = getTokenDebugData(firstToken) && {
+                token: firstToken,
+                lastToken: tkn,
+            };
             return node;
         },
         evaluate: function (node, contextStack, _a) {
@@ -4919,9 +5070,9 @@ var Playground = (function (exports) {
             var _a, _b;
             var parseToken = parsers.parseToken;
             var functionName = parseToken(tokenStream, parseState);
-            assertNameNode(functionName, (_b = (_a = functionName.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            assertNameNode(functionName, (_b = getTokenDebugData((_a = functionName.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'defn',
@@ -4940,11 +5091,11 @@ var Playground = (function (exports) {
             var _c, _d, _e, _f;
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
             var name = getFunctionName('defn', node, contextStack, evaluateAstNode);
-            assertNameNotDefined(name, contextStack, builtin, (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+            assertNameNotDefined(name, contextStack, builtin, (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
             var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = (_f = (_e = node.debugData) === null || _e === void 0 ? void 0 : _e.token.debugData) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo,
+                _b.sourceCodeInfo = (_f = getTokenDebugData((_e = node.debugData) === null || _e === void 0 ? void 0 : _e.token)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo,
                 _b.t = FunctionType.UserDefined,
                 _b.n = name,
                 _b.o = evaluatedFunctionOverloades,
@@ -4965,7 +5116,7 @@ var Playground = (function (exports) {
             var parseToken = parsers.parseToken;
             var functionName = parseToken(tokenStream, parseState);
             var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'defns',
@@ -4984,11 +5135,11 @@ var Playground = (function (exports) {
             var _c, _d, _e, _f;
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
             var name = getFunctionName('defns', node, contextStack, evaluateAstNode);
-            assertNameNotDefined(name, contextStack, builtin, (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+            assertNameNotDefined(name, contextStack, builtin, (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
             var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = (_f = (_e = node.debugData) === null || _e === void 0 ? void 0 : _e.token.debugData) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo,
+                _b.sourceCodeInfo = (_f = getTokenDebugData((_e = node.debugData) === null || _e === void 0 ? void 0 : _e.token)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo,
                 _b.t = FunctionType.UserDefined,
                 _b.n = name,
                 _b.o = evaluatedFunctionOverloades,
@@ -5000,7 +5151,7 @@ var Playground = (function (exports) {
             var _b;
             var _c, _d;
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo;
+            var sourceCodeInfo = (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo;
             var name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack);
             assertString(name, sourceCodeInfo);
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
@@ -5012,7 +5163,7 @@ var Playground = (function (exports) {
     var fnSpecialExpression = {
         parse: function (tokenStream, parseState, firstToken, parsers) {
             var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'fn',
@@ -5032,7 +5183,7 @@ var Playground = (function (exports) {
             var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
                 _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo,
+                _b.sourceCodeInfo = (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo,
                 _b.t = FunctionType.UserDefined,
                 _b.n = undefined,
                 _b.o = evaluatedFunctionOverloades,
@@ -5046,7 +5197,7 @@ var Playground = (function (exports) {
     };
     function getFunctionName(expressionName, node, contextStack, evaluateAstNode) {
         var _a, _b;
-        var sourceCodeInfo = (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
+        var sourceCodeInfo = (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
         if (expressionName === 'defn')
             return (node.f).v;
         var name = evaluateAstNode(node.f, contextStack);
@@ -5147,41 +5298,41 @@ var Playground = (function (exports) {
     function parseFunctionBody(tokenStream, parseState, _a) {
         var _b;
         var parseToken = _a.parseToken;
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
         var body = [];
-        while (!(tkn.t === 'Bracket' && tkn[1] === ')')) {
+        while (!isRParenToken(tkn)) {
             body.push(parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         if (body.length === 0)
-            throw new LitsError('Missing body in function', (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            throw new LitsError('Missing body in function', (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         return body;
     }
     function parseFunctionOverloades(tokenStream, parseState, parsers) {
         var _a, _b, _c;
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'Bracket' });
-        if (tkn[1] === '(') {
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
+        if (isLParenToken(tkn)) {
             var functionOverloades = [];
-            while (!(tkn.t === 'Bracket' && tkn[1] === ')')) {
+            while (!isRParenToken(tkn)) {
                 parseState.position++;
-                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'LBracket' });
+                tkn = asLBracketToken(tokenStream.tokens[parseState.position]);
                 var functionArguments = parseFunctionArguments(tokenStream, parseState, parsers);
                 var arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length;
                 if (!arityOk(functionOverloades, arity))
-                    throw new LitsError('All overloaded functions must have different arity', (_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    throw new LitsError('All overloaded functions must have different arity', (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 var functionBody = parseFunctionBody(tokenStream, parseState, parsers);
                 functionOverloades.push({
                     as: functionArguments,
                     b: functionBody,
                     a: arity,
                 });
-                tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath, { type: 'Bracket' });
-                if (tkn[1] !== ')' && tkn[1] !== '(')
-                    throw new LitsError("Expected ( or ) token, got ".concat(valueToString(tkn), "."), (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                tkn = asToken(tokenStream.tokens[++parseState.position]);
+                if (!isRParenToken(tkn) && !isLParenToken(tkn))
+                    throw new LitsError("Expected ( or ) token, got ".concat(valueToString(tkn), "."), (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             return functionOverloades;
         }
-        else if (tkn[1] === '[') {
+        else if (isLBracketToken(tkn)) {
             var functionArguments = parseFunctionArguments(tokenStream, parseState, parsers);
             var arity = functionArguments.r ? { min: functionArguments.m.length } : functionArguments.m.length;
             var functionBody = parseFunctionBody(tokenStream, parseState, parsers);
@@ -5194,7 +5345,7 @@ var Playground = (function (exports) {
             ];
         }
         else {
-            throw new LitsError("Expected [ or ( token, got ".concat(valueToString(tkn)), (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+            throw new LitsError("Expected [ or ( token, got ".concat(valueToString(tkn)), (_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
         }
     }
     function parseFunctionArguments(tokenStream, parseState, parsers) {
@@ -5204,30 +5355,30 @@ var Playground = (function (exports) {
         var restArgument;
         var mandatoryArguments = [];
         var state = 'mandatory';
-        var tkn = asToken(tokenStream.tokens[++parseState.position], tokenStream.filePath);
-        // let tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath)
-        while (!isRBracket(tkn)) {
+        var tkn = asToken(tokenStream.tokens[++parseState.position]);
+        // let tkn = asToken(tokenStream.tokens[parseState.position])
+        while (!isRBracketToken(tkn)) {
             if (state === 'let') {
                 bindings = parseBindings(tokenStream, parseState);
                 break;
             }
             else {
                 var node = parseArgument(tokenStream, parseState);
-                tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+                tkn = asToken(tokenStream.tokens[parseState.position]);
                 if (node.t === AstNodeType.Modifier) {
                     switch (node.v) {
                         case '&':
                             if (state === 'rest')
-                                throw new LitsError('& can only appear once', (_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                                throw new LitsError('& can only appear once', (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                             state = 'rest';
                             break;
                         case '&let':
                             if (state === 'rest' && !restArgument)
-                                throw new LitsError('No rest argument was specified', (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                                throw new LitsError('No rest argument was specified', (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                             state = 'let';
                             break;
                         default:
-                            throw new LitsError("Illegal modifier: ".concat(node.v), (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                            throw new LitsError("Illegal modifier: ".concat(node.v), (_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                     }
                 }
                 else {
@@ -5237,7 +5388,7 @@ var Playground = (function (exports) {
                             break;
                         case 'rest':
                             if (restArgument !== undefined)
-                                throw new LitsError('Can only specify one rest argument', (_d = tkn.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                                throw new LitsError('Can only specify one rest argument', (_d = getTokenDebugData(tkn)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
                             restArgument = node.n;
                             break;
                     }
@@ -5246,7 +5397,7 @@ var Playground = (function (exports) {
         }
         parseState.position += 1;
         if (state === 'rest' && restArgument === undefined)
-            throw new LitsError('Missing rest argument name', (_e = tkn.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+            throw new LitsError('Missing rest argument name', (_e = getTokenDebugData(tkn)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
         var args = {
             m: mandatoryArguments,
             r: restArgument,
@@ -5259,7 +5410,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'if',
@@ -5275,7 +5426,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var _d = __read(node.p, 3), conditionNode = _d[0], trueNode = _d[1], falseNode = _d[2];
             if (evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
                 return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack);
@@ -5297,19 +5448,19 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c, _d, _e;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseToken = _a.parseToken;
-            var bindingArray = ((_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo) ? asNormalExpressionNode(parseToken(tokenStream, __assign({}, parseState))) : undefined;
+            var bindingArray = ((_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo) ? asNormalExpressionNode(parseToken(tokenStream, __assign({}, parseState))) : undefined;
             var bindings = parseBindings(tokenStream, parseState);
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             }
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'if-let',
-                b: asNonUndefined(bindings[0], (_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo),
+                b: asNonUndefined(bindings[0], (_d = getTokenDebugData(firstToken)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo),
                 p: params,
-                debugData: ((_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo) && bindingArray && {
+                debugData: ((_e = getTokenDebugData(firstToken)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo) && bindingArray && {
                     token: firstToken,
                     lastToken: lastToken,
                     bindingArray: bindingArray,
@@ -5321,7 +5472,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var locals = {};
             var bindingValue = evaluateAstNode(node.b.v, contextStack);
             if (bindingValue) {
@@ -5350,7 +5501,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'if-not',
@@ -5366,7 +5517,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var _d = __read(node.p, 3), conditionNode = _d[0], trueNode = _d[1], falseNode = _d[2];
             if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {
                 return evaluateAstNode(asAstNode(trueNode, sourceCodeInfo), contextStack);
@@ -5388,16 +5539,16 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseToken = _a.parseToken;
-            var bindingArray = ((_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo) && asNormalExpressionNode(parseToken(tokenStream, __assign({}, parseState)));
+            var bindingArray = ((_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo) && asNormalExpressionNode(parseToken(tokenStream, __assign({}, parseState)));
             var bindings = parseBindings(tokenStream, parseState);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'let',
                 p: params,
                 bs: bindings,
-                debugData: ((_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo) && bindingArray && {
+                debugData: ((_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo) && bindingArray && {
                     token: firstToken,
                     lastToken: lastToken,
                     bindingArray: bindingArray,
@@ -5466,7 +5617,7 @@ var Playground = (function (exports) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseBindings = _a.parseBindings;
             var bindings = parseBindings(tokenStream, parseState);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'loop',
@@ -5482,7 +5633,7 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+            var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
             var bindingContext = node.bs.reduce(function (result, binding) {
                 result[binding.n] = { value: evaluateAstNode(binding.v, contextStack) };
                 return result;
@@ -5543,19 +5694,20 @@ var Playground = (function (exports) {
     };
 
     function parseLoopBinding(tokenStream, parseState, _a) {
-        var _b, _c, _d, _e;
+        var _b, _c, _d, _e, _f;
         var parseBinding = _a.parseBinding, parseBindings = _a.parseBindings, parseToken = _a.parseToken;
         var bindingNode = parseBinding(tokenStream, parseState);
         var loopBinding = {
             b: bindingNode,
             m: [],
         };
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
-        while (tkn.t === 'Modifier') {
-            switch (tkn[1]) {
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
+        while (isModifierToken(tkn)) {
+            var modifier = tkn[1];
+            switch (modifier) {
                 case '&let':
                     if (loopBinding.l) {
-                        throw new LitsError('Only one &let modifier allowed', (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                        throw new LitsError('Only one &let modifier allowed', (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                     }
                     parseState.position += 1;
                     loopBinding.l = parseBindings(tokenStream, parseState);
@@ -5563,7 +5715,7 @@ var Playground = (function (exports) {
                     break;
                 case '&when':
                     if (loopBinding.wn) {
-                        throw new LitsError('Only one &when modifier allowed', (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                        throw new LitsError('Only one &when modifier allowed', (_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                     }
                     parseState.position += 1;
                     loopBinding.wn = parseToken(tokenStream, parseState);
@@ -5571,16 +5723,18 @@ var Playground = (function (exports) {
                     break;
                 case '&while':
                     if (loopBinding.we) {
-                        throw new LitsError('Only one &while modifier allowed', (_d = tkn.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                        throw new LitsError('Only one &while modifier allowed', (_d = getTokenDebugData(tkn)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
                     }
                     parseState.position += 1;
                     loopBinding.we = parseToken(tokenStream, parseState);
                     loopBinding.m.push('&while');
                     break;
+                case '&':
+                    throw new LitsError("Illegal modifier: ".concat(modifier), (_e = getTokenDebugData(tkn)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
                 default:
-                    throw new LitsError("Illegal modifier: ".concat(tkn[1]), (_e = tkn.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+                    throw new LitsError("Illegal modifier: ".concat(modifier), (_f = getTokenDebugData(tkn)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
             }
-            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         return loopBinding;
     }
@@ -5603,12 +5757,12 @@ var Playground = (function (exports) {
         }
     }
     function parseLoopBindings(tokenStream, parseState, parsers) {
-        assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LBracket' });
+        assertLBracketToken(tokenStream.tokens[parseState.position++]);
         var loopBindings = [];
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
-        while (!isToken(tkn, { type: 'RBracket' })) {
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
+        while (!isRBracketToken(tkn)) {
             loopBindings.push(parseLoopBinding(tokenStream, parseState, parsers));
-            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         parseState.position += 1;
         return loopBindings;
@@ -5616,7 +5770,7 @@ var Playground = (function (exports) {
     function evaluateLoop(returnResult, node, contextStack, evaluateAstNode) {
         var e_2, _a;
         var _b, _c;
-        var sourceCodeInfo = (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
+        var sourceCodeInfo = (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
         var _d = node, loopBindings = _d.l, params = _d.p;
         var result = [];
         var bindingIndices = loopBindings.map(function () { return 0; });
@@ -5731,7 +5885,7 @@ var Playground = (function (exports) {
             var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
             var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 n: 'for',
                 t: AstNodeType.SpecialExpression,
@@ -5756,7 +5910,7 @@ var Playground = (function (exports) {
             var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
             var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 n: 'doseq',
                 t: AstNodeType.SpecialExpression,
@@ -5784,7 +5938,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'or',
@@ -5827,7 +5981,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: '??',
@@ -5848,7 +6002,7 @@ var Playground = (function (exports) {
                 if (contextStack.lookUp(firstNode) === null)
                     return secondNode ? evaluateAstNode(secondNode, contextStack) : null;
             }
-            assertAny(firstNode, (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+            assertAny(firstNode, (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             var firstResult = evaluateAstNode(firstNode, contextStack);
             return firstResult !== null && firstResult !== void 0 ? firstResult : (secondNode ? evaluateAstNode(secondNode, contextStack) : null);
         },
@@ -5862,7 +6016,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'recur',
@@ -5889,8 +6043,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'RParen' });
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'throw',
@@ -5906,10 +6059,10 @@ var Playground = (function (exports) {
         evaluate: function (node, contextStack, _a) {
             var _b, _c, _d, _e;
             var evaluateAstNode = _a.evaluateAstNode;
-            var message = asString(evaluateAstNode(node.p[0], contextStack), (_c = (_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo, {
+            var message = asString(evaluateAstNode(node.p[0], contextStack), (_c = getTokenDebugData((_b = node.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo, {
                 nonEmpty: true,
             });
-            throw new UserDefinedError(message, (_e = (_d = node.debugData) === null || _d === void 0 ? void 0 : _d.token.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+            throw new UserDefinedError(message, (_e = getTokenDebugData((_d = node.debugData) === null || _d === void 0 ? void 0 : _d.token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
         },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
@@ -5921,7 +6074,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'time!',
@@ -5955,17 +6108,17 @@ var Playground = (function (exports) {
             var _b, _c, _d, _e, _f, _g;
             var parseToken = _a.parseToken;
             var tryExpression = parseToken(tokenStream, parseState);
-            assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LParen' });
+            assertLParenToken(tokenStream.tokens[parseState.position++]);
             var catchNode = parseToken(tokenStream, parseState);
-            assertNameNode(catchNode, (_c = (_b = catchNode.debugData) === null || _b === void 0 ? void 0 : _b.token.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+            assertNameNode(catchNode, (_c = getTokenDebugData((_b = catchNode.debugData) === null || _b === void 0 ? void 0 : _b.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             if (catchNode.v !== 'catch') {
-                throw new LitsError("Expected 'catch', got '".concat(catchNode.v, "'."), getSourceCodeInfo(catchNode, (_e = (_d = catchNode.debugData) === null || _d === void 0 ? void 0 : _d.token.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo));
+                throw new LitsError("Expected 'catch', got '".concat(catchNode.v, "'."), getSourceCodeInfo(catchNode, (_e = getTokenDebugData((_d = catchNode.debugData) === null || _d === void 0 ? void 0 : _d.token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo));
             }
             var error = parseToken(tokenStream, parseState);
-            assertNameNode(error, (_g = (_f = error.debugData) === null || _f === void 0 ? void 0 : _f.token.debugData) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
+            assertNameNode(error, (_g = getTokenDebugData((_f = error.debugData) === null || _f === void 0 ? void 0 : _f.token)) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
             var catchExpression = parseToken(tokenStream, parseState);
-            assertToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'RParen' });
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            assertRParenToken(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'try',
@@ -5990,7 +6143,7 @@ var Playground = (function (exports) {
             }
             catch (error) {
                 var newContext = (_b = {},
-                    _b[errorNode.v] = { value: asAny(error, (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo) },
+                    _b[errorNode.v] = { value: asAny(error, (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo) },
                     _b);
                 return evaluateAstNode(catchExpression, contextStack.create(newContext));
             }
@@ -6012,7 +6165,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when',
@@ -6030,7 +6183,7 @@ var Playground = (function (exports) {
             var _c, _d;
             var evaluateAstNode = _a.evaluateAstNode;
             var _e = __read(node.p), whenExpression = _e[0], body = _e.slice(1);
-            assertAstNode(whenExpression, (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+            assertAstNode(whenExpression, (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
             if (!evaluateAstNode(whenExpression, contextStack))
                 return null;
             var result = null;
@@ -6061,14 +6214,14 @@ var Playground = (function (exports) {
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var bindings = parseBindings(tokenStream, parseState);
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when-first',
-                b: asNonUndefined(bindings[0], (_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
+                b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
                 debugData: getTokenDebugData(firstToken) && {
                     token: firstToken,
@@ -6085,7 +6238,7 @@ var Playground = (function (exports) {
             var binding = node.b;
             var evaluatedBindingForm = evaluateAstNode(binding.v, contextStack);
             if (!isSeq(evaluatedBindingForm)) {
-                throw new LitsError("Expected undefined or a sequence, got ".concat(valueToString(evaluatedBindingForm)), (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                throw new LitsError("Expected undefined or a sequence, got ".concat(valueToString(evaluatedBindingForm)), (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
             }
             if (evaluatedBindingForm.length === 0)
                 return null;
@@ -6125,14 +6278,14 @@ var Playground = (function (exports) {
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var bindings = parseBindings(tokenStream, parseState);
             if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when-let',
-                b: asNonUndefined(bindings[0], (_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
+                b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
                 debugData: getTokenDebugData(firstToken) && {
                     token: firstToken,
@@ -6182,7 +6335,7 @@ var Playground = (function (exports) {
         parse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+            var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'when-not',
@@ -6200,7 +6353,7 @@ var Playground = (function (exports) {
             var _c, _d;
             var evaluateAstNode = _a.evaluateAstNode;
             var _e = __read(node.p), whenExpression = _e[0], body = _e.slice(1);
-            assertAstNode(whenExpression, (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+            assertAstNode(whenExpression, (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
             if (evaluateAstNode(whenExpression, contextStack))
                 return null;
             var result = null;
@@ -6329,7 +6482,7 @@ var Playground = (function (exports) {
             var e_2, _a, _b;
             var _c, _d, _e, _f, _g;
             var value = node.v;
-            var sourceCodeInfo = (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo;
+            var sourceCodeInfo = (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo;
             try {
                 for (var _h = __values(this.contexts), _j = _h.next(); !_j.done; _j = _h.next()) {
                     var context = _j.value;
@@ -6383,7 +6536,7 @@ var Playground = (function (exports) {
                 return lookUpResult.value;
             else if (isBuiltinFunction(lookUpResult))
                 return lookUpResult;
-            throw new UndefinedSymbolError(node.v, (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            throw new UndefinedSymbolError(node.v, (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         };
         return ContextStackImpl;
     }());
@@ -6642,7 +6795,7 @@ var Playground = (function (exports) {
             case AstNodeType.SpecialExpression:
                 return evaluateSpecialExpression(node, contextStack);
             default:
-                throw new LitsError("".concat(node.t, "-node cannot be evaluated"), (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                throw new LitsError("".concat(node.t, "-node cannot be evaluated"), (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         }
     }
     function evaluateNumber(node) {
@@ -6653,12 +6806,12 @@ var Playground = (function (exports) {
     }
     function evaluateReservedName(node) {
         var _a, _b;
-        return asNonUndefined(postfixReservedNamesRecord[node.v], (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo).value;
+        return asNonUndefined(postfixReservedNamesRecord[node.v], (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo).value;
     }
     function evaluateNormalExpression(node, contextStack) {
         var _a, _b;
         var params = node.p.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
-        var sourceCodeInfo = (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
+        var sourceCodeInfo = (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
         if (isNormalExpressionNodeWithName(node)) {
             var value = contextStack.getValue(node.n);
             if (value !== undefined)
@@ -6687,12 +6840,12 @@ var Playground = (function (exports) {
         var _a, _b, _c, _d;
         var normalExpression = builtin.normalExpressions[node.n];
         if (!normalExpression)
-            throw new UndefinedSymbolError(node.n, (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-        return normalExpression.evaluate(params, (_d = (_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo, contextStack, { executeFunction: executeFunction });
+            throw new UndefinedSymbolError(node.n, (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+        return normalExpression.evaluate(params, (_d = getTokenDebugData((_c = node.debugData) === null || _c === void 0 ? void 0 : _c.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo, contextStack, { executeFunction: executeFunction });
     }
     function evaluateSpecialExpression(node, contextStack) {
         var _a, _b;
-        var specialExpression = asNonUndefined(builtin.specialExpressions[node.n], (_b = (_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+        var specialExpression = asNonUndefined(builtin.specialExpressions[node.n], (_b = getTokenDebugData((_a = node.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         // eslint-disable-next-line ts/no-unsafe-argument
         return specialExpression.evaluate(node, contextStack, { evaluateAstNode: evaluateAstNode, builtin: builtin });
     }
@@ -6791,7 +6944,7 @@ var Playground = (function (exports) {
                 return unresolvedIdentifiers_1;
             }
             case AstNodeType.SpecialExpression: {
-                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], (_e = (_d = astNode.debugData) === null || _d === void 0 ? void 0 : _d.token.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], (_e = getTokenDebugData((_d = astNode.debugData) === null || _d === void 0 ? void 0 : _d.token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
                 // eslint-disable-next-line ts/no-unsafe-argument
                 var unresolvedIdentifiers = specialExpression.findUnresolvedIdentifiers(astNode, contextStack, {
                     findUnresolvedIdentifiers: findUnresolvedIdentifiers,
@@ -7340,99 +7493,140 @@ var Playground = (function (exports) {
 
     function parseNumber(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position++]);
         return {
             t: AstNodeType.Number,
             v: Number(tkn[1]),
             p: [],
             n: undefined,
-            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
     }
     function parseString(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var tkn = asStringToken(tokenStream.tokens[parseState.position++]);
+        var value = tkn[1].substring(1, tkn[1].length - 1)
+            .replace(/(\\{2})|(\\")|(\\n)|(\\t)|(\\r)|(\\b)|(\\f)|\\(.)/g, function (_, backslash, doubleQuote, newline, tab, carriageReturn, backspace, formFeed, normalChar) {
+            // If it's a double escape (\\x), return \x
+            if (backslash) {
+                return '\\';
+            }
+            // If it's a special character (\n, \t, \r, \b, \f), return the special character
+            else if (newline) {
+                return '\n';
+            }
+            else if (tab) {
+                return '\t';
+            }
+            else if (carriageReturn) {
+                return '\r';
+            }
+            else if (backspace) {
+                return '\b';
+            }
+            else if (formFeed) {
+                return '\f';
+            }
+            else if (doubleQuote) {
+                return '"';
+            }
+            return normalChar;
+        });
         return {
             t: AstNodeType.String,
-            v: tkn[1],
+            v: value,
             p: [],
             n: undefined,
-            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
     }
-    function parseName(tokenStream, parseState) {
+    function parseStringShorthand(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var tkn = asStringShorthandToken(tokenStream.tokens[parseState.position++]);
+        var value = tkn[1].substring(1);
+        return {
+            t: AstNodeType.String,
+            v: value,
+            p: [],
+            n: undefined,
+            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                ? { token: tkn, lastToken: tkn }
+                : undefined,
+        };
+    }
+    function parseSymbol(tokenStream, parseState) {
+        var _a;
+        var tkn = asSymbolToken(tokenStream.tokens[parseState.position++]);
         return {
             t: AstNodeType.Name,
             v: tkn[1],
             p: [],
             n: undefined,
-            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
     }
-    function parseReservedName(tokenStream, parseState) {
+    function parseReservedSymbol(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var tkn = asReservedSymbolToken(tokenStream.tokens[parseState.position++]);
         return {
             t: AstNodeType.ReservedName,
             v: tkn[1],
             p: [],
             n: undefined,
-            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
     }
     function parseComment(tokenStream, parseState) {
         var _a;
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var tkn = asCommentToken(tokenStream.tokens[parseState.position++]);
         return {
             t: AstNodeType.Comment,
             v: tkn[1],
             p: [],
             n: undefined,
-            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
     }
     function parseTokensUntilClosingBracket(tokenStream, parseState) {
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
         var astNodes = [];
-        while (!(tkn.t === 'Bracket' && (tkn[1] === ')' || tkn[1] === ']'))) {
+        while (!isRParenToken(tkn) && !isRBracketToken(tkn)) {
             astNodes.push(parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         return astNodes;
     }
     var parseExpression = function (tokenStream, parseState) {
-        var tkn = asToken(tokenStream.tokens[parseState.position + 1], tokenStream.filePath);
-        if (isSymbol(tkn) && builtin.specialExpressions[tkn[1]])
+        var tkn = asToken(tokenStream.tokens[parseState.position + 1]);
+        if (isSymbolToken(tkn) && builtin.specialExpressions[tkn[1]])
             return parseSpecialExpression(tokenStream, parseState);
         return parseNormalExpression(tokenStream, parseState);
     };
     function parseArrayLitteral(tokenStream, parseState) {
         var _a;
-        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+        var firstToken = asToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
         var params = [];
-        while (!isRBracket(tkn)) {
+        while (!isRBracketToken(tkn)) {
             params.push(parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         parseState.position += 1;
         var node = {
             t: AstNodeType.NormalExpression,
             n: 'array',
             p: params,
-            debugData: ((_a = firstToken.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: tkn,
@@ -7443,19 +7637,19 @@ var Playground = (function (exports) {
     }
     function parseObjectLitteral(tokenStream, parseState) {
         var _a;
-        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+        var firstToken = asToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
         var params = [];
-        while (!isRBrace(tkn)) {
+        while (!isRBraceToken(tkn)) {
             params.push(parseToken(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         parseState.position += 1;
         var node = {
             t: AstNodeType.NormalExpression,
             n: 'object',
             p: params,
-            debugData: ((_a = firstToken.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: tkn,
@@ -7466,27 +7660,29 @@ var Playground = (function (exports) {
         return node;
     }
     function parseRegexpShorthand(tokenStream, parseState) {
-        var _a, _b, _c, _d;
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var _a, _b, _c;
+        var tkn = asRegexpShorthandToken(tokenStream.tokens[parseState.position++]);
+        var endStringPosition = tkn[1].lastIndexOf('"');
+        var regexpString = tkn[1].substring(2, endStringPosition);
+        var optionsString = tkn[1].substring(endStringPosition + 1);
         var stringNode = {
             t: AstNodeType.String,
-            v: tkn[1],
+            v: regexpString,
             p: [],
             n: undefined,
-            debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: tkn,
                     lastToken: tkn,
                 }
                 : undefined,
         };
-        assertNonUndefined(tkn.o, (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         var optionsNode = {
             t: AstNodeType.String,
-            v: "".concat(tkn.o.g ? 'g' : '').concat(tkn.o.i ? 'i' : ''),
+            v: optionsString,
             p: [],
             n: undefined,
-            debugData: ((_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo)
+            debugData: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
                 ? {
                     token: tkn,
                     lastToken: tkn,
@@ -7497,7 +7693,7 @@ var Playground = (function (exports) {
             t: AstNodeType.NormalExpression,
             n: 'regexp',
             p: [stringNode, optionsNode],
-            debugData: ((_d = tkn.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo)
+            debugData: ((_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo)
                 ? {
                     token: tkn,
                     lastToken: tkn,
@@ -7509,30 +7705,30 @@ var Playground = (function (exports) {
     var placeholderRegexp = /^%([1-9]\d?)?$/;
     function parseFnShorthand(tokenStream, parseState) {
         var _a, _b, _c, _d, _e;
-        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
+        var firstToken = asToken(tokenStream.tokens[parseState.position++]);
         var startPos = parseState.position + 1;
         var exprNode = parseExpression(tokenStream, parseState);
         var arity = 0;
         var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
         for (var pos = startPos; pos < parseState.position - 1; pos += 1) {
-            var tkn = asToken(tokenStream.tokens[pos], tokenStream.filePath);
-            if (isSymbol(tkn)) {
+            var tkn = asToken(tokenStream.tokens[pos]);
+            if (isSymbolToken(tkn)) {
                 var match = placeholderRegexp.exec(tkn[1]);
                 if (match) {
                     var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
                     if (number === '1') {
                         var mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED');
                         if (mixedPercent1)
-                            throw new LitsError('Please make up your mind, either use % or %1', (_b = firstToken.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                            throw new LitsError('Please make up your mind, either use % or %1', (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                         percent1 = match[1] ? 'WITH_1' : 'NAKED';
                     }
                     arity = Math.max(arity, Number(number));
                     if (arity > 20)
-                        throw new LitsError('Can\'t specify more than 20 arguments', (_c = firstToken.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                        throw new LitsError('Can\'t specify more than 20 arguments', (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                 }
             }
-            if (isFnShorthand(tkn))
-                throw new LitsError('Nested shortcut functions are not allowed', (_d = firstToken.debugData) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+            if (isFnShorthandToken(tkn))
+                throw new LitsError('Nested shortcut functions are not allowed', (_d = getTokenDebugData(firstToken)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
         }
         var mandatoryArguments = [];
         for (var i = 1; i <= arity; i += 1) {
@@ -7556,7 +7752,7 @@ var Playground = (function (exports) {
                     a: args.m.length,
                 },
             ],
-            debugData: ((_e = firstToken.debugData) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo)
+            debugData: ((_e = getTokenDebugData(firstToken)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: exprNode.debugData.lastToken,
@@ -7567,13 +7763,13 @@ var Playground = (function (exports) {
     }
     var parseArgument = function (tokenStream, parseState) {
         var _a, _b, _c;
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath);
-        if (isSymbol(tkn)) {
+        var tkn = asToken(tokenStream.tokens[parseState.position++]);
+        if (isSymbolToken(tkn)) {
             return {
                 t: AstNodeType.Argument,
                 n: tkn[1],
                 p: [],
-                debugData: ((_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                     ? {
                         token: tkn,
                         lastToken: tkn,
@@ -7581,14 +7777,13 @@ var Playground = (function (exports) {
                     : undefined,
             };
         }
-        else if (tkn.t === 'Modifier') {
-            var value = tkn[1];
+        else if (isModifierToken(tkn)) {
             return {
                 t: AstNodeType.Modifier,
-                v: value,
+                v: tkn[1],
                 p: [],
                 n: undefined,
-                debugData: ((_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
+                debugData: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
                     ? {
                         token: tkn,
                         lastToken: tkn,
@@ -7597,31 +7792,31 @@ var Playground = (function (exports) {
             };
         }
         else {
-            throw new LitsError("Expected name or modifier token, got ".concat(valueToString(tkn), "."), (_c = tkn.debugData) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+            throw new LitsError("Expected name or modifier token, got ".concat(valueToString(tkn), "."), (_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
         }
     };
     function parseBindings(tokenStream, parseState) {
-        var tkn = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LBracket' });
-        tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+        assertLBracketToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
         var bindings = [];
-        while (!isRBracket(tkn)) {
+        while (!isRBracketToken(tkn)) {
             bindings.push(parseBinding(tokenStream, parseState));
-            tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
+            tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         parseState.position += 1;
         return bindings;
     }
     function parseBinding(tokenStream, parseState) {
         var _a;
-        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Name' });
-        var name = firstToken.v;
+        var firstToken = asSymbolToken(tokenStream.tokens[parseState.position++]);
+        var name = firstToken[1];
         var value = parseToken(tokenStream, parseState);
         var node = {
             t: AstNodeType.Binding,
             n: name,
             v: value,
             p: [],
-            debugData: ((_a = firstToken.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: value.debugData.lastToken,
@@ -7632,13 +7827,11 @@ var Playground = (function (exports) {
     }
     function parseNormalExpression(tokenStream, parseState) {
         var _a, _b, _c, _d;
-        var startBracketToken = tokenStream.hasDebugData
-            ? asToken(tokenStream.tokens[parseState.position], tokenStream.filePath, { type: 'LParen' })
-            : undefined;
+        var startBracketToken = tokenStream.hasDebugData ? asLParenToken(tokenStream.tokens[parseState.position]) : undefined;
         parseState.position += 1;
         var fnNode = parseToken(tokenStream, parseState);
         var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-        var lastToken = asRParen(tokenStream.tokens[parseState.position++]);
+        var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
         if (isExpressionNode(fnNode)) {
             var node_1 = {
                 t: AstNodeType.NormalExpression,
@@ -7653,7 +7846,7 @@ var Playground = (function (exports) {
             };
             return node_1;
         }
-        assertNameNode(fnNode, (_b = (_a = fnNode.debugData) === null || _a === void 0 ? void 0 : _a.token.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+        assertNameNode(fnNode, (_b = getTokenDebugData((_a = fnNode.debugData) === null || _a === void 0 ? void 0 : _a.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
         var node = {
             t: AstNodeType.NormalExpression,
             n: fnNode.v,
@@ -7673,10 +7866,11 @@ var Playground = (function (exports) {
         return node;
     }
     function parseSpecialExpression(tokenStream, parseState) {
-        var firstToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'LParen' });
-        var nameToken = asToken(tokenStream.tokens[parseState.position++], tokenStream.filePath, { type: 'Name' });
-        var expressionName = nameToken.v, debugData = nameToken.debugData;
-        var parse = asNonUndefined(builtin.specialExpressions[expressionName], debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo).parse;
+        var _a;
+        var firstToken = asLParenToken(tokenStream.tokens[parseState.position++]);
+        var nameToken = asSymbolToken(tokenStream.tokens[parseState.position++]);
+        var expressionName = nameToken[1];
+        var parse = asNonUndefined(builtin.specialExpressions[expressionName], (_a = getTokenDebugData(nameToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo).parse;
         var node = parse(tokenStream, parseState, firstToken, {
             parseExpression: parseExpression,
             parseTokensUntilClosingBracket: parseTokensUntilClosingBracket,
@@ -7695,24 +7889,25 @@ var Playground = (function (exports) {
         // if (parseState.infix) {
         //   return
         // }
-        var tkn = asToken(tokenStream.tokens[parseState.position], tokenStream.filePath);
-        switch (tkn.t) {
+        var tkn = asToken(tokenStream.tokens[parseState.position]);
+        var tokenType = tkn[0];
+        switch (tokenType) {
             case 'Number':
                 return parseNumber(tokenStream, parseState);
             case 'String':
                 return parseString(tokenStream, parseState);
-            case 'Name':
-                return parseName(tokenStream, parseState);
-            case 'ReservedName':
-                return parseReservedName(tokenStream, parseState);
-            case 'Bracket':
-                if (tkn[1] === '(')
-                    return parseExpression(tokenStream, parseState);
-                else if (tkn[1] === '[')
-                    return parseArrayLitteral(tokenStream, parseState);
-                else if (tkn[1] === '{')
-                    return parseObjectLitteral(tokenStream, parseState);
-                break;
+            case 'StringShorthand':
+                return parseStringShorthand(tokenStream, parseState);
+            case 'Symbol':
+                return parseSymbol(tokenStream, parseState);
+            case 'ReservedSymbol':
+                return parseReservedSymbol(tokenStream, parseState);
+            case 'LParen':
+                return parseExpression(tokenStream, parseState);
+            case 'LBracket':
+                return parseArrayLitteral(tokenStream, parseState);
+            case 'LBrace':
+                return parseObjectLitteral(tokenStream, parseState);
             case 'RegexpShorthand':
                 return parseRegexpShorthand(tokenStream, parseState);
             case 'FnShorthand':
@@ -7725,12 +7920,15 @@ var Playground = (function (exports) {
             case 'Infix':
             case 'Postfix':
             case 'InfixOperator':
+            case 'RParen':
+            case 'RBracket':
+            case 'RBrace':
                 break;
             /* v8 ignore next 2 */
             default:
-                throw new LitsError("Unrecognized token: ".concat(tkn.t, " ").concat(tkn[1]), (_a = tkn.debugData) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                throw new LitsError("Unrecognized token: ".concat(tokenType, " ").concat(tkn[1]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
-        throw new LitsError("Unrecognized token: ".concat(tkn.t, " ").concat(tkn[1]), (_b = tkn.debugData) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+        throw new LitsError("Unrecognized token: ".concat(tokenType).concat(tkn[1] ? " ".concat(tkn[1]) : ''), (_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
     }
 
     function parse$1(tokenStream) {
@@ -7753,122 +7951,98 @@ var Playground = (function (exports) {
     var infixIdentifierCharacterClass = '[\\w$:]';
     var infixIdentifierFirstCharacterClass = '[a-zA-Z_$]';
 
-    var NO_MATCH = [0, undefined];
+    var NO_MATCH = [0];
+    function isNoMatch(tokenDescriptor) {
+        return tokenDescriptor[0] === 0;
+    }
     var newLineRegExp = /\n/;
-    var tokenizeNewLine = function (input, current, debugData) {
-        return newLineRegExp.test(input[current])
-            ? [1, { t: 'NewLine', v: '\n', debugData: debugData }]
+    var tokenizeNewLine = function (input, position) {
+        return newLineRegExp.test(input[position])
+            ? [1, ['NewLine']]
             : NO_MATCH;
     };
-    var tokenizeComment = function (input, current, debugData) {
-        if (input[current] === ';') {
+    var tokenizeComment = function (input, position) {
+        if (input[position] === ';') {
             var length_1 = 0;
             var value = '';
-            while (input[current + length_1] !== '\n' && current + length_1 < input.length) {
-                value += input[current + length_1];
+            while (input[position + length_1] !== '\n' && position + length_1 < input.length) {
+                value += input[position + length_1];
                 length_1 += 1;
             }
-            if (input[current + length_1] === '\n' && current + length_1 < input.length)
+            if (input[position + length_1] === '\n' && position + length_1 < input.length)
                 length_1 += 1;
-            return [length_1, { t: 'Comment', v: value.trim(), debugData: debugData }];
+            return [length_1, ['Comment', value.trim()]];
         }
         return NO_MATCH;
     };
-    var tokenizeLeftParen = function (input, position, debugData) {
-        return tokenizeCharacter('Bracket', '(', input, position, debugData);
+    var tokenizeLeftParen = function (input, position) {
+        return tokenizeSimpleToken('LParen', '(', input, position);
     };
-    var tokenizeRightParen = function (input, position, debugData) {
-        return tokenizeCharacter('Bracket', ')', input, position, debugData);
+    var tokenizeRightParen = function (input, position) {
+        return tokenizeSimpleToken('RParen', ')', input, position);
     };
-    var tokenizeLeftBracket = function (input, position, debugData) {
-        return tokenizeCharacter('Bracket', '[', input, position, debugData);
+    var tokenizeLeftBracket = function (input, position) {
+        return tokenizeSimpleToken('LBracket', '[', input, position);
     };
-    var tokenizeRightBracket = function (input, position, debugData) {
-        return tokenizeCharacter('Bracket', ']', input, position, debugData);
+    var tokenizeRightBracket = function (input, position) {
+        return tokenizeSimpleToken('RBracket', ']', input, position);
     };
-    var tokenizeLeftCurly = function (input, position, debugData) {
-        return tokenizeCharacter('Bracket', '{', input, position, debugData);
+    var tokenizeLeftCurly = function (input, position) {
+        return tokenizeSimpleToken('LBrace', '{', input, position);
     };
-    var tokenizeRightCurly = function (input, position, debugData) {
-        return tokenizeCharacter('Bracket', '}', input, position, debugData);
+    var tokenizeRightCurly = function (input, position) {
+        return tokenizeSimpleToken('RBrace', '}', input, position);
     };
-    var tokenizeString = function (input, position, debugData) {
+    var tokenizeString = function (input, position) {
         if (input[position] !== '"')
             return NO_MATCH;
-        var value = '';
+        var value = '"';
         var length = 1;
         var char = input[position + length];
-        var escape = false;
-        while (char !== '"' || escape) {
+        var escaping = false;
+        while (char !== '"' || escaping) {
             if (char === undefined)
-                throw new LitsError("Unclosed string at position ".concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+                throw new LitsError("Unclosed string at position ".concat(position, "."));
             length += 1;
-            if (escape) {
-                escape = false;
-                if (char === '"' || char === '\\') {
-                    value += char;
-                }
-                else {
-                    value += '\\';
-                    value += char;
-                }
+            if (escaping) {
+                escaping = false;
+                value += char;
             }
             else {
-                if (char === '\\')
-                    escape = true;
-                else
-                    value += char;
+                if (char === '\\') {
+                    escaping = true;
+                }
+                value += char;
             }
             char = input[position + length];
         }
-        return [length + 1, { t: 'String', v: value, debugData: debugData }];
+        value += '"'; // closing quote
+        return [length + 1, ['String', value]];
     };
-    var tokenizeCollectionAccessor = function (input, position, debugData) {
+    var tokenizeCollectionAccessor = function (input, position) {
         var char = input[position];
         if (char !== '.' && char !== '#')
             return NO_MATCH;
-        return [
-            1,
-            {
-                t: 'CollectionAccessor',
-                v: char,
-                debugData: debugData,
-            },
-        ];
+        return [1, ['CollectionAccessor', char]];
     };
-    var tokenizeRegexpShorthand = function (input, position, debugData) {
+    var tokenizeRegexpShorthand = function (input, position) {
         if (input[position] !== '#')
             return NO_MATCH;
-        var _a = __read(tokenizeString(input, position + 1, debugData), 2), stringLength = _a[0], token = _a[1];
+        var _a = __read(tokenizeString(input, position + 1), 2), stringLength = _a[0], token = _a[1];
         if (!token)
             return NO_MATCH;
         position += stringLength + 1;
         var length = stringLength + 1;
-        var options = {};
+        var options = '';
         while (input[position] === 'g' || input[position] === 'i') {
-            if (input[position] === 'g') {
-                if (options.g)
-                    throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                length += 1;
-                options.g = true;
+            if (options.includes(input[position])) {
+                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."));
             }
-            else {
-                if (options.i)
-                    throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                length += 1;
-                options.i = true;
-            }
+            options += input[position];
+            length += 1;
             position += 1;
         }
-        return [
-            length,
-            {
-                t: 'RegexpShorthand',
-                v: token.v,
-                o: options,
-                debugData: debugData,
-            },
-        ];
+        return [length, ['RegexpShorthand', "#".concat(token[1]).concat(options)]];
     };
     var endOfNumberRegExp = /[\s)\]},#]/;
     var decimalNumberRegExp = /\d/;
@@ -7876,7 +8050,7 @@ var Playground = (function (exports) {
     var hexNumberRegExp = /[0-9a-f]/i;
     var binaryNumberRegExp = /[01]/;
     var firstCharRegExp = /[0-9.-]/;
-    var tokenizeNumber = function (input, position, debugData) {
+    var tokenizeNumber = function (input, position) {
         var type = 'decimal';
         var firstChar = input[position];
         if (!firstCharRegExp.test(firstChar))
@@ -7884,7 +8058,7 @@ var Playground = (function (exports) {
         var hasDecimals = firstChar === '.';
         var i;
         for (i = position + 1; i < input.length; i += 1) {
-            var char = asString(input[i], debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { char: true });
+            var char = input[i];
             if (endOfNumberRegExp.test(char))
                 break;
             if (char === '.') {
@@ -7935,486 +8109,13 @@ var Playground = (function (exports) {
         var value = input.substring(position, i);
         if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
             return NO_MATCH;
-        return [length, { t: 'Number', v: value, debugData: debugData }];
+        return [length, ['Number', value]];
     };
-    function tokenizeCharacter(type, value, input, position, debugData) {
+    function tokenizeSimpleToken(type, value, input, position) {
         if (value === input[position])
-            return [1, { t: type, v: value, debugData: debugData }];
+            return [1, [type]];
         else
             return NO_MATCH;
-    }
-
-    var nameRegExp = new RegExp(postfixIdentifierCharacterClass);
-    var whitespaceRegExp$1 = /\s|,/;
-    var skipWhiteSpace$1 = function (input, current) {
-        return whitespaceRegExp$1.test(input[current]) ? [1, undefined] : NO_MATCH;
-    };
-    var tokenizeFnShorthand = function (input, position, debugData) {
-        if (input.slice(position, position + 2) !== '#(')
-            return NO_MATCH;
-        return [
-            1,
-            {
-                t: 'FnShorthand',
-                v: '#',
-                debugData: debugData,
-            },
-        ];
-    };
-    var tokenizeReservedName$1 = function (input, position, debugData) {
-        var e_1, _a;
-        try {
-            for (var _b = __values(Object.entries(postfixReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
-                var length_1 = reservedName.length;
-                var nextChar = input[position + length_1];
-                if (nextChar && nameRegExp.test(nextChar))
-                    continue;
-                var name_1 = input.substring(position, position + length_1);
-                if (name_1 === reservedName) {
-                    if (forbidden)
-                        throw new LitsError("".concat(name_1, " is forbidden!"), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                    return [length_1, { t: 'ReservedName', v: reservedName, debugData: debugData }];
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return NO_MATCH;
-    };
-    var tokenizeName$1 = function (input, position, debugData) {
-        return tokenizePattern('Name', nameRegExp, input, position, debugData);
-    };
-    var tokenizeSymbolString = function (input, position, debugData) {
-        if (input[position] !== ':')
-            return NO_MATCH;
-        var value = '';
-        var length = 1;
-        var char = input[position + length];
-        while (char && nameRegExp.test(char)) {
-            length += 1;
-            value += char;
-            char = input[position + length];
-        }
-        if (length === 1)
-            return NO_MATCH;
-        return [length, { t: 'String', v: value, debugData: debugData, o: { s: true } }];
-    };
-    var tokenizeModifier = function (input, position, debugData) {
-        var e_2, _a;
-        var modifiers = ['&', '&let', '&when', '&while'];
-        try {
-            for (var modifiers_1 = __values(modifiers), modifiers_1_1 = modifiers_1.next(); !modifiers_1_1.done; modifiers_1_1 = modifiers_1.next()) {
-                var modifier = modifiers_1_1.value;
-                var length_2 = modifier.length;
-                var charAfterModifier = input[position + length_2];
-                if (input.substring(position, position + length_2) === modifier && (!charAfterModifier || !nameRegExp.test(charAfterModifier))) {
-                    var value = modifier;
-                    return [length_2, { t: 'Modifier', v: value, debugData: debugData }];
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (modifiers_1_1 && !modifiers_1_1.done && (_a = modifiers_1.return)) _a.call(modifiers_1);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return NO_MATCH;
-    };
-    var tokenizeInfixDirective = function (input, position, debugData) {
-        if (input[position] !== '$') {
-            return NO_MATCH;
-        }
-        var nextChar = input[position + 1];
-        if (nextChar && nameRegExp.test(nextChar)) {
-            return NO_MATCH;
-        }
-        return [1, { t: 'Infix', v: '$', debugData: debugData }];
-    };
-    function tokenizePattern(type, pattern, input, position, debugData) {
-        var char = input[position];
-        var length = 0;
-        var value = '';
-        if (!char || !pattern.test(char))
-            return NO_MATCH;
-        while (char && pattern.test(char)) {
-            value += char;
-            length += 1;
-            char = input[position + length];
-        }
-        return [length, { t: type, v: value, debugData: debugData }];
-    }
-    // All tokenizers, order matters!
-    var tokenizers$1 = [
-        tokenizeInfixDirective,
-        skipWhiteSpace$1,
-        tokenizeComment,
-        tokenizeLeftParen,
-        tokenizeRightParen,
-        tokenizeLeftBracket,
-        tokenizeRightBracket,
-        tokenizeLeftCurly,
-        tokenizeRightCurly,
-        tokenizeString,
-        tokenizeSymbolString,
-        tokenizeNumber,
-        tokenizeReservedName$1,
-        tokenizeName$1,
-        tokenizeModifier,
-        tokenizeRegexpShorthand,
-        tokenizeFnShorthand,
-        tokenizeCollectionAccessor,
-    ];
-    var newLineTokenizers$1 = [
-        tokenizeNewLine,
-        skipWhiteSpace$1,
-    ];
-    var commentTokenizers$1 = [
-        tokenizeNewLine,
-        skipWhiteSpace$1,
-        tokenizeComment,
-    ];
-
-    function getSourceCodeLine$1(input, lineNbr) {
-        return input.split(/\r\n|\r|\n/)[lineNbr];
-    }
-    function createSourceCodeInfo$1(input, position, filePath) {
-        var lines = input.substring(0, position + 1).split(/\r\n|\r|\n/);
-        var lastLine = lines[lines.length - 1];
-        var code = getSourceCodeLine$1(input, lines.length - 1);
-        var line = lines.length;
-        var column = lastLine.length;
-        return {
-            code: code,
-            position: {
-                line: line,
-                column: column,
-            },
-            filePath: filePath,
-        };
-    }
-    function getNextPostfixToken(input, position, params) {
-        var e_1, _a, _b;
-        var debug = !!params.debug;
-        var initialPosition = position;
-        var _c = __read(readLeadingNewLineTokens$1(input, position, params), 2), leadingNewLineTokensLength = _c[0], leadingNewLineTokens = _c[1];
-        position += leadingNewLineTokensLength;
-        if (position >= input.length)
-            return [position - initialPosition, undefined];
-        var _d = __read(readLeadingCommentTokens$1(input, position, params), 2), leadingCommentTokensLength = _d[0], leadingCommentTokens = _d[1];
-        position += leadingCommentTokensLength;
-        if (position >= input.length)
-            return [position - initialPosition, undefined];
-        var leadingMetaTokens = __spreadArray(__spreadArray([], __read(leadingNewLineTokens), false), __read(leadingCommentTokens), false);
-        // Loop through all tokenizer until one matches
-        var debugData = debug
-            ? {
-                sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                metaTokens: { inlineCommentToken: null, leadingMetaTokens: leadingMetaTokens },
-            }
-            : undefined;
-        var tryNext = true;
-        while (tryNext) {
-            if (position >= input.length) {
-                return [position - initialPosition, undefined];
-            }
-            tryNext = false;
-            try {
-                for (var tokenizers_1 = (e_1 = void 0, __values(tokenizers$1)), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
-                    var tokenizer = tokenizers_1_1.value;
-                    var _e = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _e[0], token = _e[1];
-                    position += nbrOfCharacters;
-                    if (nbrOfCharacters === 0) {
-                        continue;
-                    }
-                    if (!token) {
-                        tryNext = true;
-                        break;
-                    }
-                    var inlineCommentToken = null;
-                    if (!isCommentToken$1(token)) {
-                        _b = __read(readInlineCommentToken$1(input, position, params), 2), position = _b[0], inlineCommentToken = _b[1];
-                    }
-                    if (token.debugData) {
-                        token.debugData.metaTokens.inlineCommentToken = inlineCommentToken;
-                    }
-                    if (!isCommentToken$1(token) || debug) {
-                        return [position - initialPosition, token];
-                    }
-                    tryNext = true;
-                    break;
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (tokenizers_1_1 && !tokenizers_1_1.done && (_a = tokenizers_1.return)) _a.call(tokenizers_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-        }
-        throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-    }
-    function readLeadingNewLineTokens$1(input, position, params) {
-        var e_2, _a;
-        var newLineTokens = [];
-        var initialPosition = position;
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var newLineTokenizers_1 = (e_2 = void 0, __values(newLineTokenizers$1)), newLineTokenizers_1_1 = newLineTokenizers_1.next(); !newLineTokenizers_1_1.done; newLineTokenizers_1_1 = newLineTokenizers_1.next()) {
-                    var tokenizer = newLineTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            assertNewLineToken$1(token);
-                            if (newLineTokens.length < 2)
-                                newLineTokens.push(token);
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (newLineTokenizers_1_1 && !newLineTokenizers_1_1.done && (_a = newLineTokenizers_1.return)) _a.call(newLineTokenizers_1);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            if (!tokenized)
-                // All newline tokens read!
-                return [position - initialPosition, newLineTokens];
-        }
-        // Ending up here means that no non newline token was found. I.e. this cannot be leading newline tokens
-        return [position - initialPosition, []];
-    }
-    function readLeadingCommentTokens$1(input, position, params) {
-        var e_3, _a;
-        var initialPosition = position;
-        var commentTokens = [];
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var commentTokenizers_1 = (e_3 = void 0, __values(commentTokenizers$1)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
-                    var tokenizer = commentTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            assertMetaToken$1(token);
-                            // If a newline token is found, then this is not a leading comment
-                            if (isNewLineToken$1(token))
-                                return [0, []];
-                            commentTokens.push(token);
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
-            finally {
-                try {
-                    if (commentTokenizers_1_1 && !commentTokenizers_1_1.done && (_a = commentTokenizers_1.return)) _a.call(commentTokenizers_1);
-                }
-                finally { if (e_3) throw e_3.error; }
-            }
-            if (!tokenized)
-                // All metatokens read!
-                return [position - initialPosition, commentTokens];
-        }
-        // Ending up here means that no non meta token was found. I.e. this cannot be leading meta tokens
-        return [0, []];
-    }
-    function readInlineCommentToken$1(input, position, params) {
-        var e_4, _a;
-        var rollbackPosition = position;
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var commentTokenizers_2 = (e_4 = void 0, __values(commentTokenizers$1)), commentTokenizers_2_1 = commentTokenizers_2.next(); !commentTokenizers_2_1.done; commentTokenizers_2_1 = commentTokenizers_2.next()) {
-                    var tokenizer = commentTokenizers_2_1.value;
-                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            if (isNewLineToken$1(token))
-                                return [rollbackPosition, null];
-                            assertCommentToken$1(token);
-                            return [position, token];
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
-            finally {
-                try {
-                    if (commentTokenizers_2_1 && !commentTokenizers_2_1.done && (_a = commentTokenizers_2.return)) _a.call(commentTokenizers_2);
-                }
-                finally { if (e_4) throw e_4.error; }
-            }
-            if (!tokenized)
-                // All metatokens read! Return undefined if not debug mode
-                return [rollbackPosition, null];
-        }
-        // Ending up here means that no comment token was found and end of tokens reached
-        return [position, null];
-    }
-    function isMetaToken$1(token) {
-        return !!token && (token.t === 'NewLine' || token.t === 'Comment');
-    }
-    function assertMetaToken$1(token) {
-        if (!isMetaToken$1(token))
-            throw new LitsError("Expected meta token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
-    }
-    function isCommentToken$1(token) {
-        return !!token && token.t === 'Comment';
-    }
-    function assertCommentToken$1(token) {
-        if (!isCommentToken$1(token))
-            throw new LitsError("Expected comment token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
-    }
-    function isNewLineToken$1(token) {
-        return !!token && token.t === 'NewLine';
-    }
-    function assertNewLineToken$1(token) {
-        if (!isNewLineToken$1(token))
-            throw new LitsError("Expected newline token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
-    }
-
-    var applyCollectionAccessors = function (tokenStream) {
-        var dotTokenIndex = tokenStream.tokens.findIndex(function (tkn) { return tkn.t === 'CollectionAccessor'; });
-        while (dotTokenIndex >= 0) {
-            applyCollectionAccessor(tokenStream, dotTokenIndex);
-            dotTokenIndex = tokenStream.tokens.findIndex(function (tkn) { return tkn.t === 'CollectionAccessor'; });
-        }
-        return tokenStream;
-    };
-    function applyCollectionAccessor(tokenStream, position) {
-        var dotTkn = asNonUndefined(tokenStream.tokens[position]);
-        var debugData = dotTkn.debugData;
-        var backPosition = getPositionBackwards(tokenStream, position, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-        checkForward(tokenStream, position, dotTkn, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-        tokenStream.tokens.splice(position, 1);
-        tokenStream.tokens.splice(backPosition, 0, {
-            t: 'Bracket',
-            v: '(',
-            debugData: debugData,
-        });
-        var nextTkn = asNonUndefined(tokenStream.tokens[position + 1]);
-        if (dotTkn.v === '.') {
-            tokenStream.tokens[position + 1] = {
-                t: 'String',
-                v: nextTkn.v,
-                debugData: nextTkn.debugData,
-            };
-        }
-        else {
-            assertNumber(Number(nextTkn.v), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { integer: true, nonNegative: true });
-            tokenStream.tokens[position + 1] = {
-                t: 'Number',
-                v: nextTkn.v,
-                debugData: nextTkn.debugData,
-            };
-        }
-        tokenStream.tokens.splice(position + 2, 0, {
-            t: 'Bracket',
-            v: ')',
-            debugData: debugData,
-        });
-    }
-    function getPositionBackwards(tokenStream, position, sourceCodeInfo) {
-        var bracketCount = null;
-        if (position <= 0)
-            throw new LitsError('Array accessor # must come after a sequence', sourceCodeInfo);
-        var prevToken = asNonUndefined(tokenStream.tokens[position - 1]);
-        var openBracket = null;
-        var closeBracket = null;
-        if (prevToken.t === 'Bracket') {
-            switch (prevToken.v) {
-                case ')':
-                    openBracket = '(';
-                    closeBracket = ')';
-                    break;
-                case ']':
-                    openBracket = '[';
-                    closeBracket = ']';
-                    break;
-                case '}':
-                    openBracket = '{';
-                    closeBracket = '}';
-                    break;
-                default:
-                    throw new LitsError('# or . must be preceeded by a collection', sourceCodeInfo);
-            }
-        }
-        while (bracketCount !== 0) {
-            bracketCount = bracketCount === null ? 0 : bracketCount;
-            position -= 1;
-            var tkn = asNonUndefined(tokenStream.tokens[position], sourceCodeInfo);
-            if (tkn.t === 'Bracket') {
-                if (tkn[1] === openBracket)
-                    bracketCount += 1;
-                if (tkn[1] === closeBracket)
-                    bracketCount -= 1;
-            }
-        }
-        if (openBracket === '(' && position > 0) {
-            var tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1]);
-            if (tokenBeforeBracket.t === 'FnShorthand')
-                throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo);
-        }
-        return position;
-    }
-    function checkForward(tokenStream, position, dotTkn, sourceCodeInfo) {
-        var tkn = asNonUndefined(tokenStream.tokens[position + 1], sourceCodeInfo);
-        if (dotTkn.v === '.' && tkn.t !== 'Name')
-            throw new LitsError('# as a collection accessor must be followed by an name', sourceCodeInfo);
-        if (dotTkn.v === '#' && tkn.t !== 'Number')
-            throw new LitsError('# as a collection accessor must be followed by an integer', sourceCodeInfo);
-    }
-
-    function getSugar() {
-        return [applyCollectionAccessors];
     }
 
     var prefixInfixNamesRecord = {
@@ -8456,11 +8157,11 @@ var Playground = (function (exports) {
 
     var identifierRegExp = new RegExp(infixIdentifierCharacterClass);
     var identifierFirstCharacterRegExp = new RegExp(infixIdentifierFirstCharacterClass);
-    var whitespaceRegExp = /\s/;
-    var skipWhiteSpace = function (input, current) {
-        return whitespaceRegExp.test(input[current]) ? [1, undefined] : NO_MATCH;
+    var whitespaceRegExp$1 = /\s/;
+    var skipWhiteSpace$1 = function (input, current) {
+        return whitespaceRegExp$1.test(input[current]) ? [1, undefined] : NO_MATCH;
     };
-    var tokenizeReservedName = function (input, position, debugData) {
+    var tokenizeReservedSymbol$1 = function (input, position) {
         var e_1, _a;
         try {
             for (var _b = __values(Object.entries(prefixInfixNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -8472,8 +8173,8 @@ var Playground = (function (exports) {
                 var name_1 = input.substring(position, position + length_1);
                 if (name_1 === reservedName) {
                     if (forbidden)
-                        throw new LitsError("".concat(name_1, " is forbidden!"), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                    return [length_1, { t: 'ReservedName', v: reservedName, debugData: debugData }];
+                        throw new LitsError("".concat(name_1, " is forbidden!"));
+                    return [length_1, ['ReservedSymbol', reservedName]];
                 }
             }
         }
@@ -8486,8 +8187,7 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
-    // tokenizePattern('Name', nameRegExp, input, position, debugData)
-    var tokenizeName = function (input, position, debugData) {
+    var tokenizeSymbol$1 = function (input, position) {
         var initialPosition = position;
         var value = input[position];
         if (!value || !identifierFirstCharacterRegExp.test(value))
@@ -8499,31 +8199,31 @@ var Playground = (function (exports) {
             position += 1;
             char = input[position];
         }
-        return [position - initialPosition, { t: 'Name', v: value, debugData: debugData }];
+        return [position - initialPosition, ['Symbol', value]];
     };
-    var tokenizeOperator = function (input, position, debugData) {
+    var tokenizeInfixOperator = function (input, position) {
         var _a;
         var twoChars = input.slice(position, position + 2);
         var nextChar = input[position + 2];
         if (['==', '!=', '>=', '<=', '&&', '||'].includes(twoChars) && [' ', '\n', undefined].includes(nextChar)) {
-            return [2, { t: 'InfixOperator', v: twoChars, debugData: debugData }];
+            return [2, ['InfixOperator', twoChars]];
         }
         var oneChar = (_a = input[position]) !== null && _a !== void 0 ? _a : '';
         nextChar = input[position + 1];
         if (['<', '>', '+', '-', '*', '/', '%', '^', '!', '=', '&', '|'].includes(oneChar) && [' ', '\n', undefined].includes(nextChar)) {
-            return [1, { t: 'InfixOperator', v: oneChar, debugData: debugData }];
+            return [1, ['InfixOperator', oneChar]];
         }
         return NO_MATCH;
     };
-    var tokenizePostfixDirective = function (input, position, debugData) {
-        return tokenizeCharacter('Bracket', '@', input, position, debugData);
+    var tokenizePostfixDirective = function (input, position) {
+        return tokenizeSimpleToken('Postfix', '@', input, position);
     };
     // All tokenizers, order matters!
     var tokenizers = [
-        skipWhiteSpace,
+        skipWhiteSpace$1,
         tokenizeComment,
         tokenizePostfixDirective,
-        tokenizeOperator,
+        tokenizeInfixOperator,
         tokenizeLeftParen,
         tokenizeRightParen,
         tokenizeLeftBracket,
@@ -8532,9 +8232,370 @@ var Playground = (function (exports) {
         tokenizeRightCurly,
         tokenizeString,
         tokenizeNumber,
-        tokenizeReservedName,
-        tokenizeName,
+        tokenizeReservedSymbol$1,
+        tokenizeSymbol$1,
         tokenizeRegexpShorthand,
+        tokenizeCollectionAccessor,
+    ];
+    var newLineTokenizers$1 = [
+        tokenizeNewLine,
+        skipWhiteSpace$1,
+    ];
+    var commentTokenizers$1 = [
+        tokenizeNewLine,
+        skipWhiteSpace$1,
+        tokenizeComment,
+    ];
+
+    function getSourceCodeLine$1(input, lineNbr) {
+        return input.split(/\r\n|\r|\n/)[lineNbr];
+    }
+    function createSourceCodeInfo$1(input, position, filePath) {
+        var lines = input.substring(0, position + 1).split(/\r\n|\r|\n/);
+        var lastLine = lines[lines.length - 1];
+        var code = getSourceCodeLine$1(input, lines.length - 1);
+        var line = lines.length;
+        var column = lastLine.length;
+        return {
+            code: code,
+            position: {
+                line: line,
+                column: column,
+            },
+            filePath: filePath,
+        };
+    }
+    function getNextInfixToken(input, position, params) {
+        var e_1, _a, _b;
+        var debug = !!params.debug;
+        var initialPosition = position;
+        var _c = __read(readLeadingNewLineTokens$1(input, position, params), 2), leadingNewLineTokensLength = _c[0], leadingNewLineTokens = _c[1];
+        position += leadingNewLineTokensLength;
+        if (position >= input.length)
+            return [position - initialPosition, undefined];
+        var _d = __read(readLeadingCommentTokens$1(input, position, params), 2), leadingCommentTokensLength = _d[0], leadingCommentTokens = _d[1];
+        position += leadingCommentTokensLength;
+        if (position >= input.length)
+            return [position - initialPosition, undefined];
+        var leadingMetaTokens = __spreadArray(__spreadArray([], __read(leadingNewLineTokens), false), __read(leadingCommentTokens), false);
+        // Loop through all tokenizer until one matches
+        var debugData = debug
+            ? {
+                sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                metaTokens: { inlineCommentToken: null, leadingMetaTokens: leadingMetaTokens },
+            }
+            : undefined;
+        var tryNext = true;
+        while (tryNext) {
+            if (position >= input.length) {
+                return [position - initialPosition, undefined];
+            }
+            tryNext = false;
+            try {
+                for (var tokenizers_1 = (e_1 = void 0, __values(tokenizers)), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
+                    var tokenizer = tokenizers_1_1.value;
+                    var _e = __read(tokenizer(input, position), 2), nbrOfCharacters = _e[0], token = _e[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
+                    position += nbrOfCharacters;
+                    if (nbrOfCharacters === 0) {
+                        continue;
+                    }
+                    if (!token) {
+                        tryNext = true;
+                        break;
+                    }
+                    var inlineCommentToken = null;
+                    if (!isCommentToken(token)) {
+                        _b = __read(readInlineCommentToken$1(input, position, params), 2), position = _b[0], inlineCommentToken = _b[1];
+                    }
+                    var tokenDebugData = getTokenDebugData(token);
+                    if (tokenDebugData) {
+                        tokenDebugData.metaTokens.inlineCommentToken = inlineCommentToken;
+                    }
+                    if (!isCommentToken(token) || debug) {
+                        return [position - initialPosition, token];
+                    }
+                    tryNext = true;
+                    break;
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (tokenizers_1_1 && !tokenizers_1_1.done && (_a = tokenizers_1.return)) _a.call(tokenizers_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }
+        throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+    }
+    function readLeadingNewLineTokens$1(input, position, params) {
+        var e_2, _a;
+        var newLineTokens = [];
+        var initialPosition = position;
+        var tokenized = false;
+        while (position < input.length) {
+            tokenized = false;
+            var debugData = params.debug
+                ? {
+                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
+                }
+                : undefined;
+            try {
+                // Loop through all tokenizer until one matches
+                for (var newLineTokenizers_1 = (e_2 = void 0, __values(newLineTokenizers$1)), newLineTokenizers_1_1 = newLineTokenizers_1.next(); !newLineTokenizers_1_1.done; newLineTokenizers_1_1 = newLineTokenizers_1.next()) {
+                    var tokenizer = newLineTokenizers_1_1.value;
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
+                    // tokenizer matched
+                    if (nbrOfCharacters > 0) {
+                        tokenized = true;
+                        position += nbrOfCharacters;
+                        if (token) {
+                            assertNewLineToken(token);
+                            if (newLineTokens.length < 2)
+                                newLineTokens.push(token);
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (newLineTokenizers_1_1 && !newLineTokenizers_1_1.done && (_a = newLineTokenizers_1.return)) _a.call(newLineTokenizers_1);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+            if (!tokenized)
+                // All newline tokens read!
+                return [position - initialPosition, newLineTokens];
+        }
+        // Ending up here means that no non newline token was found. I.e. this cannot be leading newline tokens
+        return [position - initialPosition, []];
+    }
+    function readLeadingCommentTokens$1(input, position, params) {
+        var e_3, _a;
+        var initialPosition = position;
+        var commentTokens = [];
+        var tokenized = false;
+        while (position < input.length) {
+            tokenized = false;
+            var debugData = params.debug
+                ? {
+                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
+                }
+                : undefined;
+            try {
+                // Loop through all tokenizer until one matches
+                for (var commentTokenizers_1 = (e_3 = void 0, __values(commentTokenizers$1)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
+                    var tokenizer = commentTokenizers_1_1.value;
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
+                    // tokenizer matched
+                    if (nbrOfCharacters > 0) {
+                        tokenized = true;
+                        position += nbrOfCharacters;
+                        if (token) {
+                            assertMetaToken$1(token);
+                            // If a newline token is found, then this is not a leading comment
+                            if (isNewLineToken(token))
+                                return [0, []];
+                            commentTokens.push(token);
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (commentTokenizers_1_1 && !commentTokenizers_1_1.done && (_a = commentTokenizers_1.return)) _a.call(commentTokenizers_1);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            if (!tokenized)
+                // All metatokens read!
+                return [position - initialPosition, commentTokens];
+        }
+        // Ending up here means that no non meta token was found. I.e. this cannot be leading meta tokens
+        return [0, []];
+    }
+    function readInlineCommentToken$1(input, position, params) {
+        var e_4, _a;
+        var rollbackPosition = position;
+        var tokenized = false;
+        while (position < input.length) {
+            tokenized = false;
+            var debugData = params.debug
+                ? {
+                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
+                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
+                }
+                : undefined;
+            try {
+                // Loop through all tokenizer until one matches
+                for (var commentTokenizers_2 = (e_4 = void 0, __values(commentTokenizers$1)), commentTokenizers_2_1 = commentTokenizers_2.next(); !commentTokenizers_2_1.done; commentTokenizers_2_1 = commentTokenizers_2.next()) {
+                    var tokenizer = commentTokenizers_2_1.value;
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
+                    // tokenizer matched
+                    if (nbrOfCharacters > 0) {
+                        tokenized = true;
+                        position += nbrOfCharacters;
+                        if (token) {
+                            if (isNewLineToken(token))
+                                return [rollbackPosition, null];
+                            assertCommentToken(token);
+                            return [position, token];
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            finally {
+                try {
+                    if (commentTokenizers_2_1 && !commentTokenizers_2_1.done && (_a = commentTokenizers_2.return)) _a.call(commentTokenizers_2);
+                }
+                finally { if (e_4) throw e_4.error; }
+            }
+            if (!tokenized)
+                // All metatokens read! Return undefined if not debug mode
+                return [rollbackPosition, null];
+        }
+        // Ending up here means that no comment token was found and end of tokens reached
+        return [position, null];
+    }
+    function isMetaToken$1(token) {
+        return !!token && (isNewLineToken(token) || isCommentToken(token));
+    }
+    function assertMetaToken$1(token) {
+        if (!isMetaToken$1(token))
+            throw new LitsError("Expected meta token, got ".concat(token, "."));
+    }
+
+    var symbolRegExp = new RegExp(postfixIdentifierCharacterClass);
+    var whitespaceRegExp = /\s|,/;
+    var skipWhiteSpace = function (input, current) {
+        return whitespaceRegExp.test(input[current]) ? [1, undefined] : NO_MATCH;
+    };
+    var tokenizeFnShorthand = function (input, position) {
+        if (input.slice(position, position + 2) !== '#(')
+            return NO_MATCH;
+        return [1, ['FnShorthand']];
+    };
+    var tokenizeReservedSymbol = function (input, position) {
+        var e_1, _a;
+        try {
+            for (var _b = __values(Object.entries(postfixReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
+                var length_1 = reservedName.length;
+                var nextChar = input[position + length_1];
+                if (nextChar && symbolRegExp.test(nextChar)) {
+                    continue;
+                }
+                var symbol = input.substring(position, position + length_1);
+                if (symbol === reservedName) {
+                    if (forbidden)
+                        throw new LitsError("".concat(symbol, " is forbidden!"));
+                    return [length_1, ['ReservedSymbol', reservedName]];
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return NO_MATCH;
+    };
+    var tokenizeSymbol = function (input, position) {
+        var char = input[position];
+        var length = 0;
+        var value = '';
+        if (!char || !symbolRegExp.test(char))
+            return NO_MATCH;
+        while (char && symbolRegExp.test(char)) {
+            value += char;
+            length += 1;
+            char = input[position + length];
+        }
+        return [length, ['Symbol', value]];
+    };
+    var tokenizeStringShorthand = function (input, position) {
+        if (input[position] !== ':')
+            return NO_MATCH;
+        var symbolDescription = tokenizeSymbol(input, position + 1);
+        if (isNoMatch(symbolDescription)) {
+            return symbolDescription;
+        }
+        var symbolToken = asSymbolToken(symbolDescription[1]);
+        return [symbolDescription[0] + 1, ['StringShorthand', ":".concat(symbolToken[1])]];
+    };
+    var tokenizeModifier = function (input, position) {
+        var e_2, _a;
+        try {
+            for (var modifierNames_1 = __values(modifierNames), modifierNames_1_1 = modifierNames_1.next(); !modifierNames_1_1.done; modifierNames_1_1 = modifierNames_1.next()) {
+                var modifierName = modifierNames_1_1.value;
+                var length_2 = modifierName.length;
+                var charAfterModifier = input[position + length_2];
+                if (input.substring(position, position + length_2) === modifierName && (!charAfterModifier || !symbolRegExp.test(charAfterModifier))) {
+                    var value = modifierName;
+                    return [length_2, ['Modifier', value]];
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (modifierNames_1_1 && !modifierNames_1_1.done && (_a = modifierNames_1.return)) _a.call(modifierNames_1);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return NO_MATCH;
+    };
+    var tokenizeInfixDirective = function (input, position) {
+        if (input[position] !== '$') {
+            return NO_MATCH;
+        }
+        var nextChar = input[position + 1];
+        if (nextChar && symbolRegExp.test(nextChar)) {
+            return NO_MATCH;
+        }
+        return [1, ['Infix']];
+    };
+    // All tokenizers, order matters!
+    var postfixTokenizers = [
+        tokenizeInfixDirective,
+        skipWhiteSpace,
+        tokenizeComment,
+        tokenizeLeftParen,
+        tokenizeRightParen,
+        tokenizeLeftBracket,
+        tokenizeRightBracket,
+        tokenizeLeftCurly,
+        tokenizeRightCurly,
+        tokenizeString,
+        tokenizeStringShorthand,
+        tokenizeNumber,
+        tokenizeReservedSymbol,
+        tokenizeSymbol,
+        tokenizeModifier,
+        tokenizeRegexpShorthand,
+        tokenizeFnShorthand,
         tokenizeCollectionAccessor,
     ];
     var newLineTokenizers = [
@@ -8565,7 +8626,7 @@ var Playground = (function (exports) {
             filePath: filePath,
         };
     }
-    function getNextInfixToken(input, position, params) {
+    function getNextPostfixToken(input, position, params) {
         var e_1, _a, _b;
         var debug = !!params.debug;
         var initialPosition = position;
@@ -8592,9 +8653,12 @@ var Playground = (function (exports) {
             }
             tryNext = false;
             try {
-                for (var tokenizers_1 = (e_1 = void 0, __values(tokenizers)), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
-                    var tokenizer = tokenizers_1_1.value;
-                    var _e = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _e[0], token = _e[1];
+                for (var postfixTokenizers_1 = (e_1 = void 0, __values(postfixTokenizers)), postfixTokenizers_1_1 = postfixTokenizers_1.next(); !postfixTokenizers_1_1.done; postfixTokenizers_1_1 = postfixTokenizers_1.next()) {
+                    var tokenizer = postfixTokenizers_1_1.value;
+                    var _e = __read(tokenizer(input, position), 2), nbrOfCharacters = _e[0], token = _e[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
                     position += nbrOfCharacters;
                     if (nbrOfCharacters === 0) {
                         continue;
@@ -8607,8 +8671,9 @@ var Playground = (function (exports) {
                     if (!isCommentToken(token)) {
                         _b = __read(readInlineCommentToken(input, position, params), 2), position = _b[0], inlineCommentToken = _b[1];
                     }
-                    if (token.debugData) {
-                        token.debugData.metaTokens.inlineCommentToken = inlineCommentToken;
+                    var tokenDebugData = getTokenDebugData(token);
+                    if (tokenDebugData) {
+                        tokenDebugData.metaTokens.inlineCommentToken = inlineCommentToken;
                     }
                     if (!isCommentToken(token) || debug) {
                         return [position - initialPosition, token];
@@ -8620,7 +8685,7 @@ var Playground = (function (exports) {
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (tokenizers_1_1 && !tokenizers_1_1.done && (_a = tokenizers_1.return)) _a.call(tokenizers_1);
+                    if (postfixTokenizers_1_1 && !postfixTokenizers_1_1.done && (_a = postfixTokenizers_1.return)) _a.call(postfixTokenizers_1);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
@@ -8644,7 +8709,10 @@ var Playground = (function (exports) {
                 // Loop through all tokenizer until one matches
                 for (var newLineTokenizers_1 = (e_2 = void 0, __values(newLineTokenizers)), newLineTokenizers_1_1 = newLineTokenizers_1.next(); !newLineTokenizers_1_1.done; newLineTokenizers_1_1 = newLineTokenizers_1.next()) {
                     var tokenizer = newLineTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
                     // tokenizer matched
                     if (nbrOfCharacters > 0) {
                         tokenized = true;
@@ -8689,7 +8757,10 @@ var Playground = (function (exports) {
                 // Loop through all tokenizer until one matches
                 for (var commentTokenizers_1 = (e_3 = void 0, __values(commentTokenizers)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
                     var tokenizer = commentTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
                     // tokenizer matched
                     if (nbrOfCharacters > 0) {
                         tokenized = true;
@@ -8735,7 +8806,10 @@ var Playground = (function (exports) {
                 // Loop through all tokenizer until one matches
                 for (var commentTokenizers_2 = (e_4 = void 0, __values(commentTokenizers)), commentTokenizers_2_1 = commentTokenizers_2.next(); !commentTokenizers_2_1.done; commentTokenizers_2_1 = commentTokenizers_2.next()) {
                     var tokenizer = commentTokenizers_2_1.value;
-                    var _b = __read(tokenizer(input, position, debugData), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
+                    if (token && debugData) {
+                        addTokenDebugData(token, debugData);
+                    }
                     // tokenizer matched
                     if (nbrOfCharacters > 0) {
                         tokenized = true;
@@ -8765,25 +8839,94 @@ var Playground = (function (exports) {
         return [position, null];
     }
     function isMetaToken(token) {
-        return !!token && (token.t === 'NewLine' || token.t === 'Comment');
+        return !!token && (isNewLineToken(token) || isCommentToken(token));
     }
     function assertMetaToken(token) {
         if (!isMetaToken(token))
-            throw new LitsError("Expected meta token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
+            throw new LitsError("Expected meta token, got ".concat(token, "."));
     }
-    function isCommentToken(token) {
-        return !!token && token.t === 'Comment';
+
+    var applyCollectionAccessors = function (tokenStream) {
+        var dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken);
+        while (dotTokenIndex >= 0) {
+            applyCollectionAccessor(tokenStream, dotTokenIndex);
+            dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken);
+        }
+        return tokenStream;
+    };
+    function applyCollectionAccessor(tokenStream, position) {
+        var dotTkn = asCollectionAccessorToken(tokenStream.tokens[position]);
+        var debugData = getTokenDebugData(dotTkn);
+        var backPosition = getPositionBackwards(tokenStream, position, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+        checkForward(tokenStream, position, dotTkn, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+        tokenStream.tokens.splice(position, 1);
+        tokenStream.tokens.splice(backPosition, 0, ['LParen']);
+        var nextTkn = asToken(tokenStream.tokens[position + 1]);
+        if (dotTkn[1] === '.') {
+            assertSymbolToken(nextTkn);
+            var token = ['StringShorthand', ":".concat(nextTkn[1])];
+            tokenStream.tokens[position + 1] = token;
+            var nextTkndebugData = getTokenDebugData(nextTkn);
+            if (nextTkndebugData) {
+                addTokenDebugData(token, nextTkndebugData);
+            }
+        }
+        else {
+            assertNumberToken(nextTkn);
+            assertNumber(Number(nextTkn[1]), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { integer: true, nonNegative: true });
+            tokenStream.tokens[position + 1] = ['Number', nextTkn[1]];
+        }
+        tokenStream.tokens.splice(position + 2, 0, ['RParen']);
     }
-    function assertCommentToken(token) {
-        if (!isCommentToken(token))
-            throw new LitsError("Expected comment token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
+    function getPositionBackwards(tokenStream, position, sourceCodeInfo) {
+        var bracketCount = null;
+        if (position <= 0)
+            throw new LitsError('Array accessor # must come after a sequence', sourceCodeInfo);
+        var prevToken = asNonUndefined(tokenStream.tokens[position - 1]);
+        var openBracket = null;
+        var closeBracket = null;
+        if (isRParenToken(prevToken)) {
+            openBracket = 'LParen';
+            closeBracket = 'RParen';
+        }
+        else if (isRBracketToken(prevToken)) {
+            openBracket = 'LBracket';
+            closeBracket = 'RBracket';
+        }
+        else if (isRBraceToken(prevToken)) {
+            openBracket = 'LBrace';
+            closeBracket = 'RBrace';
+        }
+        while (bracketCount !== 0) {
+            bracketCount = bracketCount === null ? 0 : bracketCount;
+            position -= 1;
+            var tkn = asNonUndefined(tokenStream.tokens[position], sourceCodeInfo);
+            if (tkn[0] === openBracket) {
+                bracketCount += 1;
+            }
+            else if (tkn[0] === closeBracket) {
+                bracketCount -= 1;
+            }
+        }
+        if (openBracket === 'LParen' && position > 0) {
+            var tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1]);
+            if (isFnShorthandToken(tokenBeforeBracket))
+                throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo);
+        }
+        return position;
     }
-    function isNewLineToken(token) {
-        return !!token && token.t === 'NewLine';
+    function checkForward(tokenStream, position, dotTkn, sourceCodeInfo) {
+        var tkn = tokenStream.tokens[position + 1];
+        if (dotTkn[1] === '.' && !isSymbolToken(tkn)) {
+            throw new LitsError('# as a collection accessor must be followed by an name', sourceCodeInfo);
+        }
+        if (dotTkn[1] === '#' && isNumber(tkn)) {
+            throw new LitsError('# as a collection accessor must be followed by an integer', sourceCodeInfo);
+        }
     }
-    function assertNewLineToken(token) {
-        if (!isNewLineToken(token))
-            throw new LitsError("Expected newline token, got ".concat(token === null || token === void 0 ? void 0 : token.t, "."));
+
+    function getSugar() {
+        return [applyCollectionAccessors];
     }
 
     function tokenize$1(input, params) {
@@ -8803,10 +8946,10 @@ var Playground = (function (exports) {
             position += count;
             if (token) {
                 tokenStream.tokens.push(token);
-                if (token.t === 'Infix') {
+                if (isInfixToken(token)) {
                     infix = true;
                 }
-                if (token.t === 'Postfix') {
+                if (isPostfixToken(token)) {
                     infix = false;
                 }
             }
@@ -8820,17 +8963,14 @@ var Playground = (function (exports) {
     }
 
     function transformTokens(tokenStram, transformer) {
-        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) {
-                return __assign(__assign({}, token), { v: transformer(token.v) });
-            }) });
+        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return !isSymbolToken(token) ? token : [token[0], transformer(token[1])]; }) });
     }
 
     function isNoSpaceNeededBefore(token) {
-        switch (token.t) {
-            case 'Bracket':
-                return [')', ']'].includes(token.v);
+        switch (token[0]) {
+            case 'RParen':
+            case 'RBracket':
             case 'CollectionAccessor':
-                return true;
             case 'NewLine':
                 return true;
             default:
@@ -8838,15 +8978,12 @@ var Playground = (function (exports) {
         }
     }
     function isNoSpaceNeededAfter(token) {
-        switch (token.t) {
-            case 'Bracket':
-                return ['(', '['].includes(token.v);
+        switch (token[0]) {
+            case 'LParen':
+            case 'LBracket':
             case 'CollectionAccessor':
-                return true;
             case 'FnShorthand':
-                return true;
             case 'NewLine':
-                return true;
             case 'RegexpShorthand':
                 return true;
             default:
@@ -8862,11 +8999,24 @@ var Playground = (function (exports) {
         }, '');
     }
     function untokenizeToken(token) {
-        switch (token.t) {
-            case 'String':
-                return "\"".concat(token.v, "\"");
+        if (isValueToken(token)) {
+            return token[1];
+        }
+        assertSimpleToken(token);
+        var tokenType = token[0];
+        switch (tokenType) {
+            case 'LParen': return '(';
+            case 'RParen': return ')';
+            case 'LBracket': return '[';
+            case 'RBracket': return ']';
+            case 'LBrace': return '{';
+            case 'RBrace': return '}';
+            case 'NewLine': return '';
+            case 'Infix': return '$';
+            case 'Postfix': return '@';
+            case 'FnShorthand': return '#';
             default:
-                return token.v;
+                throw new Error("Unknown token type: ".concat(tokenType));
         }
     }
 

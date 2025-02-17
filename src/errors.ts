@@ -1,6 +1,6 @@
+import { getCodeMarker } from '../src/utils/debug/getCodeMarker'
 import type { Arr } from './interface'
 import type { SourceCodeInfo } from './tokenizer/interface'
-import { getCodeMarker, valueToString } from './utils/debug/debugTools'
 
 function getLitsErrorMessage(message: string, sourceCodeInfo?: SourceCodeInfo) {
   const filePathLine = sourceCodeInfo?.filePath ? `\n${sourceCodeInfo.filePath}` : ''
@@ -40,7 +40,7 @@ export class LitsError extends Error {
 
 export class NotAFunctionError extends LitsError {
   constructor(fn: unknown, sourceCodeInfo?: SourceCodeInfo) {
-    const message = `Expected function, got ${valueToString(fn)}.`
+    const message = `Expected function, got ${fn}.`
     super(message, sourceCodeInfo)
     Object.setPrototypeOf(this, NotAFunctionError.prototype)
     this.name = 'NotAFunctionError'

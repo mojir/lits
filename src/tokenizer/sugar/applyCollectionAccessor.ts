@@ -2,7 +2,7 @@ import { LitsError } from '../../errors'
 import { asNonUndefined } from '../../typeGuards'
 import { assertNumber, isNumber } from '../../typeGuards/number'
 import type { SourceCodeInfo, TokenStream } from '../interface'
-import type { CollectionAccessorToken, StringShorthandToken, StringToken, TokenType } from '../Token'
+import type { CollectionAccessorToken, StringShorthandToken, TokenType } from '../Token'
 import { addTokenDebugData, asCollectionAccessorToken, asToken, assertNumberToken, assertSymbolToken, getTokenDebugData, isCollectionAccessorToken, isFnShorthandToken, isRBraceToken, isRBracketToken, isRParenToken, isSymbolToken } from '../Token'
 import type { SugarFunction } from '.'
 

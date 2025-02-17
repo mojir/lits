@@ -106,6 +106,10 @@ export interface MetaTokens {
   inlineCommentToken: CommentToken | null // Comment on the same line as the token
 }
 
+export function isTokenType(type: string): type is TokenType {
+  return typeof type === 'string' && tokenTypes.includes(type as TokenType)
+}
+
 export function isToken(token?: Token): token is Token {
   return !!token
 }

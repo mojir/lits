@@ -4,7 +4,7 @@ import { LitsError } from '../errors'
 import type { Context } from '../evaluator/interface'
 import { Lits } from '../Lits/Lits'
 import type { SourceCodeInfo } from '../tokenizer/interface'
-import { getCodeMarker } from '../utils/debug/debugTools'
+import { getCodeMarker } from '../utils/debug/getCodeMarker'
 
 interface TestChunk {
   name: string

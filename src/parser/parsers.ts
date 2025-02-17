@@ -6,7 +6,7 @@ import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { TokenStream } from '../tokenizer/interface'
-import { asCommentToken, asLParenToken, asRParenToken, asRegexpShorthandToken, asReservedSymbolToken, asStringShorthandToken, asStringToken, asSymbolToken, asToken, assertLBracketToken, getTokenDebugData, isFnShorthandToken, isModifierToken, isRBraceToken, isRBracketToken, isRParenToken, isStringShorthandToken, isStringToken, isSymbolToken } from '../tokenizer/Token'
+import { asCommentToken, asLParenToken, asRParenToken, asRegexpShorthandToken, asReservedSymbolToken, asStringShorthandToken, asStringToken, asSymbolToken, asToken, assertLBracketToken, getTokenDebugData, isFnShorthandToken, isModifierToken, isRBraceToken, isRBracketToken, isRParenToken, isSymbolToken } from '../tokenizer/Token'
 import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
 import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
@@ -40,14 +40,46 @@ export function parseNumber(tokenStream: TokenStream, parseState: ParseState): N
 
 function parseString(tokenStream: TokenStream, parseState: ParseState): StringNode {
   const tkn = asStringToken(tokenStream.tokens[parseState.position++])
-  const value = tkn[1].substring(1, tkn[1].length - 1).replace(/\\{2}(.)|\\(.)/g, (_, doubleEscaped: string, singleEscaped: string) => {
-    // If it's a double escape (\\x), return \x
-    if (doubleEscaped !== undefined) {
-      return `\\${doubleEscaped}`
-    }
-    // If it's a single escape (\x), return x
-    return singleEscaped
-  })
+  const value = tkn[1].substring(1, tkn[1].length - 1)
+    .replace(
+      /(\\{2})|(\\")|(\\n)|(\\t)|(\\r)|(\\b)|(\\f)|\\(.)/g,
+      (
+        _,
+        backslash: string,
+        doubleQuote: string,
+        newline: string,
+        tab: string,
+        carriageReturn: string,
+        backspace: string,
+        formFeed: string,
+        normalChar: string,
+      ) => {
+        // If it's a double escape (\\x), return \x
+        if (backslash) {
+          return '\\'
+        }
+        // If it's a special character (\n, \t, \r, \b, \f), return the special character
+        else if (newline) {
+          return '\n'
+        }
+        else if (tab) {
+          return '\t'
+        }
+        else if (carriageReturn) {
+          return '\r'
+        }
+        else if (backspace) {
+          return '\b'
+        }
+        else if (formFeed) {
+          return '\f'
+        }
+        else if (doubleQuote) {
+          return '"'
+        }
+        return normalChar
+      },
+    )
 
   return {
     t: AstNodeType.String,

@@ -1,7 +1,6 @@
-import { astNodeTypeName, isAstNodeType, isFunctionType, isTokenType } from '../../constants/constants'
+import { astNodeTypeName, isAstNodeType, isFunctionType } from '../../constants/constants'
 import type { AstNode, LitsFunction } from '../../parser/interface'
-import type { SourceCodeInfo } from '../../tokenizer/interface'
-import type { Token } from '../../tokenizer/Token'
+import { type Token, isTokenType } from '../../tokenizer/Token'
 import { FUNCTION_SYMBOL } from '../symbols'
 
 function isLitsFunction(func: unknown): func is LitsFunction {
@@ -44,13 +43,4 @@ export function valueToString(value: unknown): string {
     return value.toString()
 
   return JSON.stringify(value)
-}
-
-export function getCodeMarker(sourceCodeInfo: SourceCodeInfo): string {
-  if (!sourceCodeInfo.position || !sourceCodeInfo.code)
-    return ''
-
-  const leftPadding = sourceCodeInfo.position.column - 1
-  const rightPadding = sourceCodeInfo.code.length - leftPadding - 1
-  return `${' '.repeat(Math.max(leftPadding, 0))}^${' '.repeat(Math.max(rightPadding, 0))}`
 }

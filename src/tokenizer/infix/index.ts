@@ -1,4 +1,3 @@
-import { assertMetaToken } from '..'
 import { LitsError } from '../../errors'
 import type { SourceCodeInfo, TokenDescriptor, TokenizeParams } from '../interface'
 import { type CommentToken, type MetaToken, type NewLineToken, type Token, type TokenDebugData, addTokenDebugData, assertCommentToken, assertNewLineToken, getTokenDebugData, isCommentToken, isNewLineToken } from '../Token'
@@ -216,4 +215,13 @@ function readInlineCommentToken(input: string, position: number, params: Tokeniz
   }
   // Ending up here means that no comment token was found and end of tokens reached
   return [position, null]
+}
+
+function isMetaToken(token?: Token): token is MetaToken {
+  return !!token && (isNewLineToken(token) || isCommentToken(token))
+}
+
+export function assertMetaToken(token?: Token): asserts token is MetaToken {
+  if (!isMetaToken(token))
+    throw new LitsError(`Expected meta token, got ${token}.`)
 }

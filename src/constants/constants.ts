@@ -1,5 +1,3 @@
-import { type TokenType, tokenTypes } from '../tokenizer/Token'
-
 export enum AstNodeType {
   Number = 201,
   String = 202,
@@ -29,10 +27,6 @@ export const astNodeTypeName = new Map([
 
 export function isAstNodeType(type: unknown): type is AstNodeType {
   return typeof type === 'number' && astNodeTypeName.has(type)
-}
-
-export function isTokenType(type: string): type is TokenType {
-  return typeof type === 'string' && tokenTypes.includes(type as TokenType)
 }
 
 export enum FunctionType {
