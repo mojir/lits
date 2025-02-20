@@ -1,25 +1,11 @@
 import { LitsError } from '../../errors'
 import type { TokenDescriptor, Tokenizer } from '../interface'
-import type { CollectionAccessorToken, CommentToken, LBraceToken, LBracketToken, LParenToken, NumberToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, SimpleToken, StringToken } from '../Token'
+import type { LBraceToken, LBracketToken, LParenToken, NumberToken, RBraceToken, RBracketToken, RParenToken, SimpleToken, StringToken } from '../Token'
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
 
 export function isNoMatch(tokenDescriptor: TokenDescriptor<any>): tokenDescriptor is TokenDescriptor<never> {
   return tokenDescriptor[0] === 0
-}
-
-export const tokenizeComment: Tokenizer<CommentToken> = (input, position) => {
-  if (input[position] === ';') {
-    let length = 0
-    let value = ''
-    while (input[position + length] !== '\n' && position + length < input.length) {
-      value += input[position + length]
-      length += 1
-    }
-
-    return [length, ['Comment', value.trim()]]
-  }
-  return NO_MATCH
 }
 
 export const tokenizeLeftParen: Tokenizer<LParenToken> = (input, position) =>
@@ -62,38 +48,6 @@ export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   }
   value += '"' // closing quote
   return [length + 1, ['String', value]]
-}
-
-export const tokenizeCollectionAccessor: Tokenizer<CollectionAccessorToken> = (input, position) => {
-  const char = input[position]
-  if (char !== '.' && char !== '#')
-    return NO_MATCH
-
-  return [1, ['CollectionAccessor', char]]
-}
-
-export const tokenizeRegexpShorthand: Tokenizer<RegexpShorthandToken> = (input, position) => {
-  if (input[position] !== '#')
-    return NO_MATCH
-
-  const [stringLength, token] = tokenizeString(input, position + 1)
-  if (!token)
-    return NO_MATCH
-
-  position += stringLength + 1
-  let length = stringLength + 1
-
-  let options = ''
-  while (input[position] === 'g' || input[position] === 'i') {
-    if (options.includes(input[position]!)) {
-      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`)
-    }
-    options += input[position]!
-    length += 1
-    position += 1
-  }
-
-  return [length, ['RegexpShorthand', `#${token[1]}${options}`]]
 }
 
 const endOfNumberRegExp = /[\s)\]},#]/

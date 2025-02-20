@@ -132,8 +132,8 @@ describe('context', () => {
               },
             ],
             debugData: {
-              token: ['Symbol', 'pow'],
-              lastToken: ['Symbol', 'pow'],
+              token: ['PF_Symbol', 'pow'],
+              lastToken: ['PF_Symbol', 'pow'],
             },
           },
         ],

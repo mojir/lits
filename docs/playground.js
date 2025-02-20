@@ -737,8 +737,7 @@ var Playground = (function (exports) {
     function isTokenDebugData(tokenDebugData) {
         return (typeof tokenDebugData === 'object'
             && tokenDebugData !== null
-            && 'sourceCodeInfo' in tokenDebugData
-            && 'metaTokens' in tokenDebugData);
+            && 'sourceCodeInfo' in tokenDebugData);
     }
     function getTokenDebugData(token) {
         var debugData = token === null || token === void 0 ? void 0 : token.at(-1);
@@ -750,8 +749,31 @@ var Playground = (function (exports) {
         }
         token.push(debugData);
     }
-    var simpleTokenTypes = ['LParen', 'RParen', 'LBracket', 'RBracket', 'LBrace', 'RBrace', 'FnShorthand', 'NewLine', 'Infix', 'Postfix'];
-    var valueTokenTypes = ['Number', 'String', 'StringShorthand', 'Symbol', 'ReservedSymbol', 'Modifier', 'CollectionAccessor', 'Comment', 'InfixOperator', 'RegexpShorthand'];
+    var simpleTokenTypes = [
+        'FnShorthand',
+        'Infix',
+        'LBrace',
+        'LBracket',
+        'LParen',
+        'Postfix',
+        'RBrace',
+        'RBracket',
+        'RParen',
+    ];
+    var valueTokenTypes = [
+        'CollectionAccessor',
+        'Comment',
+        'InfixOperator',
+        'Modifier',
+        'Number',
+        'RegexpShorthand',
+        'ReservedSymbol',
+        'String',
+        'StringShorthand',
+        'Symbol',
+        'InfixWhitespace',
+        'PostfixWhitespace',
+    ];
     var tokenTypes = __spreadArray(__spreadArray([], __read(simpleTokenTypes), false), __read(valueTokenTypes), false);
     function isTokenType(type) {
         return typeof type === 'string' && tokenTypes.includes(type);
@@ -919,19 +941,17 @@ var Playground = (function (exports) {
         assertCommentToken(token);
         return token;
     }
-    function isNewLineToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'NewLine';
-    }
-    function assertNewLineToken(token) {
-        if (!isNewLineToken(token)) {
-            throwUnexpectedToken('LParen', token);
-        }
-    }
     function isInfixToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Infix';
     }
     function isPostfixToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Postfix';
+    }
+    function isInfixWhitespaceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'InfixWhitespace';
+    }
+    function isPostfixWhitespaceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PostfixWhitespace';
     }
     function throwUnexpectedToken(expected, actual) {
         throw new LitsError("Unexpected token: ".concat(actual, ", expected ").concat(expected));
@@ -7916,13 +7936,14 @@ var Playground = (function (exports) {
                 return parseComment(tokenStream, parseState);
             case 'CollectionAccessor':
             case 'Modifier':
-            case 'NewLine':
             case 'Infix':
             case 'Postfix':
             case 'InfixOperator':
             case 'RParen':
             case 'RBracket':
             case 'RBrace':
+            case 'InfixWhitespace':
+            case 'PostfixWhitespace':
                 break;
             /* v8 ignore next 2 */
             default:
@@ -7933,18 +7954,28 @@ var Playground = (function (exports) {
 
     function parse$1(tokenStream) {
         var _a;
+        var safeTokenStream = removeUnnecessaryTokens(tokenStream);
         var ast = {
             b: [],
-            hasDebugData: tokenStream.hasDebugData,
+            hasDebugData: safeTokenStream.hasDebugData,
         };
         var parseState = {
             position: 0,
-            infix: (_a = tokenStream.infix) !== null && _a !== void 0 ? _a : false,
+            infix: (_a = safeTokenStream.infix) !== null && _a !== void 0 ? _a : false,
         };
-        while (parseState.position < tokenStream.tokens.length) {
-            ast.b.push(parseToken(tokenStream, parseState));
+        while (parseState.position < safeTokenStream.tokens.length) {
+            ast.b.push(parseToken(safeTokenStream, parseState));
         }
         return ast;
+    }
+    function removeUnnecessaryTokens(tokenStream) {
+        var tokens = tokenStream.tokens.filter(function (token) {
+            if (isCommentToken(token) || isInfixWhitespaceToken(token) || isPostfixWhitespaceToken(token)) {
+                return false;
+            }
+            return true;
+        });
+        return __assign(__assign({}, tokenStream), { tokens: tokens });
     }
 
     var postfixIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
@@ -7955,12 +7986,6 @@ var Playground = (function (exports) {
     function isNoMatch(tokenDescriptor) {
         return tokenDescriptor[0] === 0;
     }
-    var newLineRegExp = /\n/;
-    var tokenizeNewLine = function (input, position) {
-        return newLineRegExp.test(input[position])
-            ? [1, ['NewLine']]
-            : NO_MATCH;
-    };
     var tokenizeComment = function (input, position) {
         if (input[position] === ';') {
             var length_1 = 0;
@@ -7969,8 +7994,6 @@ var Playground = (function (exports) {
                 value += input[position + length_1];
                 length_1 += 1;
             }
-            if (input[position + length_1] === '\n' && position + length_1 < input.length)
-                length_1 += 1;
             return [length_1, ['Comment', value.trim()]];
         }
         return NO_MATCH;
@@ -8158,8 +8181,20 @@ var Playground = (function (exports) {
     var identifierRegExp = new RegExp(infixIdentifierCharacterClass);
     var identifierFirstCharacterRegExp = new RegExp(infixIdentifierFirstCharacterClass);
     var whitespaceRegExp$1 = /\s/;
-    var skipWhiteSpace$1 = function (input, current) {
-        return whitespaceRegExp$1.test(input[current]) ? [1, undefined] : NO_MATCH;
+    var tokenizeInfixWhitespace = function (input, position) {
+        var char = input[position];
+        if (!char || !whitespaceRegExp$1.test(char)) {
+            return NO_MATCH;
+        }
+        var value = char;
+        position += 1;
+        char = input[position];
+        while (char && whitespaceRegExp$1.test(char)) {
+            value += char;
+            position += 1;
+            char = input[position];
+        }
+        return [value.length, ['InfixWhitespace', value]];
     };
     var tokenizeReservedSymbol$1 = function (input, position) {
         var e_1, _a;
@@ -8220,7 +8255,7 @@ var Playground = (function (exports) {
     };
     // All tokenizers, order matters!
     var tokenizers = [
-        skipWhiteSpace$1,
+        tokenizeInfixWhitespace,
         tokenizeComment,
         tokenizePostfixDirective,
         tokenizeInfixOperator,
@@ -8236,15 +8271,6 @@ var Playground = (function (exports) {
         tokenizeSymbol$1,
         tokenizeRegexpShorthand,
         tokenizeCollectionAccessor,
-    ];
-    var newLineTokenizers$1 = [
-        tokenizeNewLine,
-        skipWhiteSpace$1,
-    ];
-    var commentTokenizers$1 = [
-        tokenizeNewLine,
-        skipWhiteSpace$1,
-        tokenizeComment,
     ];
 
     function getSourceCodeLine$1(input, lineNbr) {
@@ -8266,23 +8292,13 @@ var Playground = (function (exports) {
         };
     }
     function getNextInfixToken(input, position, params) {
-        var e_1, _a, _b;
+        var e_1, _a;
         var debug = !!params.debug;
         var initialPosition = position;
-        var _c = __read(readLeadingNewLineTokens$1(input, position, params), 2), leadingNewLineTokensLength = _c[0], leadingNewLineTokens = _c[1];
-        position += leadingNewLineTokensLength;
-        if (position >= input.length)
-            return [position - initialPosition, undefined];
-        var _d = __read(readLeadingCommentTokens$1(input, position, params), 2), leadingCommentTokensLength = _d[0], leadingCommentTokens = _d[1];
-        position += leadingCommentTokensLength;
-        if (position >= input.length)
-            return [position - initialPosition, undefined];
-        var leadingMetaTokens = __spreadArray(__spreadArray([], __read(leadingNewLineTokens), false), __read(leadingCommentTokens), false);
         // Loop through all tokenizer until one matches
         var debugData = debug
             ? {
                 sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                metaTokens: { inlineCommentToken: null, leadingMetaTokens: leadingMetaTokens },
             }
             : undefined;
         var tryNext = true;
@@ -8294,7 +8310,7 @@ var Playground = (function (exports) {
             try {
                 for (var tokenizers_1 = (e_1 = void 0, __values(tokenizers)), tokenizers_1_1 = tokenizers_1.next(); !tokenizers_1_1.done; tokenizers_1_1 = tokenizers_1.next()) {
                     var tokenizer = tokenizers_1_1.value;
-                    var _e = __read(tokenizer(input, position), 2), nbrOfCharacters = _e[0], token = _e[1];
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
                     if (token && debugData) {
                         addTokenDebugData(token, debugData);
                     }
@@ -8306,19 +8322,7 @@ var Playground = (function (exports) {
                         tryNext = true;
                         break;
                     }
-                    var inlineCommentToken = null;
-                    if (!isCommentToken(token)) {
-                        _b = __read(readInlineCommentToken$1(input, position, params), 2), position = _b[0], inlineCommentToken = _b[1];
-                    }
-                    var tokenDebugData = getTokenDebugData(token);
-                    if (tokenDebugData) {
-                        tokenDebugData.metaTokens.inlineCommentToken = inlineCommentToken;
-                    }
-                    if (!isCommentToken(token) || debug) {
-                        return [position - initialPosition, token];
-                    }
-                    tryNext = true;
-                    break;
+                    return [position - initialPosition, token];
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -8331,164 +8335,23 @@ var Playground = (function (exports) {
         }
         throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
     }
-    function readLeadingNewLineTokens$1(input, position, params) {
-        var e_2, _a;
-        var newLineTokens = [];
-        var initialPosition = position;
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var newLineTokenizers_1 = (e_2 = void 0, __values(newLineTokenizers$1)), newLineTokenizers_1_1 = newLineTokenizers_1.next(); !newLineTokenizers_1_1.done; newLineTokenizers_1_1 = newLineTokenizers_1.next()) {
-                    var tokenizer = newLineTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    if (token && debugData) {
-                        addTokenDebugData(token, debugData);
-                    }
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            assertNewLineToken(token);
-                            if (newLineTokens.length < 2)
-                                newLineTokens.push(token);
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (newLineTokenizers_1_1 && !newLineTokenizers_1_1.done && (_a = newLineTokenizers_1.return)) _a.call(newLineTokenizers_1);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            if (!tokenized)
-                // All newline tokens read!
-                return [position - initialPosition, newLineTokens];
-        }
-        // Ending up here means that no non newline token was found. I.e. this cannot be leading newline tokens
-        return [position - initialPosition, []];
-    }
-    function readLeadingCommentTokens$1(input, position, params) {
-        var e_3, _a;
-        var initialPosition = position;
-        var commentTokens = [];
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var commentTokenizers_1 = (e_3 = void 0, __values(commentTokenizers$1)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
-                    var tokenizer = commentTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    if (token && debugData) {
-                        addTokenDebugData(token, debugData);
-                    }
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            assertMetaToken$1(token);
-                            // If a newline token is found, then this is not a leading comment
-                            if (isNewLineToken(token))
-                                return [0, []];
-                            commentTokens.push(token);
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
-            finally {
-                try {
-                    if (commentTokenizers_1_1 && !commentTokenizers_1_1.done && (_a = commentTokenizers_1.return)) _a.call(commentTokenizers_1);
-                }
-                finally { if (e_3) throw e_3.error; }
-            }
-            if (!tokenized)
-                // All metatokens read!
-                return [position - initialPosition, commentTokens];
-        }
-        // Ending up here means that no non meta token was found. I.e. this cannot be leading meta tokens
-        return [0, []];
-    }
-    function readInlineCommentToken$1(input, position, params) {
-        var e_4, _a;
-        var rollbackPosition = position;
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo$1(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var commentTokenizers_2 = (e_4 = void 0, __values(commentTokenizers$1)), commentTokenizers_2_1 = commentTokenizers_2.next(); !commentTokenizers_2_1.done; commentTokenizers_2_1 = commentTokenizers_2.next()) {
-                    var tokenizer = commentTokenizers_2_1.value;
-                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    if (token && debugData) {
-                        addTokenDebugData(token, debugData);
-                    }
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            if (isNewLineToken(token))
-                                return [rollbackPosition, null];
-                            assertCommentToken(token);
-                            return [position, token];
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
-            finally {
-                try {
-                    if (commentTokenizers_2_1 && !commentTokenizers_2_1.done && (_a = commentTokenizers_2.return)) _a.call(commentTokenizers_2);
-                }
-                finally { if (e_4) throw e_4.error; }
-            }
-            if (!tokenized)
-                // All metatokens read! Return undefined if not debug mode
-                return [rollbackPosition, null];
-        }
-        // Ending up here means that no comment token was found and end of tokens reached
-        return [position, null];
-    }
-    function isMetaToken$1(token) {
-        return !!token && (isNewLineToken(token) || isCommentToken(token));
-    }
-    function assertMetaToken$1(token) {
-        if (!isMetaToken$1(token))
-            throw new LitsError("Expected meta token, got ".concat(token, "."));
-    }
 
     var symbolRegExp = new RegExp(postfixIdentifierCharacterClass);
     var whitespaceRegExp = /\s|,/;
-    var skipWhiteSpace = function (input, current) {
-        return whitespaceRegExp.test(input[current]) ? [1, undefined] : NO_MATCH;
+    var tokenizePostfixWhitespace = function (input, position) {
+        var char = input[position];
+        if (!char || !whitespaceRegExp.test(char)) {
+            return NO_MATCH;
+        }
+        var value = char;
+        position += 1;
+        char = input[position];
+        while (char && whitespaceRegExp.test(char)) {
+            value += char;
+            position += 1;
+            char = input[position];
+        }
+        return [value.length, ['PostfixWhitespace', value]];
     };
     var tokenizeFnShorthand = function (input, position) {
         if (input.slice(position, position + 2) !== '#(')
@@ -8579,8 +8442,8 @@ var Playground = (function (exports) {
     };
     // All tokenizers, order matters!
     var postfixTokenizers = [
+        tokenizePostfixWhitespace,
         tokenizeInfixDirective,
-        skipWhiteSpace,
         tokenizeComment,
         tokenizeLeftParen,
         tokenizeRightParen,
@@ -8597,15 +8460,6 @@ var Playground = (function (exports) {
         tokenizeRegexpShorthand,
         tokenizeFnShorthand,
         tokenizeCollectionAccessor,
-    ];
-    var newLineTokenizers = [
-        tokenizeNewLine,
-        skipWhiteSpace,
-    ];
-    var commentTokenizers = [
-        tokenizeNewLine,
-        skipWhiteSpace,
-        tokenizeComment,
     ];
 
     function getSourceCodeLine(input, lineNbr) {
@@ -8627,23 +8481,13 @@ var Playground = (function (exports) {
         };
     }
     function getNextPostfixToken(input, position, params) {
-        var e_1, _a, _b;
+        var e_1, _a;
         var debug = !!params.debug;
         var initialPosition = position;
-        var _c = __read(readLeadingNewLineTokens(input, position, params), 2), leadingNewLineTokensLength = _c[0], leadingNewLineTokens = _c[1];
-        position += leadingNewLineTokensLength;
-        if (position >= input.length)
-            return [position - initialPosition, undefined];
-        var _d = __read(readLeadingCommentTokens(input, position, params), 2), leadingCommentTokensLength = _d[0], leadingCommentTokens = _d[1];
-        position += leadingCommentTokensLength;
-        if (position >= input.length)
-            return [position - initialPosition, undefined];
-        var leadingMetaTokens = __spreadArray(__spreadArray([], __read(leadingNewLineTokens), false), __read(leadingCommentTokens), false);
         // Loop through all tokenizer until one matches
         var debugData = debug
             ? {
                 sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
-                metaTokens: { inlineCommentToken: null, leadingMetaTokens: leadingMetaTokens },
             }
             : undefined;
         var tryNext = true;
@@ -8655,10 +8499,7 @@ var Playground = (function (exports) {
             try {
                 for (var postfixTokenizers_1 = (e_1 = void 0, __values(postfixTokenizers)), postfixTokenizers_1_1 = postfixTokenizers_1.next(); !postfixTokenizers_1_1.done; postfixTokenizers_1_1 = postfixTokenizers_1.next()) {
                     var tokenizer = postfixTokenizers_1_1.value;
-                    var _e = __read(tokenizer(input, position), 2), nbrOfCharacters = _e[0], token = _e[1];
-                    if (token && debugData) {
-                        addTokenDebugData(token, debugData);
-                    }
+                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
                     position += nbrOfCharacters;
                     if (nbrOfCharacters === 0) {
                         continue;
@@ -8667,19 +8508,10 @@ var Playground = (function (exports) {
                         tryNext = true;
                         break;
                     }
-                    var inlineCommentToken = null;
-                    if (!isCommentToken(token)) {
-                        _b = __read(readInlineCommentToken(input, position, params), 2), position = _b[0], inlineCommentToken = _b[1];
+                    if (debugData) {
+                        addTokenDebugData(token, debugData);
                     }
-                    var tokenDebugData = getTokenDebugData(token);
-                    if (tokenDebugData) {
-                        tokenDebugData.metaTokens.inlineCommentToken = inlineCommentToken;
-                    }
-                    if (!isCommentToken(token) || debug) {
-                        return [position - initialPosition, token];
-                    }
-                    tryNext = true;
-                    break;
+                    return [position - initialPosition, token];
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -8691,159 +8523,6 @@ var Playground = (function (exports) {
             }
         }
         throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-    }
-    function readLeadingNewLineTokens(input, position, params) {
-        var e_2, _a;
-        var newLineTokens = [];
-        var initialPosition = position;
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var newLineTokenizers_1 = (e_2 = void 0, __values(newLineTokenizers)), newLineTokenizers_1_1 = newLineTokenizers_1.next(); !newLineTokenizers_1_1.done; newLineTokenizers_1_1 = newLineTokenizers_1.next()) {
-                    var tokenizer = newLineTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    if (token && debugData) {
-                        addTokenDebugData(token, debugData);
-                    }
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            assertNewLineToken(token);
-                            if (newLineTokens.length < 2)
-                                newLineTokens.push(token);
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (newLineTokenizers_1_1 && !newLineTokenizers_1_1.done && (_a = newLineTokenizers_1.return)) _a.call(newLineTokenizers_1);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            if (!tokenized)
-                // All newline tokens read!
-                return [position - initialPosition, newLineTokens];
-        }
-        // Ending up here means that no non newline token was found. I.e. this cannot be leading newline tokens
-        return [position - initialPosition, []];
-    }
-    function readLeadingCommentTokens(input, position, params) {
-        var e_3, _a;
-        var initialPosition = position;
-        var commentTokens = [];
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var commentTokenizers_1 = (e_3 = void 0, __values(commentTokenizers)), commentTokenizers_1_1 = commentTokenizers_1.next(); !commentTokenizers_1_1.done; commentTokenizers_1_1 = commentTokenizers_1.next()) {
-                    var tokenizer = commentTokenizers_1_1.value;
-                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    if (token && debugData) {
-                        addTokenDebugData(token, debugData);
-                    }
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            assertMetaToken(token);
-                            // If a newline token is found, then this is not a leading comment
-                            if (isNewLineToken(token))
-                                return [0, []];
-                            commentTokens.push(token);
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
-            finally {
-                try {
-                    if (commentTokenizers_1_1 && !commentTokenizers_1_1.done && (_a = commentTokenizers_1.return)) _a.call(commentTokenizers_1);
-                }
-                finally { if (e_3) throw e_3.error; }
-            }
-            if (!tokenized)
-                // All metatokens read!
-                return [position - initialPosition, commentTokens];
-        }
-        // Ending up here means that no non meta token was found. I.e. this cannot be leading meta tokens
-        return [0, []];
-    }
-    function readInlineCommentToken(input, position, params) {
-        var e_4, _a;
-        var rollbackPosition = position;
-        var tokenized = false;
-        while (position < input.length) {
-            tokenized = false;
-            var debugData = params.debug
-                ? {
-                    sourceCodeInfo: createSourceCodeInfo(input, position, params.filePath),
-                    metaTokens: { inlineCommentToken: null, leadingMetaTokens: [] },
-                }
-                : undefined;
-            try {
-                // Loop through all tokenizer until one matches
-                for (var commentTokenizers_2 = (e_4 = void 0, __values(commentTokenizers)), commentTokenizers_2_1 = commentTokenizers_2.next(); !commentTokenizers_2_1.done; commentTokenizers_2_1 = commentTokenizers_2.next()) {
-                    var tokenizer = commentTokenizers_2_1.value;
-                    var _b = __read(tokenizer(input, position), 2), nbrOfCharacters = _b[0], token = _b[1];
-                    if (token && debugData) {
-                        addTokenDebugData(token, debugData);
-                    }
-                    // tokenizer matched
-                    if (nbrOfCharacters > 0) {
-                        tokenized = true;
-                        position += nbrOfCharacters;
-                        if (token) {
-                            if (isNewLineToken(token))
-                                return [rollbackPosition, null];
-                            assertCommentToken(token);
-                            return [position, token];
-                        }
-                        break;
-                    }
-                }
-            }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
-            finally {
-                try {
-                    if (commentTokenizers_2_1 && !commentTokenizers_2_1.done && (_a = commentTokenizers_2.return)) _a.call(commentTokenizers_2);
-                }
-                finally { if (e_4) throw e_4.error; }
-            }
-            if (!tokenized)
-                // All metatokens read! Return undefined if not debug mode
-                return [rollbackPosition, null];
-        }
-        // Ending up here means that no comment token was found and end of tokens reached
-        return [position, null];
-    }
-    function isMetaToken(token) {
-        return !!token && (isNewLineToken(token) || isCommentToken(token));
-    }
-    function assertMetaToken(token) {
-        if (!isMetaToken(token))
-            throw new LitsError("Expected meta token, got ".concat(token, "."));
     }
 
     var applyCollectionAccessors = function (tokenStream) {
@@ -8971,7 +8650,8 @@ var Playground = (function (exports) {
             case 'RParen':
             case 'RBracket':
             case 'CollectionAccessor':
-            case 'NewLine':
+            case 'PostfixWhitespace':
+            case 'InfixWhitespace':
                 return true;
             default:
                 return false;
@@ -8983,7 +8663,8 @@ var Playground = (function (exports) {
             case 'LBracket':
             case 'CollectionAccessor':
             case 'FnShorthand':
-            case 'NewLine':
+            case 'PostfixWhitespace':
+            case 'InfixWhitespace':
             case 'RegexpShorthand':
                 return true;
             default:
@@ -9011,7 +8692,6 @@ var Playground = (function (exports) {
             case 'RBracket': return ']';
             case 'LBrace': return '{';
             case 'RBrace': return '}';
-            case 'NewLine': return '';
             case 'Infix': return '$';
             case 'Postfix': return '@';
             case 'FnShorthand': return '#';

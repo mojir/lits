@@ -31,7 +31,7 @@ import {
 } from './astNode'
 
 describe('astNode type guards', () => {
-  const tkn: Token = ['Symbol', 'X']
+  const tkn: Token = ['PF_Symbol', 'X']
   const invalidAstNodes: unknown[] = [
     {
       tkn,
@@ -86,7 +86,7 @@ describe('astNode type guards', () => {
   const stringNode: StringNode = {
     t: AstNodeType.String,
     v: 'foo',
-    debugData: { token: ['Symbol', 'X'], lastToken: tkn },
+    debugData: { token: ['PF_Symbol', 'X'], lastToken: tkn },
     p: [],
     n: undefined,
   }
@@ -94,7 +94,7 @@ describe('astNode type guards', () => {
     t: AstNodeType.NormalExpression,
     p: [],
     n: 'object',
-    debugData: { token: ['Symbol', 'X'], lastToken: tkn },
+    debugData: { token: ['PF_Symbol', 'X'], lastToken: tkn },
   }
   const normalExpressionNodeWithoutName: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
@@ -106,7 +106,7 @@ describe('astNode type guards', () => {
         {
           t: AstNodeType.Number,
           v: 2,
-          debugData: { token: ['Symbol', 'X'], lastToken: tkn },
+          debugData: { token: ['PF_Symbol', 'X'], lastToken: tkn },
           p: [],
           n: undefined,
         },

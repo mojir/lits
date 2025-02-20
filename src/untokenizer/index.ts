@@ -5,9 +5,9 @@ function isNoSpaceNeededBefore(token: Token): boolean {
   switch (token[0]) {
     case 'RParen':
     case 'RBracket':
-    case 'CollectionAccessor':
-    case 'PostfixWhitespace':
-    case 'InfixWhitespace':
+    case 'PF_CollectionAccessor':
+    case 'PF_Whitespace':
+    case 'IF_Whitespace':
       return true
     default:
       return false
@@ -18,11 +18,11 @@ function isNoSpaceNeededAfter(token: Token): boolean {
   switch (token[0]) {
     case 'LParen':
     case 'LBracket':
-    case 'CollectionAccessor':
-    case 'FnShorthand':
-    case 'PostfixWhitespace':
-    case 'InfixWhitespace':
-    case 'RegexpShorthand':
+    case 'PF_CollectionAccessor':
+    case 'PF_FnShorthand':
+    case 'PF_Whitespace':
+    case 'IF_Whitespace':
+    case 'PF_RegexpShorthand':
       return true
     default:
       return false
@@ -51,9 +51,9 @@ function untokenizeToken(token: Token): string {
     case 'RBracket': return ']'
     case 'LBrace': return '{'
     case 'RBrace': return '}'
-    case 'Infix': return '$'
-    case 'Postfix': return '@'
-    case 'FnShorthand': return '#'
+    case 'PF_Infix': return '$'
+    case 'IF_Postfix': return '@'
+    case 'PF_FnShorthand': return '#'
 
     default:
       throw new Error(`Unknown token type: ${tokenType satisfies never}`)

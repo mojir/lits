@@ -2,7 +2,7 @@ import { LitsError } from '../../errors'
 import type { SourceCodeInfo, TokenDescriptor, TokenizeParams } from '../interface'
 import type { Token, TokenDebugData } from '../Token'
 import { addTokenDebugData } from '../Token'
-import { postfixTokenizers } from './tokenizers'
+import { postfixTokenizers } from './postfixTokenizers'
 
 function getSourceCodeLine(input: string, lineNbr: number): string {
   return input.split(/\r\n|\r|\n/)[lineNbr] as string

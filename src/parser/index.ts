@@ -1,7 +1,7 @@
 import type { TokenStream } from '../tokenizer/interface'
-import { isCommentToken, isInfixWhitespaceToken, isPostfixWhitespaceToken } from '../tokenizer/Token'
-import type { Ast, ParseState } from './interface'
-import { parseToken } from './parsers'
+import { isIF_WhitespaceToken, isPF_CommentToken, isPF_WhitespaceToken } from '../tokenizer/Token'
+import type { Ast, AstNode, ParseState } from './interface'
+import { parsePostfixToken } from './postfixTokenParsers'
 
 export function parse(tokenStream: TokenStream): Ast {
   const safeTokenStream = removeUnnecessaryTokens(tokenStream)
@@ -14,6 +14,7 @@ export function parse(tokenStream: TokenStream): Ast {
   const parseState: ParseState = {
     position: 0,
     infix: safeTokenStream.infix ?? false,
+    parseToken,
   }
 
   while (parseState.position < safeTokenStream.tokens.length) {
@@ -25,11 +26,19 @@ export function parse(tokenStream: TokenStream): Ast {
 
 function removeUnnecessaryTokens(tokenStream: TokenStream): TokenStream {
   const tokens = tokenStream.tokens.filter((token) => {
-    if (isCommentToken(token) || isInfixWhitespaceToken(token) || isPostfixWhitespaceToken(token)) {
+    if (isPF_CommentToken(token) || isIF_WhitespaceToken(token) || isPF_WhitespaceToken(token)) {
       return false
     }
     return true
   })
 
   return { ...tokenStream, tokens }
+}
+
+export function parseToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
+  // if (parseState.infix) {
+  //   return
+  // }
+
+  return parsePostfixToken(tokenStream, parseState)
 }

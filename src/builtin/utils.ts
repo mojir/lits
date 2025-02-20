@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { AstNode, BindingNode } from '../parser/interface'
-import { postfixReservedNamesRecord } from '../tokenizer/postfix/reservedNames'
+import { postfixReservedNamesRecord } from '../tokenizer/postfix/postfixReservedNames'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import type { Builtin } from './interface'
 import type { SpecialExpressionName } from '.'

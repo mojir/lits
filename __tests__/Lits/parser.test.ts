@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { parse } from '../../src/parser'
+import { parse, parseToken } from '../../src/parser'
 import { AstNodeType } from '../../src/constants/constants'
 import type { Ast } from '../../src/parser/interface'
-import { parseToken } from '../../src/parser/parsers'
 import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
-import type { CollectionAccessorToken } from '../../src/tokenizer/Token'
+import type { PF_CollectionAccessorToken } from '../../src/tokenizer/Token'
 
 const program = `
 (let [day (* 24 60 60 1000)]
@@ -192,11 +191,11 @@ describe('parser', () => {
       hasDebugData: false,
       infix: false,
       tokens: [
-        ['CollectionAccessor', ''] as unknown as CollectionAccessorToken,
-        ['Modifier', ''] as unknown as CollectionAccessorToken,
+        ['CollectionAccessor', ''] as unknown as PF_CollectionAccessorToken,
+        ['Modifier', ''] as unknown as PF_CollectionAccessorToken,
       ],
     }
-    expect(() => parseToken(tokenStream, { position: 0, infix: false })).toThrow()
-    expect(() => parseToken(tokenStream, { position: 0, infix: false })).toThrow()
+    expect(() => parseToken(tokenStream, { position: 0, infix: false, parseToken })).toThrow()
+    expect(() => parseToken(tokenStream, { position: 0, infix: false, parseToken })).toThrow()
   })
 })

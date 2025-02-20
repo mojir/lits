@@ -34,16 +34,16 @@ describe('tokenizer', () => {
     expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
-      tokens: [['String', '"Hi"'], ['PostfixWhitespace', ' '], ['Comment', ';This is a string']],
+      tokens: [['String', '"Hi"'], ['PF_Whitespace', ' '], ['PF_Comment', ';This is a string']],
     })
     expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
       infix: false,
       tokens: [
         ['String', '"Hi"'],
-        ['PostfixWhitespace', ' '],
-        ['Comment', ';This is a string'],
-        ['PostfixWhitespace', '\n'],
+        ['PF_Whitespace', ' '],
+        ['PF_Comment', ';This is a string'],
+        ['PF_Whitespace', '\n'],
         ['String', '"there"'],
       ],
     })
@@ -66,7 +66,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', '#"Hi"', {
+          ['PF_RegexpShorthand', '#"Hi"', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
           }],
         ],
@@ -76,7 +76,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', '#"Hi"g', {
+          ['PF_RegexpShorthand', '#"Hi"g', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
           }],
         ],
@@ -85,7 +85,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', '#"Hi"i', {
+          ['PF_RegexpShorthand', '#"Hi"i', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
           }],
         ],
@@ -94,7 +94,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', '#"Hi"gi', {
+          ['PF_RegexpShorthand', '#"Hi"gi', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
           }],
         ],
@@ -103,7 +103,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['RegexpShorthand', '#"Hi"ig', {
+          ['PF_RegexpShorthand', '#"Hi"ig', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
           }],
         ],
@@ -120,7 +120,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         infix: false,
         tokens: [
-          ['FnShorthand', {
+          ['PF_FnShorthand', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
           }],
           ['LParen', {

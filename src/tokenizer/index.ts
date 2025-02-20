@@ -2,7 +2,7 @@ import { getNextInfixToken } from './infix'
 import type { TokenStream, TokenizeParams } from './interface'
 import { getNextPostfixToken } from './postfix'
 import { getSugar } from './sugar'
-import { isInfixToken, isPostfixToken } from './Token'
+import { isIF_PostfixToken, isPF_InfixToken } from './Token'
 
 export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const debug = !!params.debug
@@ -23,10 +23,10 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
     position += count
     if (token) {
       tokenStream.tokens.push(token)
-      if (isInfixToken(token)) {
+      if (isPF_InfixToken(token)) {
         infix = true
       }
-      if (isPostfixToken(token)) {
+      if (isIF_PostfixToken(token)) {
         infix = false
       }
     }

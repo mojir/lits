@@ -2,21 +2,21 @@ import { LitsError } from '../../errors'
 import { asNonUndefined } from '../../typeGuards'
 import { assertNumber, isNumber } from '../../typeGuards/number'
 import type { SourceCodeInfo, TokenStream } from '../interface'
-import type { CollectionAccessorToken, StringShorthandToken, TokenType } from '../Token'
-import { addTokenDebugData, asCollectionAccessorToken, asToken, assertNumberToken, assertSymbolToken, getTokenDebugData, isCollectionAccessorToken, isFnShorthandToken, isRBraceToken, isRBracketToken, isRParenToken, isSymbolToken } from '../Token'
+import type { PF_CollectionAccessorToken, PF_StringShorthandToken } from '../Token'
+import { addTokenDebugData, asPF_CollectionAccessorToken, asToken, assertNumberToken, assertPF_SymbolToken, getTokenDebugData, isPF_CollectionAccessorToken, isPF_FnShorthandToken, isPF_SymbolToken, isRBraceToken, isRBracketToken, isRParenToken } from '../Token'
 import type { SugarFunction } from '.'
 
 export const applyCollectionAccessors: SugarFunction = (tokenStream) => {
-  let dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken)
+  let dotTokenIndex = tokenStream.tokens.findIndex(isPF_CollectionAccessorToken)
   while (dotTokenIndex >= 0) {
     applyCollectionAccessor(tokenStream, dotTokenIndex)
-    dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken)
+    dotTokenIndex = tokenStream.tokens.findIndex(isPF_CollectionAccessorToken)
   }
   return tokenStream
 }
 
 function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
-  const dotTkn = asCollectionAccessorToken(tokenStream.tokens[position])
+  const dotTkn = asPF_CollectionAccessorToken(tokenStream.tokens[position])
   const debugData = getTokenDebugData(dotTkn)
   const backPosition = getPositionBackwards(tokenStream, position, debugData?.sourceCodeInfo)
   checkForward(tokenStream, position, dotTkn, debugData?.sourceCodeInfo)
@@ -25,8 +25,8 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
   tokenStream.tokens.splice(backPosition, 0, ['LParen'])
   const nextTkn = asToken(tokenStream.tokens[position + 1])
   if (dotTkn[1] === '.') {
-    assertSymbolToken(nextTkn)
-    const token: StringShorthandToken = ['StringShorthand', `:${nextTkn[1]}`]
+    assertPF_SymbolToken(nextTkn)
+    const token: PF_StringShorthandToken = ['PF_StringShorthand', `:${nextTkn[1]}`]
     tokenStream.tokens[position + 1] = token
 
     const nextTkndebugData = getTokenDebugData(nextTkn)
@@ -49,8 +49,8 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
     throw new LitsError('Array accessor # must come after a sequence', sourceCodeInfo)
 
   const prevToken = asNonUndefined(tokenStream.tokens[position - 1])
-  let openBracket: 'LParen' | 'LBracket' | 'LBrace' | null = null satisfies TokenType | null
-  let closeBracket: 'RParen' | 'RBracket' | 'RBrace' | null = null satisfies TokenType | null
+  let openBracket: 'LParen' | 'LBracket' | 'LBrace' | null = null
+  let closeBracket: 'RParen' | 'RBracket' | 'RBrace' | null = null
 
   if (isRParenToken(prevToken)) {
     openBracket = 'LParen'
@@ -78,7 +78,7 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
   }
   if (openBracket === 'LParen' && position > 0) {
     const tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1])
-    if (isFnShorthandToken(tokenBeforeBracket))
+    if (isPF_FnShorthandToken(tokenBeforeBracket))
       throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo)
   }
   return position
@@ -87,12 +87,12 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
 function checkForward(
   tokenStream: TokenStream,
   position: number,
-  dotTkn: CollectionAccessorToken,
+  dotTkn: PF_CollectionAccessorToken,
   sourceCodeInfo: SourceCodeInfo | undefined,
 ) {
   const tkn = tokenStream.tokens[position + 1]
 
-  if (dotTkn[1] === '.' && !isSymbolToken(tkn)) {
+  if (dotTkn[1] === '.' && !isPF_SymbolToken(tkn)) {
     throw new LitsError('# as a collection accessor must be followed by an name', sourceCodeInfo)
   }
 

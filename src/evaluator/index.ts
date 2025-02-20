@@ -9,7 +9,7 @@ import type {
 } from '../parser/interface'
 import type { SpecialExpressionNode } from '../builtin'
 import { builtin } from '../builtin'
-import { postfixReservedNamesRecord } from '../tokenizer/postfix/reservedNames'
+import { postfixReservedNamesRecord } from '../tokenizer/postfix/postfixReservedNames'
 import { toAny } from '../utils'
 import type { Any, Arr, Obj } from '../interface'
 import type { SourceCodeInfo } from '../tokenizer/interface'

@@ -28,62 +28,198 @@ export function addTokenDebugData(token: Token, debugData: TokenDebugData): void
   ;(token as unknown[]).push(debugData)
 }
 
-export const simpleTokenTypes = [
-  'FnShorthand',
-  'Infix',
+export const commonSimpleTokenTypes = [
   'LBrace',
   'LBracket',
   'LParen',
-  'Postfix',
   'RBrace',
   'RBracket',
   'RParen',
 ] as const
-export const valueTokenTypes = [
-  'CollectionAccessor',
-  'Comment',
-  'InfixOperator',
-  'Modifier',
-  'Number',
-  'RegexpShorthand',
-  'ReservedSymbol',
-  'String',
-  'StringShorthand',
-  'Symbol',
-  'InfixWhitespace',
-  'PostfixWhitespace',
-] as const
-export const tokenTypes = [...simpleTokenTypes, ...valueTokenTypes] as const
 
-export type SimpleTokenType = typeof simpleTokenTypes[number]
-export type ValueTokenType = typeof valueTokenTypes[number]
+const infixOnlySimpleTokenTypes = [
+  'IF_Postfix',
+] as const satisfies `IF_${string}`[]
+
+export const infixSimpleTokenTypes = [
+  ...commonSimpleTokenTypes,
+  ...infixOnlySimpleTokenTypes,
+] as const
+
+const postfixOnlySimpleTokenTypes = [
+  'PF_FnShorthand',
+  'PF_Infix',
+] as const satisfies `PF_${string}`[]
+
+export const postfixSimpleTokenTypes = [
+  ...commonSimpleTokenTypes,
+  ...postfixOnlySimpleTokenTypes,
+] as const
+
+export const commomValueTokenTypes = [
+  'Number',
+  'String',
+] as const
+
+const infixOnlyValueTokenTypes = [
+  'IF_Whitespace',
+  'IF_Operator',
+  'IF_Symbol',
+  'IF_ReservedSymbol',
+  'IF_SingleLineComment',
+  'IF_MultiLineComment',
+] as const satisfies `IF_${string}`[]
+
+export const infixValueTokenTypes = [
+  ...commomValueTokenTypes,
+  ...infixOnlyValueTokenTypes,
+] as const
+
+const postfixOnlyValueTokenTypes = [
+  'PF_Modifier',
+  'PF_StringShorthand',
+  'PF_Symbol',
+  'PF_ReservedSymbol',
+  'PF_RegexpShorthand',
+  'PF_CollectionAccessor',
+  'PF_Comment',
+  'PF_Whitespace',
+] as const satisfies `PF_${string}`[]
+
+export const postfixValueTokenTypes = [
+  ...commomValueTokenTypes,
+  ...postfixOnlyValueTokenTypes,
+] as const
+
+export const infixTokenTypes = [
+  ...infixSimpleTokenTypes,
+  ...infixValueTokenTypes,
+] as const
+
+export const postfixTokenTypes = [
+  ...postfixSimpleTokenTypes,
+  ...postfixValueTokenTypes,
+] as const
+
+export const simpleTokenTypes = [
+  ...commonSimpleTokenTypes,
+  ...infixOnlySimpleTokenTypes,
+  ...postfixOnlySimpleTokenTypes,
+] as const
+
+export const valueTokenTypes = [
+  ...commomValueTokenTypes,
+  ...infixOnlyValueTokenTypes,
+  ...postfixOnlyValueTokenTypes,
+] as const
+
+export const tokenTypes = [
+  ...commonSimpleTokenTypes,
+  ...infixOnlySimpleTokenTypes,
+  ...postfixOnlySimpleTokenTypes,
+  ...commomValueTokenTypes,
+  ...infixOnlyValueTokenTypes,
+  ...postfixOnlyValueTokenTypes,
+] as const
+
+export const infixOperators = [
+  '**', // exponentiation
+
+  '*', // multiplication
+  '/', // division
+  '%', // remainder
+
+  '+', // addition
+  '-', // subtraction
+
+  '<<', // left shift
+  '>>', // signed right shift
+  '>>>', // unsigned right shift
+
+  '<', // less than
+  '<=', // less than or equal
+  '>', // greater than
+  '>=', // greater than or equal
+
+  '==', // equal
+  '!=', // not equal
+
+  '&', // bitwise AND
+  '^', // bitwise XOR
+  '|', // bitwise OR
+
+  '&&', // logical AND
+  '||', // logical OR
+  '??', // nullish coalescing
+
+] as const
+
+export type InfixOperator = typeof infixOperators[number]
+
+export function isInfixOperator(operator: string): operator is InfixOperator {
+  return infixOperators.includes(operator as InfixOperator)
+}
+export function assertInfixOperator(operator: string): asserts operator is InfixOperator {
+  if (!isInfixOperator(operator)) {
+    throw new LitsError(`Expected infix operator, got ${operator}`)
+  }
+}
+export function asInfixOperator(operator: string): InfixOperator {
+  assertInfixOperator(operator)
+  return operator
+}
+
+type CommonSimpleTokenType = typeof commonSimpleTokenTypes[number]
+type InfixSimpleTokenType = typeof infixSimpleTokenTypes[number]
+type PostfixSimpleTokenType = typeof postfixSimpleTokenTypes[number]
+
+type CommonValueTokenType = typeof commomValueTokenTypes[number]
+type InfixValueTokenType = typeof infixValueTokenTypes[number]
+type PostfixValueTokenType = typeof postfixValueTokenTypes[number]
+
+type SimpleTokenType = InfixSimpleTokenType | PostfixSimpleTokenType
+type ValueTokenType = InfixValueTokenType | PostfixValueTokenType
 
 export type TokenType = typeof tokenTypes[number]
 
-type GenericSimpleToken<T extends SimpleTokenType> = [T] | [T, TokenDebugData]
-type GenericValueToken<T extends ValueTokenType, V extends string = string> = [T, V] | [T, V, TokenDebugData]
+type GenericCommonSimpleToken<T extends CommonSimpleTokenType> = [T] | [T, TokenDebugData]
+type GenericInfixSimpleToken<T extends Exclude<InfixSimpleTokenType, CommonSimpleTokenType>> = [T] | [T, TokenDebugData]
+type GenericPostfixSimpleToken<T extends Exclude<PostfixSimpleTokenType, CommonSimpleTokenType>> = [T] | [T, TokenDebugData]
 
-export type LParenToken = GenericSimpleToken<'LParen'>
-export type RParenToken = GenericSimpleToken<'RParen'>
-export type LBracketToken = GenericSimpleToken<'LBracket'>
-export type RBracketToken = GenericSimpleToken<'RBracket'>
-export type LBraceToken = GenericSimpleToken<'LBrace'>
-export type RBraceToken = GenericSimpleToken<'RBrace'>
-export type FnShorthandToken = GenericSimpleToken<'FnShorthand'>
-export type InfixToken = GenericSimpleToken<'Infix'>
-export type PostfixToken = GenericSimpleToken<'Postfix'>
-export type NumberToken = GenericValueToken<'Number'>
-export type StringToken = GenericValueToken<'String'>
-export type StringShorthandToken = GenericValueToken<'StringShorthand'>
-export type SymbolToken = GenericValueToken<'Symbol'>
-export type ReservedSymbolToken = GenericValueToken<'ReservedSymbol'>
-export type ModifierToken = GenericValueToken<'Modifier', ModifierName>
-export type RegexpShorthandToken = GenericValueToken<'RegexpShorthand'>
-export type CollectionAccessorToken = GenericValueToken<'CollectionAccessor', '.' | '#'>
-export type CommentToken = GenericValueToken<'Comment'>
-export type InfixWhitespaceToken = GenericValueToken<'InfixWhitespace'>
-export type PostfixWhitespaceToken = GenericValueToken<'PostfixWhitespace'>
-export type InfixOperatorToken = GenericValueToken<'InfixOperator', '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '&&' | '||' | '^' >
+type GenericCommonValueToken<T extends CommonValueTokenType, V extends string = string> = [T, V] | [T, V, TokenDebugData]
+type GenericInfixValueToken<T extends Exclude<InfixValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
+type GenericPostfixValueToken<T extends Exclude<PostfixValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
+
+export type LParenToken = GenericCommonSimpleToken<'LParen'>
+export type RParenToken = GenericCommonSimpleToken<'RParen'>
+export type LBracketToken = GenericCommonSimpleToken<'LBracket'>
+export type RBracketToken = GenericCommonSimpleToken<'RBracket'>
+export type LBraceToken = GenericCommonSimpleToken<'LBrace'>
+export type RBraceToken = GenericCommonSimpleToken<'RBrace'>
+
+export type IF_PostfixToken = GenericInfixSimpleToken<'IF_Postfix'>
+
+export type PF_FnShorthandToken = GenericPostfixSimpleToken<'PF_FnShorthand'>
+export type PF_InfixToken = GenericPostfixSimpleToken<'PF_Infix'>
+
+export type NumberToken = GenericCommonValueToken<'Number'>
+export type StringToken = GenericCommonValueToken<'String'>
+
+export type IF_WhitespaceToken = GenericInfixValueToken<'IF_Whitespace'>
+export type IF_OperatorToken = GenericInfixValueToken<'IF_Operator', InfixOperator>
+export type IF_SymbolToken = GenericInfixValueToken<'IF_Symbol'>
+export type IF_ReservedSymbolToken = GenericInfixValueToken<'IF_ReservedSymbol'>
+export type IF_SingleLineCommentToken = GenericInfixValueToken<'IF_SingleLineComment'>
+export type IF_MultiLineCommentToken = GenericInfixValueToken<'IF_MultiLineComment'>
+
+export type PF_ModifierToken = GenericPostfixValueToken<'PF_Modifier', ModifierName>
+export type PF_StringShorthandToken = GenericPostfixValueToken<'PF_StringShorthand'>
+export type PF_SymbolToken = GenericPostfixValueToken<'PF_Symbol'>
+export type PF_ReservedSymbolToken = GenericPostfixValueToken<'PF_ReservedSymbol'>
+export type PF_RegexpShorthandToken = GenericPostfixValueToken<'PF_RegexpShorthand'>
+export type PF_CollectionAccessorToken = GenericPostfixValueToken<'PF_CollectionAccessor', '.' | '#'>
+export type PF_CommentToken = GenericPostfixValueToken<'PF_Comment'>
+export type PF_WhitespaceToken = GenericPostfixValueToken<'PF_Whitespace'>
 
 export type SimpleToken =
   | LParenToken
@@ -92,23 +228,27 @@ export type SimpleToken =
   | RBracketToken
   | LBraceToken
   | RBraceToken
-  | FnShorthandToken
-  | InfixToken
-  | PostfixToken
+  | IF_PostfixToken
+  | PF_FnShorthandToken
+  | PF_InfixToken
 
 export type ValueToken =
   | NumberToken
   | StringToken
-  | StringShorthandToken
-  | SymbolToken
-  | ReservedSymbolToken
-  | ModifierToken
-  | RegexpShorthandToken
-  | CollectionAccessorToken
-  | CommentToken
-  | InfixOperatorToken
-  | InfixWhitespaceToken
-  | PostfixWhitespaceToken
+  | IF_WhitespaceToken
+  | IF_OperatorToken
+  | IF_SymbolToken
+  | IF_ReservedSymbolToken
+  | IF_SingleLineCommentToken
+  | IF_MultiLineCommentToken
+  | PF_ModifierToken
+  | PF_StringShorthandToken
+  | PF_SymbolToken
+  | PF_ReservedSymbolToken
+  | PF_RegexpShorthandToken
+  | PF_CollectionAccessorToken
+  | PF_CommentToken
+  | PF_WhitespaceToken
 
 export type Token =
   | SimpleToken
@@ -179,7 +319,7 @@ export function isRParenToken(token?: Token): token is RParenToken {
 }
 export function assertRParenToken(token?: Token): asserts token is RParenToken {
   if (!isRParenToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('RParen', token)
   }
 }
 export function asRParenToken(token?: Token): RParenToken {
@@ -192,7 +332,7 @@ export function isLBracketToken(token?: Token): token is LBracketToken {
 }
 export function assertLBracketToken(token?: Token): asserts token is LBracketToken {
   if (!isLBracketToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('LBracket', token)
   }
 }
 export function asLBracketToken(token?: Token): LBracketToken {
@@ -205,7 +345,7 @@ export function isRBracketToken(token?: Token): token is RBracketToken {
 }
 export function assertRBracketToken(token?: Token): asserts token is RBracketToken {
   if (!isRBracketToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('RBracket', token)
   }
 }
 export function asRBracketToken(token?: Token): RBracketToken {
@@ -218,7 +358,7 @@ export function isLBraceToken(token?: Token): token is LBraceToken {
 }
 export function assertLBraceToken(token?: Token): asserts token is LBraceToken {
   if (!isLBraceToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('LBrace', token)
   }
 }
 export function asLBraceToken(token?: Token): LBraceToken {
@@ -231,7 +371,7 @@ export function isRBraceToken(token?: Token): token is RBraceToken {
 }
 export function assertRBraceToken(token?: Token): asserts token is RBraceToken {
   if (!isRBraceToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('RBrace', token)
   }
 }
 export function asRBraceToken(token?: Token): RBraceToken {
@@ -244,7 +384,7 @@ export function isNumberToken(token?: Token): token is NumberToken {
 }
 export function assertNumberToken(token?: Token): asserts token is NumberToken {
   if (!isNumberToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('Number', token)
   }
 }
 export function asNumberToken(token?: Token): NumberToken {
@@ -257,7 +397,7 @@ export function isStringToken(token?: Token): token is StringToken {
 }
 export function assertStringToken(token?: Token): asserts token is StringToken {
   if (!isStringToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('String', token)
   }
 }
 export function asStringToken(token?: Token): StringToken {
@@ -265,172 +405,224 @@ export function asStringToken(token?: Token): StringToken {
   return token
 }
 
-export function isStringShorthandToken(token?: Token): token is StringShorthandToken {
-  return token?.[0] === 'StringShorthand'
+export function isPF_StringShorthandToken(token?: Token): token is PF_StringShorthandToken {
+  return token?.[0] === 'PF_StringShorthand'
 }
-export function assertStringShorthandToken(token?: Token): asserts token is StringShorthandToken {
-  if (!isStringShorthandToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_StringShorthandToken(token?: Token): asserts token is PF_StringShorthandToken {
+  if (!isPF_StringShorthandToken(token)) {
+    throwUnexpectedToken('PF_StringShorthand', token)
   }
 }
-export function asStringShorthandToken(token?: Token): StringShorthandToken {
-  assertStringShorthandToken(token)
+export function asPF_StringShorthandToken(token?: Token): PF_StringShorthandToken {
+  assertPF_StringShorthandToken(token)
   return token
 }
 
-export function isSymbolToken(token?: Token): token is SymbolToken {
-  return token?.[0] === 'Symbol'
+export function isPF_SymbolToken(token?: Token): token is PF_SymbolToken {
+  return token?.[0] === 'PF_Symbol'
 }
-export function assertSymbolToken(token?: Token): asserts token is SymbolToken {
-  if (!isSymbolToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_SymbolToken(token?: Token): asserts token is PF_SymbolToken {
+  if (!isPF_SymbolToken(token)) {
+    throwUnexpectedToken('PF_Symbol', token)
   }
 }
-export function asSymbolToken(token?: Token): SymbolToken {
-  assertSymbolToken(token)
+export function asPF_SymbolToken(token?: Token): PF_SymbolToken {
+  assertPF_SymbolToken(token)
   return token
 }
 
-export function isReservedSymbolToken(token?: Token): token is ReservedSymbolToken {
-  return token?.[0] === 'ReservedSymbol'
+export function isPF_ReservedSymbolToken(token?: Token): token is PF_ReservedSymbolToken {
+  return token?.[0] === 'PF_ReservedSymbol'
 }
-export function assertReservedSymbolToken(token?: Token): asserts token is ReservedSymbolToken {
-  if (!isReservedSymbolToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_ReservedSymbolToken(token?: Token): asserts token is PF_ReservedSymbolToken {
+  if (!isPF_ReservedSymbolToken(token)) {
+    throwUnexpectedToken('PF_ReservedSymbol', token)
   }
 }
-export function asReservedSymbolToken(token?: Token): ReservedSymbolToken {
-  assertReservedSymbolToken(token)
+export function asPF_ReservedSymbolToken(token?: Token): PF_ReservedSymbolToken {
+  assertPF_ReservedSymbolToken(token)
   return token
 }
 
-export function isModifierToken(token?: Token): token is ModifierToken {
-  return token?.[0] === 'Modifier'
+export function isIF_SymbolToken(token?: Token): token is IF_SymbolToken {
+  return token?.[0] === 'IF_Symbol'
 }
-export function assertModifierToken(token?: Token): asserts token is ModifierToken {
-  if (!isModifierToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertIF_SymbolToken(token?: Token): asserts token is IF_SymbolToken {
+  if (!isIF_SymbolToken(token)) {
+    throwUnexpectedToken('IF_Symbol', token)
   }
 }
-export function asModifierToken(token?: Token): ModifierToken {
-  assertModifierToken(token)
+export function asIF_SymbolToken(token?: Token): IF_SymbolToken {
+  assertIF_SymbolToken(token)
   return token
 }
 
-export function isRegexpShorthandToken(token?: Token): token is RegexpShorthandToken {
-  return token?.[0] === 'RegexpShorthand'
+export function isIF_ReservedSymbolToken(token?: Token): token is IF_ReservedSymbolToken {
+  return token?.[0] === 'IF_ReservedSymbol'
 }
-export function assertRegexpShorthandToken(token?: Token): asserts token is RegexpShorthandToken {
-  if (!isRegexpShorthandToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertIF_ReservedSymbolToken(token?: Token): asserts token is IF_ReservedSymbolToken {
+  if (!isIF_ReservedSymbolToken(token)) {
+    throwUnexpectedToken('IF_ReservedSymbol', token)
   }
 }
-export function asRegexpShorthandToken(token?: Token): RegexpShorthandToken {
-  assertRegexpShorthandToken(token)
+export function asIF_ReservedSymbolToken(token?: Token): IF_ReservedSymbolToken {
+  assertIF_ReservedSymbolToken(token)
   return token
 }
 
-export function isFnShorthandToken(token?: Token): token is FnShorthandToken {
-  return token?.[0] === 'FnShorthand'
+export function isPF_ModifierToken(token?: Token): token is PF_ModifierToken {
+  return token?.[0] === 'PF_Modifier'
 }
-export function assertFnShorthandToken(token?: Token): asserts token is FnShorthandToken {
-  if (!isFnShorthandToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_ModifierToken(token?: Token): asserts token is PF_ModifierToken {
+  if (!isPF_ModifierToken(token)) {
+    throwUnexpectedToken('PF_Modifier', token)
   }
 }
-export function asFnShorthandToken(token?: Token): FnShorthandToken {
-  assertFnShorthandToken(token)
+export function asPF_ModifierToken(token?: Token): PF_ModifierToken {
+  assertPF_ModifierToken(token)
   return token
 }
 
-export function isCollectionAccessorToken(token?: Token): token is CollectionAccessorToken {
-  return token?.[0] === 'CollectionAccessor'
+export function isPF_RegexpShorthandToken(token?: Token): token is PF_RegexpShorthandToken {
+  return token?.[0] === 'PF_RegexpShorthand'
 }
-export function assertCollectionAccessorToken(token?: Token): asserts token is CollectionAccessorToken {
-  if (!isCollectionAccessorToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_RegexpShorthandToken(token?: Token): asserts token is PF_RegexpShorthandToken {
+  if (!isPF_RegexpShorthandToken(token)) {
+    throwUnexpectedToken('PF_RegexpShorthand', token)
   }
 }
-export function asCollectionAccessorToken(token?: Token): CollectionAccessorToken {
-  assertCollectionAccessorToken(token)
+export function asPF_RegexpShorthandToken(token?: Token): PF_RegexpShorthandToken {
+  assertPF_RegexpShorthandToken(token)
   return token
 }
 
-export function isCommentToken(token?: Token): token is CommentToken {
-  return token?.[0] === 'Comment'
+export function isPF_FnShorthandToken(token?: Token): token is PF_FnShorthandToken {
+  return token?.[0] === 'PF_FnShorthand'
 }
-export function assertCommentToken(token?: Token): asserts token is CommentToken {
-  if (!isCommentToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_FnShorthandToken(token?: Token): asserts token is PF_FnShorthandToken {
+  if (!isPF_FnShorthandToken(token)) {
+    throwUnexpectedToken('PF_FnShorthand', token)
   }
 }
-export function asCommentToken(token?: Token): CommentToken {
-  assertCommentToken(token)
+export function asPF_FnShorthandToken(token?: Token): PF_FnShorthandToken {
+  assertPF_FnShorthandToken(token)
   return token
 }
 
-export function isInfixToken(token?: Token): token is InfixToken {
-  return token?.[0] === 'Infix'
+export function isPF_CollectionAccessorToken(token?: Token): token is PF_CollectionAccessorToken {
+  return token?.[0] === 'PF_CollectionAccessor'
 }
-export function assertInfixToken(token?: Token): asserts token is InfixToken {
-  if (!isInfixToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_CollectionAccessorToken(token?: Token): asserts token is PF_CollectionAccessorToken {
+  if (!isPF_CollectionAccessorToken(token)) {
+    throwUnexpectedToken('PF_CollectionAccessor', token)
   }
 }
-export function asInfixToken(token?: Token): InfixToken {
-  assertInfixToken(token)
+export function asPF_CollectionAccessorToken(token?: Token): PF_CollectionAccessorToken {
+  assertPF_CollectionAccessorToken(token)
   return token
 }
 
-export function isPostfixToken(token?: Token): token is PostfixToken {
-  return token?.[0] === 'Postfix'
+export function isPF_CommentToken(token?: Token): token is PF_CommentToken {
+  return token?.[0] === 'PF_Comment'
 }
-export function assertPostfixToken(token?: Token): asserts token is PostfixToken {
-  if (!isPostfixToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_CommentToken(token?: Token): asserts token is PF_CommentToken {
+  if (!isPF_CommentToken(token)) {
+    throwUnexpectedToken('PF_Comment', token)
   }
 }
-export function asPostfixToken(token?: Token): PostfixToken {
-  assertPostfixToken(token)
+export function asPF_CommentToken(token?: Token): PF_CommentToken {
+  assertPF_CommentToken(token)
   return token
 }
 
-export function isInfixOperatorToken(token?: Token): token is InfixOperatorToken {
-  return token?.[0] === 'InfixOperator'
+export function isIF_CommentToken(token?: Token): token is IF_SingleLineCommentToken {
+  return token?.[0] === 'IF_SingleLineComment'
 }
-export function assertInfixOperatorToken(token?: Token): asserts token is InfixOperatorToken {
-  if (!isInfixOperatorToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertIF_CommentToken(token?: Token): asserts token is IF_SingleLineCommentToken {
+  if (!isIF_CommentToken(token)) {
+    throwUnexpectedToken('IF_SingleLineComment', token)
   }
 }
-export function asInfixOperatorToken(token?: Token): InfixOperatorToken {
-  assertInfixOperatorToken(token)
+export function asIF_CommentToken(token?: Token): IF_SingleLineCommentToken {
+  assertIF_CommentToken(token)
   return token
 }
 
-export function isInfixWhitespaceToken(token?: Token): token is InfixWhitespaceToken {
-  return token?.[0] === 'InfixWhitespace'
+export function isIF_MultiLineCommentToken(token?: Token): token is IF_MultiLineCommentToken {
+  return token?.[0] === 'IF_MultiLineComment'
 }
-export function assertInfixWhitespaceToken(token?: Token): asserts token is InfixWhitespaceToken {
-  if (!isInfixWhitespaceToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertIF_MultiLineCommentToken(token?: Token): asserts token is IF_MultiLineCommentToken {
+  if (!isIF_MultiLineCommentToken(token)) {
+    throwUnexpectedToken('IF_MultiLineComment', token)
   }
 }
-export function asInfixWhitespaceToken(token?: Token): InfixWhitespaceToken {
-  assertInfixWhitespaceToken(token)
+export function asIF_MultiLineCommentToken(token?: Token): IF_MultiLineCommentToken {
+  assertIF_MultiLineCommentToken(token)
   return token
 }
 
-export function isPostfixWhitespaceToken(token?: Token): token is PostfixWhitespaceToken {
-  return token?.[0] === 'PostfixWhitespace'
+export function isPF_InfixToken(token?: Token): token is PF_InfixToken {
+  return token?.[0] === 'PF_Infix'
 }
-export function assertPostfixWhitespaceToken(token?: Token): asserts token is PostfixWhitespaceToken {
-  if (!isPostfixWhitespaceToken(token)) {
-    throwUnexpectedToken('LParen', token)
+export function assertPF_InfixToken(token?: Token): asserts token is PF_InfixToken {
+  if (!isPF_InfixToken(token)) {
+    throwUnexpectedToken('PF_Infix', token)
   }
 }
-export function asPostfixWhitespaceToken(token?: Token): PostfixWhitespaceToken {
-  assertPostfixWhitespaceToken(token)
+export function asPF_InfixToken(token?: Token): PF_InfixToken {
+  assertPF_InfixToken(token)
+  return token
+}
+
+export function isIF_PostfixToken(token?: Token): token is IF_PostfixToken {
+  return token?.[0] === 'IF_Postfix'
+}
+export function assertIF_PostfixToken(token?: Token): asserts token is IF_PostfixToken {
+  if (!isIF_PostfixToken(token)) {
+    throwUnexpectedToken('IF_Postfix', token)
+  }
+}
+export function asIF_PostfixToken(token?: Token): IF_PostfixToken {
+  assertIF_PostfixToken(token)
+  return token
+}
+
+export function isIF_OperatorToken(token?: Token): token is IF_OperatorToken {
+  return token?.[0] === 'IF_Operator'
+}
+export function assertIF_OperatorToken(token?: Token): asserts token is IF_OperatorToken {
+  if (!isIF_OperatorToken(token)) {
+    throwUnexpectedToken('IF_Operator', token)
+  }
+}
+export function asIF_OperatorToken(token?: Token): IF_OperatorToken {
+  assertIF_OperatorToken(token)
+  return token
+}
+
+export function isIF_WhitespaceToken(token?: Token): token is IF_WhitespaceToken {
+  return token?.[0] === 'IF_Whitespace'
+}
+export function assertIF_WhitespaceToken(token?: Token): asserts token is IF_WhitespaceToken {
+  if (!isIF_WhitespaceToken(token)) {
+    throwUnexpectedToken('IF_Whitespace', token)
+  }
+}
+export function asIF_WhitespaceToken(token?: Token): IF_WhitespaceToken {
+  assertIF_WhitespaceToken(token)
+  return token
+}
+
+export function isPF_WhitespaceToken(token?: Token): token is PF_WhitespaceToken {
+  return token?.[0] === 'PF_Whitespace'
+}
+export function assertPF_WhitespaceToken(token?: Token): asserts token is PF_WhitespaceToken {
+  if (!isPF_WhitespaceToken(token)) {
+    throwUnexpectedToken('PF_Whitespace', token)
+  }
+}
+export function asPF_WhitespaceToken(token?: Token): PF_WhitespaceToken {
+  assertPF_WhitespaceToken(token)
   return token
 }
 

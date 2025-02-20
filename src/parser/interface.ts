@@ -4,7 +4,7 @@ import type { Arity } from '../builtin/utils'
 import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
-import type { PostfixReservedName } from '../tokenizer/postfix/reservedNames'
+import type { PostfixReservedName } from '../tokenizer/postfix/postfixReservedNames'
 import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 import type { ModifierName, Token } from '../tokenizer/Token'
@@ -12,6 +12,7 @@ import type { ModifierName, Token } from '../tokenizer/Token'
 export interface ParseState {
   position: number
   infix: boolean
+  parseToken: ParseToken
 }
 export interface EvaluatedFunctionArguments {
   mandatoryArguments: string[]
