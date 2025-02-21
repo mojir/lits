@@ -1,6 +1,7 @@
 import { LitsError } from '../../errors'
 import type { TokenDescriptor, Tokenizer } from '../interface'
-import type { LBraceToken, LBracketToken, LParenToken, NumberToken, RBraceToken, RBracketToken, RParenToken, SimpleToken, StringToken } from '../Token'
+import type { SimpleToken } from '../tokens'
+import type { LBraceToken, LBracketToken, LParenToken, NumberToken, RBraceToken, RBracketToken, RParenToken, StringToken } from './commonTokens'
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
 

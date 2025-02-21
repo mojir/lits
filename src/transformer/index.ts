@@ -1,5 +1,5 @@
 import type { TokenStream } from '../tokenizer/interface'
-import { isPF_SymbolToken } from '../tokenizer/Token'
+import { isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
 
 export function transformTokens(tokenStram: TokenStream, transformer: (name: string) => string): TokenStream {
   return {

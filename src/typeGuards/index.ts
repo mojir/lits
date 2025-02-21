@@ -3,7 +3,7 @@ import type { UnknownRecord } from '../interface'
 import type { GenericNode } from '../parser/interface'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { SourceCodeInfo } from '../tokenizer/interface'
-import { getTokenDebugData } from '../tokenizer/Token'
+import { getTokenDebugData } from '../tokenizer/utils'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 

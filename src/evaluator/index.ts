@@ -23,7 +23,7 @@ import { asNonUndefined } from '../typeGuards'
 import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { assertString } from '../typeGuards/string'
 import { removeCommenNodes } from '../removeCommentNodes'
-import { getTokenDebugData } from '../tokenizer/Token'
+import { getTokenDebugData } from '../tokenizer/utils'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
 

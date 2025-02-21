@@ -2,7 +2,9 @@ import { AstNodeType } from '../../constants/constants'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { asToken, getTokenDebugData, isRParenToken } from '../../tokenizer/Token'
+import { isRParenToken } from '../../tokenizer/common/commonTokens'
+import { asToken } from '../../tokenizer/tokens'
+import { getTokenDebugData } from '../../tokenizer/utils'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface DoNode extends CommonSpecialExpressionNode<'do'> {}

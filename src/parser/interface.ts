@@ -7,7 +7,8 @@ import type { Any, Arr } from '../interface'
 import type { PostfixReservedName } from '../tokenizer/postfix/postfixReservedNames'
 import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
-import type { ModifierName, Token } from '../tokenizer/Token'
+import type { Token } from '../tokenizer/tokens'
+import type { ModifierName } from '../tokenizer/postfix/postfixTokens'
 
 export interface ParseState {
   position: number

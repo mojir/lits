@@ -1,7 +1,8 @@
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { asRParenToken, getTokenDebugData } from '../../tokenizer/Token'
+import { asRParenToken } from '../../tokenizer/common/commonTokens'
+import { getTokenDebugData } from '../../tokenizer/utils'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface OrNode extends CommonSpecialExpressionNode<'or'> {}

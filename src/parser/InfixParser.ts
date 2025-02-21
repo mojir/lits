@@ -1,7 +1,9 @@
+import { isLParenToken, isRBraceToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import type { IF_OperatorToken } from '../tokenizer/infix/infixTokens'
+import { isIF_OperatorToken } from '../tokenizer/infix/infixTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import type { IF_OperatorToken, Token } from '../tokenizer/Token'
-import { isIF_OperatorToken, isLParenToken, isRBraceToken, isRParenToken } from '../tokenizer/Token'
-import { parseNumber } from './commonTokenParsers'
+import type { Token } from '../tokenizer/tokens'
+import { parseNumber, parseString } from './commonTokenParsers'
 import type { AstNode, ParseState, ParseToken } from './interface'
 
 function getPrecedence(operator: IF_OperatorToken): number {

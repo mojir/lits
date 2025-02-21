@@ -15,7 +15,7 @@ export { type LitsFunction, type NativeJsFunction, type ExtraData } from './pars
 export type { Context } from './evaluator/interface'
 export type { Ast } from './parser/interface'
 export type { SourceCodeInfo } from './tokenizer/interface'
-export type { Token } from './tokenizer/Token'
+export type { Token } from './tokenizer/tokens'
 export { normalExpressionKeys, specialExpressionKeys } from './builtin'
 export { postfixReservedNames } from './tokenizer/postfix/postfixReservedNames'
 export { Lits } from './Lits/Lits'

@@ -1,5 +1,6 @@
+import { isIF_WhitespaceToken } from '../tokenizer/infix/infixTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import { isIF_WhitespaceToken, isPF_CommentToken, isPF_WhitespaceToken } from '../tokenizer/Token'
+import { isPF_CommentToken, isPF_WhitespaceToken } from '../tokenizer/postfix/postfixTokens'
 import type { Ast, AstNode, ParseState } from './interface'
 import { parsePostfixToken } from './postfixTokenParsers'
 

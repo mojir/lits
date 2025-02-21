@@ -3,7 +3,7 @@ import { builtin } from '../builtin'
 import type { Builtin } from '../builtin/interface'
 import { type ContextStack, createContextStack } from '../evaluator/ContextStack'
 import type { Ast, AstNode } from '../parser/interface'
-import type { Token } from '../tokenizer/Token'
+import type { Token } from '../tokenizer/tokens'
 import { calculateOutcomes } from './calculateOutcomes'
 import { findUnresolvedIdentifiers } from './findUnresolvedIdentifiers'
 

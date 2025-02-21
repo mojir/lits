@@ -1,6 +1,8 @@
 import { LitsError } from '../../errors'
 import type { SourceCodeInfo, TokenDescriptor, TokenizeParams } from '../interface'
-import { type Token, type TokenDebugData, addTokenDebugData } from '../Token'
+import type { Token } from '../tokens'
+import type { TokenDebugData } from '../utils'
+import { addTokenDebugData } from '../utils'
 import { tokenizers } from './infixTokenizers'
 
 function getSourceCodeLine(input: string, lineNbr: number): string {

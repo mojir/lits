@@ -4,7 +4,7 @@ import { AstNodeType } from '../../src/constants/constants'
 import type { Ast } from '../../src/parser/interface'
 import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
-import type { PF_CollectionAccessorToken } from '../../src/tokenizer/Token'
+import type { PF_CollectionAccessorToken } from '../../src/tokenizer/postfix/postfixTokens'
 
 const program = `
 (let [day (* 24 60 60 1000)]

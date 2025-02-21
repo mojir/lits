@@ -4,7 +4,7 @@ import type { ContextStack } from '../evaluator/ContextStack'
 import type { AstNode } from '../parser/interface'
 import { asNonUndefined } from '../typeGuards'
 import { evaluateAstNode } from '../evaluator'
-import { getTokenDebugData } from '../tokenizer/Token'
+import { getTokenDebugData } from '../tokenizer/utils'
 import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '.'
 
 export const findUnresolvedIdentifiers: FindUnresolvedIdentifiers = (ast, contextStack, builtin: Builtin) => {

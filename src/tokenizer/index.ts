@@ -1,8 +1,9 @@
 import { getNextInfixToken } from './infix'
+import { isIF_PostfixToken } from './infix/infixTokens'
 import type { TokenStream, TokenizeParams } from './interface'
 import { getNextPostfixToken } from './postfix'
+import { isPF_InfixToken } from './postfix/postfixTokens'
 import { getSugar } from './sugar'
-import { isIF_PostfixToken, isPF_InfixToken } from './Token'
 
 export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const debug = !!params.debug

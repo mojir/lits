@@ -1,6 +1,8 @@
 import { AstNodeType } from '../../constants/constants'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { asToken, getTokenDebugData, isRParenToken } from '../../tokenizer/Token'
+import { isRParenToken } from '../../tokenizer/common/commonTokens'
+import { asToken } from '../../tokenizer/tokens'
+import { getTokenDebugData } from '../../tokenizer/utils'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface CommentExpressionNode extends CommonSpecialExpressionNode<'comment'> {}

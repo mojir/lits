@@ -1,5 +1,5 @@
 import type { TokenStream } from '../tokenizer/interface'
-import { type Token, assertSimpleToken, isValueToken } from '../tokenizer/Token'
+import { type Token, assertSimpleToken, isValueToken } from '../tokenizer/tokens'
 
 function isNoSpaceNeededBefore(token: Token): boolean {
   switch (token[0]) {

@@ -9,7 +9,7 @@ import { FUNCTION_SYMBOL } from '../utils/symbols'
 import { FunctionType } from '../constants/constants'
 import { asNonUndefined } from '../typeGuards'
 import { isBuiltinFunction } from '../typeGuards/litsFunction'
-import { getTokenDebugData } from '../tokenizer/Token'
+import { getTokenDebugData } from '../tokenizer/utils'
 import { isContextEntry } from './interface'
 import type { Context, LookUpResult } from './interface'
 

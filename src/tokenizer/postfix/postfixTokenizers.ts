@@ -1,4 +1,5 @@
 import { LitsError } from '../../errors'
+import { postfixIdentifierCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
   isNoMatch,
@@ -12,10 +13,9 @@ import {
   tokenizeString,
 } from '../common/tokenizers'
 import type { Tokenizer } from '../interface'
-import type { ModifierName, PF_CollectionAccessorToken, PF_CommentToken, PF_FnShorthandToken, PF_InfixToken, PF_ModifierToken, PF_RegexpShorthandToken, PF_ReservedSymbolToken, PF_StringShorthandToken, PF_WhitespaceToken } from '../Token'
-import { asPF_SymbolToken, modifierNames } from '../Token'
-import { PF_symbolRegExp as pf_symbolRegExp, tokenizePF_Symbol } from '../tokenizePF_Symbol'
 import { postfixReservedNamesRecord } from './postfixReservedNames'
+import type { ModifierName, PF_CollectionAccessorToken, PF_CommentToken, PF_FnShorthandToken, PF_InfixToken, PF_ModifierToken, PF_RegexpShorthandToken, PF_ReservedSymbolToken, PF_StringShorthandToken, PF_SymbolToken, PF_WhitespaceToken } from './postfixTokens'
+import { asPF_SymbolToken, modifierNames } from './postfixTokens'
 
 const whitespaceRegExp = /\s|,/
 
@@ -47,6 +47,25 @@ export const tokenizePF_Whitespace: Tokenizer<PF_WhitespaceToken> = (input, posi
     char = input[position]
   }
   return [value.length, ['PF_Whitespace', value]]
+}
+
+export const pf_symbolRegExp = new RegExp(postfixIdentifierCharacterClass)
+
+export const tokenizePF_Symbol: Tokenizer<PF_SymbolToken> = (input, position) => {
+  let char = input[position]
+  let length = 0
+  let value = ''
+
+  if (!char || !pf_symbolRegExp.test(char))
+    return NO_MATCH
+
+  while (char && pf_symbolRegExp.test(char)) {
+    value += char
+    length += 1
+    char = input[position + length]
+  }
+
+  return [length, ['PF_Symbol', value]]
 }
 
 export const tokenizePF_FnShorthand: Tokenizer<PF_FnShorthandToken> = (input, position) => {

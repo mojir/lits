@@ -1,6 +1,8 @@
 import { AstNodeType } from '../constants/constants'
+import { asStringToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import { asStringToken, asToken, getTokenDebugData } from '../tokenizer/Token'
+import { asToken } from '../tokenizer/tokens'
+import { getTokenDebugData } from '../tokenizer/utils'
 import type {
   NumberNode,
   ParseState,

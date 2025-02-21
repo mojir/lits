@@ -749,32 +749,78 @@ var Playground = (function (exports) {
         }
         token.push(debugData);
     }
-    var simpleTokenTypes = [
-        'FnShorthand',
-        'Infix',
+    var commonSimpleTokenTypes = [
         'LBrace',
         'LBracket',
         'LParen',
-        'Postfix',
         'RBrace',
         'RBracket',
         'RParen',
     ];
-    var valueTokenTypes = [
-        'CollectionAccessor',
-        'Comment',
-        'InfixOperator',
-        'Modifier',
-        'Number',
-        'RegexpShorthand',
-        'ReservedSymbol',
-        'String',
-        'StringShorthand',
-        'Symbol',
-        'InfixWhitespace',
-        'PostfixWhitespace',
+    var infixOnlySimpleTokenTypes = [
+        'IF_Postfix',
     ];
-    var tokenTypes = __spreadArray(__spreadArray([], __read(simpleTokenTypes), false), __read(valueTokenTypes), false);
+    var infixSimpleTokenTypes = __spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(infixOnlySimpleTokenTypes), false);
+    var postfixOnlySimpleTokenTypes = [
+        'PF_FnShorthand',
+        'PF_Infix',
+    ];
+    var postfixSimpleTokenTypes = __spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(postfixOnlySimpleTokenTypes), false);
+    var commomValueTokenTypes = [
+        'Number',
+        'String',
+    ];
+    var infixOnlyValueTokenTypes = [
+        'IF_Whitespace',
+        'IF_Operator',
+        'IF_Symbol',
+        'IF_ReservedSymbol',
+        'IF_SingleLineComment',
+        'IF_MultiLineComment',
+    ];
+    var infixValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(infixOnlyValueTokenTypes), false);
+    var postfixOnlyValueTokenTypes = [
+        'PF_Modifier',
+        'PF_StringShorthand',
+        'PF_Symbol',
+        'PF_ReservedSymbol',
+        'PF_RegexpShorthand',
+        'PF_CollectionAccessor',
+        'PF_Comment',
+        'PF_Whitespace',
+    ];
+    var postfixValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(postfixOnlyValueTokenTypes), false);
+    __spreadArray(__spreadArray([], __read(infixSimpleTokenTypes), false), __read(infixValueTokenTypes), false);
+    __spreadArray(__spreadArray([], __read(postfixSimpleTokenTypes), false), __read(postfixValueTokenTypes), false);
+    var simpleTokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(infixOnlySimpleTokenTypes), false), __read(postfixOnlySimpleTokenTypes), false);
+    var valueTokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(infixOnlyValueTokenTypes), false), __read(postfixOnlyValueTokenTypes), false);
+    var tokenTypes = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(infixOnlySimpleTokenTypes), false), __read(postfixOnlySimpleTokenTypes), false), __read(commomValueTokenTypes), false), __read(infixOnlyValueTokenTypes), false), __read(postfixOnlyValueTokenTypes), false);
+    var infixOperators = [
+        '**', // exponentiation
+        '*', // multiplication
+        '/', // division
+        '%', // remainder
+        '+', // addition
+        '-', // subtraction
+        '<<', // left shift
+        '>>', // signed right shift
+        '>>>', // unsigned right shift
+        '<', // less than
+        '<=', // less than or equal
+        '>', // greater than
+        '>=', // greater than or equal
+        '==', // equal
+        '!=', // not equal
+        '&', // bitwise AND
+        '^', // bitwise XOR
+        '|', // bitwise OR
+        '&&', // logical AND
+        '||', // logical OR
+        '??', // nullish coalescing
+    ];
+    function isInfixOperator(operator) {
+        return infixOperators.includes(operator);
+    }
     function isTokenType(type) {
         return typeof type === 'string' && tokenTypes.includes(type);
     }
@@ -818,7 +864,7 @@ var Playground = (function (exports) {
     }
     function assertRParenToken(token) {
         if (!isRParenToken(token)) {
-            throwUnexpectedToken('LParen', token);
+            throwUnexpectedToken('RParen', token);
         }
     }
     function asRParenToken(token) {
@@ -830,7 +876,7 @@ var Playground = (function (exports) {
     }
     function assertLBracketToken(token) {
         if (!isLBracketToken(token)) {
-            throwUnexpectedToken('LParen', token);
+            throwUnexpectedToken('LBracket', token);
         }
     }
     function asLBracketToken(token) {
@@ -848,7 +894,7 @@ var Playground = (function (exports) {
     }
     function assertNumberToken(token) {
         if (!isNumberToken(token)) {
-            throwUnexpectedToken('LParen', token);
+            throwUnexpectedToken('Number', token);
         }
     }
     function isStringToken(token) {
@@ -856,102 +902,102 @@ var Playground = (function (exports) {
     }
     function assertStringToken(token) {
         if (!isStringToken(token)) {
-            throwUnexpectedToken('LParen', token);
+            throwUnexpectedToken('String', token);
         }
     }
     function asStringToken(token) {
         assertStringToken(token);
         return token;
     }
-    function isStringShorthandToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'StringShorthand';
+    function isPF_StringShorthandToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_StringShorthand';
     }
-    function assertStringShorthandToken(token) {
-        if (!isStringShorthandToken(token)) {
-            throwUnexpectedToken('LParen', token);
+    function assertPF_StringShorthandToken(token) {
+        if (!isPF_StringShorthandToken(token)) {
+            throwUnexpectedToken('PF_StringShorthand', token);
         }
     }
-    function asStringShorthandToken(token) {
-        assertStringShorthandToken(token);
+    function asPF_StringShorthandToken(token) {
+        assertPF_StringShorthandToken(token);
         return token;
     }
-    function isSymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Symbol';
+    function isPF_SymbolToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_Symbol';
     }
-    function assertSymbolToken(token) {
-        if (!isSymbolToken(token)) {
-            throwUnexpectedToken('LParen', token);
+    function assertPF_SymbolToken(token) {
+        if (!isPF_SymbolToken(token)) {
+            throwUnexpectedToken('PF_Symbol', token);
         }
     }
-    function asSymbolToken(token) {
-        assertSymbolToken(token);
+    function asPF_SymbolToken(token) {
+        assertPF_SymbolToken(token);
         return token;
     }
-    function isReservedSymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'ReservedSymbol';
+    function isPF_ReservedSymbolToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_ReservedSymbol';
     }
-    function assertReservedSymbolToken(token) {
-        if (!isReservedSymbolToken(token)) {
-            throwUnexpectedToken('LParen', token);
+    function assertPF_ReservedSymbolToken(token) {
+        if (!isPF_ReservedSymbolToken(token)) {
+            throwUnexpectedToken('PF_ReservedSymbol', token);
         }
     }
-    function asReservedSymbolToken(token) {
-        assertReservedSymbolToken(token);
+    function asPF_ReservedSymbolToken(token) {
+        assertPF_ReservedSymbolToken(token);
         return token;
     }
-    function isModifierToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Modifier';
+    function isPF_ModifierToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_Modifier';
     }
-    function isRegexpShorthandToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'RegexpShorthand';
+    function isPF_RegexpShorthandToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_RegexpShorthand';
     }
-    function assertRegexpShorthandToken(token) {
-        if (!isRegexpShorthandToken(token)) {
-            throwUnexpectedToken('LParen', token);
+    function assertPF_RegexpShorthandToken(token) {
+        if (!isPF_RegexpShorthandToken(token)) {
+            throwUnexpectedToken('PF_RegexpShorthand', token);
         }
     }
-    function asRegexpShorthandToken(token) {
-        assertRegexpShorthandToken(token);
+    function asPF_RegexpShorthandToken(token) {
+        assertPF_RegexpShorthandToken(token);
         return token;
     }
-    function isFnShorthandToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'FnShorthand';
+    function isPF_FnShorthandToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_FnShorthand';
     }
-    function isCollectionAccessorToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'CollectionAccessor';
+    function isPF_CollectionAccessorToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_CollectionAccessor';
     }
-    function assertCollectionAccessorToken(token) {
-        if (!isCollectionAccessorToken(token)) {
-            throwUnexpectedToken('LParen', token);
+    function assertPF_CollectionAccessorToken(token) {
+        if (!isPF_CollectionAccessorToken(token)) {
+            throwUnexpectedToken('PF_CollectionAccessor', token);
         }
     }
-    function asCollectionAccessorToken(token) {
-        assertCollectionAccessorToken(token);
+    function asPF_CollectionAccessorToken(token) {
+        assertPF_CollectionAccessorToken(token);
         return token;
     }
-    function isCommentToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Comment';
+    function isPF_CommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_Comment';
     }
-    function assertCommentToken(token) {
-        if (!isCommentToken(token)) {
-            throwUnexpectedToken('LParen', token);
+    function assertPF_CommentToken(token) {
+        if (!isPF_CommentToken(token)) {
+            throwUnexpectedToken('PF_Comment', token);
         }
     }
-    function asCommentToken(token) {
-        assertCommentToken(token);
+    function asPF_CommentToken(token) {
+        assertPF_CommentToken(token);
         return token;
     }
-    function isInfixToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Infix';
+    function isPF_InfixToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_Infix';
     }
-    function isPostfixToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Postfix';
+    function isIF_PostfixToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'IF_Postfix';
     }
-    function isInfixWhitespaceToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'InfixWhitespace';
+    function isIF_WhitespaceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'IF_Whitespace';
     }
-    function isPostfixWhitespaceToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'PostfixWhitespace';
+    function isPF_WhitespaceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_Whitespace';
     }
     function throwUnexpectedToken(expected, actual) {
         throw new LitsError("Unexpected token: ".concat(actual, ", expected ").concat(expected));
@@ -5722,7 +5768,7 @@ var Playground = (function (exports) {
             m: [],
         };
         var tkn = asToken(tokenStream.tokens[parseState.position]);
-        while (isModifierToken(tkn)) {
+        while (isPF_ModifierToken(tkn)) {
             var modifier = tkn[1];
             switch (modifier) {
                 case '&let':
@@ -7564,9 +7610,10 @@ var Playground = (function (exports) {
                 : undefined,
         };
     }
+
     function parseStringShorthand(tokenStream, parseState) {
         var _a;
-        var tkn = asStringShorthandToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asPF_StringShorthandToken(tokenStream.tokens[parseState.position++]);
         var value = tkn[1].substring(1);
         return {
             t: AstNodeType.String,
@@ -7580,7 +7627,7 @@ var Playground = (function (exports) {
     }
     function parseSymbol(tokenStream, parseState) {
         var _a;
-        var tkn = asSymbolToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asPF_SymbolToken(tokenStream.tokens[parseState.position++]);
         return {
             t: AstNodeType.Name,
             v: tkn[1],
@@ -7593,7 +7640,7 @@ var Playground = (function (exports) {
     }
     function parseReservedSymbol(tokenStream, parseState) {
         var _a;
-        var tkn = asReservedSymbolToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asPF_ReservedSymbolToken(tokenStream.tokens[parseState.position++]);
         return {
             t: AstNodeType.ReservedName,
             v: tkn[1],
@@ -7606,7 +7653,7 @@ var Playground = (function (exports) {
     }
     function parseComment(tokenStream, parseState) {
         var _a;
-        var tkn = asCommentToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asPF_CommentToken(tokenStream.tokens[parseState.position++]);
         return {
             t: AstNodeType.Comment,
             v: tkn[1],
@@ -7621,14 +7668,14 @@ var Playground = (function (exports) {
         var tkn = asToken(tokenStream.tokens[parseState.position]);
         var astNodes = [];
         while (!isRParenToken(tkn) && !isRBracketToken(tkn)) {
-            astNodes.push(parseToken(tokenStream, parseState));
+            astNodes.push(parseState.parseToken(tokenStream, parseState));
             tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         return astNodes;
     }
     var parseExpression = function (tokenStream, parseState) {
         var tkn = asToken(tokenStream.tokens[parseState.position + 1]);
-        if (isSymbolToken(tkn) && builtin.specialExpressions[tkn[1]])
+        if (isPF_SymbolToken(tkn) && builtin.specialExpressions[tkn[1]])
             return parseSpecialExpression(tokenStream, parseState);
         return parseNormalExpression(tokenStream, parseState);
     };
@@ -7638,7 +7685,7 @@ var Playground = (function (exports) {
         var tkn = asToken(tokenStream.tokens[parseState.position]);
         var params = [];
         while (!isRBracketToken(tkn)) {
-            params.push(parseToken(tokenStream, parseState));
+            params.push(parseState.parseToken(tokenStream, parseState));
             tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         parseState.position += 1;
@@ -7661,7 +7708,7 @@ var Playground = (function (exports) {
         var tkn = asToken(tokenStream.tokens[parseState.position]);
         var params = [];
         while (!isRBraceToken(tkn)) {
-            params.push(parseToken(tokenStream, parseState));
+            params.push(parseState.parseToken(tokenStream, parseState));
             tkn = asToken(tokenStream.tokens[parseState.position]);
         }
         parseState.position += 1;
@@ -7681,7 +7728,7 @@ var Playground = (function (exports) {
     }
     function parseRegexpShorthand(tokenStream, parseState) {
         var _a, _b, _c;
-        var tkn = asRegexpShorthandToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asPF_RegexpShorthandToken(tokenStream.tokens[parseState.position++]);
         var endStringPosition = tkn[1].lastIndexOf('"');
         var regexpString = tkn[1].substring(2, endStringPosition);
         var optionsString = tkn[1].substring(endStringPosition + 1);
@@ -7732,7 +7779,7 @@ var Playground = (function (exports) {
         var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
         for (var pos = startPos; pos < parseState.position - 1; pos += 1) {
             var tkn = asToken(tokenStream.tokens[pos]);
-            if (isSymbolToken(tkn)) {
+            if (isPF_SymbolToken(tkn)) {
                 var match = placeholderRegexp.exec(tkn[1]);
                 if (match) {
                     var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
@@ -7747,7 +7794,7 @@ var Playground = (function (exports) {
                         throw new LitsError('Can\'t specify more than 20 arguments', (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                 }
             }
-            if (isFnShorthandToken(tkn))
+            if (isPF_FnShorthandToken(tkn))
                 throw new LitsError('Nested shortcut functions are not allowed', (_d = getTokenDebugData(firstToken)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
         }
         var mandatoryArguments = [];
@@ -7784,7 +7831,7 @@ var Playground = (function (exports) {
     var parseArgument = function (tokenStream, parseState) {
         var _a, _b, _c;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
-        if (isSymbolToken(tkn)) {
+        if (isPF_SymbolToken(tkn)) {
             return {
                 t: AstNodeType.Argument,
                 n: tkn[1],
@@ -7797,7 +7844,7 @@ var Playground = (function (exports) {
                     : undefined,
             };
         }
-        else if (isModifierToken(tkn)) {
+        else if (isPF_ModifierToken(tkn)) {
             return {
                 t: AstNodeType.Modifier,
                 v: tkn[1],
@@ -7828,9 +7875,9 @@ var Playground = (function (exports) {
     }
     function parseBinding(tokenStream, parseState) {
         var _a;
-        var firstToken = asSymbolToken(tokenStream.tokens[parseState.position++]);
+        var firstToken = asPF_SymbolToken(tokenStream.tokens[parseState.position++]);
         var name = firstToken[1];
-        var value = parseToken(tokenStream, parseState);
+        var value = parseState.parseToken(tokenStream, parseState);
         var node = {
             t: AstNodeType.Binding,
             n: name,
@@ -7849,7 +7896,7 @@ var Playground = (function (exports) {
         var _a, _b, _c, _d;
         var startBracketToken = tokenStream.hasDebugData ? asLParenToken(tokenStream.tokens[parseState.position]) : undefined;
         parseState.position += 1;
-        var fnNode = parseToken(tokenStream, parseState);
+        var fnNode = parseState.parseToken(tokenStream, parseState);
         var params = parseTokensUntilClosingBracket(tokenStream, parseState);
         var lastToken = asRParenToken(tokenStream.tokens[parseState.position++]);
         if (isExpressionNode(fnNode)) {
@@ -7888,13 +7935,13 @@ var Playground = (function (exports) {
     function parseSpecialExpression(tokenStream, parseState) {
         var _a;
         var firstToken = asLParenToken(tokenStream.tokens[parseState.position++]);
-        var nameToken = asSymbolToken(tokenStream.tokens[parseState.position++]);
+        var nameToken = asPF_SymbolToken(tokenStream.tokens[parseState.position++]);
         var expressionName = nameToken[1];
         var parse = asNonUndefined(builtin.specialExpressions[expressionName], (_a = getTokenDebugData(nameToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo).parse;
         var node = parse(tokenStream, parseState, firstToken, {
             parseExpression: parseExpression,
             parseTokensUntilClosingBracket: parseTokensUntilClosingBracket,
-            parseToken: parseToken,
+            parseToken: parseState.parseToken,
             parseBinding: parseBinding,
             parseBindings: parseBindings,
             parseArgument: parseArgument,
@@ -7904,11 +7951,8 @@ var Playground = (function (exports) {
         }
         return node;
     }
-    function parseToken(tokenStream, parseState) {
+    function parsePostfixToken(tokenStream, parseState) {
         var _a, _b;
-        // if (parseState.infix) {
-        //   return
-        // }
         var tkn = asToken(tokenStream.tokens[parseState.position]);
         var tokenType = tkn[0];
         switch (tokenType) {
@@ -7916,11 +7960,11 @@ var Playground = (function (exports) {
                 return parseNumber(tokenStream, parseState);
             case 'String':
                 return parseString(tokenStream, parseState);
-            case 'StringShorthand':
+            case 'PF_StringShorthand':
                 return parseStringShorthand(tokenStream, parseState);
-            case 'Symbol':
+            case 'PF_Symbol':
                 return parseSymbol(tokenStream, parseState);
-            case 'ReservedSymbol':
+            case 'PF_ReservedSymbol':
                 return parseReservedSymbol(tokenStream, parseState);
             case 'LParen':
                 return parseExpression(tokenStream, parseState);
@@ -7928,22 +7972,26 @@ var Playground = (function (exports) {
                 return parseArrayLitteral(tokenStream, parseState);
             case 'LBrace':
                 return parseObjectLitteral(tokenStream, parseState);
-            case 'RegexpShorthand':
+            case 'PF_RegexpShorthand':
                 return parseRegexpShorthand(tokenStream, parseState);
-            case 'FnShorthand':
+            case 'PF_FnShorthand':
                 return parseFnShorthand(tokenStream, parseState);
-            case 'Comment':
+            case 'PF_Comment':
                 return parseComment(tokenStream, parseState);
-            case 'CollectionAccessor':
-            case 'Modifier':
-            case 'Infix':
-            case 'Postfix':
-            case 'InfixOperator':
+            case 'PF_CollectionAccessor':
+            case 'PF_Modifier':
+            case 'PF_Infix':
+            case 'IF_Postfix':
+            case 'IF_Operator':
             case 'RParen':
             case 'RBracket':
             case 'RBrace':
-            case 'InfixWhitespace':
-            case 'PostfixWhitespace':
+            case 'IF_Whitespace':
+            case 'PF_Whitespace':
+            case 'IF_MultiLineComment':
+            case 'IF_SingleLineComment':
+            case 'IF_ReservedSymbol':
+            case 'IF_Symbol':
                 break;
             /* v8 ignore next 2 */
             default:
@@ -7962,6 +8010,7 @@ var Playground = (function (exports) {
         var parseState = {
             position: 0,
             infix: (_a = safeTokenStream.infix) !== null && _a !== void 0 ? _a : false,
+            parseToken: parseToken,
         };
         while (parseState.position < safeTokenStream.tokens.length) {
             ast.b.push(parseToken(safeTokenStream, parseState));
@@ -7970,12 +8019,18 @@ var Playground = (function (exports) {
     }
     function removeUnnecessaryTokens(tokenStream) {
         var tokens = tokenStream.tokens.filter(function (token) {
-            if (isCommentToken(token) || isInfixWhitespaceToken(token) || isPostfixWhitespaceToken(token)) {
+            if (isPF_CommentToken(token) || isIF_WhitespaceToken(token) || isPF_WhitespaceToken(token)) {
                 return false;
             }
             return true;
         });
         return __assign(__assign({}, tokenStream), { tokens: tokens });
+    }
+    function parseToken(tokenStream, parseState) {
+        // if (parseState.infix) {
+        //   return
+        // }
+        return parsePostfixToken(tokenStream, parseState);
     }
 
     var postfixIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
@@ -7986,18 +8041,6 @@ var Playground = (function (exports) {
     function isNoMatch(tokenDescriptor) {
         return tokenDescriptor[0] === 0;
     }
-    var tokenizeComment = function (input, position) {
-        if (input[position] === ';') {
-            var length_1 = 0;
-            var value = '';
-            while (input[position + length_1] !== '\n' && position + length_1 < input.length) {
-                value += input[position + length_1];
-                length_1 += 1;
-            }
-            return [length_1, ['Comment', value.trim()]];
-        }
-        return NO_MATCH;
-    };
     var tokenizeLeftParen = function (input, position) {
         return tokenizeSimpleToken('LParen', '(', input, position);
     };
@@ -8041,31 +8084,6 @@ var Playground = (function (exports) {
         }
         value += '"'; // closing quote
         return [length + 1, ['String', value]];
-    };
-    var tokenizeCollectionAccessor = function (input, position) {
-        var char = input[position];
-        if (char !== '.' && char !== '#')
-            return NO_MATCH;
-        return [1, ['CollectionAccessor', char]];
-    };
-    var tokenizeRegexpShorthand = function (input, position) {
-        if (input[position] !== '#')
-            return NO_MATCH;
-        var _a = __read(tokenizeString(input, position + 1), 2), stringLength = _a[0], token = _a[1];
-        if (!token)
-            return NO_MATCH;
-        position += stringLength + 1;
-        var length = stringLength + 1;
-        var options = '';
-        while (input[position] === 'g' || input[position] === 'i') {
-            if (options.includes(input[position])) {
-                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."));
-            }
-            options += input[position];
-            length += 1;
-            position += 1;
-        }
-        return [length, ['RegexpShorthand', "#".concat(token[1]).concat(options)]];
     };
     var endOfNumberRegExp = /[\s)\]},#]/;
     var decimalNumberRegExp = /\d/;
@@ -8141,16 +8159,27 @@ var Playground = (function (exports) {
             return NO_MATCH;
     }
 
-    var prefixInfixNamesRecord = {
+    var PF_symbolRegExp = new RegExp(postfixIdentifierCharacterClass);
+    var tokenizePF_Symbol = function (input, position) {
+        var char = input[position];
+        var length = 0;
+        var value = '';
+        if (!char || !PF_symbolRegExp.test(char))
+            return NO_MATCH;
+        while (char && PF_symbolRegExp.test(char)) {
+            value += char;
+            length += 1;
+            char = input[position + length];
+        }
+        return [length, ['PF_Symbol', value]];
+    };
+
+    var infixReservedNamesRecord = {
         'true': { value: true },
         'false': { value: false },
         'nil': { value: null },
         'null': { value: null, forbidden: true },
         'undefined': { value: null, forbidden: true },
-        '===': { value: null, forbidden: true },
-        '!==': { value: null, forbidden: true },
-        // 'and': { value: null, forbidden: true },
-        // 'or': { value: null, forbidden: true },
         'def': { value: null, forbidden: true },
         'defs': { value: null, forbidden: true },
         'let': { value: null, forbidden: true },
@@ -8162,26 +8191,17 @@ var Playground = (function (exports) {
         'defns': { value: null, forbidden: true },
         'try': { value: null, forbidden: true },
         'throw': { value: null, forbidden: true },
-        // 'if': { value: null, forbidden: true },
-        // 'if-not': { value: null, forbidden: true },
-        // 'cond': { value: null, forbidden: true },
-        // 'when': { value: null, forbidden: true },
-        // 'when-not': { value: null, forbidden: true },
-        // 'comment': { value: null, forbidden: true },
-        // 'do': { value: null, forbidden: true },
         'recur': { value: null, forbidden: true },
         'loop': { value: null, forbidden: true },
         'time!': { value: null, forbidden: true },
         'doseq': { value: null, forbidden: true },
         'for': { value: null, forbidden: true },
-        // 'declared?': { value: null, forbidden: true },
-        // '??': { value: null, forbidden: true },
     };
 
     var identifierRegExp = new RegExp(infixIdentifierCharacterClass);
     var identifierFirstCharacterRegExp = new RegExp(infixIdentifierFirstCharacterClass);
     var whitespaceRegExp$1 = /\s/;
-    var tokenizeInfixWhitespace = function (input, position) {
+    var tokenizeIF_Whitespace = function (input, position) {
         var char = input[position];
         if (!char || !whitespaceRegExp$1.test(char)) {
             return NO_MATCH;
@@ -8194,12 +8214,12 @@ var Playground = (function (exports) {
             position += 1;
             char = input[position];
         }
-        return [value.length, ['InfixWhitespace', value]];
+        return [value.length, ['IF_Whitespace', value]];
     };
-    var tokenizeReservedSymbol$1 = function (input, position) {
+    var tokenizeIF_ReservedSymbolToken = function (input, position) {
         var e_1, _a;
         try {
-            for (var _b = __values(Object.entries(prefixInfixNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values(Object.entries(infixReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
                 var length_1 = reservedName.length;
                 var nextChar = input[position + length_1];
@@ -8209,7 +8229,7 @@ var Playground = (function (exports) {
                 if (name_1 === reservedName) {
                     if (forbidden)
                         throw new LitsError("".concat(name_1, " is forbidden!"));
-                    return [length_1, ['ReservedSymbol', reservedName]];
+                    return [length_1, ['IF_ReservedSymbol', reservedName]];
                 }
             }
         }
@@ -8222,43 +8242,93 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
-    var tokenizeSymbol$1 = function (input, position) {
+    var tokenizeIF_Symbol = function (input, position) {
         var initialPosition = position;
         var value = input[position];
-        if (!value || !identifierFirstCharacterRegExp.test(value))
+        if (!value) {
             return NO_MATCH;
-        position += 1;
-        var char = input[position];
-        while (char && identifierRegExp.test(char)) {
-            value += char;
+        }
+        if (identifierFirstCharacterRegExp.test(value)) {
             position += 1;
-            char = input[position];
+            var char = input[position];
+            while (char && identifierRegExp.test(char)) {
+                value += char;
+                position += 1;
+                char = input[position];
+            }
+            return [position - initialPosition, ['IF_Symbol', value]];
         }
-        return [position - initialPosition, ['Symbol', value]];
-    };
-    var tokenizeInfixOperator = function (input, position) {
-        var _a;
-        var twoChars = input.slice(position, position + 2);
-        var nextChar = input[position + 2];
-        if (['==', '!=', '>=', '<=', '&&', '||'].includes(twoChars) && [' ', '\n', undefined].includes(nextChar)) {
-            return [2, ['InfixOperator', twoChars]];
-        }
-        var oneChar = (_a = input[position]) !== null && _a !== void 0 ? _a : '';
-        nextChar = input[position + 1];
-        if (['<', '>', '+', '-', '*', '/', '%', '^', '!', '=', '&', '|'].includes(oneChar) && [' ', '\n', undefined].includes(nextChar)) {
-            return [1, ['InfixOperator', oneChar]];
+        if (value === '`') {
+            position += 1;
+            var _a = __read(tokenizePF_Symbol(input, position), 2), count = _a[0], pfSymbolToken = _a[1];
+            if (pfSymbolToken === undefined) {
+                return NO_MATCH;
+            }
+            position += count;
+            if (input[position] !== '`') {
+                return NO_MATCH;
+            }
+            position += 1;
+            var pfValue = pfSymbolToken[1];
+            return [position - initialPosition, ['IF_Symbol', pfValue]];
         }
         return NO_MATCH;
     };
-    var tokenizePostfixDirective = function (input, position) {
-        return tokenizeSimpleToken('Postfix', '@', input, position);
+    var tokenizeIF_Operator = function (input, position) {
+        var _a;
+        var threeChars = input.slice(position, position + 3);
+        if (position + 2 < input.length && isInfixOperator(threeChars)) {
+            return [3, ['IF_Operator', threeChars]];
+        }
+        var twoChars = input.slice(position, position + 2);
+        if (position + 1 < input.length && isInfixOperator(twoChars)) {
+            return [2, ['IF_Operator', twoChars]];
+        }
+        var oneChar = (_a = input[position]) !== null && _a !== void 0 ? _a : '';
+        if (isInfixOperator(oneChar)) {
+            return [1, ['IF_Operator', oneChar]];
+        }
+        return NO_MATCH;
+    };
+    var tokenizeIF_PostfixToken = function (input, position) {
+        return tokenizeSimpleToken('IF_Postfix', '@', input, position);
+    };
+    var tokenizeIF_MultiLineComment = function (input, position) {
+        if (input[position] === '/' && input[position + 1] === '*') {
+            var length_2 = 2;
+            var value = '/*';
+            while (input[position + length_2] !== '*' && input[position + length_2 + 1] !== '/' && position + length_2 + 1 < input.length) {
+                value += input[position + length_2];
+                length_2 += 1;
+            }
+            if (position + length_2 + 1 >= input.length) {
+                throw new LitsError('Comment not closed');
+            }
+            value += '*/';
+            length_2 += 2;
+            return [length_2, ['IF_MultiLineComment', value]];
+        }
+        return NO_MATCH;
+    };
+    var tokenizeIF_SingleLineComment = function (input, position) {
+        if (input[position] === '/' && input[position + 1] === '/') {
+            var length_3 = 2;
+            var value = '//';
+            while (input[position + length_3] !== '\n' && position + length_3 < input.length) {
+                value += input[position + length_3];
+                length_3 += 1;
+            }
+            return [length_3, ['IF_SingleLineComment', value]];
+        }
+        return NO_MATCH;
     };
     // All tokenizers, order matters!
     var tokenizers = [
-        tokenizeInfixWhitespace,
-        tokenizeComment,
-        tokenizePostfixDirective,
-        tokenizeInfixOperator,
+        tokenizeIF_Whitespace,
+        tokenizeIF_MultiLineComment,
+        tokenizeIF_SingleLineComment,
+        tokenizeIF_PostfixToken,
+        tokenizeIF_Operator,
         tokenizeLeftParen,
         tokenizeRightParen,
         tokenizeLeftBracket,
@@ -8267,10 +8337,8 @@ var Playground = (function (exports) {
         tokenizeRightCurly,
         tokenizeString,
         tokenizeNumber,
-        tokenizeReservedSymbol$1,
-        tokenizeSymbol$1,
-        tokenizeRegexpShorthand,
-        tokenizeCollectionAccessor,
+        tokenizeIF_ReservedSymbolToken,
+        tokenizeIF_Symbol,
     ];
 
     function getSourceCodeLine$1(input, lineNbr) {
@@ -8336,9 +8404,20 @@ var Playground = (function (exports) {
         throw new LitsError("Unrecognized character '".concat(input[position], "'."), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
     }
 
-    var symbolRegExp = new RegExp(postfixIdentifierCharacterClass);
     var whitespaceRegExp = /\s|,/;
-    var tokenizePostfixWhitespace = function (input, position) {
+    var tokenizePF_Comment = function (input, position) {
+        if (input[position] === ';') {
+            var length_1 = 0;
+            var value = '';
+            while (input[position + length_1] !== '\n' && position + length_1 < input.length) {
+                value += input[position + length_1];
+                length_1 += 1;
+            }
+            return [length_1, ['PF_Comment', value]];
+        }
+        return NO_MATCH;
+    };
+    var tokenizePF_Whitespace = function (input, position) {
         var char = input[position];
         if (!char || !whitespaceRegExp.test(char)) {
             return NO_MATCH;
@@ -8351,28 +8430,28 @@ var Playground = (function (exports) {
             position += 1;
             char = input[position];
         }
-        return [value.length, ['PostfixWhitespace', value]];
+        return [value.length, ['PF_Whitespace', value]];
     };
-    var tokenizeFnShorthand = function (input, position) {
+    var tokenizePF_FnShorthand = function (input, position) {
         if (input.slice(position, position + 2) !== '#(')
             return NO_MATCH;
-        return [1, ['FnShorthand']];
+        return [1, ['PF_FnShorthand']];
     };
-    var tokenizeReservedSymbol = function (input, position) {
+    var tokenizePF_ReservedSymbol = function (input, position) {
         var e_1, _a;
         try {
             for (var _b = __values(Object.entries(postfixReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
-                var length_1 = reservedName.length;
-                var nextChar = input[position + length_1];
-                if (nextChar && symbolRegExp.test(nextChar)) {
+                var length_2 = reservedName.length;
+                var nextChar = input[position + length_2];
+                if (nextChar && PF_symbolRegExp.test(nextChar)) {
                     continue;
                 }
-                var symbol = input.substring(position, position + length_1);
+                var symbol = input.substring(position, position + length_2);
                 if (symbol === reservedName) {
                     if (forbidden)
                         throw new LitsError("".concat(symbol, " is forbidden!"));
-                    return [length_1, ['ReservedSymbol', reservedName]];
+                    return [length_2, ['PF_ReservedSymbol', reservedName]];
                 }
             }
         }
@@ -8385,39 +8464,26 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
-    var tokenizeSymbol = function (input, position) {
-        var char = input[position];
-        var length = 0;
-        var value = '';
-        if (!char || !symbolRegExp.test(char))
-            return NO_MATCH;
-        while (char && symbolRegExp.test(char)) {
-            value += char;
-            length += 1;
-            char = input[position + length];
-        }
-        return [length, ['Symbol', value]];
-    };
-    var tokenizeStringShorthand = function (input, position) {
+    var tokenizePF_StringShorthand = function (input, position) {
         if (input[position] !== ':')
             return NO_MATCH;
-        var symbolDescription = tokenizeSymbol(input, position + 1);
+        var symbolDescription = tokenizePF_Symbol(input, position + 1);
         if (isNoMatch(symbolDescription)) {
             return symbolDescription;
         }
-        var symbolToken = asSymbolToken(symbolDescription[1]);
-        return [symbolDescription[0] + 1, ['StringShorthand', ":".concat(symbolToken[1])]];
+        var symbolToken = asPF_SymbolToken(symbolDescription[1]);
+        return [symbolDescription[0] + 1, ['PF_StringShorthand', ":".concat(symbolToken[1])]];
     };
-    var tokenizeModifier = function (input, position) {
+    var tokenizePF_Modifier = function (input, position) {
         var e_2, _a;
         try {
             for (var modifierNames_1 = __values(modifierNames), modifierNames_1_1 = modifierNames_1.next(); !modifierNames_1_1.done; modifierNames_1_1 = modifierNames_1.next()) {
                 var modifierName = modifierNames_1_1.value;
-                var length_2 = modifierName.length;
-                var charAfterModifier = input[position + length_2];
-                if (input.substring(position, position + length_2) === modifierName && (!charAfterModifier || !symbolRegExp.test(charAfterModifier))) {
+                var length_3 = modifierName.length;
+                var charAfterModifier = input[position + length_3];
+                if (input.substring(position, position + length_3) === modifierName && (!charAfterModifier || !PF_symbolRegExp.test(charAfterModifier))) {
                     var value = modifierName;
-                    return [length_2, ['Modifier', value]];
+                    return [length_3, ['PF_Modifier', value]];
                 }
             }
         }
@@ -8430,21 +8496,46 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
-    var tokenizeInfixDirective = function (input, position) {
+    var tokenizePF_InfixToken = function (input, position) {
         if (input[position] !== '$') {
             return NO_MATCH;
         }
         var nextChar = input[position + 1];
-        if (nextChar && symbolRegExp.test(nextChar)) {
+        if (nextChar && PF_symbolRegExp.test(nextChar)) {
             return NO_MATCH;
         }
-        return [1, ['Infix']];
+        return [1, ['PF_Infix']];
+    };
+    var tokenizePF_CollectionAccessor = function (input, position) {
+        var char = input[position];
+        if (char !== '.' && char !== '#')
+            return NO_MATCH;
+        return [1, ['PF_CollectionAccessor', char]];
+    };
+    var tokenizePF_RegexpShorthand = function (input, position) {
+        if (input[position] !== '#')
+            return NO_MATCH;
+        var _a = __read(tokenizeString(input, position + 1), 2), stringLength = _a[0], token = _a[1];
+        if (!token)
+            return NO_MATCH;
+        position += stringLength + 1;
+        var length = stringLength + 1;
+        var options = '';
+        while (input[position] === 'g' || input[position] === 'i') {
+            if (options.includes(input[position])) {
+                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."));
+            }
+            options += input[position];
+            length += 1;
+            position += 1;
+        }
+        return [length, ['PF_RegexpShorthand', "#".concat(token[1]).concat(options)]];
     };
     // All tokenizers, order matters!
     var postfixTokenizers = [
-        tokenizePostfixWhitespace,
-        tokenizeInfixDirective,
-        tokenizeComment,
+        tokenizePF_Whitespace,
+        tokenizePF_InfixToken,
+        tokenizePF_Comment,
         tokenizeLeftParen,
         tokenizeRightParen,
         tokenizeLeftBracket,
@@ -8452,14 +8543,14 @@ var Playground = (function (exports) {
         tokenizeLeftCurly,
         tokenizeRightCurly,
         tokenizeString,
-        tokenizeStringShorthand,
+        tokenizePF_StringShorthand,
         tokenizeNumber,
-        tokenizeReservedSymbol,
-        tokenizeSymbol,
-        tokenizeModifier,
-        tokenizeRegexpShorthand,
-        tokenizeFnShorthand,
-        tokenizeCollectionAccessor,
+        tokenizePF_ReservedSymbol,
+        tokenizePF_Symbol,
+        tokenizePF_Modifier,
+        tokenizePF_RegexpShorthand,
+        tokenizePF_FnShorthand,
+        tokenizePF_CollectionAccessor,
     ];
 
     function getSourceCodeLine(input, lineNbr) {
@@ -8526,15 +8617,15 @@ var Playground = (function (exports) {
     }
 
     var applyCollectionAccessors = function (tokenStream) {
-        var dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken);
+        var dotTokenIndex = tokenStream.tokens.findIndex(isPF_CollectionAccessorToken);
         while (dotTokenIndex >= 0) {
             applyCollectionAccessor(tokenStream, dotTokenIndex);
-            dotTokenIndex = tokenStream.tokens.findIndex(isCollectionAccessorToken);
+            dotTokenIndex = tokenStream.tokens.findIndex(isPF_CollectionAccessorToken);
         }
         return tokenStream;
     };
     function applyCollectionAccessor(tokenStream, position) {
-        var dotTkn = asCollectionAccessorToken(tokenStream.tokens[position]);
+        var dotTkn = asPF_CollectionAccessorToken(tokenStream.tokens[position]);
         var debugData = getTokenDebugData(dotTkn);
         var backPosition = getPositionBackwards(tokenStream, position, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
         checkForward(tokenStream, position, dotTkn, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
@@ -8542,8 +8633,8 @@ var Playground = (function (exports) {
         tokenStream.tokens.splice(backPosition, 0, ['LParen']);
         var nextTkn = asToken(tokenStream.tokens[position + 1]);
         if (dotTkn[1] === '.') {
-            assertSymbolToken(nextTkn);
-            var token = ['StringShorthand', ":".concat(nextTkn[1])];
+            assertPF_SymbolToken(nextTkn);
+            var token = ['PF_StringShorthand', ":".concat(nextTkn[1])];
             tokenStream.tokens[position + 1] = token;
             var nextTkndebugData = getTokenDebugData(nextTkn);
             if (nextTkndebugData) {
@@ -8589,14 +8680,14 @@ var Playground = (function (exports) {
         }
         if (openBracket === 'LParen' && position > 0) {
             var tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1]);
-            if (isFnShorthandToken(tokenBeforeBracket))
+            if (isPF_FnShorthandToken(tokenBeforeBracket))
                 throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo);
         }
         return position;
     }
     function checkForward(tokenStream, position, dotTkn, sourceCodeInfo) {
         var tkn = tokenStream.tokens[position + 1];
-        if (dotTkn[1] === '.' && !isSymbolToken(tkn)) {
+        if (dotTkn[1] === '.' && !isPF_SymbolToken(tkn)) {
             throw new LitsError('# as a collection accessor must be followed by an name', sourceCodeInfo);
         }
         if (dotTkn[1] === '#' && isNumber(tkn)) {
@@ -8625,10 +8716,10 @@ var Playground = (function (exports) {
             position += count;
             if (token) {
                 tokenStream.tokens.push(token);
-                if (isInfixToken(token)) {
+                if (isPF_InfixToken(token)) {
                     infix = true;
                 }
-                if (isPostfixToken(token)) {
+                if (isIF_PostfixToken(token)) {
                     infix = false;
                 }
             }
@@ -8642,16 +8733,16 @@ var Playground = (function (exports) {
     }
 
     function transformTokens(tokenStram, transformer) {
-        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return !isSymbolToken(token) ? token : [token[0], transformer(token[1])]; }) });
+        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return !isPF_SymbolToken(token) ? token : [token[0], transformer(token[1])]; }) });
     }
 
     function isNoSpaceNeededBefore(token) {
         switch (token[0]) {
             case 'RParen':
             case 'RBracket':
-            case 'CollectionAccessor':
-            case 'PostfixWhitespace':
-            case 'InfixWhitespace':
+            case 'PF_CollectionAccessor':
+            case 'PF_Whitespace':
+            case 'IF_Whitespace':
                 return true;
             default:
                 return false;
@@ -8661,11 +8752,11 @@ var Playground = (function (exports) {
         switch (token[0]) {
             case 'LParen':
             case 'LBracket':
-            case 'CollectionAccessor':
-            case 'FnShorthand':
-            case 'PostfixWhitespace':
-            case 'InfixWhitespace':
-            case 'RegexpShorthand':
+            case 'PF_CollectionAccessor':
+            case 'PF_FnShorthand':
+            case 'PF_Whitespace':
+            case 'IF_Whitespace':
+            case 'PF_RegexpShorthand':
                 return true;
             default:
                 return false;
@@ -8692,9 +8783,9 @@ var Playground = (function (exports) {
             case 'RBracket': return ']';
             case 'LBrace': return '{';
             case 'RBrace': return '}';
-            case 'Infix': return '$';
-            case 'Postfix': return '@';
-            case 'FnShorthand': return '#';
+            case 'PF_Infix': return '$';
+            case 'IF_Postfix': return '@';
+            case 'PF_FnShorthand': return '#';
             default:
                 throw new Error("Unknown token type: ".concat(tokenType));
         }

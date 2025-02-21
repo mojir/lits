@@ -11,7 +11,7 @@ import type {
   NumberNode,
   StringNode,
 } from '../parser/interface'
-import type { Token } from '../tokenizer/Token'
+import type { Token } from '../tokenizer/tokens'
 import {
   asAstNode,
   asExpressionNode,

@@ -2,8 +2,11 @@ import { LitsError } from '../../errors'
 import { asNonUndefined } from '../../typeGuards'
 import { assertNumber, isNumber } from '../../typeGuards/number'
 import type { SourceCodeInfo, TokenStream } from '../interface'
-import type { PF_CollectionAccessorToken, PF_StringShorthandToken } from '../Token'
-import { addTokenDebugData, asPF_CollectionAccessorToken, asToken, assertNumberToken, assertPF_SymbolToken, getTokenDebugData, isPF_CollectionAccessorToken, isPF_FnShorthandToken, isPF_SymbolToken, isRBraceToken, isRBracketToken, isRParenToken } from '../Token'
+import { addTokenDebugData, getTokenDebugData } from '../utils'
+import type { PF_CollectionAccessorToken, PF_StringShorthandToken } from '../postfix/postfixTokens'
+import { asPF_CollectionAccessorToken, assertPF_SymbolToken, isPF_CollectionAccessorToken, isPF_FnShorthandToken, isPF_SymbolToken } from '../postfix/postfixTokens'
+import { assertNumberToken, isRBraceToken, isRBracketToken, isRParenToken } from '../common/commonTokens'
+import { asToken } from '../tokens'
 import type { SugarFunction } from '.'
 
 export const applyCollectionAccessors: SugarFunction = (tokenStream) => {
