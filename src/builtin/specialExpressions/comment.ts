@@ -13,7 +13,7 @@ export const commentSpecialExpression: BuiltinSpecialExpression<null, CommentExp
       t: AstNodeType.SpecialExpression,
       n: 'comment',
       p: [],
-      debugData: undefined,
+      token: undefined,
     }
 
     let tkn = asToken(tokenStream.tokens[parseState.position])
@@ -23,9 +23,7 @@ export const commentSpecialExpression: BuiltinSpecialExpression<null, CommentExp
     }
     parseState.position += 1
 
-    node.debugData = getTokenDebugData(firstToken) && {
-      token: firstToken,
-    }
+    node.token = getTokenDebugData(firstToken) && firstToken
 
     return node
   },

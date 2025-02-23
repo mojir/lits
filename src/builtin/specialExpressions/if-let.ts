@@ -3,25 +3,20 @@ import { AstNodeType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
+import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
-import { asAstNode, asNormalExpressionNode } from '../../typeGuards/astNode'
+import { asAstNode } from '../../typeGuards/astNode'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface IfLetNode extends CommonSpecialExpressionNode<'if-let'> {
   b: BindingNode
-  debugData: CommonSpecialExpressionNode<'let'>['debugData'] & ({
-    bindingArray: NormalExpressionNode
-  } | undefined)
 }
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
-    const bindingArray = getTokenDebugData(firstToken)?.sourceCodeInfo ? asNormalExpressionNode(parseToken(tokenStream, { ...parseState })) : undefined
-
+  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
     if (bindings.length !== 1) {
@@ -39,10 +34,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
       n: 'if-let',
       b: asNonUndefined(bindings[0], getTokenDebugData(firstToken)?.sourceCodeInfo),
       p: params,
-      debugData: getTokenDebugData(firstToken)?.sourceCodeInfo && bindingArray && {
-        token: firstToken,
-        bindingArray,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     assertNumberOfParams({ min: 1, max: 2 }, node)
@@ -50,7 +42,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const locals: Context = {}
     const bindingValue = evaluateAstNode(node.b.v, contextStack)
     if (bindingValue) {

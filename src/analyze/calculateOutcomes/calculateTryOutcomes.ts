@@ -27,11 +27,11 @@ export const calculateTryOutcomes: CalculatePossibleAstNodesHelper<TryNode> = ({
         t: AstNodeType.Binding,
         n: astNode.e.v,
         v: throwNode,
-        debugData: undefined,
+        token: undefined,
         p: [],
       }],
       p: [astNode.ce],
-      debugData: undefined,
+      token: undefined,
     }
     return calculatePossibleAstNodes(letNode)
   })

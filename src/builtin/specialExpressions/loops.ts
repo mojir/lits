@@ -122,7 +122,7 @@ function evaluateLoop(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ) {
-  const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+  const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
   const { l: loopBindings, p: params } = node as LoopNode
 
   const result: Arr = []
@@ -258,9 +258,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
       t: AstNodeType.SpecialExpression,
       l: loopBindings,
       p: params,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     assertNumberOfParams(1, node)
@@ -284,9 +282,7 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
       t: AstNodeType.SpecialExpression,
       l: loopBindings,
       p: params,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     assertNumberOfParams(1, node)

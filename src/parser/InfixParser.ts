@@ -7,7 +7,7 @@ import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { hasTokenDebugData } from '../tokenizer/utils'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
-import type { AstNode, DebugData, NormalExpressionNodeWithName, ParseState } from './interface'
+import type { AstNode, NormalExpressionNodeWithName, ParseState } from './interface'
 
 function getPrecedence(operator: IF_OperatorToken): number {
   const operatorSign = operator[1]
@@ -58,104 +58,96 @@ function getPrecedence(operator: IF_OperatorToken): number {
   }
 }
 
-function createNormalExpressionNode(name: string, params: AstNode[], debugData: DebugData | undefined): NormalExpressionNodeWithName {
+function createNormalExpressionNode(name: string, params: AstNode[], token: Token | undefined): NormalExpressionNodeWithName {
   return {
     t: AstNodeType.NormalExpression,
     n: name,
     p: params,
-    debugData,
+    token,
   }
 }
 
 function fromUnaryInfixToAstNode(operator: IF_OperatorToken, operand: AstNode): AstNode {
-  const debugData: DebugData | undefined = hasTokenDebugData(operator)
-    ? {
-        token: operator,
-      }
-    : undefined
+  const token: Token | undefined = hasTokenDebugData(operator) ? operand.token : undefined
 
   const operatorName = operator[1]
 
   switch (operatorName) {
     case '+':
-      return createNormalExpressionNode('+', [operand], debugData)
+      return createNormalExpressionNode('+', [operand], token)
     case '-':
-      return createNormalExpressionNode('-', [operand], debugData)
+      return createNormalExpressionNode('-', [operand], token)
     case '!':
-      return createNormalExpressionNode('not', [operand], debugData)
+      return createNormalExpressionNode('not', [operand], token)
     case '~':
-      return createNormalExpressionNode('bit-not', [operand], debugData)
+      return createNormalExpressionNode('bit-not', [operand], token)
     default:
       throw new Error(`Unknown operator: ${operatorName}`)
   }
 }
 
 function fromBinaryInfixToAstNode(operator: IF_OperatorToken, left: AstNode, right: AstNode): AstNode {
-  const debugData: DebugData | undefined = hasTokenDebugData(operator)
-    ? {
-        token: operator,
-      }
-    : undefined
+  const token: Token | undefined = hasTokenDebugData(operator) ? operator : undefined
 
   const operatorName = operator[1]
 
   switch (operatorName) {
     case '**': // exponentiation
-      return createNormalExpressionNode('pow', [left, right], debugData)
+      return createNormalExpressionNode('pow', [left, right], token)
     case '*':
-      return createNormalExpressionNode('*', [left, right], debugData)
+      return createNormalExpressionNode('*', [left, right], token)
     case '/':
-      return createNormalExpressionNode('/', [left, right], debugData)
+      return createNormalExpressionNode('/', [left, right], token)
     case '%':
-      return createNormalExpressionNode('rem', [left, right], debugData)
+      return createNormalExpressionNode('rem', [left, right], token)
     case '+':
-      return createNormalExpressionNode('+', [left, right], debugData)
+      return createNormalExpressionNode('+', [left, right], token)
     case '-':
-      return createNormalExpressionNode('-', [left, right], debugData)
+      return createNormalExpressionNode('-', [left, right], token)
     case '<<':
-      return createNormalExpressionNode('bit-shift-left', [left, right], debugData)
+      return createNormalExpressionNode('bit-shift-left', [left, right], token)
     case '>>':
-      return createNormalExpressionNode('bit-shift-right', [left, right], debugData)
+      return createNormalExpressionNode('bit-shift-right', [left, right], token)
     case '>>>':
-      return createNormalExpressionNode('unsigned-bit-shift-right', [left, right], debugData)
+      return createNormalExpressionNode('unsigned-bit-shift-right', [left, right], token)
     case '<':
-      return createNormalExpressionNode('<', [left, right], debugData)
+      return createNormalExpressionNode('<', [left, right], token)
     case '<=':
-      return createNormalExpressionNode('<=', [left, right], debugData)
+      return createNormalExpressionNode('<=', [left, right], token)
     case '>':
-      return createNormalExpressionNode('>', [left, right], debugData)
+      return createNormalExpressionNode('>', [left, right], token)
     case '>=':
-      return createNormalExpressionNode('>=', [left, right], debugData)
+      return createNormalExpressionNode('>=', [left, right], token)
     case '==':
-      return createNormalExpressionNode('=', [left, right], debugData)
+      return createNormalExpressionNode('=', [left, right], token)
     case '!=':
-      return createNormalExpressionNode('not=', [left, right], debugData)
+      return createNormalExpressionNode('not=', [left, right], token)
     case '&':
-      return createNormalExpressionNode('bit-and', [left, right], debugData)
+      return createNormalExpressionNode('bit-and', [left, right], token)
     case '^':
-      return createNormalExpressionNode('bit-xor', [left, right], debugData)
+      return createNormalExpressionNode('bit-xor', [left, right], token)
     case '|':
-      return createNormalExpressionNode('bit-or', [left, right], debugData)
+      return createNormalExpressionNode('bit-or', [left, right], token)
     case '&&':
       return {
         t: AstNodeType.SpecialExpression,
         n: 'and',
         p: [left, right],
-        debugData,
+        token,
       }
     case '||':
       return {
         t: AstNodeType.SpecialExpression,
         n: 'or',
         p: [left, right],
-        debugData,
+        token,
       }
     case '??':
       return {
         t: AstNodeType.SpecialExpression,
         n: '??',
         p: [left, right],
-        debugData,
+        token,
       }
     case '!':
     case '~':

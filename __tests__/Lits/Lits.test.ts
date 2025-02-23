@@ -113,25 +113,19 @@ describe('context', () => {
               {
                 t: AstNodeType.Number,
                 v: 2,
-                debugData: {
-                  token: ['Number', '2'],
-                },
+                token: ['Number', '2'],
                 p: [],
                 n: undefined,
               },
               {
                 t: AstNodeType.Number,
                 v: 4,
-                debugData: {
-                  token: ['Number', '4'],
-                },
+                token: ['Number', '4'],
                 p: [],
                 n: undefined,
               },
             ],
-            debugData: {
-              token: ['PF_Symbol', 'pow'],
-            },
+            token: ['PF_Symbol', 'pow'],
           },
         ],
       },
@@ -190,7 +184,7 @@ function ast(n: number): Ast {
       {
         t: AstNodeType.Number,
         v: n,
-        debugData: undefined,
+        token: undefined,
         p: [],
         n: undefined,
       },

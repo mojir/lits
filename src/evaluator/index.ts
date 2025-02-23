@@ -54,7 +54,7 @@ export function evaluateAstNode(node: AstNode, contextStack: ContextStack): Any 
     case AstNodeType.SpecialExpression:
       return evaluateSpecialExpression(node, contextStack)
     default:
-      throw new LitsError(`${node.t}-node cannot be evaluated`, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+      throw new LitsError(`${node.t}-node cannot be evaluated`, getTokenDebugData(node.token)?.sourceCodeInfo)
   }
 }
 
@@ -67,12 +67,12 @@ function evaluateString(node: StringNode): string {
 }
 
 function evaluateReservedName(node: ReservedSymbolNode): Any {
-  return asNonUndefined(postfixReservedNamesRecord[node.v], getTokenDebugData(node.debugData?.token)?.sourceCodeInfo).value
+  return asNonUndefined(postfixReservedNamesRecord[node.v], getTokenDebugData(node.token)?.sourceCodeInfo).value
 }
 
 function evaluateNormalExpression(node: NormalExpressionNode, contextStack: ContextStack): Any {
   const params = node.p.map(paramNode => evaluateAstNode(paramNode, contextStack))
-  const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+  const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
   if (isNormalExpressionNodeWithName(node)) {
     const value = contextStack.getValue(node.n)
     if (value !== undefined)
@@ -112,13 +112,13 @@ function evaluateBuiltinNormalExpression(
 ): Any {
   const normalExpression = builtin.normalExpressions[node.n]
   if (!normalExpression)
-    throw new UndefinedSymbolError(node.n, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+    throw new UndefinedSymbolError(node.n, getTokenDebugData(node.token)?.sourceCodeInfo)
 
-  return normalExpression.evaluate(params, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo, contextStack, { executeFunction })
+  return normalExpression.evaluate(params, getTokenDebugData(node.token)?.sourceCodeInfo, contextStack, { executeFunction })
 }
 
 function evaluateSpecialExpression(node: SpecialExpressionNode, contextStack: ContextStack): Any {
-  const specialExpression = asNonUndefined(builtin.specialExpressions[node.n], getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+  const specialExpression = asNonUndefined(builtin.specialExpressions[node.n], getTokenDebugData(node.token)?.sourceCodeInfo)
 
   // eslint-disable-next-line ts/no-unsafe-argument
   return specialExpression.evaluate(node as any, contextStack, { evaluateAstNode, builtin })

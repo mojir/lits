@@ -18,18 +18,16 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
       t: AstNodeType.SpecialExpression,
       n: 'def',
       p: params,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
-    assertNameNode(node.p[0], getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+    assertNameNode(node.p[0], getTokenDebugData(node.token)?.sourceCodeInfo)
     assertNumberOfParams(2, node)
 
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
-    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const name = (node.p[0] as SymbolNode).v
 
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
@@ -41,7 +39,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
     return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
-    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const subNode = asAstNode(node.p[1])
     const result = findUnresolvedIdentifiers([subNode], contextStack, builtin)
     const name = asNameNode(node.p[0]).v

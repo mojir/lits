@@ -80,7 +80,7 @@ export class ContextStackImpl {
 
   public lookUp(node: SymbolNode): LookUpResult {
     const value = node.v
-    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
 
     for (const context of this.contexts) {
       const contextEntry = context[value]
@@ -130,7 +130,7 @@ export class ContextStackImpl {
     else if (isBuiltinFunction(lookUpResult))
       return lookUpResult
 
-    throw new UndefinedSymbolError(node.v, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+    throw new UndefinedSymbolError(node.v, getTokenDebugData(node.token)?.sourceCodeInfo)
   }
 }
 

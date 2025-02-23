@@ -4810,7 +4810,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'and',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -4851,7 +4851,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'comment',
                 p: [],
-                debugData: undefined,
+                token: undefined,
             };
             var tkn = asToken(tokenStream.tokens[parseState.position]);
             while (!isRParenToken(tkn)) {
@@ -4859,7 +4859,7 @@ var Playground = (function (exports) {
                 tkn = asToken(tokenStream.tokens[parseState.position]);
             }
             parseState.position += 1;
-            node.debugData = getTokenDebugData(firstToken) && {
+            node.token = getTokenDebugData(firstToken) && {
                 token: firstToken,
                       };
             return node;
@@ -4877,7 +4877,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'cond',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -4921,7 +4921,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'declared?',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -4975,7 +4975,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'def',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5017,7 +5017,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'defs',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5058,7 +5058,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'do',
                 p: [],
-                debugData: undefined,
+                token: undefined,
             };
             var tkn = asToken(tokenStream.tokens[parseState.position]);
             while (!isRParenToken(tkn)) {
@@ -5066,7 +5066,7 @@ var Playground = (function (exports) {
                 tkn = asToken(tokenStream.tokens[parseState.position]);
             }
             parseState.position += 1;
-            node.debugData = getTokenDebugData(firstToken) && {
+            node.token = getTokenDebugData(firstToken) && {
                 token: firstToken,
                       };
             return node;
@@ -5143,7 +5143,7 @@ var Playground = (function (exports) {
                 f: functionName,
                 p: [],
                 o: functionOverloades,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5187,7 +5187,7 @@ var Playground = (function (exports) {
                 p: [],
                 f: functionName,
                 o: functionOverloades,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5233,7 +5233,7 @@ var Playground = (function (exports) {
                 n: 'fn',
                 p: [],
                 o: functionOverloades,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5479,7 +5479,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'if',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5524,7 +5524,7 @@ var Playground = (function (exports) {
                 n: 'if-let',
                 b: asNonUndefined(bindings[0], (_d = getTokenDebugData(firstToken)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo),
                 p: params,
-                debugData: ((_e = getTokenDebugData(firstToken)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo) && bindingArray && {
+                token: ((_e = getTokenDebugData(firstToken)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo) && bindingArray && {
                     token: firstToken,
                     lastToken: lastToken,
                     bindingArray: bindingArray,
@@ -5570,7 +5570,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'if-not',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5612,7 +5612,7 @@ var Playground = (function (exports) {
                 n: 'let',
                 p: params,
                 bs: bindings,
-                debugData: ((_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo) && bindingArray && {
+                token: ((_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo) && bindingArray && {
                     token: firstToken,
                     lastToken: lastToken,
                     bindingArray: bindingArray,
@@ -5687,7 +5687,7 @@ var Playground = (function (exports) {
                 n: 'loop',
                 p: params,
                 bs: bindings,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5955,7 +5955,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 l: loopBindings,
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -5980,7 +5980,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 l: loopBindings,
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6007,7 +6007,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'or',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6050,7 +6050,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: '??',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6085,7 +6085,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'recur',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6112,7 +6112,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'throw',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6143,7 +6143,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'time!',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6189,7 +6189,7 @@ var Playground = (function (exports) {
                 p: [tryExpression],
                 ce: catchExpression,
                 e: error,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6234,7 +6234,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'when',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6287,7 +6287,7 @@ var Playground = (function (exports) {
                 n: 'when-first',
                 b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6351,7 +6351,7 @@ var Playground = (function (exports) {
                 n: 'when-let',
                 b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6404,7 +6404,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'when-not',
                 p: params,
-                debugData: getTokenDebugData(firstToken) && {
+                token: getTokenDebugData(firstToken) && {
                     token: firstToken,
                     lastToken: lastToken,
                 },
@@ -6974,7 +6974,7 @@ var Playground = (function (exports) {
             case AstNodeType.Name: {
                 var lookUpResult = contextStack.lookUp(astNode);
                 if (lookUpResult === null)
-                    return new Set([{ symbol: astNode.v, token: (_b = astNode.debugData) === null || _b === void 0 ? void 0 : _b.token }]);
+                    return new Set([{ symbol: astNode.v, token: (_b = astNode.token) === null || _b === void 0 ? void 0 : _b.token }]);
                 return emptySet;
             }
             case AstNodeType.String:
@@ -6985,11 +6985,11 @@ var Playground = (function (exports) {
                 return emptySet;
             case AstNodeType.NormalExpression: {
                 var unresolvedIdentifiers_1 = new Set();
-                var name_1 = astNode.n, debug = astNode.debugData;
+                var name_1 = astNode.n, debug = astNode.token;
                 if (typeof name_1 === 'string') {
-                    var lookUpResult = contextStack.lookUp({ t: AstNodeType.Name, v: name_1, debugData: debug, p: [], n: undefined });
+                    var lookUpResult = contextStack.lookUp({ t: AstNodeType.Name, v: name_1, token: debug, p: [], n: undefined });
                     if (lookUpResult === null)
-                        unresolvedIdentifiers_1.add({ symbol: name_1, token: (_c = astNode.debugData) === null || _c === void 0 ? void 0 : _c.token });
+                        unresolvedIdentifiers_1.add({ symbol: name_1, token: (_c = astNode.token) === null || _c === void 0 ? void 0 : _c.token });
                 }
                 try {
                     for (var _f = __values(astNode.p), _g = _f.next(); !_g.done; _g = _f.next()) {
@@ -7008,7 +7008,7 @@ var Playground = (function (exports) {
                 return unresolvedIdentifiers_1;
             }
             case AstNodeType.SpecialExpression: {
-                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], (_e = getTokenDebugData((_d = astNode.debugData) === null || _d === void 0 ? void 0 : _d.token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+                var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], (_e = getTokenDebugData((_d = astNode.token) === null || _d === void 0 ? void 0 : _d.token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
                 // eslint-disable-next-line ts/no-unsafe-argument
                 var unresolvedIdentifiers = specialExpression.findUnresolvedIdentifiers(astNode, contextStack, {
                     findUnresolvedIdentifiers: findUnresolvedIdentifiers,
@@ -7027,7 +7027,7 @@ var Playground = (function (exports) {
             n: 'and',
             t: AstNodeType.SpecialExpression,
             p: p,
-            debugData: astNode.debugData,
+            token: astNode.token,
         }); });
     };
 
@@ -7059,8 +7059,8 @@ var Playground = (function (exports) {
         ], false);
     };
 
-    var trueNode = { t: AstNodeType.ReservedName, v: 'true', debugData: undefined, p: [], n: undefined };
-    var falseNode = { t: AstNodeType.ReservedName, v: 'false', debugData: undefined, p: [], n: undefined };
+    var trueNode = { t: AstNodeType.ReservedName, v: 'true', token: undefined, p: [], n: undefined };
+    var falseNode = { t: AstNodeType.ReservedName, v: 'false', token: undefined, p: [], n: undefined };
     var calculateDeclaredOutcomes = function (_a) {
         var astNode = _a.astNode, isAstComputable = _a.isAstComputable;
         if (isAstComputable(astNode.p))
@@ -7149,7 +7149,7 @@ var Playground = (function (exports) {
                 n: 'if-not',
                 t: astNode.t,
                 p: p,
-                debugData: astNode.debugData,
+                token: astNode.token,
             }); });
         }
         return __spreadArray(__spreadArray([], __read(calculatePossibleAstNodes(thenBranch)), false), __read(calculatePossibleAstNodes(elseBranch)), false);
@@ -7167,7 +7167,7 @@ var Playground = (function (exports) {
                 n: 'if',
                 t: astNode.t,
                 p: p,
-                debugData: astNode.debugData,
+                token: astNode.token,
             }); });
         }
         return __spreadArray(__spreadArray([], __read(calculatePossibleAstNodes(thenBranch)), false), __read(calculatePossibleAstNodes(elseBranch)), false);
@@ -7187,7 +7187,7 @@ var Playground = (function (exports) {
                     n: 'do',
                     t: AstNodeType.SpecialExpression,
                     p: p,
-                    debugData: astNode.debugData,
+                    token: astNode.token,
                 };
             });
             return doNodes;
@@ -7204,7 +7204,7 @@ var Playground = (function (exports) {
                 bs: bindingNodes,
                 t: AstNodeType.SpecialExpression,
                 p: p,
-                debugData: astNode.debugData,
+                token: astNode.token,
             };
         }); });
         return letNodes;
@@ -7262,7 +7262,7 @@ var Playground = (function (exports) {
             n: 'or',
             t: AstNodeType.SpecialExpression,
             p: p,
-            debugData: astNode.debugData,
+            token: astNode.token,
         }); });
     };
 
@@ -7304,11 +7304,11 @@ var Playground = (function (exports) {
                         t: AstNodeType.Binding,
                         n: astNode.e.v,
                         v: throwNode,
-                        debugData: undefined,
+                        token: undefined,
                         p: [],
                     }],
                 p: [astNode.ce],
-                debugData: undefined,
+                token: undefined,
             };
             return calculatePossibleAstNodes(letNode);
         });
@@ -7338,7 +7338,7 @@ var Playground = (function (exports) {
                 n: 'do',
                 t: astNode.t,
                 p: p,
-                debugData: astNode.debugData,
+                token: astNode.token,
             }); })), false), [
                 nilNode,
             ], false);
@@ -7361,7 +7361,7 @@ var Playground = (function (exports) {
                 n: 'when-not',
                 t: astNode.t,
                 p: p,
-                debugData: astNode.debugData,
+                token: astNode.token,
             }); });
         }
         var body = astNode.p.slice(1);
@@ -7370,7 +7370,7 @@ var Playground = (function (exports) {
             n: 'do',
             t: astNode.t,
             p: p,
-            debugData: astNode.debugData,
+            token: astNode.token,
         }); })), false), [
             nilNode,
         ], false);
@@ -7385,7 +7385,7 @@ var Playground = (function (exports) {
                 n: 'when',
                 t: astNode.t,
                 p: p,
-                debugData: astNode.debugData,
+                token: astNode.token,
             }); });
         }
         var body = astNode.p.slice(1);
@@ -7394,7 +7394,7 @@ var Playground = (function (exports) {
             n: 'do',
             t: astNode.t,
             p: p,
-            debugData: astNode.debugData,
+            token: astNode.token,
         }); })), false), [
             nilNode,
         ], false);
@@ -7515,7 +7515,7 @@ var Playground = (function (exports) {
         }
         return possibleAsts;
     }
-    var nilNode = { t: AstNodeType.ReservedName, v: 'nil', debugData: undefined, p: [], n: undefined };
+    var nilNode = { t: AstNodeType.ReservedName, v: 'nil', token: undefined, p: [], n: undefined };
     function calculatePossibleAstNodes(contextStack, astNode, newIndentifiers) {
         var newContext = newIndentifiers
             ? newIndentifiers.reduce(function (acc, identity) {
@@ -7563,7 +7563,7 @@ var Playground = (function (exports) {
             v: Number(tkn[1]),
             p: [],
             n: undefined,
-            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
@@ -7603,7 +7603,7 @@ var Playground = (function (exports) {
             v: value,
             p: [],
             n: undefined,
-            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
@@ -7618,7 +7618,7 @@ var Playground = (function (exports) {
             v: value,
             p: [],
             n: undefined,
-            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
@@ -7631,7 +7631,7 @@ var Playground = (function (exports) {
             v: tkn[1],
             p: [],
             n: undefined,
-            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
@@ -7644,7 +7644,7 @@ var Playground = (function (exports) {
             v: tkn[1],
             p: [],
             n: undefined,
-            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
@@ -7657,7 +7657,7 @@ var Playground = (function (exports) {
             v: tkn[1],
             p: [],
             n: undefined,
-            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? { token: tkn, lastToken: tkn }
                 : undefined,
         };
@@ -7691,7 +7691,7 @@ var Playground = (function (exports) {
             t: AstNodeType.NormalExpression,
             n: 'array',
             p: params,
-            debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                               }
@@ -7713,7 +7713,7 @@ var Playground = (function (exports) {
             t: AstNodeType.NormalExpression,
             n: 'object',
             p: params,
-            debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                               }
@@ -7733,7 +7733,7 @@ var Playground = (function (exports) {
             v: regexpString,
             p: [],
             n: undefined,
-            debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: tkn,
                               }
@@ -7744,7 +7744,7 @@ var Playground = (function (exports) {
             v: optionsString,
             p: [],
             n: undefined,
-            debugData: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
+            token: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
                 ? {
                     token: tkn,
                               }
@@ -7754,7 +7754,7 @@ var Playground = (function (exports) {
             t: AstNodeType.NormalExpression,
             n: 'regexp',
             p: [stringNode, optionsNode],
-            debugData: ((_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo)
+            token: ((_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo)
                 ? {
                     token: tkn,
                               }
@@ -7812,7 +7812,7 @@ var Playground = (function (exports) {
                     a: args.m.length,
                 },
             ],
-            debugData: ((_e = getTokenDebugData(firstToken)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo)
+            token: ((_e = getTokenDebugData(firstToken)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: exprNode.debugData.lastToken,
@@ -7829,7 +7829,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.Argument,
                 n: tkn[1],
                 p: [],
-                debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+                token: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                     ? {
                         token: tkn,
                                       }
@@ -7842,7 +7842,7 @@ var Playground = (function (exports) {
                 v: tkn[1],
                 p: [],
                 n: undefined,
-                debugData: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
+                token: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
                     ? {
                         token: tkn,
                                       }
@@ -7874,7 +7874,7 @@ var Playground = (function (exports) {
             n: name,
             v: value,
             p: [],
-            debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
+            token: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
                     lastToken: value.debugData.lastToken,
@@ -7895,7 +7895,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.NormalExpression,
                 p: __spreadArray([fnNode], __read(params), false),
                 n: undefined,
-                debugData: startBracketToken
+                token: startBracketToken
                     ? {
                         token: startBracketToken,
                         lastToken: lastToken,
@@ -7909,7 +7909,7 @@ var Playground = (function (exports) {
             t: AstNodeType.NormalExpression,
             n: fnNode.v,
             p: params,
-            debugData: startBracketToken
+            token: startBracketToken
                 ? {
                     token: startBracketToken,
                     nameToken: (_c = fnNode.debugData) === null || _c === void 0 ? void 0 : _c.token,

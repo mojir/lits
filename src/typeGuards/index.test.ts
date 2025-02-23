@@ -16,7 +16,7 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
   const astNodes: AstNode[] = arr.map(n => ({
     t: AstNodeType.Number,
     v: n,
-    debugData: undefined,
+    token: undefined,
     p: [],
     n: undefined,
   }))
@@ -24,9 +24,7 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
     n: 'let',
     p: astNodes,
     t: AstNodeType.NormalExpression,
-    debugData: {
-      token: ['PF_Symbol', 'X'],
-    },
+    token: ['PF_Symbol', 'X'],
   }
 }
 

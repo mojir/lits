@@ -24,9 +24,7 @@ export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): S
     v: tkn[1],
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 }
 
@@ -41,9 +39,7 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
     v: tkn[1],
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 }
 
@@ -54,9 +50,7 @@ export function parseNumber(tokenStream: TokenStream, parseState: ParseState): N
     v: Number(tkn[1]),
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 }
 
@@ -108,8 +102,6 @@ export function parseString(tokenStream: TokenStream, parseState: ParseState): S
     v: value,
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 }

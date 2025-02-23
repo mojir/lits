@@ -19,9 +19,7 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
       t: AstNodeType.SpecialExpression,
       n: '??',
       p: params,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     assertNumberOfParams({ min: 1, max: 2 }, node)
@@ -35,7 +33,7 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
       if (contextStack.lookUp(firstNode) === null)
         return secondNode ? evaluateAstNode(secondNode, contextStack) : null
     }
-    assertAny(firstNode, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+    assertAny(firstNode, getTokenDebugData(node.token)?.sourceCodeInfo)
     const firstResult = evaluateAstNode(firstNode, contextStack)
     return firstResult ?? (secondNode ? evaluateAstNode(secondNode, contextStack) : null)
   },

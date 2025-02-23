@@ -18,9 +18,7 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
       t: AstNodeType.SpecialExpression,
       n: 'cond',
       p: params,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     assertEvenNumberOfParams(node)

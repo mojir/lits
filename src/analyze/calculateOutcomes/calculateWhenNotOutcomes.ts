@@ -16,7 +16,7 @@ export const calculateWhenNotOutcomes: CalculatePossibleAstNodesHelper<WhenNotNo
         n: 'when-not',
         t: astNode.t,
         p,
-        debugData: astNode.debugData,
+        token: astNode.token,
       }))
   }
 
@@ -28,7 +28,7 @@ export const calculateWhenNotOutcomes: CalculatePossibleAstNodesHelper<WhenNotNo
         n: 'do',
         t: astNode.t,
         p,
-        debugData: astNode.debugData,
+        token: astNode.token,
       })),
     nilNode,
   ]

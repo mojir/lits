@@ -14,7 +14,7 @@ export function assertEvenNumberOfParams(node: GenericNode): void {
   if (length % 2 !== 0) {
     throw new LitsError(
       `Wrong number of arguments, expected an even number, got ${valueToString(length)}.`,
-      getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
+      getTokenDebugData(node.token)?.sourceCodeInfo,
     )
   }
 }
@@ -24,7 +24,7 @@ export function assertNumberOfParams(count: Count, node: GenericNode): void {
     count,
     length: withoutCommentNodes(node.p).length,
     name: node.n ?? 'expression',
-    sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
+    sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
   })
 }
 

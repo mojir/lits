@@ -18,9 +18,7 @@ export const ifNotSpecialExpression: BuiltinSpecialExpression<Any, IfNotNode> = 
       t: AstNodeType.SpecialExpression,
       n: 'if-not',
       p: params,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     assertNumberOfParams({ min: 2, max: 3 }, node)
@@ -28,7 +26,7 @@ export const ifNotSpecialExpression: BuiltinSpecialExpression<Any, IfNotNode> = 
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
 
     const [conditionNode, trueNode, falseNode] = node.p
     if (!evaluateAstNode(asAstNode(conditionNode, sourceCodeInfo), contextStack)) {

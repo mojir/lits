@@ -2,23 +2,17 @@ import { joinAnalyzeResults } from '../../analyze/utils'
 import { AstNodeType } from '../../constants/constants'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
+import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { asNormalExpressionNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LetNode extends CommonSpecialExpressionNode<'let'> {
   bs: BindingNode[]
-  debugData: CommonSpecialExpressionNode<'let'>['debugData'] & ({
-    bindingArray: NormalExpressionNode
-  } | undefined)
 }
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket, parseToken }) => {
-    const bindingArray = getTokenDebugData(firstToken)?.sourceCodeInfo && asNormalExpressionNode(parseToken(tokenStream, { ...parseState }))
-
+  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
@@ -29,10 +23,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
       n: 'let',
       p: params,
       bs: bindings,
-      debugData: getTokenDebugData(firstToken)?.sourceCodeInfo && bindingArray && {
-        token: firstToken,
-        bindingArray,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
     return node
   },

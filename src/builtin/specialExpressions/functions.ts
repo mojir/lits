@@ -45,7 +45,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   parse: (tokenStream, parseState, firstToken, parsers) => {
     const { parseToken } = parsers
     const functionName = parseToken(tokenStream, parseState)
-    assertNameNode(functionName, getTokenDebugData(functionName.debugData?.token)?.sourceCodeInfo)
+    assertNameNode(functionName, getTokenDebugData(functionName.token)?.sourceCodeInfo)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
     assertRParenToken(tokenStream.tokens[parseState.position++])
@@ -56,9 +56,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
       f: functionName,
       p: [],
       o: functionOverloades,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     return node
@@ -66,13 +64,13 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = getFunctionName('defn', node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
+      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -102,9 +100,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
       p: [],
       f: functionName,
       o: functionOverloades,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     return node
@@ -112,13 +108,13 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = getFunctionName('defns', node, contextStack, evaluateAstNode)
 
-    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.debugData?.token)?.sourceCodeInfo)
+    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
 
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
+      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: name,
       o: evaluatedFunctionOverloades,
@@ -128,7 +124,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
     return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin, evaluateAstNode }) => {
-    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack)
     assertString(name, sourceCodeInfo)
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
@@ -149,9 +145,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
       n: 'fn',
       p: [],
       o: functionOverloades,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     return node
@@ -161,7 +155,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
 
     const litsFunction: LitsFunction = {
       [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: getTokenDebugData(node.debugData?.token)?.sourceCodeInfo,
+      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
       t: FunctionType.UserDefined,
       n: undefined,
       o: evaluatedFunctionOverloades,
@@ -179,7 +173,7 @@ function getFunctionName(
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ): string {
-  const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+  const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
   if (expressionName === 'defn')
     return ((node as DefnNode).f).v
 

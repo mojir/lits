@@ -125,7 +125,7 @@ export interface GenericNode {
   t: AstNodeType // type
   p: AstNode[] // params
   n: string | undefined // name
-  debugData: DebugData | undefined
+  token: Token | undefined
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode

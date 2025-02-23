@@ -27,14 +27,12 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       n: 'loop',
       p: params,
       bs: bindings,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
     return node
   },
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const bindingContext: Context = node.bs.reduce((result: Context, binding) => {
       result[binding.n] = { value: evaluateAstNode(binding.v, contextStack) }
       return result

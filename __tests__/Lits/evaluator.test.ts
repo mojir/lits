@@ -170,7 +170,7 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
-        debugData: { token: ['PF_Symbol', 'X'] },
+        token: ['PF_Symbol', 'X'],
         p: [],
         n: undefined,
       },
@@ -182,7 +182,7 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
-        debugData: undefined,
+        token: undefined,
         p: [],
         n: undefined,
       },
@@ -194,11 +194,9 @@ it('evaluateAstNode', () => {
       {
         t: AstNodeType.Modifier,
         v: '&',
-        debugData: {
-          token: ['PF_Symbol', 'X', {
-            sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
-          }],
-        },
+        token: ['PF_Symbol', 'X', {
+          sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
+        }],
         p: [],
         n: undefined,
       },

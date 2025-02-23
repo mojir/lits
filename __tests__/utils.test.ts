@@ -113,7 +113,7 @@ describe('utils', () => {
     const n: SymbolNode = {
       t: AstNodeType.Name,
       v: 'Foo',
-      debugData: undefined,
+      token: undefined,
       p: [],
       n: undefined,
     }

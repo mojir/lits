@@ -16,9 +16,7 @@ export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, Declar
       t: AstNodeType.SpecialExpression,
       n: 'declared?',
       p: params,
-      debugData: getTokenDebugData(firstToken) && {
-        token: firstToken,
-      },
+      token: getTokenDebugData(firstToken) && firstToken,
     }
 
     assertNumberOfParams(1, node)

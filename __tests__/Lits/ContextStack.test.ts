@@ -7,7 +7,7 @@ function createNameNode(name: string): SymbolNode {
   return {
     t: AstNodeType.Name,
     v: name,
-    debugData: undefined,
+    token: undefined,
     p: [],
     n: undefined,
   }

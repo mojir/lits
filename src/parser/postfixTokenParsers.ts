@@ -36,9 +36,7 @@ function parseStringShorthand(tokenStream: TokenStream, parseState: ParseState):
     v: value,
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 }
 
@@ -49,9 +47,7 @@ function parseComment(tokenStream: TokenStream, parseState: ParseState): Comment
     v: tkn[1],
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 }
 
@@ -89,11 +85,7 @@ function parseArrayLitteral(tokenStream: TokenStream, parseState: ParseState): A
     t: AstNodeType.NormalExpression,
     n: 'array',
     p: params,
-    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
-      ? {
-          token: firstToken,
-        }
-      : undefined,
+    token: getTokenDebugData(firstToken) && firstToken,
   }
 
   return node
@@ -115,11 +107,7 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
     t: AstNodeType.NormalExpression,
     n: 'object',
     p: params,
-    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
-      ? {
-          token: firstToken,
-        }
-      : undefined,
+    token: getTokenDebugData(firstToken) && firstToken,
   }
 
   assertEvenNumberOfParams(node)
@@ -138,11 +126,7 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
     v: regexpString,
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? {
-          token: tkn,
-        }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 
   const optionsNode: StringNode = {
@@ -150,22 +134,14 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
     v: optionsString,
     p: [],
     n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? {
-          token: tkn,
-        }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 
   const node: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
     n: 'regexp',
     p: [stringNode, optionsNode],
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? {
-          token: tkn,
-        }
-      : undefined,
+    token: getTokenDebugData(tkn) && tkn,
   }
 
   return node
@@ -227,11 +203,7 @@ function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnN
         a: args.m.length,
       },
     ],
-    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
-      ? {
-          token: firstToken,
-        }
-      : undefined,
+    token: getTokenDebugData(firstToken) && firstToken,
   }
 
   return node
@@ -245,11 +217,7 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
       t: AstNodeType.Argument,
       n: tkn[1],
       p: [],
-      debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-        ? {
-            token: tkn,
-          }
-        : undefined,
+      token: getTokenDebugData(tkn) && tkn,
     }
   }
   else if (isPF_ModifierToken(tkn)) {
@@ -258,11 +226,7 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
       v: tkn[1],
       p: [],
       n: undefined,
-      debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-        ? {
-            token: tkn,
-          }
-        : undefined,
+      token: getTokenDebugData(tkn) && tkn,
     }
   }
   else {
@@ -294,11 +258,7 @@ function parseBinding(tokenStream: TokenStream, parseState: ParseState): Binding
     n: name,
     v: value,
     p: [],
-    debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
-      ? {
-          token: firstToken,
-        }
-      : undefined,
+    token: getTokenDebugData(firstToken) && firstToken,
   }
   return node
 }
@@ -317,27 +277,18 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
       t: AstNodeType.NormalExpression,
       p: [fnNode, ...params],
       n: undefined,
-      debugData: startBracketToken
-        ? {
-            token: startBracketToken,
-          }
-        : undefined,
+      token: startBracketToken,
     }
 
     return node
   }
 
-  assertNameNode(fnNode, getTokenDebugData(fnNode.debugData?.token)?.sourceCodeInfo)
+  assertNameNode(fnNode, getTokenDebugData(fnNode.token)?.sourceCodeInfo)
   const node: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
     n: fnNode.v,
     p: params,
-    debugData: startBracketToken
-      ? {
-          token: startBracketToken,
-          nameToken: fnNode.debugData?.token,
-        }
-      : undefined,
+    token: startBracketToken,
   }
 
   const builtinExpression = builtin.normalExpressions[node.n]
@@ -368,10 +319,6 @@ function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState
     parseBindings,
     parseArgument,
   })
-
-  if (node.debugData) {
-    node.debugData.nameToken = nameToken
-  }
 
   return node
 }
