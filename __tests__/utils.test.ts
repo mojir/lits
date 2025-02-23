@@ -111,7 +111,7 @@ describe('utils', () => {
 
   describe('helpers', () => {
     const n: SymbolNode = {
-      t: AstNodeType.Name,
+      t: AstNodeType.Symbol,
       v: 'Foo',
       token: undefined,
       p: [],

@@ -163,4 +163,20 @@ describe('infix operators', () => {
       expect(lits.run('2 + (3 * 2)')).toBe(8)
     })
   })
+  describe('objects', () => {
+    test('samples', () => {
+      expect(lits.run('{ a=2+3 }')).toEqual({ a: 5 })
+      expect(lits.run('{ a=10 }')).toEqual({ a: 10 })
+      expect(lits.run('{ a=10, b=2+3 }')).toEqual({ a: 10, b: 5 })
+      expect(lits.run('{ a=10, b=20, c = 2 * (1 - 2) }')).toEqual({ a: 10, b: 20, c: -2 })
+    })
+  })
+  describe('arrays', () => {
+    test('samples', () => {
+      expect(lits.run('[2+3]')).toEqual([5])
+      expect(lits.run('[10]')).toEqual([10])
+      expect(lits.run('[10, 2+3]')).toEqual([10, 5])
+      expect(lits.run('[10, 20, 2 * (1 - 2)]')).toEqual([10, 20, -2])
+    })
+  })
 })

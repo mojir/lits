@@ -45,9 +45,9 @@ export function evaluateAstNode(node: AstNode, contextStack: ContextStack): Any 
       return evaluateNumber(node)
     case AstNodeType.String:
       return evaluateString(node)
-    case AstNodeType.Name:
+    case AstNodeType.Symbol:
       return contextStack.evaluateName(node)
-    case AstNodeType.ReservedName:
+    case AstNodeType.ReservedSymbol:
       return evaluateReservedName(node)
     case AstNodeType.NormalExpression:
       return evaluateNormalExpression(node, contextStack)

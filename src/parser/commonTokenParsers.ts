@@ -1,6 +1,6 @@
 import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
-import { asStringToken } from '../tokenizer/common/commonTokens'
+import { asNumberToken, asStringToken } from '../tokenizer/common/commonTokens'
 import { isIF_ReservedSymbolToken, isIF_SymbolToken } from '../tokenizer/infix/infixTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { isPF_ReservedSymbolToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
@@ -20,7 +20,7 @@ export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): S
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
   }
   return {
-    t: AstNodeType.Name,
+    t: AstNodeType.Symbol,
     v: tkn[1],
     p: [],
     n: undefined,
@@ -35,7 +35,7 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
   }
   return {
-    t: AstNodeType.ReservedName,
+    t: AstNodeType.ReservedSymbol,
     v: tkn[1],
     p: [],
     n: undefined,
@@ -44,10 +44,13 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
 }
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
-  const tkn = asToken(tokenStream.tokens[parseState.position++])
+  const tkn = asNumberToken(tokenStream.tokens[parseState.position++])
+  const value = tkn[1]
+  const negative = value[0] === '-'
+  const numberString = negative ? value.substring(1) : value
   return {
     t: AstNodeType.Number,
-    v: Number(tkn[1]),
+    v: negative ? -Number(numberString) : Number(numberString),
     p: [],
     n: undefined,
     token: getTokenDebugData(tkn) && tkn,

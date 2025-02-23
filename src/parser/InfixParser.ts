@@ -1,8 +1,8 @@
-import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
-import { isLParenToken, isRBraceToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { LitsError } from '../errors'
+import { asLBraceToken, asLBracketToken, assertRBraceToken, assertRBracketToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { IF_OperatorToken, InfixTokenType } from '../tokenizer/infix/infixTokens'
-import { isIF_OperatorToken } from '../tokenizer/infix/infixTokens'
+import { assertIF_OperatorToken, isIF_OperatorToken } from '../tokenizer/infix/infixTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { hasTokenDebugData } from '../tokenizer/utils'
@@ -51,6 +51,8 @@ function getPrecedence(operator: IF_OperatorToken): number {
 
     case '!': // logical NOT
     case '~': // bitwise NOT
+    case '=': // property assignemnt operator
+    case ',': // element delimiter
       throw new Error(`Unknown binary operator: ${operatorSign}`)
 
     default:
@@ -151,6 +153,8 @@ function fromBinaryInfixToAstNode(operator: IF_OperatorToken, left: AstNode, rig
       }
     case '!':
     case '~':
+    case '=':
+    case ',':
       throw new Error(`Unknown binary operator: ${operatorName}`)
     default:
       throw new Error(`Unknown binary operator: ${operatorName satisfies never}`)
@@ -174,7 +178,7 @@ export class InfixParser {
   private parseExpression(precedence = 0): AstNode {
     let left = this.parseOperand()
 
-    while (!this.isAtEnd()) {
+    while (!this.isAtEnd() && !isIF_OperatorToken(this.peek(), ',')) {
       const operator = this.peek()
       if (!isIF_OperatorToken(operator)) {
         break
@@ -228,6 +232,14 @@ export class InfixParser {
       return expression
     }
 
+    if (isLBraceToken(token)) {
+      return this.parseObject()
+    }
+
+    if (isLBracketToken(token)) {
+      return this.parseArray()
+    }
+
     const tokenType = token[0] as InfixTokenType
     switch (tokenType) {
       case 'Number':
@@ -243,8 +255,77 @@ export class InfixParser {
     return this.parseState.parseToken(this.tokenStream, this.parseState)
   }
 
+  private parseObject(): AstNode {
+    const firstToken = asLBraceToken(this.peek())
+    this.advance()
+    const params: AstNode[] = []
+    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+      const key = this.parseOperand()
+      if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
+        throw new LitsError('Expected key to be a symbol or a string')
+      }
+
+      params.push({
+        t: AstNodeType.String,
+        v: key.v,
+        token: key.token,
+        p: [],
+        n: undefined,
+      })
+
+      assertIF_OperatorToken(this.peek(), '=')
+      this.advance()
+
+      params.push(this.parseExpression())
+      const nextToken = this.peek()
+      if (!isIF_OperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
+        throw new LitsError('Expected comma or closing brace')
+      }
+
+      if (isIF_OperatorToken(nextToken, ',')) {
+        this.advance()
+      }
+    }
+
+    assertRBraceToken(this.peek())
+    this.advance()
+
+    return {
+      t: AstNodeType.NormalExpression,
+      n: 'object',
+      p: params,
+      token: firstToken,
+    }
+  }
+
+  private parseArray(): AstNode {
+    const firstToken = asLBracketToken(this.peek())
+    this.advance()
+    const params: AstNode[] = []
+    while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
+      params.push(this.parseExpression())
+      const nextToken = this.peek()
+      if (!isIF_OperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
+        throw new LitsError('Expected comma or closing parenthesis')
+      }
+      if (isIF_OperatorToken(nextToken, ',')) {
+        this.advance()
+      }
+    }
+
+    assertRBracketToken(this.peek())
+    this.advance()
+
+    return {
+      t: AstNodeType.NormalExpression,
+      n: 'array',
+      p: params,
+      token: firstToken,
+    }
+  }
+
   private isAtEnd(): boolean {
-    return this.parseState.position >= this.tokenStream.tokens.length || isRBraceToken(this.peek())
+    return this.parseState.position >= this.tokenStream.tokens.length
   }
 
   private peek(): Token {

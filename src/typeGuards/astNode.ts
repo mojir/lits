@@ -31,7 +31,7 @@ export function isNameNode(value: unknown): value is SymbolNode {
   if (!isAstNode(value))
     return false
 
-  return value.t === AstNodeType.Name
+  return value.t === AstNodeType.Symbol
 }
 export function asNameNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): SymbolNode {
   assertNameNode(value, sourceCodeInfo)

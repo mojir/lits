@@ -28,7 +28,7 @@ import {
 describe('lits type guards', () => {
   it('any', () => {
     const node: AstNode = {
-      t: AstNodeType.Name,
+      t: AstNodeType.Symbol,
       v: 'test',
       token: ['PF_Symbol', 'X'],
       p: [],

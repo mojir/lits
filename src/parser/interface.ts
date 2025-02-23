@@ -145,7 +145,7 @@ export interface StringNode extends GenericNode {
   v: string // value
 }
 export interface SymbolNode extends GenericNode {
-  t: AstNodeType.Name // type
+  t: AstNodeType.Symbol // type
   v: string // value
 }
 export interface ModifierNode extends GenericNode {
@@ -153,7 +153,7 @@ export interface ModifierNode extends GenericNode {
   v: ModifierName
 }
 export interface ReservedSymbolNode extends GenericNode {
-  t: AstNodeType.ReservedName // type
+  t: AstNodeType.ReservedSymbol // type
   v: PostfixReservedName // reservedName
 }
 

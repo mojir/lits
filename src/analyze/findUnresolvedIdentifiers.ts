@@ -23,7 +23,7 @@ export const findUnresolvedIdentifiers: FindUnresolvedIdentifiers = (ast, contex
 function findUnresolvedIdentifiersInAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin): UnresolvedIdentifiers {
   const emptySet = new Set<UnresolvedIdentifier>()
   switch (astNode.t) {
-    case AstNodeType.Name: {
+    case AstNodeType.Symbol: {
       const lookUpResult = contextStack.lookUp(astNode)
       if (lookUpResult === null)
         return new Set([{ symbol: astNode.v, token: astNode.token }])
@@ -33,14 +33,14 @@ function findUnresolvedIdentifiersInAstNode(astNode: AstNode, contextStack: Cont
     case AstNodeType.String:
     case AstNodeType.Number:
     case AstNodeType.Modifier:
-    case AstNodeType.ReservedName:
+    case AstNodeType.ReservedSymbol:
     case AstNodeType.Comment:
       return emptySet
     case AstNodeType.NormalExpression: {
       const unresolvedIdentifiers = new Set<UnresolvedIdentifier>()
       const { n: name, token: debug } = astNode
       if (typeof name === 'string') {
-        const lookUpResult = contextStack.lookUp({ t: AstNodeType.Name, v: name, token: debug, p: [], n: undefined })
+        const lookUpResult = contextStack.lookUp({ t: AstNodeType.Symbol, v: name, token: debug, p: [], n: undefined })
         if (lookUpResult === null)
           unresolvedIdentifiers.add({ symbol: name, token: astNode.token })
       }

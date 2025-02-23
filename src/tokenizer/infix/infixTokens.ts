@@ -35,6 +35,8 @@ export const infixTokenTypes = [
 export const infixOperators = [
   '!', // logical NOT
   '~', // bitwise NOT
+  '=', // property assignemnt operator
+  ',', // element delimiter
 
   '**', // exponentiation
 
@@ -91,7 +93,7 @@ type GenericInfixValueToken<T extends Exclude<InfixValueTokenType, CommonValueTo
 
 export type IF_PostfixToken = GenericInfixSimpleToken<'IF_Postfix'>
 export type IF_WhitespaceToken = GenericInfixValueToken<'IF_Whitespace'>
-export type IF_OperatorToken = GenericInfixValueToken<'IF_Operator', InfixOperator>
+export type IF_OperatorToken<T extends InfixOperator = InfixOperator> = GenericInfixValueToken<'IF_Operator', T>
 export type IF_SymbolToken = GenericInfixValueToken<'IF_Symbol'>
 export type IF_ReservedSymbolToken = GenericInfixValueToken<'IF_ReservedSymbol'>
 export type IF_SingleLineCommentToken = GenericInfixValueToken<'IF_SingleLineComment'>
@@ -179,16 +181,25 @@ export function asIF_PostfixToken(token?: Token): IF_PostfixToken {
   return token
 }
 
-export function isIF_OperatorToken(token?: Token): token is IF_OperatorToken {
-  return token?.[0] === 'IF_Operator'
+export function isIF_OperatorToken<T extends InfixOperator>(token?: Token, operatorName?: T): token is IF_OperatorToken<T> {
+  if (token?.[0] !== 'IF_Operator') {
+    return false
+  }
+  if (operatorName && token[1] !== operatorName) {
+    return false
+  }
+  return true
 }
-export function assertIF_OperatorToken(token?: Token): asserts token is IF_OperatorToken {
-  if (!isIF_OperatorToken(token)) {
+export function assertIF_OperatorToken<T extends InfixOperator>(token?: Token, operatorName?: T): asserts token is IF_OperatorToken<T> {
+  if (!isIF_OperatorToken(token, operatorName)) {
+    if (operatorName) {
+      throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`)
+    }
     throwUnexpectedToken('IF_Operator', token)
   }
 }
-export function asIF_OperatorToken(token?: Token): IF_OperatorToken {
-  assertIF_OperatorToken(token)
+export function asIF_OperatorToken<T extends InfixOperator>(token?: Token, operatorName?: T): IF_OperatorToken<T> {
+  assertIF_OperatorToken(token, operatorName)
   return token
 }
 

@@ -5,7 +5,7 @@ import type { SymbolNode } from '../../src/parser/interface'
 
 function createNameNode(name: string): SymbolNode {
   return {
-    t: AstNodeType.Name,
+    t: AstNodeType.Symbol,
     v: name,
     token: undefined,
     p: [],

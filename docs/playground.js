@@ -590,9 +590,9 @@ var Playground = (function (exports) {
         AstNodeType[AstNodeType["String"] = 202] = "String";
         AstNodeType[AstNodeType["NormalExpression"] = 203] = "NormalExpression";
         AstNodeType[AstNodeType["SpecialExpression"] = 204] = "SpecialExpression";
-        AstNodeType[AstNodeType["Name"] = 205] = "Name";
+        AstNodeType[AstNodeType["Symbol"] = 205] = "Symbol";
         AstNodeType[AstNodeType["Modifier"] = 206] = "Modifier";
-        AstNodeType[AstNodeType["ReservedName"] = 207] = "ReservedName";
+        AstNodeType[AstNodeType["ReservedSymbol"] = 207] = "ReservedSymbol";
         AstNodeType[AstNodeType["Binding"] = 208] = "Binding";
         AstNodeType[AstNodeType["Argument"] = 209] = "Argument";
         AstNodeType[AstNodeType["Partial"] = 210] = "Partial";
@@ -603,9 +603,9 @@ var Playground = (function (exports) {
         [AstNodeType.String, 'String'],
         [AstNodeType.NormalExpression, 'NormalExpression'],
         [AstNodeType.SpecialExpression, 'SpecialExpression'],
-        [AstNodeType.Name, 'Name'],
+        [AstNodeType.Symbol, 'Name'],
         [AstNodeType.Modifier, 'Modifier'],
-        [AstNodeType.ReservedName, 'ReservedName'],
+        [AstNodeType.ReservedSymbol, 'ReservedName'],
         [AstNodeType.Binding, 'Binding'],
         [AstNodeType.Argument, 'Argument'],
         [AstNodeType.Partial, 'Partial'],
@@ -802,8 +802,30 @@ var Playground = (function (exports) {
     function isRBracketToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'RBracket';
     }
+    function assertRBracketToken(token) {
+        if (!isRBracketToken(token)) {
+            throwUnexpectedToken('RBracket', token);
+        }
+    }
+    function isLBraceToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'LBrace';
+    }
+    function assertLBraceToken(token) {
+        if (!isLBraceToken(token)) {
+            throwUnexpectedToken('LBrace', token);
+        }
+    }
+    function asLBraceToken(token) {
+        assertLBraceToken(token);
+        return token;
+    }
     function isRBraceToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'RBrace';
+    }
+    function assertRBraceToken(token) {
+        if (!isRBraceToken(token)) {
+            throwUnexpectedToken('RBrace', token);
+        }
     }
     function isNumberToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'Number';
@@ -812,6 +834,10 @@ var Playground = (function (exports) {
         if (!isNumberToken(token)) {
             throwUnexpectedToken('Number', token);
         }
+    }
+    function asNumberToken(token) {
+        assertNumberToken(token);
+        return token;
     }
     function isStringToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'String';
@@ -843,6 +869,8 @@ var Playground = (function (exports) {
     var infixOperators = [
         '!', // logical NOT
         '~', // bitwise NOT
+        '=', // property assignemnt operator
+        ',', // element delimiter
         '**', // exponentiation
         '*', // multiplication
         '/', // division
@@ -877,8 +905,21 @@ var Playground = (function (exports) {
     function isIF_PostfixToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'IF_Postfix';
     }
-    function isIF_OperatorToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'IF_Operator';
+    function isIF_OperatorToken(token, operatorName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'IF_Operator') {
+            return false;
+        }
+        if (operatorName && token[1] !== operatorName) {
+            return false;
+        }
+        return true;
+    }
+    function assertIF_OperatorToken(token, operatorName) {
+        if (!isIF_OperatorToken(token, operatorName)) {
+            {
+                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName));
+            }
+        }
     }
     function isIF_WhitespaceToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'IF_Whitespace';
@@ -1070,7 +1111,7 @@ var Playground = (function (exports) {
     function isNameNode(value) {
         if (!isAstNode(value))
             return false;
-        return value.t === AstNodeType.Name;
+        return value.t === AstNodeType.Symbol;
     }
     function asNameNode(value, sourceCodeInfo) {
         assertNameNode(value, sourceCodeInfo);
@@ -6772,9 +6813,9 @@ var Playground = (function (exports) {
                 return evaluateNumber(node);
             case AstNodeType.String:
                 return evaluateString(node);
-            case AstNodeType.Name:
+            case AstNodeType.Symbol:
                 return contextStack.evaluateName(node);
-            case AstNodeType.ReservedName:
+            case AstNodeType.ReservedSymbol:
                 return evaluateReservedName(node);
             case AstNodeType.NormalExpression:
                 return evaluateNormalExpression(node, contextStack);
@@ -6893,7 +6934,7 @@ var Playground = (function (exports) {
         var _b;
         var emptySet = new Set();
         switch (astNode.t) {
-            case AstNodeType.Name: {
+            case AstNodeType.Symbol: {
                 var lookUpResult = contextStack.lookUp(astNode);
                 if (lookUpResult === null)
                     return new Set([{ symbol: astNode.v, token: astNode.token }]);
@@ -6902,14 +6943,14 @@ var Playground = (function (exports) {
             case AstNodeType.String:
             case AstNodeType.Number:
             case AstNodeType.Modifier:
-            case AstNodeType.ReservedName:
+            case AstNodeType.ReservedSymbol:
             case AstNodeType.Comment:
                 return emptySet;
             case AstNodeType.NormalExpression: {
                 var unresolvedIdentifiers_1 = new Set();
                 var name_1 = astNode.n, debug = astNode.token;
                 if (typeof name_1 === 'string') {
-                    var lookUpResult = contextStack.lookUp({ t: AstNodeType.Name, v: name_1, token: debug, p: [], n: undefined });
+                    var lookUpResult = contextStack.lookUp({ t: AstNodeType.Symbol, v: name_1, token: debug, p: [], n: undefined });
                     if (lookUpResult === null)
                         unresolvedIdentifiers_1.add({ symbol: name_1, token: astNode.token });
                 }
@@ -6981,8 +7022,8 @@ var Playground = (function (exports) {
         ], false);
     };
 
-    var trueNode = { t: AstNodeType.ReservedName, v: 'true', token: undefined, p: [], n: undefined };
-    var falseNode = { t: AstNodeType.ReservedName, v: 'false', token: undefined, p: [], n: undefined };
+    var trueNode = { t: AstNodeType.ReservedSymbol, v: 'true', token: undefined, p: [], n: undefined };
+    var falseNode = { t: AstNodeType.ReservedSymbol, v: 'false', token: undefined, p: [], n: undefined };
     var calculateDeclaredOutcomes = function (_a) {
         var astNode = _a.astNode, isAstComputable = _a.isAstComputable;
         if (isAstComputable(astNode.p))
@@ -7437,7 +7478,7 @@ var Playground = (function (exports) {
         }
         return possibleAsts;
     }
-    var nilNode = { t: AstNodeType.ReservedName, v: 'nil', token: undefined, p: [], n: undefined };
+    var nilNode = { t: AstNodeType.ReservedSymbol, v: 'nil', token: undefined, p: [], n: undefined };
     function calculatePossibleAstNodes(contextStack, astNode, newIndentifiers) {
         var newContext = newIndentifiers
             ? newIndentifiers.reduce(function (acc, identity) {
@@ -7483,7 +7524,7 @@ var Playground = (function (exports) {
             throw new LitsError("Expected symbol token, got ".concat(tkn[0]));
         }
         return {
-            t: AstNodeType.Name,
+            t: AstNodeType.Symbol,
             v: tkn[1],
             p: [],
             n: undefined,
@@ -7496,7 +7537,7 @@ var Playground = (function (exports) {
             throw new LitsError("Expected symbol token, got ".concat(tkn[0]));
         }
         return {
-            t: AstNodeType.ReservedName,
+            t: AstNodeType.ReservedSymbol,
             v: tkn[1],
             p: [],
             n: undefined,
@@ -7504,10 +7545,13 @@ var Playground = (function (exports) {
         };
     }
     function parseNumber(tokenStream, parseState) {
-        var tkn = asToken(tokenStream.tokens[parseState.position++]);
+        var tkn = asNumberToken(tokenStream.tokens[parseState.position++]);
+        var value = tkn[1];
+        var negative = value[0] === '-';
+        var numberString = negative ? value.substring(1) : value;
         return {
             t: AstNodeType.Number,
-            v: Number(tkn[1]),
+            v: negative ? -Number(numberString) : Number(numberString),
             p: [],
             n: undefined,
             token: getTokenDebugData(tkn) && tkn,
@@ -7585,6 +7629,8 @@ var Playground = (function (exports) {
                 return 8;
             case '!': // logical NOT
             case '~': // bitwise NOT
+            case '=': // property assignemnt operator
+            case ',': // element delimiter
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
             default:
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
@@ -7677,6 +7723,8 @@ var Playground = (function (exports) {
                 };
             case '!':
             case '~':
+            case '=':
+            case ',':
                 throw new Error("Unknown binary operator: ".concat(operatorName));
             default:
                 throw new Error("Unknown binary operator: ".concat(operatorName));
@@ -7696,7 +7744,7 @@ var Playground = (function (exports) {
         InfixParser.prototype.parseExpression = function (precedence) {
             if (precedence === void 0) { precedence = 0; }
             var left = this.parseOperand();
-            while (!this.isAtEnd()) {
+            while (!this.isAtEnd() && !isIF_OperatorToken(this.peek(), ',')) {
                 var operator = this.peek();
                 if (!isIF_OperatorToken(operator)) {
                     break;
@@ -7744,6 +7792,12 @@ var Playground = (function (exports) {
                 this.advance();
                 return expression;
             }
+            if (isLBraceToken(token)) {
+                return this.parseObject();
+            }
+            if (isLBracketToken(token)) {
+                return this.parseArray();
+            }
             var tokenType = token[0];
             switch (tokenType) {
                 case 'Number':
@@ -7757,8 +7811,67 @@ var Playground = (function (exports) {
             }
             return this.parseState.parseToken(this.tokenStream, this.parseState);
         };
+        InfixParser.prototype.parseObject = function () {
+            var firstToken = asLBraceToken(this.peek());
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+                var key = this.parseOperand();
+                if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
+                    throw new LitsError('Expected key to be a symbol or a string');
+                }
+                params.push({
+                    t: AstNodeType.String,
+                    v: key.v,
+                    token: key.token,
+                    p: [],
+                    n: undefined,
+                });
+                assertIF_OperatorToken(this.peek(), '=');
+                this.advance();
+                params.push(this.parseExpression());
+                var nextToken = this.peek();
+                if (!isIF_OperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
+                    throw new LitsError('Expected comma or closing brace');
+                }
+                if (isIF_OperatorToken(nextToken, ',')) {
+                    this.advance();
+                }
+            }
+            assertRBraceToken(this.peek());
+            this.advance();
+            return {
+                t: AstNodeType.NormalExpression,
+                n: 'object',
+                p: params,
+                token: firstToken,
+            };
+        };
+        InfixParser.prototype.parseArray = function () {
+            var firstToken = asLBracketToken(this.peek());
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isRBracketToken(this.peek())) {
+                params.push(this.parseExpression());
+                var nextToken = this.peek();
+                if (!isIF_OperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
+                    throw new LitsError('Expected comma or closing parenthesis');
+                }
+                if (isIF_OperatorToken(nextToken, ',')) {
+                    this.advance();
+                }
+            }
+            assertRBracketToken(this.peek());
+            this.advance();
+            return {
+                t: AstNodeType.NormalExpression,
+                n: 'array',
+                p: params,
+                token: firstToken,
+            };
+        };
         InfixParser.prototype.isAtEnd = function () {
-            return this.parseState.position >= this.tokenStream.tokens.length || isRBraceToken(this.peek());
+            return this.parseState.position >= this.tokenStream.tokens.length;
         };
         InfixParser.prototype.peek = function () {
             return this.tokenStream.tokens[this.parseState.position];
@@ -8139,7 +8252,6 @@ var Playground = (function (exports) {
         value += '"'; // closing quote
         return [length + 1, ['String', value]];
     };
-    var endOfNumberRegExp = /[\s)\]},#]/;
     var decimalNumberRegExp = /\d/;
     var octalNumberRegExp = /[0-7]/;
     var hexNumberRegExp = /[0-9a-f]/i;
@@ -8148,20 +8260,14 @@ var Playground = (function (exports) {
     var tokenizeNumber = function (input, position) {
         var type = 'decimal';
         var firstChar = input[position];
+        var secondChar = input[position + 1];
         if (!firstCharRegExp.test(firstChar))
             return NO_MATCH;
         var hasDecimals = firstChar === '.';
         var i;
         for (i = position + 1; i < input.length; i += 1) {
             var char = input[i];
-            if (endOfNumberRegExp.test(char))
-                break;
-            if (char === '.') {
-                var nextChar = input[i + 1];
-                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
-                    break;
-            }
-            if (i === position + 1 && firstChar === '0') {
+            if ((i === position + 1 && firstChar === '0') || (i === position + 2 && firstChar === '-' && secondChar === '0')) {
                 if (char === 'b' || char === 'B') {
                     type = 'binary';
                     continue;
@@ -8174,6 +8280,30 @@ var Playground = (function (exports) {
                     type = 'hex';
                     continue;
                 }
+            }
+            if (type === 'decimal') {
+                if (hasDecimals) {
+                    if (!decimalNumberRegExp.test(char)) {
+                        break;
+                    }
+                }
+                else if (char !== '.' && !decimalNumberRegExp.test(char)) {
+                    break;
+                }
+            }
+            if (type === 'binary' && !binaryNumberRegExp.test(char)) {
+                break;
+            }
+            if (type === 'octal' && !octalNumberRegExp.test(char)) {
+                break;
+            }
+            if (type === 'hex' && !hexNumberRegExp.test(char)) {
+                break;
+            }
+            if (char === '.') {
+                var nextChar = input[i + 1];
+                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
+                    break;
             }
             if (type === 'decimal' && hasDecimals) {
                 if (!decimalNumberRegExp.test(char))

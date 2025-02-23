@@ -51,7 +51,6 @@ export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   return [length + 1, ['String', value]]
 }
 
-const endOfNumberRegExp = /[\s)\]},#]/
 const decimalNumberRegExp = /\d/
 const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-f]/i
@@ -60,6 +59,7 @@ const firstCharRegExp = /[0-9.-]/
 export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
   let type: 'decimal' | 'octal' | 'hex' | 'binary' = 'decimal'
   const firstChar = input[position] as string
+  const secondChar = input[position + 1] as string
   if (!firstCharRegExp.test(firstChar))
     return NO_MATCH
 
@@ -68,15 +68,8 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
   let i: number
   for (i = position + 1; i < input.length; i += 1) {
     const char = input[i] as string
-    if (endOfNumberRegExp.test(char))
-      break
 
-    if (char === '.') {
-      const nextChar = input[i + 1]
-      if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
-        break
-    }
-    if (i === position + 1 && firstChar === '0') {
+    if ((i === position + 1 && firstChar === '0') || (i === position + 2 && firstChar === '-' && secondChar === '0')) {
       if (char === 'b' || char === 'B') {
         type = 'binary'
         continue
@@ -89,6 +82,32 @@ export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
         type = 'hex'
         continue
       }
+    }
+
+    if (type === 'decimal') {
+      if (hasDecimals) {
+        if (!decimalNumberRegExp.test(char)) {
+          break
+        }
+      }
+      else if (char !== '.' && !decimalNumberRegExp.test(char)) {
+        break
+      }
+    }
+    if (type === 'binary' && !binaryNumberRegExp.test(char)) {
+      break
+    }
+    if (type === 'octal' && !octalNumberRegExp.test(char)) {
+      break
+    }
+    if (type === 'hex' && !hexNumberRegExp.test(char)) {
+      break
+    }
+
+    if (char === '.') {
+      const nextChar = input[i + 1]
+      if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
+        break
     }
     if (type === 'decimal' && hasDecimals) {
       if (!decimalNumberRegExp.test(char))

@@ -55,13 +55,13 @@ describe('astNode type guards', () => {
     t: AstNodeType.SpecialExpression,
     n: '??',
     p: [{
-      t: AstNodeType.ReservedName,
+      t: AstNodeType.ReservedSymbol,
       v: 'nil',
       token: undefined,
       p: [],
       n: undefined,
     }, {
-      t: AstNodeType.ReservedName,
+      t: AstNodeType.ReservedSymbol,
       v: 'nil',
       token: undefined,
       p: [],
@@ -70,7 +70,7 @@ describe('astNode type guards', () => {
     token: undefined,
   }
   const nameNode: SymbolNode = {
-    t: AstNodeType.Name,
+    t: AstNodeType.Symbol,
     token: tkn,
     v: 'A name',
     p: [],
