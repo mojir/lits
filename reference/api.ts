@@ -253,6 +253,7 @@ export const api = {
   bitwise: [
     'bit-shift-left',
     'bit-shift-right',
+    'unsigned-bit-shift-right',
     'bit-not',
     'bit-and',
     'bit-and-not',

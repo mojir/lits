@@ -41,6 +41,26 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   ],
   description: 'Shifts $x arithmetically right by $n bit positions.',
   examples: ['(bit-shift-right 2048 10)', '(bit-shift-right 4 10)'],
+}, 'unsigned-bit-shift-right': {
+  title: 'unsigned-bit-shift-right',
+  category: 'Bitwise',
+  linkName: 'unsigned-bit-shift-right',
+  returns: {
+    type: 'integer',
+  },
+  args: {
+    x: {
+      type: 'integer',
+    },
+    n: {
+      type: 'integer',
+    },
+  },
+  variants: [
+    { argumentNames: ['x', 'n'] },
+  ],
+  description: 'Shifts $x arithmetically right by $n bit positions without sign extension.',
+  examples: ['(unsigned-bit-shift-right 2048 10)', '(unsigned-bit-shift-right 4 10)', '(unsigned-bit-shift-right -1 10)'],
 }, 'bit-not': {
   title: 'bit-not',
   category: 'Bitwise',

@@ -39,6 +39,7 @@ export const postfixTokenTypes = [
 
 export type PostfixSimpleTokenType = typeof postfixSimpleTokenTypes[number]
 export type PostfixValueTokenType = typeof postfixValueTokenTypes[number]
+export type PostfixTokenType = typeof postfixTokenTypes[number]
 
 type GenericPostfixSimpleToken<T extends Exclude<PostfixSimpleTokenType, CommonSimpleTokenType>> = [T] | [T, TokenDebugData]
 type GenericPostfixValueToken<T extends Exclude<PostfixValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]

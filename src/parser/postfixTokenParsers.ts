@@ -7,24 +7,23 @@ import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import { asLParenToken, asRParenToken, assertLBracketToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import { asPF_CommentToken, asPF_RegexpShorthandToken, asPF_ReservedSymbolToken, asPF_StringShorthandToken, asPF_SymbolToken, isPF_FnShorthandToken, isPF_ModifierToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
+import type { PostfixTokenType } from '../tokenizer/postfix/postfixTokens'
+import { asPF_CommentToken, asPF_RegexpShorthandToken, asPF_StringShorthandToken, asPF_SymbolToken, isPF_FnShorthandToken, isPF_ModifierToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
 import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
-import { parseNumber, parseString } from './commonTokenParsers'
+import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type {
   AstNode,
   BindingNode,
   CommentNode,
-  NameNode,
   NormalExpressionNode,
   NormalExpressionNodeWithName,
   ParseArgument,
   ParseExpression,
   ParseState,
-  ReservedNameNode,
   StringNode,
 } from './interface'
 
@@ -35,32 +34,6 @@ function parseStringShorthand(tokenStream: TokenStream, parseState: ParseState):
   return {
     t: AstNodeType.String,
     v: value,
-    p: [],
-    n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn, lastToken: tkn }
-      : undefined,
-  }
-}
-
-function parseSymbol(tokenStream: TokenStream, parseState: ParseState): NameNode {
-  const tkn = asPF_SymbolToken(tokenStream.tokens[parseState.position++])
-  return {
-    t: AstNodeType.Name,
-    v: tkn[1],
-    p: [],
-    n: undefined,
-    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn, lastToken: tkn }
-      : undefined,
-  }
-}
-
-function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedNameNode {
-  const tkn = asPF_ReservedSymbolToken(tokenStream.tokens[parseState.position++])
-  return {
-    t: AstNodeType.ReservedName,
-    v: tkn[1],
     p: [],
     n: undefined,
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
@@ -417,7 +390,7 @@ function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState
 export function parsePostfixToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
   const tkn = asToken(tokenStream.tokens[parseState.position])
 
-  const tokenType = tkn[0]
+  const tokenType = tkn[0] as PostfixTokenType
   switch (tokenType) {
     case 'Number':
       return parseNumber(tokenStream, parseState)
@@ -444,17 +417,10 @@ export function parsePostfixToken(tokenStream: TokenStream, parseState: ParseSta
     case 'PF_CollectionAccessor':
     case 'PF_Modifier':
     case 'PF_Infix':
-    case 'IF_Postfix':
-    case 'IF_Operator':
     case 'RParen':
     case 'RBracket':
     case 'RBrace':
-    case 'IF_Whitespace':
     case 'PF_Whitespace':
-    case 'IF_MultiLineComment':
-    case 'IF_SingleLineComment':
-    case 'IF_ReservedSymbol':
-    case 'IF_Symbol':
       break
     /* v8 ignore next 2 */
     default:

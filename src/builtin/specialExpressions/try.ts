@@ -3,7 +3,7 @@ import { AstNodeType } from '../../constants/constants'
 import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
-import type { AstNode, CommonSpecialExpressionNode, NameNode } from '../../parser/interface'
+import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
 import { asRParenToken, assertLParenToken, assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
@@ -13,7 +13,7 @@ import { getSourceCodeInfo } from '../../utils/debug/getSourceCodeInfo'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface TryNode extends CommonSpecialExpressionNode<'try'> {
-  e: NameNode
+  e: SymbolNode
   ce: AstNode
 }
 

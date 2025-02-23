@@ -1,13 +1,51 @@
+import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
 import { asStringToken } from '../tokenizer/common/commonTokens'
+import { isIF_ReservedSymbolToken, isIF_SymbolToken } from '../tokenizer/infix/infixTokens'
 import type { TokenStream } from '../tokenizer/interface'
+import { isPF_ReservedSymbolToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type {
   NumberNode,
   ParseState,
+  ReservedSymbolNode,
   StringNode,
+  SymbolNode,
 } from './interface'
+
+export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): SymbolNode {
+  const tkn = asToken(tokenStream.tokens[parseState.position++])
+  if (!isIF_SymbolToken(tkn) && !isPF_SymbolToken(tkn)) {
+    throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
+  }
+  return {
+    t: AstNodeType.Name,
+    v: tkn[1],
+    p: [],
+    n: undefined,
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
+      ? { token: tkn, lastToken: tkn }
+      : undefined,
+  }
+}
+
+export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedSymbolNode {
+  const tkn = asToken(tokenStream.tokens[parseState.position++])
+
+  if (!isIF_ReservedSymbolToken(tkn) && !isPF_ReservedSymbolToken(tkn)) {
+    throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
+  }
+  return {
+    t: AstNodeType.ReservedName,
+    v: tkn[1],
+    p: [],
+    n: undefined,
+    debugData: getTokenDebugData(tkn)?.sourceCodeInfo
+      ? { token: tkn, lastToken: tkn }
+      : undefined,
+  }
+}
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])

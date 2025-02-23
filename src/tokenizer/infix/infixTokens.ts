@@ -33,6 +33,9 @@ export const infixTokenTypes = [
 ] as const
 
 export const infixOperators = [
+  '!', // logical NOT
+  '~', // bitwise NOT
+
   '**', // exponentiation
 
   '*', // multiplication
@@ -81,6 +84,7 @@ export function asInfixOperator(operator: string): InfixOperator {
 
 export type InfixSimpleTokenType = typeof infixSimpleTokenTypes[number]
 export type InfixValueTokenType = typeof infixValueTokenTypes[number]
+export type InfixTokenType = typeof infixTokenTypes[number]
 
 type GenericInfixSimpleToken<T extends Exclude<InfixSimpleTokenType, CommonSimpleTokenType>> = [T] | [T, TokenDebugData]
 type GenericInfixValueToken<T extends Exclude<InfixValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]

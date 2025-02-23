@@ -21,6 +21,15 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
+  'unsigned-bit-shift-right': {
+    evaluate: ([num, count], sourceCodeInfo): number => {
+      assertNumber(num, sourceCodeInfo, { integer: true })
+      assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true })
+
+      return num >>> count
+    },
+    validate: node => assertNumberOfParams(2, node),
+  },
   'bit-not': {
     evaluate: ([num], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })

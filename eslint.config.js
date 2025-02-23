@@ -4,6 +4,11 @@ const config = antfu({
   stylistic: {
     indent: 2,
   },
+  test: {
+    overrides: {
+      'test/consistent-test-it': 'off',
+    },
+  },
   typescript: {
     tsconfigPath: 'tsconfig.compile.json',
     overrides: {

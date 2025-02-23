@@ -154,7 +154,6 @@ export const infixTokenizers = [
   tokenizeIF_MultiLineComment,
   tokenizeIF_SingleLineComment,
   tokenizeIF_PostfixToken,
-  tokenizeIF_Operator,
   tokenizeLeftParen,
   tokenizeRightParen,
   tokenizeLeftBracket,
@@ -163,6 +162,7 @@ export const infixTokenizers = [
   tokenizeRightCurly,
   tokenizeString,
   tokenizeNumber,
+  tokenizeIF_Operator,
   tokenizeIF_ReservedSymbolToken,
   tokenizeIF_Symbol,
 ] as const satisfies Tokenizer<InfixToken>[]

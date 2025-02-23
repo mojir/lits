@@ -5,11 +5,11 @@ import { AstNodeType } from '../constants/constants'
 import type {
   AstNode,
   ExpressionNode,
-  NameNode,
   NormalExpressionNode,
   NormalExpressionNodeWithName,
   NumberNode,
   StringNode,
+  SymbolNode,
 } from '../parser/interface'
 import type { Token } from '../tokenizer/tokens'
 import {
@@ -69,7 +69,7 @@ describe('astNode type guards', () => {
     }],
     debugData: undefined,
   }
-  const nameNode: NameNode = {
+  const nameNode: SymbolNode = {
     t: AstNodeType.Name,
     debugData: { token: tkn, lastToken: tkn },
     v: 'A name',

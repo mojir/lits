@@ -1073,7 +1073,7 @@ var Playground = (function (exports) {
     }
     function assertNameNode(value, sourceCodeInfo) {
         if (!isNameNode(value))
-            throw getAssertionError('NameNode', value, sourceCodeInfo);
+            throw getAssertionError('SymbolNode', value, sourceCodeInfo);
     }
     function isNormalExpressionNode(value) {
         if (!isAstNode(value))

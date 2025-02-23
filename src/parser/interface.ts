@@ -117,15 +117,16 @@ export type LitsFunction =
 
 export type LitsFunctionType = LitsFunction['t']
 
+export type DebugData = {
+  token: Token
+  lastToken: Token
+  nameToken?: Token
+}
 export interface GenericNode {
   t: AstNodeType // type
   p: AstNode[] // params
   n: string | undefined // name
-  debugData: {
-    token: Token
-    lastToken: Token
-    nameToken?: Token
-  } | undefined
+  debugData: DebugData | undefined
 }
 
 export type ExpressionNode = NormalExpressionNode | SpecialExpressionNode | NumberNode | StringNode
@@ -144,7 +145,7 @@ export interface StringNode extends GenericNode {
   t: AstNodeType.String // type
   v: string // value
 }
-export interface NameNode extends GenericNode {
+export interface SymbolNode extends GenericNode {
   t: AstNodeType.Name // type
   v: string // value
 }
@@ -152,7 +153,7 @@ export interface ModifierNode extends GenericNode {
   t: AstNodeType.Modifier // type
   v: ModifierName
 }
-export interface ReservedNameNode extends GenericNode {
+export interface ReservedSymbolNode extends GenericNode {
   t: AstNodeType.ReservedName // type
   v: PostfixReservedName // reservedName
 }
@@ -196,8 +197,8 @@ export interface CommentNode extends GenericNode {
 export type AstNode =
   | NumberNode
   | StringNode
-  | ReservedNameNode
-  | NameNode
+  | ReservedSymbolNode
+  | SymbolNode
   | CommentNode
   | NormalExpressionNode
   | ModifierNode

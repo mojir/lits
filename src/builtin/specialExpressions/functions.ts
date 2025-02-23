@@ -11,8 +11,8 @@ import type {
   CommonSpecialExpressionNode,
   EvaluatedFunctionOverload,
   LitsFunction,
-  NameNode,
   ParseState,
+  SymbolNode,
 } from '../../parser/interface'
 import { asLBracketToken, asRParenToken, isLBracketToken, isLParenToken, isRBracketToken, isRParenToken } from '../../tokenizer/common/commonTokens'
 import type { TokenStream } from '../../tokenizer/interface'
@@ -27,7 +27,7 @@ import type { Arity, FunctionArguments, FunctionOverload } from '../utils'
 import { assertNameNotDefined } from '../utils'
 
 export interface DefnNode extends CommonSpecialExpressionNode<'defn'> {
-  f: NameNode
+  f: SymbolNode
   o: FunctionOverload[]
 }
 

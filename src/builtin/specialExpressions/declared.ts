@@ -1,5 +1,5 @@
 import { AstNodeType } from '../../constants/constants'
-import type { CommonSpecialExpressionNode, NameNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
 import { asRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
@@ -27,7 +27,7 @@ export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, Declar
     return node
   },
   evaluate: (node, contextStack) => {
-    const lookUpResult = contextStack.lookUp(node.p[0] as NameNode)
+    const lookUpResult = contextStack.lookUp(node.p[0] as SymbolNode)
     return lookUpResult !== null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),

@@ -19,6 +19,10 @@ export function getTokenDebugData(token?: Token): TokenDebugData | undefined {
   return isTokenDebugData(debugData) ? debugData : undefined
 }
 
+export function hasTokenDebugData(token?: Token): boolean {
+  return isTokenDebugData(token?.at(-1))
+}
+
 export function addTokenDebugData(token: Token, debugData: TokenDebugData): void {
   if (isTokenDebugData(token.at(-1))) {
     throw new Error(`Token already has debug data: ${token}`)

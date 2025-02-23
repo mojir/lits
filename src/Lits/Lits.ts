@@ -35,21 +35,25 @@ export interface LitsParams {
   jsFunctions?: Record<string, JsFunction>
   filePath?: string
   debug?: boolean
+  infix?: boolean
 }
 
 interface LitsConfig {
   initialCache?: Record<string, Ast>
   astCacheSize?: number | null
   debug?: boolean
+  infix?: boolean
 }
 
 export class Lits {
   private astCache: Cache | null
   private astCacheSize: number | null
   private debug: boolean
+  private infix: boolean
 
   constructor(config: LitsConfig = {}) {
     this.debug = config.debug ?? false
+    this.infix = config.infix ?? false
     this.astCacheSize = config.astCacheSize ?? null
     if (this.astCacheSize) {
       this.astCache = new Cache(this.astCacheSize)
@@ -138,7 +142,12 @@ export class Lits {
       if (cachedAst)
         return cachedAst
     }
-    const tokenStream = this.tokenize(program, { debug: params.debug ?? this.debug, filePath: params.filePath })
+    const tokenStream = this.tokenize(program, {
+      debug: params.debug ?? this.debug,
+      filePath: params.filePath,
+      infix: params.infix ?? this.infix,
+
+    })
     const ast: Ast = this.parse(tokenStream)
     this.astCache?.set(program, ast)
     return ast

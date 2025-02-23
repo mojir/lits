@@ -1,5 +1,5 @@
 import { AstNodeType } from '../../constants/constants'
-import type { CommonSpecialExpressionNode, NameNode } from '../../parser/interface'
+import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
 import { asRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
@@ -31,7 +31,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
   },
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
-    const name = (node.p[0] as NameNode).v
+    const name = (node.p[0] as SymbolNode).v
 
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
 

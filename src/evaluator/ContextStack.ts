@@ -1,4 +1,4 @@
-import type { BuiltinFunction, ExtraData, NameNode, NativeJsFunction } from '../parser/interface'
+import type { BuiltinFunction, ExtraData, NativeJsFunction, SymbolNode } from '../parser/interface'
 import type { SpecialExpressionName } from '../builtin'
 import { builtin, normalExpressionKeys, specialExpressionKeys } from '../builtin'
 import { toAny } from '../utils'
@@ -78,7 +78,7 @@ export class ContextStackImpl {
     return this.values?.[name]
   }
 
-  public lookUp(node: NameNode): LookUpResult {
+  public lookUp(node: SymbolNode): LookUpResult {
     const value = node.v
     const sourceCodeInfo = getTokenDebugData(node.debugData?.token)?.sourceCodeInfo
 
@@ -122,7 +122,7 @@ export class ContextStackImpl {
     return null
   }
 
-  public evaluateName(node: NameNode): Any {
+  public evaluateName(node: SymbolNode): Any {
     const lookUpResult = this.lookUp(node)
 
     if (isContextEntry(lookUpResult))

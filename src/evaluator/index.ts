@@ -4,7 +4,7 @@ import type {
   NormalExpressionNode,
   NormalExpressionNodeWithName,
   NumberNode,
-  ReservedNameNode,
+  ReservedSymbolNode,
   StringNode,
 } from '../parser/interface'
 import type { SpecialExpressionNode } from '../builtin'
@@ -66,7 +66,7 @@ function evaluateString(node: StringNode): string {
   return node.v
 }
 
-function evaluateReservedName(node: ReservedNameNode): Any {
+function evaluateReservedName(node: ReservedSymbolNode): Any {
   return asNonUndefined(postfixReservedNamesRecord[node.v], getTokenDebugData(node.debugData?.token)?.sourceCodeInfo).value
 }
 

@@ -2,9 +2,9 @@ import { AstNodeType, isAstNodeType } from '../constants/constants'
 import type {
   AstNode,
   ExpressionNode,
-  NameNode,
   NormalExpressionNode,
   NormalExpressionNodeWithName,
+  SymbolNode,
 } from '../parser/interface'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import { getAssertionError } from '../utils/getAssertionError'
@@ -27,19 +27,19 @@ export function assertAstNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): 
     throw getAssertionError('AstNode', value, sourceCodeInfo)
 }
 
-export function isNameNode(value: unknown): value is NameNode {
+export function isNameNode(value: unknown): value is SymbolNode {
   if (!isAstNode(value))
     return false
 
   return value.t === AstNodeType.Name
 }
-export function asNameNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): NameNode {
+export function asNameNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): SymbolNode {
   assertNameNode(value, sourceCodeInfo)
   return value
 }
-export function assertNameNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): asserts value is NameNode {
+export function assertNameNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): asserts value is SymbolNode {
   if (!isNameNode(value))
-    throw getAssertionError('NameNode', value, sourceCodeInfo)
+    throw getAssertionError('SymbolNode', value, sourceCodeInfo)
 }
 
 export function isNormalExpressionNode(value: unknown): value is NormalExpressionNode {

@@ -31,6 +31,15 @@ describe('predicates', () => {
         expect(() => lits.run('(bit-shift-right 1 -2)')).toThrow()
       })
     })
+    describe('unsigned-bit-shift-right', () => {
+      it('samples', () => {
+        expect(lits.run('(unsigned-bit-shift-right 16 2)')).toBe(4)
+        expect(lits.run('(unsigned-bit-shift-right -16 2)')).toBe(0x3FFFFFFC)
+        expect(() => lits.run('(unsigned-bit-shift-right)')).toThrow()
+        expect(() => lits.run('(unsigned-bit-shift-right 1)')).toThrow()
+        expect(() => lits.run('(unsigned-bit-shift-right 1 -2)')).toThrow()
+      })
+    })
     describe('bit-and', () => {
       it('samples', () => {
         expect(lits.run('(bit-and 0b0011 0b1010)')).toBe(0b0010)

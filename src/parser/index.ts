@@ -1,6 +1,7 @@
 import { isIF_WhitespaceToken } from '../tokenizer/infix/infixTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { isPF_CommentToken, isPF_WhitespaceToken } from '../tokenizer/postfix/postfixTokens'
+import { InfixParser } from './InfixParser'
 import type { Ast, AstNode, ParseState } from './interface'
 import { parsePostfixToken } from './postfixTokenParsers'
 
@@ -37,9 +38,10 @@ function removeUnnecessaryTokens(tokenStream: TokenStream): TokenStream {
 }
 
 export function parseToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
-  // if (parseState.infix) {
-  //   return
-  // }
+  if (parseState.infix) {
+    const infixParser = new InfixParser(tokenStream, parseState)
+    return infixParser.parse()
+  }
 
   return parsePostfixToken(tokenStream, parseState)
 }
