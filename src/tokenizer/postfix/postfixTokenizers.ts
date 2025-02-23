@@ -14,7 +14,7 @@ import {
 } from '../common/tokenizers'
 import type { Tokenizer } from '../interface'
 import { postfixReservedNamesRecord } from './postfixReservedNames'
-import type { ModifierName, PF_CollectionAccessorToken, PF_CommentToken, PF_FnShorthandToken, PF_InfixToken, PF_ModifierToken, PF_RegexpShorthandToken, PF_ReservedSymbolToken, PF_StringShorthandToken, PF_SymbolToken, PF_WhitespaceToken } from './postfixTokens'
+import type { ModifierName, PF_CollectionAccessorToken, PF_CommentToken, PF_FnShorthandToken, PF_InfixToken, PF_ModifierToken, PF_RegexpShorthandToken, PF_ReservedSymbolToken, PF_StringShorthandToken, PF_SymbolToken, PF_WhitespaceToken, PostfixToken } from './postfixTokens'
 import { asPF_SymbolToken, modifierNames } from './postfixTokens'
 
 const whitespaceRegExp = /\s|,/
@@ -183,4 +183,4 @@ export const postfixTokenizers = [
   tokenizePF_RegexpShorthand,
   tokenizePF_FnShorthand,
   tokenizePF_CollectionAccessor,
-] as const
+] as const satisfies Tokenizer<PostfixToken>[]

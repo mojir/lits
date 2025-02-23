@@ -1,4 +1,4 @@
-import type { CommonSimpleTokenType, CommonValueTokenType } from '../common/commonTokens'
+import type { CommonSimpleToken, CommonSimpleTokenType, CommonValueToken, CommonValueTokenType } from '../common/commonTokens'
 import { commomValueTokenTypes, commonSimpleTokenTypes } from '../common/commonTokens'
 import type { Token } from '../tokens'
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
@@ -67,6 +67,12 @@ export type PostfixOnlyValueToken =
   | PF_CollectionAccessorToken
   | PF_CommentToken
   | PF_WhitespaceToken
+
+export type PostfixToken =
+  | PostfixOnlySimpleToken
+  | PostfixOnlyValueToken
+  | CommonSimpleToken
+  | CommonValueToken
 
 export function isPF_StringShorthandToken(token?: Token): token is PF_StringShorthandToken {
   return token?.[0] === 'PF_StringShorthand'

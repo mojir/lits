@@ -14,9 +14,8 @@ import {
 } from '../common/tokenizers'
 import type { Tokenizer } from '../interface'
 import { tokenizePF_Symbol } from '../postfix/postfixTokenizers'
-import type { Token } from '../tokens'
 import { infixReservedNamesRecord } from './infixReservedNames'
-import type { IF_MultiLineCommentToken, IF_OperatorToken, IF_PostfixToken, IF_ReservedSymbolToken, IF_SingleLineCommentToken, IF_SymbolToken, IF_WhitespaceToken } from './infixTokens'
+import type { IF_MultiLineCommentToken, IF_OperatorToken, IF_PostfixToken, IF_ReservedSymbolToken, IF_SingleLineCommentToken, IF_SymbolToken, IF_WhitespaceToken, InfixToken } from './infixTokens'
 import { isInfixOperator } from './infixTokens'
 
 const identifierRegExp = new RegExp(infixIdentifierCharacterClass)
@@ -150,7 +149,7 @@ export const tokenizeIF_SingleLineComment: Tokenizer<IF_SingleLineCommentToken> 
 }
 
 // All tokenizers, order matters!
-export const tokenizers: Tokenizer<Token>[] = [
+export const infixTokenizers = [
   tokenizeIF_Whitespace,
   tokenizeIF_MultiLineComment,
   tokenizeIF_SingleLineComment,
@@ -166,4 +165,4 @@ export const tokenizers: Tokenizer<Token>[] = [
   tokenizeNumber,
   tokenizeIF_ReservedSymbolToken,
   tokenizeIF_Symbol,
-]
+] as const satisfies Tokenizer<InfixToken>[]

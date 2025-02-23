@@ -1,5 +1,5 @@
 import { LitsError } from '../../errors'
-import type { CommonSimpleTokenType, CommonValueTokenType } from '../common/commonTokens'
+import type { CommonSimpleToken, CommonSimpleTokenType, CommonValueToken, CommonValueTokenType } from '../common/commonTokens'
 import { commomValueTokenTypes, commonSimpleTokenTypes } from '../common/commonTokens'
 import type { Token } from '../tokens'
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
@@ -103,6 +103,12 @@ export type InfixOnlyValueToken =
   | IF_ReservedSymbolToken
   | IF_SingleLineCommentToken
   | IF_MultiLineCommentToken
+
+export type InfixToken =
+  | InfixOnlySimpleToken
+  | InfixOnlyValueToken
+  | CommonSimpleToken
+  | CommonValueToken
 
 export function isIF_SymbolToken(token?: Token): token is IF_SymbolToken {
   return token?.[0] === 'IF_Symbol'
