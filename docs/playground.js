@@ -4861,8 +4861,7 @@ var Playground = (function (exports) {
             parseState.position += 1;
             node.debugData = getTokenDebugData(firstToken) && {
                 token: firstToken,
-                lastToken: tkn,
-            };
+                      };
             return node;
         },
         evaluate: function () { return null; },
@@ -5069,8 +5068,7 @@ var Playground = (function (exports) {
             parseState.position += 1;
             node.debugData = getTokenDebugData(firstToken) && {
                 token: firstToken,
-                lastToken: tkn,
-            };
+                      };
             return node;
         },
         evaluate: function (node, contextStack, _a) {
@@ -7696,8 +7694,7 @@ var Playground = (function (exports) {
             debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
-                    lastToken: tkn,
-                }
+                              }
                 : undefined,
         };
         return node;
@@ -7719,8 +7716,7 @@ var Playground = (function (exports) {
             debugData: ((_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: firstToken,
-                    lastToken: tkn,
-                }
+                              }
                 : undefined,
         };
         assertEvenNumberOfParams(node);
@@ -7740,8 +7736,7 @@ var Playground = (function (exports) {
             debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                 ? {
                     token: tkn,
-                    lastToken: tkn,
-                }
+                              }
                 : undefined,
         };
         var optionsNode = {
@@ -7752,8 +7747,7 @@ var Playground = (function (exports) {
             debugData: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
                 ? {
                     token: tkn,
-                    lastToken: tkn,
-                }
+                              }
                 : undefined,
         };
         var node = {
@@ -7763,8 +7757,7 @@ var Playground = (function (exports) {
             debugData: ((_c = getTokenDebugData(tkn)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo)
                 ? {
                     token: tkn,
-                    lastToken: tkn,
-                }
+                              }
                 : undefined,
         };
         return node;
@@ -7839,8 +7832,7 @@ var Playground = (function (exports) {
                 debugData: ((_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)
                     ? {
                         token: tkn,
-                        lastToken: tkn,
-                    }
+                                      }
                     : undefined,
             };
         }
@@ -7853,8 +7845,7 @@ var Playground = (function (exports) {
                 debugData: ((_b = getTokenDebugData(tkn)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo)
                     ? {
                         token: tkn,
-                        lastToken: tkn,
-                    }
+                                      }
                     : undefined,
             };
         }

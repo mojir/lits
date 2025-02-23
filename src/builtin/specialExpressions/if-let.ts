@@ -4,7 +4,7 @@ import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode, NormalExpressionNode } from '../../parser/interface'
-import { asRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
 import { asAstNode, asNormalExpressionNode } from '../../typeGuards/astNode'
@@ -32,7 +32,7 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
     }
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: IfLetNode = {
       t: AstNodeType.SpecialExpression,
@@ -41,7 +41,6 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
       p: params,
       debugData: getTokenDebugData(firstToken)?.sourceCodeInfo && bindingArray && {
         token: firstToken,
-        lastToken,
         bindingArray,
       },
     }

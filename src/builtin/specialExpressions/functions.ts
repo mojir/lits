@@ -14,7 +14,7 @@ import type {
   ParseState,
   SymbolNode,
 } from '../../parser/interface'
-import { asLBracketToken, asRParenToken, isLBracketToken, isLParenToken, isRBracketToken, isRParenToken } from '../../tokenizer/common/commonTokens'
+import { asLBracketToken, assertRParenToken, isLBracketToken, isLParenToken, isRBracketToken, isRParenToken } from '../../tokenizer/common/commonTokens'
 import type { TokenStream } from '../../tokenizer/interface'
 import { asToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
@@ -48,7 +48,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
     assertNameNode(functionName, getTokenDebugData(functionName.debugData?.token)?.sourceCodeInfo)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DefnNode = {
       t: AstNodeType.SpecialExpression,
@@ -58,7 +58,6 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
       o: functionOverloades,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 
@@ -95,7 +94,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
     const functionName = parseToken(tokenStream, parseState)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DefnsNode = {
       t: AstNodeType.SpecialExpression,
@@ -105,7 +104,6 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
       o: functionOverloades,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 
@@ -144,7 +142,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
 export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
   parse: (tokenStream, parseState, firstToken, parsers) => {
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: FnNode = {
       t: AstNodeType.SpecialExpression,
@@ -153,7 +151,6 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
       o: functionOverloades,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 

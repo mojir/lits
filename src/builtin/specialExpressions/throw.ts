@@ -1,7 +1,7 @@
 import { AstNodeType } from '../../constants/constants'
 import { UserDefinedError } from '../../errors'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { asRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import { asString } from '../../typeGuards/string'
@@ -13,7 +13,7 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
 
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: ThrowNode = {
       t: AstNodeType.SpecialExpression,
@@ -21,7 +21,6 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
       p: params,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 

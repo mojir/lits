@@ -1,6 +1,6 @@
 import { AstNodeType } from '../../constants/constants'
 import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
-import { asRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import type { BuiltinSpecialExpression } from '../interface'
@@ -10,7 +10,7 @@ export interface DeclaredNode extends CommonSpecialExpressionNode<'declared?'> {
 export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, DeclaredNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DeclaredNode = {
       t: AstNodeType.SpecialExpression,
@@ -18,7 +18,6 @@ export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, Declar
       p: params,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 

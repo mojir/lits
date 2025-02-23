@@ -4,7 +4,7 @@ import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
-import { asRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { asNonUndefined } from '../../typeGuards'
 import { asAny } from '../../typeGuards/lits'
@@ -20,7 +20,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: LoopNode = {
       t: AstNodeType.SpecialExpression,
@@ -29,7 +29,6 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       bs: bindings,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
     return node

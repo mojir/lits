@@ -119,7 +119,6 @@ export type LitsFunctionType = LitsFunction['t']
 
 export type DebugData = {
   token: Token
-  lastToken: Token
   nameToken?: Token
 }
 export interface GenericNode {

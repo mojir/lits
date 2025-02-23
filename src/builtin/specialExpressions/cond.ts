@@ -1,7 +1,7 @@
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { asRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertEvenNumberOfParams } from '../../typeGuards'
 import { arrayToPairs } from '../../utils'
@@ -12,7 +12,7 @@ export interface CondNode extends CommonSpecialExpressionNode<'cond'> {}
 export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: CondNode = {
       t: AstNodeType.SpecialExpression,
@@ -20,7 +20,6 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
       p: params,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 

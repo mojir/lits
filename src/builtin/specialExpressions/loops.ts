@@ -6,7 +6,7 @@ import type { ContextStack } from '../../evaluator/ContextStack'
 import type { Context, EvaluateAstNode } from '../../evaluator/interface'
 import type { Any, Arr } from '../../interface'
 import type { AstNode, BindingNode, CommonSpecialExpressionNode, ParseState } from '../../parser/interface'
-import { asRParenToken, assertLBracketToken, isRBracketToken } from '../../tokenizer/common/commonTokens'
+import { assertLBracketToken, assertRParenToken, isRBracketToken } from '../../tokenizer/common/commonTokens'
 import type { SourceCodeInfo, TokenStream } from '../../tokenizer/interface'
 import { isPF_ModifierToken } from '../../tokenizer/postfix/postfixTokens'
 import { asToken } from '../../tokenizer/tokens'
@@ -251,7 +251,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: ForNode = {
       n: 'for',
@@ -260,7 +260,6 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
       p: params,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 
@@ -278,7 +277,7 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: DoSeqNode = {
       n: 'doseq',
@@ -287,7 +286,6 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
       p: params,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 

@@ -4,7 +4,7 @@ import { LitsError } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
-import { asRParenToken, assertLParenToken, assertRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertLParenToken, assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import { assertNameNode } from '../../typeGuards/astNode'
@@ -39,7 +39,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
 
     assertRParenToken(tokenStream.tokens[parseState.position++])
 
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: TryNode = {
       t: AstNodeType.SpecialExpression,
@@ -49,7 +49,6 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       e: error,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 

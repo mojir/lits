@@ -115,7 +115,6 @@ describe('context', () => {
                 v: 2,
                 debugData: {
                   token: ['Number', '2'],
-                  lastToken: ['Number', '2'],
                 },
                 p: [],
                 n: undefined,
@@ -125,7 +124,6 @@ describe('context', () => {
                 v: 4,
                 debugData: {
                   token: ['Number', '4'],
-                  lastToken: ['Number', '4'],
                 },
                 p: [],
                 n: undefined,
@@ -133,7 +131,6 @@ describe('context', () => {
             ],
             debugData: {
               token: ['PF_Symbol', 'pow'],
-              lastToken: ['PF_Symbol', 'pow'],
             },
           },
         ],

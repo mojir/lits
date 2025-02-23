@@ -27,7 +27,6 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
 
     node.debugData = getTokenDebugData(firstToken) && {
       token: firstToken,
-      lastToken: tkn,
     }
 
     return node

@@ -1,7 +1,7 @@
 import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { asRParenToken } from '../../tokenizer/common/commonTokens'
+import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import type { BuiltinSpecialExpression } from '../interface'
@@ -11,7 +11,7 @@ export interface TimeNode extends CommonSpecialExpressionNode<'time!'> {}
 export const timeSpecialExpression: BuiltinSpecialExpression<Any, TimeNode> = {
   parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+    assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: TimeNode = {
       t: AstNodeType.SpecialExpression,
@@ -19,7 +19,6 @@ export const timeSpecialExpression: BuiltinSpecialExpression<Any, TimeNode> = {
       p: params,
       debugData: getTokenDebugData(firstToken) && {
         token: firstToken,
-        lastToken,
       },
     }
 

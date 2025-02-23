@@ -71,7 +71,6 @@ function fromUnaryInfixToAstNode(operator: IF_OperatorToken, operand: AstNode): 
   const debugData: DebugData | undefined = hasTokenDebugData(operator)
     ? {
         token: operator,
-        lastToken: operator,
       }
     : undefined
 
@@ -95,7 +94,6 @@ function fromBinaryInfixToAstNode(operator: IF_OperatorToken, left: AstNode, rig
   const debugData: DebugData | undefined = hasTokenDebugData(operator)
     ? {
         token: operator,
-        lastToken: operator,
       }
     : undefined
 

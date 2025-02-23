@@ -25,7 +25,6 @@ export const commentSpecialExpression: BuiltinSpecialExpression<null, CommentExp
 
     node.debugData = getTokenDebugData(firstToken) && {
       token: firstToken,
-      lastToken: tkn,
     }
 
     return node

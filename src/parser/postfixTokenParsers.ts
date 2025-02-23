@@ -5,7 +5,7 @@ import type { FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
-import { asLParenToken, asRParenToken, assertLBracketToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { asLParenToken, assertLBracketToken, assertRParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { PostfixTokenType } from '../tokenizer/postfix/postfixTokens'
 import { asPF_CommentToken, asPF_RegexpShorthandToken, asPF_StringShorthandToken, asPF_SymbolToken, isPF_FnShorthandToken, isPF_ModifierToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
@@ -37,7 +37,7 @@ function parseStringShorthand(tokenStream: TokenStream, parseState: ParseState):
     p: [],
     n: undefined,
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn, lastToken: tkn }
+      ? { token: tkn }
       : undefined,
   }
 }
@@ -50,7 +50,7 @@ function parseComment(tokenStream: TokenStream, parseState: ParseState): Comment
     p: [],
     n: undefined,
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
-      ? { token: tkn, lastToken: tkn }
+      ? { token: tkn }
       : undefined,
   }
 }
@@ -92,7 +92,6 @@ function parseArrayLitteral(tokenStream: TokenStream, parseState: ParseState): A
     debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
-          lastToken: tkn,
         }
       : undefined,
   }
@@ -119,7 +118,6 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
     debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
-          lastToken: tkn,
         }
       : undefined,
   }
@@ -143,7 +141,6 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? {
           token: tkn,
-          lastToken: tkn,
         }
       : undefined,
   }
@@ -156,7 +153,6 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? {
           token: tkn,
-          lastToken: tkn,
         }
       : undefined,
   }
@@ -168,7 +164,6 @@ function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState):
     debugData: getTokenDebugData(tkn)?.sourceCodeInfo
       ? {
           token: tkn,
-          lastToken: tkn,
         }
       : undefined,
   }
@@ -235,7 +230,6 @@ function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnN
     debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
-          lastToken: exprNode.debugData!.lastToken,
         }
       : undefined,
   }
@@ -254,7 +248,6 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
       debugData: getTokenDebugData(tkn)?.sourceCodeInfo
         ? {
             token: tkn,
-            lastToken: tkn,
           }
         : undefined,
     }
@@ -268,7 +261,6 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
       debugData: getTokenDebugData(tkn)?.sourceCodeInfo
         ? {
             token: tkn,
-            lastToken: tkn,
           }
         : undefined,
     }
@@ -305,7 +297,6 @@ function parseBinding(tokenStream: TokenStream, parseState: ParseState): Binding
     debugData: getTokenDebugData(firstToken)?.sourceCodeInfo
       ? {
           token: firstToken,
-          lastToken: value.debugData!.lastToken,
         }
       : undefined,
   }
@@ -319,7 +310,7 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
 
   const params = parseTokensUntilClosingBracket(tokenStream, parseState)
 
-  const lastToken = asRParenToken(tokenStream.tokens[parseState.position++])
+  assertRParenToken(tokenStream.tokens[parseState.position++])
 
   if (isExpressionNode(fnNode)) {
     const node: NormalExpressionNode = {
@@ -329,7 +320,6 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
       debugData: startBracketToken
         ? {
             token: startBracketToken,
-            lastToken,
           }
         : undefined,
     }
@@ -346,7 +336,6 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
       ? {
           token: startBracketToken,
           nameToken: fnNode.debugData?.token,
-          lastToken,
         }
       : undefined,
   }
