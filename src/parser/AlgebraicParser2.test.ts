@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest'
-import { Lits } from '../'
+import { Lits } from '..'
 
-const lits = new Lits({ infix: true })
+const lits = new Lits({ algebraic: true })
 
-describe('infix operators', () => {
+describe('algebraic operators', () => {
   describe('**', () => {
     test('samples', () => {
       expect(lits.run('2 ** 3')).toBe(8)
@@ -185,8 +185,8 @@ describe('infix operators', () => {
       expect(lits.run('5')).toBe(5)
       expect(lits.run('-10')).toBe(-10)
       expect(lits.tokenize('-10').tokens).toEqual([
-        ['IF_Operator', '-'],
-        ['IF_Number', '10'],
+        ['A_Operator', '-'],
+        ['A_Number', '10'],
       ])
     })
   })
@@ -204,7 +204,7 @@ describe('infix operators', () => {
       expect(lits.run('+1')).toBe(1)
     })
   })
-  // describe('postfix escape hatch', () => {
+  // describe('polish escape hatch', () => {
   //   test('samples', () => {
   //     expect(lits.run('10 * @(+ 1 2) / 2')).toBe(15)
   //   })
@@ -214,7 +214,7 @@ describe('infix operators', () => {
       expect(lits.run('2+3', { debug: true })).toBe(5)
       expect(lits.tokenize('2+3', { debug: true }).tokens).toEqual([
         [
-          'IF_Number',
+          'A_Number',
           '2',
           {
             sourceCodeInfo: {
@@ -227,7 +227,7 @@ describe('infix operators', () => {
           },
         ],
         [
-          'IF_Operator',
+          'A_Operator',
           '+',
           {
             sourceCodeInfo: {
@@ -240,7 +240,7 @@ describe('infix operators', () => {
           },
         ],
         [
-          'IF_Number',
+          'A_Number',
           '3',
           {
             sourceCodeInfo: {
@@ -256,7 +256,7 @@ describe('infix operators', () => {
       expect(lits.run('-2', { debug: true })).toBe(-2)
       expect(lits.tokenize('-2', { debug: true }).tokens).toEqual([
         [
-          'IF_Operator',
+          'A_Operator',
           '-',
           {
             sourceCodeInfo: {
@@ -269,7 +269,7 @@ describe('infix operators', () => {
           },
         ],
         [
-          'IF_Number',
+          'A_Number',
           '2',
           {
             sourceCodeInfo: {

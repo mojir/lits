@@ -3,7 +3,7 @@ import { Lits } from '../Lits/Lits'
 
 const lits = new Lits()
 
-const postfixExamples = [
+const polishExamples = [
   '(+ 1 2)',
   `
 (defn foo [x]
@@ -13,7 +13,7 @@ const postfixExamples = [
   '($ 1 + 2)',
 ]
 
-const infixExamples = [
+const algebraicExamples = [
   '1 + 2',
   '-1 * (2 - 3)',
   '@(+ 1 2)',
@@ -21,16 +21,16 @@ const infixExamples = [
 
 describe('untokenizer', () => {
   describe('untokenize', () => {
-    it('should untokenize postfix Examples', () => {
-      for (const example of postfixExamples) {
+    it('should untokenize polish Examples', () => {
+      for (const example of polishExamples) {
         const tokenStream = lits.tokenize(example)
         const result = lits.untokenize(tokenStream)
         expect(result).toBe(example)
       }
     })
-    it('should untokenize infix Examples', () => {
-      for (const example of infixExamples) {
-        const tokenStream = lits.tokenize(example, { infix: true })
+    it('should untokenize algebraic Examples', () => {
+      for (const example of algebraicExamples) {
+        const tokenStream = lits.tokenize(example, { algebraic: true })
         const result = lits.untokenize(tokenStream)
         expect(result).toBe(example)
       }

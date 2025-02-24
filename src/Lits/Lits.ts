@@ -35,25 +35,25 @@ export interface LitsParams {
   jsFunctions?: Record<string, JsFunction>
   filePath?: string
   debug?: boolean
-  infix?: boolean
+  algebraic?: boolean
 }
 
 interface LitsConfig {
   initialCache?: Record<string, Ast>
   astCacheSize?: number | null
   debug?: boolean
-  infix?: boolean
+  algebraic?: boolean
 }
 
 export class Lits {
   private astCache: Cache | null
   private astCacheSize: number | null
   private debug: boolean
-  private infix: boolean
+  private algebraic: boolean
 
   constructor(config: LitsConfig = {}) {
     this.debug = config.debug ?? false
-    this.infix = config.infix ?? false
+    this.algebraic = config.algebraic ?? false
     this.astCacheSize = config.astCacheSize ?? null
     if (this.astCacheSize) {
       this.astCache = new Cache(this.astCacheSize)
@@ -94,8 +94,8 @@ export class Lits {
 
   public tokenize(program: string, tokenizeParams: TokenizeParams = {}): TokenStream {
     const debug = tokenizeParams.debug ?? this.debug
-    const infix = tokenizeParams.infix ?? this.infix
-    return tokenize(program, { ...tokenizeParams, debug, infix })
+    const algebraic = tokenizeParams.algebraic ?? this.algebraic
+    return tokenize(program, { ...tokenizeParams, debug, algebraic })
   }
 
   public parse(tokenStream: TokenStream): Ast {
@@ -147,7 +147,7 @@ export class Lits {
     const tokenStream = this.tokenize(program, {
       debug: params.debug ?? this.debug,
       filePath: params.filePath,
-      infix: params.infix ?? this.infix,
+      algebraic: params.algebraic ?? this.algebraic,
 
     })
     const ast: Ast = this.parse(tokenStream)

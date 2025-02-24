@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../..'
-import { tokenizePF_Number } from '../postfixTokenizers'
+import { tokenizeP_Number } from '../polishTokenizers'
 
 describe('parse numbers', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
@@ -28,7 +28,7 @@ describe('parse numbers', () => {
 
       numberSamples.forEach((sample) => {
         it(`number sample: ${sample}`, () => {
-          expect(tokenizePF_Number(sample, 0)).toEqual([sample.length, ['PF_Number', sample]])
+          expect(tokenizeP_Number(sample, 0)).toEqual([sample.length, ['P_Number', sample]])
           expect(lits.run(sample) === Number(sample)).toBe(true)
         })
       })
@@ -56,7 +56,7 @@ describe('parse numbers', () => {
 
       numberSamples.forEach((sample) => {
         it(`number sample: ${sample}`, () => {
-          expect(tokenizePF_Number(sample, 0)).toEqual([0])
+          expect(tokenizeP_Number(sample, 0)).toEqual([0])
         })
       })
     })

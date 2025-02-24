@@ -30,7 +30,7 @@ describe('lits type guards', () => {
     const node: AstNode = {
       t: AstNodeType.Symbol,
       v: 'test',
-      token: ['PF_Symbol', 'X'],
+      token: ['P_Symbol', 'X'],
       p: [],
       n: undefined,
     }

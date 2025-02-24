@@ -4,7 +4,7 @@ import { AstNodeType } from '../../src/constants/constants'
 import type { Ast } from '../../src/parser/interface'
 import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
-import type { PF_CollectionAccessorToken } from '../../src/tokenizer/postfix/postfixTokens'
+import type { P_CollectionAccessorToken } from '../../src/tokenizer/polish/polishTokens'
 
 const program = `
 (let [day (* 24 60 60 1000)]
@@ -189,13 +189,13 @@ describe('parser', () => {
   it('parseToken unknown token', () => {
     const tokenStream: TokenStream = {
       hasDebugData: false,
-      infix: false,
+      algebraic: false,
       tokens: [
-        ['CollectionAccessor', ''] as unknown as PF_CollectionAccessorToken,
-        ['Modifier', ''] as unknown as PF_CollectionAccessorToken,
+        ['CollectionAccessor', ''] as unknown as P_CollectionAccessorToken,
+        ['Modifier', ''] as unknown as P_CollectionAccessorToken,
       ],
     }
-    expect(() => parseToken(tokenStream, { position: 0, infix: false, parseToken })).toThrow()
-    expect(() => parseToken(tokenStream, { position: 0, infix: false, parseToken })).toThrow()
+    expect(() => parseToken(tokenStream, { position: 0, algebraic: false, parseToken })).toThrow()
+    expect(() => parseToken(tokenStream, { position: 0, algebraic: false, parseToken })).toThrow()
   })
 })

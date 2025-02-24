@@ -24,7 +24,7 @@ function toNormalExpressionNode(arr: number[]): NormalExpressionNode {
     n: 'let',
     p: astNodes,
     t: AstNodeType.NormalExpression,
-    token: ['PF_Symbol', 'X'],
+    token: ['P_Symbol', 'X'],
   }
 }
 

@@ -8,7 +8,7 @@ import type { Any, Arr } from '../../interface'
 import type { AstNode, BindingNode, CommonSpecialExpressionNode, ParseState } from '../../parser/interface'
 import { assertLBracketToken, assertRParenToken, isRBracketToken } from '../../tokenizer/common/commonTokens'
 import type { SourceCodeInfo, TokenStream } from '../../tokenizer/interface'
-import { isPF_ModifierToken } from '../../tokenizer/postfix/postfixTokens'
+import { isP_ModifierToken } from '../../tokenizer/polish/polishTokens'
 import { asToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
@@ -47,7 +47,7 @@ function parseLoopBinding(
   }
 
   let tkn = asToken(tokenStream.tokens[parseState.position])
-  while (isPF_ModifierToken(tkn)) {
+  while (isP_ModifierToken(tkn)) {
     const modifier = tkn[1]
     switch (modifier) {
       case '&let':

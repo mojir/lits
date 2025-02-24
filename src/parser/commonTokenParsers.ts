@@ -1,9 +1,9 @@
 import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
 import { asStringToken } from '../tokenizer/common/commonTokens'
-import { isIF_NumberToken, isIF_ReservedSymbolToken, isIF_SymbolToken } from '../tokenizer/infix/infixTokens'
+import { isA_NumberToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import { isPF_NumberToken, isPF_ReservedSymbolToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
+import { isP_NumberToken, isP_ReservedSymbolToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type {
@@ -16,7 +16,7 @@ import type {
 
 export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): SymbolNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
-  if (!isIF_SymbolToken(tkn) && !isPF_SymbolToken(tkn)) {
+  if (!isA_SymbolToken(tkn) && !isP_SymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
   }
   return {
@@ -31,7 +31,7 @@ export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): S
 export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedSymbolNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
 
-  if (!isIF_ReservedSymbolToken(tkn) && !isPF_ReservedSymbolToken(tkn)) {
+  if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
   }
   return {
@@ -45,7 +45,7 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
   const tkn = tokenStream.tokens[parseState.position++]
-  if (!isPF_NumberToken(tkn) && !isIF_NumberToken(tkn)) {
+  if (!isP_NumberToken(tkn) && !isA_NumberToken(tkn)) {
     throw new LitsError(`Expected number token, got ${tkn}`)
   }
   const value = tkn[1]

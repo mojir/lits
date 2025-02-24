@@ -1,5 +1,5 @@
 import { LitsError } from '../../errors'
-import { infixIdentifierCharacterClass, infixIdentifierFirstCharacterClass } from '../../identifier'
+import { algebraicIdentifierCharacterClass, algebraicIdentifierFirstCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
   tokenizeLeftBracket,
@@ -12,16 +12,16 @@ import {
   tokenizeString,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
-import { tokenizePF_Symbol } from '../postfix/postfixTokenizers'
-import { infixReservedNamesRecord } from './infixReservedNames'
-import type { IF_MultiLineCommentToken, IF_NumberToken, IF_OperatorToken, IF_PostfixToken, IF_ReservedSymbolToken, IF_SingleLineCommentToken, IF_SymbolToken, IF_WhitespaceToken, InfixToken } from './infixTokens'
-import { isInfixOperator } from './infixTokens'
+import { tokenizeP_Symbol } from '../polish/polishTokenizers'
+import { algebraicReservedNamesRecord } from './algebraicReservedNames'
+import type { A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_PolishToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
+import { isAlgebraicOperator } from './algebraicTokens'
 
-const identifierRegExp = new RegExp(infixIdentifierCharacterClass)
-const identifierFirstCharacterRegExp = new RegExp(infixIdentifierFirstCharacterClass)
+const identifierRegExp = new RegExp(algebraicIdentifierCharacterClass)
+const identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass)
 const whitespaceRegExp = /\s/
 
-export const tokenizeIF_Whitespace: Tokenizer<IF_WhitespaceToken> = (input, position) => {
+export const tokenizeA_Whitespace: Tokenizer<A_WhitespaceToken> = (input, position) => {
   let char = input[position]
   if (!char || !whitespaceRegExp.test(char)) {
     return NO_MATCH
@@ -34,7 +34,7 @@ export const tokenizeIF_Whitespace: Tokenizer<IF_WhitespaceToken> = (input, posi
     position += 1
     char = input[position]
   }
-  return [value.length, ['IF_Whitespace', value]]
+  return [value.length, ['A_Whitespace', value]]
 }
 
 const decimalNumberRegExp = /\d/
@@ -42,7 +42,7 @@ const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-f]/i
 const binaryNumberRegExp = /[01]/
 const firstCharRegExp = /[0-9.]/
-export const tokenizeIF_Number: Tokenizer<IF_NumberToken> = (input, position) => {
+export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
   let type: 'decimal' | 'octal' | 'hex' | 'binary' = 'decimal'
   const firstChar = input[position] as string
   if (!firstCharRegExp.test(firstChar))
@@ -125,11 +125,11 @@ export const tokenizeIF_Number: Tokenizer<IF_NumberToken> = (input, position) =>
   if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
     return NO_MATCH
 
-  return [length, ['IF_Number', value]]
+  return [length, ['A_Number', value]]
 }
 
-export const tokenizeIF_ReservedSymbolToken: Tokenizer<IF_ReservedSymbolToken> = (input, position) => {
-  for (const [reservedName, { forbidden }] of Object.entries(infixReservedNamesRecord)) {
+export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (input, position) => {
+  for (const [reservedName, { forbidden }] of Object.entries(algebraicReservedNamesRecord)) {
     const length = reservedName.length
     const nextChar = input[position + length]
     if (nextChar && identifierRegExp.test(nextChar))
@@ -140,13 +140,13 @@ export const tokenizeIF_ReservedSymbolToken: Tokenizer<IF_ReservedSymbolToken> =
       if (forbidden)
         throw new LitsError(`${name} is forbidden!`)
 
-      return [length, ['IF_ReservedSymbol', reservedName]]
+      return [length, ['A_ReservedSymbol', reservedName]]
     }
   }
   return NO_MATCH
 }
 
-export const tokenizeIF_Symbol: Tokenizer<IF_SymbolToken> = (input, position) => {
+export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
   const initialPosition = position
   let value = input[position]
 
@@ -163,12 +163,12 @@ export const tokenizeIF_Symbol: Tokenizer<IF_SymbolToken> = (input, position) =>
       position += 1
       char = input[position]
     }
-    return [position - initialPosition, ['IF_Symbol', value]]
+    return [position - initialPosition, ['A_Symbol', value]]
   }
 
   if (value === '`') {
     position += 1
-    const [count, pfSymbolToken] = tokenizePF_Symbol(input, position)
+    const [count, pfSymbolToken] = tokenizeP_Symbol(input, position)
     if (pfSymbolToken === undefined) {
       return NO_MATCH
     }
@@ -178,34 +178,34 @@ export const tokenizeIF_Symbol: Tokenizer<IF_SymbolToken> = (input, position) =>
     }
     position += 1
     const pfValue = pfSymbolToken[1]
-    return [position - initialPosition, ['IF_Symbol', pfValue]]
+    return [position - initialPosition, ['A_Symbol', pfValue]]
   }
 
   return NO_MATCH
 }
 
-export const tokenizeIF_Operator: Tokenizer<IF_OperatorToken> = (input, position) => {
+export const tokenizeA_Operator: Tokenizer<A_OperatorToken> = (input, position) => {
   const threeChars = input.slice(position, position + 3)
-  if (position + 2 < input.length && isInfixOperator(threeChars)) {
-    return [3, ['IF_Operator', threeChars]]
+  if (position + 2 < input.length && isAlgebraicOperator(threeChars)) {
+    return [3, ['A_Operator', threeChars]]
   }
 
   const twoChars = input.slice(position, position + 2)
-  if (position + 1 < input.length && isInfixOperator(twoChars)) {
-    return [2, ['IF_Operator', twoChars]]
+  if (position + 1 < input.length && isAlgebraicOperator(twoChars)) {
+    return [2, ['A_Operator', twoChars]]
   }
 
   const oneChar = input[position] ?? ''
-  if (isInfixOperator(oneChar)) {
-    return [1, ['IF_Operator', oneChar]]
+  if (isAlgebraicOperator(oneChar)) {
+    return [1, ['A_Operator', oneChar]]
   }
   return NO_MATCH
 }
 
-export const tokenizeIF_PostfixToken: Tokenizer<IF_PostfixToken> = (input, position) =>
-  tokenizeSimpleToken('IF_Postfix', '@', input, position)
+export const tokenizeA_PolishToken: Tokenizer<A_PolishToken> = (input, position) =>
+  tokenizeSimpleToken('A_Polish', '@', input, position)
 
-export const tokenizeIF_MultiLineComment: Tokenizer<IF_MultiLineCommentToken> = (input, position) => {
+export const tokenizeA_MultiLineComment: Tokenizer<A_MultiLineCommentToken> = (input, position) => {
   if (input[position] === '/' && input[position + 1] === '*') {
     let length = 2
     let value = '/*'
@@ -219,12 +219,12 @@ export const tokenizeIF_MultiLineComment: Tokenizer<IF_MultiLineCommentToken> = 
     value += '*/'
     length += 2
 
-    return [length, ['IF_MultiLineComment', value]]
+    return [length, ['A_MultiLineComment', value]]
   }
   return NO_MATCH
 }
 
-export const tokenizeIF_SingleLineComment: Tokenizer<IF_SingleLineCommentToken> = (input, position) => {
+export const tokenizeA_SingleLineComment: Tokenizer<A_SingleLineCommentToken> = (input, position) => {
   if (input[position] === '/' && input[position + 1] === '/') {
     let length = 2
     let value = '//'
@@ -233,17 +233,17 @@ export const tokenizeIF_SingleLineComment: Tokenizer<IF_SingleLineCommentToken> 
       length += 1
     }
 
-    return [length, ['IF_SingleLineComment', value]]
+    return [length, ['A_SingleLineComment', value]]
   }
   return NO_MATCH
 }
 
 // All tokenizers, order matters!
-export const infixTokenizers = [
-  tokenizeIF_Whitespace,
-  tokenizeIF_MultiLineComment,
-  tokenizeIF_SingleLineComment,
-  tokenizeIF_PostfixToken,
+export const algebraicTokenizers = [
+  tokenizeA_Whitespace,
+  tokenizeA_MultiLineComment,
+  tokenizeA_SingleLineComment,
+  tokenizeA_PolishToken,
   tokenizeLeftParen,
   tokenizeRightParen,
   tokenizeLeftBracket,
@@ -251,8 +251,8 @@ export const infixTokenizers = [
   tokenizeLeftCurly,
   tokenizeRightCurly,
   tokenizeString,
-  tokenizeIF_Number,
-  tokenizeIF_Operator,
-  tokenizeIF_ReservedSymbolToken,
-  tokenizeIF_Symbol,
-] as const satisfies Tokenizer<InfixToken>[]
+  tokenizeA_Number,
+  tokenizeA_Operator,
+  tokenizeA_ReservedSymbolToken,
+  tokenizeA_Symbol,
+] as const satisfies Tokenizer<AlgebraicToken>[]

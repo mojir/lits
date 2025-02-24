@@ -3,23 +3,23 @@ import { asNonUndefined } from '../../typeGuards'
 import { assertNumber, isNumber } from '../../typeGuards/number'
 import type { SourceCodeInfo, TokenStream } from '../interface'
 import { addTokenDebugData, getTokenDebugData } from '../utils'
-import type { PF_CollectionAccessorToken, PF_StringShorthandToken } from '../postfix/postfixTokens'
-import { asPF_CollectionAccessorToken, assertPF_NumberToken, assertPF_SymbolToken, isPF_CollectionAccessorToken, isPF_FnShorthandToken, isPF_SymbolToken } from '../postfix/postfixTokens'
+import type { P_CollectionAccessorToken, P_StringShorthandToken } from '../polish/polishTokens'
+import { asP_CollectionAccessorToken, assertP_NumberToken, assertP_SymbolToken, isP_CollectionAccessorToken, isP_FnShorthandToken, isP_SymbolToken } from '../polish/polishTokens'
 import { isRBraceToken, isRBracketToken, isRParenToken } from '../common/commonTokens'
 import { asToken } from '../tokens'
 import type { SugarFunction } from '.'
 
 export const applyCollectionAccessors: SugarFunction = (tokenStream) => {
-  let dotTokenIndex = tokenStream.tokens.findIndex(isPF_CollectionAccessorToken)
+  let dotTokenIndex = tokenStream.tokens.findIndex(isP_CollectionAccessorToken)
   while (dotTokenIndex >= 0) {
     applyCollectionAccessor(tokenStream, dotTokenIndex)
-    dotTokenIndex = tokenStream.tokens.findIndex(isPF_CollectionAccessorToken)
+    dotTokenIndex = tokenStream.tokens.findIndex(isP_CollectionAccessorToken)
   }
   return tokenStream
 }
 
 function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
-  const dotTkn = asPF_CollectionAccessorToken(tokenStream.tokens[position])
+  const dotTkn = asP_CollectionAccessorToken(tokenStream.tokens[position])
   const debugData = getTokenDebugData(dotTkn)
   const backPosition = getPositionBackwards(tokenStream, position, debugData?.sourceCodeInfo)
   checkForward(tokenStream, position, dotTkn, debugData?.sourceCodeInfo)
@@ -28,8 +28,8 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
   tokenStream.tokens.splice(backPosition, 0, ['LParen'])
   const nextTkn = asToken(tokenStream.tokens[position + 1])
   if (dotTkn[1] === '.') {
-    assertPF_SymbolToken(nextTkn)
-    const token: PF_StringShorthandToken = ['PF_StringShorthand', `:${nextTkn[1]}`]
+    assertP_SymbolToken(nextTkn)
+    const token: P_StringShorthandToken = ['P_StringShorthand', `:${nextTkn[1]}`]
     tokenStream.tokens[position + 1] = token
 
     const nextTkndebugData = getTokenDebugData(nextTkn)
@@ -38,10 +38,10 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
     }
   }
   else {
-    assertPF_NumberToken(nextTkn)
+    assertP_NumberToken(nextTkn)
     assertNumber(Number(nextTkn[1]), debugData?.sourceCodeInfo, { integer: true, nonNegative: true })
 
-    tokenStream.tokens[position + 1] = ['PF_Number', nextTkn[1]]
+    tokenStream.tokens[position + 1] = ['P_Number', nextTkn[1]]
   }
   tokenStream.tokens.splice(position + 2, 0, ['RParen'])
 }
@@ -81,7 +81,7 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
   }
   if (openBracket === 'LParen' && position > 0) {
     const tokenBeforeBracket = asNonUndefined(tokenStream.tokens[position - 1])
-    if (isPF_FnShorthandToken(tokenBeforeBracket))
+    if (isP_FnShorthandToken(tokenBeforeBracket))
       throw new LitsError('# or . must NOT be preceeded by shorthand lambda function', sourceCodeInfo)
   }
   return position
@@ -90,12 +90,12 @@ function getPositionBackwards(tokenStream: TokenStream, position: number, source
 function checkForward(
   tokenStream: TokenStream,
   position: number,
-  dotTkn: PF_CollectionAccessorToken,
+  dotTkn: P_CollectionAccessorToken,
   sourceCodeInfo: SourceCodeInfo | undefined,
 ) {
   const tkn = tokenStream.tokens[position + 1]
 
-  if (dotTkn[1] === '.' && !isPF_SymbolToken(tkn)) {
+  if (dotTkn[1] === '.' && !isP_SymbolToken(tkn)) {
     throw new LitsError('# as a collection accessor must be followed by an name', sourceCodeInfo)
   }
 

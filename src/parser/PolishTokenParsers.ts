@@ -7,8 +7,8 @@ import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import { asLParenToken, assertLBracketToken, assertRParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import type { PostfixTokenType } from '../tokenizer/postfix/postfixTokens'
-import { asPF_CommentToken, asPF_RegexpShorthandToken, asPF_StringShorthandToken, asPF_SymbolToken, isPF_FnShorthandToken, isPF_ModifierToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
+import type { PolishTokenType } from '../tokenizer/polish/polishTokens'
+import { asP_CommentToken, asP_RegexpShorthandToken, asP_StringShorthandToken, asP_SymbolToken, isP_FnShorthandToken, isP_ModifierToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
@@ -28,7 +28,7 @@ import type {
 } from './interface'
 
 function parseStringShorthand(tokenStream: TokenStream, parseState: ParseState): StringNode {
-  const tkn = asPF_StringShorthandToken(tokenStream.tokens[parseState.position++])
+  const tkn = asP_StringShorthandToken(tokenStream.tokens[parseState.position++])
   const value = tkn[1].substring(1)
 
   return {
@@ -41,7 +41,7 @@ function parseStringShorthand(tokenStream: TokenStream, parseState: ParseState):
 }
 
 function parseComment(tokenStream: TokenStream, parseState: ParseState): CommentNode {
-  const tkn = asPF_CommentToken(tokenStream.tokens[parseState.position++])
+  const tkn = asP_CommentToken(tokenStream.tokens[parseState.position++])
   return {
     t: AstNodeType.Comment,
     v: tkn[1],
@@ -63,7 +63,7 @@ function parseTokensUntilClosingBracket(tokenStream: TokenStream, parseState: Pa
 
 const parseExpression: ParseExpression = (tokenStream, parseState) => {
   const tkn = asToken(tokenStream.tokens[parseState.position + 1])
-  if (isPF_SymbolToken(tkn) && builtin.specialExpressions[tkn[1] as SpecialExpressionName])
+  if (isP_SymbolToken(tkn) && builtin.specialExpressions[tkn[1] as SpecialExpressionName])
     return parseSpecialExpression(tokenStream, parseState)
 
   return parseNormalExpression(tokenStream, parseState)
@@ -116,7 +116,7 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
 }
 
 function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNodeWithName {
-  const tkn = asPF_RegexpShorthandToken(tokenStream.tokens[parseState.position++])
+  const tkn = asP_RegexpShorthandToken(tokenStream.tokens[parseState.position++])
 
   const endStringPosition = tkn[1].lastIndexOf('"')
   const regexpString = tkn[1].substring(2, endStringPosition)
@@ -157,7 +157,7 @@ function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnN
   let percent1: 'NOT_SET' | 'WITH_1' | 'NAKED' = 'NOT_SET' // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
   for (let pos = startPos; pos < parseState.position - 1; pos += 1) {
     const tkn = asToken(tokenStream.tokens[pos])
-    if (isPF_SymbolToken(tkn)) {
+    if (isP_SymbolToken(tkn)) {
       const match = placeholderRegexp.exec(tkn[1])
       if (match) {
         const number = match[1] ?? '1'
@@ -174,7 +174,7 @@ function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnN
           throw new LitsError('Can\'t specify more than 20 arguments', getTokenDebugData(firstToken)?.sourceCodeInfo)
       }
     }
-    if (isPF_FnShorthandToken(tkn))
+    if (isP_FnShorthandToken(tkn))
       throw new LitsError('Nested shortcut functions are not allowed', getTokenDebugData(firstToken)?.sourceCodeInfo)
   }
 
@@ -212,7 +212,7 @@ function parseFnShorthand(tokenStream: TokenStream, parseState: ParseState): FnN
 const parseArgument: ParseArgument = (tokenStream, parseState) => {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
 
-  if (isPF_SymbolToken(tkn)) {
+  if (isP_SymbolToken(tkn)) {
     return {
       t: AstNodeType.Argument,
       n: tkn[1],
@@ -220,7 +220,7 @@ const parseArgument: ParseArgument = (tokenStream, parseState) => {
       token: getTokenDebugData(tkn) && tkn,
     }
   }
-  else if (isPF_ModifierToken(tkn)) {
+  else if (isP_ModifierToken(tkn)) {
     return {
       t: AstNodeType.Modifier,
       v: tkn[1],
@@ -248,7 +248,7 @@ function parseBindings(tokenStream: TokenStream, parseState: ParseState): Bindin
 }
 
 function parseBinding(tokenStream: TokenStream, parseState: ParseState): BindingNode {
-  const firstToken = asPF_SymbolToken(tokenStream.tokens[parseState.position++])
+  const firstToken = asP_SymbolToken(tokenStream.tokens[parseState.position++])
   const name = firstToken[1]
 
   const value = parseState.parseToken(tokenStream, parseState)
@@ -306,7 +306,7 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
 function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState): SpecialExpressionNode {
   const firstToken = asLParenToken(tokenStream.tokens[parseState.position++])
 
-  const nameToken = asPF_SymbolToken(tokenStream.tokens[parseState.position++])
+  const nameToken = asP_SymbolToken(tokenStream.tokens[parseState.position++])
   const expressionName = nameToken[1] as SpecialExpressionName
 
   const { parse } = asNonUndefined(builtin.specialExpressions[expressionName], getTokenDebugData(nameToken)?.sourceCodeInfo)
@@ -323,20 +323,20 @@ function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState
   return node
 }
 
-export function parsePostfixToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
+export function parsePolishToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
   const tkn = asToken(tokenStream.tokens[parseState.position])
 
-  const tokenType = tkn[0] as PostfixTokenType
+  const tokenType = tkn[0] as PolishTokenType
   switch (tokenType) {
     case 'String':
       return parseString(tokenStream, parseState)
-    case 'PF_Number':
+    case 'P_Number':
       return parseNumber(tokenStream, parseState)
-    case 'PF_StringShorthand':
+    case 'P_StringShorthand':
       return parseStringShorthand(tokenStream, parseState)
-    case 'PF_Symbol':
+    case 'P_Symbol':
       return parseSymbol(tokenStream, parseState)
-    case 'PF_ReservedSymbol':
+    case 'P_ReservedSymbol':
       return parseReservedSymbol(tokenStream, parseState)
     case 'LParen':
       return parseExpression(tokenStream, parseState)
@@ -344,19 +344,19 @@ export function parsePostfixToken(tokenStream: TokenStream, parseState: ParseSta
       return parseArrayLitteral(tokenStream, parseState)
     case 'LBrace':
       return parseObjectLitteral(tokenStream, parseState)
-    case 'PF_RegexpShorthand':
+    case 'P_RegexpShorthand':
       return parseRegexpShorthand(tokenStream, parseState)
-    case 'PF_FnShorthand':
+    case 'P_FnShorthand':
       return parseFnShorthand(tokenStream, parseState)
-    case 'PF_Comment':
+    case 'P_Comment':
       return parseComment(tokenStream, parseState)
-    case 'PF_CollectionAccessor':
-    case 'PF_Modifier':
-    case 'PF_Infix':
+    case 'P_CollectionAccessor':
+    case 'P_Modifier':
+    case 'P_Algebraic':
     case 'RParen':
     case 'RBracket':
     case 'RBrace':
-    case 'PF_Whitespace':
+    case 'P_Whitespace':
       break
     /* v8 ignore next 2 */
     default:

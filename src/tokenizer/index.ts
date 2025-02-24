@@ -1,9 +1,9 @@
 import { LitsError } from '../errors'
-import { infixTokenizers } from './infix/infixTokenizers'
-import { isIF_PostfixToken } from './infix/infixTokens'
+import { algebraicTokenizers } from './algebraic/algebraicTokenizers'
+import { isA_PolishToken } from './algebraic/algebraicTokens'
 import type { SourceCodeInfo, TokenDescriptor, TokenStream, TokenizeParams, Tokenizer } from './interface'
-import { postfixTokenizers } from './postfix/postfixTokenizers'
-import { isPF_InfixToken } from './postfix/postfixTokens'
+import { polishTokenizers } from './polish/polishTokenizers'
+import { isP_AlgebraicToken } from './polish/polishTokens'
 import { getSugar } from './sugar'
 import type { Token } from './tokens'
 import type { TokenDebugData } from './utils'
@@ -11,17 +11,17 @@ import { addTokenDebugData } from './utils'
 
 export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const debug = !!params.debug
-  let infix = !!params.infix
+  let algebraic = !!params.algebraic
   let position = 0
   const tokenStream: TokenStream = {
     tokens: [],
     filePath: params.filePath,
     hasDebugData: debug,
-    infix,
+    algebraic,
   }
 
   while (position < input.length) {
-    const tokenizers = infix ? infixTokenizers : postfixTokenizers
+    const tokenizers = algebraic ? algebraicTokenizers : polishTokenizers
     const tokenDescriptor = getCurrentToken(input, position, tokenizers)
 
     const debugData: TokenDebugData | undefined = debug
@@ -43,11 +43,11 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
       }
 
       tokenStream.tokens.push(token)
-      if (isPF_InfixToken(token)) {
-        infix = true
+      if (isP_AlgebraicToken(token)) {
+        algebraic = true
       }
-      if (isIF_PostfixToken(token)) {
-        infix = false
+      if (isA_PolishToken(token)) {
+        algebraic = false
       }
     }
   }

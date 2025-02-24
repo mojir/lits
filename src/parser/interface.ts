@@ -4,15 +4,15 @@ import type { Arity } from '../builtin/utils'
 import type { AstNodeType, FunctionType } from '../constants/constants'
 import type { Context } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
-import type { PostfixReservedName } from '../tokenizer/postfix/postfixReservedNames'
+import type { PolishReservedName } from '../tokenizer/polish/polishReservedNames'
 import type { SourceCodeInfo, TokenStream } from '../tokenizer/interface'
 import type { FUNCTION_SYMBOL, REGEXP_SYMBOL } from '../utils/symbols'
 import type { Token } from '../tokenizer/tokens'
-import type { ModifierName } from '../tokenizer/postfix/postfixTokens'
+import type { ModifierName } from '../tokenizer/polish/polishTokens'
 
 export interface ParseState {
   position: number
-  infix: boolean
+  algebraic: boolean
   parseToken: ParseToken
 }
 export interface EvaluatedFunctionArguments {
@@ -154,7 +154,7 @@ export interface ModifierNode extends GenericNode {
 }
 export interface ReservedSymbolNode extends GenericNode {
   t: AstNodeType.ReservedSymbol // type
-  v: PostfixReservedName // reservedName
+  v: PolishReservedName // reservedName
 }
 
 interface CommonNormalExpressionNode extends GenericNode {

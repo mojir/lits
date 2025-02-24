@@ -1,46 +1,46 @@
 import { LitsError } from '../errors'
 import type { CommonSimpleToken, CommonValueToken } from './common/commonTokens'
 import { commomValueTokenTypes, commonSimpleTokenTypes } from './common/commonTokens'
-import type { InfixOnlySimpleToken, InfixOnlyValueToken, InfixSimpleTokenType, InfixValueTokenType } from './infix/infixTokens'
-import { infixOnlySimpleTokenTypes, infixOnlyValueTokenTypes } from './infix/infixTokens'
-import type { PostfixOnlySimpleToken, PostfixOnlyValueToken, PostfixSimpleTokenType, PostfixValueTokenType } from './postfix/postfixTokens'
-import { postfixOnlySimpleTokenTypes, postfixOnlyValueTokenTypes } from './postfix/postfixTokens'
+import type { AlgebraicOnlySimpleToken, AlgebraicOnlyValueToken, AlgebraicSimpleTokenType, AlgebraicValueTokenType } from './algebraic/algebraicTokens'
+import { algebraicOnlySimpleTokenTypes, algebraicOnlyValueTokenTypes } from './algebraic/algebraicTokens'
+import type { PolishOnlySimpleToken, PolishOnlyValueToken, PolishSimpleTokenType, PolishValueTokenType } from './polish/polishTokens'
+import { polishOnlySimpleTokenTypes, polishOnlyValueTokenTypes } from './polish/polishTokens'
 
 export const simpleTokenTypes = [
   ...commonSimpleTokenTypes,
-  ...infixOnlySimpleTokenTypes,
-  ...postfixOnlySimpleTokenTypes,
+  ...algebraicOnlySimpleTokenTypes,
+  ...polishOnlySimpleTokenTypes,
 ] as const
 
 export const valueTokenTypes = [
   ...commomValueTokenTypes,
-  ...infixOnlyValueTokenTypes,
-  ...postfixOnlyValueTokenTypes,
+  ...algebraicOnlyValueTokenTypes,
+  ...polishOnlyValueTokenTypes,
 ] as const
 
 export const tokenTypes = [
   ...commonSimpleTokenTypes,
-  ...infixOnlySimpleTokenTypes,
-  ...postfixOnlySimpleTokenTypes,
+  ...algebraicOnlySimpleTokenTypes,
+  ...polishOnlySimpleTokenTypes,
   ...commomValueTokenTypes,
-  ...infixOnlyValueTokenTypes,
-  ...postfixOnlyValueTokenTypes,
+  ...algebraicOnlyValueTokenTypes,
+  ...polishOnlyValueTokenTypes,
 ] as const
 
-type SimpleTokenType = InfixSimpleTokenType | PostfixSimpleTokenType
-type ValueTokenType = InfixValueTokenType | PostfixValueTokenType
+type SimpleTokenType = AlgebraicSimpleTokenType | PolishSimpleTokenType
+type ValueTokenType = AlgebraicValueTokenType | PolishValueTokenType
 
 export type TokenType = typeof tokenTypes[number]
 
 export type SimpleToken =
   | CommonSimpleToken
-  | InfixOnlySimpleToken
-  | PostfixOnlySimpleToken
+  | AlgebraicOnlySimpleToken
+  | PolishOnlySimpleToken
 
 export type ValueToken =
   | CommonValueToken
-  | InfixOnlyValueToken
-  | PostfixOnlyValueToken
+  | AlgebraicOnlyValueToken
+  | PolishOnlyValueToken
 
 export type Token =
   | SimpleToken

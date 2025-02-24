@@ -1,5 +1,5 @@
 import { LitsError } from '../../errors'
-import { postfixIdentifierCharacterClass } from '../../identifier'
+import { polishIdentifierCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
   isNoMatch,
@@ -12,13 +12,27 @@ import {
   tokenizeString,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
-import { postfixReservedNamesRecord } from './postfixReservedNames'
-import type { ModifierName, PF_CollectionAccessorToken, PF_CommentToken, PF_FnShorthandToken, PF_InfixToken, PF_ModifierToken, PF_NumberToken, PF_RegexpShorthandToken, PF_ReservedSymbolToken, PF_StringShorthandToken, PF_SymbolToken, PF_WhitespaceToken, PostfixToken } from './postfixTokens'
-import { asPF_SymbolToken, modifierNames } from './postfixTokens'
+import { polishReservedNamesRecord } from './polishReservedNames'
+import type {
+  ModifierName,
+  P_AlgebraicToken,
+  P_CollectionAccessorToken,
+  P_CommentToken,
+  P_FnShorthandToken,
+  P_ModifierToken,
+  P_NumberToken,
+  P_RegexpShorthandToken,
+  P_ReservedSymbolToken,
+  P_StringShorthandToken,
+  P_SymbolToken,
+  P_WhitespaceToken,
+  PolishToken,
+} from './polishTokens'
+import { asP_SymbolToken, modifierNames } from './polishTokens'
 
 const whitespaceRegExp = /\s|,/
 
-export const tokenizePF_Comment: Tokenizer<PF_CommentToken> = (input, position) => {
+export const tokenizeP_Comment: Tokenizer<P_CommentToken> = (input, position) => {
   if (input[position] === ';') {
     let length = 0
     let value = ''
@@ -27,12 +41,12 @@ export const tokenizePF_Comment: Tokenizer<PF_CommentToken> = (input, position) 
       length += 1
     }
 
-    return [length, ['PF_Comment', value]]
+    return [length, ['P_Comment', value]]
   }
   return NO_MATCH
 }
 
-export const tokenizePF_Whitespace: Tokenizer<PF_WhitespaceToken> = (input, position) => {
+export const tokenizeP_Whitespace: Tokenizer<P_WhitespaceToken> = (input, position) => {
   let char = input[position]
   if (!char || !whitespaceRegExp.test(char)) {
     return NO_MATCH
@@ -45,7 +59,7 @@ export const tokenizePF_Whitespace: Tokenizer<PF_WhitespaceToken> = (input, posi
     position += 1
     char = input[position]
   }
-  return [value.length, ['PF_Whitespace', value]]
+  return [value.length, ['P_Whitespace', value]]
 }
 
 const endOfNumberRegExp = /[\s)\]},#]/
@@ -54,7 +68,7 @@ const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-f]/i
 const binaryNumberRegExp = /[01]/
 const firstCharRegExp = /[0-9.-]/
-export const tokenizePF_Number: Tokenizer<PF_NumberToken> = (input, position) => {
+export const tokenizeP_Number: Tokenizer<P_NumberToken> = (input, position) => {
   let type: 'decimal' | 'octal' | 'hex' | 'binary' = 'decimal'
   const firstChar = input[position] as string
   if (!firstCharRegExp.test(firstChar))
@@ -118,39 +132,39 @@ export const tokenizePF_Number: Tokenizer<PF_NumberToken> = (input, position) =>
   if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
     return NO_MATCH
 
-  return [length, ['PF_Number', value]]
+  return [length, ['P_Number', value]]
 }
 
-export const pf_symbolRegExp = new RegExp(postfixIdentifierCharacterClass)
-export const tokenizePF_Symbol: Tokenizer<PF_SymbolToken> = (input, position) => {
+export const P_symbolRegExp = new RegExp(polishIdentifierCharacterClass)
+export const tokenizeP_Symbol: Tokenizer<P_SymbolToken> = (input, position) => {
   let char = input[position]
   let length = 0
   let value = ''
 
-  if (!char || !pf_symbolRegExp.test(char))
+  if (!char || !P_symbolRegExp.test(char))
     return NO_MATCH
 
-  while (char && pf_symbolRegExp.test(char)) {
+  while (char && P_symbolRegExp.test(char)) {
     value += char
     length += 1
     char = input[position + length]
   }
 
-  return [length, ['PF_Symbol', value]]
+  return [length, ['P_Symbol', value]]
 }
 
-export const tokenizePF_FnShorthand: Tokenizer<PF_FnShorthandToken> = (input, position) => {
+export const tokenizeP_FnShorthand: Tokenizer<P_FnShorthandToken> = (input, position) => {
   if (input.slice(position, position + 2) !== '#(')
     return NO_MATCH
 
-  return [1, ['PF_FnShorthand']]
+  return [1, ['P_FnShorthand']]
 }
 
-export const tokenizePF_ReservedSymbol: Tokenizer<PF_ReservedSymbolToken> = (input, position) => {
-  for (const [reservedName, { forbidden }] of Object.entries(postfixReservedNamesRecord)) {
+export const tokenizeP_ReservedSymbol: Tokenizer<P_ReservedSymbolToken> = (input, position) => {
+  for (const [reservedName, { forbidden }] of Object.entries(polishReservedNamesRecord)) {
     const length = reservedName.length
     const nextChar = input[position + length]
-    if (nextChar && pf_symbolRegExp.test(nextChar)) {
+    if (nextChar && P_symbolRegExp.test(nextChar)) {
       continue
     }
 
@@ -159,58 +173,58 @@ export const tokenizePF_ReservedSymbol: Tokenizer<PF_ReservedSymbolToken> = (inp
       if (forbidden)
         throw new LitsError(`${symbol} is forbidden!`)
 
-      return [length, ['PF_ReservedSymbol', reservedName]]
+      return [length, ['P_ReservedSymbol', reservedName]]
     }
   }
   return NO_MATCH
 }
 
-const tokenizePF_StringShorthand: Tokenizer<PF_StringShorthandToken> = (input, position) => {
+const tokenizeP_StringShorthand: Tokenizer<P_StringShorthandToken> = (input, position) => {
   if (input[position] !== ':')
     return NO_MATCH
 
-  const symbolDescription = tokenizePF_Symbol(input, position + 1)
+  const symbolDescription = tokenizeP_Symbol(input, position + 1)
   if (isNoMatch(symbolDescription)) {
     return symbolDescription
   }
 
-  const symbolToken = asPF_SymbolToken(symbolDescription[1])
+  const symbolToken = asP_SymbolToken(symbolDescription[1])
 
-  return [symbolDescription[0] + 1, ['PF_StringShorthand', `:${symbolToken[1]}`]]
+  return [symbolDescription[0] + 1, ['P_StringShorthand', `:${symbolToken[1]}`]]
 }
 
-export const tokenizePF_Modifier: Tokenizer<PF_ModifierToken> = (input, position) => {
+export const tokenizeP_Modifier: Tokenizer<P_ModifierToken> = (input, position) => {
   for (const modifierName of modifierNames) {
     const length = modifierName.length
     const charAfterModifier = input[position + length]
-    if (input.substring(position, position + length) === modifierName && (!charAfterModifier || !pf_symbolRegExp.test(charAfterModifier))) {
+    if (input.substring(position, position + length) === modifierName && (!charAfterModifier || !P_symbolRegExp.test(charAfterModifier))) {
       const value: ModifierName = modifierName
-      return [length, ['PF_Modifier', value]]
+      return [length, ['P_Modifier', value]]
     }
   }
   return NO_MATCH
 }
 
-export const tokenizePF_InfixToken: Tokenizer<PF_InfixToken> = (input, position) => {
+export const tokenizeP_AlgebraicToken: Tokenizer<P_AlgebraicToken> = (input, position) => {
   if (input[position] !== '$') {
     return NO_MATCH
   }
   const nextChar = input[position + 1]
-  if (nextChar && pf_symbolRegExp.test(nextChar)) {
+  if (nextChar && P_symbolRegExp.test(nextChar)) {
     return NO_MATCH
   }
-  return [1, ['PF_Infix']]
+  return [1, ['P_Algebraic']]
 }
 
-export const tokenizePF_CollectionAccessor: Tokenizer<PF_CollectionAccessorToken> = (input, position) => {
+export const tokenizeP_CollectionAccessor: Tokenizer<P_CollectionAccessorToken> = (input, position) => {
   const char = input[position]
   if (char !== '.' && char !== '#')
     return NO_MATCH
 
-  return [1, ['PF_CollectionAccessor', char]]
+  return [1, ['P_CollectionAccessor', char]]
 }
 
-export const tokenizePF_RegexpShorthand: Tokenizer<PF_RegexpShorthandToken> = (input, position) => {
+export const tokenizeP_RegexpShorthand: Tokenizer<P_RegexpShorthandToken> = (input, position) => {
   if (input[position] !== '#')
     return NO_MATCH
 
@@ -231,14 +245,14 @@ export const tokenizePF_RegexpShorthand: Tokenizer<PF_RegexpShorthandToken> = (i
     position += 1
   }
 
-  return [length, ['PF_RegexpShorthand', `#${token[1]}${options}`]]
+  return [length, ['P_RegexpShorthand', `#${token[1]}${options}`]]
 }
 
 // All tokenizers, order matters!
-export const postfixTokenizers = [
-  tokenizePF_Whitespace,
-  tokenizePF_InfixToken,
-  tokenizePF_Comment,
+export const polishTokenizers = [
+  tokenizeP_Whitespace,
+  tokenizeP_AlgebraicToken,
+  tokenizeP_Comment,
   tokenizeLeftParen,
   tokenizeRightParen,
   tokenizeLeftBracket,
@@ -246,12 +260,12 @@ export const postfixTokenizers = [
   tokenizeLeftCurly,
   tokenizeRightCurly,
   tokenizeString,
-  tokenizePF_StringShorthand,
-  tokenizePF_Number,
-  tokenizePF_ReservedSymbol,
-  tokenizePF_Symbol,
-  tokenizePF_Modifier,
-  tokenizePF_RegexpShorthand,
-  tokenizePF_FnShorthand,
-  tokenizePF_CollectionAccessor,
-] as const satisfies Tokenizer<PostfixToken>[]
+  tokenizeP_StringShorthand,
+  tokenizeP_Number,
+  tokenizeP_ReservedSymbol,
+  tokenizeP_Symbol,
+  tokenizeP_Modifier,
+  tokenizeP_RegexpShorthand,
+  tokenizeP_FnShorthand,
+  tokenizeP_CollectionAccessor,
+] as const satisfies Tokenizer<PolishToken>[]

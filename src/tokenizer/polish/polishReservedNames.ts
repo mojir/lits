@@ -1,6 +1,6 @@
 import type { Any } from '../../interface'
 
-export const postfixReservedNamesRecord: Record<string, { value: Any, forbidden?: true }> = {
+export const polishReservedNamesRecord: Record<string, { value: Any, forbidden?: true }> = {
   'true': { value: true },
   'false': { value: false },
   'nil': { value: null },
@@ -12,6 +12,6 @@ export const postfixReservedNamesRecord: Record<string, { value: Any, forbidden?
   '||': { value: null, forbidden: true },
 } as const
 
-export type PostfixReservedName = keyof typeof postfixReservedNamesRecord
+export type PolishReservedName = keyof typeof polishReservedNamesRecord
 
-export const postfixReservedNames: PostfixReservedName[] = Object.keys(postfixReservedNamesRecord)
+export const polishReservedNames: PolishReservedName[] = Object.keys(polishReservedNamesRecord)

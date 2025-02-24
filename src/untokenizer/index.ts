@@ -20,9 +20,9 @@ function untokenizeToken(token: Token): string {
     case 'RBracket': return ']'
     case 'LBrace': return '{'
     case 'RBrace': return '}'
-    case 'PF_Infix': return '$'
-    case 'IF_Postfix': return '@'
-    case 'PF_FnShorthand': return '#'
+    case 'P_Algebraic': return '$'
+    case 'A_Polish': return '@'
+    case 'P_FnShorthand': return '#'
 
     /* v8 ignore next 2 */
     default:

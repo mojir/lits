@@ -1,4 +1,4 @@
-export const postfixIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]'
-export const postfixIdentifierFirstCharacterClass = '[a-zA-Z_@%^?=!$<>+*/-]'
-export const infixIdentifierCharacterClass = '[\\w$:]'
-export const infixIdentifierFirstCharacterClass = '[a-zA-Z_$]'
+export const polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]'
+export const polishIdentifierFirstCharacterClass = '[a-zA-Z_@%^?=!$<>+*/-]'
+export const algebraicIdentifierCharacterClass = '[\\w$:]'
+export const algebraicIdentifierFirstCharacterClass = '[a-zA-Z_$]'

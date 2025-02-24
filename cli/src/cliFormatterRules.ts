@@ -1,5 +1,5 @@
 import { type TextFormatter, createFormatter } from '../../common/createFormatter'
-import { postfixIdentifierCharacterClass, postfixIdentifierFirstCharacterClass } from '../../src/identifier'
+import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../src/identifier'
 import { ColorEnum, type Colorizer } from './colorizer'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
@@ -7,7 +7,7 @@ export type FormatterRule = (text: string, index: number, formatter: TextFormatt
   formattedText: string
 }
 
-export const variableRegExp = new RegExp(`^\\$${postfixIdentifierFirstCharacterClass}${postfixIdentifierCharacterClass}*`)
+export const variableRegExp = new RegExp(`^\\$${polishIdentifierFirstCharacterClass}${polishIdentifierCharacterClass}*`)
 
 const noMatch = { count: 0, formattedText: '' }
 
@@ -37,11 +37,11 @@ export const getNumberRule: (cli: Colorizer) => FormatterRule = fmt => (text, in
     const count = startMatch[0].length
     const characterBefor = text[index - 1]
     const characterAfter = text[index + count]
-    if (characterBefor && new RegExp(postfixIdentifierCharacterClass).test(characterBefor))
+    if (characterBefor && new RegExp(polishIdentifierCharacterClass).test(characterBefor))
       return noMatch
     if (characterBefor && numberRegExp.test(characterBefor))
       return noMatch
-    if (characterAfter && new RegExp(postfixIdentifierCharacterClass).test(characterAfter))
+    if (characterAfter && new RegExp(polishIdentifierCharacterClass).test(characterAfter))
       return noMatch
     if (characterAfter && numberRegExp.test(characterAfter))
       return noMatch
@@ -76,7 +76,7 @@ const stringRule = createRule({
 
 const shortcutStringRule = createRule({
   name: 'string',
-  startPattern: new RegExp(`^:${postfixIdentifierCharacterClass}+`),
+  startPattern: new RegExp(`^:${polishIdentifierCharacterClass}+`),
   startTag: ColorEnum.FgRed,
   endTag: ColorEnum.Reset,
   keepPatterns: true,
@@ -86,7 +86,7 @@ const shortcutStringRule = createRule({
 
 const functionNameRule = createRule({
   name: 'functionName',
-  startPattern: new RegExp(`^\\((?=${postfixIdentifierCharacterClass}+)`),
+  startPattern: new RegExp(`^\\((?=${polishIdentifierCharacterClass}+)`),
   endPattern: /^[) \n]/,
   startTag: ColorEnum.FgBlue,
   endTag: ColorEnum.Reset,
@@ -97,7 +97,7 @@ const functionNameRule = createRule({
 
 const nameRule = createRule({
   name: 'functionName',
-  startPattern: new RegExp(`^${postfixIdentifierCharacterClass}+`),
+  startPattern: new RegExp(`^${polishIdentifierCharacterClass}+`),
   startTag: `${ColorEnum.Bright}${ColorEnum.FgBlue}`,
   endTag: ColorEnum.Reset,
   keepPatterns: true,

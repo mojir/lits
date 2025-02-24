@@ -3,9 +3,9 @@ import { createFormatter } from '../../../../common/createFormatter'
 import { createVariableRule, mdRules } from '../../formatter/rules'
 import { styles } from '../../styles'
 import { findAllOccurrences } from '../../../../common/utils'
-import { postfixIdentifierCharacterClass, postfixIdentifierFirstCharacterClass } from '../../../../src/identifier'
+import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../../../src/identifier'
 
-const variableRegExp = new RegExp(`\\$${postfixIdentifierFirstCharacterClass}${postfixIdentifierCharacterClass}*`, 'g')
+const variableRegExp = new RegExp(`\\$${polishIdentifierFirstCharacterClass}${polishIdentifierCharacterClass}*`, 'g')
 
 export function formatDescription(description: string, reference: Reference): string {
   if (isFunctionReference(reference))

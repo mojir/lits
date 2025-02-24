@@ -1,9 +1,9 @@
-import { isIF_WhitespaceToken } from '../tokenizer/infix/infixTokens'
+import { isA_WhitespaceToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import { isPF_CommentToken, isPF_WhitespaceToken } from '../tokenizer/postfix/postfixTokens'
-import { InfixParser } from './InfixParser'
+import { isP_CommentToken, isP_WhitespaceToken } from '../tokenizer/polish/polishTokens'
+import { AlgebraicParser } from './AlgebraicParser'
 import type { Ast, AstNode, ParseState } from './interface'
-import { parsePostfixToken } from './postfixTokenParsers'
+import { parsePolishToken } from './PolishTokenParsers'
 
 export function parse(tokenStream: TokenStream): Ast {
   const safeTokenStream = removeUnnecessaryTokens(tokenStream)
@@ -15,7 +15,7 @@ export function parse(tokenStream: TokenStream): Ast {
 
   const parseState: ParseState = {
     position: 0,
-    infix: safeTokenStream.infix ?? false,
+    algebraic: safeTokenStream.algebraic ?? false,
     parseToken,
   }
 
@@ -28,7 +28,7 @@ export function parse(tokenStream: TokenStream): Ast {
 
 function removeUnnecessaryTokens(tokenStream: TokenStream): TokenStream {
   const tokens = tokenStream.tokens.filter((token) => {
-    if (isPF_CommentToken(token) || isIF_WhitespaceToken(token) || isPF_WhitespaceToken(token)) {
+    if (isP_CommentToken(token) || isA_WhitespaceToken(token) || isP_WhitespaceToken(token)) {
       return false
     }
     return true
@@ -38,10 +38,10 @@ function removeUnnecessaryTokens(tokenStream: TokenStream): TokenStream {
 }
 
 export function parseToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
-  if (parseState.infix) {
-    const infixParser = new InfixParser(tokenStream, parseState)
-    return infixParser.parse()
+  if (parseState.algebraic) {
+    const algebraicParser = new AlgebraicParser(tokenStream, parseState)
+    return algebraicParser.parse()
   }
 
-  return parsePostfixToken(tokenStream, parseState)
+  return parsePolishToken(tokenStream, parseState)
 }

@@ -145,7 +145,3 @@ console.log(tokens);
 }
 ```
 
-## TODO
-### use different number parsers for infix and postfix
-infix parser: no negative numbers (use unary operator -)
-

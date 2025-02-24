@@ -1,6 +1,6 @@
 import type { Any } from '../../interface'
 
-export const infixReservedNamesRecord: Record<string, { value: Any, forbidden?: true }> = {
+export const algebraicReservedNamesRecord: Record<string, { value: Any, forbidden?: true }> = {
   'true': { value: true },
   'false': { value: false },
   'nil': { value: null },
@@ -25,6 +25,6 @@ export const infixReservedNamesRecord: Record<string, { value: Any, forbidden?: 
 
 } as const
 
-type InfixReservedName = keyof typeof infixReservedNamesRecord
+type AlgebraicReservedName = keyof typeof algebraicReservedNamesRecord
 
-export const infixReservedNames: InfixReservedName[] = Object.keys(infixReservedNamesRecord)
+export const algebraicReservedNames: AlgebraicReservedName[] = Object.keys(algebraicReservedNamesRecord)

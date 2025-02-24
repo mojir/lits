@@ -33,17 +33,17 @@ describe('tokenizer', () => {
   it('comments', () => {
     expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
-      infix: false,
-      tokens: [['String', '"Hi"'], ['PF_Whitespace', ' '], ['PF_Comment', ';This is a string']],
+      algebraic: false,
+      tokens: [['String', '"Hi"'], ['P_Whitespace', ' '], ['P_Comment', ';This is a string']],
     })
     expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual<TokenStream>({
       hasDebugData: false,
-      infix: false,
+      algebraic: false,
       tokens: [
         ['String', '"Hi"'],
-        ['PF_Whitespace', ' '],
-        ['PF_Comment', ';This is a string'],
-        ['PF_Whitespace', '\n'],
+        ['P_Whitespace', ' '],
+        ['P_Comment', ';This is a string'],
+        ['P_Whitespace', '\n'],
         ['String', '"there"'],
       ],
     })
@@ -64,9 +64,9 @@ describe('tokenizer', () => {
     it('samples', () => {
       expect(tokenize('#"Hi"', { debug: true, filePath: 'foo.lits' })).toEqual<TokenStream>({
         hasDebugData: true,
-        infix: false,
+        algebraic: false,
         tokens: [
-          ['PF_RegexpShorthand', '#"Hi"', {
+          ['P_RegexpShorthand', '#"Hi"', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
           }],
         ],
@@ -74,36 +74,36 @@ describe('tokenizer', () => {
       })
       expect(tokenize('#"Hi"g', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
-        infix: false,
+        algebraic: false,
         tokens: [
-          ['PF_RegexpShorthand', '#"Hi"g', {
+          ['P_RegexpShorthand', '#"Hi"g', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
           }],
         ],
       })
       expect(tokenize('#"Hi"i', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
-        infix: false,
+        algebraic: false,
         tokens: [
-          ['PF_RegexpShorthand', '#"Hi"i', {
+          ['P_RegexpShorthand', '#"Hi"i', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
           }],
         ],
       })
       expect(tokenize('#"Hi"gi', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
-        infix: false,
+        algebraic: false,
         tokens: [
-          ['PF_RegexpShorthand', '#"Hi"gi', {
+          ['P_RegexpShorthand', '#"Hi"gi', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
           }],
         ],
       })
       expect(tokenize('#"Hi"ig', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
-        infix: false,
+        algebraic: false,
         tokens: [
-          ['PF_RegexpShorthand', '#"Hi"ig', {
+          ['P_RegexpShorthand', '#"Hi"ig', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
           }],
         ],
@@ -118,9 +118,9 @@ describe('tokenizer', () => {
     it('samples', () => {
       expect(tokenize('#(', { debug: true })).toEqual<TokenStream>({
         hasDebugData: true,
-        infix: false,
+        algebraic: false,
         tokens: [
-          ['PF_FnShorthand', {
+          ['P_FnShorthand', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
           }],
           ['LParen', {
