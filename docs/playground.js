@@ -7613,7 +7613,7 @@ var Playground = (function (exports) {
     function getPrecedence(operator) {
         var operatorSign = operator[1];
         switch (operatorSign) {
-            case '.': // exponentiation
+            case '.': // accessor
                 return 1;
             case '**': // exponentiation
                 return 2;
@@ -7783,22 +7783,38 @@ var Playground = (function (exports) {
             return this.parseExpression();
         };
         AlgebraicParser.prototype.parseExpression = function (precedence) {
+            var _a;
             if (precedence === void 0) { precedence = 0; }
             var left = this.parseOperand();
-            while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',')) {
+            while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek())) {
                 var operator = this.peek();
-                if (!isA_OperatorToken(operator)) {
-                    break;
+                // Handle index accessor
+                if (isLBracketToken(operator)) {
+                    if (precedence >= 1) {
+                        break;
+                    }
+                    this.advance();
+                    var right = this.parseExpression(1);
+                    if (!isRBracketToken(this.peek())) {
+                        throw new LitsError('Expected closing bracket', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                    this.advance();
+                    left = createAccessorNode(left, right, operator);
                 }
-                var newPrecedece = getPrecedence(operator);
-                if (newPrecedece <= precedence
-                    // ** (exponentiation) is right associative
-                    && !(newPrecedece === 2 && precedence === 2)) {
-                    break;
+                else {
+                    if (!isA_OperatorToken(operator)) {
+                        break;
+                    }
+                    var newPrecedece = getPrecedence(operator);
+                    if (newPrecedece <= precedence
+                        // ** (exponentiation) is right associative
+                        && !(newPrecedece === 2 && precedence === 2)) {
+                        break;
+                    }
+                    this.advance();
+                    var right = this.parseExpression(newPrecedece);
+                    left = fromBinaryAlgebraicToAstNode(operator, left, right);
                 }
-                this.advance();
-                var right = this.parseExpression(newPrecedece);
-                left = fromBinaryAlgebraicToAstNode(operator, left, right);
             }
             return left;
         };
@@ -7842,8 +7858,7 @@ var Playground = (function (exports) {
                 case 'String':
                     return parseString(this.tokenStream, this.parseState);
                 case 'A_Symbol': {
-                    var symbolNode = parseSymbol(this.tokenStream, this.parseState);
-                    return symbolNode;
+                    return parseSymbol(this.tokenStream, this.parseState);
                 }
                 case 'A_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);

@@ -210,6 +210,16 @@ describe('algebraic operators', () => {
       expect(lits.run('{ a={ b=1, c=2 } }.a.c')).toBe(2)
     })
   })
+  describe('propery accessor with brackets', () => {
+    test('samples', () => {
+      expect(lits.run('{ a=200 }["a"]')).toBe(200)
+      expect(lits.run('[1, [10, 20, 30], 3][1][1]')).toBe(20)
+      expect(lits.run('{ foo=[1, 2, 3] }.foo[2 - 1]')).toBe(2)
+      expect(lits.run('{ foo=[1, { bar=20 }, 3] }.foo[1].bar')).toBe(20)
+      expect(lits.run('[1, { bar=20 }, 3][1].bar')).toBe(20)
+    })
+  })
+
   describe('polish escape hatch', () => {
     test('samples', () => {
       expect(lits.tokenize('$`1 2`').tokens).toEqual([

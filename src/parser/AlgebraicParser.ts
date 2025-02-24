@@ -13,7 +13,7 @@ import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, Sym
 function getPrecedence(operator: A_OperatorToken): number {
   const operatorSign = operator[1]
   switch (operatorSign) {
-    case '.': // exponentiation
+    case '.': // accessor
       return 1
 
     case '**': // exponentiation
@@ -122,7 +122,6 @@ function fromBinaryAlgebraicToAstNode(operator: A_OperatorToken, left: AstNode, 
   switch (operatorName) {
     case '.':
       return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, getTokenDebugData(token)?.sourceCodeInfo)), token)
-
     case '**': // exponentiation
       return createNamedNormalExpressionNode('pow', [left, right], token)
     case '*':
@@ -209,21 +208,37 @@ export class AlgebraicParser {
   private parseExpression(precedence = 0): AstNode {
     let left = this.parseOperand()
 
-    while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',')) {
+    while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek())) {
       const operator = this.peek()
-      if (!isA_OperatorToken(operator)) {
-        break
+
+      // Handle index accessor
+      if (isLBracketToken(operator)) {
+        if (precedence >= 1) {
+          break
+        }
+        this.advance()
+        const right = this.parseExpression(1)
+        if (!isRBracketToken(this.peek())) {
+          throw new LitsError('Expected closing bracket', getTokenDebugData(this.peek())?.sourceCodeInfo)
+        }
+        this.advance()
+        left = createAccessorNode(left, right, operator)
       }
-      const newPrecedece = getPrecedence(operator)
-      if (
-        newPrecedece <= precedence
-        // ** (exponentiation) is right associative
-        && !(newPrecedece === 2 && precedence === 2)) {
-        break
+      else {
+        if (!isA_OperatorToken(operator)) {
+          break
+        }
+        const newPrecedece = getPrecedence(operator)
+        if (
+          newPrecedece <= precedence
+          // ** (exponentiation) is right associative
+          && !(newPrecedece === 2 && precedence === 2)) {
+          break
+        }
+        this.advance()
+        const right = this.parseExpression(newPrecedece)
+        left = fromBinaryAlgebraicToAstNode(operator, left, right)
       }
-      this.advance()
-      const right = this.parseExpression(newPrecedece)
-      left = fromBinaryAlgebraicToAstNode(operator, left, right)
     }
 
     return left
@@ -287,9 +302,7 @@ export class AlgebraicParser {
       case 'String':
         return parseString(this.tokenStream, this.parseState)
       case 'A_Symbol': {
-        const symbolNode = parseSymbol(this.tokenStream, this.parseState)
-
-        return symbolNode
+        return parseSymbol(this.tokenStream, this.parseState)
       }
       case 'A_ReservedSymbol':
         return parseReservedSymbol(this.tokenStream, this.parseState)
