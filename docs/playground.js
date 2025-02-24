@@ -764,7 +764,6 @@ var Playground = (function (exports) {
         'RParen',
     ];
     var commomValueTokenTypes = [
-        'Number',
         'String',
     ];
     function isLParenToken(token) {
@@ -827,18 +826,6 @@ var Playground = (function (exports) {
             throwUnexpectedToken('RBrace', token);
         }
     }
-    function isNumberToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'Number';
-    }
-    function assertNumberToken(token) {
-        if (!isNumberToken(token)) {
-            throwUnexpectedToken('Number', token);
-        }
-    }
-    function asNumberToken(token) {
-        assertNumberToken(token);
-        return token;
-    }
     function isStringToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'String';
     }
@@ -863,6 +850,7 @@ var Playground = (function (exports) {
         'IF_ReservedSymbol',
         'IF_SingleLineComment',
         'IF_MultiLineComment',
+        'IF_Number',
     ];
     var infixValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(infixOnlyValueTokenTypes), false);
     __spreadArray(__spreadArray([], __read(infixSimpleTokenTypes), false), __read(infixValueTokenTypes), false);
@@ -924,6 +912,9 @@ var Playground = (function (exports) {
     function isIF_WhitespaceToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'IF_Whitespace';
     }
+    function isIF_NumberToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'IF_Number';
+    }
 
     var modifierNames = ['&', '&let', '&when', '&while'];
     var postfixOnlySimpleTokenTypes = [
@@ -940,6 +931,7 @@ var Playground = (function (exports) {
         'PF_CollectionAccessor',
         'PF_Comment',
         'PF_Whitespace',
+        'PF_Number',
     ];
     var postfixValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(postfixOnlyValueTokenTypes), false);
     __spreadArray(__spreadArray([], __read(postfixSimpleTokenTypes), false), __read(postfixValueTokenTypes), false);
@@ -1017,6 +1009,14 @@ var Playground = (function (exports) {
     }
     function isPF_WhitespaceToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_Whitespace';
+    }
+    function isPF_NumberToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PF_Number';
+    }
+    function assertPF_NumberToken(token) {
+        if (!isPF_NumberToken(token)) {
+            throwUnexpectedToken('PF_Number', token);
+        }
     }
 
     var simpleTokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(infixOnlySimpleTokenTypes), false), __read(postfixOnlySimpleTokenTypes), false);
@@ -7545,7 +7545,10 @@ var Playground = (function (exports) {
         };
     }
     function parseNumber(tokenStream, parseState) {
-        var tkn = asNumberToken(tokenStream.tokens[parseState.position++]);
+        var tkn = tokenStream.tokens[parseState.position++];
+        if (!isPF_NumberToken(tkn) && !isIF_NumberToken(tkn)) {
+            throw new LitsError("Expected number token, got ".concat(tkn));
+        }
         var value = tkn[1];
         var negative = value[0] === '-';
         var numberString = negative ? value.substring(1) : value;
@@ -7800,7 +7803,7 @@ var Playground = (function (exports) {
             }
             var tokenType = token[0];
             switch (tokenType) {
-                case 'Number':
+                case 'IF_Number':
                     return parseNumber(this.tokenStream, this.parseState);
                 case 'String':
                     return parseString(this.tokenStream, this.parseState);
@@ -8129,10 +8132,10 @@ var Playground = (function (exports) {
         var tkn = asToken(tokenStream.tokens[parseState.position]);
         var tokenType = tkn[0];
         switch (tokenType) {
-            case 'Number':
-                return parseNumber(tokenStream, parseState);
             case 'String':
                 return parseString(tokenStream, parseState);
+            case 'PF_Number':
+                return parseNumber(tokenStream, parseState);
             case 'PF_StringShorthand':
                 return parseStringShorthand(tokenStream, parseState);
             case 'PF_Symbol':
@@ -8252,90 +8255,6 @@ var Playground = (function (exports) {
         value += '"'; // closing quote
         return [length + 1, ['String', value]];
     };
-    var decimalNumberRegExp = /\d/;
-    var octalNumberRegExp = /[0-7]/;
-    var hexNumberRegExp = /[0-9a-f]/i;
-    var binaryNumberRegExp = /[01]/;
-    var firstCharRegExp = /[0-9.-]/;
-    var tokenizeNumber = function (input, position) {
-        var type = 'decimal';
-        var firstChar = input[position];
-        var secondChar = input[position + 1];
-        if (!firstCharRegExp.test(firstChar))
-            return NO_MATCH;
-        var hasDecimals = firstChar === '.';
-        var i;
-        for (i = position + 1; i < input.length; i += 1) {
-            var char = input[i];
-            if ((i === position + 1 && firstChar === '0') || (i === position + 2 && firstChar === '-' && secondChar === '0')) {
-                if (char === 'b' || char === 'B') {
-                    type = 'binary';
-                    continue;
-                }
-                if (char === 'o' || char === 'O') {
-                    type = 'octal';
-                    continue;
-                }
-                if (char === 'x' || char === 'X') {
-                    type = 'hex';
-                    continue;
-                }
-            }
-            if (type === 'decimal') {
-                if (hasDecimals) {
-                    if (!decimalNumberRegExp.test(char)) {
-                        break;
-                    }
-                }
-                else if (char !== '.' && !decimalNumberRegExp.test(char)) {
-                    break;
-                }
-            }
-            if (type === 'binary' && !binaryNumberRegExp.test(char)) {
-                break;
-            }
-            if (type === 'octal' && !octalNumberRegExp.test(char)) {
-                break;
-            }
-            if (type === 'hex' && !hexNumberRegExp.test(char)) {
-                break;
-            }
-            if (char === '.') {
-                var nextChar = input[i + 1];
-                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
-                    break;
-            }
-            if (type === 'decimal' && hasDecimals) {
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'binary') {
-                if (!binaryNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'octal') {
-                if (!octalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'hex') {
-                if (!hexNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else {
-                if (char === '.') {
-                    hasDecimals = true;
-                    continue;
-                }
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-        }
-        var length = i - position;
-        var value = input.substring(position, i);
-        if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
-            return NO_MATCH;
-        return [length, ['Number', value]];
-    };
     function tokenizeSimpleToken(type, value, input, position) {
         if (value === input[position])
             return [1, [type]];
@@ -8370,6 +8289,73 @@ var Playground = (function (exports) {
             char = input[position];
         }
         return [value.length, ['PF_Whitespace', value]];
+    };
+    var endOfNumberRegExp = /[\s)\]},#]/;
+    var decimalNumberRegExp$1 = /\d/;
+    var octalNumberRegExp$1 = /[0-7]/;
+    var hexNumberRegExp$1 = /[0-9a-f]/i;
+    var binaryNumberRegExp$1 = /[01]/;
+    var firstCharRegExp$1 = /[0-9.-]/;
+    var tokenizePF_Number = function (input, position) {
+        var type = 'decimal';
+        var firstChar = input[position];
+        if (!firstCharRegExp$1.test(firstChar))
+            return NO_MATCH;
+        var hasDecimals = firstChar === '.';
+        var i;
+        for (i = position + 1; i < input.length; i += 1) {
+            var char = input[i];
+            if (endOfNumberRegExp.test(char))
+                break;
+            if (char === '.') {
+                var nextChar = input[i + 1];
+                if (typeof nextChar === 'string' && !decimalNumberRegExp$1.test(nextChar))
+                    break;
+            }
+            if (i === position + 1 && firstChar === '0') {
+                if (char === 'b' || char === 'B') {
+                    type = 'binary';
+                    continue;
+                }
+                if (char === 'o' || char === 'O') {
+                    type = 'octal';
+                    continue;
+                }
+                if (char === 'x' || char === 'X') {
+                    type = 'hex';
+                    continue;
+                }
+            }
+            if (type === 'decimal' && hasDecimals) {
+                if (!decimalNumberRegExp$1.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'binary') {
+                if (!binaryNumberRegExp$1.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'octal') {
+                if (!octalNumberRegExp$1.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'hex') {
+                if (!hexNumberRegExp$1.test(char))
+                    return NO_MATCH;
+            }
+            else {
+                if (char === '.') {
+                    hasDecimals = true;
+                    continue;
+                }
+                if (!decimalNumberRegExp$1.test(char))
+                    return NO_MATCH;
+            }
+        }
+        var length = i - position;
+        var value = input.substring(position, i);
+        if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
+            return NO_MATCH;
+        return [length, ['PF_Number', value]];
     };
     var pf_symbolRegExp = new RegExp(postfixIdentifierCharacterClass);
     var tokenizePF_Symbol = function (input, position) {
@@ -8497,7 +8483,7 @@ var Playground = (function (exports) {
         tokenizeRightCurly,
         tokenizeString,
         tokenizePF_StringShorthand,
-        tokenizeNumber,
+        tokenizePF_Number,
         tokenizePF_ReservedSymbol,
         tokenizePF_Symbol,
         tokenizePF_Modifier,
@@ -8547,6 +8533,89 @@ var Playground = (function (exports) {
             char = input[position];
         }
         return [value.length, ['IF_Whitespace', value]];
+    };
+    var decimalNumberRegExp = /\d/;
+    var octalNumberRegExp = /[0-7]/;
+    var hexNumberRegExp = /[0-9a-f]/i;
+    var binaryNumberRegExp = /[01]/;
+    var firstCharRegExp = /[0-9.]/;
+    var tokenizeIF_Number = function (input, position) {
+        var type = 'decimal';
+        var firstChar = input[position];
+        if (!firstCharRegExp.test(firstChar))
+            return NO_MATCH;
+        var hasDecimals = firstChar === '.';
+        var i;
+        for (i = position + 1; i < input.length; i += 1) {
+            var char = input[i];
+            if ((i === position + 1 && firstChar === '0')) {
+                if (char === 'b' || char === 'B') {
+                    type = 'binary';
+                    continue;
+                }
+                if (char === 'o' || char === 'O') {
+                    type = 'octal';
+                    continue;
+                }
+                if (char === 'x' || char === 'X') {
+                    type = 'hex';
+                    continue;
+                }
+            }
+            if (type === 'decimal') {
+                if (hasDecimals) {
+                    if (!decimalNumberRegExp.test(char)) {
+                        break;
+                    }
+                }
+                else if (char !== '.' && !decimalNumberRegExp.test(char)) {
+                    break;
+                }
+            }
+            if (type === 'binary' && !binaryNumberRegExp.test(char)) {
+                break;
+            }
+            if (type === 'octal' && !octalNumberRegExp.test(char)) {
+                break;
+            }
+            if (type === 'hex' && !hexNumberRegExp.test(char)) {
+                break;
+            }
+            if (char === '.') {
+                var nextChar = input[i + 1];
+                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
+                    break;
+            }
+            if (type === 'decimal' && hasDecimals) {
+                if (!decimalNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'binary') {
+                if (!binaryNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'octal') {
+                if (!octalNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else if (type === 'hex') {
+                if (!hexNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+            else {
+                if (char === '.') {
+                    hasDecimals = true;
+                    continue;
+                }
+                if (!decimalNumberRegExp.test(char))
+                    return NO_MATCH;
+            }
+        }
+        var length = i - position;
+        var value = input.substring(position, i);
+        if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
+            return NO_MATCH;
+        return [length, ['IF_Number', value]];
     };
     var tokenizeIF_ReservedSymbolToken = function (input, position) {
         var e_1, _a;
@@ -8667,7 +8736,7 @@ var Playground = (function (exports) {
         tokenizeLeftCurly,
         tokenizeRightCurly,
         tokenizeString,
-        tokenizeNumber,
+        tokenizeIF_Number,
         tokenizeIF_Operator,
         tokenizeIF_ReservedSymbolToken,
         tokenizeIF_Symbol,
@@ -8699,9 +8768,9 @@ var Playground = (function (exports) {
             }
         }
         else {
-            assertNumberToken(nextTkn);
+            assertPF_NumberToken(nextTkn);
             assertNumber(Number(nextTkn[1]), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { integer: true, nonNegative: true });
-            tokenStream.tokens[position + 1] = ['Number', nextTkn[1]];
+            tokenStream.tokens[position + 1] = ['PF_Number', nextTkn[1]];
         }
         tokenStream.tokens.splice(position + 2, 0, ['RParen']);
     }
@@ -9025,9 +9094,11 @@ var Playground = (function (exports) {
             return analyze$1(ast, params);
         };
         Lits.prototype.tokenize = function (program, tokenizeParams) {
-            var _a;
+            var _a, _b;
             if (tokenizeParams === void 0) { tokenizeParams = {}; }
-            return tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: (_a = tokenizeParams.debug) !== null && _a !== void 0 ? _a : this.debug }));
+            var debug = (_a = tokenizeParams.debug) !== null && _a !== void 0 ? _a : this.debug;
+            var infix = (_b = tokenizeParams.infix) !== null && _b !== void 0 ? _b : this.infix;
+            return tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, infix: infix }));
         };
         Lits.prototype.parse = function (tokenStream) {
             return parse$1(tokenStream);
