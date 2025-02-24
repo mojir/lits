@@ -22,12 +22,7 @@ describe('tokenizer', () => {
     expect(() => tokenize('nil', { debug: false })).not.toThrow()
     expect(() => tokenize('false', { debug: false })).not.toThrow()
     expect(() => tokenize('true', { debug: false })).not.toThrow()
-    expect(() => tokenize('null', { debug: false })).toThrow()
-    expect(() => tokenize('undefined', { debug: false })).toThrow()
-    expect(() => tokenize('===', { debug: false })).toThrow()
-    expect(() => tokenize('!==', { debug: false })).toThrow()
-    expect(() => tokenize('&&', { debug: false })).toThrow()
-    expect(() => tokenize('||', { debug: false })).toThrow()
+    expect(() => tokenize('null', { debug: false })).not.toThrow()
   })
 
   it('comments', () => {

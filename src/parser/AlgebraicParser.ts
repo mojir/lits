@@ -12,6 +12,7 @@ import type { SpecialExpressionName } from '../builtin'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
+const exponentiationPrecedence = 8
 function getPrecedence(operator: A_OperatorToken): number {
   const operatorSign = operator[1]
   switch (operatorSign) {
@@ -19,7 +20,7 @@ function getPrecedence(operator: A_OperatorToken): number {
       return 9
 
     case '**': // exponentiation
-      return 8
+      return exponentiationPrecedence
 
     case '*': // multiplication
     case '/': // division
@@ -215,7 +216,7 @@ export class AlgebraicParser {
 
       // Handle index accessor
       if (isLBracketToken(operator)) {
-        if (precedence >= 1) {
+        if (precedence >= 9) {
           break
         }
         this.advance()
@@ -234,7 +235,7 @@ export class AlgebraicParser {
         if (
           newPrecedece <= precedence
           // ** (exponentiation) is right associative
-          && !(newPrecedece === 8 && precedence === 8)) {
+          && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
           break
         }
         this.advance()

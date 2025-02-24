@@ -4986,15 +4986,10 @@ var Playground = (function (exports) {
     };
 
     var polishReservedNamesRecord = {
-        'true': { value: true },
-        'false': { value: false },
-        'nil': { value: null },
-        'null': { value: null, forbidden: true },
-        'undefined': { value: null, forbidden: true },
-        '===': { value: null, forbidden: true },
-        '!==': { value: null, forbidden: true },
-        '&&': { value: null, forbidden: true },
-        '||': { value: null, forbidden: true },
+        true: { value: true },
+        false: { value: false },
+        nil: { value: null },
+        null: { value: null },
     };
 
     function assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo) {
@@ -7611,13 +7606,14 @@ var Playground = (function (exports) {
         };
     }
 
+    var exponentiationPrecedence = 8;
     function getPrecedence(operator) {
         var operatorSign = operator[1];
         switch (operatorSign) {
             case '.': // accessor
                 return 9;
             case '**': // exponentiation
-                return 8;
+                return exponentiationPrecedence;
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
@@ -7791,7 +7787,7 @@ var Playground = (function (exports) {
                 var operator = this.peek();
                 // Handle index accessor
                 if (isLBracketToken(operator)) {
-                    if (precedence >= 1) {
+                    if (precedence >= 9) {
                         break;
                     }
                     this.advance();
@@ -7809,7 +7805,7 @@ var Playground = (function (exports) {
                     var newPrecedece = getPrecedence(operator);
                     if (newPrecedece <= precedence
                         // ** (exponentiation) is right associative
-                        && !(newPrecedece === 8 && precedence === 8)) {
+                        && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
                         break;
                     }
                     this.advance();
@@ -8657,8 +8653,7 @@ var Playground = (function (exports) {
         'true': { value: true },
         'false': { value: false },
         'nil': { value: null },
-        'null': { value: null, forbidden: true },
-        'undefined': { value: null, forbidden: true },
+        'null': { value: null },
         'def': { value: null, forbidden: true },
         'defs': { value: null, forbidden: true },
         'let': { value: null, forbidden: true },
