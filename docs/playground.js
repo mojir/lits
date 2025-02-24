@@ -3659,7 +3659,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.1-alpha.2";
+    var version = "2.0.2";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
