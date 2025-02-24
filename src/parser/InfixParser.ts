@@ -239,7 +239,21 @@ export class InfixParser {
       return this.parseArray()
     }
 
-    const tokenType = token[0] as Exclude<InfixTokenType, 'IF_Operator' | 'LParen' | 'LBrace' | 'LBracket'>
+    const tokenType = token[0] as Exclude<
+      InfixTokenType,
+      | 'IF_Operator' // Handled above
+      | 'LParen' // Handled above
+      | 'LBrace' // Handled above
+      | 'LBracket' // Handled above
+
+      | 'RParen' // Illegal token
+      | 'RBrace' // Illegal token
+      | 'RBracket' // Illegal token
+
+      | 'IF_MultiLineComment' // Should have been removed
+      | 'IF_SingleLineComment' // Should have been removed
+      | 'IF_Whitespace' // Should have been removed
+    >
     switch (tokenType) {
       case 'IF_Number':
         return parseNumber(this.tokenStream, this.parseState)
@@ -249,9 +263,18 @@ export class InfixParser {
         return parseSymbol(this.tokenStream, this.parseState)
       case 'IF_ReservedSymbol':
         return parseReservedSymbol(this.tokenStream, this.parseState)
-    }
+      case 'IF_Postfix': {
+        // this.parseState.position++
+        // this.parseState.infix = false
+        // const astNode = this.parseState.parseToken(this.tokenStream, this.parseState)
+        // this.parseState.infix = true
+        // return astNode
+        throw new LitsError('Not implemented')
+      }
 
-    throw new LitsError(`Unknown token type: ${tokenType}`)
+      default:
+        throw new LitsError(`Unknown token type: ${tokenType}`)
+    }
   }
 
   private parseObject(): AstNode {

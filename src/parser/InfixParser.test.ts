@@ -204,6 +204,11 @@ describe('infix operators', () => {
       expect(lits.run('+1')).toBe(1)
     })
   })
+  // describe('postfix escape hatch', () => {
+  //   test('samples', () => {
+  //     expect(lits.run('10 * @(+ 1 2) / 2')).toBe(15)
+  //   })
+  // })
   describe('debug', () => {
     test('samples', () => {
       expect(lits.run('2+3', { debug: true })).toBe(5)
@@ -288,6 +293,7 @@ describe('infix operators', () => {
       expect(() => lits.run('{ 2 = 1 }')).toThrow()
       expect(() => lits.run('{ x=1 y=2 }')).toThrow()
       expect(() => lits.run('[1 2]')).toThrow()
+      expect(() => lits.run(']')).toThrow()
     })
   })
 })

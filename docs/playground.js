@@ -7809,8 +7809,17 @@ var Playground = (function (exports) {
                     return parseSymbol(this.tokenStream, this.parseState);
                 case 'IF_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);
+                case 'IF_Postfix': {
+                    // this.parseState.position++
+                    // this.parseState.infix = false
+                    // const astNode = this.parseState.parseToken(this.tokenStream, this.parseState)
+                    // this.parseState.infix = true
+                    // return astNode
+                    throw new LitsError('Not implemented');
+                }
+                default:
+                    throw new LitsError("Unknown token type: ".concat(tokenType));
             }
-            throw new LitsError("Unknown token type: ".concat(tokenType));
         };
         InfixParser.prototype.parseObject = function () {
             var firstToken = asLBraceToken(this.peek());
