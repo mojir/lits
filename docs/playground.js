@@ -3659,7 +3659,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.3";
+    var version = "2.0.4";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -8441,7 +8441,7 @@ var Playground = (function (exports) {
     }
 
     var polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
-    var algebraicIdentifierCharacterClass = '[\\w$:]';
+    var algebraicIdentifierCharacterClass = '[\\w$:!]';
     var algebraicIdentifierFirstCharacterClass = '[a-zA-Z_$]';
 
     var NO_MATCH = [0];
