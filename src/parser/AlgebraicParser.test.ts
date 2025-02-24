@@ -240,6 +240,8 @@ describe('algebraic operators', () => {
       expect(pLits.run('@`10 + $`(mod 3 2)``')).toBe(11)
 
       expect(pLits.run('(def o @`{ foo="bar" }`) o.foo')).toBe('bar')
+
+      expect(pLits.run('(map (fn [number-parameter] @`\'number-parameter\' + 1`) [1 2 3])')).toEqual([2, 3, 4])
     })
   })
   describe('debug', () => {

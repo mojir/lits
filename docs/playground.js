@@ -8705,14 +8705,14 @@ var Playground = (function (exports) {
             }
             return [position - initialPosition, ['A_Symbol', value]];
         }
-        if (value === '`') {
+        if (value === '\'') {
             position += 1;
             var _a = __read(tokenizeP_Symbol(input, position), 2), count = _a[0], pfSymbolToken = _a[1];
             if (pfSymbolToken === undefined) {
                 return NO_MATCH;
             }
             position += count;
-            if (input[position] !== '`') {
+            if (input[position] !== '\'') {
                 return NO_MATCH;
             }
             position += 1;

@@ -159,14 +159,14 @@ export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
     return [position - initialPosition, ['A_Symbol', value]]
   }
 
-  if (value === '`') {
+  if (value === '\'') {
     position += 1
     const [count, pfSymbolToken] = tokenizeP_Symbol(input, position)
     if (pfSymbolToken === undefined) {
       return NO_MATCH
     }
     position += count
-    if (input[position] !== '`') {
+    if (input[position] !== '\'') {
       return NO_MATCH
     }
     position += 1

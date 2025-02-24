@@ -22,8 +22,8 @@ describe('algebraicTokenizers', () => {
     it('should tokenize symbol', () => {
       expect(tokenizeA_Symbol('symbol', 0)).toEqual([6, ['A_Symbol', 'symbol']])
       expect(tokenizeA_Symbol('A:B', 0)).toEqual([3, ['A_Symbol', 'A:B']])
-      expect(tokenizeA_Symbol('... `A-B`', 4)).toEqual([5, ['A_Symbol', 'A-B']])
-      expect(tokenizeA_Symbol('... `A B`', 4)).toEqual(NO_MATCH)
+      expect(tokenizeA_Symbol('... \'A-B\'', 4)).toEqual([5, ['A_Symbol', 'A-B']])
+      expect(tokenizeA_Symbol('... \'A B\'', 4)).toEqual(NO_MATCH)
     })
   })
   describe('tokenizeA_Operator', () => {
