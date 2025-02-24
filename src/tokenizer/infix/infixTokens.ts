@@ -20,6 +20,7 @@ export const infixOnlyValueTokenTypes = [
   'IF_ReservedSymbol',
   'IF_SingleLineComment',
   'IF_MultiLineComment',
+  'IF_Number',
 ] as const satisfies `IF_${string}`[]
 
 export const infixValueTokenTypes = [
@@ -93,6 +94,7 @@ type GenericInfixValueToken<T extends Exclude<InfixValueTokenType, CommonValueTo
 
 export type IF_PostfixToken = GenericInfixSimpleToken<'IF_Postfix'>
 export type IF_WhitespaceToken = GenericInfixValueToken<'IF_Whitespace'>
+export type IF_NumberToken = GenericInfixValueToken<'IF_Number'>
 export type IF_OperatorToken<T extends InfixOperator = InfixOperator> = GenericInfixValueToken<'IF_Operator', T>
 export type IF_SymbolToken = GenericInfixValueToken<'IF_Symbol'>
 export type IF_ReservedSymbolToken = GenericInfixValueToken<'IF_ReservedSymbol'>
@@ -104,6 +106,7 @@ export type InfixOnlySimpleToken =
 
 export type InfixOnlyValueToken =
   | IF_WhitespaceToken
+  | IF_NumberToken
   | IF_OperatorToken
   | IF_SymbolToken
   | IF_ReservedSymbolToken
@@ -213,5 +216,18 @@ export function assertIF_WhitespaceToken(token?: Token): asserts token is IF_Whi
 }
 export function asIF_WhitespaceToken(token?: Token): IF_WhitespaceToken {
   assertIF_WhitespaceToken(token)
+  return token
+}
+
+export function isIF_NumberToken(token?: Token): token is IF_NumberToken {
+  return token?.[0] === 'IF_Number'
+}
+export function assertIF_NumberToken(token?: Token): asserts token is IF_NumberToken {
+  if (!isIF_NumberToken(token)) {
+    throwUnexpectedToken('IF_Number', token)
+  }
+}
+export function asIF_NumberToken(token?: Token): IF_NumberToken {
+  assertIF_NumberToken(token)
   return token
 }

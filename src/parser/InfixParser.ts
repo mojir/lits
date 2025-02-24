@@ -242,7 +242,7 @@ export class InfixParser {
 
     const tokenType = token[0] as InfixTokenType
     switch (tokenType) {
-      case 'Number':
+      case 'IF_Number':
         return parseNumber(this.tokenStream, this.parseState)
       case 'String':
         return parseString(this.tokenStream, this.parseState)

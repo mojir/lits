@@ -1,9 +1,9 @@
 import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
-import { asNumberToken, asStringToken } from '../tokenizer/common/commonTokens'
-import { isIF_ReservedSymbolToken, isIF_SymbolToken } from '../tokenizer/infix/infixTokens'
+import { asStringToken } from '../tokenizer/common/commonTokens'
+import { isIF_NumberToken, isIF_ReservedSymbolToken, isIF_SymbolToken } from '../tokenizer/infix/infixTokens'
 import type { TokenStream } from '../tokenizer/interface'
-import { isPF_ReservedSymbolToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
+import { isPF_NumberToken, isPF_ReservedSymbolToken, isPF_SymbolToken } from '../tokenizer/postfix/postfixTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type {
@@ -44,7 +44,10 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
 }
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
-  const tkn = asNumberToken(tokenStream.tokens[parseState.position++])
+  const tkn = tokenStream.tokens[parseState.position++]
+  if (!isPF_NumberToken(tkn) && !isIF_NumberToken(tkn)) {
+    throw new LitsError(`Expected number token, got ${tkn}`)
+  }
   const value = tkn[1]
   const negative = value[0] === '-'
   const numberString = negative ? value.substring(1) : value

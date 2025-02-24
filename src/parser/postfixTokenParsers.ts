@@ -328,10 +328,10 @@ export function parsePostfixToken(tokenStream: TokenStream, parseState: ParseSta
 
   const tokenType = tkn[0] as PostfixTokenType
   switch (tokenType) {
-    case 'Number':
-      return parseNumber(tokenStream, parseState)
     case 'String':
       return parseString(tokenStream, parseState)
+    case 'PF_Number':
+      return parseNumber(tokenStream, parseState)
     case 'PF_StringShorthand':
       return parseStringShorthand(tokenStream, parseState)
     case 'PF_Symbol':

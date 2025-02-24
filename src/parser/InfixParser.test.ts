@@ -179,4 +179,14 @@ describe('infix operators', () => {
       expect(lits.run('[10, 20, 2 * (1 - 2)]')).toEqual([10, 20, -2])
     })
   })
+  describe('numbers', () => {
+    test('samples', () => {
+      expect(lits.run('5')).toBe(5)
+      expect(lits.run('-10')).toBe(-10)
+      expect(lits.tokenize('-10').tokens).toEqual([
+        ['IF_Operator', '-'],
+        ['IF_Number', '10'],
+      ])
+    })
+  })
 })

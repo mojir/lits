@@ -113,14 +113,14 @@ describe('context', () => {
               {
                 t: AstNodeType.Number,
                 v: 2,
-                token: ['Number', '2'],
+                token: ['PF_Number', '2'],
                 p: [],
                 n: undefined,
               },
               {
                 t: AstNodeType.Number,
                 v: 4,
-                token: ['Number', '4'],
+                token: ['PF_Number', '4'],
                 p: [],
                 n: undefined,
               },

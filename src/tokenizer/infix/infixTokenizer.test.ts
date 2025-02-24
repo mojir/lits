@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { NO_MATCH } from '../common/tokenizers'
-import { tokenizeIF_MultiLineComment, tokenizeIF_Operator, tokenizeIF_SingleLineComment, tokenizeIF_Symbol } from './infixTokenizers'
+import { NO_MATCH } from '../common/commonTokenizers'
+import { tokenizeIF_MultiLineComment, tokenizeIF_Number, tokenizeIF_Operator, tokenizeIF_SingleLineComment, tokenizeIF_Symbol } from './infixTokenizers'
 
 describe('infixTokenizers', () => {
   describe('tokenizeIF_SingleLineComment', () => {
@@ -32,6 +32,15 @@ describe('infixTokenizers', () => {
       expect(tokenizeIF_Operator('<=', 0)).toEqual([2, ['IF_Operator', '<=']])
       expect(tokenizeIF_Operator('+', 0)).toEqual([1, ['IF_Operator', '+']])
       expect(tokenizeIF_Operator('...', 4)).toEqual(NO_MATCH)
+    })
+  })
+  describe('tokenizeIF_Number', () => {
+    it('should tokenize operator', () => {
+      expect(tokenizeIF_Number('1', 0)).toEqual([1, ['IF_Number', '1']])
+      expect(tokenizeIF_Number('0xF', 0)).toEqual([3, ['IF_Number', '0xF']])
+      expect(tokenizeIF_Number('0o7', 0)).toEqual([3, ['IF_Number', '0o7']])
+      expect(tokenizeIF_Number('0b1100', 0)).toEqual([6, ['IF_Number', '0b1100']])
+      expect(tokenizeIF_Number('-1', 0)).toEqual([0])
     })
   })
 })

@@ -93,7 +93,9 @@ export class Lits {
   }
 
   public tokenize(program: string, tokenizeParams: TokenizeParams = {}): TokenStream {
-    return tokenize(program, { ...tokenizeParams, debug: tokenizeParams.debug ?? this.debug })
+    const debug = tokenizeParams.debug ?? this.debug
+    const infix = tokenizeParams.infix ?? this.infix
+    return tokenize(program, { ...tokenizeParams, debug, infix })
   }
 
   public parse(tokenStream: TokenStream): Ast {

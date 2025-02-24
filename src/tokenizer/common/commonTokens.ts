@@ -11,7 +11,6 @@ export const commonSimpleTokenTypes = [
 ] as const
 
 export const commomValueTokenTypes = [
-  'Number',
   'String',
 ] as const
 
@@ -28,7 +27,6 @@ export type RBracketToken = GenericCommonSimpleToken<'RBracket'>
 export type LBraceToken = GenericCommonSimpleToken<'LBrace'>
 export type RBraceToken = GenericCommonSimpleToken<'RBrace'>
 
-export type NumberToken = GenericCommonValueToken<'Number'>
 export type StringToken = GenericCommonValueToken<'String'>
 
 export type CommonSimpleToken =
@@ -40,7 +38,6 @@ export type CommonSimpleToken =
   | RBraceToken
 
 export type CommonValueToken =
-  | NumberToken
   | StringToken
 
 export function isLParenToken(token?: Token): token is LParenToken {
@@ -118,19 +115,6 @@ export function assertRBraceToken(token?: Token): asserts token is RBraceToken {
 }
 export function asRBraceToken(token?: Token): RBraceToken {
   assertRBraceToken(token)
-  return token
-}
-
-export function isNumberToken(token?: Token): token is NumberToken {
-  return token?.[0] === 'Number'
-}
-export function assertNumberToken(token?: Token): asserts token is NumberToken {
-  if (!isNumberToken(token)) {
-    throwUnexpectedToken('Number', token)
-  }
-}
-export function asNumberToken(token?: Token): NumberToken {
-  assertNumberToken(token)
   return token
 }
 

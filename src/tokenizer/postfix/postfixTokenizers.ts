@@ -6,15 +6,14 @@ import {
   tokenizeLeftBracket,
   tokenizeLeftCurly,
   tokenizeLeftParen,
-  tokenizeNumber,
   tokenizeRightBracket,
   tokenizeRightCurly,
   tokenizeRightParen,
   tokenizeString,
-} from '../common/tokenizers'
+} from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
 import { postfixReservedNamesRecord } from './postfixReservedNames'
-import type { ModifierName, PF_CollectionAccessorToken, PF_CommentToken, PF_FnShorthandToken, PF_InfixToken, PF_ModifierToken, PF_RegexpShorthandToken, PF_ReservedSymbolToken, PF_StringShorthandToken, PF_SymbolToken, PF_WhitespaceToken, PostfixToken } from './postfixTokens'
+import type { ModifierName, PF_CollectionAccessorToken, PF_CommentToken, PF_FnShorthandToken, PF_InfixToken, PF_ModifierToken, PF_NumberToken, PF_RegexpShorthandToken, PF_ReservedSymbolToken, PF_StringShorthandToken, PF_SymbolToken, PF_WhitespaceToken, PostfixToken } from './postfixTokens'
 import { asPF_SymbolToken, modifierNames } from './postfixTokens'
 
 const whitespaceRegExp = /\s|,/
@@ -49,8 +48,80 @@ export const tokenizePF_Whitespace: Tokenizer<PF_WhitespaceToken> = (input, posi
   return [value.length, ['PF_Whitespace', value]]
 }
 
-export const pf_symbolRegExp = new RegExp(postfixIdentifierCharacterClass)
+const endOfNumberRegExp = /[\s)\]},#]/
+const decimalNumberRegExp = /\d/
+const octalNumberRegExp = /[0-7]/
+const hexNumberRegExp = /[0-9a-f]/i
+const binaryNumberRegExp = /[01]/
+const firstCharRegExp = /[0-9.-]/
+export const tokenizePF_Number: Tokenizer<PF_NumberToken> = (input, position) => {
+  let type: 'decimal' | 'octal' | 'hex' | 'binary' = 'decimal'
+  const firstChar = input[position] as string
+  if (!firstCharRegExp.test(firstChar))
+    return NO_MATCH
 
+  let hasDecimals = firstChar === '.'
+
+  let i: number
+  for (i = position + 1; i < input.length; i += 1) {
+    const char = input[i] as string
+    if (endOfNumberRegExp.test(char))
+      break
+
+    if (char === '.') {
+      const nextChar = input[i + 1]
+      if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
+        break
+    }
+    if (i === position + 1 && firstChar === '0') {
+      if (char === 'b' || char === 'B') {
+        type = 'binary'
+        continue
+      }
+      if (char === 'o' || char === 'O') {
+        type = 'octal'
+        continue
+      }
+      if (char === 'x' || char === 'X') {
+        type = 'hex'
+        continue
+      }
+    }
+    if (type === 'decimal' && hasDecimals) {
+      if (!decimalNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else if (type === 'binary') {
+      if (!binaryNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else if (type === 'octal') {
+      if (!octalNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else if (type === 'hex') {
+      if (!hexNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else {
+      if (char === '.') {
+        hasDecimals = true
+        continue
+      }
+      if (!decimalNumberRegExp.test(char))
+        return NO_MATCH
+    }
+  }
+
+  const length = i - position
+  const value = input.substring(position, i)
+  if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
+    return NO_MATCH
+
+  return [length, ['PF_Number', value]]
+}
+
+export const pf_symbolRegExp = new RegExp(postfixIdentifierCharacterClass)
 export const tokenizePF_Symbol: Tokenizer<PF_SymbolToken> = (input, position) => {
   let char = input[position]
   let length = 0
@@ -176,7 +247,7 @@ export const postfixTokenizers = [
   tokenizeRightCurly,
   tokenizeString,
   tokenizePF_StringShorthand,
-  tokenizeNumber,
+  tokenizePF_Number,
   tokenizePF_ReservedSymbol,
   tokenizePF_Symbol,
   tokenizePF_Modifier,

@@ -4,8 +4,8 @@ import { assertNumber, isNumber } from '../../typeGuards/number'
 import type { SourceCodeInfo, TokenStream } from '../interface'
 import { addTokenDebugData, getTokenDebugData } from '../utils'
 import type { PF_CollectionAccessorToken, PF_StringShorthandToken } from '../postfix/postfixTokens'
-import { asPF_CollectionAccessorToken, assertPF_SymbolToken, isPF_CollectionAccessorToken, isPF_FnShorthandToken, isPF_SymbolToken } from '../postfix/postfixTokens'
-import { assertNumberToken, isRBraceToken, isRBracketToken, isRParenToken } from '../common/commonTokens'
+import { asPF_CollectionAccessorToken, assertPF_NumberToken, assertPF_SymbolToken, isPF_CollectionAccessorToken, isPF_FnShorthandToken, isPF_SymbolToken } from '../postfix/postfixTokens'
+import { isRBraceToken, isRBracketToken, isRParenToken } from '../common/commonTokens'
 import { asToken } from '../tokens'
 import type { SugarFunction } from '.'
 
@@ -38,10 +38,10 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
     }
   }
   else {
-    assertNumberToken(nextTkn)
+    assertPF_NumberToken(nextTkn)
     assertNumber(Number(nextTkn[1]), debugData?.sourceCodeInfo, { integer: true, nonNegative: true })
 
-    tokenStream.tokens[position + 1] = ['Number', nextTkn[1]]
+    tokenStream.tokens[position + 1] = ['PF_Number', nextTkn[1]]
   }
   tokenStream.tokens.splice(position + 2, 0, ['RParen'])
 }

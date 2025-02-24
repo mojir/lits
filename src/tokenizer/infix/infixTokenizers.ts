@@ -5,17 +5,16 @@ import {
   tokenizeLeftBracket,
   tokenizeLeftCurly,
   tokenizeLeftParen,
-  tokenizeNumber,
   tokenizeRightBracket,
   tokenizeRightCurly,
   tokenizeRightParen,
   tokenizeSimpleToken,
   tokenizeString,
-} from '../common/tokenizers'
+} from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
 import { tokenizePF_Symbol } from '../postfix/postfixTokenizers'
 import { infixReservedNamesRecord } from './infixReservedNames'
-import type { IF_MultiLineCommentToken, IF_OperatorToken, IF_PostfixToken, IF_ReservedSymbolToken, IF_SingleLineCommentToken, IF_SymbolToken, IF_WhitespaceToken, InfixToken } from './infixTokens'
+import type { IF_MultiLineCommentToken, IF_NumberToken, IF_OperatorToken, IF_PostfixToken, IF_ReservedSymbolToken, IF_SingleLineCommentToken, IF_SymbolToken, IF_WhitespaceToken, InfixToken } from './infixTokens'
 import { isInfixOperator } from './infixTokens'
 
 const identifierRegExp = new RegExp(infixIdentifierCharacterClass)
@@ -36,6 +35,97 @@ export const tokenizeIF_Whitespace: Tokenizer<IF_WhitespaceToken> = (input, posi
     char = input[position]
   }
   return [value.length, ['IF_Whitespace', value]]
+}
+
+const decimalNumberRegExp = /\d/
+const octalNumberRegExp = /[0-7]/
+const hexNumberRegExp = /[0-9a-f]/i
+const binaryNumberRegExp = /[01]/
+const firstCharRegExp = /[0-9.]/
+export const tokenizeIF_Number: Tokenizer<IF_NumberToken> = (input, position) => {
+  let type: 'decimal' | 'octal' | 'hex' | 'binary' = 'decimal'
+  const firstChar = input[position] as string
+  if (!firstCharRegExp.test(firstChar))
+    return NO_MATCH
+
+  let hasDecimals = firstChar === '.'
+
+  let i: number
+  for (i = position + 1; i < input.length; i += 1) {
+    const char = input[i] as string
+
+    if ((i === position + 1 && firstChar === '0')) {
+      if (char === 'b' || char === 'B') {
+        type = 'binary'
+        continue
+      }
+      if (char === 'o' || char === 'O') {
+        type = 'octal'
+        continue
+      }
+      if (char === 'x' || char === 'X') {
+        type = 'hex'
+        continue
+      }
+    }
+
+    if (type === 'decimal') {
+      if (hasDecimals) {
+        if (!decimalNumberRegExp.test(char)) {
+          break
+        }
+      }
+      else if (char !== '.' && !decimalNumberRegExp.test(char)) {
+        break
+      }
+    }
+    if (type === 'binary' && !binaryNumberRegExp.test(char)) {
+      break
+    }
+    if (type === 'octal' && !octalNumberRegExp.test(char)) {
+      break
+    }
+    if (type === 'hex' && !hexNumberRegExp.test(char)) {
+      break
+    }
+
+    if (char === '.') {
+      const nextChar = input[i + 1]
+      if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
+        break
+    }
+    if (type === 'decimal' && hasDecimals) {
+      if (!decimalNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else if (type === 'binary') {
+      if (!binaryNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else if (type === 'octal') {
+      if (!octalNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else if (type === 'hex') {
+      if (!hexNumberRegExp.test(char))
+        return NO_MATCH
+    }
+    else {
+      if (char === '.') {
+        hasDecimals = true
+        continue
+      }
+      if (!decimalNumberRegExp.test(char))
+        return NO_MATCH
+    }
+  }
+
+  const length = i - position
+  const value = input.substring(position, i)
+  if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
+    return NO_MATCH
+
+  return [length, ['IF_Number', value]]
 }
 
 export const tokenizeIF_ReservedSymbolToken: Tokenizer<IF_ReservedSymbolToken> = (input, position) => {
@@ -161,7 +251,7 @@ export const infixTokenizers = [
   tokenizeLeftCurly,
   tokenizeRightCurly,
   tokenizeString,
-  tokenizeNumber,
+  tokenizeIF_Number,
   tokenizeIF_Operator,
   tokenizeIF_ReservedSymbolToken,
   tokenizeIF_Symbol,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { Lits } from '../src'
-import { tokenizeNumber } from '../src/tokenizer/common/tokenizers'
+import { Lits } from '../../..'
+import { tokenizePF_Number } from '../postfixTokenizers'
 
 describe('parse numbers', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
@@ -28,7 +28,7 @@ describe('parse numbers', () => {
 
       numberSamples.forEach((sample) => {
         it(`number sample: ${sample}`, () => {
-          expect(tokenizeNumber(sample, 0)).toEqual([sample.length, ['Number', sample]])
+          expect(tokenizePF_Number(sample, 0)).toEqual([sample.length, ['PF_Number', sample]])
           expect(lits.run(sample) === Number(sample)).toBe(true)
         })
       })
@@ -42,21 +42,21 @@ describe('parse numbers', () => {
         '0B',
         '0o',
         '0O',
-        // '1.1.',
-        // '0x1.1',
-        // '0b1.1',
-        // '0o1.1',
-        // '-0x1234567890abcdefABCDEF',
-        // '-0o12345670',
-        // '-0b10',
-        // '-0X1234567890abcdefABCDEF',
-        // '-0O12345670',
-        // '-0B10',
+        '1.1.',
+        '0x1.1',
+        '0b1.1',
+        '0o1.1',
+        '-0x1234567890abcdefABCDEF',
+        '-0o12345670',
+        '-0b10',
+        '-0X1234567890abcdefABCDEF',
+        '-0O12345670',
+        '-0B10',
       ]
 
       numberSamples.forEach((sample) => {
         it(`number sample: ${sample}`, () => {
-          expect(tokenizeNumber(sample, 0)).toEqual([0])
+          expect(tokenizePF_Number(sample, 0)).toEqual([0])
         })
       })
     })

@@ -25,6 +25,7 @@ export const postfixOnlyValueTokenTypes = [
   'PF_CollectionAccessor',
   'PF_Comment',
   'PF_Whitespace',
+  'PF_Number',
 ] as const satisfies `PF_${string}`[]
 
 export const postfixValueTokenTypes = [
@@ -54,6 +55,7 @@ export type PF_RegexpShorthandToken = GenericPostfixValueToken<'PF_RegexpShortha
 export type PF_CollectionAccessorToken = GenericPostfixValueToken<'PF_CollectionAccessor', '.' | '#'>
 export type PF_CommentToken = GenericPostfixValueToken<'PF_Comment'>
 export type PF_WhitespaceToken = GenericPostfixValueToken<'PF_Whitespace'>
+export type PF_NumberToken = GenericPostfixValueToken<'PF_Number'>
 
 export type PostfixOnlySimpleToken =
   | PF_FnShorthandToken
@@ -68,6 +70,7 @@ export type PostfixOnlyValueToken =
   | PF_CollectionAccessorToken
   | PF_CommentToken
   | PF_WhitespaceToken
+  | PF_NumberToken
 
 export type PostfixToken =
   | PostfixOnlySimpleToken
@@ -202,5 +205,18 @@ export function assertPF_WhitespaceToken(token?: Token): asserts token is PF_Whi
 }
 export function asPF_WhitespaceToken(token?: Token): PF_WhitespaceToken {
   assertPF_WhitespaceToken(token)
+  return token
+}
+
+export function isPF_NumberToken(token?: Token): token is PF_NumberToken {
+  return token?.[0] === 'PF_Number'
+}
+export function assertPF_NumberToken(token?: Token): asserts token is PF_NumberToken {
+  if (!isPF_NumberToken(token)) {
+    throwUnexpectedToken('PF_Number', token)
+  }
+}
+export function asPF_NumberToken(token?: Token): PF_NumberToken {
+  assertPF_NumberToken(token)
   return token
 }
