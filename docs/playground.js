@@ -762,6 +762,9 @@ var Playground = (function (exports) {
         'RBrace',
         'RBracket',
         'RParen',
+        'AlgNotation',
+        'PolNotation',
+        'EndNotation',
     ];
     var commomValueTokenTypes = [
         'String',
@@ -838,11 +841,22 @@ var Playground = (function (exports) {
         assertStringToken(token);
         return token;
     }
+    function isAlgebraicNotationToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'AlgNotation';
+    }
+    function isPolishNotationToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'PolNotation';
+    }
+    function isEndNotationToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'EndNotation';
+    }
+    function assertEndNotationToken(token) {
+        if (!isEndNotationToken(token)) {
+            throwUnexpectedToken('EndNotation', token);
+        }
+    }
 
-    var algebraicOnlySimpleTokenTypes = [
-        'A_Polish',
-    ];
-    var algebraicSimpleTokenTypes = __spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(algebraicOnlySimpleTokenTypes), false);
+    var algebraicSimpleTokenTypes = __spreadArray([], __read(commonSimpleTokenTypes), false);
     var algebraicOnlyValueTokenTypes = [
         'A_Whitespace',
         'A_Operator',
@@ -890,9 +904,6 @@ var Playground = (function (exports) {
     function isA_ReservedSymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_ReservedSymbol';
     }
-    function isA_PolishToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Polish';
-    }
     function isA_OperatorToken(token, operatorName) {
         if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_Operator') {
             return false;
@@ -919,7 +930,6 @@ var Playground = (function (exports) {
     var modifierNames = ['&', '&let', '&when', '&while'];
     var polishOnlySimpleTokenTypes = [
         'P_FnShorthand',
-        'P_Algebraic',
     ];
     var polishSimpleTokenTypes = __spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false);
     var polishOnlyValueTokenTypes = [
@@ -1004,9 +1014,6 @@ var Playground = (function (exports) {
         assertP_CommentToken(token);
         return token;
     }
-    function isP_AlgebraicToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Algebraic';
-    }
     function isP_WhitespaceToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Whitespace';
     }
@@ -1019,9 +1026,9 @@ var Playground = (function (exports) {
         }
     }
 
-    var simpleTokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(algebraicOnlySimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false);
+    var simpleTokenTypes = __spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false);
     var valueTokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false), __read(polishOnlyValueTokenTypes), false);
-    var tokenTypes = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(algebraicOnlySimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false), __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false), __read(polishOnlyValueTokenTypes), false);
+    var tokenTypes = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false), __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false), __read(polishOnlyValueTokenTypes), false);
     function isTokenType(type) {
         return typeof type === 'string' && tokenTypes.includes(type);
     }
@@ -7809,13 +7816,23 @@ var Playground = (function (exports) {
                     return parseSymbol(this.tokenStream, this.parseState);
                 case 'A_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);
-                case 'A_Polish': {
-                    // this.parseState.position++
-                    // this.parseState.algebraic = false
-                    // const astNode = this.parseState.parseToken(this.tokenStream, this.parseState)
-                    // this.parseState.algebraic = true
-                    // return astNode
-                    throw new LitsError('Not implemented');
+                case 'PolNotation': {
+                    this.parseState.algebraic = false;
+                    var astNode = void 0;
+                    this.advance();
+                    do {
+                        astNode = this.parseState.parseToken(this.tokenStream, this.parseState);
+                    } while (!isEndNotationToken(this.peek()));
+                    this.advance();
+                    this.parseState.algebraic = true;
+                    return astNode;
+                }
+                case 'AlgNotation': {
+                    this.parseState.position++;
+                    var node = this.parseOperand();
+                    assertEndNotationToken(this.peek());
+                    this.advance();
+                    return node;
                 }
                 default:
                     throw new LitsError("Unknown token type: ".concat(tokenType));
@@ -8161,13 +8178,31 @@ var Playground = (function (exports) {
                 return parseFnShorthand(tokenStream, parseState);
             case 'P_Comment':
                 return parseComment(tokenStream, parseState);
+            case 'AlgNotation': {
+                parseState.position += 1;
+                parseState.algebraic = true;
+                var algebraicParser = new AlgebraicParser(tokenStream, parseState);
+                var node = algebraicParser.parse();
+                assertEndNotationToken(tokenStream.tokens[parseState.position++]);
+                parseState.algebraic = false;
+                return node;
+            }
+            case 'PolNotation': {
+                var node = void 0;
+                parseState.position += 1;
+                do {
+                    node = parsePolishToken(tokenStream, parseState);
+                } while (!isEndNotationToken(asToken(tokenStream.tokens[parseState.position])));
+                parseState.position += 1;
+                return node;
+            }
             case 'P_CollectionAccessor':
             case 'P_Modifier':
-            case 'P_Algebraic':
             case 'RParen':
             case 'RBracket':
             case 'RBrace':
             case 'P_Whitespace':
+            case 'EndNotation':
                 break;
             /* v8 ignore next 2 */
             default:
@@ -8218,23 +8253,32 @@ var Playground = (function (exports) {
     function isNoMatch(tokenDescriptor) {
         return tokenDescriptor[0] === 0;
     }
-    var tokenizeLeftParen = function (input, position) {
+    var tokenizeLParen = function (input, position) {
         return tokenizeSimpleToken('LParen', '(', input, position);
     };
-    var tokenizeRightParen = function (input, position) {
+    var tokenizeRParen = function (input, position) {
         return tokenizeSimpleToken('RParen', ')', input, position);
     };
-    var tokenizeLeftBracket = function (input, position) {
+    var tokenizeLBracket = function (input, position) {
         return tokenizeSimpleToken('LBracket', '[', input, position);
     };
-    var tokenizeRightBracket = function (input, position) {
+    var tokenizeRBracket = function (input, position) {
         return tokenizeSimpleToken('RBracket', ']', input, position);
     };
-    var tokenizeLeftCurly = function (input, position) {
+    var tokenizeLBrace = function (input, position) {
         return tokenizeSimpleToken('LBrace', '{', input, position);
     };
-    var tokenizeRightCurly = function (input, position) {
+    var tokenizeRBrace = function (input, position) {
         return tokenizeSimpleToken('RBrace', '}', input, position);
+    };
+    var tokenizePolishNotation = function (input, position) {
+        return tokenizeSimpleToken('PolNotation', '$`', input, position);
+    };
+    var tokenizeAlgebraicNotation = function (input, position) {
+        return tokenizeSimpleToken('AlgNotation', '@`', input, position);
+    };
+    var tokenizeEndNotation = function (input, position) {
+        return tokenizeSimpleToken('EndNotation', '`', input, position);
     };
     var tokenizeString = function (input, position) {
         if (input[position] !== '"')
@@ -8263,11 +8307,23 @@ var Playground = (function (exports) {
         return [length + 1, ['String', value]];
     };
     function tokenizeSimpleToken(type, value, input, position) {
-        if (value === input[position])
-            return [1, [type]];
+        if (value === input.slice(position, position + value.length))
+            return [value.length, [type]];
         else
             return NO_MATCH;
     }
+    var commonTokenizers = [
+        tokenizePolishNotation,
+        tokenizeAlgebraicNotation,
+        tokenizeEndNotation,
+        tokenizeLParen,
+        tokenizeRParen,
+        tokenizeLBracket,
+        tokenizeRBracket,
+        tokenizeLBrace,
+        tokenizeRBrace,
+        tokenizeString,
+    ];
 
     var whitespaceRegExp$1 = /\s|,/;
     var tokenizeP_Comment = function (input, position) {
@@ -8297,7 +8353,7 @@ var Playground = (function (exports) {
         }
         return [value.length, ['P_Whitespace', value]];
     };
-    var endOfNumberRegExp = /[\s)\]},#]/;
+    var endOfNumberRegExp = /[\s)\]},;#`]/;
     var decimalNumberRegExp$1 = /\d/;
     var octalNumberRegExp$1 = /[0-7]/;
     var hexNumberRegExp$1 = /[0-9a-f]/i;
@@ -8442,16 +8498,6 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
-    var tokenizeP_AlgebraicToken = function (input, position) {
-        if (input[position] !== '$') {
-            return NO_MATCH;
-        }
-        var nextChar = input[position + 1];
-        if (nextChar && P_symbolRegExp.test(nextChar)) {
-            return NO_MATCH;
-        }
-        return [1, ['P_Algebraic']];
-    };
     var tokenizeP_CollectionAccessor = function (input, position) {
         var char = input[position];
         if (char !== '.' && char !== '#')
@@ -8478,17 +8524,10 @@ var Playground = (function (exports) {
         return [length, ['P_RegexpShorthand', "#".concat(token[1]).concat(options)]];
     };
     // All tokenizers, order matters!
-    var polishTokenizers = [
+    var polishTokenizers = __spreadArray(__spreadArray([
         tokenizeP_Whitespace,
-        tokenizeP_AlgebraicToken,
-        tokenizeP_Comment,
-        tokenizeLeftParen,
-        tokenizeRightParen,
-        tokenizeLeftBracket,
-        tokenizeRightBracket,
-        tokenizeLeftCurly,
-        tokenizeRightCurly,
-        tokenizeString,
+        tokenizeP_Comment
+    ], __read(commonTokenizers), false), [
         tokenizeP_StringShorthand,
         tokenizeP_Number,
         tokenizeP_ReservedSymbol,
@@ -8497,7 +8536,7 @@ var Playground = (function (exports) {
         tokenizeP_RegexpShorthand,
         tokenizeP_FnShorthand,
         tokenizeP_CollectionAccessor,
-    ];
+    ], false);
 
     var algebraicReservedNamesRecord = {
         'true': { value: true },
@@ -8698,9 +8737,6 @@ var Playground = (function (exports) {
         }
         return NO_MATCH;
     };
-    var tokenizeA_PolishToken = function (input, position) {
-        return tokenizeSimpleToken('A_Polish', '@', input, position);
-    };
     var tokenizeA_MultiLineComment = function (input, position) {
         if (input[position] === '/' && input[position + 1] === '*') {
             var length_2 = 2;
@@ -8731,23 +8767,16 @@ var Playground = (function (exports) {
         return NO_MATCH;
     };
     // All tokenizers, order matters!
-    var algebraicTokenizers = [
+    var algebraicTokenizers = __spreadArray(__spreadArray([
         tokenizeA_Whitespace,
         tokenizeA_MultiLineComment,
-        tokenizeA_SingleLineComment,
-        tokenizeA_PolishToken,
-        tokenizeLeftParen,
-        tokenizeRightParen,
-        tokenizeLeftBracket,
-        tokenizeRightBracket,
-        tokenizeLeftCurly,
-        tokenizeRightCurly,
-        tokenizeString,
+        tokenizeA_SingleLineComment
+    ], __read(commonTokenizers), false), [
         tokenizeA_Number,
         tokenizeA_Operator,
         tokenizeA_ReservedSymbolToken,
         tokenizeA_Symbol,
-    ];
+    ], false);
 
     var applyCollectionAccessors = function (tokenStream) {
         var dotTokenIndex = tokenStream.tokens.findIndex(isP_CollectionAccessorToken);
@@ -8834,16 +8863,16 @@ var Playground = (function (exports) {
 
     function tokenize$1(input, params) {
         var debug = !!params.debug;
-        var algebraic = !!params.algebraic;
+        var notationStack = [params.algebraic ? 'algebraic' : 'polish'];
         var position = 0;
         var tokenStream = {
             tokens: [],
             filePath: params.filePath,
             hasDebugData: debug,
-            algebraic: algebraic,
+            algebraic: !!params.algebraic,
         };
         while (position < input.length) {
-            var tokenizers = algebraic ? algebraicTokenizers : polishTokenizers;
+            var tokenizers = notationStack.at(-1) === 'algebraic' ? algebraicTokenizers : polishTokenizers;
             var tokenDescriptor = getCurrentToken(input, position, tokenizers);
             var debugData = debug
                 ? {
@@ -8860,13 +8889,22 @@ var Playground = (function (exports) {
                     addTokenDebugData(token, debugData);
                 }
                 tokenStream.tokens.push(token);
-                if (isP_AlgebraicToken(token)) {
-                    algebraic = true;
+                if (isAlgebraicNotationToken(token)) {
+                    notationStack.push('algebraic');
                 }
-                if (isA_PolishToken(token)) {
-                    algebraic = false;
+                if (isPolishNotationToken(token)) {
+                    notationStack.push('polish');
+                }
+                if (isEndNotationToken(token)) {
+                    notationStack.pop();
+                    if (notationStack.length < 1) {
+                        throw new LitsError('Unexpected end directive `.', debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
+                    }
                 }
             }
+        }
+        if (notationStack.length > 1) {
+            throw new LitsError('Missing end directive `.', createSourceCodeInfo(input, position, params.filePath));
         }
         applySugar(tokenStream);
         return tokenStream;
@@ -8950,8 +8988,9 @@ var Playground = (function (exports) {
             case 'RBracket': return ']';
             case 'LBrace': return '{';
             case 'RBrace': return '}';
-            case 'P_Algebraic': return '$';
-            case 'A_Polish': return '@';
+            case 'PolNotation': return '$`';
+            case 'AlgNotation': return '@`';
+            case 'EndNotation': return '`';
             case 'P_FnShorthand': return '#';
             /* v8 ignore next 2 */
             default:

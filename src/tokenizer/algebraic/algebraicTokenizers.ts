@@ -2,19 +2,12 @@ import { LitsError } from '../../errors'
 import { algebraicIdentifierCharacterClass, algebraicIdentifierFirstCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
-  tokenizeLeftBracket,
-  tokenizeLeftCurly,
-  tokenizeLeftParen,
-  tokenizeRightBracket,
-  tokenizeRightCurly,
-  tokenizeRightParen,
-  tokenizeSimpleToken,
-  tokenizeString,
+  commonTokenizers,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
 import { tokenizeP_Symbol } from '../polish/polishTokenizers'
 import { algebraicReservedNamesRecord } from './algebraicReservedNames'
-import type { A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_PolishToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
+import type { A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
 import { isAlgebraicOperator } from './algebraicTokens'
 
 const identifierRegExp = new RegExp(algebraicIdentifierCharacterClass)
@@ -202,9 +195,6 @@ export const tokenizeA_Operator: Tokenizer<A_OperatorToken> = (input, position) 
   return NO_MATCH
 }
 
-export const tokenizeA_PolishToken: Tokenizer<A_PolishToken> = (input, position) =>
-  tokenizeSimpleToken('A_Polish', '@', input, position)
-
 export const tokenizeA_MultiLineComment: Tokenizer<A_MultiLineCommentToken> = (input, position) => {
   if (input[position] === '/' && input[position + 1] === '*') {
     let length = 2
@@ -243,14 +233,7 @@ export const algebraicTokenizers = [
   tokenizeA_Whitespace,
   tokenizeA_MultiLineComment,
   tokenizeA_SingleLineComment,
-  tokenizeA_PolishToken,
-  tokenizeLeftParen,
-  tokenizeRightParen,
-  tokenizeLeftBracket,
-  tokenizeRightBracket,
-  tokenizeLeftCurly,
-  tokenizeRightCurly,
-  tokenizeString,
+  ...commonTokenizers,
   tokenizeA_Number,
   tokenizeA_Operator,
   tokenizeA_ReservedSymbolToken,

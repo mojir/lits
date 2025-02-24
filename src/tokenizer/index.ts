@@ -1,9 +1,8 @@
 import { LitsError } from '../errors'
 import { algebraicTokenizers } from './algebraic/algebraicTokenizers'
-import { isA_PolishToken } from './algebraic/algebraicTokens'
+import { isAlgebraicNotationToken, isEndNotationToken, isPolishNotationToken } from './common/commonTokens'
 import type { SourceCodeInfo, TokenDescriptor, TokenStream, TokenizeParams, Tokenizer } from './interface'
 import { polishTokenizers } from './polish/polishTokenizers'
-import { isP_AlgebraicToken } from './polish/polishTokens'
 import { getSugar } from './sugar'
 import type { Token } from './tokens'
 import type { TokenDebugData } from './utils'
@@ -11,17 +10,17 @@ import { addTokenDebugData } from './utils'
 
 export function tokenize(input: string, params: TokenizeParams): TokenStream {
   const debug = !!params.debug
-  let algebraic = !!params.algebraic
+  const notationStack: ('polish' | 'algebraic')[] = [params.algebraic ? 'algebraic' : 'polish']
   let position = 0
   const tokenStream: TokenStream = {
     tokens: [],
     filePath: params.filePath,
     hasDebugData: debug,
-    algebraic,
+    algebraic: !!params.algebraic,
   }
 
   while (position < input.length) {
-    const tokenizers = algebraic ? algebraicTokenizers : polishTokenizers
+    const tokenizers = notationStack.at(-1) === 'algebraic' ? algebraicTokenizers : polishTokenizers
     const tokenDescriptor = getCurrentToken(input, position, tokenizers)
 
     const debugData: TokenDebugData | undefined = debug
@@ -43,13 +42,23 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
       }
 
       tokenStream.tokens.push(token)
-      if (isP_AlgebraicToken(token)) {
-        algebraic = true
+      if (isAlgebraicNotationToken(token)) {
+        notationStack.push('algebraic')
       }
-      if (isA_PolishToken(token)) {
-        algebraic = false
+      if (isPolishNotationToken(token)) {
+        notationStack.push('polish')
+      }
+      if (isEndNotationToken(token)) {
+        notationStack.pop()
+        if (notationStack.length < 1) {
+          throw new LitsError('Unexpected end directive `.', debugData?.sourceCodeInfo)
+        }
       }
     }
+  }
+
+  if (notationStack.length > 1) {
+    throw new LitsError('Missing end directive `.', createSourceCodeInfo(input, position, params.filePath))
   }
 
   applySugar(tokenStream)

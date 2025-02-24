@@ -8,7 +8,6 @@ export type ModifierName = typeof modifierNames[number]
 
 export const polishOnlySimpleTokenTypes = [
   'P_FnShorthand',
-  'P_Algebraic',
 ] as const satisfies `P_${string}`[]
 
 export const polishSimpleTokenTypes = [
@@ -46,7 +45,6 @@ type GenericPolishSimpleToken<T extends Exclude<PolishSimpleTokenType, CommonSim
 type GenericPolishValueToken<T extends Exclude<PolishValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
 
 export type P_FnShorthandToken = GenericPolishSimpleToken<'P_FnShorthand'>
-export type P_AlgebraicToken = GenericPolishSimpleToken<'P_Algebraic'>
 export type P_ModifierToken = GenericPolishValueToken<'P_Modifier', ModifierName>
 export type P_StringShorthandToken = GenericPolishValueToken<'P_StringShorthand'>
 export type P_SymbolToken = GenericPolishValueToken<'P_Symbol'>
@@ -59,7 +57,6 @@ export type P_NumberToken = GenericPolishValueToken<'P_Number'>
 
 export type PolishOnlySimpleToken =
   | P_FnShorthandToken
-  | P_AlgebraicToken
 
 export type PolishOnlyValueToken =
   | P_ModifierToken
@@ -179,19 +176,6 @@ export function assertP_CommentToken(token?: Token): asserts token is P_CommentT
 }
 export function asP_CommentToken(token?: Token): P_CommentToken {
   assertP_CommentToken(token)
-  return token
-}
-
-export function isP_AlgebraicToken(token?: Token): token is P_AlgebraicToken {
-  return token?.[0] === 'P_Algebraic'
-}
-export function assertP_AlgebraicToken(token?: Token): asserts token is P_AlgebraicToken {
-  if (!isP_AlgebraicToken(token)) {
-    throwUnexpectedToken('P_Algebraic', token)
-  }
-}
-export function asP_AlgebraicToken(token?: Token): P_AlgebraicToken {
-  assertP_AlgebraicToken(token)
   return token
 }
 

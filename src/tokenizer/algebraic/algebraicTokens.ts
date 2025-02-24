@@ -1,16 +1,11 @@
 import { LitsError } from '../../errors'
-import type { CommonSimpleToken, CommonSimpleTokenType, CommonValueToken, CommonValueTokenType } from '../common/commonTokens'
+import type { CommonSimpleToken, CommonValueToken, CommonValueTokenType } from '../common/commonTokens'
 import { commomValueTokenTypes, commonSimpleTokenTypes } from '../common/commonTokens'
 import type { Token } from '../tokens'
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
 
-export const algebraicOnlySimpleTokenTypes = [
-  'A_Polish',
-] as const satisfies `A_${string}`[]
-
 export const algebraicSimpleTokenTypes = [
   ...commonSimpleTokenTypes,
-  ...algebraicOnlySimpleTokenTypes,
 ] as const
 
 export const algebraicOnlyValueTokenTypes = [
@@ -89,10 +84,8 @@ export type AlgebraicSimpleTokenType = typeof algebraicSimpleTokenTypes[number]
 export type AlgebraicValueTokenType = typeof algebraicValueTokenTypes[number]
 export type AlgebraicTokenType = typeof algebraicTokenTypes[number]
 
-type GenericAlgebraicSimpleToken<T extends Exclude<AlgebraicSimpleTokenType, CommonSimpleTokenType>> = [T] | [T, TokenDebugData]
 type GenericAlgebraicValueToken<T extends Exclude<AlgebraicValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
 
-export type A_PolishToken = GenericAlgebraicSimpleToken<'A_Polish'>
 export type A_WhitespaceToken = GenericAlgebraicValueToken<'A_Whitespace'>
 export type A_NumberToken = GenericAlgebraicValueToken<'A_Number'>
 export type A_OperatorToken<T extends AlgebraicOperator = AlgebraicOperator> = GenericAlgebraicValueToken<'A_Operator', T>
@@ -100,9 +93,6 @@ export type A_SymbolToken = GenericAlgebraicValueToken<'A_Symbol'>
 export type A_ReservedSymbolToken = GenericAlgebraicValueToken<'A_ReservedSymbol'>
 export type A_SingleLineCommentToken = GenericAlgebraicValueToken<'A_SingleLineComment'>
 export type A_MultiLineCommentToken = GenericAlgebraicValueToken<'A_MultiLineComment'>
-
-export type AlgebraicOnlySimpleToken =
-  | A_PolishToken
 
 export type AlgebraicOnlyValueToken =
   | A_WhitespaceToken
@@ -114,7 +104,6 @@ export type AlgebraicOnlyValueToken =
   | A_MultiLineCommentToken
 
 export type AlgebraicToken =
-  | AlgebraicOnlySimpleToken
   | AlgebraicOnlyValueToken
   | CommonSimpleToken
   | CommonValueToken
@@ -168,19 +157,6 @@ export function assertA_MultiLineCommentToken(token?: Token): asserts token is A
 }
 export function asA_MultiLineCommentToken(token?: Token): A_MultiLineCommentToken {
   assertA_MultiLineCommentToken(token)
-  return token
-}
-
-export function isA_PolishToken(token?: Token): token is A_PolishToken {
-  return token?.[0] === 'A_Polish'
-}
-export function assertA_PolishToken(token?: Token): asserts token is A_PolishToken {
-  if (!isA_PolishToken(token)) {
-    throwUnexpectedToken('A_Polish', token)
-  }
-}
-export function asA_PolishToken(token?: Token): A_PolishToken {
-  assertA_PolishToken(token)
   return token
 }
 

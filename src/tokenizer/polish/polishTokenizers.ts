@@ -2,20 +2,14 @@ import { LitsError } from '../../errors'
 import { polishIdentifierCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
+  commonTokenizers,
   isNoMatch,
-  tokenizeLeftBracket,
-  tokenizeLeftCurly,
-  tokenizeLeftParen,
-  tokenizeRightBracket,
-  tokenizeRightCurly,
-  tokenizeRightParen,
   tokenizeString,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
 import { polishReservedNamesRecord } from './polishReservedNames'
 import type {
   ModifierName,
-  P_AlgebraicToken,
   P_CollectionAccessorToken,
   P_CommentToken,
   P_FnShorthandToken,
@@ -62,7 +56,7 @@ export const tokenizeP_Whitespace: Tokenizer<P_WhitespaceToken> = (input, positi
   return [value.length, ['P_Whitespace', value]]
 }
 
-const endOfNumberRegExp = /[\s)\]},#]/
+const endOfNumberRegExp = /[\s)\]},;#`]/
 const decimalNumberRegExp = /\d/
 const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-f]/i
@@ -205,17 +199,6 @@ export const tokenizeP_Modifier: Tokenizer<P_ModifierToken> = (input, position) 
   return NO_MATCH
 }
 
-export const tokenizeP_AlgebraicToken: Tokenizer<P_AlgebraicToken> = (input, position) => {
-  if (input[position] !== '$') {
-    return NO_MATCH
-  }
-  const nextChar = input[position + 1]
-  if (nextChar && P_symbolRegExp.test(nextChar)) {
-    return NO_MATCH
-  }
-  return [1, ['P_Algebraic']]
-}
-
 export const tokenizeP_CollectionAccessor: Tokenizer<P_CollectionAccessorToken> = (input, position) => {
   const char = input[position]
   if (char !== '.' && char !== '#')
@@ -251,15 +234,8 @@ export const tokenizeP_RegexpShorthand: Tokenizer<P_RegexpShorthandToken> = (inp
 // All tokenizers, order matters!
 export const polishTokenizers = [
   tokenizeP_Whitespace,
-  tokenizeP_AlgebraicToken,
   tokenizeP_Comment,
-  tokenizeLeftParen,
-  tokenizeRightParen,
-  tokenizeLeftBracket,
-  tokenizeRightBracket,
-  tokenizeLeftCurly,
-  tokenizeRightCurly,
-  tokenizeString,
+  ...commonTokenizers,
   tokenizeP_StringShorthand,
   tokenizeP_Number,
   tokenizeP_ReservedSymbol,

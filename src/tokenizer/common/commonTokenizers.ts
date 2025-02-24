@@ -1,7 +1,7 @@
 import { LitsError } from '../../errors'
 import type { TokenDescriptor, Tokenizer } from '../interface'
 import type { SimpleToken } from '../tokens'
-import type { LBraceToken, LBracketToken, LParenToken, RBraceToken, RBracketToken, RParenToken, StringToken } from './commonTokens'
+import type { AlgebraicNotationToken, EndNotationToken, LBraceToken, LBracketToken, LParenToken, PolishNotationToken, RBraceToken, RBracketToken, RParenToken, StringToken } from './commonTokens'
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
 
@@ -9,18 +9,24 @@ export function isNoMatch(tokenDescriptor: TokenDescriptor<any>): tokenDescripto
   return tokenDescriptor[0] === 0
 }
 
-export const tokenizeLeftParen: Tokenizer<LParenToken> = (input, position) =>
+const tokenizeLParen: Tokenizer<LParenToken> = (input, position) =>
   tokenizeSimpleToken('LParen', '(', input, position)
-export const tokenizeRightParen: Tokenizer<RParenToken> = (input, position) =>
+const tokenizeRParen: Tokenizer<RParenToken> = (input, position) =>
   tokenizeSimpleToken('RParen', ')', input, position)
-export const tokenizeLeftBracket: Tokenizer<LBracketToken> = (input, position) =>
+const tokenizeLBracket: Tokenizer<LBracketToken> = (input, position) =>
   tokenizeSimpleToken('LBracket', '[', input, position)
-export const tokenizeRightBracket: Tokenizer<RBracketToken> = (input, position) =>
+const tokenizeRBracket: Tokenizer<RBracketToken> = (input, position) =>
   tokenizeSimpleToken('RBracket', ']', input, position)
-export const tokenizeLeftCurly: Tokenizer<LBraceToken> = (input, position) =>
+const tokenizeLBrace: Tokenizer<LBraceToken> = (input, position) =>
   tokenizeSimpleToken('LBrace', '{', input, position)
-export const tokenizeRightCurly: Tokenizer<RBraceToken> = (input, position) =>
+const tokenizeRBrace: Tokenizer<RBraceToken> = (input, position) =>
   tokenizeSimpleToken('RBrace', '}', input, position)
+const tokenizePolishNotation: Tokenizer<PolishNotationToken> = (input, position) =>
+  tokenizeSimpleToken('PolNotation', '$`', input, position)
+const tokenizeAlgebraicNotation: Tokenizer<AlgebraicNotationToken> = (input, position) =>
+  tokenizeSimpleToken('AlgNotation', '@`', input, position)
+const tokenizeEndNotation: Tokenizer<EndNotationToken> = (input, position) =>
+  tokenizeSimpleToken('EndNotation', '`', input, position)
 
 export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   if (input[position] !== '"')
@@ -57,8 +63,21 @@ export function tokenizeSimpleToken<T extends SimpleToken>(
   input: string,
   position: number,
 ): TokenDescriptor<T> {
-  if (value === input[position])
-    return [1, [type] as T]
+  if (value === input.slice(position, position + value.length))
+    return [value.length, [type] as T]
   else
     return NO_MATCH
 }
+
+export const commonTokenizers = [
+  tokenizePolishNotation,
+  tokenizeAlgebraicNotation,
+  tokenizeEndNotation,
+  tokenizeLParen,
+  tokenizeRParen,
+  tokenizeLBracket,
+  tokenizeRBracket,
+  tokenizeLBrace,
+  tokenizeRBrace,
+  tokenizeString,
+] as const

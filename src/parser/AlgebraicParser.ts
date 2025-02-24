@@ -1,6 +1,6 @@
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
-import { asLBraceToken, asLBracketToken, assertRBraceToken, assertRBracketToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { A_OperatorToken, AlgebraicTokenType } from '../tokenizer/algebraic/algebraicTokens'
 import { assertA_OperatorToken, isA_OperatorToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
@@ -263,13 +263,23 @@ export class AlgebraicParser {
         return parseSymbol(this.tokenStream, this.parseState)
       case 'A_ReservedSymbol':
         return parseReservedSymbol(this.tokenStream, this.parseState)
-      case 'A_Polish': {
-        // this.parseState.position++
-        // this.parseState.algebraic = false
-        // const astNode = this.parseState.parseToken(this.tokenStream, this.parseState)
-        // this.parseState.algebraic = true
-        // return astNode
-        throw new LitsError('Not implemented')
+      case 'PolNotation': {
+        this.parseState.algebraic = false
+        let astNode: AstNode
+        this.advance()
+        do {
+          astNode = this.parseState.parseToken(this.tokenStream, this.parseState)
+        } while (!isEndNotationToken(this.peek()))
+        this.advance()
+        this.parseState.algebraic = true
+        return astNode
+      }
+      case 'AlgNotation': {
+        this.parseState.position++
+        const node = this.parseOperand()
+        assertEndNotationToken(this.peek())
+        this.advance()
+        return node
       }
 
       default:

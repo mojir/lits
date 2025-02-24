@@ -204,11 +204,44 @@ describe('algebraic operators', () => {
       expect(lits.run('+1')).toBe(1)
     })
   })
-  // describe('polish escape hatch', () => {
-  //   test('samples', () => {
-  //     expect(lits.run('10 * @(+ 1 2) / 2')).toBe(15)
-  //   })
-  // })
+  describe('polish escape hatch', () => {
+    test('samples', () => {
+      expect(lits.tokenize('$`1 2`').tokens).toEqual([
+        ['PolNotation'],
+        ['P_Number', '1'],
+        ['P_Whitespace', ' '],
+        ['P_Number', '2'],
+        ['EndNotation'],
+      ])
+
+      expect(lits.run('$`1`')).toBe(1)
+      expect(lits.run('10 * $`(+ 1 10)` / 2')).toBe(55)
+      expect(lits.run('10 * $`(+ 1 @`12 - 2`)` / 2')).toBe(55)
+      expect(lits.run('$`(+ $`2 1`)`')).toBe(1)
+      expect(lits.run('10 * $`(+ $`2 1` @`@`12` - 2`)` / 2')).toBe(55)
+    })
+  })
+  describe('algebraic escape hatch', () => {
+    test('samples', () => {
+      const pLits = new Lits({ algebraic: false })
+      expect(pLits.tokenize('@`1 + 2`').tokens).toEqual([
+        ['AlgNotation'],
+        ['A_Number', '1'],
+        ['A_Whitespace', ' '],
+        ['A_Operator', '+'],
+        ['A_Whitespace', ' '],
+        ['A_Number', '2'],
+        ['EndNotation'],
+      ])
+
+      expect(pLits.run('@`1`')).toBe(1)
+      expect(pLits.run('@`1 + 2`')).toBe(3)
+      expect(pLits.run('(/ (* 10 @`1 + 10`) 2)')).toBe(55)
+      expect(pLits.run('@`10 + $`(mod 3 2)``')).toBe(11)
+
+      expect(pLits.run('(def o @`{ foo="bar" }`) o.foo')).toBe('bar')
+    })
+  })
   describe('debug', () => {
     test('samples', () => {
       expect(lits.run('2+3', { debug: true })).toBe(5)

@@ -1,14 +1,13 @@
 import { LitsError } from '../errors'
 import type { CommonSimpleToken, CommonValueToken } from './common/commonTokens'
 import { commomValueTokenTypes, commonSimpleTokenTypes } from './common/commonTokens'
-import type { AlgebraicOnlySimpleToken, AlgebraicOnlyValueToken, AlgebraicSimpleTokenType, AlgebraicValueTokenType } from './algebraic/algebraicTokens'
-import { algebraicOnlySimpleTokenTypes, algebraicOnlyValueTokenTypes } from './algebraic/algebraicTokens'
+import type { AlgebraicOnlyValueToken, AlgebraicSimpleTokenType, AlgebraicValueTokenType } from './algebraic/algebraicTokens'
+import { algebraicOnlyValueTokenTypes } from './algebraic/algebraicTokens'
 import type { PolishOnlySimpleToken, PolishOnlyValueToken, PolishSimpleTokenType, PolishValueTokenType } from './polish/polishTokens'
 import { polishOnlySimpleTokenTypes, polishOnlyValueTokenTypes } from './polish/polishTokens'
 
 export const simpleTokenTypes = [
   ...commonSimpleTokenTypes,
-  ...algebraicOnlySimpleTokenTypes,
   ...polishOnlySimpleTokenTypes,
 ] as const
 
@@ -20,7 +19,6 @@ export const valueTokenTypes = [
 
 export const tokenTypes = [
   ...commonSimpleTokenTypes,
-  ...algebraicOnlySimpleTokenTypes,
   ...polishOnlySimpleTokenTypes,
   ...commomValueTokenTypes,
   ...algebraicOnlyValueTokenTypes,
@@ -34,7 +32,6 @@ export type TokenType = typeof tokenTypes[number]
 
 export type SimpleToken =
   | CommonSimpleToken
-  | AlgebraicOnlySimpleToken
   | PolishOnlySimpleToken
 
 export type ValueToken =
