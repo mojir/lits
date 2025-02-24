@@ -183,6 +183,7 @@ var Playground = (function (exports) {
         'new-context-name': '',
         'new-context-value': '',
         'debug': false,
+        'algebraic': false,
         'focused-panel': null,
     };
     var contextHistoryListener;
@@ -7614,16 +7615,16 @@ var Playground = (function (exports) {
         var operatorSign = operator[1];
         switch (operatorSign) {
             case '.': // accessor
-                return 1;
+                return 9;
             case '**': // exponentiation
-                return 2;
+                return 8;
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
-                return 3;
+                return 7;
             case '+': // addition
             case '-': // subtraction
-                return 4;
+                return 6;
             case '<<': // left shift
             case '>>': // signed right shift
             case '>>>': // unsigned right shift
@@ -7632,18 +7633,18 @@ var Playground = (function (exports) {
             case '<=': // less than or equal
             case '>': // greater than
             case '>=': // greater than or equal
-                return 6;
+                return 4;
             case '==': // equal
             case '!=': // not equal
-                return 7;
+                return 3;
             case '&': // bitwise AND
             case '^': // bitwise XOR
             case '|': // bitwise OR
-                return 8;
+                return 2;
             case '&&': // logical AND
             case '||': // logical OR
             case '??': // nullish coalescing
-                return 9;
+                return 1;
             /* v8 ignore next 8 */
             case '!': // logical NOT
             case '~': // bitwise NOT
@@ -7808,7 +7809,7 @@ var Playground = (function (exports) {
                     var newPrecedece = getPrecedence(operator);
                     if (newPrecedece <= precedence
                         // ** (exponentiation) is right associative
-                        && !(newPrecedece === 2 && precedence === 2)) {
+                        && !(newPrecedece === 8 && precedence === 8)) {
                         break;
                     }
                     this.advance();
@@ -7858,7 +7859,12 @@ var Playground = (function (exports) {
                 case 'String':
                     return parseString(this.tokenStream, this.parseState);
                 case 'A_Symbol': {
-                    return parseSymbol(this.tokenStream, this.parseState);
+                    var symbolToken = parseSymbol(this.tokenStream, this.parseState);
+                    // function call
+                    if (isLParenToken(this.peek())) {
+                        return this.parseFunctionCall(symbolToken);
+                    }
+                    return symbolToken;
                 }
                 case 'A_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);
@@ -7944,6 +7950,67 @@ var Playground = (function (exports) {
                 p: params,
                 token: firstToken,
             };
+        };
+        AlgebraicParser.prototype.parseFunctionCall = function (symbol) {
+            var _a, _b;
+            var params = [];
+            this.advance();
+            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+                params.push(this.parseExpression());
+                var nextToken = this.peek();
+                if (!isA_OperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
+                    throw new LitsError('Expected comma or closing parenthesis', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+                if (isA_OperatorToken(nextToken, ',')) {
+                    this.advance();
+                }
+            }
+            if (!isRParenToken(this.peek())) {
+                throw new LitsError('Expected closing parenthesis', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            }
+            this.advance();
+            if (specialExpressionKeys.includes(symbol.v)) {
+                var name_1 = symbol.v;
+                switch (name_1) {
+                    case '??':
+                    case 'and':
+                    case 'comment':
+                    case 'cond':
+                    case 'declared?':
+                    case 'if':
+                    case 'if-not':
+                    case 'or':
+                    case 'when':
+                    case 'when-not':
+                        return {
+                            t: AstNodeType.SpecialExpression,
+                            n: name_1,
+                            p: params,
+                            token: symbol.token,
+                        };
+                    case 'def':
+                    case 'defs':
+                    case 'let':
+                    case 'if-let':
+                    case 'when-let':
+                    case 'when-first':
+                    case 'fn':
+                    case 'defn':
+                    case 'defns':
+                    case 'try':
+                    case 'throw':
+                    case 'recur':
+                    case 'loop':
+                    case 'time!':
+                    case 'doseq':
+                    case 'for':
+                    case 'do':
+                        throw new Error("Special expression ".concat(name_1, " is not available in algebraic notation"));
+                    default:
+                        throw new Error("Unknown special expression: ".concat(name_1));
+                }
+            }
+            return createNamedNormalExpressionNode(symbol.v, params, symbol.token);
         };
         AlgebraicParser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
@@ -8608,6 +8675,7 @@ var Playground = (function (exports) {
         'time!': { value: null, forbidden: true },
         'doseq': { value: null, forbidden: true },
         'for': { value: null, forbidden: true },
+        'do': { value: null, forbidden: true },
     };
 
     var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
@@ -16031,7 +16099,16 @@ var Playground = (function (exports) {
     var getLits = (function () {
         var lits = new Lits({ debug: true });
         var litsNoDebug = new Lits({ debug: false });
-        return function (forceDebug) { return forceDebug || getState('debug') ? lits : litsNoDebug; };
+        var algebraicLits = new Lits({ debug: true, algebraic: true });
+        var algebraicLitsNoDebug = new Lits({ debug: false, algebraic: true });
+        return function (forceDebug) {
+            if (getState('algebraic')) {
+                return forceDebug || getState('debug') ? algebraicLits : algebraicLitsNoDebug;
+            }
+            else {
+                return forceDebug || getState('debug') ? lits : litsNoDebug;
+            }
+        };
     })();
     var elements = {
         wrapper: document.getElementById('wrapper'),
@@ -16053,6 +16130,7 @@ var Playground = (function (exports) {
         resizeDevider1: document.getElementById('resize-divider-1'),
         resizeDevider2: document.getElementById('resize-divider-2'),
         toggleDebugMenuLabel: document.getElementById('toggle-debug-menu-label'),
+        toggleAlgebraicMenuLabel: document.getElementById('toggle-algebraic-menu-label'),
         litsPanelDebugInfo: document.getElementById('lits-panel-debug-info'),
         contextUndoButton: document.getElementById('context-undo-button'),
         contextRedoButton: document.getElementById('context-redo-button'),
@@ -16421,6 +16499,10 @@ var Playground = (function (exports) {
                         evt.preventDefault();
                         toggleDebug();
                         break;
+                    case 'l':
+                        evt.preventDefault();
+                        toggleAlgebraic();
+                        break;
                     case '1':
                         evt.preventDefault();
                         focusContext();
@@ -16715,6 +16797,14 @@ var Playground = (function (exports) {
         appendOutput("Debug mode toggled ".concat(debug ? 'ON' : 'OFF'), 'comment');
         focusLitsCode();
     }
+    function toggleAlgebraic() {
+        var algebraic = !getState('algebraic');
+        saveState({ algebraic: algebraic });
+        updateCSS();
+        addOutputSeparator();
+        appendOutput("Algebraic mode toggled ".concat(algebraic ? 'ON' : 'OFF'), 'comment');
+        focusLitsCode();
+    }
     function focusContext() {
         elements.contextTextArea.focus();
     }
@@ -16796,6 +16886,7 @@ var Playground = (function (exports) {
     function updateCSS() {
         var debug = getState('debug');
         elements.toggleDebugMenuLabel.textContent = debug ? 'Debug: ON' : 'Debug: OFF';
+        elements.toggleAlgebraicMenuLabel.textContent = getState('algebraic') ? 'Algebraic: ON' : 'Algebraic: OFF';
         elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none';
         elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : '';
         elements.contextTitle.style.color = (getState('focused-panel') === 'context') ? 'white' : '';
@@ -16916,6 +17007,7 @@ var Playground = (function (exports) {
     exports.setPlayground = setPlayground;
     exports.share = share;
     exports.showPage = showPage;
+    exports.toggleAlgebraic = toggleAlgebraic;
     exports.toggleDebug = toggleDebug;
     exports.tokenize = tokenize;
     exports.undoContextHistory = undoContextHistory;

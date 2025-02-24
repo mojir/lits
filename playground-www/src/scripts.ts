@@ -26,7 +26,16 @@ import { isMac, throttle } from './utils'
 const getLits: (forceDebug?: 'debug') => Lits = (() => {
   const lits = new Lits({ debug: true })
   const litsNoDebug = new Lits({ debug: false })
-  return (forceDebug?: 'debug') => forceDebug || getState('debug') ? lits : litsNoDebug
+  const algebraicLits = new Lits({ debug: true, algebraic: true })
+  const algebraicLitsNoDebug = new Lits({ debug: false, algebraic: true })
+  return (forceDebug?: 'debug') => {
+    if (getState('algebraic')) {
+      return forceDebug || getState('debug') ? algebraicLits : algebraicLitsNoDebug
+    }
+    else {
+      return forceDebug || getState('debug') ? lits : litsNoDebug
+    }
+  }
 })()
 
 const elements = {
@@ -49,6 +58,7 @@ const elements = {
   resizeDevider1: document.getElementById('resize-divider-1') as HTMLElement,
   resizeDevider2: document.getElementById('resize-divider-2') as HTMLElement,
   toggleDebugMenuLabel: document.getElementById('toggle-debug-menu-label') as HTMLSpanElement,
+  toggleAlgebraicMenuLabel: document.getElementById('toggle-algebraic-menu-label') as HTMLSpanElement,
   litsPanelDebugInfo: document.getElementById('lits-panel-debug-info') as HTMLDivElement,
   contextUndoButton: document.getElementById('context-undo-button') as HTMLAnchorElement,
   contextRedoButton: document.getElementById('context-redo-button') as HTMLAnchorElement,
@@ -507,6 +517,10 @@ window.onload = function () {
           evt.preventDefault()
           toggleDebug()
           break
+        case 'l':
+          evt.preventDefault()
+          toggleAlgebraic()
+          break
         case '1':
           evt.preventDefault()
           focusContext()
@@ -838,6 +852,15 @@ export function toggleDebug() {
   focusLitsCode()
 }
 
+export function toggleAlgebraic() {
+  const algebraic = !getState('algebraic')
+  saveState({ algebraic })
+  updateCSS()
+  addOutputSeparator()
+  appendOutput(`Algebraic mode toggled ${algebraic ? 'ON' : 'OFF'}`, 'comment')
+  focusLitsCode()
+}
+
 export function focusContext() {
   elements.contextTextArea.focus()
 }
@@ -941,6 +964,7 @@ function applyState(scrollToTop = false) {
 function updateCSS() {
   const debug = getState('debug')
   elements.toggleDebugMenuLabel.textContent = debug ? 'Debug: ON' : 'Debug: OFF'
+  elements.toggleAlgebraicMenuLabel.textContent = getState('algebraic') ? 'Algebraic: ON' : 'Algebraic: OFF'
   elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none'
 
   elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : ''

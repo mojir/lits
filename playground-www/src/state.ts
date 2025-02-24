@@ -19,6 +19,7 @@ export const defaultState = {
   'new-context-name': '' as string,
   'new-context-value': '' as string,
   'debug': false as boolean,
+  'algebraic': false as boolean,
   'focused-panel': null as 'lits-code' | 'context' | null,
 } as const
 

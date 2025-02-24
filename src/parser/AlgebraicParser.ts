@@ -7,6 +7,8 @@ import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
 import { asSymbolNode } from '../typeGuards/astNode'
+import { specialExpressionKeys } from '../builtin'
+import type { SpecialExpressionName } from '../builtin'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
@@ -14,19 +16,19 @@ function getPrecedence(operator: A_OperatorToken): number {
   const operatorSign = operator[1]
   switch (operatorSign) {
     case '.': // accessor
-      return 1
+      return 9
 
     case '**': // exponentiation
-      return 2
+      return 8
 
     case '*': // multiplication
     case '/': // division
     case '%': // remainder
-      return 3
+      return 7
 
     case '+': // addition
     case '-': // subtraction
-      return 4
+      return 6
 
     case '<<': // left shift
     case '>>': // signed right shift
@@ -37,21 +39,21 @@ function getPrecedence(operator: A_OperatorToken): number {
     case '<=': // less than or equal
     case '>': // greater than
     case '>=': // greater than or equal
-      return 6
+      return 4
 
     case '==': // equal
     case '!=': // not equal
-      return 7
+      return 3
 
     case '&': // bitwise AND
     case '^': // bitwise XOR
     case '|': // bitwise OR
-      return 8
+      return 2
 
     case '&&': // logical AND
     case '||': // logical OR
     case '??': // nullish coalescing
-      return 9
+      return 1
 
     /* v8 ignore next 8 */
     case '!': // logical NOT
@@ -232,7 +234,7 @@ export class AlgebraicParser {
         if (
           newPrecedece <= precedence
           // ** (exponentiation) is right associative
-          && !(newPrecedece === 2 && precedence === 2)) {
+          && !(newPrecedece === 8 && precedence === 8)) {
           break
         }
         this.advance()
@@ -302,7 +304,12 @@ export class AlgebraicParser {
       case 'String':
         return parseString(this.tokenStream, this.parseState)
       case 'A_Symbol': {
-        return parseSymbol(this.tokenStream, this.parseState)
+        const symbolToken = parseSymbol(this.tokenStream, this.parseState)
+        // function call
+        if (isLParenToken(this.peek())) {
+          return this.parseFunctionCall(symbolToken)
+        }
+        return symbolToken
       }
       case 'A_ReservedSymbol':
         return parseReservedSymbol(this.tokenStream, this.parseState)
@@ -397,6 +404,67 @@ export class AlgebraicParser {
       p: params,
       token: firstToken,
     }
+  }
+
+  private parseFunctionCall(symbol: SymbolNode): AstNode {
+    const params: AstNode[] = []
+    this.advance()
+    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+      params.push(this.parseExpression())
+      const nextToken = this.peek()
+      if (!isA_OperatorToken(nextToken, ',') && !isRParenToken(nextToken)) {
+        throw new LitsError('Expected comma or closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
+      }
+      if (isA_OperatorToken(nextToken, ',')) {
+        this.advance()
+      }
+    }
+    if (!isRParenToken(this.peek())) {
+      throw new LitsError('Expected closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
+    }
+    this.advance()
+    if (specialExpressionKeys.includes(symbol.v)) {
+      const name: SpecialExpressionName = symbol.v as SpecialExpressionName
+      switch (name) {
+        case '??':
+        case 'and':
+        case 'comment':
+        case 'cond':
+        case 'declared?':
+        case 'if':
+        case 'if-not':
+        case 'or':
+        case 'when':
+        case 'when-not':
+          return {
+            t: AstNodeType.SpecialExpression,
+            n: name,
+            p: params,
+            token: symbol.token,
+          }
+        case 'def':
+        case 'defs':
+        case 'let':
+        case 'if-let':
+        case 'when-let':
+        case 'when-first':
+        case 'fn':
+        case 'defn':
+        case 'defns':
+        case 'try':
+        case 'throw':
+        case 'recur':
+        case 'loop':
+        case 'time!':
+        case 'doseq':
+        case 'for':
+        case 'do':
+          throw new Error(`Special expression ${name} is not available in algebraic notation`)
+        default:
+          throw new Error(`Unknown special expression: ${name satisfies never}`)
+      }
+    }
+    return createNamedNormalExpressionNode(symbol.v, params, symbol.token)
   }
 
   private isAtEnd(): boolean {

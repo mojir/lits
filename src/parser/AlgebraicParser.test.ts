@@ -163,6 +163,11 @@ describe('algebraic operators', () => {
       expect(lits.run('2 + (3 * 2)')).toBe(8)
     })
   })
+  describe('operator presedence', () => {
+    test('samples', () => {
+      expect(lits.run('1 / 2 + 1 / 2')).toBe(1)
+    })
+  })
   describe('objects', () => {
     test('samples', () => {
       expect(lits.run('{ a=2+3 }')).toEqual({ a: 5 })
@@ -217,6 +222,19 @@ describe('algebraic operators', () => {
       expect(lits.run('{ foo=[1, 2, 3] }.foo[2 - 1]')).toBe(2)
       expect(lits.run('{ foo=[1, { bar=20 }, 3] }.foo[1].bar')).toBe(20)
       expect(lits.run('[1, { bar=20 }, 3][1].bar')).toBe(20)
+    })
+  })
+
+  describe('function call', () => {
+    test('samples', () => {
+      expect(lits.run('max(1, 3, 2)')).toBe(3)
+      expect(lits.run('and(1, 2, 3)')).toBe(3)
+      expect(lits.run('or(0, 1, 2)')).toBe(1)
+      expect(lits.run('if(1 > 2, 1, 2)')).toBe(2)
+      expect(lits.run('if(1 < 2, 1, 2)')).toBe(1)
+      expect(lits.run('when(1 > 2, 2)')).toBe(null)
+      expect(lits.run('when(1 < 2, 2)')).toBe(2)
+      expect(lits.run('\'remove-at\'(1, [1, 2, 3])')).toEqual([1, 3])
     })
   })
 
