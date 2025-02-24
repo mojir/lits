@@ -165,7 +165,7 @@ export const tokenizeP_ReservedSymbol: Tokenizer<P_ReservedSymbolToken> = (input
     const symbol = input.substring(position, position + length)
     if (symbol === reservedName) {
       if (forbidden)
-        throw new LitsError(`${symbol} is forbidden!`)
+        throw new LitsError(`${symbol} is forbidden!`, undefined)
 
       return [length, ['P_ReservedSymbol', reservedName]]
     }
@@ -221,7 +221,7 @@ export const tokenizeP_RegexpShorthand: Tokenizer<P_RegexpShorthandToken> = (inp
   let options = ''
   while (input[position] === 'g' || input[position] === 'i') {
     if (options.includes(input[position]!)) {
-      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`)
+      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`, undefined)
     }
     options += input[position]!
     length += 1

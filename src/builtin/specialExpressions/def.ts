@@ -3,7 +3,7 @@ import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/inter
 import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
-import { asAstNode, asNameNode, assertNameNode } from '../../typeGuards/astNode'
+import { asAstNode, asSymbolNode, assertSymbolNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
 
@@ -21,7 +21,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
       token: getTokenDebugData(firstToken) && firstToken,
     }
 
-    assertNameNode(node.p[0], getTokenDebugData(node.token)?.sourceCodeInfo)
+    assertSymbolNode(node.p[0], getTokenDebugData(node.token)?.sourceCodeInfo)
     assertNumberOfParams(2, node)
 
     return node
@@ -42,7 +42,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const subNode = asAstNode(node.p[1])
     const result = findUnresolvedIdentifiers([subNode], contextStack, builtin)
-    const name = asNameNode(node.p[0]).v
+    const name = asSymbolNode(node.p[0]).v
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
     contextStack.globalContext[name] = { value: true }
     return result

@@ -752,7 +752,7 @@ var Playground = (function (exports) {
         token.push(debugData);
     }
     function throwUnexpectedToken(expected, actual) {
-        throw new LitsError("Unexpected token: ".concat(actual, ", expected ").concat(expected));
+        throw new LitsError("Unexpected token: ".concat(actual, ", expected ").concat(expected), undefined);
     }
 
     var commonSimpleTokenTypes = [
@@ -869,10 +869,12 @@ var Playground = (function (exports) {
     var algebraicValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false);
     __spreadArray(__spreadArray([], __read(algebraicSimpleTokenTypes), false), __read(algebraicValueTokenTypes), false);
     var AlgebraicOperators = [
+        // Unary only operators
         '!', // logical NOT
         '~', // bitwise NOT
         '=', // property assignemnt operator
         ',', // element delimiter
+        '.', // property accessor
         '**', // exponentiation
         '*', // multiplication
         '/', // division
@@ -916,7 +918,7 @@ var Playground = (function (exports) {
     function assertA_OperatorToken(token, operatorName) {
         if (!isA_OperatorToken(token, operatorName)) {
             {
-                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName));
+                throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), undefined);
             }
         }
     }
@@ -1037,7 +1039,7 @@ var Playground = (function (exports) {
     }
     function assertToken(token) {
         if (!isToken$1(token)) {
-            throw new LitsError("Expected token, got ".concat(token));
+            throw new LitsError("Expected token, got ".concat(token), undefined);
         }
     }
     function asToken(token) {
@@ -1049,7 +1051,7 @@ var Playground = (function (exports) {
     }
     function assertSimpleToken(token) {
         if (!isSimpleToken(token)) {
-            throw new LitsError("Expected simple token, got ".concat(token));
+            throw new LitsError("Expected simple token, got ".concat(token), undefined);
         }
     }
     function isValueToken(token) {
@@ -1115,17 +1117,17 @@ var Playground = (function (exports) {
         if (!isAstNode(value))
             throw getAssertionError('AstNode', value, sourceCodeInfo);
     }
-    function isNameNode(value) {
+    function isSymbolNode(value) {
         if (!isAstNode(value))
             return false;
         return value.t === AstNodeType.Symbol;
     }
-    function asNameNode(value, sourceCodeInfo) {
-        assertNameNode(value, sourceCodeInfo);
+    function asSymbolNode(value, sourceCodeInfo) {
+        assertSymbolNode(value, sourceCodeInfo);
         return value;
     }
-    function assertNameNode(value, sourceCodeInfo) {
-        if (!isNameNode(value))
+    function assertSymbolNode(value, sourceCodeInfo) {
+        if (!isSymbolNode(value))
             throw getAssertionError('SymbolNode', value, sourceCodeInfo);
     }
     function isNormalExpressionNode(value) {
@@ -1636,7 +1638,7 @@ var Playground = (function (exports) {
     function assertString(value, sourceCodeInfo, options) {
         if (options === void 0) { options = {}; }
         if (!isString(value, options)) {
-            throw new LitsError(getAssertionError("".concat(options.nonEmpty ? 'non empty string' : options.char ? 'character' : 'string'), value, sourceCodeInfo));
+            throw getAssertionError("".concat(options.nonEmpty ? 'non empty string' : options.char ? 'character' : 'string'), value, sourceCodeInfo);
         }
     }
     function asString(value, sourceCodeInfo, options) {
@@ -5020,7 +5022,7 @@ var Playground = (function (exports) {
                 p: params,
                 token: getTokenDebugData(firstToken) && firstToken,
             };
-            assertNameNode(node.p[0], (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            assertSymbolNode(node.p[0], (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             assertNumberOfParams(2, node);
             return node;
         },
@@ -5041,7 +5043,7 @@ var Playground = (function (exports) {
             var sourceCodeInfo = (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
             var subNode = asAstNode(node.p[1]);
             var result = findUnresolvedIdentifiers([subNode], contextStack, builtin);
-            var name = asNameNode(node.p[0]).v;
+            var name = asSymbolNode(node.p[0]).v;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
             contextStack.globalContext[name] = { value: true };
             return result;
@@ -5169,7 +5171,7 @@ var Playground = (function (exports) {
             var _a;
             var parseToken = parsers.parseToken;
             var functionName = parseToken(tokenStream, parseState);
-            assertNameNode(functionName, (_a = getTokenDebugData(functionName.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            assertSymbolNode(functionName, (_a = getTokenDebugData(functionName.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
@@ -6056,7 +6058,7 @@ var Playground = (function (exports) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode;
             var _c = __read(node.p, 2), firstNode = _c[0], secondNode = _c[1];
-            if (isNameNode(firstNode)) {
+            if (isSymbolNode(firstNode)) {
                 if (contextStack.lookUp(firstNode) === null)
                     return secondNode ? evaluateAstNode(secondNode, contextStack) : null;
             }
@@ -6159,12 +6161,12 @@ var Playground = (function (exports) {
             var tryExpression = parseToken(tokenStream, parseState);
             assertLParenToken(tokenStream.tokens[parseState.position++]);
             var catchNode = parseToken(tokenStream, parseState);
-            assertNameNode(catchNode, (_b = getTokenDebugData(catchNode.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            assertSymbolNode(catchNode, (_b = getTokenDebugData(catchNode.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             if (catchNode.v !== 'catch') {
                 throw new LitsError("Expected 'catch', got '".concat(catchNode.v, "'."), getSourceCodeInfo(catchNode, (_c = getTokenDebugData(catchNode.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo));
             }
             var error = parseToken(tokenStream, parseState);
-            assertNameNode(error, (_d = getTokenDebugData(error.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+            assertSymbolNode(error, (_d = getTokenDebugData(error.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
             var catchExpression = parseToken(tokenStream, parseState);
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             assertRParenToken(tokenStream.tokens[parseState.position++]);
@@ -7040,7 +7042,7 @@ var Playground = (function (exports) {
 
     var calculateDefOutcomes = function (_a) {
         var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, addGlobalIdentifier = _a.addGlobalIdentifier;
-        var nameNode = asNameNode(astNode.p[0]);
+        var nameNode = asSymbolNode(astNode.p[0]);
         var valueNode = astNode.p[1];
         addGlobalIdentifier(nameNode.v);
         return calculatePossibleAstNodes(valueNode)
@@ -7526,9 +7528,10 @@ var Playground = (function (exports) {
     }
 
     function parseSymbol(tokenStream, parseState) {
+        var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
         if (!isA_SymbolToken(tkn) && !isP_SymbolToken(tkn)) {
-            throw new LitsError("Expected symbol token, got ".concat(tkn[0]));
+            throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         return {
             t: AstNodeType.Symbol,
@@ -7539,9 +7542,10 @@ var Playground = (function (exports) {
         };
     }
     function parseReservedSymbol(tokenStream, parseState) {
+        var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
         if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
-            throw new LitsError("Expected symbol token, got ".concat(tkn[0]));
+            throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         return {
             t: AstNodeType.ReservedSymbol,
@@ -7552,9 +7556,10 @@ var Playground = (function (exports) {
         };
     }
     function parseNumber(tokenStream, parseState) {
+        var _a;
         var tkn = tokenStream.tokens[parseState.position++];
         if (!isP_NumberToken(tkn) && !isA_NumberToken(tkn)) {
-            throw new LitsError("Expected number token, got ".concat(tkn));
+            throw new LitsError("Expected number token, got ".concat(tkn), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         var value = tkn[1];
         var negative = value[0] === '-';
@@ -7608,35 +7613,37 @@ var Playground = (function (exports) {
     function getPrecedence(operator) {
         var operatorSign = operator[1];
         switch (operatorSign) {
-            case '**': // exponentiation
+            case '.': // exponentiation
                 return 1;
+            case '**': // exponentiation
+                return 2;
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
-                return 2;
+                return 3;
             case '+': // addition
             case '-': // subtraction
-                return 3;
+                return 4;
             case '<<': // left shift
             case '>>': // signed right shift
             case '>>>': // unsigned right shift
-                return 4;
+                return 5;
             case '<': // less than
             case '<=': // less than or equal
             case '>': // greater than
             case '>=': // greater than or equal
-                return 5;
+                return 6;
             case '==': // equal
             case '!=': // not equal
-                return 6;
+                return 7;
             case '&': // bitwise AND
             case '^': // bitwise XOR
             case '|': // bitwise OR
-                return 7;
+                return 8;
             case '&&': // logical AND
             case '||': // logical OR
             case '??': // nullish coalescing
-                return 8;
+                return 9;
             /* v8 ignore next 8 */
             case '!': // logical NOT
             case '~': // bitwise NOT
@@ -7647,11 +7654,29 @@ var Playground = (function (exports) {
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
         }
     }
-    function createNormalExpressionNode(name, params, token) {
+    function createNamedNormalExpressionNode(name, params, token) {
         return {
             t: AstNodeType.NormalExpression,
             n: name,
             p: params,
+            token: token,
+        };
+    }
+    function fromSymbolToStringNode(symbol) {
+        return {
+            t: AstNodeType.String,
+            v: symbol.v,
+            token: symbol.token,
+            p: [],
+            n: undefined,
+        };
+    }
+    function createAccessorNode(left, right, token) {
+        // Unnamed normal expression
+        return {
+            t: AstNodeType.NormalExpression,
+            p: [left, right],
+            n: undefined,
             token: token,
         };
     }
@@ -7660,58 +7685,61 @@ var Playground = (function (exports) {
         var operatorName = operator[1];
         switch (operatorName) {
             case '+':
-                return createNormalExpressionNode('+', [operand], token);
+                return createNamedNormalExpressionNode('+', [operand], token);
             case '-':
-                return createNormalExpressionNode('-', [operand], token);
+                return createNamedNormalExpressionNode('-', [operand], token);
             case '!':
-                return createNormalExpressionNode('not', [operand], token);
+                return createNamedNormalExpressionNode('not', [operand], token);
             case '~':
-                return createNormalExpressionNode('bit-not', [operand], token);
+                return createNamedNormalExpressionNode('bit-not', [operand], token);
             /* v8 ignore next 2 */
             default:
                 throw new Error("Unknown operator: ".concat(operatorName));
         }
     }
     function fromBinaryAlgebraicToAstNode(operator, left, right) {
+        var _a, _b, _c;
         var token = hasTokenDebugData(operator) ? operator : undefined;
         var operatorName = operator[1];
         switch (operatorName) {
+            case '.':
+                return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)), token);
             case '**': // exponentiation
-                return createNormalExpressionNode('pow', [left, right], token);
+                return createNamedNormalExpressionNode('pow', [left, right], token);
             case '*':
-                return createNormalExpressionNode('*', [left, right], token);
+                return createNamedNormalExpressionNode('*', [left, right], token);
             case '/':
-                return createNormalExpressionNode('/', [left, right], token);
+                return createNamedNormalExpressionNode('/', [left, right], token);
             case '%':
-                return createNormalExpressionNode('rem', [left, right], token);
+                return createNamedNormalExpressionNode('rem', [left, right], token);
             case '+':
-                return createNormalExpressionNode('+', [left, right], token);
+                return createNamedNormalExpressionNode('+', [left, right], token);
             case '-':
-                return createNormalExpressionNode('-', [left, right], token);
+                return createNamedNormalExpressionNode('-', [left, right], token);
             case '<<':
-                return createNormalExpressionNode('bit-shift-left', [left, right], token);
+                return createNamedNormalExpressionNode('bit-shift-left', [left, right], token);
             case '>>':
-                return createNormalExpressionNode('bit-shift-right', [left, right], token);
+                return createNamedNormalExpressionNode('bit-shift-right', [left, right], token);
             case '>>>':
-                return createNormalExpressionNode('unsigned-bit-shift-right', [left, right], token);
+                return createNamedNormalExpressionNode('unsigned-bit-shift-right', [left, right], token);
             case '<':
-                return createNormalExpressionNode('<', [left, right], token);
+                return createNamedNormalExpressionNode('<', [left, right], token);
             case '<=':
-                return createNormalExpressionNode('<=', [left, right], token);
+                return createNamedNormalExpressionNode('<=', [left, right], token);
             case '>':
-                return createNormalExpressionNode('>', [left, right], token);
+                return createNamedNormalExpressionNode('>', [left, right], token);
             case '>=':
-                return createNormalExpressionNode('>=', [left, right], token);
+                return createNamedNormalExpressionNode('>=', [left, right], token);
             case '==':
-                return createNormalExpressionNode('=', [left, right], token);
+                return createNamedNormalExpressionNode('=', [left, right], token);
             case '!=':
-                return createNormalExpressionNode('not=', [left, right], token);
+                return createNamedNormalExpressionNode('not=', [left, right], token);
             case '&':
-                return createNormalExpressionNode('bit-and', [left, right], token);
+                return createNamedNormalExpressionNode('bit-and', [left, right], token);
             case '^':
-                return createNormalExpressionNode('bit-xor', [left, right], token);
+                return createNamedNormalExpressionNode('bit-xor', [left, right], token);
             case '|':
-                return createNormalExpressionNode('bit-or', [left, right], token);
+                return createNamedNormalExpressionNode('bit-or', [left, right], token);
             case '&&':
                 return {
                     t: AstNodeType.SpecialExpression,
@@ -7738,9 +7766,9 @@ var Playground = (function (exports) {
             case '~':
             case '=':
             case ',':
-                throw new Error("Unknown binary operator: ".concat(operatorName));
+                throw new LitsError("Unknown binary operator: ".concat(operatorName), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             default:
-                throw new Error("Unknown binary operator: ".concat(operatorName));
+                throw new LitsError("Unknown binary operator: ".concat(operatorName), (_c = getTokenDebugData(token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
         }
     }
     var AlgebraicParser = /** @class */ (function () {
@@ -7749,7 +7777,7 @@ var Playground = (function (exports) {
             this.parseState = parseState;
         }
         AlgebraicParser.prototype.advance = function () {
-            this.parseState.position++;
+            this.parseState.position += 1;
         };
         AlgebraicParser.prototype.parse = function () {
             return this.parseExpression();
@@ -7765,7 +7793,7 @@ var Playground = (function (exports) {
                 var newPrecedece = getPrecedence(operator);
                 if (newPrecedece <= precedence
                     // ** (exponentiation) is right associative
-                    && !(newPrecedece === 1 && precedence === 1)) {
+                    && !(newPrecedece === 2 && precedence === 2)) {
                     break;
                 }
                 this.advance();
@@ -7775,6 +7803,7 @@ var Playground = (function (exports) {
             return left;
         };
         AlgebraicParser.prototype.parseOperand = function () {
+            var _a;
             var token = this.peek();
             // Parentheses
             if (isLParenToken(token)) {
@@ -7812,8 +7841,10 @@ var Playground = (function (exports) {
                     return parseNumber(this.tokenStream, this.parseState);
                 case 'String':
                     return parseString(this.tokenStream, this.parseState);
-                case 'A_Symbol':
-                    return parseSymbol(this.tokenStream, this.parseState);
+                case 'A_Symbol': {
+                    var symbolNode = parseSymbol(this.tokenStream, this.parseState);
+                    return symbolNode;
+                }
                 case 'A_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);
                 case 'PolNotation': {
@@ -7828,24 +7859,25 @@ var Playground = (function (exports) {
                     return astNode;
                 }
                 case 'AlgNotation': {
-                    this.parseState.position++;
+                    this.advance();
                     var node = this.parseOperand();
                     assertEndNotationToken(this.peek());
                     this.advance();
                     return node;
                 }
                 default:
-                    throw new LitsError("Unknown token type: ".concat(tokenType));
+                    throw new LitsError("Unknown token type: ".concat(tokenType), (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             }
         };
         AlgebraicParser.prototype.parseObject = function () {
+            var _a, _b;
             var firstToken = asLBraceToken(this.peek());
             this.advance();
             var params = [];
             while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
                 var key = this.parseOperand();
                 if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
-                    throw new LitsError('Expected key to be a symbol or a string');
+                    throw new LitsError('Expected key to be a symbol or a string', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
                 params.push({
                     t: AstNodeType.String,
@@ -7859,7 +7891,7 @@ var Playground = (function (exports) {
                 params.push(this.parseExpression());
                 var nextToken = this.peek();
                 if (!isA_OperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing brace');
+                    throw new LitsError('Expected comma or closing brace', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                 }
                 if (isA_OperatorToken(nextToken, ',')) {
                     this.advance();
@@ -7875,6 +7907,7 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseArray = function () {
+            var _a;
             var firstToken = asLBracketToken(this.peek());
             this.advance();
             var params = [];
@@ -7882,7 +7915,7 @@ var Playground = (function (exports) {
                 params.push(this.parseExpression());
                 var nextToken = this.peek();
                 if (!isA_OperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
-                    throw new LitsError('Expected comma or closing parenthesis');
+                    throw new LitsError('Expected comma or closing parenthesis', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
                 if (isA_OperatorToken(nextToken, ',')) {
                     this.advance();
@@ -8122,7 +8155,7 @@ var Playground = (function (exports) {
             };
             return node_1;
         }
-        assertNameNode(fnNode, (_a = getTokenDebugData(fnNode.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+        assertSymbolNode(fnNode, (_a = getTokenDebugData(fnNode.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         var node = {
             t: AstNodeType.NormalExpression,
             n: fnNode.v,
@@ -8289,7 +8322,7 @@ var Playground = (function (exports) {
         var escaping = false;
         while (char !== '"' || escaping) {
             if (char === undefined)
-                throw new LitsError("Unclosed string at position ".concat(position, "."));
+                throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
             length += 1;
             if (escaping) {
                 escaping = false;
@@ -8452,7 +8485,7 @@ var Playground = (function (exports) {
                 var symbol = input.substring(position, position + length_2);
                 if (symbol === reservedName) {
                     if (forbidden)
-                        throw new LitsError("".concat(symbol, " is forbidden!"));
+                        throw new LitsError("".concat(symbol, " is forbidden!"), undefined);
                     return [length_2, ['P_ReservedSymbol', reservedName]];
                 }
             }
@@ -8515,7 +8548,7 @@ var Playground = (function (exports) {
         var options = '';
         while (input[position] === 'g' || input[position] === 'i') {
             if (options.includes(input[position])) {
-                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."));
+                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), undefined);
             }
             options += input[position];
             length += 1;
@@ -8675,7 +8708,7 @@ var Playground = (function (exports) {
                 var name_1 = input.substring(position, position + length_1);
                 if (name_1 === reservedName) {
                     if (forbidden)
-                        throw new LitsError("".concat(name_1, " is forbidden!"));
+                        throw new LitsError("".concat(name_1, " is forbidden!"), undefined);
                     return [length_1, ['A_ReservedSymbol', reservedName]];
                 }
             }
@@ -8746,7 +8779,7 @@ var Playground = (function (exports) {
                 length_2 += 1;
             }
             if (position + length_2 + 1 >= input.length) {
-                throw new LitsError('Comment not closed');
+                throw new LitsError('Comment not closed', undefined);
             }
             value += '*/';
             length_2 += 2;

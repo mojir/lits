@@ -7,7 +7,7 @@ import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../par
 import { assertLParenToken, assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
-import { assertNameNode } from '../../typeGuards/astNode'
+import { assertSymbolNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
 import { getSourceCodeInfo } from '../../utils/debug/getSourceCodeInfo'
 import type { BuiltinSpecialExpression } from '../interface'
@@ -24,7 +24,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
     assertLParenToken(tokenStream.tokens[parseState.position++])
 
     const catchNode = parseToken(tokenStream, parseState)
-    assertNameNode(catchNode, getTokenDebugData(catchNode.token)?.sourceCodeInfo)
+    assertSymbolNode(catchNode, getTokenDebugData(catchNode.token)?.sourceCodeInfo)
     if (catchNode.v !== 'catch') {
       throw new LitsError(
         `Expected 'catch', got '${catchNode.v}'.`,
@@ -33,7 +33,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
     }
 
     const error = parseToken(tokenStream, parseState)
-    assertNameNode(error, getTokenDebugData(error.token)?.sourceCodeInfo)
+    assertSymbolNode(error, getTokenDebugData(error.token)?.sourceCodeInfo)
 
     const catchExpression = parseToken(tokenStream, parseState)
 

@@ -1,5 +1,5 @@
 import type { DefNode } from '../../builtin/specialExpressions/def'
-import { asNameNode } from '../../typeGuards/astNode'
+import { asSymbolNode } from '../../typeGuards/astNode'
 import type { CalculatePossibleAstNodesHelper } from '.'
 
 export const calculateDefOutcomes: CalculatePossibleAstNodesHelper<DefNode> = ({
@@ -7,7 +7,7 @@ export const calculateDefOutcomes: CalculatePossibleAstNodesHelper<DefNode> = ({
   calculatePossibleAstNodes,
   addGlobalIdentifier,
 }) => {
-  const nameNode = asNameNode(astNode.p[0])
+  const nameNode = asSymbolNode(astNode.p[0])
   const valueNode = astNode.p[1]!
   addGlobalIdentifier(nameNode.v)
   return calculatePossibleAstNodes(valueNode)

@@ -23,7 +23,7 @@ describe('errors', () => {
   describe('isLitsError', () => {
     it('isLitsError', () => {
       const error = new Error('An error')
-      const litsError = new LitsError('An error')
+      const litsError = new LitsError('An error', undefined)
       const recurSignal = new RecurSignal([100])
       const userDefinedError = new UserDefinedError('An error')
 

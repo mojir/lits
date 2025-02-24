@@ -22,7 +22,7 @@ export class RecurSignal extends Error {
 export class LitsError extends Error {
   public readonly sourceCodeInfo?: SourceCodeInfo
   public readonly shortMessage: string
-  constructor(message: string | Error, sourceCodeInfo?: SourceCodeInfo) {
+  constructor(message: string | Error, sourceCodeInfo: SourceCodeInfo | undefined) {
     if (message instanceof Error)
       message = `${message.name}${message.message}`
 

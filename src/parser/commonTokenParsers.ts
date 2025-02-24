@@ -17,7 +17,7 @@ import type {
 export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): SymbolNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
   if (!isA_SymbolToken(tkn) && !isP_SymbolToken(tkn)) {
-    throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
+    throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
   return {
     t: AstNodeType.Symbol,
@@ -32,7 +32,7 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
   const tkn = asToken(tokenStream.tokens[parseState.position++])
 
   if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
-    throw new LitsError(`Expected symbol token, got ${tkn[0]}`)
+    throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
   return {
     t: AstNodeType.ReservedSymbol,
@@ -46,7 +46,7 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
   const tkn = tokenStream.tokens[parseState.position++]
   if (!isP_NumberToken(tkn) && !isA_NumberToken(tkn)) {
-    throw new LitsError(`Expected number token, got ${tkn}`)
+    throw new LitsError(`Expected number token, got ${tkn}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
   const value = tkn[1]
   const negative = value[0] === '-'

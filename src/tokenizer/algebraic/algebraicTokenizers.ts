@@ -131,7 +131,7 @@ export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (
     const name = input.substring(position, position + length)
     if (name === reservedName) {
       if (forbidden)
-        throw new LitsError(`${name} is forbidden!`)
+        throw new LitsError(`${name} is forbidden!`, undefined)
 
       return [length, ['A_ReservedSymbol', reservedName]]
     }
@@ -204,7 +204,7 @@ export const tokenizeA_MultiLineComment: Tokenizer<A_MultiLineCommentToken> = (i
       length += 1
     }
     if (position + length + 1 >= input.length) {
-      throw new LitsError('Comment not closed')
+      throw new LitsError('Comment not closed', undefined)
     }
     value += '*/'
     length += 2

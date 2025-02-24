@@ -204,6 +204,12 @@ describe('algebraic operators', () => {
       expect(lits.run('+1')).toBe(1)
     })
   })
+  describe('propery accessor', () => {
+    test('samples', () => {
+      expect(lits.run('{ a=200 }.a')).toBe(200)
+      expect(lits.run('{ a={ b=1, c=2 } }.a.c')).toBe(2)
+    })
+  })
   describe('polish escape hatch', () => {
     test('samples', () => {
       expect(lits.tokenize('$`1 2`').tokens).toEqual([

@@ -18,7 +18,7 @@ import { asLBracketToken, assertRParenToken, isLBracketToken, isLParenToken, isR
 import type { TokenStream } from '../../tokenizer/interface'
 import { asToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { asAstNode, assertNameNode } from '../../typeGuards/astNode'
+import { asAstNode, assertSymbolNode } from '../../typeGuards/astNode'
 import { asString, assertString } from '../../typeGuards/string'
 import { valueToString } from '../../utils/debug/debugTools'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
@@ -45,7 +45,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   parse: (tokenStream, parseState, firstToken, parsers) => {
     const { parseToken } = parsers
     const functionName = parseToken(tokenStream, parseState)
-    assertNameNode(functionName, getTokenDebugData(functionName.token)?.sourceCodeInfo)
+    assertSymbolNode(functionName, getTokenDebugData(functionName.token)?.sourceCodeInfo)
 
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
     assertRParenToken(tokenStream.tokens[parseState.position++])

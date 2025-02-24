@@ -38,7 +38,7 @@ export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   let escaping = false
   while (char !== '"' || escaping) {
     if (char === undefined)
-      throw new LitsError(`Unclosed string at position ${position}.`)
+      throw new LitsError(`Unclosed string at position ${position}.`, undefined)
 
     length += 1
     if (escaping) {

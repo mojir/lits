@@ -15,19 +15,19 @@ import type { Token } from '../tokenizer/tokens'
 import {
   asAstNode,
   asExpressionNode,
-  asNameNode,
   asNormalExpressionNode,
   asNormalExpressionNodeWithName,
+  asSymbolNode,
   assertAstNode,
   assertExpressionNode,
-  assertNameNode,
   assertNormalExpressionNode,
   assertNormalExpressionNodeWithName,
+  assertSymbolNode,
   isAstNode,
   isExpressionNode,
-  isNameNode,
   isNormalExpressionNode,
   isNormalExpressionNodeWithName,
+  isSymbolNode,
 } from './astNode'
 
 describe('astNode type guards', () => {
@@ -142,7 +142,7 @@ describe('astNode type guards', () => {
         valid: [nameNode],
         invalid: [...invalidAstNodes, ...validAstNodes.filter(node => node !== nameNode)],
       },
-      { is: isNameNode, as: asNameNode, assert: assertNameNode },
+      { is: isSymbolNode, as: asSymbolNode, assert: assertSymbolNode },
     )
   })
 

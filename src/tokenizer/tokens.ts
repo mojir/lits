@@ -52,7 +52,7 @@ export function isToken(token?: Token): token is Token {
 }
 export function assertToken(token?: Token): asserts token is Token {
   if (!isToken(token)) {
-    throw new LitsError(`Expected token, got ${token}`)
+    throw new LitsError(`Expected token, got ${token}`, undefined)
   }
 }
 export function asToken(token?: Token): Token {
@@ -66,7 +66,7 @@ export function isSimpleToken(token?: Token): token is SimpleToken {
 
 export function assertSimpleToken(token?: Token): asserts token is SimpleToken {
   if (!isSimpleToken(token)) {
-    throw new LitsError(`Expected simple token, got ${token}`)
+    throw new LitsError(`Expected simple token, got ${token}`, undefined)
   }
 }
 
@@ -81,7 +81,7 @@ export function isValueToken(token?: Token): token is ValueToken {
 
 export function assertValueToken(token?: Token): asserts token is ValueToken {
   if (!isValueToken(token)) {
-    throw new LitsError(`Expected value token, got ${token}`)
+    throw new LitsError(`Expected value token, got ${token}`, undefined)
   }
 }
 

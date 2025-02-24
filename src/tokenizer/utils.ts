@@ -31,5 +31,5 @@ export function addTokenDebugData(token: Token, debugData: TokenDebugData): void
 }
 
 export function throwUnexpectedToken(expected: TokenType, actual?: Token): never {
-  throw new LitsError(`Unexpected token: ${actual}, expected ${expected}`)
+  throw new LitsError(`Unexpected token: ${actual}, expected ${expected}`, undefined)
 }

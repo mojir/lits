@@ -29,10 +29,13 @@ export const algebraicTokenTypes = [
 ] as const
 
 export const AlgebraicOperators = [
+  // Unary only operators
   '!', // logical NOT
   '~', // bitwise NOT
   '=', // property assignemnt operator
   ',', // element delimiter
+
+  '.', // property accessor
 
   '**', // exponentiation
 
@@ -72,7 +75,7 @@ export function isAlgebraicOperator(operator: string): operator is AlgebraicOper
 }
 export function assertAlgebraicOperator(operator: string): asserts operator is AlgebraicOperator {
   if (!isAlgebraicOperator(operator)) {
-    throw new LitsError(`Expected algebraic operator, got ${operator}`)
+    throw new LitsError(`Expected algebraic operator, got ${operator}`, undefined)
   }
 }
 export function asAlgebraicOperator(operator: string): AlgebraicOperator {
@@ -172,7 +175,7 @@ export function isA_OperatorToken<T extends AlgebraicOperator>(token?: Token, op
 export function assertA_OperatorToken<T extends AlgebraicOperator>(token?: Token, operatorName?: T): asserts token is A_OperatorToken<T> {
   if (!isA_OperatorToken(token, operatorName)) {
     if (operatorName) {
-      throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`)
+      throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, undefined)
     }
     throwUnexpectedToken('A_Operator', token)
   }

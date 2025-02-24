@@ -5,49 +5,53 @@ import type { A_OperatorToken, AlgebraicTokenType } from '../tokenizer/algebraic
 import { assertA_OperatorToken, isA_OperatorToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
-import { hasTokenDebugData } from '../tokenizer/utils'
+import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
+import { asSymbolNode } from '../typeGuards/astNode'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
-import type { AstNode, NormalExpressionNodeWithName, ParseState } from './interface'
+import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
 function getPrecedence(operator: A_OperatorToken): number {
   const operatorSign = operator[1]
   switch (operatorSign) {
-    case '**': // exponentiation
+    case '.': // exponentiation
       return 1
+
+    case '**': // exponentiation
+      return 2
 
     case '*': // multiplication
     case '/': // division
     case '%': // remainder
-      return 2
+      return 3
 
     case '+': // addition
     case '-': // subtraction
-      return 3
+      return 4
 
     case '<<': // left shift
     case '>>': // signed right shift
     case '>>>': // unsigned right shift
-      return 4
+      return 5
 
     case '<': // less than
     case '<=': // less than or equal
     case '>': // greater than
     case '>=': // greater than or equal
-      return 5
+      return 6
 
     case '==': // equal
     case '!=': // not equal
-      return 6
+      return 7
 
     case '&': // bitwise AND
     case '^': // bitwise XOR
     case '|': // bitwise OR
-      return 7
+      return 8
 
     case '&&': // logical AND
     case '||': // logical OR
     case '??': // nullish coalescing
-      return 8
+      return 9
 
     /* v8 ignore next 8 */
     case '!': // logical NOT
@@ -61,11 +65,31 @@ function getPrecedence(operator: A_OperatorToken): number {
   }
 }
 
-function createNormalExpressionNode(name: string, params: AstNode[], token: Token | undefined): NormalExpressionNodeWithName {
+function createNamedNormalExpressionNode(name: string, params: AstNode[], token: Token | undefined): NormalExpressionNodeWithName {
   return {
     t: AstNodeType.NormalExpression,
     n: name,
     p: params,
+    token,
+  }
+}
+
+function fromSymbolToStringNode(symbol: SymbolNode): StringNode {
+  return {
+    t: AstNodeType.String,
+    v: symbol.v,
+    token: symbol.token,
+    p: [],
+    n: undefined,
+  }
+}
+
+function createAccessorNode(left: AstNode, right: AstNode, token: Token | undefined): AstNode {
+  // Unnamed normal expression
+  return {
+    t: AstNodeType.NormalExpression,
+    p: [left, right],
+    n: undefined,
     token,
   }
 }
@@ -77,13 +101,13 @@ function fromUnaryAlgebraicToAstNode(operator: A_OperatorToken, operand: AstNode
 
   switch (operatorName) {
     case '+':
-      return createNormalExpressionNode('+', [operand], token)
+      return createNamedNormalExpressionNode('+', [operand], token)
     case '-':
-      return createNormalExpressionNode('-', [operand], token)
+      return createNamedNormalExpressionNode('-', [operand], token)
     case '!':
-      return createNormalExpressionNode('not', [operand], token)
+      return createNamedNormalExpressionNode('not', [operand], token)
     case '~':
-      return createNormalExpressionNode('bit-not', [operand], token)
+      return createNamedNormalExpressionNode('bit-not', [operand], token)
     /* v8 ignore next 2 */
     default:
       throw new Error(`Unknown operator: ${operatorName}`)
@@ -96,42 +120,45 @@ function fromBinaryAlgebraicToAstNode(operator: A_OperatorToken, left: AstNode, 
   const operatorName = operator[1]
 
   switch (operatorName) {
+    case '.':
+      return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, getTokenDebugData(token)?.sourceCodeInfo)), token)
+
     case '**': // exponentiation
-      return createNormalExpressionNode('pow', [left, right], token)
+      return createNamedNormalExpressionNode('pow', [left, right], token)
     case '*':
-      return createNormalExpressionNode('*', [left, right], token)
+      return createNamedNormalExpressionNode('*', [left, right], token)
     case '/':
-      return createNormalExpressionNode('/', [left, right], token)
+      return createNamedNormalExpressionNode('/', [left, right], token)
     case '%':
-      return createNormalExpressionNode('rem', [left, right], token)
+      return createNamedNormalExpressionNode('rem', [left, right], token)
     case '+':
-      return createNormalExpressionNode('+', [left, right], token)
+      return createNamedNormalExpressionNode('+', [left, right], token)
     case '-':
-      return createNormalExpressionNode('-', [left, right], token)
+      return createNamedNormalExpressionNode('-', [left, right], token)
     case '<<':
-      return createNormalExpressionNode('bit-shift-left', [left, right], token)
+      return createNamedNormalExpressionNode('bit-shift-left', [left, right], token)
     case '>>':
-      return createNormalExpressionNode('bit-shift-right', [left, right], token)
+      return createNamedNormalExpressionNode('bit-shift-right', [left, right], token)
     case '>>>':
-      return createNormalExpressionNode('unsigned-bit-shift-right', [left, right], token)
+      return createNamedNormalExpressionNode('unsigned-bit-shift-right', [left, right], token)
     case '<':
-      return createNormalExpressionNode('<', [left, right], token)
+      return createNamedNormalExpressionNode('<', [left, right], token)
     case '<=':
-      return createNormalExpressionNode('<=', [left, right], token)
+      return createNamedNormalExpressionNode('<=', [left, right], token)
     case '>':
-      return createNormalExpressionNode('>', [left, right], token)
+      return createNamedNormalExpressionNode('>', [left, right], token)
     case '>=':
-      return createNormalExpressionNode('>=', [left, right], token)
+      return createNamedNormalExpressionNode('>=', [left, right], token)
     case '==':
-      return createNormalExpressionNode('=', [left, right], token)
+      return createNamedNormalExpressionNode('=', [left, right], token)
     case '!=':
-      return createNormalExpressionNode('not=', [left, right], token)
+      return createNamedNormalExpressionNode('not=', [left, right], token)
     case '&':
-      return createNormalExpressionNode('bit-and', [left, right], token)
+      return createNamedNormalExpressionNode('bit-and', [left, right], token)
     case '^':
-      return createNormalExpressionNode('bit-xor', [left, right], token)
+      return createNamedNormalExpressionNode('bit-xor', [left, right], token)
     case '|':
-      return createNormalExpressionNode('bit-or', [left, right], token)
+      return createNamedNormalExpressionNode('bit-or', [left, right], token)
     case '&&':
       return {
         t: AstNodeType.SpecialExpression,
@@ -158,10 +185,10 @@ function fromBinaryAlgebraicToAstNode(operator: A_OperatorToken, left: AstNode, 
     case '~':
     case '=':
     case ',':
-      throw new Error(`Unknown binary operator: ${operatorName}`)
+      throw new LitsError(`Unknown binary operator: ${operatorName}`, getTokenDebugData(token)?.sourceCodeInfo)
 
     default:
-      throw new Error(`Unknown binary operator: ${operatorName satisfies never}`)
+      throw new LitsError(`Unknown binary operator: ${operatorName satisfies never}`, getTokenDebugData(token)?.sourceCodeInfo)
   }
 }
 
@@ -172,7 +199,7 @@ export class AlgebraicParser {
   ) {}
 
   private advance(): void {
-    this.parseState.position++
+    this.parseState.position += 1
   }
 
   public parse(): AstNode {
@@ -191,7 +218,7 @@ export class AlgebraicParser {
       if (
         newPrecedece <= precedence
         // ** (exponentiation) is right associative
-        && !(newPrecedece === 1 && precedence === 1)) {
+        && !(newPrecedece === 2 && precedence === 2)) {
         break
       }
       this.advance()
@@ -259,8 +286,11 @@ export class AlgebraicParser {
         return parseNumber(this.tokenStream, this.parseState)
       case 'String':
         return parseString(this.tokenStream, this.parseState)
-      case 'A_Symbol':
-        return parseSymbol(this.tokenStream, this.parseState)
+      case 'A_Symbol': {
+        const symbolNode = parseSymbol(this.tokenStream, this.parseState)
+
+        return symbolNode
+      }
       case 'A_ReservedSymbol':
         return parseReservedSymbol(this.tokenStream, this.parseState)
       case 'PolNotation': {
@@ -275,7 +305,7 @@ export class AlgebraicParser {
         return astNode
       }
       case 'AlgNotation': {
-        this.parseState.position++
+        this.advance()
         const node = this.parseOperand()
         assertEndNotationToken(this.peek())
         this.advance()
@@ -283,7 +313,7 @@ export class AlgebraicParser {
       }
 
       default:
-        throw new LitsError(`Unknown token type: ${tokenType}`)
+        throw new LitsError(`Unknown token type: ${tokenType}`, getTokenDebugData(token)?.sourceCodeInfo)
     }
   }
 
@@ -294,7 +324,7 @@ export class AlgebraicParser {
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       const key = this.parseOperand()
       if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
-        throw new LitsError('Expected key to be a symbol or a string')
+        throw new LitsError('Expected key to be a symbol or a string', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
 
       params.push({
@@ -311,7 +341,7 @@ export class AlgebraicParser {
       params.push(this.parseExpression())
       const nextToken = this.peek()
       if (!isA_OperatorToken(nextToken, ',') && !isRBraceToken(nextToken)) {
-        throw new LitsError('Expected comma or closing brace')
+        throw new LitsError('Expected comma or closing brace', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
 
       if (isA_OperatorToken(nextToken, ',')) {
@@ -338,7 +368,7 @@ export class AlgebraicParser {
       params.push(this.parseExpression())
       const nextToken = this.peek()
       if (!isA_OperatorToken(nextToken, ',') && !isRBracketToken(nextToken)) {
-        throw new LitsError('Expected comma or closing parenthesis')
+        throw new LitsError('Expected comma or closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
       if (isA_OperatorToken(nextToken, ',')) {
         this.advance()

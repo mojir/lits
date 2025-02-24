@@ -1,4 +1,3 @@
-import { LitsError } from '../errors'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import { getAssertionError } from '../utils/getAssertionError'
 
@@ -31,12 +30,10 @@ export function assertString(
   options: StringAssertionOptions = {},
 ): asserts value is string {
   if (!isString(value, options)) {
-    throw new LitsError(
-      getAssertionError(
-        `${options.nonEmpty ? 'non empty string' : options.char ? 'character' : 'string'}`,
-        value,
-        sourceCodeInfo,
-      ),
+    throw getAssertionError(
+      `${options.nonEmpty ? 'non empty string' : options.char ? 'character' : 'string'}`,
+      value,
+      sourceCodeInfo,
     )
   }
 }

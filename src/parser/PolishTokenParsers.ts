@@ -12,7 +12,7 @@ import { asP_CommentToken, asP_RegexpShorthandToken, asP_StringShorthandToken, a
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
-import { assertNameNode, isExpressionNode } from '../typeGuards/astNode'
+import { assertSymbolNode, isExpressionNode } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
 import { AlgebraicParser } from './AlgebraicParser'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
@@ -284,7 +284,7 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
     return node
   }
 
-  assertNameNode(fnNode, getTokenDebugData(fnNode.token)?.sourceCodeInfo)
+  assertSymbolNode(fnNode, getTokenDebugData(fnNode.token)?.sourceCodeInfo)
   const node: NormalExpressionNode = {
     t: AstNodeType.NormalExpression,
     n: fnNode.v,

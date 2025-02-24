@@ -27,18 +27,18 @@ export function assertAstNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): 
     throw getAssertionError('AstNode', value, sourceCodeInfo)
 }
 
-export function isNameNode(value: unknown): value is SymbolNode {
+export function isSymbolNode(value: unknown): value is SymbolNode {
   if (!isAstNode(value))
     return false
 
   return value.t === AstNodeType.Symbol
 }
-export function asNameNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): SymbolNode {
-  assertNameNode(value, sourceCodeInfo)
+export function asSymbolNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): SymbolNode {
+  assertSymbolNode(value, sourceCodeInfo)
   return value
 }
-export function assertNameNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): asserts value is SymbolNode {
-  if (!isNameNode(value))
+export function assertSymbolNode(value: unknown, sourceCodeInfo?: SourceCodeInfo): asserts value is SymbolNode {
+  if (!isSymbolNode(value))
     throw getAssertionError('SymbolNode', value, sourceCodeInfo)
 }
 
