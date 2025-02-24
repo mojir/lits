@@ -875,6 +875,9 @@ var Playground = (function (exports) {
         '~', // bitwise NOT
         '=', // property assignemnt operator
         ',', // element delimiter
+        // Only used in lamda function parser
+        '=>',
+        '...',
         '.', // property accessor
         '**', // exponentiation
         '*', // multiplication
@@ -7646,6 +7649,8 @@ var Playground = (function (exports) {
             case '~': // bitwise NOT
             case '=': // property assignemnt operator
             case ',': // element delimiter
+            case '=>': // Only used in lamda function parser
+            case '...': // Only used in lamda function parser
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
             default:
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
@@ -7656,14 +7661,14 @@ var Playground = (function (exports) {
             t: AstNodeType.NormalExpression,
             n: name,
             p: params,
-            token: token,
+            token: getTokenDebugData(token) && token,
         };
     }
     function fromSymbolToStringNode(symbol) {
         return {
             t: AstNodeType.String,
             v: symbol.v,
-            token: symbol.token,
+            token: getTokenDebugData(symbol.token) && symbol.token,
             p: [],
             n: undefined,
         };
@@ -7674,7 +7679,7 @@ var Playground = (function (exports) {
             t: AstNodeType.NormalExpression,
             p: [left, right],
             n: undefined,
-            token: token,
+            token: getTokenDebugData(token) && token,
         };
     }
     function fromUnaryAlgebraicToAstNode(operator, operand) {
@@ -7742,27 +7747,29 @@ var Playground = (function (exports) {
                     t: AstNodeType.SpecialExpression,
                     n: 'and',
                     p: [left, right],
-                    token: token,
+                    token: getTokenDebugData(token) && token,
                 };
             case '||':
                 return {
                     t: AstNodeType.SpecialExpression,
                     n: 'or',
                     p: [left, right],
-                    token: token,
+                    token: getTokenDebugData(token) && token,
                 };
             case '??':
                 return {
                     t: AstNodeType.SpecialExpression,
                     n: '??',
                     p: [left, right],
-                    token: token,
+                    token: getTokenDebugData(token) && token,
                 };
             /* v8 ignore next 8 */
             case '!':
             case '~':
             case '=':
             case ',':
+            case '=>':
+            case '...':
                 throw new LitsError("Unknown binary operator: ".concat(operatorName), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             default:
                 throw new LitsError("Unknown binary operator: ".concat(operatorName), (_c = getTokenDebugData(token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
@@ -7783,10 +7790,17 @@ var Playground = (function (exports) {
             var _a;
             if (precedence === void 0) { precedence = 0; }
             var left = this.parseOperand();
-            while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek())) {
+            while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
                 var operator = this.peek();
                 // Handle index accessor
-                if (isLBracketToken(operator)) {
+                if (isLParenToken(operator)) {
+                    if (precedence >= 9) {
+                        break;
+                    }
+                    left = this.parseFunctionCall(left);
+                }
+                // Handle index accessor
+                else if (isLBracketToken(operator)) {
                     if (precedence >= 9) {
                         break;
                     }
@@ -7820,6 +7834,12 @@ var Playground = (function (exports) {
             var token = this.peek();
             // Parentheses
             if (isLParenToken(token)) {
+                var positionBefore = this.parseState.position;
+                var lamdaFunction = this.parseLamdaFunction();
+                if (lamdaFunction) {
+                    return lamdaFunction;
+                }
+                this.parseState.position = positionBefore;
                 this.advance();
                 var expression = this.parseExpression();
                 if (!isRParenToken(this.peek())) {
@@ -7855,12 +7875,7 @@ var Playground = (function (exports) {
                 case 'String':
                     return parseString(this.tokenStream, this.parseState);
                 case 'A_Symbol': {
-                    var symbolToken = parseSymbol(this.tokenStream, this.parseState);
-                    // function call
-                    if (isLParenToken(this.peek())) {
-                        return this.parseFunctionCall(symbolToken);
-                    }
-                    return symbolToken;
+                    return parseSymbol(this.tokenStream, this.parseState);
                 }
                 case 'A_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);
@@ -7899,7 +7914,7 @@ var Playground = (function (exports) {
                 params.push({
                     t: AstNodeType.String,
                     v: key.v,
-                    token: key.token,
+                    token: getTokenDebugData(key.token) && key.token,
                     p: [],
                     n: undefined,
                 });
@@ -7920,7 +7935,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.NormalExpression,
                 n: 'object',
                 p: params,
-                token: firstToken,
+                token: getTokenDebugData(firstToken) && firstToken,
             };
         };
         AlgebraicParser.prototype.parseArray = function () {
@@ -7944,7 +7959,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.NormalExpression,
                 n: 'array',
                 p: params,
-                token: firstToken,
+                token: getTokenDebugData(firstToken) && firstToken,
             };
         };
         AlgebraicParser.prototype.parseFunctionCall = function (symbol) {
@@ -7965,48 +7980,117 @@ var Playground = (function (exports) {
                 throw new LitsError('Expected closing parenthesis', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             this.advance();
-            if (specialExpressionKeys.includes(symbol.v)) {
-                var name_1 = symbol.v;
-                switch (name_1) {
-                    case '??':
-                    case 'and':
-                    case 'comment':
-                    case 'cond':
-                    case 'declared?':
-                    case 'if':
-                    case 'if-not':
-                    case 'or':
-                    case 'when':
-                    case 'when-not':
-                        return {
-                            t: AstNodeType.SpecialExpression,
-                            n: name_1,
-                            p: params,
-                            token: symbol.token,
-                        };
-                    case 'def':
-                    case 'defs':
-                    case 'let':
-                    case 'if-let':
-                    case 'when-let':
-                    case 'when-first':
-                    case 'fn':
-                    case 'defn':
-                    case 'defns':
-                    case 'try':
-                    case 'throw':
-                    case 'recur':
-                    case 'loop':
-                    case 'time!':
-                    case 'doseq':
-                    case 'for':
-                    case 'do':
-                        throw new Error("Special expression ".concat(name_1, " is not available in algebraic notation"));
-                    default:
-                        throw new Error("Unknown special expression: ".concat(name_1));
+            if (isSymbolNode(symbol)) {
+                if (specialExpressionKeys.includes(symbol.v)) {
+                    var name_1 = symbol.v;
+                    switch (name_1) {
+                        case '??':
+                        case 'and':
+                        case 'comment':
+                        case 'cond':
+                        case 'declared?':
+                        case 'if':
+                        case 'if-not':
+                        case 'or':
+                        case 'when':
+                        case 'when-not':
+                            return {
+                                t: AstNodeType.SpecialExpression,
+                                n: name_1,
+                                p: params,
+                                token: getTokenDebugData(symbol.token) && symbol.token,
+                            };
+                        case 'def':
+                        case 'defs':
+                        case 'let':
+                        case 'if-let':
+                        case 'when-let':
+                        case 'when-first':
+                        case 'fn':
+                        case 'defn':
+                        case 'defns':
+                        case 'try':
+                        case 'throw':
+                        case 'recur':
+                        case 'loop':
+                        case 'time!':
+                        case 'doseq':
+                        case 'for':
+                        case 'do':
+                            throw new Error("Special expression ".concat(name_1, " is not available in algebraic notation"));
+                        default:
+                            throw new Error("Unknown special expression: ".concat(name_1));
+                    }
+                }
+                return createNamedNormalExpressionNode(symbol.v, params, symbol.token);
+            }
+            else {
+                return {
+                    t: AstNodeType.NormalExpression,
+                    n: undefined,
+                    p: __spreadArray([symbol], __read(params), false),
+                    token: getTokenDebugData(symbol.token) && symbol.token,
+                };
+            }
+        };
+        AlgebraicParser.prototype.parseLamdaFunction = function () {
+            var _a;
+            var firstToken = this.peek();
+            this.advance();
+            var spread = false;
+            var args = [];
+            var restArg;
+            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+                if (isA_OperatorToken(this.peek(), '...')) {
+                    if (spread) {
+                        throw new LitsError('Multiple spread operators in lambda function', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                    this.advance();
+                    spread = true;
+                }
+                var symbolToken = this.peek();
+                if (!isA_SymbolToken(symbolToken)) {
+                    return null;
+                }
+                if (spread) {
+                    restArg = symbolToken[1];
+                }
+                else {
+                    args.push(symbolToken[1]);
+                }
+                this.advance();
+                if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
+                    return null;
+                }
+                if (isA_OperatorToken(this.peek(), ',')) {
+                    this.advance();
                 }
             }
-            return createNamedNormalExpressionNode(symbol.v, params, symbol.token);
+            if (!isRParenToken(this.peek())) {
+                return null;
+            }
+            this.advance();
+            if (!isA_OperatorToken(this.peek(), '=>')) {
+                return null;
+            }
+            this.advance();
+            var body = this.parseExpression();
+            var arity = restArg !== undefined ? { min: args.length } : args.length;
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'fn',
+                p: [],
+                o: [{
+                        as: {
+                            m: args,
+                            r: restArg,
+                            b: [],
+                        },
+                        b: [body],
+                        a: arity,
+                    }],
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
         };
         AlgebraicParser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;

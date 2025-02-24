@@ -35,6 +35,10 @@ export const AlgebraicOperators = [
   '=', // property assignemnt operator
   ',', // element delimiter
 
+  // Only used in lamda function parser
+  '=>',
+  '...',
+
   '.', // property accessor
 
   '**', // exponentiation

@@ -2,13 +2,14 @@ import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { A_OperatorToken, AlgebraicTokenType } from '../tokenizer/algebraic/algebraicTokens'
-import { assertA_OperatorToken, isA_OperatorToken } from '../tokenizer/algebraic/algebraicTokens'
+import { assertA_OperatorToken, isA_OperatorToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
-import { asSymbolNode } from '../typeGuards/astNode'
+import { asSymbolNode, isSymbolNode } from '../typeGuards/astNode'
 import { specialExpressionKeys } from '../builtin'
 import type { SpecialExpressionName } from '../builtin'
+import type { Arity } from '../builtin/utils'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
@@ -61,6 +62,8 @@ function getPrecedence(operator: A_OperatorToken): number {
     case '~': // bitwise NOT
     case '=': // property assignemnt operator
     case ',': // element delimiter
+    case '=>': // Only used in lamda function parser
+    case '...': // Only used in lamda function parser
       throw new Error(`Unknown binary operator: ${operatorSign}`)
 
     default:
@@ -73,7 +76,7 @@ function createNamedNormalExpressionNode(name: string, params: AstNode[], token:
     t: AstNodeType.NormalExpression,
     n: name,
     p: params,
-    token,
+    token: getTokenDebugData(token) && token,
   }
 }
 
@@ -81,7 +84,7 @@ function fromSymbolToStringNode(symbol: SymbolNode): StringNode {
   return {
     t: AstNodeType.String,
     v: symbol.v,
-    token: symbol.token,
+    token: getTokenDebugData(symbol.token) && symbol.token,
     p: [],
     n: undefined,
   }
@@ -93,7 +96,7 @@ function createAccessorNode(left: AstNode, right: AstNode, token: Token | undefi
     t: AstNodeType.NormalExpression,
     p: [left, right],
     n: undefined,
-    token,
+    token: getTokenDebugData(token) && token,
   }
 }
 
@@ -166,27 +169,29 @@ function fromBinaryAlgebraicToAstNode(operator: A_OperatorToken, left: AstNode, 
         t: AstNodeType.SpecialExpression,
         n: 'and',
         p: [left, right],
-        token,
+        token: getTokenDebugData(token) && token,
       }
     case '||':
       return {
         t: AstNodeType.SpecialExpression,
         n: 'or',
         p: [left, right],
-        token,
+        token: getTokenDebugData(token) && token,
       }
     case '??':
       return {
         t: AstNodeType.SpecialExpression,
         n: '??',
         p: [left, right],
-        token,
+        token: getTokenDebugData(token) && token,
       }
     /* v8 ignore next 8 */
     case '!':
     case '~':
     case '=':
     case ',':
+    case '=>':
+    case '...':
       throw new LitsError(`Unknown binary operator: ${operatorName}`, getTokenDebugData(token)?.sourceCodeInfo)
 
     default:
@@ -211,11 +216,18 @@ export class AlgebraicParser {
   private parseExpression(precedence = 0): AstNode {
     let left = this.parseOperand()
 
-    while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek())) {
+    while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
       const operator = this.peek()
 
       // Handle index accessor
-      if (isLBracketToken(operator)) {
+      if (isLParenToken(operator)) {
+        if (precedence >= 9) {
+          break
+        }
+        left = this.parseFunctionCall(left)
+      }
+      // Handle index accessor
+      else if (isLBracketToken(operator)) {
         if (precedence >= 9) {
           break
         }
@@ -252,6 +264,12 @@ export class AlgebraicParser {
 
     // Parentheses
     if (isLParenToken(token)) {
+      const positionBefore = this.parseState.position
+      const lamdaFunction = this.parseLamdaFunction()
+      if (lamdaFunction) {
+        return lamdaFunction
+      }
+      this.parseState.position = positionBefore
       this.advance()
       const expression = this.parseExpression()
       if (!isRParenToken(this.peek())) {
@@ -305,12 +323,7 @@ export class AlgebraicParser {
       case 'String':
         return parseString(this.tokenStream, this.parseState)
       case 'A_Symbol': {
-        const symbolToken = parseSymbol(this.tokenStream, this.parseState)
-        // function call
-        if (isLParenToken(this.peek())) {
-          return this.parseFunctionCall(symbolToken)
-        }
-        return symbolToken
+        return parseSymbol(this.tokenStream, this.parseState)
       }
       case 'A_ReservedSymbol':
         return parseReservedSymbol(this.tokenStream, this.parseState)
@@ -351,7 +364,7 @@ export class AlgebraicParser {
       params.push({
         t: AstNodeType.String,
         v: key.v,
-        token: key.token,
+        token: getTokenDebugData(key.token) && key.token,
         p: [],
         n: undefined,
       })
@@ -377,7 +390,7 @@ export class AlgebraicParser {
       t: AstNodeType.NormalExpression,
       n: 'object',
       p: params,
-      token: firstToken,
+      token: getTokenDebugData(firstToken) && firstToken,
     }
   }
 
@@ -403,11 +416,11 @@ export class AlgebraicParser {
       t: AstNodeType.NormalExpression,
       n: 'array',
       p: params,
-      token: firstToken,
+      token: getTokenDebugData(firstToken) && firstToken,
     }
   }
 
-  private parseFunctionCall(symbol: SymbolNode): AstNode {
+  private parseFunctionCall(symbol: AstNode): AstNode {
     const params: AstNode[] = []
     this.advance()
     while (!this.isAtEnd() && !isRParenToken(this.peek())) {
@@ -424,48 +437,118 @@ export class AlgebraicParser {
       throw new LitsError('Expected closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
     }
     this.advance()
-    if (specialExpressionKeys.includes(symbol.v)) {
-      const name: SpecialExpressionName = symbol.v as SpecialExpressionName
-      switch (name) {
-        case '??':
-        case 'and':
-        case 'comment':
-        case 'cond':
-        case 'declared?':
-        case 'if':
-        case 'if-not':
-        case 'or':
-        case 'when':
-        case 'when-not':
-          return {
-            t: AstNodeType.SpecialExpression,
-            n: name,
-            p: params,
-            token: symbol.token,
-          }
-        case 'def':
-        case 'defs':
-        case 'let':
-        case 'if-let':
-        case 'when-let':
-        case 'when-first':
-        case 'fn':
-        case 'defn':
-        case 'defns':
-        case 'try':
-        case 'throw':
-        case 'recur':
-        case 'loop':
-        case 'time!':
-        case 'doseq':
-        case 'for':
-        case 'do':
-          throw new Error(`Special expression ${name} is not available in algebraic notation`)
-        default:
-          throw new Error(`Unknown special expression: ${name satisfies never}`)
+    if (isSymbolNode(symbol)) {
+      if (specialExpressionKeys.includes(symbol.v)) {
+        const name: SpecialExpressionName = symbol.v as SpecialExpressionName
+        switch (name) {
+          case '??':
+          case 'and':
+          case 'comment':
+          case 'cond':
+          case 'declared?':
+          case 'if':
+          case 'if-not':
+          case 'or':
+          case 'when':
+          case 'when-not':
+            return {
+              t: AstNodeType.SpecialExpression,
+              n: name,
+              p: params,
+              token: getTokenDebugData(symbol.token) && symbol.token,
+            }
+          case 'def':
+          case 'defs':
+          case 'let':
+          case 'if-let':
+          case 'when-let':
+          case 'when-first':
+          case 'fn':
+          case 'defn':
+          case 'defns':
+          case 'try':
+          case 'throw':
+          case 'recur':
+          case 'loop':
+          case 'time!':
+          case 'doseq':
+          case 'for':
+          case 'do':
+            throw new Error(`Special expression ${name} is not available in algebraic notation`)
+          default:
+            throw new Error(`Unknown special expression: ${name satisfies never}`)
+        }
+      }
+      return createNamedNormalExpressionNode(symbol.v, params, symbol.token)
+    }
+    else {
+      return {
+        t: AstNodeType.NormalExpression,
+        n: undefined,
+        p: [symbol, ...params],
+        token: getTokenDebugData(symbol.token) && symbol.token,
       }
     }
-    return createNamedNormalExpressionNode(symbol.v, params, symbol.token)
+  }
+
+  parseLamdaFunction(): AstNode | null {
+    const firstToken = this.peek()
+    this.advance()
+    let spread = false
+    const args: string[] = []
+    let restArg: string | undefined
+    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+      if (isA_OperatorToken(this.peek(), '...')) {
+        if (spread) {
+          throw new LitsError('Multiple spread operators in lambda function', getTokenDebugData(this.peek())?.sourceCodeInfo)
+        }
+        this.advance()
+        spread = true
+      }
+      const symbolToken = this.peek()
+      if (!isA_SymbolToken(symbolToken)) {
+        return null
+      }
+      if (spread) {
+        restArg = symbolToken[1]
+      }
+      else {
+        args.push(symbolToken[1])
+      }
+      this.advance()
+      if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
+        return null
+      }
+      if (isA_OperatorToken(this.peek(), ',')) {
+        this.advance()
+      }
+    }
+    if (!isRParenToken(this.peek())) {
+      return null
+    }
+    this.advance()
+    if (!isA_OperatorToken(this.peek(), '=>')) {
+      return null
+    }
+    this.advance()
+    const body = this.parseExpression()
+    const arity: Arity = restArg !== undefined ? { min: args.length } : args.length
+
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'fn',
+      p: [],
+      o: [{
+        as: {
+          m: args,
+          r: restArg,
+          b: [],
+        },
+        b: [body],
+        a: arity,
+      }],
+      token: getTokenDebugData(firstToken) && firstToken,
+    }
   }
 
   private isAtEnd(): boolean {
