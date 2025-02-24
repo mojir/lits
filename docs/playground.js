@@ -3659,7 +3659,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.2";
+    var version = "2.0.3";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -9162,7 +9162,9 @@ var Playground = (function (exports) {
     }
 
     function transformTokens(tokenStram, transformer) {
-        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return !isP_SymbolToken(token) ? token : [token[0], transformer(token[1])]; }) });
+        return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return isA_SymbolToken(token) || isP_SymbolToken(token)
+                ? [token[0], transformer(token[1])]
+                : token; }) });
     }
 
     function untokenize(tokenStream) {
