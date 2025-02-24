@@ -167,6 +167,7 @@ describe('infix operators', () => {
     test('samples', () => {
       expect(lits.run('{ a=2+3 }')).toEqual({ a: 5 })
       expect(lits.run('{ a=10 }')).toEqual({ a: 10 })
+      expect(lits.run('{ " "=10 }')).toEqual({ ' ': 10 })
       expect(lits.run('{ a=10, b=2+3 }')).toEqual({ a: 10, b: 5 })
       expect(lits.run('{ a=10, b=20, c = 2 * (1 - 2) }')).toEqual({ a: 10, b: 20, c: -2 })
     })
@@ -187,6 +188,106 @@ describe('infix operators', () => {
         ['IF_Operator', '-'],
         ['IF_Number', '10'],
       ])
+    })
+  })
+  describe('strings', () => {
+    test('samples', () => {
+      expect(lits.run('""')).toBe('')
+      expect(lits.run('"Foo"')).toBe('Foo')
+      expect(lits.run('"Fo\\no"')).toBe('Fo\no')
+    })
+  })
+  describe('unary operators', () => {
+    test('samples', () => {
+      expect(lits.run('!5')).toBe(false)
+      expect(lits.run('~1')).toBe(-2)
+      expect(lits.run('+1')).toBe(1)
+    })
+  })
+  describe('debug', () => {
+    test('samples', () => {
+      expect(lits.run('2+3', { debug: true })).toBe(5)
+      expect(lits.tokenize('2+3', { debug: true }).tokens).toEqual([
+        [
+          'IF_Number',
+          '2',
+          {
+            sourceCodeInfo: {
+              code: '2+3',
+              position: {
+                column: 1,
+                line: 1,
+              },
+            },
+          },
+        ],
+        [
+          'IF_Operator',
+          '+',
+          {
+            sourceCodeInfo: {
+              code: '2+3',
+              position: {
+                column: 2,
+                line: 1,
+              },
+            },
+          },
+        ],
+        [
+          'IF_Number',
+          '3',
+          {
+            sourceCodeInfo: {
+              code: '2+3',
+              position: {
+                column: 3,
+                line: 1,
+              },
+            },
+          },
+        ],
+      ])
+      expect(lits.run('-2', { debug: true })).toBe(-2)
+      expect(lits.tokenize('-2', { debug: true }).tokens).toEqual([
+        [
+          'IF_Operator',
+          '-',
+          {
+            sourceCodeInfo: {
+              code: '-2',
+              position: {
+                column: 1,
+                line: 1,
+              },
+            },
+          },
+        ],
+        [
+          'IF_Number',
+          '2',
+          {
+            sourceCodeInfo: {
+              code: '-2',
+              position: {
+                column: 2,
+                line: 1,
+              },
+            },
+          },
+        ],
+      ])
+    })
+  })
+
+  describe('errors', () => {
+    test('unknown operator', () => {
+      expect(() => lits.run('2 # 3')).toThrow()
+      expect(() => lits.run('(1 + 2]')).toThrow()
+      expect(() => lits.run('/2')).toThrow()
+      expect(() => lits.run('{ 2 = 1 }')).toThrow()
+      expect(() => lits.run('{ x=1 y=2 }')).toThrow()
+      expect(() => lits.run('[1 2]')).toThrow()
     })
   })
 })

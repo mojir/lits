@@ -49,6 +49,7 @@ function getPrecedence(operator: IF_OperatorToken): number {
     case '??': // nullish coalescing
       return 8
 
+    /* v8 ignore next 8 */
     case '!': // logical NOT
     case '~': // bitwise NOT
     case '=': // property assignemnt operator
@@ -83,6 +84,7 @@ function fromUnaryInfixToAstNode(operator: IF_OperatorToken, operand: AstNode): 
       return createNormalExpressionNode('not', [operand], token)
     case '~':
       return createNormalExpressionNode('bit-not', [operand], token)
+    /* v8 ignore next 2 */
     default:
       throw new Error(`Unknown operator: ${operatorName}`)
   }
@@ -151,11 +153,13 @@ function fromBinaryInfixToAstNode(operator: IF_OperatorToken, left: AstNode, rig
         p: [left, right],
         token,
       }
+    /* v8 ignore next 8 */
     case '!':
     case '~':
     case '=':
     case ',':
       throw new Error(`Unknown binary operator: ${operatorName}`)
+
     default:
       throw new Error(`Unknown binary operator: ${operatorName satisfies never}`)
   }
@@ -200,16 +204,19 @@ export class InfixParser {
 
   private parseOperand(): AstNode {
     const token = this.peek()
+
+    // Parentheses
     if (isLParenToken(token)) {
       this.advance()
       const expression = this.parseExpression()
       if (!isRParenToken(this.peek())) {
-        throw new Error('Expected closing brace')
+        throw new Error('Expected closing parenthesis')
       }
       this.advance()
       return expression
     }
 
+    // Unary operators
     if (isIF_OperatorToken(token)) {
       const operatorName = token[1]
       if (['-', '+', '!', '~'].includes(operatorName)) {
@@ -222,25 +229,17 @@ export class InfixParser {
       }
     }
 
-    if (isLParenToken(token)) {
-      this.advance()
-      const expression = this.parseExpression()
-      if (!isRParenToken(this.peek())) {
-        throw new LitsError('Expected closing parenthesis')
-      }
-      this.advance()
-      return expression
-    }
-
+    // Object litteral, e.g. {a=1, b=2}
     if (isLBraceToken(token)) {
       return this.parseObject()
     }
 
+    // Array litteral, e.g. [1, 2]
     if (isLBracketToken(token)) {
       return this.parseArray()
     }
 
-    const tokenType = token[0] as InfixTokenType
+    const tokenType = token[0] as Exclude<InfixTokenType, 'IF_Operator' | 'LParen' | 'LBrace' | 'LBracket'>
     switch (tokenType) {
       case 'IF_Number':
         return parseNumber(this.tokenStream, this.parseState)
@@ -252,7 +251,7 @@ export class InfixParser {
         return parseReservedSymbol(this.tokenStream, this.parseState)
     }
 
-    return this.parseState.parseToken(this.tokenStream, this.parseState)
+    throw new LitsError(`Unknown token type: ${tokenType}`)
   }
 
   private parseObject(): AstNode {

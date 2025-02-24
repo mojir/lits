@@ -1,40 +1,9 @@
 import type { TokenStream } from '../tokenizer/interface'
 import { type Token, assertSimpleToken, isValueToken } from '../tokenizer/tokens'
 
-function isNoSpaceNeededBefore(token: Token): boolean {
-  switch (token[0]) {
-    case 'RParen':
-    case 'RBracket':
-    case 'PF_CollectionAccessor':
-    case 'PF_Whitespace':
-    case 'IF_Whitespace':
-      return true
-    default:
-      return false
-  }
-}
-
-function isNoSpaceNeededAfter(token: Token): boolean {
-  switch (token[0]) {
-    case 'LParen':
-    case 'LBracket':
-    case 'PF_CollectionAccessor':
-    case 'PF_FnShorthand':
-    case 'PF_Whitespace':
-    case 'IF_Whitespace':
-    case 'PF_RegexpShorthand':
-      return true
-    default:
-      return false
-  }
-}
-
 export function untokenize(tokenStream: TokenStream): string {
-  let lastToken: Token | undefined
   return tokenStream.tokens.reduce((acc: string, token) => {
-    const joiner = !lastToken || isNoSpaceNeededAfter(lastToken) || isNoSpaceNeededBefore(token) ? '' : ' '
-    lastToken = token
-    return `${acc}${joiner}${untokenizeToken(token)}`
+    return `${acc}${untokenizeToken(token)}`
   }, '')
 }
 
@@ -55,6 +24,7 @@ function untokenizeToken(token: Token): string {
     case 'IF_Postfix': return '@'
     case 'PF_FnShorthand': return '#'
 
+    /* v8 ignore next 2 */
     default:
       throw new Error(`Unknown token type: ${tokenType satisfies never}`)
   }

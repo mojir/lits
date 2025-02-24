@@ -7630,6 +7630,7 @@ var Playground = (function (exports) {
             case '||': // logical OR
             case '??': // nullish coalescing
                 return 8;
+            /* v8 ignore next 8 */
             case '!': // logical NOT
             case '~': // bitwise NOT
             case '=': // property assignemnt operator
@@ -7659,6 +7660,7 @@ var Playground = (function (exports) {
                 return createNormalExpressionNode('not', [operand], token);
             case '~':
                 return createNormalExpressionNode('bit-not', [operand], token);
+            /* v8 ignore next 2 */
             default:
                 throw new Error("Unknown operator: ".concat(operatorName));
         }
@@ -7724,6 +7726,7 @@ var Playground = (function (exports) {
                     p: [left, right],
                     token: token,
                 };
+            /* v8 ignore next 8 */
             case '!':
             case '~':
             case '=':
@@ -7766,15 +7769,17 @@ var Playground = (function (exports) {
         };
         InfixParser.prototype.parseOperand = function () {
             var token = this.peek();
+            // Parentheses
             if (isLParenToken(token)) {
                 this.advance();
                 var expression = this.parseExpression();
                 if (!isRParenToken(this.peek())) {
-                    throw new Error('Expected closing brace');
+                    throw new Error('Expected closing parenthesis');
                 }
                 this.advance();
                 return expression;
             }
+            // Unary operators
             if (isIF_OperatorToken(token)) {
                 var operatorName = token[1];
                 if (['-', '+', '!', '~'].includes(operatorName)) {
@@ -7786,18 +7791,11 @@ var Playground = (function (exports) {
                     throw new Error("Unknown unary operator: ".concat(operatorName));
                 }
             }
-            if (isLParenToken(token)) {
-                this.advance();
-                var expression = this.parseExpression();
-                if (!isRParenToken(this.peek())) {
-                    throw new LitsError('Expected closing parenthesis');
-                }
-                this.advance();
-                return expression;
-            }
+            // Object litteral, e.g. {a=1, b=2}
             if (isLBraceToken(token)) {
                 return this.parseObject();
             }
+            // Array litteral, e.g. [1, 2]
             if (isLBracketToken(token)) {
                 return this.parseArray();
             }
@@ -7812,7 +7810,7 @@ var Playground = (function (exports) {
                 case 'IF_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);
             }
-            return this.parseState.parseToken(this.tokenStream, this.parseState);
+            throw new LitsError("Unknown token type: ".concat(tokenType));
         };
         InfixParser.prototype.parseObject = function () {
             var firstToken = asLBraceToken(this.peek());
@@ -8925,38 +8923,9 @@ var Playground = (function (exports) {
         return __assign(__assign({}, tokenStram), { tokens: tokenStram.tokens.map(function (token) { return !isPF_SymbolToken(token) ? token : [token[0], transformer(token[1])]; }) });
     }
 
-    function isNoSpaceNeededBefore(token) {
-        switch (token[0]) {
-            case 'RParen':
-            case 'RBracket':
-            case 'PF_CollectionAccessor':
-            case 'PF_Whitespace':
-            case 'IF_Whitespace':
-                return true;
-            default:
-                return false;
-        }
-    }
-    function isNoSpaceNeededAfter(token) {
-        switch (token[0]) {
-            case 'LParen':
-            case 'LBracket':
-            case 'PF_CollectionAccessor':
-            case 'PF_FnShorthand':
-            case 'PF_Whitespace':
-            case 'IF_Whitespace':
-            case 'PF_RegexpShorthand':
-                return true;
-            default:
-                return false;
-        }
-    }
     function untokenize(tokenStream) {
-        var lastToken;
         return tokenStream.tokens.reduce(function (acc, token) {
-            var joiner = !lastToken || isNoSpaceNeededAfter(lastToken) || isNoSpaceNeededBefore(token) ? '' : ' ';
-            lastToken = token;
-            return "".concat(acc).concat(joiner).concat(untokenizeToken(token));
+            return "".concat(acc).concat(untokenizeToken(token));
         }, '');
     }
     function untokenizeToken(token) {
@@ -8975,6 +8944,7 @@ var Playground = (function (exports) {
             case 'PF_Infix': return '$';
             case 'IF_Postfix': return '@';
             case 'PF_FnShorthand': return '#';
+            /* v8 ignore next 2 */
             default:
                 throw new Error("Unknown token type: ".concat(tokenType));
         }
