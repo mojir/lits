@@ -9,11 +9,14 @@ import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
 import { asSymbolNode, isSymbolNode } from '../typeGuards/astNode'
 import { specialExpressionKeys } from '../builtin'
 import type { SpecialExpressionName } from '../builtin'
-import type { Arity } from '../builtin/utils'
+import type { Arity, FunctionArguments } from '../builtin/utils'
+import type { FnNode } from '../builtin/specialExpressions/functions'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
 const exponentiationPrecedence = 9
+const placeholderRegexp = /^\$([1-9]\d?)?$/
+
 function getPrecedence(operator: A_OperatorToken): number {
   const operatorSign = operator[1]
   switch (operatorSign) {
@@ -273,7 +276,7 @@ export class AlgebraicParser {
     // Parentheses
     if (isLParenToken(token)) {
       const positionBefore = this.parseState.position
-      const lamdaFunction = this.parseLamdaFunction()
+      const lamdaFunction = this.parseLambdaFunction()
       if (lamdaFunction) {
         return lamdaFunction
       }
@@ -294,6 +297,9 @@ export class AlgebraicParser {
         this.advance()
         const operand = this.parseOperand()
         return fromUnaryAlgebraicToAstNode(token, operand)
+      }
+      else if (operatorName === '=>') {
+        return this.parseShorthandLamdaFunction()
       }
       else {
         throw new Error(`Unknown unary operator: ${operatorName}`)
@@ -507,7 +513,7 @@ export class AlgebraicParser {
     }
   }
 
-  parseLamdaFunction(): AstNode | null {
+  parseLambdaFunction(): AstNode | null {
     const firstToken = this.peek()
     this.advance()
     let spread = false
@@ -565,6 +571,70 @@ export class AlgebraicParser {
       }],
       token: getTokenDebugData(firstToken) && firstToken,
     }
+  }
+
+  private parseShorthandLamdaFunction(): FnNode {
+    const firstToken = this.peek()
+    this.advance()
+    const startPos = this.parseState.position
+    const exprNode = this.parseExpression()
+    const endPos = this.parseState.position - 1
+
+    let arity = 0
+    let percent1: 'NOT_SET' | 'WITH_1' | 'NAKED' = 'NOT_SET' // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
+    for (let pos = startPos; pos <= endPos; pos += 1) {
+      const tkn = this.tokenStream.tokens[pos]!
+      if (isA_SymbolToken(tkn)) {
+        const match = placeholderRegexp.exec(tkn[1])
+        if (match) {
+          const number = match[1] ?? '1'
+          if (number === '1') {
+            const mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED')
+            if (mixedPercent1)
+              throw new LitsError('Please make up your mind, either use $ or $1', getTokenDebugData(firstToken)?.sourceCodeInfo)
+
+            percent1 = match[1] ? 'WITH_1' : 'NAKED'
+          }
+
+          arity = Math.max(arity, Number(number))
+          if (arity > 20)
+            throw new LitsError('Can\'t specify more than 20 arguments', getTokenDebugData(firstToken)?.sourceCodeInfo)
+        }
+      }
+      if (isA_OperatorToken(tkn, '=>')) {
+        throw new LitsError('Nested shortcut functions are not allowed', getTokenDebugData(firstToken)?.sourceCodeInfo)
+      }
+    }
+
+    const mandatoryArguments: string[] = []
+
+    for (let i = 1; i <= arity; i += 1) {
+      if (i === 1 && percent1 === 'NAKED')
+        mandatoryArguments.push('$')
+      else
+        mandatoryArguments.push(`$${i}`)
+    }
+
+    const args: FunctionArguments = {
+      b: [],
+      m: mandatoryArguments,
+    }
+
+    const node: FnNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'fn',
+      p: [],
+      o: [
+        {
+          as: args,
+          b: [exprNode],
+          a: args.m.length,
+        },
+      ],
+      token: getTokenDebugData(firstToken) && firstToken,
+    }
+
+    return node
   }
 
   private isAtEnd(): boolean {

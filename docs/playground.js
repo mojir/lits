@@ -3660,7 +3660,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.8";
+    var version = "2.0.9";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -7611,6 +7611,7 @@ var Playground = (function (exports) {
     }
 
     var exponentiationPrecedence = 9;
+    var placeholderRegexp$1 = /^\$([1-9]\d?)?$/;
     function getPrecedence(operator) {
         var operatorSign = operator[1];
         switch (operatorSign) {
@@ -7843,7 +7844,7 @@ var Playground = (function (exports) {
             // Parentheses
             if (isLParenToken(token)) {
                 var positionBefore = this.parseState.position;
-                var lamdaFunction = this.parseLamdaFunction();
+                var lamdaFunction = this.parseLambdaFunction();
                 if (lamdaFunction) {
                     return lamdaFunction;
                 }
@@ -7863,6 +7864,9 @@ var Playground = (function (exports) {
                     this.advance();
                     var operand = this.parseOperand();
                     return fromUnaryAlgebraicToAstNode(token, operand);
+                }
+                else if (operatorName === '=>') {
+                    return this.parseShorthandLamdaFunction();
                 }
                 else {
                     throw new Error("Unknown unary operator: ".concat(operatorName));
@@ -8049,7 +8053,7 @@ var Playground = (function (exports) {
                 };
             }
         };
-        AlgebraicParser.prototype.parseLamdaFunction = function () {
+        AlgebraicParser.prototype.parseLambdaFunction = function () {
             var _a;
             var firstToken = this.peek();
             this.advance();
@@ -8107,6 +8111,62 @@ var Playground = (function (exports) {
                     }],
                 token: getTokenDebugData(firstToken) && firstToken,
             };
+        };
+        AlgebraicParser.prototype.parseShorthandLamdaFunction = function () {
+            var _a, _b, _c, _d;
+            var firstToken = this.peek();
+            this.advance();
+            var startPos = this.parseState.position;
+            var exprNode = this.parseExpression();
+            var endPos = this.parseState.position - 1;
+            var arity = 0;
+            var percent1 = 'NOT_SET'; // referring to argument bindings. % = NAKED, %1, %2, %3, etc = WITH_1
+            for (var pos = startPos; pos <= endPos; pos += 1) {
+                var tkn = this.tokenStream.tokens[pos];
+                if (isA_SymbolToken(tkn)) {
+                    var match = placeholderRegexp$1.exec(tkn[1]);
+                    if (match) {
+                        var number = (_a = match[1]) !== null && _a !== void 0 ? _a : '1';
+                        if (number === '1') {
+                            var mixedPercent1 = (!match[1] && percent1 === 'WITH_1') || (match[1] && percent1 === 'NAKED');
+                            if (mixedPercent1)
+                                throw new LitsError('Please make up your mind, either use $ or $1', (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                            percent1 = match[1] ? 'WITH_1' : 'NAKED';
+                        }
+                        arity = Math.max(arity, Number(number));
+                        if (arity > 20)
+                            throw new LitsError('Can\'t specify more than 20 arguments', (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                    }
+                }
+                if (isA_OperatorToken(tkn, '=>')) {
+                    throw new LitsError('Nested shortcut functions are not allowed', (_d = getTokenDebugData(firstToken)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                }
+            }
+            var mandatoryArguments = [];
+            for (var i = 1; i <= arity; i += 1) {
+                if (i === 1 && percent1 === 'NAKED')
+                    mandatoryArguments.push('$');
+                else
+                    mandatoryArguments.push("$".concat(i));
+            }
+            var args = {
+                b: [],
+                m: mandatoryArguments,
+            };
+            var node = {
+                t: AstNodeType.SpecialExpression,
+                n: 'fn',
+                p: [],
+                o: [
+                    {
+                        as: args,
+                        b: [exprNode],
+                        a: args.m.length,
+                    },
+                ],
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+            return node;
         };
         AlgebraicParser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;

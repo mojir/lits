@@ -626,6 +626,13 @@ describe('lambda functions', () => {
     expect(lits.run('((x, y) => x + y)(10, -5)')).toBe(5)
   })
 
+  it('supports shorthand lambda function definitions', () => {
+    // Testing the provided lambda function example
+    expect(lits.run('(=> 1)()')).toBe(1)
+    expect(lits.run('(=> $)(1)')).toBe(1)
+    expect(lits.run('(=> $1 + $2)(3, 4)')).toBe(7)
+  })
+
   it('supports lambda functions with no parameters', () => {
     expect(lits.run('(() => 42)()')).toBe(42)
     expect(lits.run('(() => 10 + 5)()')).toBe(15)
