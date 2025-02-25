@@ -18,7 +18,7 @@ describe('tokenizer', () => {
     expect(tokenStream.tokens.length).toBeGreaterThan(0)
   })
 
-  it('forbidden reserved names', () => {
+  it('forbidden reserved symbols', () => {
     expect(() => tokenize('nil', { debug: false, algebraic: false })).not.toThrow()
     expect(() => tokenize('false', { debug: false, algebraic: false })).not.toThrow()
     expect(() => tokenize('true', { debug: false, algebraic: false })).not.toThrow()

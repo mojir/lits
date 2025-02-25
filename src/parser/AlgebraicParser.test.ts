@@ -65,6 +65,14 @@ describe('algebraic operators', () => {
       expect(lits.run('64 >>> 3 >>> 2')).toBe(2)
     })
   })
+  describe('++', () => {
+    test('samples', () => {
+      expect(lits.run('"Foo" ++ "Bar"')).toBe('FooBar')
+      expect(lits.run('2 ++ 3')).toBe('23')
+      expect(lits.run('2 ++ 3 * 2')).toBe('26')
+      expect(lits.run('"Hello" ++ " " ++ "World"')).toBe('Hello World')
+    })
+  })
   describe('<', () => {
     test('samples', () => {
       expect(lits.run('2 < 3')).toBe(true)

@@ -888,6 +888,7 @@ var Playground = (function (exports) {
         '<<', // left shift
         '>>', // signed right shift
         '>>>', // unsigned right shift
+        '++', // string concatenation
         '<', // less than
         '<=', // less than or equal
         '>', // greater than
@@ -3659,7 +3660,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.7";
+    var version = "2.0.8";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -7609,24 +7610,26 @@ var Playground = (function (exports) {
         };
     }
 
-    var exponentiationPrecedence = 8;
+    var exponentiationPrecedence = 9;
     function getPrecedence(operator) {
         var operatorSign = operator[1];
         switch (operatorSign) {
             case '.': // accessor
-                return 9;
+                return 10;
             case '**': // exponentiation
                 return exponentiationPrecedence;
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
-                return 7;
+                return 8;
             case '+': // addition
             case '-': // subtraction
-                return 6;
+                return 7;
             case '<<': // left shift
             case '>>': // signed right shift
             case '>>>': // unsigned right shift
+                return 6;
+            case '++': // string concatenation
                 return 5;
             case '<': // less than
             case '<=': // less than or equal
@@ -7724,6 +7727,11 @@ var Playground = (function (exports) {
                 return createNamedNormalExpressionNode('bit-shift-right', [left, right], token);
             case '>>>':
                 return createNamedNormalExpressionNode('unsigned-bit-shift-right', [left, right], token);
+            case '++': {
+                var leftString = createNamedNormalExpressionNode('str', [left], token);
+                var rightString = createNamedNormalExpressionNode('str', [right], token);
+                return createNamedNormalExpressionNode('str', [leftString, rightString], token);
+            }
             case '<':
                 return createNamedNormalExpressionNode('<', [left, right], token);
             case '<=':
@@ -8002,6 +8010,8 @@ var Playground = (function (exports) {
                         case 'or':
                         case 'when':
                         case 'when-not':
+                        case 'do':
+                        case 'throw':
                             return {
                                 t: AstNodeType.SpecialExpression,
                                 n: name_1,
@@ -8018,13 +8028,11 @@ var Playground = (function (exports) {
                         case 'defn':
                         case 'defns':
                         case 'try':
-                        case 'throw':
                         case 'recur':
                         case 'loop':
                         case 'time!':
                         case 'doseq':
                         case 'for':
-                        case 'do':
                             throw new Error("Special expression ".concat(name_1, " is not available in algebraic notation"));
                         default:
                             throw new Error("Unknown special expression: ".concat(name_1));
@@ -8457,7 +8465,7 @@ var Playground = (function (exports) {
     }
 
     var polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
-    var algebraicIdentifierCharacterClass = '[\\w$:!]';
+    var algebraicIdentifierCharacterClass = '[\\w$:!?]';
     var algebraicIdentifierFirstCharacterClass = '[a-zA-Z_$]';
 
     var NO_MATCH = [0];
@@ -8764,13 +8772,11 @@ var Playground = (function (exports) {
         'defn': { value: null, forbidden: true },
         'defns': { value: null, forbidden: true },
         'try': { value: null, forbidden: true },
-        'throw': { value: null, forbidden: true },
         'recur': { value: null, forbidden: true },
         'loop': { value: null, forbidden: true },
         'time!': { value: null, forbidden: true },
         'doseq': { value: null, forbidden: true },
         'for': { value: null, forbidden: true },
-        'do': { value: null, forbidden: true },
     };
 
     var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);

@@ -13,12 +13,12 @@ import type { Arity } from '../builtin/utils'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
-const exponentiationPrecedence = 8
+const exponentiationPrecedence = 9
 function getPrecedence(operator: A_OperatorToken): number {
   const operatorSign = operator[1]
   switch (operatorSign) {
     case '.': // accessor
-      return 9
+      return 10
 
     case '**': // exponentiation
       return exponentiationPrecedence
@@ -26,15 +26,18 @@ function getPrecedence(operator: A_OperatorToken): number {
     case '*': // multiplication
     case '/': // division
     case '%': // remainder
-      return 7
+      return 8
 
     case '+': // addition
     case '-': // subtraction
-      return 6
+      return 7
 
     case '<<': // left shift
     case '>>': // signed right shift
     case '>>>': // unsigned right shift
+      return 6
+
+    case '++': // string concatenation
       return 5
 
     case '<': // less than
@@ -146,6 +149,11 @@ function fromBinaryAlgebraicToAstNode(operator: A_OperatorToken, left: AstNode, 
       return createNamedNormalExpressionNode('bit-shift-right', [left, right], token)
     case '>>>':
       return createNamedNormalExpressionNode('unsigned-bit-shift-right', [left, right], token)
+    case '++': {
+      const leftString = createNamedNormalExpressionNode('str', [left], token)
+      const rightString = createNamedNormalExpressionNode('str', [right], token)
+      return createNamedNormalExpressionNode('str', [leftString, rightString], token)
+    }
     case '<':
       return createNamedNormalExpressionNode('<', [left, right], token)
     case '<=':
@@ -459,6 +467,8 @@ export class AlgebraicParser {
           case 'or':
           case 'when':
           case 'when-not':
+          case 'do':
+          case 'throw':
             return {
               t: AstNodeType.SpecialExpression,
               n: name,
@@ -475,13 +485,11 @@ export class AlgebraicParser {
           case 'defn':
           case 'defns':
           case 'try':
-          case 'throw':
           case 'recur':
           case 'loop':
           case 'time!':
           case 'doseq':
           case 'for':
-          case 'do':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)
           default:
             throw new Error(`Unknown special expression: ${name satisfies never}`)

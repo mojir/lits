@@ -15,13 +15,11 @@ export const algebraicReservedNamesRecord: Record<string, { value: Any, forbidde
   'defn': { value: null, forbidden: true },
   'defns': { value: null, forbidden: true },
   'try': { value: null, forbidden: true },
-  'throw': { value: null, forbidden: true },
   'recur': { value: null, forbidden: true },
   'loop': { value: null, forbidden: true },
   'time!': { value: null, forbidden: true },
   'doseq': { value: null, forbidden: true },
   'for': { value: null, forbidden: true },
-  'do': { value: null, forbidden: true },
 
 } as const
 

@@ -54,6 +54,8 @@ export const AlgebraicOperators = [
   '>>', // signed right shift
   '>>>', // unsigned right shift
 
+  '++', // string concatenation
+
   '<', // less than
   '<=', // less than or equal
   '>', // greater than
