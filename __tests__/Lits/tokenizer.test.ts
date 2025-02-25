@@ -9,29 +9,29 @@ describe('tokenizer', () => {
       (let ((day (* 24 60 60 1000)))
         (* days day)
       )`,
-      { debug: false },
+      { debug: false, algebraic: false },
     )
     expect(tokenStream.tokens.length).toBeGreaterThan(0)
   })
   it('another simple expressions', () => {
-    const tokenStream = tokenize('(do-me)', { debug: false })
+    const tokenStream = tokenize('(do-me)', { debug: false, algebraic: false })
     expect(tokenStream.tokens.length).toBeGreaterThan(0)
   })
 
   it('forbidden reserved names', () => {
-    expect(() => tokenize('nil', { debug: false })).not.toThrow()
-    expect(() => tokenize('false', { debug: false })).not.toThrow()
-    expect(() => tokenize('true', { debug: false })).not.toThrow()
-    expect(() => tokenize('null', { debug: false })).not.toThrow()
+    expect(() => tokenize('nil', { debug: false, algebraic: false })).not.toThrow()
+    expect(() => tokenize('false', { debug: false, algebraic: false })).not.toThrow()
+    expect(() => tokenize('true', { debug: false, algebraic: false })).not.toThrow()
+    expect(() => tokenize('null', { debug: false, algebraic: false })).not.toThrow()
   })
 
   it('comments', () => {
-    expect(tokenize('"Hi" ;This is a string', { debug: false })).toEqual<TokenStream>({
+    expect(tokenize('"Hi" ;This is a string', { debug: false, algebraic: false })).toEqual<TokenStream>({
       hasDebugData: false,
       algebraic: false,
       tokens: [['String', '"Hi"'], ['P_Whitespace', ' '], ['P_Comment', ';This is a string']],
     })
-    expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false })).toEqual<TokenStream>({
+    expect(tokenize('"Hi" ;This is a string\n"there"', { debug: false, algebraic: false })).toEqual<TokenStream>({
       hasDebugData: false,
       algebraic: false,
       tokens: [
@@ -46,18 +46,18 @@ describe('tokenizer', () => {
 
   describe('strings', () => {
     it('unclosed string', () => {
-      expect(() => tokenize('"Hi', { debug: false })).toThrow()
+      expect(() => tokenize('"Hi', { debug: false, algebraic: false })).toThrow()
     })
     it('escaped string', () => {
-      expect(tokenize('"He\\"j"', { debug: false }).tokens[0]).toEqual(['String', '"He\\"j"'])
-      expect(tokenize('"He\\\\j"', { debug: false }).tokens[0]).toEqual(['String', '"He\\\\j"'])
-      expect(tokenize('"H\\ej"', { debug: false }).tokens[0]).toEqual(['String', '"H\\ej"'])
+      expect(tokenize('"He\\"j"', { debug: false, algebraic: false }).tokens[0]).toEqual(['String', '"He\\"j"'])
+      expect(tokenize('"He\\\\j"', { debug: false, algebraic: false }).tokens[0]).toEqual(['String', '"He\\\\j"'])
+      expect(tokenize('"H\\ej"', { debug: false, algebraic: false }).tokens[0]).toEqual(['String', '"H\\ej"'])
     })
   })
 
   describe('regexpShorthand', () => {
     it('samples', () => {
-      expect(tokenize('#"Hi"', { debug: true, filePath: 'foo.lits' })).toEqual<TokenStream>({
+      expect(tokenize('#"Hi"', { debug: true, algebraic: false, filePath: 'foo.lits' })).toEqual<TokenStream>({
         hasDebugData: true,
         algebraic: false,
         tokens: [
@@ -67,7 +67,7 @@ describe('tokenizer', () => {
         ],
         filePath: 'foo.lits',
       })
-      expect(tokenize('#"Hi"g', { debug: true })).toEqual<TokenStream>({
+      expect(tokenize('#"Hi"g', { debug: true, algebraic: false })).toEqual<TokenStream>({
         hasDebugData: true,
         algebraic: false,
         tokens: [
@@ -76,7 +76,7 @@ describe('tokenizer', () => {
           }],
         ],
       })
-      expect(tokenize('#"Hi"i', { debug: true })).toEqual<TokenStream>({
+      expect(tokenize('#"Hi"i', { debug: true, algebraic: false })).toEqual<TokenStream>({
         hasDebugData: true,
         algebraic: false,
         tokens: [
@@ -85,7 +85,7 @@ describe('tokenizer', () => {
           }],
         ],
       })
-      expect(tokenize('#"Hi"gi', { debug: true })).toEqual<TokenStream>({
+      expect(tokenize('#"Hi"gi', { debug: true, algebraic: false })).toEqual<TokenStream>({
         hasDebugData: true,
         algebraic: false,
         tokens: [
@@ -94,7 +94,7 @@ describe('tokenizer', () => {
           }],
         ],
       })
-      expect(tokenize('#"Hi"ig', { debug: true })).toEqual<TokenStream>({
+      expect(tokenize('#"Hi"ig', { debug: true, algebraic: false })).toEqual<TokenStream>({
         hasDebugData: true,
         algebraic: false,
         tokens: [
@@ -103,15 +103,15 @@ describe('tokenizer', () => {
           }],
         ],
       })
-      expect(() => tokenize('#"Hi"gg', { debug: true })).toThrow()
-      expect(() => tokenize('#"Hi"ii', { debug: true })).toThrow()
-      expect(() => tokenize('#1', { debug: true })).toThrow()
+      expect(() => tokenize('#"Hi"gg', { debug: true, algebraic: false })).toThrow()
+      expect(() => tokenize('#"Hi"ii', { debug: true, algebraic: false })).toThrow()
+      expect(() => tokenize('#1', { debug: true, algebraic: false })).toThrow()
     })
   })
 
   describe('fnShorthand', () => {
     it('samples', () => {
-      expect(tokenize('#(', { debug: true })).toEqual<TokenStream>({
+      expect(tokenize('#(', { debug: true, algebraic: false })).toEqual<TokenStream>({
         hasDebugData: true,
         algebraic: false,
         tokens: [
@@ -123,7 +123,7 @@ describe('tokenizer', () => {
           }],
         ],
       })
-      expect(() => tokenize('#', { debug: true })).toThrow()
+      expect(() => tokenize('#', { debug: true, algebraic: false })).toThrow()
     })
   })
 
@@ -139,13 +139,13 @@ describe('tokenizer', () => {
         '{:a 1}.a',
       ]
       for (const sample of samples)
-        tokenize(sample, { debug: false })
+        tokenize(sample, { debug: false, algebraic: false })
     })
     it('illegal samples', () => {
       const illegalSamples = ['#(indentity %1)#1', '(.bar', 'foo##1', 'foo..bar', '.bar', ').1', 'foo # 10', 'foo #10 #20 . bar']
       for (const sample of illegalSamples) {
         try {
-          tokenize(sample, { debug: false })
+          tokenize(sample, { debug: false, algebraic: false })
           throw new Error('Expected to throw an error')
         }
         catch {

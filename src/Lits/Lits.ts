@@ -34,8 +34,6 @@ export interface LitsParams {
   lazyValues?: Record<string, LazyValue>
   jsFunctions?: Record<string, JsFunction>
   filePath?: string
-  debug?: boolean
-  algebraic?: boolean
 }
 
 interface LitsConfig {
@@ -92,9 +90,9 @@ export class Lits {
     return analyze(ast, params)
   }
 
-  public tokenize(program: string, tokenizeParams: TokenizeParams = {}): TokenStream {
-    const debug = tokenizeParams.debug ?? this.debug
-    const algebraic = tokenizeParams.algebraic ?? this.algebraic
+  public tokenize(program: string, tokenizeParams: Pick<TokenizeParams, 'filePath'> = {}): TokenStream {
+    const debug = this.debug
+    const algebraic = this.algebraic
     return tokenize(program, { ...tokenizeParams, debug, algebraic })
   }
 
@@ -117,12 +115,8 @@ export class Lits {
 
   public apply(fn: LitsFunction, fnParams: unknown[], params: LitsParams = {}): Any {
     const fnName = 'FN_2eb7b316-471c-5bfa-90cb-d3dfd9164a59'
-    const paramsString: string = fnParams
-      .map((_, index) => {
-        return `${fnName}_${index}`
-      })
-      .join(' ')
-    const program = `(${fnName} ${paramsString})`
+    const program = this.generateApplyFunctionCall(fnName, fnParams)
+
     const ast = this.generateAst(program, params)
 
     const hostValues: Obj = fnParams.reduce(
@@ -138,6 +132,15 @@ export class Lits {
     return this.evaluate(ast, params)
   }
 
+  private generateApplyFunctionCall(fnName: string, fnParams: unknown[]) {
+    const paramsString: string = fnParams
+      .map((_, index) => {
+        return `${fnName}_${index}`
+      })
+      .join(this.algebraic ? ', ' : ' ')
+    return this.algebraic ? `${fnName}(${paramsString})` : `(${fnName} ${paramsString})`
+  }
+
   private generateAst(program: string, params: LitsParams): Ast {
     if (this.astCache) {
       const cachedAst = this.astCache.get(program)
@@ -145,10 +148,7 @@ export class Lits {
         return cachedAst
     }
     const tokenStream = this.tokenize(program, {
-      debug: params.debug ?? this.debug,
       filePath: params.filePath,
-      algebraic: params.algebraic ?? this.algebraic,
-
     })
     const ast: Ast = this.parse(tokenStream)
     this.astCache?.set(program, ast)

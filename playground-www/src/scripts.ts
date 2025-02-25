@@ -66,6 +66,7 @@ const elements = {
   litsCodeRedoButton: document.getElementById('lits-code-redo-button') as HTMLAnchorElement,
   contextTitle: document.getElementById('context-title') as HTMLDivElement,
   litsCodeTitle: document.getElementById('lits-code-title') as HTMLDivElement,
+  litsCodeTitleString: document.getElementById('lits-code-title-string') as HTMLDivElement,
 }
 
 type MoveParams = {
@@ -968,6 +969,7 @@ function updateCSS() {
   elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none'
 
   elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : ''
+  elements.litsCodeTitleString.textContent = getState('algebraic') ? 'Algebraic Code' : 'Lisp Code'
   elements.contextTitle.style.color = (getState('focused-panel') === 'context') ? 'white' : ''
 }
 

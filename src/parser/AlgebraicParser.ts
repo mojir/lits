@@ -329,14 +329,22 @@ export class AlgebraicParser {
         return parseReservedSymbol(this.tokenStream, this.parseState)
       case 'PolNotation': {
         this.parseState.algebraic = false
-        let astNode: AstNode
+        const astNodes: AstNode[] = []
         this.advance()
         do {
-          astNode = this.parseState.parseToken(this.tokenStream, this.parseState)
+          astNodes.push(this.parseState.parseToken(this.tokenStream, this.parseState))
         } while (!isEndNotationToken(this.peek()))
         this.advance()
         this.parseState.algebraic = true
-        return astNode
+        if (astNodes.length === 1) {
+          return astNodes[0]!
+        }
+        return {
+          t: AstNodeType.SpecialExpression,
+          n: 'do',
+          p: astNodes,
+          token: getTokenDebugData(token) && token,
+        }
       }
       case 'AlgNotation': {
         this.advance()

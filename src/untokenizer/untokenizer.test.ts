@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../Lits/Lits'
 
-const lits = new Lits()
-
 const polishExamples = [
   '(+ 1 2)',
   `
@@ -22,6 +20,8 @@ const algebraicExamples = [
 describe('untokenizer', () => {
   describe('untokenize', () => {
     it('should untokenize polish Examples', () => {
+      const lits = new Lits()
+
       for (const example of polishExamples) {
         const tokenStream = lits.tokenize(example)
         const result = lits.untokenize(tokenStream)
@@ -29,8 +29,9 @@ describe('untokenizer', () => {
       }
     })
     it('should untokenize algebraic Examples', () => {
+      const lits = new Lits({ algebraic: true })
       for (const example of algebraicExamples) {
-        const tokenStream = lits.tokenize(example, { algebraic: true })
+        const tokenStream = lits.tokenize(example)
         const result = lits.untokenize(tokenStream)
         expect(result).toBe(example)
       }

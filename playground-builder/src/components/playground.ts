@@ -85,7 +85,7 @@ export function getPlayground() {
         <div ${styles('PanelHeader')} onclick="Playground.focusLitsCode()">
           <div id="lits-code-title" ${styles('flex', 'gap-1', 'w-full', 'items-center')}>
             <span id="lits-panel-debug-info" ${styles('flex', 'items-center', 'text-xl')}>${debugIcon}</span>
-            <div ${styles('text-lg', 'font-sans', 'cursor-pointer')}>Code</div>
+            <div id="lits-code-title-string" ${styles('text-lg', 'font-sans', 'cursor-pointer')}>Code</div>
           </div>
           <div
             id="lits-links"

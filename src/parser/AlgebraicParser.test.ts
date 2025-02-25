@@ -280,8 +280,9 @@ describe('algebraic operators', () => {
   })
   describe('debug', () => {
     test('samples', () => {
-      expect(lits.run('2+3', { debug: true })).toBe(5)
-      expect(lits.tokenize('2+3', { debug: true }).tokens).toEqual([
+      const litsDebug = new Lits({ debug: true, algebraic: true })
+      expect(litsDebug.run('2+3')).toBe(5)
+      expect(litsDebug.tokenize('2+3').tokens).toEqual([
         [
           'A_Number',
           '2',
@@ -322,8 +323,8 @@ describe('algebraic operators', () => {
           },
         ],
       ])
-      expect(lits.run('-2', { debug: true })).toBe(-2)
-      expect(lits.tokenize('-2', { debug: true }).tokens).toEqual([
+      expect(litsDebug.run('-2')).toBe(-2)
+      expect(litsDebug.tokenize('-2').tokens).toEqual([
         [
           'A_Operator',
           '-',
@@ -620,6 +621,16 @@ describe('algebraic operators', () => {
     it('supports lambda functions as return values', () => {
       expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("add")(5, 3)')).toBe(8)
       expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("subtract")(5, 3)')).toBe(2)
+    })
+
+    test('samples', () => {
+      // expect(lits.run('(val) => number:format("d", val)')).toBe(8)
+      expect(lits.run(`
+        $\`
+        (def foo #(inc %))
+        (foo 7)
+        \`
+      `)).toBe(8)
     })
   })
 })

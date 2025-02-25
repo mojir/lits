@@ -3659,7 +3659,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.4";
+    var version = "2.0.5";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -7881,14 +7881,22 @@ var Playground = (function (exports) {
                     return parseReservedSymbol(this.tokenStream, this.parseState);
                 case 'PolNotation': {
                     this.parseState.algebraic = false;
-                    var astNode = void 0;
+                    var astNodes = [];
                     this.advance();
                     do {
-                        astNode = this.parseState.parseToken(this.tokenStream, this.parseState);
+                        astNodes.push(this.parseState.parseToken(this.tokenStream, this.parseState));
                     } while (!isEndNotationToken(this.peek()));
                     this.advance();
                     this.parseState.algebraic = true;
-                    return astNode;
+                    if (astNodes.length === 1) {
+                        return astNodes[0];
+                    }
+                    return {
+                        t: AstNodeType.SpecialExpression,
+                        n: 'do',
+                        p: astNodes,
+                        token: getTokenDebugData(token) && token,
+                    };
                 }
                 case 'AlgNotation': {
                     this.advance();
@@ -9309,10 +9317,9 @@ var Playground = (function (exports) {
             return analyze$1(ast, params);
         };
         Lits.prototype.tokenize = function (program, tokenizeParams) {
-            var _a, _b;
             if (tokenizeParams === void 0) { tokenizeParams = {}; }
-            var debug = (_a = tokenizeParams.debug) !== null && _a !== void 0 ? _a : this.debug;
-            var algebraic = (_b = tokenizeParams.algebraic) !== null && _b !== void 0 ? _b : this.algebraic;
+            var debug = this.debug;
+            var algebraic = this.algebraic;
             return tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, algebraic: algebraic }));
         };
         Lits.prototype.parse = function (tokenStream) {
@@ -9332,12 +9339,7 @@ var Playground = (function (exports) {
             var _a;
             if (params === void 0) { params = {}; }
             var fnName = 'FN_2eb7b316-471c-5bfa-90cb-d3dfd9164a59';
-            var paramsString = fnParams
-                .map(function (_, index) {
-                return "".concat(fnName, "_").concat(index);
-            })
-                .join(' ');
-            var program = "(".concat(fnName, " ").concat(paramsString, ")");
+            var program = this.generateApplyFunctionCall(fnName, fnParams);
             var ast = this.generateAst(program, params);
             var hostValues = fnParams.reduce(function (result, param, index) {
                 result["".concat(fnName, "_").concat(index)] = param;
@@ -9346,20 +9348,26 @@ var Playground = (function (exports) {
             params.values = __assign(__assign({}, params.values), hostValues);
             return this.evaluate(ast, params);
         };
+        Lits.prototype.generateApplyFunctionCall = function (fnName, fnParams) {
+            var paramsString = fnParams
+                .map(function (_, index) {
+                return "".concat(fnName, "_").concat(index);
+            })
+                .join(this.algebraic ? ', ' : ' ');
+            return this.algebraic ? "".concat(fnName, "(").concat(paramsString, ")") : "(".concat(fnName, " ").concat(paramsString, ")");
+        };
         Lits.prototype.generateAst = function (program, params) {
-            var _a, _b, _c;
+            var _a;
             if (this.astCache) {
                 var cachedAst = this.astCache.get(program);
                 if (cachedAst)
                     return cachedAst;
             }
             var tokenStream = this.tokenize(program, {
-                debug: (_a = params.debug) !== null && _a !== void 0 ? _a : this.debug,
                 filePath: params.filePath,
-                algebraic: (_b = params.algebraic) !== null && _b !== void 0 ? _b : this.algebraic,
             });
             var ast = this.parse(tokenStream);
-            (_c = this.astCache) === null || _c === void 0 ? void 0 : _c.set(program, ast);
+            (_a = this.astCache) === null || _a === void 0 ? void 0 : _a.set(program, ast);
             return ast;
         };
         return Lits;
@@ -16219,6 +16227,7 @@ var Playground = (function (exports) {
         litsCodeRedoButton: document.getElementById('lits-code-redo-button'),
         contextTitle: document.getElementById('context-title'),
         litsCodeTitle: document.getElementById('lits-code-title'),
+        litsCodeTitleString: document.getElementById('lits-code-title-string'),
     };
     var moveParams = null;
     var ignoreSelectionChange = false;
@@ -16970,6 +16979,7 @@ var Playground = (function (exports) {
         elements.toggleAlgebraicMenuLabel.textContent = getState('algebraic') ? 'Algebraic: ON' : 'Algebraic: OFF';
         elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none';
         elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : '';
+        elements.litsCodeTitleString.textContent = getState('algebraic') ? 'Algebraic Code' : 'Lisp Code';
         elements.contextTitle.style.color = (getState('focused-panel') === 'context') ? 'white' : '';
     }
     function showPage(id, scroll, historyEvent) {

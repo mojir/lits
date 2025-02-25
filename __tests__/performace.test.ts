@@ -45,13 +45,13 @@ describe.skip('performace', () => {
   it('tokenise', () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1)
-      tokenize(program, { debug: true })
+      tokenize(program, { debug: true, algebraic: false })
 
     logPerformace('Tokenise', Date.now() - startTime)
   })
 
   it('parse', () => {
-    const tokens = tokenize(program, { debug: true })
+    const tokens = tokenize(program, { debug: true, algebraic: false })
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1)
       parse(tokens)
@@ -60,7 +60,7 @@ describe.skip('performace', () => {
   })
 
   it('evaluate', () => {
-    const tokens = tokenize(program, { debug: true })
+    const tokens = tokenize(program, { debug: true, algebraic: false })
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1)

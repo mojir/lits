@@ -19,7 +19,7 @@ export interface TokenStream {
 }
 
 export interface TokenizeParams {
-  debug?: boolean
+  debug: boolean
+  algebraic: boolean
   filePath?: string
-  algebraic?: boolean
 }
