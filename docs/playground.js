@@ -3659,7 +3659,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.5";
+    var version = "2.0.6";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -8391,13 +8391,21 @@ var Playground = (function (exports) {
                 return node;
             }
             case 'PolNotation': {
-                var node = void 0;
+                var astNodes = [];
                 parseState.position += 1;
                 do {
-                    node = parsePolishToken(tokenStream, parseState);
+                    astNodes.push(parsePolishToken(tokenStream, parseState));
                 } while (!isEndNotationToken(asToken(tokenStream.tokens[parseState.position])));
                 parseState.position += 1;
-                return node;
+                if (astNodes.length === 1) {
+                    return astNodes[0];
+                }
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: astNodes,
+                    token: astNodes[0].token,
+                };
             }
             case 'P_CollectionAccessor':
             case 'P_Modifier':

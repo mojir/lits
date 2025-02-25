@@ -361,13 +361,21 @@ export function parsePolishToken(tokenStream: TokenStream, parseState: ParseStat
       return node
     }
     case 'PolNotation': {
-      let node: AstNode
+      const astNodes: AstNode[] = []
       parseState.position += 1
       do {
-        node = parsePolishToken(tokenStream, parseState)
+        astNodes.push(parsePolishToken(tokenStream, parseState))
       } while (!isEndNotationToken(asToken(tokenStream.tokens[parseState.position])))
       parseState.position += 1
-      return node
+      if (astNodes.length === 1) {
+        return astNodes[0]!
+      }
+      return {
+        t: AstNodeType.SpecialExpression,
+        n: 'do',
+        p: astNodes,
+        token: astNodes[0]!.token,
+      }
     }
     case 'P_CollectionAccessor':
     case 'P_Modifier':
