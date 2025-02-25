@@ -114,7 +114,7 @@ export class Lits {
   }
 
   public apply(fn: LitsFunction, fnParams: unknown[], params: LitsParams = {}): Any {
-    const fnName = 'FN_2eb7b316-471c-5bfa-90cb-d3dfd9164a59'
+    const fnName = 'FN_2eb7b316_471c_5bfa_90cb_d3dfd9164a59'
     const program = this.generateApplyFunctionCall(fnName, fnParams)
 
     const ast = this.generateAst(program, params)

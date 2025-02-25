@@ -3659,7 +3659,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.6";
+    var version = "2.0.7";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -9346,7 +9346,7 @@ var Playground = (function (exports) {
         Lits.prototype.apply = function (fn, fnParams, params) {
             var _a;
             if (params === void 0) { params = {}; }
-            var fnName = 'FN_2eb7b316-471c-5bfa-90cb-d3dfd9164a59';
+            var fnName = 'FN_2eb7b316_471c_5bfa_90cb_d3dfd9164a59';
             var program = this.generateApplyFunctionCall(fnName, fnParams);
             var ast = this.generateAst(program, params);
             var hostValues = fnParams.reduce(function (result, param, index) {
