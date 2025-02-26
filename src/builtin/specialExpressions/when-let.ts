@@ -15,7 +15,7 @@ export interface WhenLetNode extends CommonSpecialExpressionNode<'when-let'> {
 }
 
 export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
     if (bindings.length !== 1) {

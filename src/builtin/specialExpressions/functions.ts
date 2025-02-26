@@ -42,7 +42,7 @@ export interface FnNode extends CommonSpecialExpressionNode<'fn'> {
 }
 
 export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
-  parse: (tokenStream, parseState, firstToken, parsers) => {
+  polishParse: (tokenStream, parseState, firstToken, parsers) => {
     const { parseToken } = parsers
     const functionName = parseToken(tokenStream, parseState)
     assertSymbolNode(functionName, getTokenDebugData(functionName.token)?.sourceCodeInfo)
@@ -88,7 +88,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
 }
 
 export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> = {
-  parse: (tokenStream, parseState, firstToken, parsers) => {
+  polishParse: (tokenStream, parseState, firstToken, parsers) => {
     const { parseToken } = parsers
     const functionName = parseToken(tokenStream, parseState)
 
@@ -138,7 +138,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
 }
 
 export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode> = {
-  parse: (tokenStream, parseState, firstToken, parsers) => {
+  polishParse: (tokenStream, parseState, firstToken, parsers) => {
     const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
     assertRParenToken(tokenStream.tokens[parseState.position++])
 

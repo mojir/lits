@@ -3,12 +3,12 @@ import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertEvenNumberOfParams } from '../../typeGuards'
 import { arrayToPairs } from '../../utils'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonParser } from './commonParser'
+import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface CondNode extends CommonSpecialExpressionNode<'cond'> {}
 
 export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
-  parse: getCommonParser('cond'),
+  polishParse: getCommonPolishSpecialExpressionParser('cond'),
   validateParameterCount: node => assertEvenNumberOfParams(node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     for (const [test, form] of arrayToPairs(node.p)) {

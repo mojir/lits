@@ -8,7 +8,7 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface AndNode extends CommonSpecialExpressionNode<'and'> {}
 
 export const andSpecialExpression: BuiltinSpecialExpression<Any, AndNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
     assertRParenToken(tokenStream.tokens[parseState.position++])
 

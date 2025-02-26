@@ -246,7 +246,7 @@ function analyze(
 }
 
 export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
-  parse: (tokenStream, parseState, firstToken, parsers) => {
+  polishParse: (tokenStream, parseState, firstToken, parsers) => {
     const { parseTokensUntilClosingBracket } = parsers
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 
@@ -269,7 +269,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
 }
 
 export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> = {
-  parse: (tokenStream, parseState, firstToken, parsers) => {
+  polishParse: (tokenStream, parseState, firstToken, parsers) => {
     const { parseTokensUntilClosingBracket } = parsers
     const loopBindings = parseLoopBindings(tokenStream, parseState, parsers)
 

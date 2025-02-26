@@ -4,12 +4,12 @@ import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonParser } from './commonParser'
+import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface IfNode extends CommonSpecialExpressionNode<'if'> {}
 
 export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
-  parse: getCommonParser('if'),
+  polishParse: getCommonPolishSpecialExpressionParser('if'),
   validateParameterCount: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo

@@ -47,7 +47,7 @@ interface EvaluateHelpers {
   builtin: Builtin
 }
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
-  parse: (tokenStream: TokenStream, parseState: ParseState, firstToken: Token, parsers: ParserHelpers) => N
+  polishParse: (tokenStream: TokenStream, parseState: ParseState, firstToken: Token, parsers: ParserHelpers) => N
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
   validateParameterCount: ValidateSpecialExpressionNode
   findUnresolvedIdentifiers: (

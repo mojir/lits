@@ -18,7 +18,7 @@ export interface TryNode extends CommonSpecialExpressionNode<'try'> {
 }
 
 export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseToken }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseToken }) => {
     const tryExpression = parseToken(tokenStream, parseState)
 
     assertLParenToken(tokenStream.tokens[parseState.position++])

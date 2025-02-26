@@ -16,7 +16,7 @@ export interface LoopNode extends CommonSpecialExpressionNode<'loop'> {
 }
 
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket, parseBindings }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket, parseBindings }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)

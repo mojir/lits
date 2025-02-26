@@ -2,12 +2,12 @@ import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonParser } from './commonParser'
+import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface DoNode extends CommonSpecialExpressionNode<'do'> {}
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
-  parse: getCommonParser('do'),
+  polishParse: getCommonPolishSpecialExpressionParser('do'),
   validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const newContext: Context = {}

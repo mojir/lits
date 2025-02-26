@@ -10,7 +10,7 @@ import { assertNameNotDefined } from '../utils'
 export interface DefsNode extends CommonSpecialExpressionNode<'defs'> {}
 
 export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
     assertRParenToken(tokenStream.tokens[parseState.position++])
 

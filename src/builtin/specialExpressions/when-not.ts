@@ -4,12 +4,12 @@ import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import { assertAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonParser } from './commonParser'
+import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface WhenNotNode extends CommonSpecialExpressionNode<'when-not'> {}
 
 export const whenNotSpecialExpression: BuiltinSpecialExpression<Any, WhenNotNode> = {
-  parse: getCommonParser('when-not'),
+  polishParse: getCommonPolishSpecialExpressionParser('when-not'),
   validateParameterCount: node => assertNumberOfParams({ min: 1 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const [whenExpression, ...body] = node.p

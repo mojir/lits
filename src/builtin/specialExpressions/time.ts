@@ -2,12 +2,12 @@ import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertNumberOfParams } from '../../typeGuards'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonParser } from './commonParser'
+import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface TimeNode extends CommonSpecialExpressionNode<'time!'> {}
 
 export const timeSpecialExpression: BuiltinSpecialExpression<Any, TimeNode> = {
-  parse: getCommonParser('time!'),
+  polishParse: getCommonPolishSpecialExpressionParser('time!'),
   validateParameterCount: node => assertNumberOfParams(1, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const param = node.p[0]!

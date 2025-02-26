@@ -16,7 +16,7 @@ export interface IfLetNode extends CommonSpecialExpressionNode<'if-let'> {
 }
 
 export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
     if (bindings.length !== 1) {

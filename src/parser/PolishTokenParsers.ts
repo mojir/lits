@@ -310,7 +310,7 @@ function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState
   const nameToken = asP_SymbolToken(tokenStream.tokens[parseState.position++])
   const expressionName = nameToken[1] as SpecialExpressionName
 
-  const { parse, validateParameterCount } = asNonUndefined(builtin.specialExpressions[expressionName], getTokenDebugData(nameToken)?.sourceCodeInfo)
+  const { polishParse: parse, validateParameterCount } = asNonUndefined(builtin.specialExpressions[expressionName], getTokenDebugData(nameToken)?.sourceCodeInfo)
 
   const node = parse(tokenStream, parseState, firstToken, {
     parseExpression,

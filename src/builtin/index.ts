@@ -77,8 +77,8 @@ export type CommonSpecialExpressionName = keyof Pick<
 export type BuiltinSpecialExpressions = typeof specialExpressions
 export type BuiltinSpecialExpression = typeof specialExpressions[SpecialExpressionName]
 export type BuiltinCommonSpecialExpression = typeof specialExpressions[CommonSpecialExpressionName]
-export type GenericCommonSpecialExpressionNode<T extends CommonSpecialExpressionName> = ReturnType<typeof specialExpressions[T]['parse']>
-export type SpecialExpressionNode = ReturnType<typeof specialExpressions[SpecialExpressionName]['parse']>
+export type GenericCommonSpecialExpressionNode<T extends CommonSpecialExpressionName> = ReturnType<typeof specialExpressions[T]['polishParse']>
+export type SpecialExpressionNode = ReturnType<typeof specialExpressions[SpecialExpressionName]['polishParse']>
 
 Object.keys(specialExpressions).forEach((key) => {
   /* v8 ignore next 2 */

@@ -8,7 +8,7 @@ import type { BuiltinSpecialExpression } from '../interface'
 export interface RecurNode extends CommonSpecialExpressionNode<'recur'> {}
 
 export const recurSpecialExpression: BuiltinSpecialExpression<null, RecurNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
     assertRParenToken(tokenStream.tokens[parseState.position++])
 

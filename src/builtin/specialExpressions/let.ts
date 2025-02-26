@@ -12,7 +12,7 @@ export interface LetNode extends CommonSpecialExpressionNode<'let'> {
 }
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)

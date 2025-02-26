@@ -17,7 +17,7 @@ export interface WhenFirstNode extends CommonSpecialExpressionNode<'when-first'>
 }
 
 export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirstNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
     if (bindings.length !== 1) {

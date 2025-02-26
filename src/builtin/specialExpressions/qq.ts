@@ -5,12 +5,12 @@ import { assertNumberOfParams } from '../../typeGuards'
 import { isSymbolNode } from '../../typeGuards/astNode'
 import { assertAny } from '../../typeGuards/lits'
 import type { BuiltinSpecialExpression } from '../interface'
-import { getCommonParser } from './commonParser'
+import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
 export interface QqNode extends CommonSpecialExpressionNode<'??'> {}
 
 export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
-  parse: getCommonParser('??'),
+  polishParse: getCommonPolishSpecialExpressionParser('??'),
   validateParameterCount: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const [firstNode, secondNode] = node.p
