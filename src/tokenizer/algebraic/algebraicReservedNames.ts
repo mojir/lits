@@ -7,7 +7,6 @@ export const algebraicReservedNamesRecord: Record<string, { value: Any, forbidde
   'null': { value: null },
   'def': { value: null, forbidden: true },
   'defs': { value: null, forbidden: true },
-  'let': { value: null, forbidden: true },
   'if-let': { value: null, forbidden: true },
   'when-let': { value: null, forbidden: true },
   'when-first': { value: null, forbidden: true },

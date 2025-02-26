@@ -187,6 +187,7 @@ describe('algebraic operators', () => {
   })
   describe('arrays', () => {
     test('samples', () => {
+      expect(lits.run('[]')).toEqual([])
       expect(lits.run('[2+3]')).toEqual([5])
       expect(lits.run('[10]')).toEqual([10])
       expect(lits.run('[10, 2+3]')).toEqual([10, 5])
@@ -568,6 +569,12 @@ describe('algebraic operators', () => {
     })
   })
 
+  describe('let', () => {
+    it('supports let bindings', () => {
+      expect(lits.run('let({ a=10 }, a)')).toBe(10)
+    })
+  })
+
   describe('complex expressions', () => {
     it('handles complex arithmetic expressions', () => {
       expect(lits.run('(2 + 3) * 4 / 2 - 1')).toBe(9)
@@ -621,10 +628,19 @@ describe('algebraic operators', () => {
 
   describe('lambda functions', () => {
     it('supports basic lambda function definitions', () => {
-    // Testing the provided lambda function example
+      // Testing the provided lambda function example
       expect(lits.run('(() => 1)()')).toBe(1)
       expect(lits.run('((x, y) => x + y)(3, 4)')).toBe(7)
       expect(lits.run('((x, y) => x + y)(10, -5)')).toBe(5)
+    })
+
+    it('supports lambda functions with let bindings', () => {
+      // Support for let bindings
+      expect(lits.run('(x, { y=2 }) => y')).toBeDefined()
+      // Here we need the let bindings due to dynamic scoping, not lexical scoping
+      // Would be nice to have lexical scoping, but that would require a more complex implementation
+      expect(lits.run('((x) => (y, {x=x}) => x + y)(3)(4)')).toBe(7)
+      expect(lits.run('((a) => (b, { a=a }) => (c, { a=a, b=b }) => a * b * c)(2)(3)(4)')).toBe(24)
     })
 
     it('supports shorthand lambda function definitions', () => {

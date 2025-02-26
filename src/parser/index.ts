@@ -1,4 +1,4 @@
-import { isA_WhitespaceToken } from '../tokenizer/algebraic/algebraicTokens'
+import { isA_CommentToken, isA_MultiLineCommentToken, isA_WhitespaceToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { isP_CommentToken, isP_WhitespaceToken } from '../tokenizer/polish/polishTokens'
 import { AlgebraicParser } from './AlgebraicParser'
@@ -28,7 +28,12 @@ export function parse(tokenStream: TokenStream): Ast {
 
 function removeUnnecessaryTokens(tokenStream: TokenStream): TokenStream {
   const tokens = tokenStream.tokens.filter((token) => {
-    if (isP_CommentToken(token) || isA_WhitespaceToken(token) || isP_WhitespaceToken(token)) {
+    if (
+      isP_CommentToken(token)
+      || isA_CommentToken(token)
+      || isA_MultiLineCommentToken(token)
+      || isA_WhitespaceToken(token)
+      || isP_WhitespaceToken(token)) {
       return false
     }
     return true

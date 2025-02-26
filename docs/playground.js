@@ -911,6 +911,12 @@ var Playground = (function (exports) {
     function isA_ReservedSymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_ReservedSymbol';
     }
+    function isA_CommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_SingleLineComment';
+    }
+    function isA_MultiLineCommentToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_MultiLineComment';
+    }
     function isA_OperatorToken(token, operatorName) {
         if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_Operator') {
             return false;
@@ -3660,7 +3666,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.10";
+    var version = "2.0.11";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -4863,7 +4869,7 @@ var Playground = (function (exports) {
     var normalExpressions = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, bitwiseNormalExpression), collectionNormalExpression), arrayNormalExpression), sequenceNormalExpression), mathNormalExpression), miscNormalExpression), assertNormalExpression), objectNormalExpression), predicatesNormalExpression), regexpNormalExpression), stringNormalExpression), functionalNormalExpression);
 
     var andSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
             assertRParenToken(tokenStream.tokens[parseState.position++]);
@@ -4903,7 +4909,7 @@ var Playground = (function (exports) {
         },
     };
 
-    function getCommonParser(name) {
+    function getCommonPolishSpecialExpressionParser(name) {
         return function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
@@ -4918,14 +4924,14 @@ var Playground = (function (exports) {
     }
 
     var commentSpecialExpression = {
-        parse: getCommonParser('comment'),
+        polishParse: getCommonPolishSpecialExpressionParser('comment'),
         validateParameterCount: function () { return undefined; },
         evaluate: function () { return null; },
         findUnresolvedIdentifiers: function () { return new Set(); },
     };
 
     var condSpecialExpression = {
-        parse: getCommonParser('cond'),
+        polishParse: getCommonPolishSpecialExpressionParser('cond'),
         validateParameterCount: function (node) { return assertEvenNumberOfParams(node); },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -4955,7 +4961,7 @@ var Playground = (function (exports) {
     };
 
     var declaredSpecialExpression = {
-        parse: getCommonParser('declared?'),
+        polishParse: getCommonPolishSpecialExpressionParser('declared?'),
         validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
         evaluate: function (node, contextStack) {
             var lookUpResult = contextStack.lookUp(node.p[0]);
@@ -4989,7 +4995,7 @@ var Playground = (function (exports) {
     }
 
     var defSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var _b;
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
@@ -5029,7 +5035,7 @@ var Playground = (function (exports) {
     };
 
     var defsSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
             assertRParenToken(tokenStream.tokens[parseState.position++]);
@@ -5069,7 +5075,7 @@ var Playground = (function (exports) {
     };
 
     var doSpecialExpression = {
-        parse: getCommonParser('do'),
+        polishParse: getCommonPolishSpecialExpressionParser('do'),
         validateParameterCount: function () { return undefined; },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -5130,7 +5136,7 @@ var Playground = (function (exports) {
     }
 
     var defnSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, parsers) {
+        polishParse: function (tokenStream, parseState, firstToken, parsers) {
             var _a;
             var parseToken = parsers.parseToken;
             var functionName = parseToken(tokenStream, parseState);
@@ -5174,7 +5180,7 @@ var Playground = (function (exports) {
         },
     };
     var defnsSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, parsers) {
+        polishParse: function (tokenStream, parseState, firstToken, parsers) {
             var parseToken = parsers.parseToken;
             var functionName = parseToken(tokenStream, parseState);
             var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
@@ -5221,7 +5227,7 @@ var Playground = (function (exports) {
         },
     };
     var fnSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, parsers) {
+        polishParse: function (tokenStream, parseState, firstToken, parsers) {
             var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
@@ -5465,7 +5471,7 @@ var Playground = (function (exports) {
     }
 
     var ifSpecialExpression = {
-        parse: getCommonParser('if'),
+        polishParse: getCommonPolishSpecialExpressionParser('if'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5489,7 +5495,7 @@ var Playground = (function (exports) {
     };
 
     var ifLetSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var bindings = parseBindings(tokenStream, parseState);
@@ -5537,7 +5543,7 @@ var Playground = (function (exports) {
     };
 
     var ifNotSpecialExpression = {
-        parse: getCommonParser('if-not'),
+        polishParse: getCommonPolishSpecialExpressionParser('if-not'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5561,7 +5567,7 @@ var Playground = (function (exports) {
     };
 
     var letSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var bindings = parseBindings(tokenStream, parseState);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
@@ -5633,7 +5639,7 @@ var Playground = (function (exports) {
     };
 
     var loopSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket, parseBindings = _a.parseBindings;
             var bindings = parseBindings(tokenStream, parseState);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
@@ -5899,7 +5905,7 @@ var Playground = (function (exports) {
         return result;
     }
     var forSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, parsers) {
+        polishParse: function (tokenStream, parseState, firstToken, parsers) {
             var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
             var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
@@ -5921,7 +5927,7 @@ var Playground = (function (exports) {
         },
     };
     var doseqSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, parsers) {
+        polishParse: function (tokenStream, parseState, firstToken, parsers) {
             var parseTokensUntilClosingBracket = parsers.parseTokensUntilClosingBracket;
             var loopBindings = parseLoopBindings(tokenStream, parseState, parsers);
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
@@ -5947,7 +5953,7 @@ var Playground = (function (exports) {
     };
 
     var orSpecialExpression = {
-        parse: getCommonParser('or'),
+        polishParse: getCommonPolishSpecialExpressionParser('or'),
         validateParameterCount: function () { return undefined; },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -5977,7 +5983,7 @@ var Playground = (function (exports) {
     };
 
     var qqSpecialExpression = {
-        parse: getCommonParser('??'),
+        polishParse: getCommonPolishSpecialExpressionParser('??'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5998,7 +6004,7 @@ var Playground = (function (exports) {
     };
 
     var recurSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var params = parseTokensUntilClosingBracket(tokenStream, parseState);
             assertRParenToken(tokenStream.tokens[parseState.position++]);
@@ -6023,7 +6029,7 @@ var Playground = (function (exports) {
     };
 
     var throwSpecialExpression = {
-        parse: getCommonParser('throw'),
+        polishParse: getCommonPolishSpecialExpressionParser('throw'),
         validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
@@ -6040,7 +6046,7 @@ var Playground = (function (exports) {
     };
 
     var timeSpecialExpression = {
-        parse: getCommonParser('time!'),
+        polishParse: getCommonPolishSpecialExpressionParser('time!'),
         validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
@@ -6059,7 +6065,7 @@ var Playground = (function (exports) {
     };
 
     var trySpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c, _d;
             var parseToken = _a.parseToken;
             var tryExpression = parseToken(tokenStream, parseState);
@@ -6114,7 +6120,7 @@ var Playground = (function (exports) {
     };
 
     var whenSpecialExpression = {
-        parse: getCommonParser('when'),
+        polishParse: getCommonPolishSpecialExpressionParser('when'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -6147,7 +6153,7 @@ var Playground = (function (exports) {
     };
 
     var whenFirstSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var bindings = parseBindings(tokenStream, parseState);
@@ -6209,7 +6215,7 @@ var Playground = (function (exports) {
     };
 
     var whenLetSpecialExpression = {
-        parse: function (tokenStream, parseState, firstToken, _a) {
+        polishParse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c;
             var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
             var bindings = parseBindings(tokenStream, parseState);
@@ -6266,7 +6272,7 @@ var Playground = (function (exports) {
     };
 
     var whenNotSpecialExpression = {
-        parse: getCommonParser('when-not'),
+        polishParse: getCommonPolishSpecialExpressionParser('when-not'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -7910,9 +7916,10 @@ var Playground = (function (exports) {
                             builtin.specialExpressions[node_1.n].validateParameterCount(node_1);
                             return node_1;
                         }
+                        case 'let':
+                            return this.parseLet(symbol, params);
                         case 'def':
                         case 'defs':
-                        case 'let':
                         case 'if-let':
                         case 'when-let':
                         case 'when-first':
@@ -7946,31 +7953,40 @@ var Playground = (function (exports) {
             }
         };
         AlgebraicParser.prototype.parseLambdaFunction = function () {
-            var _a;
+            var _a, _b;
             var firstToken = this.peek();
             this.advance();
-            var spread = false;
+            var rest = false;
+            var letBindingObject;
             var args = [];
             var restArg;
             while (!this.isAtEnd() && !isRParenToken(this.peek())) {
-                if (isA_OperatorToken(this.peek(), '...')) {
-                    if (spread) {
-                        throw new LitsError('Multiple spread operators in lambda function', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                    this.advance();
-                    spread = true;
+                if (letBindingObject) {
+                    throw new LitsError('Expected right parentheses', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
-                var symbolToken = this.peek();
-                if (!isA_SymbolToken(symbolToken)) {
-                    return null;
-                }
-                if (spread) {
-                    restArg = symbolToken[1];
+                if (isLBraceToken(this.peek())) {
+                    letBindingObject = this.parseObject();
                 }
                 else {
-                    args.push(symbolToken[1]);
+                    if (isA_OperatorToken(this.peek(), '...')) {
+                        if (rest) {
+                            throw new LitsError('Multiple spread operators in lambda function', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                        }
+                        this.advance();
+                        rest = true;
+                    }
+                    var symbolToken = this.peek();
+                    if (!isA_SymbolToken(symbolToken)) {
+                        return null;
+                    }
+                    if (rest) {
+                        restArg = symbolToken[1];
+                    }
+                    else {
+                        args.push(symbolToken[1]);
+                    }
+                    this.advance();
                 }
-                this.advance();
                 if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
                     return null;
                 }
@@ -7986,6 +8002,7 @@ var Playground = (function (exports) {
                 return null;
             }
             this.advance();
+            var letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : [];
             var body = this.parseExpression();
             var arity = restArg !== undefined ? { min: args.length } : args.length;
             return {
@@ -7996,7 +8013,17 @@ var Playground = (function (exports) {
                         as: {
                             m: args,
                             r: restArg,
-                            b: [],
+                            b: letBindings.map(function (pair) {
+                                var key = pair[0];
+                                var value = pair[1];
+                                return {
+                                    t: AstNodeType.Binding,
+                                    n: key.v,
+                                    v: value,
+                                    p: [],
+                                    token: getTokenDebugData(key.token) && key.token,
+                                };
+                            }),
                         },
                         b: [body],
                         a: arity,
@@ -8059,6 +8086,35 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(firstToken) && firstToken,
             };
             return node;
+        };
+        AlgebraicParser.prototype.parseLet = function (nameSymbol, params) {
+            var _a, _b;
+            if (params.length !== 2) {
+                throw new LitsError('let expects two arguments', (_a = getTokenDebugData(nameSymbol.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            var letObject = params[0];
+            if (letObject.t !== AstNodeType.NormalExpression || letObject.n !== 'object') {
+                throw new LitsError('let expects an object as first argument', (_b = getTokenDebugData(letObject.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+            }
+            var letBindings = arrayToPairs(letObject.p);
+            var expression = params[1];
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'let',
+                p: [expression],
+                token: getTokenDebugData(nameSymbol.token) && nameSymbol.token,
+                bs: letBindings.map(function (pair) {
+                    var key = pair[0];
+                    var value = pair[1];
+                    return {
+                        t: AstNodeType.Binding,
+                        n: key.v,
+                        v: value,
+                        p: [],
+                        token: getTokenDebugData(key.token) && key.token,
+                    };
+                }),
+            };
         };
         AlgebraicParser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
@@ -8303,7 +8359,7 @@ var Playground = (function (exports) {
         var firstToken = asLParenToken(tokenStream.tokens[parseState.position++]);
         var nameToken = asP_SymbolToken(tokenStream.tokens[parseState.position++]);
         var expressionName = nameToken[1];
-        var _b = asNonUndefined(builtin.specialExpressions[expressionName], (_a = getTokenDebugData(nameToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo), parse = _b.parse, validateParameterCount = _b.validateParameterCount;
+        var _b = asNonUndefined(builtin.specialExpressions[expressionName], (_a = getTokenDebugData(nameToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo), parse = _b.polishParse, validateParameterCount = _b.validateParameterCount;
         var node = parse(tokenStream, parseState, firstToken, {
             parseExpression: parseExpression,
             parseTokensUntilClosingBracket: parseTokensUntilClosingBracket,
@@ -8402,7 +8458,11 @@ var Playground = (function (exports) {
     }
     function removeUnnecessaryTokens(tokenStream) {
         var tokens = tokenStream.tokens.filter(function (token) {
-            if (isP_CommentToken(token) || isA_WhitespaceToken(token) || isP_WhitespaceToken(token)) {
+            if (isP_CommentToken(token)
+                || isA_CommentToken(token)
+                || isA_MultiLineCommentToken(token)
+                || isA_WhitespaceToken(token)
+                || isP_WhitespaceToken(token)) {
                 return false;
             }
             return true;
@@ -8717,7 +8777,6 @@ var Playground = (function (exports) {
         'null': { value: null },
         'def': { value: null, forbidden: true },
         'defs': { value: null, forbidden: true },
-        'let': { value: null, forbidden: true },
         'if-let': { value: null, forbidden: true },
         'when-let': { value: null, forbidden: true },
         'when-first': { value: null, forbidden: true },

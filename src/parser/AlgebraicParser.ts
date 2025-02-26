@@ -1,17 +1,18 @@
+import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
+import { builtin, specialExpressionKeys } from '../builtin'
+import type { FnNode } from '../builtin/specialExpressions/functions'
+import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
-import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { withoutCommentNodes } from '../removeCommentNodes'
 import type { A_OperatorToken, AlgebraicTokenType } from '../tokenizer/algebraic/algebraicTokens'
 import { assertA_OperatorToken, isA_OperatorToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
+import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
 import { asSymbolNode, isSymbolNode } from '../typeGuards/astNode'
-import { builtin, specialExpressionKeys } from '../builtin'
-import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
-import type { Arity, FunctionArguments } from '../builtin/utils'
-import type { FnNode } from '../builtin/specialExpressions/functions'
-import { withoutCommentNodes } from '../removeCommentNodes'
+import { arrayToPairs } from '../utils'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
@@ -486,9 +487,10 @@ export class AlgebraicParser {
             builtin.specialExpressions[node.n].validateParameterCount(node)
             return node
           }
+          case 'let':
+            return this.parseLet(symbol, params)
           case 'def':
           case 'defs':
-          case 'let':
           case 'if-let':
           case 'when-let':
           case 'when-first':
@@ -531,28 +533,37 @@ export class AlgebraicParser {
   parseLambdaFunction(): AstNode | null {
     const firstToken = this.peek()
     this.advance()
-    let spread = false
+    let rest = false
+    let letBindingObject: AstNode | undefined
     const args: string[] = []
     let restArg: string | undefined
     while (!this.isAtEnd() && !isRParenToken(this.peek())) {
-      if (isA_OperatorToken(this.peek(), '...')) {
-        if (spread) {
-          throw new LitsError('Multiple spread operators in lambda function', getTokenDebugData(this.peek())?.sourceCodeInfo)
-        }
-        this.advance()
-        spread = true
+      if (letBindingObject) {
+        throw new LitsError('Expected right parentheses', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
-      const symbolToken = this.peek()
-      if (!isA_SymbolToken(symbolToken)) {
-        return null
-      }
-      if (spread) {
-        restArg = symbolToken[1]
+      if (isLBraceToken(this.peek())) {
+        letBindingObject = this.parseObject()
       }
       else {
-        args.push(symbolToken[1])
+        if (isA_OperatorToken(this.peek(), '...')) {
+          if (rest) {
+            throw new LitsError('Multiple spread operators in lambda function', getTokenDebugData(this.peek())?.sourceCodeInfo)
+          }
+          this.advance()
+          rest = true
+        }
+        const symbolToken = this.peek()
+        if (!isA_SymbolToken(symbolToken)) {
+          return null
+        }
+        if (rest) {
+          restArg = symbolToken[1]
+        }
+        else {
+          args.push(symbolToken[1])
+        }
+        this.advance()
       }
-      this.advance()
       if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
         return null
       }
@@ -568,6 +579,7 @@ export class AlgebraicParser {
       return null
     }
     this.advance()
+    const letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : []
     const body = this.parseExpression()
     const arity: Arity = restArg !== undefined ? { min: args.length } : args.length
 
@@ -579,7 +591,17 @@ export class AlgebraicParser {
         as: {
           m: args,
           r: restArg,
-          b: [],
+          b: letBindings.map((pair) => {
+            const key = pair[0] as StringNode
+            const value = pair[1] as AstNode
+            return {
+              t: AstNodeType.Binding,
+              n: key.v,
+              v: value,
+              p: [],
+              token: getTokenDebugData(key.token) && key.token,
+            }
+          }),
         },
         b: [body],
         a: arity,
@@ -650,6 +672,39 @@ export class AlgebraicParser {
     }
 
     return node
+  }
+
+  private parseLet(nameSymbol: SymbolNode, params: AstNode[]): AstNode {
+    if (params.length !== 2) {
+      throw new LitsError('let expects two arguments', getTokenDebugData(nameSymbol.token)?.sourceCodeInfo)
+    }
+
+    const letObject = params[0]!
+    if (letObject.t !== AstNodeType.NormalExpression || letObject.n !== 'object') {
+      throw new LitsError('let expects an object as first argument', getTokenDebugData(letObject.token)?.sourceCodeInfo)
+    }
+
+    const letBindings = arrayToPairs(letObject.p)
+    const expression = params[1]!
+
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'let',
+      p: [expression],
+      token: getTokenDebugData(nameSymbol.token) && nameSymbol.token,
+      bs: letBindings.map((pair) => {
+        const key = pair[0] as StringNode
+        const value = pair[1] as AstNode
+
+        return {
+          t: AstNodeType.Binding,
+          n: key.v,
+          v: value,
+          p: [],
+          token: getTokenDebugData(key.token) && key.token,
+        }
+      }),
+    }
   }
 
   private isAtEnd(): boolean {
