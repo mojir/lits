@@ -23,11 +23,12 @@ export type NormalExpressionEvaluator<T> = (
   contextStack: ContextStack,
   { executeFunction }: { executeFunction: ExecuteFunction },
 ) => T
-type ValidateNode = (node: NormalExpressionNode) => void
+type ValidateNormalExpressionNode = (node: NormalExpressionNode) => void
+type ValidateSpecialExpressionNode = (node: SpecialExpressionNode) => void
 
 interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
-  validate?: ValidateNode
+  validate?: ValidateNormalExpressionNode
 }
 
 export interface ParserHelpers {
@@ -48,6 +49,7 @@ interface EvaluateHelpers {
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   parse: (tokenStream: TokenStream, parseState: ParseState, firstToken: Token, parsers: ParserHelpers) => N
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
+  validateParameterCount: ValidateSpecialExpressionNode
   findUnresolvedIdentifiers: (
     node: N,
     contextStack: ContextStack,

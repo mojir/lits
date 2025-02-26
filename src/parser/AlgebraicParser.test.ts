@@ -371,6 +371,8 @@ describe('algebraic operators', () => {
       expect(() => lits.run('{ 2 = 1 }')).toThrow()
       expect(() => lits.run('{ x=1 y=2 }')).toThrow()
       expect(() => lits.run('[1 2]')).toThrow()
+      expect(() => lits.run('uuid!(1)')).toThrow() // To many parameters
+      expect(() => lits.run('if(1)')).toThrow() // To few parameters
       expect(() => lits.run(']')).toThrow()
     })
   })
@@ -609,63 +611,63 @@ describe('algebraic operators', () => {
       // expect(lits.run('((10 / 2) + 3) * (4 - 1) ** 2 % 7')).toBeCloseTo(6)
     })
   })
-})
 
-describe('error handling', () => {
-  it('throws on invalid syntax', () => {
-    expect(() => lits.run('4 + ')).toThrow()
-    expect(() => lits.run('(4 + 5')).toThrow()
+  describe('error handling', () => {
+    it('throws on invalid syntax', () => {
+      expect(() => lits.run('4 + ')).toThrow()
+      expect(() => lits.run('(4 + 5')).toThrow()
+    })
   })
-})
 
-describe('lambda functions', () => {
-  it('supports basic lambda function definitions', () => {
+  describe('lambda functions', () => {
+    it('supports basic lambda function definitions', () => {
     // Testing the provided lambda function example
-    expect(lits.run('(() => 1)()')).toBe(1)
-    expect(lits.run('((x, y) => x + y)(3, 4)')).toBe(7)
-    expect(lits.run('((x, y) => x + y)(10, -5)')).toBe(5)
-  })
+      expect(lits.run('(() => 1)()')).toBe(1)
+      expect(lits.run('((x, y) => x + y)(3, 4)')).toBe(7)
+      expect(lits.run('((x, y) => x + y)(10, -5)')).toBe(5)
+    })
 
-  it('supports shorthand lambda function definitions', () => {
+    it('supports shorthand lambda function definitions', () => {
     // Testing the provided lambda function example
-    expect(lits.run('(=> 1)()')).toBe(1)
-    expect(lits.run('(=> $)(1)')).toBe(1)
-    expect(lits.run('(=> $1 + $2)(3, 4)')).toBe(7)
-  })
+      expect(lits.run('(=> 1)()')).toBe(1)
+      expect(lits.run('(=> $)(1)')).toBe(1)
+      expect(lits.run('(=> $1 + $2)(3, 4)')).toBe(7)
+    })
 
-  it('supports lambda functions with no parameters', () => {
-    expect(lits.run('(() => 42)()')).toBe(42)
-    expect(lits.run('(() => 10 + 5)()')).toBe(15)
-  })
+    it('supports lambda functions with no parameters', () => {
+      expect(lits.run('(() => 42)()')).toBe(42)
+      expect(lits.run('(() => 10 + 5)()')).toBe(15)
+    })
 
-  it('supports lambda functions with rest parameters', () => {
-    expect(lits.run('((...args) => apply(\'+\', args))(1, 2, 3, 4, 5, 6)')).toBe(21)
-    expect(lits.run('((first, ...args) => first + apply(\'+\', args))(1, 2, 3, 4, 5, 6)')).toBe(21)
-  })
+    it('supports lambda functions with rest parameters', () => {
+      expect(lits.run('((...args) => apply(\'+\', args))(1, 2, 3, 4, 5, 6)')).toBe(21)
+      expect(lits.run('((first, ...args) => first + apply(\'+\', args))(1, 2, 3, 4, 5, 6)')).toBe(21)
+    })
 
-  it('supports lambda function expressions in data structures', () => {
-    expect(lits.run('map((x) => x * 2, [1, 2, 3])')).toEqual([2, 4, 6])
-    expect(lits.run('{ fun=((x) => x + 1) }.fun(5)')).toBe(6)
-  })
+    it('supports lambda function expressions in data structures', () => {
+      expect(lits.run('map((x) => x * 2, [1, 2, 3])')).toEqual([2, 4, 6])
+      expect(lits.run('{ fun=((x) => x + 1) }.fun(5)')).toBe(6)
+    })
 
-  it('supports complex expressions in lambda functions', () => {
-    expect(lits.run('((x, y) => x ** 2 + y ** 2)(3, 4)')).toBe(25)
-    expect(lits.run('((a, b) => ({ sum=a + b, product=a * b }))(3, 4).sum')).toBe(7)
-    expect(lits.run('((a, b) => ({ sum=a + b, product=a * b }))(3, 4).product')).toBe(12)
-  })
+    it('supports complex expressions in lambda functions', () => {
+      expect(lits.run('((x, y) => x ** 2 + y ** 2)(3, 4)')).toBe(25)
+      expect(lits.run('((a, b) => ({ sum=a + b, product=a * b }))(3, 4).sum')).toBe(7)
+      expect(lits.run('((a, b) => ({ sum=a + b, product=a * b }))(3, 4).product')).toBe(12)
+    })
 
-  it('supports lambda functions as return values', () => {
-    expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("add")(5, 3)')).toBe(8)
-    expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("subtract")(5, 3)')).toBe(2)
-  })
+    it('supports lambda functions as return values', () => {
+      expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("add")(5, 3)')).toBe(8)
+      expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("subtract")(5, 3)')).toBe(2)
+    })
 
-  test('samples', () => {
+    test('samples', () => {
     // expect(lits.run('(val) => number:format("d", val)')).toBe(8)
-    expect(lits.run(`
+      expect(lits.run(`
         $\`
         (def foo #(inc %))
         (foo 7)
         \`
       `)).toBe(8)
+    })
   })
 })

@@ -22,10 +22,10 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
     }
 
     assertSymbolNode(node.p[0], getTokenDebugData(node.token)?.sourceCodeInfo)
-    assertNumberOfParams(2, node)
 
     return node
   },
+  validateParameterCount: node => assertNumberOfParams(2, node),
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const name = (node.p[0] as SymbolNode).v

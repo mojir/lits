@@ -1,26 +1,13 @@
-import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { assertRParenToken } from '../../tokenizer/common/commonTokens'
-import { getTokenDebugData } from '../../tokenizer/utils'
 import type { BuiltinSpecialExpression } from '../interface'
+import { getCommonParser } from './commonParser'
 
 export interface OrNode extends CommonSpecialExpressionNode<'or'> {}
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
-    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: OrNode = {
-      t: AstNodeType.SpecialExpression,
-      n: 'or',
-      p: params,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-
-    return node
-  },
+  parse: getCommonParser('or'),
+  validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = false
 

@@ -1,31 +1,17 @@
-import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import { isSymbolNode } from '../../typeGuards/astNode'
 import { assertAny } from '../../typeGuards/lits'
 import type { BuiltinSpecialExpression } from '../interface'
+import { getCommonParser } from './commonParser'
 
 export interface QqNode extends CommonSpecialExpressionNode<'??'> {}
 
 export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
-    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: QqNode = {
-      t: AstNodeType.SpecialExpression,
-      n: '??',
-      p: params,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-
-    assertNumberOfParams({ min: 1, max: 2 }, node)
-
-    return node
-  },
+  parse: getCommonParser('??'),
+  validateParameterCount: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const [firstNode, secondNode] = node.p
 

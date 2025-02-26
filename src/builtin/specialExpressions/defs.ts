@@ -21,10 +21,9 @@ export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
       token: getTokenDebugData(firstToken) && firstToken,
     }
 
-    assertNumberOfParams(2, node)
-
     return node
   },
+  validateParameterCount: node => assertNumberOfParams(2, node),
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const name = evaluateAstNode(node.p[0]!, contextStack)

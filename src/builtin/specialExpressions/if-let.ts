@@ -37,10 +37,9 @@ export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = 
       token: getTokenDebugData(firstToken) && firstToken,
     }
 
-    assertNumberOfParams({ min: 1, max: 2 }, node)
-
     return node
   },
+  validateParameterCount: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const locals: Context = {}

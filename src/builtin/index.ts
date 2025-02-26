@@ -56,8 +56,28 @@ const specialExpressions = {
 } as const
 
 export type SpecialExpressionName = keyof typeof specialExpressions
+export type CommonSpecialExpressionName = keyof Pick<
+  typeof specialExpressions,
+  | '??'
+  | '??'
+  | 'and'
+  | 'comment'
+  | 'cond'
+  | 'declared?'
+  | 'do'
+  | 'if'
+  | 'if-not'
+  | 'or'
+  | 'time!'
+  | 'when'
+  | 'when-not'
+  | 'throw'
+>
+
 export type BuiltinSpecialExpressions = typeof specialExpressions
 export type BuiltinSpecialExpression = typeof specialExpressions[SpecialExpressionName]
+export type BuiltinCommonSpecialExpression = typeof specialExpressions[CommonSpecialExpressionName]
+export type GenericCommonSpecialExpressionNode<T extends CommonSpecialExpressionName> = ReturnType<typeof specialExpressions[T]['parse']>
 export type SpecialExpressionNode = ReturnType<typeof specialExpressions[SpecialExpressionName]['parse']>
 
 Object.keys(specialExpressions).forEach((key) => {

@@ -261,10 +261,9 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
       token: getTokenDebugData(firstToken) && firstToken,
     }
 
-    assertNumberOfParams(1, node)
-
     return node
   },
+  validateParameterCount: node => assertNumberOfParams(1, node),
   evaluate: (node, contextStack, helpers) => evaluateLoop(true, node, contextStack, helpers.evaluateAstNode),
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => analyze(node, contextStack, findUnresolvedIdentifiers, builtin),
 }
@@ -285,10 +284,9 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
       token: getTokenDebugData(firstToken) && firstToken,
     }
 
-    assertNumberOfParams(1, node)
-
     return node
   },
+  validateParameterCount: node => assertNumberOfParams(1, node),
   evaluate: (node, contextStack, helpers) => {
     evaluateLoop(false, node, contextStack, helpers.evaluateAstNode)
     return null

@@ -7,10 +7,11 @@ import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
 import { asSymbolNode, isSymbolNode } from '../typeGuards/astNode'
-import { specialExpressionKeys } from '../builtin'
-import type { SpecialExpressionName } from '../builtin'
+import { builtin, specialExpressionKeys } from '../builtin'
+import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
 import type { Arity, FunctionArguments } from '../builtin/utils'
 import type { FnNode } from '../builtin/specialExpressions/functions'
+import { withoutCommentNodes } from '../removeCommentNodes'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
@@ -474,13 +475,17 @@ export class AlgebraicParser {
           case 'when':
           case 'when-not':
           case 'do':
-          case 'throw':
-            return {
+          case 'time!':
+          case 'throw': {
+            const node: SpecialExpressionNode = {
               t: AstNodeType.SpecialExpression,
               n: name,
               p: params,
               token: getTokenDebugData(symbol.token) && symbol.token,
             }
+            builtin.specialExpressions[node.n].validateParameterCount(node)
+            return node
+          }
           case 'def':
           case 'defs':
           case 'let':
@@ -493,7 +498,6 @@ export class AlgebraicParser {
           case 'try':
           case 'recur':
           case 'loop':
-          case 'time!':
           case 'doseq':
           case 'for':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)
@@ -501,7 +505,18 @@ export class AlgebraicParser {
             throw new Error(`Unknown special expression: ${name satisfies never}`)
         }
       }
-      return createNamedNormalExpressionNode(symbol.v, params, symbol.token)
+      const node = createNamedNormalExpressionNode(symbol.v, params, symbol.token)
+
+      const builtinExpression = builtin.normalExpressions[node.n]
+
+      if (builtinExpression) {
+        builtinExpression.validate?.({
+          ...node,
+          p: withoutCommentNodes(node.p),
+        })
+      }
+
+      return node
     }
     else {
       return {

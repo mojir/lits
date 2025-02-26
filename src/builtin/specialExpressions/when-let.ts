@@ -37,6 +37,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode
     }
     return node
   },
+  validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const { b: binding } = node
     const locals: Context = {}

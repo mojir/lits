@@ -1,30 +1,16 @@
-import { AstNodeType } from '../../constants/constants'
 import type { Any } from '../../interface'
 import type { CommonSpecialExpressionNode } from '../../parser/interface'
-import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
 import { assertNumberOfParams } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
+import { getCommonParser } from './commonParser'
 
 export interface IfNode extends CommonSpecialExpressionNode<'if'> {}
 
 export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
-  parse: (tokenStream, parseState, firstToken, { parseTokensUntilClosingBracket }) => {
-    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: IfNode = {
-      t: AstNodeType.SpecialExpression,
-      n: 'if',
-      p: params,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-
-    assertNumberOfParams({ min: 2, max: 3 }, node)
-
-    return node
-  },
+  parse: getCommonParser('if'),
+  validateParameterCount: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
 

@@ -31,6 +31,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
     }
     return node
   },
+  validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const bindingContext: Context = node.bs.reduce((result: Context, binding) => {

@@ -50,10 +50,9 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       token: getTokenDebugData(firstToken) && firstToken,
     }
 
-    assertNumberOfParams(1, node)
-
     return node
   },
+  validateParameterCount: node => assertNumberOfParams(1, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
     try {

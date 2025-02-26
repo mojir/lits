@@ -27,6 +27,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     }
     return node
   },
+  validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const locals: Context = {}
     const newContextStack = contextStack.create(locals)

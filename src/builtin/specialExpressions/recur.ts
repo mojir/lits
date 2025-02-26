@@ -21,6 +21,7 @@ export const recurSpecialExpression: BuiltinSpecialExpression<null, RecurNode> =
 
     return node
   },
+  validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const params = node.p.map(paramNode => evaluateAstNode(paramNode, contextStack))
     throw new RecurSignal(params)

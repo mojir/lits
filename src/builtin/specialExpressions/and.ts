@@ -21,6 +21,7 @@ export const andSpecialExpression: BuiltinSpecialExpression<Any, AndNode> = {
 
     return node
   },
+  validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = true
 

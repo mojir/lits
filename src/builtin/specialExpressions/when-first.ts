@@ -39,6 +39,7 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirst
     }
     return node
   },
+  validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const locals: Context = {}
     const { b: binding } = node
