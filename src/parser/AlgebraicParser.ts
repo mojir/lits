@@ -1,20 +1,22 @@
 import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
 import { builtin, specialExpressionKeys } from '../builtin'
 import type { FnNode } from '../builtin/specialExpressions/functions'
+import type { LetNode } from '../builtin/specialExpressions/let'
+import type { ForNode, LoopBindingNode } from '../builtin/specialExpressions/loops'
 import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { A_OperatorToken, AlgebraicTokenType } from '../tokenizer/algebraic/algebraicTokens'
-import { assertA_OperatorToken, isA_OperatorToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
-import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { asA_SymbolToken, assertA_OperatorToken, isA_OperatorToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
+import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
-import { asSymbolNode, isSymbolNode } from '../typeGuards/astNode'
+import { asSymbolNode } from '../typeGuards/astNode'
 import { arrayToPairs } from '../utils'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
-import type { AstNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
+import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
 const exponentiationPrecedence = 9
 const placeholderRegexp = /^\$([1-9]\d?)?$/
@@ -445,8 +447,13 @@ export class AlgebraicParser {
   }
 
   private parseFunctionCall(symbol: AstNode): AstNode {
-    const params: AstNode[] = []
+    const isNamedFunction = symbol.t === AstNodeType.Symbol
     this.advance()
+    if (isNamedFunction && symbol.v === 'for') {
+      return this.parseFor(symbol)
+    }
+
+    const params: AstNode[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek())) {
       params.push(this.parseExpression())
       const nextToken = this.peek()
@@ -461,9 +468,9 @@ export class AlgebraicParser {
       throw new LitsError('Expected closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
     }
     this.advance()
-    if (isSymbolNode(symbol)) {
+    if (isNamedFunction) {
       if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as SpecialExpressionName
+        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for'>
         switch (name) {
           case '??':
           case 'and':
@@ -501,7 +508,6 @@ export class AlgebraicParser {
           case 'recur':
           case 'loop':
           case 'doseq':
-          case 'for':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)
           default:
             throw new Error(`Unknown special expression: ${name satisfies never}`)
@@ -674,9 +680,9 @@ export class AlgebraicParser {
     return node
   }
 
-  private parseLet(nameSymbol: SymbolNode, params: AstNode[]): AstNode {
+  private parseLet(letSymbol: SymbolNode, params: AstNode[]): LetNode {
     if (params.length !== 2) {
-      throw new LitsError('let expects two arguments', getTokenDebugData(nameSymbol.token)?.sourceCodeInfo)
+      throw new LitsError('let expects two arguments', getTokenDebugData(letSymbol.token)?.sourceCodeInfo)
     }
 
     const letObject = params[0]!
@@ -691,7 +697,7 @@ export class AlgebraicParser {
       t: AstNodeType.SpecialExpression,
       n: 'let',
       p: [expression],
-      token: getTokenDebugData(nameSymbol.token) && nameSymbol.token,
+      token: getTokenDebugData(letSymbol.token) && letSymbol.token,
       bs: letBindings.map((pair) => {
         const key = pair[0] as StringNode
         const value = pair[1] as AstNode
@@ -707,11 +713,142 @@ export class AlgebraicParser {
     }
   }
 
+  private parseFor(forSymbol: SymbolNode): ForNode {
+    const forLoopBindings: LoopBindingNode[] = [
+      this.parseForLoopBinding(),
+    ]
+    let nextToken = this.peekAhead()
+    while (isA_SymbolToken(nextToken) && nextToken[1] === 'of') {
+      forLoopBindings.push(this.parseForLoopBinding())
+      nextToken = this.peekAhead()
+    }
+
+    const expression = this.parseExpression()
+
+    assertRParenToken(this.peek())
+    this.advance()
+
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'for',
+      p: [expression],
+      token: getTokenDebugData(forSymbol.token) && forSymbol.token,
+      l: forLoopBindings,
+    }
+  }
+
+  // export interface LoopBindingNode {
+  //   b: BindingNode // Binding
+  //   m: Array<'&let' | '&when' | '&while'> // Modifiers
+  //   l?: BindingNode[] // Let-Bindings
+  //   wn?: AstNode // When Node
+  //   we?: AstNode // While Node
+  // }
+  private parseForLoopBinding(): LoopBindingNode {
+    const bindingNode = this.parseBinding()
+
+    if (isA_OperatorToken(this.peek(), ',')) {
+      this.advance()
+      return {
+        b: bindingNode,
+        m: [],
+      }
+    }
+
+    const modifiers: Array<'&let' | '&when' | '&while'> = []
+    let token = this.peek()
+
+    if (!isA_SymbolToken(token)) {
+      throw new LitsError('Expected symbol let, when or while', getTokenDebugData(token)?.sourceCodeInfo)
+    }
+
+    let letBindings: BindingNode[] | undefined
+    if (token[1] === 'let') {
+      modifiers.push('&let')
+      letBindings = []
+      this.advance()
+      const letObject = this.parseObject()
+      letBindings = arrayToPairs(letObject.p).map((pair) => {
+        const key = pair[0] as StringNode
+        const value = pair[1] as AstNode
+
+        return {
+          t: AstNodeType.Binding,
+          n: key.v,
+          v: value,
+          p: [],
+          token: getTokenDebugData(key.token) && key.token,
+        }
+      })
+    }
+
+    token = this.peek()
+    let whenNode: AstNode | undefined
+    let whileNode: AstNode | undefined
+    while (
+      isA_SymbolToken(token)
+      && (
+        (token[1] === 'when' && !modifiers.includes('&when'))
+        || (token[1] === 'while' && !modifiers.includes('&while'))
+      )
+    ) {
+      this.advance()
+
+      if (token[1] === 'when') {
+        modifiers.push('&when')
+        whenNode = this.parseExpression()
+      }
+      else {
+        modifiers.push('&while')
+        whileNode = this.parseExpression()
+      }
+      token = this.peek()
+    }
+
+    assertA_OperatorToken(token, ',')
+    this.advance()
+
+    return {
+      b: bindingNode,
+      m: modifiers,
+      l: letBindings,
+      wn: whenNode,
+      we: whileNode,
+    }
+  }
+
+  private parseBinding(): BindingNode {
+    const firstToken = asA_SymbolToken(this.peek())
+    const name = firstToken[1]
+    this.advance()
+
+    const ofSymbol = asA_SymbolToken(this.peek())
+    if (ofSymbol[1] !== 'of') {
+      throw new LitsError('Expected "of"', getTokenDebugData(this.peek())?.sourceCodeInfo)
+    }
+    this.advance()
+
+    const value = this.parseExpression()
+
+    const node: BindingNode = {
+      t: AstNodeType.Binding,
+      n: name,
+      v: value,
+      p: [],
+      token: getTokenDebugData(firstToken) && firstToken,
+    }
+    return node
+  }
+
   private isAtEnd(): boolean {
     return this.parseState.position >= this.tokenStream.tokens.length
   }
 
   private peek(): Token {
     return this.tokenStream.tokens[this.parseState.position]!
+  }
+
+  private peekAhead(): Token {
+    return this.tokenStream.tokens[this.parseState.position + 1]!
   }
 }

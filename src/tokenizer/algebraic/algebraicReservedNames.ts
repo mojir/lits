@@ -18,7 +18,6 @@ export const algebraicReservedNamesRecord: Record<string, { value: Any, forbidde
   'loop': { value: null, forbidden: true },
   'time!': { value: null, forbidden: true },
   'doseq': { value: null, forbidden: true },
-  'for': { value: null, forbidden: true },
 
 } as const
 

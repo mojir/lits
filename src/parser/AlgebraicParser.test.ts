@@ -572,6 +572,214 @@ describe('algebraic operators', () => {
   describe('let', () => {
     it('supports let bindings', () => {
       expect(lits.run('let({ a=10 }, a)')).toBe(10)
+      expect(lits.run('let({ foo = => $ + 1 }, foo(1))')).toBe(2)
+    })
+  })
+
+  // describe('for', () => {
+  //   it('supports for loops', () => {
+  //     expect(lits.run('for(x of [1, 2, 3], x)')).toEqual([1, 2, 3])
+  //     expect(lits.run('for(x of [1, 2, 3], y of [1, 2, 3], x + y)')).toEqual([2, 3, 4, 3, 4, 5, 4, 5, 6])
+  //   })
+  // })
+
+  describe('for', () => {
+    test('empty collections', () => {
+      expect(lits.run('for(x of [], x)')).toEqual([])
+      expect(lits.run('for(x of [1, 2, 3], y of [], x)')).toEqual([])
+      expect(lits.run('for(x of [], y of [1, 2, 3], x)')).toEqual([])
+    })
+    test('string and object iteration', () => {
+      expect(lits.run('for(x of "Al", y of [1, 2], repeat(y, x))')).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
+      expect(lits.run('for(x of { a=10, b=20 }, y of [1, 2], repeat(y, x))')).toEqual([
+        [['a', 10]],
+        [
+          ['a', 10],
+          ['a', 10],
+        ],
+        [['b', 20]],
+        [
+          ['b', 20],
+          ['b', 20],
+        ],
+      ])
+    })
+    test('basic iteration with computation', () => {
+      expect(lits.run('for(x of [1, 2], y of [1, 10], x * y)')).toEqual([1, 10, 2, 20])
+    })
+    test('with computed bindings using let', () => {
+      expect(lits.run('for(x of [1, 2] let { z = x * x * x }, z)')).toEqual([1, 8])
+    })
+    test('using previous bindings of subsequent iterations', () => {
+      expect(lits.run('for(x of [1, 2], y of [x, 2 * x], x * y)')).toEqual([1, 2, 4, 8])
+    })
+    test('with when conditions', () => {
+      expect(lits.run('for(x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } when even?(y), y)')).toEqual([0, 6, 12])
+    })
+    test('with while conditions (early termination)', () => {
+      expect(lits.run('for(x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } while even?(y), y)')).toEqual([0])
+    })
+    test('multiple iterations with while', () => {
+      expect(lits.run('for(x of [1, 2, 3], y of [1, 2, 3] while x <= y, z of [1, 2, 3], [x, y, z])')).toEqual([
+        [1, 1, 1],
+        [1, 1, 2],
+        [1, 1, 3],
+        [1, 2, 1],
+        [1, 2, 2],
+        [1, 2, 3],
+        [1, 3, 1],
+        [1, 3, 2],
+        [1, 3, 3],
+      ])
+    })
+    test('complex example with three iterations', () => {
+      expect(lits.run('for(x of [1, 2, 3], y of [1, 2, 3], z of [1, 2, 3] while x <= y, [x, y, z])')).toEqual([
+        [1, 1, 1],
+        [1, 1, 2],
+        [1, 1, 3],
+        [1, 2, 1],
+        [1, 2, 2],
+        [1, 2, 3],
+        [1, 3, 1],
+        [1, 3, 2],
+        [1, 3, 3],
+        [2, 2, 1],
+        [2, 2, 2],
+        [2, 2, 3],
+        [2, 3, 1],
+        [2, 3, 2],
+        [2, 3, 3],
+        [3, 3, 1],
+        [3, 3, 2],
+        [3, 3, 3],
+      ])
+    })
+    test('real world example', () => {
+      expect(lits.run(`// Imagine these are coming from a database
+let({
+  products = [
+    { id="P1", name="Phone", price=500, category="electronics", stockLevel=23 },
+    { id="P2", name="Headphones", price=150, category="electronics", stockLevel=42 },
+    { id="P3", name="Case", price=30, category="accessories", stockLevel=56 },
+  ],
+  customerPreferences = {
+    priceLimit=700,
+    preferredCategories=["electronics", "accessories"],
+    recentViews=["P1", "P3", "P5"]
+  }
+},
+
+  // Generate personalized bundle recommendations
+  for(
+    // Start with main products
+    mainProduct of products
+      let {
+        isInStock = mainProduct.stockLevel > 0,
+        isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category),
+        isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
+      }
+      when (isInStock && isPreferredCategory && isPriceOk),
+      
+ 
+    // Add compatible accessories
+    accessory of products
+      let {
+        isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0,
+        totalPrice = mainProduct.price + accessory.price,
+        isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
+      }
+      when (isCompatible && totalPrice <= customerPreferences.priceLimit)
+      while totalPrice <= customerPreferences.priceLimit * 0.9,
+ 
+    // For high-value bundles, consider a third complementary item
+    complItem of products
+      let {
+        isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
+        finalPrice = mainProduct.price + accessory.price + complItem.price,
+        discount = if(finalPrice > 500, 0.1, 0.05),
+        discountedPrice = finalPrice * (1 - discount),
+        matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
+      }
+      when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
+      while discountedPrice <= customerPreferences.priceLimit,
+ 
+    // Return bundle information object
+    {
+      bundle=[mainProduct, accessory, complItem],
+      originalPrice=finalPrice,
+      discountedPrice=discountedPrice,
+      savingsAmount=discount * finalPrice,
+      savingsPercentage=discount * 100
+    }
+  )
+)
+`)).toEqual([
+        {
+          bundle: [
+            {
+              category: 'accessories',
+              id: 'P3',
+              name: 'Case',
+              price: 30,
+              stockLevel: 56,
+            },
+            {
+              category: 'electronics',
+              id: 'P1',
+              name: 'Phone',
+              price: 500,
+              stockLevel: 23,
+            },
+            {
+              category: 'electronics',
+              id: 'P2',
+              name: 'Headphones',
+              price: 150,
+              stockLevel: 42,
+            },
+          ],
+          discountedPrice: 612,
+          originalPrice: 680,
+          savingsAmount: 68,
+          savingsPercentage: 10,
+        },
+        {
+          bundle: [
+            {
+              category: 'accessories',
+              id: 'P3',
+              name: 'Case',
+              price: 30,
+              stockLevel: 56,
+            },
+            {
+              category: 'electronics',
+              id: 'P2',
+              name: 'Headphones',
+              price: 150,
+              stockLevel: 42,
+            },
+            {
+              category: 'electronics',
+              id: 'P1',
+              name: 'Phone',
+              price: 500,
+              stockLevel: 23,
+            },
+          ],
+          discountedPrice: 612,
+          originalPrice: 680,
+          savingsAmount: 68,
+          savingsPercentage: 10,
+        },
+      ])
+    })
+    test('error cases', () => {
+      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y), y)')).toThrow()
+      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5] let { x = 10 }, y)')).toThrow()
+      expect(() => lits.run('for x of [0, 1, 2, 3, 4, 5], y')).toThrow()
+      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5], x, y)')).toThrow()
+      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5], x of [10, 20], x)')).toThrow()
     })
   })
 

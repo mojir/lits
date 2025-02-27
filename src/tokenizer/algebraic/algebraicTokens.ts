@@ -117,59 +117,59 @@ export type AlgebraicToken =
   | CommonSimpleToken
   | CommonValueToken
 
-export function isA_SymbolToken(token?: Token): token is A_SymbolToken {
+export function isA_SymbolToken(token: Token | undefined): token is A_SymbolToken {
   return token?.[0] === 'A_Symbol'
 }
-export function assertA_SymbolToken(token?: Token): asserts token is A_SymbolToken {
+export function assertA_SymbolToken(token: Token | undefined): asserts token is A_SymbolToken {
   if (!isA_SymbolToken(token)) {
     throwUnexpectedToken('A_Symbol', token)
   }
 }
-export function asA_SymbolToken(token?: Token): A_SymbolToken {
+export function asA_SymbolToken(token: Token | undefined): A_SymbolToken {
   assertA_SymbolToken(token)
   return token
 }
 
-export function isA_ReservedSymbolToken(token?: Token): token is A_ReservedSymbolToken {
+export function isA_ReservedSymbolToken(token: Token | undefined): token is A_ReservedSymbolToken {
   return token?.[0] === 'A_ReservedSymbol'
 }
-export function assertA_ReservedSymbolToken(token?: Token): asserts token is A_ReservedSymbolToken {
+export function assertA_ReservedSymbolToken(token: Token | undefined): asserts token is A_ReservedSymbolToken {
   if (!isA_ReservedSymbolToken(token)) {
     throwUnexpectedToken('A_ReservedSymbol', token)
   }
 }
-export function asA_ReservedSymbolToken(token?: Token): A_ReservedSymbolToken {
+export function asA_ReservedSymbolToken(token: Token | undefined): A_ReservedSymbolToken {
   assertA_ReservedSymbolToken(token)
   return token
 }
 
-export function isA_CommentToken(token?: Token): token is A_SingleLineCommentToken {
+export function isA_CommentToken(token: Token | undefined): token is A_SingleLineCommentToken {
   return token?.[0] === 'A_SingleLineComment'
 }
-export function assertA_CommentToken(token?: Token): asserts token is A_SingleLineCommentToken {
+export function assertA_CommentToken(token: Token | undefined): asserts token is A_SingleLineCommentToken {
   if (!isA_CommentToken(token)) {
     throwUnexpectedToken('A_SingleLineComment', token)
   }
 }
-export function asA_CommentToken(token?: Token): A_SingleLineCommentToken {
+export function asA_CommentToken(token: Token | undefined): A_SingleLineCommentToken {
   assertA_CommentToken(token)
   return token
 }
 
-export function isA_MultiLineCommentToken(token?: Token): token is A_MultiLineCommentToken {
+export function isA_MultiLineCommentToken(token: Token | undefined): token is A_MultiLineCommentToken {
   return token?.[0] === 'A_MultiLineComment'
 }
-export function assertA_MultiLineCommentToken(token?: Token): asserts token is A_MultiLineCommentToken {
+export function assertA_MultiLineCommentToken(token: Token | undefined): asserts token is A_MultiLineCommentToken {
   if (!isA_MultiLineCommentToken(token)) {
     throwUnexpectedToken('A_MultiLineComment', token)
   }
 }
-export function asA_MultiLineCommentToken(token?: Token): A_MultiLineCommentToken {
+export function asA_MultiLineCommentToken(token: Token | undefined): A_MultiLineCommentToken {
   assertA_MultiLineCommentToken(token)
   return token
 }
 
-export function isA_OperatorToken<T extends AlgebraicOperator>(token?: Token, operatorName?: T): token is A_OperatorToken<T> {
+export function isA_OperatorToken<T extends AlgebraicOperator>(token: Token | undefined, operatorName?: T): token is A_OperatorToken<T> {
   if (token?.[0] !== 'A_Operator') {
     return false
   }
@@ -178,7 +178,7 @@ export function isA_OperatorToken<T extends AlgebraicOperator>(token?: Token, op
   }
   return true
 }
-export function assertA_OperatorToken<T extends AlgebraicOperator>(token?: Token, operatorName?: T): asserts token is A_OperatorToken<T> {
+export function assertA_OperatorToken<T extends AlgebraicOperator>(token: Token | undefined, operatorName?: T): asserts token is A_OperatorToken<T> {
   if (!isA_OperatorToken(token, operatorName)) {
     if (operatorName) {
       throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, undefined)
@@ -186,33 +186,33 @@ export function assertA_OperatorToken<T extends AlgebraicOperator>(token?: Token
     throwUnexpectedToken('A_Operator', token)
   }
 }
-export function asA_OperatorToken<T extends AlgebraicOperator>(token?: Token, operatorName?: T): A_OperatorToken<T> {
+export function asA_OperatorToken<T extends AlgebraicOperator>(token: Token | undefined, operatorName?: T): A_OperatorToken<T> {
   assertA_OperatorToken(token, operatorName)
   return token
 }
 
-export function isA_WhitespaceToken(token?: Token): token is A_WhitespaceToken {
+export function isA_WhitespaceToken(token: Token | undefined): token is A_WhitespaceToken {
   return token?.[0] === 'A_Whitespace'
 }
-export function assertA_WhitespaceToken(token?: Token): asserts token is A_WhitespaceToken {
+export function assertA_WhitespaceToken(token: Token | undefined): asserts token is A_WhitespaceToken {
   if (!isA_WhitespaceToken(token)) {
     throwUnexpectedToken('A_Whitespace', token)
   }
 }
-export function asA_WhitespaceToken(token?: Token): A_WhitespaceToken {
+export function asA_WhitespaceToken(token: Token | undefined): A_WhitespaceToken {
   assertA_WhitespaceToken(token)
   return token
 }
 
-export function isA_NumberToken(token?: Token): token is A_NumberToken {
+export function isA_NumberToken(token: Token | undefined): token is A_NumberToken {
   return token?.[0] === 'A_Number'
 }
-export function assertA_NumberToken(token?: Token): asserts token is A_NumberToken {
+export function assertA_NumberToken(token: Token | undefined): asserts token is A_NumberToken {
   if (!isA_NumberToken(token)) {
     throwUnexpectedToken('A_Number', token)
   }
 }
-export function asA_NumberToken(token?: Token): A_NumberToken {
+export function asA_NumberToken(token: Token | undefined): A_NumberToken {
   assertA_NumberToken(token)
   return token
 }

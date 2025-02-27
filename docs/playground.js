@@ -908,6 +908,15 @@ var Playground = (function (exports) {
     function isA_SymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol';
     }
+    function assertA_SymbolToken(token) {
+        if (!isA_SymbolToken(token)) {
+            throwUnexpectedToken('A_Symbol', token);
+        }
+    }
+    function asA_SymbolToken(token) {
+        assertA_SymbolToken(token);
+        return token;
+    }
     function isA_ReservedSymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_ReservedSymbol';
     }
@@ -928,9 +937,10 @@ var Playground = (function (exports) {
     }
     function assertA_OperatorToken(token, operatorName) {
         if (!isA_OperatorToken(token, operatorName)) {
-            {
+            if (operatorName) {
                 throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), undefined);
             }
+            throwUnexpectedToken('A_Operator', token);
         }
     }
     function isA_WhitespaceToken(token) {
@@ -7874,8 +7884,12 @@ var Playground = (function (exports) {
         };
         AlgebraicParser.prototype.parseFunctionCall = function (symbol) {
             var _a, _b, _c;
-            var params = [];
+            var isNamedFunction = symbol.t === AstNodeType.Symbol;
             this.advance();
+            if (isNamedFunction && symbol.v === 'for') {
+                return this.parseFor(symbol);
+            }
+            var params = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek())) {
                 params.push(this.parseExpression());
                 var nextToken = this.peek();
@@ -7890,7 +7904,7 @@ var Playground = (function (exports) {
                 throw new LitsError('Expected closing parenthesis', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             this.advance();
-            if (isSymbolNode(symbol)) {
+            if (isNamedFunction) {
                 if (specialExpressionKeys.includes(symbol.v)) {
                     var name_1 = symbol.v;
                     switch (name_1) {
@@ -7930,7 +7944,6 @@ var Playground = (function (exports) {
                         case 'recur':
                         case 'loop':
                         case 'doseq':
-                        case 'for':
                             throw new Error("Special expression ".concat(name_1, " is not available in algebraic notation"));
                         default:
                             throw new Error("Unknown special expression: ".concat(name_1));
@@ -8087,10 +8100,10 @@ var Playground = (function (exports) {
             };
             return node;
         };
-        AlgebraicParser.prototype.parseLet = function (nameSymbol, params) {
+        AlgebraicParser.prototype.parseLet = function (letSymbol, params) {
             var _a, _b;
             if (params.length !== 2) {
-                throw new LitsError('let expects two arguments', (_a = getTokenDebugData(nameSymbol.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                throw new LitsError('let expects two arguments', (_a = getTokenDebugData(letSymbol.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             }
             var letObject = params[0];
             if (letObject.t !== AstNodeType.NormalExpression || letObject.n !== 'object') {
@@ -8102,7 +8115,7 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'let',
                 p: [expression],
-                token: getTokenDebugData(nameSymbol.token) && nameSymbol.token,
+                token: getTokenDebugData(letSymbol.token) && letSymbol.token,
                 bs: letBindings.map(function (pair) {
                     var key = pair[0];
                     var value = pair[1];
@@ -8116,11 +8129,121 @@ var Playground = (function (exports) {
                 }),
             };
         };
+        AlgebraicParser.prototype.parseFor = function (forSymbol) {
+            var forLoopBindings = [
+                this.parseForLoopBinding(),
+            ];
+            var nextToken = this.peekAhead();
+            while (isA_SymbolToken(nextToken) && nextToken[1] === 'of') {
+                forLoopBindings.push(this.parseForLoopBinding());
+                nextToken = this.peekAhead();
+            }
+            var expression = this.parseExpression();
+            assertRParenToken(this.peek());
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'for',
+                p: [expression],
+                token: getTokenDebugData(forSymbol.token) && forSymbol.token,
+                l: forLoopBindings,
+            };
+        };
+        // export interface LoopBindingNode {
+        //   b: BindingNode // Binding
+        //   m: Array<'&let' | '&when' | '&while'> // Modifiers
+        //   l?: BindingNode[] // Let-Bindings
+        //   wn?: AstNode // When Node
+        //   we?: AstNode // While Node
+        // }
+        AlgebraicParser.prototype.parseForLoopBinding = function () {
+            var _a;
+            var bindingNode = this.parseBinding();
+            if (isA_OperatorToken(this.peek(), ',')) {
+                this.advance();
+                return {
+                    b: bindingNode,
+                    m: [],
+                };
+            }
+            var modifiers = [];
+            var token = this.peek();
+            if (!isA_SymbolToken(token)) {
+                throw new LitsError('Expected symbol let, when or while', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            var letBindings;
+            if (token[1] === 'let') {
+                modifiers.push('&let');
+                letBindings = [];
+                this.advance();
+                var letObject = this.parseObject();
+                letBindings = arrayToPairs(letObject.p).map(function (pair) {
+                    var key = pair[0];
+                    var value = pair[1];
+                    return {
+                        t: AstNodeType.Binding,
+                        n: key.v,
+                        v: value,
+                        p: [],
+                        token: getTokenDebugData(key.token) && key.token,
+                    };
+                });
+            }
+            token = this.peek();
+            var whenNode;
+            var whileNode;
+            while (isA_SymbolToken(token)
+                && (token[1] === 'when' && !modifiers.includes('&when')
+                    || token[1] === 'while' && !modifiers.includes('&while'))) {
+                this.advance();
+                if (token[1] === 'when') {
+                    modifiers.push('&when');
+                    whenNode = this.parseExpression();
+                }
+                else {
+                    modifiers.push('&while');
+                    whileNode = this.parseExpression();
+                }
+                token = this.peek();
+            }
+            assertA_OperatorToken(token, ',');
+            this.advance();
+            return {
+                b: bindingNode,
+                m: modifiers,
+                l: letBindings,
+                wn: whenNode,
+                we: whileNode,
+            };
+        };
+        AlgebraicParser.prototype.parseBinding = function () {
+            var _a;
+            var firstToken = asA_SymbolToken(this.peek());
+            var name = firstToken[1];
+            this.advance();
+            var ofSymbol = asA_SymbolToken(this.peek());
+            if (ofSymbol[1] !== 'of') {
+                throw new LitsError('Expected "of"', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            this.advance();
+            var value = this.parseExpression();
+            var node = {
+                t: AstNodeType.Binding,
+                n: name,
+                v: value,
+                p: [],
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+            return node;
+        };
         AlgebraicParser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
         };
         AlgebraicParser.prototype.peek = function () {
             return this.tokenStream.tokens[this.parseState.position];
+        };
+        AlgebraicParser.prototype.peekAhead = function () {
+            return this.tokenStream.tokens[this.parseState.position + 1];
         };
         return AlgebraicParser;
     }());
@@ -8788,7 +8911,6 @@ var Playground = (function (exports) {
         'loop': { value: null, forbidden: true },
         'time!': { value: null, forbidden: true },
         'doseq': { value: null, forbidden: true },
-        'for': { value: null, forbidden: true },
     };
 
     var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
