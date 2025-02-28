@@ -869,16 +869,13 @@ var Playground = (function (exports) {
     ];
     var algebraicValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false);
     __spreadArray(__spreadArray([], __read(algebraicSimpleTokenTypes), false), __read(algebraicValueTokenTypes), false);
-    var AlgebraicOperators = [
-        // Unary only operators
+    var symbolicUnaryOperators = [
         '!', // logical NOT
         '~', // bitwise NOT
-        '=', // property assignemnt operator
-        ',', // element delimiter
-        // Only used in lamda function parser
-        '=>',
-        '...',
-        '.', // property accessor
+        '+', // addition
+        '-', // subtraction
+    ];
+    var symbolicBinaryOperators = [
         '**', // exponentiation
         '*', // multiplication
         '/', // division
@@ -902,9 +899,45 @@ var Playground = (function (exports) {
         '||', // logical OR
         '??', // nullish coalescing
     ];
-    function isAlgebraicOperator(operator) {
-        return AlgebraicOperators.includes(operator);
+    var otherSymbolicOperators = [
+        '=>', // lambda
+        '...', // rest
+        '.', // property accessor
+        ',', // item separator
+        '=', // property assignment
+    ];
+    var symbolicOperators = __spreadArray(__spreadArray(__spreadArray([], __read(symbolicUnaryOperators), false), __read(symbolicBinaryOperators), false), __read(otherSymbolicOperators), false);
+    var binaryFunctionOperators = [
+        'filter',
+        'has?',
+        'contains?',
+        'abs',
+    ];
+    var unaryFunctionOperators = [
+        'empty?',
+    ];
+    var algebraicOperatos = __spreadArray(__spreadArray(__spreadArray([], __read(symbolicOperators), false), __read(binaryFunctionOperators), false), __read(unaryFunctionOperators), false);
+    var symbolicUnaryOperatorSet = new Set(symbolicUnaryOperators);
+    function isSymbolicUnaryOperator(operator) {
+        return symbolicUnaryOperatorSet.has(operator);
     }
+    var symbolicBinaryOperatorSet = new Set(symbolicBinaryOperators);
+    function isSymbolicBinaryOperator(operator) {
+        return symbolicBinaryOperatorSet.has(operator);
+    }
+    var symbolicOperatorSet = new Set(symbolicOperators);
+    function isSymbolicOperator(operator) {
+        return symbolicOperatorSet.has(operator);
+    }
+    var binaryFunctionOperatorSet = new Set(binaryFunctionOperators);
+    function isBinaryFunctionOperator(operator) {
+        return binaryFunctionOperatorSet.has(operator);
+    }
+    var unaryFunctionOperatorSet = new Set(unaryFunctionOperators);
+    function isUnaryFunctionOperator(operator) {
+        return unaryFunctionOperatorSet.has(operator);
+    }
+    new Set(algebraicOperatos);
     function isA_SymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol';
     }
@@ -916,6 +949,15 @@ var Playground = (function (exports) {
     function asA_SymbolToken(token) {
         assertA_SymbolToken(token);
         return token;
+    }
+    function isA_BinaryOperatorToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Operator' && isSymbolicBinaryOperator(token[1]);
+    }
+    function isA_BinaryFunctionSymbolToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol' && isBinaryFunctionOperator(token[1]);
+    }
+    function isA_UnaryFunctionSymbolToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol' && isUnaryFunctionOperator(token[1]);
     }
     function isA_ReservedSymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_ReservedSymbol';
@@ -2026,8 +2068,15 @@ var Playground = (function (exports) {
                 assertColl(coll, sourceCodeInfo);
                 if (Array.isArray(coll))
                     return coll.includes(value);
-                if (typeof coll === 'string')
-                    return typeof value === 'string' ? coll.split('').includes(value) : false;
+                if (typeof coll === 'string') {
+                    if (typeof value === 'string') {
+                        return coll.includes(value);
+                    }
+                    else if (typeof value === 'number') {
+                        return coll.includes("".concat(value));
+                    }
+                    return false;
+                }
                 return Object.values(coll).includes(value);
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
@@ -2406,10 +2455,10 @@ var Playground = (function (exports) {
         },
         'filter': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), fn = _c[0], seq = _c[1];
+                var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
                 assertSeq(seq, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
                 if (Array.isArray(seq))
                     return seq.filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return seq
@@ -7510,33 +7559,31 @@ var Playground = (function (exports) {
         };
     }
 
-    var exponentiationPrecedence = 9;
+    var exponentiationPrecedence = 10;
     var placeholderRegexp$1 = /^\$([1-9]\d?)?$/;
-    function getPrecedence(operator) {
-        var operatorSign = operator[1];
+    function getPrecedence(operatorSign) {
         switch (operatorSign) {
-            case '.': // accessor
-                return 10;
             case '**': // exponentiation
                 return exponentiationPrecedence;
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
-                return 8;
+                return 9;
             case '+': // addition
             case '-': // subtraction
-                return 7;
+                return 8;
             case '<<': // left shift
             case '>>': // signed right shift
             case '>>>': // unsigned right shift
-                return 6;
+                return 7;
             case '++': // string concatenation
-                return 5;
+                return 6;
             case '<': // less than
             case '<=': // less than or equal
             case '>': // greater than
             case '>=': // greater than or equal
-                return 4;
+                return 5;
+            // leave room for functional operators = 4
             case '==': // equal
             case '!=': // not equal
                 return 3;
@@ -7548,14 +7595,6 @@ var Playground = (function (exports) {
             case '||': // logical OR
             case '??': // nullish coalescing
                 return 1;
-            /* v8 ignore next 8 */
-            case '!': // logical NOT
-            case '~': // bitwise NOT
-            case '=': // property assignemnt operator
-            case ',': // element delimiter
-            case '=>': // Only used in lamda function parser
-            case '...': // Only used in lamda function parser
-                throw new Error("Unknown binary operator: ".concat(operatorSign));
             default:
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
         }
@@ -7603,9 +7642,8 @@ var Playground = (function (exports) {
                 throw new Error("Unknown operator: ".concat(operatorName));
         }
     }
-    function fromBinaryAlgebraicToAstNode(operator, left, right) {
+    function fromBinaryOperatorToAstNode(operator, left, right, token) {
         var _a, _b, _c;
-        var token = hasTokenDebugData(operator) ? operator : undefined;
         var operatorName = operator[1];
         switch (operatorName) {
             case '.':
@@ -7696,36 +7734,13 @@ var Playground = (function (exports) {
             return this.parseExpression();
         };
         AlgebraicParser.prototype.parseExpression = function (precedence) {
-            var _a;
             if (precedence === void 0) { precedence = 0; }
             var left = this.parseOperand();
             while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
                 var operator = this.peek();
-                // Handle index accessor
-                if (isLParenToken(operator)) {
-                    if (precedence >= 9) {
-                        break;
-                    }
-                    left = this.parseFunctionCall(left);
-                }
-                // Handle index accessor
-                else if (isLBracketToken(operator)) {
-                    if (precedence >= 9) {
-                        break;
-                    }
-                    this.advance();
-                    var right = this.parseExpression(1);
-                    if (!isRBracketToken(this.peek())) {
-                        throw new LitsError('Expected closing bracket', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                    this.advance();
-                    left = createAccessorNode(left, right, operator);
-                }
-                else {
-                    if (!isA_OperatorToken(operator)) {
-                        break;
-                    }
-                    var newPrecedece = getPrecedence(operator);
+                if (isA_BinaryOperatorToken(operator)) {
+                    var name_1 = operator[1];
+                    var newPrecedece = getPrecedence(name_1);
                     if (newPrecedece <= precedence
                         // ** (exponentiation) is right associative
                         && !(newPrecedece === exponentiationPrecedence && precedence === exponentiationPrecedence)) {
@@ -7733,12 +7748,66 @@ var Playground = (function (exports) {
                     }
                     this.advance();
                     var right = this.parseExpression(newPrecedece);
-                    left = fromBinaryAlgebraicToAstNode(operator, left, right);
+                    var token = hasTokenDebugData(operator) ? operator : undefined;
+                    left = fromBinaryOperatorToAstNode(operator, left, right, token);
+                }
+                else if (isA_BinaryFunctionSymbolToken(operator)) {
+                    var name_2 = operator[1];
+                    var newPrecedece = 4;
+                    if (newPrecedece <= precedence) {
+                        break;
+                    }
+                    this.advance();
+                    var right = this.parseExpression(newPrecedece);
+                    var token = hasTokenDebugData(operator) ? operator : undefined;
+                    left = createNamedNormalExpressionNode(name_2, [left, right], token);
+                }
+                else {
+                    break;
                 }
             }
             return left;
         };
         AlgebraicParser.prototype.parseOperand = function () {
+            var _a, _b;
+            var operand = this.parseOperandPart();
+            var token = this.peek();
+            while (isA_OperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
+                if (token[1] === '.') {
+                    this.advance();
+                    var symbolToken = this.peek();
+                    if (!isA_SymbolToken(symbolToken)) {
+                        throw new LitsError('Expected symbol', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                    var stringNode = {
+                        t: AstNodeType.String,
+                        v: symbolToken[1],
+                        token: getTokenDebugData(symbolToken) && symbolToken,
+                        p: [],
+                        n: undefined,
+                    };
+                    operand = createAccessorNode(operand, stringNode, token);
+                    this.advance();
+                    token = this.peek();
+                }
+                else if (isLBracketToken(token)) {
+                    this.advance();
+                    var expression = this.parseExpression();
+                    if (!isRBracketToken(this.peek())) {
+                        throw new LitsError('Expected closing bracket', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                    }
+                    operand = createAccessorNode(operand, expression, token);
+                    this.advance();
+                    token = this.peek();
+                }
+                else if (isLParenToken(token)) {
+                    operand = this.parseFunctionCall(operand);
+                    token = this.peek();
+                }
+            }
+            return operand;
+        };
+        AlgebraicParser.prototype.parseOperandPart = function () {
             var _a;
             var token = this.peek();
             // Parentheses
@@ -7758,26 +7827,36 @@ var Playground = (function (exports) {
                 return expression;
             }
             // Unary operators
-            if (isA_OperatorToken(token)) {
+            else if (isA_OperatorToken(token)) {
                 var operatorName = token[1];
-                if (['-', '+', '!', '~'].includes(operatorName)) {
+                if (isSymbolicUnaryOperator(operatorName)) {
                     this.advance();
-                    var operand = this.parseOperand();
-                    return fromUnaryAlgebraicToAstNode(token, operand);
+                    return fromUnaryAlgebraicToAstNode(token, this.parseOperand());
                 }
-                else if (operatorName === '=>') {
+                if (operatorName === '=>') {
                     return this.parseShorthandLamdaFunction();
                 }
                 else {
                     throw new Error("Unknown unary operator: ".concat(operatorName));
                 }
             }
+            if (isA_UnaryFunctionSymbolToken(token)) {
+                var rollbackPosition = this.parseState.position;
+                this.advance();
+                try {
+                    var operand = this.parseOperand();
+                    return createNamedNormalExpressionNode(token[1], [operand], token);
+                }
+                catch (_b) {
+                    this.parseState.position = rollbackPosition;
+                }
+            }
             // Object litteral, e.g. {a=1, b=2}
-            if (isLBraceToken(token)) {
+            else if (isLBraceToken(token)) {
                 return this.parseObject();
             }
             // Array litteral, e.g. [1, 2]
-            if (isLBracketToken(token)) {
+            else if (isLBracketToken(token)) {
                 return this.parseArray();
             }
             var tokenType = token[0];
@@ -7906,8 +7985,8 @@ var Playground = (function (exports) {
             this.advance();
             if (isNamedFunction) {
                 if (specialExpressionKeys.includes(symbol.v)) {
-                    var name_1 = symbol.v;
-                    switch (name_1) {
+                    var name_3 = symbol.v;
+                    switch (name_3) {
                         case '??':
                         case 'and':
                         case 'comment':
@@ -7923,7 +8002,7 @@ var Playground = (function (exports) {
                         case 'throw': {
                             var node_1 = {
                                 t: AstNodeType.SpecialExpression,
-                                n: name_1,
+                                n: name_3,
                                 p: params,
                                 token: getTokenDebugData(symbol.token) && symbol.token,
                             };
@@ -7944,9 +8023,9 @@ var Playground = (function (exports) {
                         case 'recur':
                         case 'loop':
                         case 'doseq':
-                            throw new Error("Special expression ".concat(name_1, " is not available in algebraic notation"));
+                            throw new Error("Special expression ".concat(name_3, " is not available in algebraic notation"));
                         default:
-                            throw new Error("Unknown special expression: ".concat(name_1));
+                            throw new Error("Unknown special expression: ".concat(name_3));
                     }
                 }
                 var node = createNamedNormalExpressionNode(symbol.v, params, symbol.token);
@@ -8193,8 +8272,8 @@ var Playground = (function (exports) {
             var whenNode;
             var whileNode;
             while (isA_SymbolToken(token)
-                && (token[1] === 'when' && !modifiers.includes('&when')
-                    || token[1] === 'while' && !modifiers.includes('&while'))) {
+                && ((token[1] === 'when' && !modifiers.includes('&when'))
+                    || (token[1] === 'while' && !modifiers.includes('&while')))) {
                 this.advance();
                 if (token[1] === 'when') {
                     modifiers.push('&when');
@@ -9075,15 +9154,15 @@ var Playground = (function (exports) {
     var tokenizeA_Operator = function (input, position) {
         var _a;
         var threeChars = input.slice(position, position + 3);
-        if (position + 2 < input.length && isAlgebraicOperator(threeChars)) {
+        if (position + 2 < input.length && isSymbolicOperator(threeChars)) {
             return [3, ['A_Operator', threeChars]];
         }
         var twoChars = input.slice(position, position + 2);
-        if (position + 1 < input.length && isAlgebraicOperator(twoChars)) {
+        if (position + 1 < input.length && isSymbolicOperator(twoChars)) {
             return [2, ['A_Operator', twoChars]];
         }
         var oneChar = (_a = input[position]) !== null && _a !== void 0 ? _a : '';
-        if (isAlgebraicOperator(oneChar)) {
+        if (isSymbolicOperator(oneChar)) {
             return [1, ['A_Operator', oneChar]];
         }
         return NO_MATCH;
@@ -9629,7 +9708,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['coll', 'key'] },
             ],
-            description: 'Returns `true` if $coll contains $key, otherwise returns `false`.',
+            description: 'Returns `true` if $coll contains $key, otherwise returns `false`. For strings, it checks if substring is included.',
             examples: [
                 "\n(contains?\n  []\n  1)",
                 "\n(contains?\n  [1]\n  1)",
@@ -10744,11 +10823,11 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
+                },
+                fn: {
+                    type: 'function',
                 },
             },
             variants: [
@@ -10756,8 +10835,8 @@ var Playground = (function (exports) {
             ],
             description: 'Creates a new array with all elements that pass the test implemented by $fn.',
             examples: [
-                "\n(filter\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
-                "\n(filter\n  (fn [x] (> x 10))\n  [5 10 15 20])",
+                "\n(filter\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(filter\n[5 10 15 20]\n  (fn [x] (> x 10)))",
             ],
         },
         'position': {

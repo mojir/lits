@@ -146,7 +146,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     variants: [
       { argumentNames: ['coll', 'key'] },
     ],
-    description: 'Returns `true` if $coll contains $key, otherwise returns `false`.',
+    description: 'Returns `true` if $coll contains $key, otherwise returns `false`. For strings, it checks if substring is included.',
     examples: [
       `
 (contains?

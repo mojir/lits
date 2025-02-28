@@ -28,19 +28,14 @@ export const algebraicTokenTypes = [
   ...algebraicValueTokenTypes,
 ] as const
 
-export const AlgebraicOperators = [
-  // Unary only operators
+const symbolicUnaryOperators = [
   '!', // logical NOT
   '~', // bitwise NOT
-  '=', // property assignemnt operator
-  ',', // element delimiter
+  '+', // addition
+  '-', // subtraction
+] as const
 
-  // Only used in lamda function parser
-  '=>',
-  '...',
-
-  '.', // property accessor
-
+const symbolicBinaryOperators = [
   '**', // exponentiation
 
   '*', // multiplication
@@ -71,13 +66,120 @@ export const AlgebraicOperators = [
   '&&', // logical AND
   '||', // logical OR
   '??', // nullish coalescing
-
 ] as const
 
-export type AlgebraicOperator = typeof AlgebraicOperators[number]
+const otherSymbolicOperators = [
+  '=>', // lambda
+  '...', // rest
+  '.', // property accessor
+  ',', // item separator
+  '=', // property assignment
+] as const
 
+const symbolicOperators = [
+  ...symbolicUnaryOperators,
+  ...symbolicBinaryOperators,
+  ...otherSymbolicOperators,
+] as const
+
+const binaryFunctionOperators = [
+  'filter',
+  'has?',
+  'contains?',
+  'abs',
+] as const
+
+const unaryFunctionOperators = [
+  'empty?',
+] as const
+
+const algebraicOperatos = [
+  ...symbolicOperators,
+  ...binaryFunctionOperators,
+  ...unaryFunctionOperators,
+] as const
+
+export type SymbolicUnaryOperator = typeof symbolicUnaryOperators[number]
+export type SymbolicBinaryOperator = typeof symbolicBinaryOperators[number]
+export type SymbolicOperator = typeof symbolicOperators[number]
+
+export type BinaryFunctionOperator = typeof binaryFunctionOperators[number]
+export type UnaryFunctionOperator = typeof unaryFunctionOperators[number]
+export type AlgebraicOperator = typeof algebraicOperatos[number]
+
+const symbolicUnaryOperatorSet = new Set(symbolicUnaryOperators)
+export function isSymbolicUnaryOperator(operator: string): operator is SymbolicUnaryOperator {
+  return symbolicUnaryOperatorSet.has(operator as SymbolicUnaryOperator)
+}
+export function assertSymbolicUnaryOperator(operator: string): asserts operator is SymbolicUnaryOperator {
+  if (!isSymbolicUnaryOperator(operator)) {
+    throw new LitsError(`Expected symbolic unary operator, got ${operator}`, undefined)
+  }
+}
+export function asSymbolicUnaryOperator(operator: string): SymbolicUnaryOperator {
+  assertSymbolicUnaryOperator(operator)
+  return operator
+}
+
+const symbolicBinaryOperatorSet = new Set(symbolicBinaryOperators)
+export function isSymbolicBinaryOperator(operator: string): operator is SymbolicBinaryOperator {
+  return symbolicBinaryOperatorSet.has(operator as SymbolicBinaryOperator)
+}
+export function assertSymbolicBinaryOperator(operator: string): asserts operator is SymbolicBinaryOperator {
+  if (!isSymbolicBinaryOperator(operator)) {
+    throw new LitsError(`Expected symbolic binary operator, got ${operator}`, undefined)
+  }
+}
+export function asSymbolicBinaryOperator(operator: string): SymbolicBinaryOperator {
+  assertSymbolicBinaryOperator(operator)
+  return operator
+}
+
+const symbolicOperatorSet = new Set(symbolicOperators)
+export function isSymbolicOperator(operator: string): operator is SymbolicOperator {
+  return symbolicOperatorSet.has(operator as SymbolicOperator)
+}
+export function assertSymbolicOperator(operator: string): asserts operator is SymbolicOperator {
+  if (!isSymbolicOperator(operator)) {
+    throw new LitsError(`Expected symbolic operator, got ${operator}`, undefined)
+  }
+}
+export function asSymbolicOperator(operator: string): SymbolicOperator {
+  assertSymbolicOperator(operator)
+  return operator
+}
+
+const binaryFunctionOperatorSet = new Set(binaryFunctionOperators)
+export function isBinaryFunctionOperator(operator: string): operator is BinaryFunctionOperator {
+  return binaryFunctionOperatorSet.has(operator as BinaryFunctionOperator)
+}
+export function assertBinaryFunctionOperator(operator: string): asserts operator is BinaryFunctionOperator {
+  if (!isBinaryFunctionOperator(operator)) {
+    throw new LitsError(`Expected binary function operator, got ${operator}`, undefined)
+  }
+}
+export function asBinaryFunctionOperator(operator: string): BinaryFunctionOperator {
+  assertBinaryFunctionOperator(operator)
+  return operator
+}
+
+const unaryFunctionOperatorSet = new Set(unaryFunctionOperators)
+export function isUnaryFunctionOperator(operator: string): operator is UnaryFunctionOperator {
+  return unaryFunctionOperatorSet.has(operator as UnaryFunctionOperator)
+}
+export function assertUnaryFunctionOperator(operator: string): asserts operator is UnaryFunctionOperator {
+  if (!isUnaryFunctionOperator(operator)) {
+    throw new LitsError(`Expected unary function operator, got ${operator}`, undefined)
+  }
+}
+export function asUnaryFunctionOperator(operator: string): UnaryFunctionOperator {
+  assertUnaryFunctionOperator(operator)
+  return operator
+}
+
+const algebraicOperatorSet = new Set(algebraicOperatos)
 export function isAlgebraicOperator(operator: string): operator is AlgebraicOperator {
-  return AlgebraicOperators.includes(operator as AlgebraicOperator)
+  return algebraicOperatorSet.has(operator as AlgebraicOperator)
 }
 export function assertAlgebraicOperator(operator: string): asserts operator is AlgebraicOperator {
   if (!isAlgebraicOperator(operator)) {
@@ -97,8 +199,8 @@ type GenericAlgebraicValueToken<T extends Exclude<AlgebraicValueTokenType, Commo
 
 export type A_WhitespaceToken = GenericAlgebraicValueToken<'A_Whitespace'>
 export type A_NumberToken = GenericAlgebraicValueToken<'A_Number'>
-export type A_OperatorToken<T extends AlgebraicOperator = AlgebraicOperator> = GenericAlgebraicValueToken<'A_Operator', T>
-export type A_SymbolToken = GenericAlgebraicValueToken<'A_Symbol'>
+export type A_OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericAlgebraicValueToken<'A_Operator', T>
+export type A_SymbolToken<T extends string = string> = GenericAlgebraicValueToken<'A_Symbol', T>
 export type A_ReservedSymbolToken = GenericAlgebraicValueToken<'A_ReservedSymbol'>
 export type A_SingleLineCommentToken = GenericAlgebraicValueToken<'A_SingleLineComment'>
 export type A_MultiLineCommentToken = GenericAlgebraicValueToken<'A_MultiLineComment'>
@@ -126,6 +228,45 @@ export function assertA_SymbolToken(token: Token | undefined): asserts token is 
   }
 }
 export function asA_SymbolToken(token: Token | undefined): A_SymbolToken {
+  assertA_SymbolToken(token)
+  return token
+}
+
+export function isA_BinaryOperatorToken(token: Token | undefined): token is A_OperatorToken<SymbolicBinaryOperator> {
+  return token?.[0] === 'A_Operator' && isSymbolicBinaryOperator(token[1])
+}
+export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is A_OperatorToken<SymbolicBinaryOperator> {
+  if (!isA_BinaryOperatorToken(token)) {
+    throwUnexpectedToken('A_Operator', token)
+  }
+}
+export function asA_BinaryOperatorToken(token: Token | undefined): A_OperatorToken<SymbolicBinaryOperator> {
+  assertA_BinaryOperatorToken(token)
+  return token
+}
+
+export function isA_BinaryFunctionSymbolToken(token: Token | undefined): token is A_SymbolToken<BinaryFunctionOperator> {
+  return token?.[0] === 'A_Symbol' && isBinaryFunctionOperator(token[1])
+}
+export function assertA_BinaryFunctionSymbolToken(token: Token | undefined): asserts token is A_SymbolToken {
+  if (!isA_SymbolToken(token)) {
+    throwUnexpectedToken('A_Symbol', token)
+  }
+}
+export function asA_BinaryFunctionSymbolToken(token: Token | undefined): A_SymbolToken {
+  assertA_SymbolToken(token)
+  return token
+}
+
+export function isA_UnaryFunctionSymbolToken(token: Token | undefined): token is A_SymbolToken<UnaryFunctionOperator> {
+  return token?.[0] === 'A_Symbol' && isUnaryFunctionOperator(token[1])
+}
+export function assertA_UnaryFunctionSymbolToken(token: Token | undefined): asserts token is A_SymbolToken {
+  if (!isA_SymbolToken(token)) {
+    throwUnexpectedToken('A_Symbol', token)
+  }
+}
+export function asA_UnaryFunctionSymbolToken(token: Token | undefined): A_SymbolToken {
   assertA_SymbolToken(token)
   return token
 }
@@ -169,7 +310,7 @@ export function asA_MultiLineCommentToken(token: Token | undefined): A_MultiLine
   return token
 }
 
-export function isA_OperatorToken<T extends AlgebraicOperator>(token: Token | undefined, operatorName?: T): token is A_OperatorToken<T> {
+export function isA_OperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): token is A_OperatorToken<T> {
   if (token?.[0] !== 'A_Operator') {
     return false
   }
@@ -178,7 +319,7 @@ export function isA_OperatorToken<T extends AlgebraicOperator>(token: Token | un
   }
   return true
 }
-export function assertA_OperatorToken<T extends AlgebraicOperator>(token: Token | undefined, operatorName?: T): asserts token is A_OperatorToken<T> {
+export function assertA_OperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): asserts token is A_OperatorToken<T> {
   if (!isA_OperatorToken(token, operatorName)) {
     if (operatorName) {
       throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, undefined)
@@ -186,7 +327,7 @@ export function assertA_OperatorToken<T extends AlgebraicOperator>(token: Token 
     throwUnexpectedToken('A_Operator', token)
   }
 }
-export function asA_OperatorToken<T extends AlgebraicOperator>(token: Token | undefined, operatorName?: T): A_OperatorToken<T> {
+export function asA_OperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): A_OperatorToken<T> {
   assertA_OperatorToken(token, operatorName)
   return token
 }

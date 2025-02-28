@@ -154,6 +154,8 @@ describe('collection functions', () => {
       expect(lits.run('(has? (object) 1)')).toBe(false)
       expect(lits.run('(has? "Albert" :A)')).toBe(true)
       expect(lits.run('(has? "Albert" :a)')).toBe(false)
+      expect(lits.run('(has? "Albert" :bert)')).toBe(true)
+      expect(lits.run('(has? "123" "12")')).toBe(true)
       expect(lits.run('(has? "Albert" 1)')).toBe(false)
 
       expect(lits.run('(has? nil 1)')).toBe(false)

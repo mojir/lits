@@ -7,8 +7,8 @@ import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
-import type { A_OperatorToken, AlgebraicTokenType } from '../tokenizer/algebraic/algebraicTokens'
-import { asA_SymbolToken, assertA_OperatorToken, isA_OperatorToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
+import type { A_OperatorToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
+import { asA_SymbolToken, assertA_OperatorToken, isA_BinaryFunctionSymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_SymbolToken, isA_UnaryFunctionSymbolToken, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
@@ -18,40 +18,38 @@ import { arrayToPairs } from '../utils'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
-const exponentiationPrecedence = 9
+const exponentiationPrecedence = 10
 const placeholderRegexp = /^\$([1-9]\d?)?$/
 
-function getPrecedence(operator: A_OperatorToken): number {
-  const operatorSign = operator[1]
+function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
   switch (operatorSign) {
-    case '.': // accessor
-      return 10
-
     case '**': // exponentiation
       return exponentiationPrecedence
 
     case '*': // multiplication
     case '/': // division
     case '%': // remainder
-      return 8
+      return 9
 
     case '+': // addition
     case '-': // subtraction
-      return 7
+      return 8
 
     case '<<': // left shift
     case '>>': // signed right shift
     case '>>>': // unsigned right shift
-      return 6
+      return 7
 
     case '++': // string concatenation
-      return 5
+      return 6
 
     case '<': // less than
     case '<=': // less than or equal
     case '>': // greater than
     case '>=': // greater than or equal
-      return 4
+      return 5
+
+      // leave room for functional operators = 4
 
     case '==': // equal
     case '!=': // not equal
@@ -66,15 +64,6 @@ function getPrecedence(operator: A_OperatorToken): number {
     case '||': // logical OR
     case '??': // nullish coalescing
       return 1
-
-    /* v8 ignore next 8 */
-    case '!': // logical NOT
-    case '~': // bitwise NOT
-    case '=': // property assignemnt operator
-    case ',': // element delimiter
-    case '=>': // Only used in lamda function parser
-    case '...': // Only used in lamda function parser
-      throw new Error(`Unknown binary operator: ${operatorSign}`)
 
     default:
       throw new Error(`Unknown binary operator: ${operatorSign satisfies never}`)
@@ -130,9 +119,7 @@ function fromUnaryAlgebraicToAstNode(operator: A_OperatorToken, operand: AstNode
   }
 }
 
-function fromBinaryAlgebraicToAstNode(operator: A_OperatorToken, left: AstNode, right: AstNode): AstNode {
-  const token: Token | undefined = hasTokenDebugData(operator) ? operator : undefined
-
+function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, right: AstNode, token: Token | undefined): AstNode {
   const operatorName = operator[1]
 
   switch (operatorName) {
@@ -234,31 +221,9 @@ export class AlgebraicParser {
     while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
       const operator = this.peek()
 
-      // Handle index accessor
-      if (isLParenToken(operator)) {
-        if (precedence >= 9) {
-          break
-        }
-        left = this.parseFunctionCall(left)
-      }
-      // Handle index accessor
-      else if (isLBracketToken(operator)) {
-        if (precedence >= 9) {
-          break
-        }
-        this.advance()
-        const right = this.parseExpression(1)
-        if (!isRBracketToken(this.peek())) {
-          throw new LitsError('Expected closing bracket', getTokenDebugData(this.peek())?.sourceCodeInfo)
-        }
-        this.advance()
-        left = createAccessorNode(left, right, operator)
-      }
-      else {
-        if (!isA_OperatorToken(operator)) {
-          break
-        }
-        const newPrecedece = getPrecedence(operator)
+      if (isA_BinaryOperatorToken(operator)) {
+        const name = operator[1]
+        const newPrecedece = getPrecedence(name)
         if (
           newPrecedece <= precedence
           // ** (exponentiation) is right associative
@@ -267,7 +232,23 @@ export class AlgebraicParser {
         }
         this.advance()
         const right = this.parseExpression(newPrecedece)
-        left = fromBinaryAlgebraicToAstNode(operator, left, right)
+        const token: Token | undefined = hasTokenDebugData(operator) ? operator : undefined
+        left = fromBinaryOperatorToAstNode(operator, left, right, token)
+      }
+      else if (isA_BinaryFunctionSymbolToken(operator)) {
+        const name = operator[1]
+        const newPrecedece = 4
+        if (newPrecedece <= precedence) {
+          break
+        }
+        this.advance()
+        const right = this.parseExpression(newPrecedece)
+        const token: Token | undefined = hasTokenDebugData(operator) ? operator : undefined
+
+        left = createNamedNormalExpressionNode(name, [left, right], token)
+      }
+      else {
+        break
       }
     }
 
@@ -275,6 +256,45 @@ export class AlgebraicParser {
   }
 
   private parseOperand(): AstNode {
+    let operand = this.parseOperandPart()
+    let token = this.peek()
+    while (isA_OperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
+      if (token[1] === '.') {
+        this.advance()
+        const symbolToken = this.peek()
+        if (!isA_SymbolToken(symbolToken)) {
+          throw new LitsError('Expected symbol', getTokenDebugData(this.peek())?.sourceCodeInfo)
+        }
+        const stringNode: StringNode = {
+          t: AstNodeType.String,
+          v: symbolToken[1],
+          token: getTokenDebugData(symbolToken) && symbolToken,
+          p: [],
+          n: undefined,
+        }
+        operand = createAccessorNode(operand, stringNode, token)
+        this.advance()
+        token = this.peek()
+      }
+      else if (isLBracketToken(token)) {
+        this.advance()
+        const expression = this.parseExpression()
+        if (!isRBracketToken(this.peek())) {
+          throw new LitsError('Expected closing bracket', getTokenDebugData(this.peek())?.sourceCodeInfo)
+        }
+        operand = createAccessorNode(operand, expression, token)
+        this.advance()
+        token = this.peek()
+      }
+      else if (isLParenToken(token)) {
+        operand = this.parseFunctionCall(operand)
+        token = this.peek()
+      }
+    }
+    return operand
+  }
+
+  private parseOperandPart(): AstNode {
     const token = this.peek()
 
     // Parentheses
@@ -295,14 +315,14 @@ export class AlgebraicParser {
     }
 
     // Unary operators
-    if (isA_OperatorToken(token)) {
+    else if (isA_OperatorToken(token)) {
       const operatorName = token[1]
-      if (['-', '+', '!', '~'].includes(operatorName)) {
+      if (isSymbolicUnaryOperator(operatorName)) {
         this.advance()
-        const operand = this.parseOperand()
-        return fromUnaryAlgebraicToAstNode(token, operand)
+        return fromUnaryAlgebraicToAstNode(token, this.parseOperand())
       }
-      else if (operatorName === '=>') {
+
+      if (operatorName === '=>') {
         return this.parseShorthandLamdaFunction()
       }
       else {
@@ -310,13 +330,25 @@ export class AlgebraicParser {
       }
     }
 
+    if (isA_UnaryFunctionSymbolToken(token)) {
+      const rollbackPosition = this.parseState.position
+      this.advance()
+      try {
+        const operand = this.parseOperand()
+        return createNamedNormalExpressionNode(token[1], [operand], token)
+      }
+      catch {
+        this.parseState.position = rollbackPosition
+      }
+    }
+
     // Object litteral, e.g. {a=1, b=2}
-    if (isLBraceToken(token)) {
+    else if (isLBraceToken(token)) {
       return this.parseObject()
     }
 
     // Array litteral, e.g. [1, 2]
-    if (isLBracketToken(token)) {
+    else if (isLBracketToken(token)) {
       return this.parseArray()
     }
 

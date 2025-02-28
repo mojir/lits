@@ -314,11 +314,11 @@ l`,
       type: 'sequence',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
+      },
+      fn: {
+        type: 'function',
       },
     },
     variants: [
@@ -328,12 +328,12 @@ l`,
     examples: [
       `
 (filter
-  string?
-  ["Albert" "Mojir" 160 [1 2]])`,
+  ["Albert" "Mojir" 160 [1 2]]
+  string?)`,
       `
 (filter
-  (fn [x] (> x 10))
-  [5 10 15 20])`,
+[5 10 15 20]
+  (fn [x] (> x 10)))`,
     ],
   },
   'position': {

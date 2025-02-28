@@ -98,9 +98,9 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
   'filter': {
-    evaluate: ([fn, seq]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
-      assertLitsFunction(fn, sourceCodeInfo)
+    evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
       assertSeq(seq, sourceCodeInfo)
+      assertLitsFunction(fn, sourceCodeInfo)
       if (Array.isArray(seq))
         return seq.filter(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
 

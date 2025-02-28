@@ -200,14 +200,14 @@ describe('sequence functions', () => {
   })
   describe('filter', () => {
     it('samples', () => {
-      expect(lits.run('(filter number? [1 :2 3])')).toEqual([1, 3])
-      expect(lits.run('(filter number? [])')).toEqual([])
-      expect(lits.run('(filter nil? [1 :2 3])')).toEqual([])
-      expect(lits.run('(filter (fn [x] (zero? (mod x 3))) [0 1 2 3 4 5 6 7])')).toEqual([0, 3, 6])
-      expect(lits.run('(filter (fn [x] (>= x :a)) "aAbBcC")')).toBe('abc')
+      expect(lits.run('(filter [1 :2 3] number?)')).toEqual([1, 3])
+      expect(lits.run('(filter [] number?)')).toEqual([])
+      expect(lits.run('(filter [1 :2 3] nil?)')).toEqual([])
+      expect(lits.run('(filter [0 1 2 3 4 5 6 7] (fn [x] (zero? (mod x 3))))')).toEqual([0, 3, 6])
+      expect(lits.run('(filter "aAbBcC" (fn [x] (>= x :a)))')).toBe('abc')
       expect(() => lits.run('(filter +)')).toThrow()
       expect(() => lits.run('(filter)')).toThrow()
-      expect(() => lits.run('(filter number? [1] 2)')).toThrow()
+      expect(() => lits.run('(filter [1] number? 2)')).toThrow()
     })
   })
 

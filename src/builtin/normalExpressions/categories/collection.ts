@@ -221,8 +221,15 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       if (Array.isArray(coll))
         return coll.includes(value)
 
-      if (typeof coll === 'string')
-        return typeof value === 'string' ? coll.split('').includes(value) : false
+      if (typeof coll === 'string') {
+        if (typeof value === 'string') {
+          return coll.includes(value)
+        }
+        else if (typeof value === 'number') {
+          return coll.includes(`${value}`)
+        }
+        return false
+      }
 
       return Object.values(coll).includes(value)
     },

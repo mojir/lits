@@ -8,7 +8,7 @@ import type { Tokenizer } from '../interface'
 import { tokenizeP_Symbol } from '../polish/polishTokenizers'
 import { algebraicReservedNamesRecord } from './algebraicReservedNames'
 import type { A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
-import { isAlgebraicOperator } from './algebraicTokens'
+import { isSymbolicOperator } from './algebraicTokens'
 
 const identifierRegExp = new RegExp(algebraicIdentifierCharacterClass)
 const identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass)
@@ -179,17 +179,17 @@ export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
 
 export const tokenizeA_Operator: Tokenizer<A_OperatorToken> = (input, position) => {
   const threeChars = input.slice(position, position + 3)
-  if (position + 2 < input.length && isAlgebraicOperator(threeChars)) {
+  if (position + 2 < input.length && isSymbolicOperator(threeChars)) {
     return [3, ['A_Operator', threeChars]]
   }
 
   const twoChars = input.slice(position, position + 2)
-  if (position + 1 < input.length && isAlgebraicOperator(twoChars)) {
+  if (position + 1 < input.length && isSymbolicOperator(twoChars)) {
     return [2, ['A_Operator', twoChars]]
   }
 
   const oneChar = input[position] ?? ''
-  if (isAlgebraicOperator(oneChar)) {
+  if (isSymbolicOperator(oneChar)) {
     return [1, ['A_Operator', oneChar]]
   }
   return NO_MATCH
