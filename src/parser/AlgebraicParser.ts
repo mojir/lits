@@ -18,7 +18,9 @@ import { arrayToPairs } from '../utils'
 import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
-const exponentiationPrecedence = 10
+const exponentiationPrecedence = 11
+const unaryFunctionalOperatorPrecedence = 5
+const binaryFunctionalOperatorPrecedence = 6
 const placeholderRegexp = /^\$([1-9]\d?)?$/
 
 function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
@@ -29,27 +31,27 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
     case '*': // multiplication
     case '/': // division
     case '%': // remainder
-      return 9
+      return 10
 
     case '+': // addition
     case '-': // subtraction
-      return 8
+      return 9
 
     case '<<': // left shift
     case '>>': // signed right shift
     case '>>>': // unsigned right shift
-      return 7
+      return 8
 
     case '++': // string concatenation
-      return 6
+      return 7
+
+      // leave room for functional operators = funaryFunctionalOperatorPrecedence = 5 and binaryFunctionalOperatorPrecedence = 6
 
     case '<': // less than
     case '<=': // less than or equal
     case '>': // greater than
     case '>=': // greater than or equal
-      return 5
-
-      // leave room for functional operators = 4
+      return 4
 
     case '==': // equal
     case '!=': // not equal
@@ -221,7 +223,7 @@ export class AlgebraicParser {
     while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
       const operator = this.peek()
 
-      if (isA_BinaryOperatorToken(operator)) {
+      if (left && isA_BinaryOperatorToken(operator)) {
         const name = operator[1]
         const newPrecedece = getPrecedence(name)
         if (
@@ -235,9 +237,8 @@ export class AlgebraicParser {
         const token: Token | undefined = hasTokenDebugData(operator) ? operator : undefined
         left = fromBinaryOperatorToAstNode(operator, left, right, token)
       }
-      else if (isA_BinaryFunctionSymbolToken(operator)) {
-        const name = operator[1]
-        const newPrecedece = 4
+      else if (isA_BinaryFunctionSymbolToken(operator) || isA_UnaryFunctionSymbolToken(operator)) {
+        const newPrecedece = isA_BinaryFunctionSymbolToken(operator) ? binaryFunctionalOperatorPrecedence : unaryFunctionalOperatorPrecedence
         if (newPrecedece <= precedence) {
           break
         }
@@ -245,18 +246,26 @@ export class AlgebraicParser {
         const right = this.parseExpression(newPrecedece)
         const token: Token | undefined = hasTokenDebugData(operator) ? operator : undefined
 
-        left = createNamedNormalExpressionNode(name, [left, right], token)
+        left = createNamedNormalExpressionNode(operator[1], left ? [left, right] : [right], token)
       }
       else {
         break
       }
     }
 
+    if (!left) {
+      throw new LitsError('Expected operand', getTokenDebugData(this.peek())?.sourceCodeInfo)
+    }
+
     return left
   }
 
-  private parseOperand(): AstNode {
+  private parseOperand(): AstNode | null {
     let operand = this.parseOperandPart()
+    if (operand === null) {
+      // Unary functional token
+      return null
+    }
     let token = this.peek()
     while (isA_OperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
       if (token[1] === '.') {
@@ -294,7 +303,7 @@ export class AlgebraicParser {
     return operand
   }
 
-  private parseOperandPart(): AstNode {
+  private parseOperandPart(): AstNode | null {
     const token = this.peek()
 
     // Parentheses
@@ -319,7 +328,11 @@ export class AlgebraicParser {
       const operatorName = token[1]
       if (isSymbolicUnaryOperator(operatorName)) {
         this.advance()
-        return fromUnaryAlgebraicToAstNode(token, this.parseOperand())
+        const operand = this.parseOperand()
+        if (operand === null) {
+          throw new LitsError('Expected operand', getTokenDebugData(token)?.sourceCodeInfo)
+        }
+        return fromUnaryAlgebraicToAstNode(token, operand)
       }
 
       if (operatorName === '=>') {
@@ -334,10 +347,10 @@ export class AlgebraicParser {
       const rollbackPosition = this.parseState.position
       this.advance()
       try {
-        const operand = this.parseOperand()
-        return createNamedNormalExpressionNode(token[1], [operand], token)
+        this.parseOperand()
+        return null // createNamedNormalExpressionNode(token[1], [operand], token)
       }
-      catch {
+      finally {
         this.parseState.position = rollbackPosition
       }
     }
@@ -415,6 +428,9 @@ export class AlgebraicParser {
     const params: AstNode[] = []
     while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
       const key = this.parseOperand()
+      if (key === null) {
+        throw new LitsError('Expected key', getTokenDebugData(this.peek())?.sourceCodeInfo)
+      }
       if (key.t !== AstNodeType.Symbol && key.t !== AstNodeType.String) {
         throw new LitsError('Expected key to be a symbol or a string', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }

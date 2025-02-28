@@ -91,6 +91,7 @@ const binaryFunctionOperators = [
 
 const unaryFunctionOperators = [
   'empty?',
+  'count',
 ] as const
 
 const algebraicOperatos = [

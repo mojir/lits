@@ -287,6 +287,12 @@ describe('algebraic operators', () => {
       expect(pLits.run('(map (fn [number-parameter] @`\'number-parameter\' + 1`) [1 2 3])')).toEqual([2, 3, 4])
     })
   })
+
+  test('unary operator precedence', () => {
+    expect(lits.run('empty? [1, 2 ,3] filter => $ > 10')).toBe(true)
+    expect(lits.run('empty? [1, 2 ,3] filter => $ > 1')).toBe(false)
+  })
+
   describe('debug', () => {
     test('samples', () => {
       const litsDebug = new Lits({ debug: true, algebraic: true })
