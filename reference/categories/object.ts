@@ -178,16 +178,16 @@ If no arguments are provided \`nil\` is returned.`,
       type: 'object',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       objs: {
         type: 'object',
         rest: true,
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'objs'] },
+      { argumentNames: ['objs', 'fn'] },
     ],
     description: `
 Returns a new object created by merging together all arguments.
@@ -195,9 +195,9 @@ If two keys appears in more than one object $fn is used to calculate the new val
 
 If no arguments are provided \`nil\` is returned.`,
     examples: [
-      '(merge-with + (object :x 10) (object :y 20))',
-      '(merge-with + (object :x 10) (object :x 15 :y 20))',
-      '(merge-with - (object :x 10) (object :x 20) (object :x 30) (object :x 40))',
+      '(merge-with (object :x 10) (object :y 20) +)',
+      '(merge-with (object :x 10) (object :x 15 :y 20) +)',
+      '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
     ],
   },
   'zipmap': {

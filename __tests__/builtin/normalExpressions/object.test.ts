@@ -153,18 +153,18 @@ describe('object functions', () => {
 
       describe('merge-with', () => {
         it('samples', () => {
-          expect(lits.run('(merge-with + (object :x 10) (object :y 20))')).toEqual({
+          expect(lits.run('(merge-with (object :x 10) (object :y 20) +)')).toEqual({
             x: 10,
             y: 20,
           })
-          expect(lits.run('(merge-with + (object :x 10) (object :x 15 :y 20))')).toEqual({
+          expect(lits.run('(merge-with (object :x 10) (object :x 15 :y 20) + )')).toEqual({
             x: 25,
             y: 20,
           })
-          expect(lits.run('(merge-with - (object :x 10) (object :x 20) (object :x 30) (object :x 40))')).toEqual({
+          expect(lits.run('(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)')).toEqual({
             x: -80,
           })
-          expect(lits.run('(merge-with +)')).toBeNull()
+          expect(() => lits.run('(merge-with +)')).toThrow()
           expect(() => lits.run('(merge-with)')).toThrow()
           expect(() => lits.run('(merge-with + "kjh")')).toThrow()
           expect(() => lits.run('(merge-with + [1 2 3])')).toThrow()

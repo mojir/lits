@@ -558,32 +558,32 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (every?
-  string?
-  ["Albert" "Mojir" 160 [1 2]])`,
+["Albert" "Mojir" 160 [1 2]]
+  string?)`,
       `
 (every?
-  (fn [x] (> x 10))
-  [50 100 150 200])`,
+[50 100 150 200]
+  (fn [x] (> x 10)))`,
       `
 (every?
-  number?
-  [])`,
+  []
+  number?)`,
       `
 (every?
-  number?
-  "")`,
+  ""
+  number?)`,
       `
 (every?
-  number?
-  {})`,
+  {}
+  number?)`,
       `
 (every?
-  #(even? (second %))
-  {:a 2 :b 4})`,
+  {:a 2 :b 4}
+  #(even? (second %)))`,
       `
 (every?
-  #(even? (second %))
-  {:a 2 :b 3})`,
+  {:a 2 :b 3}
+  #(even? (second %)))`,
     ],
   },
   'not-every?': {
@@ -608,32 +608,32 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (not-every?
-  string?
-  ["Albert" "Mojir" 160 [1 2]])`,
+  ["Albert" "Mojir" 160 [1 2]]
+  string?)`,
       `
 (not-every?
-  (fn [x] (> x 10))
-  [50 100 150 200])`,
+  [50 100 150 200]
+  (fn [x] (> x 10)))`,
       `
 (not-every?
-  number?
-  [])`,
+  []
+  number?)`,
       `
 (not-every?
-  number?
-  "")`,
+  ""
+  number?)`,
       `
 (not-every?
-  number?
-  {})`,
+  {}
+  number?)`,
       `
 (not-every?
-  #(even? (second %))
-  {:a 2 :b 4})`,
+  {:a 2 :b 4}
+  #(even? (second %)))`,
       `
 (not-every?
-  #(even? (second %))
-  {:a 2 :b 3})`,
+  {:a 2 :b 3}
+  #(even? (second %)))`,
     ],
   },
   'any?': {
@@ -658,32 +658,32 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (any?
-  string?
-  ["Albert" "Mojir" 160 [1 2]])`,
+  ["Albert" "Mojir" 160 [1 2]]
+  string?)`,
       `
 (any?
-  (fn [x] (> x 10))
-  [50 100 150 200])`,
+  [50 100 150 200]
+  (fn [x] (> x 10)))`,
       `
 (any?
-  number?
-  [])`,
+  []
+  number?)`,
       `
 (any?
-  number?
-  "")`,
+  ""
+  number?)`,
       `
 (any?
-  number?
-  {})`,
+  {}
+  number?)`,
       `
 (any?
-  #(even? (second %))
-  {:a 2 :b 3})`,
+  {:a 2 :b 3}
+  #(even? (second %)))`,
       `
 (any?
-  #(even? (second %))
-  {:a 1 :b 3})`,
+  {:a 1 :b 3}
+  #(even? (second %)))`,
     ],
   },
   'not-any?': {
@@ -708,32 +708,32 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (not-any?
-  string?
-  ["Albert" "Mojir" 160 [1 2]])`,
+  ["Albert" "Mojir" 160 [1 2]]
+  string?)`,
       `
 (not-any?
-  (fn [x] (> x 10))
-  [50 100 150 200])`,
+  [50 100 150 200]
+  (fn [x] (> x 10)))`,
       `
 (not-any?
-  number?
-  [])`,
+  []
+  number?)`,
       `
 (not-any?
-  number?
-  "")`,
+  ""
+  number?)`,
       `
 (not-any?
-  number?
-  {})`,
+  {}
+  number?)`,
       `
 (not-any?
-  #(even? (second %))
-  {:a 2 :b 3})`,
+  {:a 2 :b 3}
+  #(even? (second %)))`,
       `
 (not-any?
-  #(even? (second %))
-  {:a 1 :b 3})`,
+  {:a 1 :b 3}
+  #(even? (second %)))`,
     ],
   },
   'update': {

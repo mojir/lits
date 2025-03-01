@@ -81,21 +81,21 @@ $step defaults to 1.`,
       array: true,
     },
     args: {
-      n: {
-        type: 'integer',
-      },
       x: {
         type: 'any',
       },
+      n: {
+        type: 'integer',
+      },
     },
     variants: [{
-      argumentNames: ['n', 'x'],
+      argumentNames: ['x', 'n'],
     }],
     description: 'Returns an array with $x repeated $n times.',
     examples: [
-      '(repeat 3 10)',
-      '(repeat 0 10)',
-      '(repeat 5 "Albert")',
+      '(repeat 10 3)',
+      '(repeat 10 0)',
+      '(repeat "Albert" 5)',
     ],
   },
   flatten: {

@@ -23,25 +23,25 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
   },
 
   'keys': {
-    evaluate: ([first], sourceCodeInfo): string[] => {
-      assertObj(first, sourceCodeInfo)
-      return Object.keys(first)
+    evaluate: ([obj], sourceCodeInfo): string[] => {
+      assertObj(obj, sourceCodeInfo)
+      return Object.keys(obj)
     },
     validate: node => assertNumberOfParams(1, node),
   },
 
   'vals': {
-    evaluate: ([first], sourceCodeInfo): Arr => {
-      assertObj(first, sourceCodeInfo)
-      return Object.values(first)
+    evaluate: ([obj], sourceCodeInfo): Arr => {
+      assertObj(obj, sourceCodeInfo)
+      return Object.values(obj)
     },
     validate: node => assertNumberOfParams(1, node),
   },
 
   'entries': {
-    evaluate: ([first], sourceCodeInfo): Array<[string, unknown]> => {
-      assertObj(first, sourceCodeInfo)
-      return Object.entries(first)
+    evaluate: ([obj], sourceCodeInfo): Array<[string, unknown]> => {
+      assertObj(obj, sourceCodeInfo)
+      return Object.entries(obj)
     },
     validate: node => assertNumberOfParams(1, node),
   },
@@ -90,13 +90,12 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
   'merge-with': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
-      const [fn, first, ...rest] = params
-      assertLitsFunction(fn, sourceCodeInfo)
-
-      if (params.length === 1)
-        return null
+      const first = params[0]
+      const fn = params.at(-1)
+      const rest = params.slice(1, -1)
 
       assertObj(first, sourceCodeInfo)
+      assertLitsFunction(fn, sourceCodeInfo)
 
       return rest.reduce(
         (result: Obj, obj) => {
@@ -114,7 +113,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         { ...first },
       )
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    validate: node => assertNumberOfParams({ min: 2 }, node),
   },
 
   'zipmap': {

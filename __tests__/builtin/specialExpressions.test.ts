@@ -728,8 +728,8 @@ describe('specialExpressions', () => {
       expect(lits.run('(doseq [x [1 2 3] y []] x)')).toBeNull()
       expect(lits.run('(doseq [x [] y [1 2 3]] x)')).toBeNull()
 
-      expect(lits.run('(doseq [x "Al" y [1 2]] (repeat y x))')).toBeNull()
-      expect(lits.run('(doseq [x {:a 10 :b 20} y [1 2]] (repeat y x))')).toBeNull()
+      expect(lits.run('(doseq [x "Al" y [1 2]] (repeat x y))')).toBeNull()
+      expect(lits.run('(doseq [x {:a 10 :b 20} y [1 2]] (repeat x y))')).toBeNull()
 
       expect(lits.run('(doseq [x [1 2] y [1 10]] (* x y))')).toBeNull()
       expect(lits.run('(doseq [x [1 2] &let [z (* x x x)]] z)')).toBeNull()
@@ -768,8 +768,8 @@ describe('specialExpressions', () => {
       expect(lits.run('(for [x [1 2 3] y []] x)')).toEqual([])
       expect(lits.run('(for [x [] y [1 2 3]] x)')).toEqual([])
 
-      expect(lits.run('(for [x "Al" y [1 2]] (repeat y x))')).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
-      expect(lits.run('(for [x {:a 10 :b 20} y [1 2]] (repeat y x))')).toEqual([
+      expect(lits.run('(for [x "Al" y [1 2]] (repeat x y))')).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
+      expect(lits.run('(for [x {:a 10 :b 20} y [1 2]] (repeat x y))')).toEqual([
         [['a', 10]],
         [
           ['a', 10],

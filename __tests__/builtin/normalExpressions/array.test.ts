@@ -51,12 +51,12 @@ describe('array functions', () => {
 
   describe('repeat', () => {
     it('samples', () => {
-      expect(lits.run('(repeat 3 5)')).toEqual([5, 5, 5])
-      expect(lits.run('(repeat 3 :5)')).toEqual(['5', '5', '5'])
-      expect(lits.run('(repeat 1 :5)')).toEqual(['5'])
-      expect(lits.run('(repeat 0 :5)')).toEqual([])
-      expect(() => lits.run('(repeat 1.3 :5)')).toThrow()
-      expect(() => lits.run('(repeat -10 :5)')).toThrow()
+      expect(lits.run('(repeat 5 3)')).toEqual([5, 5, 5])
+      expect(lits.run('(repeat :5 3)')).toEqual(['5', '5', '5'])
+      expect(lits.run('(repeat :5 1)')).toEqual(['5'])
+      expect(lits.run('(repeat :5 0)')).toEqual([])
+      expect(() => lits.run('(repeat :5 1.3)')).toThrow()
+      expect(() => lits.run('(repeat :5 -10)')).toThrow()
       expect(() => lits.run('(repeat 10)')).toThrow()
       expect(() => lits.run('(repeat :5)')).toThrow()
       expect(() => lits.run('(repeat)')).toThrow()

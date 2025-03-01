@@ -2327,10 +2327,10 @@ var Playground = (function (exports) {
         },
         'every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), fn = _c[0], coll = _c[1];
+                var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
-                assertLitsFunction(fn, sourceCodeInfo);
                 assertColl(coll, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
                 if (Array.isArray(coll))
                     return coll.every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 if (typeof coll === 'string')
@@ -2341,7 +2341,7 @@ var Playground = (function (exports) {
         },
         'any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), fn = _c[0], coll = _c[1];
+                var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertLitsFunction(fn, sourceCodeInfo);
                 assertColl(coll, sourceCodeInfo);
@@ -2355,7 +2355,7 @@ var Playground = (function (exports) {
         },
         'not-any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), fn = _c[0], coll = _c[1];
+                var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertLitsFunction(fn, sourceCodeInfo);
                 assertColl(coll, sourceCodeInfo);
@@ -2369,7 +2369,7 @@ var Playground = (function (exports) {
         },
         'not-every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), fn = _c[0], coll = _c[1];
+                var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertLitsFunction(fn, sourceCodeInfo);
                 assertColl(coll, sourceCodeInfo);
@@ -2427,7 +2427,7 @@ var Playground = (function (exports) {
         },
         repeat: {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), count = _b[0], value = _b[1];
+                var _b = __read(_a, 2), value = _b[0], count = _b[1];
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 var result = [];
                 for (var i = 0; i < count; i += 1)
@@ -4080,25 +4080,25 @@ var Playground = (function (exports) {
         },
         'keys': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertObj(first, sourceCodeInfo);
-                return Object.keys(first);
+                var _b = __read(_a, 1), obj = _b[0];
+                assertObj(obj, sourceCodeInfo);
+                return Object.keys(obj);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'vals': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertObj(first, sourceCodeInfo);
-                return Object.values(first);
+                var _b = __read(_a, 1), obj = _b[0];
+                assertObj(obj, sourceCodeInfo);
+                return Object.values(obj);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'entries': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertObj(first, sourceCodeInfo);
-                return Object.entries(first);
+                var _b = __read(_a, 1), obj = _b[0];
+                assertObj(obj, sourceCodeInfo);
+                return Object.entries(obj);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
@@ -4140,11 +4140,11 @@ var Playground = (function (exports) {
         'merge-with': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
-                var _b = __read(params), fn = _b[0], first = _b[1], rest = _b.slice(2);
-                assertLitsFunction(fn, sourceCodeInfo);
-                if (params.length === 1)
-                    return null;
+                var first = params[0];
+                var fn = params.at(-1);
+                var rest = params.slice(1, -1);
                 assertObj(first, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
                 return rest.reduce(function (result, obj) {
                     assertObj(obj, sourceCodeInfo);
                     Object.entries(obj).forEach(function (entry) {
@@ -4158,7 +4158,7 @@ var Playground = (function (exports) {
                     return result;
                 }, __assign({}, first));
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
         'zipmap': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -9861,13 +9861,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if all entries in $coll pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(every?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
-                "\n(every?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
-                "\n(every?\n  number?\n  [])",
-                "\n(every?\n  number?\n  \"\")",
-                "\n(every?\n  number?\n  {})",
-                "\n(every?\n  #(even? (second %))\n  {:a 2 :b 4})",
-                "\n(every?\n  #(even? (second %))\n  {:a 2 :b 3})",
+                "\n(every?\n[\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(every?\n[50 100 150 200]\n  (fn [x] (> x 10)))",
+                "\n(every?\n  []\n  number?)",
+                "\n(every?\n  \"\"\n  number?)",
+                "\n(every?\n  {}\n  number?)",
+                "\n(every?\n  {:a 2 :b 4}\n  #(even? (second %)))",
+                "\n(every?\n  {:a 2 :b 3}\n  #(even? (second %)))",
             ],
         },
         'not-every?': {
@@ -9890,13 +9890,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(not-every?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
-                "\n(not-every?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
-                "\n(not-every?\n  number?\n  [])",
-                "\n(not-every?\n  number?\n  \"\")",
-                "\n(not-every?\n  number?\n  {})",
-                "\n(not-every?\n  #(even? (second %))\n  {:a 2 :b 4})",
-                "\n(not-every?\n  #(even? (second %))\n  {:a 2 :b 3})",
+                "\n(not-every?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(not-every?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
+                "\n(not-every?\n  []\n  number?)",
+                "\n(not-every?\n  \"\"\n  number?)",
+                "\n(not-every?\n  {}\n  number?)",
+                "\n(not-every?\n  {:a 2 :b 4}\n  #(even? (second %)))",
+                "\n(not-every?\n  {:a 2 :b 3}\n  #(even? (second %)))",
             ],
         },
         'any?': {
@@ -9919,13 +9919,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if any element in $coll pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(any?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
-                "\n(any?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
-                "\n(any?\n  number?\n  [])",
-                "\n(any?\n  number?\n  \"\")",
-                "\n(any?\n  number?\n  {})",
-                "\n(any?\n  #(even? (second %))\n  {:a 2 :b 3})",
-                "\n(any?\n  #(even? (second %))\n  {:a 1 :b 3})",
+                "\n(any?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
+                "\n(any?\n  []\n  number?)",
+                "\n(any?\n  \"\"\n  number?)",
+                "\n(any?\n  {}\n  number?)",
+                "\n(any?\n  {:a 2 :b 3}\n  #(even? (second %)))",
+                "\n(any?\n  {:a 1 :b 3}\n  #(even? (second %)))",
             ],
         },
         'not-any?': {
@@ -9948,13 +9948,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
             examples: [
-                "\n(not-any?\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
-                "\n(not-any?\n  (fn [x] (> x 10))\n  [50 100 150 200])",
-                "\n(not-any?\n  number?\n  [])",
-                "\n(not-any?\n  number?\n  \"\")",
-                "\n(not-any?\n  number?\n  {})",
-                "\n(not-any?\n  #(even? (second %))\n  {:a 2 :b 3})",
-                "\n(not-any?\n  #(even? (second %))\n  {:a 1 :b 3})",
+                "\n(not-any?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(not-any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
+                "\n(not-any?\n  []\n  number?)",
+                "\n(not-any?\n  \"\"\n  number?)",
+                "\n(not-any?\n  {}\n  number?)",
+                "\n(not-any?\n  {:a 2 :b 3}\n  #(even? (second %)))",
+                "\n(not-any?\n  {:a 1 :b 3}\n  #(even? (second %)))",
             ],
         },
         'update': {
@@ -10345,21 +10345,21 @@ var Playground = (function (exports) {
                 array: true,
             },
             args: {
-                n: {
-                    type: 'integer',
-                },
                 x: {
                     type: 'any',
                 },
+                n: {
+                    type: 'integer',
+                },
             },
             variants: [{
-                    argumentNames: ['n', 'x'],
+                    argumentNames: ['x', 'n'],
                 }],
             description: 'Returns an array with $x repeated $n times.',
             examples: [
-                '(repeat 3 10)',
-                '(repeat 0 10)',
-                '(repeat 5 "Albert")',
+                '(repeat 10 3)',
+                '(repeat 10 0)',
+                '(repeat "Albert" 5)',
             ],
         },
         flatten: {
@@ -13381,22 +13381,22 @@ var Playground = (function (exports) {
                 type: 'object',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 objs: {
                     type: 'object',
                     rest: true,
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'objs'] },
+                { argumentNames: ['objs', 'fn'] },
             ],
             description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fn is used to calculate the new value.\n\nIf no arguments are provided `nil` is returned.",
             examples: [
-                '(merge-with + (object :x 10) (object :y 20))',
-                '(merge-with + (object :x 10) (object :x 15 :y 20))',
-                '(merge-with - (object :x 10) (object :x 20) (object :x 30) (object :x 40))',
+                '(merge-with (object :x 10) (object :y 20) +)',
+                '(merge-with (object :x 10) (object :x 15 :y 20) +)',
+                '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
             ],
         },
         'zipmap': {

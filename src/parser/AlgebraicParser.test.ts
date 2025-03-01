@@ -597,8 +597,8 @@ describe('algebraic operators', () => {
       expect(lits.run('for(x of [], y of [1, 2, 3], x)')).toEqual([])
     })
     test('string and object iteration', () => {
-      expect(lits.run('for(x of "Al", y of [1, 2], repeat(y, x))')).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
-      expect(lits.run('for(x of { a=10, b=20 }, y of [1, 2], repeat(y, x))')).toEqual([
+      expect(lits.run('for(x of "Al", y of [1, 2], x repeat y)')).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
+      expect(lits.run('for(x of { a=10, b=20 }, y of [1, 2], repeat(x, y))')).toEqual([
         [['a', 10]],
         [
           ['a', 10],

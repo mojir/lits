@@ -54,7 +54,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
   },
 
   repeat: {
-    evaluate: ([count, value], sourceCodeInfo): Arr => {
+    evaluate: ([value, count], sourceCodeInfo): Arr => {
       assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true })
       const result: Arr = []
       for (let i = 0; i < count; i += 1)
