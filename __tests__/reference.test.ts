@@ -7,17 +7,17 @@ import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
 import { isUnknownRecord } from '../src/typeGuards'
 
 function getLinkName(name: string): string {
-  name = name.replace(/<=/g, '_lte')
-  name = name.replace(/</g, '_lt')
-  name = name.replace(/>=/g, '_gte')
-  name = name.replace(/>/g, '_gt')
-  name = name.replace(/=/g, '_equal')
-  name = name.replace(/\+/g, '_plus')
-  name = name.replace(/-$/g, '_minus')
-  name = name.replace(/\*/g, '_star')
-  name = name.replace(/\//g, '_slash')
-  name = name.replace(/\?/g, '_question')
-  name = name.replace(/!/g, '_exclamation')
+  name = name.replace(/<=/g, '-lte')
+  name = name.replace(/</g, '-lt')
+  name = name.replace(/>=/g, '-gte')
+  name = name.replace(/>/g, '-gt')
+  name = name.replace(/=/g, '-equal')
+  name = name.replace(/\+/g, '-plus')
+  name = name.replace(/-$/g, '-minus')
+  name = name.replace(/\*/g, '-star')
+  name = name.replace(/\//g, '-slash')
+  name = name.replace(/\?/g, '-question')
+  name = name.replace(/!/g, '-exclamation')
   return name
 }
 

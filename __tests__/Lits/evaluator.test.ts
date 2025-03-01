@@ -19,7 +19,7 @@ const simpleProgram = `
   [
     day (let [sec 1000] (* 24 60 60 sec))
   ]
-  (* (get-in info [:days 1]) day)
+  (* (get_in info [:days 1]) day)
 )`
 
 const formatPhoneNumber = `
@@ -109,10 +109,10 @@ describe('evaluator', () => {
     const result = evaluate(ast, createContextStack({ contexts: [context] }))
     expect(result).toBe(true)
   })
-  it('not= statement 1', () => {
+  it('!= statement 1', () => {
     const tokens = tokenize(
       `
-      [(not= 0 -1) (not= 1 1)]
+      [(!= 0 -1) (!= 1 1)]
     `,
       { debug: true, algebraic: false },
     )

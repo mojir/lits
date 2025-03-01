@@ -175,7 +175,7 @@ describe('object functions', () => {
         const program = `
         (def obj1 (object :x 10))
         (def obj2 (merge obj1))
-        (not= obj1 obj2)
+        (!= obj1 obj2)
       `
         expect(lits.run(program)).toBe(true)
       })

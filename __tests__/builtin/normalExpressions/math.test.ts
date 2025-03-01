@@ -175,27 +175,6 @@ describe('math functions', () => {
     })
   })
 
-  describe('rand!', () => {
-    it('samples', () => {
-      expect(lits.run('(rand!)')).toBeLessThan(1)
-      expect(lits.run('(rand! 0.1)')).toBeLessThan(0.1)
-      expect(lits.run('(rand! 0.1)')).toBeGreaterThanOrEqual(0)
-      expect(() => lits.run('(rand! :x)')).toThrow()
-      expect(() => lits.run('(rand! 1 2)')).toThrow()
-    })
-  })
-
-  describe('rand-int!', () => {
-    it('samples', () => {
-      expect(lits.run('(rand-int! 1)')).toBe(0)
-      expect(lits.run('(rand-int! 2)')).toBeLessThan(2)
-      expect(lits.run('(rand-int! 20)')).toBeLessThan(20)
-      expect(lits.run('(rand-int! 10.1)')).toBeLessThan(10.1)
-      expect(() => lits.run('(rand-int! :x)')).toThrow()
-      expect(() => lits.run('(rand-int! 1 2)')).toThrow()
-    })
-  })
-
   describe('min', () => {
     it('samples', () => {
       expect(lits.run('(min 1)')).toBe(1)
@@ -225,31 +204,31 @@ describe('math functions', () => {
     })
   })
 
-  describe('max-safe-integer', () => {
+  describe('max_safe_integer', () => {
     it('samples', () => {
-      expect(lits.run('(max-safe-integer)')).toBe(Number.MAX_SAFE_INTEGER)
-      expect(() => lits.run('(max-safe-integer :1)')).toThrow()
+      expect(lits.run('(max_safe_integer)')).toBe(Number.MAX_SAFE_INTEGER)
+      expect(() => lits.run('(max_safe_integer :1)')).toThrow()
     })
   })
 
-  describe('min-safe-integer', () => {
+  describe('min_safe_integer', () => {
     it('samples', () => {
-      expect(lits.run('(min-safe-integer)')).toBe(Number.MIN_SAFE_INTEGER)
-      expect(() => lits.run('(min-safe-integer :1)')).toThrow()
+      expect(lits.run('(min_safe_integer)')).toBe(Number.MIN_SAFE_INTEGER)
+      expect(() => lits.run('(min_safe_integer :1)')).toThrow()
     })
   })
 
-  describe('max-value', () => {
+  describe('max_value', () => {
     it('samples', () => {
-      expect(lits.run('(max-value)')).toBe(Number.MAX_VALUE)
-      expect(() => lits.run('(max-value :1)')).toThrow()
+      expect(lits.run('(max_value)')).toBe(Number.MAX_VALUE)
+      expect(() => lits.run('(max_value :1)')).toThrow()
     })
   })
 
-  describe('min-value', () => {
+  describe('min_value', () => {
     it('samples', () => {
-      expect(lits.run('(min-value)')).toBe(Number.MIN_VALUE)
-      expect(() => lits.run('(min-value :1)')).toThrow()
+      expect(lits.run('(min_value)')).toBe(Number.MIN_VALUE)
+      expect(() => lits.run('(min_value :1)')).toThrow()
     })
   })
 
@@ -267,17 +246,17 @@ describe('math functions', () => {
     })
   })
 
-  describe('positive-infinity', () => {
+  describe('positive_infinity', () => {
     it('samples', () => {
-      expect(lits.run('(positive-infinity)')).toBe(Number.POSITIVE_INFINITY)
-      expect(() => lits.run('(positive-infinity :1)')).toThrow()
+      expect(lits.run('(positive_infinity)')).toBe(Number.POSITIVE_INFINITY)
+      expect(() => lits.run('(positive_infinity :1)')).toThrow()
     })
   })
 
-  describe('negative-infinity', () => {
+  describe('negative_infinity', () => {
     it('samples', () => {
-      expect(lits.run('(negative-infinity)')).toBe(Number.NEGATIVE_INFINITY)
-      expect(() => lits.run('(negative-infinity :1)')).toThrow()
+      expect(lits.run('(negative_infinity)')).toBe(Number.NEGATIVE_INFINITY)
+      expect(() => lits.run('(negative_infinity :1)')).toThrow()
     })
   })
 

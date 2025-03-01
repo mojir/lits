@@ -11,7 +11,7 @@ const uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
 const xyRegexp = /[xy]/g
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
-  'not=': {
+  '!=': {
     evaluate: (params): boolean => {
       for (let i = 0; i < params.length - 1; i += 1) {
         for (let j = i + 1; j < params.length; j += 1) {

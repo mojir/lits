@@ -103,7 +103,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
 
-  'every-pred': {
+  'every_pred': {
     evaluate: (fns, sourceCodeInfo): EveryPredFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
@@ -115,7 +115,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
 
-  'some-pred': {
+  'some_pred': {
     evaluate: (fns, sourceCodeInfo): SomePredFunction => {
       return {
         [FUNCTION_SYMBOL]: true,

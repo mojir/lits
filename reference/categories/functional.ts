@@ -205,10 +205,10 @@ and returns a vector containing the result of applying each function to the args
     description: 'Takes a function $fn and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
     examples: ['((complement >) 1 3)', '((complement <) 1 3)', '((complement +) 1 3)', '((complement +) 0 0)'],
   },
-  'every-pred': {
-    title: 'every-pred',
+  'every_pred': {
+    title: 'every_pred',
     category: 'Functional',
-    linkName: 'every-pred',
+    linkName: 'every_pred',
     returns: {
       type: 'function',
     },
@@ -231,25 +231,25 @@ return a truthy value against all of its arguments, else it returns \`false\`.`,
     examples: [
       `
 (
-  (every-pred string? #(> (count %1) 3))
+  (every_pred string? #(> (count %1) 3))
   "Albert"
   "Mojir")`,
       `
 (
-  (every-pred string? #(> (count %1) 3))
+  (every_pred string? #(> (count %1) 3))
   "Albert"
   :M)`,
       `
 (
-  (every-pred string? #(> (count %1) 3))
+  (every_pred string? #(> (count %1) 3))
   "Albert"
   [1 2 3])`,
     ],
   },
-  'some-pred': {
-    title: 'some-pred',
+  'some_pred': {
+    title: 'some_pred',
     category: 'Functional',
-    linkName: 'some-pred',
+    linkName: 'some_pred',
     clojureDocs: null,
     returns: {
       type: 'function',
@@ -269,10 +269,10 @@ return a truthy value against all of its arguments, else it returns \`false\`.`,
     ],
     description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
     examples: [
-      '((some-pred string? #(> (count %1) 3)) "Albert" "Mojir")',
-      '((some-pred string? #(> (count %1) 3)) :A :M)',
-      '((some-pred string? #(> (count %1) 3)) :A [1 2 3])',
-      '((some-pred string? #(> (count %1) 3)) [1 2 3] [2])',
+      '((some_pred string? #(> (count %1) 3)) "Albert" "Mojir")',
+      '((some_pred string? #(> (count %1) 3)) :A :M)',
+      '((some_pred string? #(> (count %1) 3)) :A [1 2 3])',
+      '((some_pred string? #(> (count %1) 3)) [1 2 3] [2])',
     ],
   },
   'fnil': {

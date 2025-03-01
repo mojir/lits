@@ -2,11 +2,11 @@ import type { ShorthandName } from './api'
 import type { ShorthandReference } from '.'
 
 export const shorthand: Record<ShorthandName, ShorthandReference> = {
-  _short_regexp: {
+  '-short-regexp': {
     shorthand: true,
     title: '#"pattern"',
     category: 'Shorthand',
-    linkName: '_short_regexp',
+    linkName: '-short-regexp',
     clojureDocs: null,
     description: 'Shorthand for ``(regexp pattern)``',
     examples: [
@@ -15,11 +15,11 @@ export const shorthand: Record<ShorthandName, ShorthandReference> = {
     ],
     seeAlso: ['regexp'],
   },
-  _short_fn: {
+  '-short-fn': {
     shorthand: true,
     title: '#(expression)',
     category: 'Shorthand',
-    linkName: '_short_fn',
+    linkName: '-short-fn',
     clojureDocs: null,
     description: `
 Shorthand for \`\`(fn [args] (expression))\`\`.
@@ -34,11 +34,11 @@ E.g. \`\`#(* % %1)\`\` is not valid.`,
     ],
     seeAlso: ['fn'],
   },
-  _short_string: {
+  '-short-string': {
     shorthand: true,
     title: ':abc',
     category: 'Shorthand',
-    linkName: '_short_string',
+    linkName: '-short-string',
     clojureDocs: null,
     description: 'Shorthand for ``"abc"``. The string can only contain `name` characters',
     examples: [
@@ -46,11 +46,11 @@ E.g. \`\`#(* % %1)\`\` is not valid.`,
       ':a-b',
     ],
   },
-  _short_dot: {
+  '-short-dot': {
     shorthand: true,
     title: 'foo.bar',
     category: 'Shorthand',
-    linkName: '_short_dot',
+    linkName: '-short-dot',
     clojureDocs: null,
     description: 'Shorthand for ``(foo "bar")``.',
     examples: [
@@ -59,11 +59,11 @@ E.g. \`\`#(* % %1)\`\` is not valid.`,
 foo.bar.baz`,
     ],
   },
-  _short_hash: {
+  '-short-hash': {
     shorthand: true,
     title: 'foo#3',
     category: 'Shorthand',
-    linkName: '_short_hash',
+    linkName: '-short-hash',
     clojureDocs: null,
     description: 'Shorthand for ``(foo 3)``.',
     examples: [

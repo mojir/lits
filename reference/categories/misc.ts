@@ -2,10 +2,11 @@ import type { FunctionReference } from '..'
 import type { MiscApiName } from '../api'
 
 export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
-  'not=': {
-    title: 'not=',
+  '!=': {
+    title: '!=',
     category: 'Misc',
-    linkName: 'not_equal',
+    clojureDocs: 'not=',
+    linkName: '-exclamation-equal',
     returns: {
       type: 'boolean',
     },
@@ -22,13 +23,13 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x'] },
       { argumentNames: ['x', 'ys'] },
     ],
-    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(not= a b)` is same as `(not (= a b))`.',
-    examples: ['(not= 3)', '(not= 3 2)', '(not= :3 3)', '(not= 3 3 2)', '(not= :3 :2 :1 :0)', '(not= 0 -0)'],
+    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (= a b))`.',
+    examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
   },
   '=': {
     title: '=',
     category: 'Misc',
-    linkName: '_equal',
+    linkName: '-equal',
     returns: {
       type: 'boolean',
     },
@@ -51,7 +52,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '<': {
     title: '<',
     category: 'Misc',
-    linkName: '_lt',
+    linkName: '-lt',
     returns: {
       type: 'boolean',
     },
@@ -74,7 +75,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '>': {
     title: '>',
     category: 'Misc',
-    linkName: '_gt',
+    linkName: '-gt',
     returns: {
       type: 'boolean',
     },
@@ -97,7 +98,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '<=': {
     title: '<=',
     category: 'Misc',
-    linkName: '_lte',
+    linkName: '-lte',
     returns: {
       type: 'boolean',
     },
@@ -120,7 +121,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   '>=': {
     title: '>=',
     category: 'Misc',
-    linkName: '_gte',
+    linkName: '-gte',
     returns: {
       type: 'boolean',
     },
@@ -161,7 +162,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'write!': {
     title: 'write!',
     category: 'Misc',
-    linkName: 'write_exclamation',
+    linkName: 'write-exclamation',
     clojureDocs: null,
     returns: {
       type: 'any',
@@ -188,7 +189,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'inst-ms!': {
     title: 'inst-ms!',
     category: 'Misc',
-    linkName: 'inst-ms_exclamation',
+    linkName: 'inst-ms-exclamation',
     clojureDocs: 'inst-ms',
     returns: {
       type: 'number',
@@ -203,7 +204,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'iso-date-time->inst-ms': {
     title: 'iso-date-time->inst-ms',
     category: 'Misc',
-    linkName: 'iso-date-time-_gtinst-ms',
+    linkName: 'iso-date-time--gtinst-ms',
     returns: {
       type: 'number',
     },
@@ -224,7 +225,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'inst-ms->iso-date-time': {
     title: 'inst-ms->iso-date-time',
     category: 'Misc',
-    linkName: 'inst-ms-_gtiso-date-time',
+    linkName: 'inst-ms--gtiso-date-time',
     returns: {
       type: 'string',
     },
@@ -298,7 +299,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'lits-version!': {
     title: 'lits-version!',
     category: 'Misc',
-    linkName: 'lits-version_exclamation',
+    linkName: 'lits-version-exclamation',
     returns: {
       type: 'string',
     },
@@ -312,7 +313,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'uuid!': {
     title: 'uuid!',
     category: 'Misc',
-    linkName: 'uuid_exclamation',
+    linkName: 'uuid-exclamation',
     returns: {
       type: 'string',
     },
@@ -326,7 +327,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
   'equal?': {
     title: 'equal?',
     category: 'Misc',
-    linkName: 'equal_question',
+    linkName: 'equal-question',
     clojureDocs: null,
     returns: {
       type: 'boolean',

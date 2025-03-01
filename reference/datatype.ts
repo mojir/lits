@@ -2,48 +2,48 @@ import type { DatatypeName } from './api'
 import type { DatatypeReference } from '.'
 
 export const datatype: Record<DatatypeName, DatatypeReference> = {
-  _type_number: {
+  '-type-number': {
     datatype: true,
     clojureDocs: null,
     title: 'number',
     category: 'Datatype',
-    linkName: '_type_number',
+    linkName: '-type-number',
     description: 'A number',
     examples: [
       '42',
       '3.14',
     ],
   },
-  _type_string: {
+  '-type-string': {
     datatype: true,
     clojureDocs: null,
     title: 'string',
     category: 'Datatype',
-    linkName: '_type_string',
+    linkName: '-type-string',
     description: 'A string',
     examples: [
       '"hello"',
       '""',
     ],
   },
-  _type_object: {
+  '-type-object': {
     datatype: true,
     clojureDocs: null,
     title: 'object',
     category: 'Datatype',
-    linkName: '_type_object',
+    linkName: '-type-object',
     description: 'An object, a collection of key-value pairs where keys are strings',
     examples: [
       '{}',
       '{:a 1 :b 2}',
     ],
   },
-  _type_array: {
+  '-type-array': {
     datatype: true,
     clojureDocs: null,
     title: 'array',
     category: 'Datatype',
-    linkName: '_type_array',
+    linkName: '-type-array',
     description: 'An array, a collection of values',
     examples: [
       '[]',
@@ -51,24 +51,24 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
       '[:a nil true]',
     ],
   },
-  _type_boolean: {
+  '-type-boolean': {
     datatype: true,
     clojureDocs: null,
     title: 'boolean',
     category: 'Datatype',
-    linkName: '_type_boolean',
+    linkName: '-type-boolean',
     description: 'A boolean',
     examples: [
       'true',
       'false',
     ],
   },
-  _type_function: {
+  '-type-function': {
     datatype: true,
     clojureDocs: null,
     title: 'function',
     category: 'Datatype',
-    linkName: '_type_function',
+    linkName: '-type-function',
     description: 'A function',
     examples: [
       '(fn [x] (+ x 1))',
@@ -76,24 +76,24 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
       '#(+ %1 %2)',
     ],
   },
-  _type_integer: {
+  '-type-integer': {
     datatype: true,
     clojureDocs: null,
     title: 'integer',
     category: 'Datatype',
-    linkName: '_type_integer',
+    linkName: '-type-integer',
     description: 'An integer',
     examples: [
       '42',
       '-42',
     ],
   },
-  _type_any: {
+  '-type-any': {
     datatype: true,
     clojureDocs: null,
     title: 'any',
     category: 'Datatype',
-    linkName: '_type_any',
+    linkName: '-type-any',
     description: 'Any value',
     examples: [
       '42',
@@ -102,23 +102,23 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
       'nil',
     ],
   },
-  _type_nil: {
+  '-type-nil': {
     datatype: true,
     clojureDocs: null,
     title: 'nil',
     category: 'Datatype',
-    linkName: '_type_nil',
+    linkName: '-type-nil',
     description: 'The value nil',
     examples: [
       'nil',
     ],
   },
-  _type_collection: {
+  '-type-collection': {
     datatype: true,
     clojureDocs: null,
     title: 'collection',
     category: 'Datatype',
-    linkName: '_type_collection',
+    linkName: '-type-collection',
     description: 'A collection, an object, an array or a string',
     examples: [
       '{:foo 42}',
@@ -126,36 +126,36 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
       '"hello"',
     ],
   },
-  _type_sequence: {
+  '-type-sequence': {
     datatype: true,
     clojureDocs: null,
     title: 'sequence',
     category: 'Datatype',
-    linkName: '_type_sequence',
+    linkName: '-type-sequence',
     description: 'A sequence, an array or a string',
     examples: [
       '[1 2 3]',
       '"hello"',
     ],
   },
-  _type_regexp: {
+  '-type-regexp': {
     datatype: true,
     clojureDocs: null,
     title: 'regexp',
     category: 'Datatype',
-    linkName: '_type_regexp',
+    linkName: '-type-regexp',
     description: 'A regular expression',
     examples: [
       '(regexp "^\\s*(.*)$")',
       '#"albert"ig',
     ],
   },
-  _type_never: {
+  '-type-never': {
     datatype: true,
     clojureDocs: null,
     title: 'never',
     category: 'Datatype',
-    linkName: '_type_never',
+    linkName: '-type-never',
     description: 'A value that can never be created',
     examples: [
       '(throw "error")',

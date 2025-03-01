@@ -164,7 +164,7 @@ not ok 1 equals
     }.
   location: "${path.resolve(__dirname, 'object-diff.test.lits')}:5:1"
   code:
-    - "(assert-equal obj-a obj-b)"
+    - "(assert_equal obj-a obj-b)"
     - "^                         "
   ...
 `)

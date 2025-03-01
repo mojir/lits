@@ -62,15 +62,15 @@
   (let [data (or data [])]
     (if input
       (if (has? data loopItemValue) data (push data loopItemValue))
-      (let [index (index-of data loopItemValue)]
-        ((fnil remove-at -1) index data)
+      (let [index (index_of data loopItemValue)]
+        ((fnil remove_at -1) index data)
       )
     )
   )
 )
 
 (defn toIsoPhoneNumber [input]
-  (if (and (string? input) (count input) (not= input "("))
+  (if (and (string? input) (count input) (!= input "("))
     (str
       "+1"
       (replace
@@ -95,7 +95,7 @@
   (let
     [
       data (or data [])
-      allAreSelected (has-every? data ["MORNING" "AFTERNOON" "MORNING"])
+      allAreSelected (has_every? data ["MORNING" "AFTERNOON" "MORNING"])
     ]
     (if (= loopItemValue "ANY_TIME")
       allAreSelected
@@ -112,7 +112,7 @@
     [
       data (or data [])
       allSelectedArr ["MORNING" "AFTERNOON" "MORNING"]
-      allAreSelected (has-every? data allSelectedArr)
+      allAreSelected (has_every? data allSelectedArr)
     ]
     (if input
       (if (= loopItemValue "ANY_TIME")
@@ -127,7 +127,7 @@
       )
       (if (= loopItemValue "ANY_TIME")
         []
-        (filter #(not= %1 loopItemValue) data)
+        (filter #(!= %1 loopItemValue) data)
       )
     )
   )
@@ -151,13 +151,13 @@
 
 (defn labels-from-values [arr values]  (for    [      value      values      &let [        label        (let [entry (some #(= value (%1 :value)) $array)]          (if (nil? entry) (str value) (entry :label))        )      ]      &when (boolean label)    ]    label  ))
 
-(defn multiSelectSetter [input data loopItemValue]  (let [data (or data [])]    (if input      (if (has? data loopItemValue) data (push data input))      (let [index (index-of data loopItemValue)]        ((fnil remove-at -1) index data)      )    )  ))
+(defn multiSelectSetter [input data loopItemValue]  (let [data (or data [])]    (if input      (if (has? data loopItemValue) data (push data input))      (let [index (index_of data loopItemValue)]        ((fnil remove_at -1) index data)      )    )  ))
 
-(defn toIsoPhoneNumber [input]  (if (and (string? input) (count input) (not= input "("))    (str      "+1"      (replace        (replace          (replace            input            (regexp "([^0-9+])" :g)            ""          )          (regexp "(\+1)" :g)          ""        )        (regexp "(\+)" :g)        ""      )    )    ""  ))
+(defn toIsoPhoneNumber [input]  (if (and (string? input) (count input) (!= input "("))    (str      "+1"      (replace        (replace          (replace            input            (regexp "([^0-9+])" :g)            ""          )          (regexp "(\+1)" :g)          ""        )        (regexp "(\+)" :g)        ""      )    )    ""  ))
 
-(defn timeToContactGetter [data loopItemValue]  (let    [      data (or data [])      allAreSelected (has-every? data ["MORNING" "AFTERNOON" "MORNING"])    ]    (if (= loopItemValue "ANY_TIME")      allAreSelected      (if allAreSelected        false        (has? data loopItemValue)      )    )  ))
+(defn timeToContactGetter [data loopItemValue]  (let    [      data (or data [])      allAreSelected (has_every? data ["MORNING" "AFTERNOON" "MORNING"])    ]    (if (= loopItemValue "ANY_TIME")      allAreSelected      (if allAreSelected        false        (has? data loopItemValue)      )    )  ))
 
-(defn timeToContactSetter [input data loopItemValue]  (let    [      data (or data [])      allSelectedArr ["MORNING" "AFTERNOON" "MORNING"]      allAreSelected (has-every? data allSelectedArr)    ]    (if input      (if (= loopItemValue "ANY_TIME")        allSelectedArr        (if allAreSelected          [loopItemValue]          (if (has? data loopItemValue)            data            (push data loopItemValue)          )        )      )      (if (= loopItemValue "ANY_TIME")        []        (filter #(not= %1 loopItemValue) data)      )    )  ))
+(defn timeToContactSetter [input data loopItemValue]  (let    [      data (or data [])      allSelectedArr ["MORNING" "AFTERNOON" "MORNING"]      allAreSelected (has_every? data allSelectedArr)    ]    (if input      (if (= loopItemValue "ANY_TIME")        allSelectedArr        (if allAreSelected          [loopItemValue]          (if (has? data loopItemValue)            data            (push data loopItemValue)          )        )      )      (if (= loopItemValue "ANY_TIME")        []        (filter #(!= %1 loopItemValue) data)      )    )  ))
 
 (loop [list (entries *translations*)]
   (when (count list)
@@ -192,8 +192,8 @@
 (boolean
   (or
     $totalCdlExperienceOutdated
-    (and (= $totalCdlExperienceTotalCdl (get-in $experienceEnum [0 :value])) $cdlTrainingOutdated)
-    (and (!= $totalCdlExperienceTotalCdl (get-in $experienceEnum [0 :value])) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated))
+    (and (= $totalCdlExperienceTotalCdl (get_in $experienceEnum [0 :value])) $cdlTrainingOutdated)
+    (and (!= $totalCdlExperienceTotalCdl (get_in $experienceEnum [0 :value])) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated))
     (and (has? ((or $requiredExperiences [])) "STRAIGHT_TRUCK_TANKER") $STRAIGHT_TRUCK_TANKER_ExperienceOutdated)
     (and (has? ((or $requiredExperiences [])) "STRAIGHT_TRUCK_READY_MIXER") $STRAIGHT_TRUCK_READY_MIXER_ExperienceOutdated)
     (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER") $TRACTOR_TRAILER_ExperienceOutdated)
@@ -206,7 +206,7 @@
   )
 )
 
-(boolean (or $totalCdlExperienceOutdated (and (= $totalCdlExperienceTotalCdl (get-in $experienceEnum [0 :value])) $cdlTrainingOutdated) (and (!= $totalCdlExperienceTotalCdl (get-in $experienceEnum [0 :value])) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated)) (and (has? ((or $requiredExperiences [])) "STRAIGHT_TRUCK_TANKER") $STRAIGHT_TRUCK_TANKER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "STRAIGHT_TRUCK_READY_MIXER") $STRAIGHT_TRUCK_READY_MIXER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER") $TRACTOR_TRAILER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_OTR") $TRACTOR_TRAILER_OTR_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_FLATBED") $TRACTOR_TRAILER_FLATBED_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_TANKER") $TRACTOR_TRAILER_TANKER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_HEAVY_HAUL") $TRACTOR_TRAILER_HEAVY_HAUL_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated)))
+(boolean (or $totalCdlExperienceOutdated (and (= $totalCdlExperienceTotalCdl (get_in $experienceEnum [0 :value])) $cdlTrainingOutdated) (and (!= $totalCdlExperienceTotalCdl (get_in $experienceEnum [0 :value])) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated)) (and (has? ((or $requiredExperiences [])) "STRAIGHT_TRUCK_TANKER") $STRAIGHT_TRUCK_TANKER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "STRAIGHT_TRUCK_READY_MIXER") $STRAIGHT_TRUCK_READY_MIXER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER") $TRACTOR_TRAILER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_OTR") $TRACTOR_TRAILER_OTR_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_FLATBED") $TRACTOR_TRAILER_FLATBED_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_TANKER") $TRACTOR_TRAILER_TANKER_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "TRACTOR_TRAILER_HEAVY_HAUL") $TRACTOR_TRAILER_HEAVY_HAUL_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated) (and (has? ((or $requiredExperiences [])) "COMMERCIAL_DRIVING") $COMMERCIAL_DRIVING_ExperienceOutdated)))
 
 (str "Owner Operator" (if (= $ownerOperatorApplyAs $applyAsOwnerOperatorValue) "" " (Lease Purchase)"))
 
@@ -264,7 +264,7 @@
 (defn formatPhoneNumber [data] (if (string? data)   (let [phoneNumber (if (= "+" (nth data 0)) (subs data 2) data)]     (cond       (> (count phoneNumber) 6)         (str           "("           (subs phoneNumber 0 3)           ") "           (subs phoneNumber 3 6)           "-"           (subs phoneNumber 6))       (> (count phoneNumber) 3)         (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))       (> (count phoneNumber) 0)         (str "(" (subs phoneNumber 0))       true         phoneNumber     )   )   "" ))
 (defn label-from-value [arr value]  (let [entry (some #(= value (%1 :value)) arr)]    (if (nil? entry) (str value) (entry :label))  ))
 (defn labels-from-values [arr values $opt default](let  [    labels    (for      [        value        values        &let [          label          (let [entry (some #(= value (%1 :value)) $array)]            (if (nil? entry) (str value) (entry :label))          )        ]        &when (boolean label)      ]      label    )  ]  (if (and (string? default) (empty? labels)) [default] labels)))
-(defn multiSelectSetter [input data loopItemValue]  (let [data (or data [])]    (if input      (if (has? data loopItemValue) data (push data loopItemValue))      (let [index (index-of data loopItemValue)]        ((fnil remove-at -1) index data)      )    )  ))
-(defn toIsoPhoneNumber [input]  (if (and (string? input) (count input) (not= input "("))    (str      "+1"      (replace        (replace          (replace            input            (regexp "([^0-9+])" :g)            ""          )          (regexp "(\+1)" :g)          ""        )        (regexp "(\+)" :g)        ""      )    )    ""  ))
-(defn timeToContactGetter [data loopItemValue]  (let    [      data (or data [])      allAreSelected (has-every? data ["MORNING" "AFTERNOON" "MORNING"])    ]    (if (= loopItemValue "ANY_TIME")      allAreSelected      (if allAreSelected        false        (has? data loopItemValue)      )    )  ))
-(defn timeToContactSetter [input data loopItemValue]  (let    [      data (or data [])      allSelectedArr ["MORNING" "AFTERNOON" "MORNING"]      allAreSelected (has-every? data allSelectedArr)    ]    (if input      (if (= loopItemValue "ANY_TIME")        allSelectedArr        (if allAreSelected          [loopItemValue]          (if (has? data loopItemValue)            data            (push data loopItemValue)          )        )      )      (if (= loopItemValue "ANY_TIME")        []        (filter #(not= %1 loopItemValue) data)      )    )  ))
+(defn multiSelectSetter [input data loopItemValue]  (let [data (or data [])]    (if input      (if (has? data loopItemValue) data (push data loopItemValue))      (let [index (index_of data loopItemValue)]        ((fnil remove_at -1) index data)      )    )  ))
+(defn toIsoPhoneNumber [input]  (if (and (string? input) (count input) (!= input "("))    (str      "+1"      (replace        (replace          (replace            input            (regexp "([^0-9+])" :g)            ""          )          (regexp "(\+1)" :g)          ""        )        (regexp "(\+)" :g)        ""      )    )    ""  ))
+(defn timeToContactGetter [data loopItemValue]  (let    [      data (or data [])      allAreSelected (has_every? data ["MORNING" "AFTERNOON" "MORNING"])    ]    (if (= loopItemValue "ANY_TIME")      allAreSelected      (if allAreSelected        false        (has? data loopItemValue)      )    )  ))
+(defn timeToContactSetter [input data loopItemValue]  (let    [      data (or data [])      allSelectedArr ["MORNING" "AFTERNOON" "MORNING"]      allAreSelected (has_every? data allSelectedArr)    ]    (if input      (if (= loopItemValue "ANY_TIME")        allSelectedArr        (if allAreSelected          [loopItemValue]          (if (has? data loopItemValue)            data            (push data loopItemValue)          )        )      )      (if (= loopItemValue "ANY_TIME")        []        (filter #(!= %1 loopItemValue) data)      )    )  ))

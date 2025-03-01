@@ -7,7 +7,7 @@ export function getType(arg: Argument | TypedValue) {
   const types = Array.isArray(argType) ? argType : [argType]
   const typeString = types.map((type) => {
     return isDataType(type)
-      ? `<span ${styles('text-color-Rose')}><a onclick="Playground.showPage('_type_${type}', 'smooth')">${type}</a></span>`
+      ? `<span ${styles('text-color-Rose')}><a onclick="Playground.showPage('-type-${type}', 'smooth')">${type}</a></span>`
       : `<span ${styles('text-color-Rose')}>${type}</span>`
   }).join(' | ')
   const result = arg.array || arg.rest

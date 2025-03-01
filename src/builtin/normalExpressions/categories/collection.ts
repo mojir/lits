@@ -155,7 +155,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'get-in': {
+  'get_in': {
     evaluate: (params, sourceCodeInfo): Any => {
       let coll = toAny(params[0])
       const keys = params[1] ?? [] // nil behaves as empty array
@@ -235,7 +235,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'has-some?': {
+  'has_some?': {
     evaluate: ([coll, seq], sourceCodeInfo): boolean => {
       if (coll === null || seq === null)
         return false
@@ -264,7 +264,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'has-every?': {
+  'has_every?': {
     evaluate: ([coll, seq], sourceCodeInfo): boolean => {
       if (coll === null)
         return false
@@ -305,7 +305,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(3, node),
   },
-  'assoc-in': {
+  'assoc_in': {
     evaluate: ([originalColl, keys, value], sourceCodeInfo): Coll => {
       assertColl(originalColl, sourceCodeInfo)
       assertArray(keys, sourceCodeInfo)
@@ -343,7 +343,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 3 }, node),
   },
-  'update-in': {
+  'update_in': {
     evaluate: ([originalColl, keys, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
       assertColl(originalColl, sourceCodeInfo)
       assertArray(keys, sourceCodeInfo)
@@ -412,7 +412,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
-  'not-empty': {
+  'not_empty': {
     evaluate: ([coll], sourceCodeInfo): Coll | null => {
       if (coll === null)
         return null
@@ -458,7 +458,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'not-any?': {
+  'not_any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertLitsFunction(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
@@ -473,7 +473,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'not-every?': {
+  'not_every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertLitsFunction(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)

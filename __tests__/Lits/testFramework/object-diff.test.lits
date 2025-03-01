@@ -2,4 +2,4 @@
 (def obj-b {:id :id2 :val :value2})
 
 ; @test equals
-(assert-equal obj-a obj-b)
+(assert_equal obj-a obj-b)

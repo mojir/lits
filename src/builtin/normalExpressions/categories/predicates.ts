@@ -123,7 +123,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  'positive-infinity?': {
+  'positive_infinity?': {
     evaluate: ([value], sourceCodeInfo): boolean => {
       assertNumber(value, sourceCodeInfo)
       return value === Number.POSITIVE_INFINITY
@@ -131,7 +131,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  'negative-infinity?': {
+  'negative_infinity?': {
     evaluate: ([value], sourceCodeInfo): boolean => {
       assertNumber(value, sourceCodeInfo)
       return value === Number.NEGATIVE_INFINITY
@@ -169,7 +169,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(1, node),
   },
-  'not-empty?': {
+  'not_empty?': {
     evaluate: ([coll], sourceCodeInfo): boolean => {
       if (coll === null)
         return false

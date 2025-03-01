@@ -31,7 +31,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert-not=': {
+  'assert!=': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first === second)
@@ -41,7 +41,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert-equal': {
+  'assert_equal': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (!deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
@@ -54,7 +54,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert-not-equal': {
+  'assert_not_equal': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
@@ -67,7 +67,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert>': {
+  'assert_gt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) <= 0)
@@ -77,7 +77,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert>=': {
+  'assert_gte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) < 0)
@@ -87,7 +87,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert<': {
+  'assert_lt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) >= 0)
@@ -97,7 +97,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert<=': {
+  'assert_lte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) > 0)
@@ -107,7 +107,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert-true': {
+  'assert_true': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first !== true)
@@ -117,7 +117,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
-  'assert-false': {
+  'assert_false': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first !== false)
@@ -127,7 +127,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
-  'assert-truthy': {
+  'assert_truthy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (!first)
@@ -137,7 +137,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
-  'assert-falsy': {
+  'assert_falsy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first)
@@ -147,7 +147,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
-  'assert-nil': {
+  'assert_null': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first !== null)
@@ -157,7 +157,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
-  'assert-throws': {
+  'assert_throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       assertLitsFunction(func, sourceCodeInfo)
@@ -171,7 +171,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
-  'assert-throws-error': {
+  'assert_throws_error': {
     evaluate: ([func, throwMessage, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       assertString(throwMessage, sourceCodeInfo)
@@ -193,7 +193,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
-  'assert-not-throws': {
+  'assert_not_throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       assertLitsFunction(func, sourceCodeInfo)

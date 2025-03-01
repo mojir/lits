@@ -67,12 +67,12 @@ export interface FunctionReference<T extends Category = Category> extends Common
 
 export interface ShorthandReference extends CommonReference<'Shorthand'> {
   shorthand: true
-  linkName: `_short_${string}`
+  linkName: `-short-${string}`
 }
 
 export interface DatatypeReference extends CommonReference<'Datatype'> {
   datatype: true
-  linkName: `_type_${string}`
+  linkName: `-type-${string}`
 }
 
 export type Reference<T extends Category = Category> = FunctionReference<T> | ShorthandReference | DatatypeReference

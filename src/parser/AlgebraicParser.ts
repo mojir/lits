@@ -169,7 +169,7 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, r
     case '==':
       return createNamedNormalExpressionNode('=', [left, right], token)
     case '!=':
-      return createNamedNormalExpressionNode('not=', [left, right], token)
+      return createNamedNormalExpressionNode('!=', [left, right], token)
     case '&':
       return createNamedNormalExpressionNode('bit-and', [left, right], token)
     case '^':

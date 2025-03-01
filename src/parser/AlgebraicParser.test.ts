@@ -244,7 +244,7 @@ describe('algebraic operators', () => {
       expect(lits.run('if(1 < 2, 1, 2)')).toBe(1)
       expect(lits.run('when(1 > 2, 2)')).toBe(null)
       expect(lits.run('when(1 < 2, 2)')).toBe(2)
-      expect(lits.run('\'remove-at\'(1, [1, 2, 3])')).toEqual([1, 3])
+      expect(lits.run('\'remove_at\'(1, [1, 2, 3])')).toEqual([1, 3])
     })
   })
 

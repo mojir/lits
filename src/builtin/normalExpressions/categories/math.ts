@@ -1,5 +1,5 @@
 import type { NormalExpressionNode } from '../../../parser/interface'
-import { asNumber, assertNumber } from '../../../typeGuards/number'
+import { assertNumber } from '../../../typeGuards/number'
 import { assertNumberOfParams } from '../../../typeGuards'
 import type { BuiltinNormalExpressions } from '../../interface'
 
@@ -166,22 +166,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  'rand!': {
-    evaluate: (parameters, sourceCodeInfo): number => {
-      const num = asNumber(parameters.length === 1 ? parameters[0] : 1, sourceCodeInfo)
-      return Math.random() * num
-    },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 0, max: 1 }, node),
-  },
-
-  'rand-int!': {
-    evaluate: ([first], sourceCodeInfo): number => {
-      assertNumber(first, sourceCodeInfo)
-      return Math.floor(Math.random() * Math.abs(first)) * Math.sign(first)
-    },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
-  },
-
   'min': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)
@@ -226,28 +210,28 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  'max-safe-integer': {
+  'max_safe_integer': {
     evaluate: (): number => {
       return Number.MAX_SAFE_INTEGER
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
   },
 
-  'min-safe-integer': {
+  'min_safe_integer': {
     evaluate: (): number => {
       return Number.MIN_SAFE_INTEGER
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
   },
 
-  'max-value': {
+  'max_value': {
     evaluate: (): number => {
       return Number.MAX_VALUE
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
   },
 
-  'min-value': {
+  'min_value': {
     evaluate: (): number => {
       return Number.MIN_VALUE
     },
@@ -261,14 +245,14 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
   },
 
-  'positive-infinity': {
+  'positive_infinity': {
     evaluate: (): number => {
       return Number.POSITIVE_INFINITY
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
   },
 
-  'negative-infinity': {
+  'negative_infinity': {
     evaluate: (): number => {
       return Number.NEGATIVE_INFINITY
     },

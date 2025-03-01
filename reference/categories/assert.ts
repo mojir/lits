@@ -25,7 +25,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
 }, 'assert=': {
   title: 'assert=',
   category: 'Assert',
-  linkName: 'assert_equal',
+  linkName: 'assert-equal',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -51,10 +51,10 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     '(assert= 0 1)',
     '(assert= 1 1)',
   ],
-}, 'assert-not=': {
-  title: 'assert-not=',
+}, 'assert!=': {
+  title: 'assert!=',
   category: 'Assert',
-  linkName: 'assert-not_equal',
+  linkName: 'assert-exclamation-equal',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -76,14 +76,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $a is the same as $b it throws `AssertionError`.',
   examples: [
-    '(assert-not= 0 0 "Expected different values")',
-    '(assert-not= 0 0)',
-    '(assert-not= 0 1)',
+    '(assert!= 0 0 "Expected different values")',
+    '(assert!= 0 0)',
+    '(assert!= 0 1)',
   ],
-}, 'assert-equal': {
-  title: 'assert-equal',
+}, 'assert_equal': {
+  title: 'assert_equal',
   category: 'Assert',
-  linkName: 'assert-equal',
+  linkName: 'assert_equal',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -105,14 +105,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $a is not deep equal to $b it throws `AssertionError`.',
   examples: [
-    '(assert-equal { :a 1 } { :a 2 } "Expected equal values")',
-    '(assert-equal { :a 1 } { :a 2 })',
-    '(assert-equal { :a 1 } { :a 1 })',
+    '(assert_equal { :a 1 } { :a 2 } "Expected equal values")',
+    '(assert_equal { :a 1 } { :a 2 })',
+    '(assert_equal { :a 1 } { :a 1 })',
   ],
-}, 'assert-not-equal': {
-  title: 'assert-not-equal',
+}, 'assert_not_equal': {
+  title: 'assert_not_equal',
   category: 'Assert',
-  linkName: 'assert-not-equal',
+  linkName: 'assert_not_equal',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -134,12 +134,12 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $a is not deep equal to $b it throws `AssertionError`.',
   examples: [
-    '(assert-not-equal { :a 2 } { :a 2 } "Expected different values")',
-    '(assert-not-equal { :a 2 } { :a 2 })',
-    '(assert-not-equal { :a 1 } { :a 2 })',
+    '(assert_not_equal { :a 2 } { :a 2 } "Expected different values")',
+    '(assert_not_equal { :a 2 } { :a 2 })',
+    '(assert_not_equal { :a 1 } { :a 2 })',
   ],
-}, 'assert>': {
-  title: 'assert>',
+}, 'assert_gt': {
+  title: 'assert_gt',
   category: 'Assert',
   linkName: 'assert_gt',
   clojureDocs: null,
@@ -163,12 +163,12 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $a is not greater than $b it throws `AssertionError`.',
   examples: [
-    '(assert> 0 1 "Expected greater value")',
-    '(assert> 0 0)',
-    '(assert> 1 0)',
+    '(assert_gt 0 1 "Expected greater value")',
+    '(assert_gt 0 0)',
+    '(assert_gt 1 0)',
   ],
-}, 'assert<': {
-  title: 'assert<',
+}, 'assert_lt': {
+  title: 'assert_lt',
   category: 'Assert',
   linkName: 'assert_lt',
   clojureDocs: null,
@@ -192,12 +192,12 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $a is not less than $b it throws `AssertionError`.',
   examples: [
-    '(assert< 1 0 "Expected smaller value value")',
-    '(assert< 1 1)',
-    '(assert< 0 1)',
+    '(assert_lte 1 0 "Expected smaller value value")',
+    '(assert_lte 1 1)',
+    '(assert_lte 0 1)',
   ],
-}, 'assert>=': {
-  title: 'assert>=',
+}, 'assert_gte': {
+  title: 'assert_gte',
   category: 'Assert',
   linkName: 'assert_gte',
   clojureDocs: null,
@@ -221,12 +221,12 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $a is less than $b it throws `AssertionError`.',
   examples: [
-    '(assert>= 0 1 "Expected greater value")',
-    '(assert>= 0 1)',
-    '(assert>= 1 1)',
+    '(assert_gte 0 1 "Expected greater value")',
+    '(assert_gte 0 1)',
+    '(assert_gte 1 1)',
   ],
-}, 'assert<=': {
-  title: 'assert<=',
+}, 'assert_lte': {
+  title: 'assert_lte',
   category: 'Assert',
   linkName: 'assert_lte',
   clojureDocs: null,
@@ -250,14 +250,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $a is grater than $b it throws `AssertionError`.',
   examples: [
-    '(assert<= 1 0 "Expected smaller value value")',
-    '(assert<= 1 0)',
-    '(assert<= 1 1)',
+    '(assert_lte 1 0 "Expected smaller value value")',
+    '(assert_lte 1 0)',
+    '(assert_lte 1 1)',
   ],
-}, 'assert-true': {
-  title: 'assert-true',
+}, 'assert_true': {
+  title: 'assert_true',
   category: 'Assert',
-  linkName: 'assert-true',
+  linkName: 'assert_true',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -276,14 +276,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $value is not `true` it throws `AssertionError`.',
   examples: [
-    '(assert-true false "Expected true")',
-    '(assert-true false)',
-    '(assert-true true)',
+    '(assert_true false "Expected true")',
+    '(assert_true false)',
+    '(assert_true true)',
   ],
-}, 'assert-false': {
-  title: 'assert-false',
+}, 'assert_false': {
+  title: 'assert_false',
   category: 'Assert',
-  linkName: 'assert-false',
+  linkName: 'assert_false',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -302,14 +302,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $value is not `false` it throws `AssertionError`.',
   examples: [
-    '(assert-false true "Expected false")',
-    '(assert-false true)',
-    '(assert-false false)',
+    '(assert_false true "Expected false")',
+    '(assert_false true)',
+    '(assert_false false)',
   ],
-}, 'assert-truthy': {
-  title: 'assert-truthy',
+}, 'assert_truthy': {
+  title: 'assert_truthy',
   category: 'Assert',
-  linkName: 'assert-truthy',
+  linkName: 'assert_truthy',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -328,21 +328,21 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $value is not `truthy` it throws `AssertionError`.',
   examples: [
-    '(assert-truthy false "Expected truthy")',
-    '(assert-truthy false)',
-    '(assert-truthy 0)',
-    '(assert-truthy nil)',
-    '(assert-truthy "")',
-    '(assert-truthy true)',
-    '(assert-truthy 1)',
-    '(assert-truthy :x)',
-    '(assert-truthy [])',
-    '(assert-truthy {})',
+    '(assert_truthy false "Expected truthy")',
+    '(assert_truthy false)',
+    '(assert_truthy 0)',
+    '(assert_truthy nil)',
+    '(assert_truthy "")',
+    '(assert_truthy true)',
+    '(assert_truthy 1)',
+    '(assert_truthy :x)',
+    '(assert_truthy [])',
+    '(assert_truthy {})',
   ],
-}, 'assert-falsy': {
-  title: 'assert-falsy',
+}, 'assert_falsy': {
+  title: 'assert_falsy',
   category: 'Assert',
-  linkName: 'assert-falsy',
+  linkName: 'assert_falsy',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -361,20 +361,20 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $value is not `falsy` it throws `AssertionError`.',
   examples: [
-    '(assert-falsy true "Expected falsy")',
-    '(assert-falsy :x)',
-    '(assert-falsy [])',
-    '(assert-falsy {})',
-    '(assert-falsy 1)',
-    '(assert-falsy false)',
-    '(assert-falsy 0)',
-    '(assert-falsy nil)',
-    '(assert-falsy "")',
+    '(assert_falsy true "Expected falsy")',
+    '(assert_falsy :x)',
+    '(assert_falsy [])',
+    '(assert_falsy {})',
+    '(assert_falsy 1)',
+    '(assert_falsy false)',
+    '(assert_falsy 0)',
+    '(assert_falsy nil)',
+    '(assert_falsy "")',
   ],
-}, 'assert-nil': {
-  title: 'assert-nil',
+}, 'assert_null': {
+  title: 'assert_null',
   category: 'Assert',
-  linkName: 'assert-nil',
+  linkName: 'assert_null',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -393,20 +393,20 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $value is not `nil` it throws `AssertionError`.',
   examples: [
-    '(assert-nil nil)',
-    '(assert-nil true "Expected nil")',
-    '(assert-nil :x)',
-    '(assert-nil [])',
-    '(assert-nil {})',
-    '(assert-nil 1)',
-    '(assert-nil false)',
-    '(assert-nil 0)',
-    '(assert-nil "")',
+    '(assert_null nil)',
+    '(assert_null true "Expected nil")',
+    '(assert_null :x)',
+    '(assert_null [])',
+    '(assert_null {})',
+    '(assert_null 1)',
+    '(assert_null false)',
+    '(assert_null 0)',
+    '(assert_null "")',
   ],
-}, 'assert-throws': {
-  title: 'assert-throws',
+}, 'assert_throws': {
+  title: 'assert_throws',
   category: 'Assert',
-  linkName: 'assert-throws',
+  linkName: 'assert_throws',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -424,11 +424,11 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     { argumentNames: ['fn', 'message'] },
   ],
   description: 'If $fn does not throw, it throws `AssertionError`.',
-  examples: ['(assert-throws #(throw "Error"))', '(assert-throws #(identity "Error"))'],
-}, 'assert-throws-error': {
-  title: 'assert-throws-error',
+  examples: ['(assert_throws #(throw "Error"))', '(assert_throws #(identity "Error"))'],
+}, 'assert_throws_error': {
+  title: 'assert_throws_error',
   category: 'Assert',
-  linkName: 'assert-throws-error',
+  linkName: 'assert_throws_error',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -450,14 +450,14 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   ],
   description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
   examples: [
-    '(assert-throws-error #(throw :Error) :Error)',
-    '(assert-throws-error #(throw "Something else") :Error "Hej alla barn")',
-    '(assert-throws-error #(identity :Error) :Error)',
+    '(assert_throws_error #(throw :Error) :Error)',
+    '(assert_throws_error #(throw "Something else") :Error "Hej alla barn")',
+    '(assert_throws_error #(identity :Error) :Error)',
   ],
-}, 'assert-not-throws': {
-  title: 'assert-not-throws',
+}, 'assert_not_throws': {
+  title: 'assert_not_throws',
   category: 'Assert',
-  linkName: 'assert-not-throws',
+  linkName: 'assert_not_throws',
   clojureDocs: null,
   returns: {
     type: 'nil',
@@ -475,5 +475,5 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     { argumentNames: ['fn', 'message'] },
   ],
   description: 'If $fn throws, it throws `AssertionError`.',
-  examples: ['(assert-not-throws #(identity "Error"))', '(assert-not-throws #(throw "Error"))'],
+  examples: ['(assert_not_throws #(identity "Error"))', '(assert_not_throws #(throw "Error"))'],
 } }

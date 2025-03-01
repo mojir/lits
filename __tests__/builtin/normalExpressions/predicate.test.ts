@@ -349,23 +349,23 @@ describe('predicates', () => {
       })
     })
 
-    describe('positive-infinity?', () => {
+    describe('positive_infinity?', () => {
       it('samples', () => {
-        expect(lits.run('(positive-infinity? 1)')).toBe(false)
-        expect(lits.run('(positive-infinity? 0)')).toBe(false)
-        expect(lits.run('(positive-infinity? (/ 1 0))')).toBe(true)
-        expect(lits.run('(positive-infinity? (/ -1 0))')).toBe(false)
-        expect(lits.run('(positive-infinity? (sqrt -1))')).toBe(false)
+        expect(lits.run('(positive_infinity? 1)')).toBe(false)
+        expect(lits.run('(positive_infinity? 0)')).toBe(false)
+        expect(lits.run('(positive_infinity? (/ 1 0))')).toBe(true)
+        expect(lits.run('(positive_infinity? (/ -1 0))')).toBe(false)
+        expect(lits.run('(positive_infinity? (sqrt -1))')).toBe(false)
       })
     })
 
-    describe('negative-infinity?', () => {
+    describe('negative_infinity?', () => {
       it('samples', () => {
-        expect(lits.run('(negative-infinity? 1)')).toBe(false)
-        expect(lits.run('(negative-infinity? 0)')).toBe(false)
-        expect(lits.run('(negative-infinity? (/ 1 0))')).toBe(false)
-        expect(lits.run('(negative-infinity? (/ -1 0))')).toBe(true)
-        expect(lits.run('(negative-infinity? (sqrt -1))')).toBe(false)
+        expect(lits.run('(negative_infinity? 1)')).toBe(false)
+        expect(lits.run('(negative_infinity? 0)')).toBe(false)
+        expect(lits.run('(negative_infinity? (/ 1 0))')).toBe(false)
+        expect(lits.run('(negative_infinity? (/ -1 0))')).toBe(true)
+        expect(lits.run('(negative_infinity? (sqrt -1))')).toBe(false)
       })
     })
 
@@ -409,23 +409,23 @@ describe('predicates', () => {
       })
     })
 
-    describe('not-empty?', () => {
+    describe('not_empty?', () => {
       it('samples', () => {
-        expect(lits.run('(not-empty? [])')).toBe(false)
-        expect(lits.run('(not-empty? [0])')).toBe(true)
-        expect(lits.run('(not-empty? {})')).toBe(false)
-        expect(lits.run('(not-empty? {:a 2})')).toBe(true)
-        expect(lits.run('(not-empty? "")')).toBe(false)
-        expect(lits.run('(not-empty? "Albert")')).toBe(true)
-        expect(lits.run('(not-empty? nil)')).toBe(false)
+        expect(lits.run('(not_empty? [])')).toBe(false)
+        expect(lits.run('(not_empty? [0])')).toBe(true)
+        expect(lits.run('(not_empty? {})')).toBe(false)
+        expect(lits.run('(not_empty? {:a 2})')).toBe(true)
+        expect(lits.run('(not_empty? "")')).toBe(false)
+        expect(lits.run('(not_empty? "Albert")')).toBe(true)
+        expect(lits.run('(not_empty? nil)')).toBe(false)
 
-        expect(() => lits.run('(not-empty?)')).toThrow()
-        expect(() => lits.run('(not-empty?)')).toThrow()
-        expect(() => lits.run('(not-empty? true)')).toThrow()
-        expect(() => lits.run('(not-empty? false)')).toThrow()
-        expect(() => lits.run('(not-empty? undefined)')).toThrow()
-        expect(() => lits.run('(not-empty? 10)')).toThrow()
-        expect(() => lits.run('(not-empty? (regexp "^start"))')).toThrow()
+        expect(() => lits.run('(not_empty?)')).toThrow()
+        expect(() => lits.run('(not_empty?)')).toThrow()
+        expect(() => lits.run('(not_empty? true)')).toThrow()
+        expect(() => lits.run('(not_empty? false)')).toThrow()
+        expect(() => lits.run('(not_empty? undefined)')).toThrow()
+        expect(() => lits.run('(not_empty? 10)')).toThrow()
+        expect(() => lits.run('(not_empty? (regexp "^start"))')).toThrow()
       })
     })
   }

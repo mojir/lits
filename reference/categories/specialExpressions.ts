@@ -738,7 +738,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
   'time!': {
     title: 'time!',
     category: 'Special expression',
-    linkName: 'time_exclamation',
+    linkName: 'time-exclamation',
     clojureDocs: 'time',
     returns: {
       type: 'any',
@@ -863,7 +863,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
   'declared?': {
     title: 'declared?',
     category: 'Special expression',
-    linkName: 'declared_question',
+    linkName: 'declared-question',
     returns: {
       type: 'boolean',
     },
@@ -891,7 +891,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
   '??': {
     title: '??',
     category: 'Special expression',
-    linkName: '_question_question',
+    linkName: '-question-question',
     returns: {
       type: 'any',
     },

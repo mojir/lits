@@ -35,7 +35,7 @@ export function getStartPage(): string {
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
               <span ${styles('font-bold')}>Pure Functions:</span>
-              <span ${styles('text-color-gray-400')}>Functions are <a class="external-link" href="https://en.wikipedia.org/wiki/Pure_function">pure</a> by default. Functions with side effects have names ending in an exclamation mark (!), such as <span ${styles('text-color-Blue')}><a onclick="Playground.showPage('write_exclamation')">write!</a></span> or <span ${styles('text-color-Blue')}><a onclick="Playground.showPage('rand_exclamation')">rand!</a></span>.</span>
+              <span ${styles('text-color-gray-400')}>Functions are <a class="external-link" href="https://en.wikipedia.org/wiki/Pure_function">pure</a> by default. Functions with side effects have names ending in an exclamation mark (!), such as <span ${styles('text-color-Blue')}><a onclick="Playground.showPage('write-exclamation')">write!</a></span> or <span ${styles('text-color-Blue')}><a onclick="Playground.showPage('rand-exclamation')">rand!</a></span>.</span>
             </div>
           </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
