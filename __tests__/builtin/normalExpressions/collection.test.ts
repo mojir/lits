@@ -10,7 +10,7 @@ describe('collection functions', () => {
       expect(lits.run('(count [1])')).toBe(1)
       expect(lits.run('(count [1 2 3])')).toBe(3)
       expect(lits.run('(count (object))')).toBe(0)
-      expect(lits.run('(count (object :a 1 :b 2))')).toBe(2)
+      expect(lits.run('(\'count\' (object :a 1 :b 2))')).toBe(2)
       expect(lits.run('(count "")')).toBe(0)
       expect(lits.run('(count "Albert")')).toBe(6)
       expect(lits.run('(count nil)')).toBe(0)

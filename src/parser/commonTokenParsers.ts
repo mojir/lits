@@ -19,12 +19,41 @@ export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): S
   if (!isA_SymbolToken(tkn) && !isP_SymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
-  return {
-    t: AstNodeType.Symbol,
-    v: tkn[1],
-    p: [],
-    n: undefined,
-    token: getTokenDebugData(tkn) && tkn,
+  if (tkn[1][0] !== '\'') {
+    return {
+      t: AstNodeType.Symbol,
+      v: tkn[1],
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(tkn) && tkn,
+    }
+  }
+  else {
+    const value = tkn[1].substring(1, tkn[1].length - 1)
+      .replace(
+        /(\\{2})|(\\')|\\(.)/g,
+        (
+          _,
+          backslash: string,
+          singleQuote: string,
+          normalChar: string,
+        ) => {
+          if (backslash) {
+            return '\\'
+          }
+          if (singleQuote) {
+            return '\''
+          }
+          return `\\${normalChar}`
+        },
+      )
+    return {
+      t: AstNodeType.Symbol,
+      v: value,
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(tkn) && tkn,
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 import { LitsError } from '../../errors'
-import { polishIdentifierCharacterClass } from '../../identifier'
+import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
   commonTokenizers,
@@ -130,21 +130,53 @@ export const tokenizeP_Number: Tokenizer<P_NumberToken> = (input, position) => {
 }
 
 export const P_symbolRegExp = new RegExp(polishIdentifierCharacterClass)
+export const P_symbolFirstCharacterRegExp = new RegExp(polishIdentifierFirstCharacterClass)
 export const tokenizeP_Symbol: Tokenizer<P_SymbolToken> = (input, position) => {
-  let char = input[position]
-  let length = 0
-  let value = ''
+  let value = input[position]
 
-  if (!char || !P_symbolRegExp.test(char))
+  if (!value) {
     return NO_MATCH
-
-  while (char && P_symbolRegExp.test(char)) {
-    value += char
-    length += 1
-    char = input[position + length]
   }
 
-  return [length, ['P_Symbol', value]]
+  if (value === '\'') {
+    let length = 1
+    let char = input[position + length]
+    let escaping = false
+    while (char !== '\'' || escaping) {
+      if (char === undefined)
+        throw new LitsError(`Unclosed string at position ${position}.`, undefined)
+
+      length += 1
+      if (escaping) {
+        escaping = false
+        value += char
+      }
+      else {
+        if (char === '\\') {
+          escaping = true
+        }
+        value += char
+      }
+      char = input[position + length]
+    }
+    value += '\'' // closing quote
+    return [length + 1, ['P_Symbol', value]]
+  }
+
+  if (P_symbolRegExp.test(value)) {
+    const initialPosition = position
+    position += 1
+    let char = input[position]
+
+    while (char && P_symbolRegExp.test(char)) {
+      value += char
+      position += 1
+      char = input[position]
+    }
+    return [position - initialPosition, ['P_Symbol', value]]
+  }
+
+  return NO_MATCH
 }
 
 export const tokenizeP_FnShorthand: Tokenizer<P_FnShorthandToken> = (input, position) => {

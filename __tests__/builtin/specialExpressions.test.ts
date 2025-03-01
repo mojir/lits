@@ -437,7 +437,7 @@ describe('specialExpressions', () => {
       expect(() => lits.run('(defn add ([a b & rest] (+ a b)) ([a b c & rest] 10))')).toThrow()
     })
     it('call defn function', () => {
-      expect(lits.run('(defn sumOneToN [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
+      expect(lits.run('(defn \'sumOneToN\' [n] (if (<= n 1) n (+ n (\'sumOneToN\' (- n 1))))) (sumOneToN 10)')).toBe(55)
       expect(lits.run('(defn applyWithVal [fun val] (fun val)) (applyWithVal inc 10)')).toBe(11)
       expect(lits.run('(defn applyWithVal [fun val] (fun val)) (applyWithVal inc 10)')).toBe(11)
     })

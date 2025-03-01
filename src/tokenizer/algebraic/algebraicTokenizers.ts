@@ -5,7 +5,6 @@ import {
   commonTokenizers,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
-import { tokenizeP_Symbol } from '../polish/polishTokenizers'
 import { algebraicReservedNamesRecord } from './algebraicReservedNames'
 import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
 import { isSymbolicOperator } from './algebraicTokens'
@@ -112,14 +111,39 @@ export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (
 }
 
 export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
-  const initialPosition = position
   let value = input[position]
 
   if (!value) {
     return NO_MATCH
   }
 
+  if (value === '\'') {
+    let length = 1
+    let char = input[position + length]
+    let escaping = false
+    while (char !== '\'' || escaping) {
+      if (char === undefined)
+        throw new LitsError(`Unclosed string at position ${position}.`, undefined)
+
+      length += 1
+      if (escaping) {
+        escaping = false
+        value += char
+      }
+      else {
+        if (char === '\\') {
+          escaping = true
+        }
+        value += char
+      }
+      char = input[position + length]
+    }
+    value += '\'' // closing quote
+    return [length + 1, ['A_Symbol', value]]
+  }
+
   if (identifierFirstCharacterRegExp.test(value)) {
+    const initialPosition = position
     position += 1
     let char = input[position]
 
@@ -129,21 +153,6 @@ export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
       char = input[position]
     }
     return [position - initialPosition, ['A_Symbol', value]]
-  }
-
-  if (value === '\'') {
-    position += 1
-    const [count, pfSymbolToken] = tokenizeP_Symbol(input, position)
-    if (pfSymbolToken === undefined) {
-      return NO_MATCH
-    }
-    position += count
-    if (input[position] !== '\'') {
-      return NO_MATCH
-    }
-    position += 1
-    const pfValue = pfSymbolToken[1]
-    return [position - initialPosition, ['A_Symbol', pfValue]]
   }
 
   return NO_MATCH

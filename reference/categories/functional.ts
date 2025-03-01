@@ -2,7 +2,7 @@ import type { FunctionalApiName } from '../api.ts'
 import type { FunctionReference } from '../index.ts'
 
 export const functionalReference: Record<FunctionalApiName, FunctionReference<'Functional'>> = {
-  'apply': {
+  apply: {
     title: 'apply',
     category: 'Functional',
     linkName: 'apply',
@@ -34,7 +34,7 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
   [3 4])`,
     ],
   },
-  'identity': {
+  identity: {
     title: 'identity',
     category: 'Functional',
     linkName: 'identity',
@@ -52,7 +52,7 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
     description: 'Returns $x.',
     examples: ['(identity 1)', '(identity "Albert")', '(identity {:a 1})', '(identity nil)'],
   },
-  'partial': {
+  partial: {
     title: 'partial',
     category: 'Functional',
     linkName: 'partial',
@@ -84,7 +84,7 @@ When called, the returned function calls \`(\`$fn \`...\`$args\` ...additional_a
 (addHundred 10)`,
     ],
   },
-  'comp': {
+  comp: {
     title: 'comp',
     category: 'Functional',
     linkName: 'comp',
@@ -119,7 +119,7 @@ When called, the returned function calls \`(\`$fn \`...\`$args\` ...additional_a
 ((comp "foo" "bar") x)`,
     ],
   },
-  'constantly': {
+  constantly: {
     title: 'constantly',
     category: 'Functional',
     linkName: 'constantly',
@@ -147,7 +147,7 @@ When called, the returned function calls \`(\`$fn \`...\`$args\` ...additional_a
     ],
   },
 
-  'juxt': {
+  juxt: {
     title: 'juxt',
     category: 'Functional',
     linkName: 'juxt',
@@ -187,7 +187,7 @@ and returns a vector containing the result of applying each function to the args
   (range 1 11))`,
     ],
   },
-  'complement': {
+  complement: {
     title: 'complement',
     category: 'Functional',
     linkName: 'complement',
@@ -205,7 +205,7 @@ and returns a vector containing the result of applying each function to the args
     description: 'Takes a function $fn and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
     examples: ['((complement >) 1 3)', '((complement <) 1 3)', '((complement +) 1 3)', '((complement +) 0 0)'],
   },
-  'every_pred': {
+  every_pred: {
     title: 'every_pred',
     category: 'Functional',
     linkName: 'every_pred',
@@ -246,7 +246,7 @@ return a truthy value against all of its arguments, else it returns \`false\`.`,
   [1 2 3])`,
     ],
   },
-  'some_pred': {
+  some_pred: {
     title: 'some_pred',
     category: 'Functional',
     linkName: 'some_pred',
@@ -275,7 +275,7 @@ return a truthy value against all of its arguments, else it returns \`false\`.`,
       '((some_pred string? #(> (count %1) 3)) [1 2 3] [2])',
     ],
   },
-  'fnil': {
+  fnil: {
     title: 'fnil',
     category: 'Functional',
     linkName: 'fnil',

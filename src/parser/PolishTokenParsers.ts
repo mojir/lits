@@ -249,14 +249,14 @@ function parseBindings(tokenStream: TokenStream, parseState: ParseState): Bindin
 }
 
 function parseBinding(tokenStream: TokenStream, parseState: ParseState): BindingNode {
-  const firstToken = asP_SymbolToken(tokenStream.tokens[parseState.position++])
-  const name = firstToken[1]
+  const firstToken = asP_SymbolToken(tokenStream.tokens[parseState.position])
+  const name = parseSymbol(tokenStream, parseState)
 
   const value = parseState.parseToken(tokenStream, parseState)
 
   const node: BindingNode = {
     t: AstNodeType.Binding,
-    n: name,
+    n: name.v,
     v: value,
     p: [],
     token: getTokenDebugData(firstToken) && firstToken,

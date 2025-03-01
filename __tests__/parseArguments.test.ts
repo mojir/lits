@@ -5,7 +5,7 @@ describe('parseArguments', () => {
   for (const lits of [new Lits(), new Lits({ debug: true })]) {
     describe('defn', () => {
       it('& params', () => {
-        expect(() => lits.run('(defn foo [& a] a)')).not.toThrow()
+        expect(() => lits.run('(defn \'foo\' [& a] a)')).not.toThrow()
         expect(() => lits.run('(defn foo [& 1] a)')).toThrow()
         expect(() => lits.run('(defn foo [x & a] a)')).not.toThrow()
         expect(() => lits.run('(defn foo [x &] a)')).toThrow()

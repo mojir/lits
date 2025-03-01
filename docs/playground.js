@@ -4687,7 +4687,7 @@ var Playground = (function (exports) {
     }
 
     var functionalNormalExpression = {
-        'apply': {
+        apply: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a), func = _c[0], params = _c.slice(1);
                 var executeFunction = _b.executeFunction;
@@ -4700,14 +4700,14 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
-        'identity': {
+        identity: {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return toAny(value);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'partial': {
+        partial: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a), fn = _c[0], params = _c.slice(1);
@@ -4721,7 +4721,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
-        'comp': {
+        comp: {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 if (fns.length > 1) {
@@ -4738,7 +4738,7 @@ var Playground = (function (exports) {
                     _a;
             },
         },
-        'constantly': {
+        constantly: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a, 1), value = _c[0];
@@ -4751,7 +4751,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'juxt': {
+        juxt: {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 return _a = {},
@@ -4763,7 +4763,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
-        'complement': {
+        complement: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a, 1), fn = _c[0];
@@ -4776,7 +4776,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'every_pred': {
+        every_pred: {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 return _a = {},
@@ -4788,7 +4788,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
-        'some_pred': {
+        some_pred: {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 return _a = {},
@@ -4800,7 +4800,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
-        'fnil': {
+        fnil: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a), fn = _c[0], params = _c.slice(1);
@@ -7373,13 +7373,34 @@ var Playground = (function (exports) {
         if (!isA_SymbolToken(tkn) && !isP_SymbolToken(tkn)) {
             throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
-        return {
-            t: AstNodeType.Symbol,
-            v: tkn[1],
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
+        if (tkn[1][0] !== '\'') {
+            return {
+                t: AstNodeType.Symbol,
+                v: tkn[1],
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(tkn) && tkn,
+            };
+        }
+        else {
+            var value = tkn[1].substring(1, tkn[1].length - 1)
+                .replace(/(\\{2})|(\\')|\\(.)/g, function (_, backslash, singleQuote, normalChar) {
+                if (backslash) {
+                    return '\\';
+                }
+                if (singleQuote) {
+                    return '\'';
+                }
+                return "\\".concat(normalChar);
+            });
+            return {
+                t: AstNodeType.Symbol,
+                v: value,
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(tkn) && tkn,
+            };
+        }
     }
     function parseReservedSymbol(tokenStream, parseState) {
         var _a;
@@ -8424,12 +8445,12 @@ var Playground = (function (exports) {
         return bindings;
     }
     function parseBinding(tokenStream, parseState) {
-        var firstToken = asP_SymbolToken(tokenStream.tokens[parseState.position++]);
-        var name = firstToken[1];
+        var firstToken = asP_SymbolToken(tokenStream.tokens[parseState.position]);
+        var name = parseSymbol(tokenStream, parseState);
         var value = parseState.parseToken(tokenStream, parseState);
         var node = {
             t: AstNodeType.Binding,
-            n: name,
+            n: name.v,
             v: value,
             p: [],
             token: getTokenDebugData(firstToken) && firstToken,
@@ -8668,7 +8689,222 @@ var Playground = (function (exports) {
         tokenizeString,
     ];
 
-    var whitespaceRegExp$1 = /\s|,/;
+    var algebraicReservedNamesRecord = {
+        'true': { value: true },
+        'false': { value: false },
+        'nil': { value: null },
+        'null': { value: null },
+        'def': { value: null, forbidden: true },
+        'defs': { value: null, forbidden: true },
+        'if-let': { value: null, forbidden: true },
+        'when-let': { value: null, forbidden: true },
+        'when-first': { value: null, forbidden: true },
+        'fn': { value: null, forbidden: true },
+        'defn': { value: null, forbidden: true },
+        'defns': { value: null, forbidden: true },
+        'try': { value: null, forbidden: true },
+        'recur': { value: null, forbidden: true },
+        'loop': { value: null, forbidden: true },
+        'time!': { value: null, forbidden: true },
+        'doseq': { value: null, forbidden: true },
+    };
+
+    var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
+    var identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass);
+    var whitespaceRegExp$1 = /\s/;
+    var tokenizeA_Whitespace = function (input, position) {
+        var char = input[position];
+        if (!char || !whitespaceRegExp$1.test(char)) {
+            return NO_MATCH;
+        }
+        var value = char;
+        position += 1;
+        char = input[position];
+        while (char && whitespaceRegExp$1.test(char)) {
+            value += char;
+            position += 1;
+            char = input[position];
+        }
+        return [value.length, ['A_Whitespace', value]];
+    };
+    var decimalNumberRegExp$1 = /\d/;
+    var octalNumberRegExp$1 = /[0-7]/;
+    var hexNumberRegExp$1 = /[0-9a-f]/i;
+    var binaryNumberRegExp$1 = /[01]/;
+    var tokenizeA_Number = function (input, position) {
+        var i;
+        for (i = position; i < input.length; i += 1) {
+            var char = input[i];
+            if (!decimalNumberRegExp$1.test(char)) {
+                break;
+            }
+        }
+        var length = i - position;
+        if (length === 0) {
+            return NO_MATCH;
+        }
+        return [length, ['A_Number', input.substring(position, i)]];
+    };
+    var tokenizeA_BasePrefixedNumber = function (input, position) {
+        if (input[position] !== '0') {
+            return NO_MATCH;
+        }
+        var baseChar = input[position + 1];
+        var type = baseChar === 'b' || baseChar === 'B'
+            ? 'binary'
+            : baseChar === 'o' || baseChar === 'O'
+                ? 'octal'
+                : baseChar === 'x' || baseChar === 'X'
+                    ? 'hex'
+                    : null;
+        if (type === null) {
+            return NO_MATCH;
+        }
+        var i;
+        for (i = position + 2; i < input.length; i += 1) {
+            var char = input[i];
+            if (type === 'binary' && !binaryNumberRegExp$1.test(char)) {
+                break;
+            }
+            if (type === 'octal' && !octalNumberRegExp$1.test(char)) {
+                break;
+            }
+            if (type === 'hex' && !hexNumberRegExp$1.test(char)) {
+                break;
+            }
+        }
+        var length = i - position;
+        if (length <= 2) {
+            return NO_MATCH;
+        }
+        return [length, ['A_BasePrefixedNumber', input.substring(position, i)]];
+    };
+    var tokenizeA_ReservedSymbolToken = function (input, position) {
+        var e_1, _a;
+        try {
+            for (var _b = __values(Object.entries(algebraicReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
+                var length_1 = reservedName.length;
+                var nextChar = input[position + length_1];
+                if (nextChar && identifierRegExp.test(nextChar))
+                    continue;
+                var name_1 = input.substring(position, position + length_1);
+                if (name_1 === reservedName) {
+                    if (forbidden)
+                        throw new LitsError("".concat(name_1, " is forbidden!"), undefined);
+                    return [length_1, ['A_ReservedSymbol', reservedName]];
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return NO_MATCH;
+    };
+    var tokenizeA_Symbol = function (input, position) {
+        var value = input[position];
+        if (!value) {
+            return NO_MATCH;
+        }
+        if (value === '\'') {
+            var length_2 = 1;
+            var char = input[position + length_2];
+            var escaping = false;
+            while (char !== '\'' || escaping) {
+                if (char === undefined)
+                    throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
+                length_2 += 1;
+                if (escaping) {
+                    escaping = false;
+                    value += char;
+                }
+                else {
+                    if (char === '\\') {
+                        escaping = true;
+                    }
+                    value += char;
+                }
+                char = input[position + length_2];
+            }
+            value += '\''; // closing quote
+            return [length_2 + 1, ['A_Symbol', value]];
+        }
+        if (identifierFirstCharacterRegExp.test(value)) {
+            var initialPosition = position;
+            position += 1;
+            var char = input[position];
+            while (char && identifierRegExp.test(char)) {
+                value += char;
+                position += 1;
+                char = input[position];
+            }
+            return [position - initialPosition, ['A_Symbol', value]];
+        }
+        return NO_MATCH;
+    };
+    var tokenizeA_Operator = function (input, position) {
+        var _a;
+        var threeChars = input.slice(position, position + 3);
+        if (position + 2 < input.length && isSymbolicOperator(threeChars)) {
+            return [3, ['A_Operator', threeChars]];
+        }
+        var twoChars = input.slice(position, position + 2);
+        if (position + 1 < input.length && isSymbolicOperator(twoChars)) {
+            return [2, ['A_Operator', twoChars]];
+        }
+        var oneChar = (_a = input[position]) !== null && _a !== void 0 ? _a : '';
+        if (isSymbolicOperator(oneChar)) {
+            return [1, ['A_Operator', oneChar]];
+        }
+        return NO_MATCH;
+    };
+    var tokenizeA_MultiLineComment = function (input, position) {
+        if (input[position] === '/' && input[position + 1] === '*') {
+            var length_3 = 2;
+            var value = '/*';
+            while (input[position + length_3] !== '*' && input[position + length_3 + 1] !== '/' && position + length_3 + 1 < input.length) {
+                value += input[position + length_3];
+                length_3 += 1;
+            }
+            if (position + length_3 + 1 >= input.length) {
+                throw new LitsError('Comment not closed', undefined);
+            }
+            value += '*/';
+            length_3 += 2;
+            return [length_3, ['A_MultiLineComment', value]];
+        }
+        return NO_MATCH;
+    };
+    var tokenizeA_SingleLineComment = function (input, position) {
+        if (input[position] === '/' && input[position + 1] === '/') {
+            var length_4 = 2;
+            var value = '//';
+            while (input[position + length_4] !== '\n' && position + length_4 < input.length) {
+                value += input[position + length_4];
+                length_4 += 1;
+            }
+            return [length_4, ['A_SingleLineComment', value]];
+        }
+        return NO_MATCH;
+    };
+    // All tokenizers, order matters!
+    var algebraicTokenizers = __spreadArray(__spreadArray([
+        tokenizeA_Whitespace,
+        tokenizeA_MultiLineComment,
+        tokenizeA_SingleLineComment
+    ], __read(commonTokenizers), false), [
+        tokenizeA_BasePrefixedNumber,
+        tokenizeA_Number,
+        tokenizeA_Operator,
+        tokenizeA_ReservedSymbolToken,
+        tokenizeA_Symbol,
+    ], false);
+
+    var whitespaceRegExp = /\s|,/;
     var tokenizeP_Comment = function (input, position) {
         if (input[position] === ';') {
             var length_1 = 0;
@@ -8683,13 +8919,13 @@ var Playground = (function (exports) {
     };
     var tokenizeP_Whitespace = function (input, position) {
         var char = input[position];
-        if (!char || !whitespaceRegExp$1.test(char)) {
+        if (!char || !whitespaceRegExp.test(char)) {
             return NO_MATCH;
         }
         var value = char;
         position += 1;
         char = input[position];
-        while (char && whitespaceRegExp$1.test(char)) {
+        while (char && whitespaceRegExp.test(char)) {
             value += char;
             position += 1;
             char = input[position];
@@ -8697,10 +8933,10 @@ var Playground = (function (exports) {
         return [value.length, ['P_Whitespace', value]];
     };
     var endOfNumberRegExp = /[\s)\]},;#`]/;
-    var decimalNumberRegExp$1 = /\d/;
-    var octalNumberRegExp$1 = /[0-7]/;
-    var hexNumberRegExp$1 = /[0-9a-f]/i;
-    var binaryNumberRegExp$1 = /[01]/;
+    var decimalNumberRegExp = /\d/;
+    var octalNumberRegExp = /[0-7]/;
+    var hexNumberRegExp = /[0-9a-f]/i;
+    var binaryNumberRegExp = /[01]/;
     var firstCharRegExp = /[0-9.-]/;
     var tokenizeP_Number = function (input, position) {
         var type = 'decimal';
@@ -8715,7 +8951,7 @@ var Playground = (function (exports) {
                 break;
             if (char === '.') {
                 var nextChar = input[i + 1];
-                if (typeof nextChar === 'string' && !decimalNumberRegExp$1.test(nextChar))
+                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
                     break;
             }
             if (i === position + 1 && firstChar === '0') {
@@ -8733,19 +8969,19 @@ var Playground = (function (exports) {
                 }
             }
             if (type === 'decimal' && hasDecimals) {
-                if (!decimalNumberRegExp$1.test(char))
+                if (!decimalNumberRegExp.test(char))
                     return NO_MATCH;
             }
             else if (type === 'binary') {
-                if (!binaryNumberRegExp$1.test(char))
+                if (!binaryNumberRegExp.test(char))
                     return NO_MATCH;
             }
             else if (type === 'octal') {
-                if (!octalNumberRegExp$1.test(char))
+                if (!octalNumberRegExp.test(char))
                     return NO_MATCH;
             }
             else if (type === 'hex') {
-                if (!hexNumberRegExp$1.test(char))
+                if (!hexNumberRegExp.test(char))
                     return NO_MATCH;
             }
             else {
@@ -8753,7 +8989,7 @@ var Playground = (function (exports) {
                     hasDecimals = true;
                     continue;
                 }
-                if (!decimalNumberRegExp$1.test(char))
+                if (!decimalNumberRegExp.test(char))
                     return NO_MATCH;
             }
         }
@@ -8765,17 +9001,45 @@ var Playground = (function (exports) {
     };
     var P_symbolRegExp = new RegExp(polishIdentifierCharacterClass);
     var tokenizeP_Symbol = function (input, position) {
-        var char = input[position];
-        var length = 0;
-        var value = '';
-        if (!char || !P_symbolRegExp.test(char))
+        var value = input[position];
+        if (!value) {
             return NO_MATCH;
-        while (char && P_symbolRegExp.test(char)) {
-            value += char;
-            length += 1;
-            char = input[position + length];
         }
-        return [length, ['P_Symbol', value]];
+        if (value === '\'') {
+            var length_2 = 1;
+            var char = input[position + length_2];
+            var escaping = false;
+            while (char !== '\'' || escaping) {
+                if (char === undefined)
+                    throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
+                length_2 += 1;
+                if (escaping) {
+                    escaping = false;
+                    value += char;
+                }
+                else {
+                    if (char === '\\') {
+                        escaping = true;
+                    }
+                    value += char;
+                }
+                char = input[position + length_2];
+            }
+            value += '\''; // closing quote
+            return [length_2 + 1, ['P_Symbol', value]];
+        }
+        if (P_symbolRegExp.test(value)) {
+            var initialPosition = position;
+            position += 1;
+            var char = input[position];
+            while (char && P_symbolRegExp.test(char)) {
+                value += char;
+                position += 1;
+                char = input[position];
+            }
+            return [position - initialPosition, ['P_Symbol', value]];
+        }
+        return NO_MATCH;
     };
     var tokenizeP_FnShorthand = function (input, position) {
         if (input.slice(position, position + 2) !== '#(')
@@ -8787,16 +9051,16 @@ var Playground = (function (exports) {
         try {
             for (var _b = __values(Object.entries(polishReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
-                var length_2 = reservedName.length;
-                var nextChar = input[position + length_2];
+                var length_3 = reservedName.length;
+                var nextChar = input[position + length_3];
                 if (nextChar && P_symbolRegExp.test(nextChar)) {
                     continue;
                 }
-                var symbol = input.substring(position, position + length_2);
+                var symbol = input.substring(position, position + length_3);
                 if (symbol === reservedName) {
                     if (forbidden)
                         throw new LitsError("".concat(symbol, " is forbidden!"), undefined);
-                    return [length_2, ['P_ReservedSymbol', reservedName]];
+                    return [length_3, ['P_ReservedSymbol', reservedName]];
                 }
             }
         }
@@ -8824,11 +9088,11 @@ var Playground = (function (exports) {
         try {
             for (var modifierNames_1 = __values(modifierNames), modifierNames_1_1 = modifierNames_1.next(); !modifierNames_1_1.done; modifierNames_1_1 = modifierNames_1.next()) {
                 var modifierName = modifierNames_1_1.value;
-                var length_3 = modifierName.length;
-                var charAfterModifier = input[position + length_3];
-                if (input.substring(position, position + length_3) === modifierName && (!charAfterModifier || !P_symbolRegExp.test(charAfterModifier))) {
+                var length_4 = modifierName.length;
+                var charAfterModifier = input[position + length_4];
+                if (input.substring(position, position + length_4) === modifierName && (!charAfterModifier || !P_symbolRegExp.test(charAfterModifier))) {
                     var value = modifierName;
-                    return [length_3, ['P_Modifier', value]];
+                    return [length_4, ['P_Modifier', value]];
                 }
             }
         }
@@ -8879,212 +9143,6 @@ var Playground = (function (exports) {
         tokenizeP_RegexpShorthand,
         tokenizeP_FnShorthand,
         tokenizeP_CollectionAccessor,
-    ], false);
-
-    var algebraicReservedNamesRecord = {
-        'true': { value: true },
-        'false': { value: false },
-        'nil': { value: null },
-        'null': { value: null },
-        'def': { value: null, forbidden: true },
-        'defs': { value: null, forbidden: true },
-        'if-let': { value: null, forbidden: true },
-        'when-let': { value: null, forbidden: true },
-        'when-first': { value: null, forbidden: true },
-        'fn': { value: null, forbidden: true },
-        'defn': { value: null, forbidden: true },
-        'defns': { value: null, forbidden: true },
-        'try': { value: null, forbidden: true },
-        'recur': { value: null, forbidden: true },
-        'loop': { value: null, forbidden: true },
-        'time!': { value: null, forbidden: true },
-        'doseq': { value: null, forbidden: true },
-    };
-
-    var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
-    var identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass);
-    var whitespaceRegExp = /\s/;
-    var tokenizeA_Whitespace = function (input, position) {
-        var char = input[position];
-        if (!char || !whitespaceRegExp.test(char)) {
-            return NO_MATCH;
-        }
-        var value = char;
-        position += 1;
-        char = input[position];
-        while (char && whitespaceRegExp.test(char)) {
-            value += char;
-            position += 1;
-            char = input[position];
-        }
-        return [value.length, ['A_Whitespace', value]];
-    };
-    var decimalNumberRegExp = /\d/;
-    var octalNumberRegExp = /[0-7]/;
-    var hexNumberRegExp = /[0-9a-f]/i;
-    var binaryNumberRegExp = /[01]/;
-    var tokenizeA_Number = function (input, position) {
-        var i;
-        for (i = position; i < input.length; i += 1) {
-            var char = input[i];
-            if (!decimalNumberRegExp.test(char)) {
-                break;
-            }
-        }
-        var length = i - position;
-        if (length === 0) {
-            return NO_MATCH;
-        }
-        return [length, ['A_Number', input.substring(position, i)]];
-    };
-    var tokenizeA_BasePrefixedNumber = function (input, position) {
-        if (input[position] !== '0') {
-            return NO_MATCH;
-        }
-        var baseChar = input[position + 1];
-        var type = baseChar === 'b' || baseChar === 'B'
-            ? 'binary'
-            : baseChar === 'o' || baseChar === 'O'
-                ? 'octal'
-                : baseChar === 'x' || baseChar === 'X'
-                    ? 'hex'
-                    : null;
-        if (type === null) {
-            return NO_MATCH;
-        }
-        var i;
-        for (i = position + 2; i < input.length; i += 1) {
-            var char = input[i];
-            if (type === 'binary' && !binaryNumberRegExp.test(char)) {
-                break;
-            }
-            if (type === 'octal' && !octalNumberRegExp.test(char)) {
-                break;
-            }
-            if (type === 'hex' && !hexNumberRegExp.test(char)) {
-                break;
-            }
-        }
-        var length = i - position;
-        if (length <= 2) {
-            return NO_MATCH;
-        }
-        return [length, ['A_BasePrefixedNumber', input.substring(position, i)]];
-    };
-    var tokenizeA_ReservedSymbolToken = function (input, position) {
-        var e_1, _a;
-        try {
-            for (var _b = __values(Object.entries(algebraicReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
-                var length_1 = reservedName.length;
-                var nextChar = input[position + length_1];
-                if (nextChar && identifierRegExp.test(nextChar))
-                    continue;
-                var name_1 = input.substring(position, position + length_1);
-                if (name_1 === reservedName) {
-                    if (forbidden)
-                        throw new LitsError("".concat(name_1, " is forbidden!"), undefined);
-                    return [length_1, ['A_ReservedSymbol', reservedName]];
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return NO_MATCH;
-    };
-    var tokenizeA_Symbol = function (input, position) {
-        var initialPosition = position;
-        var value = input[position];
-        if (!value) {
-            return NO_MATCH;
-        }
-        if (identifierFirstCharacterRegExp.test(value)) {
-            position += 1;
-            var char = input[position];
-            while (char && identifierRegExp.test(char)) {
-                value += char;
-                position += 1;
-                char = input[position];
-            }
-            return [position - initialPosition, ['A_Symbol', value]];
-        }
-        if (value === '\'') {
-            position += 1;
-            var _a = __read(tokenizeP_Symbol(input, position), 2), count = _a[0], pfSymbolToken = _a[1];
-            if (pfSymbolToken === undefined) {
-                return NO_MATCH;
-            }
-            position += count;
-            if (input[position] !== '\'') {
-                return NO_MATCH;
-            }
-            position += 1;
-            var pfValue = pfSymbolToken[1];
-            return [position - initialPosition, ['A_Symbol', pfValue]];
-        }
-        return NO_MATCH;
-    };
-    var tokenizeA_Operator = function (input, position) {
-        var _a;
-        var threeChars = input.slice(position, position + 3);
-        if (position + 2 < input.length && isSymbolicOperator(threeChars)) {
-            return [3, ['A_Operator', threeChars]];
-        }
-        var twoChars = input.slice(position, position + 2);
-        if (position + 1 < input.length && isSymbolicOperator(twoChars)) {
-            return [2, ['A_Operator', twoChars]];
-        }
-        var oneChar = (_a = input[position]) !== null && _a !== void 0 ? _a : '';
-        if (isSymbolicOperator(oneChar)) {
-            return [1, ['A_Operator', oneChar]];
-        }
-        return NO_MATCH;
-    };
-    var tokenizeA_MultiLineComment = function (input, position) {
-        if (input[position] === '/' && input[position + 1] === '*') {
-            var length_2 = 2;
-            var value = '/*';
-            while (input[position + length_2] !== '*' && input[position + length_2 + 1] !== '/' && position + length_2 + 1 < input.length) {
-                value += input[position + length_2];
-                length_2 += 1;
-            }
-            if (position + length_2 + 1 >= input.length) {
-                throw new LitsError('Comment not closed', undefined);
-            }
-            value += '*/';
-            length_2 += 2;
-            return [length_2, ['A_MultiLineComment', value]];
-        }
-        return NO_MATCH;
-    };
-    var tokenizeA_SingleLineComment = function (input, position) {
-        if (input[position] === '/' && input[position + 1] === '/') {
-            var length_3 = 2;
-            var value = '//';
-            while (input[position + length_3] !== '\n' && position + length_3 < input.length) {
-                value += input[position + length_3];
-                length_3 += 1;
-            }
-            return [length_3, ['A_SingleLineComment', value]];
-        }
-        return NO_MATCH;
-    };
-    // All tokenizers, order matters!
-    var algebraicTokenizers = __spreadArray(__spreadArray([
-        tokenizeA_Whitespace,
-        tokenizeA_MultiLineComment,
-        tokenizeA_SingleLineComment
-    ], __read(commonTokenizers), false), [
-        tokenizeA_BasePrefixedNumber,
-        tokenizeA_Number,
-        tokenizeA_Operator,
-        tokenizeA_ReservedSymbolToken,
-        tokenizeA_Symbol,
     ], false);
 
     var applyCollectionAccessors = function (tokenStream) {
@@ -10011,7 +10069,7 @@ var Playground = (function (exports) {
     };
 
     var functionalReference = {
-        'apply': {
+        apply: {
             title: 'apply',
             category: 'Functional',
             linkName: 'apply',
@@ -10035,7 +10093,7 @@ var Playground = (function (exports) {
                 "\n(apply\n  (fn [x y]\n    (sqrt\n      (+\n        (* x x)\n        (* y y))))\n  [3 4])",
             ],
         },
-        'identity': {
+        identity: {
             title: 'identity',
             category: 'Functional',
             linkName: 'identity',
@@ -10053,7 +10111,7 @@ var Playground = (function (exports) {
             description: 'Returns $x.',
             examples: ['(identity 1)', '(identity "Albert")', '(identity {:a 1})', '(identity nil)'],
         },
-        'partial': {
+        partial: {
             title: 'partial',
             category: 'Functional',
             linkName: 'partial',
@@ -10079,7 +10137,7 @@ var Playground = (function (exports) {
                 "\n(def addHundred (partial + 100))\n(addHundred 10)",
             ],
         },
-        'comp': {
+        comp: {
             title: 'comp',
             category: 'Functional',
             linkName: 'comp',
@@ -10102,7 +10160,7 @@ var Playground = (function (exports) {
                 "\n(def x {\"bar\" {\"foo\" 42}})\n((comp \"foo\" \"bar\") x)",
             ],
         },
-        'constantly': {
+        constantly: {
             title: 'constantly',
             category: 'Functional',
             linkName: 'constantly',
@@ -10123,7 +10181,7 @@ var Playground = (function (exports) {
                 "\n(\n  #((apply constantly first (repeat %2 rest)) %1)\n  [1 2 3 4 5 6 7]\n  3)",
             ],
         },
-        'juxt': {
+        juxt: {
             title: 'juxt',
             category: 'Functional',
             linkName: 'juxt',
@@ -10150,7 +10208,7 @@ var Playground = (function (exports) {
                 "\n(apply\n  (juxt + * min max)\n  (range 1 11))",
             ],
         },
-        'complement': {
+        complement: {
             title: 'complement',
             category: 'Functional',
             linkName: 'complement',
@@ -10168,7 +10226,7 @@ var Playground = (function (exports) {
             description: 'Takes a function $fn and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
             examples: ['((complement >) 1 3)', '((complement <) 1 3)', '((complement +) 1 3)', '((complement +) 0 0)'],
         },
-        'every_pred': {
+        every_pred: {
             title: 'every_pred',
             category: 'Functional',
             linkName: 'every_pred',
@@ -10195,7 +10253,7 @@ var Playground = (function (exports) {
                 "\n(\n  (every_pred string? #(> (count %1) 3))\n  \"Albert\"\n  [1 2 3])",
             ],
         },
-        'some_pred': {
+        some_pred: {
             title: 'some_pred',
             category: 'Functional',
             linkName: 'some_pred',
@@ -10224,7 +10282,7 @@ var Playground = (function (exports) {
                 '((some_pred string? #(> (count %1) 3)) [1 2 3] [2])',
             ],
         },
-        'fnil': {
+        fnil: {
             title: 'fnil',
             category: 'Functional',
             linkName: 'fnil',

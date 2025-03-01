@@ -51,7 +51,7 @@ describe('functional functions', () => {
 
     describe('comp', () => {
       it('samples', () => {
-        expect(lits.run('(def negative-quotient (comp - /)) (negative-quotient 9 3)')).toBe(-3)
+        expect(lits.run('(def \'negative-quotient\' (comp - /)) (\'negative-quotient\' 9 3)')).toBe(-3)
         expect(
           lits.run(`
         (#((apply comp first (repeat rest %2)) %1) [1 2 3 4 5 6 7] 3)
