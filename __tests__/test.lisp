@@ -163,7 +163,7 @@
   (when (count list)
     (let [entry (first list)]
       (defns (entry 0) [&rest params &let [templateString (entry 1)]]
-        (apply template (cons templateString params))
+        (apply template (unshift params templateString))
       )
       (recur (rest list))
     )

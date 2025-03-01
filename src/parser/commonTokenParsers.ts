@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
 import { asStringToken } from '../tokenizer/common/commonTokens'
-import { isA_NumberToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
+import { isA_BasePrefixedNumberToken, isA_NumberToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { isP_NumberToken, isP_ReservedSymbolToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
 import { asToken } from '../tokenizer/tokens'
@@ -45,9 +45,27 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
   const tkn = tokenStream.tokens[parseState.position++]
-  if (!isP_NumberToken(tkn) && !isA_NumberToken(tkn)) {
+  if (isA_NumberToken(tkn)) {
+    let numberString = tkn[1]
+    const periodToken = tokenStream.tokens[parseState.position]
+    const decimalToken = tokenStream.tokens[parseState.position + 1]
+    if (isA_OperatorToken(periodToken, '.') && isA_NumberToken(decimalToken)) {
+      numberString += `.${decimalToken[1]}`
+      parseState.position += 2
+    }
+    return {
+      t: AstNodeType.Number,
+      v: Number(numberString),
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(tkn) && tkn,
+    }
+  }
+
+  if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn)) {
     throw new LitsError(`Expected number token, got ${tkn}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
+
   const value = tkn[1]
   const negative = value[0] === '-'
   const numberString = negative ? value.substring(1) : value

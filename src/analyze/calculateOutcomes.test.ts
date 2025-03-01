@@ -370,7 +370,7 @@ describe('calculateOutcomes.', () => {
         )
       )
       
-      (sort numberComparer l)`, [[
+      (sort l numberComparer)`, [[
         -5,
         0,
         1,

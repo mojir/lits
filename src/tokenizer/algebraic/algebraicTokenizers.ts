@@ -7,7 +7,7 @@ import {
 import type { Tokenizer } from '../interface'
 import { tokenizeP_Symbol } from '../polish/polishTokenizers'
 import { algebraicReservedNamesRecord } from './algebraicReservedNames'
-import type { A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
+import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
 import { isSymbolicOperator } from './algebraicTokens'
 
 const identifierRegExp = new RegExp(algebraicIdentifierCharacterClass)
@@ -34,44 +34,46 @@ const decimalNumberRegExp = /\d/
 const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-f]/i
 const binaryNumberRegExp = /[01]/
-const firstCharRegExp = /[0-9.]/
-export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
-  let type: 'decimal' | 'octal' | 'hex' | 'binary' = 'decimal'
-  const firstChar = input[position] as string
-  if (!firstCharRegExp.test(firstChar))
-    return NO_MATCH
 
-  let hasDecimals = firstChar === '.'
+export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
+  let i: number
+  for (i = position; i < input.length; i += 1) {
+    const char = input[i] as string
+    if (!decimalNumberRegExp.test(char)) {
+      break
+    }
+  }
+
+  const length = i - position
+  if (length === 0) {
+    return NO_MATCH
+  }
+
+  return [length, ['A_Number', input.substring(position, i)]]
+}
+
+export const tokenizeA_BasePrefixedNumber: Tokenizer<A_BasePrefixedNumberToken> = (input, position) => {
+  if (input[position] !== '0') {
+    return NO_MATCH
+  }
+
+  const baseChar = input[position + 1]
+
+  const type = baseChar === 'b' || baseChar === 'B'
+    ? 'binary'
+    : baseChar === 'o' || baseChar === 'O'
+      ? 'octal'
+      : baseChar === 'x' || baseChar === 'X'
+        ? 'hex'
+        : null
+
+  if (type === null) {
+    return NO_MATCH
+  }
 
   let i: number
-  for (i = position + 1; i < input.length; i += 1) {
+  for (i = position + 2; i < input.length; i += 1) {
     const char = input[i] as string
-
-    if ((i === position + 1 && firstChar === '0')) {
-      if (char === 'b' || char === 'B') {
-        type = 'binary'
-        continue
-      }
-      if (char === 'o' || char === 'O') {
-        type = 'octal'
-        continue
-      }
-      if (char === 'x' || char === 'X') {
-        type = 'hex'
-        continue
-      }
-    }
-
-    if (type === 'decimal') {
-      if (hasDecimals) {
-        if (!decimalNumberRegExp.test(char)) {
-          break
-        }
-      }
-      else if (char !== '.' && !decimalNumberRegExp.test(char)) {
-        break
-      }
-    }
     if (type === 'binary' && !binaryNumberRegExp.test(char)) {
       break
     }
@@ -81,44 +83,14 @@ export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
     if (type === 'hex' && !hexNumberRegExp.test(char)) {
       break
     }
-
-    if (char === '.') {
-      const nextChar = input[i + 1]
-      if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
-        break
-    }
-    if (type === 'decimal' && hasDecimals) {
-      if (!decimalNumberRegExp.test(char))
-        return NO_MATCH
-    }
-    else if (type === 'binary') {
-      if (!binaryNumberRegExp.test(char))
-        return NO_MATCH
-    }
-    else if (type === 'octal') {
-      if (!octalNumberRegExp.test(char))
-        return NO_MATCH
-    }
-    else if (type === 'hex') {
-      if (!hexNumberRegExp.test(char))
-        return NO_MATCH
-    }
-    else {
-      if (char === '.') {
-        hasDecimals = true
-        continue
-      }
-      if (!decimalNumberRegExp.test(char))
-        return NO_MATCH
-    }
   }
 
   const length = i - position
-  const value = input.substring(position, i)
-  if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
+  if (length <= 2) {
     return NO_MATCH
+  }
 
-  return [length, ['A_Number', value]]
+  return [length, ['A_BasePrefixedNumber', input.substring(position, i)]]
 }
 
 export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (input, position) => {
@@ -234,6 +206,7 @@ export const algebraicTokenizers = [
   tokenizeA_MultiLineComment,
   tokenizeA_SingleLineComment,
   ...commonTokenizers,
+  tokenizeA_BasePrefixedNumber,
   tokenizeA_Number,
   tokenizeA_Operator,
   tokenizeA_ReservedSymbolToken,

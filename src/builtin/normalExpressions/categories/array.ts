@@ -3,7 +3,7 @@ import { assertArray } from '../../../typeGuards/array'
 import { assertNumber } from '../../../typeGuards/number'
 import { assertNumberOfParams } from '../../../typeGuards'
 import type { BuiltinNormalExpressions } from '../../interface'
-import { evaluateMap } from './sequence'
+import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   array: {
@@ -75,10 +75,10 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
   mapcat: {
-    evaluate: (params, sourceCodeInfo, contextStack, helpers): Arr | string => {
-      const mapResult = evaluateMap(params, sourceCodeInfo, contextStack, helpers)
-      assertArray(mapResult, sourceCodeInfo)
-      return mapResult.flat(1)
+    evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr | string => {
+      assertArray(arr, sourceCodeInfo)
+      assertLitsFunction(fn, sourceCodeInfo)
+      return arr.map(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)).flat(1)
     },
     validate: node => assertNumberOfParams(2, node),
   },

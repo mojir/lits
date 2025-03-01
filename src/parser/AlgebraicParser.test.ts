@@ -222,6 +222,7 @@ describe('algebraic operators', () => {
     test('samples', () => {
       expect(lits.run('{ a=200 }.a')).toBe(200)
       expect(lits.run('{ a={ b=1, c=2 } }.a.c')).toBe(2)
+      expect(lits.run('[1, 2, 3][1]')).toBe(2)
     })
   })
   describe('propery accessor with brackets', () => {
@@ -284,13 +285,13 @@ describe('algebraic operators', () => {
 
       expect(pLits.run('(def o @`{ foo="bar" }`) o.foo')).toBe('bar')
 
-      expect(pLits.run('(map (fn [number-parameter] @`\'number-parameter\' + 1`) [1 2 3])')).toEqual([2, 3, 4])
+      expect(pLits.run('(map [1 2 3] (fn [number-parameter] @`\'number-parameter\' + 1`))')).toEqual([2, 3, 4])
     })
   })
 
-  test('unary operator precedence', () => {
-    expect(lits.run('empty? [1, 2 ,3] filter => $ > 10')).toBe(true)
-    expect(lits.run('empty? [1, 2 ,3] filter => $ > 1')).toBe(false)
+  test('misc', () => {
+    expect(lits.run('empty?([1, 2 ,3] filter => $ > 10)')).toBe(true)
+    expect(lits.run('empty?([1, 2 ,3] filter => $ > 1)')).toBe(false)
   })
 
   describe('debug', () => {
@@ -662,64 +663,64 @@ describe('algebraic operators', () => {
     })
     test('real world example', () => {
       expect(lits.run(`// Imagine these are coming from a database
-let({
-  products = [
-    { id="P1", name="Phone", price=500, category="electronics", stockLevel=23 },
-    { id="P2", name="Headphones", price=150, category="electronics", stockLevel=42 },
-    { id="P3", name="Case", price=30, category="accessories", stockLevel=56 },
-  ],
-  customerPreferences = {
-    priceLimit=700,
-    preferredCategories=["electronics", "accessories"],
-    recentViews=["P1", "P3", "P5"]
-  }
-},
-
-  // Generate personalized bundle recommendations
-  for(
-    // Start with main products
-    mainProduct of products
-      let {
-        isInStock = mainProduct.stockLevel > 0,
-        isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category),
-        isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
-      }
-      when (isInStock && isPreferredCategory && isPriceOk),
-      
- 
-    // Add compatible accessories
-    accessory of products
-      let {
-        isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0,
-        totalPrice = mainProduct.price + accessory.price,
-        isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
-      }
-      when (isCompatible && totalPrice <= customerPreferences.priceLimit)
-      while totalPrice <= customerPreferences.priceLimit * 0.9,
- 
-    // For high-value bundles, consider a third complementary item
-    complItem of products
-      let {
-        isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
-        finalPrice = mainProduct.price + accessory.price + complItem.price,
-        discount = if(finalPrice > 500, 0.1, 0.05),
-        discountedPrice = finalPrice * (1 - discount),
-        matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
-      }
-      when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
-      while discountedPrice <= customerPreferences.priceLimit,
- 
-    // Return bundle information object
-    {
-      bundle=[mainProduct, accessory, complItem],
-      originalPrice=finalPrice,
-      discountedPrice=discountedPrice,
-      savingsAmount=discount * finalPrice,
-      savingsPercentage=discount * 100
-    }
-  )
-)
-`)).toEqual([
+        let({
+          products = [
+            { id="P1", name="Phone", price=500, category="electronics", stockLevel=23 },
+            { id="P2", name="Headphones", price=150, category="electronics", stockLevel=42 },
+            { id="P3", name="Case", price=30, category="accessories", stockLevel=56 },
+          ],
+          customerPreferences = {
+            priceLimit=700,
+            preferredCategories=["electronics", "accessories"],
+            recentViews=["P1", "P3", "P5"]
+          }
+        },
+        
+          // Generate personalized bundle recommendations
+          for(
+            // Start with main products
+            mainProduct of products
+              let {
+                isInStock = mainProduct.stockLevel > 0,
+                isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category),
+                isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
+              }
+              when (isInStock && isPreferredCategory && isPriceOk),
+              
+         
+            // Add compatible accessories
+            accessory of products
+              let {
+                isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0,
+                totalPrice = mainProduct.price + accessory.price,
+                isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
+              }
+              when (isCompatible && totalPrice <= customerPreferences.priceLimit)
+              while totalPrice <= customerPreferences.priceLimit * 0.9,
+         
+            // For high-value bundles, consider a third complementary item
+            complItem of products
+              let {
+                isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
+                finalPrice = mainProduct.price + accessory.price + complItem.price,
+                discount = if(finalPrice > 500, 0.1, 0.05),
+                discountedPrice = finalPrice * (1 - discount),
+                matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
+              }
+              when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
+              while discountedPrice <= customerPreferences.priceLimit,
+         
+            // Return bundle information object
+            {
+              bundle=[mainProduct, accessory, complItem],
+              originalPrice=finalPrice,
+              discountedPrice=discountedPrice,
+              savingsAmount=discount * finalPrice,
+              savingsPercentage=discount * 100
+            }
+          )
+        )
+        `)).toEqual([
         {
           bundle: [
             {
@@ -875,7 +876,7 @@ let({
     })
 
     it('supports lambda function expressions in data structures', () => {
-      expect(lits.run('map((x) => x * 2, [1, 2, 3])')).toEqual([2, 4, 6])
+      expect(lits.run('map([1, 2, 3], (x) => x * 2)')).toEqual([2, 4, 6])
       expect(lits.run('{ fun=((x) => x + 1) }.fun(5)')).toBe(6)
     })
 

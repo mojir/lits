@@ -16,6 +16,7 @@ export const algebraicOnlyValueTokenTypes = [
   'A_SingleLineComment',
   'A_MultiLineComment',
   'A_Number',
+  'A_BasePrefixedNumber',
 ] as const satisfies `A_${string}`[]
 
 export const algebraicValueTokenTypes = [
@@ -82,31 +83,44 @@ const symbolicOperators = [
   ...otherSymbolicOperators,
 ] as const
 
-const binaryFunctionOperators = [
-  'filter',
-  'has?',
-  'contains?',
-  'abs',
-] as const
+const nonFunctionOperators = [
+  '??',
+  'and',
+  'comment',
+  'cond',
+  'declared?',
+  'if',
+  'if-not',
+  'or',
+  'when',
+  'when-not',
+  'do',
+  'time!',
+  'throw',
+  'let',
+  'def',
+  'defs',
+  'if-let',
+  'when-let',
+  'when-first',
+  'fn',
+  'defn',
+  'defns',
+  'try',
+  'recur',
+  'loop',
+  'doseq',
+  'while',
+]
 
-const unaryFunctionOperators = [
-  'empty?',
-  'count',
-] as const
-
-const algebraicOperatos = [
-  ...symbolicOperators,
-  ...binaryFunctionOperators,
-  ...unaryFunctionOperators,
-] as const
+const nonFunctionOperatorSet = new Set(nonFunctionOperators)
+export function isFunctionOperator(operator: string): boolean {
+  return !nonFunctionOperatorSet.has(operator)
+}
 
 export type SymbolicUnaryOperator = typeof symbolicUnaryOperators[number]
 export type SymbolicBinaryOperator = typeof symbolicBinaryOperators[number]
 export type SymbolicOperator = typeof symbolicOperators[number]
-
-export type BinaryFunctionOperator = typeof binaryFunctionOperators[number]
-export type UnaryFunctionOperator = typeof unaryFunctionOperators[number]
-export type AlgebraicOperator = typeof algebraicOperatos[number]
 
 const symbolicUnaryOperatorSet = new Set(symbolicUnaryOperators)
 export function isSymbolicUnaryOperator(operator: string): operator is SymbolicUnaryOperator {
@@ -149,49 +163,6 @@ export function asSymbolicOperator(operator: string): SymbolicOperator {
   assertSymbolicOperator(operator)
   return operator
 }
-
-const binaryFunctionOperatorSet = new Set(binaryFunctionOperators)
-export function isBinaryFunctionOperator(operator: string): operator is BinaryFunctionOperator {
-  return binaryFunctionOperatorSet.has(operator as BinaryFunctionOperator)
-}
-export function assertBinaryFunctionOperator(operator: string): asserts operator is BinaryFunctionOperator {
-  if (!isBinaryFunctionOperator(operator)) {
-    throw new LitsError(`Expected binary function operator, got ${operator}`, undefined)
-  }
-}
-export function asBinaryFunctionOperator(operator: string): BinaryFunctionOperator {
-  assertBinaryFunctionOperator(operator)
-  return operator
-}
-
-const unaryFunctionOperatorSet = new Set(unaryFunctionOperators)
-export function isUnaryFunctionOperator(operator: string): operator is UnaryFunctionOperator {
-  return unaryFunctionOperatorSet.has(operator as UnaryFunctionOperator)
-}
-export function assertUnaryFunctionOperator(operator: string): asserts operator is UnaryFunctionOperator {
-  if (!isUnaryFunctionOperator(operator)) {
-    throw new LitsError(`Expected unary function operator, got ${operator}`, undefined)
-  }
-}
-export function asUnaryFunctionOperator(operator: string): UnaryFunctionOperator {
-  assertUnaryFunctionOperator(operator)
-  return operator
-}
-
-const algebraicOperatorSet = new Set(algebraicOperatos)
-export function isAlgebraicOperator(operator: string): operator is AlgebraicOperator {
-  return algebraicOperatorSet.has(operator as AlgebraicOperator)
-}
-export function assertAlgebraicOperator(operator: string): asserts operator is AlgebraicOperator {
-  if (!isAlgebraicOperator(operator)) {
-    throw new LitsError(`Expected algebraic operator, got ${operator}`, undefined)
-  }
-}
-export function asAlgebraicOperator(operator: string): AlgebraicOperator {
-  assertAlgebraicOperator(operator)
-  return operator
-}
-
 export type AlgebraicSimpleTokenType = typeof algebraicSimpleTokenTypes[number]
 export type AlgebraicValueTokenType = typeof algebraicValueTokenTypes[number]
 export type AlgebraicTokenType = typeof algebraicTokenTypes[number]
@@ -200,6 +171,7 @@ type GenericAlgebraicValueToken<T extends Exclude<AlgebraicValueTokenType, Commo
 
 export type A_WhitespaceToken = GenericAlgebraicValueToken<'A_Whitespace'>
 export type A_NumberToken = GenericAlgebraicValueToken<'A_Number'>
+export type A_BasePrefixedNumberToken = GenericAlgebraicValueToken<'A_BasePrefixedNumber'>
 export type A_OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericAlgebraicValueToken<'A_Operator', T>
 export type A_SymbolToken<T extends string = string> = GenericAlgebraicValueToken<'A_Symbol', T>
 export type A_ReservedSymbolToken = GenericAlgebraicValueToken<'A_ReservedSymbol'>
@@ -209,6 +181,7 @@ export type A_MultiLineCommentToken = GenericAlgebraicValueToken<'A_MultiLineCom
 export type AlgebraicOnlyValueToken =
   | A_WhitespaceToken
   | A_NumberToken
+  | A_BasePrefixedNumberToken
   | A_OperatorToken
   | A_SymbolToken
   | A_ReservedSymbolToken
@@ -243,32 +216,6 @@ export function assertA_BinaryOperatorToken(token: Token | undefined): asserts t
 }
 export function asA_BinaryOperatorToken(token: Token | undefined): A_OperatorToken<SymbolicBinaryOperator> {
   assertA_BinaryOperatorToken(token)
-  return token
-}
-
-export function isA_BinaryFunctionSymbolToken(token: Token | undefined): token is A_SymbolToken<BinaryFunctionOperator> {
-  return token?.[0] === 'A_Symbol' && isBinaryFunctionOperator(token[1])
-}
-export function assertA_BinaryFunctionSymbolToken(token: Token | undefined): asserts token is A_SymbolToken {
-  if (!isA_SymbolToken(token)) {
-    throwUnexpectedToken('A_Symbol', token)
-  }
-}
-export function asA_BinaryFunctionSymbolToken(token: Token | undefined): A_SymbolToken {
-  assertA_SymbolToken(token)
-  return token
-}
-
-export function isA_UnaryFunctionSymbolToken(token: Token | undefined): token is A_SymbolToken<UnaryFunctionOperator> {
-  return token?.[0] === 'A_Symbol' && isUnaryFunctionOperator(token[1])
-}
-export function assertA_UnaryFunctionSymbolToken(token: Token | undefined): asserts token is A_SymbolToken {
-  if (!isA_SymbolToken(token)) {
-    throwUnexpectedToken('A_Symbol', token)
-  }
-}
-export function asA_UnaryFunctionSymbolToken(token: Token | undefined): A_SymbolToken {
-  assertA_SymbolToken(token)
   return token
 }
 
@@ -356,5 +303,18 @@ export function assertA_NumberToken(token: Token | undefined): asserts token is 
 }
 export function asA_NumberToken(token: Token | undefined): A_NumberToken {
   assertA_NumberToken(token)
+  return token
+}
+
+export function isA_BasePrefixedNumberToken(token: Token | undefined): token is A_BasePrefixedNumberToken {
+  return token?.[0] === 'A_BasePrefixedNumber'
+}
+export function assertA_BasePrefixedNumberToken(token: Token | undefined): asserts token is A_BasePrefixedNumberToken {
+  if (!isA_BasePrefixedNumberToken(token)) {
+    throwUnexpectedToken('A_BasePrefixedNumber', token)
+  }
+}
+export function asA_BasePrefixedNumberToken(token: Token | undefined): A_BasePrefixedNumberToken {
+  assertA_BasePrefixedNumberToken(token)
   return token
 }

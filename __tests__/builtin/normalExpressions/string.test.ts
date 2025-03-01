@@ -165,7 +165,7 @@ describe('string functions', () => {
           'pqrst',
           'vw',
         ])
-        expect(lits.run('(map number (split "0123456789" "" 5))')).toEqual([0, 1, 2, 3, 4])
+        expect(lits.run('(map (split "0123456789" "" 5) number)')).toEqual([0, 1, 2, 3, 4])
         expect(() => lits.run('(split "0123456789")')).toThrow()
         expect(() => lits.run('(split "0123456789" :5 -1)')).toThrow()
         expect(() => lits.run('(split 23456789 :5)')).toThrow()

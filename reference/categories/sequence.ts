@@ -288,22 +288,20 @@ l`,
       array: true,
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Creates a new array populated with the results of calling $fn on every elements in $seq.',
     examples: [
-      '(map str ["Albert" "Mojir" 42])',
-      '(map str [])',
-      '(map + [1 2 3] [1 2 3])',
-      '(map max [2 6 3] [2 4 7] [1 6 2])',
+      '(map ["Albert" "Mojir" 42] str)',
+      '(map [1 2 3] inc)',
     ],
   },
   'filter': {
@@ -322,7 +320,7 @@ l`,
       },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Creates a new array with all elements that pass the test implemented by $fn.',
     examples: [
@@ -345,30 +343,30 @@ l`,
       type: ['number', 'nil'],
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: ['sequence', 'nil'],
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `nil` is returned.',
     examples: [
       `
 (position
-  string?
-  ["Albert" "Mojir" 160 [1 2]])`,
+  ["Albert" "Mojir" 160 [1 2]]
+  string?)`,
       `
 (position
-  (fn [x] (> x 10))
-  [5 10 15 20])`,
+  [5 10 15 20]
+  (fn [x] (> x 10)))`,
       `
 (position
-  (fn [x] (> x 100))
-  [5 10 15 20])`,
+  [5 10 15 20]
+  (fn [x] (> x 100)))`,
       `
 (position
   (fn [x] (> x 100))
@@ -410,38 +408,38 @@ l`,
       type: 'any',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: ['sequence', 'nil'],
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `nil` is returned.',
     examples: [
       `
 (some
-  string?
-  ["Albert" "Mojir" 160 [1 2]])`,
+  ["Albert" "Mojir" 160 [1 2]]
+  string?)`,
       `
 (some
-  (fn [x] (> x 10))
-  [5 10 15 20])`,
+  [5 10 15 20]
+  (fn [x] (> x 10)))`,
       `
 (some
-  (fn [x] (> x 10))
-  [1 2 3 4])`,
+  [1 2 3 4]
+  (fn [x] (> x 10)))`,
       `
 (some
-  (fn [x] (> x 10))
-  [])`,
+  []
+  (fn [x] (> x 10)))`,
       `
 (some
-  (fn [x] (> x 10))
-  nil)`,
+  nil
+  (fn [x] (> x 10)))`,
     ],
   },
   'reverse': {
@@ -644,31 +642,6 @@ For string $seq returns all but the first characters in $seq.`,
       '(nthnext "" 0)',
     ],
   },
-  'cons': {
-    title: 'cons',
-    category: 'Sequence',
-    linkName: 'cons',
-    returns: {
-      type: 'any',
-      array: true,
-    },
-    args: {
-      x: {
-        type: 'any',
-      },
-      seq: {
-        type: 'sequence',
-      },
-    },
-    variants: [
-      { argumentNames: ['x', 'seq'] },
-    ],
-    description: 'Constructs a new array with $x as first element and $seq as the rest.',
-    examples: [
-      '(cons "Hi" ["Albert" "Mojir" 160 [1 2]])',
-      '(cons "Hi" [])',
-    ],
-  },
   'take': {
     title: 'take',
     category: 'Sequence',
@@ -727,26 +700,26 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
     examples: [
       `
 (take-while
-  (fn [x] (< x 3))
-  [1 2 3 2 1])`,
+  [1 2 3 2 1]
+  (fn [x] (< x 3)))`,
       `
 (take-while
-  (fn [x] (> x 3))
-  [1 2 3 2 1])`,
+  [1 2 3 2 1]
+  (fn [x] (> x 3)))`,
     ],
   },
   'drop': {
@@ -757,22 +730,22 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
-      n: {
-        type: 'integer',
-      },
       seq: {
         type: 'sequence',
       },
+      n: {
+        type: 'integer',
+      },
     },
     variants: [
-      { argumentNames: ['n', 'seq'] },
+      { argumentNames: ['seq', 'n'] },
     ],
     description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
     examples: [
-      '(drop 3 [1 2 3 4 5])',
-      '(drop 0 [1 2 3 4 5])',
-      '(drop 2 "Albert")',
-      '(drop 50 "Albert")',
+      '(drop [1 2 3 4 5] 3)',
+      '(drop [1 2 3 4 5] 0)',
+      '(drop "Albert" 2)',
+      '(drop "Albert" 50)',
     ],
   },
   'drop-last': {
@@ -783,20 +756,20 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
-      n: {
-        type: 'integer',
-      },
       seq: {
         type: 'sequence',
       },
+      n: {
+        type: 'integer',
+      },
     },
     variants: [
-      { argumentNames: ['n', 'seq'] },
+      { argumentNames: ['seq', 'n'] },
     ],
     description: 'Constructs a new array with the $n last elements dropped from $seq.',
     examples: [
-      '(drop-last 3 [1 2 3 4 5])',
-      '(drop-last 0 [1 2 3 4 5])',
+      '(drop-last [1 2 3 4 5] 3)',
+      '(drop-last [1 2 3 4 5] 0)',
     ],
   },
   'drop-while': {
@@ -807,26 +780,26 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
     examples: [
       `
 (drop-while
-  (fn [x] (< x 3))
-  [1 2 3 2 1])`,
+  [1 2 3 2 1]
+  (fn [x] (< x 3)))`,
       `
 (drop-while
-  (fn [x] (> x 3))
-  [1 2 3 2 1])`,
+  [1 2 3 2 1]
+  (fn [x] (> x 3)))`,
     ],
   },
   'sort': {
@@ -838,28 +811,28 @@ For string $seq returns all but the first characters in $seq.`,
       array: true,
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
+      },
+      fn: {
+        type: 'function',
       },
     },
     variants: [
       { argumentNames: ['seq'] },
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns a new sequence with the elements from $seq sorted according to $fn. If no $fn is supplied, builtin `compare` will be used.',
     examples: [
       '(sort [3 1 2])',
       `
 (sort
-  (fn [a b] (cond (< a b) -1 (> a b) 1 true -1))
-  [3 1 2])`,
+  [3 1 2]
+  (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)))`,
       `
 (sort
-  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1))
-  [3 1 2])`,
+  [3 1 2]
+  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))`,
     ],
   },
   'sort-by': {
@@ -871,14 +844,14 @@ For string $seq returns all but the first characters in $seq.`,
       array: true,
     },
     args: {
+      seq: {
+        type: 'sequence',
+      },
       keyfn: {
         type: 'function',
       },
       comp: {
         type: 'function',
-      },
-      seq: {
-        type: 'sequence',
       },
     },
     variants: [
@@ -887,82 +860,8 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
     examples: [
-      '(sort-by count ["Albert" "Mojir" "Nina"])',
-      '(sort-by lower-case #(compare %2 %1) "Albert")',
-    ],
-  },
-  'random-sample!': {
-    title: 'random-sample!',
-    category: 'Sequence',
-    linkName: 'random-sample_exclamation',
-    clojureDocs: 'random-sample',
-    returns: {
-      type: 'sequence',
-    },
-    args: {
-      prob: {
-        type: 'number',
-        description: 'Probability of including an element from $seq. Between 0 and 1.',
-      },
-      seq: {
-        type: 'sequence',
-      },
-    },
-    variants: [
-      { argumentNames: ['prob', 'seq'] },
-    ],
-    description: 'Each element from $seq has the probability $prob to be included in the result.',
-    examples: [
-      '(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])',
-      '(random-sample! 0.5 "Albert")',
-    ],
-  },
-  'rand-nth!': {
-    title: 'rand-nth!',
-    category: 'Sequence',
-    linkName: 'rand-nth_exclamation',
-    clojureDocs: 'rand-nth',
-    returns: {
-      type: 'any',
-    },
-    args: {
-      seq: {
-        type: 'sequence',
-      },
-    },
-    variants: [
-      { argumentNames: ['seq'] },
-    ],
-    description: 'Returns a random element from $seq. Returns `nil` if $seq is empty.',
-    examples: [
-      '(rand-nth! [1 2 3 4 5 6 7 8 9 10])',
-      '(rand-nth! "Albert")',
-      '(rand-nth! [])',
-    ],
-  },
-  'shuffle!': {
-    title: 'shuffle!',
-    category: 'Sequence',
-    linkName: 'shuffle_exclamation',
-    clojureDocs: 'shuffle',
-    returns: {
-      type: 'sequence',
-    },
-    args: {
-      seq: {
-        type: 'sequence',
-      },
-    },
-    variants: [
-      { argumentNames: ['seq'] },
-    ],
-    description: 'Returns a shuffled copy of $seq.',
-    examples: [
-      '(shuffle! [1 2 3 4 5 6 7 8 9 10])',
-      '(shuffle! "Albert Mojir")',
-      '(shuffle! [1 2])',
-      '(shuffle! [1])',
-      '(shuffle! [])',
+      '(sort-by ["Albert" "Mojir" "Nina"] count)',
+      '(sort-by "Albert" lower-case #(compare %2 %1))',
     ],
   },
   'distinct': {
@@ -996,20 +895,20 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns a new sequence of items in $seq for witch ``(pred item)`` returns a falsy value.',
     examples: [
-      '(remove even? [1 2 3 1 3 5])',
-      '(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")',
+      '(remove [1 2 3 1 3 5] even?)',
+      '(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))',
     ],
   },
   'remove-at': {
@@ -1021,21 +920,21 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
-      n: {
-        type: 'number',
-      },
       seq: {
         type: 'sequence',
       },
+      n: {
+        type: 'number',
+      },
     },
     variants: [
-      { argumentNames: ['n', 'seq'] },
+      { argumentNames: ['seq', 'n'] },
     ],
     description: 'Returns a new sequence of all items in $seq except item at position $n.',
     examples: [
-      '(remove-at 0 [1 2 3 1 3 5])',
-      '(remove-at -1 [1 2 3 1 3 5])',
-      '(remove-at 6 "Albert Mojir")',
+      '(remove-at [1 2 3 1 3 5] 0)',
+      '(remove-at [1 2 3 1 3 5] -1)',
+      '(remove-at "Albert Mojir" 6)',
     ],
   },
   'split-at': {
@@ -1047,20 +946,20 @@ For string $seq returns all but the first characters in $seq.`,
       array: true,
     },
     args: {
-      n: {
-        type: 'number',
-      },
       seq: {
         type: 'sequence',
       },
+      n: {
+        type: 'number',
+      },
     },
     variants: [
-      { argumentNames: ['n', 'seq'] },
+      { argumentNames: ['seq', 'n'] },
     ],
     description: 'Returns a pair of sequence ``[(take pos input) (drop pos input)]``.',
     examples: [
-      '(split-at 2 [1 2 3 4 5])',
-      '(split-at 2 "Albert")',
+      '(split-at [1 2 3 4 5] 2)',
+      '(split-at "Albert" 2)',
     ],
   },
   'split-with': {
@@ -1072,20 +971,20 @@ For string $seq returns all but the first characters in $seq.`,
       array: true,
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns a pair of sequences ``[(take-while fn input) (drop-while fn input)]``.',
     examples: [
-      '(split-with #(> %1 3) [1 2 3 4 5])',
-      '(split-with #(<= %1 :Z) "Albert")',
+      '(split-with [1 2 3 4 5] #(> %1 3))',
+      '(split-with "Albert" #(<= %1 :Z))',
     ],
   },
   'frequencies': {
@@ -1117,20 +1016,20 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'object',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
     examples: [
-      '(group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}])',
-      '(group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir")',
+      '(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
+      '(group-by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))',
     ],
   },
   'partition': {
@@ -1141,6 +1040,9 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      seq: {
+        type: 'sequence',
+      },
       n: {
         type: 'number',
       },
@@ -1150,32 +1052,29 @@ For string $seq returns all but the first characters in $seq.`,
       pad: {
         type: 'array',
       },
-      seq: {
-        type: 'sequence',
-      },
     },
     variants: [
-      { argumentNames: ['n', 'seq'] },
-      { argumentNames: ['n', 'step', 'seq'] },
-      { argumentNames: ['n', 'step', 'pad', 'seq'] },
+      { argumentNames: ['seq', 'n'] },
+      { argumentNames: ['seq', 'n', 'step'] },
+      { argumentNames: ['seq', 'n', 'step', 'pad'] },
     ],
     description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
     examples: [
-      '(partition 4 (range 20))',
-      '(partition 4 (range 22))',
-      '(partition 4 6 (range 20))',
-      '(partition 4 3 (range 20))',
-      '(partition 3 6 [:a] (range 20))',
-      '(partition 4 6 [:a] (range 20))',
-      '(partition 4 6 [:a :b :c :d] (range 20))',
-      '(partition 3 1 [:a :b :c :d :e :f])',
-      '(partition 10 [1 2 3 4])',
-      '(partition 10 10 [1 2 3 4])',
-      '(partition 10 10 [] [1 2 3 4])',
-      '(partition 10 10 nil [1 2 3 4])',
-      '(partition 5 "superfragilistic")',
-      '(partition 5 5 nil "superfragilistic")',
-      '(def foo [5 6 7 8]) (partition 2 1 foo foo)',
+      '(partition (range 20) 4)',
+      '(partition (range 22) 4)',
+      '(partition (range 20) 4 6)',
+      '(partition (range 20) 4 3)',
+      '(partition (range 20) 3 6 [:a])',
+      '(partition (range 20) 4 6 [:a])',
+      '(partition (range 20) 4 6 [:a :b :c :d])',
+      '(partition [:a :b :c :d :e :f] 3 1)',
+      '(partition [1 2 3 4] 10)',
+      '(partition [1 2 3 4] 10 10)',
+      '(partition [1 2 3 4] 10 10 [])',
+      '(partition [1 2 3 4] 10 10 nil)',
+      '(partition "superfragilistic" 5)',
+      '(partition "superfragilistic" 5 5 nil)',
+      '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
     ],
   },
   'partition-all': {
@@ -1186,25 +1085,25 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      seq: {
+        type: 'sequence',
+      },
       n: {
         type: 'number',
       },
       step: {
         type: 'number',
       },
-      seq: {
-        type: 'sequence',
-      },
     },
     variants: [
-      { argumentNames: ['n', 'seq'] },
-      { argumentNames: ['n', 'step', 'seq'] },
+      { argumentNames: ['seq', 'n'] },
+      { argumentNames: ['seq', 'n', 'step'] },
     ],
     description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
     examples: [
-      '(partition-all 4 [0 1 2 3 4 5 6 7 8 9])',
-      '(partition 4 [0 1 2 3 4 5 6 7 8 9])',
-      '(partition-all 2 4 [0 1 2 3 4 5 6 7 8 9])',
+      '(partition-all [0 1 2 3 4 5 6 7 8 9] 4)',
+      '(partition [0 1 2 3 4 5 6 7 8 9] 4)',
+      '(partition-all [0 1 2 3 4 5 6 7 8 9] 2 4)',
     ],
   },
   'partition-by': {
@@ -1215,21 +1114,21 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
       seq: {
         type: 'sequence',
       },
+      fn: {
+        type: 'function',
+      },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
     ],
     description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
     examples: [
-      '(partition-by #(= 3 %1) [1 2 3 4 5])',
-      '(partition-by odd? [1 1 1 2 2 3 3])',
-      '(partition-by identity "Leeeeeerrroyyy")',
+      '(partition-by [1 2 3 4 5] #(= 3 %1))',
+      '(partition-by [1 1 1 2 2 3 3] odd?)',
+      '(partition-by "Leeeeeerrroyyy" identity)',
     ],
   },
 }

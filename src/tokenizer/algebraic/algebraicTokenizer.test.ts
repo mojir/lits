@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { NO_MATCH } from '../common/commonTokenizers'
-import { tokenizeA_MultiLineComment, tokenizeA_Number, tokenizeA_Operator, tokenizeA_SingleLineComment, tokenizeA_Symbol } from './algebraicTokenizers'
+import { tokenizeA_BasePrefixedNumber, tokenizeA_MultiLineComment, tokenizeA_Number, tokenizeA_Operator, tokenizeA_SingleLineComment, tokenizeA_Symbol } from './algebraicTokenizers'
 
 describe('algebraicTokenizers', () => {
   describe('tokenizeA_SingleLineComment', () => {
@@ -39,9 +39,9 @@ describe('algebraicTokenizers', () => {
   describe('tokenizeA_Number', () => {
     it('should tokenize operator', () => {
       expect(tokenizeA_Number('1', 0)).toEqual([1, ['A_Number', '1']])
-      expect(tokenizeA_Number('0xF', 0)).toEqual([3, ['A_Number', '0xF']])
-      expect(tokenizeA_Number('0o7', 0)).toEqual([3, ['A_Number', '0o7']])
-      expect(tokenizeA_Number('0b1100', 0)).toEqual([6, ['A_Number', '0b1100']])
+      expect(tokenizeA_BasePrefixedNumber('0xF', 0)).toEqual([3, ['A_BasePrefixedNumber', '0xF']])
+      expect(tokenizeA_BasePrefixedNumber('0o7', 0)).toEqual([3, ['A_BasePrefixedNumber', '0o7']])
+      expect(tokenizeA_BasePrefixedNumber('0b1100', 0)).toEqual([6, ['A_BasePrefixedNumber', '0b1100']])
       expect(tokenizeA_Number('-1', 0)).toEqual([0])
     })
   })

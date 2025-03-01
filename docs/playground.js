@@ -866,6 +866,7 @@ var Playground = (function (exports) {
         'A_SingleLineComment',
         'A_MultiLineComment',
         'A_Number',
+        'A_BasePrefixedNumber',
     ];
     var algebraicValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false);
     __spreadArray(__spreadArray([], __read(algebraicSimpleTokenTypes), false), __read(algebraicValueTokenTypes), false);
@@ -907,17 +908,39 @@ var Playground = (function (exports) {
         '=', // property assignment
     ];
     var symbolicOperators = __spreadArray(__spreadArray(__spreadArray([], __read(symbolicUnaryOperators), false), __read(symbolicBinaryOperators), false), __read(otherSymbolicOperators), false);
-    var binaryFunctionOperators = [
-        'filter',
-        'has?',
-        'contains?',
-        'abs',
+    var nonFunctionOperators = [
+        '??',
+        'and',
+        'comment',
+        'cond',
+        'declared?',
+        'if',
+        'if-not',
+        'or',
+        'when',
+        'when-not',
+        'do',
+        'time!',
+        'throw',
+        'let',
+        'def',
+        'defs',
+        'if-let',
+        'when-let',
+        'when-first',
+        'fn',
+        'defn',
+        'defns',
+        'try',
+        'recur',
+        'loop',
+        'doseq',
+        'while',
     ];
-    var unaryFunctionOperators = [
-        'empty?',
-        'count',
-    ];
-    var algebraicOperatos = __spreadArray(__spreadArray(__spreadArray([], __read(symbolicOperators), false), __read(binaryFunctionOperators), false), __read(unaryFunctionOperators), false);
+    var nonFunctionOperatorSet = new Set(nonFunctionOperators);
+    function isFunctionOperator(operator) {
+        return !nonFunctionOperatorSet.has(operator);
+    }
     var symbolicUnaryOperatorSet = new Set(symbolicUnaryOperators);
     function isSymbolicUnaryOperator(operator) {
         return symbolicUnaryOperatorSet.has(operator);
@@ -930,15 +953,6 @@ var Playground = (function (exports) {
     function isSymbolicOperator(operator) {
         return symbolicOperatorSet.has(operator);
     }
-    var binaryFunctionOperatorSet = new Set(binaryFunctionOperators);
-    function isBinaryFunctionOperator(operator) {
-        return binaryFunctionOperatorSet.has(operator);
-    }
-    var unaryFunctionOperatorSet = new Set(unaryFunctionOperators);
-    function isUnaryFunctionOperator(operator) {
-        return unaryFunctionOperatorSet.has(operator);
-    }
-    new Set(algebraicOperatos);
     function isA_SymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol';
     }
@@ -953,12 +967,6 @@ var Playground = (function (exports) {
     }
     function isA_BinaryOperatorToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Operator' && isSymbolicBinaryOperator(token[1]);
-    }
-    function isA_BinaryFunctionSymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol' && isBinaryFunctionOperator(token[1]);
-    }
-    function isA_UnaryFunctionSymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol' && isUnaryFunctionOperator(token[1]);
     }
     function isA_ReservedSymbolToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_ReservedSymbol';
@@ -991,6 +999,9 @@ var Playground = (function (exports) {
     }
     function isA_NumberToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Number';
+    }
+    function isA_BasePrefixedNumberToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_BasePrefixedNumber';
     }
 
     var modifierNames = ['&', '&let', '&when', '&while'];
@@ -2372,76 +2383,81 @@ var Playground = (function (exports) {
         },
     };
 
-    var evaluateMap = function (params, sourceCodeInfo, contextStack, _a) {
-        var executeFunction = _a.executeFunction;
-        var _b = __read(params, 2), fn = _b[0], firstList = _b[1];
-        assertLitsFunction(fn, sourceCodeInfo);
-        assertSeq(firstList, sourceCodeInfo);
-        var isStringSeq = typeof firstList === 'string';
-        var length = firstList.length;
-        if (params.length === 2) {
-            if (Array.isArray(firstList)) {
-                return firstList.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
-            }
-            else {
-                return firstList
-                    .split('')
-                    .map(function (elem) {
-                    var newVal = executeFunction(fn, [elem], contextStack, sourceCodeInfo);
-                    assertString(newVal, sourceCodeInfo, { char: true });
-                    return newVal;
-                })
-                    .join('');
-            }
-        }
-        else {
-            params.slice(2).forEach(function (collParam) {
-                if (isStringSeq)
-                    assertString(collParam, sourceCodeInfo);
-                else
-                    assertArray(collParam, sourceCodeInfo);
-                if (length !== collParam.length)
-                    throw new LitsError('All arguments to "map" must have the same length.', sourceCodeInfo);
-            });
-            if (isStringSeq) {
-                var result = '';
-                var _loop_1 = function (i) {
-                    var fnParams = params.slice(1).map(function (l) { return l[i]; });
-                    var newValue = executeFunction(fn, fnParams, contextStack, sourceCodeInfo);
-                    assertString(newValue, sourceCodeInfo, { char: true });
-                    result += newValue;
-                };
-                for (var i = 0; i < length; i += 1) {
-                    _loop_1(i);
+    var arrayNormalExpression = {
+        array: {
+            evaluate: function (params) { return params; },
+        },
+        range: {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(params, 3), first = _a[0], second = _a[1], third = _a[2];
+                var from;
+                var to;
+                var step;
+                assertNumber(first, sourceCodeInfo, { finite: true });
+                if (params.length === 1) {
+                    from = 0;
+                    to = first;
+                    step = to >= 0 ? 1 : -1;
                 }
-                return result;
-            }
-            else {
+                else if (params.length === 2) {
+                    assertNumber(second, sourceCodeInfo, { finite: true });
+                    from = first;
+                    to = second;
+                    step = to >= from ? 1 : -1;
+                }
+                else {
+                    assertNumber(second, sourceCodeInfo, { finite: true });
+                    assertNumber(third, sourceCodeInfo, { finite: true });
+                    from = first;
+                    to = second;
+                    step = third;
+                    if (to > from)
+                        assertNumber(step, sourceCodeInfo, { positive: true });
+                    else if (to < from)
+                        assertNumber(step, sourceCodeInfo, { negative: true });
+                    else
+                        assertNumber(step, sourceCodeInfo, { nonZero: true });
+                }
                 var result = [];
-                var _loop_2 = function (i) {
-                    var fnParams = params.slice(1).map(function (l) { return toAny(l[i]); });
-                    result.push(executeFunction(fn, fnParams, contextStack, sourceCodeInfo));
-                };
-                for (var i = 0; i < length; i += 1) {
-                    _loop_2(i);
-                }
+                for (var i = from; step < 0 ? i > to : i < to; i += step)
+                    result.push(i);
                 return result;
-            }
-        }
-    };
-    var sequenceNormalExpression = {
-        'cons': {
+            },
+            validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
+        },
+        repeat: {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), elem = _b[0], seq = _b[1];
-                assertAny(elem, sourceCodeInfo);
-                assertSeq(seq, sourceCodeInfo);
-                if (Array.isArray(seq))
-                    return __spreadArray([elem], __read(seq), false);
-                assertString(elem, sourceCodeInfo, { char: true });
-                return "".concat(elem).concat(seq);
+                var _b = __read(_a, 2), count = _b[0], value = _b[1];
+                assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
+                var result = [];
+                for (var i = 0; i < count; i += 1)
+                    result.push(value);
+                return result;
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
+        flatten: {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), seq = _b[0];
+                if (!Array.isArray(seq))
+                    return [];
+                return seq.flat(Number.POSITIVE_INFINITY);
+            },
+            validate: function (node) { return assertNumberOfParams(1, node); },
+        },
+        mapcat: {
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), arr = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertArray(arr, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
+                return arr.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }).flat(1);
+            },
+            validate: function (node) { return assertNumberOfParams(2, node); },
+        },
+    };
+
+    var sequenceNormalExpression = {
         'nth': {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 2), seq = _a[0], i = _a[1];
@@ -2490,24 +2506,41 @@ var Playground = (function (exports) {
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'map': {
-            evaluate: evaluateMap,
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
+                var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
+                var executeFunction = _b.executeFunction;
+                assertSeq(seq, sourceCodeInfo);
+                assertLitsFunction(fn, sourceCodeInfo);
+                if (Array.isArray(seq)) {
+                    return seq.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
+                }
+                else {
+                    return seq
+                        .split('')
+                        .map(function (elem) {
+                        var newVal = executeFunction(fn, [elem], contextStack, sourceCodeInfo);
+                        assertString(newVal, sourceCodeInfo, { char: true });
+                        return newVal;
+                    })
+                        .join('');
+                }
+            },
+            validate: function (node) { return assertNumberOfParams(2, node); },
         },
         'pop': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), seq = _b[0];
                 assertSeq(seq, sourceCodeInfo);
-                if (typeof seq === 'string')
+                if (typeof seq === 'string') {
                     return seq.substring(0, seq.length - 1);
-                var copy = __spreadArray([], __read(seq), false);
-                copy.pop();
-                return copy;
+                }
+                return seq.slice(0, seq.length - 1);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'position': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), fn = _c[0], seq = _c[1];
+                var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertLitsFunction(fn, sourceCodeInfo);
                 if (seq === null)
@@ -2560,17 +2593,16 @@ var Playground = (function (exports) {
         'reductions': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
-                var fn = params[0];
+                var _b = __read(params, 2), seq = _b[0], fn = _b[1];
+                assertSeq(seq, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 if (params.length === 2) {
-                    var _b = __read(params, 2), arr = _b[1];
-                    assertSeq(arr, sourceCodeInfo);
-                    if (arr.length === 0)
+                    if (seq.length === 0)
                         return [executeFunction(fn, [], contextStack, sourceCodeInfo)];
-                    else if (arr.length === 1)
-                        return [toAny(arr[0])];
-                    if (typeof arr === 'string') {
-                        var chars = arr.split('');
+                    else if (seq.length === 1)
+                        return [toAny(seq[0])];
+                    if (typeof seq === 'string') {
+                        var chars = seq.split('');
                         var resultArray_1 = [asAny(chars[0], sourceCodeInfo)];
                         chars.slice(1).reduce(function (result, elem) {
                             var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
@@ -2580,19 +2612,18 @@ var Playground = (function (exports) {
                         return resultArray_1;
                     }
                     else {
-                        var resultArray_2 = [toAny(arr[0])];
-                        arr.slice(1).reduce(function (result, elem) {
+                        var resultArray_2 = [toAny(seq[0])];
+                        seq.slice(1).reduce(function (result, elem) {
                             var newVal = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
                             resultArray_2.push(newVal);
                             return newVal;
-                        }, toAny(arr[0]));
+                        }, toAny(seq[0]));
                         return resultArray_2;
                     }
                 }
                 else {
-                    var _c = __read(params, 3), val = _c[1], seq = _c[2];
+                    var val = params[2];
                     assertAny(val, sourceCodeInfo);
-                    assertSeq(seq, sourceCodeInfo);
                     if (typeof seq === 'string') {
                         assertString(val, sourceCodeInfo);
                         if (seq.length === 0)
@@ -2623,32 +2654,30 @@ var Playground = (function (exports) {
         'reduce': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
-                var fn = params[0];
+                var _b = __read(params, 2), seq = _b[0], fn = _b[1];
+                assertSeq(seq, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 if (params.length === 2) {
-                    var _b = __read(params, 2), arr = _b[1];
-                    assertSeq(arr, sourceCodeInfo);
-                    if (arr.length === 0)
+                    if (seq.length === 0)
                         return executeFunction(fn, [], contextStack, sourceCodeInfo);
-                    else if (arr.length === 1)
-                        return toAny(arr[0]);
-                    if (typeof arr === 'string') {
-                        var chars = arr.split('');
+                    else if (seq.length === 1)
+                        return toAny(seq[0]);
+                    if (typeof seq === 'string') {
+                        var chars = seq.split('');
                         return chars.slice(1).reduce(function (result, elem) {
                             var val = executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
                             return val;
                         }, asAny(chars[0], sourceCodeInfo));
                     }
                     else {
-                        return arr.slice(1).reduce(function (result, elem) {
+                        return seq.slice(1).reduce(function (result, elem) {
                             return executeFunction(fn, [result, elem], contextStack, sourceCodeInfo);
-                        }, toAny(arr[0]));
+                        }, toAny(seq[0]));
                     }
                 }
                 else {
-                    var _c = __read(params, 3), val = _c[1], seq = _c[2];
+                    var val = params[2];
                     assertAny(val, sourceCodeInfo);
-                    assertSeq(seq, sourceCodeInfo);
                     if (typeof seq === 'string') {
                         assertString(val, sourceCodeInfo);
                         if (seq.length === 0)
@@ -2672,11 +2701,10 @@ var Playground = (function (exports) {
         'reduce-right': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
-                var fn = params[0];
+                var _b = __read(params, 2), seq = _b[0], fn = _b[1];
+                assertSeq(seq, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
                 if (params.length === 2) {
-                    var _b = __read(params, 2), seq = _b[1];
-                    assertSeq(seq, sourceCodeInfo);
                     if (seq.length === 0)
                         return executeFunction(fn, [], contextStack, sourceCodeInfo);
                     else if (seq.length === 1)
@@ -2696,7 +2724,7 @@ var Playground = (function (exports) {
                     }
                 }
                 else {
-                    var _c = __read(params, 3), val = _c[1], seq = _c[2];
+                    var val = params[2];
                     assertAny(val, sourceCodeInfo);
                     assertSeq(seq, sourceCodeInfo);
                     if (typeof seq === 'string') {
@@ -2720,14 +2748,14 @@ var Playground = (function (exports) {
         },
         'rest': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertSeq(first, sourceCodeInfo);
-                if (Array.isArray(first)) {
-                    if (first.length <= 1)
+                var _b = __read(_a, 1), seq = _b[0];
+                assertSeq(seq, sourceCodeInfo);
+                if (Array.isArray(seq)) {
+                    if (seq.length <= 1)
                         return [];
-                    return first.slice(1);
+                    return seq.slice(1);
                 }
-                return first.substring(1);
+                return seq.substring(1);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
@@ -2745,16 +2773,16 @@ var Playground = (function (exports) {
         },
         'next': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), first = _b[0];
-                assertSeq(first, sourceCodeInfo);
-                if (Array.isArray(first)) {
-                    if (first.length <= 1)
+                var _b = __read(_a, 1), seq = _b[0];
+                assertSeq(seq, sourceCodeInfo);
+                if (Array.isArray(seq)) {
+                    if (seq.length <= 1)
                         return null;
-                    return first.slice(1);
+                    return seq.slice(1);
                 }
-                if (first.length <= 1)
+                if (seq.length <= 1)
                     return null;
-                return first.substring(1);
+                return seq.substring(1);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
@@ -2786,11 +2814,11 @@ var Playground = (function (exports) {
         },
         'second': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), array = _b[0];
-                if (array === null)
+                var _b = __read(_a, 1), seq = _b[0];
+                if (seq === null)
                     return null;
-                assertSeq(array, sourceCodeInfo);
-                return toAny(array[1]);
+                assertSeq(seq, sourceCodeInfo);
+                return toAny(seq[1]);
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
@@ -2823,7 +2851,7 @@ var Playground = (function (exports) {
         'some': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c;
-                var _d = __read(_a, 2), fn = _d[0], seq = _d[1];
+                var _d = __read(_a, 2), seq = _d[0], fn = _d[1];
                 var executeFunction = _b.executeFunction;
                 assertLitsFunction(fn, sourceCodeInfo);
                 if (seq === null)
@@ -2840,9 +2868,9 @@ var Playground = (function (exports) {
         'sort': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
+                var _b = __read(params, 1), seq = _b[0];
                 var defaultComparer = params.length === 1;
-                var seq = defaultComparer ? params[0] : params[1];
-                var comparer = defaultComparer ? null : params[0];
+                var comparer = defaultComparer ? null : params[1];
                 assertSeq(seq, sourceCodeInfo);
                 if (typeof seq === 'string') {
                     var result_1 = seq.split('');
@@ -2878,10 +2906,11 @@ var Playground = (function (exports) {
         'sort-by': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
+                var _b = __read(params, 2), seq = _b[0], keyfn = _b[1];
                 var defaultComparer = params.length === 2;
-                var keyfn = asAny(params[0], sourceCodeInfo);
-                var comparer = defaultComparer ? null : params[1];
-                var seq = asSeq(defaultComparer ? params[1] : params[2], sourceCodeInfo);
+                assertSeq(seq, sourceCodeInfo);
+                assertAny(keyfn, sourceCodeInfo);
+                var comparer = defaultComparer ? null : params[2];
                 if (typeof seq === 'string') {
                     var result_2 = seq.split('');
                     if (defaultComparer) {
@@ -2927,7 +2956,7 @@ var Playground = (function (exports) {
         },
         'take': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), n = _b[0], input = _b[1];
+                var _b = __read(_a, 2), input = _b[0], n = _b[1];
                 assertNumber(n, sourceCodeInfo);
                 assertSeq(input, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
@@ -2937,7 +2966,7 @@ var Playground = (function (exports) {
         },
         'take-last': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), n = _b[0], array = _b[1];
+                var _b = __read(_a, 2), array = _b[0], n = _b[1];
                 assertSeq(array, sourceCodeInfo);
                 assertNumber(n, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
@@ -2949,7 +2978,7 @@ var Playground = (function (exports) {
         'take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var e_1, _c;
-                var _d = __read(_a, 2), fn = _d[0], seq = _d[1];
+                var _d = __read(_a, 2), seq = _d[0], fn = _d[1];
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
@@ -2976,7 +3005,7 @@ var Playground = (function (exports) {
         },
         'drop': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), n = _b[0], input = _b[1];
+                var _b = __read(_a, 2), input = _b[0], n = _b[1];
                 assertNumber(n, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
                 assertSeq(input, sourceCodeInfo);
@@ -2986,7 +3015,7 @@ var Playground = (function (exports) {
         },
         'drop-last': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), n = _b[0], array = _b[1];
+                var _b = __read(_a, 2), array = _b[0], n = _b[1];
                 assertSeq(array, sourceCodeInfo);
                 assertNumber(n, sourceCodeInfo);
                 var num = Math.max(Math.ceil(n), 0);
@@ -2997,7 +3026,7 @@ var Playground = (function (exports) {
         },
         'drop-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
-                var _c = __read(_a, 2), fn = _c[0], seq = _c[1];
+                var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
                 assertSeq(seq, sourceCodeInfo);
                 assertLitsFunction(fn, sourceCodeInfo);
@@ -3024,58 +3053,6 @@ var Playground = (function (exports) {
                 return copy;
             },
             validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
-        },
-        'random-sample!': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), prob = _b[0], seq = _b[1];
-                assertNumber(prob, sourceCodeInfo, { finite: true });
-                assertSeq(seq, sourceCodeInfo);
-                if (typeof seq === 'string') {
-                    return seq
-                        .split('')
-                        .filter(function () { return Math.random() < prob; })
-                        .join('');
-                }
-                else {
-                    return seq.filter(function () { return Math.random() < prob; });
-                }
-            },
-            validate: function (node) { return assertNumberOfParams(2, node); },
-        },
-        'rand-nth!': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), seq = _b[0];
-                assertSeq(seq, sourceCodeInfo);
-                if (seq.length === 0)
-                    return null;
-                var index = Math.floor(Math.random() * seq.length);
-                if (typeof seq === 'string')
-                    return toAny(seq.split('')[index]);
-                return toAny(seq[index]);
-            },
-            validate: function (node) { return assertNumberOfParams(1, node); },
-        },
-        'shuffle!': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), input = _b[0];
-                assertSeq(input, sourceCodeInfo);
-                var array = typeof input === 'string' ? __spreadArray([], __read(input.split('')), false) : __spreadArray([], __read(input), false);
-                var remainingLength = array.length;
-                var arrayElement;
-                var pickedIndex;
-                // Fisher–Yates Shuffle
-                while (remainingLength) {
-                    remainingLength -= 1;
-                    // Pick a remaining element
-                    pickedIndex = Math.floor(Math.random() * remainingLength);
-                    // And swap it with the current element.
-                    arrayElement = toAny(array[remainingLength]);
-                    array[remainingLength] = toAny(array[pickedIndex]);
-                    array[pickedIndex] = arrayElement;
-                }
-                return typeof input === 'string' ? array.join('') : array;
-            },
-            validate: function (node) { return assertNumberOfParams(1, node); },
         },
         'distinct': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3252,78 +3229,6 @@ var Playground = (function (exports) {
         }
         return isStringSeq ? result.map(function (x) { return x.join(''); }) : result;
     }
-
-    var arrayNormalExpression = {
-        array: {
-            evaluate: function (params) { return params; },
-        },
-        range: {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a = __read(params, 3), first = _a[0], second = _a[1], third = _a[2];
-                var from;
-                var to;
-                var step;
-                assertNumber(first, sourceCodeInfo, { finite: true });
-                if (params.length === 1) {
-                    from = 0;
-                    to = first;
-                    step = to >= 0 ? 1 : -1;
-                }
-                else if (params.length === 2) {
-                    assertNumber(second, sourceCodeInfo, { finite: true });
-                    from = first;
-                    to = second;
-                    step = to >= from ? 1 : -1;
-                }
-                else {
-                    assertNumber(second, sourceCodeInfo, { finite: true });
-                    assertNumber(third, sourceCodeInfo, { finite: true });
-                    from = first;
-                    to = second;
-                    step = third;
-                    if (to > from)
-                        assertNumber(step, sourceCodeInfo, { positive: true });
-                    else if (to < from)
-                        assertNumber(step, sourceCodeInfo, { negative: true });
-                    else
-                        assertNumber(step, sourceCodeInfo, { nonZero: true });
-                }
-                var result = [];
-                for (var i = from; step < 0 ? i > to : i < to; i += step)
-                    result.push(i);
-                return result;
-            },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
-        },
-        repeat: {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), count = _b[0], value = _b[1];
-                assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
-                var result = [];
-                for (var i = 0; i < count; i += 1)
-                    result.push(value);
-                return result;
-            },
-            validate: function (node) { return assertNumberOfParams(2, node); },
-        },
-        flatten: {
-            evaluate: function (_a) {
-                var _b = __read(_a, 1), seq = _b[0];
-                if (!Array.isArray(seq))
-                    return [];
-                return seq.flat(Number.POSITIVE_INFINITY);
-            },
-            validate: function (node) { return assertNumberOfParams(1, node); },
-        },
-        mapcat: {
-            evaluate: function (params, sourceCodeInfo, contextStack, helpers) {
-                var mapResult = evaluateMap(params, sourceCodeInfo, contextStack, helpers);
-                assertArray(mapResult, sourceCodeInfo);
-                return mapResult.flat(1);
-            },
-            validate: function (node) { return assertNumberOfParams(2, node); },
-        },
-    };
 
     var mathNormalExpression = {
         'inc': {
@@ -3726,7 +3631,7 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.11";
+    var version = "2.0.12";
 
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
@@ -7508,7 +7413,23 @@ var Playground = (function (exports) {
     function parseNumber(tokenStream, parseState) {
         var _a;
         var tkn = tokenStream.tokens[parseState.position++];
-        if (!isP_NumberToken(tkn) && !isA_NumberToken(tkn)) {
+        if (isA_NumberToken(tkn)) {
+            var numberString_1 = tkn[1];
+            var periodToken = tokenStream.tokens[parseState.position];
+            var decimalToken = tokenStream.tokens[parseState.position + 1];
+            if (isA_OperatorToken(periodToken, '.') && isA_NumberToken(decimalToken)) {
+                numberString_1 += ".".concat(decimalToken[1]);
+                parseState.position += 2;
+            }
+            return {
+                t: AstNodeType.Number,
+                v: Number(numberString_1),
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(tkn) && tkn,
+            };
+        }
+        if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn)) {
             throw new LitsError("Expected number token, got ".concat(tkn), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         var value = tkn[1];
@@ -7560,9 +7481,8 @@ var Playground = (function (exports) {
         };
     }
 
-    var exponentiationPrecedence = 11;
-    var unaryFunctionalOperatorPrecedence = 5;
-    var binaryFunctionalOperatorPrecedence = 6;
+    var exponentiationPrecedence = 10;
+    var binaryFunctionalOperatorPrecedence = 1;
     var placeholderRegexp$1 = /^\$([1-9]\d?)?$/;
     function getPrecedence(operatorSign) {
         switch (operatorSign) {
@@ -7571,44 +7491,50 @@ var Playground = (function (exports) {
             case '*': // multiplication
             case '/': // division
             case '%': // remainder
-                return 10;
+                return 9;
             case '+': // addition
             case '-': // subtraction
-                return 9;
+                return 8;
             case '<<': // left shift
             case '>>': // signed right shift
             case '>>>': // unsigned right shift
-                return 8;
-            case '++': // string concatenation
                 return 7;
-            // leave room for functional operators = funaryFunctionalOperatorPrecedence = 5 and binaryFunctionalOperatorPrecedence = 6
+            case '++': // string concatenation
+                return 6;
             case '<': // less than
             case '<=': // less than or equal
             case '>': // greater than
             case '>=': // greater than or equal
-                return 4;
+                return 5;
             case '==': // equal
             case '!=': // not equal
-                return 3;
+                return 4;
             case '&': // bitwise AND
             case '^': // bitwise XOR
             case '|': // bitwise OR
-                return 2;
+                return 3;
             case '&&': // logical AND
             case '||': // logical OR
             case '??': // nullish coalescing
-                return 1;
+                return 2;
+            // leave room for binaryFunctionalOperatorPrecedence = 1
             default:
                 throw new Error("Unknown binary operator: ".concat(operatorSign));
         }
     }
     function createNamedNormalExpressionNode(name, params, token) {
-        return {
+        var _a;
+        var node = {
             t: AstNodeType.NormalExpression,
             n: name,
             p: params,
             token: getTokenDebugData(token) && token,
         };
+        var builtinExpression = builtin.normalExpressions[node.n];
+        if (builtinExpression) {
+            (_a = builtinExpression.validate) === null || _a === void 0 ? void 0 : _a.call(builtinExpression, __assign(__assign({}, node), { p: withoutCommentNodes(node.p) }));
+        }
+        return node;
     }
     function fromSymbolToStringNode(symbol) {
         return {
@@ -7742,7 +7668,7 @@ var Playground = (function (exports) {
             var left = this.parseOperand();
             while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
                 var operator = this.peek();
-                if (left && isA_BinaryOperatorToken(operator)) {
+                if (isA_BinaryOperatorToken(operator)) {
                     var name_1 = operator[1];
                     var newPrecedece = getPrecedence(name_1);
                     if (newPrecedece <= precedence
@@ -7755,15 +7681,18 @@ var Playground = (function (exports) {
                     var token = hasTokenDebugData(operator) ? operator : undefined;
                     left = fromBinaryOperatorToAstNode(operator, left, right, token);
                 }
-                else if (isA_BinaryFunctionSymbolToken(operator) || isA_UnaryFunctionSymbolToken(operator)) {
-                    var newPrecedece = isA_BinaryFunctionSymbolToken(operator) ? binaryFunctionalOperatorPrecedence : unaryFunctionalOperatorPrecedence;
+                else if (isA_SymbolToken(operator)) {
+                    if (!isFunctionOperator(operator[1])) {
+                        break;
+                    }
+                    var newPrecedece = binaryFunctionalOperatorPrecedence;
                     if (newPrecedece <= precedence) {
                         break;
                     }
                     this.advance();
                     var right = this.parseExpression(newPrecedece);
                     var token = hasTokenDebugData(operator) ? operator : undefined;
-                    left = createNamedNormalExpressionNode(operator[1], left ? [left, right] : [right], token);
+                    left = createNamedNormalExpressionNode(operator[1], [left, right], token);
                 }
                 else {
                     break;
@@ -7777,10 +7706,6 @@ var Playground = (function (exports) {
         AlgebraicParser.prototype.parseOperand = function () {
             var _a, _b;
             var operand = this.parseOperandPart();
-            if (operand === null) {
-                // Unary functional token
-                return null;
-            }
             var token = this.peek();
             while (isA_OperatorToken(token, '.') || isLBracketToken(token) || isLParenToken(token)) {
                 if (token[1] === '.') {
@@ -7854,28 +7779,18 @@ var Playground = (function (exports) {
                     throw new Error("Unknown unary operator: ".concat(operatorName));
                 }
             }
-            if (isA_UnaryFunctionSymbolToken(token)) {
-                var rollbackPosition = this.parseState.position;
-                this.advance();
-                try {
-                    this.parseOperand();
-                    return null; // createNamedNormalExpressionNode(token[1], [operand], token)
-                }
-                finally {
-                    this.parseState.position = rollbackPosition;
-                }
-            }
             // Object litteral, e.g. {a=1, b=2}
-            else if (isLBraceToken(token)) {
+            if (isLBraceToken(token)) {
                 return this.parseObject();
             }
             // Array litteral, e.g. [1, 2]
-            else if (isLBracketToken(token)) {
+            if (isLBracketToken(token)) {
                 return this.parseArray();
             }
             var tokenType = token[0];
             switch (tokenType) {
                 case 'A_Number':
+                case 'A_BasePrefixedNumber':
                     return parseNumber(this.tokenStream, this.parseState);
                 case 'String':
                     return parseString(this.tokenStream, this.parseState);
@@ -7979,7 +7894,7 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseFunctionCall = function (symbol) {
-            var _a, _b, _c;
+            var _a, _b;
             var isNamedFunction = symbol.t === AstNodeType.Symbol;
             this.advance();
             if (isNamedFunction && symbol.v === 'for') {
@@ -8017,14 +7932,14 @@ var Playground = (function (exports) {
                         case 'do':
                         case 'time!':
                         case 'throw': {
-                            var node_1 = {
+                            var node = {
                                 t: AstNodeType.SpecialExpression,
                                 n: name_2,
                                 p: params,
                                 token: getTokenDebugData(symbol.token) && symbol.token,
                             };
-                            builtin.specialExpressions[node_1.n].validateParameterCount(node_1);
-                            return node_1;
+                            builtin.specialExpressions[node.n].validateParameterCount(node);
+                            return node;
                         }
                         case 'let':
                             return this.parseLet(symbol, params);
@@ -8045,12 +7960,7 @@ var Playground = (function (exports) {
                             throw new Error("Unknown special expression: ".concat(name_2));
                     }
                 }
-                var node = createNamedNormalExpressionNode(symbol.v, params, symbol.token);
-                var builtinExpression = builtin.normalExpressions[node.n];
-                if (builtinExpression) {
-                    (_c = builtinExpression.validate) === null || _c === void 0 ? void 0 : _c.call(builtinExpression, __assign(__assign({}, node), { p: withoutCommentNodes(node.p) }));
-                }
-                return node;
+                return createNamedNormalExpressionNode(symbol.v, params, symbol.token);
             }
             else {
                 return {
@@ -8141,7 +8051,7 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseShorthandLamdaFunction = function () {
-            var _a, _b, _c, _d;
+            var _a, _b, _c;
             var firstToken = this.peek();
             this.advance();
             var startPos = this.parseState.position;
@@ -8165,9 +8075,6 @@ var Playground = (function (exports) {
                         if (arity > 20)
                             throw new LitsError('Can\'t specify more than 20 arguments', (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                     }
-                }
-                if (isA_OperatorToken(tkn, '=>')) {
-                    throw new LitsError('Nested shortcut functions are not allowed', (_d = getTokenDebugData(firstToken)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
                 }
             }
             var mandatoryArguments = [];
@@ -8809,11 +8716,11 @@ var Playground = (function (exports) {
     var octalNumberRegExp$1 = /[0-7]/;
     var hexNumberRegExp$1 = /[0-9a-f]/i;
     var binaryNumberRegExp$1 = /[01]/;
-    var firstCharRegExp$1 = /[0-9.-]/;
+    var firstCharRegExp = /[0-9.-]/;
     var tokenizeP_Number = function (input, position) {
         var type = 'decimal';
         var firstChar = input[position];
-        if (!firstCharRegExp$1.test(firstChar))
+        if (!firstCharRegExp.test(firstChar))
             return NO_MATCH;
         var hasDecimals = firstChar === '.';
         var i;
@@ -9031,40 +8938,38 @@ var Playground = (function (exports) {
     var octalNumberRegExp = /[0-7]/;
     var hexNumberRegExp = /[0-9a-f]/i;
     var binaryNumberRegExp = /[01]/;
-    var firstCharRegExp = /[0-9.]/;
     var tokenizeA_Number = function (input, position) {
-        var type = 'decimal';
-        var firstChar = input[position];
-        if (!firstCharRegExp.test(firstChar))
-            return NO_MATCH;
-        var hasDecimals = firstChar === '.';
         var i;
-        for (i = position + 1; i < input.length; i += 1) {
+        for (i = position; i < input.length; i += 1) {
             var char = input[i];
-            if ((i === position + 1 && firstChar === '0')) {
-                if (char === 'b' || char === 'B') {
-                    type = 'binary';
-                    continue;
-                }
-                if (char === 'o' || char === 'O') {
-                    type = 'octal';
-                    continue;
-                }
-                if (char === 'x' || char === 'X') {
-                    type = 'hex';
-                    continue;
-                }
+            if (!decimalNumberRegExp.test(char)) {
+                break;
             }
-            if (type === 'decimal') {
-                if (hasDecimals) {
-                    if (!decimalNumberRegExp.test(char)) {
-                        break;
-                    }
-                }
-                else if (char !== '.' && !decimalNumberRegExp.test(char)) {
-                    break;
-                }
-            }
+        }
+        var length = i - position;
+        if (length === 0) {
+            return NO_MATCH;
+        }
+        return [length, ['A_Number', input.substring(position, i)]];
+    };
+    var tokenizeA_BasePrefixedNumber = function (input, position) {
+        if (input[position] !== '0') {
+            return NO_MATCH;
+        }
+        var baseChar = input[position + 1];
+        var type = baseChar === 'b' || baseChar === 'B'
+            ? 'binary'
+            : baseChar === 'o' || baseChar === 'O'
+                ? 'octal'
+                : baseChar === 'x' || baseChar === 'X'
+                    ? 'hex'
+                    : null;
+        if (type === null) {
+            return NO_MATCH;
+        }
+        var i;
+        for (i = position + 2; i < input.length; i += 1) {
+            var char = input[i];
             if (type === 'binary' && !binaryNumberRegExp.test(char)) {
                 break;
             }
@@ -9074,41 +8979,12 @@ var Playground = (function (exports) {
             if (type === 'hex' && !hexNumberRegExp.test(char)) {
                 break;
             }
-            if (char === '.') {
-                var nextChar = input[i + 1];
-                if (typeof nextChar === 'string' && !decimalNumberRegExp.test(nextChar))
-                    break;
-            }
-            if (type === 'decimal' && hasDecimals) {
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'binary') {
-                if (!binaryNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'octal') {
-                if (!octalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else if (type === 'hex') {
-                if (!hexNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
-            else {
-                if (char === '.') {
-                    hasDecimals = true;
-                    continue;
-                }
-                if (!decimalNumberRegExp.test(char))
-                    return NO_MATCH;
-            }
         }
         var length = i - position;
-        var value = input.substring(position, i);
-        if ((type !== 'decimal' && length <= 2) || value === '.' || value === '-')
+        if (length <= 2) {
             return NO_MATCH;
-        return [length, ['A_Number', value]];
+        }
+        return [length, ['A_BasePrefixedNumber', input.substring(position, i)]];
     };
     var tokenizeA_ReservedSymbolToken = function (input, position) {
         var e_1, _a;
@@ -9219,6 +9095,7 @@ var Playground = (function (exports) {
         tokenizeA_MultiLineComment,
         tokenizeA_SingleLineComment
     ], __read(commonTokenizers), false), [
+        tokenizeA_BasePrefixedNumber,
         tokenizeA_Number,
         tokenizeA_Operator,
         tokenizeA_ReservedSymbolToken,
@@ -10814,22 +10691,20 @@ var Playground = (function (exports) {
                 array: true,
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Creates a new array populated with the results of calling $fn on every elements in $seq.',
             examples: [
-                '(map str ["Albert" "Mojir" 42])',
-                '(map str [])',
-                '(map + [1 2 3] [1 2 3])',
-                '(map max [2 6 3] [2 4 7] [1 6 2])',
+                '(map ["Albert" "Mojir" 42] str)',
+                '(map [1 2 3] inc)',
             ],
         },
         'filter': {
@@ -10848,7 +10723,7 @@ var Playground = (function (exports) {
                 },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Creates a new array with all elements that pass the test implemented by $fn.',
             examples: [
@@ -10865,21 +10740,21 @@ var Playground = (function (exports) {
                 type: ['number', 'nil'],
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: ['sequence', 'nil'],
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `nil` is returned.',
             examples: [
-                "\n(position\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
-                "\n(position\n  (fn [x] (> x 10))\n  [5 10 15 20])",
-                "\n(position\n  (fn [x] (> x 100))\n  [5 10 15 20])",
+                "\n(position\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(position\n  [5 10 15 20]\n  (fn [x] (> x 10)))",
+                "\n(position\n  [5 10 15 20]\n  (fn [x] (> x 100)))",
                 "\n(position\n  (fn [x] (> x 100))\n  nil)",
             ],
         },
@@ -10918,23 +10793,23 @@ var Playground = (function (exports) {
                 type: 'any',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: ['sequence', 'nil'],
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `nil` is returned.',
             examples: [
-                "\n(some\n  string?\n  [\"Albert\" \"Mojir\" 160 [1 2]])",
-                "\n(some\n  (fn [x] (> x 10))\n  [5 10 15 20])",
-                "\n(some\n  (fn [x] (> x 10))\n  [1 2 3 4])",
-                "\n(some\n  (fn [x] (> x 10))\n  [])",
-                "\n(some\n  (fn [x] (> x 10))\n  nil)",
+                "\n(some\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(some\n  [5 10 15 20]\n  (fn [x] (> x 10)))",
+                "\n(some\n  [1 2 3 4]\n  (fn [x] (> x 10)))",
+                "\n(some\n  []\n  (fn [x] (> x 10)))",
+                "\n(some\n  nil\n  (fn [x] (> x 10)))",
             ],
         },
         'reverse': {
@@ -11135,31 +11010,6 @@ var Playground = (function (exports) {
                 '(nthnext "" 0)',
             ],
         },
-        'cons': {
-            title: 'cons',
-            category: 'Sequence',
-            linkName: 'cons',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['x', 'seq'] },
-            ],
-            description: 'Constructs a new array with $x as first element and $seq as the rest.',
-            examples: [
-                '(cons "Hi" ["Albert" "Mojir" 160 [1 2]])',
-                '(cons "Hi" [])',
-            ],
-        },
         'take': {
             title: 'take',
             category: 'Sequence',
@@ -11218,20 +11068,20 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
             examples: [
-                "\n(take-while\n  (fn [x] (< x 3))\n  [1 2 3 2 1])",
-                "\n(take-while\n  (fn [x] (> x 3))\n  [1 2 3 2 1])",
+                "\n(take-while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
+                "\n(take-while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
             ],
         },
         'drop': {
@@ -11242,22 +11092,22 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                n: {
-                    type: 'integer',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                n: {
+                    type: 'integer',
+                },
             },
             variants: [
-                { argumentNames: ['n', 'seq'] },
+                { argumentNames: ['seq', 'n'] },
             ],
             description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
             examples: [
-                '(drop 3 [1 2 3 4 5])',
-                '(drop 0 [1 2 3 4 5])',
-                '(drop 2 "Albert")',
-                '(drop 50 "Albert")',
+                '(drop [1 2 3 4 5] 3)',
+                '(drop [1 2 3 4 5] 0)',
+                '(drop "Albert" 2)',
+                '(drop "Albert" 50)',
             ],
         },
         'drop-last': {
@@ -11268,20 +11118,20 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                n: {
-                    type: 'integer',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                n: {
+                    type: 'integer',
+                },
             },
             variants: [
-                { argumentNames: ['n', 'seq'] },
+                { argumentNames: ['seq', 'n'] },
             ],
             description: 'Constructs a new array with the $n last elements dropped from $seq.',
             examples: [
-                '(drop-last 3 [1 2 3 4 5])',
-                '(drop-last 0 [1 2 3 4 5])',
+                '(drop-last [1 2 3 4 5] 3)',
+                '(drop-last [1 2 3 4 5] 0)',
             ],
         },
         'drop-while': {
@@ -11292,20 +11142,20 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
             examples: [
-                "\n(drop-while\n  (fn [x] (< x 3))\n  [1 2 3 2 1])",
-                "\n(drop-while\n  (fn [x] (> x 3))\n  [1 2 3 2 1])",
+                "\n(drop-while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
+                "\n(drop-while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
             ],
         },
         'sort': {
@@ -11317,22 +11167,22 @@ var Playground = (function (exports) {
                 array: true,
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
+                },
+                fn: {
+                    type: 'function',
                 },
             },
             variants: [
                 { argumentNames: ['seq'] },
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns a new sequence with the elements from $seq sorted according to $fn. If no $fn is supplied, builtin `compare` will be used.',
             examples: [
                 '(sort [3 1 2])',
-                "\n(sort\n  (fn [a b] (cond (< a b) -1 (> a b) 1 true -1))\n  [3 1 2])",
-                "\n(sort\n  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1))\n  [3 1 2])",
+                "\n(sort\n  [3 1 2]\n  (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)))",
+                "\n(sort\n  [3 1 2]\n  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))",
             ],
         },
         'sort-by': {
@@ -11344,14 +11194,14 @@ var Playground = (function (exports) {
                 array: true,
             },
             args: {
+                seq: {
+                    type: 'sequence',
+                },
                 keyfn: {
                     type: 'function',
                 },
                 comp: {
                     type: 'function',
-                },
-                seq: {
-                    type: 'sequence',
                 },
             },
             variants: [
@@ -11360,82 +11210,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
             examples: [
-                '(sort-by count ["Albert" "Mojir" "Nina"])',
-                '(sort-by lower-case #(compare %2 %1) "Albert")',
-            ],
-        },
-        'random-sample!': {
-            title: 'random-sample!',
-            category: 'Sequence',
-            linkName: 'random-sample_exclamation',
-            clojureDocs: 'random-sample',
-            returns: {
-                type: 'sequence',
-            },
-            args: {
-                prob: {
-                    type: 'number',
-                    description: 'Probability of including an element from $seq. Between 0 and 1.',
-                },
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['prob', 'seq'] },
-            ],
-            description: 'Each element from $seq has the probability $prob to be included in the result.',
-            examples: [
-                '(random-sample! 0.5 [1 2 3 4 5 6 7 8 9 10])',
-                '(random-sample! 0.5 "Albert")',
-            ],
-        },
-        'rand-nth!': {
-            title: 'rand-nth!',
-            category: 'Sequence',
-            linkName: 'rand-nth_exclamation',
-            clojureDocs: 'rand-nth',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns a random element from $seq. Returns `nil` if $seq is empty.',
-            examples: [
-                '(rand-nth! [1 2 3 4 5 6 7 8 9 10])',
-                '(rand-nth! "Albert")',
-                '(rand-nth! [])',
-            ],
-        },
-        'shuffle!': {
-            title: 'shuffle!',
-            category: 'Sequence',
-            linkName: 'shuffle_exclamation',
-            clojureDocs: 'shuffle',
-            returns: {
-                type: 'sequence',
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq'] },
-            ],
-            description: 'Returns a shuffled copy of $seq.',
-            examples: [
-                '(shuffle! [1 2 3 4 5 6 7 8 9 10])',
-                '(shuffle! "Albert Mojir")',
-                '(shuffle! [1 2])',
-                '(shuffle! [1])',
-                '(shuffle! [])',
+                '(sort-by ["Albert" "Mojir" "Nina"] count)',
+                '(sort-by "Albert" lower-case #(compare %2 %1))',
             ],
         },
         'distinct': {
@@ -11469,20 +11245,20 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns a new sequence of items in $seq for witch ``(pred item)`` returns a falsy value.',
             examples: [
-                '(remove even? [1 2 3 1 3 5])',
-                '(remove #(has? "aoueiyAOUEIY" %1) "Albert Mojir")',
+                '(remove [1 2 3 1 3 5] even?)',
+                '(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))',
             ],
         },
         'remove-at': {
@@ -11494,21 +11270,21 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                n: {
-                    type: 'number',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                n: {
+                    type: 'number',
+                },
             },
             variants: [
-                { argumentNames: ['n', 'seq'] },
+                { argumentNames: ['seq', 'n'] },
             ],
             description: 'Returns a new sequence of all items in $seq except item at position $n.',
             examples: [
-                '(remove-at 0 [1 2 3 1 3 5])',
-                '(remove-at -1 [1 2 3 1 3 5])',
-                '(remove-at 6 "Albert Mojir")',
+                '(remove-at [1 2 3 1 3 5] 0)',
+                '(remove-at [1 2 3 1 3 5] -1)',
+                '(remove-at "Albert Mojir" 6)',
             ],
         },
         'split-at': {
@@ -11520,20 +11296,20 @@ var Playground = (function (exports) {
                 array: true,
             },
             args: {
-                n: {
-                    type: 'number',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                n: {
+                    type: 'number',
+                },
             },
             variants: [
-                { argumentNames: ['n', 'seq'] },
+                { argumentNames: ['seq', 'n'] },
             ],
             description: 'Returns a pair of sequence ``[(take pos input) (drop pos input)]``.',
             examples: [
-                '(split-at 2 [1 2 3 4 5])',
-                '(split-at 2 "Albert")',
+                '(split-at [1 2 3 4 5] 2)',
+                '(split-at "Albert" 2)',
             ],
         },
         'split-with': {
@@ -11545,20 +11321,20 @@ var Playground = (function (exports) {
                 array: true,
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns a pair of sequences ``[(take-while fn input) (drop-while fn input)]``.',
             examples: [
-                '(split-with #(> %1 3) [1 2 3 4 5])',
-                '(split-with #(<= %1 :Z) "Albert")',
+                '(split-with [1 2 3 4 5] #(> %1 3))',
+                '(split-with "Albert" #(<= %1 :Z))',
             ],
         },
         'frequencies': {
@@ -11590,20 +11366,20 @@ var Playground = (function (exports) {
                 type: 'object',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
             examples: [
-                '(group-by "name" [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}])',
-                '(group-by (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")) "Albert Mojir")',
+                '(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
+                '(group-by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))',
             ],
         },
         'partition': {
@@ -11614,6 +11390,9 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
+                seq: {
+                    type: 'sequence',
+                },
                 n: {
                     type: 'number',
                 },
@@ -11623,32 +11402,29 @@ var Playground = (function (exports) {
                 pad: {
                     type: 'array',
                 },
-                seq: {
-                    type: 'sequence',
-                },
             },
             variants: [
-                { argumentNames: ['n', 'seq'] },
-                { argumentNames: ['n', 'step', 'seq'] },
-                { argumentNames: ['n', 'step', 'pad', 'seq'] },
+                { argumentNames: ['seq', 'n'] },
+                { argumentNames: ['seq', 'n', 'step'] },
+                { argumentNames: ['seq', 'n', 'step', 'pad'] },
             ],
             description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
             examples: [
-                '(partition 4 (range 20))',
-                '(partition 4 (range 22))',
-                '(partition 4 6 (range 20))',
-                '(partition 4 3 (range 20))',
-                '(partition 3 6 [:a] (range 20))',
-                '(partition 4 6 [:a] (range 20))',
-                '(partition 4 6 [:a :b :c :d] (range 20))',
-                '(partition 3 1 [:a :b :c :d :e :f])',
-                '(partition 10 [1 2 3 4])',
-                '(partition 10 10 [1 2 3 4])',
-                '(partition 10 10 [] [1 2 3 4])',
-                '(partition 10 10 nil [1 2 3 4])',
-                '(partition 5 "superfragilistic")',
-                '(partition 5 5 nil "superfragilistic")',
-                '(def foo [5 6 7 8]) (partition 2 1 foo foo)',
+                '(partition (range 20) 4)',
+                '(partition (range 22) 4)',
+                '(partition (range 20) 4 6)',
+                '(partition (range 20) 4 3)',
+                '(partition (range 20) 3 6 [:a])',
+                '(partition (range 20) 4 6 [:a])',
+                '(partition (range 20) 4 6 [:a :b :c :d])',
+                '(partition [:a :b :c :d :e :f] 3 1)',
+                '(partition [1 2 3 4] 10)',
+                '(partition [1 2 3 4] 10 10)',
+                '(partition [1 2 3 4] 10 10 [])',
+                '(partition [1 2 3 4] 10 10 nil)',
+                '(partition "superfragilistic" 5)',
+                '(partition "superfragilistic" 5 5 nil)',
+                '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
             ],
         },
         'partition-all': {
@@ -11659,25 +11435,25 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
+                seq: {
+                    type: 'sequence',
+                },
                 n: {
                     type: 'number',
                 },
                 step: {
                     type: 'number',
                 },
-                seq: {
-                    type: 'sequence',
-                },
             },
             variants: [
-                { argumentNames: ['n', 'seq'] },
-                { argumentNames: ['n', 'step', 'seq'] },
+                { argumentNames: ['seq', 'n'] },
+                { argumentNames: ['seq', 'n', 'step'] },
             ],
             description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
             examples: [
-                '(partition-all 4 [0 1 2 3 4 5 6 7 8 9])',
-                '(partition 4 [0 1 2 3 4 5 6 7 8 9])',
-                '(partition-all 2 4 [0 1 2 3 4 5 6 7 8 9])',
+                '(partition-all [0 1 2 3 4 5 6 7 8 9] 4)',
+                '(partition [0 1 2 3 4 5 6 7 8 9] 4)',
+                '(partition-all [0 1 2 3 4 5 6 7 8 9] 2 4)',
             ],
         },
         'partition-by': {
@@ -11688,21 +11464,21 @@ var Playground = (function (exports) {
                 type: 'sequence',
             },
             args: {
-                fn: {
-                    type: 'function',
-                },
                 seq: {
                     type: 'sequence',
                 },
+                fn: {
+                    type: 'function',
+                },
             },
             variants: [
-                { argumentNames: ['fn', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
             examples: [
-                '(partition-by #(= 3 %1) [1 2 3 4 5])',
-                '(partition-by odd? [1 1 1 2 2 3 3])',
-                '(partition-by identity "Leeeeeerrroyyy")',
+                '(partition-by [1 2 3 4 5] #(= 3 %1))',
+                '(partition-by [1 1 1 2 2 3 3] odd?)',
+                '(partition-by "Leeeeeerrroyyy" identity)',
             ],
         },
     };
@@ -16141,7 +15917,6 @@ var Playground = (function (exports) {
             'nthrest',
             'next',
             'nthnext',
-            'cons',
             'take',
             'take-last',
             'take-while',
@@ -16150,9 +15925,6 @@ var Playground = (function (exports) {
             'drop-while',
             'sort',
             'sort-by',
-            'random-sample!',
-            'rand-nth!',
-            'shuffle!',
             'distinct',
             'remove',
             'remove-at',

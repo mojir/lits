@@ -170,7 +170,7 @@ export const examples: Example[] = [
   (when (count list)
     (let [entry (first list)]
       (defns (entry 0) [& params &let [templateString (entry 1)]]
-        (apply template (cons templateString params))
+        (apply template (unshift params templateString))
       )
       (recur (rest list))
     )
