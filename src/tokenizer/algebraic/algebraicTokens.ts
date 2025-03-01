@@ -75,6 +75,7 @@ const otherSymbolicOperators = [
   '.', // property accessor
   ',', // item separator
   '=', // property assignment
+  ';', // statement terminator
 ] as const
 
 const symbolicOperators = [

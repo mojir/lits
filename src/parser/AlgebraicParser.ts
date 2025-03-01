@@ -1,15 +1,16 @@
 import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
 import { builtin, specialExpressionKeys } from '../builtin'
-import type { FnNode } from '../builtin/specialExpressions/functions'
+import type { DefNode } from '../builtin/specialExpressions/def'
+import type { DefnNode, FnNode } from '../builtin/specialExpressions/functions'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { ForNode, LoopBindingNode } from '../builtin/specialExpressions/loops'
 import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
-import type { A_OperatorToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
+import type { A_OperatorToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asA_SymbolToken, assertA_OperatorToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_SymbolToken, isFunctionOperator, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
-import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertLBraceToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
@@ -198,6 +199,7 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, r
         token: getTokenDebugData(token) && token,
       }
     /* v8 ignore next 8 */
+    case ';':
     case '!':
     case '~':
     case '=':
@@ -221,16 +223,35 @@ export class AlgebraicParser {
     this.parseState.position += 1
   }
 
-  public parse(): AstNode {
-    return this.parseExpression()
+  public parse(): AstNode[] {
+    const nodes: AstNode[] = []
+    while (!this.isAtEnd()) {
+      nodes.push(this.parseExpression())
+      if (!isA_OperatorToken(this.peek(), ';')) {
+        break
+      }
+      this.advance()
+    }
+    return nodes
   }
 
   private parseExpression(precedence = 0): AstNode {
+    const firstToken = this.peek()
+    if (isA_SymbolToken(firstToken) && firstToken[1] === 'def') {
+      return this.parseDef(firstToken)
+    }
+    if (isA_SymbolToken(firstToken) && firstToken[1] === 'defn') {
+      return this.parseDefn(firstToken)
+    }
+
     let left = this.parseOperand()
+    let operator = this.peek()
 
-    while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
-      const operator = this.peek()
-
+    while (!this.isAtEnd()
+      && !isA_OperatorToken(operator, ',')
+      && !isA_OperatorToken(operator, ';')
+      && !isRBracketToken(operator)
+      && !isRParenToken(operator)) {
       if (isA_BinaryOperatorToken(operator)) {
         const name = operator[1]
         const newPrecedece = getPrecedence(name)
@@ -262,6 +283,8 @@ export class AlgebraicParser {
       else {
         break
       }
+
+      operator = this.peek()
     }
 
     if (!left) {
@@ -514,7 +537,7 @@ export class AlgebraicParser {
     this.advance()
     if (isNamedFunction) {
       if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for'>
+        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn'>
         switch (name) {
           case '??':
           case 'and':
@@ -540,13 +563,11 @@ export class AlgebraicParser {
           }
           case 'let':
             return this.parseLet(symbol, params)
-          case 'def':
           case 'defs':
           case 'if-let':
           case 'when-let':
           case 'when-first':
           case 'fn':
-          case 'defn':
           case 'defns':
           case 'try':
           case 'recur':
@@ -571,6 +592,34 @@ export class AlgebraicParser {
 
   parseLambdaFunction(): AstNode | null {
     const firstToken = this.peek()
+    try {
+      const { functionArguments, arity } = this.parseFunctionArguments()
+
+      if (!isA_OperatorToken(this.peek(), '=>')) {
+        return null
+      }
+      this.advance()
+
+      const body = this.parseExpression()
+
+      return {
+        t: AstNodeType.SpecialExpression,
+        n: 'fn',
+        p: [],
+        o: [{
+          as: functionArguments,
+          b: [body],
+          a: arity,
+        }],
+        token: getTokenDebugData(firstToken) && firstToken,
+      }
+    }
+    catch {
+      return null
+    }
+  }
+
+  parseFunctionArguments(): { functionArguments: FunctionArguments, arity: Arity } {
     this.advance()
     let rest = false
     let letBindingObject: AstNode | undefined
@@ -593,7 +642,7 @@ export class AlgebraicParser {
         }
         const symbolToken = this.peek()
         if (!isA_SymbolToken(symbolToken)) {
-          return null
+          throw new LitsError('Expected symbol', getTokenDebugData(this.peek())?.sourceCodeInfo)
         }
         if (rest) {
           restArg = symbolToken[1]
@@ -604,48 +653,38 @@ export class AlgebraicParser {
         this.advance()
       }
       if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-        return null
+        throw new LitsError('Expected comma or closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
       if (isA_OperatorToken(this.peek(), ',')) {
         this.advance()
       }
     }
-    if (!isRParenToken(this.peek())) {
-      return null
-    }
-    this.advance()
-    if (!isA_OperatorToken(this.peek(), '=>')) {
-      return null
-    }
-    this.advance()
-    const letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : []
-    const body = this.parseExpression()
     const arity: Arity = restArg !== undefined ? { min: args.length } : args.length
+    if (!isRParenToken(this.peek())) {
+      throw new LitsError('Expected closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
+    }
+    const letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : []
+    const functionArguments: FunctionArguments = {
+      m: args,
+      r: restArg,
+      b: letBindings.map((pair) => {
+        const key = pair[0] as StringNode
+        const value = pair[1] as AstNode
+        return {
+          t: AstNodeType.Binding,
+          n: key.v,
+          v: value,
+          p: [],
+          token: getTokenDebugData(key.token) && key.token,
+        }
+      }),
+    }
+
+    this.advance()
 
     return {
-      t: AstNodeType.SpecialExpression,
-      n: 'fn',
-      p: [],
-      o: [{
-        as: {
-          m: args,
-          r: restArg,
-          b: letBindings.map((pair) => {
-            const key = pair[0] as StringNode
-            const value = pair[1] as AstNode
-            return {
-              t: AstNodeType.Binding,
-              n: key.v,
-              v: value,
-              p: [],
-              token: getTokenDebugData(key.token) && key.token,
-            }
-          }),
-        },
-        b: [body],
-        a: arity,
-      }],
-      token: getTokenDebugData(firstToken) && firstToken,
+      functionArguments,
+      arity,
     }
   }
 
@@ -868,6 +907,54 @@ export class AlgebraicParser {
       token: getTokenDebugData(firstToken) && firstToken,
     }
     return node
+  }
+
+  parseDef(token: A_SymbolToken): DefNode {
+    this.advance()
+    const symbol = parseSymbol(this.tokenStream, this.parseState)
+    assertA_OperatorToken(this.peek(), '=')
+    this.advance()
+    const value = this.parseExpression()
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'def',
+      p: [symbol, value],
+      token: getTokenDebugData(token) && token,
+    }
+  }
+
+  parseDefn(token: A_SymbolToken): DefnNode {
+    this.advance()
+    const symbol = parseSymbol(this.tokenStream, this.parseState)
+    const { functionArguments, arity } = this.parseFunctionArguments()
+    assertLBraceToken(this.peek())
+    this.advance()
+
+    const body: AstNode[] = []
+
+    while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+      body.push(this.parseExpression())
+      if (isA_OperatorToken(this.peek(), ';')) {
+        this.advance()
+      }
+    }
+    if (!isRBraceToken(this.peek())) {
+      throw new LitsError('Expected closing brace', getTokenDebugData(this.peek())?.sourceCodeInfo)
+    }
+    this.advance()
+
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'defn',
+      f: symbol,
+      p: [],
+      o: [{
+        as: functionArguments,
+        b: body,
+        a: arity,
+      }],
+      token: getTokenDebugData(token) && token,
+    }
   }
 
   private isAtEnd(): boolean {

@@ -357,10 +357,18 @@ export function parsePolishToken(tokenStream: TokenStream, parseState: ParseStat
       parseState.position += 1
       parseState.algebraic = true
       const algebraicParser = new AlgebraicParser(tokenStream, parseState)
-      const node = algebraicParser.parse()
+      const nodes = algebraicParser.parse()
       assertEndNotationToken(tokenStream.tokens[parseState.position++])
       parseState.algebraic = false
-      return node
+      if (nodes.length === 1) {
+        return nodes[0]!
+      }
+      return {
+        t: AstNodeType.SpecialExpression,
+        n: 'do',
+        p: nodes,
+        token: nodes[0]!.token,
+      }
     }
     case 'PolNotation': {
       const astNodes: AstNode[] = []

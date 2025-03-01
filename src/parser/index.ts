@@ -1,3 +1,4 @@
+import { AstNodeType } from '../constants/constants'
 import { isA_CommentToken, isA_MultiLineCommentToken, isA_WhitespaceToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { isP_CommentToken, isP_WhitespaceToken } from '../tokenizer/polish/polishTokens'
@@ -45,7 +46,16 @@ function removeUnnecessaryTokens(tokenStream: TokenStream): TokenStream {
 export function parseToken(tokenStream: TokenStream, parseState: ParseState): AstNode {
   if (parseState.algebraic) {
     const algebraicParser = new AlgebraicParser(tokenStream, parseState)
-    return algebraicParser.parse()
+    const nodes = algebraicParser.parse()
+    if (nodes.length === 1) {
+      return nodes[0]!
+    }
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'do',
+      p: nodes,
+      token: nodes[0]!.token,
+    }
   }
 
   return parsePolishToken(tokenStream, parseState)

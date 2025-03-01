@@ -906,6 +906,7 @@ var Playground = (function (exports) {
         '.', // property accessor
         ',', // item separator
         '=', // property assignment
+        ';', // statement terminator
     ];
     var symbolicOperators = __spreadArray(__spreadArray(__spreadArray([], __read(symbolicUnaryOperators), false), __read(symbolicBinaryOperators), false), __read(otherSymbolicOperators), false);
     var nonFunctionOperators = [
@@ -7646,6 +7647,7 @@ var Playground = (function (exports) {
                     token: getTokenDebugData(token) && token,
                 };
             /* v8 ignore next 8 */
+            case ';':
             case '!':
             case '~':
             case '=':
@@ -7666,14 +7668,33 @@ var Playground = (function (exports) {
             this.parseState.position += 1;
         };
         AlgebraicParser.prototype.parse = function () {
-            return this.parseExpression();
+            var nodes = [];
+            while (!this.isAtEnd()) {
+                nodes.push(this.parseExpression());
+                if (!isA_OperatorToken(this.peek(), ';')) {
+                    break;
+                }
+                this.advance();
+            }
+            return nodes;
         };
         AlgebraicParser.prototype.parseExpression = function (precedence) {
             var _a;
             if (precedence === void 0) { precedence = 0; }
+            var firstToken = this.peek();
+            if (isA_SymbolToken(firstToken) && firstToken[1] === 'def') {
+                return this.parseDef(firstToken);
+            }
+            if (isA_SymbolToken(firstToken) && firstToken[1] === 'defn') {
+                return this.parseDefn(firstToken);
+            }
             var left = this.parseOperand();
-            while (!this.isAtEnd() && !isA_OperatorToken(this.peek(), ',') && !isRBracketToken(this.peek()) && !isRParenToken(this.peek())) {
-                var operator = this.peek();
+            var operator = this.peek();
+            while (!this.isAtEnd()
+                && !isA_OperatorToken(operator, ',')
+                && !isA_OperatorToken(operator, ';')
+                && !isRBracketToken(operator)
+                && !isRParenToken(operator)) {
                 if (isA_BinaryOperatorToken(operator)) {
                     var name_1 = operator[1];
                     var newPrecedece = getPrecedence(name_1);
@@ -7703,6 +7724,7 @@ var Playground = (function (exports) {
                 else {
                     break;
                 }
+                operator = this.peek();
             }
             if (!left) {
                 throw new LitsError('Expected operand', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
@@ -7949,13 +7971,11 @@ var Playground = (function (exports) {
                         }
                         case 'let':
                             return this.parseLet(symbol, params);
-                        case 'def':
                         case 'defs':
                         case 'if-let':
                         case 'when-let':
                         case 'when-first':
                         case 'fn':
-                        case 'defn':
                         case 'defns':
                         case 'try':
                         case 'recur':
@@ -7978,8 +7998,32 @@ var Playground = (function (exports) {
             }
         };
         AlgebraicParser.prototype.parseLambdaFunction = function () {
-            var _a, _b;
             var firstToken = this.peek();
+            try {
+                var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
+                if (!isA_OperatorToken(this.peek(), '=>')) {
+                    return null;
+                }
+                this.advance();
+                var body = this.parseExpression();
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'fn',
+                    p: [],
+                    o: [{
+                            as: functionArguments,
+                            b: [body],
+                            a: arity,
+                        }],
+                    token: getTokenDebugData(firstToken) && firstToken,
+                };
+            }
+            catch (_b) {
+                return null;
+            }
+        };
+        AlgebraicParser.prototype.parseFunctionArguments = function () {
+            var _a, _b, _c, _d, _e;
             this.advance();
             var rest = false;
             var letBindingObject;
@@ -8002,7 +8046,7 @@ var Playground = (function (exports) {
                     }
                     var symbolToken = this.peek();
                     if (!isA_SymbolToken(symbolToken)) {
-                        return null;
+                        throw new LitsError('Expected symbol', (_c = getTokenDebugData(this.peek())) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                     }
                     if (rest) {
                         restArg = symbolToken[1];
@@ -8013,47 +8057,36 @@ var Playground = (function (exports) {
                     this.advance();
                 }
                 if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-                    return null;
+                    throw new LitsError('Expected comma or closing parenthesis', (_d = getTokenDebugData(this.peek())) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
                 }
                 if (isA_OperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
             }
-            if (!isRParenToken(this.peek())) {
-                return null;
-            }
-            this.advance();
-            if (!isA_OperatorToken(this.peek(), '=>')) {
-                return null;
-            }
-            this.advance();
-            var letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : [];
-            var body = this.parseExpression();
             var arity = restArg !== undefined ? { min: args.length } : args.length;
+            if (!isRParenToken(this.peek())) {
+                throw new LitsError('Expected closing parenthesis', (_e = getTokenDebugData(this.peek())) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+            }
+            var letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : [];
+            var functionArguments = {
+                m: args,
+                r: restArg,
+                b: letBindings.map(function (pair) {
+                    var key = pair[0];
+                    var value = pair[1];
+                    return {
+                        t: AstNodeType.Binding,
+                        n: key.v,
+                        v: value,
+                        p: [],
+                        token: getTokenDebugData(key.token) && key.token,
+                    };
+                }),
+            };
+            this.advance();
             return {
-                t: AstNodeType.SpecialExpression,
-                n: 'fn',
-                p: [],
-                o: [{
-                        as: {
-                            m: args,
-                            r: restArg,
-                            b: letBindings.map(function (pair) {
-                                var key = pair[0];
-                                var value = pair[1];
-                                return {
-                                    t: AstNodeType.Binding,
-                                    n: key.v,
-                                    v: value,
-                                    p: [],
-                                    token: getTokenDebugData(key.token) && key.token,
-                                };
-                            }),
-                        },
-                        b: [body],
-                        a: arity,
-                    }],
-                token: getTokenDebugData(firstToken) && firstToken,
+                functionArguments: functionArguments,
+                arity: arity,
             };
         };
         AlgebraicParser.prototype.parseShorthandLamdaFunction = function () {
@@ -8244,6 +8277,50 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(firstToken) && firstToken,
             };
             return node;
+        };
+        AlgebraicParser.prototype.parseDef = function (token) {
+            this.advance();
+            var symbol = parseSymbol(this.tokenStream, this.parseState);
+            assertA_OperatorToken(this.peek(), '=');
+            this.advance();
+            var value = this.parseExpression();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'def',
+                p: [symbol, value],
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        AlgebraicParser.prototype.parseDefn = function (token) {
+            var _a;
+            this.advance();
+            var symbol = parseSymbol(this.tokenStream, this.parseState);
+            var _b = this.parseFunctionArguments(), functionArguments = _b.functionArguments, arity = _b.arity;
+            assertLBraceToken(this.peek());
+            this.advance();
+            var body = [];
+            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+                body.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+            }
+            if (!isRBraceToken(this.peek())) {
+                throw new LitsError('Expected closing brace', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'defn',
+                f: symbol,
+                p: [],
+                o: [{
+                        as: functionArguments,
+                        b: body,
+                        a: arity,
+                    }],
+                token: getTokenDebugData(token) && token,
+            };
         };
         AlgebraicParser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
@@ -8534,10 +8611,18 @@ var Playground = (function (exports) {
                 parseState.position += 1;
                 parseState.algebraic = true;
                 var algebraicParser = new AlgebraicParser(tokenStream, parseState);
-                var node = algebraicParser.parse();
+                var nodes = algebraicParser.parse();
                 assertEndNotationToken(tokenStream.tokens[parseState.position++]);
                 parseState.algebraic = false;
-                return node;
+                if (nodes.length === 1) {
+                    return nodes[0];
+                }
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: nodes,
+                    token: nodes[0].token,
+                };
             }
             case 'PolNotation': {
                 var astNodes = [];
@@ -8604,7 +8689,16 @@ var Playground = (function (exports) {
     function parseToken(tokenStream, parseState) {
         if (parseState.algebraic) {
             var algebraicParser = new AlgebraicParser(tokenStream, parseState);
-            return algebraicParser.parse();
+            var nodes = algebraicParser.parse();
+            if (nodes.length === 1) {
+                return nodes[0];
+            }
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'do',
+                p: nodes,
+                token: nodes[0].token,
+            };
         }
         return parsePolishToken(tokenStream, parseState);
     }
@@ -8694,13 +8788,10 @@ var Playground = (function (exports) {
         'false': { value: false },
         'nil': { value: null },
         'null': { value: null },
-        'def': { value: null, forbidden: true },
-        'defs': { value: null, forbidden: true },
         'if-let': { value: null, forbidden: true },
         'when-let': { value: null, forbidden: true },
         'when-first': { value: null, forbidden: true },
         'fn': { value: null, forbidden: true },
-        'defn': { value: null, forbidden: true },
         'defns': { value: null, forbidden: true },
         'try': { value: null, forbidden: true },
         'recur': { value: null, forbidden: true },
