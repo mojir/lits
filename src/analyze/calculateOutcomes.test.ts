@@ -113,24 +113,24 @@ describe('calculateOutcomes.', () => {
 
   describe('calculateIfNotOutcomes.', () => {
     testSamples([
-      ['(if-not true "heads" "tails")', ['tails']],
-      ['(if-not false "heads" "tails")', ['heads']],
-      ['(if-not true "heads")', [null]],
-      ['(if-not false "heads")', ['heads']],
-      ['(if-not foo "heads" "tails")', ['heads', 'tails']],
-      ['(if-not x "heads" "tails")', ['heads', 'tails']],
-      [`(if-not x
-          (if-not y 1 2)
-          (if-not y 3 4))`, [1, 2, 3, 4]],
+      ['(if_not true "heads" "tails")', ['tails']],
+      ['(if_not false "heads" "tails")', ['heads']],
+      ['(if_not true "heads")', [null]],
+      ['(if_not false "heads")', ['heads']],
+      ['(if_not foo "heads" "tails")', ['heads', 'tails']],
+      ['(if_not x "heads" "tails")', ['heads', 'tails']],
+      [`(if_not x
+          (if_not y 1 2)
+          (if_not y 3 4))`, [1, 2, 3, 4]],
     ])
   })
 
   describe('calculateIfLetOutcomes.', () => {
     testSamples([
-      ['(if-let [x true] x 0)', [true]],
-      ['(if-let [x false] x 0)', [0]],
-      ['(if-let [x foo] x 0)', null],
-      ['(if-let [x foo] 1 0)', [1, 0]],
+      ['(if_let [x true] x 0)', [true]],
+      ['(if_let [x false] x 0)', [0]],
+      ['(if_let [x foo] x 0)', null],
+      ['(if_let [x foo] 1 0)', [1, 0]],
     ])
   })
 
@@ -148,8 +148,8 @@ describe('calculateOutcomes.', () => {
       [`(let [foo (if x 1 2)]
           (if (not foo) 1 2)
         )`, [2]],
-      [`(let [foo (if-not x 1 2)]
-          (if-not (not foo) 1 2)
+      [`(let [foo (if_not x 1 2)]
+          (if_not (not foo) 1 2)
       )`, [1]],
     ])
   })
@@ -224,10 +224,10 @@ describe('calculateOutcomes.', () => {
 
   describe('calculateWhenFirstOutcomes.', () => {
     testSamples([
-      ['(when-first [x [true false]] x 1)', [1]],
-      ['(when-first [x [true false]] 1 x)', [true]],
-      ['(when-first [x [(if y 1 2) false]] 0 x)', [1, 2]],
-      ['(when-first [x [y false]] 0 x)', null],
+      ['(when_first [x [true false]] x 1)', [1]],
+      ['(when_first [x [true false]] 1 x)', [true]],
+      ['(when_first [x [(if y 1 2) false]] 0 x)', [1, 2]],
+      ['(when_first [x [y false]] 0 x)', null],
     ])
   })
 
@@ -242,19 +242,19 @@ describe('calculateOutcomes.', () => {
 
   describe('calculateWhenNotOutcomes.', () => {
     testSamples([
-      ['(when-not false 0 1)', [1]],
-      ['(when-not true 0 1)', [null]],
-      ['(when-not foo 0 1)', [1, null]],
-      ['(when-not foo 0 (if x 1 2))', [1, 2, null]],
+      ['(when_not false 0 1)', [1]],
+      ['(when_not true 0 1)', [null]],
+      ['(when_not foo 0 1)', [1, null]],
+      ['(when_not foo 0 (if x 1 2))', [1, 2, null]],
     ])
   })
 
   describe('calculateWhenLetOutcomes.', () => {
     testSamples([
-      ['(when-let [x true] 0 x)', [true]],
-      ['(when-let [x false] 0 x)', [null]],
-      ['(when-let [x foo] 0 x)', null],
-      ['(when-let [x foo] 0 1)', [1, null]],
+      ['(when_let [x true] 0 x)', [true]],
+      ['(when_let [x false] 0 x)', [null]],
+      ['(when_let [x foo] 0 x)', null],
+      ['(when_let [x foo] 0 1)', [1, null]],
 
     ])
   })
@@ -272,21 +272,21 @@ describe('calculateOutcomes.', () => {
             ([x] "One parameter")
             ([x y] "Two parameters")
             ([x y z] "Three parameters")
-            ([x y z zz & rest] "Four or more parameters"))
+            ([x y z zz &rest rest] "Four or more parameters"))
           (foo)`, ['No parameters', '0 parameters']],
         [`(defn foo
             ([] (if x "No parameters" "0 parameters"))
             ([x] "One parameter")
             ([x y] "Two parameters")
             ([x y z] "Three parameters")
-            ([x y z zz & rest] "Four or more parameters"))
+            ([x y z zz &rest rest] "Four or more parameters"))
           (foo 1 2)`, ['Two parameters']],
         [`(defn foo
             ([] (if x "No parameters" "0 parameters"))
             ([x] "One parameter")
             ([x y] "Two parameters")
             ([x y z] "Three parameters")
-            ([x y z zz & rest] (if bar "Four or more parameters" "Many parameters")))
+            ([x y z zz &rest rest] (if bar "Four or more parameters" "Many parameters")))
           (foo 1 2 3 4 5 6)`, ['Four or more parameters', 'Many parameters']],
         [`(defn foo
           ([x y] "Two parameters")
@@ -305,21 +305,21 @@ describe('calculateOutcomes.', () => {
           ([x] "One parameter")
           ([x y] "Two parameters")
           ([x y z] "Three parameters")
-          ([x y z zz & rest] "Four or more parameters"))
+          ([x y z zz &rest rest] "Four or more parameters"))
         (foo)`, ['No parameters', '0 parameters']],
         [`(defns :foo
           ([] (if x "No parameters" "0 parameters"))
           ([x] "One parameter")
           ([x y] "Two parameters")
           ([x y z] "Three parameters")
-          ([x y z zz & rest] "Four or more parameters"))
+          ([x y z zz &rest rest] "Four or more parameters"))
         (foo 1 2)`, ['Two parameters']],
         [`(defns (str :f :o :o)
           ([] (if x "No parameters" "0 parameters"))
           ([x] "One parameter")
           ([x y] "Two parameters")
           ([x y z] "Three parameters")
-          ([x y z zz & rest] (if foo "Four or more parameters" "Many parameters")))
+          ([x y z zz &rest rest] (if foo "Four or more parameters" "Many parameters")))
         (foo 1 2 3 4 5 6)`, ['Four or more parameters', 'Many parameters']],
       ])
     })
@@ -333,19 +333,19 @@ describe('calculateOutcomes.', () => {
           ([x] "One parameter")
           ([x y] "Two parameters")
           ([x y z] "Three parameters")
-          ([x y z zz & rest] "Four or more parameters")))`, ['No parameters', '0 parameters']],
+          ([x y z zz &rest rest] "Four or more parameters")))`, ['No parameters', '0 parameters']],
         [`((fn
           ([] (if x "No parameters" "0 parameters"))
           ([x] "One parameter")
           ([x y] "Two parameters")
           ([x y z] "Three parameters")
-          ([x y z zz & rest] "Four or more parameters")) 1 2)`, ['Two parameters']],
+          ([x y z zz &rest rest] "Four or more parameters")) 1 2)`, ['Two parameters']],
         [`((fn
           ([] (if x "No parameters" "0 parameters"))
           ([x] "One parameter")
           ([x y] "Two parameters")
           ([x y z] "Three parameters")
-          ([x y z zz & rest] (if foo "Four or more parameters" "Many parameters"))) 1 2 3 4 5 6)`, ['Four or more parameters', 'Many parameters']],
+          ([x y z zz &rest rest] (if foo "Four or more parameters" "Many parameters"))) 1 2 3 4 5 6)`, ['Four or more parameters', 'Many parameters']],
       ])
     })
   })

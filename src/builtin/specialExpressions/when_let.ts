@@ -10,7 +10,7 @@ import { asNonUndefined } from '../../typeGuards'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
-export interface WhenLetNode extends CommonSpecialExpressionNode<'when-let'> {
+export interface WhenLetNode extends CommonSpecialExpressionNode<'when_let'> {
   b: BindingNode
 }
 
@@ -30,7 +30,7 @@ export const whenLetSpecialExpression: BuiltinSpecialExpression<Any, WhenLetNode
 
     const node: WhenLetNode = {
       t: AstNodeType.SpecialExpression,
-      n: 'when-let',
+      n: 'when_let',
       b: asNonUndefined(bindings[0], getTokenDebugData(firstToken)?.sourceCodeInfo),
       p: params,
       token: getTokenDebugData(firstToken) && firstToken,

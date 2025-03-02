@@ -186,25 +186,10 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(write! nil true false)',
     ],
   },
-  'inst-ms!': {
-    title: 'inst-ms!',
+  'iso_date>epoch': {
+    title: 'iso_date>epoch',
     category: 'Misc',
-    linkName: 'inst-ms-exclamation',
-    clojureDocs: 'inst-ms',
-    returns: {
-      type: 'number',
-    },
-    args: {},
-    variants: [
-      { argumentNames: [] },
-    ],
-    description: 'Returns milliseconds elapsed since the UNIX epoch.',
-    examples: ['(inst-ms!)'],
-  },
-  'iso-date-time->inst-ms': {
-    title: 'iso-date-time->inst-ms',
-    category: 'Misc',
-    linkName: 'iso-date-time--gtinst-ms',
+    linkName: 'iso_date-gtepoch',
     returns: {
       type: 'number',
     },
@@ -218,14 +203,14 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
     examples: [
-      '(iso-date-time->inst-ms "2022-04-12T09:37:10.899Z")',
-      '(iso-date-time->inst-ms "1980-01-01")',
+      '(iso_date>epoch "2022-04-12T09:37:10.899Z")',
+      '(iso_date>epoch "1980-01-01")',
     ],
   },
-  'inst-ms->iso-date-time': {
-    title: 'inst-ms->iso-date-time',
+  'epoch>iso_date': {
+    title: 'epoch>iso_date',
     category: 'Misc',
-    linkName: 'inst-ms--gtiso-date-time',
+    linkName: 'epoch-gtiso_date',
     returns: {
       type: 'string',
     },
@@ -239,8 +224,8 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
     examples: [
-      '(inst-ms->iso-date-time 1649756230899)',
-      '(inst-ms->iso-date-time 0)',
+      '(epoch>iso_date 1649756230899)',
+      '(epoch>iso_date 0)',
     ],
   },
   'boolean': {
@@ -296,20 +281,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(compare + -)',
     ],
   },
-  'lits-version!': {
-    title: 'lits-version!',
-    category: 'Misc',
-    linkName: 'lits-version-exclamation',
-    returns: {
-      type: 'string',
-    },
-    args: {},
-    variants: [
-      { argumentNames: [] },
-    ],
-    description: 'Returns the lits version.',
-    examples: ['(lits-version!)'],
-  },
   'uuid!': {
     title: 'uuid!',
     category: 'Misc',
@@ -353,10 +324,10 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(equal? 0.3 (+ 0.1 0.2))',
     ],
   },
-  'json-parse': {
-    title: 'json-parse',
+  'json_parse': {
+    title: 'json_parse',
     category: 'Misc',
-    linkName: 'json-parse',
+    linkName: 'json_parse',
     clojureDocs: null,
     returns: {
       type: 'any',
@@ -371,13 +342,13 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns `JSON.parse(`$x`)`.',
     examples: [
-      '(json-parse "[1, 2, 3]")',
+      '(json_parse "[1, 2, 3]")',
     ],
   },
-  'json-stringify': {
-    title: 'json-stringify',
+  'json_stringify': {
+    title: 'json_stringify',
     category: 'Misc',
-    linkName: 'json-stringify',
+    linkName: 'json_stringify',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -397,8 +368,8 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
     examples: [
-      '(json-stringify [1, 2, 3])',
-      '(json-stringify {:a {:b 10}} 2)',
+      '(json_stringify [1, 2, 3])',
+      '(json_stringify {:a {:b 10}} 2)',
     ],
   },
 }

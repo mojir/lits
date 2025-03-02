@@ -1,4 +1,4 @@
-import type { IfNotNode } from '../../builtin/specialExpressions/if-not'
+import type { IfNotNode } from '../../builtin/specialExpressions/if_not'
 import type { CalculatePossibleAstNodesHelper } from '.'
 
 export const calculateIfNotOutcomes: CalculatePossibleAstNodesHelper<IfNotNode> = ({
@@ -15,7 +15,7 @@ export const calculateIfNotOutcomes: CalculatePossibleAstNodesHelper<IfNotNode> 
   if (isAstComputable(condition)) {
     return combinateAstNodes(astNode.p)
       .map(p => ({
-        n: 'if-not',
+        n: 'if_not',
         t: astNode.t,
         p,
         token: astNode.token,

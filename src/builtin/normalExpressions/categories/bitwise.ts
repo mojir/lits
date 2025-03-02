@@ -3,7 +3,7 @@ import { assertNumberOfParams } from '../../../typeGuards'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const bitwiseNormalExpression: BuiltinNormalExpressions = {
-  'bit-shift-left': {
+  '<<': {
     evaluate: ([num, count], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -12,7 +12,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'bit-shift-right': {
+  '>>': {
     evaluate: ([num, count], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -21,7 +21,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'unsigned-bit-shift-right': {
+  '>>>': {
     evaluate: ([num, count], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -30,14 +30,14 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'bit-not': {
+  '~': {
     evaluate: ([num], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       return ~num
     },
     validate: node => assertNumberOfParams(1, node),
   },
-  'bit-and': {
+  '&': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo, { integer: true })
 
@@ -48,7 +48,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2 }, node),
   },
-  'bit-and-not': {
+  '&!': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo, { integer: true })
 
@@ -59,7 +59,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2 }, node),
   },
-  'bit-or': {
+  '|': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo, { integer: true })
 
@@ -70,7 +70,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2 }, node),
   },
-  'bit-xor': {
+  '^': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo, { integer: true })
 
@@ -81,7 +81,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 2 }, node),
   },
-  'bit-flip': {
+  'bit_flip': {
     evaluate: ([num, index], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -91,7 +91,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'bit-set': {
+  'bit_set': {
     evaluate: ([num, index], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -101,7 +101,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'bit-clear': {
+  'bit_clear': {
     evaluate: ([num, index], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -111,7 +111,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(2, node),
   },
-  'bit-test': {
+  'bit_test': {
     evaluate: ([num, index], sourceCodeInfo): boolean => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })

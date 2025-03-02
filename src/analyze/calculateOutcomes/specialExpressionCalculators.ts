@@ -8,8 +8,8 @@ import type { DefsNode } from '../../builtin/specialExpressions/defs'
 import type { DoNode } from '../../builtin/specialExpressions/do'
 import type { DefnNode, DefnsNode, FnNode } from '../../builtin/specialExpressions/functions'
 import type { IfNode } from '../../builtin/specialExpressions/if'
-import type { IfLetNode } from '../../builtin/specialExpressions/if-let'
-import type { IfNotNode } from '../../builtin/specialExpressions/if-not'
+import type { IfLetNode } from '../../builtin/specialExpressions/if_let'
+import type { IfNotNode } from '../../builtin/specialExpressions/if_not'
 import type { LetNode } from '../../builtin/specialExpressions/let'
 import type { LoopNode } from '../../builtin/specialExpressions/loop'
 import type { DoSeqNode, ForNode } from '../../builtin/specialExpressions/loops'
@@ -20,9 +20,9 @@ import type { ThrowNode } from '../../builtin/specialExpressions/throw'
 import type { TimeNode } from '../../builtin/specialExpressions/time'
 import type { TryNode } from '../../builtin/specialExpressions/try'
 import type { WhenNode } from '../../builtin/specialExpressions/when'
-import type { WhenFirstNode } from '../../builtin/specialExpressions/when-first'
-import type { WhenLetNode } from '../../builtin/specialExpressions/when-let'
-import type { WhenNotNode } from '../../builtin/specialExpressions/when-not'
+import type { WhenFirstNode } from '../../builtin/specialExpressions/when_first'
+import type { WhenLetNode } from '../../builtin/specialExpressions/when_let'
+import type { WhenNotNode } from '../../builtin/specialExpressions/when_not'
 import type { AstNode } from '../../parser/interface'
 import { calculateAndOutcomes } from './calculateAndOutcomes'
 import { calculateCondOutcomes } from './calculateCondOutcomes'
@@ -63,9 +63,9 @@ export const specialExpressionCalculator = {
   'doseq': (astNode: DoSeqNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateDoSeqOutcomes({ astNode, ...helperOptions }),
   'fn': (astNode: FnNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateFnOutcomes({ astNode, ...helperOptions }),
   'for': (astNode: ForNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateForOutcomes({ astNode, ...helperOptions }),
-  'if-let': (astNode: IfLetNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateIfLetOutcomes({ astNode, ...helperOptions }),
+  'if_let': (astNode: IfLetNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateIfLetOutcomes({ astNode, ...helperOptions }),
   'if': (astNode: IfNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateIfOutcomes({ astNode, ...helperOptions }),
-  'if-not': (astNode: IfNotNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateIfNotOutcomes({ astNode, ...helperOptions }),
+  'if_not': (astNode: IfNotNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateIfNotOutcomes({ astNode, ...helperOptions }),
   'let': (astNode: LetNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateLetOutcomes({ astNode, ...helperOptions }),
   'loop': (astNode: LoopNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateLoopOutcomes({ astNode, ...helperOptions }),
   'or': (astNode: OrNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateOrOutcomes({ astNode, ...helperOptions }),
@@ -74,9 +74,9 @@ export const specialExpressionCalculator = {
   'time!': (astNode: TimeNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateTimeOutcomes({ astNode, ...helperOptions }),
   'throw': (astNode: ThrowNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateThrowOutcomes({ astNode, ...helperOptions }),
   'try': (astNode: TryNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateTryOutcomes({ astNode, ...helperOptions }),
-  'when-first': (astNode: WhenFirstNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenFirstOutcomes({ astNode, ...helperOptions }),
-  'when-let': (astNode: WhenLetNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenLetOutcomes({ astNode, ...helperOptions }),
+  'when_first': (astNode: WhenFirstNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenFirstOutcomes({ astNode, ...helperOptions }),
+  'when_let': (astNode: WhenLetNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenLetOutcomes({ astNode, ...helperOptions }),
   'when': (astNode: WhenNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenOutcomes({ astNode, ...helperOptions }),
-  'when-not': (astNode: WhenNotNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenNotOutcomes({ astNode, ...helperOptions }),
+  'when_not': (astNode: WhenNotNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenNotOutcomes({ astNode, ...helperOptions }),
 
 } satisfies Record<SpecialExpressionName, unknown>

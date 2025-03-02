@@ -170,10 +170,10 @@ If no arguments are provided \`nil\` is returned.`,
       '(merge (object :x 10) (object :x 15 :y 20))',
     ],
   },
-  'merge-with': {
-    title: 'merge-with',
+  'merge_with': {
+    title: 'merge_with',
     category: 'Object',
-    linkName: 'merge-with',
+    linkName: 'merge_with',
     returns: {
       type: 'object',
     },
@@ -195,9 +195,9 @@ If two keys appears in more than one object $fn is used to calculate the new val
 
 If no arguments are provided \`nil\` is returned.`,
     examples: [
-      '(merge-with (object :x 10) (object :y 20) +)',
-      '(merge-with (object :x 10) (object :x 15 :y 20) +)',
-      '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
+      '(merge_with (object :x 10) (object :y 20) +)',
+      '(merge_with (object :x 10) (object :x 15 :y 20) +)',
+      '(merge_with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
     ],
   },
   'zipmap': {
@@ -227,10 +227,10 @@ If no arguments are provided \`nil\` is returned.`,
       '(zipmap [] [10 nil [1 2 3]])',
     ],
   },
-  'select-keys': {
-    title: 'select-keys',
+  'select_keys': {
+    title: 'select_keys',
     category: 'Object',
-    linkName: 'select-keys',
+    linkName: 'select_keys',
     returns: {
       type: 'object',
     },
@@ -248,8 +248,8 @@ If no arguments are provided \`nil\` is returned.`,
     ],
     description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
     examples: [
-      '(select-keys {:a 1 :b 2 :c 3} [:a :b])',
-      '(select-keys {:a 1} [:a :b])',
+      '(select_keys {:a 1 :b 2 :c 3} [:a :b])',
+      '(select_keys {:a 1} [:a :b])',
     ],
   },
 }

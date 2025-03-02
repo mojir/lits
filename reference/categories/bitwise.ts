@@ -1,10 +1,11 @@
 import type { BitwiseApiName } from '../api.ts'
 import type { FunctionReference } from '../index.ts'
 
-export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise'>> = { 'bit-shift-left': {
-  title: 'bit-shift-left',
+export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise'>> = { '<<': {
+  title: '<<',
   category: 'Bitwise',
-  linkName: 'bit-shift-left',
+  linkName: '-lt-lt',
+  clojureDocs: 'bit-shift-left',
   returns: {
     type: 'integer',
   },
@@ -20,11 +21,12 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Shifts $x arithmetically left by $n bit positions.',
-  examples: ['(bit-shift-left 1 10)', '(bit-shift-left -4 2)'],
-}, 'bit-shift-right': {
-  title: 'bit-shift-right',
+  examples: ['(<< 1 10)', '(<< -4 2)'],
+}, '>>': {
+  title: '>>',
   category: 'Bitwise',
-  linkName: 'bit-shift-right',
+  linkName: '-gt-gt',
+  clojureDocs: 'bit-shift-right',
   returns: {
     type: 'integer',
   },
@@ -40,11 +42,12 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Shifts $x arithmetically right by $n bit positions.',
-  examples: ['(bit-shift-right 2048 10)', '(bit-shift-right 4 10)'],
-}, 'unsigned-bit-shift-right': {
-  title: 'unsigned-bit-shift-right',
+  examples: ['(>> 2048 10)', '(>> 4 10)'],
+}, '>>>': {
+  title: '>>>',
   category: 'Bitwise',
-  linkName: 'unsigned-bit-shift-right',
+  linkName: '-gt-gt-gt',
+  clojureDocs: 'unsigned-bit-shift-right',
   returns: {
     type: 'integer',
   },
@@ -60,11 +63,12 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Shifts $x arithmetically right by $n bit positions without sign extension.',
-  examples: ['(unsigned-bit-shift-right 2048 10)', '(unsigned-bit-shift-right 4 10)', '(unsigned-bit-shift-right -1 10)'],
-}, 'bit-not': {
-  title: 'bit-not',
+  examples: ['(>>> 2048 10)', '(>>> 4 10)', '(>>> -1 10)'],
+}, '~': {
+  title: '~',
   category: 'Bitwise',
-  linkName: 'bit-not',
+  linkName: '-tilde',
+  clojureDocs: 'bit-not',
   returns: {
     type: 'integer',
   },
@@ -77,11 +81,12 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x'] },
   ],
   description: 'Returns bitwise `not` of $x.',
-  examples: ['(bit-not 0)', '(bit-not 255)'],
-}, 'bit-and': {
-  title: 'bit-and',
+  examples: ['(~ 0)', '(~ 255)'],
+}, '&': {
+  title: '&',
   category: 'Bitwise',
-  linkName: 'bit-and',
+  linkName: '-and',
+  clojureDocs: 'bit-and',
   returns: {
     type: 'integer',
   },
@@ -103,13 +108,14 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   ],
   description: 'Returns bitwise `and` of all arguments.',
   examples: [
-    '(bit-and 0b0011 0b0110)',
-    '(bit-and 0b0011 0b0110 0b1001)',
+    '(& 0b0011 0b0110)',
+    '(& 0b0011 0b0110 0b1001)',
   ],
-}, 'bit-and-not': {
-  title: 'bit-and-not',
+}, '&!': {
+  title: '&!',
   category: 'Bitwise',
-  linkName: 'bit-and-not',
+  linkName: '-and-exclamation',
+  clojureDocs: 'bit-and-not',
   returns: {
     type: 'integer',
   },
@@ -130,11 +136,12 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'y', 'rest'] },
   ],
   description: 'Returns bitwise `and` with complement.',
-  examples: ['(bit-and-not 0b0011 0b0110)', '(bit-and-not 0b0011 0b0110 0b1001)'],
-}, 'bit-or': {
-  title: 'bit-or',
+  examples: ['(&! 0b0011 0b0110)', '(&! 0b0011 0b0110 0b1001)'],
+}, '|': {
+  title: '|',
   category: 'Bitwise',
-  linkName: 'bit-or',
+  linkName: '-or',
+  clojureDocs: 'bit-or',
   returns: {
     type: 'integer',
   },
@@ -155,11 +162,12 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'y', 'rest'] },
   ],
   description: 'Returns bitwise `or` of all arguments.',
-  examples: ['(bit-or 0b0011 0b0110)', '(bit-or 0b1000 0b0100 0b0010)'],
-}, 'bit-xor': {
-  title: 'bit-xor',
+  examples: ['(| 0b0011 0b0110)', '(| 0b1000 0b0100 0b0010)'],
+}, '^': {
+  title: '^',
   category: 'Bitwise',
-  linkName: 'bit-xor',
+  linkName: '-caret',
+  clojureDocs: 'bit-xor',
   returns: {
     type: 'integer',
   },
@@ -180,11 +188,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'y', 'rest'] },
   ],
   description: 'Returns bitwise `xor` of all arguments.',
-  examples: ['(bit-xor 0b0011 0b0110)', '(bit-xor 0b11110000 0b00111100 0b10101010)'],
-}, 'bit-flip': {
-  title: 'bit-flip',
+  examples: ['(^ 0b0011 0b0110)', '(^ 0b11110000 0b00111100 0b10101010)'],
+}, 'bit_flip': {
+  title: 'bit_flip',
   category: 'Bitwise',
-  linkName: 'bit-flip',
+  linkName: 'bit_flip',
   returns: {
     type: 'integer',
   },
@@ -200,11 +208,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Flips bit number $n.',
-  examples: ['(bit-flip 0b0011 1)', '(bit-flip 0b1100 1)'],
-}, 'bit-clear': {
-  title: 'bit-clear',
+  examples: ['(bit_flip 0b0011 1)', '(bit_flip 0b1100 1)'],
+}, 'bit_clear': {
+  title: 'bit_clear',
   category: 'Bitwise',
-  linkName: 'bit-clear',
+  linkName: 'bit_clear',
   returns: {
     type: 'integer',
   },
@@ -220,11 +228,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Clears bit number $n.',
-  examples: ['(bit-clear 0b0011 1)', '(bit-clear 0b1100 1)'],
-}, 'bit-set': {
-  title: 'bit-set',
+  examples: ['(bit_clear 0b0011 1)', '(bit_clear 0b1100 1)'],
+}, 'bit_set': {
+  title: 'bit_set',
   category: 'Bitwise',
-  linkName: 'bit-set',
+  linkName: 'bit_set',
   returns: {
     type: 'integer',
   },
@@ -240,11 +248,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Sets bit number $n.',
-  examples: ['(bit-set 0b0011 1)', '(bit-set 0b1100 1)'],
-}, 'bit-test': {
-  title: 'bit-test',
+  examples: ['(bit_set 0b0011 1)', '(bit_set 0b1100 1)'],
+}, 'bit_test': {
+  title: 'bit_test',
   category: 'Bitwise',
-  linkName: 'bit-test',
+  linkName: 'bit_test',
   returns: {
     type: 'boolean',
   },
@@ -260,5 +268,5 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Checks if bit number $n is set.',
-  examples: ['(bit-test 0b0011 1)', '(bit-test 0b1100 1)'],
+  examples: ['(bit_test 0b0011 1)', '(bit_test 0b1100 1)'],
 } }

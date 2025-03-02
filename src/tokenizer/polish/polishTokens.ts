@@ -3,7 +3,7 @@ import { commomValueTokenTypes, commonSimpleTokenTypes } from '../common/commonT
 import type { Token } from '../tokens'
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
 
-export const modifierNames = ['&', '&let', '&when', '&while'] as const
+export const modifierNames = ['&rest', '&let', '&when', '&while'] as const
 export type ModifierName = typeof modifierNames[number]
 
 export const polishOnlySimpleTokenTypes = [

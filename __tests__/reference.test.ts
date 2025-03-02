@@ -18,6 +18,10 @@ function getLinkName(name: string): string {
   name = name.replace(/\//g, '-slash')
   name = name.replace(/\?/g, '-question')
   name = name.replace(/!/g, '-exclamation')
+  name = name.replace(/&/g, '-and')
+  name = name.replace(/\|/g, '-or')
+  name = name.replace(/~/g, '-tilde')
+  name = name.replace(/\^/g, '-caret')
   return name
 }
 

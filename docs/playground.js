@@ -1005,7 +1005,7 @@ var Playground = (function (exports) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_BasePrefixedNumber';
     }
 
-    var modifierNames = ['&', '&let', '&when', '&while'];
+    var modifierNames = ['&rest', '&let', '&when', '&while'];
     var polishOnlySimpleTokenTypes = [
         'P_FnShorthand',
     ];
@@ -1580,7 +1580,7 @@ var Playground = (function (exports) {
     }
 
     var bitwiseNormalExpression = {
-        'bit-shift-left': {
+        '<<': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], count = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1589,7 +1589,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'bit-shift-right': {
+        '>>': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], count = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1598,7 +1598,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'unsigned-bit-shift-right': {
+        '>>>': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], count = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1607,7 +1607,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'bit-not': {
+        '~': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), num = _b[0];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1615,7 +1615,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'bit-and': {
+        '&': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), first = _b[0], rest = _b.slice(1);
                 assertNumber(first, sourceCodeInfo, { integer: true });
@@ -1626,7 +1626,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
-        'bit-and-not': {
+        '&!': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), first = _b[0], rest = _b.slice(1);
                 assertNumber(first, sourceCodeInfo, { integer: true });
@@ -1637,7 +1637,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
-        'bit-or': {
+        '|': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), first = _b[0], rest = _b.slice(1);
                 assertNumber(first, sourceCodeInfo, { integer: true });
@@ -1648,7 +1648,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
-        'bit-xor': {
+        '^': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a), first = _b[0], rest = _b.slice(1);
                 assertNumber(first, sourceCodeInfo, { integer: true });
@@ -5382,7 +5382,7 @@ var Playground = (function (exports) {
                 tkn = asToken(tokenStream.tokens[parseState.position]);
                 if (node.t === AstNodeType.Modifier) {
                     switch (node.v) {
-                        case '&':
+                        case '&rest':
                             if (state === 'rest')
                                 throw new LitsError('& can only appear once', (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                             state = 'rest';
@@ -5704,7 +5704,7 @@ var Playground = (function (exports) {
                     loopBinding.we = parseToken(tokenStream, parseState);
                     loopBinding.m.push('&while');
                     break;
-                case '&':
+                case '&rest':
                     throw new LitsError("Illegal modifier: ".concat(modifier), (_e = getTokenDebugData(tkn)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
                 default:
                     throw new LitsError("Illegal modifier: ".concat(modifier), (_f = getTokenDebugData(tkn)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
@@ -7572,7 +7572,7 @@ var Playground = (function (exports) {
             case '!':
                 return createNamedNormalExpressionNode('not', [operand], token);
             case '~':
-                return createNamedNormalExpressionNode('bit-not', [operand], token);
+                return createNamedNormalExpressionNode('~', [operand], token);
             /* v8 ignore next 2 */
             default:
                 throw new Error("Unknown operator: ".concat(operatorName));
@@ -7597,11 +7597,11 @@ var Playground = (function (exports) {
             case '-':
                 return createNamedNormalExpressionNode('-', [left, right], token);
             case '<<':
-                return createNamedNormalExpressionNode('bit-shift-left', [left, right], token);
+                return createNamedNormalExpressionNode('<<', [left, right], token);
             case '>>':
-                return createNamedNormalExpressionNode('bit-shift-right', [left, right], token);
+                return createNamedNormalExpressionNode('>>', [left, right], token);
             case '>>>':
-                return createNamedNormalExpressionNode('unsigned-bit-shift-right', [left, right], token);
+                return createNamedNormalExpressionNode('>>>', [left, right], token);
             case '++': {
                 var leftString = createNamedNormalExpressionNode('str', [left], token);
                 var rightString = createNamedNormalExpressionNode('str', [right], token);
@@ -7620,11 +7620,11 @@ var Playground = (function (exports) {
             case '!=':
                 return createNamedNormalExpressionNode('!=', [left, right], token);
             case '&':
-                return createNamedNormalExpressionNode('bit-and', [left, right], token);
+                return createNamedNormalExpressionNode('&', [left, right], token);
             case '^':
-                return createNamedNormalExpressionNode('bit-xor', [left, right], token);
+                return createNamedNormalExpressionNode('^', [left, right], token);
             case '|':
-                return createNamedNormalExpressionNode('bit-or', [left, right], token);
+                return createNamedNormalExpressionNode('|', [left, right], token);
             case '&&':
                 return {
                     t: AstNodeType.SpecialExpression,
@@ -8703,7 +8703,7 @@ var Playground = (function (exports) {
         return parsePolishToken(tokenStream, parseState);
     }
 
-    var polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:-]';
+    var polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:&\|~-]';
     var algebraicIdentifierCharacterClass = '[\\w$:!?]';
     var algebraicIdentifierFirstCharacterClass = '[a-zA-Z_$]';
 
@@ -9229,8 +9229,8 @@ var Playground = (function (exports) {
         tokenizeP_StringShorthand,
         tokenizeP_Number,
         tokenizeP_ReservedSymbol,
-        tokenizeP_Symbol,
         tokenizeP_Modifier,
+        tokenizeP_Symbol,
         tokenizeP_RegexpShorthand,
         tokenizeP_FnShorthand,
         tokenizeP_CollectionAccessor,
@@ -15516,10 +15516,11 @@ var Playground = (function (exports) {
         },
     };
 
-    var bitwiseReference = { 'bit-shift-left': {
-            title: 'bit-shift-left',
+    var bitwiseReference = { '<<': {
+            title: '<<',
             category: 'Bitwise',
-            linkName: 'bit-shift-left',
+            linkName: '-lt-lt',
+            clojureDocs: 'bit-shift-left',
             returns: {
                 type: 'integer',
             },
@@ -15535,11 +15536,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Shifts $x arithmetically left by $n bit positions.',
-            examples: ['(bit-shift-left 1 10)', '(bit-shift-left -4 2)'],
-        }, 'bit-shift-right': {
-            title: 'bit-shift-right',
+            examples: ['(<< 1 10)', '(<< -4 2)'],
+        }, '>>': {
+            title: '>>',
             category: 'Bitwise',
-            linkName: 'bit-shift-right',
+            linkName: '-gt-gt',
+            clojureDocs: 'bit-shift-right',
             returns: {
                 type: 'integer',
             },
@@ -15555,11 +15557,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Shifts $x arithmetically right by $n bit positions.',
-            examples: ['(bit-shift-right 2048 10)', '(bit-shift-right 4 10)'],
-        }, 'unsigned-bit-shift-right': {
-            title: 'unsigned-bit-shift-right',
+            examples: ['(>> 2048 10)', '(>> 4 10)'],
+        }, '>>>': {
+            title: '>>>',
             category: 'Bitwise',
-            linkName: 'unsigned-bit-shift-right',
+            linkName: '-gt-gt-gt',
+            clojureDocs: 'unsigned-bit-shift-right',
             returns: {
                 type: 'integer',
             },
@@ -15575,11 +15578,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Shifts $x arithmetically right by $n bit positions without sign extension.',
-            examples: ['(unsigned-bit-shift-right 2048 10)', '(unsigned-bit-shift-right 4 10)', '(unsigned-bit-shift-right -1 10)'],
-        }, 'bit-not': {
-            title: 'bit-not',
+            examples: ['(>>> 2048 10)', '(>>> 4 10)', '(>>> -1 10)'],
+        }, '~': {
+            title: '~',
             category: 'Bitwise',
-            linkName: 'bit-not',
+            linkName: '-tilde',
+            clojureDocs: 'bit-not',
             returns: {
                 type: 'integer',
             },
@@ -15592,11 +15596,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns bitwise `not` of $x.',
-            examples: ['(bit-not 0)', '(bit-not 255)'],
-        }, 'bit-and': {
-            title: 'bit-and',
+            examples: ['(~ 0)', '(~ 255)'],
+        }, '&': {
+            title: '&',
             category: 'Bitwise',
-            linkName: 'bit-and',
+            linkName: '-and',
+            clojureDocs: 'bit-and',
             returns: {
                 type: 'integer',
             },
@@ -15618,13 +15623,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns bitwise `and` of all arguments.',
             examples: [
-                '(bit-and 0b0011 0b0110)',
-                '(bit-and 0b0011 0b0110 0b1001)',
+                '(& 0b0011 0b0110)',
+                '(& 0b0011 0b0110 0b1001)',
             ],
-        }, 'bit-and-not': {
-            title: 'bit-and-not',
+        }, '&!': {
+            title: '&!',
             category: 'Bitwise',
-            linkName: 'bit-and-not',
+            linkName: '-and-exclamation',
+            clojureDocs: 'bit-and-not',
             returns: {
                 type: 'integer',
             },
@@ -15645,11 +15651,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'y', 'rest'] },
             ],
             description: 'Returns bitwise `and` with complement.',
-            examples: ['(bit-and-not 0b0011 0b0110)', '(bit-and-not 0b0011 0b0110 0b1001)'],
-        }, 'bit-or': {
-            title: 'bit-or',
+            examples: ['(&! 0b0011 0b0110)', '(&! 0b0011 0b0110 0b1001)'],
+        }, '|': {
+            title: '|',
             category: 'Bitwise',
-            linkName: 'bit-or',
+            linkName: '-or',
+            clojureDocs: 'bit-or',
             returns: {
                 type: 'integer',
             },
@@ -15670,11 +15677,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'y', 'rest'] },
             ],
             description: 'Returns bitwise `or` of all arguments.',
-            examples: ['(bit-or 0b0011 0b0110)', '(bit-or 0b1000 0b0100 0b0010)'],
-        }, 'bit-xor': {
-            title: 'bit-xor',
+            examples: ['(| 0b0011 0b0110)', '(| 0b1000 0b0100 0b0010)'],
+        }, '^': {
+            title: '^',
             category: 'Bitwise',
-            linkName: 'bit-xor',
+            linkName: '-caret',
+            clojureDocs: 'bit-xor',
             returns: {
                 type: 'integer',
             },
@@ -15695,7 +15703,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'y', 'rest'] },
             ],
             description: 'Returns bitwise `xor` of all arguments.',
-            examples: ['(bit-xor 0b0011 0b0110)', '(bit-xor 0b11110000 0b00111100 0b10101010)'],
+            examples: ['(^ 0b0011 0b0110)', '(^ 0b11110000 0b00111100 0b10101010)'],
         }, 'bit-flip': {
             title: 'bit-flip',
             category: 'Bitwise',
@@ -16255,14 +16263,14 @@ var Playground = (function (exports) {
             'join',
         ],
         bitwise: [
-            'bit-shift-left',
-            'bit-shift-right',
-            'unsigned-bit-shift-right',
-            'bit-not',
-            'bit-and',
-            'bit-and-not',
-            'bit-or',
-            'bit-xor',
+            '<<',
+            '>>',
+            '>>>',
+            '~',
+            '&',
+            '&!',
+            '|',
+            '^',
             'bit-flip',
             'bit-clear',
             'bit-set',

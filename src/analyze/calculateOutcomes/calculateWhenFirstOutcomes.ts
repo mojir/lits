@@ -1,4 +1,4 @@
-import type { WhenFirstNode } from '../../builtin/specialExpressions/when-first'
+import type { WhenFirstNode } from '../../builtin/specialExpressions/when_first'
 import type { BindingNode } from '../../parser/interface'
 import type { CalculatePossibleAstNodesHelper } from '.'
 

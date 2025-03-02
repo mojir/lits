@@ -2,7 +2,7 @@ import type { FunctionReference } from '..'
 import type { StringApiName } from '../api'
 
 export const stringReference: Record<StringApiName, FunctionReference<'String'>> = {
-  'subs': {
+  subs: {
     title: 'subs',
     category: 'String',
     linkName: 'subs',
@@ -32,10 +32,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(subs "A string" 100)',
     ],
   },
-  'string-repeat': {
-    title: 'string-repeat',
+  string_repeat: {
+    title: 'string_repeat',
     category: 'String',
-    linkName: 'string-repeat',
+    linkName: 'string_repeat',
     clojureDocs: null,
     returns: {
       type: 'number',
@@ -53,11 +53,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Repeates $s $n times.',
     examples: [
-      '(string-repeat "*" 10)',
-      '(string-repeat "***" 0)',
+      '(string_repeat "*" 10)',
+      '(string_repeat "***" 0)',
     ],
   },
-  'str': {
+  str: {
     title: 'str',
     category: 'String',
     linkName: 'str',
@@ -81,7 +81,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(str 0 false true nil #"^kalle" [1 2 3] {:a :a})',
     ],
   },
-  'number': {
+  number: {
     title: 'number',
     category: 'String',
     linkName: 'number',
@@ -104,41 +104,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(number "-1.01")',
     ],
   },
-  'number-to-string': {
-    title: 'number-to-string',
+  lower_case: {
+    title: 'lower_case',
     category: 'String',
-    linkName: 'number-to-string',
-    clojureDocs: null,
-    returns: {
-      type: 'string',
-    },
-    args: {
-      n: {
-        type: 'number',
-      },
-      base: {
-        type: 'number',
-        description: '2, 8, 10 or 16',
-      },
-    },
-    variants: [
-      { argumentNames: ['n'] },
-      { argumentNames: ['n', 'base'] },
-    ],
-    description: 'Converts $n to a string. If $base is not equal to `10`, $n must be a non negative integer.',
-    examples: [
-      '(number-to-string 10)',
-      '(number-to-string -1.01)',
-      '(number-to-string -.01)',
-      '(number-to-string 15 2)',
-      '(number-to-string 15 8)',
-      '(number-to-string 15 16)',
-    ],
-  },
-  'lower-case': {
-    title: 'lower-case',
-    category: 'String',
-    linkName: 'lower-case',
+    linkName: 'lower_case',
     returns: {
       type: 'string',
     },
@@ -152,14 +121,14 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns $s converted to lower case.',
     examples: [
-      '(lower-case "Albert")',
-      '(lower-case "")',
+      '(lower_case "Albert")',
+      '(lower_case "")',
     ],
   },
-  'upper-case': {
-    title: 'upper-case',
+  upper_case: {
+    title: 'upper_case',
     category: 'String',
-    linkName: 'upper-case',
+    linkName: 'upper_case',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -174,11 +143,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns $s converted to upper case.',
     examples: [
-      '(upper-case "Albert")',
-      '(upper-case "")',
+      '(upper_case "Albert")',
+      '(upper_case "")',
     ],
   },
-  'trim': {
+  trim: {
     title: 'trim',
     category: 'String',
     linkName: 'trim',
@@ -201,10 +170,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(trim "")',
     ],
   },
-  'trim-left': {
-    title: 'trim-left',
+  trim_left: {
+    title: 'trim_left',
     category: 'String',
-    linkName: 'trim-left',
+    linkName: 'trim_left',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -219,15 +188,15 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a new string with leading whitespaces removed.',
     examples: [
-      '(trim-left "  Albert  ")',
-      '(trim-left "   ")',
-      '(trim-left "")',
+      '(trim_left "  Albert  ")',
+      '(trim_left "   ")',
+      '(trim_left "")',
     ],
   },
-  'trim-right': {
-    title: 'trim-right',
+  trim_right: {
+    title: 'trim_right',
     category: 'String',
-    linkName: 'trim-right',
+    linkName: 'trim_right',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -242,15 +211,15 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a new string with trailing whitespaces removed.',
     examples: [
-      '(trim-right "  Albert  ")',
-      '(trim-right "   ")',
-      '(trim-right "")',
+      '(trim_right "  Albert  ")',
+      '(trim_right "   ")',
+      '(trim_right "")',
     ],
   },
-  'pad-left': {
-    title: 'pad-left',
+  pad_left: {
+    title: 'pad_left',
     category: 'String',
-    linkName: 'pad-left',
+    linkName: 'pad_left',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -272,16 +241,16 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
     examples: [
-      '(pad-left "Albert" 20)',
-      '(pad-left "Albert" 20 "-*-")',
-      '(pad-left "Albert" 5)',
-      '(pad-left "Albert" -1)',
+      '(pad_left "Albert" 20)',
+      '(pad_left "Albert" 20 "-*-")',
+      '(pad_left "Albert" 5)',
+      '(pad_left "Albert" -1)',
     ],
   },
-  'pad-right': {
-    title: 'pad-right',
+  pad_right: {
+    title: 'pad_right',
     category: 'String',
-    linkName: 'pad-right',
+    linkName: 'pad_right',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -303,13 +272,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
     examples: [
-      '(pad-right "Albert" 20)',
-      '(pad-right "Albert" 20 "-*-")',
-      '(pad-right "Albert" 5)',
-      '(pad-right "Albert" -1)',
+      '(pad_right "Albert" 20)',
+      '(pad_right "Albert" 20 "-*-")',
+      '(pad_right "Albert" 5)',
+      '(pad_right "Albert" -1)',
     ],
   },
-  'split': {
+  split: {
     title: 'split',
     category: 'String',
     linkName: 'split',
@@ -340,7 +309,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(map number (split "0123456789" "" 5))',
     ],
   },
-  'template': {
+  template: {
     title: 'template',
     category: 'String',
     linkName: 'template',
@@ -377,10 +346,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(template "No book||||One book||||Two books||||Three books||||$1 books" 4)',
     ],
   },
-  'to-char-code': {
-    title: 'to-char-code',
+  to_char_code: {
+    title: 'to_char_code',
     category: 'String',
-    linkName: 'to-char-code',
+    linkName: 'to_char_code',
     clojureDocs: null,
     returns: {
       type: 'number',
@@ -395,14 +364,14 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Return code point for first character in $c.',
     examples: [
-      '(to-char-code :A)',
-      '(to-char-code "Albert")',
+      '(to_char_code :A)',
+      '(to_char_code "Albert")',
     ],
   },
-  'from-char-code': {
-    title: 'from-char-code',
+  from_char_code: {
+    title: 'from_char_code',
     category: 'String',
-    linkName: 'from-char-code',
+    linkName: 'from_char_code',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -417,14 +386,14 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Return character for code point $code.',
     examples: [
-      '(from-char-code 65)',
-      '(from-char-code 0)',
+      '(from_char_code 65)',
+      '(from_char_code 0)',
     ],
   },
-  'encode-base64': {
-    title: 'encode-base64',
+  encode_base64: {
+    title: 'encode_base64',
     category: 'String',
-    linkName: 'encode-base64',
+    linkName: 'encode_base64',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -439,13 +408,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a Base64 encoded string from $s.',
     examples: [
-      '(encode-base64 "Albert")',
+      '(encode_base64 "Albert")',
     ],
   },
-  'decode-base64': {
-    title: 'decode-base64',
+  decode_base64: {
+    title: 'decode_base64',
     category: 'String',
-    linkName: 'decode-base64',
+    linkName: 'decode_base64',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -460,13 +429,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a Base64 decoded string from $base64string.',
     examples: [
-      '(decode-base64 "QWxiZXJ0IPCfkLs=")',
+      '(decode_base64 "QWxiZXJ0IPCfkLs=")',
     ],
   },
-  'encode-uri-component': {
-    title: 'encode-uri-component',
+  encode_uri_component: {
+    title: 'encode_uri_component',
     category: 'String',
-    linkName: 'encode-uri-component',
+    linkName: 'encode_uri_component',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -481,13 +450,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns an escaped `URI` string.',
     examples: [
-      '(encode-uri-component "Hi everyone!?")',
+      '(encode_uri_component "Hi everyone!?")',
     ],
   },
-  'decode-uri-component': {
-    title: 'decode-uri-component',
+  decode_uri_component: {
+    title: 'decode_uri_component',
     category: 'String',
-    linkName: 'decode-uri-component',
+    linkName: 'decode_uri_component',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -502,11 +471,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns an un-escaped `URI` string.',
     examples: [
-      '(decode-uri-component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
+      '(decode_uri_component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
     ],
   },
 
-  'join': {
+  join: {
     title: 'join',
     category: 'String',
     linkName: 'join',
@@ -528,7 +497,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
     examples: [
       '(join ["Albert" "Mojir"] " ")',
-      '(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")',
+      '(join (map [0 1 2 3 4 5 6 7 8 9] str) ", ")',
     ],
   },
 }

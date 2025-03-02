@@ -149,10 +149,10 @@ It returns evaluation of the last expression in $expressions.`,
         b (* 1 2 3 4)]
     (write! a b))`],
   },
-  'if-let': {
-    title: 'if-let',
+  'if_let': {
+    title: 'if_let',
     category: 'Special expression',
-    linkName: 'if-let',
+    linkName: 'if_let',
     returns: {
       type: 'any',
     },
@@ -178,19 +178,19 @@ If the bound variable evaluates to false, the $else-expr is evaluated
 (without variable accessable).`,
     examples: [
       `
-(if-let [a (> (count "Albert") 4)]
+(if_let [a (> (count "Albert") 4)]
   (write! (str a ", is big enough"))
   (write! "Sorry, not big enough."))`,
       `
-(if-let [a (> (count "Albert") 10)]
+(if_let [a (> (count "Albert") 10)]
   (write! (str a ", is big enough"))
   (write! "Sorry, not big enough."))`,
     ],
   },
-  'when-let': {
-    title: 'when-let',
+  'when_let': {
+    title: 'when_let',
     category: 'Special expression',
-    linkName: 'when-let',
+    linkName: 'when_let',
     returns: {
       type: 'any',
     },
@@ -212,14 +212,14 @@ $expressions is executed with the variable accessable.
 If the bound variable evaluates to a falsy value, \`nil\` is returned.`,
     examples: [
       `
-(when-let [a (> (count "Albert") 4)]
+(when_let [a (> (count "Albert") 4)]
   (write! a))`,
     ],
   },
-  'when-first': {
-    title: 'when-first',
+  'when_first': {
+    title: 'when_first',
     category: 'Special expression',
-    linkName: 'when-first',
+    linkName: 'when_first',
     returns: {
       type: 'any',
     },
@@ -239,23 +239,23 @@ If the bound variable evaluates to a falsy value, \`nil\` is returned.`,
     description: 'When the binding value in $binding is a non empty sequence, the first element of that sequence (instead of the sequence itself) is bound to the variable.',
     examples: [
       `
-(when-first [x [1 2 3]]
+(when_first [x [1 2 3]]
   (write! x)
   x)`,
       `
-(when-first [x "Albert"]
+(when_first [x "Albert"]
   (write! x)
   x)`,
       `
-(when-first [x [0]]
+(when_first [x [0]]
   (write! x)
   x)`,
       `
-(when-first [x [nil]]
+(when_first [x [nil]]
   (write! x)
   x)`,
       `
-(when-first [x []]
+(when_first [x []]
   (write! x)
   x)`,
     ],
@@ -485,10 +485,10 @@ hyp`,
       '(if false (write! "TRUE"))',
     ],
   },
-  'if-not': {
-    title: 'if-not',
+  'if_not': {
+    title: 'if_not',
     category: 'Special expression',
-    linkName: 'if-not',
+    linkName: 'if_not',
     returns: {
       type: 'any',
     },
@@ -509,10 +509,10 @@ hyp`,
     ],
     description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
     examples: [
-      '(if-not true (write! "TRUE") (write! "FALSE"))',
-      '(if-not false (write! "TRUE") (write! "FALSE"))',
-      '(if-not true (write! "TRUE"))',
-      '(if-not false (write! "TRUE"))',
+      '(if_not true (write! "TRUE") (write! "FALSE"))',
+      '(if_not false (write! "TRUE") (write! "FALSE"))',
+      '(if_not true (write! "TRUE"))',
+      '(if_not false (write! "TRUE"))',
     ],
   },
   'cond': {
@@ -582,10 +582,10 @@ and \`nil\` is returned. If no $expressions are provided, \`nil\` is returned.`,
       '(when false)',
     ],
   },
-  'when-not': {
-    title: 'when-not',
+  'when_not': {
+    title: 'when_not',
     category: 'Special expression',
-    linkName: 'when-not',
+    linkName: 'when_not',
     returns: {
       type: 'any',
     },
@@ -606,10 +606,10 @@ and the value returned by the last \`expression\` is returned.
 Otherwise, if $test yields a truthy value, the $expressions are not evaluated,
 and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`,
     examples: [
-      '(when-not true (write! "Hi") (write! "There"))',
-      '(when-not false (write! "Hi") (write! "There"))',
-      '(when-not true)',
-      '(when-not false)',
+      '(when_not true (write! "Hi") (write! "There"))',
+      '(when_not false (write! "Hi") (write! "There"))',
+      '(when_not true)',
+      '(when_not false)',
     ],
   },
   'comment': {

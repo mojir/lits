@@ -169,7 +169,7 @@ it('evaluateAstNode', () => {
     evaluateAstNode(
       {
         t: AstNodeType.Modifier,
-        v: '&',
+        v: '&rest',
         token: ['P_Symbol', 'X'],
         p: [],
         n: undefined,
@@ -181,7 +181,7 @@ it('evaluateAstNode', () => {
     evaluateAstNode(
       {
         t: AstNodeType.Modifier,
-        v: '&',
+        v: '&rest',
         token: undefined,
         p: [],
         n: undefined,
@@ -193,7 +193,7 @@ it('evaluateAstNode', () => {
     evaluateAstNode(
       {
         t: AstNodeType.Modifier,
-        v: '&',
+        v: '&rest',
         token: ['P_Symbol', 'X', {
           sourceCodeInfo: { code: '', position: { column: 1, line: 1 } },
         }],

@@ -88,7 +88,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 0 }, node),
   },
 
-  'merge-with': {
+  'merge_with': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       const first = params[0]
       const fn = params.at(-1)
@@ -134,7 +134,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(2, node),
   },
 
-  'select-keys': {
+  'select_keys': {
     evaluate: ([obj, keys], sourceCodeInfo): Any => {
       assertStringArray(keys, sourceCodeInfo)
       assertObj(obj, sourceCodeInfo)

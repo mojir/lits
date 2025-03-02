@@ -4,7 +4,7 @@ import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DeclaredNode } from '../builtin/specialExpressions/declared'
 import type { DoNode } from '../builtin/specialExpressions/do'
 import type { DefnNode, DefnsNode, FnNode } from '../builtin/specialExpressions/functions'
-import type { IfLetNode } from '../builtin/specialExpressions/if-let'
+import type { IfLetNode } from '../builtin/specialExpressions/if_let'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
 import type { DoSeqNode, ForNode } from '../builtin/specialExpressions/loops'
@@ -12,9 +12,9 @@ import type { ThrowNode } from '../builtin/specialExpressions/throw'
 import type { TimeNode } from '../builtin/specialExpressions/time'
 import type { TryNode } from '../builtin/specialExpressions/try'
 import type { WhenNode } from '../builtin/specialExpressions/when'
-import type { WhenFirstNode } from '../builtin/specialExpressions/when-first'
-import type { WhenLetNode } from '../builtin/specialExpressions/when-let'
-import type { WhenNotNode } from '../builtin/specialExpressions/when-not'
+import type { WhenFirstNode } from '../builtin/specialExpressions/when_first'
+import type { WhenLetNode } from '../builtin/specialExpressions/when_let'
+import type { WhenNotNode } from '../builtin/specialExpressions/when_not'
 import type { RemoveOptions } from '.'
 
 const specialExpressionCommentRemovers = {
@@ -51,12 +51,12 @@ const specialExpressionCommentRemovers = {
   'doseq': (_node: DoSeqNode, _removeOptions: RemoveOptions) => {},
   'fn': (_node: FnNode, _removeOptions: RemoveOptions) => {},
   'for': (_node: ForNode, _removeOptions: RemoveOptions) => {},
-  'if-let': (_node: IfLetNode, _removeOptions: RemoveOptions) => {},
+  'if_let': (_node: IfLetNode, _removeOptions: RemoveOptions) => {},
   'if': (node: AndNode, removeOptions: RemoveOptions) => {
     removeOptions.removeCommenNodesFromArray(node.p)
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },
-  'if-not': (node: AndNode, removeOptions: RemoveOptions) => {
+  'if_not': (node: AndNode, removeOptions: RemoveOptions) => {
     removeOptions.removeCommenNodesFromArray(node.p)
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },
@@ -89,10 +89,10 @@ const specialExpressionCommentRemovers = {
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },
   'try': (_node: TryNode, _removeOptions: RemoveOptions) => {},
-  'when-first': (_node: WhenFirstNode, _removeOptions: RemoveOptions) => {},
-  'when-let': (_node: WhenLetNode, _removeOptions: RemoveOptions) => {},
+  'when_first': (_node: WhenFirstNode, _removeOptions: RemoveOptions) => {},
+  'when_let': (_node: WhenLetNode, _removeOptions: RemoveOptions) => {},
   'when': (_node: WhenNode, _removeOptions: RemoveOptions) => {},
-  'when-not': (_node: WhenNotNode, _removeOptions: RemoveOptions) => {},
+  'when_not': (_node: WhenNotNode, _removeOptions: RemoveOptions) => {},
 
 } satisfies Record<SpecialExpressionName, (astNode: any, removeOptions: RemoveOptions) => void>
 

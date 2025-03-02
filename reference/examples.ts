@@ -189,7 +189,7 @@ export const examples: Example[] = [
     description: 'Check if string is formatted as an ISO date string.',
     code: `
 (defn isoDateString? [$data]
-  (if-let [m
+  (if_let [m
            (match
              (regexp
                "^(\\d{4})-(\\d{2})-(\\d{2})$")

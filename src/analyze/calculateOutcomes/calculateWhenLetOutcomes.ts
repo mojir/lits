@@ -1,5 +1,5 @@
 import type { DoNode } from '../../builtin/specialExpressions/do'
-import type { WhenLetNode } from '../../builtin/specialExpressions/when-let'
+import type { WhenLetNode } from '../../builtin/specialExpressions/when_let'
 import type { BindingNode } from '../../parser/interface'
 import type { CalculatePossibleAstNodesHelper } from '.'
 

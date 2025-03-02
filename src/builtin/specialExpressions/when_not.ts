@@ -6,10 +6,10 @@ import { assertAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
-export interface WhenNotNode extends CommonSpecialExpressionNode<'when-not'> {}
+export interface WhenNotNode extends CommonSpecialExpressionNode<'when_not'> {}
 
 export const whenNotSpecialExpression: BuiltinSpecialExpression<Any, WhenNotNode> = {
-  polishParse: getCommonPolishSpecialExpressionParser('when-not'),
+  polishParse: getCommonPolishSpecialExpressionParser('when_not'),
   validateParameterCount: node => assertNumberOfParams({ min: 1 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const [whenExpression, ...body] = node.p

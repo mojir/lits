@@ -442,12 +442,12 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(
         lits.run(
-          '(def x "Albert") (update x 3 (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))',
+          '(def x "Albert") (update x 3 (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albfrt')
       expect(
         lits.run(
-          '(def x "Albert") (update x 6 (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))',
+          '(def x "Albert") (update x 6 (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albert!')
 
@@ -475,12 +475,12 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(
         lits.run(
-          '(def x "Albert") (update_in x [3] (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))',
+          '(def x "Albert") (update_in x [3] (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albfrt')
       expect(
         lits.run(
-          '(def x "Albert") (update_in x [6] (fn [val] (if (nil? val) "!" (from-char-code (inc (to-char-code val))))))',
+          '(def x "Albert") (update_in x [6] (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albert!')
 

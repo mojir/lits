@@ -349,7 +349,7 @@ function parseFunctionArguments(
 
       if (node.t === AstNodeType.Modifier) {
         switch (node.v) {
-          case '&':
+          case '&rest':
             if (state === 'rest')
               throw new LitsError('& can only appear once', getTokenDebugData(tkn)?.sourceCodeInfo)
 

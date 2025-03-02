@@ -1,5 +1,5 @@
 import type { DoNode } from '../../builtin/specialExpressions/do'
-import type { WhenNotNode } from '../../builtin/specialExpressions/when-not'
+import type { WhenNotNode } from '../../builtin/specialExpressions/when_not'
 import type { CalculatePossibleAstNodesHelper } from '.'
 
 export const calculateWhenNotOutcomes: CalculatePossibleAstNodesHelper<WhenNotNode> = ({
@@ -13,7 +13,7 @@ export const calculateWhenNotOutcomes: CalculatePossibleAstNodesHelper<WhenNotNo
   if (isAstComputable(condition)) {
     return combinateAstNodes(astNode.p)
       .map<WhenNotNode>(p => ({
-        n: 'when-not',
+        n: 'when_not',
         t: astNode.t,
         p,
         token: astNode.token,

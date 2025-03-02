@@ -1,7 +1,6 @@
 import type { Any } from '../../../interface'
 import { compare, deepEqual } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
-import { version } from '../../../../package.json'
 import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { assertString } from '../../../typeGuards/string'
@@ -100,20 +99,14 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => !first,
     validate: node => assertNumberOfParams(1, node),
   },
-  'inst-ms!': {
-    evaluate: (): number => {
-      return Date.now()
-    },
-    validate: node => assertNumberOfParams(0, node),
-  },
-  'inst-ms->iso-date-time': {
+  'epoch>iso_date': {
     evaluate: ([ms], sourceCodeInfo): string => {
       assertNumber(ms, sourceCodeInfo)
       return new Date(ms).toISOString()
     },
     validate: node => assertNumberOfParams(1, node),
   },
-  'iso-date-time->inst-ms': {
+  'iso_date>epoch': {
     evaluate: ([dateTime], sourceCodeInfo): number => {
       assertString(dateTime, sourceCodeInfo)
       const ms = new Date(dateTime).valueOf()
@@ -155,13 +148,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(0, node),
   },
-  'lits-version!': {
-    evaluate: (): Any => {
-      return version
-    },
-    validate: node => assertNumberOfParams(0, node),
-  },
-  'json-parse': {
+  'json_parse': {
     evaluate: ([first], sourceCodeInfo): Any => {
       assertString(first, sourceCodeInfo)
       // eslint-disable-next-line ts/no-unsafe-return
@@ -169,7 +156,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams(1, node),
   },
-  'json-stringify': {
+  'json_stringify': {
     evaluate: ([first, second], sourceCodeInfo): string => {
       assertAny(first, sourceCodeInfo)
       if (second === undefined)

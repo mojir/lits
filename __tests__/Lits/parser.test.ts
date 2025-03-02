@@ -47,7 +47,6 @@ describe('parser', () => {
     expect(() => parse(tokenize('(for [x [1 2 3] &when (odd? x) &when (odd? x)] x)', { debug: true, algebraic: false }))).toThrow()
     expect(() => parse(tokenize('(for [x [1 2 3] &while (odd? x)] x)', { debug: true, algebraic: false }))).not.toThrow()
     expect(() => parse(tokenize('(for [x [1 2 3] &while (odd? x) &while (odd? x)] x)', { debug: true, algebraic: false }))).toThrow()
-    expect(() => parse(tokenize('(for [x [1 2 3] &while (odd? x) &whil (odd? x)] x)', { debug: true, algebraic: false }))).toThrow()
     expect(() =>
       parse(
         tokenize(

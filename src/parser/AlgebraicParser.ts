@@ -123,7 +123,7 @@ function fromUnaryAlgebraicToAstNode(operator: A_OperatorToken, operand: AstNode
     case '!':
       return createNamedNormalExpressionNode('not', [operand], token)
     case '~':
-      return createNamedNormalExpressionNode('bit-not', [operand], token)
+      return createNamedNormalExpressionNode('~', [operand], token)
     /* v8 ignore next 2 */
     default:
       throw new Error(`Unknown operator: ${operatorName}`)
@@ -149,11 +149,11 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, r
     case '-':
       return createNamedNormalExpressionNode('-', [left, right], token)
     case '<<':
-      return createNamedNormalExpressionNode('bit-shift-left', [left, right], token)
+      return createNamedNormalExpressionNode('<<', [left, right], token)
     case '>>':
-      return createNamedNormalExpressionNode('bit-shift-right', [left, right], token)
+      return createNamedNormalExpressionNode('>>', [left, right], token)
     case '>>>':
-      return createNamedNormalExpressionNode('unsigned-bit-shift-right', [left, right], token)
+      return createNamedNormalExpressionNode('>>>', [left, right], token)
     case '++': {
       const leftString = createNamedNormalExpressionNode('str', [left], token)
       const rightString = createNamedNormalExpressionNode('str', [right], token)
@@ -172,11 +172,11 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, r
     case '!=':
       return createNamedNormalExpressionNode('!=', [left, right], token)
     case '&':
-      return createNamedNormalExpressionNode('bit-and', [left, right], token)
+      return createNamedNormalExpressionNode('&', [left, right], token)
     case '^':
-      return createNamedNormalExpressionNode('bit-xor', [left, right], token)
+      return createNamedNormalExpressionNode('^', [left, right], token)
     case '|':
-      return createNamedNormalExpressionNode('bit-or', [left, right], token)
+      return createNamedNormalExpressionNode('|', [left, right], token)
     case '&&':
       return {
         t: AstNodeType.SpecialExpression,
@@ -545,10 +545,10 @@ export class AlgebraicParser {
           case 'cond':
           case 'declared?':
           case 'if':
-          case 'if-not':
+          case 'if_not':
           case 'or':
           case 'when':
-          case 'when-not':
+          case 'when_not':
           case 'do':
           case 'time!':
           case 'throw': {
@@ -564,9 +564,9 @@ export class AlgebraicParser {
           case 'let':
             return this.parseLet(symbol, params)
           case 'defs':
-          case 'if-let':
-          case 'when-let':
-          case 'when-first':
+          case 'if_let':
+          case 'when_let':
+          case 'when_first':
           case 'fn':
           case 'defns':
           case 'try':

@@ -861,7 +861,7 @@ For string $seq returns all but the first characters in $seq.`,
     description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
     examples: [
       '(sort_by ["Albert" "Mojir" "Nina"] count)',
-      '(sort_by "Albert" lower-case #(compare %2 %1))',
+      '(sort_by "Albert" lower_case #(compare %2 %1))',
     ],
   },
   distinct: {

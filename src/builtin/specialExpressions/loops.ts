@@ -74,7 +74,7 @@ function parseLoopBinding(
         loopBinding.we = parseToken(tokenStream, parseState)
         loopBinding.m.push('&while')
         break
-      case '&':
+      case '&rest':
         throw new LitsError(`Illegal modifier: ${modifier}`, getTokenDebugData(tkn)?.sourceCodeInfo)
       default:
         throw new LitsError(`Illegal modifier: ${modifier satisfies never}`, getTokenDebugData(tkn)?.sourceCodeInfo)

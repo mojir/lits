@@ -6,17 +6,16 @@ import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { asNonUndefined } from '../../typeGuards'
-import { isSeq } from '../../typeGuards/lits'
-import { toAny } from '../../utils'
+import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
+import { asAstNode } from '../../typeGuards/astNode'
 import { valueToString } from '../../utils/debug/debugTools'
 import type { BuiltinSpecialExpression } from '../interface'
 
-export interface WhenFirstNode extends CommonSpecialExpressionNode<'when-first'> {
+export interface IfLetNode extends CommonSpecialExpressionNode<'if_let'> {
   b: BindingNode
 }
 
-export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirstNode> = {
+export const ifLetSpecialExpression: BuiltinSpecialExpression<Any, IfLetNode> = {
   polishParse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
@@ -30,44 +29,36 @@ export const whenFirstSpecialExpression: BuiltinSpecialExpression<Any, WhenFirst
     const params = parseTokensUntilClosingBracket(tokenStream, parseState)
     assertRParenToken(tokenStream.tokens[parseState.position++])
 
-    const node: WhenFirstNode = {
+    const node: IfLetNode = {
       t: AstNodeType.SpecialExpression,
-      n: 'when-first',
+      n: 'if_let',
       b: asNonUndefined(bindings[0], getTokenDebugData(firstToken)?.sourceCodeInfo),
       p: params,
       token: getTokenDebugData(firstToken) && firstToken,
     }
+
     return node
   },
-  validateParameterCount: () => undefined,
+  validateParameterCount: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
+    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const locals: Context = {}
-    const { b: binding } = node
-    const evaluatedBindingForm = evaluateAstNode(binding.v, contextStack)
-    if (!isSeq(evaluatedBindingForm)) {
-      throw new LitsError(
-        `Expected undefined or a sequence, got ${valueToString(evaluatedBindingForm)}`,
-        getTokenDebugData(node.token)?.sourceCodeInfo,
-      )
+    const bindingValue = evaluateAstNode(node.b.v, contextStack)
+    if (bindingValue) {
+      locals[node.b.n] = { value: bindingValue }
+      const newContextStack = contextStack.create(locals)
+      const thenForm = asAstNode(node.p[0], sourceCodeInfo)
+      return evaluateAstNode(thenForm, newContextStack)
     }
-
-    if (evaluatedBindingForm.length === 0)
-      return null
-
-    const bindingValue = toAny(evaluatedBindingForm[0])
-    locals[binding.n] = { value: bindingValue }
-    const newContextStack = contextStack.create(locals)
-
-    let result: Any = null
-    for (const form of node.p)
-      result = evaluateAstNode(form, newContextStack)
-
-    return result
+    if (node.p.length === 2) {
+      const elseForm = asAstNode(node.p[1], sourceCodeInfo)
+      return evaluateAstNode(elseForm, contextStack)
+    }
+    return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
-    const { b: binding } = node
-    const newContext: Context = { [binding.n]: { value: true } }
-    const bindingResult = findUnresolvedIdentifiers([binding.v], contextStack, builtin)
+    const newContext: Context = { [node.b.n]: { value: true } }
+    const bindingResult = findUnresolvedIdentifiers([node.b.v], contextStack, builtin)
     const paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin)
     return joinAnalyzeResults(bindingResult, paramsResult)
   },

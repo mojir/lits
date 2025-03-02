@@ -1,4 +1,4 @@
-import type { IfLetNode } from '../../builtin/specialExpressions/if-let'
+import type { IfLetNode } from '../../builtin/specialExpressions/if_let'
 import type { BindingNode } from '../../parser/interface'
 import type { CalculatePossibleAstNodesHelper } from '.'
 

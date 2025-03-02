@@ -721,8 +721,8 @@ describe('sequence functions', () => {
   describe('join', () => {
     it('samples', () => {
       expect(lits.run('(join ["Albert" "Mojir"] " ")')).toBe('Albert Mojir')
-      expect(lits.run('(join (map [0 1 2 3 4 5 6 7 8 9] number-to-string) ", ")')).toBe('0, 1, 2, 3, 4, 5, 6, 7, 8, 9')
-      expect(() => lits.run('(join (map [0 1 2 3 4 5 6 7 8 9] number-to-string) ", " 5)')).toThrow()
+      expect(lits.run('(join (map [0 1 2 3 4 5 6 7 8 9] str) ", ")')).toBe('0, 1, 2, 3, 4, 5, 6, 7, 8, 9')
+      expect(() => lits.run('(join (map [0 1 2 3 4 5 6 7 8 9] str) ", " 5)')).toThrow()
       expect(() => lits.run('(join ["Albert" "Mojir"] " " -1)')).toThrow()
       expect(() => lits.run('(join ["Albert" "Mojir"])')).toThrow()
       expect(() => lits.run('(join ["Albert" 10] " ")')).toThrow()
@@ -864,8 +864,8 @@ describe('sequence functions', () => {
         'Mojir',
         'Nina',
       ])
-      expect(lits.run('(sort_by "Albert" lower-case)')).toEqual('Abelrt')
-      expect(lits.run('(sort_by "Albert" lower-case (fn [a b] (- (to-char-code b) (to-char-code a))))')).toEqual(
+      expect(lits.run('(sort_by "Albert" lower_case)')).toEqual('Abelrt')
+      expect(lits.run('(sort_by "Albert" lower_case (fn [a b] (- (to_char_code b) (to_char_code a))))')).toEqual(
         'trlebA',
       )
       expect(() => lits.run('(sort_by)')).toThrow()
