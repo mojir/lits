@@ -129,7 +129,7 @@ export const examples: Example[] = [
   )
 )
 
-(sort numberComparer l)
+(sort l numberComparer)
     `.trim(),
   },
   {
@@ -142,7 +142,7 @@ export const examples: Example[] = [
   ([x] "One parameter")
   ([x y] "Two parameters")
   ([x y z] "Three parameters")
-  ([x y z zz & rest] "Four or more parameters")
+  ([x y z zz &rest rest] "Four or more parameters")
 )
 
 (write! (foo))
@@ -169,7 +169,7 @@ export const examples: Example[] = [
 (loop [list (entries TRANSLATIONS)]
   (when (count list)
     (let [entry (first list)]
-      (defns (entry 0) [& params &let [templateString (entry 1)]]
+      (defns (entry 0) [&rest params &let [templateString (entry 1)]]
         (apply template (unshift params templateString))
       )
       (recur (rest list))
@@ -191,40 +191,39 @@ export const examples: Example[] = [
 (defn isoDateString? [$data]
   (if_let [m
            (match
-             (regexp
-               "^(\\d{4})-(\\d{2})-(\\d{2})$")
-               $data)]
+             #"^(\\d{4})-(\\d{2})-(\\d{2})$"
+             $data)]
     (let
       [
         year (number (m 1))
         month (number (m 2))
         day (number (m 3))
         leapYear
-          (and
+          (&&
             (zero? (mod year 4))
-            (or
+            (||
               (not (zero? (mod year 100)))
               (zero? (mod year 400))
             )
           )
       ]
-      (not (or
-        (or (< year 1900) (> year 2100))
-        (or (< month 1) (> month 12))
-        (or (< day 1) (> day 31))
-        (and
-          (or
+      (not (||
+        (|| (< year 1900) (> year 2100))
+        (|| (< month 1) (> month 12))
+        (|| (< day 1) (> day 31))
+        (&&
+          (||
             (== month 4)
             (== month 6)
             (== month 9)
             (== month 11))
           (> day 30)
         )
-        (and
+        (&&
           (== month 2)
-          (or
-            (and leapYear (> day 29))
-            (and (not leapYear) (> day 28))
+          (||
+            (&& leapYear (> day 29))
+            (&& (not leapYear) (> day 28))
           )
         )
       ))
@@ -244,7 +243,7 @@ export const examples: Example[] = [
     description: 'Find label to corresponding value in array of {label value}-objects.',
     code: `
 (defn label-from-value [$array $value]
-  (let [entry (some #(== $value (%1 :value)) $array)]
+  (let [entry (some $array #(== $value (%1 :value)))]
     (if (nil? entry) (str $value) (entry :label))
   )
 )
@@ -272,8 +271,8 @@ export const examples: Example[] = [
         label
         (let [entry
                (some
-                 #(== value (%1 :value))
-                 $array)]
+                 $array
+                 #(== value (%1 :value)))]
           (if
             (nil? entry)
             (str value)
