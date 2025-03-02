@@ -911,24 +911,24 @@ var Playground = (function (exports) {
     var symbolicOperators = __spreadArray(__spreadArray(__spreadArray([], __read(symbolicUnaryOperators), false), __read(symbolicBinaryOperators), false), __read(otherSymbolicOperators), false);
     var nonFunctionOperators = [
         '??',
-        'and',
+        '&&',
         'comment',
         'cond',
         'declared?',
         'if',
-        'if-not',
-        'or',
+        'if_not',
+        '||',
         'when',
-        'when-not',
+        'when_not',
         'do',
         'time!',
         'throw',
         'let',
         'def',
         'defs',
-        'if-let',
-        'when-let',
-        'when-first',
+        'if_let',
+        'when_let',
+        'when_first',
         'fn',
         'defn',
         'defns',
@@ -1226,7 +1226,7 @@ var Playground = (function (exports) {
     }
 
     var specialExpressionCommentRemovers = {
-        'and': function (node, removeOptions) {
+        '&&': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -1259,12 +1259,12 @@ var Playground = (function (exports) {
         'doseq': function (_node, _removeOptions) { },
         'fn': function (_node, _removeOptions) { },
         'for': function (_node, _removeOptions) { },
-        'if-let': function (_node, _removeOptions) { },
+        'if_let': function (_node, _removeOptions) { },
         'if': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
-        'if-not': function (node, removeOptions) {
+        'if_not': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -1276,7 +1276,7 @@ var Playground = (function (exports) {
             });
         },
         'loop': function (_node, _removeOptions) { },
-        'or': function (node, removeOptions) {
+        '||': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -1297,10 +1297,10 @@ var Playground = (function (exports) {
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
         'try': function (_node, _removeOptions) { },
-        'when-first': function (_node, _removeOptions) { },
-        'when-let': function (_node, _removeOptions) { },
+        'when_first': function (_node, _removeOptions) { },
+        'when_let': function (_node, _removeOptions) { },
         'when': function (_node, _removeOptions) { },
-        'when-not': function (_node, _removeOptions) { },
+        'when_not': function (_node, _removeOptions) { },
     };
     function removeCommentNodesFromSpecialExpression(node, removeOptions) {
         var uncommenter = specialExpressionCommentRemovers[node.n];
@@ -1659,7 +1659,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
-        'bit-flip': {
+        'bit_flip': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1669,7 +1669,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'bit-set': {
+        'bit_set': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1679,7 +1679,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'bit-clear': {
+        'bit_clear': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1689,7 +1689,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'bit-test': {
+        'bit_test': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -3314,7 +3314,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'rem': {
+        '%': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), dividend = _b[0], divisor = _b[1];
                 assertNumber(dividend, sourceCodeInfo);
@@ -3340,7 +3340,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'pow': {
+        '**': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], second = _b[1];
                 assertNumber(first, sourceCodeInfo);
@@ -3617,8 +3617,6 @@ var Playground = (function (exports) {
         },
     };
 
-    var version = "2.0.14";
-
     var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
     var xyRegexp = /[xy]/g;
     var miscNormalExpression = {
@@ -3634,7 +3632,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
-        '=': {
+        '==': {
             evaluate: function (_a) {
                 var e_1, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -3766,13 +3764,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'inst-ms!': {
-            evaluate: function () {
-                return Date.now();
-            },
-            validate: function (node) { return assertNumberOfParams(0, node); },
-        },
-        'inst-ms->iso-date-time': {
+        'epoch>iso_date': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), ms = _b[0];
                 assertNumber(ms, sourceCodeInfo);
@@ -3780,7 +3772,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'iso-date-time->inst-ms': {
+        'iso_date>epoch': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), dateTime = _b[0];
                 assertString(dateTime, sourceCodeInfo);
@@ -3823,13 +3815,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(0, node); },
         },
-        'lits-version!': {
-            evaluate: function () {
-                return version;
-            },
-            validate: function (node) { return assertNumberOfParams(0, node); },
-        },
-        'json-parse': {
+        'json_parse': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), first = _b[0];
                 assertString(first, sourceCodeInfo);
@@ -3838,7 +3824,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'json-stringify': {
+        'json_stringify': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], second = _b[1];
                 assertAny(first, sourceCodeInfo);
@@ -4051,7 +4037,7 @@ var Playground = (function (exports) {
     };
 
     var objectNormalExpression = {
-        'object': {
+        object: {
             evaluate: function (params, sourceCodeInfo) {
                 var result = {};
                 for (var i = 0; i < params.length; i += 2) {
@@ -4064,7 +4050,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertEvenNumberOfParams(node); },
         },
-        'keys': {
+        keys: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), obj = _b[0];
                 assertObj(obj, sourceCodeInfo);
@@ -4072,7 +4058,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'vals': {
+        vals: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), obj = _b[0];
                 assertObj(obj, sourceCodeInfo);
@@ -4080,7 +4066,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'entries': {
+        entries: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), obj = _b[0];
                 assertObj(obj, sourceCodeInfo);
@@ -4088,7 +4074,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'find': {
+        find: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), obj = _b[0], key = _b[1];
                 assertObj(obj, sourceCodeInfo);
@@ -4099,7 +4085,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'dissoc': {
+        dissoc: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), obj = _b[0], key = _b[1];
                 assertObj(obj, sourceCodeInfo);
@@ -4110,7 +4096,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'merge': {
+        merge: {
             evaluate: function (params, sourceCodeInfo) {
                 if (params.length === 0)
                     return null;
@@ -4123,7 +4109,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
         },
-        'merge-with': {
+        merge_with: {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var first = params[0];
@@ -4146,7 +4132,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
         },
-        'zipmap': {
+        zipmap: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), keys = _b[0], values = _b[1];
                 assertStringArray(keys, sourceCodeInfo);
@@ -4161,7 +4147,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
         },
-        'select-keys': {
+        select_keys: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), obj = _b[0], keys = _b[1];
                 assertStringArray(keys, sourceCodeInfo);
@@ -4427,7 +4413,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
-        'string-repeat': {
+        'string_repeat': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), str = _b[0], count = _b[1];
                 assertString(str, sourceCodeInfo);
@@ -4461,27 +4447,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'number-to-string': {
-            evaluate: function (params, sourceCodeInfo) {
-                var _a = __read(params, 2), num = _a[0], base = _a[1];
-                assertNumber(num, sourceCodeInfo, { finite: true });
-                if (params.length === 1) {
-                    return "".concat(num);
-                }
-                else {
-                    assertNumber(base, sourceCodeInfo, { finite: true });
-                    if (base !== 2 && base !== 8 && base !== 10 && base !== 16) {
-                        throw new LitsError("Expected \"number-to-string\" base argument to be 2, 8, 10 or 16, got: ".concat(base), sourceCodeInfo);
-                    }
-                    if (base === 10)
-                        return "".concat(num);
-                    assertNumber(num, sourceCodeInfo, { integer: true, nonNegative: true });
-                    return Number(num).toString(base);
-                }
-            },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-        },
-        'from-char-code': {
+        'from_char_code': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), num = _b[0];
                 assertNumber(num, sourceCodeInfo, { finite: true });
@@ -4495,7 +4461,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'to-char-code': {
+        'to_char_code': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo, { nonEmpty: true });
@@ -4503,7 +4469,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'lower-case': {
+        'lower_case': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4511,7 +4477,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'upper-case': {
+        'upper_case': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4527,7 +4493,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'trim-left': {
+        'trim_left': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4535,13 +4501,37 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'trim-right': {
+        'trim_right': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
                 return str.replace(/\s+$/, '');
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
+        },
+        '++': {
+            evaluate: function (params, sourceCodeInfo) {
+                if (params.length === 0) {
+                    return '';
+                }
+                var first = params[0];
+                if (first !== null) {
+                    assertStringOrNumber(first, sourceCodeInfo);
+                }
+                if (params.length === 1) {
+                    return first === null ? '' : "".concat(first);
+                }
+                return params.slice(1).reduce(function (acc, str) {
+                    if (str !== null) {
+                        assertStringOrNumber(str, sourceCodeInfo);
+                    }
+                    if (str === null) {
+                        return acc;
+                    }
+                    return "".concat(acc).concat(str);
+                }, first === null ? '' : "".concat(first));
+            },
+            validate: function () { return undefined; },
         },
         'join': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4567,7 +4557,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
-        'pad-left': {
+        'pad_left': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), str = _b[0], length = _b[1], padString = _b[2];
                 assertString(str, sourceCodeInfo);
@@ -4578,7 +4568,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         },
-        'pad-right': {
+        'pad_right': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), str = _b[0], length = _b[1], padString = _b[2];
                 assertString(str, sourceCodeInfo);
@@ -4620,7 +4610,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1, max: 10 }, node); },
         },
-        'encode-base64': {
+        'encode_base64': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4631,7 +4621,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'decode-base64': {
+        'decode_base64': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4649,7 +4639,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'encode-uri-component': {
+        'encode_uri_component': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4657,7 +4647,7 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
-        'decode-uri-component': {
+        'decode_uri_component': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4826,7 +4816,7 @@ var Playground = (function (exports) {
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
-                n: 'and',
+                n: '&&',
                 p: params,
                 token: getTokenDebugData(firstToken) && firstToken,
             };
@@ -5457,7 +5447,7 @@ var Playground = (function (exports) {
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
-                n: 'if-let',
+                n: 'if_let',
                 b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
                 token: getTokenDebugData(firstToken) && firstToken,
@@ -5494,7 +5484,7 @@ var Playground = (function (exports) {
     };
 
     var ifNotSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('if-not'),
+        polishParse: getCommonPolishSpecialExpressionParser('if_not'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -5904,7 +5894,7 @@ var Playground = (function (exports) {
     };
 
     var orSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('or'),
+        polishParse: getCommonPolishSpecialExpressionParser('||'),
         validateParameterCount: function () { return undefined; },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -6115,7 +6105,7 @@ var Playground = (function (exports) {
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
-                n: 'when-first',
+                n: 'when_first',
                 b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
                 token: getTokenDebugData(firstToken) && firstToken,
@@ -6177,7 +6167,7 @@ var Playground = (function (exports) {
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
-                n: 'when-let',
+                n: 'when_let',
                 b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
                 p: params,
                 token: getTokenDebugData(firstToken) && firstToken,
@@ -6223,7 +6213,7 @@ var Playground = (function (exports) {
     };
 
     var whenNotSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('when-not'),
+        polishParse: getCommonPolishSpecialExpressionParser('when_not'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
@@ -6256,7 +6246,7 @@ var Playground = (function (exports) {
     };
 
     var specialExpressions = {
-        'and': andSpecialExpression,
+        '&&': andSpecialExpression,
         'comment': commentSpecialExpression,
         'cond': condSpecialExpression,
         'def': defSpecialExpression,
@@ -6268,19 +6258,19 @@ var Playground = (function (exports) {
         'for': forSpecialExpression,
         'fn': fnSpecialExpression,
         'if': ifSpecialExpression,
-        'if-let': ifLetSpecialExpression,
-        'if-not': ifNotSpecialExpression,
+        'if_let': ifLetSpecialExpression,
+        'if_not': ifNotSpecialExpression,
         'let': letSpecialExpression,
         'loop': loopSpecialExpression,
-        'or': orSpecialExpression,
+        '||': orSpecialExpression,
         'recur': recurSpecialExpression,
         'throw': throwSpecialExpression,
         'time!': timeSpecialExpression,
         'try': trySpecialExpression,
         'when': whenSpecialExpression,
-        'when-first': whenFirstSpecialExpression,
-        'when-let': whenLetSpecialExpression,
-        'when-not': whenNotSpecialExpression,
+        'when_first': whenFirstSpecialExpression,
+        'when_let': whenLetSpecialExpression,
+        'when_not': whenNotSpecialExpression,
         'declared?': declaredSpecialExpression,
         '??': qqSpecialExpression,
     };
@@ -6837,7 +6827,7 @@ var Playground = (function (exports) {
         var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
         return combinateAstNodes(astNode.p)
             .map(function (p) { return ({
-            n: 'and',
+            n: '&&',
             t: AstNodeType.SpecialExpression,
             p: p,
             token: astNode.token,
@@ -6959,7 +6949,7 @@ var Playground = (function (exports) {
         if (isAstComputable(condition)) {
             return combinateAstNodes(astNode.p)
                 .map(function (p) { return ({
-                n: 'if-not',
+                n: 'if_not',
                 t: astNode.t,
                 p: p,
                 token: astNode.token,
@@ -7072,7 +7062,7 @@ var Playground = (function (exports) {
         var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
         return combinateAstNodes(astNode.p)
             .map(function (p) { return ({
-            n: 'or',
+            n: '||',
             t: AstNodeType.SpecialExpression,
             p: p,
             token: astNode.token,
@@ -7171,7 +7161,7 @@ var Playground = (function (exports) {
         if (isAstComputable(condition)) {
             return combinateAstNodes(astNode.p)
                 .map(function (p) { return ({
-                n: 'when-not',
+                n: 'when_not',
                 t: astNode.t,
                 p: p,
                 token: astNode.token,
@@ -7231,7 +7221,7 @@ var Playground = (function (exports) {
     };
 
     var specialExpressionCalculator = {
-        'and': function (astNode, helperOptions) { return calculateAndOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        '&&': function (astNode, helperOptions) { return calculateAndOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'comment': function (astNode, helperOptions) { return calculateCommentOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'cond': function (astNode, helperOptions) { return calculateCondOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'declared?': function (astNode, helperOptions) { return calculateDeclaredOutcomes(__assign({ astNode: astNode }, helperOptions)); },
@@ -7243,21 +7233,21 @@ var Playground = (function (exports) {
         'doseq': function (astNode, helperOptions) { return calculateDoSeqOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'fn': function (astNode, helperOptions) { return calculateFnOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'for': function (astNode, helperOptions) { return calculateForOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'if-let': function (astNode, helperOptions) { return calculateIfLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        'if_let': function (astNode, helperOptions) { return calculateIfLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'if': function (astNode, helperOptions) { return calculateIfOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'if-not': function (astNode, helperOptions) { return calculateIfNotOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        'if_not': function (astNode, helperOptions) { return calculateIfNotOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'let': function (astNode, helperOptions) { return calculateLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'loop': function (astNode, helperOptions) { return calculateLoopOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'or': function (astNode, helperOptions) { return calculateOrOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        '||': function (astNode, helperOptions) { return calculateOrOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         '??': function (astNode, helperOptions) { return calculateQqOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'recur': function (astNode, helperOptions) { return calculateRecurOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'time!': function (astNode, helperOptions) { return calculateTimeOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'throw': function (astNode, helperOptions) { return calculateThrowOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'try': function (astNode, helperOptions) { return calculateTryOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'when-first': function (astNode, helperOptions) { return calculateWhenFirstOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'when-let': function (astNode, helperOptions) { return calculateWhenLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        'when_first': function (astNode, helperOptions) { return calculateWhenFirstOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        'when_let': function (astNode, helperOptions) { return calculateWhenLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'when': function (astNode, helperOptions) { return calculateWhenOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'when-not': function (astNode, helperOptions) { return calculateWhenNotOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        'when_not': function (astNode, helperOptions) { return calculateWhenNotOutcomes(__assign({ astNode: astNode }, helperOptions)); },
     };
 
     function isIdempotent(normalExpressionName) {
@@ -7585,64 +7575,31 @@ var Playground = (function (exports) {
             case '.':
                 return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo)), token);
             case '**': // exponentiation
-                return createNamedNormalExpressionNode('pow', [left, right], token);
             case '*':
-                return createNamedNormalExpressionNode('*', [left, right], token);
             case '/':
-                return createNamedNormalExpressionNode('/', [left, right], token);
             case '%':
-                return createNamedNormalExpressionNode('rem', [left, right], token);
             case '+':
-                return createNamedNormalExpressionNode('+', [left, right], token);
             case '-':
-                return createNamedNormalExpressionNode('-', [left, right], token);
             case '<<':
-                return createNamedNormalExpressionNode('<<', [left, right], token);
             case '>>':
-                return createNamedNormalExpressionNode('>>', [left, right], token);
             case '>>>':
-                return createNamedNormalExpressionNode('>>>', [left, right], token);
-            case '++': {
-                var leftString = createNamedNormalExpressionNode('str', [left], token);
-                var rightString = createNamedNormalExpressionNode('str', [right], token);
-                return createNamedNormalExpressionNode('str', [leftString, rightString], token);
-            }
+            case '++':
             case '<':
-                return createNamedNormalExpressionNode('<', [left, right], token);
             case '<=':
-                return createNamedNormalExpressionNode('<=', [left, right], token);
             case '>':
-                return createNamedNormalExpressionNode('>', [left, right], token);
             case '>=':
-                return createNamedNormalExpressionNode('>=', [left, right], token);
             case '==':
-                return createNamedNormalExpressionNode('=', [left, right], token);
             case '!=':
-                return createNamedNormalExpressionNode('!=', [left, right], token);
             case '&':
-                return createNamedNormalExpressionNode('&', [left, right], token);
             case '^':
-                return createNamedNormalExpressionNode('^', [left, right], token);
             case '|':
-                return createNamedNormalExpressionNode('|', [left, right], token);
+                return createNamedNormalExpressionNode(operatorName, [left, right], token);
             case '&&':
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'and',
-                    p: [left, right],
-                    token: getTokenDebugData(token) && token,
-                };
             case '||':
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'or',
-                    p: [left, right],
-                    token: getTokenDebugData(token) && token,
-                };
             case '??':
                 return {
                     t: AstNodeType.SpecialExpression,
-                    n: '??',
+                    n: operatorName,
                     p: [left, right],
                     token: getTokenDebugData(token) && token,
                 };
@@ -7948,15 +7905,15 @@ var Playground = (function (exports) {
                     var name_2 = symbol.v;
                     switch (name_2) {
                         case '??':
-                        case 'and':
+                        case '&&':
                         case 'comment':
                         case 'cond':
                         case 'declared?':
                         case 'if':
-                        case 'if-not':
-                        case 'or':
+                        case 'if_not':
+                        case '||':
                         case 'when':
-                        case 'when-not':
+                        case 'when_not':
                         case 'do':
                         case 'time!':
                         case 'throw': {
@@ -7972,9 +7929,9 @@ var Playground = (function (exports) {
                         case 'let':
                             return this.parseLet(symbol, params);
                         case 'defs':
-                        case 'if-let':
-                        case 'when-let':
-                        case 'when-first':
+                        case 'if_let':
+                        case 'when_let':
+                        case 'when_first':
                         case 'fn':
                         case 'defns':
                         case 'try':
@@ -8788,9 +8745,9 @@ var Playground = (function (exports) {
         'false': { value: false },
         'nil': { value: null },
         'null': { value: null },
-        'if-let': { value: null, forbidden: true },
-        'when-let': { value: null, forbidden: true },
-        'when-first': { value: null, forbidden: true },
+        'if_let': { value: null, forbidden: true },
+        'when_let': { value: null, forbidden: true },
+        'when_first': { value: null, forbidden: true },
         'fn': { value: null, forbidden: true },
         'defns': { value: null, forbidden: true },
         'try': { value: null, forbidden: true },
@@ -9638,7 +9595,7 @@ var Playground = (function (exports) {
             },
             args: {
                 coll: {
-                    type: ['collection', 'string', 'nil'],
+                    type: ['collection', 'string', 'null'],
                 },
             },
             variants: [
@@ -9727,7 +9684,7 @@ var Playground = (function (exports) {
             },
             args: {
                 coll: {
-                    type: ['collection', 'nil'],
+                    type: ['collection', 'null'],
                 },
                 key: {
                     type: ['string', 'number'],
@@ -9755,7 +9712,7 @@ var Playground = (function (exports) {
             },
             args: {
                 coll: {
-                    type: ['collection', 'nil'],
+                    type: ['collection', 'null'],
                 },
                 value: {
                     type: ['any'],
@@ -9958,7 +9915,7 @@ var Playground = (function (exports) {
             },
             args: {
                 coll: {
-                    type: ['collection', 'nil'],
+                    type: ['collection', 'null'],
                 },
             },
             variants: [
@@ -10559,7 +10516,7 @@ var Playground = (function (exports) {
             },
             args: {
                 'seq': {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
                 'n': {
                     type: 'integer',
@@ -10621,7 +10578,7 @@ var Playground = (function (exports) {
             category: 'Sequence',
             linkName: 'pop',
             returns: {
-                type: ['sequence', 'nil'],
+                type: ['sequence', 'null'],
                 array: true,
             },
             args: {
@@ -10674,7 +10631,7 @@ var Playground = (function (exports) {
             linkName: 'shift',
             clojureDocs: null,
             returns: {
-                type: ['sequence', 'nil'],
+                type: ['sequence', 'null'],
                 array: true,
             },
             args: {
@@ -10871,11 +10828,11 @@ var Playground = (function (exports) {
             linkName: 'position',
             clojureDocs: null,
             returns: {
-                type: ['number', 'nil'],
+                type: ['number', 'null'],
             },
             args: {
                 seq: {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
                 fn: {
                     type: 'function',
@@ -10898,11 +10855,11 @@ var Playground = (function (exports) {
             linkName: 'index_of',
             clojureDocs: null,
             returns: {
-                type: ['number', 'nil'],
+                type: ['number', 'null'],
             },
             args: {
                 seq: {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
                 x: {
                     type: 'any',
@@ -10928,7 +10885,7 @@ var Playground = (function (exports) {
             },
             args: {
                 seq: {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
                 fn: {
                     type: 'function',
@@ -10951,11 +10908,11 @@ var Playground = (function (exports) {
             category: 'Sequence',
             linkName: 'reverse',
             returns: {
-                type: ['sequence', 'nil'],
+                type: ['sequence', 'null'],
             },
             args: {
                 seq: {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
             },
             variants: [
@@ -10978,7 +10935,7 @@ var Playground = (function (exports) {
             },
             args: {
                 seq: {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
             },
             variants: [
@@ -11000,7 +10957,7 @@ var Playground = (function (exports) {
             },
             args: {
                 seq: {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
             },
             variants: [
@@ -11023,7 +10980,7 @@ var Playground = (function (exports) {
             },
             args: {
                 seq: {
-                    type: ['sequence', 'nil'],
+                    type: ['sequence', 'null'],
                 },
             },
             variants: [
@@ -11043,7 +11000,7 @@ var Playground = (function (exports) {
             category: 'Sequence',
             linkName: 'rest',
             returns: {
-                type: ['sequence', 'nil'],
+                type: ['sequence', 'null'],
             },
             args: {
                 seq: {
@@ -11096,7 +11053,7 @@ var Playground = (function (exports) {
             category: 'Sequence',
             linkName: 'next',
             returns: {
-                type: ['sequence', 'nil'],
+                type: ['sequence', 'null'],
             },
             args: {
                 seq: {
@@ -11121,7 +11078,7 @@ var Playground = (function (exports) {
             category: 'Sequence',
             linkName: 'nthnext',
             returns: {
-                type: ['sequence', 'nil'],
+                type: ['sequence', 'null'],
                 array: true,
             },
             args: {
@@ -11345,7 +11302,7 @@ var Playground = (function (exports) {
             description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
             examples: [
                 '(sort_by ["Albert" "Mojir" "Nina"] count)',
-                '(sort_by "Albert" lower-case #(compare %2 %1))',
+                '(sort_by "Albert" lower_case #(compare %2 %1))',
             ],
         },
         distinct: {
@@ -11610,7 +11567,7 @@ var Playground = (function (exports) {
             ],
             description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
             examples: [
-                '(partition_by [1 2 3 4 5] #(= 3 %1))',
+                '(partition_by [1 2 3 4 5] #(== 3 %1))',
                 '(partition_by [1 1 1 2 2 3 3] odd?)',
                 '(partition_by "Leeeeeerrroyyy" identity)',
             ],
@@ -11716,10 +11673,11 @@ var Playground = (function (exports) {
             description: 'Modulus of `dividend` and `divisor`. Truncates toward negative infinity.',
             examples: ['(mod 5 3)', '(mod 5.2 3.1)', '(mod -5 3)', '(mod 5 -3)', '(mod -5 -3)'],
         },
-        'rem': {
-            title: 'rem',
+        '%': {
+            title: '%',
             category: 'Math',
-            linkName: 'rem',
+            linkName: '-percent',
+            clojureDocs: 'rem',
             returns: {
                 type: 'number',
             },
@@ -11735,7 +11693,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Remainder of dividing `dividend` and `divisor`.',
-            examples: ['(rem 5 3)', '(rem 5.2 3.1)', '(rem -5 3)', '(rem 5 -3)', '(rem -5 -3)'],
+            examples: ['(% 5 3)', '(% 5.2 3.1)', '(% -5 3)', '(% 5 -3)', '(% -5 -3)'],
         },
         'quot': {
             title: 'quot',
@@ -11832,10 +11790,10 @@ var Playground = (function (exports) {
             description: 'Computes cube root of $x.',
             examples: ['(cbrt 0)', '(cbrt 27)', '(cbrt 2)', '(cbrt 1)'],
         },
-        'pow': {
-            title: 'pow',
+        '**': {
+            title: '**',
             category: 'Math',
-            linkName: 'pow',
+            linkName: '-star-star',
             clojureDocs: null,
             returns: {
                 type: 'number',
@@ -11852,7 +11810,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Computes returns $a raised to the power of $b.',
-            examples: ['(pow 2 3)', '(pow 2 0)', '(pow 2 -3)', '(pow -2 3)', '(pow -2 -3)'],
+            examples: ['(** 2 3)', '(** 2 0)', '(** 2 -3)', '(** -2 3)', '(** -2 -3)'],
         },
         'exp': {
             title: 'exp',
@@ -12222,7 +12180,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the base `2` logarithm of a number.',
-            examples: ['(log2 0.01)', '(log2 (pow 2 12))', '(log2 2.5)'],
+            examples: ['(log2 0.01)', '(log2 (** 2 12))', '(log2 2.5)'],
         },
         'log10': {
             title: 'log10',
@@ -12241,7 +12199,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the `10` logarithm of a number.',
-            examples: ['(log10 0.01)', '(log10 (pow 10 12))', '(log10 2.5)'],
+            examples: ['(log10 0.01)', '(log10 (** 10 12))', '(log10 2.5)'],
         },
         'sin': {
             title: 'sin',
@@ -12495,13 +12453,14 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (= a b))`.',
+            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (== a b))`.',
             examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
         },
-        '=': {
-            title: '=',
+        '==': {
+            title: '==',
             category: 'Misc',
-            linkName: '-equal',
+            linkName: '-equal-equal',
+            clojureDocs: '=',
             returns: {
                 type: 'boolean',
             },
@@ -12519,7 +12478,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'ys'] },
             ],
             description: 'Compares `values` according to \'equal\' predicate. Result is `true` if every specified value is equal to each other, otherwise result is `false`.',
-            examples: ['(= 1 1)', '(= 1.01 1)', '(= :1 1)', '(= :2 :2 :2 :2)', '(= 2 2 1 2)'],
+            examples: ['(== 1 1)', '(== 1.01 1)', '(== :1 1)', '(== :2 :2 :2 :2)', '(== 2 2 1 2)'],
         },
         '<': {
             title: '<',
@@ -12658,25 +12617,10 @@ var Playground = (function (exports) {
                 '(write! nil true false)',
             ],
         },
-        'inst-ms!': {
-            title: 'inst-ms!',
+        'iso_date>epoch': {
+            title: 'iso_date>epoch',
             category: 'Misc',
-            linkName: 'inst-ms-exclamation',
-            clojureDocs: 'inst-ms',
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns milliseconds elapsed since the UNIX epoch.',
-            examples: ['(inst-ms!)'],
-        },
-        'iso-date-time->inst-ms': {
-            title: 'iso-date-time->inst-ms',
-            category: 'Misc',
-            linkName: 'iso-date-time--gtinst-ms',
+            linkName: 'iso_date-gtepoch',
             returns: {
                 type: 'number',
             },
@@ -12690,14 +12634,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
             examples: [
-                '(iso-date-time->inst-ms "2022-04-12T09:37:10.899Z")',
-                '(iso-date-time->inst-ms "1980-01-01")',
+                '(iso_date>epoch "2022-04-12T09:37:10.899Z")',
+                '(iso_date>epoch "1980-01-01")',
             ],
         },
-        'inst-ms->iso-date-time': {
-            title: 'inst-ms->iso-date-time',
+        'epoch>iso_date': {
+            title: 'epoch>iso_date',
             category: 'Misc',
-            linkName: 'inst-ms--gtiso-date-time',
+            linkName: 'epoch-gtiso_date',
             returns: {
                 type: 'string',
             },
@@ -12711,8 +12655,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
             examples: [
-                '(inst-ms->iso-date-time 1649756230899)',
-                '(inst-ms->iso-date-time 0)',
+                '(epoch>iso_date 1649756230899)',
+                '(epoch>iso_date 0)',
             ],
         },
         'boolean': {
@@ -12768,20 +12712,6 @@ var Playground = (function (exports) {
                 '(compare + -)',
             ],
         },
-        'lits-version!': {
-            title: 'lits-version!',
-            category: 'Misc',
-            linkName: 'lits-version-exclamation',
-            returns: {
-                type: 'string',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns the lits version.',
-            examples: ['(lits-version!)'],
-        },
         'uuid!': {
             title: 'uuid!',
             category: 'Misc',
@@ -12821,14 +12751,14 @@ var Playground = (function (exports) {
                 '(equal? [1 true nil] [1 true nil])',
                 '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
                 '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
-                '(= 0.3 (+ 0.1 0.2))',
+                '(== 0.3 (+ 0.1 0.2))',
                 '(equal? 0.3 (+ 0.1 0.2))',
             ],
         },
-        'json-parse': {
-            title: 'json-parse',
+        'json_parse': {
+            title: 'json_parse',
             category: 'Misc',
-            linkName: 'json-parse',
+            linkName: 'json_parse',
             clojureDocs: null,
             returns: {
                 type: 'any',
@@ -12843,13 +12773,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `JSON.parse(`$x`)`.',
             examples: [
-                '(json-parse "[1, 2, 3]")',
+                '(json_parse "[1, 2, 3]")',
             ],
         },
-        'json-stringify': {
-            title: 'json-stringify',
+        'json_stringify': {
+            title: 'json_stringify',
             category: 'Misc',
-            linkName: 'json-stringify',
+            linkName: 'json_stringify',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -12869,8 +12799,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
             examples: [
-                '(json-stringify [1, 2, 3])',
-                '(json-stringify {:a {:b 10}} 2)',
+                '(json_stringify [1, 2, 3])',
+                '(json_stringify {:a {:b 10}} 2)',
             ],
         },
     };
@@ -12902,7 +12832,7 @@ var Playground = (function (exports) {
             linkName: 'assert-equal',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -12931,7 +12861,7 @@ var Playground = (function (exports) {
             linkName: 'assert-exclamation-equal',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -12960,7 +12890,7 @@ var Playground = (function (exports) {
             linkName: 'assert_equal',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -12989,7 +12919,7 @@ var Playground = (function (exports) {
             linkName: 'assert_not_equal',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -13018,7 +12948,7 @@ var Playground = (function (exports) {
             linkName: 'assert_gt',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -13047,7 +12977,7 @@ var Playground = (function (exports) {
             linkName: 'assert_lt',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -13076,7 +13006,7 @@ var Playground = (function (exports) {
             linkName: 'assert_gte',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -13105,7 +13035,7 @@ var Playground = (function (exports) {
             linkName: 'assert_lte',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 a: {
@@ -13134,7 +13064,7 @@ var Playground = (function (exports) {
             linkName: 'assert_true',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 value: {
@@ -13160,7 +13090,7 @@ var Playground = (function (exports) {
             linkName: 'assert_false',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 value: {
@@ -13186,7 +13116,7 @@ var Playground = (function (exports) {
             linkName: 'assert_truthy',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 value: {
@@ -13219,7 +13149,7 @@ var Playground = (function (exports) {
             linkName: 'assert_falsy',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 value: {
@@ -13251,7 +13181,7 @@ var Playground = (function (exports) {
             linkName: 'assert_null',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 value: {
@@ -13283,7 +13213,7 @@ var Playground = (function (exports) {
             linkName: 'assert_throws',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 fn: {
@@ -13305,7 +13235,7 @@ var Playground = (function (exports) {
             linkName: 'assert_throws_error',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 'fn': {
@@ -13334,7 +13264,7 @@ var Playground = (function (exports) {
             linkName: 'assert_not_throws',
             clojureDocs: null,
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 fn: {
@@ -13353,7 +13283,7 @@ var Playground = (function (exports) {
         } };
 
     var objectReference = {
-        'dissoc': {
+        dissoc: {
             title: 'dissoc',
             category: 'Object',
             linkName: 'dissoc',
@@ -13378,7 +13308,7 @@ var Playground = (function (exports) {
                 "\n(def o { :a 5 }) (dissoc o :a)\no",
             ],
         },
-        'object': {
+        object: {
             title: 'object',
             category: 'Object',
             linkName: 'object',
@@ -13404,7 +13334,7 @@ var Playground = (function (exports) {
                 '{:a 1 :b 2}',
             ],
         },
-        'keys': {
+        keys: {
             title: 'keys',
             category: 'Object',
             linkName: 'keys',
@@ -13426,7 +13356,7 @@ var Playground = (function (exports) {
                 '(keys (object :x 10 :y true :z "A string"))',
             ],
         },
-        'vals': {
+        vals: {
             title: 'vals',
             category: 'Object',
             linkName: 'vals',
@@ -13448,7 +13378,7 @@ var Playground = (function (exports) {
                 '(vals (object :x 10 :y true :z "A string"))',
             ],
         },
-        'entries': {
+        entries: {
             title: 'entries',
             category: 'Object',
             linkName: 'entries',
@@ -13470,12 +13400,12 @@ var Playground = (function (exports) {
                 '(entries (object :x 10 :y true :z "A string"))',
             ],
         },
-        'find': {
+        find: {
             title: 'find',
             category: 'Object',
             linkName: 'find',
             returns: {
-                type: ['array', 'nil'],
+                type: ['array', 'null'],
             },
             args: {
                 obj: {
@@ -13494,7 +13424,7 @@ var Playground = (function (exports) {
                 '(find (object :a 1 :b 2) :c)',
             ],
         },
-        'merge': {
+        merge: {
             title: 'merge',
             category: 'Object',
             linkName: 'merge',
@@ -13516,10 +13446,10 @@ var Playground = (function (exports) {
                 '(merge (object :x 10) (object :x 15 :y 20))',
             ],
         },
-        'merge-with': {
-            title: 'merge-with',
+        merge_with: {
+            title: 'merge_with',
             category: 'Object',
-            linkName: 'merge-with',
+            linkName: 'merge_with',
             returns: {
                 type: 'object',
             },
@@ -13537,12 +13467,12 @@ var Playground = (function (exports) {
             ],
             description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fn is used to calculate the new value.\n\nIf no arguments are provided `nil` is returned.",
             examples: [
-                '(merge-with (object :x 10) (object :y 20) +)',
-                '(merge-with (object :x 10) (object :x 15 :y 20) +)',
-                '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
+                '(merge_with (object :x 10) (object :y 20) +)',
+                '(merge_with (object :x 10) (object :x 15 :y 20) +)',
+                '(merge_with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
             ],
         },
-        'zipmap': {
+        zipmap: {
             title: 'zipmap',
             category: 'Object',
             linkName: 'zipmap',
@@ -13569,10 +13499,10 @@ var Playground = (function (exports) {
                 '(zipmap [] [10 nil [1 2 3]])',
             ],
         },
-        'select-keys': {
-            title: 'select-keys',
+        select_keys: {
+            title: 'select_keys',
             category: 'Object',
-            linkName: 'select-keys',
+            linkName: 'select_keys',
             returns: {
                 type: 'object',
             },
@@ -13590,8 +13520,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
             examples: [
-                '(select-keys {:a 1 :b 2 :c 3} [:a :b])',
-                '(select-keys {:a 1} [:a :b])',
+                '(select_keys {:a 1 :b 2 :c 3} [:a :b])',
+                '(select_keys {:a 1} [:a :b])',
             ],
         },
     };
@@ -14151,7 +14081,7 @@ var Playground = (function (exports) {
             },
             args: {
                 x: {
-                    type: ['collection', 'string', 'nil'],
+                    type: ['collection', 'string', 'null'],
                 },
             },
             variants: [
@@ -14178,7 +14108,7 @@ var Playground = (function (exports) {
             },
             args: {
                 x: {
-                    type: ['collection', 'string', 'nil'],
+                    type: ['collection', 'string', 'null'],
                 },
             },
             variants: [
@@ -14290,10 +14220,10 @@ var Playground = (function (exports) {
     };
 
     var specialExpressionsReference = {
-        'and': {
-            title: 'and',
+        '&&': {
+            title: '&&',
             category: 'Special expression',
-            linkName: 'and',
+            linkName: '-and-and',
             returns: {
                 type: 'boolean',
             },
@@ -14306,19 +14236,20 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['expressions'] },
             ],
-            description: "\nComputes logical `and` function. Evaluation of $expressions starts from left.\nAs soon as a `expression` evaluates to a falsy value, the result is returned.\n\nIf all expressions evaluate to truthy values, the value of the last expression is returned.",
+            description: "\nComputes logical `and`. Evaluation of $expressions starts from left.\nAs soon as a `expression` evaluates to a falsy value, the result is returned.\n\nIf all expressions evaluate to truthy values, the value of the last expression is returned.",
             examples: [
-                '(and 1 1)',
-                '(and (> 3 2) "string")',
-                '(and (< 3 2) "string")',
-                '(and true true true true)',
-                '(and true true 0 true)',
+                '(&& 1 1)',
+                '(&& (> 3 2) "string")',
+                '(&& (< 3 2) "string")',
+                '(&& true true true true)',
+                '(&& true true 0 true)',
             ],
         },
-        'or': {
-            title: 'or',
+        '||': {
+            title: '||',
             category: 'Special expression',
-            linkName: 'or',
+            linkName: '-or-or',
+            clojureDocs: 'or',
             returns: {
                 type: 'boolean',
             },
@@ -14331,13 +14262,13 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['expressions'] },
             ],
-            description: "\nComputes logical `or` function. Evaluation of $expressions evaluation starts from left.\nAs soon as a `expression` evaluates to a truthy value, the result is returned.\n\nIf all expressions evaluate to falsy values, the value of the last expression is returned.",
+            description: "\nComputes logical `or`. Evaluation of $expressions evaluation starts from left.\nAs soon as a `expression` evaluates to a truthy value, the result is returned.\n\nIf all expressions evaluate to falsy values, the value of the last expression is returned.",
             examples: [
-                '(or 1 1)',
-                '(or (> 3 2) "string")',
-                '(or (< 3 2) "string")',
-                '(or true true true true)',
-                '(or 1 2 3 4)',
+                '(|| 1 1)',
+                '(|| (> 3 2) "string")',
+                '(|| (< 3 2) "string")',
+                '(|| true true true true)',
+                '(|| 1 2 3 4)',
             ],
         },
         'def': {
@@ -14413,10 +14344,10 @@ var Playground = (function (exports) {
             description: "\nBinds local variables. The variables lives only within $expressions.\nIt returns evaluation of the last expression in $expressions.",
             examples: ["\n  (let [a (+ 1 2 3 4) \n        b (* 1 2 3 4)]\n    (write! a b))"],
         },
-        'if-let': {
-            title: 'if-let',
+        'if_let': {
+            title: 'if_let',
             category: 'Special expression',
-            linkName: 'if-let',
+            linkName: 'if_let',
             returns: {
                 type: 'any',
             },
@@ -14437,14 +14368,14 @@ var Playground = (function (exports) {
             ],
             description: "\nBinds one local variable. If it evaluates to a truthy value\n$then-expr is executed with the variable accessable.\nIf the bound variable evaluates to false, the $else-expr is evaluated\n(without variable accessable).",
             examples: [
-                "\n(if-let [a (> (count \"Albert\") 4)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
-                "\n(if-let [a (> (count \"Albert\") 10)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
+                "\n(if_let [a (> (count \"Albert\") 4)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
+                "\n(if_let [a (> (count \"Albert\") 10)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
             ],
         },
-        'when-let': {
-            title: 'when-let',
+        'when_let': {
+            title: 'when_let',
             category: 'Special expression',
-            linkName: 'when-let',
+            linkName: 'when_let',
             returns: {
                 type: 'any',
             },
@@ -14462,13 +14393,13 @@ var Playground = (function (exports) {
             ],
             description: "\nBinds one local variable. If it evaluates to a truthy value\n$expressions is executed with the variable accessable.\nIf the bound variable evaluates to a falsy value, `nil` is returned.",
             examples: [
-                "\n(when-let [a (> (count \"Albert\") 4)]\n  (write! a))",
+                "\n(when_let [a (> (count \"Albert\") 4)]\n  (write! a))",
             ],
         },
-        'when-first': {
-            title: 'when-first',
+        'when_first': {
+            title: 'when_first',
             category: 'Special expression',
-            linkName: 'when-first',
+            linkName: 'when_first',
             returns: {
                 type: 'any',
             },
@@ -14487,11 +14418,11 @@ var Playground = (function (exports) {
             ],
             description: 'When the binding value in $binding is a non empty sequence, the first element of that sequence (instead of the sequence itself) is bound to the variable.',
             examples: [
-                "\n(when-first [x [1 2 3]]\n  (write! x)\n  x)",
-                "\n(when-first [x \"Albert\"]\n  (write! x)\n  x)",
-                "\n(when-first [x [0]]\n  (write! x)\n  x)",
-                "\n(when-first [x [nil]]\n  (write! x)\n  x)",
-                "\n(when-first [x []]\n  (write! x)\n  x)",
+                "\n(when_first [x [1 2 3]]\n  (write! x)\n  x)",
+                "\n(when_first [x \"Albert\"]\n  (write! x)\n  x)",
+                "\n(when_first [x [0]]\n  (write! x)\n  x)",
+                "\n(when_first [x [nil]]\n  (write! x)\n  x)",
+                "\n(when_first [x []]\n  (write! x)\n  x)",
             ],
         },
         'fn': {
@@ -14656,10 +14587,10 @@ var Playground = (function (exports) {
                 '(if false (write! "TRUE"))',
             ],
         },
-        'if-not': {
-            title: 'if-not',
+        'if_not': {
+            title: 'if_not',
             category: 'Special expression',
-            linkName: 'if-not',
+            linkName: 'if_not',
             returns: {
                 type: 'any',
             },
@@ -14680,10 +14611,10 @@ var Playground = (function (exports) {
             ],
             description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
             examples: [
-                '(if-not true (write! "TRUE") (write! "FALSE"))',
-                '(if-not false (write! "TRUE") (write! "FALSE"))',
-                '(if-not true (write! "TRUE"))',
-                '(if-not false (write! "TRUE"))',
+                '(if_not true (write! "TRUE") (write! "FALSE"))',
+                '(if_not false (write! "TRUE") (write! "FALSE"))',
+                '(if_not true (write! "TRUE"))',
+                '(if_not false (write! "TRUE"))',
             ],
         },
         'cond': {
@@ -14735,10 +14666,10 @@ var Playground = (function (exports) {
                 '(when false)',
             ],
         },
-        'when-not': {
-            title: 'when-not',
+        'when_not': {
+            title: 'when_not',
             category: 'Special expression',
-            linkName: 'when-not',
+            linkName: 'when_not',
             returns: {
                 type: 'any',
             },
@@ -14756,10 +14687,10 @@ var Playground = (function (exports) {
             ],
             description: "If $test yields a falsy value, the expressions are evaluated\nand the value returned by the last `expression` is returned.\nOtherwise, if $test yields a truthy value, the $expressions are not evaluated,\nand `nil` is returned. If no `expression` is provided, `nil` is returned.",
             examples: [
-                '(when-not true (write! "Hi") (write! "There"))',
-                '(when-not false (write! "Hi") (write! "There"))',
-                '(when-not true)',
-                '(when-not false)',
+                '(when_not true (write! "Hi") (write! "There"))',
+                '(when_not false (write! "Hi") (write! "There"))',
+                '(when_not true)',
+                '(when_not false)',
             ],
         },
         'comment': {
@@ -14767,7 +14698,7 @@ var Playground = (function (exports) {
             category: 'Special expression',
             linkName: 'comment',
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 expressions: {
@@ -14808,7 +14739,7 @@ var Playground = (function (exports) {
             category: 'Special expression',
             linkName: 'recur',
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 expressions: {
@@ -14876,7 +14807,7 @@ var Playground = (function (exports) {
             category: 'Special expression',
             linkName: 'doseq',
             returns: {
-                type: 'nil',
+                type: 'null',
             },
             args: {
                 bindings: {
@@ -15016,10 +14947,10 @@ var Playground = (function (exports) {
                 '(subs "A string" 100)',
             ],
         },
-        'string-repeat': {
-            title: 'string-repeat',
+        'string_repeat': {
+            title: 'string_repeat',
             category: 'String',
-            linkName: 'string-repeat',
+            linkName: 'string_repeat',
             clojureDocs: null,
             returns: {
                 type: 'number',
@@ -15037,8 +14968,8 @@ var Playground = (function (exports) {
             ],
             description: 'Repeates $s $n times.',
             examples: [
-                '(string-repeat "*" 10)',
-                '(string-repeat "***" 0)',
+                '(string_repeat "*" 10)',
+                '(string_repeat "***" 0)',
             ],
         },
         'str': {
@@ -15088,41 +15019,10 @@ var Playground = (function (exports) {
                 '(number "-1.01")',
             ],
         },
-        'number-to-string': {
-            title: 'number-to-string',
+        'lower_case': {
+            title: 'lower_case',
             category: 'String',
-            linkName: 'number-to-string',
-            clojureDocs: null,
-            returns: {
-                type: 'string',
-            },
-            args: {
-                n: {
-                    type: 'number',
-                },
-                base: {
-                    type: 'number',
-                    description: '2, 8, 10 or 16',
-                },
-            },
-            variants: [
-                { argumentNames: ['n'] },
-                { argumentNames: ['n', 'base'] },
-            ],
-            description: 'Converts $n to a string. If $base is not equal to `10`, $n must be a non negative integer.',
-            examples: [
-                '(number-to-string 10)',
-                '(number-to-string -1.01)',
-                '(number-to-string -.01)',
-                '(number-to-string 15 2)',
-                '(number-to-string 15 8)',
-                '(number-to-string 15 16)',
-            ],
-        },
-        'lower-case': {
-            title: 'lower-case',
-            category: 'String',
-            linkName: 'lower-case',
+            linkName: 'lower_case',
             returns: {
                 type: 'string',
             },
@@ -15136,14 +15036,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns $s converted to lower case.',
             examples: [
-                '(lower-case "Albert")',
-                '(lower-case "")',
+                '(lower_case "Albert")',
+                '(lower_case "")',
             ],
         },
-        'upper-case': {
-            title: 'upper-case',
+        'upper_case': {
+            title: 'upper_case',
             category: 'String',
-            linkName: 'upper-case',
+            linkName: 'upper_case',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15158,8 +15058,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns $s converted to upper case.',
             examples: [
-                '(upper-case "Albert")',
-                '(upper-case "")',
+                '(upper_case "Albert")',
+                '(upper_case "")',
             ],
         },
         'trim': {
@@ -15185,10 +15085,10 @@ var Playground = (function (exports) {
                 '(trim "")',
             ],
         },
-        'trim-left': {
-            title: 'trim-left',
+        'trim_left': {
+            title: 'trim_left',
             category: 'String',
-            linkName: 'trim-left',
+            linkName: 'trim_left',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15203,15 +15103,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a new string with leading whitespaces removed.',
             examples: [
-                '(trim-left "  Albert  ")',
-                '(trim-left "   ")',
-                '(trim-left "")',
+                '(trim_left "  Albert  ")',
+                '(trim_left "   ")',
+                '(trim_left "")',
             ],
         },
-        'trim-right': {
-            title: 'trim-right',
+        'trim_right': {
+            title: 'trim_right',
             category: 'String',
-            linkName: 'trim-right',
+            linkName: 'trim_right',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15226,15 +15126,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a new string with trailing whitespaces removed.',
             examples: [
-                '(trim-right "  Albert  ")',
-                '(trim-right "   ")',
-                '(trim-right "")',
+                '(trim_right "  Albert  ")',
+                '(trim_right "   ")',
+                '(trim_right "")',
             ],
         },
-        'pad-left': {
-            title: 'pad-left',
+        'pad_left': {
+            title: 'pad_left',
             category: 'String',
-            linkName: 'pad-left',
+            linkName: 'pad_left',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15256,16 +15156,16 @@ var Playground = (function (exports) {
             ],
             description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
             examples: [
-                '(pad-left "Albert" 20)',
-                '(pad-left "Albert" 20 "-*-")',
-                '(pad-left "Albert" 5)',
-                '(pad-left "Albert" -1)',
+                '(pad_left "Albert" 20)',
+                '(pad_left "Albert" 20 "-*-")',
+                '(pad_left "Albert" 5)',
+                '(pad_left "Albert" -1)',
             ],
         },
-        'pad-right': {
-            title: 'pad-right',
+        'pad_right': {
+            title: 'pad_right',
             category: 'String',
-            linkName: 'pad-right',
+            linkName: 'pad_right',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15287,10 +15187,10 @@ var Playground = (function (exports) {
             ],
             description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
             examples: [
-                '(pad-right "Albert" 20)',
-                '(pad-right "Albert" 20 "-*-")',
-                '(pad-right "Albert" 5)',
-                '(pad-right "Albert" -1)',
+                '(pad_right "Albert" 20)',
+                '(pad_right "Albert" 20 "-*-")',
+                '(pad_right "Albert" 5)',
+                '(pad_right "Albert" -1)',
             ],
         },
         'split': {
@@ -15361,10 +15261,10 @@ var Playground = (function (exports) {
                 '(template "No book||||One book||||Two books||||Three books||||$1 books" 4)',
             ],
         },
-        'to-char-code': {
-            title: 'to-char-code',
+        'to_char_code': {
+            title: 'to_char_code',
             category: 'String',
-            linkName: 'to-char-code',
+            linkName: 'to_char_code',
             clojureDocs: null,
             returns: {
                 type: 'number',
@@ -15379,14 +15279,14 @@ var Playground = (function (exports) {
             ],
             description: 'Return code point for first character in $c.',
             examples: [
-                '(to-char-code :A)',
-                '(to-char-code "Albert")',
+                '(to_char_code :A)',
+                '(to_char_code "Albert")',
             ],
         },
-        'from-char-code': {
-            title: 'from-char-code',
+        'from_char_code': {
+            title: 'from_char_code',
             category: 'String',
-            linkName: 'from-char-code',
+            linkName: 'from_char_code',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15401,14 +15301,14 @@ var Playground = (function (exports) {
             ],
             description: 'Return character for code point $code.',
             examples: [
-                '(from-char-code 65)',
-                '(from-char-code 0)',
+                '(from_char_code 65)',
+                '(from_char_code 0)',
             ],
         },
-        'encode-base64': {
-            title: 'encode-base64',
+        'encode_base64': {
+            title: 'encode_base64',
             category: 'String',
-            linkName: 'encode-base64',
+            linkName: 'encode_base64',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15423,13 +15323,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a Base64 encoded string from $s.',
             examples: [
-                '(encode-base64 "Albert")',
+                '(encode_base64 "Albert")',
             ],
         },
-        'decode-base64': {
-            title: 'decode-base64',
+        'decode_base64': {
+            title: 'decode_base64',
             category: 'String',
-            linkName: 'decode-base64',
+            linkName: 'decode_base64',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15444,13 +15344,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a Base64 decoded string from $base64string.',
             examples: [
-                '(decode-base64 "QWxiZXJ0IPCfkLs=")',
+                '(decode_base64 "QWxiZXJ0IPCfkLs=")',
             ],
         },
-        'encode-uri-component': {
-            title: 'encode-uri-component',
+        'encode_uri_component': {
+            title: 'encode_uri_component',
             category: 'String',
-            linkName: 'encode-uri-component',
+            linkName: 'encode_uri_component',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15465,13 +15365,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an escaped `URI` string.',
             examples: [
-                '(encode-uri-component "Hi everyone!?")',
+                '(encode_uri_component "Hi everyone!?")',
             ],
         },
-        'decode-uri-component': {
-            title: 'decode-uri-component',
+        'decode_uri_component': {
+            title: 'decode_uri_component',
             category: 'String',
-            linkName: 'decode-uri-component',
+            linkName: 'decode_uri_component',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15486,7 +15386,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an un-escaped `URI` string.',
             examples: [
-                '(decode-uri-component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
+                '(decode_uri_component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
             ],
         },
         'join': {
@@ -15511,7 +15411,33 @@ var Playground = (function (exports) {
             description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
             examples: [
                 '(join ["Albert" "Mojir"] " ")',
-                '(join (map number-to-string [0 1 2 3 4 5 6 7 8 9]) ", ")',
+                '(join (map [0 1 2 3 4 5 6 7 8 9] str) ", ")',
+            ],
+        },
+        '++': {
+            title: '++',
+            category: 'String',
+            linkName: '-plus-plus',
+            clojureDocs: null,
+            returns: {
+                type: 'string',
+            },
+            args: {
+                strings: {
+                    type: ['string', 'number', 'null'],
+                    rest: true,
+                },
+            },
+            variants: [{
+                    argumentNames: ['strings'],
+                }],
+            description: 'Concatenats $strings into one string.',
+            examples: [
+                '(++ "Albert" " " "Mojir")',
+                '(++ "Albert" "Mojir")',
+                '(++ "Albert" null "Mojir")',
+                '(++ "Albert")',
+                '(++)',
             ],
         },
     };
@@ -15704,10 +15630,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns bitwise `xor` of all arguments.',
             examples: ['(^ 0b0011 0b0110)', '(^ 0b11110000 0b00111100 0b10101010)'],
-        }, 'bit-flip': {
-            title: 'bit-flip',
+        }, 'bit_flip': {
+            title: 'bit_flip',
             category: 'Bitwise',
-            linkName: 'bit-flip',
+            linkName: 'bit_flip',
             returns: {
                 type: 'integer',
             },
@@ -15723,11 +15649,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Flips bit number $n.',
-            examples: ['(bit-flip 0b0011 1)', '(bit-flip 0b1100 1)'],
-        }, 'bit-clear': {
-            title: 'bit-clear',
+            examples: ['(bit_flip 0b0011 1)', '(bit_flip 0b1100 1)'],
+        }, 'bit_clear': {
+            title: 'bit_clear',
             category: 'Bitwise',
-            linkName: 'bit-clear',
+            linkName: 'bit_clear',
             returns: {
                 type: 'integer',
             },
@@ -15743,11 +15669,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Clears bit number $n.',
-            examples: ['(bit-clear 0b0011 1)', '(bit-clear 0b1100 1)'],
-        }, 'bit-set': {
-            title: 'bit-set',
+            examples: ['(bit_clear 0b0011 1)', '(bit_clear 0b1100 1)'],
+        }, 'bit_set': {
+            title: 'bit_set',
             category: 'Bitwise',
-            linkName: 'bit-set',
+            linkName: 'bit_set',
             returns: {
                 type: 'integer',
             },
@@ -15763,11 +15689,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Sets bit number $n.',
-            examples: ['(bit-set 0b0011 1)', '(bit-set 0b1100 1)'],
-        }, 'bit-test': {
-            title: 'bit-test',
+            examples: ['(bit_set 0b0011 1)', '(bit_set 0b1100 1)'],
+        }, 'bit_test': {
+            title: 'bit_test',
             category: 'Bitwise',
-            linkName: 'bit-test',
+            linkName: 'bit_test',
             returns: {
                 type: 'boolean',
             },
@@ -15783,7 +15709,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Checks if bit number $n is set.',
-            examples: ['(bit-test 0b0011 1)', '(bit-test 0b1100 1)'],
+            examples: ['(bit_test 0b0011 1)', '(bit_test 0b1100 1)'],
         } };
 
     var shorthand = {
@@ -16093,13 +16019,13 @@ var Playground = (function (exports) {
             '*',
             '/',
             'mod',
-            'rem',
+            '%',
             'quot',
             'inc',
             'dec',
             'sqrt',
             'cbrt',
-            'pow',
+            '**',
             'exp',
             'round',
             'trunc',
@@ -16149,23 +16075,21 @@ var Playground = (function (exports) {
         ],
         misc: [
             '!=',
-            '=',
+            '==',
             '<',
             '>',
             '<=',
             '>=',
             'not',
             'write!',
-            'inst-ms!',
-            'iso-date-time->inst-ms',
-            'inst-ms->iso-date-time',
+            'iso_date>epoch',
+            'epoch>iso_date',
             'boolean',
             'compare',
-            'lits-version!',
             'uuid!',
             'equal?',
-            'json-parse',
-            'json-stringify',
+            'json_parse',
+            'json_stringify',
         ],
         object: [
             'dissoc',
@@ -16175,9 +16099,9 @@ var Playground = (function (exports) {
             'entries',
             'find',
             'merge',
-            'merge-with',
+            'merge_with',
             'zipmap',
-            'select-keys',
+            'select_keys',
         ],
         predicate: [
             'boolean?',
@@ -16211,24 +16135,24 @@ var Playground = (function (exports) {
             'replace',
         ],
         specialExpressions: [
-            'and',
-            'or',
+            '&&',
+            '||',
             'def',
             'defs',
             'let',
-            'if-let',
-            'when-let',
-            'when-first',
+            'if_let',
+            'when_let',
+            'when_first',
             'fn',
             'defn',
             'defns',
             'try',
             'throw',
             'if',
-            'if-not',
+            'if_not',
             'cond',
             'when',
-            'when-not',
+            'when_not',
             'comment',
             'do',
             'recur',
@@ -16241,26 +16165,26 @@ var Playground = (function (exports) {
         ],
         string: [
             'subs',
-            'string-repeat',
+            'string_repeat',
             'str',
             'number',
-            'number-to-string',
-            'lower-case',
-            'upper-case',
+            'lower_case',
+            'upper_case',
             'trim',
-            'trim-left',
-            'trim-right',
-            'pad-left',
-            'pad-right',
+            'trim_left',
+            'trim_right',
+            'pad_left',
+            'pad_right',
             'split',
             'template',
-            'to-char-code',
-            'from-char-code',
-            'encode-base64',
-            'decode-base64',
-            'encode-uri-component',
-            'decode-uri-component',
+            'to_char_code',
+            'from_char_code',
+            'encode_base64',
+            'decode_base64',
+            'encode_uri_component',
+            'decode_uri_component',
             'join',
+            '++',
         ],
         bitwise: [
             '<<',
@@ -16271,10 +16195,10 @@ var Playground = (function (exports) {
             '&!',
             '|',
             '^',
-            'bit-flip',
-            'bit-clear',
-            'bit-set',
-            'bit-test',
+            'bit_flip',
+            'bit_clear',
+            'bit_set',
+            'bit_test',
         ],
         assert: [
             'assert',

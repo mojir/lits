@@ -86,13 +86,13 @@ const symbolicOperators = [
 
 const nonFunctionOperators = [
   '??',
-  'and',
+  '&&',
   'comment',
   'cond',
   'declared?',
   'if',
   'if_not',
-  'or',
+  '||',
   'when',
   'when_not',
   'do',

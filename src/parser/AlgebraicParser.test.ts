@@ -238,8 +238,8 @@ describe('algebraic operators', () => {
   describe('function call', () => {
     test('samples', () => {
       expect(lits.run('max(1, 3, 2)')).toBe(3)
-      expect(lits.run('and(1, 2, 3)')).toBe(3)
-      expect(lits.run('or(0, 1, 2)')).toBe(1)
+      expect(lits.run('\'&&\'(1, 2, 3)')).toBe(3)
+      expect(lits.run('\'||\'(0, 1, 2)')).toBe(1)
       expect(lits.run('if(1 > 2, 1, 2)')).toBe(2)
       expect(lits.run('if(1 < 2, 1, 2)')).toBe(1)
       expect(lits.run('when(1 > 2, 2)')).toBe(null)

@@ -61,7 +61,7 @@ export const examples: Example[] = [
 (defn formatPhoneNumber [$data]
   (if (string? $data)
     (let [phoneNumber
-          (if (= "+" (nth $data 0))
+          (if (== "+" (nth $data 0))
             (subs $data 2)
             $data)]
       (cond
@@ -106,7 +106,7 @@ export const examples: Example[] = [
     description: 'A recursive implementation of the factorial function.',
     code: `
 (defn factorial [x]
-  (if (= x 1)
+  (if (== x 1)
     1
     (* x (factorial (dec x)))
   )
@@ -214,14 +214,14 @@ export const examples: Example[] = [
         (or (< day 1) (> day 31))
         (and
           (or
-            (= month 4)
-            (= month 6)
-            (= month 9)
-            (= month 11))
+            (== month 4)
+            (== month 6)
+            (== month 9)
+            (== month 11))
           (> day 30)
         )
         (and
-          (= month 2)
+          (== month 2)
           (or
             (and leapYear (> day 29))
             (and (not leapYear) (> day 28))
@@ -244,7 +244,7 @@ export const examples: Example[] = [
     description: 'Find label to corresponding value in array of {label value}-objects.',
     code: `
 (defn label-from-value [$array $value]
-  (let [entry (some #(= $value (%1 :value)) $array)]
+  (let [entry (some #(== $value (%1 :value)) $array)]
     (if (nil? entry) (str $value) (entry :label))
   )
 )
@@ -272,7 +272,7 @@ export const examples: Example[] = [
         label
         (let [entry
                (some
-                 #(= value (%1 :value))
+                 #(== value (%1 :value))
                  $array)]
           (if
             (nil? entry)

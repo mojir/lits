@@ -11,7 +11,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     },
     args: {
       'seq': {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
       'n': {
         type: 'integer',
@@ -73,7 +73,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     category: 'Sequence',
     linkName: 'pop',
     returns: {
-      type: ['sequence', 'nil'],
+      type: ['sequence', 'null'],
       array: true,
     },
     args: {
@@ -129,7 +129,7 @@ l`,
     linkName: 'shift',
     clojureDocs: null,
     returns: {
-      type: ['sequence', 'nil'],
+      type: ['sequence', 'null'],
       array: true,
     },
     args: {
@@ -340,11 +340,11 @@ l`,
     linkName: 'position',
     clojureDocs: null,
     returns: {
-      type: ['number', 'nil'],
+      type: ['number', 'null'],
     },
     args: {
       seq: {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
       fn: {
         type: 'function',
@@ -379,11 +379,11 @@ l`,
     linkName: 'index_of',
     clojureDocs: null,
     returns: {
-      type: ['number', 'nil'],
+      type: ['number', 'null'],
     },
     args: {
       seq: {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
       x: {
         type: 'any',
@@ -409,7 +409,7 @@ l`,
     },
     args: {
       seq: {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
       fn: {
         type: 'function',
@@ -447,11 +447,11 @@ l`,
     category: 'Sequence',
     linkName: 'reverse',
     returns: {
-      type: ['sequence', 'nil'],
+      type: ['sequence', 'null'],
     },
     args: {
       seq: {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
     },
     variants: [
@@ -474,7 +474,7 @@ l`,
     },
     args: {
       seq: {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
     },
     variants: [
@@ -496,7 +496,7 @@ l`,
     },
     args: {
       seq: {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
     },
     variants: [
@@ -519,7 +519,7 @@ l`,
     },
     args: {
       seq: {
-        type: ['sequence', 'nil'],
+        type: ['sequence', 'null'],
       },
     },
     variants: [
@@ -539,7 +539,7 @@ l`,
     category: 'Sequence',
     linkName: 'rest',
     returns: {
-      type: ['sequence', 'nil'],
+      type: ['sequence', 'null'],
     },
     args: {
       seq: {
@@ -594,7 +594,7 @@ For string $seq returns all but the first characters in $seq.`,
     category: 'Sequence',
     linkName: 'next',
     returns: {
-      type: ['sequence', 'nil'],
+      type: ['sequence', 'null'],
     },
     args: {
       seq: {
@@ -619,7 +619,7 @@ For string $seq returns all but the first characters in $seq.`,
     category: 'Sequence',
     linkName: 'nthnext',
     returns: {
-      type: ['sequence', 'nil'],
+      type: ['sequence', 'null'],
       array: true,
     },
     args: {
@@ -1126,7 +1126,7 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
     examples: [
-      '(partition_by [1 2 3 4 5] #(= 3 %1))',
+      '(partition_by [1 2 3 4 5] #(== 3 %1))',
       '(partition_by [1 1 1 2 2 3 3] odd?)',
       '(partition_by "Leeeeeerrroyyy" identity)',
     ],

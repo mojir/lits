@@ -2,7 +2,7 @@ import type { FunctionReference } from '..'
 import type { ObjectApiName } from '../api'
 
 export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>> = {
-  'dissoc': {
+  dissoc: {
     title: 'dissoc',
     category: 'Object',
     linkName: 'dissoc',
@@ -29,7 +29,7 @@ export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>>
 o`,
     ],
   },
-  'object': {
+  object: {
     title: 'object',
     category: 'Object',
     linkName: 'object',
@@ -55,7 +55,7 @@ o`,
       '{:a 1 :b 2}',
     ],
   },
-  'keys': {
+  keys: {
     title: 'keys',
     category: 'Object',
     linkName: 'keys',
@@ -77,7 +77,7 @@ o`,
       '(keys (object :x 10 :y true :z "A string"))',
     ],
   },
-  'vals': {
+  vals: {
     title: 'vals',
     category: 'Object',
     linkName: 'vals',
@@ -99,7 +99,7 @@ o`,
       '(vals (object :x 10 :y true :z "A string"))',
     ],
   },
-  'entries': {
+  entries: {
     title: 'entries',
     category: 'Object',
     linkName: 'entries',
@@ -121,12 +121,12 @@ o`,
       '(entries (object :x 10 :y true :z "A string"))',
     ],
   },
-  'find': {
+  find: {
     title: 'find',
     category: 'Object',
     linkName: 'find',
     returns: {
-      type: ['array', 'nil'],
+      type: ['array', 'null'],
     },
     args: {
       obj: {
@@ -145,7 +145,7 @@ o`,
       '(find (object :a 1 :b 2) :c)',
     ],
   },
-  'merge': {
+  merge: {
     title: 'merge',
     category: 'Object',
     linkName: 'merge',
@@ -170,7 +170,7 @@ If no arguments are provided \`nil\` is returned.`,
       '(merge (object :x 10) (object :x 15 :y 20))',
     ],
   },
-  'merge_with': {
+  merge_with: {
     title: 'merge_with',
     category: 'Object',
     linkName: 'merge_with',
@@ -200,7 +200,7 @@ If no arguments are provided \`nil\` is returned.`,
       '(merge_with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
     ],
   },
-  'zipmap': {
+  zipmap: {
     title: 'zipmap',
     category: 'Object',
     linkName: 'zipmap',
@@ -227,7 +227,7 @@ If no arguments are provided \`nil\` is returned.`,
       '(zipmap [] [10 nil [1 2 3]])',
     ],
   },
-  'select_keys': {
+  select_keys: {
     title: 'select_keys',
     category: 'Object',
     linkName: 'select_keys',

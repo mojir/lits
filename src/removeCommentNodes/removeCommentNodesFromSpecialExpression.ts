@@ -18,7 +18,7 @@ import type { WhenNotNode } from '../builtin/specialExpressions/when_not'
 import type { RemoveOptions } from '.'
 
 const specialExpressionCommentRemovers = {
-  'and': (node: AndNode, removeOptions: RemoveOptions) => {
+  '&&': (node: AndNode, removeOptions: RemoveOptions) => {
     removeOptions.removeCommenNodesFromArray(node.p)
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },
@@ -68,7 +68,7 @@ const specialExpressionCommentRemovers = {
     })
   },
   'loop': (_node: LoopNode, _removeOptions: RemoveOptions) => {},
-  'or': (node: AndNode, removeOptions: RemoveOptions) => {
+  '||': (node: AndNode, removeOptions: RemoveOptions) => {
     removeOptions.removeCommenNodesFromArray(node.p)
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },
@@ -100,6 +100,6 @@ export function removeCommentNodesFromSpecialExpression(
   node: SpecialExpressionNode,
   removeOptions: RemoveOptions,
 ) {
-  const uncommenter = specialExpressionCommentRemovers[node.n as 'and']
+  const uncommenter = specialExpressionCommentRemovers[node.n as '&&']
   return uncommenter?.(node as AndNode, removeOptions)
 }

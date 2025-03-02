@@ -111,20 +111,20 @@ describe('math functions', () => {
     })
   })
 
-  describe('pow', () => {
+  describe('**', () => {
     it('samples', () => {
-      expect(() => lits.run('(pow)')).toThrow()
-      expect(() => lits.run('(pow 3)')).toThrow()
-      expect(() => lits.run('(pow 3 4 5)')).toThrow()
-      expect(lits.run('(pow 2 0)')).toBe(1)
-      expect(lits.run('(pow 2 1)')).toBe(2)
-      expect(lits.run('(pow 2 2)')).toBe(4)
-      expect(lits.run('(pow 2 3)')).toBe(8)
-      expect(lits.run('(pow 16 0.5)')).toBe(4)
-      expect(lits.run('(pow 10 -1)')).toBe(0.1)
-      expect(lits.run('(pow 10 -2)')).toBe(0.01)
-      expect(lits.run('(pow -2 -1)')).toBe(-0.5)
-      expect(lits.run('(pow -2 -2)')).toBe(0.25)
+      expect(() => lits.run('(**)')).toThrow()
+      expect(() => lits.run('(** 3)')).toThrow()
+      expect(() => lits.run('(** 3 4 5)')).toThrow()
+      expect(lits.run('(** 2 0)')).toBe(1)
+      expect(lits.run('(** 2 1)')).toBe(2)
+      expect(lits.run('(** 2 2)')).toBe(4)
+      expect(lits.run('(** 2 3)')).toBe(8)
+      expect(lits.run('(** 16 0.5)')).toBe(4)
+      expect(lits.run('(** 10 -1)')).toBe(0.1)
+      expect(lits.run('(** 10 -2)')).toBe(0.01)
+      expect(lits.run('(** -2 -1)')).toBe(-0.5)
+      expect(lits.run('(** -2 -2)')).toBe(0.25)
     })
   })
 
@@ -518,15 +518,15 @@ describe('math functions', () => {
     })
   })
 
-  describe('rem', () => {
+  describe('%', () => {
     it('samples', () => {
-      expect(lits.run('(rem 13.75 3.25)')).toBe(0.75)
-      expect(lits.run('(rem -13.75 3.25)')).toBe(-0.75)
-      expect(lits.run('(rem 13.75 -3.25)')).toBe(0.75)
-      expect(lits.run('(rem -13.75 -3.25)')).toBe(-0.75)
-      expect(() => lits.run('(rem)')).toThrow()
-      expect(() => lits.run('(rem 1)')).toThrow()
-      expect(() => lits.run('(rem 1 2 3)')).toThrow()
+      expect(lits.run('(% 13.75 3.25)')).toBe(0.75)
+      expect(lits.run('(% -13.75 3.25)')).toBe(-0.75)
+      expect(lits.run('(% 13.75 -3.25)')).toBe(0.75)
+      expect(lits.run('(% -13.75 -3.25)')).toBe(-0.75)
+      expect(() => lits.run('(%)')).toThrow()
+      expect(() => lits.run('(% 1)')).toThrow()
+      expect(() => lits.run('(% 1 2 3)')).toThrow()
     })
   })
 })

@@ -23,7 +23,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
-  '=': {
+  '==': {
     evaluate: ([first, ...rest]): boolean => {
       for (const param of rest) {
         if (param !== first)

@@ -133,6 +133,29 @@ describe('string functions', () => {
       })
     })
 
+    describe('++', () => {
+      it('samples', () => {
+        expect(lits.run('(++ "Albert" "Mojir")')).toBe('AlbertMojir')
+        expect(lits.run('(++ "Albert" " Mojir")')).toBe('Albert Mojir')
+        expect(lits.run('(++ "Albert" "Mojir" " ")')).toBe('AlbertMojir ')
+        expect(lits.run('(++ "Albert" " " "Mojir" 1)')).toBe('Albert Mojir1')
+        expect(lits.run('(++ "Albert" "Mojir" " and ")')).toBe('AlbertMojir and ')
+        expect(lits.run('(++ "Albert" null 12)')).toBe('Albert12')
+        expect(lits.run('(++ "Albert")')).toBe('Albert')
+        expect(lits.run('(++)')).toBe('')
+
+        expect(() => lits.run('(++ "Albert" [1])')).toThrow()
+      })
+    })
+
+    describe('join', () => {
+      it('samples', () => {
+        expect(lits.run('(join ["Albert" "Mojir"] " ")')).toBe('Albert Mojir')
+        expect(lits.run('(join ["Albert" "Mojir"] "")')).toBe('AlbertMojir')
+        expect(lits.run('(join ["Albert" "Mojir"] " and ")')).toBe('Albert and Mojir')
+      })
+    })
+
     describe('split', () => {
       it('samples', () => {
         expect(lits.run('(split "Albert Mojir" " ")')).toEqual(['Albert', 'Mojir'])

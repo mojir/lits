@@ -556,7 +556,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     },
     args: {
       x: {
-        type: ['collection', 'string', 'nil'],
+        type: ['collection', 'string', 'null'],
       },
     },
     variants: [
@@ -583,7 +583,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     },
     args: {
       x: {
-        type: ['collection', 'string', 'nil'],
+        type: ['collection', 'string', 'null'],
       },
     },
     variants: [

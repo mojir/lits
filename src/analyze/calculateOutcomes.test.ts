@@ -11,13 +11,13 @@ type TestSample = [string, null | unknown[]]
 describe('calculateOutcomes.', () => {
   describe('calculateAndOutcomes.', () => {
     testSamples([
-      ['(and)', [true]],
-      ['(and true false)', [false]],
-      ['(and false true)', [false]],
-      ['(and 1 2)', [2]],
-      ['(and x 2)', null],
-      ['(and (if x 1 2) 3)', [3]],
-      ['(and (if x 0 1) 2)', [0, 2]],
+      ['(&&)', [true]],
+      ['(&& true false)', [false]],
+      ['(&& false true)', [false]],
+      ['(&& 1 2)', [2]],
+      ['(&& x 2)', null],
+      ['(&& (if x 1 2) 3)', [3]],
+      ['(&& (if x 0 1) 2)', [0, 2]],
     ])
   })
 
@@ -27,9 +27,9 @@ describe('calculateOutcomes.', () => {
       ['(cond x :1, 2 :2, 3 :3)', ['1', '2', '3', null]],
       [`(def x (if y 1 2))
         (cond
-          (= x 1) 1
-          (= x 2) 2
-          (= x 3) 3)`, [1, 2]],
+          (== x 1) 1
+          (== x 2) 2
+          (== x 3) 3)`, [1, 2]],
       ['(cond x :1, y :2)', ['1', '2', null]],
       ['(cond)', [null]],
     ])
@@ -170,13 +170,13 @@ describe('calculateOutcomes.', () => {
 
   describe('calculateOrOutcomes.', () => {
     testSamples([
-      ['(or)', [false]],
-      ['(or true false)', [true]],
-      ['(or false true)', [true]],
-      ['(or 1 2)', [1]],
-      ['(or x 2)', null],
-      ['(or (if x 1 2) 3)', [1, 2]],
-      ['(or (if x 0 1) 2)', [2, 1]],
+      ['(||)', [false]],
+      ['(|| true false)', [true]],
+      ['(|| false true)', [true]],
+      ['(|| 1 2)', [1]],
+      ['(|| x 2)', null],
+      ['(|| (if x 1 2) 3)', [1, 2]],
+      ['(|| (if x 0 1) 2)', [2, 1]],
     ])
   })
 
@@ -353,7 +353,7 @@ describe('calculateOutcomes.', () => {
   describe('misc.', () => {
     testSamples([
       [`(defn factorial [x]
-          (if (= x 1)
+          (if (== x 1)
             1
             (* x (factorial (dec x)))
           )

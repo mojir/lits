@@ -11,7 +11,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     },
     args: {
       coll: {
-        type: ['collection', 'string', 'nil'],
+        type: ['collection', 'string', 'null'],
       },
     },
     variants: [
@@ -137,7 +137,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     },
     args: {
       coll: {
-        type: ['collection', 'nil'],
+        type: ['collection', 'null'],
       },
       key: {
         type: ['string', 'number'],
@@ -180,7 +180,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     },
     args: {
       coll: {
-        type: ['collection', 'nil'],
+        type: ['collection', 'null'],
       },
       value: {
         type: ['any'],
@@ -519,7 +519,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
     },
     args: {
       coll: {
-        type: ['collection', 'nil'],
+        type: ['collection', 'null'],
       },
     },
     variants: [

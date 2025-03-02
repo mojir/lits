@@ -103,12 +103,12 @@ describe('context', () => {
 
   it('a function - initial cache', () => {
     const initialCache: Record<string, Ast> = {
-      '(pow 2 4)': {
+      '(** 2 4)': {
         hasDebugData: true,
         b: [
           {
             t: AstNodeType.NormalExpression,
-            n: 'pow',
+            n: '**',
             p: [
               {
                 t: AstNodeType.Number,
@@ -125,14 +125,14 @@ describe('context', () => {
                 n: undefined,
               },
             ],
-            token: ['P_Symbol', 'pow'],
+            token: ['P_Symbol', '**'],
           },
         ],
       },
     }
     lits = new Lits({ astCacheSize: 10, initialCache })
-    expect(lits.run('(pow 2 2)')).toBe(4)
-    expect(lits.run('(pow 2 4)')).toBe(16)
+    expect(lits.run('(** 2 2)')).toBe(4)
+    expect(lits.run('(** 2 4)')).toBe(16)
   })
 
   it('a variable.', () => {
@@ -293,7 +293,7 @@ describe('regressions', () => {
   it('debug info when executing function with error in', () => {
     const program = `(defn formatPhoneNumber [$data]
   (if (string? $data)
-    (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)]
+    (let [phoneNumber (if (== "+" (nth $data 0)) (subs $data 2) $data)]
       (cond
         (> (count phoneNumber) 6)
           (astr

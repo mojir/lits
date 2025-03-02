@@ -219,7 +219,7 @@ describe('sequence functions', () => {
       expect(lits.run('(position nil number?)')).toBeNull()
       expect(lits.run('(position [1 2 3 4 5 6 7] (fn [x] (zero? (mod x 3))))')).toEqual(2)
       expect(lits.run('(position "Aa" (fn [x] (>= x :a)))')).toBe(1)
-      expect(lits.run('(position "Aa" (fn [x] (= x :z)))')).toBeNull()
+      expect(lits.run('(position "Aa" (fn [x] (== x :z)))')).toBeNull()
       expect(() => lits.run('(position +)')).toThrow()
       expect(() => lits.run('(position)')).toThrow()
       expect(() => lits.run('(position [1] number? 2)')).toThrow()
@@ -243,7 +243,7 @@ describe('sequence functions', () => {
 
   describe('some', () => {
     it('samples', () => {
-      expect(lits.run('(some :Albert #(= :l %))')).toBe('l')
+      expect(lits.run('(some :Albert #(== :l %))')).toBe('l')
 
       expect(lits.run('(some nil number?)')).toBeNull()
       expect(lits.run('(some [:1 :2 3] number?)')).toBe(3)
@@ -966,7 +966,7 @@ describe('sequence functions', () => {
 
   describe('partition_by', () => {
     it('samples', () => {
-      expect(lits.run('(partition_by #(= 3 %1) [1 2 3 4 5])')).toEqual([[1, 2], [3], [4, 5]])
+      expect(lits.run('(partition_by #(== 3 %1) [1 2 3 4 5])')).toEqual([[1, 2], [3], [4, 5]])
       expect(lits.run('(partition_by odd? [1 1 1 2 2 3 3])')).toEqual([
         [1, 1, 1],
         [2, 2],

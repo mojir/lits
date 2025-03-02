@@ -254,9 +254,9 @@ describe('specialExpressions', () => {
           month 1
           day 1
           leapYear
-            (and
+            (&&
               (zero? (mod year 4))
-              (or
+              (||
                 (not (zero? (mod year 100)))
                 (zero? (mod year 400))
               )
@@ -300,85 +300,85 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('and', () => {
+  describe('&&', () => {
     it('samples', () => {
-      expect(lits.run('(and)')).toBe(true)
-      expect(lits.run('(and 0)')).toBe(0)
-      expect(lits.run('(and 0 1)')).toBe(0)
-      expect(lits.run('(and 2 0)')).toBe(0)
-      expect(lits.run('(and 2 0 1)')).toBe(0)
-      expect(lits.run('(and 2 3 0)')).toBe(0)
-      expect(lits.run('(and 2 3 "")')).toBe('')
-      expect(lits.run('(and 2 3 :x)')).toBe('x')
-      expect(lits.run('(and false 1)')).toBe(false)
-      expect(lits.run('(and 1 false)')).toBe(false)
-      expect(lits.run('(and 1 nil)')).toBe(null)
-      expect(lits.run('(and 2 2 false)')).toBe(false)
-      expect(lits.run('(and 3 true 3)')).toBe(3)
+      expect(lits.run('(&&)')).toBe(true)
+      expect(lits.run('(&& 0)')).toBe(0)
+      expect(lits.run('(&& 0 1)')).toBe(0)
+      expect(lits.run('(&& 2 0)')).toBe(0)
+      expect(lits.run('(&& 2 0 1)')).toBe(0)
+      expect(lits.run('(&& 2 3 0)')).toBe(0)
+      expect(lits.run('(&& 2 3 "")')).toBe('')
+      expect(lits.run('(&& 2 3 :x)')).toBe('x')
+      expect(lits.run('(&& false 1)')).toBe(false)
+      expect(lits.run('(&& 1 false)')).toBe(false)
+      expect(lits.run('(&& 1 nil)')).toBe(null)
+      expect(lits.run('(&& 2 2 false)')).toBe(false)
+      expect(lits.run('(&& 3 true 3)')).toBe(3)
     })
     describe('short circuit', () => {
       it('true, false', () => {
-        expect(lits.run('(and (write! true) (write! false))')).toBe(false)
+        expect(lits.run('(&& (write! true) (write! false))')).toBe(false)
         expect(logSpy).toHaveBeenNthCalledWith(1, true)
         expect(logSpy).toHaveBeenNthCalledWith(2, false)
       })
       it('true, 1', () => {
-        expect(lits.run('(and (write! true) (write! 1))')).toBe(1)
+        expect(lits.run('(&& (write! true) (write! 1))')).toBe(1)
         expect(logSpy).toHaveBeenNthCalledWith(1, true)
         expect(logSpy).toHaveBeenNthCalledWith(2, 1)
       })
       it('false, true', () => {
-        expect(lits.run('(and (write! false) (write! true))')).toBe(false)
+        expect(lits.run('(&& (write! false) (write! true))')).toBe(false)
         expect(logSpy).toHaveBeenCalledWith(false)
         expect(logSpy).not.toHaveBeenCalledWith(true)
       })
       it('false, 0', () => {
-        expect(lits.run('(and (write! false) (write! 0))')).toBe(false)
+        expect(lits.run('(&& (write! false) (write! 0))')).toBe(false)
         expect(logSpy).toHaveBeenCalledWith(false)
         expect(logSpy).not.toHaveBeenCalledWith(0)
       })
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(and false b)'))).toEqual(new Set(['b']))
+        expect(getUndefinedSymbolNames(lits.analyze('(&& false b)'))).toEqual(new Set(['b']))
       })
     })
   })
 
-  describe('or', () => {
+  describe('||', () => {
     it('samples', () => {
-      expect(lits.run('(or)')).toBe(false)
-      expect(lits.run('(or 0)')).toBe(0)
-      expect(lits.run('(or 0 1)')).toBe(1)
-      expect(lits.run('(or 2 0)')).toBe(2)
-      expect(lits.run('(or nil 0 false)')).toBe(false)
-      expect(lits.run('(or nil 0 1)')).toBe(1)
+      expect(lits.run('(||)')).toBe(false)
+      expect(lits.run('(|| 0)')).toBe(0)
+      expect(lits.run('(|| 0 1)')).toBe(1)
+      expect(lits.run('(|| 2 0)')).toBe(2)
+      expect(lits.run('(|| nil 0 false)')).toBe(false)
+      expect(lits.run('(|| nil 0 1)')).toBe(1)
     })
     describe('short circuit', () => {
       it('true, false', () => {
-        expect(lits.run('(or (write! true) (write! false))')).toBe(true)
+        expect(lits.run('(|| (write! true) (write! false))')).toBe(true)
         expect(logSpy).toHaveBeenCalledWith(true)
         expect(logSpy).not.toHaveBeenCalledWith(false)
       })
       it('true, 1', () => {
-        expect(lits.run('(or (write! true) (write! 1))')).toBe(true)
+        expect(lits.run('(|| (write! true) (write! 1))')).toBe(true)
         expect(logSpy).toHaveBeenCalledWith(true)
         expect(logSpy).not.toHaveBeenCalledWith(1)
       })
       it('false, true', () => {
-        expect(lits.run('(or (write! false) (write! true))')).toBe(true)
+        expect(lits.run('(|| (write! false) (write! true))')).toBe(true)
         expect(logSpy).toHaveBeenNthCalledWith(1, false)
         expect(logSpy).toHaveBeenNthCalledWith(2, true)
       })
       it('false, 0', () => {
-        expect(lits.run('(or (write! false) (write! 0))')).toBe(0)
+        expect(lits.run('(|| (write! false) (write! 0))')).toBe(0)
         expect(logSpy).toHaveBeenNthCalledWith(1, false)
         expect(logSpy).toHaveBeenNthCalledWith(2, 0)
       })
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(or true b (+ c d))'))).toEqual(new Set(['b', 'c', 'd']))
+        expect(getUndefinedSymbolNames(lits.analyze('(|| true b (+ c d))'))).toEqual(new Set(['b', 'c', 'd']))
       })
     })
   })
@@ -428,7 +428,7 @@ describe('specialExpressions', () => {
     it('arity', () => {
       expect(lits.run('(defn add ([a b] (+ a b))) (add 1 2)')).toBe(3)
       expect(lits.run('(defn add ([a b] (+ a b)) ([a] 10)) (+ (add 1 2) (add 1))')).toBe(13)
-      expect(() => lits.run('(defn add ([a b] (++ a b)) ([a] 10)) (+ (add 1 2) (add 1))')).toThrow()
+      expect(() => lits.run('(defn add ([a b] (-- a b)) ([a] 10)) (+ (add 1 2) (add 1))')).toThrow()
       expect(() => lits.run('(defn add ([a b] (+ a b)) ([a] 10)] (+ (add 1 2) (add 1))')).toThrow()
       expect(() => lits.run('(defn add ([a b] (+ a b)] ([a] 10)) (+ (add 1 2) (add 1))')).toThrow()
       expect(() => lits.run('(defn add ([a b] (+ a b)) ([a b] 10))')).toThrow()
@@ -443,11 +443,11 @@ describe('specialExpressions', () => {
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a] (if (= a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
+        expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a] (if (== a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
           new Set(),
         )
         expect(
-          getUndefinedSymbolNames(lits.analyze('(defn foo [a &let [x y, y z]] (if (= a 1) 1 (+ a (foo (dec a)))))')),
+          getUndefinedSymbolNames(lits.analyze('(defn foo [a &let [x y, y z]] (if (== a 1) 1 (+ a (foo (dec a)))))')),
         ).toEqual(new Set(['y', 'z']))
         expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a b] (str a b c))'))).toEqual(new Set(['c']))
         expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a b] (str a b c)) (foo x y)'))).toEqual(
@@ -475,7 +475,7 @@ describe('specialExpressions', () => {
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a] (if (= a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
+        expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a] (if (== a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
           new Set([]),
         )
         expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a b] (str a b c))'))).toEqual(new Set(['c']))

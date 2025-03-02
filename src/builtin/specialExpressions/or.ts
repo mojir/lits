@@ -3,10 +3,10 @@ import type { CommonSpecialExpressionNode } from '../../parser/interface'
 import type { BuiltinSpecialExpression } from '../interface'
 import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
-export interface OrNode extends CommonSpecialExpressionNode<'or'> {}
+export interface OrNode extends CommonSpecialExpressionNode<'||'> {}
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
-  polishParse: getCommonPolishSpecialExpressionParser('or'),
+  polishParse: getCommonPolishSpecialExpressionParser('||'),
   validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = false

@@ -8,7 +8,7 @@ import { collHasKey, toAny } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
-  'object': {
+  object: {
     evaluate: (params, sourceCodeInfo): Obj => {
       const result: Obj = {}
       for (let i = 0; i < params.length; i += 2) {
@@ -22,7 +22,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertEvenNumberOfParams(node),
   },
 
-  'keys': {
+  keys: {
     evaluate: ([obj], sourceCodeInfo): string[] => {
       assertObj(obj, sourceCodeInfo)
       return Object.keys(obj)
@@ -30,7 +30,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
 
-  'vals': {
+  vals: {
     evaluate: ([obj], sourceCodeInfo): Arr => {
       assertObj(obj, sourceCodeInfo)
       return Object.values(obj)
@@ -38,7 +38,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
 
-  'entries': {
+  entries: {
     evaluate: ([obj], sourceCodeInfo): Array<[string, unknown]> => {
       assertObj(obj, sourceCodeInfo)
       return Object.entries(obj)
@@ -46,7 +46,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
 
-  'find': {
+  find: {
     evaluate: ([obj, key], sourceCodeInfo): [string, unknown] | null => {
       assertObj(obj, sourceCodeInfo)
       assertString(key, sourceCodeInfo)
@@ -58,7 +58,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(2, node),
   },
 
-  'dissoc': {
+  dissoc: {
     evaluate: ([obj, key], sourceCodeInfo): Any => {
       assertObj(obj, sourceCodeInfo)
       assertString(key, sourceCodeInfo)
@@ -69,7 +69,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(2, node),
   },
 
-  'merge': {
+  merge: {
     evaluate: (params, sourceCodeInfo): Any => {
       if (params.length === 0)
         return null
@@ -88,7 +88,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 0 }, node),
   },
 
-  'merge_with': {
+  merge_with: {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       const first = params[0]
       const fn = params.at(-1)
@@ -116,7 +116,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 2 }, node),
   },
 
-  'zipmap': {
+  zipmap: {
     evaluate: ([keys, values], sourceCodeInfo): Any => {
       assertStringArray(keys, sourceCodeInfo)
       assertArray(values, sourceCodeInfo)
@@ -134,7 +134,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(2, node),
   },
 
-  'select_keys': {
+  select_keys: {
     evaluate: ([obj, keys], sourceCodeInfo): Any => {
       assertStringArray(keys, sourceCodeInfo)
       assertObj(obj, sourceCodeInfo)

@@ -15,6 +15,7 @@ function getLinkName(name: string): string {
   name = name.replace(/\+/g, '-plus')
   name = name.replace(/-$/g, '-minus')
   name = name.replace(/\*/g, '-star')
+  name = name.replace(/%/g, '-percent')
   name = name.replace(/\//g, '-slash')
   name = name.replace(/\?/g, '-question')
   name = name.replace(/!/g, '-exclamation')

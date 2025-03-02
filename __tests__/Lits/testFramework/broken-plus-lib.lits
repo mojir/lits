@@ -1,1 +1,1 @@
-(defn plus [a b] (++ a b))
+(defn plus [a b] (-- a b))

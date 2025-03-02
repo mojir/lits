@@ -137,64 +137,31 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, r
     case '.':
       return createAccessorNode(left, fromSymbolToStringNode(asSymbolNode(right, getTokenDebugData(token)?.sourceCodeInfo)), token)
     case '**': // exponentiation
-      return createNamedNormalExpressionNode('pow', [left, right], token)
     case '*':
-      return createNamedNormalExpressionNode('*', [left, right], token)
     case '/':
-      return createNamedNormalExpressionNode('/', [left, right], token)
     case '%':
-      return createNamedNormalExpressionNode('rem', [left, right], token)
     case '+':
-      return createNamedNormalExpressionNode('+', [left, right], token)
     case '-':
-      return createNamedNormalExpressionNode('-', [left, right], token)
     case '<<':
-      return createNamedNormalExpressionNode('<<', [left, right], token)
     case '>>':
-      return createNamedNormalExpressionNode('>>', [left, right], token)
     case '>>>':
-      return createNamedNormalExpressionNode('>>>', [left, right], token)
-    case '++': {
-      const leftString = createNamedNormalExpressionNode('str', [left], token)
-      const rightString = createNamedNormalExpressionNode('str', [right], token)
-      return createNamedNormalExpressionNode('str', [leftString, rightString], token)
-    }
+    case '++':
     case '<':
-      return createNamedNormalExpressionNode('<', [left, right], token)
     case '<=':
-      return createNamedNormalExpressionNode('<=', [left, right], token)
     case '>':
-      return createNamedNormalExpressionNode('>', [left, right], token)
     case '>=':
-      return createNamedNormalExpressionNode('>=', [left, right], token)
     case '==':
-      return createNamedNormalExpressionNode('=', [left, right], token)
     case '!=':
-      return createNamedNormalExpressionNode('!=', [left, right], token)
     case '&':
-      return createNamedNormalExpressionNode('&', [left, right], token)
     case '^':
-      return createNamedNormalExpressionNode('^', [left, right], token)
     case '|':
-      return createNamedNormalExpressionNode('|', [left, right], token)
+      return createNamedNormalExpressionNode(operatorName, [left, right], token)
     case '&&':
-      return {
-        t: AstNodeType.SpecialExpression,
-        n: 'and',
-        p: [left, right],
-        token: getTokenDebugData(token) && token,
-      }
     case '||':
-      return {
-        t: AstNodeType.SpecialExpression,
-        n: 'or',
-        p: [left, right],
-        token: getTokenDebugData(token) && token,
-      }
     case '??':
       return {
         t: AstNodeType.SpecialExpression,
-        n: '??',
+        n: operatorName,
         p: [left, right],
         token: getTokenDebugData(token) && token,
       }
@@ -540,13 +507,13 @@ export class AlgebraicParser {
         const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn'>
         switch (name) {
           case '??':
-          case 'and':
+          case '&&':
           case 'comment':
           case 'cond':
           case 'declared?':
           case 'if':
           case 'if_not':
-          case 'or':
+          case '||':
           case 'when':
           case 'when_not':
           case 'do':

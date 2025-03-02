@@ -26,7 +26,7 @@ import { whenLetSpecialExpression } from './specialExpressions/when_let'
 import { whenNotSpecialExpression } from './specialExpressions/when_not'
 
 const specialExpressions = {
-  'and': andSpecialExpression,
+  '&&': andSpecialExpression,
   'comment': commentSpecialExpression,
   'cond': condSpecialExpression,
   'def': defSpecialExpression,
@@ -42,7 +42,7 @@ const specialExpressions = {
   'if_not': ifNotSpecialExpression,
   'let': letSpecialExpression,
   'loop': loopSpecialExpression,
-  'or': orSpecialExpression,
+  '||': orSpecialExpression,
   'recur': recurSpecialExpression,
   'throw': throwSpecialExpression,
   'time!': timeSpecialExpression,
@@ -59,15 +59,14 @@ export type SpecialExpressionName = keyof typeof specialExpressions
 export type CommonSpecialExpressionName = keyof Pick<
   typeof specialExpressions,
   | '??'
-  | '??'
-  | 'and'
+  | '&&'
   | 'comment'
   | 'cond'
   | 'declared?'
   | 'do'
   | 'if'
   | 'if_not'
-  | 'or'
+  | '||'
   | 'time!'
   | 'when'
   | 'when_not'

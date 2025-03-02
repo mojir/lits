@@ -133,10 +133,10 @@ not ok 2 sub
 not ok 1 add
   ---
   error: "UndefinedSymbolError"
-  message: "Undefined symbol '++'."
+  message: "Undefined symbol '--'."
   location: "${path.resolve(__dirname, 'broken-plus-lib.lits')}:1:18"
   code:
-    - "(defn plus [a b] (++ a b))"
+    - "(defn plus [a b] (-- a b))"
     - "                 ^        "
   ...
 ok 2 sub

@@ -28,7 +28,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert-equal',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -57,7 +57,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert-exclamation-equal',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -86,7 +86,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_equal',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -115,7 +115,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_not_equal',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -144,7 +144,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_gt',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -173,7 +173,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_lt',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -202,7 +202,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_gte',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -231,7 +231,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_lte',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     a: {
@@ -260,7 +260,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_true',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     value: {
@@ -286,7 +286,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_false',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     value: {
@@ -312,7 +312,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_truthy',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     value: {
@@ -345,7 +345,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_falsy',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     value: {
@@ -377,7 +377,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_null',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     value: {
@@ -409,7 +409,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_throws',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     fn: {
@@ -431,7 +431,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_throws_error',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     'fn': {
@@ -460,7 +460,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
   linkName: 'assert_not_throws',
   clojureDocs: null,
   returns: {
-    type: 'nil',
+    type: 'null',
   },
   args: {
     fn: {

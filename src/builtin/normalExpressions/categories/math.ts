@@ -93,7 +93,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
   },
 
-  'rem': {
+  '%': {
     evaluate: ([dividend, divisor], sourceCodeInfo): number => {
       assertNumber(dividend, sourceCodeInfo)
       assertNumber(divisor, sourceCodeInfo)
@@ -119,7 +119,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  'pow': {
+  '**': {
     evaluate: ([first, second], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)
       assertNumber(second, sourceCodeInfo)

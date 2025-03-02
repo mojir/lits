@@ -8,7 +8,7 @@ export const calculateOrOutcomes: CalculatePossibleAstNodesHelper<OrNode> = ({
 }) => {
   return combinateAstNodes(astNode.p)
     .map<OrNode>(p => ({
-      n: 'or',
+      n: '||',
       t: AstNodeType.SpecialExpression,
       p,
       token: astNode.token,

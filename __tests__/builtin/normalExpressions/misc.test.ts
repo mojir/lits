@@ -91,34 +91,34 @@ describe('misc functions', () => {
       })
     })
 
-    describe('=', () => {
+    describe('==', () => {
       it('samples', () => {
-        expect(() => lits.run('(=)')).toThrow()
-        expect(lits.run('(= 1)')).toBe(true)
-        expect(lits.run('(= 1 1)')).toBe(true)
-        expect(lits.run('(= 1 2)')).toBe(false)
-        expect(lits.run('(= 1 2 1)')).toBe(false)
-        expect(lits.run('(= 1 2 3)')).toBe(false)
-        expect(lits.run('(= :1)')).toBe(true)
-        expect(lits.run('(= :1 :1)')).toBe(true)
-        expect(lits.run('(= :1 :2)')).toBe(false)
-        expect(lits.run('(= :1 :2 :1)')).toBe(false)
-        expect(lits.run('(= :1 :2 :3)')).toBe(false)
-        expect(lits.run('(= :2 :2 :2)')).toBe(true)
-        expect(lits.run('(= 1 :2 3)')).toBe(false)
-        expect(lits.run('(= 1 nil 3)')).toBe(false)
-        expect(lits.run('(= 1 true 3)')).toBe(false)
-        expect(lits.run('(= 1 false 3)')).toBe(false)
-        expect(lits.run('(= nil nil)')).toBe(true)
-        expect(lits.run('(= true true)')).toBe(true)
-        expect(lits.run('(= false false)')).toBe(true)
+        expect(() => lits.run('(==)')).toThrow()
+        expect(lits.run('(== 1)')).toBe(true)
+        expect(lits.run('(== 1 1)')).toBe(true)
+        expect(lits.run('(== 1 2)')).toBe(false)
+        expect(lits.run('(== 1 2 1)')).toBe(false)
+        expect(lits.run('(== 1 2 3)')).toBe(false)
+        expect(lits.run('(== :1)')).toBe(true)
+        expect(lits.run('(== :1 :1)')).toBe(true)
+        expect(lits.run('(== :1 :2)')).toBe(false)
+        expect(lits.run('(== :1 :2 :1)')).toBe(false)
+        expect(lits.run('(== :1 :2 :3)')).toBe(false)
+        expect(lits.run('(== :2 :2 :2)')).toBe(true)
+        expect(lits.run('(== 1 :2 3)')).toBe(false)
+        expect(lits.run('(== 1 nil 3)')).toBe(false)
+        expect(lits.run('(== 1 true 3)')).toBe(false)
+        expect(lits.run('(== 1 false 3)')).toBe(false)
+        expect(lits.run('(== nil nil)')).toBe(true)
+        expect(lits.run('(== true true)')).toBe(true)
+        expect(lits.run('(== false false)')).toBe(true)
       })
 
       it('object equality', () => {
         const program = `
         (def obj1 (object :x 10))
         (def obj2 (object :x 10))
-        [(= obj1 obj1) (= obj1 obj2)]
+        [(== obj1 obj1) (== obj1 obj2)]
       `
         expect(lits.run(program)).toEqual([true, false])
       })
@@ -127,7 +127,7 @@ describe('misc functions', () => {
         const program = `
         (def array1 [1 2 3])
         (def array2 [1 2 3])
-        [(= array1 array1) (= array1 array2)]
+        [(== array1 array1) (== array1 array2)]
       `
         expect(lits.run(program)).toEqual([true, false])
       })

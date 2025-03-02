@@ -2,7 +2,7 @@ import type { FunctionReference } from '..'
 import type { StringApiName } from '../api'
 
 export const stringReference: Record<StringApiName, FunctionReference<'String'>> = {
-  subs: {
+  'subs': {
     title: 'subs',
     category: 'String',
     linkName: 'subs',
@@ -32,7 +32,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(subs "A string" 100)',
     ],
   },
-  string_repeat: {
+  'string_repeat': {
     title: 'string_repeat',
     category: 'String',
     linkName: 'string_repeat',
@@ -57,7 +57,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(string_repeat "***" 0)',
     ],
   },
-  str: {
+  'str': {
     title: 'str',
     category: 'String',
     linkName: 'str',
@@ -81,7 +81,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(str 0 false true nil #"^kalle" [1 2 3] {:a :a})',
     ],
   },
-  number: {
+  'number': {
     title: 'number',
     category: 'String',
     linkName: 'number',
@@ -104,7 +104,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(number "-1.01")',
     ],
   },
-  lower_case: {
+  'lower_case': {
     title: 'lower_case',
     category: 'String',
     linkName: 'lower_case',
@@ -125,7 +125,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(lower_case "")',
     ],
   },
-  upper_case: {
+  'upper_case': {
     title: 'upper_case',
     category: 'String',
     linkName: 'upper_case',
@@ -147,7 +147,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(upper_case "")',
     ],
   },
-  trim: {
+  'trim': {
     title: 'trim',
     category: 'String',
     linkName: 'trim',
@@ -170,7 +170,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(trim "")',
     ],
   },
-  trim_left: {
+  'trim_left': {
     title: 'trim_left',
     category: 'String',
     linkName: 'trim_left',
@@ -193,7 +193,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(trim_left "")',
     ],
   },
-  trim_right: {
+  'trim_right': {
     title: 'trim_right',
     category: 'String',
     linkName: 'trim_right',
@@ -216,7 +216,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(trim_right "")',
     ],
   },
-  pad_left: {
+  'pad_left': {
     title: 'pad_left',
     category: 'String',
     linkName: 'pad_left',
@@ -247,7 +247,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(pad_left "Albert" -1)',
     ],
   },
-  pad_right: {
+  'pad_right': {
     title: 'pad_right',
     category: 'String',
     linkName: 'pad_right',
@@ -278,7 +278,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(pad_right "Albert" -1)',
     ],
   },
-  split: {
+  'split': {
     title: 'split',
     category: 'String',
     linkName: 'split',
@@ -309,7 +309,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(map number (split "0123456789" "" 5))',
     ],
   },
-  template: {
+  'template': {
     title: 'template',
     category: 'String',
     linkName: 'template',
@@ -346,7 +346,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(template "No book||||One book||||Two books||||Three books||||$1 books" 4)',
     ],
   },
-  to_char_code: {
+  'to_char_code': {
     title: 'to_char_code',
     category: 'String',
     linkName: 'to_char_code',
@@ -368,7 +368,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(to_char_code "Albert")',
     ],
   },
-  from_char_code: {
+  'from_char_code': {
     title: 'from_char_code',
     category: 'String',
     linkName: 'from_char_code',
@@ -390,7 +390,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(from_char_code 0)',
     ],
   },
-  encode_base64: {
+  'encode_base64': {
     title: 'encode_base64',
     category: 'String',
     linkName: 'encode_base64',
@@ -411,7 +411,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(encode_base64 "Albert")',
     ],
   },
-  decode_base64: {
+  'decode_base64': {
     title: 'decode_base64',
     category: 'String',
     linkName: 'decode_base64',
@@ -432,7 +432,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(decode_base64 "QWxiZXJ0IPCfkLs=")',
     ],
   },
-  encode_uri_component: {
+  'encode_uri_component': {
     title: 'encode_uri_component',
     category: 'String',
     linkName: 'encode_uri_component',
@@ -453,7 +453,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(encode_uri_component "Hi everyone!?")',
     ],
   },
-  decode_uri_component: {
+  'decode_uri_component': {
     title: 'decode_uri_component',
     category: 'String',
     linkName: 'decode_uri_component',
@@ -475,7 +475,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
   },
 
-  join: {
+  'join': {
     title: 'join',
     category: 'String',
     linkName: 'join',
@@ -498,6 +498,32 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     examples: [
       '(join ["Albert" "Mojir"] " ")',
       '(join (map [0 1 2 3 4 5 6 7 8 9] str) ", ")',
+    ],
+  },
+  '++': {
+    title: '++',
+    category: 'String',
+    linkName: '-plus-plus',
+    clojureDocs: null,
+    returns: {
+      type: 'string',
+    },
+    args: {
+      strings: {
+        type: ['string', 'number', 'null'],
+        rest: true,
+      },
+    },
+    variants: [{
+      argumentNames: ['strings'],
+    }],
+    description: 'Concatenats $strings into one string.',
+    examples: [
+      '(++ "Albert" " " "Mojir")',
+      '(++ "Albert" "Mojir")',
+      '(++ "Albert" null "Mojir")',
+      '(++ "Albert")',
+      '(++)',
     ],
   },
 }

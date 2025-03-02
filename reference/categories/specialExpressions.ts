@@ -2,10 +2,10 @@ import type { SpecialExpressionsApiName } from '../api.ts'
 import type { FunctionReference } from '../index.ts'
 
 export const specialExpressionsReference: Record<SpecialExpressionsApiName, FunctionReference<'Special expression'>> = {
-  'and': {
-    title: 'and',
+  '&&': {
+    title: '&&',
     category: 'Special expression',
-    linkName: 'and',
+    linkName: '-and-and',
     returns: {
       type: 'boolean',
     },
@@ -19,23 +19,24 @@ export const specialExpressionsReference: Record<SpecialExpressionsApiName, Func
       { argumentNames: ['expressions'] },
     ],
     description: `
-Computes logical \`and\` function. Evaluation of $expressions starts from left.
+Computes logical \`and\`. Evaluation of $expressions starts from left.
 As soon as a \`expression\` evaluates to a falsy value, the result is returned.
 
 If all expressions evaluate to truthy values, the value of the last expression is returned.`,
     examples: [
-      '(and 1 1)',
-      '(and (> 3 2) "string")',
-      '(and (< 3 2) "string")',
-      '(and true true true true)',
-      '(and true true 0 true)',
+      '(&& 1 1)',
+      '(&& (> 3 2) "string")',
+      '(&& (< 3 2) "string")',
+      '(&& true true true true)',
+      '(&& true true 0 true)',
     ],
   },
 
-  'or': {
-    title: 'or',
+  '||': {
+    title: '||',
     category: 'Special expression',
-    linkName: 'or',
+    linkName: '-or-or',
+    clojureDocs: 'or',
     returns: {
       type: 'boolean',
     },
@@ -49,16 +50,16 @@ If all expressions evaluate to truthy values, the value of the last expression i
       { argumentNames: ['expressions'] },
     ],
     description: `
-Computes logical \`or\` function. Evaluation of $expressions evaluation starts from left.
+Computes logical \`or\`. Evaluation of $expressions evaluation starts from left.
 As soon as a \`expression\` evaluates to a truthy value, the result is returned.
 
 If all expressions evaluate to falsy values, the value of the last expression is returned.`,
     examples: [
-      '(or 1 1)',
-      '(or (> 3 2) "string")',
-      '(or (< 3 2) "string")',
-      '(or true true true true)',
-      '(or 1 2 3 4)',
+      '(|| 1 1)',
+      '(|| (> 3 2) "string")',
+      '(|| (< 3 2) "string")',
+      '(|| true true true true)',
+      '(|| 1 2 3 4)',
     ],
   },
   'def': {
@@ -617,7 +618,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     category: 'Special expression',
     linkName: 'comment',
     returns: {
-      type: 'nil',
+      type: 'null',
     },
     args: {
       expressions: {
@@ -661,7 +662,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     category: 'Special expression',
     linkName: 'recur',
     returns: {
-      type: 'nil',
+      type: 'null',
     },
     args: {
       expressions: {
@@ -768,7 +769,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     category: 'Special expression',
     linkName: 'doseq',
     returns: {
-      type: 'nil',
+      type: 'null',
     },
     args: {
       bindings: {

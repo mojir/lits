@@ -8,7 +8,7 @@ export const calculateAndOutcomes: CalculatePossibleAstNodesHelper<AndNode> = ({
 }) => {
   return combinateAstNodes(astNode.p)
     .map<AndNode>(p => ({
-      n: 'and',
+      n: '&&',
       t: AstNodeType.SpecialExpression,
       p,
       token: astNode.token,

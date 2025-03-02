@@ -6,12 +6,12 @@ import { asNonUndefined, assertNumberOfParams } from '../../../typeGuards'
 import { assertArray } from '../../../typeGuards/array'
 import { assertStringOrRegularExpression, isObj } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
-import { asStringOrNumber, assertString } from '../../../typeGuards/string'
+import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { toNonNegativeInteger } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const stringNormalExpression: BuiltinNormalExpressions = {
-  subs: {
+  'subs': {
     evaluate: ([first, second, third], sourceCodeInfo): Any => {
       assertString(first, sourceCodeInfo)
       assertNumber(second, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -25,7 +25,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
-  string_repeat: {
+  'string_repeat': {
     evaluate: ([str, count], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -35,7 +35,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(2, node),
   },
 
-  str: {
+  'str': {
     evaluate: (params: Arr) => {
       return params.reduce((result: string, param) => {
         const paramStr
@@ -51,7 +51,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     },
   },
 
-  number: {
+  'number': {
     evaluate: ([str], sourceCodeInfo): number => {
       assertString(str, sourceCodeInfo)
       const number = Number(str)
@@ -63,7 +63,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  from_char_code: {
+  'from_char_code': {
     evaluate: ([num], sourceCodeInfo): string => {
       assertNumber(num, sourceCodeInfo, { finite: true })
       const int = toNonNegativeInteger(num)
@@ -77,7 +77,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  to_char_code: {
+  'to_char_code': {
     evaluate: ([str], sourceCodeInfo): number => {
       assertString(str, sourceCodeInfo, { nonEmpty: true })
       return asNonUndefined(str.codePointAt(0), sourceCodeInfo)
@@ -85,7 +85,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  lower_case: {
+  'lower_case': {
     evaluate: ([str], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       return str.toLowerCase()
@@ -93,7 +93,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  upper_case: {
+  'upper_case': {
     evaluate: ([str], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       return str.toUpperCase()
@@ -101,7 +101,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  trim: {
+  'trim': {
     evaluate: ([str], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       return str.trim()
@@ -109,7 +109,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  trim_left: {
+  'trim_left': {
     evaluate: ([str], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       return str.replace(/^\s+/, '')
@@ -117,7 +117,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  trim_right: {
+  'trim_right': {
     evaluate: ([str], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       return str.replace(/\s+$/, '')
@@ -125,7 +125,33 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 
-  join: {
+  '++': {
+    evaluate: (params, sourceCodeInfo): string => {
+      if (params.length === 0) {
+        return ''
+      }
+      const first = params[0]
+      if (first !== null) {
+        assertStringOrNumber(first, sourceCodeInfo)
+      }
+      if (params.length === 1) {
+        return first === null ? '' : `${first}`
+      }
+
+      return params.slice(1).reduce((acc: string, str) => {
+        if (str !== null) {
+          assertStringOrNumber(str, sourceCodeInfo)
+        }
+        if (str === null) {
+          return acc
+        }
+        return `${acc}${str}`
+      }, first === null ? '' : `${first}`)
+    },
+    validate: (): void => undefined,
+  },
+
+  'join': {
     evaluate: ([stringList, delimiter], sourceCodeInfo): string => {
       assertArray(stringList, sourceCodeInfo)
       stringList.forEach(str => assertString(str, sourceCodeInfo))
@@ -135,7 +161,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
   },
 
-  split: {
+  'split': {
     evaluate: ([str, stringOrRegExpValue, limit], sourceCodeInfo): string[] => {
       assertString(str, sourceCodeInfo)
       assertStringOrRegularExpression(stringOrRegExpValue, sourceCodeInfo)
@@ -151,7 +177,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
-  pad_left: {
+  'pad_left': {
     evaluate: ([str, length, padString], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       assertNumber(length, sourceCodeInfo, { integer: true })
@@ -164,7 +190,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
-  pad_right: {
+  'pad_right': {
     evaluate: ([str, length, padString], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       assertNumber(length, sourceCodeInfo, { integer: true })
@@ -177,7 +203,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
 
-  template: {
+  'template': {
     evaluate: ([templateString, ...placeholders], sourceCodeInfo): string => {
       assertString(templateString, sourceCodeInfo)
       assertArray(placeholders, sourceCodeInfo)
@@ -210,7 +236,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 1, max: 10 }, node),
   },
 
-  encode_base64: {
+  'encode_base64': {
     evaluate: ([value], sourceCodeInfo): string => {
       assertString(value, sourceCodeInfo)
       return btoa(
@@ -223,7 +249,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
 
-  decode_base64: {
+  'decode_base64': {
     evaluate: ([value], sourceCodeInfo): string => {
       assertString(value, sourceCodeInfo)
       try {
@@ -243,7 +269,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
 
-  encode_uri_component: {
+  'encode_uri_component': {
     evaluate: ([value], sourceCodeInfo): string => {
       assertString(value, sourceCodeInfo)
       return encodeURIComponent(value)
@@ -251,7 +277,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams(1, node),
   },
 
-  decode_uri_component: {
+  'decode_uri_component': {
     evaluate: ([value], sourceCodeInfo): string => {
       assertString(value, sourceCodeInfo)
       try {

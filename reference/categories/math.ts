@@ -100,10 +100,11 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     description: 'Modulus of `dividend` and `divisor`. Truncates toward negative infinity.',
     examples: ['(mod 5 3)', '(mod 5.2 3.1)', '(mod -5 3)', '(mod 5 -3)', '(mod -5 -3)'],
   },
-  'rem': {
-    title: 'rem',
+  '%': {
+    title: '%',
     category: 'Math',
-    linkName: 'rem',
+    linkName: '-percent',
+    clojureDocs: 'rem',
     returns: {
       type: 'number',
     },
@@ -119,7 +120,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Remainder of dividing `dividend` and `divisor`.',
-    examples: ['(rem 5 3)', '(rem 5.2 3.1)', '(rem -5 3)', '(rem 5 -3)', '(rem -5 -3)'],
+    examples: ['(% 5 3)', '(% 5.2 3.1)', '(% -5 3)', '(% 5 -3)', '(% -5 -3)'],
   },
   'quot': {
     title: 'quot',
@@ -216,10 +217,10 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     description: 'Computes cube root of $x.',
     examples: ['(cbrt 0)', '(cbrt 27)', '(cbrt 2)', '(cbrt 1)'],
   },
-  'pow': {
-    title: 'pow',
+  '**': {
+    title: '**',
     category: 'Math',
-    linkName: 'pow',
+    linkName: '-star-star',
     clojureDocs: null,
     returns: {
       type: 'number',
@@ -236,7 +237,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Computes returns $a raised to the power of $b.',
-    examples: ['(pow 2 3)', '(pow 2 0)', '(pow 2 -3)', '(pow -2 3)', '(pow -2 -3)'],
+    examples: ['(** 2 3)', '(** 2 0)', '(** 2 -3)', '(** -2 3)', '(** -2 -3)'],
   },
   'exp': {
     title: 'exp',
@@ -606,7 +607,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['x'] },
     ],
     description: 'Returns the base `2` logarithm of a number.',
-    examples: ['(log2 0.01)', '(log2 (pow 2 12))', '(log2 2.5)'],
+    examples: ['(log2 0.01)', '(log2 (** 2 12))', '(log2 2.5)'],
   },
   'log10': {
     title: 'log10',
@@ -625,7 +626,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['x'] },
     ],
     description: 'Returns the `10` logarithm of a number.',
-    examples: ['(log10 0.01)', '(log10 (pow 10 12))', '(log10 2.5)'],
+    examples: ['(log10 0.01)', '(log10 (** 10 12))', '(log10 2.5)'],
   },
   'sin': {
     title: 'sin',

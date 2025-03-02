@@ -23,13 +23,14 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x'] },
       { argumentNames: ['x', 'ys'] },
     ],
-    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (= a b))`.',
+    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (== a b))`.',
     examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
   },
-  '=': {
-    title: '=',
+  '==': {
+    title: '==',
     category: 'Misc',
-    linkName: '-equal',
+    linkName: '-equal-equal',
+    clojureDocs: '=',
     returns: {
       type: 'boolean',
     },
@@ -47,7 +48,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x', 'ys'] },
     ],
     description: 'Compares `values` according to \'equal\' predicate. Result is `true` if every specified value is equal to each other, otherwise result is `false`.',
-    examples: ['(= 1 1)', '(= 1.01 1)', '(= :1 1)', '(= :2 :2 :2 :2)', '(= 2 2 1 2)'],
+    examples: ['(== 1 1)', '(== 1.01 1)', '(== :1 1)', '(== :2 :2 :2 :2)', '(== 2 2 1 2)'],
   },
   '<': {
     title: '<',
@@ -320,7 +321,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(equal? [1 true nil] [1 true nil])',
       '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
       '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
-      '(= 0.3 (+ 0.1 0.2))',
+      '(== 0.3 (+ 0.1 0.2))',
       '(equal? 0.3 (+ 0.1 0.2))',
     ],
   },
