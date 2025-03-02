@@ -96,7 +96,6 @@ const nonFunctionOperators = [
   'when',
   'when_not',
   'do',
-  'time!',
   'throw',
   'let',
   'def',

@@ -283,20 +283,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(compare + -)',
     ],
   },
-  'uuid!': {
-    title: 'uuid!',
-    category: 'Misc',
-    linkName: 'uuid-exclamation',
-    returns: {
-      type: 'string',
-    },
-    args: {},
-    variants: [
-      { argumentNames: [] },
-    ],
-    description: 'Returns random UUID string.',
-    examples: ['(uuid!)'],
-  },
   'equal?': {
     title: 'equal?',
     category: 'Misc',

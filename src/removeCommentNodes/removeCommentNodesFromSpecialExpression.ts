@@ -9,7 +9,6 @@ import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
 import type { DoSeqNode, ForNode } from '../builtin/specialExpressions/loops'
 import type { ThrowNode } from '../builtin/specialExpressions/throw'
-import type { TimeNode } from '../builtin/specialExpressions/time'
 import type { TryNode } from '../builtin/specialExpressions/try'
 import type { WhenNode } from '../builtin/specialExpressions/when'
 import type { WhenFirstNode } from '../builtin/specialExpressions/when_first'
@@ -77,10 +76,6 @@ const specialExpressionCommentRemovers = {
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },
   'recur': (node: AndNode, removeOptions: RemoveOptions) => {
-    removeOptions.removeCommenNodesFromArray(node.p)
-    node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
-  },
-  'time!': (node: TimeNode, removeOptions: RemoveOptions) => {
     removeOptions.removeCommenNodesFromArray(node.p)
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },

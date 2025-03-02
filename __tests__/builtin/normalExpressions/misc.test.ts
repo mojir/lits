@@ -321,12 +321,6 @@ describe('misc functions', () => {
       })
     })
 
-    describe('uuid!', () => {
-      it('samples', () => {
-        expect(lits.run('(uuid!)')).toMatch(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i)
-      })
-    })
-
     describe('json_stringify', () => {
       it('samples', () => {
         expect(lits.run('(json_stringify {:a 10 :b 20})')).toBe('{"a":10,"b":20}')

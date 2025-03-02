@@ -736,33 +736,6 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
     n))`,
     ],
   },
-  'time!': {
-    title: 'time!',
-    category: 'Special expression',
-    linkName: 'time-exclamation',
-    clojureDocs: 'time',
-    returns: {
-      type: 'any',
-    },
-    args: {
-      expression: {
-        type: '*expression',
-      },
-    },
-    variants: [
-      { argumentNames: ['expression'] },
-    ],
-    description: 'Prints the time it took to evaluate $expression. Returns $expression evaluated.',
-    examples: [`
-(defn fib [x]
-  (if
-    (<= x 2)
-    1
-    (+ 
-      (fib (dec x))
-      (fib (- x 2)))))
-(time! (fib 20))`],
-  },
 
   'doseq': {
     title: 'doseq',

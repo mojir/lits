@@ -13,13 +13,11 @@ const lits = getLitsVariants()
 describe('specialExpressions', () => {
   let oldLog: () => void
   let logSpy: Mock<any>
-  let lastLog: unknown
   beforeEach(() => {
     oldLog = console.log
     logSpy = vitest.fn()
     console.log = (...args: unknown[]) => {
       logSpy(...args)
-      lastLog = args[0]
     }
   })
   afterEach(() => {
@@ -706,18 +704,6 @@ describe('specialExpressions', () => {
             lits.analyze('(loop [n (+ 3 y)] (write! x n) (when (! (zero? n)) (recur (dec n))))'),
           ),
         ).toEqual(new Set(['x', 'y']))
-      })
-    })
-  })
-  describe('time!', () => {
-    it('samples', () => {
-      expect(lits.run('(time! (+ 1 2))')).toBe(3)
-      expect(lastLog).toMatch(/Elapsed time: \d+ ms/)
-    })
-
-    describe('unresolvedIdentifiers', () => {
-      it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(time! (foo x z))'))).toEqual(new Set(['foo', 'x', 'z']))
       })
     })
   })

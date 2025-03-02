@@ -380,7 +380,6 @@ describe('algebraic operators', () => {
       expect(() => lits.run('{ 2 = 1 }')).toThrow()
       expect(() => lits.run('{ x=1 y=2 }')).toThrow()
       expect(() => lits.run('[1 2]')).toThrow()
-      expect(() => lits.run('uuid!(1)')).toThrow() // To many parameters
       expect(() => lits.run('if(1)')).toThrow() // To few parameters
       expect(() => lits.run(']')).toThrow()
     })

@@ -921,7 +921,6 @@ var Playground = (function (exports) {
         'when',
         'when_not',
         'do',
-        'time!',
         'throw',
         'let',
         'def',
@@ -1285,10 +1284,6 @@ var Playground = (function (exports) {
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
         'recur': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'time!': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -3617,8 +3612,6 @@ var Playground = (function (exports) {
         },
     };
 
-    var uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-    var xyRegexp = /[xy]/g;
     var miscNormalExpression = {
         '!=': {
             evaluate: function (params) {
@@ -3757,10 +3750,6 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
-        // 'not': {
-        //   evaluate: ([first]): boolean => !first,
-        //   validate: node => assertNumberOfParams(1, node),
-        // },
         '!': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
@@ -3808,16 +3797,6 @@ var Playground = (function (exports) {
                 return compare(a, b);
             },
             validate: function (node) { return assertNumberOfParams(2, node); },
-        },
-        'uuid!': {
-            evaluate: function () {
-                return uuidTemplate.replace(xyRegexp, function (character) {
-                    var randomNbr = Math.floor(Math.random() * 16);
-                    var newValue = character === 'x' ? randomNbr : (randomNbr & 0x3) | 0x8;
-                    return newValue.toString(16);
-                });
-            },
-            validate: function (node) { return assertNumberOfParams(0, node); },
         },
         'json_parse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -5990,25 +5969,6 @@ var Playground = (function (exports) {
         },
     };
 
-    var timeSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('time!'),
-        validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
-        evaluate: function (node, contextStack, _a) {
-            var evaluateAstNode = _a.evaluateAstNode;
-            var param = node.p[0];
-            var startTime = Date.now();
-            var result = evaluateAstNode(param, contextStack);
-            var totalTime = Date.now() - startTime;
-            // eslint-disable-next-line no-console
-            console.log("Elapsed time: ".concat(totalTime, " ms"));
-            return result;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
-        },
-    };
-
     var trySpecialExpression = {
         polishParse: function (tokenStream, parseState, firstToken, _a) {
             var _b, _c, _d;
@@ -6269,7 +6229,6 @@ var Playground = (function (exports) {
         '||': orSpecialExpression,
         'recur': recurSpecialExpression,
         'throw': throwSpecialExpression,
-        'time!': timeSpecialExpression,
         'try': trySpecialExpression,
         'when': whenSpecialExpression,
         'when_first': whenFirstSpecialExpression,
@@ -7086,12 +7045,6 @@ var Playground = (function (exports) {
         return calculatePossibleAstNodes(astNode.p[0]).map(function (m) { return (__assign(__assign({}, astNode), { p: [m] })); });
     };
 
-    var calculateTimeOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
-        return calculatePossibleAstNodes(astNode.p[0])
-            .map(function (p) { return (__assign(__assign({}, astNode), { n: 'do', p: [p] })); });
-    };
-
     var calculateTryOutcomes = function (_a) {
         var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
         var _b = calculatePossibleAstNodes(astNode.p[0]).reduce(function (acc, node) {
@@ -7245,7 +7198,6 @@ var Playground = (function (exports) {
         '||': function (astNode, helperOptions) { return calculateOrOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         '??': function (astNode, helperOptions) { return calculateQqOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'recur': function (astNode, helperOptions) { return calculateRecurOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'time!': function (astNode, helperOptions) { return calculateTimeOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'throw': function (astNode, helperOptions) { return calculateThrowOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'try': function (astNode, helperOptions) { return calculateTryOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'when_first': function (astNode, helperOptions) { return calculateWhenFirstOutcomes(__assign({ astNode: astNode }, helperOptions)); },
@@ -7254,10 +7206,6 @@ var Playground = (function (exports) {
         'when_not': function (astNode, helperOptions) { return calculateWhenNotOutcomes(__assign({ astNode: astNode }, helperOptions)); },
     };
 
-    function isIdempotent(normalExpressionName) {
-        return !normalExpressionName.endsWith('!')
-            || normalExpressionName === 'write!';
-    }
     function calculateOutcomes(contextStack, astNodes) {
         // First, we try to calculate outcomes for the whole astNodes array.
         // If that fails, we try to calculate outcomes for the array without the first element.
@@ -7332,8 +7280,6 @@ var Playground = (function (exports) {
             : undefined;
         var newContextStack = newContext ? contextStack.create(newContext) : contextStack;
         if (astNode.t === AstNodeType.NormalExpression) {
-            if (astNode.n && !isIdempotent(astNode.n))
-                throw new Error("NormalExpressionNode with name ".concat(astNode.n, " is not idempotent. Cannot calculate possible ASTs."));
             return combinate(astNode.p.map(function (n) { return calculatePossibleAstNodes(newContextStack, n); }))
                 .map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
         }
@@ -7916,7 +7862,6 @@ var Playground = (function (exports) {
                         case 'when':
                         case 'when_not':
                         case 'do':
-                        case 'time!':
                         case 'throw': {
                             var node = {
                                 t: AstNodeType.SpecialExpression,
@@ -8742,20 +8687,19 @@ var Playground = (function (exports) {
     ];
 
     var algebraicReservedNamesRecord = {
-        'true': { value: true },
-        'false': { value: false },
-        'nil': { value: null },
-        'null': { value: null },
-        'if_let': { value: null, forbidden: true },
-        'when_let': { value: null, forbidden: true },
-        'when_first': { value: null, forbidden: true },
-        'fn': { value: null, forbidden: true },
-        'defns': { value: null, forbidden: true },
-        'try': { value: null, forbidden: true },
-        'recur': { value: null, forbidden: true },
-        'loop': { value: null, forbidden: true },
-        'time!': { value: null, forbidden: true },
-        'doseq': { value: null, forbidden: true },
+        true: { value: true },
+        false: { value: false },
+        nil: { value: null },
+        null: { value: null },
+        if_let: { value: null, forbidden: true },
+        when_let: { value: null, forbidden: true },
+        when_first: { value: null, forbidden: true },
+        fn: { value: null, forbidden: true },
+        defns: { value: null, forbidden: true },
+        try: { value: null, forbidden: true },
+        recur: { value: null, forbidden: true },
+        loop: { value: null, forbidden: true },
+        doseq: { value: null, forbidden: true },
     };
 
     var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
@@ -12454,7 +12398,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (== a b))`.',
+            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
             examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
         },
         '==': {
@@ -12573,24 +12517,6 @@ var Playground = (function (exports) {
             description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
             examples: ['(>= 1 0)', '(>= 1.01 1)', '(>= 1 1)', '(>= 4 3 2 1)', '(>= 3 2 2 1)'],
         },
-        'not': {
-            title: 'not',
-            category: 'Misc',
-            linkName: 'not',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
-            examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
-        },
         '!': {
             title: '!',
             category: 'Misc',
@@ -12608,7 +12534,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
-            examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
+            examples: ['(! 3)', '(! true)', '(! "A string")', '(! 0)', '(! false)', '(! nil)', '(! "")'],
         },
         'write!': {
             title: 'write!',
@@ -12731,20 +12657,6 @@ var Playground = (function (exports) {
                 '(compare {:a 1} [2 3])',
                 '(compare + -)',
             ],
-        },
-        'uuid!': {
-            title: 'uuid!',
-            category: 'Misc',
-            linkName: 'uuid-exclamation',
-            returns: {
-                type: 'string',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns random UUID string.',
-            examples: ['(uuid!)'],
         },
         'equal?': {
             title: 'equal?',
@@ -13990,7 +13902,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['x'] },
             ],
-            description: 'Returns `true` if $x is NaN (not a number), otherwise `false`.',
+            description: 'Returns `true` if $x is NaN (! a number), otherwise `false`.',
             examples: [
                 '(nan? 1.0)',
                 '(nan? (/ 1 0))',
@@ -14772,9 +14684,9 @@ var Playground = (function (exports) {
             ],
             description: 'Recursevly calls enclosing function or loop with its evaluated $expressions.',
             examples: [
-                "\n(defn foo [n]\n  (write! n)\n  (when (not (zero? n))\n    (recur\n      (dec n))))\n(foo 3)",
-                "\n(\n  (fn [n]\n    (write! n)\n    (when (not (zero? n))\n      (recur\n        (dec n))))\n  3)",
-                "\n(\n  loop [n 3]\n    (write! n)\n    (when\n      (not (zero? n))\n      (recur (dec n))))",
+                "\n(defn foo [n]\n  (write! n)\n  (when (! (zero? n))\n    (recur\n      (dec n))))\n(foo 3)",
+                "\n(\n  (fn [n]\n    (write! n)\n    (when (! (zero? n))\n      (recur\n        (dec n))))\n  3)",
+                "\n(\n  loop [n 3]\n    (write! n)\n    (when\n      (! (zero? n))\n      (recur (dec n))))",
             ],
         },
         'loop': {
@@ -14799,28 +14711,9 @@ var Playground = (function (exports) {
             ],
             description: 'Executes $expressions with initial $bindings. The $bindings will be replaced with the recur parameters for subsequent recursions.',
             examples: [
-                "\n(loop [n 3]\n  (write! n)\n  (when\n    (not (zero? n))\n    (recur (dec n))))",
-                "\n(loop [n 3]\n  (write! n)\n  (if\n    (not (zero? n))\n    (recur (dec n))\n    n))",
+                "\n(loop [n 3]\n  (write! n)\n  (when\n    (! (zero? n))\n    (recur (dec n))))",
+                "\n(loop [n 3]\n  (write! n)\n  (if\n    (! (zero? n))\n    (recur (dec n))\n    n))",
             ],
-        },
-        'time!': {
-            title: 'time!',
-            category: 'Special expression',
-            linkName: 'time-exclamation',
-            clojureDocs: 'time',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                expression: {
-                    type: '*expression',
-                },
-            },
-            variants: [
-                { argumentNames: ['expression'] },
-            ],
-            description: 'Prints the time it took to evaluate $expression. Returns $expression evaluated.',
-            examples: ["\n(defn fib [x]\n  (if\n    (<= x 2)\n    1\n    (+ \n      (fib (dec x))\n      (fib (- x 2)))))\n(time! (fib 20))"],
         },
         'doseq': {
             title: 'doseq',
@@ -16101,13 +15994,11 @@ var Playground = (function (exports) {
             '<=',
             '>=',
             '!',
-            // 'not',
             'write!',
             'iso_date>epoch',
             'epoch>iso_date',
             'boolean',
             'compare',
-            'uuid!',
             'equal?',
             'json_parse',
             'json_stringify',
@@ -16178,7 +16069,6 @@ var Playground = (function (exports) {
             'do',
             'recur',
             'loop',
-            'time!',
             'doseq',
             'for',
             'declared?',

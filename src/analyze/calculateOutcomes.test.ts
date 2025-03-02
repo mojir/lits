@@ -205,12 +205,6 @@ describe('calculateOutcomes.', () => {
     ])
   })
 
-  describe('calculateTimeOutcomes.', () => {
-    testSamples([
-      ['(time! :A)', ['A']],
-    ])
-  })
-
   describe('calculateRecurOutcomes.', () => {
     testSamples([
       [`(defn foo [n]

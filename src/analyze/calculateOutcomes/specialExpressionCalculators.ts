@@ -17,7 +17,6 @@ import type { OrNode } from '../../builtin/specialExpressions/or'
 import type { QqNode } from '../../builtin/specialExpressions/qq'
 import type { RecurNode } from '../../builtin/specialExpressions/recur'
 import type { ThrowNode } from '../../builtin/specialExpressions/throw'
-import type { TimeNode } from '../../builtin/specialExpressions/time'
 import type { TryNode } from '../../builtin/specialExpressions/try'
 import type { WhenNode } from '../../builtin/specialExpressions/when'
 import type { WhenFirstNode } from '../../builtin/specialExpressions/when_first'
@@ -39,7 +38,6 @@ import { calculateDoSeqOutcomes, calculateForOutcomes } from './calculateLoopsOu
 import { calculateOrOutcomes } from './calculateOrOutcomes'
 import { calculateQqOutcomes } from './calculateQqOutcomes'
 import { calculateThrowOutcomes } from './calculateThrowOutcomes'
-import { calculateTimeOutcomes } from './calculateTimeOutcomes'
 import { calculateTryOutcomes } from './calculateTryOutcomes'
 import { calculateWhenFirstOutcomes } from './calculateWhenFirstOutcomes'
 import { calculateWhenLetOutcomes } from './calculateWhenLetOutcomes'
@@ -71,7 +69,6 @@ export const specialExpressionCalculator = {
   '||': (astNode: OrNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateOrOutcomes({ astNode, ...helperOptions }),
   '??': (astNode: QqNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateQqOutcomes({ astNode, ...helperOptions }),
   'recur': (astNode: RecurNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateRecurOutcomes({ astNode, ...helperOptions }),
-  'time!': (astNode: TimeNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateTimeOutcomes({ astNode, ...helperOptions }),
   'throw': (astNode: ThrowNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateThrowOutcomes({ astNode, ...helperOptions }),
   'try': (astNode: TryNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateTryOutcomes({ astNode, ...helperOptions }),
   'when_first': (astNode: WhenFirstNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateWhenFirstOutcomes({ astNode, ...helperOptions }),

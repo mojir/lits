@@ -514,7 +514,6 @@ export class AlgebraicParser {
           case 'when':
           case 'when_not':
           case 'do':
-          case 'time!':
           case 'throw': {
             const node: SpecialExpressionNode = {
               t: AstNodeType.SpecialExpression,

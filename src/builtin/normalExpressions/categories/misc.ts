@@ -6,9 +6,6 @@ import { assertNumber } from '../../../typeGuards/number'
 import { assertString } from '../../../typeGuards/string'
 import { assertNumberOfParams } from '../../../typeGuards'
 
-const uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-const xyRegexp = /[xy]/g
-
 export const miscNormalExpression: BuiltinNormalExpressions = {
   '!=': {
     evaluate: (params): boolean => {
@@ -137,16 +134,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return compare(a, b)
     },
     validate: node => assertNumberOfParams(2, node),
-  },
-  'uuid!': {
-    evaluate: (): string => {
-      return uuidTemplate.replace(xyRegexp, (character) => {
-        const randomNbr = Math.floor(Math.random() * 16)
-        const newValue = character === 'x' ? randomNbr : (randomNbr & 0x3) | 0x8
-        return newValue.toString(16)
-      })
-    },
-    validate: node => assertNumberOfParams(0, node),
   },
   'json_parse': {
     evaluate: ([first], sourceCodeInfo): Any => {

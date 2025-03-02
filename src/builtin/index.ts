@@ -18,7 +18,6 @@ import { orSpecialExpression } from './specialExpressions/or'
 import { qqSpecialExpression } from './specialExpressions/qq'
 import { recurSpecialExpression } from './specialExpressions/recur'
 import { throwSpecialExpression } from './specialExpressions/throw'
-import { timeSpecialExpression } from './specialExpressions/time'
 import { trySpecialExpression } from './specialExpressions/try'
 import { whenSpecialExpression } from './specialExpressions/when'
 import { whenFirstSpecialExpression } from './specialExpressions/when_first'
@@ -45,7 +44,6 @@ const specialExpressions = {
   '||': orSpecialExpression,
   'recur': recurSpecialExpression,
   'throw': throwSpecialExpression,
-  'time!': timeSpecialExpression,
   'try': trySpecialExpression,
   'when': whenSpecialExpression,
   'when_first': whenFirstSpecialExpression,
@@ -67,7 +65,6 @@ export type CommonSpecialExpressionName = keyof Pick<
   | 'if'
   | 'if_not'
   | '||'
-  | 'time!'
   | 'when'
   | 'when_not'
   | 'throw'
