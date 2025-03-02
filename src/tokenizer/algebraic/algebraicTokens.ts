@@ -3,6 +3,7 @@ import type { CommonSimpleToken, CommonValueToken, CommonValueTokenType } from '
 import { commomValueTokenTypes, commonSimpleTokenTypes } from '../common/commonTokens'
 import type { Token } from '../tokens'
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
+import type { ValidAlgebraicReservedName } from './algebraicReservedNames'
 
 export const algebraicSimpleTokenTypes = [
   ...commonSimpleTokenTypes,
@@ -174,7 +175,7 @@ export type A_NumberToken = GenericAlgebraicValueToken<'A_Number'>
 export type A_BasePrefixedNumberToken = GenericAlgebraicValueToken<'A_BasePrefixedNumber'>
 export type A_OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericAlgebraicValueToken<'A_Operator', T>
 export type A_SymbolToken<T extends string = string> = GenericAlgebraicValueToken<'A_Symbol', T>
-export type A_ReservedSymbolToken = GenericAlgebraicValueToken<'A_ReservedSymbol'>
+export type A_ReservedSymbolToken<T extends ValidAlgebraicReservedName = ValidAlgebraicReservedName> = GenericAlgebraicValueToken<'A_ReservedSymbol', T>
 export type A_SingleLineCommentToken = GenericAlgebraicValueToken<'A_SingleLineComment'>
 export type A_MultiLineCommentToken = GenericAlgebraicValueToken<'A_MultiLineComment'>
 
@@ -219,16 +220,22 @@ export function asA_BinaryOperatorToken(token: Token | undefined): A_OperatorTok
   return token
 }
 
-export function isA_ReservedSymbolToken(token: Token | undefined): token is A_ReservedSymbolToken {
-  return token?.[0] === 'A_ReservedSymbol'
+export function isA_ReservedSymbolToken<T extends ValidAlgebraicReservedName>(token: Token | undefined, symbolName?: T): token is A_ReservedSymbolToken<T> {
+  if (token?.[0] !== 'A_ReservedSymbol') {
+    return false
+  }
+  if (symbolName && token[1] !== symbolName) {
+    return false
+  }
+  return true
 }
-export function assertA_ReservedSymbolToken(token: Token | undefined): asserts token is A_ReservedSymbolToken {
-  if (!isA_ReservedSymbolToken(token)) {
+export function assertA_ReservedSymbolToken<T extends ValidAlgebraicReservedName>(token: Token | undefined, symbolName?: T): asserts token is A_ReservedSymbolToken<T> {
+  if (!isA_ReservedSymbolToken(token, symbolName)) {
     throwUnexpectedToken('A_ReservedSymbol', token)
   }
 }
-export function asA_ReservedSymbolToken(token: Token | undefined): A_ReservedSymbolToken {
-  assertA_ReservedSymbolToken(token)
+export function asA_ReservedSymbolToken<T extends ValidAlgebraicReservedName>(token: Token | undefined, symbolName?: T): A_ReservedSymbolToken<T> {
+  assertA_ReservedSymbolToken(token, symbolName)
   return token
 }
 

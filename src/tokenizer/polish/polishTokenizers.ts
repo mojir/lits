@@ -187,22 +187,21 @@ export const tokenizeP_FnShorthand: Tokenizer<P_FnShorthandToken> = (input, posi
 }
 
 export const tokenizeP_ReservedSymbol: Tokenizer<P_ReservedSymbolToken> = (input, position) => {
-  for (const [reservedName, { forbidden }] of Object.entries(polishReservedNamesRecord)) {
-    const length = reservedName.length
-    const nextChar = input[position + length]
-    if (nextChar && P_symbolRegExp.test(nextChar)) {
-      continue
-    }
-
-    const symbol = input.substring(position, position + length)
-    if (symbol === reservedName) {
-      if (forbidden)
-        throw new LitsError(`${symbol} is forbidden!`, undefined)
-
-      return [length, ['P_ReservedSymbol', reservedName]]
-    }
+  const symbolMeta = tokenizeP_Symbol(input, position)
+  if (symbolMeta[0] === 0 || !symbolMeta[1]) {
+    return NO_MATCH
   }
-  return NO_MATCH
+  let symbolName = symbolMeta[1][1]
+  symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName
+
+  const info = polishReservedNamesRecord[symbolName]
+  if (!info) {
+    return NO_MATCH
+  }
+  if (info.forbidden) {
+    throw new LitsError(`${symbolName} is forbidden!`, undefined)
+  }
+  return [symbolMeta[0], ['P_ReservedSymbol', symbolName]]
 }
 
 const tokenizeP_StringShorthand: Tokenizer<P_StringShorthandToken> = (input, position) => {

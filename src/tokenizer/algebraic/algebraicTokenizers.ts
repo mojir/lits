@@ -5,6 +5,7 @@ import {
   commonTokenizers,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
+import type { AlgebraicReservedName, ValidAlgebraicReservedName } from './algebraicReservedNames'
 import { algebraicReservedNamesRecord } from './algebraicReservedNames'
 import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
 import { isSymbolicOperator } from './algebraicTokens'
@@ -92,24 +93,6 @@ export const tokenizeA_BasePrefixedNumber: Tokenizer<A_BasePrefixedNumberToken> 
   return [length, ['A_BasePrefixedNumber', input.substring(position, i)]]
 }
 
-export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (input, position) => {
-  for (const [reservedName, { forbidden }] of Object.entries(algebraicReservedNamesRecord)) {
-    const length = reservedName.length
-    const nextChar = input[position + length]
-    if (nextChar && identifierRegExp.test(nextChar))
-      continue
-
-    const name = input.substring(position, position + length)
-    if (name === reservedName) {
-      if (forbidden)
-        throw new LitsError(`${name} is forbidden!`, undefined)
-
-      return [length, ['A_ReservedSymbol', reservedName]]
-    }
-  }
-  return NO_MATCH
-}
-
 export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
   let value = input[position]
 
@@ -156,6 +139,24 @@ export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
   }
 
   return NO_MATCH
+}
+
+export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (input, position) => {
+  const symbolMeta = tokenizeA_Symbol(input, position)
+  if (symbolMeta[0] === 0 || !symbolMeta[1]) {
+    return NO_MATCH
+  }
+  let symbolName = symbolMeta[1][1]
+  symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName
+
+  const info = algebraicReservedNamesRecord[symbolName as AlgebraicReservedName]
+  if (!info) {
+    return NO_MATCH
+  }
+  if (info.forbidden) {
+    throw new LitsError(`${symbolName} is forbidden!`, undefined)
+  }
+  return [symbolMeta[0], ['A_ReservedSymbol', symbolName as ValidAlgebraicReservedName]]
 }
 
 export const tokenizeA_Operator: Tokenizer<A_OperatorToken> = (input, position) => {

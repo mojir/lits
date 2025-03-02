@@ -1,7 +1,9 @@
 import type { SpecialExpressionName, SpecialExpressionNode } from '../builtin'
 import { builtin, specialExpressionKeys } from '../builtin'
 import type { DefNode } from '../builtin/specialExpressions/def'
+import type { DoNode } from '../builtin/specialExpressions/do'
 import type { DefnNode, FnNode } from '../builtin/specialExpressions/functions'
+import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { ForNode, LoopBindingNode } from '../builtin/specialExpressions/loops'
 import type { Arity, FunctionArguments } from '../builtin/utils'
@@ -9,7 +11,7 @@ import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { A_OperatorToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
-import { asA_SymbolToken, assertA_OperatorToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_SymbolToken, isFunctionOperator, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
+import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isFunctionOperator, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertLBraceToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
@@ -201,6 +203,9 @@ export class AlgebraicParser {
 
   private parseExpression(precedence = 0): AstNode {
     const firstToken = this.peek()
+    if (isA_SymbolToken(firstToken) && firstToken[1] === 'if') {
+      return this.parseIf(firstToken)
+    }
     if (isA_SymbolToken(firstToken) && firstToken[1] === 'def') {
       return this.parseDef(firstToken)
     }
@@ -215,6 +220,9 @@ export class AlgebraicParser {
       && !isA_OperatorToken(operator, ',')
       && !isA_OperatorToken(operator, ';')
       && !isRBracketToken(operator)
+      && !isA_ReservedSymbolToken(operator, 'else')
+      && !isA_ReservedSymbolToken(operator, 'then')
+      && !isA_ReservedSymbolToken(operator, 'end')
       && !isRParenToken(operator)) {
       if (isA_BinaryOperatorToken(operator)) {
         const name = operator[1]
@@ -501,14 +509,13 @@ export class AlgebraicParser {
     this.advance()
     if (isNamedFunction) {
       if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn'>
+        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if'>
         switch (name) {
           case '??':
           case '&&':
           case 'comment':
           case 'cond':
           case 'declared?':
-          case 'if':
           case 'if_not':
           case '||':
           case 'when':
@@ -870,6 +877,69 @@ export class AlgebraicParser {
       token: getTokenDebugData(firstToken) && firstToken,
     }
     return node
+  }
+
+  parseIf(token: A_SymbolToken): IfNode {
+    this.advance()
+    const condition = this.parseExpression()
+    assertA_ReservedSymbolToken(this.peek(), 'then')
+    this.advance()
+    const thenExpressions: AstNode[] = []
+    while (
+      !this.isAtEnd()
+      && !isA_ReservedSymbolToken(this.peek(), 'else')
+      && !isA_ReservedSymbolToken(this.peek(), 'end')
+    ) {
+      thenExpressions.push(this.parseExpression())
+      if (isA_OperatorToken(this.peek(), ';')) {
+        this.advance()
+      }
+    }
+
+    const thenExpression = thenExpressions.length === 1
+      ? thenExpressions[0]!
+      : {
+        t: AstNodeType.SpecialExpression,
+        n: 'do',
+        p: thenExpressions,
+        token: getTokenDebugData(token) && token,
+      } satisfies DoNode
+
+    let elseExpression: AstNode | undefined
+    if (isA_ReservedSymbolToken(this.peek(), 'else')) {
+      this.advance()
+      const elseExpressions: AstNode[] = []
+      while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+        elseExpressions.push(this.parseExpression())
+        if (isA_OperatorToken(this.peek(), ';')) {
+          this.advance()
+        }
+      }
+
+      elseExpression = elseExpressions.length === 1
+        ? elseExpressions[0]
+        : {
+          t: AstNodeType.SpecialExpression,
+          n: 'do',
+          p: elseExpressions,
+          token: getTokenDebugData(token) && token,
+        } satisfies DoNode
+    }
+
+    assertA_ReservedSymbolToken(this.peek(), 'end')
+    this.advance()
+
+    const params = [condition, thenExpression]
+    if (elseExpression) {
+      params.push(elseExpression)
+    }
+
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'if',
+      p: params,
+      token: getTokenDebugData(token) && token,
+    }
   }
 
   parseDef(token: A_SymbolToken): DefNode {

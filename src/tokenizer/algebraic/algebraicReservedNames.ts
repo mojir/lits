@@ -1,10 +1,16 @@
 import type { Any } from '../../interface'
 
-export const algebraicReservedNamesRecord: Record<string, { value: Any, forbidden?: true }> = {
-  true: { value: true },
-  false: { value: false },
-  nil: { value: null },
-  null: { value: null },
+const validAlgebraicReservedNamesRecord = {
+  true: { value: true, forbidden: false },
+  false: { value: false, forbidden: false },
+  nil: { value: null, forbidden: false },
+  null: { value: null, forbidden: false },
+  then: { value: null, forbidden: false },
+  else: { value: null, forbidden: false },
+  end: { value: null, forbidden: false },
+} as const satisfies Record<string, { value: Any, forbidden: false }>
+
+const forbiddenAlgebraicReservedNamesRecord = {
   if_let: { value: null, forbidden: true },
   when_let: { value: null, forbidden: true },
   when_first: { value: null, forbidden: true },
@@ -14,9 +20,12 @@ export const algebraicReservedNamesRecord: Record<string, { value: Any, forbidde
   recur: { value: null, forbidden: true },
   loop: { value: null, forbidden: true },
   doseq: { value: null, forbidden: true },
+} as const satisfies Record<string, { value: Any, forbidden: true }>
 
+export const algebraicReservedNamesRecord = {
+  ...validAlgebraicReservedNamesRecord,
+  ...forbiddenAlgebraicReservedNamesRecord,
 } as const
 
-type AlgebraicReservedName = keyof typeof algebraicReservedNamesRecord
-
-export const algebraicReservedNames: AlgebraicReservedName[] = Object.keys(algebraicReservedNamesRecord)
+export type ValidAlgebraicReservedName = keyof typeof validAlgebraicReservedNamesRecord
+export type AlgebraicReservedName = keyof typeof algebraicReservedNamesRecord

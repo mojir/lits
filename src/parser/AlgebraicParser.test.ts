@@ -240,11 +240,17 @@ describe('algebraic operators', () => {
       expect(lits.run('max(1, 3, 2)')).toBe(3)
       expect(lits.run('\'&&\'(1, 2, 3)')).toBe(3)
       expect(lits.run('\'||\'(0, 1, 2)')).toBe(1)
-      expect(lits.run('if(1 > 2, 1, 2)')).toBe(2)
-      expect(lits.run('if(1 < 2, 1, 2)')).toBe(1)
       expect(lits.run('when(1 > 2, 2)')).toBe(null)
       expect(lits.run('when(1 < 2, 2)')).toBe(2)
       expect(lits.run('\'remove_at\'(1, [1, 2, 3])')).toEqual([1, 3])
+    })
+  })
+
+  describe('if expression', () => {
+    test('samples', () => {
+      expect(lits.run('if 1 > 2 then 1 else 2 end')).toBe(2)
+      expect(lits.run('if 1 > 2 then 1 end')).toBe(null)
+      expect(lits.run('if 1 < 2 then 1 else 2 end')).toBe(1)
     })
   })
 
@@ -696,7 +702,7 @@ describe('algebraic operators', () => {
               let {
                 isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
                 finalPrice = mainProduct.price + accessory.price + complItem.price,
-                discount = if(finalPrice > 500, 0.1, 0.05),
+                discount = if finalPrice > 500 then 0.1 else 0.05 end,
                 discountedPrice = finalPrice * (1 - discount),
                 matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
               }
@@ -880,8 +886,8 @@ describe('algebraic operators', () => {
     })
 
     it('supports lambda functions as return values', () => {
-      expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("add")(5, 3)')).toBe(8)
-      expect(lits.run('((op) => if(op == "add", ((x, y) => x + y), ((x, y) => x - y)))("subtract")(5, 3)')).toBe(2)
+      expect(lits.run('((op) => if op == "add" then ((x, y) => x + y) else ((x, y) => x - y) end)("add")(5, 3)')).toBe(8)
+      expect(lits.run('((op) => if op == "add" then ((x, y) => x + y) else ((x, y) => x - y) end)("subtract")(5, 3)')).toBe(2)
     })
 
     test('samples', () => {

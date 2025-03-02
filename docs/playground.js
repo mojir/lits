@@ -968,8 +968,19 @@ var Playground = (function (exports) {
     function isA_BinaryOperatorToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Operator' && isSymbolicBinaryOperator(token[1]);
     }
-    function isA_ReservedSymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_ReservedSymbol';
+    function isA_ReservedSymbolToken(token, symbolName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_ReservedSymbol') {
+            return false;
+        }
+        if (symbolName && token[1] !== symbolName) {
+            return false;
+        }
+        return true;
+    }
+    function assertA_ReservedSymbolToken(token, symbolName) {
+        if (!isA_ReservedSymbolToken(token, symbolName)) {
+            throwUnexpectedToken('A_ReservedSymbol', token);
+        }
     }
     function isA_CommentToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'A_SingleLineComment';
@@ -7586,6 +7597,9 @@ var Playground = (function (exports) {
             var _a;
             if (precedence === void 0) { precedence = 0; }
             var firstToken = this.peek();
+            if (isA_SymbolToken(firstToken) && firstToken[1] === 'if') {
+                return this.parseIf(firstToken);
+            }
             if (isA_SymbolToken(firstToken) && firstToken[1] === 'def') {
                 return this.parseDef(firstToken);
             }
@@ -7598,6 +7612,9 @@ var Playground = (function (exports) {
                 && !isA_OperatorToken(operator, ',')
                 && !isA_OperatorToken(operator, ';')
                 && !isRBracketToken(operator)
+                && !isA_ReservedSymbolToken(operator, 'else')
+                && !isA_ReservedSymbolToken(operator, 'then')
+                && !isA_ReservedSymbolToken(operator, 'end')
                 && !isRParenToken(operator)) {
                 if (isA_BinaryOperatorToken(operator)) {
                     var name_1 = operator[1];
@@ -7856,7 +7873,6 @@ var Playground = (function (exports) {
                         case 'comment':
                         case 'cond':
                         case 'declared?':
-                        case 'if':
                         case 'if_not':
                         case '||':
                         case 'when':
@@ -8180,6 +8196,60 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(firstToken) && firstToken,
             };
             return node;
+        };
+        AlgebraicParser.prototype.parseIf = function (token) {
+            this.advance();
+            var condition = this.parseExpression();
+            assertA_ReservedSymbolToken(this.peek(), 'then');
+            this.advance();
+            var thenExpressions = [];
+            while (!this.isAtEnd()
+                && !isA_ReservedSymbolToken(this.peek(), 'else')
+                && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                thenExpressions.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+            }
+            var thenExpression = thenExpressions.length === 1
+                ? thenExpressions[0]
+                : {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: thenExpressions,
+                    token: getTokenDebugData(token) && token,
+                };
+            var elseExpression;
+            if (isA_ReservedSymbolToken(this.peek(), 'else')) {
+                this.advance();
+                var elseExpressions = [];
+                while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    elseExpressions.push(this.parseExpression());
+                    if (isA_OperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                }
+                elseExpression = elseExpressions.length === 1
+                    ? elseExpressions[0]
+                    : {
+                        t: AstNodeType.SpecialExpression,
+                        n: 'do',
+                        p: elseExpressions,
+                        token: getTokenDebugData(token) && token,
+                    };
+            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            var params = [condition, thenExpression];
+            if (elseExpression) {
+                params.push(elseExpression);
+            }
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'if',
+                p: params,
+                token: getTokenDebugData(token) && token,
+            };
         };
         AlgebraicParser.prototype.parseDef = function (token) {
             this.advance();
@@ -8686,11 +8756,16 @@ var Playground = (function (exports) {
         tokenizeString,
     ];
 
-    var algebraicReservedNamesRecord = {
-        true: { value: true },
-        false: { value: false },
-        nil: { value: null },
-        null: { value: null },
+    var validAlgebraicReservedNamesRecord = {
+        true: { value: true, forbidden: false },
+        false: { value: false, forbidden: false },
+        nil: { value: null, forbidden: false },
+        null: { value: null, forbidden: false },
+        then: { value: null, forbidden: false },
+        else: { value: null, forbidden: false },
+        end: { value: null, forbidden: false },
+    };
+    var forbiddenAlgebraicReservedNamesRecord = {
         if_let: { value: null, forbidden: true },
         when_let: { value: null, forbidden: true },
         when_first: { value: null, forbidden: true },
@@ -8701,6 +8776,7 @@ var Playground = (function (exports) {
         loop: { value: null, forbidden: true },
         doseq: { value: null, forbidden: true },
     };
+    var algebraicReservedNamesRecord = __assign(__assign({}, validAlgebraicReservedNamesRecord), forbiddenAlgebraicReservedNamesRecord);
 
     var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
     var identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass);
@@ -8772,45 +8848,19 @@ var Playground = (function (exports) {
         }
         return [length, ['A_BasePrefixedNumber', input.substring(position, i)]];
     };
-    var tokenizeA_ReservedSymbolToken = function (input, position) {
-        var e_1, _a;
-        try {
-            for (var _b = __values(Object.entries(algebraicReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
-                var length_1 = reservedName.length;
-                var nextChar = input[position + length_1];
-                if (nextChar && identifierRegExp.test(nextChar))
-                    continue;
-                var name_1 = input.substring(position, position + length_1);
-                if (name_1 === reservedName) {
-                    if (forbidden)
-                        throw new LitsError("".concat(name_1, " is forbidden!"), undefined);
-                    return [length_1, ['A_ReservedSymbol', reservedName]];
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return NO_MATCH;
-    };
     var tokenizeA_Symbol = function (input, position) {
         var value = input[position];
         if (!value) {
             return NO_MATCH;
         }
         if (value === '\'') {
-            var length_2 = 1;
-            var char = input[position + length_2];
+            var length_1 = 1;
+            var char = input[position + length_1];
             var escaping = false;
             while (char !== '\'' || escaping) {
                 if (char === undefined)
                     throw new LitsError("Unclosed string at position ".concat(position, "."), undefined);
-                length_2 += 1;
+                length_1 += 1;
                 if (escaping) {
                     escaping = false;
                     value += char;
@@ -8821,10 +8871,10 @@ var Playground = (function (exports) {
                     }
                     value += char;
                 }
-                char = input[position + length_2];
+                char = input[position + length_1];
             }
             value += '\''; // closing quote
-            return [length_2 + 1, ['A_Symbol', value]];
+            return [length_1 + 1, ['A_Symbol', value]];
         }
         if (identifierFirstCharacterRegExp.test(value)) {
             var initialPosition = position;
@@ -8838,6 +8888,22 @@ var Playground = (function (exports) {
             return [position - initialPosition, ['A_Symbol', value]];
         }
         return NO_MATCH;
+    };
+    var tokenizeA_ReservedSymbolToken = function (input, position) {
+        var symbolMeta = tokenizeA_Symbol(input, position);
+        if (symbolMeta[0] === 0 || !symbolMeta[1]) {
+            return NO_MATCH;
+        }
+        var symbolName = symbolMeta[1][1];
+        symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName;
+        var info = algebraicReservedNamesRecord[symbolName];
+        if (!info) {
+            return NO_MATCH;
+        }
+        if (info.forbidden) {
+            throw new LitsError("".concat(symbolName, " is forbidden!"), undefined);
+        }
+        return [symbolMeta[0], ['A_ReservedSymbol', symbolName]];
     };
     var tokenizeA_Operator = function (input, position) {
         var _a;
@@ -8857,30 +8923,30 @@ var Playground = (function (exports) {
     };
     var tokenizeA_MultiLineComment = function (input, position) {
         if (input[position] === '/' && input[position + 1] === '*') {
-            var length_3 = 2;
+            var length_2 = 2;
             var value = '/*';
-            while (input[position + length_3] !== '*' && input[position + length_3 + 1] !== '/' && position + length_3 + 1 < input.length) {
-                value += input[position + length_3];
-                length_3 += 1;
+            while (input[position + length_2] !== '*' && input[position + length_2 + 1] !== '/' && position + length_2 + 1 < input.length) {
+                value += input[position + length_2];
+                length_2 += 1;
             }
-            if (position + length_3 + 1 >= input.length) {
+            if (position + length_2 + 1 >= input.length) {
                 throw new LitsError('Comment not closed', undefined);
             }
             value += '*/';
-            length_3 += 2;
-            return [length_3, ['A_MultiLineComment', value]];
+            length_2 += 2;
+            return [length_2, ['A_MultiLineComment', value]];
         }
         return NO_MATCH;
     };
     var tokenizeA_SingleLineComment = function (input, position) {
         if (input[position] === '/' && input[position + 1] === '/') {
-            var length_4 = 2;
+            var length_3 = 2;
             var value = '//';
-            while (input[position + length_4] !== '\n' && position + length_4 < input.length) {
-                value += input[position + length_4];
-                length_4 += 1;
+            while (input[position + length_3] !== '\n' && position + length_3 < input.length) {
+                value += input[position + length_3];
+                length_3 += 1;
             }
-            return [length_4, ['A_SingleLineComment', value]];
+            return [length_3, ['A_SingleLineComment', value]];
         }
         return NO_MATCH;
     };
