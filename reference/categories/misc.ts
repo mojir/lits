@@ -160,6 +160,25 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
     examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
   },
+  '!': {
+    title: '!',
+    category: 'Misc',
+    linkName: '-exclamation',
+    clojureDocs: 'not',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      x: {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['x'] },
+    ],
+    description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
+    examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
+  },
   'write!': {
     title: 'write!',
     category: 'Misc',

@@ -99,6 +99,10 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => !first,
     validate: node => assertNumberOfParams(1, node),
   },
+  '!': {
+    evaluate: ([first]): boolean => !first,
+    validate: node => assertNumberOfParams(1, node),
+  },
   'epoch>iso_date': {
     evaluate: ([ms], sourceCodeInfo): string => {
       assertNumber(ms, sourceCodeInfo)

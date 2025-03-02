@@ -117,13 +117,10 @@ function fromUnaryAlgebraicToAstNode(operator: A_OperatorToken, operand: AstNode
 
   switch (operatorName) {
     case '+':
-      return createNamedNormalExpressionNode('+', [operand], token)
     case '-':
-      return createNamedNormalExpressionNode('-', [operand], token)
     case '!':
-      return createNamedNormalExpressionNode('not', [operand], token)
     case '~':
-      return createNamedNormalExpressionNode('~', [operand], token)
+      return createNamedNormalExpressionNode(operatorName, [operand], token)
     /* v8 ignore next 2 */
     default:
       throw new Error(`Unknown operator: ${operatorName}`)

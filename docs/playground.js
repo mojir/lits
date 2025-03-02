@@ -3764,6 +3764,13 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams(1, node); },
         },
+        '!': {
+            evaluate: function (_a) {
+                var _b = __read(_a, 1), first = _b[0];
+                return !first;
+            },
+            validate: function (node) { return assertNumberOfParams(1, node); },
+        },
         'epoch>iso_date': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), ms = _b[0];
@@ -12590,6 +12597,25 @@ var Playground = (function (exports) {
             description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
             examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
         },
+        '!': {
+            title: '!',
+            category: 'Misc',
+            linkName: '-exclamation',
+            clojureDocs: 'not',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
+            examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
+        },
         'write!': {
             title: 'write!',
             category: 'Misc',
@@ -16080,6 +16106,7 @@ var Playground = (function (exports) {
             '>',
             '<=',
             '>=',
+            '!',
             'not',
             'write!',
             'iso_date>epoch',

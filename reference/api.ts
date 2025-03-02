@@ -136,6 +136,7 @@ export const api = {
     '>',
     '<=',
     '>=',
+    '!',
     'not',
     'write!',
     'iso_date>epoch',
