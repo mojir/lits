@@ -95,10 +95,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     validate: node => assertNumberOfParams({ min: 1 }, node),
   },
-  'not': {
-    evaluate: ([first]): boolean => !first,
-    validate: node => assertNumberOfParams(1, node),
-  },
   '!': {
     evaluate: ([first]): boolean => !first,
     validate: node => assertNumberOfParams(1, node),

@@ -23,7 +23,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x'] },
       { argumentNames: ['x', 'ys'] },
     ],
-    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(not (== a b))`.',
+    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
     examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
   },
   '==': {
@@ -142,24 +142,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
     examples: ['(>= 1 0)', '(>= 1.01 1)', '(>= 1 1)', '(>= 4 3 2 1)', '(>= 3 2 2 1)'],
   },
-  'not': {
-    title: 'not',
-    category: 'Misc',
-    linkName: 'not',
-    returns: {
-      type: 'boolean',
-    },
-    args: {
-      x: {
-        type: 'any',
-      },
-    },
-    variants: [
-      { argumentNames: ['x'] },
-    ],
-    description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
-    examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
-  },
   '!': {
     title: '!',
     category: 'Misc',
@@ -177,7 +159,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x'] },
     ],
     description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
-    examples: ['(not 3)', '(not true)', '(not "A string")', '(not 0)', '(not false)', '(not nil)', '(not "")'],
+    examples: ['(! 3)', '(! true)', '(! "A string")', '(! 0)', '(! false)', '(! nil)', '(! "")'],
   },
   'write!': {
     title: 'write!',

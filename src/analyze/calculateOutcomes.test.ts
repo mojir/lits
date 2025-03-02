@@ -146,10 +146,10 @@ describe('calculateOutcomes.', () => {
           foo
         )`, [1, 2]],
       [`(let [foo (if x 1 2)]
-          (if (not foo) 1 2)
+          (if (! foo) 1 2)
         )`, [2]],
       [`(let [foo (if_not x 1 2)]
-          (if_not (not foo) 1 2)
+          (if_not (! foo) 1 2)
       )`, [1]],
     ])
   })
@@ -158,7 +158,7 @@ describe('calculateOutcomes.', () => {
     testSamples([
       [`(loop [n 3]
           (when
-            (not (zero? n))
+            (! (zero? n))
             (recur (dec n))))`, [null]],
       [`(loop [n 2]
           (if (< n 100)
@@ -352,6 +352,7 @@ describe('calculateOutcomes.', () => {
 
   describe('misc.', () => {
     testSamples([
+      ['(! 1)', [false]],
       [`(defn factorial [x]
           (if (== x 1)
             1
@@ -384,7 +385,7 @@ describe('calculateOutcomes.', () => {
       ]]],
 
       [`(let [foo (if x 1 2)]
-          (if (not foo) 1 2)
+          (if (! foo) 1 2)
         )`, [2]],
 
       ['(xxx false "heads" "tails")', null],

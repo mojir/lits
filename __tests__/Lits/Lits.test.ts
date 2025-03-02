@@ -273,7 +273,7 @@ describe('regressions', () => {
     try {
       lits.run(`(loop [n 3]
   (write! n)
-  (when (not zero? n))
+  (when (! zero? n))
     (recur (dec n))
   )
 )`)

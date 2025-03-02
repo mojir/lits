@@ -445,7 +445,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns `true` if $x is NaN (not a number), otherwise `false`.',
+    description: 'Returns `true` if $x is NaN (! a number), otherwise `false`.',
     examples: [
       '(nan? 1.0)',
       '(nan? (/ 1 0))',

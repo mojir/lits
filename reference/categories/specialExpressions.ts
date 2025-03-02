@@ -678,7 +678,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
       `
 (defn foo [n]
   (write! n)
-  (when (not (zero? n))
+  (when (! (zero? n))
     (recur
       (dec n))))
 (foo 3)`,
@@ -686,7 +686,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
 (
   (fn [n]
     (write! n)
-    (when (not (zero? n))
+    (when (! (zero? n))
       (recur
         (dec n))))
   3)`,
@@ -695,7 +695,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
   loop [n 3]
     (write! n)
     (when
-      (not (zero? n))
+      (! (zero? n))
       (recur (dec n))))`,
     ],
   },
@@ -725,13 +725,13 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
 (loop [n 3]
   (write! n)
   (when
-    (not (zero? n))
+    (! (zero? n))
     (recur (dec n))))`,
       `
 (loop [n 3]
   (write! n)
   (if
-    (not (zero? n))
+    (! (zero? n))
     (recur (dec n))
     n))`,
     ],

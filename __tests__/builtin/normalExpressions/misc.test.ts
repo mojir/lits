@@ -231,17 +231,17 @@ describe('misc functions', () => {
 
     describe('not', () => {
       it('samples', () => {
-        expect(() => lits.run('(not)')).toThrow()
-        expect(lits.run('(not 0)')).toBe(true)
-        expect(lits.run('(not "")')).toBe(true)
-        expect(lits.run('(not :0)')).toBe(false)
-        expect(lits.run('(not 1)')).toBe(false)
-        expect(lits.run('(not -1)')).toBe(false)
-        expect(lits.run('(not [])')).toBe(false)
-        expect(lits.run('(not false)')).toBe(true)
-        expect(lits.run('(not true)')).toBe(false)
-        expect(lits.run('(not nil)')).toBe(true)
-        expect(() => lits.run('(not 0 1)')).toThrow()
+        expect(() => lits.run('(!)')).toThrow()
+        expect(lits.run('(! 0)')).toBe(true)
+        expect(lits.run('(! "")')).toBe(true)
+        expect(lits.run('(! :0)')).toBe(false)
+        expect(lits.run('(! 1)')).toBe(false)
+        expect(lits.run('(! -1)')).toBe(false)
+        expect(lits.run('(! [])')).toBe(false)
+        expect(lits.run('(! false)')).toBe(true)
+        expect(lits.run('(! true)')).toBe(false)
+        expect(lits.run('(! nil)')).toBe(true)
+        expect(() => lits.run('(! 0 1)')).toThrow()
       })
     })
 

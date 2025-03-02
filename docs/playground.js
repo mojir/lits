@@ -3757,13 +3757,10 @@ var Playground = (function (exports) {
             },
             validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
         },
-        'not': {
-            evaluate: function (_a) {
-                var _b = __read(_a, 1), first = _b[0];
-                return !first;
-            },
-            validate: function (node) { return assertNumberOfParams(1, node); },
-        },
+        // 'not': {
+        //   evaluate: ([first]): boolean => !first,
+        //   validate: node => assertNumberOfParams(1, node),
+        // },
         '!': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
@@ -7563,13 +7560,10 @@ var Playground = (function (exports) {
         var operatorName = operator[1];
         switch (operatorName) {
             case '+':
-                return createNamedNormalExpressionNode('+', [operand], token);
             case '-':
-                return createNamedNormalExpressionNode('-', [operand], token);
             case '!':
-                return createNamedNormalExpressionNode('not', [operand], token);
             case '~':
-                return createNamedNormalExpressionNode('~', [operand], token);
+                return createNamedNormalExpressionNode(operatorName, [operand], token);
             /* v8 ignore next 2 */
             default:
                 throw new Error("Unknown operator: ".concat(operatorName));
@@ -16107,7 +16101,7 @@ var Playground = (function (exports) {
             '<=',
             '>=',
             '!',
-            'not',
+            // 'not',
             'write!',
             'iso_date>epoch',
             'epoch>iso_date',

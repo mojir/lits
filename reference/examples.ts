@@ -202,12 +202,12 @@ export const examples: Example[] = [
           (&&
             (zero? (mod year 4))
             (||
-              (not (zero? (mod year 100)))
+              (! (zero? (mod year 100)))
               (zero? (mod year 400))
             )
           )
       ]
-      (not (||
+      (! (||
         (|| (< year 1900) (> year 2100))
         (|| (< month 1) (> month 12))
         (|| (< day 1) (> day 31))
@@ -223,7 +223,7 @@ export const examples: Example[] = [
           (== month 2)
           (||
             (&& leapYear (> day 29))
-            (&& (not leapYear) (> day 28))
+            (&& (! leapYear) (> day 28))
           )
         )
       ))

@@ -27,11 +27,6 @@ export type CalculatePossibleAstNodesHelper<T extends AstNode> = (
   options: CalculatePossibleAstNodesHelperOptions<T>,
 ) => AstNode[]
 
-function isIdempotent(normalExpressionName: string): boolean {
-  return !normalExpressionName.endsWith('!')
-    || normalExpressionName === 'write!'
-}
-
 export function calculateOutcomes(contextStack: ContextStack, astNodes: AstNode[]): Outcomes | null {
   // First, we try to calculate outcomes for the whole astNodes array.
   // If that fails, we try to calculate outcomes for the array without the first element.
@@ -113,9 +108,6 @@ function calculatePossibleAstNodes(contextStack: ContextStack, astNode: AstNode,
   const newContextStack = newContext ? contextStack.create(newContext) : contextStack
 
   if (astNode.t === AstNodeType.NormalExpression) {
-    if (astNode.n && !isIdempotent(astNode.n))
-      throw new Error(`NormalExpressionNode with name ${astNode.n} is not idempotent. Cannot calculate possible ASTs.`)
-
     return combinate(astNode.p.map(n => calculatePossibleAstNodes(newContextStack, n)))
       .map(p => ({ ...astNode, p }))
   }

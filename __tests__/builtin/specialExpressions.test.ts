@@ -257,7 +257,7 @@ describe('specialExpressions', () => {
             (&&
               (zero? (mod year 4))
               (||
-                (not (zero? (mod year 100)))
+                (! (zero? (mod year 100)))
                 (zero? (mod year 400))
               )
             )
@@ -646,21 +646,21 @@ describe('specialExpressions', () => {
 
   describe('recur', () => {
     it('should work with defn', () => {
-      lits.run('(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3)')
+      lits.run('(defn foo [n] (write! n) (when (! (zero? n)) (recur (dec n)))) (foo 3)')
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
       expect(logSpy).toHaveBeenNthCalledWith(2, 2)
       expect(logSpy).toHaveBeenNthCalledWith(3, 1)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with the right number of parameters', () => {
-      expect(() => lits.run('(defn foo [n] (write! n) (when (not (zero? n)) (recur))) (foo 3)')).toThrow()
-      expect(() => lits.run('(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n)))) (foo 3)')).not.toThrow()
-      expect(() => lits.run('(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n) 1))) (foo 3)')).toThrow()
-      expect(() => lits.run('(defn foo [n] (write! n) (when (not (zero? n)) (recur (dec n) 1 2))) (foo 3)')).toThrow()
-      expect(() => lits.run('((fn [n] (write! n) (when (not (zero? n)) (recur))) 3)')).toThrow()
-      expect(() => lits.run('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)')).not.toThrow()
-      expect(() => lits.run('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n) 1))) 3)')).toThrow()
-      expect(() => lits.run('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n) 1 2))) 3)')).toThrow()
+      expect(() => lits.run('(defn foo [n] (write! n) (when (! (zero? n)) (recur))) (foo 3)')).toThrow()
+      expect(() => lits.run('(defn foo [n] (write! n) (when (! (zero? n)) (recur (dec n)))) (foo 3)')).not.toThrow()
+      expect(() => lits.run('(defn foo [n] (write! n) (when (! (zero? n)) (recur (dec n) 1))) (foo 3)')).toThrow()
+      expect(() => lits.run('(defn foo [n] (write! n) (when (! (zero? n)) (recur (dec n) 1 2))) (foo 3)')).toThrow()
+      expect(() => lits.run('((fn [n] (write! n) (when (! (zero? n)) (recur))) 3)')).toThrow()
+      expect(() => lits.run('((fn [n] (write! n) (when (! (zero? n)) (recur (dec n)))) 3)')).not.toThrow()
+      expect(() => lits.run('((fn [n] (write! n) (when (! (zero? n)) (recur (dec n) 1))) 3)')).toThrow()
+      expect(() => lits.run('((fn [n] (write! n) (when (! (zero? n)) (recur (dec n) 1 2))) 3)')).toThrow()
     })
 
     describe('unresolvedIdentifiers', () => {
@@ -668,10 +668,10 @@ describe('specialExpressions', () => {
         const lits2 = new Lits()
 
         expect(
-          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (when (not (zero? n)) (recur (dec n)))) 3)')).b, createContextStack(), builtin),
+          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (when (! (zero? n)) (recur (dec n)))) 3)')).b, createContextStack(), builtin),
         ).toEqual(new Set())
         expect(
-          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (when (not (zero? n)) (recur (- n a)))) 3)')).b, createContextStack(), builtin),
+          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (when (! (zero? n)) (recur (- n a)))) 3)')).b, createContextStack(), builtin),
         ).toEqual(new Set([{ symbol: 'a' }]))
       })
     })
@@ -679,31 +679,31 @@ describe('specialExpressions', () => {
 
   describe('loop', () => {
     it('should work with recur', () => {
-      lits.run('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))')
+      lits.run('(loop [n 3] (write! n) (when (! (zero? n)) (recur (dec n))))')
       expect(logSpy).toHaveBeenNthCalledWith(1, 3)
       expect(logSpy).toHaveBeenNthCalledWith(2, 2)
       expect(logSpy).toHaveBeenNthCalledWith(3, 1)
       expect(logSpy).toHaveBeenNthCalledWith(4, 0)
     })
     it('recur must be called with right number of parameters', () => {
-      expect(() => lits.run('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n) 2)))')).toThrow()
-      expect(() => lits.run('(loop [n 3] (write! n) (when (not (zero? n)) (recur)))')).toThrow()
+      expect(() => lits.run('(loop [n 3] (write! n) (when (! (zero? n)) (recur (dec n) 2)))')).toThrow()
+      expect(() => lits.run('(loop [n 3] (write! n) (when (! (zero? n)) (recur)))')).toThrow()
     })
     it('throw should work', () => {
-      expect(() => lits.run('(loop [n 3] (write! n) (when (not (zero? n)) (throw (dec n))))')).toThrow()
+      expect(() => lits.run('(loop [n 3] (write! n) (when (! (zero? n)) (throw (dec n))))')).toThrow()
     })
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
         expect(
-          getUndefinedSymbolNames(lits.analyze('(loop [n 3] (write! n) (when (not (zero? n)) (recur (dec n))))')),
+          getUndefinedSymbolNames(lits.analyze('(loop [n 3] (write! n) (when (! (zero? n)) (recur (dec n))))')),
         ).toEqual(new Set())
         expect(
-          getUndefinedSymbolNames(lits.analyze('(loop [n 3] (write! x n) (when (not (zero? n)) (recur (dec n))))')),
+          getUndefinedSymbolNames(lits.analyze('(loop [n 3] (write! x n) (when (! (zero? n)) (recur (dec n))))')),
         ).toEqual(new Set(['x']))
         expect(
           getUndefinedSymbolNames(
-            lits.analyze('(loop [n (+ 3 y)] (write! x n) (when (not (zero? n)) (recur (dec n))))'),
+            lits.analyze('(loop [n (+ 3 y)] (write! x n) (when (! (zero? n)) (recur (dec n))))'),
           ),
         ).toEqual(new Set(['x', 'y']))
       })
