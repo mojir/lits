@@ -656,6 +656,22 @@ describe('algebraic operators', () => {
     })
   })
 
+  describe('loop expressions', () => {
+    it('supports loop expressions', () => {
+      expect(lits.run(`
+        loop (
+          n = 10,
+          sum = 0
+        )
+          if n == 0 then
+            sum
+          else
+            recur(n - 1, sum + n)
+          end
+        end`)).toBe(55)
+    })
+  })
+
   test('cond expression', () => {
     expect(lits.run(`
       def val = 8;
@@ -693,6 +709,16 @@ describe('algebraic operators', () => {
         case 0 then "zero"
         case 1 then "one"
         case 2 then "two"
+      end`)).toBe(null)
+  })
+
+  test('doseq', () => {
+    expect(lits.run(`
+      doseq (
+        x of "Al",
+        y of [1, 2]
+      )
+        x repeat y
       end`)).toBe(null)
   })
 

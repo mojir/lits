@@ -16,9 +16,6 @@ const validAlgebraicReservedNamesRecord = {
 const forbiddenAlgebraicReservedNamesRecord = {
   fn: { value: null, forbidden: true },
   defns: { value: null, forbidden: true },
-  recur: { value: null, forbidden: true },
-  loop: { value: null, forbidden: true },
-  doseq: { value: null, forbidden: true },
 } as const satisfies Record<string, { value: Any, forbidden: true }>
 
 export const algebraicReservedNamesRecord = {

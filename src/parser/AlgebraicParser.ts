@@ -6,7 +6,8 @@ import type { DoNode } from '../builtin/specialExpressions/do'
 import type { DefnNode, FnNode } from '../builtin/specialExpressions/functions'
 import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
-import type { ForNode, LoopBindingNode } from '../builtin/specialExpressions/loops'
+import type { LoopNode } from '../builtin/specialExpressions/loop'
+import type { DoSeqNode, ForNode, LoopBindingNode } from '../builtin/specialExpressions/loops'
 import type { SwitchNode } from '../builtin/specialExpressions/switch'
 import type { TryNode } from '../builtin/specialExpressions/try'
 import type { UnlessNode } from '../builtin/specialExpressions/unless'
@@ -229,10 +230,14 @@ export class AlgebraicParser {
           left = this.parseSwitch(firstToken)
           break
         case 'for':
-          left = this.parseFor(firstToken)
+        case 'doseq':
+          left = this.parseForOrDoseq(firstToken)
           break
         case 'do':
           left = this.parseDo(firstToken)
+          break
+        case 'loop':
+          left = this.parseLoop(firstToken)
           break
         case 'try':
           left = this.parseTry(firstToken)
@@ -526,13 +531,14 @@ export class AlgebraicParser {
     this.advance()
     if (isNamedFunction) {
       if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do'>
+        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop'>
         switch (name) {
           case '??':
           case '&&':
           case 'comment':
           case 'defined?':
           case '||':
+          case 'recur':
           case 'throw': {
             const node: SpecialExpressionNode = {
               t: AstNodeType.SpecialExpression,
@@ -547,8 +553,6 @@ export class AlgebraicParser {
           case 'fn':
           case 'defns':
           case 'try':
-          case 'recur':
-          case 'loop':
           case 'doseq':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)
           default:
@@ -770,6 +774,56 @@ export class AlgebraicParser {
     }
   }
 
+  private parseLoop(token: A_SymbolToken): LoopNode {
+    this.advance()
+
+    assertLParenToken(this.peek())
+    this.advance()
+
+    const bindingNodes: BindingNode[] = []
+    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+      const symbol = parseSymbol(this.tokenStream, this.parseState)
+      assertA_OperatorToken(this.peek(), '=')
+      this.advance()
+      const value = this.parseExpression()
+      bindingNodes.push({
+        t: AstNodeType.Binding,
+        n: symbol.v,
+        v: value,
+        p: [],
+        token: getTokenDebugData(symbol.token) && symbol.token,
+      } satisfies BindingNode)
+
+      if (isA_OperatorToken(this.peek(), ',')) {
+        this.advance()
+      }
+    }
+    if (bindingNodes.length === 0) {
+      throw new LitsError('Expected binding', getTokenDebugData(this.peek())?.sourceCodeInfo)
+    }
+
+    assertRParenToken(this.peek())
+    this.advance()
+
+    const params: AstNode[] = []
+    while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+      params.push(this.parseExpression())
+      if (isA_OperatorToken(this.peek(), ';')) {
+        this.advance()
+      }
+    }
+    assertA_ReservedSymbolToken(this.peek(), 'end')
+    this.advance()
+
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'loop',
+      p: params,
+      bs: bindingNodes,
+      token: getTokenDebugData(token) && token,
+    }
+  }
+
   private parseTry(token: A_SymbolToken): TryNode {
     this.advance()
     const tryExpressions: AstNode[] = []
@@ -830,7 +884,8 @@ export class AlgebraicParser {
     }
   }
 
-  private parseFor(token: A_SymbolToken): ForNode {
+  private parseForOrDoseq(token: A_SymbolToken): ForNode | DoSeqNode {
+    const isDoseq = token[1] === 'doseq'
     this.advance()
     assertLParenToken(this.peek())
     this.advance()
@@ -853,7 +908,7 @@ export class AlgebraicParser {
 
     return {
       t: AstNodeType.SpecialExpression,
-      n: 'for',
+      n: isDoseq ? 'doseq' : 'for',
       p: [expression],
       token: getTokenDebugData(token) && token,
       l: forLoopBindings,

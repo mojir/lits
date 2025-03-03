@@ -6917,10 +6917,14 @@ var Playground = (function (exports) {
                         left = this.parseSwitch(firstToken);
                         break;
                     case 'for':
-                        left = this.parseFor(firstToken);
+                    case 'doseq':
+                        left = this.parseForOrDoseq(firstToken);
                         break;
                     case 'do':
                         left = this.parseDo(firstToken);
+                        break;
+                    case 'loop':
+                        left = this.parseLoop(firstToken);
                         break;
                     case 'try':
                         left = this.parseTry(firstToken);
@@ -7184,6 +7188,7 @@ var Playground = (function (exports) {
                         case 'comment':
                         case 'defined?':
                         case '||':
+                        case 'recur':
                         case 'throw': {
                             var node = {
                                 t: AstNodeType.SpecialExpression,
@@ -7198,8 +7203,6 @@ var Playground = (function (exports) {
                         case 'fn':
                         case 'defns':
                         case 'try':
-                        case 'recur':
-                        case 'loop':
                         case 'doseq':
                             throw new Error("Special expression ".concat(name_2, " is not available in algebraic notation"));
                         default:
@@ -7400,6 +7403,50 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(token) && token,
             };
         };
+        AlgebraicParser.prototype.parseLoop = function (token) {
+            var _a;
+            this.advance();
+            assertLParenToken(this.peek());
+            this.advance();
+            var bindingNodes = [];
+            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+                var symbol = parseSymbol(this.tokenStream, this.parseState);
+                assertA_OperatorToken(this.peek(), '=');
+                this.advance();
+                var value = this.parseExpression();
+                bindingNodes.push({
+                    t: AstNodeType.Binding,
+                    n: symbol.v,
+                    v: value,
+                    p: [],
+                    token: getTokenDebugData(symbol.token) && symbol.token,
+                });
+                if (isA_OperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
+            }
+            if (bindingNodes.length === 0) {
+                throw new LitsError('Expected binding', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            assertRParenToken(this.peek());
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                params.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'loop',
+                p: params,
+                bs: bindingNodes,
+                token: getTokenDebugData(token) && token,
+            };
+        };
         AlgebraicParser.prototype.parseTry = function (token) {
             this.advance();
             var tryExpressions = [];
@@ -7452,7 +7499,8 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(token) && token,
             };
         };
-        AlgebraicParser.prototype.parseFor = function (token) {
+        AlgebraicParser.prototype.parseForOrDoseq = function (token) {
+            var isDoseq = token[1] === 'doseq';
             this.advance();
             assertLParenToken(this.peek());
             this.advance();
@@ -7472,7 +7520,7 @@ var Playground = (function (exports) {
             this.advance();
             return {
                 t: AstNodeType.SpecialExpression,
-                n: 'for',
+                n: isDoseq ? 'doseq' : 'for',
                 p: [expression],
                 token: getTokenDebugData(token) && token,
                 l: forLoopBindings,
@@ -8217,9 +8265,6 @@ var Playground = (function (exports) {
     var forbiddenAlgebraicReservedNamesRecord = {
         fn: { value: null, forbidden: true },
         defns: { value: null, forbidden: true },
-        recur: { value: null, forbidden: true },
-        loop: { value: null, forbidden: true },
-        doseq: { value: null, forbidden: true },
     };
     var algebraicReservedNamesRecord = __assign(__assign({}, validAlgebraicReservedNamesRecord), forbiddenAlgebraicReservedNamesRecord);
 
