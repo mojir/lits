@@ -212,6 +212,9 @@ export class AlgebraicParser {
     else if (isA_SymbolToken(firstToken) && firstToken[1] === 'defn') {
       return this.parseDefn(firstToken)
     }
+    else if (isA_SymbolToken(firstToken) && firstToken[1] === 'let') {
+      return this.parseLet(firstToken)
+    }
 
     let left: AstNode
     if (isA_SymbolToken(firstToken) && firstToken[1] === 'if') {
@@ -226,6 +229,9 @@ export class AlgebraicParser {
     else if (isA_SymbolToken(firstToken) && firstToken[1] === 'for') {
       left = this.parseFor(firstToken)
     }
+    else if (isA_SymbolToken(firstToken) && firstToken[1] === 'do') {
+      left = this.parseDo(firstToken)
+    }
 
     else {
       left = this.parseOperand()
@@ -237,6 +243,8 @@ export class AlgebraicParser {
       && !isA_OperatorToken(operator, ';')
       && !isRBracketToken(operator)
       && !isA_ReservedSymbolToken(operator, 'else')
+      && !isA_ReservedSymbolToken(operator, 'when')
+      && !isA_ReservedSymbolToken(operator, 'while')
       && !isA_ReservedSymbolToken(operator, 'then')
       && !isA_ReservedSymbolToken(operator, 'end')
       && !isA_ReservedSymbolToken(operator, 'case')
@@ -523,17 +531,14 @@ export class AlgebraicParser {
     this.advance()
     if (isNamedFunction) {
       if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if' | 'cond' | 'switch'>
+        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if' | 'cond' | 'switch' | 'let' | 'do'>
         switch (name) {
           case '??':
           case '&&':
           case 'comment':
           case 'declared?':
-          case 'if_not':
+          case 'unless':
           case '||':
-          case 'when':
-          case 'when_not':
-          case 'do':
           case 'throw': {
             const node: SpecialExpressionNode = {
               t: AstNodeType.SpecialExpression,
@@ -544,12 +549,7 @@ export class AlgebraicParser {
             builtin.specialExpressions[node.n].validateParameterCount(node)
             return node
           }
-          case 'let':
-            return this.parseLet(symbol, params)
           case 'defs':
-          case 'if_let':
-          case 'when_let':
-          case 'when_first':
           case 'fn':
           case 'defns':
           case 'try':
@@ -732,35 +732,47 @@ export class AlgebraicParser {
     return node
   }
 
-  private parseLet(letSymbol: SymbolNode, params: AstNode[]): LetNode {
-    if (params.length !== 1) {
-      throw new LitsError('let expects one argument', getTokenDebugData(letSymbol.token)?.sourceCodeInfo)
-    }
+  private parseLet(token: A_SymbolToken): LetNode {
+    this.advance()
 
-    const letObject = params[0]!
-    if (letObject.t !== AstNodeType.NormalExpression || letObject.n !== 'object') {
-      throw new LitsError('let expects an object as first argument', getTokenDebugData(letObject.token)?.sourceCodeInfo)
-    }
+    const letSymbol = parseSymbol(this.tokenStream, this.parseState)
 
-    const letBindings = arrayToPairs(letObject.p)
+    assertA_OperatorToken(this.peek(), '=')
+    this.advance()
+
+    const value = this.parseExpression()
 
     return {
       t: AstNodeType.SpecialExpression,
       n: 'let',
       p: [],
       token: getTokenDebugData(letSymbol.token) && letSymbol.token,
-      bs: letBindings.map((pair) => {
-        const key = pair[0] as StringNode
-        const value = pair[1] as AstNode
+      bs: [{
+        t: AstNodeType.Binding,
+        n: letSymbol.v,
+        v: value,
+        p: [],
+        token: getTokenDebugData(token) && token,
+      }],
+    }
+  }
 
-        return {
-          t: AstNodeType.Binding,
-          n: key.v,
-          v: value,
-          p: [],
-          token: getTokenDebugData(key.token) && key.token,
-        }
-      }),
+  private parseDo(token: A_SymbolToken): DoNode {
+    this.advance()
+    const expressions: AstNode[] = []
+    while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+      expressions.push(this.parseExpression())
+      if (isA_OperatorToken(this.peek(), ';')) {
+        this.advance()
+      }
+    }
+    assertA_ReservedSymbolToken(this.peek(), 'end')
+    this.advance()
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'do',
+      p: expressions,
+      token: getTokenDebugData(token) && token,
     }
   }
 
@@ -810,7 +822,11 @@ export class AlgebraicParser {
     const modifiers: Array<'&let' | '&when' | '&while'> = []
     let token = this.peek()
 
-    if (!isA_SymbolToken(token)) {
+    if (!(
+      (isA_SymbolToken(token) && token[1] === 'let')
+      || isA_ReservedSymbolToken(token, 'when')
+      || isA_ReservedSymbolToken(token, 'while')
+    )) {
       throw new LitsError('Expected symbol let, when or while', getTokenDebugData(token)?.sourceCodeInfo)
     }
 
@@ -818,31 +834,19 @@ export class AlgebraicParser {
     if (token[1] === 'let') {
       modifiers.push('&let')
       letBindings = []
-      this.advance()
-      const letObject = this.parseObject()
-      letBindings = arrayToPairs(letObject.p).map((pair) => {
-        const key = pair[0] as StringNode
-        const value = pair[1] as AstNode
-
-        return {
-          t: AstNodeType.Binding,
-          n: key.v,
-          v: value,
-          p: [],
-          token: getTokenDebugData(key.token) && key.token,
-        }
-      })
+      while (isA_SymbolToken(token) && token[1] === 'let') {
+        const letNode = this.parseLet(token)
+        letBindings.push(letNode.bs[0]!)
+        token = this.peek()
+      }
     }
 
     token = this.peek()
     let whenNode: AstNode | undefined
     let whileNode: AstNode | undefined
     while (
-      isA_SymbolToken(token)
-      && (
-        (token[1] === 'when' && !modifiers.includes('&when'))
-        || (token[1] === 'while' && !modifiers.includes('&while'))
-      )
+      isA_ReservedSymbolToken(token, 'when')
+      || isA_ReservedSymbolToken(token, 'while')
     ) {
       this.advance()
 

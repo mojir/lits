@@ -145,117 +145,6 @@ Binds local variables.`,
       b (* 1 2 3 4)])
 (write! a b)`],
   },
-  'if_let': {
-    title: 'if_let',
-    category: 'Special expression',
-    linkName: 'if_let',
-    returns: {
-      type: 'any',
-    },
-    args: {
-      'binding': {
-        type: '*binding',
-      },
-      'then-expr': {
-        type: '*expression',
-      },
-      'else-expr': {
-        type: '*expression',
-      },
-    },
-    variants: [
-      { argumentNames: ['binding', 'then-expr'] },
-      { argumentNames: ['binding', 'then-expr', 'else-expr'] },
-    ],
-    description: `
-Binds one local variable. If it evaluates to a truthy value
-$then-expr is executed with the variable accessable.
-If the bound variable evaluates to false, the $else-expr is evaluated
-(without variable accessable).`,
-    examples: [
-      `
-(if_let [a (> (count "Albert") 4)]
-  (write! (str a ", is big enough"))
-  (write! "Sorry, not big enough."))`,
-      `
-(if_let [a (> (count "Albert") 10)]
-  (write! (str a ", is big enough"))
-  (write! "Sorry, not big enough."))`,
-    ],
-  },
-  'when_let': {
-    title: 'when_let',
-    category: 'Special expression',
-    linkName: 'when_let',
-    returns: {
-      type: 'any',
-    },
-    args: {
-      binding: {
-        type: '*binding',
-      },
-      expressions: {
-        type: '*expression',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['binding', 'expressions'] },
-    ],
-    description: `
-Binds one local variable. If it evaluates to a truthy value
-$expressions is executed with the variable accessable.
-If the bound variable evaluates to a falsy value, \`nil\` is returned.`,
-    examples: [
-      `
-(when_let [a (> (count "Albert") 4)]
-  (write! a))`,
-    ],
-  },
-  'when_first': {
-    title: 'when_first',
-    category: 'Special expression',
-    linkName: 'when_first',
-    returns: {
-      type: 'any',
-    },
-    args: {
-      binding: {
-        type: '*binding',
-        rest: true,
-      },
-      expressions: {
-        type: '*expression',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['binding', 'expressions'] },
-    ],
-    description: 'When the binding value in $binding is a non empty sequence, the first element of that sequence (instead of the sequence itself) is bound to the variable.',
-    examples: [
-      `
-(when_first [x [1 2 3]]
-  (write! x)
-  x)`,
-      `
-(when_first [x "Albert"]
-  (write! x)
-  x)`,
-      `
-(when_first [x [0]]
-  (write! x)
-  x)`,
-      `
-(when_first [x [nil]]
-  (write! x)
-  x)`,
-      `
-(when_first [x []]
-  (write! x)
-  x)`,
-    ],
-  },
 
   'fn': {
     title: 'fn',
@@ -481,10 +370,11 @@ hyp`,
       '(if false (write! "TRUE"))',
     ],
   },
-  'if_not': {
-    title: 'if_not',
+  'unless': {
+    title: 'unless',
     category: 'Special expression',
-    linkName: 'if_not',
+    linkName: 'unless',
+    clojureDocs: 'if-not',
     returns: {
       type: 'any',
     },
@@ -505,10 +395,10 @@ hyp`,
     ],
     description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
     examples: [
-      '(if_not true (write! "TRUE") (write! "FALSE"))',
-      '(if_not false (write! "TRUE") (write! "FALSE"))',
-      '(if_not true (write! "TRUE"))',
-      '(if_not false (write! "TRUE"))',
+      '(unless true (write! "TRUE") (write! "FALSE"))',
+      '(unless false (write! "TRUE") (write! "FALSE"))',
+      '(unless true (write! "TRUE"))',
+      '(unless false (write! "TRUE"))',
     ],
   },
   'cond': {
@@ -578,70 +468,6 @@ hyp`,
   2 (write! "nil"))`,
     ],
   },
-  'when': {
-    title: 'when',
-    category: 'Special expression',
-    linkName: 'when',
-    returns: {
-      type: 'any',
-    },
-    args: {
-      test: {
-        type: '*expression',
-      },
-      expressions: {
-        type: '*expression',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['test', 'expressions'] },
-    ],
-    description: `If $test yields a thruthy value, the expressions are evaluated
-and the value returned by the last expression is returned.
-Otherwise, if $test yields a falsy value, the expressions are not evaluated,
-and \`nil\` is returned. If no $expressions are provided, \`nil\` is returned.`,
-    examples: [
-      `(when true
-      (write! "Hi")
-      (write! "There"))`,
-      `(when false
-      (write! "Hi")
-      (write! "There"))`,
-      '(when true)',
-      '(when false)',
-    ],
-  },
-  'when_not': {
-    title: 'when_not',
-    category: 'Special expression',
-    linkName: 'when_not',
-    returns: {
-      type: 'any',
-    },
-    args: {
-      test: {
-        type: '*expression',
-      },
-      expressions: {
-        type: '*expression',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['test', 'expressions'] },
-    ],
-    description: `If $test yields a falsy value, the expressions are evaluated
-and the value returned by the last \`expression\` is returned.
-Otherwise, if $test yields a truthy value, the $expressions are not evaluated,
-and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`,
-    examples: [
-      '(when_not true (write! "Hi") (write! "There"))',
-      '(when_not false (write! "Hi") (write! "There"))',
-      '(when_not true)',
-      '(when_not false)',
-    ],
-  },
   'comment': {
     title: 'comment',
     category: 'Special expression',
@@ -707,7 +533,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
       `
 (defn foo [n]
   (write! n)
-  (when (! (zero? n))
+  (if (! (zero? n))
     (recur
       (dec n))))
 (foo 3)`,
@@ -715,7 +541,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
 (
   (fn [n]
     (write! n)
-    (when (! (zero? n))
+    (if (! (zero? n))
       (recur
         (dec n))))
   3)`,
@@ -723,7 +549,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
 (
   loop [n 3]
     (write! n)
-    (when
+    (if
       (! (zero? n))
       (recur (dec n))))`,
     ],
@@ -753,7 +579,7 @@ and \`nil\` is returned. If no \`expression\` is provided, \`nil\` is returned.`
       `
 (loop [n 3]
   (write! n)
-  (when
+  (if
     (! (zero? n))
     (recur (dec n))))`,
       `

@@ -31,9 +31,7 @@ export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
 
     assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
 
-    contextStack.globalContext[name] = {
-      value: evaluateAstNode(node.p[1]!, contextStack),
-    }
+    contextStack.exportValue(name, evaluateAstNode(node.p[1]!, contextStack))
 
     return null
   },
@@ -44,7 +42,7 @@ export const defsSpecialExpression: BuiltinSpecialExpression<null, DefsNode> = {
     const name = evaluateAstNode(node.p[0]!, contextStack)
     assertString(name, sourceCodeInfo)
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
-    contextStack.globalContext[name] = { value: true }
+    contextStack.exportValue(name, true)
     return result
   },
 }

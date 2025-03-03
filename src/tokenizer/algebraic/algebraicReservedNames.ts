@@ -9,12 +9,11 @@ const validAlgebraicReservedNamesRecord = {
   else: { value: null, forbidden: false },
   end: { value: null, forbidden: false },
   case: { value: null, forbidden: false },
+  when: { value: null, forbidden: false },
+  while: { value: null, forbidden: false },
 } as const satisfies Record<string, { value: Any, forbidden: false }>
 
 const forbiddenAlgebraicReservedNamesRecord = {
-  if_let: { value: null, forbidden: true },
-  when_let: { value: null, forbidden: true },
-  when_first: { value: null, forbidden: true },
   fn: { value: null, forbidden: true },
   defns: { value: null, forbidden: true },
   try: { value: null, forbidden: true },

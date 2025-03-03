@@ -926,18 +926,13 @@ var Playground = (function (exports) {
         'cond',
         'declared?',
         'if',
-        'if_not',
+        'unless',
         '||',
-        'when',
-        'when_not',
         'do',
         'throw',
         'let',
         'def',
         'defs',
-        'if_let',
-        'when_let',
-        'when_first',
         'fn',
         'defn',
         'defns',
@@ -1276,12 +1271,11 @@ var Playground = (function (exports) {
         'doseq': function (_node, _removeOptions) { },
         'fn': function (_node, _removeOptions) { },
         'for': function (_node, _removeOptions) { },
-        'if_let': function (_node, _removeOptions) { },
         'if': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
-        'if_not': function (node, removeOptions) {
+        'unless': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -1310,10 +1304,6 @@ var Playground = (function (exports) {
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
         'try': function (_node, _removeOptions) { },
-        'when_first': function (_node, _removeOptions) { },
-        'when_let': function (_node, _removeOptions) { },
-        'when': function (_node, _removeOptions) { },
-        'when_not': function (_node, _removeOptions) { },
     };
     function removeCommentNodesFromSpecialExpression(node, removeOptions) {
         var uncommenter = specialExpressionCommentRemovers[node.n];
@@ -4996,9 +4986,7 @@ var Playground = (function (exports) {
             var sourceCodeInfo = (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
             var name = node.p[0].v;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
-            contextStack.globalContext[name] = {
-                value: evaluateAstNode(node.p[1], contextStack),
-            };
+            contextStack.exportValue(name, evaluateAstNode(node.p[1], contextStack));
             return null;
         },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
@@ -5009,7 +4997,7 @@ var Playground = (function (exports) {
             var result = findUnresolvedIdentifiers([subNode], contextStack, builtin);
             var name = asSymbolNode(node.p[0]).v;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
-            contextStack.globalContext[name] = { value: true };
+            contextStack.exportValue(name, true);
             return result;
         },
     };
@@ -5035,9 +5023,7 @@ var Playground = (function (exports) {
             var name = evaluateAstNode(node.p[0], contextStack);
             assertString(name, sourceCodeInfo);
             assertNameNotDefined(name, contextStack, builtin, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-            contextStack.globalContext[name] = {
-                value: evaluateAstNode(node.p[1], contextStack),
-            };
+            contextStack.exportValue(name, evaluateAstNode(node.p[1], contextStack));
             return null;
         },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
@@ -5049,7 +5035,7 @@ var Playground = (function (exports) {
             var name = evaluateAstNode(node.p[0], contextStack);
             assertString(name, sourceCodeInfo);
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
-            contextStack.globalContext[name] = { value: true };
+            contextStack.exportValue(name, true);
             return result;
         },
     };
@@ -5143,13 +5129,13 @@ var Playground = (function (exports) {
                 _b.n = name,
                 _b.o = evaluatedFunctionOverloades,
                 _b);
-            contextStack.globalContext[name] = { value: litsFunction };
+            contextStack.exportValue(name, litsFunction);
             return null;
         },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
             var _b;
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            contextStack.globalContext[node.f.v] = { value: true };
+            contextStack.exportValue(node.f.v, true);
             var newContext = (_b = {}, _b[node.f.v] = { value: true }, _b);
             return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext);
         },
@@ -5185,7 +5171,7 @@ var Playground = (function (exports) {
                 _b.n = name,
                 _b.o = evaluatedFunctionOverloades,
                 _b);
-            contextStack.globalContext[name] = { value: litsFunction };
+            contextStack.exportValue(name, litsFunction);
             return null;
         },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
@@ -5196,7 +5182,7 @@ var Playground = (function (exports) {
             var name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack);
             assertString(name, sourceCodeInfo);
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
-            contextStack.globalContext[name] = { value: true };
+            contextStack.exportValue(name, true);
             var newContext = (_b = {}, _b[name] = { value: true }, _b);
             return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext);
         },
@@ -5469,56 +5455,8 @@ var Playground = (function (exports) {
         },
     };
 
-    var ifLetSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var _b, _c;
-            var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var bindings = parseBindings(tokenStream, parseState);
-            if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'if_let',
-                b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
-        validateParameterCount: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
-        evaluate: function (node, contextStack, _a) {
-            var _b;
-            var evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
-            var locals = {};
-            var bindingValue = evaluateAstNode(node.b.v, contextStack);
-            if (bindingValue) {
-                locals[node.b.n] = { value: bindingValue };
-                var newContextStack = contextStack.create(locals);
-                var thenForm = asAstNode(node.p[0], sourceCodeInfo);
-                return evaluateAstNode(thenForm, newContextStack);
-            }
-            if (node.p.length === 2) {
-                var elseForm = asAstNode(node.p[1], sourceCodeInfo);
-                return evaluateAstNode(elseForm, contextStack);
-            }
-            return null;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var _b;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            var newContext = (_b = {}, _b[node.b.n] = { value: true }, _b);
-            var bindingResult = findUnresolvedIdentifiers([node.b.v], contextStack, builtin);
-            var paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin);
-            return joinAnalyzeResults(bindingResult, paramsResult);
-        },
-    };
-
-    var ifNotSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('if_not'),
+    var unlessSpecialExpression = {
+        polishParse: getCommonPolishSpecialExpressionParser('unless'),
         validateParameterCount: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
         evaluate: function (node, contextStack, _a) {
             var _b;
@@ -6058,191 +5996,6 @@ var Playground = (function (exports) {
         },
     };
 
-    var whenSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('when'),
-        validateParameterCount: function (node) { return assertNumberOfParams({ min: 1 }, node); },
-        evaluate: function (node, contextStack, _a) {
-            var e_1, _b;
-            var _c;
-            var evaluateAstNode = _a.evaluateAstNode;
-            var _d = __read(node.p), whenExpression = _d[0], body = _d.slice(1);
-            assertAstNode(whenExpression, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-            if (!evaluateAstNode(whenExpression, contextStack))
-                return null;
-            var result = null;
-            try {
-                for (var body_1 = __values(body), body_1_1 = body_1.next(); !body_1_1.done; body_1_1 = body_1.next()) {
-                    var form = body_1_1.value;
-                    result = evaluateAstNode(form, contextStack);
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (body_1_1 && !body_1_1.done && (_b = body_1.return)) _b.call(body_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return result;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
-        },
-    };
-
-    var whenFirstSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var _b, _c;
-            var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var bindings = parseBindings(tokenStream, parseState);
-            if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'when_first',
-                b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
-        validateParameterCount: function () { return undefined; },
-        evaluate: function (node, contextStack, _a) {
-            var e_1, _b;
-            var _c;
-            var evaluateAstNode = _a.evaluateAstNode;
-            var locals = {};
-            var binding = node.b;
-            var evaluatedBindingForm = evaluateAstNode(binding.v, contextStack);
-            if (!isSeq(evaluatedBindingForm)) {
-                throw new LitsError("Expected undefined or a sequence, got ".concat(valueToString(evaluatedBindingForm)), (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-            }
-            if (evaluatedBindingForm.length === 0)
-                return null;
-            var bindingValue = toAny(evaluatedBindingForm[0]);
-            locals[binding.n] = { value: bindingValue };
-            var newContextStack = contextStack.create(locals);
-            var result = null;
-            try {
-                for (var _d = __values(node.p), _e = _d.next(); !_e.done; _e = _d.next()) {
-                    var form = _e.value;
-                    result = evaluateAstNode(form, newContextStack);
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return result;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var _b;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            var binding = node.b;
-            var newContext = (_b = {}, _b[binding.n] = { value: true }, _b);
-            var bindingResult = findUnresolvedIdentifiers([binding.v], contextStack, builtin);
-            var paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin);
-            return joinAnalyzeResults(bindingResult, paramsResult);
-        },
-    };
-
-    var whenLetSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var _b, _c;
-            var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var bindings = parseBindings(tokenStream, parseState);
-            if (bindings.length !== 1) {
-                throw new LitsError("Expected exactly one binding, got ".concat(valueToString(bindings.length)), (_b = getTokenDebugData(firstToken)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'when_let',
-                b: asNonUndefined(bindings[0], (_c = getTokenDebugData(firstToken)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo),
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
-        validateParameterCount: function () { return undefined; },
-        evaluate: function (node, contextStack, _a) {
-            var e_1, _b;
-            var evaluateAstNode = _a.evaluateAstNode;
-            var binding = node.b;
-            var locals = {};
-            var bindingValue = evaluateAstNode(binding.v, contextStack);
-            if (!bindingValue)
-                return null;
-            locals[binding.n] = { value: bindingValue };
-            var newContextStack = contextStack.create(locals);
-            var result = null;
-            try {
-                for (var _c = __values(node.p), _d = _c.next(); !_d.done; _d = _c.next()) {
-                    var form = _d.value;
-                    result = evaluateAstNode(form, newContextStack);
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return result;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var _b;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            var binding = node.b;
-            var newContext = (_b = {}, _b[binding.n] = { value: true }, _b);
-            var bindingResult = findUnresolvedIdentifiers([binding.v], contextStack, builtin);
-            var paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin);
-            return joinAnalyzeResults(bindingResult, paramsResult);
-        },
-    };
-
-    var whenNotSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('when_not'),
-        validateParameterCount: function (node) { return assertNumberOfParams({ min: 1 }, node); },
-        evaluate: function (node, contextStack, _a) {
-            var e_1, _b;
-            var _c;
-            var evaluateAstNode = _a.evaluateAstNode;
-            var _d = __read(node.p), whenExpression = _d[0], body = _d.slice(1);
-            assertAstNode(whenExpression, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-            if (evaluateAstNode(whenExpression, contextStack))
-                return null;
-            var result = null;
-            try {
-                for (var body_1 = __values(body), body_1_1 = body_1.next(); !body_1_1.done; body_1_1 = body_1.next()) {
-                    var form = body_1_1.value;
-                    result = evaluateAstNode(form, contextStack);
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (body_1_1 && !body_1_1.done && (_b = body_1.return)) _b.call(body_1);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return result;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
-        },
-    };
-
     var specialExpressions = {
         '&&': andSpecialExpression,
         'comment': commentSpecialExpression,
@@ -6257,18 +6010,13 @@ var Playground = (function (exports) {
         'for': forSpecialExpression,
         'fn': fnSpecialExpression,
         'if': ifSpecialExpression,
-        'if_let': ifLetSpecialExpression,
-        'if_not': ifNotSpecialExpression,
+        'unless': unlessSpecialExpression,
         'let': letSpecialExpression,
         'loop': loopSpecialExpression,
         '||': orSpecialExpression,
         'recur': recurSpecialExpression,
         'throw': throwSpecialExpression,
         'try': trySpecialExpression,
-        'when': whenSpecialExpression,
-        'when_first': whenFirstSpecialExpression,
-        'when_let': whenLetSpecialExpression,
-        'when_not': whenNotSpecialExpression,
         'declared?': declaredSpecialExpression,
         '??': qqSpecialExpression,
     };
@@ -6291,8 +6039,8 @@ var Playground = (function (exports) {
     var ContextStackImpl = /** @class */ (function () {
         function ContextStackImpl(_a) {
             var contexts = _a.contexts, hostValues = _a.values, lazyHostValues = _a.lazyValues, nativeJsFunctions = _a.nativeJsFunctions;
-            this.contexts = contexts;
             this.globalContext = asNonUndefined(contexts[0]);
+            this.contexts = contexts;
             this.values = hostValues;
             this.lazyValues = lazyHostValues;
             this.nativeJsFunctions = nativeJsFunctions;
@@ -6307,6 +6055,19 @@ var Playground = (function (exports) {
             });
             contextStack.globalContext = globalContext;
             return contextStack;
+        };
+        ContextStackImpl.prototype.exportValue = function (name, value) {
+            if (this.globalContext[name]) {
+                throw new Error("Cannot redefine exported value \"".concat(name, "\""));
+            }
+            if (specialExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow special expression \"".concat(name, "\""));
+            }
+            if (normalExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
+            }
+            this.addValue(name, value);
+            this.globalContext[name] = { value: value };
         };
         ContextStackImpl.prototype.addValue = function (name, value) {
             var currentContext = this.contexts[0];
@@ -6453,7 +6214,7 @@ var Playground = (function (exports) {
                     return acc;
                 }, {}),
         });
-        return contextStack;
+        return contextStack.create({});
     }
 
     var _a$1;
@@ -7134,6 +6895,9 @@ var Playground = (function (exports) {
             else if (isA_SymbolToken(firstToken) && firstToken[1] === 'defn') {
                 return this.parseDefn(firstToken);
             }
+            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'let') {
+                return this.parseLet(firstToken);
+            }
             var left;
             if (isA_SymbolToken(firstToken) && firstToken[1] === 'if') {
                 left = this.parseIf(firstToken);
@@ -7147,6 +6911,9 @@ var Playground = (function (exports) {
             else if (isA_SymbolToken(firstToken) && firstToken[1] === 'for') {
                 left = this.parseFor(firstToken);
             }
+            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'do') {
+                left = this.parseDo(firstToken);
+            }
             else {
                 left = this.parseOperand();
             }
@@ -7156,6 +6923,8 @@ var Playground = (function (exports) {
                 && !isA_OperatorToken(operator, ';')
                 && !isRBracketToken(operator)
                 && !isA_ReservedSymbolToken(operator, 'else')
+                && !isA_ReservedSymbolToken(operator, 'when')
+                && !isA_ReservedSymbolToken(operator, 'while')
                 && !isA_ReservedSymbolToken(operator, 'then')
                 && !isA_ReservedSymbolToken(operator, 'end')
                 && !isA_ReservedSymbolToken(operator, 'case')
@@ -7413,11 +7182,8 @@ var Playground = (function (exports) {
                         case '&&':
                         case 'comment':
                         case 'declared?':
-                        case 'if_not':
+                        case 'unless':
                         case '||':
-                        case 'when':
-                        case 'when_not':
-                        case 'do':
                         case 'throw': {
                             var node = {
                                 t: AstNodeType.SpecialExpression,
@@ -7428,12 +7194,7 @@ var Playground = (function (exports) {
                             builtin.specialExpressions[node.n].validateParameterCount(node);
                             return node;
                         }
-                        case 'let':
-                            return this.parseLet(symbol, params);
                         case 'defs':
-                        case 'if_let':
-                        case 'when_let':
-                        case 'when_first':
                         case 'fn':
                         case 'defns':
                         case 'try':
@@ -7601,32 +7362,42 @@ var Playground = (function (exports) {
             };
             return node;
         };
-        AlgebraicParser.prototype.parseLet = function (letSymbol, params) {
-            var _a, _b;
-            if (params.length !== 1) {
-                throw new LitsError('let expects one argument', (_a = getTokenDebugData(letSymbol.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-            }
-            var letObject = params[0];
-            if (letObject.t !== AstNodeType.NormalExpression || letObject.n !== 'object') {
-                throw new LitsError('let expects an object as first argument', (_b = getTokenDebugData(letObject.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-            }
-            var letBindings = arrayToPairs(letObject.p);
+        AlgebraicParser.prototype.parseLet = function (token) {
+            this.advance();
+            var letSymbol = parseSymbol(this.tokenStream, this.parseState);
+            assertA_OperatorToken(this.peek(), '=');
+            this.advance();
+            var value = this.parseExpression();
             return {
                 t: AstNodeType.SpecialExpression,
                 n: 'let',
                 p: [],
                 token: getTokenDebugData(letSymbol.token) && letSymbol.token,
-                bs: letBindings.map(function (pair) {
-                    var key = pair[0];
-                    var value = pair[1];
-                    return {
+                bs: [{
                         t: AstNodeType.Binding,
-                        n: key.v,
+                        n: letSymbol.v,
                         v: value,
                         p: [],
-                        token: getTokenDebugData(key.token) && key.token,
-                    };
-                }),
+                        token: getTokenDebugData(token) && token,
+                    }],
+            };
+        };
+        AlgebraicParser.prototype.parseDo = function (token) {
+            this.advance();
+            var expressions = [];
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                expressions.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'do',
+                p: expressions,
+                token: getTokenDebugData(token) && token,
             };
         };
         AlgebraicParser.prototype.parseFor = function (token) {
@@ -7669,33 +7440,26 @@ var Playground = (function (exports) {
             }
             var modifiers = [];
             var token = this.peek();
-            if (!isA_SymbolToken(token)) {
+            if (!((isA_SymbolToken(token) && token[1] === 'let')
+                || isA_ReservedSymbolToken(token, 'when')
+                || isA_ReservedSymbolToken(token, 'while'))) {
                 throw new LitsError('Expected symbol let, when or while', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             }
             var letBindings;
             if (token[1] === 'let') {
                 modifiers.push('&let');
                 letBindings = [];
-                this.advance();
-                var letObject = this.parseObject();
-                letBindings = arrayToPairs(letObject.p).map(function (pair) {
-                    var key = pair[0];
-                    var value = pair[1];
-                    return {
-                        t: AstNodeType.Binding,
-                        n: key.v,
-                        v: value,
-                        p: [],
-                        token: getTokenDebugData(key.token) && key.token,
-                    };
-                });
+                while (isA_SymbolToken(token) && token[1] === 'let') {
+                    var letNode = this.parseLet(token);
+                    letBindings.push(letNode.bs[0]);
+                    token = this.peek();
+                }
             }
             token = this.peek();
             var whenNode;
             var whileNode;
-            while (isA_SymbolToken(token)
-                && ((token[1] === 'when' && !modifiers.includes('&when'))
-                    || (token[1] === 'while' && !modifiers.includes('&while')))) {
+            while (isA_ReservedSymbolToken(token, 'when')
+                || isA_ReservedSymbolToken(token, 'while')) {
                 this.advance();
                 if (token[1] === 'when') {
                     modifiers.push('&when');
@@ -8378,11 +8142,10 @@ var Playground = (function (exports) {
         else: { value: null, forbidden: false },
         end: { value: null, forbidden: false },
         case: { value: null, forbidden: false },
+        when: { value: null, forbidden: false },
+        while: { value: null, forbidden: false },
     };
     var forbiddenAlgebraicReservedNamesRecord = {
-        if_let: { value: null, forbidden: true },
-        when_let: { value: null, forbidden: true },
-        when_first: { value: null, forbidden: true },
         fn: { value: null, forbidden: true },
         defns: { value: null, forbidden: true },
         try: { value: null, forbidden: true },
@@ -13941,87 +13704,6 @@ var Playground = (function (exports) {
             description: "\nBinds local variables.",
             examples: ["\n(let [a (+ 1 2 3 4) \n      b (* 1 2 3 4)])\n(write! a b)"],
         },
-        'if_let': {
-            title: 'if_let',
-            category: 'Special expression',
-            linkName: 'if_let',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                'binding': {
-                    type: '*binding',
-                },
-                'then-expr': {
-                    type: '*expression',
-                },
-                'else-expr': {
-                    type: '*expression',
-                },
-            },
-            variants: [
-                { argumentNames: ['binding', 'then-expr'] },
-                { argumentNames: ['binding', 'then-expr', 'else-expr'] },
-            ],
-            description: "\nBinds one local variable. If it evaluates to a truthy value\n$then-expr is executed with the variable accessable.\nIf the bound variable evaluates to false, the $else-expr is evaluated\n(without variable accessable).",
-            examples: [
-                "\n(if_let [a (> (count \"Albert\") 4)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
-                "\n(if_let [a (> (count \"Albert\") 10)]\n  (write! (str a \", is big enough\"))\n  (write! \"Sorry, not big enough.\"))",
-            ],
-        },
-        'when_let': {
-            title: 'when_let',
-            category: 'Special expression',
-            linkName: 'when_let',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                binding: {
-                    type: '*binding',
-                },
-                expressions: {
-                    type: '*expression',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['binding', 'expressions'] },
-            ],
-            description: "\nBinds one local variable. If it evaluates to a truthy value\n$expressions is executed with the variable accessable.\nIf the bound variable evaluates to a falsy value, `nil` is returned.",
-            examples: [
-                "\n(when_let [a (> (count \"Albert\") 4)]\n  (write! a))",
-            ],
-        },
-        'when_first': {
-            title: 'when_first',
-            category: 'Special expression',
-            linkName: 'when_first',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                binding: {
-                    type: '*binding',
-                    rest: true,
-                },
-                expressions: {
-                    type: '*expression',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['binding', 'expressions'] },
-            ],
-            description: 'When the binding value in $binding is a non empty sequence, the first element of that sequence (instead of the sequence itself) is bound to the variable.',
-            examples: [
-                "\n(when_first [x [1 2 3]]\n  (write! x)\n  x)",
-                "\n(when_first [x \"Albert\"]\n  (write! x)\n  x)",
-                "\n(when_first [x [0]]\n  (write! x)\n  x)",
-                "\n(when_first [x [nil]]\n  (write! x)\n  x)",
-                "\n(when_first [x []]\n  (write! x)\n  x)",
-            ],
-        },
         'fn': {
             title: 'fn',
             category: 'Special expression',
@@ -14184,10 +13866,11 @@ var Playground = (function (exports) {
                 '(if false (write! "TRUE"))',
             ],
         },
-        'if_not': {
-            title: 'if_not',
+        'unless': {
+            title: 'unless',
             category: 'Special expression',
-            linkName: 'if_not',
+            linkName: 'unless',
+            clojureDocs: 'if-not',
             returns: {
                 type: 'any',
             },
@@ -14208,10 +13891,10 @@ var Playground = (function (exports) {
             ],
             description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
             examples: [
-                '(if_not true (write! "TRUE") (write! "FALSE"))',
-                '(if_not false (write! "TRUE") (write! "FALSE"))',
-                '(if_not true (write! "TRUE"))',
-                '(if_not false (write! "TRUE"))',
+                '(unless true (write! "TRUE") (write! "FALSE"))',
+                '(unless false (write! "TRUE") (write! "FALSE"))',
+                '(unless true (write! "TRUE"))',
+                '(unless false (write! "TRUE"))',
             ],
         },
         'cond': {
@@ -14259,60 +13942,6 @@ var Playground = (function (exports) {
                 "\n(switch 1\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
                 "\n(switch 2\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
                 "\n(switch 3\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
-            ],
-        },
-        'when': {
-            title: 'when',
-            category: 'Special expression',
-            linkName: 'when',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                test: {
-                    type: '*expression',
-                },
-                expressions: {
-                    type: '*expression',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['test', 'expressions'] },
-            ],
-            description: "If $test yields a thruthy value, the expressions are evaluated\nand the value returned by the last expression is returned.\nOtherwise, if $test yields a falsy value, the expressions are not evaluated,\nand `nil` is returned. If no $expressions are provided, `nil` is returned.",
-            examples: [
-                "(when true\n      (write! \"Hi\")\n      (write! \"There\"))",
-                "(when false\n      (write! \"Hi\")\n      (write! \"There\"))",
-                '(when true)',
-                '(when false)',
-            ],
-        },
-        'when_not': {
-            title: 'when_not',
-            category: 'Special expression',
-            linkName: 'when_not',
-            returns: {
-                type: 'any',
-            },
-            args: {
-                test: {
-                    type: '*expression',
-                },
-                expressions: {
-                    type: '*expression',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['test', 'expressions'] },
-            ],
-            description: "If $test yields a falsy value, the expressions are evaluated\nand the value returned by the last `expression` is returned.\nOtherwise, if $test yields a truthy value, the $expressions are not evaluated,\nand `nil` is returned. If no `expression` is provided, `nil` is returned.",
-            examples: [
-                '(when_not true (write! "Hi") (write! "There"))',
-                '(when_not false (write! "Hi") (write! "There"))',
-                '(when_not true)',
-                '(when_not false)',
             ],
         },
         'comment': {
@@ -14374,9 +14003,9 @@ var Playground = (function (exports) {
             ],
             description: 'Recursevly calls enclosing function or loop with its evaluated $expressions.',
             examples: [
-                "\n(defn foo [n]\n  (write! n)\n  (when (! (zero? n))\n    (recur\n      (dec n))))\n(foo 3)",
-                "\n(\n  (fn [n]\n    (write! n)\n    (when (! (zero? n))\n      (recur\n        (dec n))))\n  3)",
-                "\n(\n  loop [n 3]\n    (write! n)\n    (when\n      (! (zero? n))\n      (recur (dec n))))",
+                "\n(defn foo [n]\n  (write! n)\n  (if (! (zero? n))\n    (recur\n      (dec n))))\n(foo 3)",
+                "\n(\n  (fn [n]\n    (write! n)\n    (if (! (zero? n))\n      (recur\n        (dec n))))\n  3)",
+                "\n(\n  loop [n 3]\n    (write! n)\n    (if\n      (! (zero? n))\n      (recur (dec n))))",
             ],
         },
         'loop': {
@@ -14401,7 +14030,7 @@ var Playground = (function (exports) {
             ],
             description: 'Executes $expressions with initial $bindings. The $bindings will be replaced with the recur parameters for subsequent recursions.',
             examples: [
-                "\n(loop [n 3]\n  (write! n)\n  (when\n    (! (zero? n))\n    (recur (dec n))))",
+                "\n(loop [n 3]\n  (write! n)\n  (if\n    (! (zero? n))\n    (recur (dec n))))",
                 "\n(loop [n 3]\n  (write! n)\n  (if\n    (! (zero? n))\n    (recur (dec n))\n    n))",
             ],
         },
@@ -15742,20 +15371,15 @@ var Playground = (function (exports) {
             'def',
             'defs',
             'let',
-            'if_let',
-            'when_let',
-            'when_first',
             'fn',
             'defn',
             'defns',
             'try',
             'throw',
             'if',
-            'if_not',
+            'unless',
             'cond',
             'switch',
-            'when',
-            'when_not',
             'comment',
             'do',
             'recur',

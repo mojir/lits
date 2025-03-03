@@ -168,7 +168,7 @@ export const examples: Example[] = [
     },
     code: `
 (loop [list (entries TRANSLATIONS)]
-  (when (count list)
+  (if (count list)
     (do
       (let [entry (first list)])
       (defns (entry 0) [&rest params &let [templateString (entry 1)]]
@@ -191,10 +191,11 @@ export const examples: Example[] = [
     description: 'Check if string is formatted as an ISO date string.',
     code: `
 (defn isoDateString? [$data]
-  (if_let [m
+  (let [m
            (match
              #"^(\\d{4})-(\\d{2})-(\\d{2})$"
-             $data)]
+             $data)])
+  (if m
     (do
       (let
         [

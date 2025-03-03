@@ -461,7 +461,7 @@ describe('collection functions', () => {
         b: 2,
       })
       expect(lits.run('(def x {:a 1 :b 2}) (:c x)')).toEqual(null)
-      expect(lits.run('(update {} :a (fn [val] (when (nil? val) 0)))')).toEqual({ a: 0 })
+      expect(lits.run('(update {} :a (fn [val] (if (nil? val) 0)))')).toEqual({ a: 0 })
       expect(lits.run('(def x {:a 1 :b 2}) (update x :c (fn [val] (if (nil? val) 0 (inc val))))')).toEqual({
         a: 1,
         b: 2,
@@ -493,16 +493,16 @@ describe('collection functions', () => {
         a: 2,
         b: 2,
       })
-      expect(lits.run('(update_in {} [:a] (fn [val] (when (nil? val) 0)))')).toEqual({ a: 0 })
+      expect(lits.run('(update_in {} [:a] (fn [val] (if (nil? val) 0)))')).toEqual({ a: 0 })
       expect(lits.run('(def x {:a 1 :b 2}) (update_in x [:c] (fn [val] (if (nil? val) 0 (inc val))))')).toEqual({
         a: 1,
         b: 2,
         c: 0,
       })
-      expect(lits.run('(update_in {:a [1 2 3]} [:a 1] (fn [val] (when (nil? val) 0)))')).toEqual({
+      expect(lits.run('(update_in {:a [1 2 3]} [:a 1] (fn [val] (if (nil? val) 0)))')).toEqual({
         a: [1, null, 3],
       })
-      expect(lits.run('(update_in {:a [1 nil 3]} [:a 1] (fn [val] (when (nil? val) 0)))')).toEqual({
+      expect(lits.run('(update_in {:a [1 nil 3]} [:a 1] (fn [val] (if (nil? val) 0)))')).toEqual({
         a: [1, 0, 3],
       })
       expect(lits.run('(update_in {:a [1 "Albert" 3]} [:a 1 0] (fn [val] (if (nil? val) "?" "!")))')).toEqual({

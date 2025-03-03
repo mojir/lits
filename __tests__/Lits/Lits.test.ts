@@ -273,7 +273,7 @@ describe('regressions', () => {
     try {
       lits.run(`(loop [n 3]
   (write! n)
-  (when (! zero? n))
+  (if (! zero? n))
     (recur (dec n))
   )
 )`)
@@ -282,7 +282,7 @@ describe('regressions', () => {
       // eslint-disable-next-line ts/no-unsafe-member-access
       expect((error as any).sourceCodeInfo.position.line).toBe(3)
       // eslint-disable-next-line ts/no-unsafe-member-access
-      expect((error as any).sourceCodeInfo.position.column).toBe(9)
+      expect((error as any).sourceCodeInfo.position.column).toBe(7)
     }
   })
   it('name not recognized', () => {

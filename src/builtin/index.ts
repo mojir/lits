@@ -10,8 +10,7 @@ import { defsSpecialExpression } from './specialExpressions/defs'
 import { doSpecialExpression } from './specialExpressions/do'
 import { defnSpecialExpression, defnsSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
-import { ifLetSpecialExpression } from './specialExpressions/if_let'
-import { ifNotSpecialExpression } from './specialExpressions/if_not'
+import { unlessSpecialExpression } from './specialExpressions/unless'
 import { letSpecialExpression } from './specialExpressions/let'
 import { loopSpecialExpression } from './specialExpressions/loop'
 import { doseqSpecialExpression, forSpecialExpression } from './specialExpressions/loops'
@@ -20,10 +19,6 @@ import { qqSpecialExpression } from './specialExpressions/qq'
 import { recurSpecialExpression } from './specialExpressions/recur'
 import { throwSpecialExpression } from './specialExpressions/throw'
 import { trySpecialExpression } from './specialExpressions/try'
-import { whenSpecialExpression } from './specialExpressions/when'
-import { whenFirstSpecialExpression } from './specialExpressions/when_first'
-import { whenLetSpecialExpression } from './specialExpressions/when_let'
-import { whenNotSpecialExpression } from './specialExpressions/when_not'
 
 const specialExpressions = {
   '&&': andSpecialExpression,
@@ -39,18 +34,13 @@ const specialExpressions = {
   'for': forSpecialExpression,
   'fn': fnSpecialExpression,
   'if': ifSpecialExpression,
-  'if_let': ifLetSpecialExpression,
-  'if_not': ifNotSpecialExpression,
+  'unless': unlessSpecialExpression,
   'let': letSpecialExpression,
   'loop': loopSpecialExpression,
   '||': orSpecialExpression,
   'recur': recurSpecialExpression,
   'throw': throwSpecialExpression,
   'try': trySpecialExpression,
-  'when': whenSpecialExpression,
-  'when_first': whenFirstSpecialExpression,
-  'when_let': whenLetSpecialExpression,
-  'when_not': whenNotSpecialExpression,
   'declared?': declaredSpecialExpression,
   '??': qqSpecialExpression,
 } as const
@@ -66,10 +56,8 @@ export type CommonSpecialExpressionName = keyof Pick<
   | 'declared?'
   | 'do'
   | 'if'
-  | 'if_not'
+  | 'unless'
   | '||'
-  | 'when'
-  | 'when_not'
   | 'throw'
 >
 

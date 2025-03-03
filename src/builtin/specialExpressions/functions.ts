@@ -77,11 +77,11 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
       o: evaluatedFunctionOverloades,
     }
 
-    contextStack.globalContext[name] = { value: litsFunction }
+    contextStack.exportValue(name, litsFunction)
     return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
-    contextStack.globalContext[node.f.v] = { value: true }
+    contextStack.exportValue(node.f.v, true)
     const newContext: Context = { [node.f.v]: { value: true } }
     return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext)
   },
@@ -122,7 +122,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
       o: evaluatedFunctionOverloades,
     }
 
-    contextStack.globalContext[name] = { value: litsFunction }
+    contextStack.exportValue(name, litsFunction)
     return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin, evaluateAstNode }) => {
@@ -130,7 +130,7 @@ export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> =
     const name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack)
     assertString(name, sourceCodeInfo)
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
-    contextStack.globalContext[name] = { value: true }
+    contextStack.exportValue(name, true)
     const newContext = { [name]: { value: true } }
 
     return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext)

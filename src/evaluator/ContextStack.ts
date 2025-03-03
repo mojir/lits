@@ -32,8 +32,8 @@ export class ContextStackImpl {
     lazyValues?: Record<string, LazyValue>
     nativeJsFunctions?: Record<string, NativeJsFunction>
   }) {
-    this.contexts = contexts
     this.globalContext = asNonUndefined(contexts[0])
+    this.contexts = contexts
     this.values = hostValues
     this.lazyValues = lazyHostValues
     this.nativeJsFunctions = nativeJsFunctions
@@ -51,7 +51,21 @@ export class ContextStackImpl {
     return contextStack
   }
 
-  public addValue(name: string, value: unknown) {
+  public exportValue(name: string, value: Any) {
+    if (this.globalContext[name]) {
+      throw new Error(`Cannot redefine exported value "${name}"`)
+    }
+    if (specialExpressionKeys.includes(name)) {
+      throw new Error(`Cannot shadow special expression "${name}"`)
+    }
+    if (normalExpressionKeys.includes(name)) {
+      throw new Error(`Cannot shadow builtin function "${name}"`)
+    }
+    this.addValue(name, value)
+    this.globalContext[name] = { value }
+  }
+
+  public addValue(name: string, value: Any) {
     const currentContext = this.contexts[0]
     if (!currentContext) {
       throw new Error('No context to add value to')
@@ -179,5 +193,5 @@ export function createContextStack(params: LitsParams = {}): ContextStack {
         return acc
       }, {}),
   })
-  return contextStack
+  return contextStack.create({})
 }

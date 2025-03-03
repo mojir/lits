@@ -240,8 +240,8 @@ describe('algebraic operators', () => {
       expect(lits.run('max(1, 3, 2)')).toBe(3)
       expect(lits.run('\'&&\'(1, 2, 3)')).toBe(3)
       expect(lits.run('\'||\'(0, 1, 2)')).toBe(1)
-      expect(lits.run('when(1 > 2, 2)')).toBe(null)
-      expect(lits.run('when(1 < 2, 2)')).toBe(2)
+      expect(lits.run('if 1 > 2 then 2 end')).toBe(null)
+      expect(lits.run('if 1 < 2 then 2 end')).toBe(2)
       expect(lits.run('\'remove_at\'(1, [1, 2, 3])')).toEqual([1, 3])
     })
   })
@@ -523,6 +523,51 @@ describe('algebraic operators', () => {
     })
   })
 
+  test('defn', () => {
+    expect(lits.run(`
+      defn add(a, b)
+        a + b
+      end
+      add(2, 3)`)).toBe(5)
+  })
+
+  describe('do', () => {
+    test('as operand', () => {
+      expect(lits.run(`
+        do 
+          let a = 1 + 2 * 3;
+          a
+        end + 3`)).toBe(10)
+    })
+    test('scope', () => {
+      expect(lits.run(`
+      let a = 1;
+      do
+        let a = 2
+      end;
+      a`)).toBe(1)
+
+      expect(() => lits.run(`
+      do
+        let a = 2
+      end;
+      a`)).toThrow() // a is not defined
+
+      expect(lits.run(`
+      let a = 1;
+      do
+        def a = 2
+      end;
+      a`)).toBe(1)
+
+      expect(lits.run(`
+      do
+        def a = 2
+      end;
+      a`)).toBe(2)
+    })
+  })
+
   describe('data structures', () => {
     it('supports array literals', () => {
       expect(lits.run('[1, 2, 3]')).toEqual([1, 2, 3])
@@ -584,8 +629,8 @@ describe('algebraic operators', () => {
 
   describe('let', () => {
     it('supports let bindings', () => {
-      expect(lits.run('let({ a=10 }); a')).toBe(10)
-      expect(lits.run('let({ foo = => $ + 1 }); foo(1)')).toBe(2)
+      expect(lits.run('let a = 10; a')).toBe(10)
+      expect(lits.run('let foo = => $ + 1; foo(1)')).toBe(2)
     })
   })
 
@@ -688,7 +733,7 @@ describe('algebraic operators', () => {
     })
     test('with computed bindings using let', () => {
       expect(lits.run(`
-        for (x of [1, 2] let { z = x * x * x })
+        for (x of [1, 2] let z = x * x * x)
           z
         end`)).toEqual([1, 8])
     })
@@ -703,13 +748,13 @@ describe('algebraic operators', () => {
     })
     test('with when conditions', () => {
       expect(lits.run(`
-        for (x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } when even?(y))
+        for (x of [0, 1, 2, 3, 4, 5] let y = x * 3 when even?(y))
           y
         end`)).toEqual([0, 6, 12])
     })
     test('with while conditions (early termination)', () => {
       expect(lits.run(`
-        for (x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } while even?(y))
+        for (x of [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y))
           y
         end`)).toEqual([0])
     })
@@ -764,50 +809,42 @@ describe('algebraic operators', () => {
     })
     test('real world example', () => {
       expect(lits.run(`// Imagine these are coming from a database
-        let({
-          products = [
-            { id="P1", name="Phone", price=500, category="electronics", stockLevel=23 },
-            { id="P2", name="Headphones", price=150, category="electronics", stockLevel=42 },
-            { id="P3", name="Case", price=30, category="accessories", stockLevel=56 },
-          ],
-          customerPreferences = {
-            priceLimit=700,
-            preferredCategories=["electronics", "accessories"],
-            recentViews=["P1", "P3", "P5"]
-          }
-        });
+        let products = [
+          { id="P1", name="Phone", price=500, category="electronics", stockLevel=23 },
+          { id="P2", name="Headphones", price=150, category="electronics", stockLevel=42 },
+          { id="P3", name="Case", price=30, category="accessories", stockLevel=56 },
+        ];
+        let customerPreferences = {
+          priceLimit=700,
+          preferredCategories=["electronics", "accessories"],
+          recentViews=["P1", "P3", "P5"]
+        };
         
         // Generate personalized bundle recommendations
         for (
           // Start with main products
           mainProduct of products
-            let {
-              isInStock = mainProduct.stockLevel > 0,
-              isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category),
-              isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
-            }
+            let isInStock = mainProduct.stockLevel > 0
+            let isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category)
+            let isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
             when (isInStock && isPreferredCategory && isPriceOk),
             
         
           // Add compatible accessories
           accessory of products
-            let {
-              isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0,
-              totalPrice = mainProduct.price + accessory.price,
-              isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
-            }
+            let isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0
+            let totalPrice = mainProduct.price + accessory.price
+            let isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
             when (isCompatible && totalPrice <= customerPreferences.priceLimit)
             while totalPrice <= customerPreferences.priceLimit * 0.9,
         
           // For high-value bundles, consider a third complementary item
           complItem of products
-            let {
-              isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
-              finalPrice = mainProduct.price + accessory.price + complItem.price,
-              discount = if finalPrice > 500 then 0.1 else 0.05 end,
-              discountedPrice = finalPrice * (1 - discount),
-              matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
-            }
+            let isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0
+            let finalPrice = mainProduct.price + accessory.price + complItem.price
+            let discount = if finalPrice > 500 then 0.1 else 0.05 end
+            let discountedPrice = finalPrice * (1 - discount)
+            let matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
             when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
             while discountedPrice <= customerPreferences.priceLimit
         )

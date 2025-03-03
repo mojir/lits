@@ -32,9 +32,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
 
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
 
-    contextStack.globalContext[name] = {
-      value: evaluateAstNode(node.p[1]!, contextStack),
-    }
+    contextStack.exportValue(name, evaluateAstNode(node.p[1]!, contextStack))
 
     return null
   },
@@ -44,7 +42,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
     const result = findUnresolvedIdentifiers([subNode], contextStack, builtin)
     const name = asSymbolNode(node.p[0]).v
     assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
-    contextStack.globalContext[name] = { value: true }
+    contextStack.exportValue(name, true)
     return result
   },
 }
