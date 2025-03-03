@@ -733,8 +733,8 @@ export class AlgebraicParser {
   }
 
   private parseLet(letSymbol: SymbolNode, params: AstNode[]): LetNode {
-    if (params.length !== 2) {
-      throw new LitsError('let expects two arguments', getTokenDebugData(letSymbol.token)?.sourceCodeInfo)
+    if (params.length !== 1) {
+      throw new LitsError('let expects one argument', getTokenDebugData(letSymbol.token)?.sourceCodeInfo)
     }
 
     const letObject = params[0]!
@@ -743,12 +743,11 @@ export class AlgebraicParser {
     }
 
     const letBindings = arrayToPairs(letObject.p)
-    const expression = params[1]!
 
     return {
       t: AstNodeType.SpecialExpression,
       n: 'let',
-      p: [expression],
+      p: [],
       token: getTokenDebugData(letSymbol.token) && letSymbol.token,
       bs: letBindings.map((pair) => {
         const key = pair[0] as StringNode

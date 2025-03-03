@@ -51,6 +51,23 @@ export class ContextStackImpl {
     return contextStack
   }
 
+  public addValue(name: string, value: unknown) {
+    const currentContext = this.contexts[0]
+    if (!currentContext) {
+      throw new Error('No context to add value to')
+    }
+    if (currentContext[name]) {
+      throw new Error(`Cannot redefine value "${name}"`)
+    }
+    if (specialExpressionKeys.includes(name)) {
+      throw new Error(`Cannot shadow special expression "${name}"`)
+    }
+    if (normalExpressionKeys.includes(name)) {
+      throw new Error(`Cannot shadow builtin function "${name}"`)
+    }
+    currentContext[name] = { value: toAny(value) }
+  }
+
   public clone(): ContextStack {
     // eslint-disable-next-line ts/no-unsafe-argument
     return new ContextStackImpl(JSON.parse(JSON.stringify({

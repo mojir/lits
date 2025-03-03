@@ -17,14 +17,17 @@ beforeEach(() => {
 const simpleProgram = `
 (let
   [
-    day (let [sec 1000] (* 24 60 60 sec))
-  ]
-  (* (get_in info [:days 1]) day)
-)`
+    day (do (let [sec 1000]) (* 24 60 60 sec))
+  ])
+(* (get_in info [:days 1]) day)
+`
 
 const formatPhoneNumber = `
 (if (string? $data)
-  (let [phoneNumber (if (== "+" (nth $data 0)) (subs $data 2) $data)]
+  (do
+    (let [ phoneNumber
+          (if (== "+" (nth $data 0)) (subs $data 2) $data)
+        ])
     (cond
       (> (count phoneNumber) 6)
         (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3 6) "-" (subs phoneNumber 6))

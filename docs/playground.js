@@ -5080,7 +5080,7 @@ var Playground = (function (exports) {
         },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+            return findUnresolvedIdentifiers(node.p, contextStack.create({}), builtin);
         },
     };
 
@@ -5108,11 +5108,6 @@ var Playground = (function (exports) {
     }
     function addAnalyzeResults(target, source) {
         source.forEach(function (symbol) { return target.add(symbol); });
-    }
-    function combinate(arrays) {
-        return arrays.reduce(function (acc, curr) {
-            return acc.flatMap(function (a) { return curr.map(function (c) { return __spreadArray(__spreadArray([], __read(a), false), [c], false); }); });
-        }, [[]]);
     }
 
     var defnSpecialExpression = {
@@ -5548,55 +5543,39 @@ var Playground = (function (exports) {
 
     var letSpecialExpression = {
         polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var parseBindings = _a.parseBindings, parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
+            var parseBindings = _a.parseBindings;
             var bindings = parseBindings(tokenStream, parseState);
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
+            // const params = parseTokensUntilClosingBracket(tokenStream, parseState)
             assertRParenToken(tokenStream.tokens[parseState.position++]);
             var node = {
                 t: AstNodeType.SpecialExpression,
                 n: 'let',
-                p: params,
+                p: [],
                 bs: bindings,
                 token: getTokenDebugData(firstToken) && firstToken,
             };
             return node;
         },
-        validateParameterCount: function () { return undefined; },
+        validateParameterCount: function (node) { return assertNumberOfParams(0, node); },
         evaluate: function (node, contextStack, _a) {
-            var e_1, _b, e_2, _c;
+            var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
-            var locals = {};
-            var newContextStack = contextStack.create(locals);
             try {
-                for (var _d = __values(node.bs), _e = _d.next(); !_e.done; _e = _d.next()) {
-                    var binding = _e.value;
+                for (var _c = __values(node.bs), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var binding = _d.value;
                     var bindingValueNode = binding.v;
-                    var bindingValue = evaluateAstNode(bindingValueNode, newContextStack);
-                    locals[binding.n] = { value: bindingValue };
+                    var bindingValue = evaluateAstNode(bindingValueNode, contextStack);
+                    contextStack.addValue(binding.n, bindingValue);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_e && !_e.done && (_b = _d.return)) _b.call(_d);
+                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
-            var result = null;
-            try {
-                for (var _f = __values(node.p), _g = _f.next(); !_g.done; _g = _f.next()) {
-                    var astNode = _g.value;
-                    result = evaluateAstNode(astNode, newContextStack);
-                }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (_g && !_g.done && (_c = _f.return)) _c.call(_f);
-                }
-                finally { if (e_2) throw e_2.error; }
-            }
-            return result;
+            return null;
         },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
@@ -5606,11 +5585,10 @@ var Playground = (function (exports) {
                 context[name] = { value: true };
                 return context;
             }, {});
-            var bindingContext = {};
             var bindingResults = node.bs.map(function (bindingNode) {
                 var valueNode = bindingNode.v;
-                var bindingsResult = findUnresolvedIdentifiers([valueNode], contextStack.create(bindingContext), builtin);
-                bindingContext[bindingNode.n] = { value: true };
+                var bindingsResult = findUnresolvedIdentifiers([valueNode], contextStack, builtin);
+                contextStack.addValue(bindingNode.n, { value: true });
                 return bindingsResult;
             });
             var paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin);
@@ -6330,6 +6308,22 @@ var Playground = (function (exports) {
             contextStack.globalContext = globalContext;
             return contextStack;
         };
+        ContextStackImpl.prototype.addValue = function (name, value) {
+            var currentContext = this.contexts[0];
+            if (!currentContext) {
+                throw new Error('No context to add value to');
+            }
+            if (currentContext[name]) {
+                throw new Error("Cannot redefine value \"".concat(name, "\""));
+            }
+            if (specialExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow special expression \"".concat(name, "\""));
+            }
+            if (normalExpressionKeys.includes(name)) {
+                throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
+            }
+            currentContext[name] = { value: toAny(value) };
+        };
         ContextStackImpl.prototype.clone = function () {
             // eslint-disable-next-line ts/no-unsafe-argument
             return new ContextStackImpl(JSON.parse(JSON.stringify({
@@ -6771,7 +6765,14 @@ var Playground = (function (exports) {
 
     var findUnresolvedIdentifiers = function (ast, contextStack, builtin) {
         var e_1, _a;
-        var astNodes = Array.isArray(ast) ? ast : ast.b;
+        var astNodes = Array.isArray(ast)
+            ? ast
+            : [{
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: ast.b,
+                    token: undefined,
+                }];
         var unresolvedIdentifiers = new Set();
         try {
             for (var astNodes_1 = __values(astNodes), astNodes_1_1 = astNodes_1.next(); !astNodes_1_1.done; astNodes_1_1 = astNodes_1.next()) {
@@ -6843,537 +6844,9 @@ var Playground = (function (exports) {
         }
     }
 
-    var calculateAndOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
-        return combinateAstNodes(astNode.p)
-            .map(function (p) { return ({
-            n: '&&',
-            t: AstNodeType.SpecialExpression,
-            p: p,
-            token: astNode.token,
-        }); });
-    };
-
-    var calculateCondOutcomes = function (_a) {
-        var astNode = _a.astNode, nilNode = _a.nilNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, isAstComputable = _a.isAstComputable;
-        var testNodes = arrayToPairs(astNode.p).map(function (_a) {
-            var _b = __read(_a, 1), t = _b[0];
-            return t;
-        });
-        if (isAstComputable(testNodes)) {
-            return combinate(arrayToPairs(astNode.p)
-                // Create a list of ast nodes from the test and form of each condition
-                .reduce(function (acc, _a) {
-                var _b = __read(_a, 2), test = _b[0], form = _b[1];
-                acc.push(calculatePossibleAstNodes(test), calculatePossibleAstNodes(form));
-                return acc;
-            }, []))
-                // Create a new CondNode for each combination of test and form outcomes
-                .map(function (conditionAsts) { return (__assign(__assign({}, astNode), { c: arrayToPairs(conditionAsts).map(function (_a) {
-                    var _b = __read(_a, 2), t = _b[0], f = _b[1];
-                    return ({ t: t, f: f });
-                }) })); });
-        }
-        return __spreadArray(__spreadArray([], __read(arrayToPairs(astNode.p).flatMap(function (_a) {
-            var _b = __read(_a, 2); _b[0]; var form = _b[1];
-            return calculatePossibleAstNodes(form);
-        })), false), [
-            nilNode,
-        ], false);
-    };
-
-    var trueNode = { t: AstNodeType.ReservedSymbol, v: 'true', token: undefined, p: [], n: undefined };
-    var falseNode = { t: AstNodeType.ReservedSymbol, v: 'false', token: undefined, p: [], n: undefined };
-    var calculateDeclaredOutcomes = function (_a) {
-        var astNode = _a.astNode, isAstComputable = _a.isAstComputable;
-        if (isAstComputable(astNode.p))
-            return [trueNode];
-        return [trueNode, falseNode];
-    };
-
-    var calculateDefOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, addGlobalIdentifier = _a.addGlobalIdentifier;
-        var nameNode = asSymbolNode(astNode.p[0]);
-        var valueNode = astNode.p[1];
-        addGlobalIdentifier(nameNode.v);
-        return calculatePossibleAstNodes(valueNode)
-            .map(function (node) { return (__assign(__assign({}, astNode), { p: [nameNode, node] })); });
-    };
-
-    var calculateDefsOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
-        return combinateAstNodes(astNode.p)
-            .map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
-    };
-
-    var calculateDoOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
-        return combinateAstNodes(astNode.p).map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
-    };
-
-    function calculateFunctionOverloadOutcomes(combinateAstNodes, functionOverloads) {
-        return combinate(functionOverloads
-            // For each overload, calculate the possible outcomes for each parameter
-            .map(function (functionOverload) {
-            var _a;
-            return combinateAstNodes(functionOverload.b, [
-                functionOverload.as.m,
-                functionOverload.as.b.map(function (bindingNode) { return bindingNode.n; }),
-                (_a = functionOverload.as.r) !== null && _a !== void 0 ? _a : [],
-            ].flat())
-                // For each combination of parameter outcomes, create a new overload
-                .map(function (body) { return (__assign(__assign({}, functionOverload), { b: body })); });
-        }));
-    }
-    var calculateDefnOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes, addGlobalIdentifier = _a.addGlobalIdentifier;
-        addGlobalIdentifier(astNode.f.v);
-        // astNode.o is an array of overloads
-        return calculateFunctionOverloadOutcomes(combinateAstNodes, astNode.o).map(function (functionOverloads) { return (__assign(__assign({}, astNode), { o: functionOverloads })); });
-    };
-    var calculateDefnsOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, combinateAstNodes = _a.combinateAstNodes;
-        // astNode.o is an array of overloads
-        return calculatePossibleAstNodes(astNode.f).flatMap(function (functionName) {
-            return calculateFunctionOverloadOutcomes(combinateAstNodes, astNode.o).map(function (functionOverloads) { return (__assign(__assign({}, astNode), { f: functionName, o: functionOverloads })); });
-        });
-    };
-    var calculateFnOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
-        // astNode.o is an array of overloads
-        return calculateFunctionOverloadOutcomes(combinateAstNodes, astNode.o).map(function (functionOverloads) { return (__assign(__assign({}, astNode), { o: functionOverloads })); });
-    };
-
-    var calculateIfLetOutcomes = function (_a) {
-        var _b;
-        var astNode = _a.astNode, nilNode = _a.nilNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, combinateAstNodes = _a.combinateAstNodes, isAstComputable = _a.isAstComputable;
-        var bindingNode = astNode.b;
-        var thenBranch = astNode.p[0];
-        var elseBranch = (_b = astNode.p[1]) !== null && _b !== void 0 ? _b : nilNode;
-        if (!isAstComputable(bindingNode.v)) {
-            return __spreadArray(__spreadArray([], __read(calculatePossibleAstNodes(thenBranch)), false), __read(calculatePossibleAstNodes(elseBranch)), false);
-        }
-        var newIdentifier = bindingNode.n;
-        return calculatePossibleAstNodes(bindingNode.v)
-            .map(function (bindingValue) { return (__assign(__assign({}, bindingNode), { v: bindingValue })); })
-            .flatMap(function (b) { return combinateAstNodes(astNode.p, [newIdentifier])
-            .map(function (p) { return (__assign(__assign({}, astNode), { b: b, p: p })); }); });
-    };
-
-    var calculateIfNotOutcomes = function (_a) {
-        var _b;
-        var astNode = _a.astNode, nilNode = _a.nilNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, combinateAstNodes = _a.combinateAstNodes, isAstComputable = _a.isAstComputable;
-        var condition = astNode.p[0];
-        var thenBranch = astNode.p[1];
-        var elseBranch = (_b = astNode.p[2]) !== null && _b !== void 0 ? _b : nilNode;
-        if (isAstComputable(condition)) {
-            return combinateAstNodes(astNode.p)
-                .map(function (p) { return ({
-                n: 'if_not',
-                t: astNode.t,
-                p: p,
-                token: astNode.token,
-            }); });
-        }
-        return __spreadArray(__spreadArray([], __read(calculatePossibleAstNodes(thenBranch)), false), __read(calculatePossibleAstNodes(elseBranch)), false);
-    };
-
-    var calculateIfOutcomes = function (_a) {
-        var _b;
-        var astNode = _a.astNode, nilNode = _a.nilNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, combinateAstNodes = _a.combinateAstNodes, isAstComputable = _a.isAstComputable;
-        var condition = astNode.p[0];
-        var thenBranch = astNode.p[1];
-        var elseBranch = (_b = astNode.p[2]) !== null && _b !== void 0 ? _b : nilNode;
-        if (isAstComputable(condition)) {
-            return combinateAstNodes(astNode.p)
-                .map(function (p) { return ({
-                n: 'if',
-                t: astNode.t,
-                p: p,
-                token: astNode.token,
-            }); });
-        }
-        return __spreadArray(__spreadArray([], __read(calculatePossibleAstNodes(thenBranch)), false), __read(calculatePossibleAstNodes(elseBranch)), false);
-    };
-
-    var calculateLetOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, combinateAstNodes = _a.combinateAstNodes, isAstComputable = _a.isAstComputable;
-        try {
-            // check bindings, if any binding value cannot be calculated, convert the whole let to a do-expression
-            if (!isAstComputable(astNode.bs.map(function (b) { return calculatePossibleAstNodes(b.v); })))
-                throw new Error('Could not calculate binding value');
-        }
-        catch (_b) {
-            var doNodes = combinateAstNodes(astNode.p)
-                .map(function (p) {
-                return {
-                    n: 'do',
-                    t: AstNodeType.SpecialExpression,
-                    p: p,
-                    token: astNode.token,
-                };
-            });
-            return doNodes;
-        }
-        var newIdentifiers = astNode.bs.map(function (bindingNode) { return bindingNode.n; });
-        var letNodes = combinate(astNode.bs.map(function (bindingNode) {
-            return calculatePossibleAstNodes(bindingNode.v)
-                .map(function (bindingValues) { return (__assign(__assign({}, bindingNode), { v: bindingValues })); });
-        }))
-            .flatMap(function (bindingNodes) { return combinate(astNode.p.map(function (p) { return calculatePossibleAstNodes(p, newIdentifiers); }))
-            .map(function (p) {
-            return {
-                n: 'let',
-                bs: bindingNodes,
-                t: AstNodeType.SpecialExpression,
-                p: p,
-                token: astNode.token,
-            };
-        }); });
-        return letNodes;
-    };
-
-    var calculateForOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
-        if (!isDeterministic(calculatePossibleAstNodes, astNode))
-            throw new Error('Could not calculate for loop, not deterministic');
-        return [astNode];
-    };
-    var calculateDoSeqOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
-        if (!isDeterministic(calculatePossibleAstNodes, astNode))
-            throw new Error('Could not calculate doSeq node, not deterministic');
-        return [astNode];
-    };
-    function isDeterministic(calculatePossibleAstNodes, astNode) {
-        var e_1, _a;
-        try {
-            for (var _b = __values(astNode.l), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = _c.value, b = _d.b, l = _d.l, wn = _d.wn, we = _d.we;
-                if (l && l.some(function (_a) {
-                    var v = _a.v;
-                    return !astIsDeterministic(calculatePossibleAstNodes, v);
-                }))
-                    return false;
-                if (!astIsDeterministic(calculatePossibleAstNodes, b.v))
-                    return false;
-                if (wn && !astIsDeterministic(calculatePossibleAstNodes, wn))
-                    return false;
-                if (we && !astIsDeterministic(calculatePossibleAstNodes, we))
-                    return false;
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        if (!astIsDeterministic(calculatePossibleAstNodes, astNode.p[0]))
-            return false;
-        return true;
-    }
-    function astIsDeterministic(calculatePossibleAstNodes, astNode) {
-        return calculatePossibleAstNodes(astNode).length === 1;
-    }
-
-    var calculateOrOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
-        return combinateAstNodes(astNode.p)
-            .map(function (p) { return ({
-            n: '||',
-            t: AstNodeType.SpecialExpression,
-            p: p,
-            token: astNode.token,
-        }); });
-    };
-
-    var calculateQqOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes, isAstComputable = _a.isAstComputable;
-        if (!isAstComputable(astNode.p[0]))
-            throw new Error('First argument of ?? not computable');
-        return combinateAstNodes(astNode.p)
-            .map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
-    };
-
-    var calculateThrowOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
-        return calculatePossibleAstNodes(astNode.p[0]).map(function (m) { return (__assign(__assign({}, astNode), { p: [m] })); });
-    };
-
-    var calculateTryOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
-        var _b = calculatePossibleAstNodes(astNode.p[0]).reduce(function (acc, node) {
-            if (node.n === 'throw') {
-                acc.throws.push(node.p[0]);
-            }
-            else {
-                acc.vals.push(node);
-            }
-            return acc;
-        }, { vals: [], throws: [] }), vals = _b.vals, throws = _b.throws;
-        var catches = throws.flatMap(function (throwNode) {
-            var letNode = {
-                t: AstNodeType.SpecialExpression,
-                n: 'let',
-                bs: [{
-                        t: AstNodeType.Binding,
-                        n: astNode.e.v,
-                        v: throwNode,
-                        token: undefined,
-                        p: [],
-                    }],
-                p: [astNode.ce],
-                token: undefined,
-            };
-            return calculatePossibleAstNodes(letNode);
-        });
-        return __spreadArray(__spreadArray([], __read(vals), false), __read(catches), false);
-    };
-
-    var calculateWhenFirstOutcomes = function (_a) {
-        var astNode = _a.astNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, combinateAstNodes = _a.combinateAstNodes, isAstComputable = _a.isAstComputable;
-        var bindingNode = astNode.b;
-        if (!isAstComputable(bindingNode.v))
-            throw new Error('Could not calculate binding value');
-        var newIdentifier = bindingNode.n;
-        return calculatePossibleAstNodes(bindingNode.v)
-            .map(function (bindingValue) { return (__assign(__assign({}, bindingNode), { v: bindingValue })); })
-            .flatMap(function (b) {
-            return combinateAstNodes(astNode.p, [newIdentifier])
-                .map(function (p) { return (__assign(__assign({}, astNode), { b: b, p: p })); });
-        });
-    };
-
-    var calculateWhenLetOutcomes = function (_a) {
-        var astNode = _a.astNode, nilNode = _a.nilNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes, combinateAstNodes = _a.combinateAstNodes, isAstComputable = _a.isAstComputable;
-        var bindingNode = astNode.b;
-        if (!isAstComputable(bindingNode.v)) {
-            return __spreadArray(__spreadArray([], __read(combinateAstNodes(astNode.p)
-                .map(function (p) { return ({
-                n: 'do',
-                t: astNode.t,
-                p: p,
-                token: astNode.token,
-            }); })), false), [
-                nilNode,
-            ], false);
-        }
-        var newIdentifier = bindingNode.n;
-        return calculatePossibleAstNodes(bindingNode.v)
-            .map(function (bindingValue) { return (__assign(__assign({}, bindingNode), { v: bindingValue })); })
-            .flatMap(function (b) {
-            return combinateAstNodes(astNode.p, [newIdentifier])
-                .map(function (p) { return (__assign(__assign({}, astNode), { b: b, p: p })); });
-        });
-    };
-
-    var calculateWhenNotOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes, nilNode = _a.nilNode, isAstComputable = _a.isAstComputable;
-        var condition = astNode.p[0];
-        if (isAstComputable(condition)) {
-            return combinateAstNodes(astNode.p)
-                .map(function (p) { return ({
-                n: 'when_not',
-                t: astNode.t,
-                p: p,
-                token: astNode.token,
-            }); });
-        }
-        var body = astNode.p.slice(1);
-        return __spreadArray(__spreadArray([], __read(combinateAstNodes(body)
-            .map(function (p) { return ({
-            n: 'do',
-            t: astNode.t,
-            p: p,
-            token: astNode.token,
-        }); })), false), [
-            nilNode,
-        ], false);
-    };
-
-    var calculateWhenOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes, nilNode = _a.nilNode, isAstComputable = _a.isAstComputable;
-        var condition = astNode.p[0];
-        if (isAstComputable(condition)) {
-            return combinateAstNodes(astNode.p)
-                .map(function (p) { return ({
-                n: 'when',
-                t: astNode.t,
-                p: p,
-                token: astNode.token,
-            }); });
-        }
-        var body = astNode.p.slice(1);
-        return __spreadArray(__spreadArray([], __read(combinateAstNodes(body)
-            .map(function (p) { return ({
-            n: 'do',
-            t: astNode.t,
-            p: p,
-            token: astNode.token,
-        }); })), false), [
-            nilNode,
-        ], false);
-    };
-
-    var calculateRecurOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
-        return combinateAstNodes(astNode.p)
-            .map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
-    };
-
-    var calculateCommentOutcomes = function (_a) {
-        var nilNode = _a.nilNode;
-        return [nilNode];
-    };
-
-    var calculateLoopOutcomes = function (_a) {
-        var astNode = _a.astNode, combinateAstNodes = _a.combinateAstNodes;
-        return combinateAstNodes(astNode.p, astNode.bs.map(function (bindingNode) { return bindingNode.n; }))
-            .map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
-    };
-
-    var calculateSwitchOutcomes = function (_a) {
-        var astNode = _a.astNode, nilNode = _a.nilNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
-        // TODO be smarter about this
-        return __spreadArray(__spreadArray([], __read(arrayToPairs(astNode.p.slice(1)).flatMap(function (_a) {
-            var _b = __read(_a, 2); _b[0]; var form = _b[1];
-            return calculatePossibleAstNodes(form);
-        })), false), [
-            nilNode,
-        ], false);
-    };
-
-    var specialExpressionCalculator = {
-        '&&': function (astNode, helperOptions) { return calculateAndOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'comment': function (astNode, helperOptions) { return calculateCommentOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'cond': function (astNode, helperOptions) { return calculateCondOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'switch': function (astNode, helperOptions) { return calculateSwitchOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'declared?': function (astNode, helperOptions) { return calculateDeclaredOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'defn': function (astNode, helperOptions) { return calculateDefnOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'def': function (astNode, helperOptions) { return calculateDefOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'defns': function (astNode, helperOptions) { return calculateDefnsOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'defs': function (astNode, helperOptions) { return calculateDefsOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'do': function (astNode, helperOptions) { return calculateDoOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'doseq': function (astNode, helperOptions) { return calculateDoSeqOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'fn': function (astNode, helperOptions) { return calculateFnOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'for': function (astNode, helperOptions) { return calculateForOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'if_let': function (astNode, helperOptions) { return calculateIfLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'if': function (astNode, helperOptions) { return calculateIfOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'if_not': function (astNode, helperOptions) { return calculateIfNotOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'let': function (astNode, helperOptions) { return calculateLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'loop': function (astNode, helperOptions) { return calculateLoopOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        '||': function (astNode, helperOptions) { return calculateOrOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        '??': function (astNode, helperOptions) { return calculateQqOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'recur': function (astNode, helperOptions) { return calculateRecurOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'throw': function (astNode, helperOptions) { return calculateThrowOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'try': function (astNode, helperOptions) { return calculateTryOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'when_first': function (astNode, helperOptions) { return calculateWhenFirstOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'when_let': function (astNode, helperOptions) { return calculateWhenLetOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'when': function (astNode, helperOptions) { return calculateWhenOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-        'when_not': function (astNode, helperOptions) { return calculateWhenNotOutcomes(__assign({ astNode: astNode }, helperOptions)); },
-    };
-
-    function calculateOutcomes(contextStack, astNodes) {
-        // First, we try to calculate outcomes for the whole astNodes array.
-        // If that fails, we try to calculate outcomes for the array without the first element.
-        // If that fails, we try to calculate outcomes for the array without the first two elements.
-        // And so on.
-        // This makes it possible to calculate outcomes for e.g.
-        // (write! x) x
-        // Problems occur for e.g.
-        // (def x 1) (write! x) x
-        // This should output [1], but since (write! x) fails to calculate outcomes, we get null.
-        // Ok, but not optimal
-        // The contract is that when an array is returned, it must be correct.
-        // But returning null (indicating that the calculation failed) is always a way out.
-        for (var i = 0; i < astNodes.length; i++) {
-            var usingAstNode = astNodes.slice(i);
-            var outcomes = calculateOutcomesInner(contextStack, usingAstNode);
-            if (outcomes !== null)
-                return outcomes;
-        }
-        return null;
-    }
-    function calculateOutcomesInner(contextStack, astNodes) {
-        var e_1, _a;
-        var possibleAsts = calculatePossibleAsts(contextStack.clone(), astNodes);
-        if (possibleAsts === null)
-            return null;
-        var outcomes = [];
-        try {
-            for (var possibleAsts_1 = __values(possibleAsts), possibleAsts_1_1 = possibleAsts_1.next(); !possibleAsts_1_1.done; possibleAsts_1_1 = possibleAsts_1.next()) {
-                var possibleAst = possibleAsts_1_1.value;
-                var unresolvedIdentifiers = findUnresolvedIdentifiers(possibleAst, contextStack.clone(), builtin);
-                if (unresolvedIdentifiers.size !== 0)
-                    return null;
-                var ast = {
-                    b: possibleAst,
-                    hasDebugData: true,
-                };
-                try {
-                    outcomes.push(evaluate(ast, contextStack.clone()));
-                }
-                catch (e) {
-                    outcomes.push(e);
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (possibleAsts_1_1 && !possibleAsts_1_1.done && (_a = possibleAsts_1.return)) _a.call(possibleAsts_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return outcomes;
-    }
-    function calculatePossibleAsts(contextStack, astNodes) {
-        var possibleAsts;
-        try {
-            possibleAsts = combinate(astNodes.map(function (astNode) { return calculatePossibleAstNodes(contextStack, astNode); }));
-        }
-        catch (e) {
-            return null;
-        }
-        return possibleAsts;
-    }
-    var nilNode = { t: AstNodeType.ReservedSymbol, v: 'nil', token: undefined, p: [], n: undefined };
-    function calculatePossibleAstNodes(contextStack, astNode, newIndentifiers) {
-        var newContext = newIndentifiers
-            ? newIndentifiers.reduce(function (acc, identity) {
-                acc[identity] = { value: null };
-                return acc;
-            }, {})
-            : undefined;
-        var newContextStack = newContext ? contextStack.create(newContext) : contextStack;
-        if (astNode.t === AstNodeType.NormalExpression) {
-            return combinate(astNode.p.map(function (n) { return calculatePossibleAstNodes(newContextStack, n); }))
-                .map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
-        }
-        else if (astNode.t === AstNodeType.SpecialExpression) {
-            var helperOptions = {
-                nilNode: nilNode,
-                calculatePossibleAstNodes: function (node, identifiers) { return calculatePossibleAstNodes(newContextStack.clone(), node, identifiers); },
-                combinateAstNodes: function (nodes, identifiers) {
-                    return combinate(nodes.map(function (node) { return calculatePossibleAstNodes(newContextStack.clone(), node, identifiers); }));
-                },
-                isAstComputable: function (node) {
-                    return calculateOutcomesInner(newContextStack, Array.isArray(node) ? node.flat() : [node]) !== null;
-                },
-                addGlobalIdentifier: function (name) { return newContextStack.globalContext[name] = { value: null }; },
-            };
-            // eslint-disable-next-line ts/no-unsafe-argument
-            return specialExpressionCalculator[astNode.n](astNode, helperOptions);
-        }
-        return [astNode];
-    }
-
     function analyze$1(ast, params) {
         return {
             unresolvedIdentifiers: findUnresolvedIdentifiers(ast, createContextStack(params), builtin),
-            outcomes: calculateOutcomes(createContextStack(params), ast.b),
         };
     }
 
@@ -8130,19 +7603,18 @@ var Playground = (function (exports) {
         };
         AlgebraicParser.prototype.parseLet = function (letSymbol, params) {
             var _a, _b;
-            if (params.length !== 2) {
-                throw new LitsError('let expects two arguments', (_a = getTokenDebugData(letSymbol.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            if (params.length !== 1) {
+                throw new LitsError('let expects one argument', (_a = getTokenDebugData(letSymbol.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             }
             var letObject = params[0];
             if (letObject.t !== AstNodeType.NormalExpression || letObject.n !== 'object') {
                 throw new LitsError('let expects an object as first argument', (_b = getTokenDebugData(letObject.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             var letBindings = arrayToPairs(letObject.p);
-            var expression = params[1];
             return {
                 t: AstNodeType.SpecialExpression,
                 n: 'let',
-                p: [expression],
+                p: [],
                 token: getTokenDebugData(letSymbol.token) && letSymbol.token,
                 bs: letBindings.map(function (pair) {
                     var key = pair[0];
@@ -10615,7 +10087,7 @@ var Playground = (function (exports) {
             description: 'Takes a nested array $x and flattens it.',
             examples: [
                 '(flatten [1 2 [3 4] 5])',
-                "\n(let [foo :bar]\n  (flatten\n    [1\n     \" 2 A \"\n     [foo [4 [:ABC]]] 6]))",
+                "\n(let [foo :bar])\n(flatten\n  [1\n    \" 2 A \"\n    [foo [4 [:ABC]]] 6])",
                 '(flatten 12)',
             ],
         },
@@ -14462,16 +13934,12 @@ var Playground = (function (exports) {
                     type: '*binding',
                     rest: true,
                 },
-                expressions: {
-                    type: '*expression',
-                    rest: true,
-                },
             },
             variants: [
-                { argumentNames: ['bindings', 'expressions'] },
+                { argumentNames: ['bindings'] },
             ],
-            description: "\nBinds local variables. The variables lives only within $expressions.\nIt returns evaluation of the last expression in $expressions.",
-            examples: ["\n  (let [a (+ 1 2 3 4) \n        b (* 1 2 3 4)]\n    (write! a b))"],
+            description: "\nBinds local variables.",
+            examples: ["\n(let [a (+ 1 2 3 4) \n      b (* 1 2 3 4)])\n(write! a b)"],
         },
         'if_let': {
             title: 'if_let',
@@ -17020,14 +16488,7 @@ var Playground = (function (exports) {
             var result = getLits('debug').analyze(code, litsParams);
             var unresolvedIdentifiers = __spreadArray([], __read(new Set(__spreadArray([], __read(result.unresolvedIdentifiers), false).map(function (s) { return s.symbol; }))), false).join(', ');
             var unresolvedIdentifiersOutput = "Unresolved identifiers: ".concat(unresolvedIdentifiers || '-');
-            var possibleOutcomes = result.outcomes && result.outcomes
-                .map(function (o) { return o instanceof UserDefinedError
-                ? "".concat(o.name).concat(o.userMessage ? "(\"".concat(o.userMessage, "\")") : '')
-                : o instanceof Error
-                    ? o.name
-                    : stringifyValue(o, false); }).join(', ');
-            var possibleOutcomesString = "Possible outcomes: ".concat(possibleOutcomes || '-');
-            appendOutput("".concat(unresolvedIdentifiersOutput, "\n").concat(possibleOutcomesString), 'analyze');
+            appendOutput("".concat(unresolvedIdentifiersOutput), 'analyze');
         }
         catch (error) {
             appendOutput(error, 'error');

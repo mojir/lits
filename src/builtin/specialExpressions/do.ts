@@ -19,5 +19,7 @@ export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
 
     return result
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
+  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+    return findUnresolvedIdentifiers(node.p, contextStack.create({}), builtin)
+  },
 }

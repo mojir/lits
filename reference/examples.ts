@@ -60,10 +60,11 @@ export const examples: Example[] = [
     code: `
 (defn formatPhoneNumber [$data]
   (if (string? $data)
-    (let [phoneNumber
-          (if (== "+" (nth $data 0))
-            (subs $data 2)
-            $data)]
+    (do
+      (let [phoneNumber
+            (if (== "+" (nth $data 0))
+              (subs $data 2)
+              $data)])
       (cond
         (> (count phoneNumber) 6)
           (str
@@ -168,12 +169,13 @@ export const examples: Example[] = [
     code: `
 (loop [list (entries TRANSLATIONS)]
   (when (count list)
-    (let [entry (first list)]
+    (do
+      (let [entry (first list)])
       (defns (entry 0) [&rest params &let [templateString (entry 1)]]
         (apply template (unshift params templateString))
       )
-      (recur (rest list))
     )
+    (recur (rest list))
   )
 )
 
@@ -193,20 +195,21 @@ export const examples: Example[] = [
            (match
              #"^(\\d{4})-(\\d{2})-(\\d{2})$"
              $data)]
-    (let
-      [
-        year (number (m 1))
-        month (number (m 2))
-        day (number (m 3))
-        leapYear
-          (&&
-            (zero? (mod year 4))
-            (||
-              (! (zero? (mod year 100)))
-              (zero? (mod year 400))
+    (do
+      (let
+        [
+          year (number (m 1))
+          month (number (m 2))
+          day (number (m 3))
+          leapYear
+            (&&
+              (zero? (mod year 4))
+              (||
+                (! (zero? (mod year 100)))
+                (zero? (mod year 400))
+              )
             )
-          )
-      ]
+        ])
       (! (||
         (|| (< year 1900) (> year 2100))
         (|| (< month 1) (> month 12))
@@ -243,9 +246,8 @@ export const examples: Example[] = [
     description: 'Find label to corresponding value in array of {label value}-objects.',
     code: `
 (defn label-from-value [$array $value]
-  (let [entry (some $array #(== $value (%1 :value)))]
-    (if (nil? entry) (str $value) (entry :label))
-  )
+  (let [entry (some $array #(== $value (%1 :value)))])
+  (if (nil? entry) (str $value) (entry :label))
 )
 
 (def arr [
@@ -269,10 +271,11 @@ export const examples: Example[] = [
       $values
       &let [
         label
-        (let [entry
-               (some
-                 $array
-                 #(== value (%1 :value)))]
+        (do
+          (let [entry
+                 (some
+                   $array
+                   #(== value (%1 :value)))])
           (if
             (nil? entry)
             (str value)

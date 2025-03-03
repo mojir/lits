@@ -134,21 +134,16 @@ b`,
         type: '*binding',
         rest: true,
       },
-      expressions: {
-        type: '*expression',
-        rest: true,
-      },
     },
     variants: [
-      { argumentNames: ['bindings', 'expressions'] },
+      { argumentNames: ['bindings'] },
     ],
     description: `
-Binds local variables. The variables lives only within $expressions.
-It returns evaluation of the last expression in $expressions.`,
+Binds local variables.`,
     examples: [`
-  (let [a (+ 1 2 3 4) 
-        b (* 1 2 3 4)]
-    (write! a b))`],
+(let [a (+ 1 2 3 4) 
+      b (* 1 2 3 4)])
+(write! a b)`],
   },
   'if_let': {
     title: 'if_let',

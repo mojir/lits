@@ -584,8 +584,8 @@ describe('algebraic operators', () => {
 
   describe('let', () => {
     it('supports let bindings', () => {
-      expect(lits.run('let({ a=10 }, a)')).toBe(10)
-      expect(lits.run('let({ foo = => $ + 1 }, foo(1))')).toBe(2)
+      expect(lits.run('let({ a=10 }); a')).toBe(10)
+      expect(lits.run('let({ foo = => $ + 1 }); foo(1)')).toBe(2)
     })
   })
 
@@ -775,52 +775,51 @@ describe('algebraic operators', () => {
             preferredCategories=["electronics", "accessories"],
             recentViews=["P1", "P3", "P5"]
           }
-        },
+        });
         
-          // Generate personalized bundle recommendations
-          for (
-            // Start with main products
-            mainProduct of products
-              let {
-                isInStock = mainProduct.stockLevel > 0,
-                isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category),
-                isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
-              }
-              when (isInStock && isPreferredCategory && isPriceOk),
-              
-         
-            // Add compatible accessories
-            accessory of products
-              let {
-                isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0,
-                totalPrice = mainProduct.price + accessory.price,
-                isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
-              }
-              when (isCompatible && totalPrice <= customerPreferences.priceLimit)
-              while totalPrice <= customerPreferences.priceLimit * 0.9,
-         
-            // For high-value bundles, consider a third complementary item
-            complItem of products
-              let {
-                isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
-                finalPrice = mainProduct.price + accessory.price + complItem.price,
-                discount = if finalPrice > 500 then 0.1 else 0.05 end,
-                discountedPrice = finalPrice * (1 - discount),
-                matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
-              }
-              when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
-              while discountedPrice <= customerPreferences.priceLimit
-          )
-            // Return bundle information object
-            {
-              bundle=[mainProduct, accessory, complItem],
-              originalPrice=finalPrice,
-              discountedPrice=discountedPrice,
-              savingsAmount=discount * finalPrice,
-              savingsPercentage=discount * 100
+        // Generate personalized bundle recommendations
+        for (
+          // Start with main products
+          mainProduct of products
+            let {
+              isInStock = mainProduct.stockLevel > 0,
+              isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category),
+              isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
             }
-          end
+            when (isInStock && isPreferredCategory && isPriceOk),
+            
+        
+          // Add compatible accessories
+          accessory of products
+            let {
+              isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0,
+              totalPrice = mainProduct.price + accessory.price,
+              isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
+            }
+            when (isCompatible && totalPrice <= customerPreferences.priceLimit)
+            while totalPrice <= customerPreferences.priceLimit * 0.9,
+        
+          // For high-value bundles, consider a third complementary item
+          complItem of products
+            let {
+              isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
+              finalPrice = mainProduct.price + accessory.price + complItem.price,
+              discount = if finalPrice > 500 then 0.1 else 0.05 end,
+              discountedPrice = finalPrice * (1 - discount),
+              matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
+            }
+            when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
+            while discountedPrice <= customerPreferences.priceLimit
         )
+          // Return bundle information object
+          {
+            bundle=[mainProduct, accessory, complItem],
+            originalPrice=finalPrice,
+            discountedPrice=discountedPrice,
+            savingsAmount=discount * finalPrice,
+            savingsPercentage=discount * 100
+          }
+        end
         `)).toEqual([
         {
           bundle: [

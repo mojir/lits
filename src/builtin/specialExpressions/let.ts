@@ -5,6 +5,7 @@ import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
+import { assertNumberOfParams } from '../../typeGuards'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LetNode extends CommonSpecialExpressionNode<'let'> {
@@ -12,36 +13,29 @@ export interface LetNode extends CommonSpecialExpressionNode<'let'> {
 }
 
 export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
-  polishParse: (tokenStream, parseState, firstToken, { parseBindings, parseTokensUntilClosingBracket }) => {
+  polishParse: (tokenStream, parseState, firstToken, { parseBindings }) => {
     const bindings = parseBindings(tokenStream, parseState)
 
-    const params = parseTokensUntilClosingBracket(tokenStream, parseState)
+    // const params = parseTokensUntilClosingBracket(tokenStream, parseState)
     assertRParenToken(tokenStream.tokens[parseState.position++])
 
     const node: LetNode = {
       t: AstNodeType.SpecialExpression,
       n: 'let',
-      p: params,
+      p: [],
       bs: bindings,
       token: getTokenDebugData(firstToken) && firstToken,
     }
     return node
   },
-  validateParameterCount: () => undefined,
+  validateParameterCount: node => assertNumberOfParams(0, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {
-    const locals: Context = {}
-    const newContextStack = contextStack.create(locals)
     for (const binding of node.bs) {
       const bindingValueNode = binding.v
-      const bindingValue = evaluateAstNode(bindingValueNode, newContextStack)
-      locals[binding.n] = { value: bindingValue }
+      const bindingValue = evaluateAstNode(bindingValueNode, contextStack)
+      contextStack.addValue(binding.n, bindingValue)
     }
-
-    let result: Any = null
-    for (const astNode of node.p)
-      result = evaluateAstNode(astNode, newContextStack)
-
-    return result
+    return null
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
     const newContext = node.bs
@@ -50,11 +44,10 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
         context[name] = { value: true }
         return context
       }, {})
-    const bindingContext: Context = {}
     const bindingResults = node.bs.map((bindingNode) => {
       const valueNode = bindingNode.v
-      const bindingsResult = findUnresolvedIdentifiers([valueNode], contextStack.create(bindingContext), builtin)
-      bindingContext[bindingNode.n] = { value: true }
+      const bindingsResult = findUnresolvedIdentifiers([valueNode], contextStack, builtin)
+      contextStack.addValue(bindingNode.n, { value: true })
       return bindingsResult
     })
 

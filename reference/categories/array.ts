@@ -119,11 +119,11 @@ $step defaults to 1.`,
     examples: [
       '(flatten [1 2 [3 4] 5])',
       `
-(let [foo :bar]
-  (flatten
-    [1
-     " 2 A "
-     [foo [4 [:ABC]]] 6]))`,
+(let [foo :bar])
+(flatten
+  [1
+    " 2 A "
+    [foo [4 [:ABC]]] 6])`,
 
       '(flatten 12)',
     ],

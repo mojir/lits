@@ -293,7 +293,8 @@ describe('regressions', () => {
   it('debug info when executing function with error in', () => {
     const program = `(defn formatPhoneNumber [$data]
   (if (string? $data)
-    (let [phoneNumber (if (== "+" (nth $data 0)) (subs $data 2) $data)]
+    (do
+      (let [phoneNumber (if (== "+" (nth $data 0)) (subs $data 2) $data)])
       (cond
         (> (count phoneNumber) 6)
           (astr
@@ -327,7 +328,7 @@ describe('regressions', () => {
     }
     catch (error) {
       // eslint-disable-next-line ts/no-unsafe-member-access
-      expect((error as any).sourceCodeInfo.position.line).toBe(6)
+      expect((error as any).sourceCodeInfo.position.line).toBe(7)
       // eslint-disable-next-line ts/no-unsafe-member-access
       expect((error as any).sourceCodeInfo.position.column).toBe(11)
     }

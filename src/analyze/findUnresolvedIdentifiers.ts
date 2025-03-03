@@ -5,10 +5,18 @@ import type { AstNode } from '../parser/interface'
 import { asNonUndefined } from '../typeGuards'
 import { evaluateAstNode } from '../evaluator'
 import { getTokenDebugData } from '../tokenizer/utils'
+import type { DoNode } from '../builtin/specialExpressions/do'
 import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '.'
 
 export const findUnresolvedIdentifiers: FindUnresolvedIdentifiers = (ast, contextStack, builtin: Builtin) => {
-  const astNodes = Array.isArray(ast) ? ast : ast.b
+  const astNodes = Array.isArray(ast)
+    ? ast
+    : [{
+      t: AstNodeType.SpecialExpression,
+      n: 'do',
+      p: ast.b,
+      token: undefined,
+    } satisfies DoNode]
 
   const unresolvedIdentifiers = new Set<UnresolvedIdentifier>()
 

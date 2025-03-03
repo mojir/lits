@@ -7,20 +7,20 @@ import type { TokenStream } from '../../src/tokenizer/interface'
 import type { P_CollectionAccessorToken } from '../../src/tokenizer/polish/polishTokens'
 
 const program = `
-(let [day (* 24 60 60 1000)]
-  (* days day)
-)`
+(let [day (* 24 60 60 1000)])
+(* days day)
+`
 
 const optimizableProgram = `
-(let [day (* 24 60 60 1000)]
+(let [day (* 24 60 60 1000)])
   (* 11 day)
-)`
+`
 
 describe('parser', () => {
   it('simple program', () => {
     const tokens = tokenize(program, { debug: true, algebraic: false })
     const ast = parse(tokens)
-    expect(ast.b.length).toBe(1)
+    expect(ast.b.length).toBe(2)
   })
   it('empty program', () => {
     const tokens = tokenize('', { debug: true, algebraic: false })
@@ -31,7 +31,7 @@ describe('parser', () => {
   it('optimization', () => {
     const tokens = tokenize(optimizableProgram, { debug: true, algebraic: false })
     const ast = parse(tokens)
-    expect(ast.b.length).toBe(1)
+    expect(ast.b.length).toBe(2)
   })
 
   it('unparsable expression', () => {

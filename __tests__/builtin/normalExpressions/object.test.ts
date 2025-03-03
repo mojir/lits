@@ -16,7 +16,7 @@ describe('object functions', () => {
           d: 0,
           e: { x: [] },
         })
-        expect(lits.run('(let [a :a] (object a 1))')).toEqual({ a: 1 })
+        expect(lits.run('(let [a :a]) (object a 1)')).toEqual({ a: 1 })
         expect(() => lits.run('(object :x)')).toThrow()
         expect(() => lits.run('(object :x)')).toThrow()
         expect(() => lits.run('(object :x 1 :y)')).toThrow()

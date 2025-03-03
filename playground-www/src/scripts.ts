@@ -2,7 +2,6 @@
 import { stringifyValue } from '../../common/utils'
 import type { Example } from '../../reference/examples'
 import { Lits, type LitsParams } from '../../src'
-import { UserDefinedError } from '../../src/errors'
 import type { UnknownRecord } from '../../src/interface'
 import type { JsFunction } from '../../src/Lits/Lits'
 import { asUnknownRecord } from '../../src/typeGuards'
@@ -746,16 +745,7 @@ export function analyze() {
     const unresolvedIdentifiers = [...new Set([...result.unresolvedIdentifiers].map(s => s.symbol))].join(', ')
     const unresolvedIdentifiersOutput = `Unresolved identifiers: ${unresolvedIdentifiers || '-'}`
 
-    const possibleOutcomes = result.outcomes && result.outcomes
-      .map(o => o instanceof UserDefinedError
-        ? `${o.name}${o.userMessage ? `("${o.userMessage}")` : ''}`
-        : o instanceof Error
-          ? o.name
-          : stringifyValue(o, false),
-      ).join(', ')
-    const possibleOutcomesString = `Possible outcomes: ${possibleOutcomes || '-'}`
-
-    appendOutput(`${unresolvedIdentifiersOutput}\n${possibleOutcomesString}`, 'analyze')
+    appendOutput(`${unresolvedIdentifiersOutput}`, 'analyze')
   }
   catch (error) {
     appendOutput(error, 'error')
