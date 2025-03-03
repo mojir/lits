@@ -13,7 +13,7 @@ import { getSourceCodeInfo } from '../../utils/debug/getSourceCodeInfo'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface TryNode extends CommonSpecialExpressionNode<'try'> {
-  e: SymbolNode
+  e: SymbolNode | undefined
   ce: AstNode
 }
 
@@ -59,18 +59,22 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       return evaluateAstNode(tryExpressions[0]!, contextStack)
     }
     catch (error) {
-      const newContext: Context = {
-        [errorNode.v]: { value: asAny(error, getTokenDebugData(node.token)?.sourceCodeInfo) },
-      }
+      const newContext: Context = errorNode
+        ? {
+            [errorNode.v]: { value: asAny(error, getTokenDebugData(node.token)?.sourceCodeInfo) },
+          }
+        : {}
       return evaluateAstNode(catchExpression, contextStack.create(newContext))
     }
   },
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
     const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
     const tryResult = findUnresolvedIdentifiers(tryExpressions, contextStack, builtin)
-    const newContext: Context = {
-      [errorNode.v]: { value: true },
-    }
+    const newContext: Context = errorNode
+      ? {
+          [errorNode.v]: { value: true },
+        }
+      : {}
     const catchResult = findUnresolvedIdentifiers([catchExpression], contextStack.create(newContext), builtin)
     return joinAnalyzeResults(tryResult, catchResult)
   },

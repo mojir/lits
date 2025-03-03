@@ -689,10 +689,10 @@ hyp`,
   [x y z])`,
     ],
   },
-  'declared?': {
-    title: 'declared?',
+  'defined?': {
+    title: 'defined?',
     category: 'Special expression',
-    linkName: 'declared-question',
+    linkName: 'defined-question',
     returns: {
       type: 'boolean',
     },
@@ -706,15 +706,15 @@ hyp`,
     ],
     description: 'Returns `true` if $n is a declared variable or a builtin function, otherwise `false`.',
     examples: [
-      '(declared? foo)',
+      '(defined? foo)',
       `
 (def foo :foo)
-(declared? foo)`,
-      '(declared? +)',
+(defined? foo)`,
+      '(defined? +)',
       `
 (def foo nil)
-(declared? foo)`,
-      '(declared? if)',
+(defined? foo)`,
+      '(defined? if)',
     ],
   },
   '??': {

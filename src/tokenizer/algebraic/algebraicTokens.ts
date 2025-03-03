@@ -90,7 +90,7 @@ const nonFunctionOperators = [
   '&&',
   'comment',
   'cond',
-  'declared?',
+  'defined?',
   'if',
   'unless',
   '||',
@@ -189,16 +189,23 @@ export type AlgebraicToken =
   | CommonSimpleToken
   | CommonValueToken
 
-export function isA_SymbolToken(token: Token | undefined): token is A_SymbolToken {
-  return token?.[0] === 'A_Symbol'
+export function isA_SymbolToken<T extends string>(token: Token | undefined, symbolName?: T): token is A_SymbolToken<T> {
+  if (token?.[0] !== 'A_Symbol') {
+    return false
+  }
+  if (symbolName && token[1] !== symbolName) {
+    return false
+  }
+  return true
 }
-export function assertA_SymbolToken(token: Token | undefined): asserts token is A_SymbolToken {
-  if (!isA_SymbolToken(token)) {
+
+export function assertA_SymbolToken<T extends string>(token: Token | undefined, symbolName?: T): asserts token is A_SymbolToken<T> {
+  if (!isA_SymbolToken(token, symbolName)) {
     throwUnexpectedToken('A_Symbol', undefined, token)
   }
 }
-export function asA_SymbolToken(token: Token | undefined): A_SymbolToken {
-  assertA_SymbolToken(token)
+export function asA_SymbolToken<T extends string>(token: Token | undefined, symbolName?: T): A_SymbolToken<T> {
+  assertA_SymbolToken(token, symbolName)
   return token
 }
 

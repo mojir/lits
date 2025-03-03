@@ -254,6 +254,28 @@ describe('algebraic operators', () => {
     })
   })
 
+  describe('unless expression', () => {
+    test('samples', () => {
+      expect(lits.run('unless 1 < 2 then 1 else 2 end')).toBe(2)
+      expect(lits.run('unless 1 < 2 then 1 end')).toBe(null)
+      expect(lits.run('unless 1 > 2 then 1 else 2 end')).toBe(1)
+    })
+  })
+
+  describe('try', () => {
+    test('samples', () => {
+      expect(lits.run('try 1 + 2 catch 0 end')).toBe(3)
+      expect(lits.run('try 1 + "2" catch 0 end')).toBe(0)
+      expect(lits.run(`
+        try
+          let x = "2";
+          1 + x
+        catch (error)
+          error
+        end`)).toBeInstanceOf(Error)
+    })
+  })
+
   describe('polish escape hatch', () => {
     test('samples', () => {
       expect(lits.tokenize('$`1 2`').tokens).toEqual([

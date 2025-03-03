@@ -41,7 +41,7 @@ const specialExpressions = {
   'recur': recurSpecialExpression,
   'throw': throwSpecialExpression,
   'try': trySpecialExpression,
-  'declared?': declaredSpecialExpression,
+  'defined?': declaredSpecialExpression,
   '??': qqSpecialExpression,
 } as const
 
@@ -53,7 +53,7 @@ export type CommonSpecialExpressionName = keyof Pick<
   | 'comment'
   | 'cond'
   | 'switch'
-  | 'declared?'
+  | 'defined?'
   | 'do'
   | 'if'
   | 'unless'

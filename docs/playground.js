@@ -924,7 +924,7 @@ var Playground = (function (exports) {
         '&&',
         'comment',
         'cond',
-        'declared?',
+        'defined?',
         'if',
         'unless',
         '||',
@@ -958,16 +958,22 @@ var Playground = (function (exports) {
     function isSymbolicOperator(operator) {
         return symbolicOperatorSet.has(operator);
     }
-    function isA_SymbolToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Symbol';
+    function isA_SymbolToken(token, symbolName) {
+        if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_Symbol') {
+            return false;
+        }
+        if (symbolName && token[1] !== symbolName) {
+            return false;
+        }
+        return true;
     }
-    function assertA_SymbolToken(token) {
-        if (!isA_SymbolToken(token)) {
+    function assertA_SymbolToken(token, symbolName) {
+        if (!isA_SymbolToken(token, symbolName)) {
             throwUnexpectedToken('A_Symbol', undefined, token);
         }
     }
-    function asA_SymbolToken(token) {
-        assertA_SymbolToken(token);
+    function asA_SymbolToken(token, symbolName) {
+        assertA_SymbolToken(token, symbolName);
         return token;
     }
     function isA_BinaryOperatorToken(token) {
@@ -1250,7 +1256,7 @@ var Playground = (function (exports) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
-        'declared?': function (node, removeOptions) {
+        'defined?': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -4931,7 +4937,7 @@ var Playground = (function (exports) {
     };
 
     var declaredSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('declared?'),
+        polishParse: getCommonPolishSpecialExpressionParser('defined?'),
         validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
         evaluate: function (node, contextStack) {
             var lookUpResult = contextStack.lookUp(node.p[0]);
@@ -5977,9 +5983,10 @@ var Playground = (function (exports) {
                 return evaluateAstNode(tryExpressions[0], contextStack);
             }
             catch (error) {
-                var newContext = (_b = {},
-                    _b[errorNode.v] = { value: asAny(error, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo) },
-                    _b);
+                var newContext = errorNode
+                    ? (_b = {},
+                        _b[errorNode.v] = { value: asAny(error, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo) },
+                        _b) : {};
                 return evaluateAstNode(catchExpression, contextStack.create(newContext));
             }
         },
@@ -5988,9 +5995,10 @@ var Playground = (function (exports) {
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
             var tryExpressions = node.p, catchExpression = node.ce, errorNode = node.e;
             var tryResult = findUnresolvedIdentifiers(tryExpressions, contextStack, builtin);
-            var newContext = (_b = {},
-                _b[errorNode.v] = { value: true },
-                _b);
+            var newContext = errorNode
+                ? (_b = {},
+                    _b[errorNode.v] = { value: true },
+                    _b) : {};
             var catchResult = findUnresolvedIdentifiers([catchExpression], contextStack.create(newContext), builtin);
             return joinAnalyzeResults(tryResult, catchResult);
         },
@@ -6017,7 +6025,7 @@ var Playground = (function (exports) {
         'recur': recurSpecialExpression,
         'throw': throwSpecialExpression,
         'try': trySpecialExpression,
-        'declared?': declaredSpecialExpression,
+        'defined?': declaredSpecialExpression,
         '??': qqSpecialExpression,
     };
     Object.keys(specialExpressions).forEach(function (key) {
@@ -6889,46 +6897,39 @@ var Playground = (function (exports) {
             var _a;
             if (precedence === void 0) { precedence = 0; }
             var firstToken = this.peek();
-            if (isA_SymbolToken(firstToken) && firstToken[1] === 'def') {
-                return this.parseDef(firstToken);
-            }
-            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'defn') {
-                return this.parseDefn(firstToken);
-            }
-            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'let') {
-                return this.parseLet(firstToken);
-            }
             var left;
-            if (isA_SymbolToken(firstToken) && firstToken[1] === 'if') {
-                left = this.parseIf(firstToken);
+            if (isA_SymbolToken(firstToken)) {
+                switch (firstToken[1]) {
+                    case 'def':
+                        return this.parseDef(firstToken);
+                    case 'defn':
+                        return this.parseDefn(firstToken);
+                    case 'let':
+                        return this.parseLet(firstToken);
+                    case 'if':
+                    case 'unless':
+                        left = this.parseIfOrUnless(firstToken);
+                        break;
+                    case 'cond':
+                        left = this.parseCond(firstToken);
+                        break;
+                    case 'switch':
+                        left = this.parseSwitch(firstToken);
+                        break;
+                    case 'for':
+                        left = this.parseFor(firstToken);
+                        break;
+                    case 'do':
+                        left = this.parseDo(firstToken);
+                        break;
+                    case 'try':
+                        left = this.parseTry(firstToken);
+                        break;
+                }
             }
-            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'cond') {
-                left = this.parseCond(firstToken);
-            }
-            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'switch') {
-                left = this.parseSwitch(firstToken);
-            }
-            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'for') {
-                left = this.parseFor(firstToken);
-            }
-            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'do') {
-                left = this.parseDo(firstToken);
-            }
-            else {
-                left = this.parseOperand();
-            }
+            left || (left = this.parseOperand());
             var operator = this.peek();
-            while (!this.isAtEnd()
-                && !isA_OperatorToken(operator, ',')
-                && !isA_OperatorToken(operator, ';')
-                && !isRBracketToken(operator)
-                && !isA_ReservedSymbolToken(operator, 'else')
-                && !isA_ReservedSymbolToken(operator, 'when')
-                && !isA_ReservedSymbolToken(operator, 'while')
-                && !isA_ReservedSymbolToken(operator, 'then')
-                && !isA_ReservedSymbolToken(operator, 'end')
-                && !isA_ReservedSymbolToken(operator, 'case')
-                && !isRParenToken(operator)) {
+            while (!this.isAtExpressionEnd()) {
                 if (isA_BinaryOperatorToken(operator)) {
                     var name_1 = operator[1];
                     var newPrecedece = getPrecedence(name_1);
@@ -7181,8 +7182,7 @@ var Playground = (function (exports) {
                         case '??':
                         case '&&':
                         case 'comment':
-                        case 'declared?':
-                        case 'unless':
+                        case 'defined?':
                         case '||':
                         case 'throw': {
                             var node = {
@@ -7400,6 +7400,58 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(token) && token,
             };
         };
+        AlgebraicParser.prototype.parseTry = function (token) {
+            this.advance();
+            var tryExpressions = [];
+            while (!this.isAtEnd() && !isA_SymbolToken(this.peek(), 'catch')) {
+                tryExpressions.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+            }
+            var tryExpression = tryExpressions.length === 1
+                ? tryExpressions[0]
+                : {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: tryExpressions,
+                    token: getTokenDebugData(token) && token,
+                };
+            assertA_SymbolToken(this.peek(), 'catch');
+            this.advance();
+            var errorSymbol;
+            if (isLParenToken(this.peek())) {
+                this.advance();
+                errorSymbol = parseSymbol(this.tokenStream, this.parseState);
+                assertRParenToken(this.peek());
+                this.advance();
+            }
+            var catchExpressions = [];
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                catchExpressions.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            var catchExpression = catchExpressions.length === 1
+                ? catchExpressions[0]
+                : {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'do',
+                    p: catchExpressions,
+                    token: getTokenDebugData(token) && token,
+                };
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'try',
+                p: [tryExpression],
+                ce: catchExpression,
+                e: errorSymbol,
+                token: getTokenDebugData(token) && token,
+            };
+        };
         AlgebraicParser.prototype.parseFor = function (token) {
             this.advance();
             assertLParenToken(this.peek());
@@ -7440,16 +7492,16 @@ var Playground = (function (exports) {
             }
             var modifiers = [];
             var token = this.peek();
-            if (!((isA_SymbolToken(token) && token[1] === 'let')
-                || isA_ReservedSymbolToken(token, 'when')
-                || isA_ReservedSymbolToken(token, 'while'))) {
+            if (!isA_SymbolToken(token, 'let')
+                && !isA_ReservedSymbolToken(token, 'when')
+                && !isA_ReservedSymbolToken(token, 'while')) {
                 throw new LitsError('Expected symbol let, when or while', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             }
             var letBindings;
             if (token[1] === 'let') {
                 modifiers.push('&let');
                 letBindings = [];
-                while (isA_SymbolToken(token) && token[1] === 'let') {
+                while (isA_SymbolToken(token, 'let')) {
                     var letNode = this.parseLet(token);
                     letBindings.push(letNode.bs[0]);
                     token = this.peek();
@@ -7502,7 +7554,8 @@ var Playground = (function (exports) {
             };
             return node;
         };
-        AlgebraicParser.prototype.parseIf = function (token) {
+        AlgebraicParser.prototype.parseIfOrUnless = function (token) {
+            var isUnless = token[1] === 'unless';
             this.advance();
             var condition = this.parseExpression();
             assertA_ReservedSymbolToken(this.peek(), 'then');
@@ -7551,7 +7604,7 @@ var Playground = (function (exports) {
             }
             return {
                 t: AstNodeType.SpecialExpression,
-                n: 'if',
+                n: isUnless ? 'unless' : 'if',
                 p: params,
                 token: getTokenDebugData(token) && token,
             };
@@ -7677,6 +7730,22 @@ var Playground = (function (exports) {
         };
         AlgebraicParser.prototype.isAtEnd = function () {
             return this.parseState.position >= this.tokenStream.tokens.length;
+        };
+        AlgebraicParser.prototype.isAtExpressionEnd = function () {
+            if (this.isAtEnd()) {
+                return true;
+            }
+            var token = this.peek();
+            if (isA_OperatorToken(token)) {
+                return [';', ','].includes(token[1]);
+            }
+            if (isA_SymbolToken(token)) {
+                return ['catch'].includes(token[1]);
+            }
+            if (isA_ReservedSymbolToken(token)) {
+                return ['else', 'when', 'while', 'then', 'end', 'case'].includes(token[1]);
+            }
+            return false;
         };
         AlgebraicParser.prototype.peek = function () {
             return this.tokenStream.tokens[this.parseState.position];
@@ -8148,7 +8217,6 @@ var Playground = (function (exports) {
     var forbiddenAlgebraicReservedNamesRecord = {
         fn: { value: null, forbidden: true },
         defns: { value: null, forbidden: true },
-        try: { value: null, forbidden: true },
         recur: { value: null, forbidden: true },
         loop: { value: null, forbidden: true },
         doseq: { value: null, forbidden: true },
@@ -14089,10 +14157,10 @@ var Playground = (function (exports) {
                 "\n(for\n  [x [1 2 3] y [1 2 3] z [1 2 3]\n  &while (<= x y)]\n  \n  [x y z])",
             ],
         },
-        'declared?': {
-            title: 'declared?',
+        'defined?': {
+            title: 'defined?',
             category: 'Special expression',
-            linkName: 'declared-question',
+            linkName: 'defined-question',
             returns: {
                 type: 'boolean',
             },
@@ -14106,11 +14174,11 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $n is a declared variable or a builtin function, otherwise `false`.',
             examples: [
-                '(declared? foo)',
-                "\n(def foo :foo)\n(declared? foo)",
-                '(declared? +)',
-                "\n(def foo nil)\n(declared? foo)",
-                '(declared? if)',
+                '(defined? foo)',
+                "\n(def foo :foo)\n(defined? foo)",
+                '(defined? +)',
+                "\n(def foo nil)\n(defined? foo)",
+                '(defined? if)',
             ],
         },
         '??': {
@@ -15386,7 +15454,7 @@ var Playground = (function (exports) {
             'loop',
             'doseq',
             'for',
-            'declared?',
+            'defined?',
             '??',
         ],
         string: [

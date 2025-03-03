@@ -210,7 +210,7 @@ export const api = {
     'loop',
     'doseq',
     'for',
-    'declared?',
+    'defined?',
     '??',
   ] as const,
   string: [

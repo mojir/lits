@@ -6,9 +6,9 @@ import { asAstNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import { getCommonPolishSpecialExpressionParser } from './commonParser'
 
-export interface IfNotNode extends CommonSpecialExpressionNode<'unless'> {}
+export interface UnlessNode extends CommonSpecialExpressionNode<'unless'> {}
 
-export const unlessSpecialExpression: BuiltinSpecialExpression<Any, IfNotNode> = {
+export const unlessSpecialExpression: BuiltinSpecialExpression<Any, UnlessNode> = {
   polishParse: getCommonPolishSpecialExpressionParser('unless'),
   validateParameterCount: node => assertNumberOfParams({ min: 2, max: 3 }, node),
   evaluate: (node, contextStack, { evaluateAstNode }) => {

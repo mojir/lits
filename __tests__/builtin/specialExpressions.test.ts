@@ -750,22 +750,22 @@ describe('specialExpressions', () => {
     })
   })
 
-  describe('declared?', () => {
+  describe('defined?', () => {
     it('samples', () => {
-      expect(lits.run('(declared? foo)')).toBe(false)
-      expect(lits.run('(def foo :foo) (declared? foo)')).toBe(true)
-      expect(lits.run('(declared? +)')).toBe(true)
-      expect(lits.run('(def foo nil) (declared? foo)')).toBe(true)
-      expect(lits.run('(declared? if)')).toBe(true)
+      expect(lits.run('(defined? foo)')).toBe(false)
+      expect(lits.run('(def foo :foo) (defined? foo)')).toBe(true)
+      expect(lits.run('(defined? +)')).toBe(true)
+      expect(lits.run('(def foo nil) (defined? foo)')).toBe(true)
+      expect(lits.run('(defined? if)')).toBe(true)
 
-      expect(() => lits.run('(declared?)')).toThrow()
-      expect(() => lits.run('(declared? foo bar)')).toThrow()
+      expect(() => lits.run('(defined?)')).toThrow()
+      expect(() => lits.run('(defined? foo bar)')).toThrow()
     })
   })
 
   describe('unresolvedIdentifiers', () => {
     it('samples', () => {
-      expect(getUndefinedSymbolNames(lits.analyze('(declared? x)'))).toEqual(new Set(['x']))
+      expect(getUndefinedSymbolNames(lits.analyze('(defined? x)'))).toEqual(new Set(['x']))
     })
   })
 
