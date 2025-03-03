@@ -1,4 +1,5 @@
 import { LitsError } from '../errors'
+import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 import type { SourceCodeInfo } from './interface'
 import type { Token, TokenType } from './tokens'
 
@@ -30,6 +31,10 @@ export function addTokenDebugData(token: Token, debugData: TokenDebugData): void
   ;(token as unknown[]).push(debugData)
 }
 
-export function throwUnexpectedToken(expected: TokenType, actual?: Token): never {
-  throw new LitsError(`Unexpected token: ${actual}, expected ${expected}`, undefined)
+export function throwUnexpectedToken(expected: TokenType, expectedValue: string | undefined, actual?: Token): never {
+  if (actual === undefined) {
+    throw new LitsError(`Unexpected end of input, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, undefined)
+  }
+  const actualOutput = `${actual[0]}${actual[1] ? ` '${actual[1]}'` : ''}`
+  throw new LitsError(`Unexpected token: ${actualOutput}, expected ${expected}${expectedValue ? ` '${expectedValue}'` : ''}`, getSourceCodeInfo(actual))
 }

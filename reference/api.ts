@@ -206,6 +206,7 @@ export const api = {
     'if',
     'if_not',
     'cond',
+    'switch',
     'when',
     'when_not',
     'comment',

@@ -54,7 +54,7 @@ export function isLParenToken(token?: Token): token is LParenToken {
 }
 export function assertLParenToken(token?: Token): asserts token is LParenToken {
   if (!isLParenToken(token)) {
-    throwUnexpectedToken('LParen', token)
+    throwUnexpectedToken('LParen', undefined, token)
   }
 }
 export function asLParenToken(token?: Token): LParenToken {
@@ -67,7 +67,7 @@ export function isRParenToken(token?: Token): token is RParenToken {
 }
 export function assertRParenToken(token?: Token): asserts token is RParenToken {
   if (!isRParenToken(token)) {
-    throwUnexpectedToken('RParen', token)
+    throwUnexpectedToken('RParen', undefined, token)
   }
 }
 export function asRParenToken(token?: Token): RParenToken {
@@ -80,7 +80,7 @@ export function isLBracketToken(token?: Token): token is LBracketToken {
 }
 export function assertLBracketToken(token?: Token): asserts token is LBracketToken {
   if (!isLBracketToken(token)) {
-    throwUnexpectedToken('LBracket', token)
+    throwUnexpectedToken('LBracket', undefined, token)
   }
 }
 export function asLBracketToken(token?: Token): LBracketToken {
@@ -93,7 +93,7 @@ export function isRBracketToken(token?: Token): token is RBracketToken {
 }
 export function assertRBracketToken(token?: Token): asserts token is RBracketToken {
   if (!isRBracketToken(token)) {
-    throwUnexpectedToken('RBracket', token)
+    throwUnexpectedToken('RBracket', undefined, token)
   }
 }
 export function asRBracketToken(token?: Token): RBracketToken {
@@ -106,7 +106,7 @@ export function isLBraceToken(token?: Token): token is LBraceToken {
 }
 export function assertLBraceToken(token?: Token): asserts token is LBraceToken {
   if (!isLBraceToken(token)) {
-    throwUnexpectedToken('LBrace', token)
+    throwUnexpectedToken('LBrace', undefined, token)
   }
 }
 export function asLBraceToken(token?: Token): LBraceToken {
@@ -119,7 +119,7 @@ export function isRBraceToken(token?: Token): token is RBraceToken {
 }
 export function assertRBraceToken(token?: Token): asserts token is RBraceToken {
   if (!isRBraceToken(token)) {
-    throwUnexpectedToken('RBrace', token)
+    throwUnexpectedToken('RBrace', undefined, token)
   }
 }
 export function asRBraceToken(token?: Token): RBraceToken {
@@ -132,7 +132,7 @@ export function isStringToken(token?: Token): token is StringToken {
 }
 export function assertStringToken(token?: Token): asserts token is StringToken {
   if (!isStringToken(token)) {
-    throwUnexpectedToken('String', token)
+    throwUnexpectedToken('String', undefined, token)
   }
 }
 export function asStringToken(token?: Token): StringToken {
@@ -145,7 +145,7 @@ export function isAlgebraicNotationToken(token?: Token): token is AlgebraicNotat
 }
 export function assertAlgebraicNotationToken(token?: Token): asserts token is AlgebraicNotationToken {
   if (!isAlgebraicNotationToken(token)) {
-    throwUnexpectedToken('AlgNotation', token)
+    throwUnexpectedToken('AlgNotation', undefined, token)
   }
 }
 export function asAlgebraicNotationToken(token?: Token): AlgebraicNotationToken {
@@ -158,7 +158,7 @@ export function isPolishNotationToken(token?: Token): token is PolishNotationTok
 }
 export function assertPolishNotationToken(token?: Token): asserts token is PolishNotationToken {
   if (!isPolishNotationToken(token)) {
-    throwUnexpectedToken('PolNotation', token)
+    throwUnexpectedToken('PolNotation', undefined, token)
   }
 }
 export function asPolishNotationToken(token?: Token): PolishNotationToken {
@@ -171,7 +171,7 @@ export function isEndNotationToken(token?: Token): token is EndNotationToken {
 }
 export function assertEndNotationToken(token?: Token): asserts token is EndNotationToken {
   if (!isEndNotationToken(token)) {
-    throwUnexpectedToken('EndNotation', token)
+    throwUnexpectedToken('EndNotation', undefined, token)
   }
 }
 export function asEndNotationToken(token?: Token): EndNotationToken {

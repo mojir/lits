@@ -199,7 +199,7 @@ export function isA_SymbolToken(token: Token | undefined): token is A_SymbolToke
 }
 export function assertA_SymbolToken(token: Token | undefined): asserts token is A_SymbolToken {
   if (!isA_SymbolToken(token)) {
-    throwUnexpectedToken('A_Symbol', token)
+    throwUnexpectedToken('A_Symbol', undefined, token)
   }
 }
 export function asA_SymbolToken(token: Token | undefined): A_SymbolToken {
@@ -212,7 +212,7 @@ export function isA_BinaryOperatorToken(token: Token | undefined): token is A_Op
 }
 export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is A_OperatorToken<SymbolicBinaryOperator> {
   if (!isA_BinaryOperatorToken(token)) {
-    throwUnexpectedToken('A_Operator', token)
+    throwUnexpectedToken('A_Operator', undefined, token)
   }
 }
 export function asA_BinaryOperatorToken(token: Token | undefined): A_OperatorToken<SymbolicBinaryOperator> {
@@ -231,7 +231,7 @@ export function isA_ReservedSymbolToken<T extends ValidAlgebraicReservedName>(to
 }
 export function assertA_ReservedSymbolToken<T extends ValidAlgebraicReservedName>(token: Token | undefined, symbolName?: T): asserts token is A_ReservedSymbolToken<T> {
   if (!isA_ReservedSymbolToken(token, symbolName)) {
-    throwUnexpectedToken('A_ReservedSymbol', token)
+    throwUnexpectedToken('A_ReservedSymbol', symbolName, token)
   }
 }
 export function asA_ReservedSymbolToken<T extends ValidAlgebraicReservedName>(token: Token | undefined, symbolName?: T): A_ReservedSymbolToken<T> {
@@ -244,7 +244,7 @@ export function isA_CommentToken(token: Token | undefined): token is A_SingleLin
 }
 export function assertA_CommentToken(token: Token | undefined): asserts token is A_SingleLineCommentToken {
   if (!isA_CommentToken(token)) {
-    throwUnexpectedToken('A_SingleLineComment', token)
+    throwUnexpectedToken('A_SingleLineComment', undefined, token)
   }
 }
 export function asA_CommentToken(token: Token | undefined): A_SingleLineCommentToken {
@@ -257,7 +257,7 @@ export function isA_MultiLineCommentToken(token: Token | undefined): token is A_
 }
 export function assertA_MultiLineCommentToken(token: Token | undefined): asserts token is A_MultiLineCommentToken {
   if (!isA_MultiLineCommentToken(token)) {
-    throwUnexpectedToken('A_MultiLineComment', token)
+    throwUnexpectedToken('A_MultiLineComment', undefined, token)
   }
 }
 export function asA_MultiLineCommentToken(token: Token | undefined): A_MultiLineCommentToken {
@@ -279,7 +279,7 @@ export function assertA_OperatorToken<T extends SymbolicOperator>(token: Token |
     if (operatorName) {
       throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, undefined)
     }
-    throwUnexpectedToken('A_Operator', token)
+    throwUnexpectedToken('A_Operator', operatorName, token)
   }
 }
 export function asA_OperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): A_OperatorToken<T> {
@@ -292,7 +292,7 @@ export function isA_WhitespaceToken(token: Token | undefined): token is A_Whites
 }
 export function assertA_WhitespaceToken(token: Token | undefined): asserts token is A_WhitespaceToken {
   if (!isA_WhitespaceToken(token)) {
-    throwUnexpectedToken('A_Whitespace', token)
+    throwUnexpectedToken('A_Whitespace', undefined, token)
   }
 }
 export function asA_WhitespaceToken(token: Token | undefined): A_WhitespaceToken {
@@ -305,7 +305,7 @@ export function isA_NumberToken(token: Token | undefined): token is A_NumberToke
 }
 export function assertA_NumberToken(token: Token | undefined): asserts token is A_NumberToken {
   if (!isA_NumberToken(token)) {
-    throwUnexpectedToken('A_Number', token)
+    throwUnexpectedToken('A_Number', undefined, token)
   }
 }
 export function asA_NumberToken(token: Token | undefined): A_NumberToken {
@@ -318,7 +318,7 @@ export function isA_BasePrefixedNumberToken(token: Token | undefined): token is 
 }
 export function assertA_BasePrefixedNumberToken(token: Token | undefined): asserts token is A_BasePrefixedNumberToken {
   if (!isA_BasePrefixedNumberToken(token)) {
-    throwUnexpectedToken('A_BasePrefixedNumber', token)
+    throwUnexpectedToken('A_BasePrefixedNumber', undefined, token)
   }
 }
 export function asA_BasePrefixedNumberToken(token: Token | undefined): A_BasePrefixedNumberToken {

@@ -408,6 +408,27 @@ describe('specialExpressions', () => {
     })
   })
 
+  describe('switch', () => {
+    it('samples', () => {
+      expect(lits.run('(switch 1)')).toBeNull()
+      expect(lits.run('(def x "-") (switch x "-" (+ 5 5) 2 20)')).toBe(10)
+      expect(lits.run('(switch true true 10)')).toBe(10)
+      expect(lits.run('(switch true false 20 true (+ 5 5))')).toBe(10)
+      expect(
+        lits.run('(switch 2, 0 20, 1 (do (write! "Hej") (+ 5 5)), 2 (do "This will work" (+ 5 5 5)))'),
+      ).toBe(15)
+      expect(() => lits.run('(switch)')).toThrow()
+      expect(() => lits.run('(switch true 123)')).toThrow()
+    })
+    describe('unresolvedIdentifiers', () => {
+      it('samples', () => {
+        expect(getUndefinedSymbolNames(lits.analyze('(switch foo true a false b (> a 1) c :else d)'))).toEqual(
+          new Set(['foo', 'a', 'b', 'c', 'd']),
+        )
+      })
+    })
+  })
+
   describe('defn', () => {
     it('samples', () => {
       expect(lits.run('(defn add [a b] (+ a b)) (add 1 2)')).toBe(3)

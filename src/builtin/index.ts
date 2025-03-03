@@ -3,6 +3,7 @@ import { normalExpressions } from './normalExpressions'
 import { andSpecialExpression } from './specialExpressions/and'
 import { commentSpecialExpression } from './specialExpressions/comment'
 import { condSpecialExpression } from './specialExpressions/cond'
+import { switchSpecialExpression } from './specialExpressions/switch'
 import { declaredSpecialExpression } from './specialExpressions/declared'
 import { defSpecialExpression } from './specialExpressions/def'
 import { defsSpecialExpression } from './specialExpressions/defs'
@@ -28,6 +29,7 @@ const specialExpressions = {
   '&&': andSpecialExpression,
   'comment': commentSpecialExpression,
   'cond': condSpecialExpression,
+  'switch': switchSpecialExpression,
   'def': defSpecialExpression,
   'defn': defnSpecialExpression,
   'defns': defnsSpecialExpression,
@@ -60,6 +62,7 @@ export type CommonSpecialExpressionName = keyof Pick<
   | '&&'
   | 'comment'
   | 'cond'
+  | 'switch'
   | 'declared?'
   | 'do'
   | 'if'

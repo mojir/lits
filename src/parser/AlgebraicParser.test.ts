@@ -589,6 +589,46 @@ describe('algebraic operators', () => {
     })
   })
 
+  test('cond expression', () => {
+    expect(lits.run(`
+      def val = 8;
+
+      cond
+        case val < 5 then "S"
+        case val < 10 then "M"
+        case val < 15 then "L"
+      end ?? "No match"`)).toBe('M')
+
+    expect(lits.run(`
+        def val = 20;
+
+        cond
+          case val < 5 then "S"
+          case val < 10 then "M"
+          case val < 15 then "L"
+        end ?? "No match"`)).toBe('No match')
+  })
+  test('switch expression', () => {
+    expect(lits.run(`
+    switch "-"
+      case "-" then 1
+    end`)).toBe(1)
+    expect(lits.run(`
+      def x = 1;
+      switch x
+        case 0 then "zero"
+        case 1 then "one"
+        case 2 then "two"
+      end`)).toBe('one')
+    expect(lits.run(`
+      def x = 10;
+      switch x
+        case 0 then "zero"
+        case 1 then "one"
+        case 2 then "two"
+      end`)).toBe(null)
+  })
+
   describe('for', () => {
     test('empty collections', () => {
       expect(lits.run('for(x of [], x)')).toEqual([])
@@ -844,8 +884,8 @@ describe('algebraic operators', () => {
     it('supports basic lambda function definitions', () => {
       // Testing the provided lambda function example
       expect(lits.run('(() => 1)()')).toBe(1)
-      // expect(lits.run('((x, y) => x + y)(3, 4)')).toBe(7)
-      // expect(lits.run('((x, y) => x + y)(10, -5)')).toBe(5)
+      expect(lits.run('((x, y) => x + y)(3, 4)')).toBe(7)
+      expect(lits.run('((x, y) => x + y)(10, -5)')).toBe(5)
     })
 
     it('supports lambda functions with let bindings', () => {
@@ -891,13 +931,12 @@ describe('algebraic operators', () => {
     })
 
     test('samples', () => {
-    // expect(lits.run('(val) => number:format("d", val)')).toBe(8)
       expect(lits.run(`
-        $\`
-        (def foo #(inc %))
-        (foo 7)
-        \`
-      `)).toBe(8)
+            $\`
+            (def foo #(inc %))
+            (foo 7)
+            \`
+          `)).toBe(8)
     })
   })
 })

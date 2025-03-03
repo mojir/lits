@@ -14,6 +14,7 @@ import type { WhenNode } from '../builtin/specialExpressions/when'
 import type { WhenFirstNode } from '../builtin/specialExpressions/when_first'
 import type { WhenLetNode } from '../builtin/specialExpressions/when_let'
 import type { WhenNotNode } from '../builtin/specialExpressions/when_not'
+import type { SwitchNode } from '../builtin/specialExpressions/switch'
 import type { RemoveOptions } from '.'
 
 const specialExpressionCommentRemovers = {
@@ -26,6 +27,10 @@ const specialExpressionCommentRemovers = {
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },
   'cond': (node: CondNode, removeOptions: RemoveOptions) => {
+    removeOptions.removeCommenNodesFromArray(node.p)
+    node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
+  },
+  'switch': (node: SwitchNode, removeOptions: RemoveOptions) => {
     removeOptions.removeCommenNodesFromArray(node.p)
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },

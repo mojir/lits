@@ -19,6 +19,16 @@ export function assertEvenNumberOfParams(node: GenericNode): void {
   }
 }
 
+export function assertOddNumberOfParams(node: GenericNode): void {
+  const length = withoutCommentNodes(node.p).length
+  if (length % 2 !== 1) {
+    throw new LitsError(
+      `Wrong number of arguments, expected an odd number, got ${valueToString(length)}.`,
+      getTokenDebugData(node.token)?.sourceCodeInfo,
+    )
+  }
+}
+
 export function assertNumberOfParams(count: Count, node: GenericNode): void {
   assertCount({
     count,

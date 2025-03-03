@@ -80,7 +80,7 @@ export function isP_StringShorthandToken(token?: Token): token is P_StringShorth
 }
 export function assertP_StringShorthandToken(token?: Token): asserts token is P_StringShorthandToken {
   if (!isP_StringShorthandToken(token)) {
-    throwUnexpectedToken('P_StringShorthand', token)
+    throwUnexpectedToken('P_StringShorthand', undefined, token)
   }
 }
 export function asP_StringShorthandToken(token?: Token): P_StringShorthandToken {
@@ -93,7 +93,7 @@ export function isP_SymbolToken(token?: Token): token is P_SymbolToken {
 }
 export function assertP_SymbolToken(token?: Token): asserts token is P_SymbolToken {
   if (!isP_SymbolToken(token)) {
-    throwUnexpectedToken('P_Symbol', token)
+    throwUnexpectedToken('P_Symbol', undefined, token)
   }
 }
 export function asP_SymbolToken(token?: Token): P_SymbolToken {
@@ -106,7 +106,7 @@ export function isP_ReservedSymbolToken(token?: Token): token is P_ReservedSymbo
 }
 export function assertP_ReservedSymbolToken(token?: Token): asserts token is P_ReservedSymbolToken {
   if (!isP_ReservedSymbolToken(token)) {
-    throwUnexpectedToken('P_ReservedSymbol', token)
+    throwUnexpectedToken('P_ReservedSymbol', undefined, token)
   }
 }
 export function asP_ReservedSymbolToken(token?: Token): P_ReservedSymbolToken {
@@ -119,7 +119,7 @@ export function isP_ModifierToken(token?: Token): token is P_ModifierToken {
 }
 export function assertP_ModifierToken(token?: Token): asserts token is P_ModifierToken {
   if (!isP_ModifierToken(token)) {
-    throwUnexpectedToken('P_Modifier', token)
+    throwUnexpectedToken('P_Modifier', undefined, token)
   }
 }
 export function asP_ModifierToken(token?: Token): P_ModifierToken {
@@ -132,7 +132,7 @@ export function isP_RegexpShorthandToken(token?: Token): token is P_RegexpShorth
 }
 export function assertP_RegexpShorthandToken(token?: Token): asserts token is P_RegexpShorthandToken {
   if (!isP_RegexpShorthandToken(token)) {
-    throwUnexpectedToken('P_RegexpShorthand', token)
+    throwUnexpectedToken('P_RegexpShorthand', undefined, token)
   }
 }
 export function asP_RegexpShorthandToken(token?: Token): P_RegexpShorthandToken {
@@ -145,7 +145,7 @@ export function isP_FnShorthandToken(token?: Token): token is P_FnShorthandToken
 }
 export function assertP_FnShorthandToken(token?: Token): asserts token is P_FnShorthandToken {
   if (!isP_FnShorthandToken(token)) {
-    throwUnexpectedToken('P_FnShorthand', token)
+    throwUnexpectedToken('P_FnShorthand', undefined, token)
   }
 }
 export function asP_FnShorthandToken(token?: Token): P_FnShorthandToken {
@@ -158,7 +158,7 @@ export function isP_CollectionAccessorToken(token?: Token): token is P_Collectio
 }
 export function assertP_CollectionAccessorToken(token?: Token): asserts token is P_CollectionAccessorToken {
   if (!isP_CollectionAccessorToken(token)) {
-    throwUnexpectedToken('P_CollectionAccessor', token)
+    throwUnexpectedToken('P_CollectionAccessor', undefined, token)
   }
 }
 export function asP_CollectionAccessorToken(token?: Token): P_CollectionAccessorToken {
@@ -171,7 +171,7 @@ export function isP_CommentToken(token?: Token): token is P_CommentToken {
 }
 export function assertP_CommentToken(token?: Token): asserts token is P_CommentToken {
   if (!isP_CommentToken(token)) {
-    throwUnexpectedToken('P_Comment', token)
+    throwUnexpectedToken('P_Comment', undefined, token)
   }
 }
 export function asP_CommentToken(token?: Token): P_CommentToken {
@@ -184,7 +184,7 @@ export function isP_WhitespaceToken(token?: Token): token is P_WhitespaceToken {
 }
 export function assertP_WhitespaceToken(token?: Token): asserts token is P_WhitespaceToken {
   if (!isP_WhitespaceToken(token)) {
-    throwUnexpectedToken('P_Whitespace', token)
+    throwUnexpectedToken('P_Whitespace', undefined, token)
   }
 }
 export function asP_WhitespaceToken(token?: Token): P_WhitespaceToken {
@@ -197,7 +197,7 @@ export function isP_NumberToken(token?: Token): token is P_NumberToken {
 }
 export function assertP_NumberToken(token?: Token): asserts token is P_NumberToken {
   if (!isP_NumberToken(token)) {
-    throwUnexpectedToken('P_Number', token)
+    throwUnexpectedToken('P_Number', undefined, token)
   }
 }
 export function asP_NumberToken(token?: Token): P_NumberToken {

@@ -734,6 +734,12 @@ var Playground = (function (exports) {
         return UndefinedSymbolError;
     }(LitsError));
 
+    function getSourceCodeInfo(anyValue, sourceCodeInfo) {
+        var _a;
+        // eslint-disable-next-line ts/no-unsafe-return, ts/no-unsafe-member-access
+        return (_a = anyValue === null || anyValue === void 0 ? void 0 : anyValue.sourceCodeInfo) !== null && _a !== void 0 ? _a : sourceCodeInfo;
+    }
+
     function isTokenDebugData(tokenDebugData) {
         return (typeof tokenDebugData === 'object'
             && tokenDebugData !== null
@@ -752,8 +758,12 @@ var Playground = (function (exports) {
         }
         token.push(debugData);
     }
-    function throwUnexpectedToken(expected, actual) {
-        throw new LitsError("Unexpected token: ".concat(actual, ", expected ").concat(expected), undefined);
+    function throwUnexpectedToken(expected, expectedValue, actual) {
+        if (actual === undefined) {
+            throw new LitsError("Unexpected end of input, expected ".concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), undefined);
+        }
+        var actualOutput = "".concat(actual[0]).concat(actual[1] ? " '".concat(actual[1], "'") : '');
+        throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), getSourceCodeInfo(actual));
     }
 
     var commonSimpleTokenTypes = [
@@ -775,7 +785,7 @@ var Playground = (function (exports) {
     }
     function assertLParenToken(token) {
         if (!isLParenToken(token)) {
-            throwUnexpectedToken('LParen', token);
+            throwUnexpectedToken('LParen', undefined, token);
         }
     }
     function asLParenToken(token) {
@@ -787,7 +797,7 @@ var Playground = (function (exports) {
     }
     function assertRParenToken(token) {
         if (!isRParenToken(token)) {
-            throwUnexpectedToken('RParen', token);
+            throwUnexpectedToken('RParen', undefined, token);
         }
     }
     function isLBracketToken(token) {
@@ -795,7 +805,7 @@ var Playground = (function (exports) {
     }
     function assertLBracketToken(token) {
         if (!isLBracketToken(token)) {
-            throwUnexpectedToken('LBracket', token);
+            throwUnexpectedToken('LBracket', undefined, token);
         }
     }
     function asLBracketToken(token) {
@@ -807,7 +817,7 @@ var Playground = (function (exports) {
     }
     function assertRBracketToken(token) {
         if (!isRBracketToken(token)) {
-            throwUnexpectedToken('RBracket', token);
+            throwUnexpectedToken('RBracket', undefined, token);
         }
     }
     function isLBraceToken(token) {
@@ -815,7 +825,7 @@ var Playground = (function (exports) {
     }
     function assertLBraceToken(token) {
         if (!isLBraceToken(token)) {
-            throwUnexpectedToken('LBrace', token);
+            throwUnexpectedToken('LBrace', undefined, token);
         }
     }
     function asLBraceToken(token) {
@@ -827,7 +837,7 @@ var Playground = (function (exports) {
     }
     function assertRBraceToken(token) {
         if (!isRBraceToken(token)) {
-            throwUnexpectedToken('RBrace', token);
+            throwUnexpectedToken('RBrace', undefined, token);
         }
     }
     function isStringToken(token) {
@@ -835,7 +845,7 @@ var Playground = (function (exports) {
     }
     function assertStringToken(token) {
         if (!isStringToken(token)) {
-            throwUnexpectedToken('String', token);
+            throwUnexpectedToken('String', undefined, token);
         }
     }
     function asStringToken(token) {
@@ -853,7 +863,7 @@ var Playground = (function (exports) {
     }
     function assertEndNotationToken(token) {
         if (!isEndNotationToken(token)) {
-            throwUnexpectedToken('EndNotation', token);
+            throwUnexpectedToken('EndNotation', undefined, token);
         }
     }
 
@@ -958,7 +968,7 @@ var Playground = (function (exports) {
     }
     function assertA_SymbolToken(token) {
         if (!isA_SymbolToken(token)) {
-            throwUnexpectedToken('A_Symbol', token);
+            throwUnexpectedToken('A_Symbol', undefined, token);
         }
     }
     function asA_SymbolToken(token) {
@@ -979,7 +989,7 @@ var Playground = (function (exports) {
     }
     function assertA_ReservedSymbolToken(token, symbolName) {
         if (!isA_ReservedSymbolToken(token, symbolName)) {
-            throwUnexpectedToken('A_ReservedSymbol', token);
+            throwUnexpectedToken('A_ReservedSymbol', symbolName, token);
         }
     }
     function isA_CommentToken(token) {
@@ -1002,7 +1012,7 @@ var Playground = (function (exports) {
             if (operatorName) {
                 throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), undefined);
             }
-            throwUnexpectedToken('A_Operator', token);
+            throwUnexpectedToken('A_Operator', operatorName, token);
         }
     }
     function isA_WhitespaceToken(token) {
@@ -1038,7 +1048,7 @@ var Playground = (function (exports) {
     }
     function assertP_StringShorthandToken(token) {
         if (!isP_StringShorthandToken(token)) {
-            throwUnexpectedToken('P_StringShorthand', token);
+            throwUnexpectedToken('P_StringShorthand', undefined, token);
         }
     }
     function asP_StringShorthandToken(token) {
@@ -1050,7 +1060,7 @@ var Playground = (function (exports) {
     }
     function assertP_SymbolToken(token) {
         if (!isP_SymbolToken(token)) {
-            throwUnexpectedToken('P_Symbol', token);
+            throwUnexpectedToken('P_Symbol', undefined, token);
         }
     }
     function asP_SymbolToken(token) {
@@ -1068,7 +1078,7 @@ var Playground = (function (exports) {
     }
     function assertP_RegexpShorthandToken(token) {
         if (!isP_RegexpShorthandToken(token)) {
-            throwUnexpectedToken('P_RegexpShorthand', token);
+            throwUnexpectedToken('P_RegexpShorthand', undefined, token);
         }
     }
     function asP_RegexpShorthandToken(token) {
@@ -1083,7 +1093,7 @@ var Playground = (function (exports) {
     }
     function assertP_CollectionAccessorToken(token) {
         if (!isP_CollectionAccessorToken(token)) {
-            throwUnexpectedToken('P_CollectionAccessor', token);
+            throwUnexpectedToken('P_CollectionAccessor', undefined, token);
         }
     }
     function asP_CollectionAccessorToken(token) {
@@ -1095,7 +1105,7 @@ var Playground = (function (exports) {
     }
     function assertP_CommentToken(token) {
         if (!isP_CommentToken(token)) {
-            throwUnexpectedToken('P_Comment', token);
+            throwUnexpectedToken('P_Comment', undefined, token);
         }
     }
     function asP_CommentToken(token) {
@@ -1110,7 +1120,7 @@ var Playground = (function (exports) {
     }
     function assertP_NumberToken(token) {
         if (!isP_NumberToken(token)) {
-            throwUnexpectedToken('P_Number', token);
+            throwUnexpectedToken('P_Number', undefined, token);
         }
     }
 
@@ -1178,12 +1188,6 @@ var Playground = (function (exports) {
         return JSON.stringify(value);
     }
 
-    function getSourceCodeInfo(anyValue, sourceCodeInfo) {
-        var _a;
-        // eslint-disable-next-line ts/no-unsafe-return, ts/no-unsafe-member-access
-        return (_a = anyValue === null || anyValue === void 0 ? void 0 : anyValue.sourceCodeInfo) !== null && _a !== void 0 ? _a : sourceCodeInfo;
-    }
-
     function getAssertionError(typeName, value, sourceCodeInfo) {
         return new LitsError("Expected ".concat(typeName, ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
     }
@@ -1245,6 +1249,10 @@ var Playground = (function (exports) {
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
         'cond': function (node, removeOptions) {
+            removeOptions.removeCommenNodesFromArray(node.p);
+            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
+        },
+        'switch': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -1346,6 +1354,13 @@ var Playground = (function (exports) {
         var length = withoutCommentNodes(node.p).length;
         if (length % 2 !== 0) {
             throw new LitsError("Wrong number of arguments, expected an even number, got ".concat(valueToString(length), "."), (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+        }
+    }
+    function assertOddNumberOfParams(node) {
+        var _a;
+        var length = withoutCommentNodes(node.p).length;
+        if (length % 2 !== 1) {
+            throw new LitsError("Wrong number of arguments, expected an odd number, got ".concat(valueToString(length), "."), (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
     }
     function assertNumberOfParams(count, node) {
@@ -4895,6 +4910,37 @@ var Playground = (function (exports) {
         },
     };
 
+    var switchSpecialExpression = {
+        polishParse: getCommonPolishSpecialExpressionParser('switch'),
+        validateParameterCount: function (node) { return assertOddNumberOfParams(node); },
+        evaluate: function (node, contextStack, _a) {
+            var e_1, _b;
+            var evaluateAstNode = _a.evaluateAstNode;
+            var switchValue = evaluateAstNode(node.p[0], contextStack);
+            try {
+                for (var _c = __values(arrayToPairs(node.p.slice(1))), _d = _c.next(); !_d.done; _d = _c.next()) {
+                    var _e = __read(_d.value, 2), test = _e[0], form = _e[1];
+                    var value = evaluateAstNode(test, contextStack);
+                    if (value === switchValue) {
+                        return evaluateAstNode(form, contextStack);
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return null;
+        },
+        findUnresolvedIdentifiers: function (node, contextStack, _a) {
+            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
+            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        },
+    };
+
     var declaredSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('declared?'),
         validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
@@ -6224,6 +6270,7 @@ var Playground = (function (exports) {
         '&&': andSpecialExpression,
         'comment': commentSpecialExpression,
         'cond': condSpecialExpression,
+        'switch': switchSpecialExpression,
         'def': defSpecialExpression,
         'defn': defnSpecialExpression,
         'defns': defnsSpecialExpression,
@@ -7188,10 +7235,22 @@ var Playground = (function (exports) {
             .map(function (p) { return (__assign(__assign({}, astNode), { p: p })); });
     };
 
+    var calculateSwitchOutcomes = function (_a) {
+        var astNode = _a.astNode, nilNode = _a.nilNode, calculatePossibleAstNodes = _a.calculatePossibleAstNodes;
+        // TODO be smarter about this
+        return __spreadArray(__spreadArray([], __read(arrayToPairs(astNode.p.slice(1)).flatMap(function (_a) {
+            var _b = __read(_a, 2); _b[0]; var form = _b[1];
+            return calculatePossibleAstNodes(form);
+        })), false), [
+            nilNode,
+        ], false);
+    };
+
     var specialExpressionCalculator = {
         '&&': function (astNode, helperOptions) { return calculateAndOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'comment': function (astNode, helperOptions) { return calculateCommentOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'cond': function (astNode, helperOptions) { return calculateCondOutcomes(__assign({ astNode: astNode }, helperOptions)); },
+        'switch': function (astNode, helperOptions) { return calculateSwitchOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'declared?': function (astNode, helperOptions) { return calculateDeclaredOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'defn': function (astNode, helperOptions) { return calculateDefnOutcomes(__assign({ astNode: astNode }, helperOptions)); },
         'def': function (astNode, helperOptions) { return calculateDefOutcomes(__assign({ astNode: astNode }, helperOptions)); },
@@ -7597,16 +7656,25 @@ var Playground = (function (exports) {
             var _a;
             if (precedence === void 0) { precedence = 0; }
             var firstToken = this.peek();
-            if (isA_SymbolToken(firstToken) && firstToken[1] === 'if') {
-                return this.parseIf(firstToken);
-            }
             if (isA_SymbolToken(firstToken) && firstToken[1] === 'def') {
                 return this.parseDef(firstToken);
             }
-            if (isA_SymbolToken(firstToken) && firstToken[1] === 'defn') {
+            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'defn') {
                 return this.parseDefn(firstToken);
             }
-            var left = this.parseOperand();
+            var left;
+            if (isA_SymbolToken(firstToken) && firstToken[1] === 'if') {
+                left = this.parseIf(firstToken);
+            }
+            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'cond') {
+                left = this.parseCond(firstToken);
+            }
+            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'switch') {
+                left = this.parseSwitch(firstToken);
+            }
+            else {
+                left = this.parseOperand();
+            }
             var operator = this.peek();
             while (!this.isAtEnd()
                 && !isA_OperatorToken(operator, ',')
@@ -7615,6 +7683,7 @@ var Playground = (function (exports) {
                 && !isA_ReservedSymbolToken(operator, 'else')
                 && !isA_ReservedSymbolToken(operator, 'then')
                 && !isA_ReservedSymbolToken(operator, 'end')
+                && !isA_ReservedSymbolToken(operator, 'case')
                 && !isRParenToken(operator)) {
                 if (isA_BinaryOperatorToken(operator)) {
                     var name_1 = operator[1];
@@ -7871,7 +7940,6 @@ var Playground = (function (exports) {
                         case '??':
                         case '&&':
                         case 'comment':
-                        case 'cond':
                         case 'declared?':
                         case 'if_not':
                         case '||':
@@ -8251,6 +8319,86 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(token) && token,
             };
         };
+        AlgebraicParser.prototype.parseCond = function (token) {
+            this.advance();
+            var params = [];
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                assertA_ReservedSymbolToken(this.peek(), 'case');
+                this.advance();
+                params.push(this.parseExpression());
+                assertA_ReservedSymbolToken(this.peek(), 'then');
+                this.advance();
+                var expressions = [];
+                while (!this.isAtEnd()
+                    && !isA_ReservedSymbolToken(this.peek(), 'case')
+                    && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    expressions.push(this.parseExpression());
+                    if (isA_OperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                }
+                params.push(expressions.length === 1
+                    ? expressions[0]
+                    : {
+                        t: AstNodeType.SpecialExpression,
+                        n: 'do',
+                        p: expressions,
+                        token: getTokenDebugData(token) && token,
+                    });
+                if (isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    break;
+                }
+                assertA_ReservedSymbolToken(this.peek(), 'case');
+            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'cond',
+                p: params,
+                token: getTokenDebugData(token) && token,
+            };
+        };
+        AlgebraicParser.prototype.parseSwitch = function (token) {
+            this.advance();
+            var params = [this.parseExpression()];
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                assertA_ReservedSymbolToken(this.peek(), 'case');
+                this.advance();
+                params.push(this.parseExpression());
+                assertA_ReservedSymbolToken(this.peek(), 'then');
+                this.advance();
+                var expressions = [];
+                while (!this.isAtEnd()
+                    && !isA_ReservedSymbolToken(this.peek(), 'case')
+                    && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    expressions.push(this.parseExpression());
+                    if (isA_OperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                }
+                params.push(expressions.length === 1
+                    ? expressions[0]
+                    : {
+                        t: AstNodeType.SpecialExpression,
+                        n: 'do',
+                        p: expressions,
+                        token: getTokenDebugData(token) && token,
+                    });
+                if (isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    break;
+                }
+                assertA_ReservedSymbolToken(this.peek(), 'case');
+            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'switch',
+                p: params,
+                token: getTokenDebugData(token) && token,
+            };
+        };
         AlgebraicParser.prototype.parseDef = function (token) {
             this.advance();
             var symbol = parseSymbol(this.tokenStream, this.parseState);
@@ -8265,22 +8413,17 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseDefn = function (token) {
-            var _a;
             this.advance();
             var symbol = parseSymbol(this.tokenStream, this.parseState);
-            var _b = this.parseFunctionArguments(), functionArguments = _b.functionArguments, arity = _b.arity;
-            assertLBraceToken(this.peek());
-            this.advance();
+            var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
             var body = [];
-            while (!this.isAtEnd() && !isRBraceToken(this.peek())) {
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
                 body.push(this.parseExpression());
                 if (isA_OperatorToken(this.peek(), ';')) {
                     this.advance();
                 }
             }
-            if (!isRBraceToken(this.peek())) {
-                throw new LitsError('Expected closing brace', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
             this.advance();
             return {
                 t: AstNodeType.SpecialExpression,
@@ -8764,6 +8907,7 @@ var Playground = (function (exports) {
         then: { value: null, forbidden: false },
         else: { value: null, forbidden: false },
         end: { value: null, forbidden: false },
+        case: { value: null, forbidden: false },
     };
     var forbiddenAlgebraicReservedNamesRecord = {
         if_let: { value: null, forbidden: true },
@@ -9106,31 +9250,20 @@ var Playground = (function (exports) {
         return [1, ['P_FnShorthand']];
     };
     var tokenizeP_ReservedSymbol = function (input, position) {
-        var e_1, _a;
-        try {
-            for (var _b = __values(Object.entries(polishReservedNamesRecord)), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), reservedName = _d[0], forbidden = _d[1].forbidden;
-                var length_3 = reservedName.length;
-                var nextChar = input[position + length_3];
-                if (nextChar && P_symbolRegExp.test(nextChar)) {
-                    continue;
-                }
-                var symbol = input.substring(position, position + length_3);
-                if (symbol === reservedName) {
-                    if (forbidden)
-                        throw new LitsError("".concat(symbol, " is forbidden!"), undefined);
-                    return [length_3, ['P_ReservedSymbol', reservedName]];
-                }
-            }
+        var symbolMeta = tokenizeP_Symbol(input, position);
+        if (symbolMeta[0] === 0 || !symbolMeta[1]) {
+            return NO_MATCH;
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
+        var symbolName = symbolMeta[1][1];
+        symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName;
+        var info = polishReservedNamesRecord[symbolName];
+        if (!info) {
+            return NO_MATCH;
         }
-        return NO_MATCH;
+        if (info.forbidden) {
+            throw new LitsError("".concat(symbolName, " is forbidden!"), undefined);
+        }
+        return [symbolMeta[0], ['P_ReservedSymbol', symbolName]];
     };
     var tokenizeP_StringShorthand = function (input, position) {
         if (input[position] !== ':')
@@ -9143,24 +9276,24 @@ var Playground = (function (exports) {
         return [symbolDescription[0] + 1, ['P_StringShorthand', ":".concat(symbolToken[1])]];
     };
     var tokenizeP_Modifier = function (input, position) {
-        var e_2, _a;
+        var e_1, _a;
         try {
             for (var modifierNames_1 = __values(modifierNames), modifierNames_1_1 = modifierNames_1.next(); !modifierNames_1_1.done; modifierNames_1_1 = modifierNames_1.next()) {
                 var modifierName = modifierNames_1_1.value;
-                var length_4 = modifierName.length;
-                var charAfterModifier = input[position + length_4];
-                if (input.substring(position, position + length_4) === modifierName && (!charAfterModifier || !P_symbolRegExp.test(charAfterModifier))) {
+                var length_3 = modifierName.length;
+                var charAfterModifier = input[position + length_3];
+                if (input.substring(position, position + length_3) === modifierName && (!charAfterModifier || !P_symbolRegExp.test(charAfterModifier))) {
                     var value = modifierName;
-                    return [length_4, ['P_Modifier', value]];
+                    return [length_3, ['P_Modifier', value]];
                 }
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
                 if (modifierNames_1_1 && !modifierNames_1_1.done && (_a = modifierNames_1.return)) _a.call(modifierNames_1);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_1) throw e_1.error; }
         }
         return NO_MATCH;
     };
@@ -14637,6 +14770,31 @@ var Playground = (function (exports) {
                 "\n(cond\n  false (write! \"FALSE\")\n  nil (write! \"nil\"))",
             ],
         },
+        'switch': {
+            title: 'switch',
+            category: 'Special expression',
+            linkName: 'switch',
+            returns: {
+                type: 'any',
+            },
+            args: {
+                value: {
+                    type: 'any',
+                },
+                conds: {
+                    type: '*conditions',
+                },
+            },
+            variants: [
+                { argumentNames: ['value', 'conds'] },
+            ],
+            description: 'Used for branching. $conds are tested sequentially from the top against $value. If no branch is tested truthy, `nil` is returned.',
+            examples: [
+                "\n(switch 1\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
+                "\n(switch 2\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
+                "\n(switch 3\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
+            ],
+        },
         'when': {
             title: 'when',
             category: 'Special expression',
@@ -16129,6 +16287,7 @@ var Playground = (function (exports) {
             'if',
             'if_not',
             'cond',
+            'switch',
             'when',
             'when_not',
             'comment',

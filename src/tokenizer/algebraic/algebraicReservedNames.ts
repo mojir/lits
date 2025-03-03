@@ -8,6 +8,7 @@ const validAlgebraicReservedNamesRecord = {
   then: { value: null, forbidden: false },
   else: { value: null, forbidden: false },
   end: { value: null, forbidden: false },
+  case: { value: null, forbidden: false },
 } as const satisfies Record<string, { value: Any, forbidden: false }>
 
 const forbiddenAlgebraicReservedNamesRecord = {

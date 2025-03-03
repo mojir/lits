@@ -23,6 +23,7 @@ import type { WhenFirstNode } from '../../builtin/specialExpressions/when_first'
 import type { WhenLetNode } from '../../builtin/specialExpressions/when_let'
 import type { WhenNotNode } from '../../builtin/specialExpressions/when_not'
 import type { AstNode } from '../../parser/interface'
+import type { SwitchNode } from '../../builtin/specialExpressions/switch'
 import { calculateAndOutcomes } from './calculateAndOutcomes'
 import { calculateCondOutcomes } from './calculateCondOutcomes'
 import { calculateDeclaredOutcomes } from './calculateDeclaredOutcomes'
@@ -46,12 +47,14 @@ import { calculateWhenOutcomes } from './calculateWhenOutcomes'
 import { calculateRecurOutcomes } from './calculateRecurOutcomes'
 import { calculateCommentOutcomes } from './calculateCommentOutcomes'
 import { calculateLoopOutcomes } from './calculateLoopOutcomes'
+import { calculateSwitchOutcomes } from './calculateSwitchOutcomes'
 import type { CalculatePossibleAstNodesHelperOptions } from '.'
 
 export const specialExpressionCalculator = {
   '&&': (astNode: AndNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateAndOutcomes({ astNode, ...helperOptions }),
   'comment': (astNode: CommentExpressionNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateCommentOutcomes({ astNode, ...helperOptions }),
   'cond': (astNode: CondNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateCondOutcomes({ astNode, ...helperOptions }),
+  'switch': (astNode: SwitchNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateSwitchOutcomes({ astNode, ...helperOptions }),
   'declared?': (astNode: DeclaredNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateDeclaredOutcomes({ astNode, ...helperOptions }),
   'defn': (astNode: DefnNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateDefnOutcomes({ astNode, ...helperOptions }),
   'def': (astNode: DefNode, helperOptions: Omit<CalculatePossibleAstNodesHelperOptions<AstNode>, 'astNode'>) => calculateDefOutcomes({ astNode, ...helperOptions }),

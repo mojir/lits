@@ -549,6 +549,40 @@ hyp`,
   nil (write! "nil"))`,
     ],
   },
+  'switch': {
+    title: 'switch',
+    category: 'Special expression',
+    linkName: 'switch',
+    returns: {
+      type: 'any',
+    },
+    args: {
+      value: {
+        type: 'any',
+      },
+      conds: {
+        type: '*conditions',
+      },
+    },
+    variants: [
+      { argumentNames: ['value', 'conds'] },
+    ],
+    description: 'Used for branching. $conds are tested sequentially from the top against $value. If no branch is tested truthy, `nil` is returned.',
+    examples: [
+      `
+(switch 1
+  1 (write! "FALSE")
+  2 (write! "nil"))`,
+      `
+(switch 2
+  1 (write! "FALSE")
+  2 (write! "nil"))`,
+      `
+(switch 3
+  1 (write! "FALSE")
+  2 (write! "nil"))`,
+    ],
+  },
   'when': {
     title: 'when',
     category: 'Special expression',
