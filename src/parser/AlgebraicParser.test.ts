@@ -631,13 +631,40 @@ describe('algebraic operators', () => {
 
   describe('for', () => {
     test('empty collections', () => {
-      expect(lits.run('for(x of [], x)')).toEqual([])
-      expect(lits.run('for(x of [1, 2, 3], y of [], x)')).toEqual([])
-      expect(lits.run('for(x of [], y of [1, 2, 3], x)')).toEqual([])
+      expect(lits.run(`
+        for (x of [])
+          x
+        end`)).toEqual([])
+      expect(lits.run(`
+        for (
+          x of [1, 2, 3],
+          y of []
+        )
+          x
+        end`)).toEqual([])
+      expect(lits.run(`
+        for (
+          x of [],
+          y of [1, 2, 3]
+        )
+          x
+        end`)).toEqual([])
     })
     test('string and object iteration', () => {
-      expect(lits.run('for(x of "Al", y of [1, 2], x repeat y)')).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
-      expect(lits.run('for(x of { a=10, b=20 }, y of [1, 2], repeat(x, y))')).toEqual([
+      expect(lits.run(`
+        for (
+          x of "Al",
+          y of [1, 2]
+        )
+          x repeat y
+        end`)).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
+      expect(lits.run(`
+         for (
+           x of { a=10, b=20 },
+           y of [1, 2]
+         )
+           repeat(x, y)
+         end`)).toEqual([
         [['a', 10]],
         [
           ['a', 10],
@@ -651,22 +678,50 @@ describe('algebraic operators', () => {
       ])
     })
     test('basic iteration with computation', () => {
-      expect(lits.run('for(x of [1, 2], y of [1, 10], x * y)')).toEqual([1, 10, 2, 20])
+      expect(lits.run(`
+        for
+          (x of [1, 2],
+          y of [1, 10]
+        )
+          x * y
+        end`)).toEqual([1, 10, 2, 20])
     })
     test('with computed bindings using let', () => {
-      expect(lits.run('for(x of [1, 2] let { z = x * x * x }, z)')).toEqual([1, 8])
+      expect(lits.run(`
+        for (x of [1, 2] let { z = x * x * x })
+          z
+        end`)).toEqual([1, 8])
     })
     test('using previous bindings of subsequent iterations', () => {
-      expect(lits.run('for(x of [1, 2], y of [x, 2 * x], x * y)')).toEqual([1, 2, 4, 8])
+      expect(lits.run(`
+        for (
+          x of [1, 2],
+          y of [x, 2 * x]
+        )
+          x * y
+        end`)).toEqual([1, 2, 4, 8])
     })
     test('with when conditions', () => {
-      expect(lits.run('for(x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } when even?(y), y)')).toEqual([0, 6, 12])
+      expect(lits.run(`
+        for (x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } when even?(y))
+          y
+        end`)).toEqual([0, 6, 12])
     })
     test('with while conditions (early termination)', () => {
-      expect(lits.run('for(x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } while even?(y), y)')).toEqual([0])
+      expect(lits.run(`
+        for (x of [0, 1, 2, 3, 4, 5] let { y = x * 3 } while even?(y))
+          y
+        end`)).toEqual([0])
     })
     test('multiple iterations with while', () => {
-      expect(lits.run('for(x of [1, 2, 3], y of [1, 2, 3] while x <= y, z of [1, 2, 3], [x, y, z])')).toEqual([
+      expect(lits.run(`
+        for (
+          x of [1, 2, 3],
+          y of [1, 2, 3] while x <= y,
+          z of [1, 2, 3]
+        )
+          [x, y, z]
+        end`)).toEqual([
         [1, 1, 1],
         [1, 1, 2],
         [1, 1, 3],
@@ -679,7 +734,14 @@ describe('algebraic operators', () => {
       ])
     })
     test('complex example with three iterations', () => {
-      expect(lits.run('for(x of [1, 2, 3], y of [1, 2, 3], z of [1, 2, 3] while x <= y, [x, y, z])')).toEqual([
+      expect(lits.run(`
+        for (
+          x of [1, 2, 3],
+          y of [1, 2, 3],
+          z of [1, 2, 3] while x <= y
+        )
+          [x, y, z]
+        end`)).toEqual([
         [1, 1, 1],
         [1, 1, 2],
         [1, 1, 3],
@@ -716,7 +778,7 @@ describe('algebraic operators', () => {
         },
         
           // Generate personalized bundle recommendations
-          for(
+          for (
             // Start with main products
             mainProduct of products
               let {
@@ -747,8 +809,8 @@ describe('algebraic operators', () => {
                 matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
               }
               when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
-              while discountedPrice <= customerPreferences.priceLimit,
-         
+              while discountedPrice <= customerPreferences.priceLimit
+          )
             // Return bundle information object
             {
               bundle=[mainProduct, accessory, complItem],
@@ -757,7 +819,7 @@ describe('algebraic operators', () => {
               savingsAmount=discount * finalPrice,
               savingsPercentage=discount * 100
             }
-          )
+          end
         )
         `)).toEqual([
         {
@@ -821,11 +883,11 @@ describe('algebraic operators', () => {
       ])
     })
     test('error cases', () => {
-      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y), y)')).toThrow()
-      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5] let { x = 10 }, y)')).toThrow()
+      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y), y)')).toThrow()
+      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let { x = 10 }, y)')).toThrow()
       expect(() => lits.run('for x of [0, 1, 2, 3, 4, 5], y')).toThrow()
-      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5], x, y)')).toThrow()
-      expect(() => lits.run('for(x of [0, 1, 2, 3, 4, 5], x of [10, 20], x)')).toThrow()
+      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5], x, y)')).toThrow()
+      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5], x of [10, 20], x)')).toThrow()
     })
   })
 

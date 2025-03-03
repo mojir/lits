@@ -772,15 +772,18 @@ export class AlgebraicParser {
     const forLoopBindings: LoopBindingNode[] = [
       this.parseForLoopBinding(),
     ]
-    let nextToken = this.peekAhead()
-    while (isA_SymbolToken(nextToken) && nextToken[1] === 'of') {
+    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
       forLoopBindings.push(this.parseForLoopBinding())
-      nextToken = this.peekAhead()
+      if (isA_OperatorToken(this.peek(), ',')) {
+        this.advance()
+      }
     }
+    assertRParenToken(this.peek())
+    this.advance()
 
     const expression = this.parseExpression()
 
-    assertRParenToken(this.peek())
+    assertA_ReservedSymbolToken(this.peek(), 'end')
     this.advance()
 
     return {
@@ -795,8 +798,10 @@ export class AlgebraicParser {
   private parseForLoopBinding(): LoopBindingNode {
     const bindingNode = this.parseBinding()
 
-    if (isA_OperatorToken(this.peek(), ',')) {
-      this.advance()
+    if (isRParenToken(this.peek()) || isA_OperatorToken(this.peek(), ',')) {
+      if (isA_OperatorToken(this.peek(), ',')) {
+        this.advance()
+      }
       return {
         b: bindingNode,
         m: [],
@@ -853,8 +858,9 @@ export class AlgebraicParser {
       token = this.peek()
     }
 
-    assertA_OperatorToken(token, ',')
-    this.advance()
+    if (isA_OperatorToken(token, ',')) {
+      this.advance()
+    }
 
     return {
       b: bindingNode,
@@ -1097,9 +1103,5 @@ export class AlgebraicParser {
 
   private peek(): Token {
     return this.tokenStream.tokens[this.parseState.position]!
-  }
-
-  private peekAhead(): Token {
-    return this.tokenStream.tokens[this.parseState.position + 1]!
   }
 }

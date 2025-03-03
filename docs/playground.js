@@ -1009,10 +1009,9 @@ var Playground = (function (exports) {
     }
     function assertA_OperatorToken(token, operatorName) {
         if (!isA_OperatorToken(token, operatorName)) {
-            if (operatorName) {
+            {
                 throw new LitsError("Unexpected token: ".concat(token, ", expected operator ").concat(operatorName), undefined);
             }
-            throwUnexpectedToken('A_Operator', operatorName, token);
         }
     }
     function isA_WhitespaceToken(token) {
@@ -7672,6 +7671,9 @@ var Playground = (function (exports) {
             else if (isA_SymbolToken(firstToken) && firstToken[1] === 'switch') {
                 left = this.parseSwitch(firstToken);
             }
+            else if (isA_SymbolToken(firstToken) && firstToken[1] === 'for') {
+                left = this.parseFor(firstToken);
+            }
             else {
                 left = this.parseOperand();
             }
@@ -7915,9 +7917,6 @@ var Playground = (function (exports) {
             var _a, _b;
             var isNamedFunction = symbol.t === AstNodeType.Symbol;
             this.advance();
-            if (isNamedFunction && symbol.v === 'for') {
-                return this.parseFor(symbol);
-            }
             var params = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek())) {
                 params.push(this.parseExpression());
@@ -8158,38 +8157,39 @@ var Playground = (function (exports) {
                 }),
             };
         };
-        AlgebraicParser.prototype.parseFor = function (forSymbol) {
+        AlgebraicParser.prototype.parseFor = function (token) {
+            this.advance();
+            assertLParenToken(this.peek());
+            this.advance();
             var forLoopBindings = [
                 this.parseForLoopBinding(),
             ];
-            var nextToken = this.peekAhead();
-            while (isA_SymbolToken(nextToken) && nextToken[1] === 'of') {
+            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
                 forLoopBindings.push(this.parseForLoopBinding());
-                nextToken = this.peekAhead();
+                if (isA_OperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
             }
-            var expression = this.parseExpression();
             assertRParenToken(this.peek());
+            this.advance();
+            var expression = this.parseExpression();
+            assertA_ReservedSymbolToken(this.peek(), 'end');
             this.advance();
             return {
                 t: AstNodeType.SpecialExpression,
                 n: 'for',
                 p: [expression],
-                token: getTokenDebugData(forSymbol.token) && forSymbol.token,
+                token: getTokenDebugData(token) && token,
                 l: forLoopBindings,
             };
         };
-        // export interface LoopBindingNode {
-        //   b: BindingNode // Binding
-        //   m: Array<'&let' | '&when' | '&while'> // Modifiers
-        //   l?: BindingNode[] // Let-Bindings
-        //   wn?: AstNode // When Node
-        //   we?: AstNode // While Node
-        // }
         AlgebraicParser.prototype.parseForLoopBinding = function () {
             var _a;
             var bindingNode = this.parseBinding();
-            if (isA_OperatorToken(this.peek(), ',')) {
-                this.advance();
+            if (isRParenToken(this.peek()) || isA_OperatorToken(this.peek(), ',')) {
+                if (isA_OperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
                 return {
                     b: bindingNode,
                     m: [],
@@ -8235,8 +8235,9 @@ var Playground = (function (exports) {
                 }
                 token = this.peek();
             }
-            assertA_OperatorToken(token, ',');
-            this.advance();
+            if (isA_OperatorToken(token, ',')) {
+                this.advance();
+            }
             return {
                 b: bindingNode,
                 m: modifiers,
@@ -8443,9 +8444,6 @@ var Playground = (function (exports) {
         };
         AlgebraicParser.prototype.peek = function () {
             return this.tokenStream.tokens[this.parseState.position];
-        };
-        AlgebraicParser.prototype.peekAhead = function () {
-            return this.tokenStream.tokens[this.parseState.position + 1];
         };
         return AlgebraicParser;
     }());
