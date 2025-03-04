@@ -6829,6 +6829,9 @@ var Playground = (function (exports) {
                         break;
                 }
             }
+            else if (isA_ReservedSymbolToken(firstToken, 'function')) {
+                return this.parseFunction(firstToken);
+            }
             left || (left = this.parseOperand());
             var operator = this.peek();
             while (!this.isAtExpressionEnd()) {
@@ -6960,6 +6963,12 @@ var Playground = (function (exports) {
                 case 'String':
                     return parseString(this.tokenStream, this.parseState);
                 case 'A_Symbol': {
+                    var positionBefore = this.parseState.position;
+                    var lamdaFunction = this.parseLambdaFunction();
+                    if (lamdaFunction) {
+                        return lamdaFunction;
+                    }
+                    this.parseState.position = positionBefore;
                     return parseSymbol(this.tokenStream, this.parseState);
                 }
                 case 'A_ReservedSymbol':
@@ -7098,8 +7107,6 @@ var Playground = (function (exports) {
                             return node;
                         }
                         case 'fn':
-                        case 'try':
-                        case 'doseq':
                             throw new Error("Special expression ".concat(name_2, " is not available in algebraic notation"));
                         default:
                             throw new Error("Unknown special expression: ".concat(name_2));
@@ -7118,6 +7125,11 @@ var Playground = (function (exports) {
         };
         AlgebraicParser.prototype.parseLambdaFunction = function () {
             var firstToken = this.peek();
+            if (isLParenToken(firstToken)
+                && isA_SymbolToken(this.peekAhead(1))
+                && isA_OperatorToken(this.peekAhead(2), '=>')) {
+                return null;
+            }
             try {
                 var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
                 if (!isA_OperatorToken(this.peek(), '=>')) {
@@ -7143,6 +7155,18 @@ var Playground = (function (exports) {
         };
         AlgebraicParser.prototype.parseFunctionArguments = function () {
             var _a, _b, _c, _d, _e;
+            var firstToken = this.peek();
+            if (isA_SymbolToken(firstToken)) {
+                this.advance();
+                return {
+                    functionArguments: {
+                        m: [firstToken[1]],
+                        b: [],
+                        r: undefined,
+                    },
+                    arity: 1,
+                };
+            }
             this.advance();
             var rest = false;
             var letBindingObject;
@@ -7271,7 +7295,6 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: 'let',
                 p: [],
-                token: getTokenDebugData(letSymbol.token) && letSymbol.token,
                 bs: [{
                         t: AstNodeType.Binding,
                         n: letSymbol.v,
@@ -7279,6 +7302,7 @@ var Playground = (function (exports) {
                         p: [],
                         token: getTokenDebugData(token) && token,
                     }],
+                token: getTokenDebugData(letSymbol.token) && letSymbol.token,
             };
         };
         AlgebraicParser.prototype.parseDo = function (token) {
@@ -7646,6 +7670,44 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(token) && token,
             };
         };
+        AlgebraicParser.prototype.parseFunction = function (token) {
+            this.advance();
+            var symbol = parseSymbol(this.tokenStream, this.parseState);
+            var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
+            var body = [];
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                body.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+            }
+            assertA_ReservedSymbolToken(this.peek(), 'end');
+            this.advance();
+            var fnNode = {
+                t: AstNodeType.SpecialExpression,
+                n: 'fn',
+                p: [],
+                o: [{
+                        as: functionArguments,
+                        b: body,
+                        a: arity,
+                    }],
+                token: getTokenDebugData(token) && token,
+            };
+            return {
+                t: AstNodeType.SpecialExpression,
+                n: 'let',
+                p: [],
+                bs: [{
+                        t: AstNodeType.Binding,
+                        n: symbol.v,
+                        v: fnNode,
+                        p: [],
+                        token: getTokenDebugData(symbol.token) && symbol.token,
+                    }],
+                token: getTokenDebugData(token) && token,
+            };
+        };
         AlgebraicParser.prototype.parseDefn = function (token) {
             this.advance();
             var symbol = parseSymbol(this.tokenStream, this.parseState);
@@ -7693,6 +7755,9 @@ var Playground = (function (exports) {
         };
         AlgebraicParser.prototype.peek = function () {
             return this.tokenStream.tokens[this.parseState.position];
+        };
+        AlgebraicParser.prototype.peekAhead = function (count) {
+            return this.tokenStream.tokens[this.parseState.position + count];
         };
         return AlgebraicParser;
     }());
@@ -8157,6 +8222,7 @@ var Playground = (function (exports) {
         case: { value: null, forbidden: false },
         when: { value: null, forbidden: false },
         while: { value: null, forbidden: false },
+        function: { value: null, forbidden: false },
     };
     var forbiddenAlgebraicReservedNamesRecord = {
         fn: { value: null, forbidden: true },

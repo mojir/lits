@@ -15,7 +15,7 @@ import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
-import type { A_OperatorToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
+import type { A_OperatorToken, A_ReservedSymbolToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isFunctionOperator, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertLParenToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
@@ -244,6 +244,9 @@ export class AlgebraicParser {
           break
       }
     }
+    else if (isA_ReservedSymbolToken(firstToken, 'function')) {
+      return this.parseFunction(firstToken)
+    }
 
     left ||= this.parseOperand()
     let operator = this.peek()
@@ -402,6 +405,12 @@ export class AlgebraicParser {
       case 'String':
         return parseString(this.tokenStream, this.parseState)
       case 'A_Symbol': {
+        const positionBefore = this.parseState.position
+        const lamdaFunction = this.parseLambdaFunction()
+        if (lamdaFunction) {
+          return lamdaFunction
+        }
+        this.parseState.position = positionBefore  
         return parseSymbol(this.tokenStream, this.parseState)
       }
       case 'A_ReservedSymbol':
@@ -531,7 +540,7 @@ export class AlgebraicParser {
     this.advance()
     if (isNamedFunction) {
       if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop'>
+        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq'>
         switch (name) {
           case '??':
           case '&&':
@@ -550,8 +559,6 @@ export class AlgebraicParser {
             return node
           }
           case 'fn':
-          case 'try':
-          case 'doseq':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)
           default:
             throw new Error(`Unknown special expression: ${name satisfies never}`)
@@ -571,6 +578,13 @@ export class AlgebraicParser {
 
   parseLambdaFunction(): AstNode | null {
     const firstToken = this.peek()
+    
+    if (isLParenToken(firstToken)
+      && isA_SymbolToken(this.peekAhead(1))
+      && isA_OperatorToken(this.peekAhead(2), '=>')) {
+      return null
+    }
+
     try {
       const { functionArguments, arity } = this.parseFunctionArguments()
 
@@ -599,6 +613,19 @@ export class AlgebraicParser {
   }
 
   parseFunctionArguments(): { functionArguments: FunctionArguments, arity: Arity } {
+    const firstToken = this.peek()
+    if (isA_SymbolToken(firstToken)) {
+      this.advance()
+      return {
+        functionArguments: {
+          m: [firstToken[1]],
+          b: [],
+          r: undefined,
+        } satisfies FunctionArguments,
+        arity: 1,
+      }
+    }
+
     this.advance()
     let rest = false
     let letBindingObject: AstNode | undefined
@@ -742,7 +769,6 @@ export class AlgebraicParser {
       t: AstNodeType.SpecialExpression,
       n: 'let',
       p: [],
-      token: getTokenDebugData(letSymbol.token) && letSymbol.token,
       bs: [{
         t: AstNodeType.Binding,
         n: letSymbol.v,
@@ -750,6 +776,7 @@ export class AlgebraicParser {
         p: [],
         token: getTokenDebugData(token) && token,
       }],
+      token: getTokenDebugData(letSymbol.token) && letSymbol.token,
     }
   }
 
@@ -1177,6 +1204,49 @@ export class AlgebraicParser {
     }
   }
 
+  parseFunction(token: A_ReservedSymbolToken<'function'>): LetNode {
+    this.advance()
+    const symbol = parseSymbol(this.tokenStream, this.parseState)
+    const { functionArguments, arity } = this.parseFunctionArguments()
+
+    const body: AstNode[] = []
+
+    while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+      body.push(this.parseExpression())
+      if (isA_OperatorToken(this.peek(), ';')) {
+        this.advance()
+      }
+    }
+    assertA_ReservedSymbolToken(this.peek(), 'end')
+    this.advance()
+
+    const fnNode: FnNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'fn',
+      p: [],
+      o: [{
+        as: functionArguments,
+        b: body,
+        a: arity,
+      }],
+      token: getTokenDebugData(token) && token,
+    }
+
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'let',
+      p: [],
+      bs: [{
+        t: AstNodeType.Binding,
+        n: symbol.v,
+        v: fnNode,
+        p: [],
+        token: getTokenDebugData(symbol.token) && symbol.token,
+      }],
+      token: getTokenDebugData(token) && token,
+    } satisfies LetNode
+  }
+
   parseDefn(token: A_SymbolToken): DefnNode {
     this.advance()
     const symbol = parseSymbol(this.tokenStream, this.parseState)
@@ -1230,5 +1300,9 @@ export class AlgebraicParser {
 
   private peek(): Token {
     return this.tokenStream.tokens[this.parseState.position]!
+  }
+
+  private peekAhead(count: number): Token | undefined {
+    return this.tokenStream.tokens[this.parseState.position + count]
   }
 }

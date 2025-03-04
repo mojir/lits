@@ -672,6 +672,22 @@ describe('algebraic operators', () => {
     })
   })
 
+  test('function', () => {
+    expect(lits.run(`
+function foo()
+  42
+end
+
+foo()`)).toBe(42)
+
+    expect(lits.run(`
+function foo(...x)
+  '+' apply (x filter => $ > 0)
+end
+
+foo(-1, 0, 1, 2, 3)`)).toBe(6)
+  })
+
   test('cond expression', () => {
     expect(lits.run(`
       def val = 8;
@@ -1032,6 +1048,11 @@ describe('algebraic operators', () => {
       expect(lits.run('(() => 1)()')).toBe(1)
       expect(lits.run('((x, y) => x + y)(3, 4)')).toBe(7)
       expect(lits.run('((x, y) => x + y)(10, -5)')).toBe(5)
+    })
+
+    it('supports single argument without parentheses', () => {
+      expect(lits.run('(x => x + 1)(1)')).toBe(2)
+      expect(lits.run('((x) => x + 1)(1)')).toBe(2)
     })
 
     it('supports lambda functions with let bindings', () => {
