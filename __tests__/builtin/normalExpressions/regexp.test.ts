@@ -75,8 +75,25 @@ describe('regexp functions', () => {
       })
     })
 
+    describe('replace_all', () => {
+      it('samples', () => {
+        expect(lits.run('(replace_all "abcabcABCABC" "abc" "ABC")')).toEqual('ABCABCABCABC')
+        expect(lits.run('(replace_all "abcabcABCABC" (regexp "^abc") "ABC")')).toEqual('ABCabcABCABC')
+        expect(lits.run('(replace_all "abcabcABCABC" (regexp :a) :A)')).toEqual('AbcAbcABCABC')
+        expect(lits.run('(replace_all "abcabcABCABC" (regexp :a :g) :A)')).toEqual('AbcAbcABCABC')
+        expect(lits.run('(replace_all "abcabcABCABC" (regexp :a "gi") "-")')).toEqual('-bc-bc-BC-BC')
+        expect(() => lits.run('(replace_all "abcabcABCABC" (regexp "^abc$") 1)')).toThrow()
+        expect(() => lits.run('(replace_all "abcabcABCABC" (regexp "^abc$") nil)')).toThrow()
+        expect(() => lits.run('(replace_all "abcabcABCABC" (regexp "^abc$") undefined)')).toThrow()
+        expect(() => lits.run('(replace_all "abcabcABCABC" (regexp "^abc$") true)')).toThrow()
+        expect(() => lits.run('(replace_all "abcabcABCABC" (regexp "^abc$") false)')).toThrow()
+        expect(() => lits.run('(replace_all "abcabcABCABC" (regexp "^abc$") [])')).toThrow()
+        expect(() => lits.run('(replace_all "abcabcABCABC" (regexp "^abc$") (object))')).toThrow()
+      })
+    })
     describe('replace', () => {
       it('samples', () => {
+        expect(lits.run('(replace "abcabcABCABC" "abc" "ABC")')).toEqual('ABCabcABCABC')
         expect(lits.run('(replace "abcabcABCABC" (regexp "^abc") "ABC")')).toEqual('ABCabcABCABC')
         expect(lits.run('(replace "abcabcABCABC" (regexp :a) :A)')).toEqual('AbcabcABCABC')
         expect(lits.run('(replace "abcabcABCABC" (regexp :a :g) :A)')).toEqual('AbcAbcABCABC')

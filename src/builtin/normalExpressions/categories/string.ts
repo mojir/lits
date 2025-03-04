@@ -10,6 +10,7 @@ import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../t
 import { toNonNegativeInteger } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
+const blankRegexp = /^\s*$/
 export const stringNormalExpression: BuiltinNormalExpressions = {
   'subs': {
     evaluate: ([first, second, third], sourceCodeInfo): Any => {
@@ -176,6 +177,13 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
     },
     validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 2, max: 3 }, node),
   },
+  'split_lines': {
+    evaluate: ([str], sourceCodeInfo): string[] => {
+      assertString(str, sourceCodeInfo)
+      return str.split((/\r\n|\n|\r/)).filter(line => line !== '')
+    },
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+  },
 
   'pad_left': {
     evaluate: ([str, length, padString], sourceCodeInfo): string => {
@@ -288,6 +296,23 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       }
     },
     validate: node => assertNumberOfParams(1, node),
+  },
+  'blank?': {
+    evaluate: ([value], sourceCodeInfo): boolean => {
+      if (value === null) {
+        return true
+      }
+      assertString(value, sourceCodeInfo)
+      return blankRegexp.test(value)
+    },
+    validate: node => assertNumberOfParams(1, node),
+  },
+  'capitalize': {
+    evaluate: ([str], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
+      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+    },
+    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
   },
 }
 

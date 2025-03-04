@@ -309,6 +309,30 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(map number (split "0123456789" "" 5))',
     ],
   },
+  'split_lines': {
+    title: 'split_lines',
+    category: 'String',
+    linkName: 'split_lines',
+    clojureDocs: null,
+    returns: {
+      type: 'string',
+    },
+    args: {
+      s: {
+        type: 'string',
+      },
+    },
+    variants: [
+      { argumentNames: ['s'] },
+    ],
+    description: 'Divides $s into an array of substrings, each representing a line.',
+    examples: [
+      '(split_lines "Albert\nMojir\n")',
+      '(split_lines "Albert\n\nMojir")',
+      '(split_lines "Albert\nMojir\n\n")',
+      '(split_lines "")',
+    ],
+  },
   'template': {
     title: 'template',
     category: 'String',
@@ -524,6 +548,55 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       '(++ "Albert" null "Mojir")',
       '(++ "Albert")',
       '(++)',
+    ],
+  },
+  'capitalize': {
+    title: 'capitalize',
+    category: 'String',
+    linkName: 'capitalize',
+    clojureDocs: 'clojure.string/capitalize',
+    returns: {
+      type: 'string',
+    },
+    args: {
+      s: {
+        type: 'string',
+      },
+    },
+    variants: [
+      { argumentNames: ['s'] },
+    ],
+    description: 'Returns $s with the first character converted to uppercase and the rest to lowercase.',
+    examples: [
+      '(capitalize "albert")',
+      '(capitalize "ALBERT")',
+      '(capitalize "aLBERT")',
+      '(capitalize "")',
+    ],
+  },
+  'blank?': {
+    title: 'blank?',
+    category: 'String',
+    linkName: 'blank-question',
+    clojureDocs: 'clojure.string/blank_q',
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      s: {
+        type: ['string', 'null'],
+      },
+    },
+    variants: [
+      { argumentNames: ['s'] },
+    ],
+    description: 'Returns true if $s is null or only contains whitespace characters.',
+    examples: [
+      '(blank? "")',
+      '(blank? null)',
+      '(blank? "\n")',
+      '(blank? " ")',
+      '(blank? ".")',
     ],
   },
 }

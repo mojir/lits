@@ -2,7 +2,7 @@ import type { FunctionReference } from '..'
 import type { SequenceApiName } from '../api'
 
 export const sequenceReference: Record<SequenceApiName, FunctionReference<'Sequence'>> = {
-  nth: {
+  'nth': {
     title: 'nth',
     category: 'Sequence',
     linkName: 'nth',
@@ -38,7 +38,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       '(nth nil 1 "Default value")',
     ],
   },
-  push: {
+  'push': {
     title: 'push',
     category: 'Sequence',
     linkName: 'push',
@@ -68,7 +68,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       '(def l [1 2 3]) (push l 4) l',
     ],
   },
-  pop: {
+  'pop': {
     title: 'pop',
     category: 'Sequence',
     linkName: 'pop',
@@ -91,7 +91,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       '(pop [])',
     ],
   },
-  unshift: {
+  'unshift': {
     title: 'unshift',
     category: 'Sequence',
     linkName: 'unshift',
@@ -123,7 +123,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
 l`,
     ],
   },
-  shift: {
+  'shift': {
     title: 'shift',
     category: 'Sequence',
     linkName: 'shift',
@@ -147,7 +147,7 @@ l`,
       '(shift [])',
     ],
   },
-  slice: {
+  'slice': {
     title: 'slice',
     category: 'Sequence',
     linkName: 'slice',
@@ -181,7 +181,7 @@ l`,
       '(slice [1 2 3 4 5] 2)',
     ],
   },
-  reductions: {
+  'reductions': {
     title: 'reductions',
     category: 'Sequence',
     linkName: 'reductions',
@@ -217,7 +217,7 @@ l`,
   [1 2 3 4 5 6 7 8 9])`,
     ],
   },
-  reduce: {
+  'reduce': {
     title: 'reduce',
     category: 'Sequence',
     linkName: 'reduce',
@@ -251,7 +251,7 @@ l`,
   [1 2 3 4 5 6 7 8 9])`,
     ],
   },
-  reduce_right: {
+  'reduce_right': {
     title: 'reduce_right',
     category: 'Sequence',
     linkName: 'reduce_right',
@@ -279,7 +279,7 @@ l`,
       '(reduce_right str [:A :B :C] "")',
     ],
   },
-  map: {
+  'map': {
     title: 'map',
     category: 'Sequence',
     linkName: 'map',
@@ -304,7 +304,7 @@ l`,
       '(map [1 2 3] inc)',
     ],
   },
-  filter: {
+  'filter': {
     title: 'filter',
     category: 'Sequence',
     linkName: 'filter',
@@ -334,7 +334,7 @@ l`,
   (fn [x] (> x 10)))`,
     ],
   },
-  position: {
+  'position': {
     title: 'position',
     category: 'Sequence',
     linkName: 'position',
@@ -373,7 +373,7 @@ l`,
   nil)`,
     ],
   },
-  index_of: {
+  'index_of': {
     title: 'index_of',
     category: 'Sequence',
     linkName: 'index_of',
@@ -400,7 +400,34 @@ l`,
       '(index_of nil 1)',
     ],
   },
-  some: {
+  'last_index_of': {
+    title: 'last_index_of',
+    category: 'Sequence',
+    linkName: 'last_index_of',
+    clojureDocs: null,
+    returns: {
+      type: ['number', 'null'],
+    },
+    args: {
+      seq: {
+        type: ['sequence', 'null'],
+      },
+      x: {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['seq', 'x'] },
+    ],
+    description: 'Returns the last index of $x in $seq. If element is not present in $seq `nil` is returned.',
+    examples: [
+      '(last_index_of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
+      '(last_index_of [5 10 15 20] 15)',
+      '(last_index_of [5 10 15 20] 1)',
+      '(last_index_of nil 1)',
+    ],
+  },
+  'some': {
     title: 'some',
     category: 'Sequence',
     linkName: 'some',
@@ -442,7 +469,7 @@ l`,
   (fn [x] (> x 10)))`,
     ],
   },
-  reverse: {
+  'reverse': {
     title: 'reverse',
     category: 'Sequence',
     linkName: 'reverse',
@@ -465,7 +492,7 @@ l`,
       '(reverse nil)',
     ],
   },
-  first: {
+  'first': {
     title: 'first',
     category: 'Sequence',
     linkName: 'first',
@@ -487,7 +514,7 @@ l`,
       '(first nil)',
     ],
   },
-  second: {
+  'second': {
     title: 'second',
     category: 'Sequence',
     linkName: 'second',
@@ -510,7 +537,7 @@ l`,
       '(second nil)',
     ],
   },
-  last: {
+  'last': {
     title: 'last',
     category: 'Sequence',
     linkName: 'last',
@@ -534,7 +561,7 @@ l`,
       '(last nil)',
     ],
   },
-  rest: {
+  'rest': {
     title: 'rest',
     category: 'Sequence',
     linkName: 'rest',
@@ -561,7 +588,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(rest "")',
     ],
   },
-  nthrest: {
+  'nthrest': {
     title: 'nthrest',
     category: 'Sequence',
     linkName: 'nthrest',
@@ -589,7 +616,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(nthrest "" 0)',
     ],
   },
-  next: {
+  'next': {
     title: 'next',
     category: 'Sequence',
     linkName: 'next',
@@ -614,7 +641,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(next "")',
     ],
   },
-  nthnext: {
+  'nthnext': {
     title: 'nthnext',
     category: 'Sequence',
     linkName: 'nthnext',
@@ -642,7 +669,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(nthnext "" 0)',
     ],
   },
-  take: {
+  'take': {
     title: 'take',
     category: 'Sequence',
     linkName: 'take',
@@ -668,7 +695,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(take 50 "Albert")',
     ],
   },
-  take_last: {
+  'take_last': {
     title: 'take_last',
     category: 'Sequence',
     linkName: 'take_last',
@@ -692,7 +719,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(take_last 0 [1 2 3 4 5])',
     ],
   },
-  take_while: {
+  'take_while': {
     title: 'take_while',
     category: 'Sequence',
     linkName: 'take_while',
@@ -722,7 +749,7 @@ For string $seq returns all but the first characters in $seq.`,
   (fn [x] (> x 3)))`,
     ],
   },
-  drop: {
+  'drop': {
     title: 'drop',
     category: 'Sequence',
     linkName: 'drop',
@@ -748,7 +775,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(drop "Albert" 50)',
     ],
   },
-  drop_last: {
+  'drop_last': {
     title: 'drop_last',
     category: 'Sequence',
     linkName: 'drop_last',
@@ -772,7 +799,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(drop_last [1 2 3 4 5] 0)',
     ],
   },
-  drop_while: {
+  'drop_while': {
     title: 'drop_while',
     category: 'Sequence',
     linkName: 'drop_while',
@@ -802,7 +829,7 @@ For string $seq returns all but the first characters in $seq.`,
   (fn [x] (> x 3)))`,
     ],
   },
-  sort: {
+  'sort': {
     title: 'sort',
     category: 'Sequence',
     linkName: 'sort',
@@ -835,7 +862,7 @@ For string $seq returns all but the first characters in $seq.`,
   (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))`,
     ],
   },
-  sort_by: {
+  'sort_by': {
     title: 'sort_by',
     category: 'Sequence',
     linkName: 'sort_by',
@@ -864,7 +891,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(sort_by "Albert" lower_case #(compare %2 %1))',
     ],
   },
-  distinct: {
+  'distinct': {
     title: 'distinct',
     category: 'Sequence',
     linkName: 'distinct',
@@ -887,7 +914,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(distinct "")',
     ],
   },
-  remove: {
+  'remove': {
     title: 'remove',
     category: 'Sequence',
     linkName: 'remove',
@@ -911,7 +938,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))',
     ],
   },
-  remove_at: {
+  'remove_at': {
     title: 'remove_at',
     category: 'Sequence',
     linkName: 'remove_at',
@@ -937,7 +964,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(remove_at "Albert Mojir" 6)',
     ],
   },
-  split_at: {
+  'split_at': {
     title: 'split_at',
     category: 'Sequence',
     linkName: 'split_at',
@@ -962,7 +989,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(split_at "Albert" 2)',
     ],
   },
-  split_with: {
+  'split_with': {
     title: 'split_with',
     category: 'Sequence',
     linkName: 'split_with',
@@ -987,7 +1014,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(split_with "Albert" #(<= %1 :Z))',
     ],
   },
-  frequencies: {
+  'frequencies': {
     title: 'frequencies',
     category: 'Sequence',
     linkName: 'frequencies',
@@ -1008,7 +1035,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")',
     ],
   },
-  group_by: {
+  'group_by': {
     title: 'group_by',
     category: 'Sequence',
     linkName: 'group_by',
@@ -1032,7 +1059,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(group_by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))',
     ],
   },
-  partition: {
+  'partition': {
     title: 'partition',
     category: 'Sequence',
     linkName: 'partition',
@@ -1077,7 +1104,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
     ],
   },
-  partition_all: {
+  'partition_all': {
     title: 'partition_all',
     category: 'Sequence',
     linkName: 'partition_all',
@@ -1106,7 +1133,7 @@ For string $seq returns all but the first characters in $seq.`,
       '(partition_all [0 1 2 3 4 5 6 7 8 9] 2 4)',
     ],
   },
-  partition_by: {
+  'partition_by': {
     title: 'partition_by',
     category: 'Sequence',
     linkName: 'partition_by',
@@ -1129,6 +1156,114 @@ For string $seq returns all but the first characters in $seq.`,
       '(partition_by [1 2 3 4 5] #(== 3 %1))',
       '(partition_by [1 1 1 2 2 3 3] odd?)',
       '(partition_by "Leeeeeerrroyyy" identity)',
+    ],
+  },
+  'starts_with?': {
+    title: 'starts_with?',
+    category: 'Sequence',
+    linkName: 'starts_with-question',
+    clojureDocs: null,
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      seq: {
+        type: 'sequence',
+      },
+      prefix: {
+        type: 'sequence',
+      },
+    },
+    variants: [
+      { argumentNames: ['seq', 'prefix'] },
+    ],
+    description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
+    examples: [
+      '(starts_with? [1 2 3 4 5] 1)',
+      '(starts_with? [1 2 3 4 5] [1])',
+      '(starts_with? "Albert" "Al")',
+      '(starts_with? "Albert" "al")',
+    ],
+  },
+  'ends_with?': {
+    title: 'ends_with?',
+    category: 'Sequence',
+    linkName: 'ends_with-question',
+    clojureDocs: null,
+    returns: {
+      type: 'boolean',
+    },
+    args: {
+      seq: {
+        type: 'sequence',
+      },
+      suffix: {
+        type: 'sequence',
+      },
+    },
+    variants: [
+      { argumentNames: ['seq', 'suffix'] },
+    ],
+    description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
+    examples: [
+      '(ends_with? [1 2 3 4 5] 5)',
+      '(ends_with? [1 2 3 4 5] [5])',
+      '(ends_with? "Albert" "rt")',
+      '(ends_with? "Albert" "RT")',
+    ],
+  },
+  'interleave': {
+    title: 'interleave',
+    category: 'Sequence',
+    linkName: 'interleave',
+    clojureDocs: null,
+    returns: {
+      type: 'sequence',
+    },
+    args: {
+      seqs: {
+        type: 'sequence',
+        array: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['seqs'] },
+    ],
+    description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
+    examples: [
+      '(interleave [1 2 3] [4 5 6])',
+      '(interleave [1 2 3] [4 5 6] [7 8 9])',
+      '(interleave [1 2 3] [4 5 6] [7 8])',
+      '(interleave [1 2 3] [4 5 6] [7])',
+      '(interleave [1 2 3] [4 5 6] [])',
+      '(interleave [1 2 3] [])',
+      '(interleave [])',
+    ],
+  },
+  'interpose': {
+    title: 'interpose',
+    category: 'Sequence',
+    linkName: 'interpose',
+    clojureDocs: null,
+    returns: {
+      type: 'sequence',
+    },
+    args: {
+      seq: {
+        type: 'sequence',
+      },
+      separator: {
+        type: 'any',
+      },
+    },
+    variants: [
+      { argumentNames: ['seq', 'separator'] },
+    ],
+    description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
+    examples: [
+      '(interpose :a [1 2 3 4 5])',
+      '(interpose " " ["Albert" "Mojir" "Nina"])',
+      '(interpose "." "Albert")',
     ],
   },
 }

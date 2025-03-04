@@ -1,5 +1,5 @@
 import type { RegularExpression } from '../../../parser/interface'
-import { assertRegularExpression } from '../../../typeGuards/lits'
+import { assertRegularExpression, assertStringOrRegularExpression, isRegularExpression } from '../../../typeGuards/lits'
 import { assertString, isString } from '../../../typeGuards/string'
 import { assertNumberOfParams } from '../../../typeGuards'
 import { REGEXP_SYMBOL } from '../../../utils/symbols'
@@ -41,11 +41,22 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
   replace: {
     evaluate: ([str, regexp, value], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
-      assertRegularExpression(regexp, sourceCodeInfo)
+      assertStringOrRegularExpression(regexp, sourceCodeInfo)
       assertString(value, sourceCodeInfo)
 
-      const regExp = new RegExp(regexp.s, regexp.f)
-      return str.replace(regExp, value)
+      const matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, `${regexp.f}`) : regexp
+      return str.replace(matcher, value)
+    },
+    validate: node => assertNumberOfParams(3, node),
+  },
+  replace_all: {
+    evaluate: ([str, regexp, value], sourceCodeInfo): string => {
+      assertString(str, sourceCodeInfo)
+      assertStringOrRegularExpression(regexp, sourceCodeInfo)
+      assertString(value, sourceCodeInfo)
+      const matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, `${regexp.f.includes('g') ? regexp.f : `${regexp.f}g`}`) : regexp
+
+      return str.replaceAll(matcher, value)
     },
     validate: node => assertNumberOfParams(3, node),
   },

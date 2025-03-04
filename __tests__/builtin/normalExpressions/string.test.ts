@@ -175,6 +175,14 @@ describe('string functions', () => {
       })
     })
 
+    describe('split_lines', () => {
+      it('samples', () => {
+        expect(lits.run('(split_lines "Albert\nMojir")')).toEqual(['Albert', 'Mojir'])
+        expect(lits.run('(split_lines "Albert\nMojir\n")')).toEqual(['Albert', 'Mojir'])
+        expect(lits.run('(split_lines "\n\nAlbert\n\n\nMojir\n")')).toEqual(['Albert', 'Mojir'])
+      })
+    })
+
     describe('string_repeat', () => {
       it('samples', () => {
         expect(lits.run('(string_repeat "*" 10)')).toBe('**********')
@@ -315,6 +323,36 @@ describe('string functions', () => {
       expect(lits.run(':a')).toBe('a')
       expect(lits.run(':a-a')).toBe('a-a')
       expect(() => lits.run(':')).toThrow()
+    })
+    describe('capitalize', () => {
+      it('samples', () => {
+        expect(lits.run('(capitalize "albert")')).toBe('Albert')
+        expect(lits.run('(capitalize "Albert")')).toBe('Albert')
+        expect(lits.run('(capitalize "ALBERT")')).toBe('Albert')
+        expect(lits.run('(capitalize "")')).toBe('')
+        expect(() => lits.run('(capitalize)')).toThrow()
+        expect(() => lits.run('(capitalize "First" "Second")')).toThrow()
+      })
+    })
+    describe('blank?', () => {
+      it('samples', () => {
+        expect(lits.run('(blank? "")')).toBe(true)
+        expect(lits.run('(blank? " ")')).toBe(true)
+        expect(lits.run('(blank? "\n")')).toBe(true)
+        expect(lits.run('(blank? "  ")')).toBe(true)
+        expect(lits.run('(blank? "  a")')).toBe(false)
+        expect(lits.run('(blank? "a  ")')).toBe(false)
+        expect(lits.run('(blank? " a ")')).toBe(false)
+        expect(lits.run('(blank? " a b ")')).toBe(false)
+        expect(lits.run('(blank? nil)')).toBe(true)
+        expect(() => lits.run('(blank? true)')).toThrow()
+        expect(() => lits.run('(blank? false)')).toThrow()
+        expect(() => lits.run('(blank? 0)')).toThrow()
+        expect(() => lits.run('(blank? [])')).toThrow()
+        expect(() => lits.run('(blank? {})')).toThrow()
+        expect(() => lits.run('(blank?)')).toThrow()
+        expect(() => lits.run('(blank? "a" "b")')).toThrow()
+      })
     })
   }
 })

@@ -242,7 +242,7 @@ describe('algebraic operators', () => {
       expect(lits.run('\'||\'(0, 1, 2)')).toBe(1)
       expect(lits.run('if 1 > 2 then 2 end')).toBe(null)
       expect(lits.run('if 1 < 2 then 2 end')).toBe(2)
-      expect(lits.run('\'remove_at\'(1, [1, 2, 3])')).toEqual([1, 3])
+      expect(lits.run('remove_at([1, 2, 3], 1)')).toEqual([1, 3])
     })
   })
 
@@ -545,14 +545,6 @@ describe('algebraic operators', () => {
     })
   })
 
-  test('defn', () => {
-    expect(lits.run(`
-      defn add(a, b)
-        a + b
-      end
-      add(2, 3)`)).toBe(5)
-  })
-
   describe('do', () => {
     test('as operand', () => {
       expect(lits.run(`
@@ -565,26 +557,26 @@ describe('algebraic operators', () => {
       expect(lits.run(`
       let a = 1;
       do
-        let a = 2
+        let a = 2;
       end;
       a`)).toBe(1)
 
       expect(() => lits.run(`
       do
-        let a = 2
+        let a = 2;
       end;
       a`)).toThrow() // a is not defined
 
       expect(lits.run(`
       let a = 1;
       do
-        def a = 2
+        export a = 2;
       end;
       a`)).toBe(1)
 
       expect(lits.run(`
       do
-        def a = 2
+        export a = 2;
       end;
       a`)).toBe(2)
     })
@@ -690,7 +682,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
 
   test('cond expression', () => {
     expect(lits.run(`
-      def val = 8;
+      let val = 8;
 
       cond
         case val < 5 then "S"
@@ -699,7 +691,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       end ?? "No match"`)).toBe('M')
 
     expect(lits.run(`
-        def val = 20;
+        let val = 20;
 
         cond
           case val < 5 then "S"
@@ -713,14 +705,14 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       case "-" then 1
     end`)).toBe(1)
     expect(lits.run(`
-      def x = 1;
+      let x = 1;
       switch x
         case 0 then "zero"
         case 1 then "one"
         case 2 then "two"
       end`)).toBe('one')
     expect(lits.run(`
-      def x = 10;
+      let x = 10;
       switch x
         case 0 then "zero"
         case 1 then "one"
@@ -1012,6 +1004,11 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     it('handles complex nested expressions', () => {
       expect(lits.run('{ a=[1, 2, { b=3 }] }.a[2].b')).toBe(3)
       expect(lits.run('[[1, 2], [3, 4]][1][abs(-1)]')).toBe(4)
+    })
+
+    test('regexp shorthands', () => {
+      expect(lits.run('"abc" match #"a"')).toBeTruthy()
+      expect(lits.run('"abc" match #"d"')).toBeNull()
     })
 
     it('handles super complex arithmetic expressions', () => {

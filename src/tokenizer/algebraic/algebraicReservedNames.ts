@@ -12,6 +12,7 @@ const validAlgebraicReservedNamesRecord = {
   when: { value: null, forbidden: false },
   while: { value: null, forbidden: false },
   function: { value: null, forbidden: false },
+  export: { value: null, forbidden: false },
 } as const satisfies Record<string, { value: Any, forbidden: false }>
 
 const forbiddenAlgebraicReservedNamesRecord = {

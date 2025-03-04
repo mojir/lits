@@ -3,7 +3,7 @@ import { builtin, specialExpressionKeys } from '../builtin'
 import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DefNode } from '../builtin/specialExpressions/def'
 import type { DoNode } from '../builtin/specialExpressions/do'
-import type { DefnNode, FnNode } from '../builtin/specialExpressions/functions'
+import type { FnNode } from '../builtin/specialExpressions/functions'
 import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
@@ -190,6 +190,14 @@ export class AlgebraicParser {
     private parseState: ParseState,
   ) {}
 
+  private peek(): Token {
+    return this.tokenStream.tokens[this.parseState.position]!
+  }
+
+  private peekAhead(count: number): Token | undefined {
+    return this.tokenStream.tokens[this.parseState.position + count]
+  }
+
   private advance(): void {
     this.parseState.position += 1
   }
@@ -213,10 +221,6 @@ export class AlgebraicParser {
 
     if (isA_SymbolToken(firstToken)) {
       switch (firstToken[1]) {
-        case 'def':
-          return this.parseDef(firstToken)
-        case 'defn':
-          return this.parseDefn(firstToken)
         case 'let':
           return this.parseLet(firstToken)
         case 'if':
@@ -246,6 +250,9 @@ export class AlgebraicParser {
     }
     else if (isA_ReservedSymbolToken(firstToken, 'function')) {
       return this.parseFunction(firstToken)
+    }
+    else if (isA_ReservedSymbolToken(firstToken, 'export')) {
+      return this.parseExport(firstToken)
     }
 
     left ||= this.parseOperand()
@@ -542,7 +549,7 @@ export class AlgebraicParser {
     this.advance()
     if (isNamedFunction) {
       if (specialExpressionKeys.includes(symbol.v)) {
-        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'def' | 'defn' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq'>
+        const name: SpecialExpressionName = symbol.v as Exclude<SpecialExpressionName, 'for' | 'if' | 'unless' | 'cond' | 'switch' | 'let' | 'do' | 'loop' | 'try' | 'doseq'>
         switch (name) {
           case '??':
           case '&&':
@@ -561,6 +568,8 @@ export class AlgebraicParser {
             return node
           }
           case 'fn':
+          case 'def':
+          case 'defn':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)
           default:
             throw new Error(`Unknown special expression: ${name satisfies never}`)
@@ -757,7 +766,7 @@ export class AlgebraicParser {
     return node
   }
 
-  private parseLet(token: A_SymbolToken): LetNode {
+  private parseLet(token: A_SymbolToken, optionalSemicolon = false): LetNode {
     this.advance()
 
     const letSymbol = parseSymbol(this.tokenStream, this.parseState)
@@ -766,6 +775,10 @@ export class AlgebraicParser {
     this.advance()
 
     const value = this.parseExpression()
+
+    if (!optionalSemicolon) {
+      assertA_OperatorToken(this.peek(), ';')
+    }
 
     return {
       t: AstNodeType.SpecialExpression,
@@ -970,7 +983,7 @@ export class AlgebraicParser {
       modifiers.push('&let')
       letBindings = []
       while (isA_SymbolToken(token, 'let')) {
-        const letNode = this.parseLet(token)
+        const letNode = this.parseLet(token, true)
         letBindings.push(letNode.bs[0]!)
         token = this.peek()
       }
@@ -1192,20 +1205,6 @@ export class AlgebraicParser {
     }
   }
 
-  parseDef(token: A_SymbolToken): DefNode {
-    this.advance()
-    const symbol = parseSymbol(this.tokenStream, this.parseState)
-    assertA_OperatorToken(this.peek(), '=')
-    this.advance()
-    const value = this.parseExpression()
-    return {
-      t: AstNodeType.SpecialExpression,
-      n: 'def',
-      p: [symbol, value],
-      token: getTokenDebugData(token) && token,
-    }
-  }
-
   parseFunction(token: A_ReservedSymbolToken<'function'>): LetNode {
     this.advance()
     const symbol = parseSymbol(this.tokenStream, this.parseState)
@@ -1249,36 +1248,6 @@ export class AlgebraicParser {
     } satisfies LetNode
   }
 
-  parseDefn(token: A_SymbolToken): DefnNode {
-    this.advance()
-    const symbol = parseSymbol(this.tokenStream, this.parseState)
-    const { functionArguments, arity } = this.parseFunctionArguments()
-
-    const body: AstNode[] = []
-
-    while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
-      body.push(this.parseExpression())
-      if (isA_OperatorToken(this.peek(), ';')) {
-        this.advance()
-      }
-    }
-    assertA_ReservedSymbolToken(this.peek(), 'end')
-    this.advance()
-
-    return {
-      t: AstNodeType.SpecialExpression,
-      n: 'defn',
-      f: symbol,
-      p: [],
-      o: [{
-        as: functionArguments,
-        b: body,
-        a: arity,
-      }],
-      token: getTokenDebugData(token) && token,
-    }
-  }
-
   private isAtEnd(): boolean {
     return this.parseState.position >= this.tokenStream.tokens.length
   }
@@ -1300,11 +1269,28 @@ export class AlgebraicParser {
     return false
   }
 
-  private peek(): Token {
-    return this.tokenStream.tokens[this.parseState.position]!
-  }
-
-  private peekAhead(count: number): Token | undefined {
-    return this.tokenStream.tokens[this.parseState.position + count]
+  private parseExport(token: A_ReservedSymbolToken<'export'>): DefNode {
+    this.advance()
+    const symbol = parseSymbol(this.tokenStream, this.parseState)
+    if (isA_OperatorToken(this.peek(), ';')) {
+      return {
+        t: AstNodeType.SpecialExpression,
+        n: 'def',
+        p: [symbol, symbol],
+        token: getTokenDebugData(token) && token,
+      }
+    }
+    if (!isA_OperatorToken(this.peek(), '=')) {
+      throw new LitsError('Expected = or ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
+    }
+    this.advance()
+    const value = this.parseExpression()
+    assertA_OperatorToken(this.peek(), ';')
+    return {
+      t: AstNodeType.SpecialExpression,
+      n: 'def',
+      p: [symbol, value],
+      token: getTokenDebugData(token) && token,
+    }
   }
 }

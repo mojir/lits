@@ -41,6 +41,7 @@ export const api = {
     'filter',
     'position',
     'index_of',
+    'last_index_of',
     'some',
     'reverse',
     'first',
@@ -68,6 +69,10 @@ export const api = {
     'partition',
     'partition_all',
     'partition_by',
+    'starts_with?',
+    'ends_with?',
+    'interleave',
+    'interpose',
   ] as const,
   math: [
     '+',
@@ -188,6 +193,7 @@ export const api = {
     'regexp',
     'match',
     'replace',
+    'replace_all',
   ] as const,
   specialExpressions: [
     '&&',
@@ -224,6 +230,7 @@ export const api = {
     'pad_left',
     'pad_right',
     'split',
+    'split_lines',
     'template',
     'to_char_code',
     'from_char_code',
@@ -233,6 +240,8 @@ export const api = {
     'decode_uri_component',
     'join',
     '++',
+    'capitalize',
+    'blank?',
   ] as const,
   bitwise: [
     '<<',

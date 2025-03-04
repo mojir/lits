@@ -76,7 +76,7 @@ If $s is a string and matches the regular expression, a \`match\`-array is retur
         type: 'string',
       },
       r: {
-        type: 'regexp',
+        type: ['regexp', 'string'],
       },
       x: {
         type: 'string',
@@ -85,11 +85,47 @@ If $s is a string and matches the regular expression, a \`match\`-array is retur
     variants: [
       { argumentNames: ['s', 'r', 'x'] },
     ],
-    description: 'Returns a new string with some or all matches of regular expression $r replaced by $x.',
+    description: 'Returns a new string with first match of regular expression $r replaced by $x.',
     examples: [
-      '(replace "Duck" (regexp :u) :i)',
+      '(replace "Duck duck" "u" :i)',
+      '(replace "Duck duck" (regexp :u) :i)',
+      '(replace "abcABC" (regexp :a "i") "-")',
       '(replace "abcABC" (regexp :a "gi") "-")',
+      '(replace "abcABC" #"a"i "-")',
       '(replace "abcABC" #"a"gi "-")',
+    ],
+  },
+  replace_all: {
+    title: 'replace_all',
+    category: 'Regular expression',
+    linkName: 'replace_all',
+    clojureDocs: null,
+    returns: {
+      type: 'any',
+      array: true,
+    },
+    args: {
+      s: {
+        type: 'string',
+      },
+      r: {
+        type: ['regexp', 'string'],
+      },
+      x: {
+        type: 'string',
+      },
+    },
+    variants: [
+      { argumentNames: ['s', 'r', 'x'] },
+    ],
+    description: 'Returns a new string with all matches of regular expression $r replaced by $x.',
+    examples: [
+      '(replace_all "Duck duck" "u" :i)',
+      '(replace_all "Duck duck" (regexp :u) :i)',
+      '(replace_all "abcABC" (regexp :a "i") "-")',
+      '(replace_all "abcABC" (regexp :a "gi") "-")',
+      '(replace_all "abcABC" #"a"i "-")',
+      '(replace_all "abcABC" #"a"gi "-")',
     ],
   },
 }
