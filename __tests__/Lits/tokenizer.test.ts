@@ -61,7 +61,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         algebraic: false,
         tokens: [
-          ['P_RegexpShorthand', '#"Hi"', {
+          ['RegexpShorthand', '#"Hi"', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"', filePath: 'foo.lits' },
           }],
         ],
@@ -71,7 +71,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         algebraic: false,
         tokens: [
-          ['P_RegexpShorthand', '#"Hi"g', {
+          ['RegexpShorthand', '#"Hi"g', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"g' },
           }],
         ],
@@ -80,7 +80,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         algebraic: false,
         tokens: [
-          ['P_RegexpShorthand', '#"Hi"i', {
+          ['RegexpShorthand', '#"Hi"i', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"i' },
           }],
         ],
@@ -89,7 +89,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         algebraic: false,
         tokens: [
-          ['P_RegexpShorthand', '#"Hi"gi', {
+          ['RegexpShorthand', '#"Hi"gi', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"gi' },
           }],
         ],
@@ -98,7 +98,7 @@ describe('tokenizer', () => {
         hasDebugData: true,
         algebraic: false,
         tokens: [
-          ['P_RegexpShorthand', '#"Hi"ig', {
+          ['RegexpShorthand', '#"Hi"ig', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#"Hi"ig' },
           }],
         ],

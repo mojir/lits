@@ -143,8 +143,8 @@ describe('context', () => {
   it('a variable - again.', () => {
     const contexts = [
       lits.context(`
-    (defn zip? [string] (boolean (match (regexp "^\\d{5}$") string)))
-    (defn isoDateString? [string] (boolean (match (regexp "^\\d{4}-\\d{2}-\\d{2}$") string)))
+    (defn zip? [string] (boolean (match string (regexp "^\\d{5}$"))))
+    (defn isoDateString? [string] (boolean (match string (regexp "^\\d{4}-\\d{2}-\\d{2}$"))))
     (def NAME_LENGTH 100)
     `),
     ]

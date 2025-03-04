@@ -20,7 +20,6 @@ export const polishOnlyValueTokenTypes = [
   'P_StringShorthand',
   'P_Symbol',
   'P_ReservedSymbol',
-  'P_RegexpShorthand',
   'P_CollectionAccessor',
   'P_Comment',
   'P_Whitespace',
@@ -49,7 +48,6 @@ export type P_ModifierToken = GenericPolishValueToken<'P_Modifier', ModifierName
 export type P_StringShorthandToken = GenericPolishValueToken<'P_StringShorthand'>
 export type P_SymbolToken = GenericPolishValueToken<'P_Symbol'>
 export type P_ReservedSymbolToken = GenericPolishValueToken<'P_ReservedSymbol'>
-export type P_RegexpShorthandToken = GenericPolishValueToken<'P_RegexpShorthand'>
 export type P_CollectionAccessorToken = GenericPolishValueToken<'P_CollectionAccessor', '.' | '#'>
 export type P_CommentToken = GenericPolishValueToken<'P_Comment'>
 export type P_WhitespaceToken = GenericPolishValueToken<'P_Whitespace'>
@@ -63,7 +61,6 @@ export type PolishOnlyValueToken =
   | P_StringShorthandToken
   | P_SymbolToken
   | P_ReservedSymbolToken
-  | P_RegexpShorthandToken
   | P_CollectionAccessorToken
   | P_CommentToken
   | P_WhitespaceToken
@@ -124,19 +121,6 @@ export function assertP_ModifierToken(token?: Token): asserts token is P_Modifie
 }
 export function asP_ModifierToken(token?: Token): P_ModifierToken {
   assertP_ModifierToken(token)
-  return token
-}
-
-export function isP_RegexpShorthandToken(token?: Token): token is P_RegexpShorthandToken {
-  return token?.[0] === 'P_RegexpShorthand'
-}
-export function assertP_RegexpShorthandToken(token?: Token): asserts token is P_RegexpShorthandToken {
-  if (!isP_RegexpShorthandToken(token)) {
-    throwUnexpectedToken('P_RegexpShorthand', undefined, token)
-  }
-}
-export function asP_RegexpShorthandToken(token?: Token): P_RegexpShorthandToken {
-  assertP_RegexpShorthandToken(token)
   return token
 }
 

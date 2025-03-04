@@ -15,6 +15,7 @@ export const commonSimpleTokenTypes = [
 
 export const commomValueTokenTypes = [
   'String',
+  'RegexpShorthand',
 ] as const
 
 export type CommonSimpleTokenType = typeof commonSimpleTokenTypes[number]
@@ -34,6 +35,7 @@ export type PolishNotationToken = GenericCommonSimpleToken<'PolNotation'>
 export type EndNotationToken = GenericCommonSimpleToken<'EndNotation'>
 
 export type StringToken = GenericCommonValueToken<'String'>
+export type RegexpShorthandToken = GenericCommonValueToken<'RegexpShorthand'>
 
 export type CommonSimpleToken =
   | LParenToken
@@ -48,6 +50,7 @@ export type CommonSimpleToken =
 
 export type CommonValueToken =
   | StringToken
+  | RegexpShorthandToken
 
 export function isLParenToken(token?: Token): token is LParenToken {
   return token?.[0] === 'LParen'
@@ -137,6 +140,19 @@ export function assertStringToken(token?: Token): asserts token is StringToken {
 }
 export function asStringToken(token?: Token): StringToken {
   assertStringToken(token)
+  return token
+}
+
+export function isRegexpShorthandToken(token?: Token): token is RegexpShorthandToken {
+  return token?.[0] === 'RegexpShorthand'
+}
+export function assertRegexpShorthandToken(token?: Token): asserts token is RegexpShorthandToken {
+  if (!isRegexpShorthandToken(token)) {
+    throwUnexpectedToken('RegexpShorthand', undefined, token)
+  }
+}
+export function asRegexpShorthandToken(token?: Token): RegexpShorthandToken {
+  assertRegexpShorthandToken(token)
   return token
 }
 

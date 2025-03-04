@@ -1,12 +1,14 @@
 import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
-import { asStringToken } from '../tokenizer/common/commonTokens'
+import { asRegexpShorthandToken, asStringToken } from '../tokenizer/common/commonTokens'
 import { isA_BasePrefixedNumberToken, isA_NumberToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { isP_NumberToken, isP_ReservedSymbolToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type {
+  NormalExpressionNode,
+  NormalExpressionNodeWithName,
   NumberNode,
   ParseState,
   ReservedSymbolNode,
@@ -157,4 +159,36 @@ export function parseString(tokenStream: TokenStream, parseState: ParseState): S
     n: undefined,
     token: getTokenDebugData(tkn) && tkn,
   }
+}
+
+export function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNodeWithName {
+  const tkn = asRegexpShorthandToken(tokenStream.tokens[parseState.position++])
+
+  const endStringPosition = tkn[1].lastIndexOf('"')
+  const regexpString = tkn[1].substring(2, endStringPosition)
+  const optionsString = tkn[1].substring(endStringPosition + 1)
+  const stringNode: StringNode = {
+    t: AstNodeType.String,
+    v: regexpString,
+    p: [],
+    n: undefined,
+    token: getTokenDebugData(tkn) && tkn,
+  }
+
+  const optionsNode: StringNode = {
+    t: AstNodeType.String,
+    v: optionsString,
+    p: [],
+    n: undefined,
+    token: getTokenDebugData(tkn) && tkn,
+  }
+
+  const node: NormalExpressionNode = {
+    t: AstNodeType.NormalExpression,
+    n: 'regexp',
+    p: [stringNode, optionsNode],
+    token: getTokenDebugData(tkn) && tkn,
+  }
+
+  return node
 }

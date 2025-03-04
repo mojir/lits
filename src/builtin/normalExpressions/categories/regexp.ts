@@ -23,7 +23,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
     validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
   },
   match: {
-    evaluate: ([regexp, text], sourceCodeInfo): string[] | null => {
+    evaluate: ([text, regexp], sourceCodeInfo): string[] | null => {
       assertRegularExpression(regexp, sourceCodeInfo)
       if (!isString(text))
         return null

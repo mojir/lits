@@ -4,7 +4,6 @@ import {
   NO_MATCH,
   commonTokenizers,
   isNoMatch,
-  tokenizeString,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
 import { polishReservedNamesRecord } from './polishReservedNames'
@@ -15,7 +14,6 @@ import type {
   P_FnShorthandToken,
   P_ModifierToken,
   P_NumberToken,
-  P_RegexpShorthandToken,
   P_ReservedSymbolToken,
   P_StringShorthandToken,
   P_SymbolToken,
@@ -238,30 +236,6 @@ export const tokenizeP_CollectionAccessor: Tokenizer<P_CollectionAccessorToken> 
   return [1, ['P_CollectionAccessor', char]]
 }
 
-export const tokenizeP_RegexpShorthand: Tokenizer<P_RegexpShorthandToken> = (input, position) => {
-  if (input[position] !== '#')
-    return NO_MATCH
-
-  const [stringLength, token] = tokenizeString(input, position + 1)
-  if (!token)
-    return NO_MATCH
-
-  position += stringLength + 1
-  let length = stringLength + 1
-
-  let options = ''
-  while (input[position] === 'g' || input[position] === 'i') {
-    if (options.includes(input[position]!)) {
-      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`, undefined)
-    }
-    options += input[position]!
-    length += 1
-    position += 1
-  }
-
-  return [length, ['P_RegexpShorthand', `#${token[1]}${options}`]]
-}
-
 // All tokenizers, order matters!
 export const polishTokenizers = [
   tokenizeP_Whitespace,
@@ -272,7 +246,6 @@ export const polishTokenizers = [
   tokenizeP_ReservedSymbol,
   tokenizeP_Modifier,
   tokenizeP_Symbol,
-  tokenizeP_RegexpShorthand,
   tokenizeP_FnShorthand,
   tokenizeP_CollectionAccessor,
 ] as const satisfies Tokenizer<PolishToken>[]

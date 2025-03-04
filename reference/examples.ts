@@ -162,8 +162,8 @@ export const examples: Example[] = [
 (defn isoDateString? [$data]
   (let [m
            (match
-             #"^(\\d{4})-(\\d{2})-(\\d{2})$"
-             $data)])
+             $data
+             #"^(\\d{4})-(\\d{2})-(\\d{2})$")])
   (if m
     (do
       (let

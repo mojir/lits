@@ -779,6 +779,7 @@ var Playground = (function (exports) {
     ];
     var commomValueTokenTypes = [
         'String',
+        'RegexpShorthand',
     ];
     function isLParenToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'LParen';
@@ -850,6 +851,18 @@ var Playground = (function (exports) {
     }
     function asStringToken(token) {
         assertStringToken(token);
+        return token;
+    }
+    function isRegexpShorthandToken(token) {
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'RegexpShorthand';
+    }
+    function assertRegexpShorthandToken(token) {
+        if (!isRegexpShorthandToken(token)) {
+            throwUnexpectedToken('RegexpShorthand', undefined, token);
+        }
+    }
+    function asRegexpShorthandToken(token) {
+        assertRegexpShorthandToken(token);
         return token;
     }
     function isAlgebraicNotationToken(token) {
@@ -1033,7 +1046,6 @@ var Playground = (function (exports) {
         'P_StringShorthand',
         'P_Symbol',
         'P_ReservedSymbol',
-        'P_RegexpShorthand',
         'P_CollectionAccessor',
         'P_Comment',
         'P_Whitespace',
@@ -1070,18 +1082,6 @@ var Playground = (function (exports) {
     }
     function isP_ModifierToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'P_Modifier';
-    }
-    function isP_RegexpShorthandToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'P_RegexpShorthand';
-    }
-    function assertP_RegexpShorthandToken(token) {
-        if (!isP_RegexpShorthandToken(token)) {
-            throwUnexpectedToken('P_RegexpShorthand', undefined, token);
-        }
-    }
-    function asP_RegexpShorthandToken(token) {
-        assertP_RegexpShorthandToken(token);
-        return token;
     }
     function isP_FnShorthandToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'P_FnShorthand';
@@ -4372,7 +4372,7 @@ var Playground = (function (exports) {
         },
         match: {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), regexp = _b[0], text = _b[1];
+                var _b = __read(_a, 2), text = _b[0], regexp = _b[1];
                 assertRegularExpression(regexp, sourceCodeInfo);
                 if (!isString(text))
                     return null;
@@ -6636,6 +6636,33 @@ var Playground = (function (exports) {
             token: getTokenDebugData(tkn) && tkn,
         };
     }
+    function parseRegexpShorthand(tokenStream, parseState) {
+        var tkn = asRegexpShorthandToken(tokenStream.tokens[parseState.position++]);
+        var endStringPosition = tkn[1].lastIndexOf('"');
+        var regexpString = tkn[1].substring(2, endStringPosition);
+        var optionsString = tkn[1].substring(endStringPosition + 1);
+        var stringNode = {
+            t: AstNodeType.String,
+            v: regexpString,
+            p: [],
+            n: undefined,
+            token: getTokenDebugData(tkn) && tkn,
+        };
+        var optionsNode = {
+            t: AstNodeType.String,
+            v: optionsString,
+            p: [],
+            n: undefined,
+            token: getTokenDebugData(tkn) && tkn,
+        };
+        var node = {
+            t: AstNodeType.NormalExpression,
+            n: 'regexp',
+            p: [stringNode, optionsNode],
+            token: getTokenDebugData(tkn) && tkn,
+        };
+        return node;
+    }
 
     var exponentiationPrecedence = 10;
     var binaryFunctionalOperatorPrecedence = 1;
@@ -6973,6 +7000,8 @@ var Playground = (function (exports) {
                 }
                 case 'A_ReservedSymbol':
                     return parseReservedSymbol(this.tokenStream, this.parseState);
+                case 'RegexpShorthand':
+                    return parseRegexpShorthand(this.tokenStream, this.parseState);
                 case 'PolNotation': {
                     this.parseState.algebraic = false;
                     var astNodes = [];
@@ -7833,33 +7862,6 @@ var Playground = (function (exports) {
         assertEvenNumberOfParams(node);
         return node;
     }
-    function parseRegexpShorthand(tokenStream, parseState) {
-        var tkn = asP_RegexpShorthandToken(tokenStream.tokens[parseState.position++]);
-        var endStringPosition = tkn[1].lastIndexOf('"');
-        var regexpString = tkn[1].substring(2, endStringPosition);
-        var optionsString = tkn[1].substring(endStringPosition + 1);
-        var stringNode = {
-            t: AstNodeType.String,
-            v: regexpString,
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-        var optionsNode = {
-            t: AstNodeType.String,
-            v: optionsString,
-            p: [],
-            n: undefined,
-            token: getTokenDebugData(tkn) && tkn,
-        };
-        var node = {
-            t: AstNodeType.NormalExpression,
-            n: 'regexp',
-            p: [stringNode, optionsNode],
-            token: getTokenDebugData(tkn) && tkn,
-        };
-        return node;
-    }
     var placeholderRegexp = /^%([1-9]\d?)?$/;
     function parseFnShorthand(tokenStream, parseState) {
         var _a, _b, _c, _d;
@@ -8029,7 +8031,7 @@ var Playground = (function (exports) {
                 return parseArrayLitteral(tokenStream, parseState);
             case 'LBrace':
                 return parseObjectLitteral(tokenStream, parseState);
-            case 'P_RegexpShorthand':
+            case 'RegexpShorthand':
                 return parseRegexpShorthand(tokenStream, parseState);
             case 'P_FnShorthand':
                 return parseFnShorthand(tokenStream, parseState);
@@ -8192,6 +8194,25 @@ var Playground = (function (exports) {
         value += '"'; // closing quote
         return [length + 1, ['String', value]];
     };
+    var tokenizeRegexpShorthand = function (input, position) {
+        if (input[position] !== '#')
+            return NO_MATCH;
+        var _a = __read(tokenizeString(input, position + 1), 2), stringLength = _a[0], token = _a[1];
+        if (!token)
+            return NO_MATCH;
+        position += stringLength + 1;
+        var length = stringLength + 1;
+        var options = '';
+        while (input[position] === 'g' || input[position] === 'i') {
+            if (options.includes(input[position])) {
+                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), undefined);
+            }
+            options += input[position];
+            length += 1;
+            position += 1;
+        }
+        return [length, ['RegexpShorthand', "#".concat(token[1]).concat(options)]];
+    };
     function tokenizeSimpleToken(type, value, input, position) {
         if (value === input.slice(position, position + value.length))
             return [value.length, [type]];
@@ -8209,6 +8230,7 @@ var Playground = (function (exports) {
         tokenizeLBrace,
         tokenizeRBrace,
         tokenizeString,
+        tokenizeRegexpShorthand,
     ];
 
     var validAlgebraicReservedNamesRecord = {
@@ -8610,25 +8632,6 @@ var Playground = (function (exports) {
             return NO_MATCH;
         return [1, ['P_CollectionAccessor', char]];
     };
-    var tokenizeP_RegexpShorthand = function (input, position) {
-        if (input[position] !== '#')
-            return NO_MATCH;
-        var _a = __read(tokenizeString(input, position + 1), 2), stringLength = _a[0], token = _a[1];
-        if (!token)
-            return NO_MATCH;
-        position += stringLength + 1;
-        var length = stringLength + 1;
-        var options = '';
-        while (input[position] === 'g' || input[position] === 'i') {
-            if (options.includes(input[position])) {
-                throw new LitsError("Duplicated regexp option \"".concat(input[position], "\" at position ").concat(position, "."), undefined);
-            }
-            options += input[position];
-            length += 1;
-            position += 1;
-        }
-        return [length, ['P_RegexpShorthand', "#".concat(token[1]).concat(options)]];
-    };
     // All tokenizers, order matters!
     var polishTokenizers = __spreadArray(__spreadArray([
         tokenizeP_Whitespace,
@@ -8639,7 +8642,6 @@ var Playground = (function (exports) {
         tokenizeP_ReservedSymbol,
         tokenizeP_Modifier,
         tokenizeP_Symbol,
-        tokenizeP_RegexpShorthand,
         tokenizeP_FnShorthand,
         tokenizeP_CollectionAccessor,
     ], false);
@@ -13617,12 +13619,12 @@ var Playground = (function (exports) {
             ],
             description: "Matches $s against regular expression $r.\nIf $s is a string and matches the regular expression, a `match`-array is returned, otherwise `nil` is returned.",
             examples: [
-                '(match (regexp "^\\s*(.*)$") "  A string")',
-                '(match #"albert"i "My name is Albert")',
-                '(match #"albert"i "My name is Ben")',
-                '(match #"albert"i nil)',
-                '(match #"albert"i 1)',
-                '(match #"albert"i {})',
+                '(match "  A string" (regexp "^\\s*(.*)$"))',
+                '(match "My name is Albert" #"albert"i)',
+                '(match "My name is Ben" #"albert"i)',
+                '(match nil #"albert"i)',
+                '(match 1 #"albert"i)',
+                '(match {} #"albert"i)',
             ],
         },
         replace: {

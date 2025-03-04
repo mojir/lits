@@ -54,12 +54,12 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
     description: `Matches $s against regular expression $r.
 If $s is a string and matches the regular expression, a \`match\`-array is returned, otherwise \`nil\` is returned.`,
     examples: [
-      '(match (regexp "^\\s*(.*)$") "  A string")',
-      '(match #"albert"i "My name is Albert")',
-      '(match #"albert"i "My name is Ben")',
-      '(match #"albert"i nil)',
-      '(match #"albert"i 1)',
-      '(match #"albert"i {})',
+      '(match "  A string" (regexp "^\\s*(.*)$"))',
+      '(match "My name is Albert" #"albert"i)',
+      '(match "My name is Ben" #"albert"i)',
+      '(match nil #"albert"i)',
+      '(match 1 #"albert"i)',
+      '(match {} #"albert"i)',
     ],
   },
   replace: {

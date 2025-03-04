@@ -23,7 +23,7 @@ import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
 import { asSymbolNode } from '../typeGuards/astNode'
 import { arrayToPairs } from '../utils'
-import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
+import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
 const exponentiationPrecedence = 10
@@ -410,11 +410,13 @@ export class AlgebraicParser {
         if (lamdaFunction) {
           return lamdaFunction
         }
-        this.parseState.position = positionBefore  
+        this.parseState.position = positionBefore
         return parseSymbol(this.tokenStream, this.parseState)
       }
       case 'A_ReservedSymbol':
         return parseReservedSymbol(this.tokenStream, this.parseState)
+      case 'RegexpShorthand':
+        return parseRegexpShorthand(this.tokenStream, this.parseState)
       case 'PolNotation': {
         this.parseState.algebraic = false
         const astNodes: AstNode[] = []
@@ -578,7 +580,7 @@ export class AlgebraicParser {
 
   parseLambdaFunction(): AstNode | null {
     const firstToken = this.peek()
-    
+
     if (isLParenToken(firstToken)
       && isA_SymbolToken(this.peekAhead(1))
       && isA_OperatorToken(this.peekAhead(2), '=>')) {

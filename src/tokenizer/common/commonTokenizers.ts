@@ -1,7 +1,7 @@
 import { LitsError } from '../../errors'
 import type { TokenDescriptor, Tokenizer } from '../interface'
 import type { SimpleToken } from '../tokens'
-import type { AlgebraicNotationToken, EndNotationToken, LBraceToken, LBracketToken, LParenToken, PolishNotationToken, RBraceToken, RBracketToken, RParenToken, StringToken } from './commonTokens'
+import type { AlgebraicNotationToken, EndNotationToken, LBraceToken, LBracketToken, LParenToken, PolishNotationToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, StringToken } from './commonTokens'
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
 
@@ -57,6 +57,30 @@ export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   return [length + 1, ['String', value]]
 }
 
+export const tokenizeRegexpShorthand: Tokenizer<RegexpShorthandToken> = (input, position) => {
+  if (input[position] !== '#')
+    return NO_MATCH
+
+  const [stringLength, token] = tokenizeString(input, position + 1)
+  if (!token)
+    return NO_MATCH
+
+  position += stringLength + 1
+  let length = stringLength + 1
+
+  let options = ''
+  while (input[position] === 'g' || input[position] === 'i') {
+    if (options.includes(input[position]!)) {
+      throw new LitsError(`Duplicated regexp option "${input[position]}" at position ${position}.`, undefined)
+    }
+    options += input[position]!
+    length += 1
+    position += 1
+  }
+
+  return [length, ['RegexpShorthand', `#${token[1]}${options}`]]
+}
+
 export function tokenizeSimpleToken<T extends SimpleToken>(
   type: T[0],
   value: string,
@@ -80,4 +104,5 @@ export const commonTokenizers = [
   tokenizeLBrace,
   tokenizeRBrace,
   tokenizeString,
+  tokenizeRegexpShorthand,
 ] as const

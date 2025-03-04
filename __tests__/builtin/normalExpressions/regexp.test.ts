@@ -29,7 +29,7 @@ describe('regexp functions', () => {
         expect(
           lits.run(
             `
-          (defn email? [string] (boolean (match #"^(?:[a-z0-9!#$%&'*+/=?^_\`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*|'(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])$" string)))
+          (defn email? [string] (boolean (match string #"^(?:[a-z0-9!#$%&'*+/=?^_\`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*|'(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])$")))
           (email? "albert.mojir@gmail.com"),
           `,
           ),
@@ -39,7 +39,7 @@ describe('regexp functions', () => {
         expect(
           lits.run(
             `
-          (defn dot? [string] (boolean (match #"^\\.$" string)))
+          (defn dot? [string] (boolean (match string #"^\\.$")))
           (dot? "."),
           `,
           ),
@@ -47,7 +47,7 @@ describe('regexp functions', () => {
         expect(
           lits.run(
             `
-          (defn dot? [string] (boolean (match (regexp "^\\\\.$") string)))
+          (defn dot? [string] (boolean (match string (regexp "^\\\\.$"))))
           (dot? "."),
           `,
           ),
@@ -57,20 +57,21 @@ describe('regexp functions', () => {
 
     describe('match', () => {
       it('samples', () => {
-        expect(lits.run('(match (regexp "^abc$") "abc")')).toEqual(['abc'])
-        expect(lits.run('(match (regexp "^abc$") "abx")')).toBeNull()
-        expect(lits.run('(match (regexp "^(a)bc$") "abc")')).toEqual(['abc', 'a'])
-        expect(lits.run('(match (regexp "^(A)BC$" :i) "abc")')).toEqual(['abc', 'a'])
-        expect(lits.run('(match (regexp "^abc$") nil)')).toBeNull()
-        expect(lits.run('(match (regexp "^abc$") 1)')).toBeNull()
-        expect(lits.run('(match (regexp "^abc$") true)')).toBeNull()
-        expect(lits.run('(match (regexp "^abc$") false)')).toBeNull()
-        expect(lits.run('(match (regexp "^abc$") [])')).toBeNull()
-        expect(lits.run('(match (regexp "^abc$") (object))')).toBeNull()
+        expect(lits.run('(match "abc" (regexp "^abc$"))')).toEqual(['abc'])
+        expect(lits.run('(match "abx" (regexp "^abc$"))')).toBeNull()
+        expect(lits.run('(match "abc" (regexp "^(a)bc$"))')).toEqual(['abc', 'a'])
+        expect(lits.run('(match "abc" (regexp "^(A)BC$" :i))')).toEqual(['abc', 'a'])
+        expect(lits.run('(match nil (regexp "^abc$"))')).toBeNull()
+        expect(lits.run('(match 1 (regexp "^abc$"))')).toBeNull()
+        expect(lits.run('(match true (regexp "^abc$"))')).toBeNull()
+        expect(lits.run('(match false (regexp "^abc$"))')).toBeNull()
+        expect(lits.run('(match [] (regexp "^abc$"))')).toBeNull()
+        expect(lits.run('(match (object) (regexp "^abc$"))')).toBeNull()
 
-        expect(() => lits.run('(match (regexp "^abc$") undefined)')).toThrow()
+        expect(() => lits.run('(match undefined (regexp "^abc$"))')).toThrow()
         expect(() => lits.run('(match (regexp "^abc$"))')).toThrow()
-        expect(() => lits.run('(match (regexp "^abc$") :x :y)')).toThrow()
+        expect(() => lits.run('(match "asd")')).toThrow()
+        expect(() => lits.run('(match :x (regexp "^abc$") :x)')).toThrow()
       })
     })
 

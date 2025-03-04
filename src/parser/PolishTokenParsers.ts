@@ -8,14 +8,14 @@ import { withoutCommentNodes } from '../removeCommentNodes'
 import { asLParenToken, assertEndNotationToken, assertLBracketToken, assertRParenToken, isEndNotationToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { PolishTokenType } from '../tokenizer/polish/polishTokens'
-import { asP_CommentToken, asP_RegexpShorthandToken, asP_StringShorthandToken, asP_SymbolToken, isP_FnShorthandToken, isP_ModifierToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
+import { asP_CommentToken, asP_StringShorthandToken, asP_SymbolToken, isP_FnShorthandToken, isP_ModifierToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
 import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
 import { assertSymbolNode, isExpressionNode } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
 import { AlgebraicParser } from './AlgebraicParser'
-import { parseNumber, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
+import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type {
   AstNode,
   BindingNode,
@@ -112,38 +112,6 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
   }
 
   assertEvenNumberOfParams(node)
-
-  return node
-}
-
-function parseRegexpShorthand(tokenStream: TokenStream, parseState: ParseState): NormalExpressionNodeWithName {
-  const tkn = asP_RegexpShorthandToken(tokenStream.tokens[parseState.position++])
-
-  const endStringPosition = tkn[1].lastIndexOf('"')
-  const regexpString = tkn[1].substring(2, endStringPosition)
-  const optionsString = tkn[1].substring(endStringPosition + 1)
-  const stringNode: StringNode = {
-    t: AstNodeType.String,
-    v: regexpString,
-    p: [],
-    n: undefined,
-    token: getTokenDebugData(tkn) && tkn,
-  }
-
-  const optionsNode: StringNode = {
-    t: AstNodeType.String,
-    v: optionsString,
-    p: [],
-    n: undefined,
-    token: getTokenDebugData(tkn) && tkn,
-  }
-
-  const node: NormalExpressionNode = {
-    t: AstNodeType.NormalExpression,
-    n: 'regexp',
-    p: [stringNode, optionsNode],
-    token: getTokenDebugData(tkn) && tkn,
-  }
 
   return node
 }
@@ -347,7 +315,7 @@ export function parsePolishToken(tokenStream: TokenStream, parseState: ParseStat
       return parseArrayLitteral(tokenStream, parseState)
     case 'LBrace':
       return parseObjectLitteral(tokenStream, parseState)
-    case 'P_RegexpShorthand':
+    case 'RegexpShorthand':
       return parseRegexpShorthand(tokenStream, parseState)
     case 'P_FnShorthand':
       return parseFnShorthand(tokenStream, parseState)
