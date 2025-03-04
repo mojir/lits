@@ -88,40 +88,6 @@ If $n is already defined, an error is thrown.`,
       '(def a (object :x 10 :y true :z "A string"))',
     ],
   },
-  'defs': {
-    title: 'defs',
-    category: 'Special expression',
-    linkName: 'defs',
-    clojureDocs: null,
-    returns: {
-      type: 'any',
-    },
-    args: {
-      name: {
-        type: '*expression',
-      },
-      value: {
-        type: '*expression',
-      },
-    },
-    variants: [
-      { argumentNames: ['name', 'value'] },
-    ],
-    description: `
-Creates a variable with name set to $name evaluated and value set to $value.
-
-If a variable with name $name is already defined, an error is thrown.`,
-    examples: [
-      '(defs :a :b)',
-      `
-(defs (str :a :1) (object :x 10 :y true :z "A string"))
-a1`,
-      `
-(defs :a :b)
-(defs a :c)
-b`,
-    ],
-  },
   'let': {
     title: 'let',
     category: 'Special expression',
@@ -224,57 +190,6 @@ hyp`,
 (hyp 3 4)`,
       `
 (defn sumOfSquares [& s]
-  (apply
-    +
-    (map
-      (fn [x] (* x x))
-      s)))
-(sumOfSquares 1 2 3 4 5)`,
-    ],
-  },
-  'defns': {
-    title: 'defns',
-    category: 'Special expression',
-    linkName: 'defns',
-    clojureDocs: null,
-    returns: {
-      type: 'function',
-    },
-    args: {
-      name: {
-        type: '*expression',
-      },
-      args: {
-        type: '*arguments',
-      },
-      expressions: {
-        type: '*expression',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['name', 'args', 'expressions'] },
-    ],
-    description: 'Creates a named global function with its name set to $name evaluated. When called, evaluation of the last expression in the body is returned.',
-    examples: [
-      `
-(defns "hyp" [a b]
-  (sqrt
-    (+
-      (* a a)
-      (* b b))))
-hyp`,
-      `
-(defns
-  (str :h :y :p)
-  [a b]
-  (sqrt
-    (+
-      (* a a)
-      (* b b))))
-(hyp 3 4)`,
-      `
-(defns "sumOfSquares" [& s]
   (apply
     +
     (map

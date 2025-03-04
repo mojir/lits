@@ -3,7 +3,7 @@ import type { AndNode } from '../builtin/specialExpressions/and'
 import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DeclaredNode } from '../builtin/specialExpressions/declared'
 import type { DoNode } from '../builtin/specialExpressions/do'
-import type { DefnNode, DefnsNode, FnNode } from '../builtin/specialExpressions/functions'
+import type { DefnNode, FnNode } from '../builtin/specialExpressions/functions'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
 import type { DoSeqNode, ForNode } from '../builtin/specialExpressions/loops'
@@ -35,11 +35,6 @@ const specialExpressionCommentRemovers = {
   },
   'defn': (_node: DefnNode, _removeOptions: RemoveOptions) => {},
   'def': (node: AndNode, removeOptions: RemoveOptions) => {
-    removeOptions.removeCommenNodesFromArray(node.p)
-    node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
-  },
-  'defns': (_node: DefnsNode, _removeOptions: RemoveOptions) => {},
-  'defs': (node: AndNode, removeOptions: RemoveOptions) => {
     removeOptions.removeCommenNodesFromArray(node.p)
     node.p.forEach(removeOptions.recursivelyRemoveCommentNodes)
   },

@@ -6,9 +6,8 @@ import { condSpecialExpression } from './specialExpressions/cond'
 import { switchSpecialExpression } from './specialExpressions/switch'
 import { declaredSpecialExpression } from './specialExpressions/declared'
 import { defSpecialExpression } from './specialExpressions/def'
-import { defsSpecialExpression } from './specialExpressions/defs'
 import { doSpecialExpression } from './specialExpressions/do'
-import { defnSpecialExpression, defnsSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
+import { defnSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
 import { unlessSpecialExpression } from './specialExpressions/unless'
 import { letSpecialExpression } from './specialExpressions/let'
@@ -27,8 +26,6 @@ const specialExpressions = {
   'switch': switchSpecialExpression,
   'def': defSpecialExpression,
   'defn': defnSpecialExpression,
-  'defns': defnsSpecialExpression,
-  'defs': defsSpecialExpression,
   'do': doSpecialExpression,
   'doseq': doseqSpecialExpression,
   'for': forSpecialExpression,

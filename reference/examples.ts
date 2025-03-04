@@ -155,37 +155,6 @@ export const examples: Example[] = [
 `.trim(),
   },
   {
-    id: 'translations-lib',
-    name: 'Translations lib',
-    description: 'A Lits take on i18n.',
-    context: {
-      values: {
-        TRANSLATIONS: {
-          'welcome-message': 'Welcome, $1',
-          'count-chairs': '$1 chair||||$1 chairs',
-        },
-      },
-    },
-    code: `
-(loop [list (entries TRANSLATIONS)]
-  (if (count list)
-    (do
-      (let [entry (first list)])
-      (defns (entry 0) [&rest params &let [templateString (entry 1)]]
-        (apply template (unshift params templateString))
-      )
-    )
-    (recur (rest list))
-  )
-)
-
-(write! (welcome-message "Albert"))
-(write! (count-chairs 12))
-(write! (count-chairs 1))
-`.trim(),
-  },
-
-  {
     id: 'isoDateString',
     name: 'Is ISO date string',
     description: 'Check if string is formatted as an ISO date string.',

@@ -549,9 +549,7 @@ export class AlgebraicParser {
             builtin.specialExpressions[node.n].validateParameterCount(node)
             return node
           }
-          case 'defs':
           case 'fn':
-          case 'defns':
           case 'try':
           case 'doseq':
             throw new Error(`Special expression ${name} is not available in algebraic notation`)

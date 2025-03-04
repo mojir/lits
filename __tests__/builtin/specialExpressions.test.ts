@@ -51,30 +51,6 @@ describe('specialExpressions', () => {
       throw new Error('Should have thrown an error')
   })
 
-  describe('defs', () => {
-    it('samples', () => {
-      expect(lits.run('(defs :a 10) a')).toBe(10)
-      expect(lits.run('(defs :a :b) (defs a :c) b')).toBe('c')
-      expect(lits.run('(defs (str :a :1) 20) a1')).toBe(20)
-      expect(() => lits.run('(defs true false)')).toThrow()
-      expect(() => lits.run('(defs a)')).toThrow()
-      expect(() => lits.run('(defs a 10 10)')).toThrow()
-      expect(() => lits.run('(defs 1 10)')).toThrow()
-      expect(() => lits.run('(defs nil 10)')).toThrow()
-      expect(() => lits.run('(defs false 10)')).toThrow()
-      expect(() => lits.run('(defs true 10)')).toThrow()
-      expect(() => lits.run('(defs [] 10)')).toThrow()
-      expect(() => lits.run('(defs (object) 10)')).toThrow()
-      expect(() => lits.run('(defs a 10)')).toThrow()
-    })
-    describe('unresolvedIdentifiers', () => {
-      it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(defs "foo" (+ a b))'))).toEqual(new Set(['a', 'b']))
-        expect(getUndefinedSymbolNames(lits.analyze('(defs "foo" (+ a b)) foo'))).toEqual(new Set(['a', 'b']))
-      })
-    })
-  })
-
   describe('def', () => {
     it('samples', () => {
       expect(lits.run('(def a 10) a')).toBe(10)
@@ -431,35 +407,6 @@ describe('specialExpressions', () => {
           new Set(['c', 'x', 'y']),
         )
         expect(getUndefinedSymbolNames(lits.analyze('(defn add ([a b &rest rest] (+ a b)) ([a] 10))'))).toEqual(new Set())
-      })
-    })
-  })
-
-  describe('defns', () => {
-    it('samples', () => {
-      expect(lits.run('(defns (str :a :d :d) [a b] (+ a b)) (add 1 2)')).toBe(3)
-      expect(() => lits.run('(defns "add" [] 10)')).not.toThrow()
-      expect(() => lits.run('(defns true [] 10)')).toThrow()
-      expect(() => lits.run('(defns false [] 10)')).toThrow()
-      expect(() => lits.run('(defns nil [] 10)')).toThrow()
-      expect(() => lits.run('(defns add [:s] 10)')).toThrow()
-      expect(() => lits.run('(defns add 1 (+ a b))')).toThrow()
-      expect(() => lits.run('(defns add (a b))')).toThrow()
-    })
-    it('call defns function', () => {
-      expect(lits.run('(defns "sumOneToN" [n] (if (<= n 1) n (+ n (sumOneToN (- n 1))))) (sumOneToN 10)')).toBe(55)
-      expect(lits.run('(defns "applyWithVal" [fun val] (fun val)) (applyWithVal inc 10)')).toBe(11)
-    })
-    describe('unresolvedIdentifiers', () => {
-      it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a] (if (== a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
-          new Set([]),
-        )
-        expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a b] (str a b c))'))).toEqual(new Set(['c']))
-        expect(getUndefinedSymbolNames(lits.analyze('(defns :foo [a b] (str a b c)) (foo x y)'))).toEqual(
-          new Set(['c', 'x', 'y']),
-        )
-        expect(getUndefinedSymbolNames(lits.analyze('(defns :add ([a b &rest rest] (+ a b)) ([a] 10))'))).toEqual(new Set())
       })
     })
   })

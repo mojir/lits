@@ -18,8 +18,7 @@ import { asLBracketToken, assertRParenToken, isLBracketToken, isLParenToken, isR
 import type { TokenStream } from '../../tokenizer/interface'
 import { asToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { asAstNode, assertSymbolNode } from '../../typeGuards/astNode'
-import { asString, assertString } from '../../typeGuards/string'
+import { assertSymbolNode } from '../../typeGuards/astNode'
 import { valueToString } from '../../utils/debug/debugTools'
 import { FUNCTION_SYMBOL } from '../../utils/symbols'
 import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
@@ -28,11 +27,6 @@ import { assertNameNotDefined } from '../utils'
 
 export interface DefnNode extends CommonSpecialExpressionNode<'defn'> {
   f: SymbolNode
-  o: FunctionOverload[]
-}
-
-export interface DefnsNode extends CommonSpecialExpressionNode<'defns'> {
-  f: AstNode
   o: FunctionOverload[]
 }
 
@@ -63,7 +57,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   },
   validateParameterCount: () => undefined,
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
-    const name = getFunctionName('defn', node, contextStack, evaluateAstNode)
+    const name = node.f.v
 
     assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
 
@@ -83,56 +77,6 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
     contextStack.exportValue(node.f.v, true)
     const newContext: Context = { [node.f.v]: { value: true } }
-    return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext)
-  },
-}
-
-export const defnsSpecialExpression: BuiltinSpecialExpression<null, DefnsNode> = {
-  polishParse: (tokenStream, parseState, firstToken, parsers) => {
-    const { parseToken } = parsers
-    const functionName = parseToken(tokenStream, parseState)
-
-    const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
-    assertRParenToken(tokenStream.tokens[parseState.position++])
-
-    const node: DefnsNode = {
-      t: AstNodeType.SpecialExpression,
-      n: 'defns',
-      p: [],
-      f: functionName,
-      o: functionOverloades,
-      token: getTokenDebugData(firstToken) && firstToken,
-    }
-
-    return node
-  },
-  validateParameterCount: () => undefined,
-  evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
-    const name = getFunctionName('defns', node, contextStack, evaluateAstNode)
-
-    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
-
-    const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
-
-    const litsFunction: LitsFunction = {
-      [FUNCTION_SYMBOL]: true,
-      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
-      t: FunctionType.UserDefined,
-      n: name,
-      o: evaluatedFunctionOverloades,
-    }
-
-    contextStack.exportValue(name, litsFunction)
-    return null
-  },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin, evaluateAstNode }) => {
-    const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
-    const name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack)
-    assertString(name, sourceCodeInfo)
-    assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo)
-    contextStack.exportValue(name, true)
-    const newContext = { [name]: { value: true } }
-
     return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext)
   },
 }
@@ -170,27 +114,13 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
     addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin),
 }
 
-function getFunctionName(
-  expressionName: 'defn' | 'defns',
-  node: SpecialExpressionNode,
-  contextStack: ContextStack,
-  evaluateAstNode: EvaluateAstNode,
-): string {
-  const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
-  if (expressionName === 'defn')
-    return ((node as DefnNode).f).v
-
-  const name = evaluateAstNode((node as DefnsNode).f, contextStack)
-  return asString(name, sourceCodeInfo)
-}
-
 function evaluateFunctionOverloades(
   node: SpecialExpressionNode,
   contextStack: ContextStack,
   evaluateAstNode: EvaluateAstNode,
 ): EvaluatedFunctionOverload[] {
   const evaluatedFunctionOverloades: EvaluatedFunctionOverload[] = []
-  for (const functionOverload of (node as DefnNode | DefnsNode | FnNode).o) {
+  for (const functionOverload of (node as DefnNode | FnNode).o) {
     const functionContext: Context = {}
     for (const binding of functionOverload.as.b) {
       const bindingValueNode = binding.v

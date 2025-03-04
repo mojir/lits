@@ -922,24 +922,22 @@ var Playground = (function (exports) {
     var nonFunctionOperators = [
         '??',
         '&&',
+        '||',
         'comment',
         'cond',
-        'defined?',
-        'if',
-        'unless',
-        '||',
-        'do',
-        'throw',
-        'let',
         'def',
-        'defs',
-        'fn',
+        'defined?',
         'defn',
-        'defns',
-        'try',
-        'recur',
-        'loop',
+        'do',
         'doseq',
+        'fn',
+        'if',
+        'let',
+        'loop',
+        'recur',
+        'throw',
+        'try',
+        'unless',
         'while',
     ];
     var nonFunctionOperatorSet = new Set(nonFunctionOperators);
@@ -1262,11 +1260,6 @@ var Playground = (function (exports) {
         },
         'defn': function (_node, _removeOptions) { },
         'def': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'defns': function (_node, _removeOptions) { },
-        'defs': function (node, removeOptions) {
             removeOptions.removeCommenNodesFromArray(node.p);
             node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
         },
@@ -5008,44 +5001,6 @@ var Playground = (function (exports) {
         },
     };
 
-    var defsSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, _a) {
-            var parseTokensUntilClosingBracket = _a.parseTokensUntilClosingBracket;
-            var params = parseTokensUntilClosingBracket(tokenStream, parseState);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'defs',
-                p: params,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
-        validateParameterCount: function (node) { return assertNumberOfParams(2, node); },
-        evaluate: function (node, contextStack, _a) {
-            var _b, _c;
-            var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
-            var sourceCodeInfo = (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
-            var name = evaluateAstNode(node.p[0], contextStack);
-            assertString(name, sourceCodeInfo);
-            assertNameNotDefined(name, contextStack, builtin, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-            contextStack.exportValue(name, evaluateAstNode(node.p[1], contextStack));
-            return null;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var _b;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
-            var subNode = node.p[1];
-            var result = findUnresolvedIdentifiers([subNode], contextStack, builtin);
-            var name = evaluateAstNode(node.p[0], contextStack);
-            assertString(name, sourceCodeInfo);
-            assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
-            contextStack.exportValue(name, true);
-            return result;
-        },
-    };
-
     var doSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('do'),
         validateParameterCount: function () { return undefined; },
@@ -5125,7 +5080,7 @@ var Playground = (function (exports) {
             var _b;
             var _c, _d;
             var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var name = getFunctionName('defn', node, contextStack, evaluateAstNode);
+            var name = node.f.v;
             assertNameNotDefined(name, contextStack, builtin, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
             var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
             var litsFunction = (_b = {},
@@ -5143,53 +5098,6 @@ var Playground = (function (exports) {
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
             contextStack.exportValue(node.f.v, true);
             var newContext = (_b = {}, _b[node.f.v] = { value: true }, _b);
-            return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext);
-        },
-    };
-    var defnsSpecialExpression = {
-        polishParse: function (tokenStream, parseState, firstToken, parsers) {
-            var parseToken = parsers.parseToken;
-            var functionName = parseToken(tokenStream, parseState);
-            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
-            assertRParenToken(tokenStream.tokens[parseState.position++]);
-            var node = {
-                t: AstNodeType.SpecialExpression,
-                n: 'defns',
-                p: [],
-                f: functionName,
-                o: functionOverloades,
-                token: getTokenDebugData(firstToken) && firstToken,
-            };
-            return node;
-        },
-        validateParameterCount: function () { return undefined; },
-        evaluate: function (node, contextStack, _a) {
-            var _b;
-            var _c, _d;
-            var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var name = getFunctionName('defns', node, contextStack, evaluateAstNode);
-            assertNameNotDefined(name, contextStack, builtin, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-            var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
-            var litsFunction = (_b = {},
-                _b[FUNCTION_SYMBOL] = true,
-                _b.sourceCodeInfo = (_d = getTokenDebugData(node.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo,
-                _b.t = FunctionType.UserDefined,
-                _b.n = name,
-                _b.o = evaluatedFunctionOverloades,
-                _b);
-            contextStack.exportValue(name, litsFunction);
-            return null;
-        },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var _b;
-            var _c;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
-            var sourceCodeInfo = (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo;
-            var name = evaluateAstNode(asAstNode(node.f, sourceCodeInfo), contextStack);
-            assertString(name, sourceCodeInfo);
-            assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
-            contextStack.exportValue(name, true);
-            var newContext = (_b = {}, _b[name] = { value: true }, _b);
             return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext);
         },
     };
@@ -5226,14 +5134,6 @@ var Playground = (function (exports) {
             return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin);
         },
     };
-    function getFunctionName(expressionName, node, contextStack, evaluateAstNode) {
-        var _a;
-        var sourceCodeInfo = (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo;
-        if (expressionName === 'defn')
-            return (node.f).v;
-        var name = evaluateAstNode(node.f, contextStack);
-        return asString(name, sourceCodeInfo);
-    }
     function evaluateFunctionOverloades(node, contextStack, evaluateAstNode) {
         var e_1, _a, e_2, _b;
         var evaluatedFunctionOverloades = [];
@@ -6011,8 +5911,6 @@ var Playground = (function (exports) {
         'switch': switchSpecialExpression,
         'def': defSpecialExpression,
         'defn': defnSpecialExpression,
-        'defns': defnsSpecialExpression,
-        'defs': defsSpecialExpression,
         'do': doSpecialExpression,
         'doseq': doseqSpecialExpression,
         'for': forSpecialExpression,
@@ -7199,9 +7097,7 @@ var Playground = (function (exports) {
                             builtin.specialExpressions[node.n].validateParameterCount(node);
                             return node;
                         }
-                        case 'defs':
                         case 'fn':
-                        case 'defns':
                         case 'try':
                         case 'doseq':
                             throw new Error("Special expression ".concat(name_2, " is not available in algebraic notation"));
@@ -8264,7 +8160,6 @@ var Playground = (function (exports) {
     };
     var forbiddenAlgebraicReservedNamesRecord = {
         fn: { value: null, forbidden: true },
-        defns: { value: null, forbidden: true },
     };
     var algebraicReservedNamesRecord = __assign(__assign({}, validAlgebraicReservedNamesRecord), forbiddenAlgebraicReservedNamesRecord);
 
@@ -13772,32 +13667,6 @@ var Playground = (function (exports) {
                 '(def a (object :x 10 :y true :z "A string"))',
             ],
         },
-        'defs': {
-            title: 'defs',
-            category: 'Special expression',
-            linkName: 'defs',
-            clojureDocs: null,
-            returns: {
-                type: 'any',
-            },
-            args: {
-                name: {
-                    type: '*expression',
-                },
-                value: {
-                    type: '*expression',
-                },
-            },
-            variants: [
-                { argumentNames: ['name', 'value'] },
-            ],
-            description: "\nCreates a variable with name set to $name evaluated and value set to $value.\n\nIf a variable with name $name is already defined, an error is thrown.",
-            examples: [
-                '(defs :a :b)',
-                "\n(defs (str :a :1) (object :x 10 :y true :z \"A string\"))\na1",
-                "\n(defs :a :b)\n(defs a :c)\nb",
-            ],
-        },
         'let': {
             title: 'let',
             category: 'Special expression',
@@ -13869,36 +13738,6 @@ var Playground = (function (exports) {
                 "\n(defn hyp [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\nhyp",
                 "\n(defn hyp [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\n(hyp 3 4)",
                 "\n(defn sumOfSquares [& s]\n  (apply\n    +\n    (map\n      (fn [x] (* x x))\n      s)))\n(sumOfSquares 1 2 3 4 5)",
-            ],
-        },
-        'defns': {
-            title: 'defns',
-            category: 'Special expression',
-            linkName: 'defns',
-            clojureDocs: null,
-            returns: {
-                type: 'function',
-            },
-            args: {
-                name: {
-                    type: '*expression',
-                },
-                args: {
-                    type: '*arguments',
-                },
-                expressions: {
-                    type: '*expression',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['name', 'args', 'expressions'] },
-            ],
-            description: 'Creates a named global function with its name set to $name evaluated. When called, evaluation of the last expression in the body is returned.',
-            examples: [
-                "\n(defns \"hyp\" [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\nhyp",
-                "\n(defns\n  (str :h :y :p)\n  [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\n(hyp 3 4)",
-                "\n(defns \"sumOfSquares\" [& s]\n  (apply\n    +\n    (map\n      (fn [x] (* x x))\n      s)))\n(sumOfSquares 1 2 3 4 5)",
             ],
         },
         'try': {
@@ -15482,11 +15321,9 @@ var Playground = (function (exports) {
             '&&',
             '||',
             'def',
-            'defs',
             'let',
             'fn',
             'defn',
-            'defns',
             'try',
             'throw',
             'if',
