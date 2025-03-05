@@ -8,6 +8,7 @@ import { parse } from '../parser'
 import type { Ast, LitsFunction } from '../parser/interface'
 import { tokenize } from '../tokenizer'
 import type { TokenStream, TokenizeParams } from '../tokenizer/interface'
+import { minifyTokenStream } from '../tokenizer/minifyTokenStream'
 import { transformTokens } from '../transformer'
 import { untokenize } from '../untokenizer'
 import { Cache } from './Cache'
@@ -90,10 +91,11 @@ export class Lits {
     return analyze(ast, params)
   }
 
-  public tokenize(program: string, tokenizeParams: Pick<TokenizeParams, 'filePath'> = {}): TokenStream {
+  public tokenize(program: string, tokenizeParams: Pick<TokenizeParams, 'filePath'> & { minify?: boolean } = {}): TokenStream {
     const debug = this.debug
     const algebraic = this.algebraic
-    return tokenize(program, { ...tokenizeParams, debug, algebraic })
+    const tokenStream = tokenize(program, { ...tokenizeParams, debug, algebraic })
+    return tokenizeParams.minify ? minifyTokenStream(tokenStream) : tokenStream
   }
 
   public parse(tokenStream: TokenStream): Ast {

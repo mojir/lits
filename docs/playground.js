@@ -6639,6 +6639,20 @@ var Playground = (function (exports) {
         };
     }
 
+    function minifyTokenStream(tokenStream) {
+        var tokens = tokenStream.tokens.filter(function (token) {
+            if (isP_CommentToken(token)
+                || isA_CommentToken(token)
+                || isA_MultiLineCommentToken(token)
+                || isA_WhitespaceToken(token)
+                || isP_WhitespaceToken(token)) {
+                return false;
+            }
+            return true;
+        });
+        return __assign(__assign({}, tokenStream), { tokens: tokens });
+    }
+
     function parseSymbol(tokenStream, parseState) {
         var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
@@ -8157,7 +8171,7 @@ var Playground = (function (exports) {
     }
 
     function parse$1(tokenStream) {
-        tokenStream = removeUnnecessaryTokens(tokenStream);
+        tokenStream = minifyTokenStream(tokenStream);
         var algebraic = tokenStream.algebraic;
         var ast = {
             b: [],
@@ -8177,19 +8191,6 @@ var Playground = (function (exports) {
             }
         }
         return ast;
-    }
-    function removeUnnecessaryTokens(tokenStream) {
-        var tokens = tokenStream.tokens.filter(function (token) {
-            if (isP_CommentToken(token)
-                || isA_CommentToken(token)
-                || isA_MultiLineCommentToken(token)
-                || isA_WhitespaceToken(token)
-                || isP_WhitespaceToken(token)) {
-                return false;
-            }
-            return true;
-        });
-        return __assign(__assign({}, tokenStream), { tokens: tokens });
     }
     function parseToken(tokenStream, parseState) {
         return parsePolishToken(tokenStream, parseState);
@@ -9017,7 +9018,8 @@ var Playground = (function (exports) {
             if (tokenizeParams === void 0) { tokenizeParams = {}; }
             var debug = this.debug;
             var algebraic = this.algebraic;
-            return tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, algebraic: algebraic }));
+            var tokenStream = tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, algebraic: algebraic }));
+            return tokenizeParams.minify ? minifyTokenStream(tokenStream) : tokenStream;
         };
         Lits.prototype.parse = function (tokenStream) {
             return parse$1(tokenStream);
