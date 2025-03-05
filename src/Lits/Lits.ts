@@ -95,7 +95,7 @@ export class Lits {
     const debug = this.debug
     const algebraic = this.algebraic
     const tokenStream = tokenize(program, { ...tokenizeParams, debug, algebraic })
-    return tokenizeParams.minify ? minifyTokenStream(tokenStream) : tokenStream
+    return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream
   }
 
   public parse(tokenStream: TokenStream): Ast {

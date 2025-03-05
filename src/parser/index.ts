@@ -5,7 +5,7 @@ import type { Ast, AstNode, ParseState } from './interface'
 import { parsePolishToken } from './PolishTokenParsers'
 
 export function parse(tokenStream: TokenStream): Ast {
-  tokenStream = minifyTokenStream(tokenStream)
+  tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true })
   const algebraic = tokenStream.algebraic
 
   const ast: Ast = {

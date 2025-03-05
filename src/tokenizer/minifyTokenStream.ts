@@ -2,18 +2,25 @@ import { isA_CommentToken, isA_MultiLineCommentToken, isA_WhitespaceToken } from
 import type { TokenStream } from './interface'
 import { isP_CommentToken, isP_WhitespaceToken } from './polish/polishTokens'
 
-export function minifyTokenStream(tokenStream: TokenStream): TokenStream {
-  const tokens = tokenStream.tokens.filter((token) => {
-    if (
-      isP_CommentToken(token)
-      || isA_CommentToken(token)
-      || isA_MultiLineCommentToken(token)
-      || isA_WhitespaceToken(token)
-      || isP_WhitespaceToken(token)) {
-      return false
-    }
-    return true
-  })
+export function minifyTokenStream(tokenStream: TokenStream, { removeWhiteSpace }: { removeWhiteSpace: boolean }): TokenStream {
+  const tokens = tokenStream.tokens
+    .filter((token) => {
+      if (
+        isP_CommentToken(token)
+        || isA_CommentToken(token)
+        || isA_MultiLineCommentToken(token)
+        || (removeWhiteSpace && isA_WhitespaceToken(token))
+        || (removeWhiteSpace && isP_WhitespaceToken(token))) {
+        return false
+      }
+      return true
+    })
+    .map((token) => {
+      if (isA_WhitespaceToken(token) || isP_WhitespaceToken(token)) {
+        return { ...token, value: ' ' }
+      }
+      return token
+    })
 
   return { ...tokenStream, tokens }
 }

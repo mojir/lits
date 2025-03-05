@@ -6639,16 +6639,24 @@ var Playground = (function (exports) {
         };
     }
 
-    function minifyTokenStream(tokenStream) {
-        var tokens = tokenStream.tokens.filter(function (token) {
+    function minifyTokenStream(tokenStream, _a) {
+        var removeWhiteSpace = _a.removeWhiteSpace;
+        var tokens = tokenStream.tokens
+            .filter(function (token) {
             if (isP_CommentToken(token)
                 || isA_CommentToken(token)
                 || isA_MultiLineCommentToken(token)
-                || isA_WhitespaceToken(token)
-                || isP_WhitespaceToken(token)) {
+                || (removeWhiteSpace && isA_WhitespaceToken(token))
+                || (removeWhiteSpace && isP_WhitespaceToken(token))) {
                 return false;
             }
             return true;
+        })
+            .map(function (token) {
+            if (isA_WhitespaceToken(token) || isP_WhitespaceToken(token)) {
+                return __assign(__assign({}, token), { value: ' ' });
+            }
+            return token;
         });
         return __assign(__assign({}, tokenStream), { tokens: tokens });
     }
@@ -8171,7 +8179,7 @@ var Playground = (function (exports) {
     }
 
     function parse$1(tokenStream) {
-        tokenStream = minifyTokenStream(tokenStream);
+        tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true });
         var algebraic = tokenStream.algebraic;
         var ast = {
             b: [],
@@ -9019,7 +9027,7 @@ var Playground = (function (exports) {
             var debug = this.debug;
             var algebraic = this.algebraic;
             var tokenStream = tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, algebraic: algebraic }));
-            return tokenizeParams.minify ? minifyTokenStream(tokenStream) : tokenStream;
+            return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream;
         };
         Lits.prototype.parse = function (tokenStream) {
             return parse$1(tokenStream);
