@@ -8,7 +8,7 @@ export interface DoNode extends CommonSpecialExpressionNode<'do'> {}
 
 export const doSpecialExpression: BuiltinSpecialExpression<Any, DoNode> = {
   polishParse: getCommonPolishSpecialExpressionParser('do'),
-  validateParameterCount: () => undefined,
+  paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const newContext: Context = {}
 

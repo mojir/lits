@@ -4,14 +4,13 @@ import type { FnNode } from '../builtin/specialExpressions/functions'
 import type { FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
-import { withoutCommentNodes } from '../removeCommentNodes'
 import { asLParenToken, assertLBracketToken, assertRParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { PolishTokenType } from '../tokenizer/polish/polishTokens'
 import { asP_CommentToken, asP_StringShorthandToken, asP_SymbolToken, isP_FnShorthandToken, isP_ModifierToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
 import { asToken } from '../tokenizer/tokens'
 import { getTokenDebugData } from '../tokenizer/utils'
-import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
+import { asNonUndefined, assertNumberOfParams } from '../typeGuards'
 import { assertSymbolNode, isExpressionNode } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
 import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
@@ -110,7 +109,7 @@ function parseObjectLitteral(tokenStream: TokenStream, parseState: ParseState): 
     token: getTokenDebugData(firstToken) && firstToken,
   }
 
-  assertEvenNumberOfParams(node)
+  assertNumberOfParams({ even: true }, node)
 
   return node
 }
@@ -262,10 +261,7 @@ function parseNormalExpression(tokenStream: TokenStream, parseState: ParseState)
   const builtinExpression = builtin.normalExpressions[node.n]
 
   if (builtinExpression) {
-    builtinExpression.validate?.({
-      ...node,
-      p: withoutCommentNodes(node.p),
-    })
+    assertNumberOfParams(builtinExpression.paramCount, node)
   }
 
   return node
@@ -277,7 +273,7 @@ function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState
   const nameToken = asP_SymbolToken(tokenStream.tokens[parseState.position++])
   const expressionName = nameToken[1] as SpecialExpressionName
 
-  const { polishParse: parse, validateParameterCount } = asNonUndefined(builtin.specialExpressions[expressionName], getTokenDebugData(nameToken)?.sourceCodeInfo)
+  const { polishParse: parse, paramCount } = asNonUndefined(builtin.specialExpressions[expressionName], getTokenDebugData(nameToken)?.sourceCodeInfo)
 
   const node = parse(tokenStream, parseState, firstToken, {
     parseExpression,
@@ -288,7 +284,7 @@ function parseSpecialExpression(tokenStream: TokenStream, parseState: ParseState
     parseArgument,
   })
 
-  validateParameterCount(node)
+  assertNumberOfParams(paramCount, node)
 
   return node
 }

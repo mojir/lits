@@ -5,7 +5,6 @@ import type { Any } from '../../interface'
 import type { BindingNode, CommonSpecialExpressionNode } from '../../parser/interface'
 import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { assertNumberOfParams } from '../../typeGuards'
 import type { BuiltinSpecialExpression } from '../interface'
 
 export interface LetNode extends CommonSpecialExpressionNode<'let'> {
@@ -28,7 +27,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     }
     return node
   },
-  validateParameterCount: node => assertNumberOfParams(0, node),
+  paramCount: 0,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     for (const binding of node.bs) {
       const bindingValueNode = binding.v

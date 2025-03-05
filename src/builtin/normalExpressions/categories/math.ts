@@ -1,6 +1,4 @@
-import type { NormalExpressionNode } from '../../../parser/interface'
 import { assertNumber } from '../../../typeGuards/number'
-import { assertNumberOfParams } from '../../../typeGuards'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const mathNormalExpression: BuiltinNormalExpressions = {
@@ -9,7 +7,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo)
       return first + 1
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'dec': {
@@ -17,7 +15,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo)
       return first - 1
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   '+': {
@@ -27,6 +25,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return result + param
       }, 0)
     },
+    paramCount: {},
   },
 
   '*': {
@@ -36,6 +35,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return result * param
       }, 1)
     },
+    paramCount: {},
   },
 
   '/': {
@@ -54,6 +54,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return result / param
       }, first)
     },
+    paramCount: {},
   },
 
   '-': {
@@ -71,6 +72,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return result - param
       }, first)
     },
+    paramCount: {},
   },
 
   'quot': {
@@ -80,7 +82,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       const quotient = Math.trunc(dividend / divisor)
       return quotient
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   'mod': {
@@ -90,7 +92,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       const quotient = Math.floor(dividend / divisor)
       return dividend - divisor * quotient
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   '%': {
@@ -100,7 +102,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       const quotient = Math.trunc(dividend / divisor)
       return dividend - divisor * quotient
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   'sqrt': {
@@ -108,7 +110,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo)
       return Math.sqrt(first)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'cbrt': {
@@ -116,7 +118,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo)
       return Math.cbrt(first)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   '**': {
@@ -125,7 +127,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(second, sourceCodeInfo)
       return first ** second
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   'round': {
@@ -139,7 +141,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       const factor = 10 ** decimals
       return Math.round(value * factor) / factor
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
 
   'trunc': {
@@ -147,7 +149,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo)
       return Math.trunc(first)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'floor': {
@@ -155,7 +157,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo)
       return Math.floor(first)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'ceil': {
@@ -163,7 +165,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(first, sourceCodeInfo)
       return Math.ceil(first)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'min': {
@@ -177,7 +179,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return Math.min(min, value)
       }, first)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
 
   'max': {
@@ -191,7 +193,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
         return Math.max(min, value)
       }, first)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
 
   'abs': {
@@ -199,7 +201,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.abs(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'sign': {
@@ -207,77 +209,77 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.sign(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'max_safe_integer': {
     evaluate: (): number => {
       return Number.MAX_SAFE_INTEGER
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'min_safe_integer': {
     evaluate: (): number => {
       return Number.MIN_SAFE_INTEGER
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'max_value': {
     evaluate: (): number => {
       return Number.MAX_VALUE
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'min_value': {
     evaluate: (): number => {
       return Number.MIN_VALUE
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'epsilon': {
     evaluate: (): number => {
       return Number.EPSILON
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'positive_infinity': {
     evaluate: (): number => {
       return Number.POSITIVE_INFINITY
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'negative_infinity': {
     evaluate: (): number => {
       return Number.NEGATIVE_INFINITY
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'nan': {
     evaluate: (): number => {
       return Number.NaN
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'e': {
     evaluate: (): number => {
       return Math.E
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'pi': {
     evaluate: (): number => {
       return Math.PI
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(0, node),
+    paramCount: 0,
   },
 
   'exp': {
@@ -285,7 +287,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.exp(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'log': {
@@ -293,7 +295,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.log(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'log2': {
@@ -301,7 +303,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.log2(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'log10': {
@@ -309,7 +311,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.log10(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'sin': {
@@ -317,7 +319,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.sin(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'asin': {
@@ -325,7 +327,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.asin(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'sinh': {
@@ -333,7 +335,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.sinh(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'asinh': {
@@ -341,7 +343,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.asinh(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'cos': {
@@ -349,7 +351,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.cos(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'acos': {
@@ -357,7 +359,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.acos(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'cosh': {
@@ -365,7 +367,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.cosh(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'acosh': {
@@ -373,7 +375,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.acosh(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'tan': {
@@ -381,7 +383,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.tan(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'atan': {
@@ -389,7 +391,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.atan(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'tanh': {
@@ -397,7 +399,7 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.tanh(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   'atanh': {
@@ -405,6 +407,6 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
       assertNumber(value, sourceCodeInfo)
       return Math.atanh(value)
     },
-    validate: (node: NormalExpressionNode): void => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 }

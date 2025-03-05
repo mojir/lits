@@ -14,13 +14,13 @@ import type { UnlessNode } from '../builtin/specialExpressions/unless'
 import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
-import { withoutCommentNodes } from '../removeCommentNodes'
 import type { A_OperatorToken, A_ReservedSymbolToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isFunctionOperator, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asLBraceToken, asLBracketToken, assertLParenToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
+import { assertNumberOfParams } from '../typeGuards'
 import { asSymbolNode } from '../typeGuards/astNode'
 import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
@@ -87,10 +87,7 @@ function createNamedNormalExpressionNode(name: string, params: AstNode[], token:
   const builtinExpression = builtin.normalExpressions[node.n]
 
   if (builtinExpression) {
-    builtinExpression.validate?.({
-      ...node,
-      p: withoutCommentNodes(node.p),
-    })
+    assertNumberOfParams(builtinExpression.paramCount, node)
   }
 
   return node
@@ -537,7 +534,7 @@ export class AlgebraicParser {
               p: params,
               token: getTokenDebugData(symbol.token) && symbol.token,
             }
-            builtin.specialExpressions[node.n].validateParameterCount(node)
+            assertNumberOfParams(builtin.specialExpressions[node.n].paramCount, node)
             return node
           }
           case 'fn':

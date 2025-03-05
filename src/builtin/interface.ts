@@ -3,7 +3,6 @@ import type { ContextStack } from '../evaluator/ContextStack'
 import type { EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
 import type {
-  NormalExpressionNode,
   ParseArgument,
   ParseBinding,
   ParseBindings,
@@ -17,18 +16,18 @@ import type { Token } from '../tokenizer/tokens'
 
 import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
 
+export type Count = number | { min?: number, max?: number, even?: boolean, odd?: boolean }
+
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
   sourceCodeInfo: SourceCodeInfo | undefined,
   contextStack: ContextStack,
   { executeFunction }: { executeFunction: ExecuteFunction },
 ) => T
-type ValidateNormalExpressionNode = (node: NormalExpressionNode) => void
-type ValidateSpecialExpressionNode = (node: SpecialExpressionNode) => void
 
 interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
-  validate?: ValidateNormalExpressionNode
+  paramCount: Count
 }
 
 export interface ParserHelpers {
@@ -49,7 +48,7 @@ interface EvaluateHelpers {
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   polishParse: (tokenStream: TokenStream, parseState: ParseState, firstToken: Token, parsers: ParserHelpers) => N
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
-  validateParameterCount: ValidateSpecialExpressionNode
+  paramCount: Count
   findUnresolvedIdentifiers: (
     node: N,
     contextStack: ContextStack,

@@ -6,7 +6,7 @@ export interface CommentExpressionNode extends CommonSpecialExpressionNode<'comm
 
 export const commentSpecialExpression: BuiltinSpecialExpression<null, CommentExpressionNode> = {
   polishParse: getCommonPolishSpecialExpressionParser('comment'),
-  validateParameterCount: () => undefined,
+  paramCount: {},
   evaluate: () => null,
   findUnresolvedIdentifiers: () => new Set(),
 }

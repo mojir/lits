@@ -5,7 +5,6 @@ import type { AstNode, NormalExpressionNode } from '../parser/interface'
 import {
   asNonUndefined,
   asUnknownRecord,
-  assertEvenNumberOfParams,
   assertNonUndefined,
   assertNumberOfParams,
   assertUnknownRecord,
@@ -48,13 +47,23 @@ describe('typeGuards index file', () => {
     expect(() => assertNonUndefined({})).not.toThrow()
   })
   it('assertLengthEven', () => {
-    expect(() => assertEvenNumberOfParams(toNormalExpressionNode([]))).not.toThrow()
-    expect(() => assertEvenNumberOfParams(toNormalExpressionNode([0]))).toThrow()
-    expect(() => assertEvenNumberOfParams(toNormalExpressionNode([0, 1]))).not.toThrow()
-    expect(() => assertEvenNumberOfParams(toNormalExpressionNode([0, 1, 2]))).toThrow()
-    expect(() => assertEvenNumberOfParams(toNormalExpressionNode([0, 1, 2, 3]))).not.toThrow()
-    expect(() => assertEvenNumberOfParams(toNormalExpressionNode([0, 1, 2, 3, 4]))).toThrow()
-    expect(() => assertEvenNumberOfParams(toNormalExpressionNode([0, 1, 2, 3, 4, 5]))).not.toThrow()
+    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([]))).not.toThrow()
+    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0]))).toThrow()
+    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1]))).not.toThrow()
+    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2]))).toThrow()
+    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2, 3]))).not.toThrow()
+    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2, 3, 4]))).toThrow()
+    expect(() => assertNumberOfParams({ even: true }, toNormalExpressionNode([0, 1, 2, 3, 4, 5]))).not.toThrow()
+  })
+
+  it('assertLengthOdd', () => {
+    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([]))).toThrow()
+    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0]))).not.toThrow()
+    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1]))).toThrow()
+    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2]))).not.toThrow()
+    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2, 3]))).toThrow()
+    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2, 3, 4]))).not.toThrow()
+    expect(() => assertNumberOfParams({ odd: true }, toNormalExpressionNode([0, 1, 2, 3, 4, 5]))).toThrow()
   })
 
   it('assertLength', () => {
@@ -66,7 +75,7 @@ describe('typeGuards index file', () => {
     expect(() => assertNumberOfParams(2, toNormalExpressionNode([1, 2]))).not.toThrow()
     expect(() => assertNumberOfParams(2, toNormalExpressionNode([1]))).toThrow()
     expect(() => assertNumberOfParams(2, toNormalExpressionNode([1, 2, 3]))).toThrow()
-    expect(() => assertNumberOfParams({}, toNormalExpressionNode([]))).toThrow()
+    expect(() => assertNumberOfParams({}, toNormalExpressionNode([]))).not.toThrow()
     expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1, 2, 3, 4, 5]))).not.toThrow()
     expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1, 2, 3, 4]))).not.toThrow()
     expect(() => assertNumberOfParams({ min: 1 }, toNormalExpressionNode([1, 2, 3]))).not.toThrow()

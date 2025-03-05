@@ -7,7 +7,7 @@ export interface OrNode extends CommonSpecialExpressionNode<'||'> {}
 
 export const orSpecialExpression: BuiltinSpecialExpression<Any, OrNode> = {
   polishParse: getCommonPolishSpecialExpressionParser('||'),
-  validateParameterCount: () => undefined,
+  paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     let value: Any = false
 

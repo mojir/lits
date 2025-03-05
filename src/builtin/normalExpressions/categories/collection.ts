@@ -12,7 +12,6 @@ import { assertArray } from '../../../typeGuards/array'
 import { asColl, assertAny, assertColl, assertObj, assertSeq, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString } from '../../../typeGuards/string'
-import { assertNumberOfParams } from '../../../typeGuards'
 
 interface CollMeta {
   coll: Coll
@@ -153,7 +152,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       const result = get(coll, key)
       return result === undefined ? defaultValue : result
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'get_in': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -176,7 +175,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return coll
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'count': {
     evaluate: ([coll], sourceCodeInfo): number => {
@@ -192,7 +191,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.keys(coll).length
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   'contains?': {
     evaluate: ([coll, key], sourceCodeInfo): boolean => {
@@ -210,7 +209,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return !!Object.getOwnPropertyDescriptor(coll, key)
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'has?': {
     evaluate: ([coll, value], sourceCodeInfo): boolean => {
@@ -233,7 +232,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.values(coll).includes(value)
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'has_some?': {
     evaluate: ([coll, seq], sourceCodeInfo): boolean => {
@@ -262,7 +261,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return false
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'has_every?': {
     evaluate: ([coll, seq], sourceCodeInfo): boolean => {
@@ -294,7 +293,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'assoc': {
     evaluate: ([coll, key, value], sourceCodeInfo): Coll => {
@@ -303,7 +302,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       assertAny(value, sourceCodeInfo)
       return assoc(coll, key, value, sourceCodeInfo)
     },
-    validate: node => assertNumberOfParams(3, node),
+    paramCount: 3,
   },
   'assoc_in': {
     evaluate: ([originalColl, keys, value], sourceCodeInfo): Coll => {
@@ -332,7 +331,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return coll
     },
-    validate: node => assertNumberOfParams(3, node),
+    paramCount: 3,
   },
   'update': {
     evaluate: ([coll, key, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
@@ -341,7 +340,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       assertLitsFunction(fn, sourceCodeInfo)
       return update(coll, key, fn, params, contextStack, executeFunction, sourceCodeInfo)
     },
-    validate: node => assertNumberOfParams({ min: 3 }, node),
+    paramCount: { min: 3 },
   },
   'update_in': {
     evaluate: ([originalColl, keys, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
@@ -386,7 +385,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return coll
     },
-    validate: node => assertNumberOfParams({ min: 3 }, node),
+    paramCount: { min: 3 },
   },
   'concat': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -410,7 +409,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
         }, {})
       }
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
   'not_empty': {
     evaluate: ([coll], sourceCodeInfo): Coll | null => {
@@ -426,7 +425,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.keys(coll).length > 0 ? coll : null
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   'every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -441,7 +440,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -456,7 +455,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'not_any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -471,7 +470,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return !Object.entries(coll).some(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'not_every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
@@ -486,6 +485,6 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
 
       return !Object.entries(coll).every(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo))
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 }

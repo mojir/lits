@@ -1,3 +1,4 @@
+import type { Count } from '../builtin/interface'
 import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
 import type { GenericNode } from '../parser/interface'
@@ -6,28 +7,6 @@ import type { SourceCodeInfo } from '../tokenizer/interface'
 import { getTokenDebugData } from '../tokenizer/utils'
 import { valueToString } from '../utils/debug/debugTools'
 import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
-
-type Count = number | { min?: number, max?: number }
-
-export function assertEvenNumberOfParams(node: GenericNode): void {
-  const length = withoutCommentNodes(node.p).length
-  if (length % 2 !== 0) {
-    throw new LitsError(
-      `Wrong number of arguments, expected an even number, got ${valueToString(length)}.`,
-      getTokenDebugData(node.token)?.sourceCodeInfo,
-    )
-  }
-}
-
-export function assertOddNumberOfParams(node: GenericNode): void {
-  const length = withoutCommentNodes(node.p).length
-  if (length % 2 !== 1) {
-    throw new LitsError(
-      `Wrong number of arguments, expected an odd number, got ${valueToString(length)}.`,
-      getTokenDebugData(node.token)?.sourceCodeInfo,
-    )
-  }
-}
 
 export function assertNumberOfParams(count: Count, node: GenericNode): void {
   assertCount({
@@ -80,9 +59,24 @@ function assertCount({ count, length, name, sourceCodeInfo }: { name: string | u
     }
   }
   else {
-    const { min, max } = count
-    if (min === undefined && max === undefined)
-      throw new LitsError('Min or max must be specified.', sourceCodeInfo)
+    const { min, max, even, odd } = count
+    if (even) {
+      if (length % 2 !== 0) {
+        throw new LitsError(
+          `Wrong number of arguments to "${name}",, expected an even number, got ${valueToString(length)}.`,
+          sourceCodeInfo,
+        )
+      }
+    }
+
+    if (odd) {
+      if (length % 2 !== 1) {
+        throw new LitsError(
+          `Wrong number of arguments to "${name}",, expected an odd number, got ${valueToString(length)}.`,
+          sourceCodeInfo,
+        )
+      }
+    }
 
     if (typeof min === 'number' && length < min) {
       throw new LitsError(

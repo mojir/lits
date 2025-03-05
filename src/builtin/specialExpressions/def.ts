@@ -2,7 +2,6 @@ import { AstNodeType } from '../../constants/constants'
 import type { CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
 import { assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { assertNumberOfParams } from '../../typeGuards'
 import { asAstNode, asSymbolNode, assertSymbolNode } from '../../typeGuards/astNode'
 import type { BuiltinSpecialExpression } from '../interface'
 import { assertNameNotDefined } from '../utils'
@@ -25,7 +24,7 @@ export const defSpecialExpression: BuiltinSpecialExpression<null, DefNode> = {
 
     return node
   },
-  validateParameterCount: node => assertNumberOfParams(2, node),
+  paramCount: 2,
   evaluate: (node, contextStack, { evaluateAstNode, builtin }) => {
     const sourceCodeInfo = getTokenDebugData(node.token)?.sourceCodeInfo
     const name = (node.p[0] as SymbolNode).v

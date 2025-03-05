@@ -6,7 +6,6 @@ import type { Any } from '../../interface'
 import type { AstNode, CommonSpecialExpressionNode, SymbolNode } from '../../parser/interface'
 import { assertLParenToken, assertRParenToken } from '../../tokenizer/common/commonTokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { assertNumberOfParams } from '../../typeGuards'
 import { assertSymbolNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
 import { getSourceCodeInfo } from '../../utils/debug/getSourceCodeInfo'
@@ -52,7 +51,7 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
 
     return node
   },
-  validateParameterCount: node => assertNumberOfParams(1, node),
+  paramCount: 1,
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
     try {

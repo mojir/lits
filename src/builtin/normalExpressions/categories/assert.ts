@@ -6,7 +6,6 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 import { assertString } from '../../../typeGuards/string'
 import { asAny } from '../../../typeGuards/lits'
-import { assertNumberOfParams } from '../../../typeGuards'
 
 export const assertNormalExpression: BuiltinNormalExpressions = {
   'assert': {
@@ -19,7 +18,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return asAny(value, sourceCodeInfo)
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
   'assert=': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -29,7 +28,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert!=': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -39,7 +38,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_equal': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -52,7 +51,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_not_equal': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -65,7 +64,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_gt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -75,7 +74,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_gte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -85,7 +84,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_lt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -95,7 +94,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_lte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
@@ -105,7 +104,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_true': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -115,7 +114,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
   'assert_false': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -125,7 +124,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
   'assert_truthy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -135,7 +134,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
   'assert_falsy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -145,7 +144,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
   'assert_null': {
     evaluate: ([first, message], sourceCodeInfo): null => {
@@ -155,7 +154,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
   'assert_throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
@@ -169,7 +168,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       throw new AssertionError(`Expected function to throw.${message}`, sourceCodeInfo)
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
   'assert_throws_error': {
     evaluate: ([func, throwMessage, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
@@ -191,7 +190,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       throw new AssertionError(`Expected function to throw "${throwMessage}".${message}`, sourceCodeInfo)
     },
-    validate: node => assertNumberOfParams({ min: 2, max: 3 }, node),
+    paramCount: { min: 2, max: 3 },
   },
   'assert_not_throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
@@ -205,6 +204,6 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
       }
       return null
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
 }

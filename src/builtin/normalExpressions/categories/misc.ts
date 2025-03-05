@@ -4,7 +4,6 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { assertString } from '../../../typeGuards/string'
-import { assertNumberOfParams } from '../../../typeGuards'
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
   '!=': {
@@ -18,7 +17,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
   '==': {
     evaluate: ([first, ...rest]): boolean => {
@@ -29,13 +28,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
   'equal?': {
     evaluate: ([a, b], sourceCodeInfo): boolean => {
       return deepEqual(asAny(a, sourceCodeInfo), asAny(b, sourceCodeInfo), sourceCodeInfo)
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
   '>': {
     evaluate: ([first, ...rest]): boolean => {
@@ -48,7 +47,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
 
   '<': {
@@ -62,7 +61,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
 
   '>=': {
@@ -76,7 +75,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
 
   '<=': {
@@ -90,18 +89,18 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       }
       return true
     },
-    validate: node => assertNumberOfParams({ min: 1 }, node),
+    paramCount: { min: 1 },
   },
   '!': {
     evaluate: ([first]): boolean => !first,
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   'epoch>iso_date': {
     evaluate: ([ms], sourceCodeInfo): string => {
       assertNumber(ms, sourceCodeInfo)
       return new Date(ms).toISOString()
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   'iso_date>epoch': {
     evaluate: ([dateTime], sourceCodeInfo): number => {
@@ -110,7 +109,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       assertNumber(ms, sourceCodeInfo, { finite: true })
       return ms
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   'write!': {
     evaluate: (params, sourceCodeInfo): Any => {
@@ -122,18 +121,19 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
+    paramCount: {},
   },
   'boolean': {
     evaluate: ([value]): boolean => {
       return !!value
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   'compare': {
     evaluate: ([a, b]): number => {
       return compare(a, b)
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
   'json_parse': {
     evaluate: ([first], sourceCodeInfo): Any => {
@@ -141,7 +141,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       // eslint-disable-next-line ts/no-unsafe-return
       return JSON.parse(first)
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   'json_stringify': {
     evaluate: ([first, second], sourceCodeInfo): string => {
@@ -152,6 +152,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       assertNumber(second, sourceCodeInfo)
       return JSON.stringify(first, null, second)
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 2 }, node),
+    paramCount: { min: 1, max: 2 },
   },
 }

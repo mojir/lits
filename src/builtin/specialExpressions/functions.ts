@@ -55,7 +55,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
 
     return node
   },
-  validateParameterCount: () => undefined,
+  paramCount: {},
   evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
     const name = node.f.v
 
@@ -96,7 +96,7 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
 
     return node
   },
-  validateParameterCount: () => undefined,
+  paramCount: {},
   evaluate: (node, contextStack, { evaluateAstNode }) => {
     const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
 

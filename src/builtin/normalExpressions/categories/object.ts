@@ -1,5 +1,4 @@
 import type { Any, Arr, Obj } from '../../../interface'
-import { assertEvenNumberOfParams, assertNumberOfParams } from '../../../typeGuards'
 import { assertArray, assertStringArray } from '../../../typeGuards/array'
 import { assertObj } from '../../../typeGuards/lits'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
@@ -19,7 +18,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: node => assertEvenNumberOfParams(node),
+    paramCount: { even: true },
   },
 
   keys: {
@@ -27,7 +26,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObj(obj, sourceCodeInfo)
       return Object.keys(obj)
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   vals: {
@@ -35,7 +34,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObj(obj, sourceCodeInfo)
       return Object.values(obj)
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   entries: {
@@ -43,7 +42,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       assertObj(obj, sourceCodeInfo)
       return Object.entries(obj)
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
 
   find: {
@@ -55,7 +54,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
 
       return null
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   dissoc: {
@@ -66,7 +65,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       delete newObj[key]
       return newObj
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   merge: {
@@ -85,7 +84,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         { ...first },
       )
     },
-    validate: node => assertNumberOfParams({ min: 0 }, node),
+    paramCount: { min: 0 },
   },
 
   merge_with: {
@@ -113,7 +112,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         { ...first },
       )
     },
-    validate: node => assertNumberOfParams({ min: 2 }, node),
+    paramCount: { min: 2 },
   },
 
   zipmap: {
@@ -131,7 +130,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
       }
       return result
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   select_keys: {
@@ -146,6 +145,6 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
         return result
       }, {})
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 }

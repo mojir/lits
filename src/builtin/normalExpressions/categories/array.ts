@@ -1,13 +1,13 @@
 import type { Arr } from '../../../interface'
 import { assertArray } from '../../../typeGuards/array'
 import { assertNumber } from '../../../typeGuards/number'
-import { assertNumberOfParams } from '../../../typeGuards'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 
 export const arrayNormalExpression: BuiltinNormalExpressions = {
   array: {
     evaluate: (params): Arr => params,
+    paramCount: {},
   },
 
   range: {
@@ -50,7 +50,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    validate: node => assertNumberOfParams({ min: 1, max: 3 }, node),
+    paramCount: { min: 1, max: 3 },
   },
 
   repeat: {
@@ -62,7 +62,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
       return result
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 
   flatten: {
@@ -72,7 +72,7 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
 
       return seq.flat(Number.POSITIVE_INFINITY)
     },
-    validate: node => assertNumberOfParams(1, node),
+    paramCount: 1,
   },
   mapcat: {
     evaluate: ([arr, fn], sourceCodeInfo, contextStack, { executeFunction }): Arr | string => {
@@ -80,6 +80,6 @@ export const arrayNormalExpression: BuiltinNormalExpressions = {
       assertLitsFunction(fn, sourceCodeInfo)
       return arr.map(elem => executeFunction(fn, [elem], contextStack, sourceCodeInfo)).flat(1)
     },
-    validate: node => assertNumberOfParams(2, node),
+    paramCount: 2,
   },
 }

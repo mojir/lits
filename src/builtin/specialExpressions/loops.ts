@@ -11,7 +11,7 @@ import type { SourceCodeInfo, TokenStream } from '../../tokenizer/interface'
 import { isP_ModifierToken } from '../../tokenizer/polish/polishTokens'
 import { asToken } from '../../tokenizer/tokens'
 import { getTokenDebugData } from '../../tokenizer/utils'
-import { asNonUndefined, assertNumberOfParams } from '../../typeGuards'
+import { asNonUndefined } from '../../typeGuards'
 import { asAstNode } from '../../typeGuards/astNode'
 import { asAny, asColl, isSeq } from '../../typeGuards/lits'
 import type { Builtin, BuiltinSpecialExpression, ParserHelpers } from '../interface'
@@ -263,7 +263,7 @@ export const forSpecialExpression: BuiltinSpecialExpression<Any, ForNode> = {
 
     return node
   },
-  validateParameterCount: node => assertNumberOfParams(1, node),
+  paramCount: 1,
   evaluate: (node, contextStack, helpers) => evaluateLoop(true, node, contextStack, helpers.evaluateAstNode),
   findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => analyze(node, contextStack, findUnresolvedIdentifiers, builtin),
 }
@@ -286,7 +286,7 @@ export const doseqSpecialExpression: BuiltinSpecialExpression<null, DoSeqNode> =
 
     return node
   },
-  validateParameterCount: node => assertNumberOfParams(1, node),
+  paramCount: 1,
   evaluate: (node, contextStack, helpers) => {
     evaluateLoop(false, node, contextStack, helpers.evaluateAstNode)
     return null
