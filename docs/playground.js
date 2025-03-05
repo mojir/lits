@@ -6108,6 +6108,7 @@ var Playground = (function (exports) {
             if (normalExpressionKeys.includes(name)) {
                 throw new Error("Cannot shadow builtin function \"".concat(name, "\""));
             }
+            this.addValue(name, value);
             this.globalContext[name] = { value: value };
         };
         ContextStackImpl.prototype.addValue = function (name, value) {
@@ -7892,27 +7893,49 @@ var Playground = (function (exports) {
         AlgebraicParser.prototype.parseExport = function (token) {
             var _a;
             this.advance();
-            var symbol = parseSymbol(this.tokenStream, this.parseState);
-            if (isA_OperatorToken(this.peek(), ';')) {
+            if (isA_SymbolToken(this.peek(), 'let')) {
+                this.advance();
+                var symbol = parseSymbol(this.tokenStream, this.parseState);
+                assertA_OperatorToken(this.peek(), '=');
+                this.advance();
+                var value = this.parseExpression();
+                assertA_OperatorToken(this.peek(), ';');
                 return {
                     t: AstNodeType.SpecialExpression,
                     n: 'def',
-                    p: [symbol, symbol],
+                    p: [symbol, value],
+                    token: getTokenDebugData(symbol.token) && symbol.token,
+                };
+            }
+            else if (isA_ReservedSymbolToken(this.peek(), 'function')) {
+                this.advance();
+                var symbol = parseSymbol(this.tokenStream, this.parseState);
+                var _b = this.parseFunctionArguments(), functionArguments = _b.functionArguments, arity = _b.arity;
+                var body = [];
+                while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    body.push(this.parseExpression());
+                    if (isA_OperatorToken(this.peek(), ';')) {
+                        this.advance();
+                    }
+                }
+                assertA_ReservedSymbolToken(this.peek(), 'end');
+                this.advance();
+                return {
+                    t: AstNodeType.SpecialExpression,
+                    n: 'defn',
+                    f: symbol,
+                    p: [],
+                    o: [{
+                            as: functionArguments,
+                            b: body,
+                            a: arity,
+                        }],
                     token: getTokenDebugData(token) && token,
                 };
             }
-            if (!isA_OperatorToken(this.peek(), '=')) {
-                throw new LitsError('Expected = or ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            else {
+                throw new LitsError('Expected let or function', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             }
-            this.advance();
-            var value = this.parseExpression();
-            assertA_OperatorToken(this.peek(), ';');
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'def',
-                p: [symbol, value],
-                token: getTokenDebugData(token) && token,
-            };
         };
         return AlgebraicParser;
     }());

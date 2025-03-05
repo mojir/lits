@@ -3,7 +3,7 @@ import { builtin, specialExpressionKeys } from '../builtin'
 import type { CondNode } from '../builtin/specialExpressions/cond'
 import type { DefNode } from '../builtin/specialExpressions/def'
 import type { DoNode } from '../builtin/specialExpressions/do'
-import type { FnNode } from '../builtin/specialExpressions/functions'
+import type { DefnNode, FnNode } from '../builtin/specialExpressions/functions'
 import type { IfNode } from '../builtin/specialExpressions/if'
 import type { LetNode } from '../builtin/specialExpressions/let'
 import type { LoopNode } from '../builtin/specialExpressions/loop'
@@ -1269,28 +1269,56 @@ export class AlgebraicParser {
     return false
   }
 
-  private parseExport(token: A_ReservedSymbolToken<'export'>): DefNode {
+  private parseExport(token: A_ReservedSymbolToken<'export'>): DefNode | DefnNode {
     this.advance()
-    const symbol = parseSymbol(this.tokenStream, this.parseState)
-    if (isA_OperatorToken(this.peek(), ';')) {
+    if (isA_SymbolToken(this.peek(), 'let')) {
+      this.advance()
+      const symbol = parseSymbol(this.tokenStream, this.parseState)
+
+      assertA_OperatorToken(this.peek(), '=')
+      this.advance()
+
+      const value = this.parseExpression()
+
+      assertA_OperatorToken(this.peek(), ';')
       return {
         t: AstNodeType.SpecialExpression,
         n: 'def',
-        p: [symbol, symbol],
+        p: [symbol, value],
+        token: getTokenDebugData(symbol.token) && symbol.token,
+      }
+    }
+    else if (isA_ReservedSymbolToken(this.peek(), 'function')) {
+      this.advance()
+      const symbol = parseSymbol(this.tokenStream, this.parseState)
+
+      const { functionArguments, arity } = this.parseFunctionArguments()
+
+      const body: AstNode[] = []
+
+      while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+        body.push(this.parseExpression())
+        if (isA_OperatorToken(this.peek(), ';')) {
+          this.advance()
+        }
+      }
+      assertA_ReservedSymbolToken(this.peek(), 'end')
+      this.advance()
+      return {
+        t: AstNodeType.SpecialExpression,
+        n: 'defn',
+        f: symbol,
+        p: [],
+        o: [{
+          as: functionArguments,
+          b: body,
+          a: arity,
+        }],
         token: getTokenDebugData(token) && token,
       }
     }
-    if (!isA_OperatorToken(this.peek(), '=')) {
-      throw new LitsError('Expected = or ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
-    }
-    this.advance()
-    const value = this.parseExpression()
-    assertA_OperatorToken(this.peek(), ';')
-    return {
-      t: AstNodeType.SpecialExpression,
-      n: 'def',
-      p: [symbol, value],
-      token: getTokenDebugData(token) && token,
+    else {
+      throw new LitsError('Expected let or function', getTokenDebugData(this.peek())?.sourceCodeInfo)
     }
   }
 }

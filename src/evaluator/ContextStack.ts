@@ -61,6 +61,7 @@ export class ContextStackImpl {
     if (normalExpressionKeys.includes(name)) {
       throw new Error(`Cannot shadow builtin function "${name}"`)
     }
+    this.addValue(name, value)
     this.globalContext[name] = { value }
   }
 

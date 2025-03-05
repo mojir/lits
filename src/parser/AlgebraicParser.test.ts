@@ -545,6 +545,18 @@ describe('algebraic operators', () => {
     })
   })
 
+  describe('export', () => {
+    test('samples', () => {
+      expect(lits.run('export let a = 10; a')).toBe(10)
+      expect(lits.run(`
+        export function foo()
+          10
+        end
+        foo()`)).toBe(10)
+    })
+    expect(() => lits.run('export let a = 10; let a = 2;')).toThrow()
+  })
+
   describe('do', () => {
     test('as operand', () => {
       expect(lits.run(`
@@ -570,13 +582,13 @@ describe('algebraic operators', () => {
       expect(lits.run(`
       let a = 1;
       do
-        export a = 2;
+        export let a = 2;
       end;
       a`)).toBe(1)
 
       expect(lits.run(`
       do
-        export a = 2;
+        export let a = 2;
       end;
       a`)).toBe(2)
     })
