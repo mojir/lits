@@ -8,9 +8,6 @@ export const commonSimpleTokenTypes = [
   'RBrace',
   'RBracket',
   'RParen',
-  'AlgNotation',
-  'PolNotation',
-  'EndNotation',
 ] as const
 
 export const commomValueTokenTypes = [
@@ -30,9 +27,6 @@ export type LBracketToken = GenericCommonSimpleToken<'LBracket'>
 export type RBracketToken = GenericCommonSimpleToken<'RBracket'>
 export type LBraceToken = GenericCommonSimpleToken<'LBrace'>
 export type RBraceToken = GenericCommonSimpleToken<'RBrace'>
-export type AlgebraicNotationToken = GenericCommonSimpleToken<'AlgNotation'>
-export type PolishNotationToken = GenericCommonSimpleToken<'PolNotation'>
-export type EndNotationToken = GenericCommonSimpleToken<'EndNotation'>
 
 export type StringToken = GenericCommonValueToken<'String'>
 export type RegexpShorthandToken = GenericCommonValueToken<'RegexpShorthand'>
@@ -44,9 +38,6 @@ export type CommonSimpleToken =
   | RBracketToken
   | LBraceToken
   | RBraceToken
-  | AlgebraicNotationToken
-  | PolishNotationToken
-  | EndNotationToken
 
 export type CommonValueToken =
   | StringToken
@@ -153,44 +144,5 @@ export function assertRegexpShorthandToken(token?: Token): asserts token is Rege
 }
 export function asRegexpShorthandToken(token?: Token): RegexpShorthandToken {
   assertRegexpShorthandToken(token)
-  return token
-}
-
-export function isAlgebraicNotationToken(token?: Token): token is AlgebraicNotationToken {
-  return token?.[0] === 'AlgNotation'
-}
-export function assertAlgebraicNotationToken(token?: Token): asserts token is AlgebraicNotationToken {
-  if (!isAlgebraicNotationToken(token)) {
-    throwUnexpectedToken('AlgNotation', undefined, token)
-  }
-}
-export function asAlgebraicNotationToken(token?: Token): AlgebraicNotationToken {
-  assertAlgebraicNotationToken(token)
-  return token
-}
-
-export function isPolishNotationToken(token?: Token): token is PolishNotationToken {
-  return token?.[0] === 'PolNotation'
-}
-export function assertPolishNotationToken(token?: Token): asserts token is PolishNotationToken {
-  if (!isPolishNotationToken(token)) {
-    throwUnexpectedToken('PolNotation', undefined, token)
-  }
-}
-export function asPolishNotationToken(token?: Token): PolishNotationToken {
-  assertPolishNotationToken(token)
-  return token
-}
-
-export function isEndNotationToken(token?: Token): token is EndNotationToken {
-  return token?.[0] === 'EndNotation'
-}
-export function assertEndNotationToken(token?: Token): asserts token is EndNotationToken {
-  if (!isEndNotationToken(token)) {
-    throwUnexpectedToken('EndNotation', undefined, token)
-  }
-}
-export function asEndNotationToken(token?: Token): EndNotationToken {
-  assertEndNotationToken(token)
   return token
 }

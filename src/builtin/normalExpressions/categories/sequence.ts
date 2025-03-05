@@ -822,16 +822,16 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       const seqsArr = isStringSeq
         ? seqs.map((seq) => {
-          assertString(seq, sourceCodeInfo)
-          if (typeof seq === 'string')
-            return seq.split('')
+            assertString(seq, sourceCodeInfo)
+            if (typeof seq === 'string')
+              return seq.split('')
 
-          return seq
-        })
+            return seq
+          })
         : seqs.map((seq) => {
-          assertArray(seq, sourceCodeInfo)
-          return seq
-        })
+            assertArray(seq, sourceCodeInfo)
+            return seq
+          })
 
       const maxLength = Math.min(...seqsArr.map(seq => seq.length))
       const result: Arr = []

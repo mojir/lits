@@ -20,9 +20,6 @@ function untokenizeToken(token: Token): string {
     case 'RBracket': return ']'
     case 'LBrace': return '{'
     case 'RBrace': return '}'
-    case 'PolNotation': return '$`'
-    case 'AlgNotation': return '@`'
-    case 'EndNotation': return '`'
     case 'P_FnShorthand': return '#'
 
     /* v8 ignore next 2 */

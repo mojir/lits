@@ -1,7 +1,7 @@
 import { LitsError } from '../../errors'
 import type { TokenDescriptor, Tokenizer } from '../interface'
 import type { SimpleToken } from '../tokens'
-import type { AlgebraicNotationToken, EndNotationToken, LBraceToken, LBracketToken, LParenToken, PolishNotationToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, StringToken } from './commonTokens'
+import type { LBraceToken, LBracketToken, LParenToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, StringToken } from './commonTokens'
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
 
@@ -21,12 +21,6 @@ const tokenizeLBrace: Tokenizer<LBraceToken> = (input, position) =>
   tokenizeSimpleToken('LBrace', '{', input, position)
 const tokenizeRBrace: Tokenizer<RBraceToken> = (input, position) =>
   tokenizeSimpleToken('RBrace', '}', input, position)
-const tokenizePolishNotation: Tokenizer<PolishNotationToken> = (input, position) =>
-  tokenizeSimpleToken('PolNotation', '$`', input, position)
-const tokenizeAlgebraicNotation: Tokenizer<AlgebraicNotationToken> = (input, position) =>
-  tokenizeSimpleToken('AlgNotation', '@`', input, position)
-const tokenizeEndNotation: Tokenizer<EndNotationToken> = (input, position) =>
-  tokenizeSimpleToken('EndNotation', '`', input, position)
 
 export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   if (input[position] !== '"')
@@ -94,9 +88,6 @@ export function tokenizeSimpleToken<T extends SimpleToken>(
 }
 
 export const commonTokenizers = [
-  tokenizePolishNotation,
-  tokenizeAlgebraicNotation,
-  tokenizeEndNotation,
   tokenizeLParen,
   tokenizeRParen,
   tokenizeLBracket,

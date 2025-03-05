@@ -83,7 +83,7 @@ LtOptions
 function getRangeString(options: NumberOptions): string {
   const hasUpperAndLowerBound
     = (typeof options.gt === 'number' || typeof options.gte === 'number')
-    && (typeof options.lt === 'number' || typeof options.lte === 'number')
+      && (typeof options.lt === 'number' || typeof options.lte === 'number')
   if (hasUpperAndLowerBound) {
     return `${typeof options.gt === 'number' ? `${options.gt} < n ` : `${options.gte} <= n `}${
       typeof options.lt === 'number' ? `< ${options.lt}` : `<= ${options.lte}`

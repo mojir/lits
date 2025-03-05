@@ -40,11 +40,11 @@ export function createReadlineInterface(options: Options): ReadLine {
   const historyEnabled = isHistoryEnabled()
   const history = historyEnabled
     ? fs.readFileSync(historyFile, 'utf8')
-      .toString()
-      .split('\n')
-      .slice(0, -1)
-      .reverse()
-      .slice(0, options.historySize)
+        .toString()
+        .split('\n')
+        .slice(0, -1)
+        .reverse()
+        .slice(0, options.historySize)
     : []
 
   ;(readline as UnknownRecord).kHistorySize = Math.max((readline as UnknownRecord).kHistorySize as number, options.historySize)

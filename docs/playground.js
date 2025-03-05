@@ -773,9 +773,6 @@ var Playground = (function (exports) {
         'RBrace',
         'RBracket',
         'RParen',
-        'AlgNotation',
-        'PolNotation',
-        'EndNotation',
     ];
     var commomValueTokenTypes = [
         'String',
@@ -864,20 +861,6 @@ var Playground = (function (exports) {
     function asRegexpShorthandToken(token) {
         assertRegexpShorthandToken(token);
         return token;
-    }
-    function isAlgebraicNotationToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'AlgNotation';
-    }
-    function isPolishNotationToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'PolNotation';
-    }
-    function isEndNotationToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'EndNotation';
-    }
-    function assertEndNotationToken(token) {
-        if (!isEndNotationToken(token)) {
-            throwUnexpectedToken('EndNotation', undefined, token);
-        }
     }
 
     var algebraicSimpleTokenTypes = __spreadArray([], __read(commonSimpleTokenTypes), false);
@@ -7143,32 +7126,6 @@ var Playground = (function (exports) {
                     return parseReservedSymbol(this.tokenStream, this.parseState);
                 case 'RegexpShorthand':
                     return parseRegexpShorthand(this.tokenStream, this.parseState);
-                case 'PolNotation': {
-                    this.parseState.algebraic = false;
-                    var astNodes = [];
-                    this.advance();
-                    do {
-                        astNodes.push(this.parseState.parseToken(this.tokenStream, this.parseState));
-                    } while (!isEndNotationToken(this.peek()));
-                    this.advance();
-                    this.parseState.algebraic = true;
-                    if (astNodes.length === 1) {
-                        return astNodes[0];
-                    }
-                    return {
-                        t: AstNodeType.SpecialExpression,
-                        n: 'do',
-                        p: astNodes,
-                        token: getTokenDebugData(token) && token,
-                    };
-                }
-                case 'AlgNotation': {
-                    this.advance();
-                    var node = this.parseOperand();
-                    assertEndNotationToken(this.peek());
-                    this.advance();
-                    return node;
-                }
                 default:
                     throw new LitsError("Unknown token type: ".concat(tokenType), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
@@ -7326,7 +7283,7 @@ var Playground = (function (exports) {
             }
         };
         AlgebraicParser.prototype.parseFunctionArguments = function () {
-            var _a, _b, _c, _d, _e;
+            var _a, _b, _c, _d;
             var firstToken = this.peek();
             if (isA_SymbolToken(firstToken)) {
                 this.advance();
@@ -7341,62 +7298,54 @@ var Playground = (function (exports) {
             }
             this.advance();
             var rest = false;
-            var letBindingObject;
             var args = [];
             var restArg;
-            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
-                if (letBindingObject) {
-                    throw new LitsError('Expected right parentheses', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                }
-                if (isLBraceToken(this.peek())) {
-                    letBindingObject = this.parseObject();
-                }
-                else {
-                    if (isA_OperatorToken(this.peek(), '...')) {
-                        if (rest) {
-                            throw new LitsError('Multiple spread operators in lambda function', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
-                        }
-                        this.advance();
-                        rest = true;
-                    }
-                    var symbolToken = this.peek();
-                    if (!isA_SymbolToken(symbolToken)) {
-                        throw new LitsError('Expected symbol', (_c = getTokenDebugData(this.peek())) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
-                    }
+            while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isA_SymbolToken(this.peek(), 'let')) {
+                if (isA_OperatorToken(this.peek(), '...')) {
                     if (rest) {
-                        restArg = symbolToken[1];
-                    }
-                    else {
-                        args.push(symbolToken[1]);
+                        throw new LitsError('Multiple spread operators in lambda function', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                     }
                     this.advance();
+                    rest = true;
                 }
-                if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
-                    throw new LitsError('Expected comma or closing parenthesis', (_d = getTokenDebugData(this.peek())) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                var symbolToken = this.peek();
+                if (!isA_SymbolToken(symbolToken)) {
+                    throw new LitsError('Expected symbol', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
+                if (rest) {
+                    restArg = symbolToken[1];
+                }
+                else {
+                    args.push(symbolToken[1]);
+                }
+                this.advance();
+                if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isA_SymbolToken(this.peek(), 'let')) {
+                    throw new LitsError('Expected comma or closing parenthesis', (_c = getTokenDebugData(this.peek())) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
                 }
                 if (isA_OperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
             }
             var arity = restArg !== undefined ? { min: args.length } : args.length;
-            if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', (_e = getTokenDebugData(this.peek())) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+            // let bindings, to be able to pass on values in the context down to the body
+            // This is needed since lits is dynamically scoped
+            // E.g.
+            // x => y => x + y // would not work, x is not available in the second lambda
+            // x => (y, let x = x) => x + y // would work, x is available in the second lambda
+            var bindingNodess = [];
+            var token = this.peek();
+            while (isA_SymbolToken(token, 'let')) {
+                var letNode = this.parseLet(token, true);
+                bindingNodess.push(letNode.bs[0]);
+                token = this.peek();
             }
-            var letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : [];
+            if (!isRParenToken(this.peek())) {
+                throw new LitsError('Expected closing parenthesis', (_d = getTokenDebugData(this.peek())) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+            }
             var functionArguments = {
                 m: args,
                 r: restArg,
-                b: letBindings.map(function (pair) {
-                    var key = pair[0];
-                    var value = pair[1];
-                    return {
-                        t: AstNodeType.Binding,
-                        n: key.v,
-                        v: value,
-                        p: [],
-                        token: getTokenDebugData(key.token) && key.token,
-                    };
-                }),
+                b: bindingNodess,
             };
             this.advance();
             return {
@@ -8186,47 +8135,12 @@ var Playground = (function (exports) {
                 return parseFnShorthand(tokenStream, parseState);
             case 'P_Comment':
                 return parseComment(tokenStream, parseState);
-            case 'AlgNotation': {
-                parseState.position += 1;
-                parseState.algebraic = true;
-                var algebraicParser = new AlgebraicParser(tokenStream, parseState);
-                var nodes = algebraicParser.parse();
-                assertEndNotationToken(tokenStream.tokens[parseState.position++]);
-                parseState.algebraic = false;
-                if (nodes.length === 1) {
-                    return nodes[0];
-                }
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'do',
-                    p: nodes,
-                    token: nodes[0].token,
-                };
-            }
-            case 'PolNotation': {
-                var astNodes = [];
-                parseState.position += 1;
-                do {
-                    astNodes.push(parsePolishToken(tokenStream, parseState));
-                } while (!isEndNotationToken(asToken(tokenStream.tokens[parseState.position])));
-                parseState.position += 1;
-                if (astNodes.length === 1) {
-                    return astNodes[0];
-                }
-                return {
-                    t: AstNodeType.SpecialExpression,
-                    n: 'do',
-                    p: astNodes,
-                    token: astNodes[0].token,
-                };
-            }
             case 'P_CollectionAccessor':
             case 'P_Modifier':
             case 'RParen':
             case 'RBracket':
             case 'RBrace':
             case 'P_Whitespace':
-            case 'EndNotation':
                 break;
             /* v8 ignore next 2 */
             default:
@@ -8308,15 +8222,6 @@ var Playground = (function (exports) {
     var tokenizeRBrace = function (input, position) {
         return tokenizeSimpleToken('RBrace', '}', input, position);
     };
-    var tokenizePolishNotation = function (input, position) {
-        return tokenizeSimpleToken('PolNotation', '$`', input, position);
-    };
-    var tokenizeAlgebraicNotation = function (input, position) {
-        return tokenizeSimpleToken('AlgNotation', '@`', input, position);
-    };
-    var tokenizeEndNotation = function (input, position) {
-        return tokenizeSimpleToken('EndNotation', '`', input, position);
-    };
     var tokenizeString = function (input, position) {
         if (input[position] !== '"')
             return NO_MATCH;
@@ -8369,9 +8274,6 @@ var Playground = (function (exports) {
             return NO_MATCH;
     }
     var commonTokenizers = [
-        tokenizePolishNotation,
-        tokenizeAlgebraicNotation,
-        tokenizeEndNotation,
         tokenizeLParen,
         tokenizeRParen,
         tokenizeLBracket,
@@ -8881,7 +8783,6 @@ var Playground = (function (exports) {
 
     function tokenize$1(input, params) {
         var debug = !!params.debug;
-        var notationStack = [params.algebraic ? 'algebraic' : 'polish'];
         var position = 0;
         var tokenStream = {
             tokens: [],
@@ -8890,7 +8791,7 @@ var Playground = (function (exports) {
             algebraic: !!params.algebraic,
         };
         while (position < input.length) {
-            var tokenizers = notationStack.at(-1) === 'algebraic' ? algebraicTokenizers : polishTokenizers;
+            var tokenizers = params.algebraic ? algebraicTokenizers : polishTokenizers;
             var tokenDescriptor = getCurrentToken(input, position, tokenizers);
             var debugData = debug
                 ? {
@@ -8907,22 +8808,7 @@ var Playground = (function (exports) {
                     addTokenDebugData(token, debugData);
                 }
                 tokenStream.tokens.push(token);
-                if (isAlgebraicNotationToken(token)) {
-                    notationStack.push('algebraic');
-                }
-                if (isPolishNotationToken(token)) {
-                    notationStack.push('polish');
-                }
-                if (isEndNotationToken(token)) {
-                    notationStack.pop();
-                    if (notationStack.length < 1) {
-                        throw new LitsError('Unexpected end directive `.', debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
-                    }
-                }
             }
-        }
-        if (notationStack.length > 1) {
-            throw new LitsError('Missing end directive `.', createSourceCodeInfo(input, position, params.filePath));
         }
         applySugar(tokenStream);
         return tokenStream;
@@ -9008,9 +8894,6 @@ var Playground = (function (exports) {
             case 'RBracket': return ']';
             case 'LBrace': return '{';
             case 'RBrace': return '}';
-            case 'PolNotation': return '$`';
-            case 'AlgNotation': return '@`';
-            case 'EndNotation': return '`';
             case 'P_FnShorthand': return '#';
             /* v8 ignore next 2 */
             default:

@@ -276,47 +276,6 @@ describe('algebraic operators', () => {
     })
   })
 
-  describe('polish escape hatch', () => {
-    test('samples', () => {
-      expect(lits.tokenize('$`1 2`').tokens).toEqual([
-        ['PolNotation'],
-        ['P_Number', '1'],
-        ['P_Whitespace', ' '],
-        ['P_Number', '2'],
-        ['EndNotation'],
-      ])
-
-      expect(lits.run('$`1`')).toBe(1)
-      expect(lits.run('10 * $`(+ 1 10)` / 2')).toBe(55)
-      expect(lits.run('10 * $`(+ 1 @`12 - 2`)` / 2')).toBe(55)
-      expect(lits.run('$`(+ $`2 1`)`')).toBe(1)
-      expect(lits.run('10 * $`(+ $`2 1` @`@`12` - 2`)` / 2')).toBe(55)
-    })
-  })
-  describe('algebraic escape hatch', () => {
-    test('samples', () => {
-      const pLits = new Lits({ algebraic: false })
-      expect(pLits.tokenize('@`1 + 2`').tokens).toEqual([
-        ['AlgNotation'],
-        ['A_Number', '1'],
-        ['A_Whitespace', ' '],
-        ['A_Operator', '+'],
-        ['A_Whitespace', ' '],
-        ['A_Number', '2'],
-        ['EndNotation'],
-      ])
-
-      expect(pLits.run('@`1`')).toBe(1)
-      expect(pLits.run('@`1 + 2`')).toBe(3)
-      expect(pLits.run('(/ (* 10 @`1 + 10`) 2)')).toBe(55)
-      expect(pLits.run('@`10 + $`(mod 3 2)``')).toBe(11)
-
-      expect(pLits.run('(def o @`{ foo="bar" }`) o.foo')).toBe('bar')
-
-      expect(pLits.run('(map [1 2 3] (fn [number-parameter] @`\'number-parameter\' + 1`))')).toEqual([2, 3, 4])
-    })
-  })
-
   test('misc', () => {
     expect(lits.run('3;2;1;')).toBe(1)
     expect(lits.run('empty?([1, 2 ,3] filter => $ > 10)')).toBe(true)
@@ -1066,11 +1025,18 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
 
     it('supports lambda functions with let bindings', () => {
       // Support for let bindings
-      expect(lits.run('(x, { y=2 }) => y')).toBeDefined()
-      // Here we need the let bindings due to dynamic scoping, not lexical scoping
-      // Would be nice to have lexical scoping, but that would require a more complex implementation
-      expect(lits.run('((x) => (y, {x=x}) => x + y)(3)(4)')).toBe(7)
-      expect(lits.run('((a) => (b, { a=a }) => (c, { a=a, b=b }) => a * b * c)(2)(3)(4)')).toBe(24)
+      expect(lits.run('(x => (y, let x = x) => x + y)(1)(2)')).toBe(3)
+      expect(lits.run(`
+(a => 
+  (b, 
+    let a = a
+  ) => 
+    (c, 
+      let a = a 
+      let b = b
+    ) => 
+      a * b * c
+)(2)(3)(4)`)).toBe(24)
     })
 
     it('supports shorthand lambda function definitions', () => {
@@ -1104,15 +1070,6 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     it('supports lambda functions as return values', () => {
       expect(lits.run('((op) => if op == "add" then ((x, y) => x + y) else ((x, y) => x - y) end)("add")(5, 3)')).toBe(8)
       expect(lits.run('((op) => if op == "add" then ((x, y) => x + y) else ((x, y) => x - y) end)("subtract")(5, 3)')).toBe(2)
-    })
-
-    test('samples', () => {
-      expect(lits.run(`
-            $\`
-            (def foo #(inc %))
-            (foo 7)
-            \`
-          `)).toBe(8)
     })
   })
 })

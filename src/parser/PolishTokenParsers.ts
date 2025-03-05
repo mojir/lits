@@ -5,7 +5,7 @@ import type { FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
-import { asLParenToken, assertEndNotationToken, assertLBracketToken, assertRParenToken, isEndNotationToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { asLParenToken, assertLBracketToken, assertRParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { PolishTokenType } from '../tokenizer/polish/polishTokens'
 import { asP_CommentToken, asP_StringShorthandToken, asP_SymbolToken, isP_FnShorthandToken, isP_ModifierToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
@@ -14,7 +14,6 @@ import { getTokenDebugData } from '../tokenizer/utils'
 import { asNonUndefined, assertEvenNumberOfParams } from '../typeGuards'
 import { assertSymbolNode, isExpressionNode } from '../typeGuards/astNode'
 import { valueToString } from '../utils/debug/debugTools'
-import { AlgebraicParser } from './AlgebraicParser'
 import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type {
   AstNode,
@@ -321,47 +320,12 @@ export function parsePolishToken(tokenStream: TokenStream, parseState: ParseStat
       return parseFnShorthand(tokenStream, parseState)
     case 'P_Comment':
       return parseComment(tokenStream, parseState)
-    case 'AlgNotation': {
-      parseState.position += 1
-      parseState.algebraic = true
-      const algebraicParser = new AlgebraicParser(tokenStream, parseState)
-      const nodes = algebraicParser.parse()
-      assertEndNotationToken(tokenStream.tokens[parseState.position++])
-      parseState.algebraic = false
-      if (nodes.length === 1) {
-        return nodes[0]!
-      }
-      return {
-        t: AstNodeType.SpecialExpression,
-        n: 'do',
-        p: nodes,
-        token: nodes[0]!.token,
-      }
-    }
-    case 'PolNotation': {
-      const astNodes: AstNode[] = []
-      parseState.position += 1
-      do {
-        astNodes.push(parsePolishToken(tokenStream, parseState))
-      } while (!isEndNotationToken(asToken(tokenStream.tokens[parseState.position])))
-      parseState.position += 1
-      if (astNodes.length === 1) {
-        return astNodes[0]!
-      }
-      return {
-        t: AstNodeType.SpecialExpression,
-        n: 'do',
-        p: astNodes,
-        token: astNodes[0]!.token,
-      }
-    }
     case 'P_CollectionAccessor':
     case 'P_Modifier':
     case 'RParen':
     case 'RBracket':
     case 'RBrace':
     case 'P_Whitespace':
-    case 'EndNotation':
       break
     /* v8 ignore next 2 */
     default:

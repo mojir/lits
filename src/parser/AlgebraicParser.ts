@@ -17,12 +17,11 @@ import { LitsError } from '../errors'
 import { withoutCommentNodes } from '../removeCommentNodes'
 import type { A_OperatorToken, A_ReservedSymbolToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isFunctionOperator, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
-import { asLBraceToken, asLBracketToken, assertEndNotationToken, assertLParenToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isEndNotationToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { asLBraceToken, asLBracketToken, assertLParenToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
 import { asSymbolNode } from '../typeGuards/astNode'
-import { arrayToPairs } from '../utils'
 import { parseNumber, parseRegexpShorthand, parseReservedSymbol, parseString, parseSymbol } from './commonTokenParsers'
 import type { AstNode, BindingNode, NormalExpressionNodeWithName, ParseState, StringNode, SymbolNode } from './interface'
 
@@ -72,7 +71,7 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
     case '??': // nullish coalescing
       return 2
 
-      // leave room for binaryFunctionalOperatorPrecedence = 1
+    // leave room for binaryFunctionalOperatorPrecedence = 1
     default:
       throw new Error(`Unknown binary operator: ${operatorSign satisfies never}`)
   }
@@ -424,32 +423,6 @@ export class AlgebraicParser {
         return parseReservedSymbol(this.tokenStream, this.parseState)
       case 'RegexpShorthand':
         return parseRegexpShorthand(this.tokenStream, this.parseState)
-      case 'PolNotation': {
-        this.parseState.algebraic = false
-        const astNodes: AstNode[] = []
-        this.advance()
-        do {
-          astNodes.push(this.parseState.parseToken(this.tokenStream, this.parseState))
-        } while (!isEndNotationToken(this.peek()))
-        this.advance()
-        this.parseState.algebraic = true
-        if (astNodes.length === 1) {
-          return astNodes[0]!
-        }
-        return {
-          t: AstNodeType.SpecialExpression,
-          n: 'do',
-          p: astNodes,
-          token: getTokenDebugData(token) && token,
-        }
-      }
-      case 'AlgNotation': {
-        this.advance()
-        const node = this.parseOperand()
-        assertEndNotationToken(this.peek())
-        this.advance()
-        return node
-      }
 
       default:
         throw new LitsError(`Unknown token type: ${tokenType}`, getTokenDebugData(token)?.sourceCodeInfo)
@@ -639,62 +612,58 @@ export class AlgebraicParser {
 
     this.advance()
     let rest = false
-    let letBindingObject: AstNode | undefined
     const args: string[] = []
     let restArg: string | undefined
-    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
-      if (letBindingObject) {
-        throw new LitsError('Expected right parentheses', getTokenDebugData(this.peek())?.sourceCodeInfo)
-      }
-      if (isLBraceToken(this.peek())) {
-        letBindingObject = this.parseObject()
-      }
-      else {
-        if (isA_OperatorToken(this.peek(), '...')) {
-          if (rest) {
-            throw new LitsError('Multiple spread operators in lambda function', getTokenDebugData(this.peek())?.sourceCodeInfo)
-          }
-          this.advance()
-          rest = true
-        }
-        const symbolToken = this.peek()
-        if (!isA_SymbolToken(symbolToken)) {
-          throw new LitsError('Expected symbol', getTokenDebugData(this.peek())?.sourceCodeInfo)
-        }
+    while (!this.isAtEnd() && !isRParenToken(this.peek()) && !isA_SymbolToken(this.peek(), 'let')) {
+      if (isA_OperatorToken(this.peek(), '...')) {
         if (rest) {
-          restArg = symbolToken[1]
-        }
-        else {
-          args.push(symbolToken[1])
+          throw new LitsError('Multiple spread operators in lambda function', getTokenDebugData(this.peek())?.sourceCodeInfo)
         }
         this.advance()
+        rest = true
       }
-      if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
+      const symbolToken = this.peek()
+      if (!isA_SymbolToken(symbolToken)) {
+        throw new LitsError('Expected symbol', getTokenDebugData(this.peek())?.sourceCodeInfo)
+      }
+      if (rest) {
+        restArg = symbolToken[1]
+      }
+      else {
+        args.push(symbolToken[1])
+      }
+      this.advance()
+
+      if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek()) && !isA_SymbolToken(this.peek(), 'let')) {
         throw new LitsError('Expected comma or closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
       if (isA_OperatorToken(this.peek(), ',')) {
         this.advance()
       }
     }
+
     const arity: Arity = restArg !== undefined ? { min: args.length } : args.length
+
+    // let bindings, to be able to pass on values in the context down to the body
+    // This is needed since lits is dynamically scoped
+    // E.g.
+    // x => y => x + y // would not work, x is not available in the second lambda
+    // x => (y, let x = x) => x + y // would work, x is available in the second lambda
+    const bindingNodess: BindingNode[] = []
+    let token = this.peek()
+    while (isA_SymbolToken(token, 'let')) {
+      const letNode = this.parseLet(token, true)
+      bindingNodess.push(letNode.bs[0]!)
+      token = this.peek()
+    }
+
     if (!isRParenToken(this.peek())) {
       throw new LitsError('Expected closing parenthesis', getTokenDebugData(this.peek())?.sourceCodeInfo)
     }
-    const letBindings = letBindingObject ? arrayToPairs(letBindingObject.p) : []
     const functionArguments: FunctionArguments = {
       m: args,
       r: restArg,
-      b: letBindings.map((pair) => {
-        const key = pair[0] as StringNode
-        const value = pair[1] as AstNode
-        return {
-          t: AstNodeType.Binding,
-          n: key.v,
-          v: value,
-          p: [],
-          token: getTokenDebugData(key.token) && key.token,
-        }
-      }),
+      b: bindingNodess,
     }
 
     this.advance()
