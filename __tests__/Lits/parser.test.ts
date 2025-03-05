@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { parse, parseToken } from '../../src/parser'
+import { parse } from '../../src/parser'
 import { AstNodeType } from '../../src/constants/constants'
 import type { Ast } from '../../src/parser/interface'
 import { tokenize } from '../../src/tokenizer'
 import type { TokenStream } from '../../src/tokenizer/interface'
 import type { P_CollectionAccessorToken } from '../../src/tokenizer/polish/polishTokens'
+import { parsePolishToken } from '../../src/parser/PolishTokenParsers'
 
 const program = `
 (let [day (* 24 60 60 1000)])
@@ -194,7 +195,7 @@ describe('parser', () => {
         ['Modifier', ''] as unknown as P_CollectionAccessorToken,
       ],
     }
-    expect(() => parseToken(tokenStream, { position: 0, algebraic: false, parseToken })).toThrow()
-    expect(() => parseToken(tokenStream, { position: 0, algebraic: false, parseToken })).toThrow()
+    expect(() => parsePolishToken(tokenStream, { position: 0, parseToken: parsePolishToken })).toThrow()
+    expect(() => parsePolishToken(tokenStream, { position: 0, parseToken: parsePolishToken })).toThrow()
   })
 })

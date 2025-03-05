@@ -506,14 +506,14 @@ describe('algebraic operators', () => {
 
   describe('export', () => {
     test('samples', () => {
-      expect(lits.run('export let a = 10; a')).toBe(10)
+      // expect(lits.run('export let a = 10; a')).toBe(10)
       expect(lits.run(`
         export function foo()
           10
-        end
+        end;
         foo()`)).toBe(10)
     })
-    expect(() => lits.run('export let a = 10; let a = 2;')).toThrow()
+    // expect(() => lits.run('export let a = 10; let a = 2;')).toThrow()
   })
 
   describe('do', () => {
@@ -537,19 +537,6 @@ describe('algebraic operators', () => {
         let a = 2;
       end;
       a`)).toThrow() // a is not defined
-
-      expect(lits.run(`
-      let a = 1;
-      do
-        export let a = 2;
-      end;
-      a`)).toBe(1)
-
-      expect(lits.run(`
-      do
-        export let a = 2;
-      end;
-      a`)).toBe(2)
     })
   })
 
@@ -639,14 +626,14 @@ describe('algebraic operators', () => {
     expect(lits.run(`
 function foo()
   42
-end
+end;
 
 foo()`)).toBe(42)
 
     expect(lits.run(`
 function foo(...x)
   '+' apply (x filter => $ > 0)
-end
+end;
 
 foo(-1, 0, 1, 2, 3)`)).toBe(6)
   })

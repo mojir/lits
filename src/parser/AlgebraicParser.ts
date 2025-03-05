@@ -201,7 +201,7 @@ export class AlgebraicParser {
   public parse(): AstNode[] {
     const nodes: AstNode[] = []
     while (!this.isAtEnd()) {
-      nodes.push(this.parseExpression())
+      nodes.push(this.parseExpression(0, true))
       if (!isA_OperatorToken(this.peek(), ';')) {
         break
       }
@@ -210,7 +210,7 @@ export class AlgebraicParser {
     return nodes
   }
 
-  private parseExpression(precedence = 0): AstNode {
+  private parseExpression(precedence = 0, moduleScope = false): AstNode {
     const firstToken = this.peek()
 
     let left: AstNode
@@ -248,6 +248,9 @@ export class AlgebraicParser {
       return this.parseFunction(firstToken)
     }
     else if (isA_ReservedSymbolToken(firstToken, 'export')) {
+      if (!moduleScope) {
+        throw new LitsError('export is only allowed in module scope', getTokenDebugData(firstToken)?.sourceCodeInfo)
+      }
       return this.parseExport(firstToken)
     }
 
@@ -1186,6 +1189,7 @@ export class AlgebraicParser {
     }
     assertA_ReservedSymbolToken(this.peek(), 'end')
     this.advance()
+    assertA_OperatorToken(this.peek(), ';')
 
     const fnNode: FnNode = {
       t: AstNodeType.SpecialExpression,

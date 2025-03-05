@@ -1321,20 +1321,6 @@ var Playground = (function (exports) {
         return astNodes.filter(function (n) { return n.t !== AstNodeType.Comment; });
     }
 
-    function assertEvenNumberOfParams(node) {
-        var _a;
-        var length = withoutCommentNodes(node.p).length;
-        if (length % 2 !== 0) {
-            throw new LitsError("Wrong number of arguments, expected an even number, got ".concat(valueToString(length), "."), (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        }
-    }
-    function assertOddNumberOfParams(node) {
-        var _a;
-        var length = withoutCommentNodes(node.p).length;
-        if (length % 2 !== 1) {
-            throw new LitsError("Wrong number of arguments, expected an odd number, got ".concat(valueToString(length), "."), (_a = getTokenDebugData(node.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-        }
-    }
     function assertNumberOfParams(count, node) {
         var _a, _b;
         assertCount({
@@ -1375,9 +1361,17 @@ var Playground = (function (exports) {
             }
         }
         else {
-            var min = count.min, max = count.max;
-            if (min === undefined && max === undefined)
-                throw new LitsError('Min or max must be specified.', sourceCodeInfo);
+            var min = count.min, max = count.max, even = count.even, odd = count.odd;
+            if (even) {
+                if (length % 2 !== 0) {
+                    throw new LitsError("Wrong number of arguments to \"".concat(name, "\",, expected an even number, got ").concat(valueToString(length), "."), sourceCodeInfo);
+                }
+            }
+            if (odd) {
+                if (length % 2 !== 1) {
+                    throw new LitsError("Wrong number of arguments to \"".concat(name, "\",, expected an odd number, got ").concat(valueToString(length), "."), sourceCodeInfo);
+                }
+            }
             if (typeof min === 'number' && length < min) {
                 throw new LitsError("Wrong number of arguments to \"".concat(name, "\", expected at least ").concat(min, ", got ").concat(valueToString(length), "."), sourceCodeInfo);
             }
@@ -1580,7 +1574,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num << count;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         '>>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1589,7 +1583,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num >> count;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         '>>>': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1598,7 +1592,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return num >>> count;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         '~': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1606,7 +1600,7 @@ var Playground = (function (exports) {
                 assertNumber(num, sourceCodeInfo, { integer: true });
                 return ~num;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         '&': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1617,7 +1611,7 @@ var Playground = (function (exports) {
                     return result & value;
                 }, first);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         '&!': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1628,7 +1622,7 @@ var Playground = (function (exports) {
                     return result & ~value;
                 }, first);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         '|': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1639,7 +1633,7 @@ var Playground = (function (exports) {
                     return result | value;
                 }, first);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         '^': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1650,7 +1644,7 @@ var Playground = (function (exports) {
                     return result ^ value;
                 }, first);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         'bit_flip': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1660,7 +1654,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return (num ^= mask);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'bit_set': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1670,7 +1664,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return (num |= mask);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'bit_clear': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1680,7 +1674,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return (num &= ~mask);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'bit_test': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -1690,7 +1684,7 @@ var Playground = (function (exports) {
                 var mask = 1 << index;
                 return !!(num & mask);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
     };
 
@@ -1998,7 +1992,7 @@ var Playground = (function (exports) {
                 var result = get(coll, key);
                 return result === undefined ? defaultValue : result;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'get_in': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2033,7 +2027,7 @@ var Playground = (function (exports) {
                 }
                 return coll;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'count': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2047,7 +2041,7 @@ var Playground = (function (exports) {
                     return coll.length;
                 return Object.keys(coll).length;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'contains?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2064,7 +2058,7 @@ var Playground = (function (exports) {
                 }
                 return !!Object.getOwnPropertyDescriptor(coll, key);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'has?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2085,7 +2079,7 @@ var Playground = (function (exports) {
                 }
                 return Object.values(coll).includes(value);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'has_some?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2145,7 +2139,7 @@ var Playground = (function (exports) {
                 }
                 return false;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'has_every?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2207,7 +2201,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'assoc': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2217,7 +2211,7 @@ var Playground = (function (exports) {
                 assertAny(value, sourceCodeInfo);
                 return assoc(coll, key, value, sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams(3, node); },
+            paramCount: 3,
         },
         'assoc_in': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2242,7 +2236,7 @@ var Playground = (function (exports) {
                 }
                 return coll;
             },
-            validate: function (node) { return assertNumberOfParams(3, node); },
+            paramCount: 3,
         },
         'update': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2253,7 +2247,7 @@ var Playground = (function (exports) {
                 assertLitsFunction(fn, sourceCodeInfo);
                 return update(coll, key, fn, params, contextStack, executeFunction, sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 3 }, node); },
+            paramCount: { min: 3 },
         },
         'update_in': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2279,7 +2273,7 @@ var Playground = (function (exports) {
                 }
                 return coll;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 3 }, node); },
+            paramCount: { min: 3 },
         },
         'concat': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2303,7 +2297,7 @@ var Playground = (function (exports) {
                     }, {});
                 }
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         'not_empty': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2317,7 +2311,7 @@ var Playground = (function (exports) {
                     return coll.length > 0 ? coll : null;
                 return Object.keys(coll).length > 0 ? coll : null;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2331,7 +2325,7 @@ var Playground = (function (exports) {
                     return coll.split('').every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2345,7 +2339,7 @@ var Playground = (function (exports) {
                     return coll.split('').some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'not_any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2359,7 +2353,7 @@ var Playground = (function (exports) {
                     return !coll.split('').some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return !Object.entries(coll).some(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'not_every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2373,13 +2367,14 @@ var Playground = (function (exports) {
                     return !coll.split('').every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return !Object.entries(coll).every(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
     };
 
     var arrayNormalExpression = {
         array: {
             evaluate: function (params) { return params; },
+            paramCount: {},
         },
         range: {
             evaluate: function (params, sourceCodeInfo) {
@@ -2417,7 +2412,7 @@ var Playground = (function (exports) {
                     result.push(i);
                 return result;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
+            paramCount: { min: 1, max: 3 },
         },
         repeat: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2428,7 +2423,7 @@ var Playground = (function (exports) {
                     result.push(value);
                 return result;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         flatten: {
             evaluate: function (_a) {
@@ -2437,7 +2432,7 @@ var Playground = (function (exports) {
                     return [];
                 return seq.flat(Number.POSITIVE_INFINITY);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         mapcat: {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2447,7 +2442,7 @@ var Playground = (function (exports) {
                 assertLitsFunction(fn, sourceCodeInfo);
                 return arr.map(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }).flat(1);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
     };
 
@@ -2462,7 +2457,7 @@ var Playground = (function (exports) {
                 assertSeq(seq, sourceCodeInfo);
                 return i >= 0 && i < seq.length ? toAny(seq[i]) : defaultValue;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'filter': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2477,7 +2472,7 @@ var Playground = (function (exports) {
                     .filter(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); })
                     .join('');
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'first': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2487,7 +2482,7 @@ var Playground = (function (exports) {
                 assertSeq(array, sourceCodeInfo);
                 return toAny(array[0]);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2497,7 +2492,7 @@ var Playground = (function (exports) {
                 assertSeq(array, sourceCodeInfo);
                 return toAny(array[array.length - 1]);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'map': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2519,7 +2514,7 @@ var Playground = (function (exports) {
                         .join('');
                 }
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'pop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2530,7 +2525,7 @@ var Playground = (function (exports) {
                 }
                 return seq.slice(0, seq.length - 1);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'position': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2549,7 +2544,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'index_of': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2568,7 +2563,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'last_index_of': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2587,7 +2582,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'push': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2601,7 +2596,7 @@ var Playground = (function (exports) {
                     return __spreadArray(__spreadArray([], __read(seq), false), __read(values), false);
                 }
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         'reductions': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2662,7 +2657,7 @@ var Playground = (function (exports) {
                     }
                 }
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'reduce': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2709,7 +2704,7 @@ var Playground = (function (exports) {
                     }
                 }
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'reduce_right': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2757,7 +2752,7 @@ var Playground = (function (exports) {
                     }
                 }
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'rest': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2770,7 +2765,7 @@ var Playground = (function (exports) {
                 }
                 return seq.substring(1);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'nthrest': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2782,7 +2777,7 @@ var Playground = (function (exports) {
                     return seq.slice(integerCount);
                 return seq.substring(integerCount);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'next': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2797,7 +2792,7 @@ var Playground = (function (exports) {
                     return null;
                 return seq.substring(1);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'nthnext': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2811,7 +2806,7 @@ var Playground = (function (exports) {
                     return seq.slice(integerCount);
                 return seq.substring(integerCount);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'reverse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2823,7 +2818,7 @@ var Playground = (function (exports) {
                     return __spreadArray([], __read(seq), false).reverse();
                 return seq.split('').reverse().join('');
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'second': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2833,7 +2828,7 @@ var Playground = (function (exports) {
                 assertSeq(seq, sourceCodeInfo);
                 return toAny(seq[1]);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'shift': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2845,7 +2840,7 @@ var Playground = (function (exports) {
                 copy.shift();
                 return copy;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'slice': {
             evaluate: function (params, sourceCodeInfo) {
@@ -2859,7 +2854,7 @@ var Playground = (function (exports) {
                 assertNumber(to, sourceCodeInfo, { integer: true });
                 return seq.slice(from, to);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 3 }, node); },
+            paramCount: { min: 1, max: 3 },
         },
         'some': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2876,7 +2871,7 @@ var Playground = (function (exports) {
                     return (_c = seq.split('').find(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); })) !== null && _c !== void 0 ? _c : null;
                 return toAny(seq.find(function (elem) { return executeFunction(fn, [elem], contextStack, sourceCodeInfo); }));
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'sort': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2914,7 +2909,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'sort_by': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -2965,7 +2960,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'take': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2975,7 +2970,7 @@ var Playground = (function (exports) {
                 var num = Math.max(Math.ceil(n), 0);
                 return input.slice(0, num);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'take_last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2986,7 +2981,7 @@ var Playground = (function (exports) {
                 var from = array.length - num;
                 return array.slice(from);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'take_while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3014,7 +3009,7 @@ var Playground = (function (exports) {
                 }
                 return typeof seq === 'string' ? result.join('') : result;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'drop': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3024,7 +3019,7 @@ var Playground = (function (exports) {
                 assertSeq(input, sourceCodeInfo);
                 return input.slice(num);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'drop_last': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3035,7 +3030,7 @@ var Playground = (function (exports) {
                 var from = array.length - num;
                 return array.slice(0, from);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'drop_while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3051,7 +3046,7 @@ var Playground = (function (exports) {
                 var from = charArray.findIndex(function (elem) { return !executeFunction(fn, [elem], contextStack, sourceCodeInfo); });
                 return charArray.slice(from).join('');
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'unshift': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3065,7 +3060,7 @@ var Playground = (function (exports) {
                 copy.unshift.apply(copy, __spreadArray([], __read(values), false));
                 return copy;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         'distinct': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3075,7 +3070,7 @@ var Playground = (function (exports) {
                     return Array.from(new Set(input));
                 return Array.from(new Set(input.split(''))).join('');
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'remove': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3090,7 +3085,7 @@ var Playground = (function (exports) {
                     .filter(function (elem) { return !executeFunction(fn, [elem], contextStack, sourceCodeInfo); })
                     .join('');
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'remove_at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3107,7 +3102,7 @@ var Playground = (function (exports) {
                 }
                 return "".concat(input.substring(0, index)).concat(input.substring(index + 1));
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'split_at': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3117,7 +3112,7 @@ var Playground = (function (exports) {
                 assertSeq(seq, sourceCodeInfo);
                 return [seq.slice(0, intPos), seq.slice(intPos)];
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'split_with': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3132,7 +3127,7 @@ var Playground = (function (exports) {
                     return [seq, seqIsArray ? [] : ''];
                 return [seq.slice(0, index), seq.slice(index)];
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'frequencies': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3148,7 +3143,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'group_by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3166,7 +3161,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'partition': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3178,7 +3173,7 @@ var Playground = (function (exports) {
                     : undefined;
                 return partition(n, step, seq, pad, sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 4 }, node); },
+            paramCount: { min: 2, max: 4 },
         },
         'partition_all': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3187,7 +3182,7 @@ var Playground = (function (exports) {
                 var step = params.length === 3 ? toNonNegativeInteger(asNumber(params[2], sourceCodeInfo)) : n;
                 return partition(n, step, seq, [], sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'partition_by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -3208,7 +3203,7 @@ var Playground = (function (exports) {
                 }, []);
                 return isStringSeq ? result.map(function (elem) { return elem.join(''); }) : result;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'ends_with?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3220,7 +3215,7 @@ var Playground = (function (exports) {
                 }
                 return str.at(-1) === search;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'starts_with?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3232,7 +3227,7 @@ var Playground = (function (exports) {
                 }
                 return str[0] === search;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'interleave': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3270,7 +3265,7 @@ var Playground = (function (exports) {
                 }
                 return isStringSeq ? result.join('') : result;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         'interpose': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3289,7 +3284,7 @@ var Playground = (function (exports) {
                 result.push(seq[seq.length - 1]);
                 return result;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
     };
     function partition(n, step, seq, pad, sourceCodeInfo) {
@@ -3327,7 +3322,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo);
                 return first + 1;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'dec': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3335,7 +3330,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo);
                 return first - 1;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         '+': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3344,6 +3339,7 @@ var Playground = (function (exports) {
                     return result + param;
                 }, 0);
             },
+            paramCount: {},
         },
         '*': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3352,6 +3348,7 @@ var Playground = (function (exports) {
                     return result * param;
                 }, 1);
             },
+            paramCount: {},
         },
         '/': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3368,6 +3365,7 @@ var Playground = (function (exports) {
                     return result / param;
                 }, first);
             },
+            paramCount: {},
         },
         '-': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3382,6 +3380,7 @@ var Playground = (function (exports) {
                     return result - param;
                 }, first);
             },
+            paramCount: {},
         },
         'quot': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3391,7 +3390,7 @@ var Playground = (function (exports) {
                 var quotient = Math.trunc(dividend / divisor);
                 return quotient;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'mod': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3401,7 +3400,7 @@ var Playground = (function (exports) {
                 var quotient = Math.floor(dividend / divisor);
                 return dividend - divisor * quotient;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         '%': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3411,7 +3410,7 @@ var Playground = (function (exports) {
                 var quotient = Math.trunc(dividend / divisor);
                 return dividend - divisor * quotient;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'sqrt': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3419,7 +3418,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo);
                 return Math.sqrt(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'cbrt': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3427,7 +3426,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo);
                 return Math.cbrt(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         '**': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3436,7 +3435,7 @@ var Playground = (function (exports) {
                 assertNumber(second, sourceCodeInfo);
                 return Math.pow(first, second);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'round': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3448,7 +3447,7 @@ var Playground = (function (exports) {
                 var factor = Math.pow(10, decimals);
                 return Math.round(value * factor) / factor;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'trunc': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3456,7 +3455,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo);
                 return Math.trunc(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'floor': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3464,7 +3463,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo);
                 return Math.floor(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'ceil': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3472,7 +3471,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo);
                 return Math.ceil(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'min': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3485,7 +3484,7 @@ var Playground = (function (exports) {
                     return Math.min(min, value);
                 }, first);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         'max': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3498,7 +3497,7 @@ var Playground = (function (exports) {
                     return Math.max(min, value);
                 }, first);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         'abs': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3506,7 +3505,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.abs(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'sign': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3514,67 +3513,67 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.sign(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'max_safe_integer': {
             evaluate: function () {
                 return Number.MAX_SAFE_INTEGER;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'min_safe_integer': {
             evaluate: function () {
                 return Number.MIN_SAFE_INTEGER;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'max_value': {
             evaluate: function () {
                 return Number.MAX_VALUE;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'min_value': {
             evaluate: function () {
                 return Number.MIN_VALUE;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'epsilon': {
             evaluate: function () {
                 return Number.EPSILON;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'positive_infinity': {
             evaluate: function () {
                 return Number.POSITIVE_INFINITY;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'negative_infinity': {
             evaluate: function () {
                 return Number.NEGATIVE_INFINITY;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'nan': {
             evaluate: function () {
                 return Number.NaN;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'e': {
             evaluate: function () {
                 return Math.E;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'pi': {
             evaluate: function () {
                 return Math.PI;
             },
-            validate: function (node) { return assertNumberOfParams(0, node); },
+            paramCount: 0,
         },
         'exp': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3582,7 +3581,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.exp(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'log': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3590,7 +3589,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.log(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'log2': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3598,7 +3597,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.log2(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'log10': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3606,7 +3605,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.log10(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'sin': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3614,7 +3613,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.sin(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'asin': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3622,7 +3621,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.asin(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'sinh': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3630,7 +3629,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.sinh(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'asinh': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3638,7 +3637,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.asinh(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'cos': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3646,7 +3645,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.cos(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'acos': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3654,7 +3653,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.acos(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'cosh': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3662,7 +3661,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.cosh(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'acosh': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3670,7 +3669,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.acosh(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'tan': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3678,7 +3677,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.tan(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'atan': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3686,7 +3685,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.atan(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'tanh': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3694,7 +3693,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.tanh(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'atanh': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3702,7 +3701,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Math.atanh(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
     };
 
@@ -3717,7 +3716,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         '==': {
             evaluate: function (_a) {
@@ -3739,14 +3738,14 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         'equal?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 return deepEqual(asAny(a, sourceCodeInfo), asAny(b, sourceCodeInfo), sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         '>': {
             evaluate: function (_a) {
@@ -3770,7 +3769,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         '<': {
             evaluate: function (_a) {
@@ -3794,7 +3793,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         '>=': {
             evaluate: function (_a) {
@@ -3818,7 +3817,7 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         '<=': {
             evaluate: function (_a) {
@@ -3842,14 +3841,14 @@ var Playground = (function (exports) {
                 }
                 return true;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         '!': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return !first;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'epoch>iso_date': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3857,7 +3856,7 @@ var Playground = (function (exports) {
                 assertNumber(ms, sourceCodeInfo);
                 return new Date(ms).toISOString();
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'iso_date>epoch': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3867,7 +3866,7 @@ var Playground = (function (exports) {
                 assertNumber(ms, sourceCodeInfo, { finite: true });
                 return ms;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'write!': {
             evaluate: function (params, sourceCodeInfo) {
@@ -3877,20 +3876,21 @@ var Playground = (function (exports) {
                     return asAny(params[params.length - 1], sourceCodeInfo);
                 return null;
             },
+            paramCount: {},
         },
         'boolean': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return !!value;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'compare': {
             evaluate: function (_a) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
                 return compare(a, b);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'json_parse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3899,7 +3899,7 @@ var Playground = (function (exports) {
                 // eslint-disable-next-line ts/no-unsafe-return
                 return JSON.parse(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'json_stringify': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3910,7 +3910,7 @@ var Playground = (function (exports) {
                 assertNumber(second, sourceCodeInfo);
                 return JSON.stringify(first, null, second);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
     };
 
@@ -3924,7 +3924,7 @@ var Playground = (function (exports) {
                     throw new AssertionError(message, sourceCodeInfo);
                 return asAny(value, sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'assert=': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3934,7 +3934,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert!=': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3944,7 +3944,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " not to be ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_equal': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3955,7 +3955,7 @@ var Playground = (function (exports) {
                 }
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_not_equal': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3966,7 +3966,7 @@ var Playground = (function (exports) {
                 }
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_gt': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3976,7 +3976,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_gte': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3986,7 +3986,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_lt': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -3996,7 +3996,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_lte': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4006,7 +4006,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_true': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4016,7 +4016,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be true.").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'assert_false': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4026,7 +4026,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be false.").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'assert_truthy': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4036,7 +4036,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be truthy.").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'assert_falsy': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4046,7 +4046,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be falsy.").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'assert_null': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4056,7 +4056,7 @@ var Playground = (function (exports) {
                     throw new AssertionError("Expected ".concat(first, " to be nil.").concat(message), sourceCodeInfo);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'assert_throws': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4072,7 +4072,7 @@ var Playground = (function (exports) {
                 }
                 throw new AssertionError("Expected function to throw.".concat(message), sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         'assert_throws_error': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4093,7 +4093,7 @@ var Playground = (function (exports) {
                 }
                 throw new AssertionError("Expected function to throw \"".concat(throwMessage, "\".").concat(message), sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'assert_not_throws': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -4109,7 +4109,7 @@ var Playground = (function (exports) {
                 }
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
     };
 
@@ -4125,7 +4125,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertEvenNumberOfParams(node); },
+            paramCount: { even: true },
         },
         keys: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4133,7 +4133,7 @@ var Playground = (function (exports) {
                 assertObj(obj, sourceCodeInfo);
                 return Object.keys(obj);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         vals: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4141,7 +4141,7 @@ var Playground = (function (exports) {
                 assertObj(obj, sourceCodeInfo);
                 return Object.values(obj);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         entries: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4149,7 +4149,7 @@ var Playground = (function (exports) {
                 assertObj(obj, sourceCodeInfo);
                 return Object.entries(obj);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         find: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4160,7 +4160,7 @@ var Playground = (function (exports) {
                     return [key, obj[key]];
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         dissoc: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4171,7 +4171,7 @@ var Playground = (function (exports) {
                 delete newObj[key];
                 return newObj;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         merge: {
             evaluate: function (params, sourceCodeInfo) {
@@ -4184,7 +4184,7 @@ var Playground = (function (exports) {
                     return __assign(__assign({}, result), obj);
                 }, __assign({}, first));
             },
-            validate: function (node) { return assertNumberOfParams({ min: 0 }, node); },
+            paramCount: { min: 0 },
         },
         merge_with: {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
@@ -4207,7 +4207,7 @@ var Playground = (function (exports) {
                     return result;
                 }, __assign({}, first));
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         zipmap: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4222,7 +4222,7 @@ var Playground = (function (exports) {
                 }
                 return result;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         select_keys: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4235,7 +4235,7 @@ var Playground = (function (exports) {
                     return result;
                 }, {});
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
     };
 
@@ -4245,42 +4245,42 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isLitsFunction(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'string?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'string';
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'number?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'number';
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'integer?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'number' && isNumber(first, { integer: true });
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'boolean?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return typeof first === 'boolean';
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'nil?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return first === null || first === undefined;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'zero?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4288,7 +4288,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return first === 0;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'pos?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4296,7 +4296,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return first > 0;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'neg?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4304,7 +4304,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return first < 0;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'even?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4312,7 +4312,7 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return first % 2 === 0;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'odd?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4320,42 +4320,42 @@ var Playground = (function (exports) {
                 assertNumber(first, sourceCodeInfo, { finite: true });
                 return isNumber(first, { integer: true }) && first % 2 !== 0;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'array?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return Array.isArray(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'coll?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isColl(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'seq?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isSeq(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'object?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return isObj(first);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'regexp?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return isRegularExpression(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'finite?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4363,7 +4363,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Number.isFinite(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'nan?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4371,7 +4371,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return Number.isNaN(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'positive_infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4379,7 +4379,7 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return value === Number.POSITIVE_INFINITY;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'negative_infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4387,21 +4387,21 @@ var Playground = (function (exports) {
                 assertNumber(value, sourceCodeInfo);
                 return value === Number.NEGATIVE_INFINITY;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'true?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return value === true;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'false?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return value === false;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'empty?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4415,7 +4415,7 @@ var Playground = (function (exports) {
                     return coll.length === 0;
                 return Object.keys(coll).length === 0;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'not_empty?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4429,7 +4429,7 @@ var Playground = (function (exports) {
                     return coll.length > 0;
                 return Object.keys(coll).length > 0;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
     };
 
@@ -4448,7 +4448,7 @@ var Playground = (function (exports) {
                     _b.f = flags,
                     _b;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+            paramCount: { min: 1, max: 2 },
         },
         match: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4462,7 +4462,7 @@ var Playground = (function (exports) {
                     return __spreadArray([], __read(match), false);
                 return null;
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         replace: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4473,7 +4473,7 @@ var Playground = (function (exports) {
                 var matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, "".concat(regexp.f)) : regexp;
                 return str.replace(matcher, value);
             },
-            validate: function (node) { return assertNumberOfParams(3, node); },
+            paramCount: 3,
         },
         replace_all: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4484,7 +4484,7 @@ var Playground = (function (exports) {
                 var matcher = isRegularExpression(regexp) ? new RegExp(regexp.s, "".concat(regexp.f.includes('g') ? regexp.f : "".concat(regexp.f, "g"))) : regexp;
                 return str.replaceAll(matcher, value);
             },
-            validate: function (node) { return assertNumberOfParams(3, node); },
+            paramCount: 3,
         },
     };
 
@@ -4500,7 +4500,7 @@ var Playground = (function (exports) {
                 assertNumber(third, sourceCodeInfo, { gte: second });
                 return (first).substring(second, third);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'string_repeat': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4509,7 +4509,7 @@ var Playground = (function (exports) {
                 assertNumber(count, sourceCodeInfo, { integer: true, nonNegative: true });
                 return str.repeat(count);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'str': {
             evaluate: function (params) {
@@ -4524,6 +4524,7 @@ var Playground = (function (exports) {
                     return result + paramStr;
                 }, '');
             },
+            paramCount: {},
         },
         'number': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4534,7 +4535,7 @@ var Playground = (function (exports) {
                     throw new LitsError("Could not convert '".concat(str, "' to a number."), sourceCodeInfo);
                 return number;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'from_char_code': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4548,7 +4549,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'to_char_code': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4556,7 +4557,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo, { nonEmpty: true });
                 return asNonUndefined(str.codePointAt(0), sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'lower_case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4564,7 +4565,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.toLowerCase();
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'upper_case': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4572,7 +4573,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.toUpperCase();
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'trim': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4580,7 +4581,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.trim();
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'trim_left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4588,7 +4589,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.replace(/^\s+/, '');
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'trim_right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4596,7 +4597,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.replace(/\s+$/, '');
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         '++': {
             evaluate: function (params, sourceCodeInfo) {
@@ -4620,7 +4621,7 @@ var Playground = (function (exports) {
                     return "".concat(acc).concat(str);
                 }, first === null ? '' : "".concat(first));
             },
-            validate: function () { return undefined; },
+            paramCount: {},
         },
         'join': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4630,7 +4631,7 @@ var Playground = (function (exports) {
                 assertString(delimiter, sourceCodeInfo);
                 return stringList.join(delimiter);
             },
-            validate: function (node) { return assertNumberOfParams(2, node); },
+            paramCount: 2,
         },
         'split': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4644,7 +4645,7 @@ var Playground = (function (exports) {
                     : new RegExp(stringOrRegExpValue.s, stringOrRegExpValue.f);
                 return str.split(delimiter, limit);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'split_lines': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4652,7 +4653,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.split((/\r\n|\n|\r/)).filter(function (line) { return line !== ''; });
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'pad_left': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4663,7 +4664,7 @@ var Playground = (function (exports) {
                     assertString(padString, sourceCodeInfo);
                 return str.padStart(length, padString);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'pad_right': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4674,7 +4675,7 @@ var Playground = (function (exports) {
                     assertString(padString, sourceCodeInfo);
                 return str.padEnd(length, padString);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+            paramCount: { min: 2, max: 3 },
         },
         'template': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4705,7 +4706,7 @@ var Playground = (function (exports) {
                     }
                 }
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1, max: 10 }, node); },
+            paramCount: { min: 1, max: 10 },
         },
         'encode_base64': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4716,7 +4717,7 @@ var Playground = (function (exports) {
                     return String.fromCharCode(Number.parseInt(p1, 16));
                 }));
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'decode_base64': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4734,7 +4735,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'encode_uri_component': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4742,7 +4743,7 @@ var Playground = (function (exports) {
                 assertString(value, sourceCodeInfo);
                 return encodeURIComponent(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'decode_uri_component': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4755,7 +4756,7 @@ var Playground = (function (exports) {
                     throw new LitsError(error, sourceCodeInfo);
                 }
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'blank?': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4766,7 +4767,7 @@ var Playground = (function (exports) {
                 assertString(value, sourceCodeInfo);
                 return blankRegexp.test(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         'capitalize': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4774,7 +4775,7 @@ var Playground = (function (exports) {
                 assertString(str, sourceCodeInfo);
                 return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
     };
     var doubleDollarRegexp = /\$\$/g;
@@ -4805,14 +4806,14 @@ var Playground = (function (exports) {
                 var applyArray = __spreadArray(__spreadArray([], __read(params.slice(0, -1)), false), __read(last), false);
                 return executeFunction(func, applyArray, contextStack, sourceCodeInfo);
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
         identity: {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return toAny(value);
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         partial: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4826,7 +4827,7 @@ var Playground = (function (exports) {
                     _b.p = params,
                     _b;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         comp: {
             evaluate: function (fns, sourceCodeInfo) {
@@ -4844,6 +4845,7 @@ var Playground = (function (exports) {
                     _a.f = fns,
                     _a;
             },
+            paramCount: {},
         },
         constantly: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4856,7 +4858,7 @@ var Playground = (function (exports) {
                     _b.v = toAny(value),
                     _b;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         juxt: {
             evaluate: function (fns, sourceCodeInfo) {
@@ -4868,7 +4870,7 @@ var Playground = (function (exports) {
                     _a.f = fns,
                     _a;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         complement: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4881,7 +4883,7 @@ var Playground = (function (exports) {
                     _b.f = toAny(fn),
                     _b;
             },
-            validate: function (node) { return assertNumberOfParams(1, node); },
+            paramCount: 1,
         },
         every_pred: {
             evaluate: function (fns, sourceCodeInfo) {
@@ -4893,7 +4895,7 @@ var Playground = (function (exports) {
                     _a.f = fns,
                     _a;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         some_pred: {
             evaluate: function (fns, sourceCodeInfo) {
@@ -4905,7 +4907,7 @@ var Playground = (function (exports) {
                     _a.f = fns,
                     _a;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 1 }, node); },
+            paramCount: { min: 1 },
         },
         fnil: {
             evaluate: function (_a, sourceCodeInfo) {
@@ -4919,7 +4921,7 @@ var Playground = (function (exports) {
                     _b.p = params,
                     _b;
             },
-            validate: function (node) { return assertNumberOfParams({ min: 2 }, node); },
+            paramCount: { min: 2 },
         },
     };
 
@@ -4938,7 +4940,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -4982,14 +4984,14 @@ var Playground = (function (exports) {
 
     var commentSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('comment'),
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function () { return null; },
         findUnresolvedIdentifiers: function () { return new Set(); },
     };
 
     var condSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('cond'),
-        validateParameterCount: function (node) { return assertEvenNumberOfParams(node); },
+        paramCount: { even: true },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5019,7 +5021,7 @@ var Playground = (function (exports) {
 
     var switchSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('switch'),
-        validateParameterCount: function (node) { return assertOddNumberOfParams(node); },
+        paramCount: { odd: true },
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5050,7 +5052,7 @@ var Playground = (function (exports) {
 
     var declaredSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('defined?'),
-        validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
+        paramCount: 1,
         evaluate: function (node, contextStack) {
             var lookUpResult = contextStack.lookUp(node.p[0]);
             return lookUpResult !== null;
@@ -5097,7 +5099,7 @@ var Playground = (function (exports) {
             assertSymbolNode(node.p[0], (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             return node;
         },
-        validateParameterCount: function (node) { return assertNumberOfParams(2, node); },
+        paramCount: 2,
         evaluate: function (node, contextStack, _a) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode, builtin = _a.builtin;
@@ -5122,7 +5124,7 @@ var Playground = (function (exports) {
 
     var doSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('do'),
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5194,7 +5196,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
             var _c, _d;
@@ -5233,7 +5235,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
             var _c;
@@ -5458,7 +5460,7 @@ var Playground = (function (exports) {
 
     var ifSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('if'),
-        validateParameterCount: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+        paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5482,7 +5484,7 @@ var Playground = (function (exports) {
 
     var unlessSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('unless'),
-        validateParameterCount: function (node) { return assertNumberOfParams({ min: 2, max: 3 }, node); },
+        paramCount: { min: 2, max: 3 },
         evaluate: function (node, contextStack, _a) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5519,7 +5521,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function (node) { return assertNumberOfParams(0, node); },
+        paramCount: 0,
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5574,7 +5576,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5840,7 +5842,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
+        paramCount: 1,
         evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateAstNode); },
         findUnresolvedIdentifiers: function (node, contextStack, _a) {
             var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
@@ -5862,7 +5864,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
+        paramCount: 1,
         evaluate: function (node, contextStack, helpers) {
             evaluateLoop(false, node, contextStack, helpers.evaluateAstNode);
             return null;
@@ -5875,7 +5877,7 @@ var Playground = (function (exports) {
 
     var orSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('||'),
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var e_1, _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5905,7 +5907,7 @@ var Playground = (function (exports) {
 
     var qqSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('??'),
-        validateParameterCount: function (node) { return assertNumberOfParams({ min: 1, max: 2 }, node); },
+        paramCount: { min: 1, max: 2 },
         evaluate: function (node, contextStack, _a) {
             var _b;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5937,7 +5939,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function () { return undefined; },
+        paramCount: {},
         evaluate: function (node, contextStack, _a) {
             var evaluateAstNode = _a.evaluateAstNode;
             var params = node.p.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
@@ -5951,7 +5953,7 @@ var Playground = (function (exports) {
 
     var throwSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('throw'),
-        validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
+        paramCount: 1,
         evaluate: function (node, contextStack, _a) {
             var _b, _c;
             var evaluateAstNode = _a.evaluateAstNode;
@@ -5992,7 +5994,7 @@ var Playground = (function (exports) {
             };
             return node;
         },
-        validateParameterCount: function (node) { return assertNumberOfParams(1, node); },
+        paramCount: 1,
         evaluate: function (node, contextStack, _a) {
             var _b;
             var _c;
@@ -6429,8 +6431,9 @@ var Playground = (function (exports) {
         var e_1, _a;
         var result = null;
         var safeAstNode = ast.hasDebugData ? JSON.parse(JSON.stringify(ast)) : ast;
-        if (safeAstNode.hasDebugData)
+        if (safeAstNode.hasDebugData) {
             removeCommenNodes(safeAstNode);
+        }
         try {
             for (var _b = __values(safeAstNode.b), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var node = _c.value;
@@ -6825,7 +6828,6 @@ var Playground = (function (exports) {
         }
     }
     function createNamedNormalExpressionNode(name, params, token) {
-        var _a;
         var node = {
             t: AstNodeType.NormalExpression,
             n: name,
@@ -6834,7 +6836,7 @@ var Playground = (function (exports) {
         };
         var builtinExpression = builtin.normalExpressions[node.n];
         if (builtinExpression) {
-            (_a = builtinExpression.validate) === null || _a === void 0 ? void 0 : _a.call(builtinExpression, __assign(__assign({}, node), { p: withoutCommentNodes(node.p) }));
+            assertNumberOfParams(builtinExpression.paramCount, node);
         }
         return node;
     }
@@ -6935,7 +6937,7 @@ var Playground = (function (exports) {
         AlgebraicParser.prototype.parse = function () {
             var nodes = [];
             while (!this.isAtEnd()) {
-                nodes.push(this.parseExpression());
+                nodes.push(this.parseExpression(0, true));
                 if (!isA_OperatorToken(this.peek(), ';')) {
                     break;
                 }
@@ -6943,9 +6945,10 @@ var Playground = (function (exports) {
             }
             return nodes;
         };
-        AlgebraicParser.prototype.parseExpression = function (precedence) {
-            var _a;
+        AlgebraicParser.prototype.parseExpression = function (precedence, moduleScope) {
+            var _a, _b;
             if (precedence === void 0) { precedence = 0; }
+            if (moduleScope === void 0) { moduleScope = false; }
             var firstToken = this.peek();
             var left;
             if (isA_SymbolToken(firstToken)) {
@@ -6981,6 +6984,9 @@ var Playground = (function (exports) {
                 return this.parseFunction(firstToken);
             }
             else if (isA_ReservedSymbolToken(firstToken, 'export')) {
+                if (!moduleScope) {
+                    throw new LitsError('export is only allowed in module scope', (_a = getTokenDebugData(firstToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
                 return this.parseExport(firstToken);
             }
             left || (left = this.parseOperand());
@@ -7018,7 +7024,7 @@ var Playground = (function (exports) {
                 operator = this.peek();
             }
             if (!left) {
-                throw new LitsError('Expected operand', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                throw new LitsError('Expected operand', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             return left;
         };
@@ -7230,7 +7236,7 @@ var Playground = (function (exports) {
                                 p: params,
                                 token: getTokenDebugData(symbol.token) && symbol.token,
                             };
-                            builtin.specialExpressions[node.n].validateParameterCount(node);
+                            assertNumberOfParams(builtin.specialExpressions[node.n].paramCount, node);
                             return node;
                         }
                         case 'fn':
@@ -7795,6 +7801,7 @@ var Playground = (function (exports) {
             }
             assertA_ReservedSymbolToken(this.peek(), 'end');
             this.advance();
+            assertA_OperatorToken(this.peek(), ';');
             var fnNode = {
                 t: AstNodeType.SpecialExpression,
                 n: 'fn',
@@ -7957,7 +7964,7 @@ var Playground = (function (exports) {
             p: params,
             token: getTokenDebugData(firstToken) && firstToken,
         };
-        assertEvenNumberOfParams(node);
+        assertNumberOfParams({ even: true }, node);
         return node;
     }
     var placeholderRegexp = /^%([1-9]\d?)?$/;
@@ -8063,7 +8070,7 @@ var Playground = (function (exports) {
         return node;
     }
     function parseNormalExpression(tokenStream, parseState) {
-        var _a, _b;
+        var _a;
         var startBracketToken = tokenStream.hasDebugData ? asLParenToken(tokenStream.tokens[parseState.position]) : undefined;
         parseState.position += 1;
         var fnNode = parseState.parseToken(tokenStream, parseState);
@@ -8087,7 +8094,7 @@ var Playground = (function (exports) {
         };
         var builtinExpression = builtin.normalExpressions[node.n];
         if (builtinExpression) {
-            (_b = builtinExpression.validate) === null || _b === void 0 ? void 0 : _b.call(builtinExpression, __assign(__assign({}, node), { p: withoutCommentNodes(node.p) }));
+            assertNumberOfParams(builtinExpression.paramCount, node);
         }
         return node;
     }
@@ -8096,7 +8103,7 @@ var Playground = (function (exports) {
         var firstToken = asLParenToken(tokenStream.tokens[parseState.position++]);
         var nameToken = asP_SymbolToken(tokenStream.tokens[parseState.position++]);
         var expressionName = nameToken[1];
-        var _b = asNonUndefined(builtin.specialExpressions[expressionName], (_a = getTokenDebugData(nameToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo), parse = _b.polishParse, validateParameterCount = _b.validateParameterCount;
+        var _b = asNonUndefined(builtin.specialExpressions[expressionName], (_a = getTokenDebugData(nameToken)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo), parse = _b.polishParse, paramCount = _b.paramCount;
         var node = parse(tokenStream, parseState, firstToken, {
             parseExpression: parseExpression,
             parseTokensUntilClosingBracket: parseTokensUntilClosingBracket,
@@ -8105,7 +8112,7 @@ var Playground = (function (exports) {
             parseBindings: parseBindings,
             parseArgument: parseArgument,
         });
-        validateParameterCount(node);
+        assertNumberOfParams(paramCount, node);
         return node;
     }
     function parsePolishToken(tokenStream, parseState) {
@@ -8150,19 +8157,24 @@ var Playground = (function (exports) {
     }
 
     function parse$1(tokenStream) {
-        var _a;
-        var safeTokenStream = removeUnnecessaryTokens(tokenStream);
+        tokenStream = removeUnnecessaryTokens(tokenStream);
+        var algebraic = tokenStream.algebraic;
         var ast = {
             b: [],
-            hasDebugData: safeTokenStream.hasDebugData,
+            hasDebugData: tokenStream.hasDebugData,
         };
         var parseState = {
             position: 0,
-            algebraic: (_a = safeTokenStream.algebraic) !== null && _a !== void 0 ? _a : false,
             parseToken: parseToken,
         };
-        while (parseState.position < safeTokenStream.tokens.length) {
-            ast.b.push(parseToken(safeTokenStream, parseState));
+        if (algebraic) {
+            var algebraicParser = new AlgebraicParser(tokenStream, parseState);
+            ast.b = algebraicParser.parse();
+        }
+        else {
+            while (parseState.position < tokenStream.tokens.length) {
+                ast.b.push(parseToken(tokenStream, parseState));
+            }
         }
         return ast;
     }
@@ -8180,19 +8192,6 @@ var Playground = (function (exports) {
         return __assign(__assign({}, tokenStream), { tokens: tokens });
     }
     function parseToken(tokenStream, parseState) {
-        if (parseState.algebraic) {
-            var algebraicParser = new AlgebraicParser(tokenStream, parseState);
-            var nodes = algebraicParser.parse();
-            if (nodes.length === 1) {
-                return nodes[0];
-            }
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'do',
-                p: nodes,
-                token: nodes[0].token,
-            };
-        }
         return parsePolishToken(tokenStream, parseState);
     }
 

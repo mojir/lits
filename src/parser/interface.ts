@@ -12,7 +12,6 @@ import type { ModifierName } from '../tokenizer/polish/polishTokens'
 
 export interface ParseState {
   position: number
-  algebraic: boolean
   parseToken: ParseToken
 }
 export interface EvaluatedFunctionArguments {

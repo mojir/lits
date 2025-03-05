@@ -31,10 +31,12 @@ export function evaluate(ast: Ast, contextStack: ContextStack): Any {
   let result: Any = null
 
   const safeAstNode = ast.hasDebugData ? JSON.parse(JSON.stringify(ast)) as Ast : ast
-  if (safeAstNode.hasDebugData)
+  if (safeAstNode.hasDebugData) {
     removeCommenNodes(safeAstNode)
-  for (const node of safeAstNode.b)
+  }
+  for (const node of safeAstNode.b) {
     result = evaluateAstNode(node, contextStack)
+  }
 
   return result
 }
