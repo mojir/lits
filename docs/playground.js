@@ -6651,12 +6651,6 @@ var Playground = (function (exports) {
                 return false;
             }
             return true;
-        })
-            .map(function (token) {
-            if (isA_WhitespaceToken(token) || isP_WhitespaceToken(token)) {
-                return __assign(__assign({}, token), { value: ' ' });
-            }
-            return token;
         });
         return __assign(__assign({}, tokenStream), { tokens: tokens });
     }

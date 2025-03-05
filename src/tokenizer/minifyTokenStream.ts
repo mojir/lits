@@ -15,12 +15,6 @@ export function minifyTokenStream(tokenStream: TokenStream, { removeWhiteSpace }
       }
       return true
     })
-    .map((token) => {
-      if (isA_WhitespaceToken(token) || isP_WhitespaceToken(token)) {
-        return { ...token, value: ' ' }
-      }
-      return token
-    })
 
   return { ...tokenStream, tokens }
 }
