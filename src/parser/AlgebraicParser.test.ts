@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'vitest'
 import { Lits } from '..'
 
-const lits = new Lits({ algebraic: true })
+const lits = new Lits({ polish: false })
 
 describe('algebraic operators', () => {
   describe('**', () => {
@@ -284,7 +284,7 @@ describe('algebraic operators', () => {
 
   describe('debug', () => {
     test('samples', () => {
-      const litsDebug = new Lits({ debug: true, algebraic: true })
+      const litsDebug = new Lits({ debug: true, polish: false })
       expect(litsDebug.run('2+3')).toBe(5)
       expect(litsDebug.tokenize('2+3').tokens).toEqual([
         [
@@ -514,6 +514,15 @@ describe('algebraic operators', () => {
         foo()`)).toBe(10)
     })
     // expect(() => lits.run('export let a = 10; let a = 2;')).toThrow()
+  })
+
+  test('multinine comment', () => {
+    expect(lits.run(`
+/*******************************************
+ *         Simple Lisp expression          *
+ ******************************************/
+
+10 + 20`)).toBe(30)
   })
 
   describe('do', () => {

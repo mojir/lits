@@ -19,47 +19,47 @@ const optimizableProgram = `
 
 describe('parser', () => {
   it('simple program', () => {
-    const tokens = tokenize(program, { debug: true, algebraic: false })
+    const tokens = tokenize(program, { debug: true, polish: true })
     const ast = parse(tokens)
     expect(ast.b.length).toBe(2)
   })
   it('empty program', () => {
-    const tokens = tokenize('', { debug: true, algebraic: false })
+    const tokens = tokenize('', { debug: true, polish: true })
     const ast = parse(tokens)
     expect(ast.b.length).toBe(0)
   })
 
   it('optimization', () => {
-    const tokens = tokenize(optimizableProgram, { debug: true, algebraic: false })
+    const tokens = tokenize(optimizableProgram, { debug: true, polish: true })
     const ast = parse(tokens)
     expect(ast.b.length).toBe(2)
   })
 
   it('unparsable expression', () => {
-    const tokens = tokenize('(', { debug: true, algebraic: false, filePath: 'test.lits' })
+    const tokens = tokenize('(', { debug: true, polish: true, filePath: 'test.lits' })
     expect(() => parse(tokens)).toThrow()
   })
 
   it('parse for', () => {
-    expect(() => parse(tokenize('(for [x [1 2 3]] x)', { debug: true, algebraic: false }))).not.toThrow()
-    expect(() => parse(tokenize('(for [x [1 2 3] &let [y (* x x)]] y)', { debug: true, algebraic: false }))).not.toThrow()
-    expect(() => parse(tokenize('(for [x [1 2 3] &let [z x] &let [y (* x x)]] y)', { debug: true, algebraic: false }))).toThrow()
-    expect(() => parse(tokenize('(for [x [1 2 3] &when (odd? x)] x)', { debug: true, algebraic: false }))).not.toThrow()
-    expect(() => parse(tokenize('(for [x [1 2 3] &when (odd? x) &when (odd? x)] x)', { debug: true, algebraic: false }))).toThrow()
-    expect(() => parse(tokenize('(for [x [1 2 3] &while (odd? x)] x)', { debug: true, algebraic: false }))).not.toThrow()
-    expect(() => parse(tokenize('(for [x [1 2 3] &while (odd? x) &while (odd? x)] x)', { debug: true, algebraic: false }))).toThrow()
+    expect(() => parse(tokenize('(for [x [1 2 3]] x)', { debug: true, polish: true }))).not.toThrow()
+    expect(() => parse(tokenize('(for [x [1 2 3] &let [y (* x x)]] y)', { debug: true, polish: true }))).not.toThrow()
+    expect(() => parse(tokenize('(for [x [1 2 3] &let [z x] &let [y (* x x)]] y)', { debug: true, polish: true }))).toThrow()
+    expect(() => parse(tokenize('(for [x [1 2 3] &when (odd? x)] x)', { debug: true, polish: true }))).not.toThrow()
+    expect(() => parse(tokenize('(for [x [1 2 3] &when (odd? x) &when (odd? x)] x)', { debug: true, polish: true }))).toThrow()
+    expect(() => parse(tokenize('(for [x [1 2 3] &while (odd? x)] x)', { debug: true, polish: true }))).not.toThrow()
+    expect(() => parse(tokenize('(for [x [1 2 3] &while (odd? x) &while (odd? x)] x)', { debug: true, polish: true }))).toThrow()
     expect(() =>
       parse(
         tokenize(
           '(for [x [1 2 3] &when (odd? x) &while (!= x 3) &let [y (* x x)] y [5 10 15] z [100 200 300]] (+ x y z))',
-          { debug: true, algebraic: false },
+          { debug: true, polish: true },
         ),
       ),
     ).not.toThrow()
   })
 
   it('parse dotNotation, check ast 1', () => {
-    const tokens = tokenize('foo#1.a', { debug: false, algebraic: false })
+    const tokens = tokenize('foo#1.a', { debug: false, polish: true })
     const ast = parse(tokens)
     expect(ast).toEqual<Ast>({
       hasDebugData: false,
@@ -97,7 +97,7 @@ describe('parser', () => {
   })
 
   it('parse dotNotation, check ast 2', () => {
-    const tokens = tokenize('(#(identity %1) [1 2 3])#1', { debug: false, algebraic: false })
+    const tokens = tokenize('(#(identity %1) [1 2 3])#1', { debug: false, polish: true })
     const ast = parse(tokens)
     expect(ast).toEqual<Ast>({
       hasDebugData: false,
@@ -189,7 +189,7 @@ describe('parser', () => {
   it('parseToken unknown token', () => {
     const tokenStream: TokenStream = {
       hasDebugData: false,
-      algebraic: false,
+      polish: true,
       tokens: [
         ['CollectionAccessor', ''] as unknown as P_CollectionAccessorToken,
         ['Modifier', ''] as unknown as P_CollectionAccessorToken,

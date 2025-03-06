@@ -14,11 +14,11 @@ export function tokenize(input: string, params: TokenizeParams): TokenStream {
     tokens: [],
     filePath: params.filePath,
     hasDebugData: debug,
-    algebraic: !!params.algebraic,
+    polish: !!params.polish,
   }
 
   while (position < input.length) {
-    const tokenizers = params.algebraic ? algebraicTokenizers : polishTokenizers
+    const tokenizers = params.polish ? polishTokenizers : algebraicTokenizers
     const tokenDescriptor = getCurrentToken(input, position, tokenizers)
 
     const debugData: TokenDebugData | undefined = debug

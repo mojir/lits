@@ -41,18 +41,18 @@ interface LitsConfig {
   initialCache?: Record<string, Ast>
   astCacheSize?: number | null
   debug?: boolean
-  algebraic?: boolean
+  polish?: boolean
 }
 
 export class Lits {
   private astCache: Cache | null
   private astCacheSize: number | null
   private debug: boolean
-  private algebraic: boolean
+  private polish: boolean
 
   constructor(config: LitsConfig = {}) {
     this.debug = config.debug ?? false
-    this.algebraic = config.algebraic ?? false
+    this.polish = config.polish ?? false
     this.astCacheSize = config.astCacheSize ?? null
     if (this.astCacheSize) {
       this.astCache = new Cache(this.astCacheSize)
@@ -93,8 +93,8 @@ export class Lits {
 
   public tokenize(program: string, tokenizeParams: Pick<TokenizeParams, 'filePath'> & { minify?: boolean } = {}): TokenStream {
     const debug = this.debug
-    const algebraic = this.algebraic
-    const tokenStream = tokenize(program, { ...tokenizeParams, debug, algebraic })
+    const prefix = this.polish
+    const tokenStream = tokenize(program, { ...tokenizeParams, debug, polish: prefix })
     return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream
   }
 
@@ -139,8 +139,8 @@ export class Lits {
       .map((_, index) => {
         return `${fnName}_${index}`
       })
-      .join(this.algebraic ? ', ' : ' ')
-    return this.algebraic ? `${fnName}(${paramsString})` : `(${fnName} ${paramsString})`
+      .join(this.polish ? ' ' : ', ')
+    return this.polish ? `(${fnName} ${paramsString})` : `${fnName}(${paramsString})`
   }
 
   private generateAst(program: string, params: LitsParams): Ast {

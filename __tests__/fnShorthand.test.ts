@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Lits } from '../src'
 
 describe('fnShorthand', () => {
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
     it('samples', () => {
       expect(lits.run('(#(identity "Kalle"))')).toBe('Kalle')
       expect(lits.run('(#(str %) 1)')).toBe('1')

@@ -6,7 +6,7 @@ import { parsePolishToken } from './PolishTokenParsers'
 
 export function parse(tokenStream: TokenStream): Ast {
   tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true })
-  const algebraic = tokenStream.algebraic
+  const prefix = tokenStream.polish
 
   const ast: Ast = {
     b: [],
@@ -18,7 +18,7 @@ export function parse(tokenStream: TokenStream): Ast {
     parseToken,
   }
 
-  if (algebraic) {
+  if (!prefix) {
     const algebraicParser = new AlgebraicParser(tokenStream, parseState)
     ast.b = algebraicParser.parse()
   }

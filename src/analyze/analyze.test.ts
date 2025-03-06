@@ -3,7 +3,7 @@ import { Lits } from '..'
 import { getUndefinedSymbolNames } from '../../__tests__/testUtils'
 
 describe('analyze', () => {
-  const lits = new Lits()
+  const lits = new Lits({ polish: true })
   it('unresolvedIdentifiers', () => {
     expect(getUndefinedSymbolNames(lits.analyze('(+ a 10)'))).toEqual(new Set(['a']))
     expect(getUndefinedSymbolNames(lits.analyze('(def a 10) (+ a 10)'))).toEqual(new Set())

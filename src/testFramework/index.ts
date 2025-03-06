@@ -45,7 +45,7 @@ export function runTest({ testPath: filePath, testNamePattern }: RunTestParams):
       }
       else {
         try {
-          const lits = new Lits({ debug: true })
+          const lits = new Lits({ debug: true, polish: true })
           const contexts = getContexts(includedFilePaths, lits)
           lits.run(testChunkProgram.program, {
             contexts,

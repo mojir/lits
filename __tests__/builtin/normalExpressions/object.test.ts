@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src'
 
 describe('object functions', () => {
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
     describe('object', () => {
       it('samples', () => {
         expect(lits.run('(object)')).toEqual({})

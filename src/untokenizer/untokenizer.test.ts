@@ -19,7 +19,7 @@ const algebraicExamples = [
 describe('untokenizer', () => {
   describe('untokenize', () => {
     it('should untokenize polish Examples', () => {
-      const lits = new Lits()
+      const lits = new Lits({ polish: true })
 
       for (const example of polishExamples) {
         const tokenStream = lits.tokenize(example)

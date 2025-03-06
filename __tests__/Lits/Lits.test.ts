@@ -11,7 +11,7 @@ import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
 describe('tEST', () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits({ debug: true, astCacheSize: 0 })
+    lits = new Lits({ debug: true, astCacheSize: 0, polish: true })
   })
   it('without params', () => {
     const fn = lits.run('#(+ %1 %2)')
@@ -33,7 +33,7 @@ describe('tEST', () => {
 
 describe('lazy host values as function', () => {
   it('that it works', () => {
-    const lits = new Lits()
+    const lits = new Lits({ polish: true })
     const lazyHostValues: Record<string, LazyValue> = {
       x: {
         read: () => 42,
@@ -69,15 +69,15 @@ describe('lazy host values as function', () => {
 
 describe('runtime info', () => {
   it('getRuntimeInfo().', () => {
-    const lits = new Lits()
+    const lits = new Lits({ polish: true })
     expect(lits.getRuntimeInfo()).toMatchSnapshot()
   })
   it('getRuntimeInfo() with ast cache > 0', () => {
-    const lits = new Lits({ astCacheSize: 10 })
+    const lits = new Lits({ astCacheSize: 10, polish: true })
     expect(lits.getRuntimeInfo()).toMatchSnapshot()
   })
   it('getRuntimeInfo() with ast cache = 0', () => {
-    const lits = new Lits({ astCacheSize: 0 })
+    const lits = new Lits({ astCacheSize: 0, polish: true })
     expect(lits.getRuntimeInfo()).toMatchSnapshot()
   })
 })
@@ -85,17 +85,17 @@ describe('runtime info', () => {
 describe('context', () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits({ debug: true })
+    lits = new Lits({ debug: true, polish: true })
   })
   it('a function.', () => {
-    lits = new Lits({ astCacheSize: 10 })
+    lits = new Lits({ astCacheSize: 10, polish: true })
     const contexts = [lits.context('(defn tripple [x] (* x 3))')]
     expect(lits.run('(tripple 10)', { contexts })).toBe(30)
     expect(lits.run('(tripple 10)', { contexts })).toBe(30)
   })
 
   it('a function - no cache', () => {
-    lits = new Lits({ debug: true })
+    lits = new Lits({ debug: true, polish: true })
     const contexts = [lits.context('(defn tripple [x] (* x 3))', {})]
     expect(lits.run('(tripple 10)', { contexts })).toBe(30)
     expect(lits.run('(tripple 10)', { contexts })).toBe(30)
@@ -130,7 +130,7 @@ describe('context', () => {
         ],
       },
     }
-    lits = new Lits({ astCacheSize: 10, initialCache })
+    lits = new Lits({ astCacheSize: 10, initialCache, polish: true })
     expect(lits.run('(** 2 2)')).toBe(4)
     expect(lits.run('(** 2 4)')).toBe(16)
   })
@@ -267,7 +267,7 @@ describe('cache', () => {
 describe('regressions', () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits({ debug: true })
+    lits = new Lits({ debug: true, polish: true })
   })
   it('sourceCodeInfo', () => {
     try {

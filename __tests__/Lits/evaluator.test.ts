@@ -11,7 +11,7 @@ import { createContextStack } from '../../src/evaluator/ContextStack'
 let lits: Lits
 
 beforeEach(() => {
-  lits = new Lits({ debug: true, algebraic: false })
+  lits = new Lits({ debug: true, polish: true })
 })
 
 const simpleProgram = `
@@ -62,19 +62,19 @@ const lazyValues: Record<string, LazyValue> = {
 
 describe('evaluator', () => {
   it('super simple program', () => {
-    const tokens = tokenize('(+ 10 kalle)', { debug: true, algebraic: false })
+    const tokens = tokenize('(+ 10 kalle)', { debug: true, polish: true })
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack({ contexts: [context] }))
     expect(result).toBe(15)
   })
   it('another super simple program', () => {
-    const tokens = tokenize('(+ 10 lisa)', { debug: true, algebraic: false })
+    const tokens = tokenize('(+ 10 lisa)', { debug: true, polish: true })
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack({ lazyValues }))
     expect(result).toBe(25)
   })
   it('simple program', () => {
-    const tokens = tokenize(simpleProgram, { debug: true, algebraic: false })
+    const tokens = tokenize(simpleProgram, { debug: true, polish: true })
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack({ contexts: [context] }))
     expect(result).toBe(13 * 24 * 60 * 60 * 1000)
@@ -84,7 +84,7 @@ describe('evaluator', () => {
       `
       (if (== (get info "gender") "male") "It\\"s a boy" "It\\"s not a girl")
     `,
-      { debug: true, algebraic: false },
+      { debug: true, polish: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack({ contexts: [context] }))
@@ -95,7 +95,7 @@ describe('evaluator', () => {
       `
       (if (== (get info "gender") "female") "It\\"s a girl" "It\\"s not a girl")
     `,
-      { debug: true, algebraic: false },
+      { debug: true, polish: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack({ contexts: [context] }))
@@ -106,7 +106,7 @@ describe('evaluator', () => {
       `
       (> 0 -1)
     `,
-      { debug: true, algebraic: false },
+      { debug: true, polish: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack({ contexts: [context] }))
@@ -117,7 +117,7 @@ describe('evaluator', () => {
       `
       [(!= 0 -1) (!= 1 1)]
     `,
-      { debug: true, algebraic: false },
+      { debug: true, polish: true },
     )
     const ast = parse(tokens)
     const result = evaluate(ast, createContextStack({ contexts: [context] }))

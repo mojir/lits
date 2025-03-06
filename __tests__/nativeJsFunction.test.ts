@@ -52,7 +52,7 @@ const values = {
 }
 
 describe('nativeJsFunction', () => {
-  const lits = new Lits()
+  const lits = new Lits({ polish: true })
   it('samples', () => {
     expect(lits.run('(tripple 9)', { jsFunctions })).toBe(27)
     expect(lits.run('(def a tripple) (a 9)', { jsFunctions })).toBe(27)

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src'
 
 describe('specialFunctions', () => {
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
     describe('string as function', () => {
       it('samples', () => {
         expect(lits.run('(def person {"firstName" "Albert", "lastName", "Mojir"}) ("firstName" person)')).toBe('Albert')

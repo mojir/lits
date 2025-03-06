@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src'
 
-const lits = new Lits()
-const litsInstances = [lits, new Lits({ debug: true })]
+const lits = new Lits({ polish: true })
+const litsInstances = [lits, new Lits({ debug: true, polish: true })]
 describe('sequence functions', () => {
   describe('nth', () => {
     it('array samples', () => {

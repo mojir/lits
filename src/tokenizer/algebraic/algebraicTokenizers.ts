@@ -181,7 +181,7 @@ export const tokenizeA_MultiLineComment: Tokenizer<A_MultiLineCommentToken> = (i
   if (input[position] === '/' && input[position + 1] === '*') {
     let length = 2
     let value = '/*'
-    while (input[position + length] !== '*' && input[position + length + 1] !== '/' && position + length + 1 < input.length) {
+    while ((input[position + length] !== '*' || input[position + length + 1] !== '/') && position + length + 1 < input.length) {
       value += input[position + length]
       length += 1
     }

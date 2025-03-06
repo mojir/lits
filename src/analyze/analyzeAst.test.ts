@@ -8,7 +8,7 @@ import type { Analysis } from '.'
 
 describe('analyze', () => {
   describe('findUnresolvedIdentifiers.', () => {
-    for (const lits of [new Lits(), new Lits({ debug: true })]) {
+    for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
       it('example', () => {
         const program = '(+ a b)'
         const tokens = lits.tokenize(program)

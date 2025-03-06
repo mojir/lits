@@ -21,7 +21,7 @@ describe('misc functions', () => {
     console.log = oldLog
     console.warn = oldWarn
   })
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
     describe('epoch>iso_date', () => {
       it('samples', () => {
         expect(() => lits.run('(epoch>iso_date 1649756230899 1649756230899)')).toThrow()

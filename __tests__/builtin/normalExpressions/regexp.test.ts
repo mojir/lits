@@ -3,7 +3,7 @@ import { Lits } from '../../../src'
 import { regexpEquals } from '../../testUtils'
 
 describe('regexp functions', () => {
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
     describe('regexp', () => {
       it('samples', () => {
         expect(regexpEquals(lits.run('(regexp "^abc$")'), /^abc$/)).toBe(true)

@@ -183,7 +183,6 @@ var Playground = (function (exports) {
         'new-context-name': '',
         'new-context-value': '',
         'debug': false,
-        'algebraic': false,
         'focused-panel': null,
     };
     var contextHistoryListener;
@@ -8174,7 +8173,7 @@ var Playground = (function (exports) {
 
     function parse$1(tokenStream) {
         tokenStream = minifyTokenStream(tokenStream, { removeWhiteSpace: true });
-        var algebraic = tokenStream.algebraic;
+        var prefix = tokenStream.polish;
         var ast = {
             b: [],
             hasDebugData: tokenStream.hasDebugData,
@@ -8183,7 +8182,7 @@ var Playground = (function (exports) {
             position: 0,
             parseToken: parseToken,
         };
-        if (algebraic) {
+        if (!prefix) {
             var algebraicParser = new AlgebraicParser(tokenStream, parseState);
             ast.b = algebraicParser.parse();
         }
@@ -8452,7 +8451,7 @@ var Playground = (function (exports) {
         if (input[position] === '/' && input[position + 1] === '*') {
             var length_2 = 2;
             var value = '/*';
-            while (input[position + length_2] !== '*' && input[position + length_2 + 1] !== '/' && position + length_2 + 1 < input.length) {
+            while ((input[position + length_2] !== '*' || input[position + length_2 + 1] !== '/') && position + length_2 + 1 < input.length) {
                 value += input[position + length_2];
                 length_2 += 1;
             }
@@ -8790,10 +8789,10 @@ var Playground = (function (exports) {
             tokens: [],
             filePath: params.filePath,
             hasDebugData: debug,
-            algebraic: !!params.algebraic,
+            polish: !!params.polish,
         };
         while (position < input.length) {
-            var tokenizers = params.algebraic ? algebraicTokenizers : polishTokenizers;
+            var tokenizers = params.polish ? polishTokenizers : algebraicTokenizers;
             var tokenDescriptor = getCurrentToken(input, position, tokenizers);
             var debugData = debug
                 ? {
@@ -8969,7 +8968,7 @@ var Playground = (function (exports) {
             if (config === void 0) { config = {}; }
             var _b, _c, _d, _e;
             this.debug = (_b = config.debug) !== null && _b !== void 0 ? _b : false;
-            this.algebraic = (_c = config.algebraic) !== null && _c !== void 0 ? _c : false;
+            this.polish = (_c = config.polish) !== null && _c !== void 0 ? _c : false;
             this.astCacheSize = (_d = config.astCacheSize) !== null && _d !== void 0 ? _d : null;
             if (this.astCacheSize) {
                 this.astCache = new Cache(this.astCacheSize);
@@ -9019,8 +9018,8 @@ var Playground = (function (exports) {
         Lits.prototype.tokenize = function (program, tokenizeParams) {
             if (tokenizeParams === void 0) { tokenizeParams = {}; }
             var debug = this.debug;
-            var algebraic = this.algebraic;
-            var tokenStream = tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, algebraic: algebraic }));
+            var prefix = this.polish;
+            var tokenStream = tokenize$1(program, __assign(__assign({}, tokenizeParams), { debug: debug, polish: prefix }));
             return tokenizeParams.minify ? minifyTokenStream(tokenStream, { removeWhiteSpace: false }) : tokenStream;
         };
         Lits.prototype.parse = function (tokenStream) {
@@ -9054,8 +9053,8 @@ var Playground = (function (exports) {
                 .map(function (_, index) {
                 return "".concat(fnName, "_").concat(index);
             })
-                .join(this.algebraic ? ', ' : ' ');
-            return this.algebraic ? "".concat(fnName, "(").concat(paramsString, ")") : "(".concat(fnName, " ").concat(paramsString, ")");
+                .join(this.polish ? ' ' : ', ');
+            return this.polish ? "(".concat(fnName, " ").concat(paramsString, ")") : "".concat(fnName, "(").concat(paramsString, ")");
         };
         Lits.prototype.generateAst = function (program, params) {
             var _a;
@@ -11216,7 +11215,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['xs'] },
             ],
             description: 'Computes sum of $xs.',
-            examples: ['(+)', '(+ 1)', '(+ 2 4)', '(+ 1 2 3 4)', '(+ (+ 2 3) (+ 5 6))'],
+            examples: ['1 + 2', '1 + 20 + 30', "'+'(1, 2, 3, 4)", "'+'()", "'+'(1)"],
+            algebraic: true,
+            operator: true,
         },
         '-': {
             title: '-',
@@ -15809,17 +15810,8 @@ var Playground = (function (exports) {
 
     var getLits = (function () {
         var lits = new Lits({ debug: true });
-        var litsNoDebug = new Lits({ debug: false });
-        var algebraicLits = new Lits({ debug: true, algebraic: true });
-        var algebraicLitsNoDebug = new Lits({ debug: false, algebraic: true });
-        return function (forceDebug) {
-            if (getState('algebraic')) {
-                return forceDebug || getState('debug') ? algebraicLits : algebraicLitsNoDebug;
-            }
-            else {
-                return forceDebug || getState('debug') ? lits : litsNoDebug;
-            }
-        };
+        var litsNoDebug = new Lits({ debug: false, polish: true });
+        return function (forceDebug) { return forceDebug || getState('debug') ? lits : litsNoDebug; };
     })();
     var elements = {
         wrapper: document.getElementById('wrapper'),
@@ -15841,7 +15833,6 @@ var Playground = (function (exports) {
         resizeDevider1: document.getElementById('resize-divider-1'),
         resizeDevider2: document.getElementById('resize-divider-2'),
         toggleDebugMenuLabel: document.getElementById('toggle-debug-menu-label'),
-        toggleAlgebraicMenuLabel: document.getElementById('toggle-algebraic-menu-label'),
         litsPanelDebugInfo: document.getElementById('lits-panel-debug-info'),
         contextUndoButton: document.getElementById('context-undo-button'),
         contextRedoButton: document.getElementById('context-redo-button'),
@@ -16211,10 +16202,6 @@ var Playground = (function (exports) {
                         evt.preventDefault();
                         toggleDebug();
                         break;
-                    case 'l':
-                        evt.preventDefault();
-                        toggleAlgebraic();
-                        break;
                     case '1':
                         evt.preventDefault();
                         focusContext();
@@ -16502,14 +16489,6 @@ var Playground = (function (exports) {
         appendOutput("Debug mode toggled ".concat(debug ? 'ON' : 'OFF'), 'comment');
         focusLitsCode();
     }
-    function toggleAlgebraic() {
-        var algebraic = !getState('algebraic');
-        saveState({ algebraic: algebraic });
-        updateCSS();
-        addOutputSeparator();
-        appendOutput("Algebraic mode toggled ".concat(algebraic ? 'ON' : 'OFF'), 'comment');
-        focusLitsCode();
-    }
     function focusContext() {
         elements.contextTextArea.focus();
     }
@@ -16591,10 +16570,9 @@ var Playground = (function (exports) {
     function updateCSS() {
         var debug = getState('debug');
         elements.toggleDebugMenuLabel.textContent = debug ? 'Debug: ON' : 'Debug: OFF';
-        elements.toggleAlgebraicMenuLabel.textContent = getState('algebraic') ? 'Algebraic: ON' : 'Algebraic: OFF';
         elements.litsPanelDebugInfo.style.display = debug ? 'flex' : 'none';
         elements.litsCodeTitle.style.color = (getState('focused-panel') === 'lits-code') ? 'white' : '';
-        elements.litsCodeTitleString.textContent = getState('algebraic') ? 'Algebraic Code' : 'Lisp Code';
+        elements.litsCodeTitleString.textContent = 'Lisp Code';
         elements.contextTitle.style.color = (getState('focused-panel') === 'context') ? 'white' : '';
     }
     function showPage(id, scroll, historyEvent) {
@@ -16635,7 +16613,7 @@ var Playground = (function (exports) {
     }
     function addToPlayground(name, encodedExample) {
         var example = atob(encodedExample);
-        appendLitsCode(";; Example - ".concat(name, " ;;\n\n").concat(example, "\n"));
+        appendLitsCode("// Example - ".concat(name, "\n\n").concat(example, "\n"));
         saveState({ 'focused-panel': 'lits-code' });
         applyState();
     }
@@ -16650,7 +16628,7 @@ var Playground = (function (exports) {
         var size = Math.max(name.length + 10, 40);
         var paddingLeft = Math.floor((size - name.length) / 2);
         var paddingRight = Math.ceil((size - name.length) / 2);
-        setLitsCode("\n".concat(";;".concat('-'.repeat(size), ";;"), "\n").concat(";;".concat(' '.repeat(paddingLeft)).concat(name).concat(' '.repeat(paddingRight), ";;"), "\n").concat(";;".concat('-'.repeat(size), ";;"), "\n\n").concat(code, "\n").trimStart(), true, 'top');
+        setLitsCode("\n".concat("/*".concat('*'.repeat(size), "**"), "\n").concat(" *".concat(' '.repeat(paddingLeft)).concat(name).concat(' '.repeat(paddingRight), " *"), "\n").concat(" *".concat('*'.repeat(size), "**/"), "\n\n").concat(code, "\n").trimStart(), true, 'top');
         saveState({ 'focused-panel': 'lits-code' });
         applyState();
     }
@@ -16713,7 +16691,6 @@ var Playground = (function (exports) {
     exports.setPlayground = setPlayground;
     exports.share = share;
     exports.showPage = showPage;
-    exports.toggleAlgebraic = toggleAlgebraic;
     exports.toggleDebug = toggleDebug;
     exports.tokenize = tokenize;
     exports.undoContextHistory = undoContextHistory;

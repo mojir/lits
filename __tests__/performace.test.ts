@@ -45,13 +45,13 @@ describe.skip('performace', () => {
   it('tokenise', () => {
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1)
-      tokenize(program, { debug: true, algebraic: false })
+      tokenize(program, { debug: true, polish: true })
 
     logPerformace('Tokenise', Date.now() - startTime)
   })
 
   it('parse', () => {
-    const tokens = tokenize(program, { debug: true, algebraic: false })
+    const tokens = tokenize(program, { debug: true, polish: true })
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1)
       parse(tokens)
@@ -60,7 +60,7 @@ describe.skip('performace', () => {
   })
 
   it('evaluate', () => {
-    const tokens = tokenize(program, { debug: true, algebraic: false })
+    const tokens = tokenize(program, { debug: true, polish: true })
     const ast = parse(tokens)
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1)
@@ -70,7 +70,7 @@ describe.skip('performace', () => {
   })
 
   it('lits run - NOT cached.', () => {
-    const lits = new Lits()
+    const lits = new Lits({ polish: true })
     const startTime = Date.now()
     for (let i = 0; i < ITERATIONS; i += 1)
       lits.run(program, { values: hostValues })

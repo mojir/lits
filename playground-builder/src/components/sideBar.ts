@@ -44,6 +44,7 @@ export function getSideBar() {
               ${
                 categoryCollections[categoryKey]
                   ? categoryCollections[categoryKey]
+                      .filter(obj => obj.algebraic)
                       .sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0))
                       .map((obj) => {
                         const linkName = obj.linkName

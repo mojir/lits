@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
 import { Lits } from '../../../src'
 
 describe('functional functions', () => {
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
     let oldLog: () => void
     let logSpy: (...args: unknown[]) => void
     beforeEach(() => {

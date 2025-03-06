@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { Lits } from '../../../src'
 
 describe('math functions', () => {
-  const lits = new Lits()
+  const lits = new Lits({ polish: true })
   describe('inc', () => {
     it('samples', () => {
       expect(lits.run('(inc 2.5)')).toBe(3.5)

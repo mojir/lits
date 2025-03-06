@@ -24,7 +24,7 @@ describe('specialExpressions', () => {
     console.log = oldLog
   })
   it('error message', () => {
-    const litsNoDebug = new Lits()
+    const litsNoDebug = new Lits({ polish: true })
     let failed = false
     try {
       litsNoDebug.run('(throw (subs "An error" 3))')
@@ -36,7 +36,7 @@ describe('specialExpressions', () => {
     if (failed)
       throw new Error('Should have thrown an error')
 
-    const litsDebug = new Lits({ debug: true })
+    const litsDebug = new Lits({ debug: true, polish: true })
     try {
       failed = false
       litsDebug.run('(throw (subs "An error" 3))')
@@ -532,7 +532,7 @@ describe('specialExpressions', () => {
 
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        const lits2 = new Lits()
+        const lits2 = new Lits({ polish: true })
 
         expect(
           findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (if (! (zero? n)) (recur (dec n)))) 3)')).b, createContextStack(), builtin),

@@ -3,7 +3,7 @@ import { Lits } from '../../..'
 import { tokenizeP_Number } from '../polishTokenizers'
 
 describe('parse numbers', () => {
-  for (const lits of [new Lits(), new Lits({ debug: true })]) {
+  for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
     describe('valid numbers', () => {
       const numberSamples = [
         '0',

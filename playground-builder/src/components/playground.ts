@@ -143,13 +143,6 @@ export function getPlayground() {
                       </div>
                       Ctrl+D
                     </a>
-                    <a ${styles('flex', 'justify-between', 'w-full', 'items-center')} onclick="Playground.closeMoreMenu(); Playground.toggleAlgebraic()">
-                      <div ${styles('flex', 'gap-2', 'w-full', 'items-center')}>
-                        <span ${styles('text-color-Rose', 'items-center', 'flex')}>${debugIcon}</span>
-                        <span id="toggle-algebraic-menu-label" ${styles('mr-8')}>Algebraic</span>
-                      </div>
-                      Ctrl+L
-                    </a>
                     <a ${styles('flex', 'gap-2', 'w-full', 'items-center', 'pt-2', 'border-0', 'border-t', 'border-solid', 'border-gray-500')} onclick="Playground.closeMoreMenu(); Playground.share();">
                       <span ${styles('text-color-Pink', 'items-center', 'flex')}>${linkIcon}</span>
                       <span>Share</span>
