@@ -262,11 +262,11 @@ var Playground = (function (exports) {
             'lits-code': state['lits-code'],
             'context': state.context,
         };
-        return btoa(JSON.stringify(sharedState));
+        return btoa(encodeURIComponent(JSON.stringify(sharedState)));
     }
     function applyEncodedState(encodedState) {
         try {
-            saveState(JSON.parse(atob(encodedState)), true);
+            saveState(JSON.parse(decodeURIComponent(atob(encodedState))), true);
             return true;
         }
         catch (error) {
@@ -884,10 +884,13 @@ var Playground = (function (exports) {
         '++', // string concatenation
         '<', // less than
         '<=', // less than or equal
+        '≤', // less than or equal
         '>', // greater than
         '>=', // greater than or equal
+        '≥', // greater than or equal
         '==', // equal
         '!=', // not equal
+        '≠', // not equal
         '&', // bitwise AND
         '^', // bitwise XOR
         '|', // bitwise OR
@@ -3388,6 +3391,14 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
+        '√': {
+            evaluate: function (_a, sourceCodeInfo) {
+                var _b = __read(_a, 1), first = _b[0];
+                assertNumber(first, sourceCodeInfo);
+                return Math.sqrt(first);
+            },
+            paramCount: 1,
+        },
         'cbrt': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), first = _b[0];
@@ -3618,6 +3629,18 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
+        '≠': {
+            evaluate: function (params) {
+                for (var i = 0; i < params.length - 1; i += 1) {
+                    for (var j = i + 1; j < params.length; j += 1) {
+                        if (params[i] === params[j])
+                            return false;
+                    }
+                }
+                return true;
+            },
+            paramCount: { min: 1 },
+        },
         '==': {
             evaluate: function (_a) {
                 var e_1, _b;
@@ -3719,7 +3742,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        '<=': {
+        '≥': {
             evaluate: function (_a) {
                 var e_5, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -3727,7 +3750,7 @@ var Playground = (function (exports) {
                 try {
                     for (var rest_5 = __values(rest), rest_5_1 = rest_5.next(); !rest_5_1.done; rest_5_1 = rest_5.next()) {
                         var param = rest_5_1.value;
-                        if (compare(currentValue, param) > 0)
+                        if (compare(currentValue, param) < 0)
                             return false;
                         currentValue = param;
                     }
@@ -3738,6 +3761,54 @@ var Playground = (function (exports) {
                         if (rest_5_1 && !rest_5_1.done && (_b = rest_5.return)) _b.call(rest_5);
                     }
                     finally { if (e_5) throw e_5.error; }
+                }
+                return true;
+            },
+            paramCount: { min: 1 },
+        },
+        '<=': {
+            evaluate: function (_a) {
+                var e_6, _b;
+                var _c = __read(_a), first = _c[0], rest = _c.slice(1);
+                var currentValue = first;
+                try {
+                    for (var rest_6 = __values(rest), rest_6_1 = rest_6.next(); !rest_6_1.done; rest_6_1 = rest_6.next()) {
+                        var param = rest_6_1.value;
+                        if (compare(currentValue, param) > 0)
+                            return false;
+                        currentValue = param;
+                    }
+                }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                finally {
+                    try {
+                        if (rest_6_1 && !rest_6_1.done && (_b = rest_6.return)) _b.call(rest_6);
+                    }
+                    finally { if (e_6) throw e_6.error; }
+                }
+                return true;
+            },
+            paramCount: { min: 1 },
+        },
+        '≤': {
+            evaluate: function (_a) {
+                var e_7, _b;
+                var _c = __read(_a), first = _c[0], rest = _c.slice(1);
+                var currentValue = first;
+                try {
+                    for (var rest_7 = __values(rest), rest_7_1 = rest_7.next(); !rest_7_1.done; rest_7_1 = rest_7.next()) {
+                        var param = rest_7_1.value;
+                        if (compare(currentValue, param) > 0)
+                            return false;
+                        currentValue = param;
+                    }
+                }
+                catch (e_7_1) { e_7 = { error: e_7_1 }; }
+                finally {
+                    try {
+                        if (rest_7_1 && !rest_7_1.done && (_b = rest_7.return)) _b.call(rest_7);
+                    }
+                    finally { if (e_7) throw e_7.error; }
                 }
                 return true;
             },
@@ -6555,22 +6626,11 @@ var Playground = (function (exports) {
         return __assign(__assign({}, tokenStream), { tokens: tokens });
     }
 
-    var validAlgebraicReservedNamesRecord = {
+    var nonNumberReservedSymbolRecord = {
         true: { value: true, forbidden: false },
         false: { value: false, forbidden: false },
         nil: { value: null, forbidden: false },
         null: { value: null, forbidden: false },
-        E: { value: Math.E, forbidden: false },
-        PI: { value: Math.PI, forbidden: false },
-        PHI: { value: 1.618033988749895, forbidden: false },
-        POSITIVE_INFINITY: { value: Number.POSITIVE_INFINITY, forbidden: false },
-        NEGATIVE_INFINITY: { value: Number.NEGATIVE_INFINITY, forbidden: false },
-        MAX_SAFE_INTEGER: { value: Number.MAX_SAFE_INTEGER, forbidden: false },
-        MIN_SAFE_INTEGER: { value: Number.MIN_SAFE_INTEGER, forbidden: false },
-        MAX_VALUE: { value: Number.MAX_VALUE, forbidden: false },
-        MIN_VALUE: { value: Number.MIN_VALUE, forbidden: false },
-        EPSILON: { value: Number.EPSILON, forbidden: false },
-        NaN: { value: Number.NaN, forbidden: false },
         then: { value: null, forbidden: false },
         else: { value: null, forbidden: false },
         end: { value: null, forbidden: false },
@@ -6580,10 +6640,40 @@ var Playground = (function (exports) {
         function: { value: null, forbidden: false },
         export: { value: null, forbidden: false },
     };
-    var forbiddenAlgebraicReservedNamesRecord = {
+    var phi = (1 + Math.sqrt(5)) / 2;
+    var numberReservedSymbolRecord = {
+        'E': { value: Math.E, forbidden: false },
+        '-E': { value: -Math.E, forbidden: false },
+        'ε': { value: Math.E, forbidden: false },
+        '-ε': { value: -Math.E, forbidden: false },
+        'PI': { value: Math.PI, forbidden: false },
+        '-PI': { value: -Math.PI, forbidden: false },
+        'π': { value: Math.PI, forbidden: false },
+        '-π': { value: -Math.PI, forbidden: false },
+        'PHI': { value: phi, forbidden: false },
+        '-PHI': { value: -phi, forbidden: false },
+        'φ': { value: phi, forbidden: false },
+        '-φ': { value: -phi, forbidden: false },
+        'POSITIVE_INFINITY': { value: Number.POSITIVE_INFINITY, forbidden: false },
+        '∞': { value: Number.POSITIVE_INFINITY, forbidden: false },
+        'NEGATIVE_INFINITY': { value: Number.NEGATIVE_INFINITY, forbidden: false },
+        '-∞': { value: Number.NEGATIVE_INFINITY, forbidden: false },
+        'MAX_SAFE_INTEGER': { value: Number.MAX_SAFE_INTEGER, forbidden: false },
+        'MIN_SAFE_INTEGER': { value: Number.MIN_SAFE_INTEGER, forbidden: false },
+        'MAX_VALUE': { value: Number.MAX_VALUE, forbidden: false },
+        'MIN_VALUE': { value: Number.MIN_VALUE, forbidden: false },
+        'EPSILON': { value: Number.EPSILON, forbidden: false },
+        '-EPSILON': { value: -Number.EPSILON, forbidden: false },
+        'NaN': { value: Number.NaN, forbidden: false },
+    };
+    var forbiddenAlgebraicReservedSymbolRecord = {
         fn: { value: null, forbidden: true },
     };
-    var algebraicReservedNamesRecord = __assign(__assign({}, validAlgebraicReservedNamesRecord), forbiddenAlgebraicReservedNamesRecord);
+    var algebraicReservedSymbolRecord = __assign(__assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord), forbiddenAlgebraicReservedSymbolRecord);
+    __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
+    function isNumberReservedSymbol(symbol) {
+        return symbol in numberReservedSymbolRecord;
+    }
 
     function parseSymbol(tokenStream, parseState) {
         var _a;
@@ -6620,33 +6710,23 @@ var Playground = (function (exports) {
             };
         }
     }
-    var numberTokens = new Set([
-        'E',
-        'EPSILON',
-        'MAX_SAFE_INTEGER',
-        'MAX_VALUE',
-        'MIN_SAFE_INTEGER',
-        'MIN_VALUE',
-        'NaN',
-        'NEGATIVE_INFINITY',
-        'PHI',
-        'PI',
-        'POSITIVE_INFINITY',
-    ]);
     function parseReservedSymbol(tokenStream, parseState) {
         var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
         if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
             throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
-        if (isA_ReservedSymbolToken(tkn) && numberTokens.has(tkn[1])) {
-            return {
-                t: AstNodeType.Number,
-                v: algebraicReservedNamesRecord[tkn[1]].value,
-                p: [],
-                n: undefined,
-                token: getTokenDebugData(tkn) && tkn,
-            };
+        if (isA_ReservedSymbolToken(tkn)) {
+            var symbol = tkn[1];
+            if (isNumberReservedSymbol(symbol)) {
+                return {
+                    t: AstNodeType.Number,
+                    v: numberReservedSymbolRecord[symbol].value,
+                    p: [],
+                    n: undefined,
+                    token: getTokenDebugData(tkn) && tkn,
+                };
+            }
         }
         return {
             t: AstNodeType.ReservedSymbol,
@@ -6776,11 +6856,14 @@ var Playground = (function (exports) {
                 return 6;
             case '<': // less than
             case '<=': // less than or equal
+            case '≤': // less than or equal
             case '>': // greater than
             case '>=': // greater than or equal
+            case '≥': // greater than or equal
                 return 5;
             case '==': // equal
             case '!=': // not equal
+            case '≠': // not equal
                 return 4;
             case '&': // bitwise AND
             case '^': // bitwise XOR
@@ -6844,10 +6927,13 @@ var Playground = (function (exports) {
             case '++':
             case '<':
             case '<=':
+            case '≤':
             case '>':
             case '>=':
+            case '≥':
             case '==':
             case '!=':
+            case '≠':
             case '&':
             case '^':
             case '|':
@@ -8432,7 +8518,7 @@ var Playground = (function (exports) {
         }
         var symbolName = symbolMeta[1][1];
         symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName;
-        var info = algebraicReservedNamesRecord[symbolName];
+        var info = algebraicReservedSymbolRecord[symbolName];
         if (!info) {
             return NO_MATCH;
         }
@@ -8490,12 +8576,12 @@ var Playground = (function (exports) {
     var algebraicTokenizers = __spreadArray(__spreadArray([
         tokenizeA_Whitespace,
         tokenizeA_MultiLineComment,
-        tokenizeA_SingleLineComment
+        tokenizeA_SingleLineComment,
+        tokenizeA_ReservedSymbolToken
     ], __read(commonTokenizers), false), [
         tokenizeA_BasePrefixedNumber,
         tokenizeA_Number,
         tokenizeA_Operator,
-        tokenizeA_ReservedSymbolToken,
         tokenizeA_Symbol,
     ], false);
 
@@ -11392,6 +11478,26 @@ var Playground = (function (exports) {
             examples: ['dec(0)', 'dec(1)', 'dec(100.1)'],
             algebraic: true,
         },
+        '√': {
+            title: '√',
+            category: 'Math',
+            linkName: 'sqrt2',
+            clojureDocs: null,
+            returns: {
+                type: 'number',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+            ],
+            description: 'Computes square root of $x.',
+            examples: ['√(0)', '√(9)', '√(2)'],
+            algebraic: true,
+        },
         'sqrt': {
             title: 'sqrt',
             category: 'Math',
@@ -11955,6 +12061,30 @@ var Playground = (function (exports) {
             description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
             examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
         },
+        '≠': {
+            title: '≠',
+            category: 'Misc',
+            clojureDocs: 'not=',
+            linkName: '-ne2',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'any',
+                },
+                ys: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
+            examples: ['(≠ 3)', '(≠ 3 2)', '(≠ :3 3)', '(≠ 3 3 2)', '(≠ :3 :2 :1 :0)', '(≠ 0 -0)'],
+        },
         '==': {
             title: '==',
             category: 'Misc',
@@ -12048,6 +12178,29 @@ var Playground = (function (exports) {
             description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
             examples: ['(<= 0 1)', '(<= 1 1.01)', '(<= 1 1)', '(<= 1 2 3 4)', '(<= 1 2 2 3)'],
         },
+        '≤': {
+            title: '≤',
+            category: 'Misc',
+            linkName: '-lte2',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+                ys: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
+            examples: ['(≤ 0 1)', '(≤ 1 1.01)', '(≤ 1 1)', '(≤ 1 2 3 4)', '(≤ 1 2 2 3)'],
+        },
         '>=': {
             title: '>=',
             category: 'Misc',
@@ -12070,6 +12223,29 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
             examples: ['(>= 1 0)', '(>= 1.01 1)', '(>= 1 1)', '(>= 4 3 2 1)', '(>= 3 2 2 1)'],
+        },
+        '≥': {
+            title: '≥',
+            category: 'Misc',
+            linkName: '-gte2',
+            returns: {
+                type: 'boolean',
+            },
+            args: {
+                x: {
+                    type: 'number',
+                },
+                ys: {
+                    type: 'number',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['x'] },
+                { argumentNames: ['x', 'ys'] },
+            ],
+            description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
+            examples: ['(≥ 1 0)', '(≥ 1.01 1)', '(≥ 1 1)', '(≥ 4 3 2 1)', '(≥ 3 2 2 1)'],
         },
         '!': {
             title: '!',
@@ -15436,6 +15612,7 @@ var Playground = (function (exports) {
             'inc',
             'dec',
             'sqrt',
+            '√',
             'cbrt',
             '**',
             'round',
@@ -15476,11 +15653,14 @@ var Playground = (function (exports) {
         ],
         misc: [
             '!=',
+            '≠',
             '==',
             '<',
             '>',
             '<=',
+            '≤',
             '>=',
+            '≥',
             '!',
             'write!',
             'iso_date>epoch',
@@ -16475,13 +16655,13 @@ var Playground = (function (exports) {
             els[0].classList.remove('active-sidebar-entry');
     }
     function addToPlayground(name, encodedExample) {
-        var example = atob(encodedExample);
+        var example = decodeURIComponent(atob(encodedExample));
         appendLitsCode("// Example - ".concat(name, "\n\n").concat(example, "\n"));
         saveState({ 'focused-panel': 'lits-code' });
         applyState();
     }
     function setPlayground(name, encodedExample) {
-        var example = JSON.parse(atob(encodedExample));
+        var example = JSON.parse(decodeURIComponent(atob(encodedExample)));
         var context = example.context
             // eslint-disable-next-line ts/no-unsafe-return
             ? JSON.stringify(example.context, function (_k, v) { return (v === undefined ? null : v); }, 2)

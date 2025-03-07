@@ -53,12 +53,15 @@ function getPrecedence(operatorSign: SymbolicBinaryOperator): number {
 
     case '<': // less than
     case '<=': // less than or equal
+    case '≤': // less than or equal
     case '>': // greater than
     case '>=': // greater than or equal
+    case '≥': // greater than or equal
       return 5
 
     case '==': // equal
     case '!=': // not equal
+    case '≠': // not equal
       return 4
 
     case '&': // bitwise AND
@@ -131,10 +134,13 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken | A_SymbolToken<'
     case '++':
     case '<':
     case '<=':
+    case '≤':
     case '>':
     case '>=':
+    case '≥':
     case '==':
     case '!=':
+    case '≠':
     case '&':
     case '^':
     case '|':

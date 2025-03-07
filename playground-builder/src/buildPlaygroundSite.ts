@@ -24,6 +24,7 @@ function writeIndexPage() {
     <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
     <meta name="description" content="A reference and a playground for &lambda;its - a Lisp implementation in Typescript">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="styles.css">
   </head>
 
@@ -41,7 +42,7 @@ function writeIndexPage() {
 
     <script src='playground.js'></script>
     <script>
-      window.Playground.allSearchResultEntries = JSON.parse(atob('${btoa(JSON.stringify(allSearchResultEntries))}'))
+      window.Playground.allSearchResultEntries = JSON.parse(decodeURIComponent(atob('${btoa(encodeURIComponent(JSON.stringify(allSearchResultEntries)))}')))
     </script>
   </body>
 </html>

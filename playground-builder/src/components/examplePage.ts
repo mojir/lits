@@ -9,7 +9,7 @@ export function getExamplePage(): string {
     <div ${styles('flex', 'flex-col', 'gap-4', 'my-4')}>
     ${examples
       .map((example) => {
-        const encodedExample = btoa(JSON.stringify(example))
+        const encodedExample = btoa(encodeURIComponent(JSON.stringify(example)))
         return `
           <div
             class='example'

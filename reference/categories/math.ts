@@ -203,6 +203,26 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
     examples: ['dec(0)', 'dec(1)', 'dec(100.1)'],
     algebraic: true,
   },
+  '√': {
+    title: '√',
+    category: 'Math',
+    linkName: 'sqrt2',
+    clojureDocs: null,
+    returns: {
+      type: 'number',
+    },
+    args: {
+      x: {
+        type: 'number',
+      },
+    },
+    variants: [
+      { argumentNames: ['x'] },
+    ],
+    description: 'Computes square root of $x.',
+    examples: ['√(0)', '√(9)', '√(2)'],
+    algebraic: true,
+  },
   'sqrt': {
     title: 'sqrt',
     category: 'Math',

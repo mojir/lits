@@ -18,7 +18,7 @@ export function getFunctionExamples(reference: Reference) {
           console.log = function () {}
           const oldWarn = console.warn
           console.warn = function () {}
-          const encodedUriExample = btoa(example)
+          const encodedUriExample = btoa(encodeURIComponent(example))
           try {
             const result = lits.run(`try ${example} catch(e) e end`)
             const stringifiedResult = stringifyValue(result, true)

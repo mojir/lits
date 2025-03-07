@@ -113,6 +113,14 @@ export const mathNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
+  '√': {
+    evaluate: ([first], sourceCodeInfo): number => {
+      assertNumber(first, sourceCodeInfo)
+      return Math.sqrt(first)
+    },
+    paramCount: 1,
+  },
+
   'cbrt': {
     evaluate: ([first], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo)

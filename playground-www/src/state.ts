@@ -119,12 +119,12 @@ export function encodeState() {
     'lits-code': state['lits-code'],
     'context': state.context,
   }
-  return btoa(JSON.stringify(sharedState))
+  return btoa(encodeURIComponent(JSON.stringify(sharedState)))
 }
 
 export function applyEncodedState(encodedState: string): boolean {
   try {
-    saveState(JSON.parse(atob(encodedState)) as Partial<State>, true)
+    saveState(JSON.parse(decodeURIComponent(atob(encodedState))) as Partial<State>, true)
     return true
   }
   catch (error) {

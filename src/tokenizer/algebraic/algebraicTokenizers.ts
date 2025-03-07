@@ -4,8 +4,8 @@ import {
   commonTokenizers,
 } from '../common/commonTokenizers'
 import type { Tokenizer } from '../interface'
-import type { AlgebraicReservedName, ValidAlgebraicReservedName } from './algebraicReservedNames'
-import { algebraicReservedNamesRecord } from './algebraicReservedNames'
+import type { AlgebraicReservedSymbol, ValidReservedSymbol } from './algebraicReservedNames'
+import { algebraicReservedSymbolRecord } from './algebraicReservedNames'
 import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
 import { isSymbolicOperator } from './algebraicTokens'
 
@@ -194,14 +194,14 @@ export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (
   let symbolName = symbolMeta[1][1]
   symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName
 
-  const info = algebraicReservedNamesRecord[symbolName as AlgebraicReservedName]
+  const info = algebraicReservedSymbolRecord[symbolName as AlgebraicReservedSymbol]
   if (!info) {
     return NO_MATCH
   }
   if (info.forbidden) {
     throw new LitsError(`${symbolName} is forbidden!`, undefined)
   }
-  return [symbolMeta[0], ['A_ReservedSymbol', symbolName as ValidAlgebraicReservedName]]
+  return [symbolMeta[0], ['A_ReservedSymbol', symbolName as ValidReservedSymbol]]
 }
 
 export const tokenizeA_Operator: Tokenizer<A_OperatorToken> = (input, position) => {
@@ -260,10 +260,10 @@ export const algebraicTokenizers = [
   tokenizeA_Whitespace,
   tokenizeA_MultiLineComment,
   tokenizeA_SingleLineComment,
+  tokenizeA_ReservedSymbolToken,
   ...commonTokenizers,
   tokenizeA_BasePrefixedNumber,
   tokenizeA_Number,
   tokenizeA_Operator,
-  tokenizeA_ReservedSymbolToken,
   tokenizeA_Symbol,
 ] as const satisfies Tokenizer<AlgebraicToken>[]

@@ -986,14 +986,14 @@ function inactivateAll() {
 }
 
 export function addToPlayground(name: string, encodedExample: string) {
-  const example = atob(encodedExample)
+  const example = decodeURIComponent(atob(encodedExample))
   appendLitsCode(`// Example - ${name}\n\n${example}\n`)
   saveState({ 'focused-panel': 'lits-code' })
   applyState()
 }
 
 export function setPlayground(name: string, encodedExample: string) {
-  const example = JSON.parse(atob(encodedExample)) as Example
+  const example = JSON.parse(decodeURIComponent(atob(encodedExample))) as Example
 
   const context = example.context
     // eslint-disable-next-line ts/no-unsafe-return

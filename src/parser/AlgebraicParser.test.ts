@@ -61,7 +61,8 @@ describe('algebraic operators', () => {
 
   describe('const PI', () => {
     it('samples', () => {
-      expect(lits.run('(PI)')).toBe(Math.PI)
+      expect(lits.run('PI')).toBe(Math.PI)
+      expect(lits.run('π')).toBe(Math.PI)
     })
   })
 
