@@ -21,7 +21,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['xs'] },
     ],
     description: 'Computes sum of $xs.',
-    examples: ['1 + 2', '1 + 20 + 30', '\'+\'(1, 2, 3, 4)', '\'+\'()', '\'+\'(1)'],
+    examples: ['1 + 2', '1 + 20 + 30', '+(1, 2, 3, 4)', '+()', '+(1)'],
     algebraic: true,
     operator: true,
   },

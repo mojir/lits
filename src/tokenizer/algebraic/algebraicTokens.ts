@@ -21,14 +21,7 @@ export const algebraicTokenTypes = [
   ...algebraicOnlyTokenTypes,
 ] as const
 
-const symbolicUnaryOperators = [
-  '!', // logical NOT
-  '~', // bitwise NOT
-  '+', // addition
-  '-', // subtraction
-] as const
-
-const symbolicBinaryOperators = [
+const binaryOperators = [
   '**', // exponentiation
 
   '*', // multiplication
@@ -61,7 +54,7 @@ const symbolicBinaryOperators = [
   '??', // nullish coalescing
 ] as const
 
-const otherSymbolicOperators = [
+const otherOperators = [
   '=>', // lambda
   '...', // rest
   '.', // property accessor
@@ -71,9 +64,8 @@ const otherSymbolicOperators = [
 ] as const
 
 const symbolicOperators = [
-  ...symbolicUnaryOperators,
-  ...symbolicBinaryOperators,
-  ...otherSymbolicOperators,
+  ...binaryOperators,
+  ...otherOperators,
 ] as const
 
 const nonFunctionOperators = [
@@ -103,35 +95,20 @@ export function isFunctionOperator(operator: string): boolean {
   return !nonFunctionOperatorSet.has(operator)
 }
 
-export type SymbolicUnaryOperator = typeof symbolicUnaryOperators[number]
-export type SymbolicBinaryOperator = typeof symbolicBinaryOperators[number]
+export type SymbolicBinaryOperator = typeof binaryOperators[number]
 export type SymbolicOperator = typeof symbolicOperators[number]
 
-const symbolicUnaryOperatorSet = new Set(symbolicUnaryOperators)
-export function isSymbolicUnaryOperator(operator: string): operator is SymbolicUnaryOperator {
-  return symbolicUnaryOperatorSet.has(operator as SymbolicUnaryOperator)
+const binaryOperatorSet = new Set(binaryOperators)
+export function isBinaryOperator(operator: string): operator is SymbolicBinaryOperator {
+  return binaryOperatorSet.has(operator as SymbolicBinaryOperator)
 }
-export function assertSymbolicUnaryOperator(operator: string): asserts operator is SymbolicUnaryOperator {
-  if (!isSymbolicUnaryOperator(operator)) {
-    throw new LitsError(`Expected symbolic unary operator, got ${operator}`, undefined)
-  }
-}
-export function asSymbolicUnaryOperator(operator: string): SymbolicUnaryOperator {
-  assertSymbolicUnaryOperator(operator)
-  return operator
-}
-
-const symbolicBinaryOperatorSet = new Set(symbolicBinaryOperators)
-export function isSymbolicBinaryOperator(operator: string): operator is SymbolicBinaryOperator {
-  return symbolicBinaryOperatorSet.has(operator as SymbolicBinaryOperator)
-}
-export function assertSymbolicBinaryOperator(operator: string): asserts operator is SymbolicBinaryOperator {
-  if (!isSymbolicBinaryOperator(operator)) {
+export function assertBinaryOperator(operator: string): asserts operator is SymbolicBinaryOperator {
+  if (!isBinaryOperator(operator)) {
     throw new LitsError(`Expected symbolic binary operator, got ${operator}`, undefined)
   }
 }
-export function asSymbolicBinaryOperator(operator: string): SymbolicBinaryOperator {
-  assertSymbolicBinaryOperator(operator)
+export function asBinaryOperator(operator: string): SymbolicBinaryOperator {
+  assertBinaryOperator(operator)
   return operator
 }
 
@@ -196,7 +173,7 @@ export function asA_SymbolToken<T extends string>(token: Token | undefined, symb
 }
 
 export function isA_BinaryOperatorToken(token: Token | undefined): token is A_OperatorToken<SymbolicBinaryOperator> {
-  return token?.[0] === 'A_Operator' && isSymbolicBinaryOperator(token[1])
+  return token?.[0] === 'A_Operator' && isBinaryOperator(token[1])
 }
 export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is A_OperatorToken<SymbolicBinaryOperator> {
   if (!isA_BinaryOperatorToken(token)) {

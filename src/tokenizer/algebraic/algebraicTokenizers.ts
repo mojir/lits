@@ -1,5 +1,4 @@
 import { LitsError } from '../../errors'
-import { algebraicIdentifierCharacterClass, algebraicIdentifierFirstCharacterClass } from '../../identifier'
 import {
   NO_MATCH,
   commonTokenizers,
@@ -10,8 +9,40 @@ import { algebraicReservedNamesRecord } from './algebraicReservedNames'
 import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, AlgebraicToken } from './algebraicTokens'
 import { isSymbolicOperator } from './algebraicTokens'
 
-const identifierRegExp = new RegExp(algebraicIdentifierCharacterClass)
-const identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass)
+const illegalSymbolCharacters = [
+  '(',
+  ')',
+  '[',
+  ']',
+  '{',
+  '}',
+  '\'',
+  '"',
+  '`',
+  ',',
+  '.',
+  ';',
+  ' ',
+  '\n',
+  '\r',
+  '\t',
+]
+const illegalFirstSymbolCharacters = [
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  ...illegalSymbolCharacters,
+]
+const illegalSymbolCharacterSet = new Set(illegalSymbolCharacters)
+const illegalFirstSymbolCharacterSet = new Set(illegalFirstSymbolCharacters)
+
 const whitespaceRegExp = /\s/
 
 export const tokenizeA_Whitespace: Tokenizer<A_WhitespaceToken> = (input, position) => {
@@ -37,11 +68,25 @@ const binaryNumberRegExp = /[01]/
 
 export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
   let i: number
-  for (i = position; i < input.length; i += 1) {
+  const negate = input[position] === '-'
+  const start = negate ? position + 1 : position
+  let hasDecimalPoint = false
+  for (i = start; i < input.length; i += 1) {
     const char = input[i] as string
+    if (char === '.') {
+      if (i === start || hasDecimalPoint) {
+        return NO_MATCH
+      }
+      hasDecimalPoint = true
+      continue
+    }
     if (!decimalNumberRegExp.test(char)) {
       break
     }
+  }
+
+  if (negate && i === start) {
+    return NO_MATCH
   }
 
   const length = i - position
@@ -125,12 +170,12 @@ export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
     return [length + 1, ['A_Symbol', value]]
   }
 
-  if (identifierFirstCharacterRegExp.test(value)) {
+  if (!illegalFirstSymbolCharacterSet.has(value)) {
     const initialPosition = position
     position += 1
     let char = input[position]
 
-    while (char && identifierRegExp.test(char)) {
+    while (char && !illegalSymbolCharacterSet.has(char)) {
       value += char
       position += 1
       char = input[position]

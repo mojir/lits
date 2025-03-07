@@ -15,7 +15,7 @@ import type { Arity, FunctionArguments } from '../builtin/utils'
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import type { A_OperatorToken, A_ReservedSymbolToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
-import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isFunctionOperator, isSymbolicUnaryOperator } from '../tokenizer/algebraic/algebraicTokens'
+import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isBinaryOperator, isFunctionOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asLBraceToken, asLBracketToken, assertLParenToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
@@ -113,24 +113,7 @@ function createAccessorNode(left: AstNode, right: AstNode, token: Token | undefi
   }
 }
 
-function fromUnaryAlgebraicToAstNode(operator: A_OperatorToken, operand: AstNode): AstNode {
-  const token: Token | undefined = hasTokenDebugData(operator) ? operand.token : undefined
-
-  const operatorName = operator[1]
-
-  switch (operatorName) {
-    case '+':
-    case '-':
-    case '!':
-    case '~':
-      return createNamedNormalExpressionNode(operatorName, [operand], token)
-    /* v8 ignore next 2 */
-    default:
-      throw new Error(`Unknown operator: ${operatorName}`)
-  }
-}
-
-function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, right: AstNode, token: Token | undefined): AstNode {
+function fromBinaryOperatorToAstNode(operator: A_OperatorToken | A_SymbolToken<'+'>, left: AstNode, right: AstNode, token: Token | undefined): AstNode {
   const operatorName = operator[1]
 
   switch (operatorName) {
@@ -167,8 +150,6 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken, left: AstNode, r
       }
     /* v8 ignore next 8 */
     case ';':
-    case '!':
-    case '~':
     case '=':
     case ',':
     case '=>':
@@ -202,10 +183,14 @@ export class AlgebraicParser {
     const nodes: AstNode[] = []
     while (!this.isAtEnd()) {
       nodes.push(this.parseExpression(0, true))
-      if (!isA_OperatorToken(this.peek(), ';')) {
-        break
+      if (isA_OperatorToken(this.peek(), ';')) {
+        this.advance()
       }
-      this.advance()
+      else {
+        if (!this.isAtEnd()) {
+          throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
+        }
+      }
     }
     return nodes
   }
@@ -362,20 +347,22 @@ export class AlgebraicParser {
     // Unary operators
     else if (isA_OperatorToken(token)) {
       const operatorName = token[1]
-      if (isSymbolicUnaryOperator(operatorName)) {
+      if (isBinaryOperator(operatorName)) {
         this.advance()
-        const operand = this.parseOperand()
-        if (operand === null) {
-          throw new LitsError('Expected operand', getTokenDebugData(token)?.sourceCodeInfo)
-        }
-        return fromUnaryAlgebraicToAstNode(token, operand)
+        return {
+          t: AstNodeType.Symbol,
+          v: operatorName,
+          token: getTokenDebugData(token) && token,
+          p: [],
+          n: undefined,
+        } satisfies SymbolNode
       }
 
       if (operatorName === '=>') {
         return this.parseShorthandLamdaFunction()
       }
       else {
-        throw new Error(`Unknown unary operator: ${operatorName}`)
+        throw new LitsError(`Illegal operator: ${operatorName}`, getTokenDebugData(token)?.sourceCodeInfo)
       }
     }
 
@@ -772,6 +759,9 @@ export class AlgebraicParser {
       if (isA_OperatorToken(this.peek(), ';')) {
         this.advance()
       }
+      else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+        throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
+      }
     }
     assertA_ReservedSymbolToken(this.peek(), 'end')
     this.advance()
@@ -820,6 +810,9 @@ export class AlgebraicParser {
       if (isA_OperatorToken(this.peek(), ';')) {
         this.advance()
       }
+      else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+        throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
+      }
     }
     assertA_ReservedSymbolToken(this.peek(), 'end')
     this.advance()
@@ -840,6 +833,9 @@ export class AlgebraicParser {
       tryExpressions.push(this.parseExpression())
       if (isA_OperatorToken(this.peek(), ';')) {
         this.advance()
+      }
+      else if (!isA_SymbolToken(this.peek(), 'catch')) {
+        throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
     }
 
@@ -868,6 +864,9 @@ export class AlgebraicParser {
       catchExpressions.push(this.parseExpression())
       if (isA_OperatorToken(this.peek(), ';')) {
         this.advance()
+      }
+      else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+        throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
     }
 
@@ -910,7 +909,17 @@ export class AlgebraicParser {
     assertRParenToken(this.peek())
     this.advance()
 
-    const expression = this.parseExpression()
+    const expressions: AstNode[] = []
+
+    while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+      expressions.push(this.parseExpression())
+      if (isA_OperatorToken(this.peek(), ';')) {
+        this.advance()
+      }
+      else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+        throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
+      }
+    }
 
     assertA_ReservedSymbolToken(this.peek(), 'end')
     this.advance()
@@ -918,7 +927,7 @@ export class AlgebraicParser {
     return {
       t: AstNodeType.SpecialExpression,
       n: isDoseq ? 'doseq' : 'for',
-      p: [expression],
+      p: expressions,
       token: getTokenDebugData(token) && token,
       l: forLoopBindings,
     }
@@ -1030,6 +1039,9 @@ export class AlgebraicParser {
       if (isA_OperatorToken(this.peek(), ';')) {
         this.advance()
       }
+      else if (!isA_ReservedSymbolToken(this.peek(), 'else') && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+        throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
+      }
     }
 
     const thenExpression = thenExpressions.length === 1
@@ -1049,6 +1061,9 @@ export class AlgebraicParser {
         elseExpressions.push(this.parseExpression())
         if (isA_OperatorToken(this.peek(), ';')) {
           this.advance()
+        }
+        else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+          throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
         }
       }
 
@@ -1096,6 +1111,9 @@ export class AlgebraicParser {
         expressions.push(this.parseExpression())
         if (isA_OperatorToken(this.peek(), ';')) {
           this.advance()
+        }
+        else if (!isA_ReservedSymbolToken(this.peek(), 'case') && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+          throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
         }
       }
 
@@ -1145,6 +1163,9 @@ export class AlgebraicParser {
         if (isA_OperatorToken(this.peek(), ';')) {
           this.advance()
         }
+        else if (!isA_ReservedSymbolToken(this.peek(), 'case') && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+          throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
+        }
       }
 
       params.push(
@@ -1185,6 +1206,9 @@ export class AlgebraicParser {
       body.push(this.parseExpression())
       if (isA_OperatorToken(this.peek(), ';')) {
         this.advance()
+      }
+      else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+        throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
       }
     }
     assertA_ReservedSymbolToken(this.peek(), 'end')
@@ -1270,6 +1294,9 @@ export class AlgebraicParser {
         body.push(this.parseExpression())
         if (isA_OperatorToken(this.peek(), ';')) {
           this.advance()
+        }
+        else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+          throw new LitsError('Expected ;', getTokenDebugData(this.peek())?.sourceCodeInfo)
         }
       }
       assertA_ReservedSymbolToken(this.peek(), 'end')

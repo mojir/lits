@@ -871,13 +871,7 @@ var Playground = (function (exports) {
         'A_BasePrefixedNumber',
     ];
     __spreadArray(__spreadArray([], __read(commonTokenTypes), false), __read(algebraicOnlyTokenTypes), false);
-    var symbolicUnaryOperators = [
-        '!', // logical NOT
-        '~', // bitwise NOT
-        '+', // addition
-        '-', // subtraction
-    ];
-    var symbolicBinaryOperators = [
+    var binaryOperators = [
         '**', // exponentiation
         '*', // multiplication
         '/', // division
@@ -901,7 +895,7 @@ var Playground = (function (exports) {
         '||', // logical OR
         '??', // nullish coalescing
     ];
-    var otherSymbolicOperators = [
+    var otherOperators = [
         '=>', // lambda
         '...', // rest
         '.', // property accessor
@@ -909,7 +903,7 @@ var Playground = (function (exports) {
         '=', // property assignment
         ';', // statement terminator
     ];
-    var symbolicOperators = __spreadArray(__spreadArray(__spreadArray([], __read(symbolicUnaryOperators), false), __read(symbolicBinaryOperators), false), __read(otherSymbolicOperators), false);
+    var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
     var nonFunctionOperators = [
         '??',
         '&&',
@@ -935,13 +929,9 @@ var Playground = (function (exports) {
     function isFunctionOperator(operator) {
         return !nonFunctionOperatorSet.has(operator);
     }
-    var symbolicUnaryOperatorSet = new Set(symbolicUnaryOperators);
-    function isSymbolicUnaryOperator(operator) {
-        return symbolicUnaryOperatorSet.has(operator);
-    }
-    var symbolicBinaryOperatorSet = new Set(symbolicBinaryOperators);
-    function isSymbolicBinaryOperator(operator) {
-        return symbolicBinaryOperatorSet.has(operator);
+    var binaryOperatorSet = new Set(binaryOperators);
+    function isBinaryOperator(operator) {
+        return binaryOperatorSet.has(operator);
     }
     var symbolicOperatorSet = new Set(symbolicOperators);
     function isSymbolicOperator(operator) {
@@ -966,7 +956,7 @@ var Playground = (function (exports) {
         return token;
     }
     function isA_BinaryOperatorToken(token) {
-        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Operator' && isSymbolicBinaryOperator(token[1]);
+        return (token === null || token === void 0 ? void 0 : token[0]) === 'A_Operator' && isBinaryOperator(token[1]);
     }
     function isA_ReservedSymbolToken(token, symbolName) {
         if ((token === null || token === void 0 ? void 0 : token[0]) !== 'A_ReservedSymbol') {
@@ -6669,23 +6659,23 @@ var Playground = (function (exports) {
     function parseNumber(tokenStream, parseState) {
         var _a;
         var tkn = tokenStream.tokens[parseState.position++];
-        if (isA_NumberToken(tkn)) {
-            var numberString_1 = tkn[1];
-            var periodToken = tokenStream.tokens[parseState.position];
-            var decimalToken = tokenStream.tokens[parseState.position + 1];
-            if (isA_OperatorToken(periodToken, '.') && isA_NumberToken(decimalToken)) {
-                numberString_1 += ".".concat(decimalToken[1]);
-                parseState.position += 2;
-            }
-            return {
-                t: AstNodeType.Number,
-                v: Number(numberString_1),
-                p: [],
-                n: undefined,
-                token: getTokenDebugData(tkn) && tkn,
-            };
-        }
-        if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn)) {
+        // if (isA_NumberToken(tkn)) {
+        //   let numberString = tkn[1]
+        //   const periodToken = tokenStream.tokens[parseState.position]
+        //   const decimalToken = tokenStream.tokens[parseState.position + 1]
+        //   if, '.') && isA_NumberToken(decimalToken)) {
+        //     numberString += `.${decimalToken[1]}`
+        //     parseState.position += 2
+        //   }
+        //   return {
+        //     t: AstNodeType.Number,
+        //     v: Number(numberString),
+        //     p: [],
+        //     n: undefined,
+        //     token: getTokenDebugData(tkn) && tkn,
+        //   }
+        // }
+        if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
             throw new LitsError("Expected number token, got ".concat(tkn), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         var value = tkn[1];
@@ -6836,20 +6826,6 @@ var Playground = (function (exports) {
             token: getTokenDebugData(token) && token,
         };
     }
-    function fromUnaryAlgebraicToAstNode(operator, operand) {
-        var token = hasTokenDebugData(operator) ? operand.token : undefined;
-        var operatorName = operator[1];
-        switch (operatorName) {
-            case '+':
-            case '-':
-            case '!':
-            case '~':
-                return createNamedNormalExpressionNode(operatorName, [operand], token);
-            /* v8 ignore next 2 */
-            default:
-                throw new Error("Unknown operator: ".concat(operatorName));
-        }
-    }
     function fromBinaryOperatorToAstNode(operator, left, right, token) {
         var _a, _b, _c;
         var operatorName = operator[1];
@@ -6887,8 +6863,6 @@ var Playground = (function (exports) {
                 };
             /* v8 ignore next 8 */
             case ';':
-            case '!':
-            case '~':
             case '=':
             case ',':
             case '=>':
@@ -6913,13 +6887,18 @@ var Playground = (function (exports) {
             this.parseState.position += 1;
         };
         AlgebraicParser.prototype.parse = function () {
+            var _a;
             var nodes = [];
             while (!this.isAtEnd()) {
                 nodes.push(this.parseExpression(0, true));
-                if (!isA_OperatorToken(this.peek(), ';')) {
-                    break;
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
                 }
-                this.advance();
+                else {
+                    if (!this.isAtEnd()) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                    }
+                }
             }
             return nodes;
         };
@@ -7067,19 +7046,21 @@ var Playground = (function (exports) {
             // Unary operators
             else if (isA_OperatorToken(token)) {
                 var operatorName = token[1];
-                if (isSymbolicUnaryOperator(operatorName)) {
+                if (isBinaryOperator(operatorName)) {
                     this.advance();
-                    var operand = this.parseOperand();
-                    if (operand === null) {
-                        throw new LitsError('Expected operand', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-                    }
-                    return fromUnaryAlgebraicToAstNode(token, operand);
+                    return {
+                        t: AstNodeType.Symbol,
+                        v: operatorName,
+                        token: getTokenDebugData(token) && token,
+                        p: [],
+                        n: undefined,
+                    };
                 }
                 if (operatorName === '=>') {
                     return this.parseShorthandLamdaFunction();
                 }
                 else {
-                    throw new Error("Unknown unary operator: ".concat(operatorName));
+                    throw new LitsError("Illegal operator: ".concat(operatorName), (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
             }
             // Object litteral, e.g. {a=1, b=2}
@@ -7415,12 +7396,16 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseDo = function (token) {
+            var _a;
             this.advance();
             var expressions = [];
             while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
                 expressions.push(this.parseExpression());
                 if (isA_OperatorToken(this.peek(), ';')) {
                     this.advance();
+                }
+                else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
             }
             assertA_ReservedSymbolToken(this.peek(), 'end');
@@ -7433,7 +7418,7 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseLoop = function (token) {
-            var _a;
+            var _a, _b;
             this.advance();
             assertLParenToken(this.peek());
             this.advance();
@@ -7465,6 +7450,9 @@ var Playground = (function (exports) {
                 if (isA_OperatorToken(this.peek(), ';')) {
                     this.advance();
                 }
+                else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
             }
             assertA_ReservedSymbolToken(this.peek(), 'end');
             this.advance();
@@ -7477,12 +7465,16 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseTry = function (token) {
+            var _a, _b;
             this.advance();
             var tryExpressions = [];
             while (!this.isAtEnd() && !isA_SymbolToken(this.peek(), 'catch')) {
                 tryExpressions.push(this.parseExpression());
                 if (isA_OperatorToken(this.peek(), ';')) {
                     this.advance();
+                }
+                else if (!isA_SymbolToken(this.peek(), 'catch')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
             }
             var tryExpression = tryExpressions.length === 1
@@ -7508,6 +7500,9 @@ var Playground = (function (exports) {
                 if (isA_OperatorToken(this.peek(), ';')) {
                     this.advance();
                 }
+                else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
+                }
             }
             assertA_ReservedSymbolToken(this.peek(), 'end');
             this.advance();
@@ -7529,6 +7524,7 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseForOrDoseq = function (token) {
+            var _a;
             var isDoseq = token[1] === 'doseq';
             this.advance();
             assertLParenToken(this.peek());
@@ -7544,13 +7540,22 @@ var Playground = (function (exports) {
             }
             assertRParenToken(this.peek());
             this.advance();
-            var expression = this.parseExpression();
+            var expressions = [];
+            while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                expressions.push(this.parseExpression());
+                if (isA_OperatorToken(this.peek(), ';')) {
+                    this.advance();
+                }
+                else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                }
+            }
             assertA_ReservedSymbolToken(this.peek(), 'end');
             this.advance();
             return {
                 t: AstNodeType.SpecialExpression,
                 n: isDoseq ? 'doseq' : 'for',
-                p: [expression],
+                p: expressions,
                 token: getTokenDebugData(token) && token,
                 l: forLoopBindings,
             };
@@ -7632,6 +7637,7 @@ var Playground = (function (exports) {
             return node;
         };
         AlgebraicParser.prototype.parseIfOrUnless = function (token) {
+            var _a, _b;
             var isUnless = token[1] === 'unless';
             this.advance();
             var condition = this.parseExpression();
@@ -7644,6 +7650,9 @@ var Playground = (function (exports) {
                 thenExpressions.push(this.parseExpression());
                 if (isA_OperatorToken(this.peek(), ';')) {
                     this.advance();
+                }
+                else if (!isA_ReservedSymbolToken(this.peek(), 'else') && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
             }
             var thenExpression = thenExpressions.length === 1
@@ -7662,6 +7671,9 @@ var Playground = (function (exports) {
                     elseExpressions.push(this.parseExpression());
                     if (isA_OperatorToken(this.peek(), ';')) {
                         this.advance();
+                    }
+                    else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                     }
                 }
                 elseExpression = elseExpressions.length === 1
@@ -7687,6 +7699,7 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseCond = function (token) {
+            var _a;
             this.advance();
             var params = [];
             while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
@@ -7702,6 +7715,9 @@ var Playground = (function (exports) {
                     expressions.push(this.parseExpression());
                     if (isA_OperatorToken(this.peek(), ';')) {
                         this.advance();
+                    }
+                    else if (!isA_ReservedSymbolToken(this.peek(), 'case') && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                     }
                 }
                 params.push(expressions.length === 1
@@ -7727,6 +7743,7 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseSwitch = function (token) {
+            var _a;
             this.advance();
             var params = [this.parseExpression()];
             while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
@@ -7742,6 +7759,9 @@ var Playground = (function (exports) {
                     expressions.push(this.parseExpression());
                     if (isA_OperatorToken(this.peek(), ';')) {
                         this.advance();
+                    }
+                    else if (!isA_ReservedSymbolToken(this.peek(), 'case') && !isA_ReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                     }
                 }
                 params.push(expressions.length === 1
@@ -7767,14 +7787,18 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseFunction = function (token) {
+            var _a;
             this.advance();
             var symbol = parseSymbol(this.tokenStream, this.parseState);
-            var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
+            var _b = this.parseFunctionArguments(), functionArguments = _b.functionArguments, arity = _b.arity;
             var body = [];
             while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
                 body.push(this.parseExpression());
                 if (isA_OperatorToken(this.peek(), ';')) {
                     this.advance();
+                }
+                else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+                    throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                 }
             }
             assertA_ReservedSymbolToken(this.peek(), 'end');
@@ -7825,7 +7849,7 @@ var Playground = (function (exports) {
             return false;
         };
         AlgebraicParser.prototype.parseExport = function (token) {
-            var _a;
+            var _a, _b;
             this.advance();
             if (isA_SymbolToken(this.peek(), 'let')) {
                 this.advance();
@@ -7844,12 +7868,15 @@ var Playground = (function (exports) {
             else if (isA_ReservedSymbolToken(this.peek(), 'function')) {
                 this.advance();
                 var symbol = parseSymbol(this.tokenStream, this.parseState);
-                var _b = this.parseFunctionArguments(), functionArguments = _b.functionArguments, arity = _b.arity;
+                var _c = this.parseFunctionArguments(), functionArguments = _c.functionArguments, arity = _c.arity;
                 var body = [];
                 while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
                     body.push(this.parseExpression());
                     if (isA_OperatorToken(this.peek(), ';')) {
                         this.advance();
+                    }
+                    else if (!isA_ReservedSymbolToken(this.peek(), 'end')) {
+                        throw new LitsError('Expected ;', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
                     }
                 }
                 assertA_ReservedSymbolToken(this.peek(), 'end');
@@ -7868,7 +7895,7 @@ var Playground = (function (exports) {
                 };
             }
             else {
-                throw new LitsError('Expected let or function', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                throw new LitsError('Expected let or function', (_b = getTokenDebugData(this.peek())) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
         };
         return AlgebraicParser;
@@ -8160,10 +8187,6 @@ var Playground = (function (exports) {
         return parsePolishToken(tokenStream, parseState);
     }
 
-    var polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:&\|~-]';
-    var algebraicIdentifierCharacterClass = '[\\w$:!?]';
-    var algebraicIdentifierFirstCharacterClass = '[a-zA-Z_$]';
-
     var NO_MATCH = [0];
     function isNoMatch(tokenDescriptor) {
         return tokenDescriptor[0] === 0;
@@ -8248,8 +8271,38 @@ var Playground = (function (exports) {
         tokenizeRegexpShorthand,
     ];
 
-    var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
-    var identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass);
+    var illegalSymbolCharacters = [
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}',
+        '\'',
+        '"',
+        '`',
+        ',',
+        '.',
+        ';',
+        ' ',
+        '\n',
+        '\r',
+        '\t',
+    ];
+    var illegalFirstSymbolCharacters = __spreadArray([
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9'
+    ], __read(illegalSymbolCharacters), false);
+    var illegalSymbolCharacterSet = new Set(illegalSymbolCharacters);
+    var illegalFirstSymbolCharacterSet = new Set(illegalFirstSymbolCharacters);
     var whitespaceRegExp$1 = /\s/;
     var tokenizeA_Whitespace = function (input, position) {
         var char = input[position];
@@ -8272,11 +8325,24 @@ var Playground = (function (exports) {
     var binaryNumberRegExp$1 = /[01]/;
     var tokenizeA_Number = function (input, position) {
         var i;
-        for (i = position; i < input.length; i += 1) {
+        var negate = input[position] === '-';
+        var start = negate ? position + 1 : position;
+        var hasDecimalPoint = false;
+        for (i = start; i < input.length; i += 1) {
             var char = input[i];
+            if (char === '.') {
+                if (i === start || hasDecimalPoint) {
+                    return NO_MATCH;
+                }
+                hasDecimalPoint = true;
+                continue;
+            }
             if (!decimalNumberRegExp$1.test(char)) {
                 break;
             }
+        }
+        if (negate && i === start) {
+            return NO_MATCH;
         }
         var length = i - position;
         if (length === 0) {
@@ -8346,11 +8412,11 @@ var Playground = (function (exports) {
             value += '\''; // closing quote
             return [length_1 + 1, ['A_Symbol', value]];
         }
-        if (identifierFirstCharacterRegExp.test(value)) {
+        if (!illegalFirstSymbolCharacterSet.has(value)) {
             var initialPosition = position;
             position += 1;
             var char = input[position];
-            while (char && identifierRegExp.test(char)) {
+            while (char && !illegalSymbolCharacterSet.has(char)) {
                 value += char;
                 position += 1;
                 char = input[position];
@@ -8432,6 +8498,8 @@ var Playground = (function (exports) {
         tokenizeA_ReservedSymbolToken,
         tokenizeA_Symbol,
     ], false);
+
+    var polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:&\|~-]';
 
     var whitespaceRegExp = /\s|,/;
     var tokenizeP_Comment = function (input, position) {
@@ -11142,7 +11210,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['xs'] },
             ],
             description: 'Computes sum of $xs.',
-            examples: ['1 + 2', '1 + 20 + 30', '\'+\'(1, 2, 3, 4)', '\'+\'()', '\'+\'(1)'],
+            examples: ['1 + 2', '1 + 20 + 30', '+(1, 2, 3, 4)', '+()', '+(1)'],
             algebraic: true,
             operator: true,
         },

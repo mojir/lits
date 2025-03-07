@@ -218,12 +218,12 @@ describe('algebraic operators', () => {
   })
   describe('!', () => {
     test('samples', () => {
-      expect(lits.run('!true')).toBe(false)
-      expect(lits.run('!false')).toBe(true)
-      expect(lits.run('!500')).toBe(false)
-      expect(lits.run('!0')).toBe(true)
-      expect(lits.run('!!500')).toBe(true)
-      expect(lits.run('!!0')).toBe(false)
+      expect(lits.run('!(true)')).toBe(false)
+      expect(lits.run('!(false)')).toBe(true)
+      expect(lits.run('!(500)')).toBe(false)
+      expect(lits.run('!(0)')).toBe(true)
+      expect(lits.run('!(!(500))')).toBe(true)
+      expect(lits.run('!(!(0))')).toBe(false)
     })
   })
   describe('parenthises', () => {
@@ -239,19 +239,19 @@ describe('algebraic operators', () => {
   })
   describe('objects', () => {
     test('samples', () => {
-      expect(lits.run('{ a=2+3 }')).toEqual({ a: 5 })
-      expect(lits.run('{ a=10 }')).toEqual({ a: 10 })
-      expect(lits.run('{ " "=10 }')).toEqual({ ' ': 10 })
-      expect(lits.run('{ a=10, b=2+3 }')).toEqual({ a: 10, b: 5 })
-      expect(lits.run('{ a=10, b=20, c = 2 * (1 - 2) }')).toEqual({ a: 10, b: 20, c: -2 })
+      expect(lits.run('{ a = 2 + 3 }')).toEqual({ a: 5 })
+      expect(lits.run('{ a = 10 }')).toEqual({ a: 10 })
+      expect(lits.run('{ " " = 10 }')).toEqual({ ' ': 10 })
+      expect(lits.run('{ a = 10, b = 2 + 3 }')).toEqual({ a: 10, b: 5 })
+      expect(lits.run('{ a = 10, b = 20, c = 2 * (1 - 2) }')).toEqual({ a: 10, b: 20, c: -2 })
     })
   })
   describe('arrays', () => {
     test('samples', () => {
       expect(lits.run('[]')).toEqual([])
-      expect(lits.run('[2+3]')).toEqual([5])
+      expect(lits.run('[2 + 3]')).toEqual([5])
       expect(lits.run('[10]')).toEqual([10])
-      expect(lits.run('[10, 2+3]')).toEqual([10, 5])
+      expect(lits.run('[10, 2 + 3]')).toEqual([10, 5])
       expect(lits.run('[10, 20, 2 * (1 - 2)]')).toEqual([10, 20, -2])
     })
   })
@@ -260,8 +260,7 @@ describe('algebraic operators', () => {
       expect(lits.run('5')).toBe(5)
       expect(lits.run('-10')).toBe(-10)
       expect(lits.tokenize('-10').tokens).toEqual([
-        ['A_Operator', '-'],
-        ['A_Number', '10'],
+        ['A_Number', '-10'],
       ])
     })
   })
@@ -272,35 +271,28 @@ describe('algebraic operators', () => {
       expect(lits.run('"Fo\\no"')).toBe('Fo\no')
     })
   })
-  describe('unary operators', () => {
-    test('samples', () => {
-      expect(lits.run('!5')).toBe(false)
-      expect(lits.run('~1')).toBe(-2)
-      expect(lits.run('+1')).toBe(1)
-    })
-  })
   describe('propery accessor', () => {
     test('samples', () => {
-      expect(lits.run('{ a=200 }.a')).toBe(200)
-      expect(lits.run('{ a={ b=1, c=2 } }.a.c')).toBe(2)
+      expect(lits.run('{ a = 200 }.a')).toBe(200)
+      expect(lits.run('{ a = { b = 1, c = 2 } }.a.c')).toBe(2)
       expect(lits.run('[1, 2, 3][1]')).toBe(2)
     })
   })
   describe('propery accessor with brackets', () => {
     test('samples', () => {
-      expect(lits.run('{ a=200 }["a"]')).toBe(200)
+      expect(lits.run('{ a = 200 }["a"]')).toBe(200)
       expect(lits.run('[1, [10, 20, 30], 3][1][1]')).toBe(20)
-      expect(lits.run('{ foo=[1, 2, 3] }.foo[2 - 1]')).toBe(2)
-      expect(lits.run('{ foo=[1, { bar=20 }, 3] }.foo[1].bar')).toBe(20)
-      expect(lits.run('[1, { bar=20 }, 3][1].bar')).toBe(20)
+      expect(lits.run('{ foo = [1, 2, 3] }.foo[2 - 1]')).toBe(2)
+      expect(lits.run('{ foo = [1, { bar = 20 }, 3] }.foo[1].bar')).toBe(20)
+      expect(lits.run('[1, { bar = 20 }, 3][1].bar')).toBe(20)
     })
   })
 
   describe('function call', () => {
     test('samples', () => {
       expect(lits.run('max(1, 3, 2)')).toBe(3)
-      expect(lits.run('\'&&\'(1, 2, 3)')).toBe(3)
-      expect(lits.run('\'||\'(0, 1, 2)')).toBe(1)
+      expect(lits.run('&&(1, 2, 3)')).toBe(3)
+      expect(lits.run('||(0, 1, 2)')).toBe(1)
       expect(lits.run('if 1 > 2 then 2 end')).toBe(null)
       expect(lits.run('if 1 < 2 then 2 end')).toBe(2)
       expect(lits.run('remove_at([1, 2, 3], 1)')).toEqual([1, 3])
@@ -346,16 +338,29 @@ describe('algebraic operators', () => {
   describe('debug', () => {
     test('samples', () => {
       const litsDebug = new Lits({ debug: true, polish: false })
-      expect(litsDebug.run('2+3')).toBe(5)
-      expect(litsDebug.tokenize('2+3').tokens).toEqual([
+      expect(litsDebug.run('2 + 3')).toBe(5)
+      expect(litsDebug.tokenize('2 + 3').tokens).toEqual([
         [
           'A_Number',
           '2',
           {
             sourceCodeInfo: {
-              code: '2+3',
+              code: '2 + 3',
               position: {
                 column: 1,
+                line: 1,
+              },
+            },
+          },
+        ],
+        [
+          'A_Whitespace',
+          ' ',
+          {
+            sourceCodeInfo: {
+              code: '2 + 3',
+              position: {
+                column: 2,
                 line: 1,
               },
             },
@@ -366,9 +371,22 @@ describe('algebraic operators', () => {
           '+',
           {
             sourceCodeInfo: {
-              code: '2+3',
+              code: '2 + 3',
               position: {
-                column: 2,
+                column: 3,
+                line: 1,
+              },
+            },
+          },
+        ],
+        [
+          'A_Whitespace',
+          ' ',
+          {
+            sourceCodeInfo: {
+              code: '2 + 3',
+              position: {
+                column: 4,
                 line: 1,
               },
             },
@@ -379,9 +397,9 @@ describe('algebraic operators', () => {
           '3',
           {
             sourceCodeInfo: {
-              code: '2+3',
+              code: '2 + 3',
               position: {
-                column: 3,
+                column: 5,
                 line: 1,
               },
             },
@@ -391,26 +409,13 @@ describe('algebraic operators', () => {
       expect(litsDebug.run('-2')).toBe(-2)
       expect(litsDebug.tokenize('-2').tokens).toEqual([
         [
-          'A_Operator',
-          '-',
+          'A_Number',
+          '-2',
           {
             sourceCodeInfo: {
               code: '-2',
               position: {
                 column: 1,
-                line: 1,
-              },
-            },
-          },
-        ],
-        [
-          'A_Number',
-          '2',
-          {
-            sourceCodeInfo: {
-              code: '-2',
-              position: {
-                column: 2,
                 line: 1,
               },
             },
@@ -424,9 +429,9 @@ describe('algebraic operators', () => {
     test('unknown operator', () => {
       expect(() => lits.run('2 # 3')).toThrow()
       expect(() => lits.run('(1 + 2]')).toThrow()
-      expect(() => lits.run('/2')).toThrow()
+      expect(() => lits.run('abs 2')).toThrow()
       expect(() => lits.run('{ 2 = 1 }')).toThrow()
-      expect(() => lits.run('{ x=1 y=2 }')).toThrow()
+      expect(() => lits.run('{ x = 1 y = 2 }')).toThrow()
       expect(() => lits.run('[1 2]')).toThrow()
       expect(() => lits.run('if(1)')).toThrow() // To few parameters
       expect(() => lits.run(']')).toThrow()
@@ -623,19 +628,19 @@ describe('algebraic operators', () => {
     })
 
     it('supports object literals', () => {
-      expect(lits.run('{ a=10, b=20 }')).toEqual({ a: 10, b: 20 })
+      expect(lits.run('{ a = 10, b = 20 }')).toEqual({ a: 10, b: 20 })
       expect(lits.run('{}')).toEqual({})
-      expect(lits.run('{ x=1+1, y=2*3 }')).toEqual({ x: 2, y: 6 })
+      expect(lits.run('{ x = 1 + 1, y = 2 * 3 }')).toEqual({ x: 2, y: 6 })
     })
 
     it('supports nested objects', () => {
-      expect(lits.run('{ a=10, b={ c=20, d=30 } }')).toEqual({ a: 10, b: { c: 20, d: 30 } })
-      expect(lits.run('{ x=[1, 2], y={ z=[3, 4] } }')).toEqual({ x: [1, 2], y: { z: [3, 4] } })
+      expect(lits.run('{ a = 10, b = { c = 20, d = 30 } }')).toEqual({ a: 10, b: { c: 20, d: 30 } })
+      expect(lits.run('{ x = [1, 2], y = { z = [3, 4] } }')).toEqual({ x: [1, 2], y: { z: [3, 4] } })
     })
 
     it('supports property access', () => {
-      expect(lits.run('{ a=10, b=20 }.a')).toBe(10)
-      expect(lits.run('{ a=10, b={ c=20 } }.b.c')).toBe(20)
+      expect(lits.run('{ a = 10, b = 20 }.a')).toBe(10)
+      expect(lits.run('{ a = 10, b = { c = 20 } }.b.c')).toBe(20)
     })
 
     it('supports array access', () => {
@@ -789,7 +794,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
         end`)).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
       expect(lits.run(`
          for (
-           x of { a=10, b=20 },
+           x of { a = 10, b = 20 },
            y of [1, 2]
          )
            repeat(x, y)
@@ -894,14 +899,14 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     test('real world example', () => {
       expect(lits.run(`// Imagine these are coming from a database
         let products = [
-          { id="P1", name="Phone", price=500, category="electronics", stockLevel=23 },
-          { id="P2", name="Headphones", price=150, category="electronics", stockLevel=42 },
-          { id="P3", name="Case", price=30, category="accessories", stockLevel=56 },
+          { id = "P1", name = "Phone", price = 500, category = "electronics", stockLevel = 23 },
+          { id = "P2", name = "Headphones", price = 150, category = "electronics", stockLevel = 42 },
+          { id = "P3", name = "Case", price = 30, category = "accessories", stockLevel = 56 },
         ];
         let customerPreferences = {
-          priceLimit=700,
-          preferredCategories=["electronics", "accessories"],
-          recentViews=["P1", "P3", "P5"]
+          priceLimit = 700,
+          preferredCategories = ["electronics", "accessories"],
+          recentViews = ["P1", "P3", "P5"]
         };
         
         // Generate personalized bundle recommendations
@@ -934,11 +939,11 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
         )
           // Return bundle information object
           {
-            bundle=[mainProduct, accessory, complItem],
-            originalPrice=finalPrice,
-            discountedPrice=discountedPrice,
-            savingsAmount=discount * finalPrice,
-            savingsPercentage=discount * 100
+            bundle = [mainProduct, accessory, complItem],
+            originalPrice = finalPrice,
+            discountedPrice = discountedPrice,
+            savingsAmount = discount * finalPrice,
+            savingsPercentage = discount * 100
           }
         end
         `)).toEqual([
@@ -1026,11 +1031,11 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       expect(lits.run('5 + 3 * 2 == 11')).toBe(true)
       expect(lits.run('(5 + 3) * 2 == 16')).toBe(true)
       expect(lits.run('[1, 2, 3][1 + 1] == 3')).toBe(true)
-      expect(lits.run('{ a=10, b=20 }.a + { a=5, b=15 }.b == 25')).toBe(true)
+      expect(lits.run('{ a = 10, b = 20 }.a + { a = 5, b = 15 }.b == 25')).toBe(true)
     })
 
     it('handles complex nested expressions', () => {
-      expect(lits.run('{ a=[1, 2, { b=3 }] }.a[2].b')).toBe(3)
+      expect(lits.run('{ a = [1, 2, { b = 3 }] }.a[2].b')).toBe(3)
       expect(lits.run('[[1, 2], [3, 4]][1][abs(-1)]')).toBe(4)
     })
 
@@ -1109,19 +1114,19 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
 
     it('supports lambda functions with rest parameters', () => {
-      expect(lits.run('((...args) => apply(\'+\', args))(1, 2, 3, 4, 5, 6)')).toBe(21)
-      expect(lits.run('((first, ...args) => first + apply(\'+\', args))(1, 2, 3, 4, 5, 6)')).toBe(21)
+      expect(lits.run('((...args) => apply(+, args))(1, 2, 3, 4, 5, 6)')).toBe(21)
+      expect(lits.run('((first, ...args) => first + apply(+, args))(1, 2, 3, 4, 5, 6)')).toBe(21)
     })
 
     it('supports lambda function expressions in data structures', () => {
       expect(lits.run('map([1, 2, 3], (x) => x * 2)')).toEqual([2, 4, 6])
-      expect(lits.run('{ fun=((x) => x + 1) }.fun(5)')).toBe(6)
+      expect(lits.run('{ fun = ((x) => x + 1) }.fun(5)')).toBe(6)
     })
 
     it('supports complex expressions in lambda functions', () => {
       expect(lits.run('((x, y) => x ** 2 + y ** 2)(3, 4)')).toBe(25)
-      expect(lits.run('((a, b) => ({ sum=a + b, product=a * b }))(3, 4).sum')).toBe(7)
-      expect(lits.run('((a, b) => ({ sum=a + b, product=a * b }))(3, 4).product')).toBe(12)
+      expect(lits.run('((a, b) => ({ sum = a + b, product = a * b }))(3, 4).sum')).toBe(7)
+      expect(lits.run('((a, b) => ({ sum = a + b, product = a * b }))(3, 4).product')).toBe(12)
     })
 
     it('supports lambda functions as return values', () => {

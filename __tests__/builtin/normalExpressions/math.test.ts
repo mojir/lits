@@ -43,8 +43,8 @@ describe('math functions', () => {
 
   describe('+', () => {
     it('samples', () => {
-      expect(lits.run('\'+\'()')).toBe(0)
-      expect(lits.run('\'+\'(2, 3, 4)')).toBe(9)
+      expect(lits.run('+()')).toBe(0)
+      expect(lits.run('+(2, 3, 4)')).toBe(9)
       expect(lits.run('2 + 2')).toBe(4)
       expect(lits.run('-2 + 2')).toBe(0)
       expect(lits.run('1 + 2 + 3 + 4')).toBe(10)
@@ -54,9 +54,9 @@ describe('math functions', () => {
 
   describe('*', () => {
     it('samples', () => {
-      expect(lits.run('\'*\'()')).toBe(1)
-      expect(lits.run('\'*\'(2)')).toBe(2)
-      expect(lits.run('\'*\'(1, 2, 3)')).toBe(6)
+      expect(lits.run('*()')).toBe(1)
+      expect(lits.run('*(2)')).toBe(2)
+      expect(lits.run('*(1, 2, 3)')).toBe(6)
       expect(lits.run('2 * 2')).toBe(4)
       expect(lits.run('-2 * 2')).toBe(-4)
       expect(lits.run('1 * 2 * 3 * 4')).toBe(24)
@@ -66,9 +66,9 @@ describe('math functions', () => {
 
   describe('/', () => {
     it('samples', () => {
-      expect(lits.run('\'/\'()')).toBe(1)
-      expect(lits.run('\'/\'(2)')).toBe(0.5)
-      expect(lits.run('\'/\'(8, 4, 2)')).toBe(1)
+      expect(lits.run('/()')).toBe(1)
+      expect(lits.run('/(2)')).toBe(0.5)
+      expect(lits.run('/(8, 4, 2)')).toBe(1)
       expect(lits.run('2 / 5')).toBe(2 / 5)
       expect(lits.run('2 / 2')).toBe(2 / 2)
       expect(lits.run('-2 / 2')).toBe(-2 / 2)
@@ -79,16 +79,16 @@ describe('math functions', () => {
 
   describe('-', () => {
     it('samples', () => {
-      expect(lits.run('\'-\'()')).toBe(0)
-      expect(lits.run('\'-\'(1)')).toBe(-1)
-      expect(lits.run('\'-\'(1, 2, 3)')).toBe(1 - 2 - 3)
+      expect(lits.run('-()')).toBe(0)
+      expect(lits.run('-(1)')).toBe(-1)
+      expect(lits.run('-(1, 2, 3)')).toBe(1 - 2 - 3)
       expect(lits.run('2 - 2')).toBe(2 - 2)
       expect(lits.run('-2 - 2')).toBe(-2 - 2)
       expect(lits.run('1 - 2 - 3 - 4')).toBe(1 - 2 - 3 - 4)
       expect(() => lits.run('"1" - 2')).toThrow()
     })
     it('strange bug', () => {
-      expect(lits.run('let a=0; let b=2; a - b')).toBe(-2)
+      expect(lits.run('let a = 0; let b = 2; a - b')).toBe(-2)
     })
   })
 
