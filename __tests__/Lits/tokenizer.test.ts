@@ -115,10 +115,10 @@ describe('tokenizer', () => {
         hasDebugData: true,
         polish: true,
         tokens: [
-          ['P_FnShorthand', {
+          ['P_FnShorthand', '#', {
             sourceCodeInfo: { position: { line: 1, column: 1 }, code: '#(' },
           }],
-          ['LParen', {
+          ['LParen', '(', {
             sourceCodeInfo: { position: { line: 1, column: 2 }, code: '#(' },
           }],
         ],

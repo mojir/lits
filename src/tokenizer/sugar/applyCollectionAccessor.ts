@@ -25,7 +25,7 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
   checkForward(tokenStream, position, dotTkn, debugData?.sourceCodeInfo)
 
   tokenStream.tokens.splice(position, 1)
-  tokenStream.tokens.splice(backPosition, 0, ['LParen'])
+  tokenStream.tokens.splice(backPosition, 0, ['LParen', '('])
   const nextTkn = asToken(tokenStream.tokens[position + 1])
   if (dotTkn[1] === '.') {
     assertP_SymbolToken(nextTkn)
@@ -43,7 +43,7 @@ function applyCollectionAccessor(tokenStream: TokenStream, position: number) {
 
     tokenStream.tokens[position + 1] = ['P_Number', nextTkn[1]]
   }
-  tokenStream.tokens.splice(position + 2, 0, ['RParen'])
+  tokenStream.tokens.splice(position + 2, 0, ['RParen', ')'])
 }
 
 function getPositionBackwards(tokenStream: TokenStream, position: number, sourceCodeInfo: SourceCodeInfo | undefined) {

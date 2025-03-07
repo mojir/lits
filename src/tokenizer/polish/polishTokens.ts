@@ -1,21 +1,13 @@
-import type { CommonSimpleToken, CommonSimpleTokenType, CommonValueToken, CommonValueTokenType } from '../common/commonTokens'
-import { commomValueTokenTypes, commonSimpleTokenTypes } from '../common/commonTokens'
+import type { CommonToken, CommonTokenType } from '../common/commonTokens'
+import { commonTokenTypes } from '../common/commonTokens'
 import type { Token } from '../tokens'
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
 
 export const modifierNames = ['&rest', '&let', '&when', '&while'] as const
 export type ModifierName = typeof modifierNames[number]
 
-export const polishOnlySimpleTokenTypes = [
+export const polishOnlyTokenTypes = [
   'P_FnShorthand',
-] as const satisfies `P_${string}`[]
-
-export const polishSimpleTokenTypes = [
-  ...commonSimpleTokenTypes,
-  ...polishOnlySimpleTokenTypes,
-] as const
-
-export const polishOnlyValueTokenTypes = [
   'P_Modifier',
   'P_StringShorthand',
   'P_Symbol',
@@ -26,24 +18,17 @@ export const polishOnlyValueTokenTypes = [
   'P_Number',
 ] as const satisfies `P_${string}`[]
 
-export const polishValueTokenTypes = [
-  ...commomValueTokenTypes,
-  ...polishOnlyValueTokenTypes,
-] as const
-
 export const polishTokenTypes = [
-  ...polishSimpleTokenTypes,
-  ...polishValueTokenTypes,
+  ...commonTokenTypes,
+  ...polishOnlyTokenTypes,
 ] as const
 
-export type PolishSimpleTokenType = typeof polishSimpleTokenTypes[number]
-export type PolishValueTokenType = typeof polishValueTokenTypes[number]
+export type PolishValueTokenType = typeof polishTokenTypes[number]
 export type PolishTokenType = typeof polishTokenTypes[number]
 
-type GenericPolishSimpleToken<T extends Exclude<PolishSimpleTokenType, CommonSimpleTokenType>> = [T] | [T, TokenDebugData]
-type GenericPolishValueToken<T extends Exclude<PolishValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
+type GenericPolishValueToken<T extends Exclude<PolishValueTokenType, CommonTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
 
-export type P_FnShorthandToken = GenericPolishSimpleToken<'P_FnShorthand'>
+export type P_FnShorthandToken = GenericPolishValueToken<'P_FnShorthand', '#'>
 export type P_ModifierToken = GenericPolishValueToken<'P_Modifier', ModifierName>
 export type P_StringShorthandToken = GenericPolishValueToken<'P_StringShorthand'>
 export type P_SymbolToken = GenericPolishValueToken<'P_Symbol'>
@@ -53,10 +38,8 @@ export type P_CommentToken = GenericPolishValueToken<'P_Comment'>
 export type P_WhitespaceToken = GenericPolishValueToken<'P_Whitespace'>
 export type P_NumberToken = GenericPolishValueToken<'P_Number'>
 
-export type PolishOnlySimpleToken =
+export type PolishOnlyToken =
   | P_FnShorthandToken
-
-export type PolishOnlyValueToken =
   | P_ModifierToken
   | P_StringShorthandToken
   | P_SymbolToken
@@ -67,10 +50,8 @@ export type PolishOnlyValueToken =
   | P_NumberToken
 
 export type PolishToken =
-  | PolishOnlySimpleToken
-  | PolishOnlyValueToken
-  | CommonSimpleToken
-  | CommonValueToken
+  | PolishOnlyToken
+  | CommonToken
 
 export function isP_StringShorthandToken(token?: Token): token is P_StringShorthandToken {
   return token?.[0] === 'P_StringShorthand'

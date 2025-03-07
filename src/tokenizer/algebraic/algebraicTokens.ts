@@ -1,15 +1,11 @@
 import { LitsError } from '../../errors'
-import type { CommonSimpleToken, CommonValueToken, CommonValueTokenType } from '../common/commonTokens'
-import { commomValueTokenTypes, commonSimpleTokenTypes } from '../common/commonTokens'
+import type { CommonToken, CommonTokenType } from '../common/commonTokens'
+import { commonTokenTypes } from '../common/commonTokens'
 import type { Token } from '../tokens'
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
 import type { ValidAlgebraicReservedName } from './algebraicReservedNames'
 
-export const algebraicSimpleTokenTypes = [
-  ...commonSimpleTokenTypes,
-] as const
-
-export const algebraicOnlyValueTokenTypes = [
+export const algebraicOnlyTokenTypes = [
   'A_Whitespace',
   'A_Operator',
   'A_Symbol',
@@ -20,14 +16,9 @@ export const algebraicOnlyValueTokenTypes = [
   'A_BasePrefixedNumber',
 ] as const satisfies `A_${string}`[]
 
-export const algebraicValueTokenTypes = [
-  ...commomValueTokenTypes,
-  ...algebraicOnlyValueTokenTypes,
-] as const
-
 export const algebraicTokenTypes = [
-  ...algebraicSimpleTokenTypes,
-  ...algebraicValueTokenTypes,
+  ...commonTokenTypes,
+  ...algebraicOnlyTokenTypes,
 ] as const
 
 const symbolicUnaryOperators = [
@@ -157,11 +148,9 @@ export function asSymbolicOperator(operator: string): SymbolicOperator {
   assertSymbolicOperator(operator)
   return operator
 }
-export type AlgebraicSimpleTokenType = typeof algebraicSimpleTokenTypes[number]
-export type AlgebraicValueTokenType = typeof algebraicValueTokenTypes[number]
 export type AlgebraicTokenType = typeof algebraicTokenTypes[number]
 
-type GenericAlgebraicValueToken<T extends Exclude<AlgebraicValueTokenType, CommonValueTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
+type GenericAlgebraicValueToken<T extends Exclude<AlgebraicTokenType, CommonTokenType>, V extends string = string> = [T, V] | [T, V, TokenDebugData]
 
 export type A_WhitespaceToken = GenericAlgebraicValueToken<'A_Whitespace'>
 export type A_NumberToken = GenericAlgebraicValueToken<'A_Number'>
@@ -172,7 +161,7 @@ export type A_ReservedSymbolToken<T extends ValidAlgebraicReservedName = ValidAl
 export type A_SingleLineCommentToken = GenericAlgebraicValueToken<'A_SingleLineComment'>
 export type A_MultiLineCommentToken = GenericAlgebraicValueToken<'A_MultiLineComment'>
 
-export type AlgebraicOnlyValueToken =
+export type AlgebraicOnlyToken =
   | A_WhitespaceToken
   | A_NumberToken
   | A_BasePrefixedNumberToken
@@ -183,9 +172,8 @@ export type AlgebraicOnlyValueToken =
   | A_MultiLineCommentToken
 
 export type AlgebraicToken =
-  | AlgebraicOnlyValueToken
-  | CommonSimpleToken
-  | CommonValueToken
+  | AlgebraicOnlyToken
+  | CommonToken
 
 export function isA_SymbolToken<T extends string>(token: Token | undefined, symbolName?: T): token is A_SymbolToken<T> {
   if (token?.[0] !== 'A_Symbol') {

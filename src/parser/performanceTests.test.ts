@@ -2,7 +2,7 @@
 import { describe, it } from 'vitest'
 import { Lits } from '..'
 
-const lits = new Lits({ algebraic: true, debug: false })
+const lits = new Lits({ debug: false })
 
 describe.skip('performance comparison', () => {
   const expressions = [

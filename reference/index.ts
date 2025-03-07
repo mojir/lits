@@ -59,13 +59,18 @@ export interface CommonReference<T extends Category> {
   clojureDocs?: string | null
   seeAlso?: ApiName[]
   algebraic?: boolean
-  operator?: boolean
 }
-export interface FunctionReference<T extends Category = Category> extends CommonReference<T> {
+export type FunctionReference<T extends Category = Category> = CommonReference<T> & {
   returns: TypedValue
   args: Record<string, Argument>
   variants: Variant[]
-}
+} & ({
+  operator: true
+  a: DataType
+  b: DataType
+} | {
+  operator?: never
+})
 
 export interface ShorthandReference extends CommonReference<'Shorthand'> {
   shorthand: true

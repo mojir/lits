@@ -4,6 +4,67 @@ import { Lits } from '..'
 const lits = new Lits({ polish: false })
 
 describe('algebraic operators', () => {
+  describe('const E', () => {
+    it('samples', () => {
+      expect(lits.run('E')).toBe(Math.E)
+    })
+  })
+
+  describe('const MAX_SAFE_INTEGER', () => {
+    it('samples', () => {
+      expect(lits.run('MAX_SAFE_INTEGER')).toBe(Number.MAX_SAFE_INTEGER)
+    })
+  })
+
+  describe('const MIN_SAFE_INTEGER', () => {
+    it('samples', () => {
+      expect(lits.run('MIN_SAFE_INTEGER')).toBe(Number.MIN_SAFE_INTEGER)
+    })
+  })
+
+  describe('const MAX_VALUE', () => {
+    it('samples', () => {
+      expect(lits.run('MAX_VALUE')).toBe(Number.MAX_VALUE)
+    })
+  })
+
+  describe('const MIN_VALUE', () => {
+    it('samples', () => {
+      expect(lits.run('MIN_VALUE')).toBe(Number.MIN_VALUE)
+      expect(() => lits.run('(min_value :1)')).toThrow()
+    })
+  })
+
+  describe('const EPSILON', () => {
+    it('samples', () => {
+      expect(lits.run('EPSILON')).toBe(Number.EPSILON)
+    })
+  })
+
+  describe('const NaN', () => {
+    it('samples', () => {
+      expect(lits.run('NaN')).toBeNaN()
+    })
+  })
+
+  describe('const POSITIVE_INFINITY', () => {
+    it('samples', () => {
+      expect(lits.run('POSITIVE_INFINITY')).toBe(Number.POSITIVE_INFINITY)
+    })
+  })
+
+  describe('const NEGATIVE_INFINITY', () => {
+    it('samples', () => {
+      expect(lits.run('(NEGATIVE_INFINITY)')).toBe(Number.NEGATIVE_INFINITY)
+    })
+  })
+
+  describe('const PI', () => {
+    it('samples', () => {
+      expect(lits.run('(PI)')).toBe(Math.PI)
+    })
+  })
+
   describe('**', () => {
     test('samples', () => {
       expect(lits.run('2 ** 3')).toBe(8)

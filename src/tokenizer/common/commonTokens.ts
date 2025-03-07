@@ -1,45 +1,38 @@
 import { type TokenDebugData, throwUnexpectedToken } from '../utils'
 import type { Token } from '../tokens'
 
-export const commonSimpleTokenTypes = [
+export const commonTokenTypes = [
   'LBrace',
   'LBracket',
   'LParen',
   'RBrace',
   'RBracket',
   'RParen',
-] as const
-
-export const commomValueTokenTypes = [
   'String',
   'RegexpShorthand',
 ] as const
 
-export type CommonSimpleTokenType = typeof commonSimpleTokenTypes[number]
-export type CommonValueTokenType = typeof commomValueTokenTypes[number]
+export type CommonTokenType = typeof commonTokenTypes[number]
 
-type GenericCommonSimpleToken<T extends CommonSimpleTokenType> = [T] | [T, TokenDebugData]
-type GenericCommonValueToken<T extends CommonValueTokenType, V extends string = string> = [T, V] | [T, V, TokenDebugData]
+type GenericCommonToken<T extends CommonTokenType, V extends string = string> = [T, V] | [T, V, TokenDebugData]
 
-export type LParenToken = GenericCommonSimpleToken<'LParen'>
-export type RParenToken = GenericCommonSimpleToken<'RParen'>
-export type LBracketToken = GenericCommonSimpleToken<'LBracket'>
-export type RBracketToken = GenericCommonSimpleToken<'RBracket'>
-export type LBraceToken = GenericCommonSimpleToken<'LBrace'>
-export type RBraceToken = GenericCommonSimpleToken<'RBrace'>
+export type LParenToken = GenericCommonToken<'LParen', '('>
+export type RParenToken = GenericCommonToken<'RParen', ')'>
+export type LBracketToken = GenericCommonToken<'LBracket', '['>
+export type RBracketToken = GenericCommonToken<'RBracket', ']'>
+export type LBraceToken = GenericCommonToken<'LBrace', '{'>
+export type RBraceToken = GenericCommonToken<'RBrace', '}'>
 
-export type StringToken = GenericCommonValueToken<'String'>
-export type RegexpShorthandToken = GenericCommonValueToken<'RegexpShorthand'>
+export type StringToken = GenericCommonToken<'String'>
+export type RegexpShorthandToken = GenericCommonToken<'RegexpShorthand'>
 
-export type CommonSimpleToken =
+export type CommonToken =
   | LParenToken
   | RParenToken
   | LBracketToken
   | RBracketToken
   | LBraceToken
   | RBraceToken
-
-export type CommonValueToken =
   | StringToken
   | RegexpShorthandToken
 

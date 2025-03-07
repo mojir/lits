@@ -28,7 +28,7 @@ describe('untokenizer', () => {
       }
     })
     it('should untokenize algebraic Examples', () => {
-      const lits = new Lits({ algebraic: true })
+      const lits = new Lits()
       for (const example of algebraicExamples) {
         const tokenStream = lits.tokenize(example)
         const result = lits.untokenize(tokenStream)

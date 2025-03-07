@@ -24,7 +24,7 @@ import { isMac, throttle } from './utils'
 
 const getLits: (forceDebug?: 'debug') => Lits = (() => {
   const lits = new Lits({ debug: true })
-  const litsNoDebug = new Lits({ debug: false, polish: true })
+  const litsNoDebug = new Lits({ debug: false })
 
   return (forceDebug?: 'debug') => forceDebug || getState('debug') ? lits : litsNoDebug
 })()

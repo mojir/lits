@@ -181,7 +181,7 @@ export const tokenizeP_FnShorthand: Tokenizer<P_FnShorthandToken> = (input, posi
   if (input.slice(position, position + 2) !== '#(')
     return NO_MATCH
 
-  return [1, ['P_FnShorthand']]
+  return [1, ['P_FnShorthand', '#']]
 }
 
 export const tokenizeP_ReservedSymbol: Tokenizer<P_ReservedSymbolToken> = (input, position) => {

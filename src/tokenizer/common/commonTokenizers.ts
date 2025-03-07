@@ -1,6 +1,6 @@
 import { LitsError } from '../../errors'
 import type { TokenDescriptor, Tokenizer } from '../interface'
-import type { SimpleToken } from '../tokens'
+import type { Token } from '../tokens'
 import type { LBraceToken, LBracketToken, LParenToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, StringToken } from './commonTokens'
 
 export const NO_MATCH: TokenDescriptor<never> = [0]
@@ -10,17 +10,17 @@ export function isNoMatch(tokenDescriptor: TokenDescriptor<any>): tokenDescripto
 }
 
 const tokenizeLParen: Tokenizer<LParenToken> = (input, position) =>
-  tokenizeSimpleToken('LParen', '(', input, position)
+  tokenizeToken('LParen', '(', input, position)
 const tokenizeRParen: Tokenizer<RParenToken> = (input, position) =>
-  tokenizeSimpleToken('RParen', ')', input, position)
+  tokenizeToken('RParen', ')', input, position)
 const tokenizeLBracket: Tokenizer<LBracketToken> = (input, position) =>
-  tokenizeSimpleToken('LBracket', '[', input, position)
+  tokenizeToken('LBracket', '[', input, position)
 const tokenizeRBracket: Tokenizer<RBracketToken> = (input, position) =>
-  tokenizeSimpleToken('RBracket', ']', input, position)
+  tokenizeToken('RBracket', ']', input, position)
 const tokenizeLBrace: Tokenizer<LBraceToken> = (input, position) =>
-  tokenizeSimpleToken('LBrace', '{', input, position)
+  tokenizeToken('LBrace', '{', input, position)
 const tokenizeRBrace: Tokenizer<RBraceToken> = (input, position) =>
-  tokenizeSimpleToken('RBrace', '}', input, position)
+  tokenizeToken('RBrace', '}', input, position)
 
 export const tokenizeString: Tokenizer<StringToken> = (input, position) => {
   if (input[position] !== '"')
@@ -75,14 +75,14 @@ export const tokenizeRegexpShorthand: Tokenizer<RegexpShorthandToken> = (input, 
   return [length, ['RegexpShorthand', `#${token[1]}${options}`]]
 }
 
-export function tokenizeSimpleToken<T extends SimpleToken>(
+export function tokenizeToken<T extends Token>(
   type: T[0],
   value: string,
   input: string,
   position: number,
 ): TokenDescriptor<T> {
   if (value === input.slice(position, position + value.length))
-    return [value.length, [type] as T]
+    return [value.length, [type, value] as T]
   else
     return NO_MATCH
 }

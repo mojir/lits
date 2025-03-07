@@ -765,15 +765,13 @@ var Playground = (function (exports) {
         throw new LitsError("Unexpected token: ".concat(actualOutput, ", expected ").concat(expected).concat(expectedValue ? " '".concat(expectedValue, "'") : ''), getSourceCodeInfo(actual));
     }
 
-    var commonSimpleTokenTypes = [
+    var commonTokenTypes = [
         'LBrace',
         'LBracket',
         'LParen',
         'RBrace',
         'RBracket',
         'RParen',
-    ];
-    var commomValueTokenTypes = [
         'String',
         'RegexpShorthand',
     ];
@@ -862,8 +860,7 @@ var Playground = (function (exports) {
         return token;
     }
 
-    var algebraicSimpleTokenTypes = __spreadArray([], __read(commonSimpleTokenTypes), false);
-    var algebraicOnlyValueTokenTypes = [
+    var algebraicOnlyTokenTypes = [
         'A_Whitespace',
         'A_Operator',
         'A_Symbol',
@@ -873,8 +870,7 @@ var Playground = (function (exports) {
         'A_Number',
         'A_BasePrefixedNumber',
     ];
-    var algebraicValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false);
-    __spreadArray(__spreadArray([], __read(algebraicSimpleTokenTypes), false), __read(algebraicValueTokenTypes), false);
+    __spreadArray(__spreadArray([], __read(commonTokenTypes), false), __read(algebraicOnlyTokenTypes), false);
     var symbolicUnaryOperators = [
         '!', // logical NOT
         '~', // bitwise NOT
@@ -1020,11 +1016,8 @@ var Playground = (function (exports) {
     }
 
     var modifierNames = ['&rest', '&let', '&when', '&while'];
-    var polishOnlySimpleTokenTypes = [
+    var polishOnlyTokenTypes = [
         'P_FnShorthand',
-    ];
-    var polishSimpleTokenTypes = __spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false);
-    var polishOnlyValueTokenTypes = [
         'P_Modifier',
         'P_StringShorthand',
         'P_Symbol',
@@ -1034,8 +1027,7 @@ var Playground = (function (exports) {
         'P_Whitespace',
         'P_Number',
     ];
-    var polishValueTokenTypes = __spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(polishOnlyValueTokenTypes), false);
-    __spreadArray(__spreadArray([], __read(polishSimpleTokenTypes), false), __read(polishValueTokenTypes), false);
+    __spreadArray(__spreadArray([], __read(commonTokenTypes), false), __read(polishOnlyTokenTypes), false);
     function isP_StringShorthandToken(token) {
         return (token === null || token === void 0 ? void 0 : token[0]) === 'P_StringShorthand';
     }
@@ -1105,9 +1097,7 @@ var Playground = (function (exports) {
         }
     }
 
-    var simpleTokenTypes = __spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false);
-    var valueTokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false), __read(polishOnlyValueTokenTypes), false);
-    var tokenTypes = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], __read(commonSimpleTokenTypes), false), __read(polishOnlySimpleTokenTypes), false), __read(commomValueTokenTypes), false), __read(algebraicOnlyValueTokenTypes), false), __read(polishOnlyValueTokenTypes), false);
+    var tokenTypes = __spreadArray(__spreadArray(__spreadArray([], __read(commonTokenTypes), false), __read(algebraicOnlyTokenTypes), false), __read(polishOnlyTokenTypes), false);
     function isTokenType(type) {
         return typeof type === 'string' && tokenTypes.includes(type);
     }
@@ -1122,17 +1112,6 @@ var Playground = (function (exports) {
     function asToken(token) {
         assertToken(token);
         return token;
-    }
-    function isSimpleToken(token) {
-        return isToken$1(token) && simpleTokenTypes.includes(token[0]);
-    }
-    function assertSimpleToken(token) {
-        if (!isSimpleToken(token)) {
-            throw new LitsError("Expected simple token, got ".concat(token), undefined);
-        }
-    }
-    function isValueToken(token) {
-        return isToken$1(token) && valueTokenTypes.includes(token[0]);
     }
 
     var FUNCTION_SYMBOL = '^^fn^^';
@@ -3511,74 +3490,6 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertNumber(value, sourceCodeInfo);
                 return Math.sign(value);
-            },
-            paramCount: 1,
-        },
-        'max_safe_integer': {
-            evaluate: function () {
-                return Number.MAX_SAFE_INTEGER;
-            },
-            paramCount: 0,
-        },
-        'min_safe_integer': {
-            evaluate: function () {
-                return Number.MIN_SAFE_INTEGER;
-            },
-            paramCount: 0,
-        },
-        'max_value': {
-            evaluate: function () {
-                return Number.MAX_VALUE;
-            },
-            paramCount: 0,
-        },
-        'min_value': {
-            evaluate: function () {
-                return Number.MIN_VALUE;
-            },
-            paramCount: 0,
-        },
-        'epsilon': {
-            evaluate: function () {
-                return Number.EPSILON;
-            },
-            paramCount: 0,
-        },
-        'positive_infinity': {
-            evaluate: function () {
-                return Number.POSITIVE_INFINITY;
-            },
-            paramCount: 0,
-        },
-        'negative_infinity': {
-            evaluate: function () {
-                return Number.NEGATIVE_INFINITY;
-            },
-            paramCount: 0,
-        },
-        'nan': {
-            evaluate: function () {
-                return Number.NaN;
-            },
-            paramCount: 0,
-        },
-        'e': {
-            evaluate: function () {
-                return Math.E;
-            },
-            paramCount: 0,
-        },
-        'pi': {
-            evaluate: function () {
-                return Math.PI;
-            },
-            paramCount: 0,
-        },
-        'exp': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), value = _b[0];
-                assertNumber(value, sourceCodeInfo);
-                return Math.exp(value);
             },
             paramCount: 1,
         },
@@ -6654,6 +6565,36 @@ var Playground = (function (exports) {
         return __assign(__assign({}, tokenStream), { tokens: tokens });
     }
 
+    var validAlgebraicReservedNamesRecord = {
+        true: { value: true, forbidden: false },
+        false: { value: false, forbidden: false },
+        nil: { value: null, forbidden: false },
+        null: { value: null, forbidden: false },
+        E: { value: Math.E, forbidden: false },
+        PI: { value: Math.PI, forbidden: false },
+        PHI: { value: 1.618033988749895, forbidden: false },
+        POSITIVE_INFINITY: { value: Number.POSITIVE_INFINITY, forbidden: false },
+        NEGATIVE_INFINITY: { value: Number.NEGATIVE_INFINITY, forbidden: false },
+        MAX_SAFE_INTEGER: { value: Number.MAX_SAFE_INTEGER, forbidden: false },
+        MIN_SAFE_INTEGER: { value: Number.MIN_SAFE_INTEGER, forbidden: false },
+        MAX_VALUE: { value: Number.MAX_VALUE, forbidden: false },
+        MIN_VALUE: { value: Number.MIN_VALUE, forbidden: false },
+        EPSILON: { value: Number.EPSILON, forbidden: false },
+        NaN: { value: Number.NaN, forbidden: false },
+        then: { value: null, forbidden: false },
+        else: { value: null, forbidden: false },
+        end: { value: null, forbidden: false },
+        case: { value: null, forbidden: false },
+        when: { value: null, forbidden: false },
+        while: { value: null, forbidden: false },
+        function: { value: null, forbidden: false },
+        export: { value: null, forbidden: false },
+    };
+    var forbiddenAlgebraicReservedNamesRecord = {
+        fn: { value: null, forbidden: true },
+    };
+    var algebraicReservedNamesRecord = __assign(__assign({}, validAlgebraicReservedNamesRecord), forbiddenAlgebraicReservedNamesRecord);
+
     function parseSymbol(tokenStream, parseState) {
         var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
@@ -6689,11 +6630,33 @@ var Playground = (function (exports) {
             };
         }
     }
+    var numberTokens = new Set([
+        'E',
+        'EPSILON',
+        'MAX_SAFE_INTEGER',
+        'MAX_VALUE',
+        'MIN_SAFE_INTEGER',
+        'MIN_VALUE',
+        'NaN',
+        'NEGATIVE_INFINITY',
+        'PHI',
+        'PI',
+        'POSITIVE_INFINITY',
+    ]);
     function parseReservedSymbol(tokenStream, parseState) {
         var _a;
         var tkn = asToken(tokenStream.tokens[parseState.position++]);
         if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
             throw new LitsError("Expected symbol token, got ".concat(tkn[0]), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+        }
+        if (isA_ReservedSymbolToken(tkn) && numberTokens.has(tkn[1])) {
+            return {
+                t: AstNodeType.Number,
+                v: algebraicReservedNamesRecord[tkn[1]].value,
+                p: [],
+                n: undefined,
+                token: getTokenDebugData(tkn) && tkn,
+            };
         }
         return {
             t: AstNodeType.ReservedSymbol,
@@ -8206,22 +8169,22 @@ var Playground = (function (exports) {
         return tokenDescriptor[0] === 0;
     }
     var tokenizeLParen = function (input, position) {
-        return tokenizeSimpleToken('LParen', '(', input, position);
+        return tokenizeToken('LParen', '(', input, position);
     };
     var tokenizeRParen = function (input, position) {
-        return tokenizeSimpleToken('RParen', ')', input, position);
+        return tokenizeToken('RParen', ')', input, position);
     };
     var tokenizeLBracket = function (input, position) {
-        return tokenizeSimpleToken('LBracket', '[', input, position);
+        return tokenizeToken('LBracket', '[', input, position);
     };
     var tokenizeRBracket = function (input, position) {
-        return tokenizeSimpleToken('RBracket', ']', input, position);
+        return tokenizeToken('RBracket', ']', input, position);
     };
     var tokenizeLBrace = function (input, position) {
-        return tokenizeSimpleToken('LBrace', '{', input, position);
+        return tokenizeToken('LBrace', '{', input, position);
     };
     var tokenizeRBrace = function (input, position) {
-        return tokenizeSimpleToken('RBrace', '}', input, position);
+        return tokenizeToken('RBrace', '}', input, position);
     };
     var tokenizeString = function (input, position) {
         if (input[position] !== '"')
@@ -8268,9 +8231,9 @@ var Playground = (function (exports) {
         }
         return [length, ['RegexpShorthand', "#".concat(token[1]).concat(options)]];
     };
-    function tokenizeSimpleToken(type, value, input, position) {
+    function tokenizeToken(type, value, input, position) {
         if (value === input.slice(position, position + value.length))
-            return [value.length, [type]];
+            return [value.length, [type, value]];
         else
             return NO_MATCH;
     }
@@ -8284,25 +8247,6 @@ var Playground = (function (exports) {
         tokenizeString,
         tokenizeRegexpShorthand,
     ];
-
-    var validAlgebraicReservedNamesRecord = {
-        true: { value: true, forbidden: false },
-        false: { value: false, forbidden: false },
-        nil: { value: null, forbidden: false },
-        null: { value: null, forbidden: false },
-        then: { value: null, forbidden: false },
-        else: { value: null, forbidden: false },
-        end: { value: null, forbidden: false },
-        case: { value: null, forbidden: false },
-        when: { value: null, forbidden: false },
-        while: { value: null, forbidden: false },
-        function: { value: null, forbidden: false },
-        export: { value: null, forbidden: false },
-    };
-    var forbiddenAlgebraicReservedNamesRecord = {
-        fn: { value: null, forbidden: true },
-    };
-    var algebraicReservedNamesRecord = __assign(__assign({}, validAlgebraicReservedNamesRecord), forbiddenAlgebraicReservedNamesRecord);
 
     var identifierRegExp = new RegExp(algebraicIdentifierCharacterClass);
     var identifierFirstCharacterRegExp = new RegExp(algebraicIdentifierFirstCharacterClass);
@@ -8629,7 +8573,7 @@ var Playground = (function (exports) {
     var tokenizeP_FnShorthand = function (input, position) {
         if (input.slice(position, position + 2) !== '#(')
             return NO_MATCH;
-        return [1, ['P_FnShorthand']];
+        return [1, ['P_FnShorthand', '#']];
     };
     var tokenizeP_ReservedSymbol = function (input, position) {
         var symbolMeta = tokenizeP_Symbol(input, position);
@@ -8713,7 +8657,7 @@ var Playground = (function (exports) {
         var backPosition = getPositionBackwards(tokenStream, position, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
         checkForward(tokenStream, position, dotTkn, debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo);
         tokenStream.tokens.splice(position, 1);
-        tokenStream.tokens.splice(backPosition, 0, ['LParen']);
+        tokenStream.tokens.splice(backPosition, 0, ['LParen', '(']);
         var nextTkn = asToken(tokenStream.tokens[position + 1]);
         if (dotTkn[1] === '.') {
             assertP_SymbolToken(nextTkn);
@@ -8729,7 +8673,7 @@ var Playground = (function (exports) {
             assertNumber(Number(nextTkn[1]), debugData === null || debugData === void 0 ? void 0 : debugData.sourceCodeInfo, { integer: true, nonNegative: true });
             tokenStream.tokens[position + 1] = ['P_Number', nextTkn[1]];
         }
-        tokenStream.tokens.splice(position + 2, 0, ['RParen']);
+        tokenStream.tokens.splice(position + 2, 0, ['RParen', ')']);
     }
     function getPositionBackwards(tokenStream, position, sourceCodeInfo) {
         var bracketCount = null;
@@ -8879,27 +8823,8 @@ var Playground = (function (exports) {
 
     function untokenize(tokenStream) {
         return tokenStream.tokens.reduce(function (acc, token) {
-            return "".concat(acc).concat(untokenizeToken(token));
+            return "".concat(acc).concat(token[1]);
         }, '');
-    }
-    function untokenizeToken(token) {
-        if (isValueToken(token)) {
-            return token[1];
-        }
-        assertSimpleToken(token);
-        var tokenType = token[0];
-        switch (tokenType) {
-            case 'LParen': return '(';
-            case 'RParen': return ')';
-            case 'LBracket': return '[';
-            case 'RBracket': return ']';
-            case 'LBrace': return '{';
-            case 'RBrace': return '}';
-            case 'P_FnShorthand': return '#';
-            /* v8 ignore next 2 */
-            default:
-                throw new Error("Unknown token type: ".concat(tokenType));
-        }
     }
 
     var Cache = /** @class */ (function () {
@@ -11211,11 +11136,13 @@ var Playground = (function (exports) {
                     rest: true,
                 },
             },
+            a: 'number',
+            b: 'number',
             variants: [
                 { argumentNames: ['xs'] },
             ],
             description: 'Computes sum of $xs.',
-            examples: ['1 + 2', '1 + 20 + 30', "'+'(1, 2, 3, 4)", "'+'()", "'+'(1)"],
+            examples: ['1 + 2', '1 + 20 + 30', '\'+\'(1, 2, 3, 4)', '\'+\'()', '\'+\'(1)'],
             algebraic: true,
             operator: true,
         },
@@ -11232,11 +11159,15 @@ var Playground = (function (exports) {
                     rest: true,
                 },
             },
+            a: 'number',
+            b: 'number',
             variants: [
                 { argumentNames: ['xs'] },
             ],
             description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
-            examples: ['(-)', '(- 1)', '(- 2 4)', '(- 4 3 2 1)'],
+            examples: ['50 - 8', '1 - 1 - 1', '\'-\'()', '\'-\'(4, 2)', '\'-\'(4, 3, 2, 1,)'],
+            algebraic: true,
+            operator: true,
         },
         '*': {
             title: '*',
@@ -11251,11 +11182,15 @@ var Playground = (function (exports) {
                     rest: true,
                 },
             },
+            a: 'number',
+            b: 'number',
             variants: [
                 { argumentNames: ['xs'] },
             ],
             description: 'Computes product of $xs.',
-            examples: ['(*)', '(* 2)', '(* 2 4)', '(* 1 2 3 4)'],
+            examples: ['6 * 7', '-1 * 4', '\'*\'(4, 7)', '\'*\'(1, 2, 3, 4, 5)', '\'*\'()', '\'*\'(8)'],
+            algebraic: true,
+            operator: true,
         },
         '/': {
             title: '/',
@@ -11271,11 +11206,15 @@ var Playground = (function (exports) {
                     rest: true,
                 },
             },
+            a: 'number',
+            b: 'number',
             variants: [
                 { argumentNames: ['xs'] },
             ],
             description: 'Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining $xs.',
-            examples: ['(/)', '(/ 2)', '(/ 2 4)', '(/ 4 3 2 1)'],
+            examples: ['12 / 100', '-1 / 4', '\'/\'(7, 4)', '\'/\'(1, 2, 4, 8)', '\'/\'()', '\'/\'(8)'],
+            algebraic: true,
+            operator: true,
         },
         'mod': {
             title: 'mod',
@@ -11296,7 +11235,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Modulus of `dividend` and `divisor`. Truncates toward negative infinity.',
-            examples: ['(mod 5 3)', '(mod 5.2 3.1)', '(mod -5 3)', '(mod 5 -3)', '(mod -5 -3)'],
+            examples: ['mod(5, 3)', 'mod(5.2, 3.1)', 'mod(-5, 3)', '5 mod -3', '-5 mod -3'],
+            algebraic: true,
         },
         '%': {
             title: '%',
@@ -11318,7 +11258,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Remainder of dividing `dividend` and `divisor`.',
-            examples: ['(% 5 3)', '(% 5.2 3.1)', '(% -5 3)', '(% 5 -3)', '(% -5 -3)'],
+            examples: ['5 % 3', '5.2 % 3.1', '-5 % 3', '\'%\'(5, -3)', '\'%\'(-5, -3)'],
+            algebraic: true,
+            operator: true,
+            a: 'number',
+            b: 'number',
         },
         'quot': {
             title: 'quot',
@@ -11339,7 +11283,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Quotient of dividing `dividend` and `divisor`.',
-            examples: ['(quot 5 3)', '(quot 5.2 3.1)', '(quot -5 3)', '(quot 5 -3)', '(quot -5 -3)'],
+            examples: ['quot(5, 3)', 'quot(5.2, 3.1)', 'quot(-5, 3)', '5 quot -3', '-5 quot -3'],
+            algebraic: true,
         },
         'inc': {
             title: 'inc',
@@ -11357,7 +11302,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Adds one to $x.',
-            examples: ['(inc 0)', '(inc 1)', '(inc 100.1)'],
+            examples: ['inc(0)', 'inc(1)', 'inc(100.1)'],
+            algebraic: true,
         },
         'dec': {
             title: 'dec',
@@ -11375,7 +11321,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Subtracts one from $x.',
-            examples: ['(dec 0)', '(dec 1)', '(dec 100.1)'],
+            examples: ['dec(0)', 'dec(1)', 'dec(100.1)'],
+            algebraic: true,
         },
         'sqrt': {
             title: 'sqrt',
@@ -11394,7 +11341,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Computes square root of $x.',
-            examples: ['(sqrt 0)', '(sqrt 9)', '(sqrt 2)'],
+            examples: ['sqrt(0)', 'sqrt(9)', 'sqrt(2)'],
+            algebraic: true,
         },
         'cbrt': {
             title: 'cbrt',
@@ -11431,30 +11379,15 @@ var Playground = (function (exports) {
                     type: 'number',
                 },
             },
+            a: 'number',
+            b: 'number',
             variants: [
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Computes returns $a raised to the power of $b.',
-            examples: ['(** 2 3)', '(** 2 0)', '(** 2 -3)', '(** -2 3)', '(** -2 -3)'],
-        },
-        'exp': {
-            title: 'exp',
-            category: 'Math',
-            linkName: 'exp',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-            ],
-            description: 'Computes `e` rasied to the power of $x.',
-            examples: ['(exp 3)', '(exp 0)', '(exp -3)', '(exp 3)'],
+            examples: ['2 ** 3', '2 ** 0', '2 ** -3', '\'**\'(-2, 3)', '\'**\'(-2, -3)'],
+            algebraic: true,
+            operator: true,
         },
         'round': {
             title: 'round',
@@ -11478,14 +11411,16 @@ var Playground = (function (exports) {
             ],
             description: 'Returns rounded $x. If $decimals is provided it return a number with that many decimals.',
             examples: [
-                '(round 2)',
-                '(round 2.49)',
-                '(round 2.5)',
-                '(round -2.49)',
-                '(round -2.5)',
-                '(round -2.501)',
-                '(round 1.23456789 4)',
+                'round(2)',
+                'round(2.49)',
+                'round(2.5)',
+                'round(-2.49)',
+                'round(-2.5)',
+                'round(-2.501)',
+                'round(1.23456789, 4)',
+                '1.123456789 round 2',
             ],
+            algebraic: true,
         },
         'trunc': {
             title: 'trunc',
@@ -11504,7 +11439,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the integer part of $x by removing any fractional digits.',
-            examples: ['(trunc 2)', '(trunc 2.49)', '(trunc 2.5)', '(trunc -2.49)', '(trunc -2.5)', '(trunc -2.501)'],
+            examples: ['trunc(2)', 'trunc(2.49)', 'trunc(2.5)', 'trunc(-2.49)', 'trunc(-2.5)', 'trunc(-2.501)'],
+            algebraic: true,
         },
         'floor': {
             title: 'floor',
@@ -11523,7 +11459,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the largest `integer` less than or equal to $x.',
-            examples: ['(floor 2)', '(floor 2.49)', '(floor 2.5)', '(floor -2.49)', '(floor -2.5)', '(floor -2.501)'],
+            examples: ['floor(2)', 'floor(2.49)', 'floor(2.5)', 'floor(-2.49)', 'floor(-2.5)', 'floor(-2.501)'],
+            algebraic: true,
         },
         'ceil': {
             title: 'ceil',
@@ -11542,7 +11479,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the smallest `integer` larger than or equal to $x.',
-            examples: ['(ceil 2)', '(ceil 2.49)', '(ceil 2.5)', '(ceil -2.49)', '(ceil -2.5)', '(ceil -2.501)'],
+            examples: ['ceil(2)', 'ceil(2.49)', 'ceil(2.5)', 'ceil(-2.49)', 'ceil(-2.5)', 'ceil(-2.501)'],
+            algebraic: true,
         },
         'min': {
             title: 'min',
@@ -11561,7 +11499,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['xs'] },
             ],
             description: 'Returns the smallest number of the arguments.',
-            examples: ['(min 2 0 1)', '(min 2 -1 1)', '(min 2.5)'],
+            examples: ['min(2, 0, 1)', 'min(2, -1, 1)', 'min(2.5)', '12 min 14'],
+            algebraic: true,
         },
         'max': {
             title: 'max',
@@ -11580,7 +11519,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['xs'] },
             ],
             description: 'Returns the largest number of the arguments.',
-            examples: ['(max 2 0 1)', '(max 2 -1 1)', '(max 2.5)'],
+            examples: ['max(2, 0, 1)', 'max(2, -1, 1)', 'max(2, 0.5)', '4 max 2'],
+            algebraic: true,
         },
         'abs': {
             title: 'abs',
@@ -11599,7 +11539,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the absolute value of $x.',
-            examples: ['(abs -2.3)', '(abs 0)', '(abs 2.5)'],
+            examples: ['abs(-2.3)', 'abs(0)', 'abs(2.5)'],
+            algebraic: true,
         },
         'sign': {
             title: 'sign',
@@ -11618,156 +11559,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns `1` if $x `> 0`, `-1` if $x `< 0`, `0` if $x `= 0` or `-0` if $x `= -0`.',
-            examples: ['(sign -2.3)', '(sign -0)', '(sign 0)', '(sign 12312)'],
-        },
-        'positive_infinity': {
-            title: 'positive_infinity',
-            category: 'Math',
-            linkName: 'positive_infinity',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing positive positive_infinity.',
-            examples: ['(positive_infinity)'],
-        },
-        'negative_infinity': {
-            title: 'negative_infinity',
-            category: 'Math',
-            linkName: 'negative_infinity',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing negative infinity.',
-            examples: ['(negative_infinity)'],
-        },
-        'max_safe_integer': {
-            title: 'max_safe_integer',
-            category: 'Math',
-            linkName: 'max_safe_integer',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing the maximum safe integer.',
-            examples: ['(max_safe_integer)'],
-        },
-        'min_safe_integer': {
-            title: 'min_safe_integer',
-            category: 'Math',
-            linkName: 'min_safe_integer',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing the minimum safe integer.',
-            examples: ['(min_safe_integer)'],
-        },
-        'max_value': {
-            title: 'max_value',
-            category: 'Math',
-            linkName: 'max_value',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing the maximum numeric value.',
-            examples: ['(max_value)'],
-        },
-        'min_value': {
-            title: 'min_value',
-            category: 'Math',
-            linkName: 'min_value',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing the smallest positive numeric value.',
-            examples: ['(min_value)'],
-        },
-        'epsilon': {
-            title: 'epsilon',
-            category: 'Math',
-            linkName: 'epsilon',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing the difference between 1 and the smallest floating point number greater than 1.',
-            examples: ['(epsilon)'],
-        },
-        'nan': {
-            title: 'nan',
-            category: 'Math',
-            linkName: 'nan',
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns a number representing Not-A-Number.',
-            examples: ['(nan)'],
-        },
-        'e': {
-            title: 'e',
-            category: 'Math',
-            linkName: 'e',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns Euler\'s number, the base of natural logarithms, e.',
-            examples: ['(e)'],
-        },
-        'pi': {
-            title: 'pi',
-            category: 'Math',
-            linkName: 'pi',
-            clojureDocs: null,
-            returns: {
-                type: 'number',
-            },
-            args: {},
-            variants: [
-                { argumentNames: [] },
-            ],
-            description: 'Returns Pi, the ratio of the circumference of a circle to its diameter.',
-            examples: ['(pi)'],
+            examples: ['sign(-2.3)', 'sign(-0)', 'sign(0)', 'sign(12312)'],
+            algebraic: true,
         },
         'log': {
             title: 'log',
@@ -11786,7 +11579,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the natural logarithm (base e) of $x.',
-            examples: ['(log 0.01)', '(log (exp 12))', '(log 2.5)'],
+            examples: ['log(0.01)', 'log(2.5)'],
+            algebraic: true,
         },
         'log2': {
             title: 'log2',
@@ -11805,7 +11599,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the base `2` logarithm of a number.',
-            examples: ['(log2 0.01)', '(log2 (** 2 12))', '(log2 2.5)'],
+            examples: ['log2(0.01)', 'log2(2 ** 12)', 'log2(2.5)'],
+            algebraic: true,
         },
         'log10': {
             title: 'log10',
@@ -11824,7 +11619,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the `10` logarithm of a number.',
-            examples: ['(log10 0.01)', '(log10 (** 10 12))', '(log10 2.5)'],
+            examples: ['log10(0.01)', 'log10(10 ** 12)', 'log10(2.5)'],
+            algebraic: true,
         },
         'sin': {
             title: 'sin',
@@ -11843,7 +11639,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the sine of $x. $x must be specified in radians.',
-            examples: ['(sin 0)', '(sin 1)', '(sin (pi))', '(sin -0.5)'],
+            examples: ['sin(0)', 'sin(1)', 'sin(PI)', 'sin(-0.5)'],
+            algebraic: true,
         },
         'cos': {
             title: 'cos',
@@ -11862,7 +11659,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the cosine of $x. $x must be specified in radians.',
-            examples: ['(cos 0)', '(cos 1)', '(cos (pi))', '(cos -0.5)'],
+            examples: ['cos(0)', 'cos(1)', 'cos(PI)', 'cos(-0.5)'],
+            algebraic: true,
         },
         'tan': {
             title: 'tan',
@@ -11881,7 +11679,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the tangent of $x. $x must be specified in radians.',
-            examples: ['(tan 0)', '(tan 1)', '(tan (pi))', '(tan -0.5)'],
+            examples: ['tan(0)', 'tan(1)', 'tan(PI)', 'tan(-0.5)'],
         },
         'asin': {
             title: 'asin',
@@ -11900,7 +11698,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the arcsine (in radians) of $x.',
-            examples: ['(asin 0)', '(asin 1)', '(asin -0.5)'],
+            examples: ['asin(0)', 'asin(1)', 'asin(-0.5)'],
+            algebraic: true,
         },
         'acos': {
             title: 'acos',
@@ -11919,7 +11718,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the arccosine (in radians) of $x.',
-            examples: ['(acos 0)', '(acos 1)', '(acos -0.5)'],
+            examples: ['acos(0)', 'acos(1)', 'acos(-0.5)'],
+            algebraic: true,
         },
         'atan': {
             title: 'atan',
@@ -11938,7 +11738,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the arctangent (in radians) of $x.',
-            examples: ['(atan 0)', '(atan 1)', '(atan -0.5)'],
+            examples: ['atan(0)', 'atan(1)', 'atan(-0.5)'],
         },
         'sinh': {
             title: 'sinh',
@@ -11957,7 +11757,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the hyperbolic sine of $x.',
-            examples: ['(sinh 0)', '(sinh 1)', '(sinh -0.5)'],
+            examples: ['sinh(0)', 'sinh(1)', 'sinh(-0.5)'],
+            algebraic: true,
         },
         'cosh': {
             title: 'cosh',
@@ -11976,7 +11777,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the hyperbolic cosine of $x.',
-            examples: ['(cosh 0)', '(cosh 1)', '(cosh -0.5)'],
+            examples: ['cosh(0)', 'cosh(1)', 'cosh(-0.5)'],
+            algebraic: true,
         },
         'tanh': {
             title: 'tanh',
@@ -11995,7 +11797,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the hyperbolic tangent of $x.',
-            examples: ['(tanh 0)', '(tanh 1)', '(tanh -0.5)', '(tanh 50)'],
+            examples: ['tanh(0)', 'tanh(1)', 'tanh(-0.5)', 'tanh(50)'],
+            algebraic: true,
         },
         'asinh': {
             title: 'asinh',
@@ -12014,7 +11817,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the hyperbolic arcsine of $x.',
-            examples: ['(asinh 0)', '(asinh 0.9)', '(asinh -0.5)'],
+            examples: ['asinh(0)', 'asinh(0.9)', 'asinh (0.5)'],
+            algebraic: true,
         },
         'acosh': {
             title: 'acosh',
@@ -12033,7 +11837,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the hyperbolic arccosine of $x.',
-            examples: ['(acosh 1)', '(acosh 2)', '(acosh 100)'],
+            examples: ['acosh(1)', 'acosh(2)', 'acosh(100)'],
+            algebraic: true,
         },
         'atanh': {
             title: 'atanh',
@@ -12052,7 +11857,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns the hyperbolic arctangent of $x.',
-            examples: ['(atanh 0)', '(atanh 0.9)', '(atanh -0.5)'],
+            examples: ['atanh(0)', 'atanh(0.9)', 'atanh(-0.5)'],
+            algebraic: true,
         },
     };
 
@@ -15564,7 +15370,6 @@ var Playground = (function (exports) {
             'sqrt',
             'cbrt',
             '**',
-            'exp',
             'round',
             'trunc',
             'floor',
@@ -15573,16 +15378,6 @@ var Playground = (function (exports) {
             'max',
             'abs',
             'sign',
-            'positive_infinity',
-            'negative_infinity',
-            'max_safe_integer',
-            'min_safe_integer',
-            'max_value',
-            'min_value',
-            'epsilon',
-            'nan',
-            'e',
-            'pi',
             'log',
             'log2',
             'log10',
@@ -15810,7 +15605,7 @@ var Playground = (function (exports) {
 
     var getLits = (function () {
         var lits = new Lits({ debug: true });
-        var litsNoDebug = new Lits({ debug: false, polish: true });
+        var litsNoDebug = new Lits({ debug: false });
         return function (forceDebug) { return forceDebug || getState('debug') ? lits : litsNoDebug; };
     })();
     var elements = {

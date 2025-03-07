@@ -1,47 +1,23 @@
 import { LitsError } from '../errors'
-import type { CommonSimpleToken, CommonValueToken } from './common/commonTokens'
-import { commomValueTokenTypes, commonSimpleTokenTypes } from './common/commonTokens'
-import type { AlgebraicOnlyValueToken, AlgebraicSimpleTokenType, AlgebraicValueTokenType } from './algebraic/algebraicTokens'
-import { algebraicOnlyValueTokenTypes } from './algebraic/algebraicTokens'
-import type { PolishOnlySimpleToken, PolishOnlyValueToken, PolishSimpleTokenType, PolishValueTokenType } from './polish/polishTokens'
-import { polishOnlySimpleTokenTypes, polishOnlyValueTokenTypes } from './polish/polishTokens'
-
-export const simpleTokenTypes = [
-  ...commonSimpleTokenTypes,
-  ...polishOnlySimpleTokenTypes,
-] as const
-
-export const valueTokenTypes = [
-  ...commomValueTokenTypes,
-  ...algebraicOnlyValueTokenTypes,
-  ...polishOnlyValueTokenTypes,
-] as const
+import type { AlgebraicOnlyToken } from './algebraic/algebraicTokens'
+import { algebraicOnlyTokenTypes } from './algebraic/algebraicTokens'
+import type { CommonToken } from './common/commonTokens'
+import { commonTokenTypes } from './common/commonTokens'
+import type { PolishOnlyToken } from './polish/polishTokens'
+import { polishOnlyTokenTypes } from './polish/polishTokens'
 
 export const tokenTypes = [
-  ...commonSimpleTokenTypes,
-  ...polishOnlySimpleTokenTypes,
-  ...commomValueTokenTypes,
-  ...algebraicOnlyValueTokenTypes,
-  ...polishOnlyValueTokenTypes,
+  ...commonTokenTypes,
+  ...algebraicOnlyTokenTypes,
+  ...polishOnlyTokenTypes,
 ] as const
-
-type SimpleTokenType = AlgebraicSimpleTokenType | PolishSimpleTokenType
-type ValueTokenType = AlgebraicValueTokenType | PolishValueTokenType
 
 export type TokenType = typeof tokenTypes[number]
 
-export type SimpleToken =
-  | CommonSimpleToken
-  | PolishOnlySimpleToken
-
-export type ValueToken =
-  | CommonValueToken
-  | AlgebraicOnlyValueToken
-  | PolishOnlyValueToken
-
 export type Token =
-  | SimpleToken
-  | ValueToken
+  | PolishOnlyToken
+  | AlgebraicOnlyToken
+  | CommonToken
 
 export function isTokenType(type: string): type is TokenType {
   return typeof type === 'string' && tokenTypes.includes(type as TokenType)
@@ -57,35 +33,5 @@ export function assertToken(token?: Token): asserts token is Token {
 }
 export function asToken(token?: Token): Token {
   assertToken(token)
-  return token
-}
-
-export function isSimpleToken(token?: Token): token is SimpleToken {
-  return isToken(token) && simpleTokenTypes.includes(token[0] as SimpleTokenType)
-}
-
-export function assertSimpleToken(token?: Token): asserts token is SimpleToken {
-  if (!isSimpleToken(token)) {
-    throw new LitsError(`Expected simple token, got ${token}`, undefined)
-  }
-}
-
-export function asSimpleToken(token?: Token): SimpleToken {
-  assertSimpleToken(token)
-  return token
-}
-
-export function isValueToken(token?: Token): token is ValueToken {
-  return isToken(token) && valueTokenTypes.includes(token[0] as ValueTokenType)
-}
-
-export function assertValueToken(token?: Token): asserts token is ValueToken {
-  if (!isValueToken(token)) {
-    throw new LitsError(`Expected value token, got ${token}`, undefined)
-  }
-}
-
-export function asValueToken(token?: Token): ValueToken {
-  assertValueToken(token)
   return token
 }

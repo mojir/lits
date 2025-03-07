@@ -1,7 +1,8 @@
-import { LitsError } from '../errors'
 import { AstNodeType } from '../constants/constants'
-import { asRegexpShorthandToken, asStringToken } from '../tokenizer/common/commonTokens'
+import { LitsError } from '../errors'
+import { type AlgebraicReservedName, algebraicReservedNamesRecord } from '../tokenizer/algebraic/algebraicReservedNames'
 import { isA_BasePrefixedNumberToken, isA_NumberToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/algebraic/algebraicTokens'
+import { asRegexpShorthandToken, asStringToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { isP_NumberToken, isP_ReservedSymbolToken, isP_SymbolToken } from '../tokenizer/polish/polishTokens'
 import { asToken } from '../tokenizer/tokens'
@@ -59,11 +60,34 @@ export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): S
   }
 }
 
-export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedSymbolNode {
+const numberTokens = new Set<AlgebraicReservedName>([
+  'E',
+  'EPSILON',
+  'MAX_SAFE_INTEGER',
+  'MAX_VALUE',
+  'MIN_SAFE_INTEGER',
+  'MIN_VALUE',
+  'NaN',
+  'NEGATIVE_INFINITY',
+  'PHI',
+  'PI',
+  'POSITIVE_INFINITY',
+])
+
+export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedSymbolNode | NumberNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
 
   if (!isA_ReservedSymbolToken(tkn) && !isP_ReservedSymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
+  }
+  if (isA_ReservedSymbolToken(tkn) && numberTokens.has(tkn[1])) {
+    return {
+      t: AstNodeType.Number,
+      v: algebraicReservedNamesRecord[tkn[1]].value as number,
+      p: [],
+      n: undefined,
+      token: getTokenDebugData(tkn) && tkn,
+    }
   }
   return {
     t: AstNodeType.ReservedSymbol,

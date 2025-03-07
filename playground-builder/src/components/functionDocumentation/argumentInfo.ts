@@ -26,5 +26,16 @@ export function getArgumentInfo(reference: FunctionReference) {
               ${arg.description ? `<td ${styles('pl-4', 'italic', 'text-base')}>${formatDescription(arg.description, reference)}</td>` : ''}
             </tr>`
   }).join(' ')}
+  ${reference.operator
+    ? `
+    <tr>
+      <td ${styles('pt-2')}><span ${styles('Description_argument')}>a</span></td>
+      <td ${styles('pt-2', 'pl-4', 'whitespace-nowrap')}>${reference.a}</td>
+    </tr>
+    <tr>
+      <td><span ${styles('Description_argument')}>b</span></td>
+      <td ${styles('pl-4', 'whitespace-nowrap')}>${reference.b}</td>
+    </tr>`
+    : ''}
   </table>`
 }

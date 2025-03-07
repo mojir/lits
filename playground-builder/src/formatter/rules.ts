@@ -1,6 +1,8 @@
 import { styles } from '../styles'
 import { type TextFormatter, createFormatter } from '../../../common/createFormatter'
 import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../../src/identifier'
+import { Lits } from '../../../src/Lits/Lits'
+import type { Token } from '../../../src/tokenizer/tokens'
 
 export type FormatterRule = (text: string, index: number, formatter: TextFormatter) => {
   count: number
@@ -176,10 +178,64 @@ export const litsExpressionRules: FormatterRule[] = [
   nameRule,
 ]
 
-export const formatLitsExpression = createFormatter(litsExpressionRules, {
-  prefix: `<span ${styles('text-color-gray-200', 'font-mono')}>`,
-  suffix: '</span>',
-})
+const lits = new Lits({ debug: false })
+export function formatLitsExpression(program: string): string {
+  try {
+    const tokens = lits.tokenize(program).tokens
+    const spans = tokens.map(token => `<span ${getStylesFromToken(token)}>${token[1]}</span>`)
+
+    return `<span ${styles('text-color-gray-200', 'font-mono')}>${
+      spans.join('')
+    }</span>`
+  }
+  catch (error) {
+    return `<span ${styles('text-color-Crimson')}>${program}</span>`
+  }
+}
+
+function getStylesFromToken(token: Token): string {
+  const tokenType = token[0]
+  switch (tokenType) {
+    case 'String':
+      return styles('text-color-Pink')
+    case 'RegexpShorthand':
+      return styles('text-color-Pink')
+    case 'A_Symbol':
+      return styles('text-color-Mint')
+    case 'A_BasePrefixedNumber':
+    case 'A_Number':
+      return styles('text-color-Beige')
+    case 'A_SingleLineComment':
+    case 'A_MultiLineComment':
+      return styles('text-color-gray-500', 'italic')
+    case 'A_Operator':
+      return styles('text-color-gray-200')
+    case 'A_ReservedSymbol':
+      return styles('text-color-gray-200')
+    case 'A_Whitespace':
+      return ''
+    case 'LBrace':
+    case 'RBrace':
+    case 'LBracket':
+    case 'RBracket':
+    case 'LParen':
+    case 'RParen':
+      return styles('text-color-gray-200')
+    case 'P_CollectionAccessor':
+    case 'P_Symbol':
+    case 'P_ReservedSymbol':
+    case 'P_StringShorthand':
+    case 'P_Number':
+    case 'P_Whitespace':
+    case 'P_Comment':
+    case 'P_FnShorthand':
+    case 'P_Modifier':
+      throw new Error(`Unexpected polish token: ${token}`)
+
+    default:
+      throw new Error(`Unexpected token: ${token satisfies never}`)
+  }
+}
 
 const inlineLitsExpressionRule: FormatterRule = (text, index) => {
   if (text.slice(index, index + 2) === '``') {
