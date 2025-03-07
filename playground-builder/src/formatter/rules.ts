@@ -1,5 +1,5 @@
 import { styles } from '../styles'
-import { type TextFormatter, createFormatter } from '../../../common/createFormatter'
+import type { TextFormatter } from '../../../common/createFormatter'
 import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../../src/identifier'
 import { Lits } from '../../../src/Lits/Lits'
 import type { Token } from '../../../src/tokenizer/tokens'
@@ -55,100 +55,6 @@ export const numberRule: FormatterRule = (text, index) => {
   return { count: 0, formattedText: '' }
 }
 
-const operatorRule = createRule({
-  name: 'string',
-  startPattern: /^[<>\-+/*=?.,():]+/,
-  startTag: `<span ${styles('text-color-gray-200')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: true,
-  stopRecursion: true,
-})
-
-const stringRule = createRule({
-  name: 'string',
-  startPattern: /^"/,
-  endPattern: /^"/,
-  startTag: `<span ${styles('text-color-Pink')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: true,
-  stopRecursion: true,
-})
-
-const shortcutStringRule = createRule({
-  name: 'string',
-  startPattern: new RegExp(`^:${polishIdentifierCharacterClass}+`),
-  startTag: `<span ${styles('text-color-Pink')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: true,
-  stopRecursion: true,
-})
-
-const functionNameRule = createRule({
-  name: 'functionName',
-  startPattern: new RegExp(`^\\((?=${polishIdentifierCharacterClass}+)`),
-  endPattern: /^[) \n]/,
-  startTag: `<span ${styles('text-color-Blue')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: false,
-  stopRecursion: true,
-})
-
-const nameRule = createRule({
-  name: 'functionName',
-  startPattern: new RegExp(`^${polishIdentifierCharacterClass}+`),
-  startTag: `<span ${styles('text-color-Mint')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: true,
-  stopRecursion: true,
-})
-
-const commentRule = createRule({
-  name: 'comment',
-  startPattern: /^;.*/,
-  startTag: `<span ${styles('text-color-gray-500', 'italic')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: true,
-  stopRecursion: true,
-})
-
-const litsKeywordRule = createRule({
-  name: 'functionName',
-  startPattern: /^(nil|true|false)\b/,
-  startTag: `<span ${styles('text-color-gray-200')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: true,
-  stopRecursion: true,
-})
-
-const inlineCodeKeywordRule = createRule({
-  name: 'inlineCodeKeywordRule',
-  startPattern: /^(null|true|false|nil|falsy|truthy)\b/,
-  startTag: `<span ${styles('text-color-gray-200')}>`,
-  endTag: '</span>',
-  keepPatterns: true,
-  formatPatterns: true,
-  stopRecursion: true,
-})
-
-const formatInlineCode = createFormatter([
-  operatorRule,
-  stringRule,
-  shortcutStringRule,
-  numberRule,
-  inlineCodeKeywordRule,
-  nameRule,
-], {
-  prefix: `<span ${styles('text-color-gray-200')}>`,
-  suffix: '</span>',
-})
-
 const inlineCodeRule: FormatterRule = (text, index) => {
   if (text[index] === '`') {
     let count = 1
@@ -162,27 +68,26 @@ const inlineCodeRule: FormatterRule = (text, index) => {
       throw new Error(`No end \` found for rule inlineCodeRule: ${text}`)
 
     count += 1
-    const formattedText = formatInlineCode(body)
+    const formattedText = formatLitsExpression(body)
     return { count, formattedText }
   }
   return { count: 0, formattedText: '' }
 }
 
-export const litsExpressionRules: FormatterRule[] = [
-  commentRule,
-  stringRule,
-  shortcutStringRule,
-  functionNameRule,
-  numberRule,
-  litsKeywordRule,
-  nameRule,
-]
-
 const lits = new Lits({ debug: false })
-export function formatLitsExpression(program: string): string {
+
+export type StyleOverride = {
+  values: string[]
+  style: string
+}
+
+export function formatLitsExpression(program: string, styleOverride?: StyleOverride): string {
   try {
     const tokens = lits.tokenize(program).tokens
-    const spans = tokens.map(token => `<span ${getStylesFromToken(token)}>${token[1]}</span>`)
+    const spans = tokens.map((token) => {
+      const style = styleOverride?.values.includes(token[1]) ? styleOverride.style : getStylesFromToken(token)
+      return `<span ${style}>${token[1]}</span>`
+    })
 
     return `<span ${styles('text-color-gray-200', 'font-mono')}>${
       spans.join('')

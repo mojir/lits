@@ -70,7 +70,15 @@ function getDocumentation(reference: Reference) {
 }
 
 function getSignature(reference: FunctionReference) {
-  return `<div ${styles('mb-6', 'mt-4', 'font-mono', 'text-base')}>${getFunctionSignature(reference)}</div>`
+  return `<div ${styles('mb-6', 'mt-4', 'font-mono', 'text-base')}>
+    ${getFunctionSignature(reference)}
+    ${reference.aliases
+      ? `<div ${styles('text-base', 'font-sans', 'mt-3', 'mb-1')}>${reference.aliases.length === 1 ? 'Alias' : 'Aliases'}</div>
+          ${reference.aliases.map(alias =>
+            getFunctionSignature({ ...reference, title: alias }),
+          ).join('')}`
+      : ''}
+  </div>`
 }
 
 function getSeeAlsoLinks(references: Reference[]) {

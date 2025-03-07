@@ -45,7 +45,15 @@ export function getSideBar() {
                 categoryCollections[categoryKey]
                   ? categoryCollections[categoryKey]
                       .filter(obj => obj.algebraic)
-                      .sort((a, b) => (a.title < b.title ? -1 : a.title > b.title ? 1 : 0))
+                      .sort((a, b) => {
+                        const aSpecial = a.title[0]!.match(/[^a-z]/i)
+                        const bSpecial = b.title[0]!.match(/[^a-z]/i)
+                        if (aSpecial && !bSpecial)
+                          return -1
+                        if (!aSpecial && bSpecial)
+                          return 1
+                        return (a.title < b.title ? -1 : a.title > b.title ? 1 : 0)
+                      })
                       .map((obj) => {
                         const linkName = obj.linkName
                         const name = escape(obj.title)

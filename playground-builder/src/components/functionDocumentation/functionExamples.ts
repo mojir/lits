@@ -10,7 +10,7 @@ const lits = new Lits({ debug: false })
 export function getFunctionExamples(reference: Reference) {
   const { examples, title: name } = reference
   return `
-    <div ${styles('flex', 'flex-col', 'gap-8')}>
+    <div ${styles('flex', 'flex-col', 'gap-4')}>
       ${examples
         .map(example => example.trim())
         .map((example) => {
@@ -34,6 +34,10 @@ export function getFunctionExamples(reference: Reference) {
               <div ${styles('whitespace-pre-wrap', 'text-color-gray-400', 'mt-1')}>${stringifiedResult}</div>
             </div>
               `
+          }
+          catch (e) {
+            console.error(`Error in ${name} example: `, example)
+            throw e
           }
           finally {
             console.log = oldLog

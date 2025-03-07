@@ -1,6 +1,6 @@
 import { type FunctionReference, type Reference, isFunctionReference } from '../../../../reference'
 import { createFormatter } from '../../../../common/createFormatter'
-import { createVariableRule, mdRules } from '../../formatter/rules'
+import { createVariableRule, formatLitsExpression, mdRules } from '../../formatter/rules'
 import { styles } from '../../styles'
 import { findAllOccurrences } from '../../../../common/utils'
 import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../../../src/identifier'
@@ -30,7 +30,7 @@ function formatFunctionDescription(description: string, reference: FunctionRefer
   )
 
   const argumentRule = createVariableRule(
-    variableName => `<span ${styles('text-color-Viola')}>${variableName}</span>`,
+    variableName => formatLitsExpression(variableName),
     variableName => isArgumentName(variableName, reference),
   )
 

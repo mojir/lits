@@ -165,7 +165,7 @@ l`,
         type: 'integer',
         description: 'Defaults to `0`.',
       },
-      end: {
+      stop: {
         type: 'integer',
         description: 'Defaults lenght of sequence + 1.',
       },
@@ -173,9 +173,9 @@ l`,
     variants: [
       { argumentNames: ['seq'] },
       { argumentNames: ['seq', 'start'] },
-      { argumentNames: ['seq', 'start', 'end'] },
+      { argumentNames: ['seq', 'start', 'stop'] },
     ],
-    description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $end (exclusive).',
+    description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
     examples: [
       '(slice [1 2 3 4 5] 2 4)',
       '(slice [1 2 3 4 5] 2)',
@@ -932,7 +932,7 @@ For string $seq returns all but the first characters in $seq.`,
     variants: [
       { argumentNames: ['seq', 'fn'] },
     ],
-    description: 'Returns a new sequence of items in $seq for witch ``(pred item)`` returns a falsy value.',
+    description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
     examples: [
       '(remove [1 2 3 1 3 5] even?)',
       '(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))',
@@ -983,7 +983,7 @@ For string $seq returns all but the first characters in $seq.`,
     variants: [
       { argumentNames: ['seq', 'n'] },
     ],
-    description: 'Returns a pair of sequence ``[(take pos input) (drop pos input)]``.',
+    description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
     examples: [
       '(split_at [1 2 3 4 5] 2)',
       '(split_at "Albert" 2)',
@@ -1008,7 +1008,7 @@ For string $seq returns all but the first characters in $seq.`,
     variants: [
       { argumentNames: ['seq', 'fn'] },
     ],
-    description: 'Returns a pair of sequences ``[(take_while fn input) (drop_while fn input)]``.',
+    description: 'Returns a pair of sequences `[take_while(input, fn), drop_while(input, fn)]`.',
     examples: [
       '(split_with [1 2 3 4 5] #(> %1 3))',
       '(split_with "Albert" #(<= %1 :Z))',

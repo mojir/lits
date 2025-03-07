@@ -16,15 +16,15 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       start: {
         type: 'integer',
       },
-      end: {
+      stop: {
         type: 'integer',
       },
     },
     variants: [
-      { argumentNames: ['s', 'start', 'end'] },
+      { argumentNames: ['s', 'start', 'stop'] },
       { argumentNames: ['s', 'start'] },
     ],
-    description: 'Extracts characters from $start up to but not including $end.',
+    description: 'Extracts characters from $start up to but not including $stop.',
     examples: [
       '(subs "A string" 2)',
       '(subs "A string" 2 5)',

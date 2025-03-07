@@ -1,5 +1,5 @@
-import type { ArrayApiName } from '../api.ts'
-import type { FunctionReference } from '../index.ts'
+import { type ArrayApiName, getOperatorArgs } from '../api'
+import type { FunctionReference } from '..'
 
 export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = {
   array: {
@@ -22,15 +22,15 @@ export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = 
     ],
     description: 'Makes new array from $values.',
     examples: [
-      '(array 1 2 3)',
-      '(array (array nil false true))',
+      'array(1, 2, 3)',
+      'array(array(nil, false, true))',
       '[]',
-      '[1 2 3]',
-      '[[nil false true]]',
-      '[]',
-      '([1 2 3] 1)',
-      '([1 2 3 4 5 6 7 8 9] 3)',
+      '[1, 2, 3]',
+      '[[nil, false, true]]',
+      '[1, 2, 3][1]',
     ],
+    noOperatorDocumentation: true,
+    algebraic: true,
   },
   range: {
     title: 'range',
@@ -44,33 +44,36 @@ export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = 
       start: {
         type: 'number',
       },
-      end: {
+      stop: {
         type: 'number',
       },
       step: {
         type: 'number',
       },
+      ...getOperatorArgs('number', 'number'),
     },
     variants: [
-      { argumentNames: ['end'] },
-      { argumentNames: ['start', 'end'] },
-      { argumentNames: ['start', 'end', 'step'] },
+      { argumentNames: ['stop'] },
+      { argumentNames: ['start', 'stop'] },
+      { argumentNames: ['start', 'stop', 'step'] },
     ],
-    description: `$range creates an array with a range of numbers from $start to $end (exclusive), by $step.
+    description: `$range creates an array with a range of numbers from $start to $stop (exclusive), by $step.
 
 $start defaults to 0.  
 $step defaults to 1.`,
     examples: [
-      '(range 4)',
-      '(range 1 4)',
-      '(range 0.4 4.9)',
+      'range(4)',
+      'range(1, 4)',
+      '1 range 10',
+      'range(0.4, 4.9)',
       `
-(range
-  0.25 ;; start value
-  1    ;; end value (exclusive)
-  0.25 ;; step value
+range(
+  0.25, // start value
+  1,    // end value (exclusive)
+  0.25, // step value
 )`,
     ],
+    algebraic: true,
   },
   repeat: {
     title: 'repeat',
@@ -87,16 +90,18 @@ $step defaults to 1.`,
       n: {
         type: 'integer',
       },
+      ...getOperatorArgs('any', 'integer'),
     },
     variants: [{
       argumentNames: ['x', 'n'],
     }],
     description: 'Returns an array with $x repeated $n times.',
     examples: [
-      '(repeat 10 3)',
-      '(repeat 10 0)',
-      '(repeat "Albert" 5)',
+      'repeat(10, 3)',
+      'repeat(10, 0)',
+      '"Albert" repeat 5',
     ],
+    algebraic: true,
   },
   flatten: {
     title: 'flatten',

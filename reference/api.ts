@@ -1,4 +1,4 @@
-import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
+import type { Argument } from '.'
 
 export const api = {
   collection: [
@@ -84,9 +84,8 @@ export const api = {
     'quot',
     'inc',
     'dec',
-    'sqrt',
     '√',
-    'cbrt',
+    '∛',
     '**',
     'round',
     'trunc',
@@ -272,9 +271,6 @@ export const api = {
   shorthand: [
     '-short-regexp',
     '-short-fn',
-    '-short-string',
-    '-short-dot',
-    '-short-hash',
   ] as const satisfies `-short-${string}`[],
   datatype: [
     '-type-number',
@@ -307,7 +303,7 @@ export type StringApiName = typeof api.string[number]
 export type BitwiseApiName = typeof api.bitwise[number]
 export type AssertApiName = typeof api.assert[number]
 
-export type FunctionName =
+export type NormalExpressionName =
   | CollectionApiName
   | ArrayApiName
   | SequenceApiName
@@ -317,16 +313,19 @@ export type FunctionName =
   | ObjectApiName
   | PredicateApiName
   | RegularExpressionApiName
-  | SpecialExpressionsApiName
   | StringApiName
   | BitwiseApiName
   | AssertApiName
+
+export type FunctionName =
+  | NormalExpressionName
+  | SpecialExpressionsApiName
 
 export type ShorthandName = typeof api.shorthand[number]
 
 export type DatatypeName = typeof api.datatype[number]
 
-const functionNames = [
+const apiFunctionNames = [
   ...api.collection,
   ...api.array,
   ...api.sequence,
@@ -343,22 +342,10 @@ const functionNames = [
 ] as const
 
 const apiNames = [
-  ...functionNames,
+  ...apiFunctionNames,
   ...api.shorthand,
   ...api.datatype,
 ] as const
-
-const functionNamesFromLitsSrc = [...normalExpressionKeys, ...specialExpressionKeys] as const
-
-for (const functionName of functionNamesFromLitsSrc) {
-  if (!apiNames.includes(functionName as ApiName))
-    throw new Error(`Function name "${functionName}" is not included in the API`)
-}
-
-for (const functionName of functionNames) {
-  if (!functionNamesFromLitsSrc.includes(functionName as FunctionName))
-    throw new Error(`Function name "${functionName}" is not included in the Lits source`)
-}
 
 export type ApiName = typeof apiNames[number]
 
@@ -407,4 +394,8 @@ export type DataType = typeof dataTypes[number]
 
 export function isDataType(arg: string): arg is DataType {
   return dataTypes.includes(arg as DataType)
+}
+
+export function getOperatorArgs(a: DataType, b: DataType): Record<string, Argument> {
+  return { a: { type: a }, b: { type: b } }
 }

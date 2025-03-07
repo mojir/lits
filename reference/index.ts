@@ -1,20 +1,22 @@
-import { isUnknownRecord } from '../src/typeGuards'
+import { normalExpressions } from '../src/builtin/normalExpressions'
+import { isSymbolicOperator } from '../src/tokenizer/algebraic/algebraicTokens'
+import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
+import type { ApiName, Category, DataType, NormalExpressionName } from './api'
+import { arrayReference } from './categories/array'
+import { assertReference } from './categories/assert'
+import { bitwiseReference } from './categories/bitwise'
 import { collectionReference } from './categories/collection'
 import { functionalReference } from './categories/functional'
-import { arrayReference } from './categories/array'
-import { sequenceReference } from './categories/sequence'
 import { mathReference } from './categories/math'
 import { miscReference } from './categories/misc'
-import { assertReference } from './categories/assert'
 import { objectReference } from './categories/object'
 import { predicateReference } from './categories/predicate'
 import { regularExpressionReference } from './categories/regularExpression'
+import { sequenceReference } from './categories/sequence'
 import { specialExpressionsReference } from './categories/specialExpressions'
 import { stringReference } from './categories/string'
-import { bitwiseReference } from './categories/bitwise'
-import { shorthand } from './shorthand'
 import { datatype } from './datatype'
-import type { ApiName, Category, DataType, FunctionName } from './api'
+import { shorthand } from './shorthand'
 
 export interface TypedValue {
   type: DataType[] | DataType
@@ -64,13 +66,11 @@ export type FunctionReference<T extends Category = Category> = CommonReference<T
   returns: TypedValue
   args: Record<string, Argument>
   variants: Variant[]
-} & ({
-  operator: true
-  a: DataType
-  b: DataType
-} | {
-  operator?: never
-})
+  aliases?: string[]
+  noOperatorDocumentation?: true
+  _isOperator?: boolean
+  _prefereOperator?: boolean
+}
 
 export interface ShorthandReference extends CommonReference<'Shorthand'> {
   shorthand: true
@@ -96,7 +96,7 @@ export function isDatatypeReference<T extends Category>(ref: Reference<T>): ref 
   return 'datatype' in ref
 }
 
-export const functionReference: Record<FunctionName, FunctionReference> = {
+export const normalExpressionReference: Record<NormalExpressionName, FunctionReference> = {
   ...collectionReference,
   ...arrayReference,
   ...sequenceReference,
@@ -106,10 +106,24 @@ export const functionReference: Record<FunctionName, FunctionReference> = {
   ...objectReference,
   ...predicateReference,
   ...regularExpressionReference,
-  ...specialExpressionsReference,
   ...stringReference,
   ...bitwiseReference,
   ...assertReference,
+}
+
+Object.entries(normalExpressionReference).forEach(([key, obj]) => {
+  const paramCount = normalExpressions[key]!.paramCount
+  if (!obj.noOperatorDocumentation && canBeOperator(paramCount)) {
+    obj._isOperator = true
+    if (isSymbolicOperator(key)) {
+      obj._prefereOperator = true
+    }
+  }
+})
+
+export const functionReference = {
+  ...normalExpressionReference,
+  ...specialExpressionsReference,
 }
 
 export const apiReference: Record<ApiName, Reference> = { ...functionReference, ...shorthand, ...datatype }

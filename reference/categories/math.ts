@@ -1,5 +1,5 @@
 import type { FunctionReference } from '..'
-import type { MathApiName } from '../api'
+import { type MathApiName, getOperatorArgs } from '../api'
 
 export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '+': {
@@ -14,16 +14,14 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
         type: 'number',
         rest: true,
       },
+      ...getOperatorArgs('number', 'number'),
     },
-    a: 'number',
-    b: 'number',
     variants: [
       { argumentNames: ['xs'] },
     ],
     description: 'Computes sum of $xs.',
     examples: ['1 + 2', '1 + 20 + 30', '+(1, 2, 3, 4)', '+()', '+(1)'],
     algebraic: true,
-    operator: true,
   },
   '-': {
     title: '-',
@@ -37,16 +35,14 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
         type: 'number',
         rest: true,
       },
+      ...getOperatorArgs('number', 'number'),
     },
-    a: 'number',
-    b: 'number',
     variants: [
       { argumentNames: ['xs'] },
     ],
     description: 'Computes difference between first value and sum of the rest. When called with only one argument, it does negation.',
-    examples: ['50 - 8', '1 - 1 - 1', '\'-\'()', '\'-\'(4, 2)', '\'-\'(4, 3, 2, 1,)'],
+    examples: ['50 - 8', '1 - 1 - 1', '-()', '-(4, 2)', '-(4, 3, 2, 1,)'],
     algebraic: true,
-    operator: true,
   },
   '*': {
     title: '*',
@@ -60,16 +56,14 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
         type: 'number',
         rest: true,
       },
+      ...getOperatorArgs('number', 'number'),
     },
-    a: 'number',
-    b: 'number',
     variants: [
       { argumentNames: ['xs'] },
     ],
     description: 'Computes product of $xs.',
-    examples: ['6 * 7', '-1 * 4', '\'*\'(4, 7)', '\'*\'(1, 2, 3, 4, 5)', '\'*\'()', '\'*\'(8)'],
+    examples: ['6 * 7', '-1 * 4', '*(4, 7)', '*(1, 2, 3, 4, 5)', '*()', '*(8)'],
     algebraic: true,
-    operator: true,
   },
   '/': {
     title: '/',
@@ -84,16 +78,14 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
         type: 'number',
         rest: true,
       },
+      ...getOperatorArgs('number', 'number'),
     },
-    a: 'number',
-    b: 'number',
     variants: [
       { argumentNames: ['xs'] },
     ],
     description: 'Computes division or reciprocal. When called with one argument it computes reciprocal. When called with two or more arguments it does compute division of the first by the all remaining $xs.',
-    examples: ['12 / 100', '-1 / 4', '\'/\'(7, 4)', '\'/\'(1, 2, 4, 8)', '\'/\'()', '\'/\'(8)'],
+    examples: ['12 / 100', '-1 / 4', '/(7, 4)', '/(1, 2, 4, 8)', '/()', '/(8)'],
     algebraic: true,
-    operator: true,
   },
   'mod': {
     title: 'mod',
@@ -103,12 +95,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       type: 'number',
     },
     args: {
-      a: {
-        type: 'number',
-      },
-      b: {
-        type: 'number',
-      },
+      ...getOperatorArgs('number', 'number'),
     },
     variants: [
       { argumentNames: ['a', 'b'] },
@@ -126,22 +113,14 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       type: 'number',
     },
     args: {
-      a: {
-        type: 'number',
-      },
-      b: {
-        type: 'number',
-      },
+      ...getOperatorArgs('number', 'number'),
     },
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Remainder of dividing `dividend` and `divisor`.',
-    examples: ['5 % 3', '5.2 % 3.1', '-5 % 3', '\'%\'(5, -3)', '\'%\'(-5, -3)'],
+    examples: ['5 % 3', '5.2 % 3.1', '-5 % 3', '%(5, -3)', '%(-5, -3)'],
     algebraic: true,
-    operator: true,
-    a: 'number',
-    b: 'number',
   },
   'quot': {
     title: 'quot',
@@ -151,12 +130,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       type: 'number',
     },
     args: {
-      a: {
-        type: 'number',
-      },
-      b: {
-        type: 'number',
-      },
+      ...getOperatorArgs('number', 'number'),
     },
     variants: [
       { argumentNames: ['a', 'b'] },
@@ -206,26 +180,6 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
   '√': {
     title: '√',
     category: 'Math',
-    linkName: 'sqrt2',
-    clojureDocs: null,
-    returns: {
-      type: 'number',
-    },
-    args: {
-      x: {
-        type: 'number',
-      },
-    },
-    variants: [
-      { argumentNames: ['x'] },
-    ],
-    description: 'Computes square root of $x.',
-    examples: ['√(0)', '√(9)', '√(2)'],
-    algebraic: true,
-  },
-  'sqrt': {
-    title: 'sqrt',
-    category: 'Math',
     linkName: 'sqrt',
     clojureDocs: null,
     returns: {
@@ -240,11 +194,12 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['x'] },
     ],
     description: 'Computes square root of $x.',
-    examples: ['sqrt(0)', 'sqrt(9)', 'sqrt(2)'],
+    examples: ['√(0)', '√(9)', '√(2)', 'sqrt(0)', 'sqrt(9)', 'sqrt(2)'],
     algebraic: true,
+    aliases: ['sqrt'],
   },
-  'cbrt': {
-    title: 'cbrt',
+  '∛': {
+    title: '∛',
     category: 'Math',
     linkName: 'cbrt',
     clojureDocs: null,
@@ -260,7 +215,8 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['x'] },
     ],
     description: 'Computes cube root of $x.',
-    examples: ['(cbrt 0)', '(cbrt 27)', '(cbrt 2)', '(cbrt 1)'],
+    examples: ['∛(0)', '∛(27)', '∛(2)', '∛(1)', 'cbrt(0)', 'cbrt(27)', 'cbrt(2)', 'cbrt(1)'],
+    aliases: ['cbrt'],
   },
   '**': {
     title: '**',
@@ -271,22 +227,14 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       type: 'number',
     },
     args: {
-      a: {
-        type: 'number',
-      },
-      b: {
-        type: 'number',
-      },
+      ...getOperatorArgs('number', 'number'),
     },
-    a: 'number',
-    b: 'number',
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
     description: 'Computes returns $a raised to the power of $b.',
-    examples: ['2 ** 3', '2 ** 0', '2 ** -3', '\'**\'(-2, 3)', '\'**\'(-2, -3)'],
+    examples: ['2 ** 3', '2 ** 0', '2 ** -3', '**(-2, 3)', '**(-2, -3)'],
     algebraic: true,
-    operator: true,
   },
   'round': {
     title: 'round',

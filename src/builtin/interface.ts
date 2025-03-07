@@ -16,7 +16,7 @@ import type { Token } from '../tokenizer/tokens'
 
 import type { BuiltinSpecialExpressions, SpecialExpressionNode } from '.'
 
-export type Count = number | { min?: number, max?: number, even?: boolean, odd?: boolean }
+export type Count = number | { min?: number, max?: number, even?: true, odd?: true }
 
 export type NormalExpressionEvaluator<T> = (
   params: Arr,
@@ -28,6 +28,7 @@ export type NormalExpressionEvaluator<T> = (
 interface BuiltinNormalExpression<T> {
   evaluate: NormalExpressionEvaluator<T>
   paramCount: Count
+  aliases?: string[]
 }
 
 export interface ParserHelpers {

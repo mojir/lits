@@ -93,3 +93,19 @@ function assertCount({ count, length, name, sourceCodeInfo }: { name: string | u
     }
   }
 }
+
+export function canBeOperator(count: Count): boolean {
+  if (typeof count === 'number') {
+    return count >= 2
+  }
+
+  if (count.odd) {
+    return false
+  }
+
+  if (typeof count.max === 'number' && count.max < 2) {
+    return false
+  }
+
+  return true
+}

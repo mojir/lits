@@ -1,10 +1,13 @@
 /* eslint-disable ts/no-unsafe-return */
 /* eslint-disable ts/no-unsafe-member-access */
 
-import { describe, expect, it } from 'vitest'
-import { apiReference, isFunctionReference } from '../reference'
+import { describe, expect, it, test } from 'vitest'
+import { apiReference, isFunctionReference, normalExpressionReference } from '../reference'
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
-import { isUnknownRecord } from '../src/typeGuards'
+import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
+import { normalExpressions } from '../src/builtin/normalExpressions'
+import { isA_ReservedSymbolToken } from '../src/tokenizer/algebraic/algebraicTokens'
+import { isReservedSymbol } from '../src/tokenizer/algebraic/algebraicReservedNames'
 
 function getLinkName(name: string): string {
   name = name.replace(/≠/g, '-ne2')
@@ -26,12 +29,20 @@ function getLinkName(name: string): string {
   name = name.replace(/\|/g, '-or')
   name = name.replace(/~/g, '-tilde')
   name = name.replace(/\^/g, '-caret')
+  name = name.replace(/√/g, 'sqrt')
+  name = name.replace(/∛/g, 'cbrt')
   return name
 }
 
 describe('apiReference', () => {
+  const referenceAliases = Object.values(apiReference)
+    .filter(obj => isFunctionReference(obj))
+    .flatMap(obj => obj.aliases ?? [])
+
   Object.entries(apiReference).forEach(([key, obj]) => {
     if (!isFunctionReference(obj))
+      return
+    if (referenceAliases.includes(key))
       return
     it(key, () => {
       expect(obj.title).toBe(key)
@@ -59,9 +70,54 @@ describe('apiReference', () => {
   })
 
   it('everything documented', () => {
-    const referenceKeys = Object.keys(apiReference)
+    const functionReferenceKeys = Object.entries(apiReference)
+      .filter(([, obj]) => isFunctionReference(obj))
+      .map(([key]) => key)
+
+    const duplicate = referenceAliases.find(name => functionReferenceKeys.includes(name))
+    expect(duplicate, `Both alias and reference key: ${duplicate}`).toBeUndefined()
+
+    const duplicateAliases = referenceAliases.filter((item, index) => referenceAliases.indexOf(item) !== index)
+    expect(duplicateAliases.length, `Duplicate aliases found: ${duplicateAliases}`).toBe(0)
+
+    const allReferenceKeys = [...functionReferenceKeys, ...referenceAliases]
+
     const builtinKeys = [...specialExpressionKeys, ...normalExpressionKeys]
-    referenceKeys.forEach(key => builtinKeys.splice(builtinKeys.indexOf(key), 1))
-    expect(builtinKeys).toEqual([])
+    const missingReference = allReferenceKeys.find(key => !builtinKeys.includes(key))
+    expect(missingReference, `Missing reference: ${missingReference}`).toBeUndefined()
+
+    const missingImplementation = builtinKeys.find(key => !allReferenceKeys.includes(key))
+    expect(missingImplementation, `Missing application: ${missingImplementation}`).toBeUndefined()
+  })
+
+  describe('argument names', () => {
+    Object.entries(apiReference).forEach(([key, obj]) => {
+      if (!isFunctionReference(obj))
+        return
+      test(key, () => {
+        const variants = obj.variants
+        variants.forEach((variant) => {
+          const argumentNames = variant.argumentNames
+          argumentNames.forEach((argName) => {
+            expect(isReservedSymbol(argName), `${key} in ${obj.category} has invalid argument name ${argName}`).toBe(false)
+          })
+        })
+      })
+    })
+  })
+
+  test.skip('operator functions', () => {
+    Object.entries(normalExpressionReference)
+      .forEach(([key, obj]) => {
+        const paramCount = normalExpressions[key]!.paramCount
+        if (canBeOperator(paramCount)) {
+          expect(obj.args.a, `${key} is missing "a" arg`).toBeDefined()
+          expect(obj.args.b, `${key} is missing "b" arg`).toBeDefined()
+        }
+        else {
+          expect(obj.args.a, `${key} has "a" arg`).toBeUndefined()
+          expect(obj.args.b, `${key} has "b" arg`).toBeUndefined()
+        }
+      })
   })
 })

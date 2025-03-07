@@ -60,6 +60,10 @@ export const validReservedSymbolRecord = {
 export type ValidReservedSymbol = keyof typeof validReservedSymbolRecord
 export type AlgebraicReservedSymbol = keyof typeof algebraicReservedSymbolRecord
 
+export function isReservedSymbol(symbol: string): symbol is keyof typeof validReservedSymbolRecord {
+  return symbol in validReservedSymbolRecord
+}
+
 export function isNumberReservedSymbol(symbol: string): symbol is keyof typeof numberReservedSymbolRecord {
   return symbol in numberReservedSymbolRecord
 }

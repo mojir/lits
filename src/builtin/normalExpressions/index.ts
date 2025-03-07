@@ -12,7 +12,7 @@ import { regexpNormalExpression } from './categories/regexp'
 import { stringNormalExpression } from './categories/string'
 import { functionalNormalExpression } from './categories/functional'
 
-export const normalExpressions: BuiltinNormalExpressions = {
+const expressions: BuiltinNormalExpressions = {
   ...bitwiseNormalExpression,
   ...collectionNormalExpression,
   ...arrayNormalExpression,
@@ -25,4 +25,17 @@ export const normalExpressions: BuiltinNormalExpressions = {
   ...regexpNormalExpression,
   ...stringNormalExpression,
   ...functionalNormalExpression,
+}
+
+const aliases: BuiltinNormalExpressions = {}
+
+Object.values(expressions).forEach((normalExpression) => {
+  normalExpression.aliases?.forEach((alias) => {
+    aliases[alias] = normalExpression
+  })
+})
+
+export const normalExpressions: BuiltinNormalExpressions = {
+  ...expressions,
+  ...aliases,
 }
