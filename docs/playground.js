@@ -1133,7 +1133,7 @@ var Playground = (function (exports) {
         if (isAstNode$1(value))
             return "".concat(astNodeTypeName.get(value.t), "-node");
         if (value === null)
-            return 'nil';
+            return 'null';
         if (typeof value === 'object' && value instanceof RegExp)
             return "".concat(value);
         if (typeof value === 'object' && value instanceof Error)
@@ -6643,7 +6643,6 @@ var Playground = (function (exports) {
     var nonNumberReservedSymbolRecord = {
         true: true,
         false: false,
-        nil: null,
         null: null,
         then: null,
         else: null,
@@ -9441,7 +9440,7 @@ var Playground = (function (exports) {
             '-type-function',
             '-type-integer',
             '-type-any',
-            '-type-nil',
+            '-type-null',
             '-type-collection',
             '-type-sequence',
             '-type-regexp',
@@ -9476,10 +9475,10 @@ var Playground = (function (exports) {
             description: 'Makes new array from $values.',
             examples: [
                 'array(1, 2, 3)',
-                'array(array(nil, false, true))',
+                'array(array(null, false, true))',
                 '[]',
                 '[1, 2, 3]',
-                '[[nil, false, true]]',
+                '[[null, false, true]]',
                 '[1, 2, 3][1]',
             ],
             noOperatorDocumentation: true,
@@ -15622,18 +15621,18 @@ var Playground = (function (exports) {
                 '42',
                 '"hello"',
                 'true',
-                'nil',
+                'null',
             ],
         },
-        '-type-nil': {
+        '-type-null': {
             datatype: true,
             clojureDocs: null,
-            title: 'nil',
+            title: 'null',
             category: 'Datatype',
-            linkName: '-type-nil',
-            description: 'The value nil',
+            linkName: '-type-null',
+            description: 'The value null',
             examples: [
-                'nil',
+                'null',
             ],
         },
         '-type-collection': {

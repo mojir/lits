@@ -34,7 +34,7 @@ export function valueToString(value: unknown): string {
     return `${astNodeTypeName.get(value.t)}-node`
 
   if (value === null)
-    return 'nil'
+    return 'null'
 
   if (typeof value === 'object' && value instanceof RegExp)
     return `${value}`

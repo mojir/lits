@@ -56,13 +56,13 @@ describe('astNode type guards', () => {
     n: '??',
     p: [{
       t: AstNodeType.ReservedSymbol,
-      v: 'nil',
+      v: 'null',
       token: undefined,
       p: [],
       n: undefined,
     }, {
       t: AstNodeType.ReservedSymbol,
-      v: 'nil',
+      v: 'null',
       token: undefined,
       p: [],
       n: undefined,

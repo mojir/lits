@@ -99,18 +99,18 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
       '42',
       '"hello"',
       'true',
-      'nil',
+      'null',
     ],
   },
-  '-type-nil': {
+  '-type-null': {
     datatype: true,
     clojureDocs: null,
-    title: 'nil',
+    title: 'null',
     category: 'Datatype',
-    linkName: '-type-nil',
-    description: 'The value nil',
+    linkName: '-type-null',
+    description: 'The value null',
     examples: [
-      'nil',
+      'null',
     ],
   },
   '-type-collection': {

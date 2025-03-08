@@ -3,7 +3,6 @@ import type { Any } from '../../interface'
 const nonNumberReservedSymbolRecord = {
   true: true,
   false: false,
-  nil: null,
   null: null,
   then: null,
   else: null,

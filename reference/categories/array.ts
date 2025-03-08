@@ -23,10 +23,10 @@ export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = 
     description: 'Makes new array from $values.',
     examples: [
       'array(1, 2, 3)',
-      'array(array(nil, false, true))',
+      'array(array(null, false, true))',
       '[]',
       '[1, 2, 3]',
-      '[[nil, false, true]]',
+      '[[null, false, true]]',
       '[1, 2, 3][1]',
     ],
     noOperatorDocumentation: true,

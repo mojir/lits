@@ -281,7 +281,7 @@ export const api = {
     '-type-function',
     '-type-integer',
     '-type-any',
-    '-type-nil',
+    '-type-null',
     '-type-collection',
     '-type-sequence',
     '-type-regexp',

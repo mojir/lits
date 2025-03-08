@@ -19,7 +19,6 @@ describe('tokenizer', () => {
   })
 
   it('forbidden reserved symbols', () => {
-    expect(() => tokenize('nil', { debug: false, polish: true })).not.toThrow()
     expect(() => tokenize('false', { debug: false, polish: true })).not.toThrow()
     expect(() => tokenize('true', { debug: false, polish: true })).not.toThrow()
     expect(() => tokenize('null', { debug: false, polish: true })).not.toThrow()
