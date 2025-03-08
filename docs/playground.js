@@ -10853,22 +10853,21 @@ var Playground = (function (exports) {
             returns: {
                 type: 'any',
             },
-            args: {
-                fn: {
+            args: __assign(__assign({}, getOperatorArgs('function', 'array')), { fn: {
                     type: 'function',
-                },
-                args: {
+                }, args: {
                     type: 'array',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['fn', 'args'] },
             ],
             description: 'Call supplied function $fn with specified arguments $args.',
             examples: [
-                "\n(apply + [1 2 3])",
-                "\n(apply\n  (fn [x y]\n    (sqrt\n      (+\n        (* x x)\n        (* y y))))\n  [3 4])",
+                "\napply(+, [1, 2, 3])",
+                "\napply(\n  (x, y) => sqrt(x ** 2 + y ** 2),\n  [3, 4]\n)",
+                "\n(x, y) => sqrt(x ** 2 + y ** 2) apply [3, 4]",
             ],
+            algebraic: true,
         },
         identity: {
             title: 'identity',
@@ -10886,7 +10885,8 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns $x.',
-            examples: ['(identity 1)', '(identity "Albert")', '(identity {:a 1})', '(identity null)'],
+            examples: ['identity(1)', 'identity("Albert")', 'identity({ a = 1 })', 'identity(null)'],
+            algebraic: true,
         },
         partial: {
             title: 'partial',
@@ -10909,10 +10909,12 @@ var Playground = (function (exports) {
             ],
             description: "Takes a function $fn and a optional number arguments $args to $fn.\nIt returns a function that takes the additional additional arguments.\nWhen called, the returned function calls `(`$fn `...`$args` ...additional_arguments)`.",
             examples: [
-                '(partial + 100)',
-                "\n(def plusMany (partial + 100 1000))\n(plusMany 1 10)",
-                "\n(def addHundred (partial + 100))\n(addHundred 10)",
+                'partial(+, 100)',
+                "\nlet plusMany = partial(+, 100, 1000);\nplusMany(1, 10)",
+                "\nlet addHundred = partial(+, 100);\naddHundred(10)",
             ],
+            noOperatorDocumentation: true,
+            algebraic: true,
         },
         comp: {
             title: 'comp',
@@ -10921,21 +10923,19 @@ var Playground = (function (exports) {
             returns: {
                 type: 'function',
             },
-            args: {
-                fns: {
+            args: __assign(__assign({}, getOperatorArgs('function', 'function')), { fns: {
                     type: 'function',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['fns'] },
             ],
             description: "Takes a variable number of functions and returns a function that is the composition of those.\n\n  The returned function takes a variable number of arguments,\n  applies the rightmost function to the args,\n  the next function (right-to-left) to the result, etc.",
             examples: [
-                "\n(def negative-quotient (comp - /))\n(negative-quotient 9 3)",
-                "\n(\n  #((apply comp first (repeat %2 rest)) %1)\n  [1 2 3 4 5 6 7]\n  3)",
-                "\n(def x {\"bar\" {\"foo\" 42}})\n((comp \"foo\" \"bar\") x)",
+                "\nlet negative-quotient = comp(-, /);\nnegative-quotient(9, 3)",
+                "\nlet x = { bar = { foo = 42 } };\ncomp(\"foo\", \"bar\")(x)",
             ],
+            algebraic: true,
         },
         constantly: {
             title: 'constantly',
@@ -10954,9 +10954,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a function that takes any number of arguments and always returns $x.',
             examples: [
-                "\n(def always-true (constantly true))\n(always-true 9 3)",
-                "\n(\n  #((apply constantly first (repeat %2 rest)) %1)\n  [1 2 3 4 5 6 7]\n  3)",
+                "\nlet always-true = constantly(true);\nalways-true(9, 3)",
             ],
+            algebraic: true,
         },
         juxt: {
             title: 'juxt',
@@ -10965,25 +10965,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'function',
             },
-            args: {
-                fn: {
+            args: __assign(__assign({}, getOperatorArgs('function', 'function')), { fn: {
                     type: 'function',
-                },
-                fns: {
+                }, fns: {
                     type: 'function',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['fn'] },
                 { argumentNames: ['fn', 'fns'] },
             ],
             description: "Takes one or many function and returns a function that is the juxtaposition of those functions.  \nThe returned function takes a variable number of args,\nand returns a vector containing the result of applying each function to the args (left-to-right).",
             examples: [
-                "\n(\n  (juxt + * min max)\n  3\n  4\n  6)",
-                "\n(\n  (juxt :a :b)\n  {:a 1, :b 2, :c 3, :d 4})",
-                "\n(apply\n  (juxt + * min max)\n  (range 1 11))",
+                "\njuxt(+, *, min, max)(\n  3,\n  4,\n  6,\n)",
+                "\njuxt(\"a\", \"b\")(\n  {\n    a = 1,\n    b = 2,\n    c = 3,\n    d = 4\n  }\n)",
+                "\njuxt(+, *, min, max) apply range(1, 11)",
             ],
+            algebraic: true,
         },
         complement: {
             title: 'complement',
@@ -11001,7 +10999,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['fn'] },
             ],
             description: 'Takes a function $fn and returns a new function that takes the same arguments as f, has the same effects, if any, and returns the opposite truth value.',
-            examples: ['((complement >) 1 3)', '((complement <) 1 3)', '((complement +) 1 3)', '((complement +) 0 0)'],
+            examples: [
+                'complement(>)(1, 3)',
+                'complement(<)(1, 3)',
+                'complement(+)(1, 3)',
+                'complement(+)(0, 0)',
+            ],
+            algebraic: true,
         },
         every_pred: {
             title: 'every_pred',
@@ -11025,10 +11029,11 @@ var Playground = (function (exports) {
             ],
             description: "\nTakes a number of predicates and returns a function that returns `true` if all predicates\nreturn a truthy value against all of its arguments, else it returns `false`.",
             examples: [
-                "\n(\n  (every_pred string? #(> (count %1) 3))\n  \"Albert\"\n  \"Mojir\")",
-                "\n(\n  (every_pred string? #(> (count %1) 3))\n  \"Albert\"\n  :M)",
-                "\n(\n  (every_pred string? #(> (count %1) 3))\n  \"Albert\"\n  [1 2 3])",
+                "\nevery_pred(string?, => count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
+                "\n(string? every_pred => count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
             ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
         some_pred: {
             title: 'some_pred',
@@ -11053,11 +11058,13 @@ var Playground = (function (exports) {
             ],
             description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
             examples: [
-                '((some_pred string? #(> (count %1) 3)) "Albert" "Mojir")',
-                '((some_pred string? #(> (count %1) 3)) :A :M)',
-                '((some_pred string? #(> (count %1) 3)) :A [1 2 3])',
-                '((some_pred string? #(> (count %1) 3)) [1 2 3] [2])',
+                'some_pred(string?, => count($) > 3)("Albert", "Mojir")',
+                'some_pred(string?, => count($) > 3)("a", "M")',
+                'some_pred(string?, => count($) > 3)("a", [1, 2, 3])',
+                'some_pred(string?, => count($) > 3)([1, 2, 3], [2])',
             ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
         fnull: {
             title: 'fnull',
@@ -11066,30 +11073,29 @@ var Playground = (function (exports) {
             returns: {
                 type: 'function',
             },
-            args: {
-                fn: {
+            args: __assign(__assign({}, getOperatorArgs('function', 'any')), { fn: {
                     type: 'function',
-                },
-                arg: {
+                }, arg: {
                     type: 'any',
-                },
-                args: {
+                }, args: {
                     type: 'any',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['fn', 'arg'] },
                 { argumentNames: ['fn', 'arg', 'args'] },
             ],
             description: 'Takes a function $fn, and returns a function that calls $fn, replacing a null argument to the corresponding argument.',
             examples: [
-                '((fnull + 1 2) 0 0)',
-                '((fnull + 1 2) null 0)',
-                '((fnull + 1 2) 0 null)',
-                '((fnull + 1 2) null null)',
-                '((fnull + 1 2) null null 3 4)',
+                'fnull(inc, 0)(1)',
+                'fnull(inc, 0)(null)',
+                '(inc fnull 0)(null)',
+                'fnull(+, 1, 2)(null, 0)',
+                'fnull(+, 1, 2)(0, null)',
+                'fnull(+, 1, 2)(null, null)',
+                'fnull(+, 1, 2)(null, null, 3, 4)',
             ],
+            algebraic: true,
         },
     };
 
