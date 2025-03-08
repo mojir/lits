@@ -36,7 +36,7 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
     }
     return null
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
     const newContext = node.bs
       .map(binding => binding.n)
       .reduce((context: Context, name) => {
@@ -45,12 +45,12 @@ export const letSpecialExpression: BuiltinSpecialExpression<Any, LetNode> = {
       }, {})
     const bindingResults = node.bs.map((bindingNode) => {
       const valueNode = bindingNode.v
-      const bindingsResult = findUnresolvedIdentifiers([valueNode], contextStack, builtin)
+      const bindingsResult = findUnresolvedSymbols([valueNode], contextStack, builtin)
       contextStack.addValue(bindingNode.n, { value: true })
       return bindingsResult
     })
 
-    const paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin)
+    const paramsResult = findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin)
     return joinAnalyzeResults(...bindingResults, paramsResult)
   },
 }

@@ -11,5 +11,5 @@ export const declaredSpecialExpression: BuiltinSpecialExpression<boolean, Declar
     const lookUpResult = contextStack.lookUp(node.p[0] as SymbolNode)
     return lookUpResult !== null
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
 }

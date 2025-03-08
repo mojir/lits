@@ -729,10 +729,10 @@ export function analyze() {
   const hijacker = hijackConsole()
   try {
     const result = getLits('debug').analyze(code, litsParams)
-    const unresolvedIdentifiers = [...new Set([...result.unresolvedIdentifiers].map(s => s.symbol))].join(', ')
-    const unresolvedIdentifiersOutput = `Unresolved identifiers: ${unresolvedIdentifiers || '-'}`
+    const unresolvedSymbols = [...new Set([...result.unresolvedSymbols].map(s => s.symbol))].join(', ')
+    const unresolvedSymbolsOutput = `Unresolved symbols: ${unresolvedSymbols || '-'}`
 
-    appendOutput(`${unresolvedIdentifiersOutput}`, 'analyze')
+    appendOutput(`${unresolvedSymbolsOutput}`, 'analyze')
   }
   catch (error) {
     appendOutput(error, 'error')

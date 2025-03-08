@@ -16,5 +16,5 @@ export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> =
     })
     throw new UserDefinedError(message, getTokenDebugData(node.token)?.sourceCodeInfo)
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
 }

@@ -3,9 +3,9 @@ import { createFormatter } from '../../../../common/createFormatter'
 import { createVariableRule, formatLitsExpression, mdRules } from '../../formatter/rules'
 import { styles } from '../../styles'
 import { findAllOccurrences } from '../../../../common/utils'
-import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../../../src/identifier'
+import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../../../src/symbolPatterns'
 
-const variableRegExp = new RegExp(`\\$${polishIdentifierFirstCharacterClass}${polishIdentifierCharacterClass}*`, 'g')
+const variableRegExp = new RegExp(`\\$${polishSymbolFirstCharacterClass}${polishSymbolCharacterClass}*`, 'g')
 
 export function formatDescription(description: string, reference: Reference): string {
   if (isFunctionReference(reference))

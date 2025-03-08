@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest'
 import { Lits } from '../../src'
 import { UserDefinedError } from '../../src/errors'
 import { getLitsVariants, getUndefinedSymbolNames } from '../testUtils'
-import { findUnresolvedIdentifiers } from '../../src/analyze/findUnresolvedIdentifiers'
+import { findUnresolvedSymbols } from '../../src/analyze/findUnresolvedSymbols'
 import { createContextStack } from '../../src/evaluator/ContextStack'
 import { builtin } from '../../src/builtin'
 
@@ -535,10 +535,10 @@ describe('specialExpressions', () => {
         const lits2 = new Lits({ polish: true })
 
         expect(
-          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (if (! (zero? n)) (recur (dec n)))) 3)')).b, createContextStack(), builtin),
+          findUnresolvedSymbols(lits2.parse(lits2.tokenize('((fn [n] (write! n) (if (! (zero? n)) (recur (dec n)))) 3)')).b, createContextStack(), builtin),
         ).toEqual(new Set())
         expect(
-          findUnresolvedIdentifiers(lits2.parse(lits2.tokenize('((fn [n] (write! n) (if (! (zero? n)) (recur (- n a)))) 3)')).b, createContextStack(), builtin),
+          findUnresolvedSymbols(lits2.parse(lits2.tokenize('((fn [n] (write! n) (if (! (zero? n)) (recur (- n a)))) 3)')).b, createContextStack(), builtin),
         ).toEqual(new Set([{ symbol: 'a' }]))
       })
     })

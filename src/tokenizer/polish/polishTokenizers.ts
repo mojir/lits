@@ -1,5 +1,5 @@
 import { LitsError } from '../../errors'
-import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../identifier'
+import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../symbolPatterns'
 import {
   NO_MATCH,
   commonTokenizers,
@@ -127,8 +127,8 @@ export const tokenizeP_Number: Tokenizer<P_NumberToken> = (input, position) => {
   return [length, ['P_Number', value]]
 }
 
-export const P_symbolRegExp = new RegExp(polishIdentifierCharacterClass)
-export const P_symbolFirstCharacterRegExp = new RegExp(polishIdentifierFirstCharacterClass)
+export const P_symbolRegExp = new RegExp(polishSymbolCharacterClass)
+export const P_symbolFirstCharacterRegExp = new RegExp(polishSymbolFirstCharacterClass)
 export const tokenizeP_Symbol: Tokenizer<P_SymbolToken> = (input, position) => {
   let value = input[position]
 

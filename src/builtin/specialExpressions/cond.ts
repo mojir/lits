@@ -19,5 +19,5 @@ export const condSpecialExpression: BuiltinSpecialExpression<Any, CondNode> = {
     }
     return null
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
 }

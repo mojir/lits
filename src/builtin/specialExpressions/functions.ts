@@ -1,5 +1,5 @@
 import type { SpecialExpressionNode } from '..'
-import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '../../analyze'
+import type { FindUnresolvedSymbols, UnresolvedSymbol, UnresolvedSymbols } from '../../analyze'
 import { addAnalyzeResults } from '../../analyze/utils'
 import { AstNodeType, FunctionType } from '../../constants/constants'
 import { LitsError } from '../../errors'
@@ -74,10 +74,10 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
     contextStack.exportValue(name, litsFunction)
     return null
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
     contextStack.exportValue(node.f.v, true)
     const newContext: Context = { [node.f.v]: { value: true } }
-    return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext)
+    return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin, newContext)
   },
 }
 
@@ -110,8 +110,8 @@ export const fnSpecialExpression: BuiltinSpecialExpression<LitsFunction, FnNode>
 
     return litsFunction
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) =>
-    addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin),
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) =>
+    addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin),
 }
 
 function evaluateFunctionOverloades(
@@ -143,19 +143,19 @@ function evaluateFunctionOverloades(
   return evaluatedFunctionOverloades
 }
 
-function addOverloadsUnresolvedIdentifiers(
+function addOverloadsUnresolvedSymbols(
   overloads: FunctionOverload[],
   contextStack: ContextStack,
-  findUnresolvedIdentifiers: FindUnresolvedIdentifiers,
+  findUnresolvedSymbols: FindUnresolvedSymbols,
   builtin: Builtin,
   functionNameContext?: Context,
-): UnresolvedIdentifiers {
-  const result = new Set<UnresolvedIdentifier>()
+): UnresolvedSymbols {
+  const result = new Set<UnresolvedSymbol>()
   const contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack
   for (const overload of overloads) {
     const newContext: Context = {}
     overload.as.b.forEach((binding) => {
-      const bindingResult = findUnresolvedIdentifiers([binding.v], contextStack, builtin)
+      const bindingResult = findUnresolvedSymbols([binding.v], contextStack, builtin)
       addAnalyzeResults(result, bindingResult)
       newContext[binding.n] = { value: true }
     })
@@ -166,7 +166,7 @@ function addOverloadsUnresolvedIdentifiers(
       newContext[overload.as.r] = { value: true }
 
     const newContextStack = contextStackWithFunctionName.create(newContext)
-    const overloadResult = findUnresolvedIdentifiers(overload.b, newContextStack, builtin)
+    const overloadResult = findUnresolvedSymbols(overload.b, newContextStack, builtin)
     addAnalyzeResults(result, overloadResult)
   }
   return result

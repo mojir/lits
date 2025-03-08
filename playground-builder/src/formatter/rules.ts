@@ -1,6 +1,6 @@
 import { styles } from '../styles'
 import type { TextFormatter } from '../../../common/createFormatter'
-import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../../src/identifier'
+import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../../src/symbolPatterns'
 import { Lits } from '../../../src/Lits/Lits'
 import type { Token } from '../../../src/tokenizer/tokens'
 
@@ -9,7 +9,7 @@ export type FormatterRule = (text: string, index: number, formatter: TextFormatt
   formattedText: string
 }
 
-const variableRegExp = new RegExp(`^\\$${polishIdentifierFirstCharacterClass}${polishIdentifierCharacterClass}*`)
+const variableRegExp = new RegExp(`^\\$${polishSymbolFirstCharacterClass}${polishSymbolCharacterClass}*`)
 
 const noMatch = { count: 0, formattedText: '' }
 
@@ -39,11 +39,11 @@ export const numberRule: FormatterRule = (text, index) => {
     const count = startMatch[0].length
     const characterBefor = text[index - 1]
     const characterAfter = text[index + count]
-    if (characterBefor && new RegExp(polishIdentifierCharacterClass).test(characterBefor))
+    if (characterBefor && new RegExp(polishSymbolCharacterClass).test(characterBefor))
       return noMatch
     if (characterBefor && numberRegExp.test(characterBefor))
       return noMatch
-    if (characterAfter && new RegExp(polishIdentifierCharacterClass).test(characterAfter))
+    if (characterAfter && new RegExp(polishSymbolCharacterClass).test(characterAfter))
       return noMatch
     if (characterAfter && numberRegExp.test(characterAfter))
       return noMatch

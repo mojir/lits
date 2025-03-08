@@ -24,5 +24,5 @@ export const ifSpecialExpression: BuiltinSpecialExpression<Any, IfNode> = {
         return null
     }
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
 }

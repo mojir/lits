@@ -17,7 +17,7 @@ import { apiReference, isFunctionReference } from '../../reference'
 import { asAny } from '../../src/typeGuards/lits'
 import type { UnknownRecord } from '../../src/interface'
 import { stringifyValue } from '../../common/utils'
-import { polishIdentifierCharacterClass, polishIdentifierFirstCharacterClass } from '../../src/identifier'
+import { polishSymbolCharacterClass, polishSymbolFirstCharacterClass } from '../../src/symbolPatterns'
 import { ColorEnum, createColorizer } from './colorizer'
 import { getCliFunctionSignature } from './cliDocumentation/getCliFunctionSignature'
 import { getCliDocumentation } from './cliDocumentation/getCliDocumentation'
@@ -45,9 +45,9 @@ const lits = new Lits({ debug: true })
 const formatValue = getInlineCodeFormatter(fmt)
 
 const commands = ['`help', '`quit', '`builtins', '`context']
-const expressionRegExp = new RegExp(`^(.*\\(\\s*)(${polishIdentifierFirstCharacterClass}${polishIdentifierCharacterClass}*)$`)
-const nameRegExp = new RegExp(`^(.*?)(${polishIdentifierFirstCharacterClass}${polishIdentifierCharacterClass}*)$`)
-const helpRegExp = new RegExp(`^\`help\\s+(${polishIdentifierFirstCharacterClass}${polishIdentifierCharacterClass}+)\\s*$`)
+const expressionRegExp = new RegExp(`^(.*\\(\\s*)(${polishSymbolFirstCharacterClass}${polishSymbolCharacterClass}*)$`)
+const nameRegExp = new RegExp(`^(.*?)(${polishSymbolFirstCharacterClass}${polishSymbolCharacterClass}*)$`)
+const helpRegExp = new RegExp(`^\`help\\s+(${polishSymbolFirstCharacterClass}${polishSymbolCharacterClass}+)\\s*$`)
 const expressions = [...normalExpressionKeys, ...specialExpressionKeys]
 
 const config = processArguments(process.argv.slice(2))

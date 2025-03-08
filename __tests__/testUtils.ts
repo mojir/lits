@@ -119,7 +119,7 @@ export function regexpEquals(udr: unknown, r: RegExp): boolean {
 }
 
 export function getUndefinedSymbolNames(result: Analysis): Set<string> {
-  const names = [...result.unresolvedIdentifiers].map(entry => entry.symbol)
+  const names = [...result.unresolvedSymbols].map(entry => entry.symbol)
   return new Set<string>(names)
 }
 

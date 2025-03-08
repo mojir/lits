@@ -115,14 +115,14 @@ describe('functional functions', () => {
       })
     })
 
-    describe('fnil', () => {
+    describe('fnull', () => {
       it('samples', () => {
-        expect(lits.run('((fnil + 1 2) 0 0)')).toBe(0)
-        expect(lits.run('((fnil + 1 2) null 0)')).toBe(1)
-        expect(lits.run('((fnil + 1 2) 0 null)')).toBe(2)
-        expect(lits.run('((fnil + 1 2) null null)')).toBe(3)
-        expect(() => lits.run('(fnil)')).toThrow()
-        expect(() => lits.run('(fnil +)')).toThrow()
+        expect(lits.run('((fnull + 1 2) 0 0)')).toBe(0)
+        expect(lits.run('((fnull + 1 2) null 0)')).toBe(1)
+        expect(lits.run('((fnull + 1 2) 0 null)')).toBe(2)
+        expect(lits.run('((fnull + 1 2) null null)')).toBe(3)
+        expect(() => lits.run('(fnull)')).toThrow()
+        expect(() => lits.run('(fnull +)')).toThrow()
       })
     })
   }

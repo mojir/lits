@@ -22,5 +22,5 @@ export const qqSpecialExpression: BuiltinSpecialExpression<Any, QqNode> = {
     const firstResult = evaluateAstNode(firstNode, contextStack)
     return firstResult ?? (secondNode ? evaluateAstNode(secondNode, contextStack) : null)
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => findUnresolvedIdentifiers(node.p, contextStack, builtin),
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => findUnresolvedSymbols(node.p, contextStack, builtin),
 }

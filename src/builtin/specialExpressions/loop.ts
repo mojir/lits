@@ -65,7 +65,7 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       return result
     }
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
     const newContext = node.bs
       .map(binding => binding.n)
       .reduce((context: Context, name) => {
@@ -74,8 +74,8 @@ export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
       }, {})
 
     const bindingValueNodes = node.bs.map(binding => binding.v)
-    const bindingsResult = findUnresolvedIdentifiers(bindingValueNodes, contextStack, builtin)
-    const paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin)
+    const bindingsResult = findUnresolvedSymbols(bindingValueNodes, contextStack, builtin)
+    const paramsResult = findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin)
     return joinAnalyzeResults(bindingsResult, paramsResult)
   },
 }

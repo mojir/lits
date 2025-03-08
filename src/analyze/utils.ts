@@ -1,14 +1,14 @@
-import type { UnresolvedIdentifier, UnresolvedIdentifiers } from '.'
+import type { UnresolvedSymbol, UnresolvedSymbols } from '.'
 
-export function joinAnalyzeResults(...results: UnresolvedIdentifiers[]): UnresolvedIdentifiers {
-  const result = new Set<UnresolvedIdentifier>()
-  for (const identifier of results)
-    identifier.forEach(symbol => result.add(symbol))
+export function joinAnalyzeResults(...results: UnresolvedSymbols[]): UnresolvedSymbols {
+  const result = new Set<UnresolvedSymbol>()
+  for (const symbols of results)
+    symbols.forEach(symbol => result.add(symbol))
 
   return result
 }
 
-export function addAnalyzeResults(target: UnresolvedIdentifiers, source: UnresolvedIdentifiers): void {
+export function addAnalyzeResults(target: UnresolvedSymbols, source: UnresolvedSymbols): void {
   source.forEach(symbol => target.add(symbol))
 }
 

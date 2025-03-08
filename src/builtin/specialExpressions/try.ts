@@ -66,15 +66,15 @@ export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
       return evaluateAstNode(catchExpression, contextStack.create(newContext))
     }
   },
-  findUnresolvedIdentifiers: (node, contextStack, { findUnresolvedIdentifiers, builtin }) => {
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
     const { p: tryExpressions, ce: catchExpression, e: errorNode } = node
-    const tryResult = findUnresolvedIdentifiers(tryExpressions, contextStack, builtin)
+    const tryResult = findUnresolvedSymbols(tryExpressions, contextStack, builtin)
     const newContext: Context = errorNode
       ? {
           [errorNode.v]: { value: true },
         }
       : {}
-    const catchResult = findUnresolvedIdentifiers([catchExpression], contextStack.create(newContext), builtin)
+    const catchResult = findUnresolvedSymbols([catchExpression], contextStack.create(newContext), builtin)
     return joinAnalyzeResults(tryResult, catchResult)
   },
 }

@@ -26,4 +26,3 @@ export { apiReference, isDatatypeReference, isFunctionReference, isNormalExpress
 export type { Argument, CommonReference, DatatypeReference, FunctionReference, Reference, ShorthandReference } from '../reference'
 export type { ApiName, FunctionName, ShorthandName, DatatypeName } from '../reference/api'
 export { isApiName, isDataType } from '../reference/api'
-export { polishIdentifierCharacterClass as identifierCharacterClass, polishIdentifierFirstCharacterClass as identifierFirstCharacterClass } from './identifier'

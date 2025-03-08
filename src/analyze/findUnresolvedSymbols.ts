@@ -6,9 +6,9 @@ import { asNonUndefined } from '../typeGuards'
 import { evaluateAstNode } from '../evaluator'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type { DoNode } from '../builtin/specialExpressions/do'
-import type { FindUnresolvedIdentifiers, UnresolvedIdentifier, UnresolvedIdentifiers } from '.'
+import type { FindUnresolvedSymbols, UnresolvedSymbol, UnresolvedSymbols } from '.'
 
-export const findUnresolvedIdentifiers: FindUnresolvedIdentifiers = (ast, contextStack, builtin: Builtin) => {
+export const findUnresolvedSymbols: FindUnresolvedSymbols = (ast, contextStack, builtin: Builtin) => {
   const astNodes = Array.isArray(ast)
     ? ast
     : [{
@@ -18,18 +18,18 @@ export const findUnresolvedIdentifiers: FindUnresolvedIdentifiers = (ast, contex
       token: undefined,
     } satisfies DoNode]
 
-  const unresolvedIdentifiers = new Set<UnresolvedIdentifier>()
+  const unresolvedSymbols = new Set<UnresolvedSymbol>()
 
   for (const subNode of astNodes) {
-    findUnresolvedIdentifiersInAstNode(subNode, contextStack, builtin)
-      .forEach(symbol => unresolvedIdentifiers.add(symbol))
+    findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)
+      .forEach(symbol => unresolvedSymbols.add(symbol))
   }
 
-  return unresolvedIdentifiers
+  return unresolvedSymbols
 }
 
-function findUnresolvedIdentifiersInAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin): UnresolvedIdentifiers {
-  const emptySet = new Set<UnresolvedIdentifier>()
+function findUnresolvedSymbolsInAstNode(astNode: AstNode, contextStack: ContextStack, builtin: Builtin): UnresolvedSymbols {
+  const emptySet = new Set<UnresolvedSymbol>()
   switch (astNode.t) {
     case AstNodeType.Symbol: {
       const lookUpResult = contextStack.lookUp(astNode)
@@ -45,28 +45,28 @@ function findUnresolvedIdentifiersInAstNode(astNode: AstNode, contextStack: Cont
     case AstNodeType.Comment:
       return emptySet
     case AstNodeType.NormalExpression: {
-      const unresolvedIdentifiers = new Set<UnresolvedIdentifier>()
+      const unresolvedSymbols = new Set<UnresolvedSymbol>()
       const { n: name, token: debug } = astNode
       if (typeof name === 'string') {
         const lookUpResult = contextStack.lookUp({ t: AstNodeType.Symbol, v: name, token: debug, p: [], n: undefined })
         if (lookUpResult === null)
-          unresolvedIdentifiers.add({ symbol: name, token: astNode.token })
+          unresolvedSymbols.add({ symbol: name, token: astNode.token })
       }
       for (const subNode of astNode.p) {
-        const innerUnresolvedIdentifiers = findUnresolvedIdentifiersInAstNode(subNode, contextStack, builtin)
-        innerUnresolvedIdentifiers.forEach(symbol => unresolvedIdentifiers.add(symbol))
+        const innerUnresolvedSymbols = findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)
+        innerUnresolvedSymbols.forEach(symbol => unresolvedSymbols.add(symbol))
       }
-      return unresolvedIdentifiers
+      return unresolvedSymbols
     }
     case AstNodeType.SpecialExpression: {
       const specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], getTokenDebugData(astNode.token)?.sourceCodeInfo)
       // eslint-disable-next-line ts/no-unsafe-argument
-      const unresolvedIdentifiers = specialExpression.findUnresolvedIdentifiers(astNode as any, contextStack, {
-        findUnresolvedIdentifiers,
+      const unresolvedSymbols = specialExpression.findUnresolvedSymbols(astNode as any, contextStack, {
+        findUnresolvedSymbols,
         builtin,
         evaluateAstNode,
       })
-      return unresolvedIdentifiers
+      return unresolvedSymbols
     }
   }
 }

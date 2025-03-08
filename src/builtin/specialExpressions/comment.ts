@@ -8,5 +8,5 @@ export const commentSpecialExpression: BuiltinSpecialExpression<null, CommentExp
   polishParse: getCommonPolishSpecialExpressionParser('comment'),
   paramCount: {},
   evaluate: () => null,
-  findUnresolvedIdentifiers: () => new Set(),
+  findUnresolvedSymbols: () => new Set(),
 }

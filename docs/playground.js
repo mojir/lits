@@ -623,7 +623,7 @@ var Playground = (function (exports) {
         FunctionType[FunctionType["Complement"] = 306] = "Complement";
         FunctionType[FunctionType["EveryPred"] = 307] = "EveryPred";
         FunctionType[FunctionType["SomePred"] = 308] = "SomePred";
-        FunctionType[FunctionType["Fnil"] = 309] = "Fnil";
+        FunctionType[FunctionType["Fnull"] = 309] = "Fnull";
         FunctionType[FunctionType["Builtin"] = 310] = "Builtin";
         FunctionType[FunctionType["NativeJsFunction"] = 399] = "NativeJsFunction";
     })(FunctionType || (FunctionType = {}));
@@ -636,7 +636,7 @@ var Playground = (function (exports) {
         [FunctionType.Complement, 'Complement'],
         [FunctionType.EveryPred, 'EveryPred'],
         [FunctionType.SomePred, 'SomePred'],
-        [FunctionType.Fnil, 'Fnil'],
+        [FunctionType.Fnull, 'Fnull'],
         [FunctionType.Builtin, 'Builtin'],
     ]);
     function isFunctionType(type) {
@@ -4886,14 +4886,14 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        fnil: {
+        fnull: {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a), fn = _c[0], params = _c.slice(1);
                 return _b = {},
                     _b[FUNCTION_SYMBOL] = true,
                     _b.sourceCodeInfo = sourceCodeInfo,
-                    _b.t = FunctionType.Fnil,
+                    _b.t = FunctionType.Fnull,
                     _b.f = toAny(fn),
                     _b.p = params,
                     _b;
@@ -4947,9 +4947,9 @@ var Playground = (function (exports) {
             }
             return value;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -4971,7 +4971,7 @@ var Playground = (function (exports) {
         polishParse: getCommonPolishSpecialExpressionParser('comment'),
         paramCount: {},
         evaluate: function () { return null; },
-        findUnresolvedIdentifiers: function () { return new Set(); },
+        findUnresolvedSymbols: function () { return new Set(); },
     };
 
     var condSpecialExpression = {
@@ -4998,9 +4998,9 @@ var Playground = (function (exports) {
             }
             return null;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5029,9 +5029,9 @@ var Playground = (function (exports) {
             }
             return null;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5042,9 +5042,9 @@ var Playground = (function (exports) {
             var lookUpResult = contextStack.lookUp(node.p[0]);
             return lookUpResult !== null;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5093,12 +5093,12 @@ var Playground = (function (exports) {
             contextStack.exportValue(name, evaluateAstNode(node.p[1], contextStack));
             return null;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
+        findUnresolvedSymbols: function (node, contextStack, _a) {
             var _b;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
             var sourceCodeInfo = (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo;
             var subNode = asAstNode(node.p[1]);
-            var result = findUnresolvedIdentifiers([subNode], contextStack, builtin);
+            var result = findUnresolvedSymbols([subNode], contextStack, builtin);
             var name = asSymbolNode(node.p[0]).v;
             assertNameNotDefined(name, contextStack, builtin, sourceCodeInfo);
             contextStack.exportValue(name, true);
@@ -5130,9 +5130,9 @@ var Playground = (function (exports) {
             }
             return result;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack.create({}), builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack.create({}), builtin);
         },
     };
 
@@ -5145,8 +5145,8 @@ var Playground = (function (exports) {
         var result = new Set();
         try {
             for (var results_1 = __values(results), results_1_1 = results_1.next(); !results_1_1.done; results_1_1 = results_1.next()) {
-                var identifier = results_1_1.value;
-                identifier.forEach(function (symbol) { return result.add(symbol); });
+                var symbols = results_1_1.value;
+                symbols.forEach(function (symbol) { return result.add(symbol); });
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -5198,12 +5198,12 @@ var Playground = (function (exports) {
             contextStack.exportValue(name, litsFunction);
             return null;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
+        findUnresolvedSymbols: function (node, contextStack, _a) {
             var _b;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
             contextStack.exportValue(node.f.v, true);
             var newContext = (_b = {}, _b[node.f.v] = { value: true }, _b);
-            return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin, newContext);
+            return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin, newContext);
         },
     };
     var fnSpecialExpression = {
@@ -5234,9 +5234,9 @@ var Playground = (function (exports) {
                 _b);
             return litsFunction;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return addOverloadsUnresolvedIdentifiers(node.o, contextStack, findUnresolvedIdentifiers, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin);
         },
     };
     function evaluateFunctionOverloades(node, contextStack, evaluateAstNode) {
@@ -5282,14 +5282,14 @@ var Playground = (function (exports) {
         }
         return evaluatedFunctionOverloades;
     }
-    function addOverloadsUnresolvedIdentifiers(overloads, contextStack, findUnresolvedIdentifiers, builtin, functionNameContext) {
+    function addOverloadsUnresolvedSymbols(overloads, contextStack, findUnresolvedSymbols, builtin, functionNameContext) {
         var e_3, _a;
         var result = new Set();
         var contextStackWithFunctionName = functionNameContext ? contextStack.create(functionNameContext) : contextStack;
         var _loop_1 = function (overload) {
             var newContext = {};
             overload.as.b.forEach(function (binding) {
-                var bindingResult = findUnresolvedIdentifiers([binding.v], contextStack, builtin);
+                var bindingResult = findUnresolvedSymbols([binding.v], contextStack, builtin);
                 addAnalyzeResults(result, bindingResult);
                 newContext[binding.n] = { value: true };
             });
@@ -5299,7 +5299,7 @@ var Playground = (function (exports) {
             if (typeof overload.as.r === 'string')
                 newContext[overload.as.r] = { value: true };
             var newContextStack = contextStackWithFunctionName.create(newContext);
-            var overloadResult = findUnresolvedIdentifiers(overload.b, newContextStack, builtin);
+            var overloadResult = findUnresolvedSymbols(overload.b, newContextStack, builtin);
             addAnalyzeResults(result, overloadResult);
         };
         try {
@@ -5460,9 +5460,9 @@ var Playground = (function (exports) {
                     return null;
             }
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5484,9 +5484,9 @@ var Playground = (function (exports) {
                     return null;
             }
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5526,8 +5526,8 @@ var Playground = (function (exports) {
             }
             return null;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
             var newContext = node.bs
                 .map(function (binding) { return binding.n; })
                 .reduce(function (context, name) {
@@ -5536,11 +5536,11 @@ var Playground = (function (exports) {
             }, {});
             var bindingResults = node.bs.map(function (bindingNode) {
                 var valueNode = bindingNode.v;
-                var bindingsResult = findUnresolvedIdentifiers([valueNode], contextStack, builtin);
+                var bindingsResult = findUnresolvedSymbols([valueNode], contextStack, builtin);
                 contextStack.addValue(bindingNode.n, { value: true });
                 return bindingsResult;
             });
-            var paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin);
+            var paramsResult = findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin);
             return joinAnalyzeResults.apply(void 0, __spreadArray(__spreadArray([], __read(bindingResults), false), [paramsResult], false));
         },
     };
@@ -5609,8 +5609,8 @@ var Playground = (function (exports) {
                     return state_1.value;
             }
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
             var newContext = node.bs
                 .map(function (binding) { return binding.n; })
                 .reduce(function (context, name) {
@@ -5618,8 +5618,8 @@ var Playground = (function (exports) {
                 return context;
             }, {});
             var bindingValueNodes = node.bs.map(function (binding) { return binding.v; });
-            var bindingsResult = findUnresolvedIdentifiers(bindingValueNodes, contextStack, builtin);
-            var paramsResult = findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin);
+            var bindingsResult = findUnresolvedSymbols(bindingValueNodes, contextStack, builtin);
+            var paramsResult = findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin);
             return joinAnalyzeResults(bindingsResult, paramsResult);
         },
     };
@@ -5777,36 +5777,36 @@ var Playground = (function (exports) {
         }
         return returnResult ? result : null;
     }
-    function analyze$2(node, contextStack, findUnresolvedIdentifiers, builtin) {
+    function analyze$2(node, contextStack, findUnresolvedSymbols, builtin) {
         var result = new Set();
         var newContext = {};
         var loopBindings = node.l;
         loopBindings.forEach(function (loopBinding) {
             var binding = loopBinding.b, letBindings = loopBinding.l, whenNode = loopBinding.wn, whileNode = loopBinding.we;
-            findUnresolvedIdentifiers([binding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
+            findUnresolvedSymbols([binding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
                 return result.add(symbol);
             });
             newContext[binding.n] = { value: true };
             if (letBindings) {
                 letBindings.forEach(function (letBinding) {
-                    findUnresolvedIdentifiers([letBinding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
+                    findUnresolvedSymbols([letBinding.v], contextStack.create(newContext), builtin).forEach(function (symbol) {
                         return result.add(symbol);
                     });
                     newContext[letBinding.n] = { value: true };
                 });
             }
             if (whenNode) {
-                findUnresolvedIdentifiers([whenNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
+                findUnresolvedSymbols([whenNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
                     return result.add(symbol);
                 });
             }
             if (whileNode) {
-                findUnresolvedIdentifiers([whileNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
+                findUnresolvedSymbols([whileNode], contextStack.create(newContext), builtin).forEach(function (symbol) {
                     return result.add(symbol);
                 });
             }
         });
-        findUnresolvedIdentifiers(node.p, contextStack.create(newContext), builtin).forEach(function (symbol) {
+        findUnresolvedSymbols(node.p, contextStack.create(newContext), builtin).forEach(function (symbol) {
             return result.add(symbol);
         });
         return result;
@@ -5828,9 +5828,9 @@ var Playground = (function (exports) {
         },
         paramCount: 1,
         evaluate: function (node, contextStack, helpers) { return evaluateLoop(true, node, contextStack, helpers.evaluateAstNode); },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return analyze$2(node, contextStack, findUnresolvedIdentifiers, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return analyze$2(node, contextStack, findUnresolvedSymbols, builtin);
         },
     };
     var doseqSpecialExpression = {
@@ -5853,9 +5853,9 @@ var Playground = (function (exports) {
             evaluateLoop(false, node, contextStack, helpers.evaluateAstNode);
             return null;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return analyze$2(node, contextStack, findUnresolvedIdentifiers, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return analyze$2(node, contextStack, findUnresolvedSymbols, builtin);
         },
     };
 
@@ -5883,9 +5883,9 @@ var Playground = (function (exports) {
             }
             return value;
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5904,9 +5904,9 @@ var Playground = (function (exports) {
             var firstResult = evaluateAstNode(firstNode, contextStack);
             return firstResult !== null && firstResult !== void 0 ? firstResult : (secondNode ? evaluateAstNode(secondNode, contextStack) : null);
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5929,9 +5929,9 @@ var Playground = (function (exports) {
             var params = node.p.map(function (paramNode) { return evaluateAstNode(paramNode, contextStack); });
             throw new RecurSignal(params);
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5946,9 +5946,9 @@ var Playground = (function (exports) {
             });
             throw new UserDefinedError(message, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
-            return findUnresolvedIdentifiers(node.p, contextStack, builtin);
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
 
@@ -5995,16 +5995,16 @@ var Playground = (function (exports) {
                 return evaluateAstNode(catchExpression, contextStack.create(newContext));
             }
         },
-        findUnresolvedIdentifiers: function (node, contextStack, _a) {
+        findUnresolvedSymbols: function (node, contextStack, _a) {
             var _b;
-            var findUnresolvedIdentifiers = _a.findUnresolvedIdentifiers, builtin = _a.builtin;
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
             var tryExpressions = node.p, catchExpression = node.ce, errorNode = node.e;
-            var tryResult = findUnresolvedIdentifiers(tryExpressions, contextStack, builtin);
+            var tryResult = findUnresolvedSymbols(tryExpressions, contextStack, builtin);
             var newContext = errorNode
                 ? (_b = {},
                     _b[errorNode.v] = { value: true },
                     _b) : {};
-            var catchResult = findUnresolvedIdentifiers([catchExpression], contextStack.create(newContext), builtin);
+            var catchResult = findUnresolvedSymbols([catchExpression], contextStack.create(newContext), builtin);
             return joinAnalyzeResults(tryResult, catchResult);
         },
     };
@@ -6399,10 +6399,10 @@ var Playground = (function (exports) {
             }
             return false;
         },
-        _a[FunctionType.Fnil] = function (fn, params, sourceCodeInfo, contextStack, _a) {
+        _a[FunctionType.Fnull] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
-            var fniledParams = params.map(function (param, index) { return (param === null ? toAny(fn.p[index]) : param); });
-            return executeFunction(toAny(fn.f), fniledParams, contextStack, sourceCodeInfo);
+            var fnulledParams = params.map(function (param, index) { return (param === null ? toAny(fn.p[index]) : param); });
+            return executeFunction(toAny(fn.f), fnulledParams, contextStack, sourceCodeInfo);
         },
         _a[FunctionType.Builtin] = function (fn, params, sourceCodeInfo, contextStack, _a) {
             var executeFunction = _a.executeFunction;
@@ -6536,7 +6536,7 @@ var Playground = (function (exports) {
         return toAny(param[fn]);
     }
 
-    var findUnresolvedIdentifiers = function (ast, contextStack, builtin) {
+    var findUnresolvedSymbols = function (ast, contextStack, builtin) {
         var e_1, _a;
         var astNodes = Array.isArray(ast)
             ? ast
@@ -6546,12 +6546,12 @@ var Playground = (function (exports) {
                     p: ast.b,
                     token: undefined,
                 }];
-        var unresolvedIdentifiers = new Set();
+        var unresolvedSymbols = new Set();
         try {
             for (var astNodes_1 = __values(astNodes), astNodes_1_1 = astNodes_1.next(); !astNodes_1_1.done; astNodes_1_1 = astNodes_1.next()) {
                 var subNode = astNodes_1_1.value;
-                findUnresolvedIdentifiersInAstNode(subNode, contextStack, builtin)
-                    .forEach(function (symbol) { return unresolvedIdentifiers.add(symbol); });
+                findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin)
+                    .forEach(function (symbol) { return unresolvedSymbols.add(symbol); });
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -6561,9 +6561,9 @@ var Playground = (function (exports) {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        return unresolvedIdentifiers;
+        return unresolvedSymbols;
     };
-    function findUnresolvedIdentifiersInAstNode(astNode, contextStack, builtin) {
+    function findUnresolvedSymbolsInAstNode(astNode, contextStack, builtin) {
         var e_2, _a;
         var _b;
         var emptySet = new Set();
@@ -6581,18 +6581,18 @@ var Playground = (function (exports) {
             case AstNodeType.Comment:
                 return emptySet;
             case AstNodeType.NormalExpression: {
-                var unresolvedIdentifiers_1 = new Set();
+                var unresolvedSymbols_1 = new Set();
                 var name_1 = astNode.n, debug = astNode.token;
                 if (typeof name_1 === 'string') {
                     var lookUpResult = contextStack.lookUp({ t: AstNodeType.Symbol, v: name_1, token: debug, p: [], n: undefined });
                     if (lookUpResult === null)
-                        unresolvedIdentifiers_1.add({ symbol: name_1, token: astNode.token });
+                        unresolvedSymbols_1.add({ symbol: name_1, token: astNode.token });
                 }
                 try {
                     for (var _c = __values(astNode.p), _d = _c.next(); !_d.done; _d = _c.next()) {
                         var subNode = _d.value;
-                        var innerUnresolvedIdentifiers = findUnresolvedIdentifiersInAstNode(subNode, contextStack, builtin);
-                        innerUnresolvedIdentifiers.forEach(function (symbol) { return unresolvedIdentifiers_1.add(symbol); });
+                        var innerUnresolvedSymbols = findUnresolvedSymbolsInAstNode(subNode, contextStack, builtin);
+                        innerUnresolvedSymbols.forEach(function (symbol) { return unresolvedSymbols_1.add(symbol); });
                     }
                 }
                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -6602,24 +6602,24 @@ var Playground = (function (exports) {
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
-                return unresolvedIdentifiers_1;
+                return unresolvedSymbols_1;
             }
             case AstNodeType.SpecialExpression: {
                 var specialExpression = asNonUndefined(builtin.specialExpressions[astNode.n], (_b = getTokenDebugData(astNode.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
                 // eslint-disable-next-line ts/no-unsafe-argument
-                var unresolvedIdentifiers = specialExpression.findUnresolvedIdentifiers(astNode, contextStack, {
-                    findUnresolvedIdentifiers: findUnresolvedIdentifiers,
+                var unresolvedSymbols = specialExpression.findUnresolvedSymbols(astNode, contextStack, {
+                    findUnresolvedSymbols: findUnresolvedSymbols,
                     builtin: builtin,
                     evaluateAstNode: evaluateAstNode,
                 });
-                return unresolvedIdentifiers;
+                return unresolvedSymbols;
             }
         }
     }
 
     function analyze$1(ast, params) {
         return {
-            unresolvedIdentifiers: findUnresolvedIdentifiers(ast, createContextStack(params), builtin),
+            unresolvedSymbols: findUnresolvedSymbols(ast, createContextStack(params), builtin),
         };
     }
 
@@ -8591,7 +8591,7 @@ var Playground = (function (exports) {
         tokenizeA_Symbol,
     ], false);
 
-    var polishIdentifierCharacterClass = '[\\w@%^?=!$<>+*/:&\|~-]';
+    var polishSymbolCharacterClass = '[\\w@%^?=!$<>+*/:&\|~-]';
 
     var whitespaceRegExp = /\s|,/;
     var tokenizeP_Comment = function (input, position) {
@@ -8688,7 +8688,7 @@ var Playground = (function (exports) {
             return NO_MATCH;
         return [length, ['P_Number', value]];
     };
-    var P_symbolRegExp = new RegExp(polishIdentifierCharacterClass);
+    var P_symbolRegExp = new RegExp(polishSymbolCharacterClass);
     var tokenizeP_Symbol = function (input, position) {
         var value = input[position];
         if (!value) {
@@ -9279,7 +9279,7 @@ var Playground = (function (exports) {
             'complement',
             'every_pred',
             'some_pred',
-            'fnil',
+            'fnull',
         ],
         misc: [
             '!=',
@@ -11059,10 +11059,10 @@ var Playground = (function (exports) {
                 '((some_pred string? #(> (count %1) 3)) [1 2 3] [2])',
             ],
         },
-        fnil: {
-            title: 'fnil',
+        fnull: {
+            title: 'fnull',
             category: 'Functional',
-            linkName: 'fnil',
+            linkName: 'fnull',
             returns: {
                 type: 'function',
             },
@@ -11084,11 +11084,11 @@ var Playground = (function (exports) {
             ],
             description: 'Takes a function $fn, and returns a function that calls $fn, replacing a null argument to the corresponding argument.',
             examples: [
-                '((fnil + 1 2) 0 0)',
-                '((fnil + 1 2) null 0)',
-                '((fnil + 1 2) 0 null)',
-                '((fnil + 1 2) null null)',
-                '((fnil + 1 2) null null 3 4)',
+                '((fnull + 1 2) 0 0)',
+                '((fnull + 1 2) null 0)',
+                '((fnull + 1 2) 0 null)',
+                '((fnull + 1 2) null null)',
+                '((fnull + 1 2) null null 3 4)',
             ],
         },
     };
@@ -16301,9 +16301,9 @@ var Playground = (function (exports) {
         var hijacker = hijackConsole();
         try {
             var result = getLits('debug').analyze(code, litsParams);
-            var unresolvedIdentifiers = __spreadArray([], __read(new Set(__spreadArray([], __read(result.unresolvedIdentifiers), false).map(function (s) { return s.symbol; }))), false).join(', ');
-            var unresolvedIdentifiersOutput = "Unresolved identifiers: ".concat(unresolvedIdentifiers || '-');
-            appendOutput("".concat(unresolvedIdentifiersOutput), 'analyze');
+            var unresolvedSymbols = __spreadArray([], __read(new Set(__spreadArray([], __read(result.unresolvedSymbols), false).map(function (s) { return s.symbol; }))), false).join(', ');
+            var unresolvedSymbolsOutput = "Unresolved symbols: ".concat(unresolvedSymbols || '-');
+            appendOutput("".concat(unresolvedSymbolsOutput), 'analyze');
         }
         catch (error) {
             appendOutput(error, 'error');

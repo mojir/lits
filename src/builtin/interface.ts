@@ -1,4 +1,4 @@
-import type { FindUnresolvedIdentifiers, UnresolvedIdentifiers } from '../analyze'
+import type { FindUnresolvedSymbols, UnresolvedSymbols } from '../analyze'
 import type { ContextStack } from '../evaluator/ContextStack'
 import type { EvaluateAstNode, ExecuteFunction } from '../evaluator/interface'
 import type { Any, Arr } from '../interface'
@@ -50,11 +50,11 @@ export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
   polishParse: (tokenStream: TokenStream, parseState: ParseState, firstToken: Token, parsers: ParserHelpers) => N
   evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => T
   paramCount: Count
-  findUnresolvedIdentifiers: (
+  findUnresolvedSymbols: (
     node: N,
     contextStack: ContextStack,
-    params: { findUnresolvedIdentifiers: FindUnresolvedIdentifiers, builtin: Builtin, evaluateAstNode: EvaluateAstNode },
-  ) => UnresolvedIdentifiers
+    params: { findUnresolvedSymbols: FindUnresolvedSymbols, builtin: Builtin, evaluateAstNode: EvaluateAstNode },
+  ) => UnresolvedSymbols
 }
 
 export interface Builtin {
