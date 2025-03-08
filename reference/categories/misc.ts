@@ -228,8 +228,8 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
-    examples: ['(! 3)', '(! true)', '(! "A string")', '(! 0)', '(! false)', '(! nil)', '(! "")'],
+    description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
+    examples: ['(! 3)', '(! true)', '(! "A string")', '(! 0)', '(! false)', '(! null)', '(! "")'],
   },
   'write!': {
     title: 'write!',
@@ -248,14 +248,14 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     variants: [
       { argumentNames: ['values'] },
     ],
-    description: 'It logs the $values and then returns the last argument. If called with no arguments `nil` is returned.',
+    description: 'It logs the $values and then returns the last argument. If called with no arguments `null` is returned.',
     examples: [
       '(write! "A string")',
       '(write! 100 "items")',
       '(write! (object :a 10))',
       '(write! [:a :b :c])',
       '(write! #"^start")',
-      '(write! nil true false)',
+      '(write! null true false)',
     ],
   },
   'iso_date>epoch': {
@@ -319,7 +319,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     examples: [
       '(boolean 0)',
       '(boolean 1)',
-      '(boolean nil)',
+      '(boolean null)',
       '(boolean "Albert")',
     ],
   },
@@ -375,7 +375,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     description: 'Returns true if $a and $b are structually equal.',
     examples: [
       '(equal? {:a 10 :b 20} {:b 20 :a 10})',
-      '(equal? [1 true nil] [1 true nil])',
+      '(equal? [1 true null] [1 true null])',
       '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
       '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
       '(== 0.3 (+ 0.1 0.2))',

@@ -277,7 +277,7 @@ hyp`,
       { argumentNames: ['test', 'then-expr'] },
       { argumentNames: ['test', 'then-expr', 'else-expr'] },
     ],
-    description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is truthy. If $test is falsy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+    description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is truthy. If $test is falsy $else-expr is executed, if no $else-expr exists, `null` is returned.',
     examples: [
       '(if true (write! "TRUE") (write! "FALSE"))',
       '(if false (write! "TRUE") (write! "FALSE"))',
@@ -308,7 +308,7 @@ hyp`,
       { argumentNames: ['test', 'then-expr'] },
       { argumentNames: ['test', 'then-expr', 'else-expr'] },
     ],
-    description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+    description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `null` is returned.',
     examples: [
       '(unless true (write! "TRUE") (write! "FALSE"))',
       '(unless false (write! "TRUE") (write! "FALSE"))',
@@ -331,22 +331,22 @@ hyp`,
     variants: [
       { argumentNames: ['conds'] },
     ],
-    description: 'Used for branching. $conds are tested sequentially from the top. If no branch is tested truthy, `nil` is returned.',
+    description: 'Used for branching. $conds are tested sequentially from the top. If no branch is tested truthy, `null` is returned.',
     examples: [
       `
 (cond
   false (write! "FALSE")
-  nil (write! "nil")
+  null (write! "null")
   :else (write! "TRUE"))`,
       `
 (cond
   false (write! "FALSE")
-  nil (write! "nil")
+  null (write! "null")
   true (write! "TRUE"))`,
       `
 (cond
   false (write! "FALSE")
-  nil (write! "nil"))`,
+  null (write! "null"))`,
     ],
   },
   'switch': {
@@ -367,20 +367,20 @@ hyp`,
     variants: [
       { argumentNames: ['value', 'conds'] },
     ],
-    description: 'Used for branching. $conds are tested sequentially from the top against $value. If no branch is tested truthy, `nil` is returned.',
+    description: 'Used for branching. $conds are tested sequentially from the top against $value. If no branch is tested truthy, `null` is returned.',
     examples: [
       `
 (switch 1
   1 (write! "FALSE")
-  2 (write! "nil"))`,
+  2 (write! "null"))`,
       `
 (switch 2
   1 (write! "FALSE")
-  2 (write! "nil"))`,
+  2 (write! "null"))`,
       `
 (switch 3
   1 (write! "FALSE")
-  2 (write! "nil"))`,
+  2 (write! "null"))`,
     ],
   },
   'comment': {
@@ -399,7 +399,7 @@ hyp`,
     variants: [
       { argumentNames: ['expressions'] },
     ],
-    description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `nil` is returned.',
+    description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `null` is returned.',
     examples: ['(comment (write! "Hi") (write! "Albert"))', '(comment)'],
   },
   'do': {
@@ -526,7 +526,7 @@ hyp`,
     variants: [
       { argumentNames: ['vars', 'expr'] },
     ],
-    description: 'Same syntax as `for`, but returns `nil`. Use for side effects. Consumes less memory than `for`.',
+    description: 'Same syntax as `for`, but returns `null`. Use for side effects. Consumes less memory than `for`.',
     examples: ['(doseq [x [1 2 4]] (write! x))'],
   },
   'for': {
@@ -627,7 +627,7 @@ hyp`,
 (defined? foo)`,
       '(defined? +)',
       `
-(def foo nil)
+(def foo null)
 (defined? foo)`,
       '(defined? if)',
     ],
@@ -651,7 +651,7 @@ hyp`,
       { argumentNames: ['test'] },
       { argumentNames: ['test', 'default'] },
     ],
-    description: 'If $test is declared and evaluated to non `nil` value $test is result, else $default is returned. If $default is not provided, `nil` is returned.',
+    description: 'If $test is declared and evaluated to non `null` value $test is result, else $default is returned. If $default is not provided, `null` is returned.',
     examples: [
       '(?? foo)',
       `
@@ -659,10 +659,10 @@ hyp`,
 (?? foo)`,
       '(?? +)',
       `
-(def foo nil)
+(def foo null)
 (?? foo)`,
       `
-(def foo nil)
+(def foo null)
 (?? foo :bar)`,
       '(?? foo 1)',
       '(?? "")',

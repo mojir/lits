@@ -30,7 +30,7 @@ describe('functional functions', () => {
       it('samples', () => {
         expect(lits.run('(identity "Albert")')).toBe('Albert')
         expect(lits.run('(identity "")')).toBe('')
-        expect(lits.run('(identity nil)')).toBe(null)
+        expect(lits.run('(identity null)')).toBe(null)
         expect(lits.run('(identity false)')).toBe(false)
         expect(lits.run('(identity true)')).toBe(true)
         expect(lits.run('(identity {:a 1})')).toEqual({ a: 1 })
@@ -60,9 +60,9 @@ describe('functional functions', () => {
         expect(lits.run('(def x {"bar" {"foo" 42}}) ((comp "foo" "bar") x)')).toBe(42)
 
         expect(lits.run('((comp) 10)')).toBe(10)
-        expect(lits.run('((comp) nil)')).toBe(null)
+        expect(lits.run('((comp) null)')).toBe(null)
         expect(lits.run('((comp) {:a 10})')).toEqual({ a: 10 })
-        expect(lits.run('((comp) [:x 10 nil])')).toEqual(['x', 10, null])
+        expect(lits.run('((comp) [:x 10 null])')).toEqual(['x', 10, null])
         lits.run('(comp :a [:b :c])')
         expect(() => lits.run('((comp) 1 2)')).toThrow()
         expect(() => lits.run('((comp true))')).toThrow()
@@ -72,7 +72,7 @@ describe('functional functions', () => {
 
     describe('constanty', () => {
       it('samples', () => {
-        expect(lits.run('((constantly 10) 12 nil :x)')).toBe(10)
+        expect(lits.run('((constantly 10) 12 null :x)')).toBe(10)
         expect(() => lits.run('(constanty)')).toThrow()
         expect(() => lits.run('(constanty 10 20)')).toThrow()
       })
@@ -118,9 +118,9 @@ describe('functional functions', () => {
     describe('fnil', () => {
       it('samples', () => {
         expect(lits.run('((fnil + 1 2) 0 0)')).toBe(0)
-        expect(lits.run('((fnil + 1 2) nil 0)')).toBe(1)
-        expect(lits.run('((fnil + 1 2) 0 nil)')).toBe(2)
-        expect(lits.run('((fnil + 1 2) nil nil)')).toBe(3)
+        expect(lits.run('((fnil + 1 2) null 0)')).toBe(1)
+        expect(lits.run('((fnil + 1 2) 0 null)')).toBe(2)
+        expect(lits.run('((fnil + 1 2) null null)')).toBe(3)
         expect(() => lits.run('(fnil)')).toThrow()
         expect(() => lits.run('(fnil +)')).toThrow()
       })

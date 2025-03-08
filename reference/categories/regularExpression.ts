@@ -52,12 +52,12 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
       { argumentNames: ['r', 's'] },
     ],
     description: `Matches $s against regular expression $r.
-If $s is a string and matches the regular expression, a \`match\`-array is returned, otherwise \`nil\` is returned.`,
+If $s is a string and matches the regular expression, a \`match\`-array is returned, otherwise \`null\` is returned.`,
     examples: [
       '(match "  A string" (regexp "^\\s*(.*)$"))',
       '(match "My name is Albert" #"albert"i)',
       '(match "My name is Ben" #"albert"i)',
-      '(match nil #"albert"i)',
+      '(match null #"albert"i)',
       '(match 1 #"albert"i)',
       '(match {} #"albert"i)',
     ],

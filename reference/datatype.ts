@@ -48,7 +48,7 @@ export const datatype: Record<DatatypeName, DatatypeReference> = {
     examples: [
       '[]',
       '[1 2 3]',
-      '[:a nil true]',
+      '[:a null true]',
     ],
   },
   '-type-boolean': {

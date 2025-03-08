@@ -26,10 +26,10 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       '(boolean? "A string")',
     ],
   },
-  'nil?': {
-    title: 'nil?',
+  'null?': {
+    title: 'null?',
     category: 'Predicate',
-    linkName: 'nil-question',
+    linkName: 'null-question',
     returns: {
       type: 'boolean',
     },
@@ -41,13 +41,13 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns `true` if $x is `nil`, otherwise `false`.',
+    description: 'Returns `true` if $x is `null`, otherwise `false`.',
     examples: [
-      '(nil? nil)',
-      '(nil? false)',
-      '(nil? [1 2 3])',
-      '(nil? 0)',
-      '(nil? "A string")',
+      '(null? null)',
+      '(null? false)',
+      '(null? [1 2 3])',
+      '(null? 0)',
+      '(null? "A string")',
     ],
   },
   'number?': {
@@ -562,7 +562,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns `true` if $x is empty or `nil`, otherwise `false`.',
+    description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
     examples: [
       '(empty? [])',
       '(empty? [1 2 3])',
@@ -570,7 +570,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       '(empty? {:a 2})',
       '(empty? "")',
       '(empty? "Albert")',
-      '(empty? nil)',
+      '(empty? null)',
     ],
   },
   'not_empty?': {
@@ -589,7 +589,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     variants: [
       { argumentNames: ['x'] },
     ],
-    description: 'Returns `false` if $x is empty or `nil`, otherwise `true`.',
+    description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
     examples: [
       '(not_empty? [])',
       '(not_empty? [1 2 3])',
@@ -597,7 +597,7 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       '(not_empty? {:a 2})',
       '(not_empty? "")',
       '(not_empty? "Albert")',
-      '(not_empty? nil)',
+      '(not_empty? null)',
     ],
   },
 }

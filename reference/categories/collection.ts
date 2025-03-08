@@ -24,7 +24,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
       '(count (object :a 1))',
       '(count "")',
       '(count "Albert")',
-      '(count nil)',
+      '(count null)',
     ],
   },
   'get': {
@@ -80,11 +80,11 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
   "default")`,
       `
 (get
-  nil
+  null
   :a)`,
       `
 (get
-  nil
+  null
   :b
   "default")`,
     ],
@@ -111,7 +111,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
       { argumentNames: ['coll', 'keys'] },
       { argumentNames: ['coll', 'keys', 'not-found'] },
     ],
-    description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `nil` is returned.',
+    description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
     examples: [
       `
 (get_in
@@ -184,7 +184,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
       },
       value: {
         type: ['any'],
-        description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+        description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
       },
     },
     variants: [
@@ -218,7 +218,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
   :a)`,
       `
 (has?
-  nil
+  null
   :a)`,
     ],
   },
@@ -237,7 +237,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
       values: {
         type: 'any',
         array: true,
-        description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+        description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
       },
     },
     variants: [
@@ -287,11 +287,11 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
   "xyzc")`,
       `
 (has_some?
-  nil
+  null
   [1])`,
       `
 (has_some?
-  nil
+  null
   "")`,
     ],
   },
@@ -310,7 +310,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
       values: {
         type: 'any',
         array: true,
-        description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+        description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
       },
     },
     variants: [
@@ -360,20 +360,20 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
   "dcba")`,
       `
 (has_every?
-  nil
+  null
   "abc")`,
       `
 (has_every?
-  nil
-  [0, 1, nil])`,
+  null
+  [0, 1, null])`,
       `
 (has_every?
-  nil
-  nil)`,
+  null
+  null)`,
       `
 (has_every?
   [1, 2, 3]
-  nil)`,
+  null)`,
     ],
   },
   'assoc': {
@@ -525,7 +525,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
     variants: [
       { argumentNames: ['coll'] },
     ],
-    description: 'Returns `nil` if $coll is empty or `nil`, otherwise $coll.',
+    description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
     examples: [
       '(not_empty [])',
       '(not_empty [1 2 3])',
@@ -533,7 +533,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
       '(not_empty {:a 2})',
       '(not_empty "")',
       '(not_empty "Albert")',
-      '(not_empty nil)',
+      '(not_empty null)',
     ],
   },
   'every?': {
@@ -766,7 +766,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
 Updates a value in the $coll collection, where $key is a key. $fn is a function
 that will take the old value and any supplied $fn-args and
 return the new value.
-If the key does not exist, \`nil\` is passed as the old value.`,
+If the key does not exist, \`null\` is passed as the old value.`,
     examples: [
       `
 (def x {:a 1 :b 2})
@@ -777,7 +777,7 @@ If the key does not exist, \`nil\` is passed as the old value.`,
   x
   :c
   (fn [val]
-    (if (nil? val) 0 (inc val))))`,
+    (if (null? val) 0 (inc val))))`,
     ],
   },
   'update_in': {
@@ -816,19 +816,19 @@ objects will be created - and the corresponding keys must be of type string.`,
   {:a [1 2 3]}
   [:a 1]
   (fn [val]
-    (when (nil? val) 0)))`,
+    (when (null? val) 0)))`,
       `
 (update_in
   {:a {:foo :bar}}
   [:a :foo]
   (fn [val]
-    (if (nil? val) "?" "!")))`,
+    (if (null? val) "?" "!")))`,
       `
 (update_in
   {:a {:foo :bar}}
   [:a :baz]
   (fn [val]
-    (if (nil? val) "?" "!")))`,
+    (if (null? val) "?" "!")))`,
       `
 (update_in
   {:a [1 2 3]}

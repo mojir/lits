@@ -29,7 +29,7 @@ export const predicatesNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  'nil?': {
+  'null?': {
     evaluate: ([first]): boolean => first === null || first === undefined,
     paramCount: 1,
   },

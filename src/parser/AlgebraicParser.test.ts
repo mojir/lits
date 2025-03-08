@@ -214,7 +214,7 @@ describe('algebraic operators', () => {
   describe('??', () => {
     test('samples', () => {
       expect(lits.run('1 ?? 2')).toBe(1)
-      expect(lits.run('nil ?? 2')).toBe(2)
+      expect(lits.run('null ?? 2')).toBe(2)
     })
   })
   describe('!', () => {

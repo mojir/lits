@@ -157,7 +157,7 @@ export const api = {
   ] as const,
   predicate: [
     'boolean?',
-    'nil?',
+    'null?',
     'number?',
     'string?',
     'function?',

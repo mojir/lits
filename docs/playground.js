@@ -1982,7 +1982,7 @@ var Playground = (function (exports) {
                 var e_1, _a;
                 var _b;
                 var coll = toAny(params[0]);
-                var keys = (_b = params[1]) !== null && _b !== void 0 ? _b : []; // nil behaves as empty array
+                var keys = (_b = params[1]) !== null && _b !== void 0 ? _b : []; // null behaves as empty array
                 var defaultValue = toAny(params[2]);
                 assertArray(keys, sourceCodeInfo);
                 try {
@@ -4030,7 +4030,7 @@ var Playground = (function (exports) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
                 if (first !== null)
-                    throw new AssertionError("Expected ".concat(first, " to be nil.").concat(message), sourceCodeInfo);
+                    throw new AssertionError("Expected ".concat(first, " to be null.").concat(message), sourceCodeInfo);
                 return null;
             },
             paramCount: { min: 1, max: 2 },
@@ -4252,7 +4252,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'nil?': {
+        'null?': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), first = _b[0];
                 return first === null || first === undefined;
@@ -5051,7 +5051,6 @@ var Playground = (function (exports) {
     var polishReservedNamesRecord = {
         true: { value: true },
         false: { value: false },
-        nil: { value: null },
         null: { value: null },
     };
 
@@ -9316,7 +9315,7 @@ var Playground = (function (exports) {
         ],
         predicate: [
             'boolean?',
-            'nil?',
+            'null?',
             'number?',
             'string?',
             'function?',
@@ -9924,7 +9923,7 @@ var Playground = (function (exports) {
                 '(assert_truthy false "Expected truthy")',
                 '(assert_truthy false)',
                 '(assert_truthy 0)',
-                '(assert_truthy nil)',
+                '(assert_truthy null)',
                 '(assert_truthy "")',
                 '(assert_truthy true)',
                 '(assert_truthy 1)',
@@ -9961,7 +9960,7 @@ var Playground = (function (exports) {
                 '(assert_falsy 1)',
                 '(assert_falsy false)',
                 '(assert_falsy 0)',
-                '(assert_falsy nil)',
+                '(assert_falsy null)',
                 '(assert_falsy "")',
             ],
         }, 'assert_null': {
@@ -9984,10 +9983,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['value'] },
                 { argumentNames: ['value', 'message'] },
             ],
-            description: 'If $value is not `nil` it throws `AssertionError`.',
+            description: 'If $value is not `null` it throws `AssertionError`.',
             examples: [
-                '(assert_null nil)',
-                '(assert_null true "Expected nil")',
+                '(assert_null null)',
+                '(assert_null true "Expected null")',
                 '(assert_null :x)',
                 '(assert_null [])',
                 '(assert_null {})',
@@ -10364,7 +10363,7 @@ var Playground = (function (exports) {
                 '(count (object :a 1))',
                 '(count "")',
                 '(count "Albert")',
-                '(count nil)',
+                '(count null)',
             ],
         },
         'get': {
@@ -10398,8 +10397,8 @@ var Playground = (function (exports) {
                 "\n(get\n  (object :a 1)\n  :a)",
                 "\n(get\n  (object :a 1)\n  :b)",
                 "\n(get\n  (object :a 1)\n  :b\n  \"default\")",
-                "\n(get\n  nil\n  :a)",
-                "\n(get\n  nil\n  :b\n  \"default\")",
+                "\n(get\n  null\n  :a)",
+                "\n(get\n  null\n  :b\n  \"default\")",
             ],
         },
         'get_in': {
@@ -10424,7 +10423,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['coll', 'keys'] },
                 { argumentNames: ['coll', 'keys', 'not-found'] },
             ],
-            description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `nil` is returned.',
+            description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
             examples: [
                 "\n(get_in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :a 0])",
                 "\n(get_in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0])",
@@ -10472,7 +10471,7 @@ var Playground = (function (exports) {
                 },
                 value: {
                     type: ['any'],
-                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
                 },
             },
             variants: [
@@ -10486,7 +10485,7 @@ var Playground = (function (exports) {
                 "\n(has?\n  {:a 1 :b 2}\n  0)",
                 "\n(has?\n  \"Albert\"\n  :A)",
                 "\n(has?\n  \"Albert\"\n  :a)",
-                "\n(has?\n  nil\n  :a)",
+                "\n(has?\n  null\n  :a)",
             ],
         },
         'has_some?': {
@@ -10504,7 +10503,7 @@ var Playground = (function (exports) {
                 values: {
                     type: 'any',
                     array: true,
-                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
                 },
             },
             variants: [
@@ -10522,8 +10521,8 @@ var Playground = (function (exports) {
                 "\n(has_some?\n  \"Albert\"\n  \"xyzl\")",
                 "\n(has_some?\n  [:a :b :c :d]\n  \"xyz\")",
                 "\n(has_some?\n  [:a :b :c :d]\n  \"xyzc\")",
-                "\n(has_some?\n  nil\n  [1])",
-                "\n(has_some?\n  nil\n  \"\")",
+                "\n(has_some?\n  null\n  [1])",
+                "\n(has_some?\n  null\n  \"\")",
             ],
         },
         'has_every?': {
@@ -10541,7 +10540,7 @@ var Playground = (function (exports) {
                 values: {
                     type: 'any',
                     array: true,
-                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `nil`.',
+                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
                 },
             },
             variants: [
@@ -10559,10 +10558,10 @@ var Playground = (function (exports) {
                 "\n(has_every?\n  \"Albert\"\n  \"treblA\")",
                 "\n(has_every?\n  [:a :b :c :d]\n  \"xyz\")",
                 "\n(has_every?\n  [:a :b :c :d]\n  \"dcba\")",
-                "\n(has_every?\n  nil\n  \"abc\")",
-                "\n(has_every?\n  nil\n  [0, 1, nil])",
-                "\n(has_every?\n  nil\n  nil)",
-                "\n(has_every?\n  [1, 2, 3]\n  nil)",
+                "\n(has_every?\n  null\n  \"abc\")",
+                "\n(has_every?\n  null\n  [0, 1, null])",
+                "\n(has_every?\n  null\n  null)",
+                "\n(has_every?\n  [1, 2, 3]\n  null)",
             ],
         },
         'assoc': {
@@ -10677,7 +10676,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['coll'] },
             ],
-            description: 'Returns `nil` if $coll is empty or `nil`, otherwise $coll.',
+            description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
             examples: [
                 '(not_empty [])',
                 '(not_empty [1 2 3])',
@@ -10685,7 +10684,7 @@ var Playground = (function (exports) {
                 '(not_empty {:a 2})',
                 '(not_empty "")',
                 '(not_empty "Albert")',
-                '(not_empty nil)',
+                '(not_empty null)',
             ],
         },
         'every?': {
@@ -10830,10 +10829,10 @@ var Playground = (function (exports) {
                 { argumentNames: ['coll', 'value', 'fn'] },
                 { argumentNames: ['coll', 'value', 'fn', 'fn-args'] },
             ],
-            description: "\nUpdates a value in the $coll collection, where $key is a key. $fn is a function\nthat will take the old value and any supplied $fn-args and\nreturn the new value.\nIf the key does not exist, `nil` is passed as the old value.",
+            description: "\nUpdates a value in the $coll collection, where $key is a key. $fn is a function\nthat will take the old value and any supplied $fn-args and\nreturn the new value.\nIf the key does not exist, `null` is passed as the old value.",
             examples: [
                 "\n(def x {:a 1 :b 2})\n(update x :a inc)",
-                "\n(def x {:a 1 :b 2})\n(update\n  x\n  :c\n  (fn [val]\n    (if (nil? val) 0 (inc val))))",
+                "\n(def x {:a 1 :b 2})\n(update\n  x\n  :c\n  (fn [val]\n    (if (null? val) 0 (inc val))))",
             ],
         },
         'update_in': {
@@ -10864,9 +10863,9 @@ var Playground = (function (exports) {
             ],
             description: "Updates a value in the $coll collection, where $keys is an array of\nkeys and $fn is a function that will take the old value and\nany supplied $fn-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
             examples: [
-                "\n(update_in\n  {:a [1 2 3]}\n  [:a 1]\n  (fn [val]\n    (when (nil? val) 0)))",
-                "\n(update_in\n  {:a {:foo :bar}}\n  [:a :foo]\n  (fn [val]\n    (if (nil? val) \"?\" \"!\")))",
-                "\n(update_in\n  {:a {:foo :bar}}\n  [:a :baz]\n  (fn [val]\n    (if (nil? val) \"?\" \"!\")))",
+                "\n(update_in\n  {:a [1 2 3]}\n  [:a 1]\n  (fn [val]\n    (when (null? val) 0)))",
+                "\n(update_in\n  {:a {:foo :bar}}\n  [:a :foo]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
+                "\n(update_in\n  {:a {:foo :bar}}\n  [:a :baz]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
                 "\n(update_in\n  {:a [1 2 3]}\n  [:a 1]\n  *\n  10\n  10\n  10)",
             ],
         },
@@ -10913,7 +10912,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns $x.',
-            examples: ['(identity 1)', '(identity "Albert")', '(identity {:a 1})', '(identity nil)'],
+            examples: ['(identity 1)', '(identity "Albert")', '(identity {:a 1})', '(identity null)'],
         },
         partial: {
             title: 'partial',
@@ -11109,13 +11108,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['fn', 'arg'] },
                 { argumentNames: ['fn', 'arg', 'args'] },
             ],
-            description: 'Takes a function $fn, and returns a function that calls $fn, replacing a nil argument to the corresponding argument.',
+            description: 'Takes a function $fn, and returns a function that calls $fn, replacing a null argument to the corresponding argument.',
             examples: [
                 '((fnil + 1 2) 0 0)',
-                '((fnil + 1 2) nil 0)',
-                '((fnil + 1 2) 0 nil)',
-                '((fnil + 1 2) nil nil)',
-                '((fnil + 1 2) nil nil 3 4)',
+                '((fnil + 1 2) null 0)',
+                '((fnil + 1 2) 0 null)',
+                '((fnil + 1 2) null null)',
+                '((fnil + 1 2) null null 3 4)',
             ],
         },
     };
@@ -12035,8 +12034,8 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['x'] },
             ],
-            description: 'Computes logical negation. Note that any other $x than `false`, `0`, `nil` and `\'\'` is truthy.',
-            examples: ['(! 3)', '(! true)', '(! "A string")', '(! 0)', '(! false)', '(! nil)', '(! "")'],
+            description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
+            examples: ['(! 3)', '(! true)', '(! "A string")', '(! 0)', '(! false)', '(! null)', '(! "")'],
         },
         'write!': {
             title: 'write!',
@@ -12055,14 +12054,14 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['values'] },
             ],
-            description: 'It logs the $values and then returns the last argument. If called with no arguments `nil` is returned.',
+            description: 'It logs the $values and then returns the last argument. If called with no arguments `null` is returned.',
             examples: [
                 '(write! "A string")',
                 '(write! 100 "items")',
                 '(write! (object :a 10))',
                 '(write! [:a :b :c])',
                 '(write! #"^start")',
-                '(write! nil true false)',
+                '(write! null true false)',
             ],
         },
         'iso_date>epoch': {
@@ -12126,7 +12125,7 @@ var Playground = (function (exports) {
             examples: [
                 '(boolean 0)',
                 '(boolean 1)',
-                '(boolean nil)',
+                '(boolean null)',
                 '(boolean "Albert")',
             ],
         },
@@ -12182,7 +12181,7 @@ var Playground = (function (exports) {
             description: 'Returns true if $a and $b are structually equal.',
             examples: [
                 '(equal? {:a 10 :b 20} {:b 20 :a 10})',
-                '(equal? [1 true nil] [1 true nil])',
+                '(equal? [1 true null] [1 true null])',
                 '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
                 '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
                 '(== 0.3 (+ 0.1 0.2))',
@@ -12375,7 +12374,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['obj', 'key'] },
             ],
-            description: 'Returns entry (key-value pair) for $key, or `nil` if $key not present in $obj.',
+            description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
             examples: [
                 '(find (object :a 1 :b 2) :b)',
                 '(find (object :a 1 :b 2) :c)',
@@ -12397,7 +12396,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['objs'] },
             ],
-            description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.  \nIf no arguments are provided `nil` is returned.",
+            description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.  \nIf no arguments are provided `null` is returned.",
             examples: [
                 '(merge (object :x 10) (object :y 20))',
                 '(merge (object :x 10) (object :x 15 :y 20))',
@@ -12422,7 +12421,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['objs', 'fn'] },
             ],
-            description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fn is used to calculate the new value.\n\nIf no arguments are provided `nil` is returned.",
+            description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fn is used to calculate the new value.\n\nIf no arguments are provided `null` is returned.",
             examples: [
                 '(merge_with (object :x 10) (object :y 20) +)',
                 '(merge_with (object :x 10) (object :x 15 :y 20) +)',
@@ -12451,9 +12450,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a new object created by mapping $keys to $values.',
             examples: [
-                '(zipmap [:a :b :c] [10 nil [1 2 3]])',
+                '(zipmap [:a :b :c] [10 null [1 2 3]])',
                 '(zipmap [:a :b :c] [1])',
-                '(zipmap [] [10 nil [1 2 3]])',
+                '(zipmap [] [10 null [1 2 3]])',
             ],
         },
         select_keys: {
@@ -12508,10 +12507,10 @@ var Playground = (function (exports) {
                 '(boolean? "A string")',
             ],
         },
-        'nil?': {
-            title: 'nil?',
+        'null?': {
+            title: 'null?',
             category: 'Predicate',
-            linkName: 'nil-question',
+            linkName: 'null-question',
             returns: {
                 type: 'boolean',
             },
@@ -12523,13 +12522,13 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['x'] },
             ],
-            description: 'Returns `true` if $x is `nil`, otherwise `false`.',
+            description: 'Returns `true` if $x is `null`, otherwise `false`.',
             examples: [
-                '(nil? nil)',
-                '(nil? false)',
-                '(nil? [1 2 3])',
-                '(nil? 0)',
-                '(nil? "A string")',
+                '(null? null)',
+                '(null? false)',
+                '(null? [1 2 3])',
+                '(null? 0)',
+                '(null? "A string")',
             ],
         },
         'number?': {
@@ -13044,7 +13043,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['x'] },
             ],
-            description: 'Returns `true` if $x is empty or `nil`, otherwise `false`.',
+            description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
             examples: [
                 '(empty? [])',
                 '(empty? [1 2 3])',
@@ -13052,7 +13051,7 @@ var Playground = (function (exports) {
                 '(empty? {:a 2})',
                 '(empty? "")',
                 '(empty? "Albert")',
-                '(empty? nil)',
+                '(empty? null)',
             ],
         },
         'not_empty?': {
@@ -13071,7 +13070,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['x'] },
             ],
-            description: 'Returns `false` if $x is empty or `nil`, otherwise `true`.',
+            description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
             examples: [
                 '(not_empty? [])',
                 '(not_empty? [1 2 3])',
@@ -13079,7 +13078,7 @@ var Playground = (function (exports) {
                 '(not_empty? {:a 2})',
                 '(not_empty? "")',
                 '(not_empty? "Albert")',
-                '(not_empty? nil)',
+                '(not_empty? null)',
             ],
         },
     };
@@ -13134,12 +13133,12 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['r', 's'] },
             ],
-            description: "Matches $s against regular expression $r.\nIf $s is a string and matches the regular expression, a `match`-array is returned, otherwise `nil` is returned.",
+            description: "Matches $s against regular expression $r.\nIf $s is a string and matches the regular expression, a `match`-array is returned, otherwise `null` is returned.",
             examples: [
                 '(match "  A string" (regexp "^\\s*(.*)$"))',
                 '(match "My name is Albert" #"albert"i)',
                 '(match "My name is Ben" #"albert"i)',
-                '(match nil #"albert"i)',
+                '(match null #"albert"i)',
                 '(match 1 #"albert"i)',
                 '(match {} #"albert"i)',
             ],
@@ -13235,7 +13234,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['seq', 'n'] },
                 { argumentNames: ['seq', 'n', 'not-found'] },
             ],
-            description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `nil`.',
+            description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
             examples: [
                 '(nth [1 2 3] 1)',
                 '(nth [1 2 3] 3)',
@@ -13245,8 +13244,8 @@ var Playground = (function (exports) {
                 '(nth "A string" 3)',
                 '(nth "A string" -3)',
                 '(nth "A string" 30 :X)',
-                '(nth nil 1)',
-                '(nth nil 1 "Default value")',
+                '(nth null 1)',
+                '(nth null 1 "Default value")',
             ],
         },
         'push': {
@@ -13296,7 +13295,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq'] },
             ],
-            description: 'Returns a copy of $seq with last element removed. If $seq is empty `nil` is returned.',
+            description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
             examples: [
                 '(pop [1 2 3])',
                 '(pop [])',
@@ -13349,7 +13348,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq'] },
             ],
-            description: 'Returns a copy of $seq with first element removed. If $seq is empty `nil` is returned.',
+            description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
             examples: [
                 '(shift [1 2 3])',
                 '(shift [])',
@@ -13547,12 +13546,12 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
-            description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `nil` is returned.',
+            description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `null` is returned.',
             examples: [
                 "\n(position\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
                 "\n(position\n  [5 10 15 20]\n  (fn [x] (> x 10)))",
                 "\n(position\n  [5 10 15 20]\n  (fn [x] (> x 100)))",
-                "\n(position\n  (fn [x] (> x 100))\n  nil)",
+                "\n(position\n  (fn [x] (> x 100))\n  null)",
             ],
         },
         'index_of': {
@@ -13574,12 +13573,12 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq', 'x'] },
             ],
-            description: 'Returns the index of $x in $seq. If element is not present in $seq `nil` is returned.',
+            description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
             examples: [
                 '(index_of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
                 '(index_of [5 10 15 20] 15)',
                 '(index_of [5 10 15 20] 1)',
-                '(index_of nil 1)',
+                '(index_of null 1)',
             ],
         },
         'last_index_of': {
@@ -13601,12 +13600,12 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq', 'x'] },
             ],
-            description: 'Returns the last index of $x in $seq. If element is not present in $seq `nil` is returned.',
+            description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
             examples: [
                 '(last_index_of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
                 '(last_index_of [5 10 15 20] 15)',
                 '(last_index_of [5 10 15 20] 1)',
-                '(last_index_of nil 1)',
+                '(last_index_of null 1)',
             ],
         },
         'some': {
@@ -13627,13 +13626,13 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
-            description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `nil` is returned.',
+            description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `null` is returned.',
             examples: [
                 "\n(some\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
                 "\n(some\n  [5 10 15 20]\n  (fn [x] (> x 10)))",
                 "\n(some\n  [1 2 3 4]\n  (fn [x] (> x 10)))",
                 "\n(some\n  []\n  (fn [x] (> x 10)))",
-                "\n(some\n  nil\n  (fn [x] (> x 10)))",
+                "\n(some\n  null\n  (fn [x] (> x 10)))",
             ],
         },
         'reverse': {
@@ -13656,7 +13655,7 @@ var Playground = (function (exports) {
                 '(reverse ["Albert" "Mojir" 160 [1 2]])',
                 '(reverse [])',
                 '(reverse "Albert")',
-                '(reverse nil)',
+                '(reverse null)',
             ],
         },
         'first': {
@@ -13674,11 +13673,11 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq'] },
             ],
-            description: 'Returns the first element of $seq. If $seq is empty or `nil`, `nil` is returned.',
+            description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
             examples: [
                 '(first ["Albert" "Mojir" 160 [1 2]])',
                 '(first [])',
-                '(first nil)',
+                '(first null)',
             ],
         },
         'second': {
@@ -13696,12 +13695,12 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq'] },
             ],
-            description: 'Returns the second element of $seq. If $seq has less than two elements or is `nil`, `nil` is returned.',
+            description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
             examples: [
                 '(second ["Albert" "Mojir" 160 [1 2]])',
                 '(second [1])',
                 '(second [])',
-                '(second nil)',
+                '(second null)',
             ],
         },
         'last': {
@@ -13719,13 +13718,13 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq'] },
             ],
-            description: 'Returns the last element of $seq. If $seq is empty, `nil` is returned.',
+            description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
             examples: [
                 '(last ["Albert" "Mojir" 160 [1 2]])',
                 '(last [1 2])',
                 '(last [1])',
                 '(last [])',
-                '(last nil)',
+                '(last null)',
             ],
         },
         'rest': {
@@ -13796,7 +13795,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq'] },
             ],
-            description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `nil` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `nil` is returned.',
+            description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
             examples: [
                 '(next ["Albert" "Mojir" 160 [1 2]])',
                 '(next ["Albert"])',
@@ -13825,7 +13824,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq', 'n'] },
             ],
-            description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. If $seq has less or equal than $n elements, `nil` returned. For string $seq returns all but the first $n characters in $seq. If length of string $seq is less or equal than $n, `nil` is returned.',
+            description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. If $seq has less or equal than $n elements, `null` returned. For string $seq returns all but the first $n characters in $seq. If length of string $seq is less or equal than $n, `null` is returned.',
             examples: [
                 '(nthnext ["Albert" "Mojir" 160 [1 2]] 2)',
                 '(nthnext "Albert" 3)',
@@ -14245,9 +14244,9 @@ var Playground = (function (exports) {
                 '(partition [1 2 3 4] 10)',
                 '(partition [1 2 3 4] 10 10)',
                 '(partition [1 2 3 4] 10 10 [])',
-                '(partition [1 2 3 4] 10 10 nil)',
+                '(partition [1 2 3 4] 10 10 null)',
                 '(partition "superfragilistic" 5)',
-                '(partition "superfragilistic" 5 5 nil)',
+                '(partition "superfragilistic" 5 5 null)',
                 '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
             ],
         },
@@ -14634,7 +14633,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['test', 'then-expr'] },
                 { argumentNames: ['test', 'then-expr', 'else-expr'] },
             ],
-            description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is truthy. If $test is falsy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+            description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is truthy. If $test is falsy $else-expr is executed, if no $else-expr exists, `null` is returned.',
             examples: [
                 '(if true (write! "TRUE") (write! "FALSE"))',
                 '(if false (write! "TRUE") (write! "FALSE"))',
@@ -14665,7 +14664,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['test', 'then-expr'] },
                 { argumentNames: ['test', 'then-expr', 'else-expr'] },
             ],
-            description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `nil` is returned.',
+            description: 'Either $then-expr or $else-expr branch is taken. $then-expr is selected when $test is falsy. If $test is truthy $else-expr is executed, if no $else-expr exists, `null` is returned.',
             examples: [
                 '(unless true (write! "TRUE") (write! "FALSE"))',
                 '(unless false (write! "TRUE") (write! "FALSE"))',
@@ -14688,11 +14687,11 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['conds'] },
             ],
-            description: 'Used for branching. $conds are tested sequentially from the top. If no branch is tested truthy, `nil` is returned.',
+            description: 'Used for branching. $conds are tested sequentially from the top. If no branch is tested truthy, `null` is returned.',
             examples: [
-                "\n(cond\n  false (write! \"FALSE\")\n  nil (write! \"nil\")\n  :else (write! \"TRUE\"))",
-                "\n(cond\n  false (write! \"FALSE\")\n  nil (write! \"nil\")\n  true (write! \"TRUE\"))",
-                "\n(cond\n  false (write! \"FALSE\")\n  nil (write! \"nil\"))",
+                "\n(cond\n  false (write! \"FALSE\")\n  null (write! \"null\")\n  :else (write! \"TRUE\"))",
+                "\n(cond\n  false (write! \"FALSE\")\n  null (write! \"null\")\n  true (write! \"TRUE\"))",
+                "\n(cond\n  false (write! \"FALSE\")\n  null (write! \"null\"))",
             ],
         },
         'switch': {
@@ -14713,11 +14712,11 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['value', 'conds'] },
             ],
-            description: 'Used for branching. $conds are tested sequentially from the top against $value. If no branch is tested truthy, `nil` is returned.',
+            description: 'Used for branching. $conds are tested sequentially from the top against $value. If no branch is tested truthy, `null` is returned.',
             examples: [
-                "\n(switch 1\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
-                "\n(switch 2\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
-                "\n(switch 3\n  1 (write! \"FALSE\")\n  2 (write! \"nil\"))",
+                "\n(switch 1\n  1 (write! \"FALSE\")\n  2 (write! \"null\"))",
+                "\n(switch 2\n  1 (write! \"FALSE\")\n  2 (write! \"null\"))",
+                "\n(switch 3\n  1 (write! \"FALSE\")\n  2 (write! \"null\"))",
             ],
         },
         'comment': {
@@ -14736,7 +14735,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['expressions'] },
             ],
-            description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `nil` is returned.',
+            description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `null` is returned.',
             examples: ['(comment (write! "Hi") (write! "Albert"))', '(comment)'],
         },
         'do': {
@@ -14829,7 +14828,7 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['vars', 'expr'] },
             ],
-            description: 'Same syntax as `for`, but returns `nil`. Use for side effects. Consumes less memory than `for`.',
+            description: 'Same syntax as `for`, but returns `null`. Use for side effects. Consumes less memory than `for`.',
             examples: ['(doseq [x [1 2 4]] (write! x))'],
         },
         'for': {
@@ -14885,7 +14884,7 @@ var Playground = (function (exports) {
                 '(defined? foo)',
                 "\n(def foo :foo)\n(defined? foo)",
                 '(defined? +)',
-                "\n(def foo nil)\n(defined? foo)",
+                "\n(def foo null)\n(defined? foo)",
                 '(defined? if)',
             ],
         },
@@ -14908,13 +14907,13 @@ var Playground = (function (exports) {
                 { argumentNames: ['test'] },
                 { argumentNames: ['test', 'default'] },
             ],
-            description: 'If $test is declared and evaluated to non `nil` value $test is result, else $default is returned. If $default is not provided, `nil` is returned.',
+            description: 'If $test is declared and evaluated to non `null` value $test is result, else $default is returned. If $default is not provided, `null` is returned.',
             examples: [
                 '(?? foo)',
                 "\n(def foo :foo)\n(?? foo)",
                 '(?? +)',
-                "\n(def foo nil)\n(?? foo)",
-                "\n(def foo nil)\n(?? foo :bar)",
+                "\n(def foo null)\n(?? foo)",
+                "\n(def foo null)\n(?? foo :bar)",
                 '(?? foo 1)',
                 '(?? "")',
                 '(?? 0)',
@@ -14996,12 +14995,12 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['values'] },
             ],
-            description: 'Concatenats $values into one string. If `value` equals `nil` empty string is returned.',
+            description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
             examples: [
                 '(str "A string" ", and another string" " ...and more")',
                 '(str "Just one string")',
                 '(str)',
-                '(str 0 false true nil #"^kalle" [1 2 3] {:a :a})',
+                '(str 0 false true null #"^kalle" [1 2 3] {:a :a})',
             ],
         },
         'number': {
@@ -15570,7 +15569,7 @@ var Playground = (function (exports) {
             examples: [
                 '[]',
                 '[1 2 3]',
-                '[:a nil true]',
+                '[:a null true]',
             ],
         },
         '-type-boolean': {

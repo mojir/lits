@@ -217,7 +217,7 @@ write!([1, 2, 3][2]);
   //     code: `
   // (defn label-from-value [$array $value]
   //   (let [entry (some $array #(== $value (%1 :value)))])
-  //   (if (nil? entry) (str $value) (entry :label))
+  //   (if (null? entry) (str $value) (entry :label))
   // )
 
   // (def arr [
@@ -247,7 +247,7 @@ write!([1, 2, 3][2]);
   //                    $array
   //                    #(== value (%1 :value)))])
   //           (if
-  //             (nil? entry)
+  //             (null? entry)
   //             (str value)
   //             (entry :label))
   //         )

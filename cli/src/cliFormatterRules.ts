@@ -117,7 +117,7 @@ const commentRule = createRule({
 
 const litsKeywordRule = createRule({
   name: 'functionName',
-  startPattern: /^(nil|true|false)\b/,
+  startPattern: /^(null|true|false)\b/,
   startTag: `${ColorEnum.Bright}${ColorEnum.FgGray}`,
   endTag: ColorEnum.Reset,
   keepPatterns: true,
@@ -127,7 +127,7 @@ const litsKeywordRule = createRule({
 
 const inlineCodeKeywordRule = createRule({
   name: 'inlineCodeKeywordRule',
-  startPattern: /^(null|true|false|nil|falsy|truthy)\b/,
+  startPattern: /^(null|true|false|falsy|truthy)\b/,
   startTag: `${ColorEnum.Bright}${ColorEnum.FgGray}`,
   endTag: ColorEnum.Reset,
   keepPatterns: true,

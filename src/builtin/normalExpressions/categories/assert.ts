@@ -150,7 +150,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first !== null)
-        throw new AssertionError(`Expected ${first} to be nil.${message}`, sourceCodeInfo)
+        throw new AssertionError(`Expected ${first} to be null.${message}`, sourceCodeInfo)
 
       return null
     },

@@ -73,12 +73,12 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     variants: [
       { argumentNames: ['values'] },
     ],
-    description: 'Concatenats $values into one string. If `value` equals `nil` empty string is returned.',
+    description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
     examples: [
       '(str "A string" ", and another string" " ...and more")',
       '(str "Just one string")',
       '(str)',
-      '(str 0 false true nil #"^kalle" [1 2 3] {:a :a})',
+      '(str 0 false true null #"^kalle" [1 2 3] {:a :a})',
     ],
   },
   'number': {

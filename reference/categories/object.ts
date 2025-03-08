@@ -139,7 +139,7 @@ o`,
     variants: [
       { argumentNames: ['obj', 'key'] },
     ],
-    description: 'Returns entry (key-value pair) for $key, or `nil` if $key not present in $obj.',
+    description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
     examples: [
       '(find (object :a 1 :b 2) :b)',
       '(find (object :a 1 :b 2) :c)',
@@ -164,7 +164,7 @@ o`,
     description: `Returns a new object created by merging together all arguments.
 
 If two keys appears in more than one object the value from the last object is used.  
-If no arguments are provided \`nil\` is returned.`,
+If no arguments are provided \`null\` is returned.`,
     examples: [
       '(merge (object :x 10) (object :y 20))',
       '(merge (object :x 10) (object :x 15 :y 20))',
@@ -193,7 +193,7 @@ If no arguments are provided \`nil\` is returned.`,
 Returns a new object created by merging together all arguments.
 If two keys appears in more than one object $fn is used to calculate the new value.
 
-If no arguments are provided \`nil\` is returned.`,
+If no arguments are provided \`null\` is returned.`,
     examples: [
       '(merge_with (object :x 10) (object :y 20) +)',
       '(merge_with (object :x 10) (object :x 15 :y 20) +)',
@@ -222,9 +222,9 @@ If no arguments are provided \`nil\` is returned.`,
     ],
     description: 'Returns a new object created by mapping $keys to $values.',
     examples: [
-      '(zipmap [:a :b :c] [10 nil [1 2 3]])',
+      '(zipmap [:a :b :c] [10 null [1 2 3]])',
       '(zipmap [:a :b :c] [1])',
-      '(zipmap [] [10 nil [1 2 3]])',
+      '(zipmap [] [10 null [1 2 3]])',
     ],
   },
   select_keys: {

@@ -7,9 +7,9 @@ describe('object functions', () => {
       it('samples', () => {
         expect(lits.run('(object)')).toEqual({})
         expect(lits.run('(object :x 1)')).toEqual({ x: 1 })
-        expect(lits.run('(object :x nil)')).toEqual({ x: null })
+        expect(lits.run('(object :x null)')).toEqual({ x: null })
         expect(lits.run('(object :x 1 :x 2)')).toEqual({ x: 2 })
-        expect(lits.run('(object :a nil :b true :c false :d 0 :e (object :x []))')).toEqual({
+        expect(lits.run('(object :a null :b true :c false :d 0 :e (object :x []))')).toEqual({
           a: null,
           b: true,
           c: false,
@@ -23,7 +23,7 @@ describe('object functions', () => {
         expect(() => lits.run('(object 0 1)')).toThrow()
         expect(() => lits.run('(object true 1)')).toThrow()
         expect(() => lits.run('(object false 1)')).toThrow()
-        expect(() => lits.run('(object nil 1)')).toThrow()
+        expect(() => lits.run('(object null 1)')).toThrow()
         expect(() => lits.run('(object [] 1)')).toThrow()
         expect(() => lits.run('(object (object) 1)')).toThrow()
       })
@@ -33,13 +33,13 @@ describe('object functions', () => {
       it('samples', () => {
         expect(lits.run('(keys (object))')).toEqual([])
         expect(lits.run('(keys (object :x 1))')).toEqual(['x'])
-        expect(lits.run('(keys (object :x nil :y 2))')).toEqual(['x', 'y'])
+        expect(lits.run('(keys (object :x null :y 2))')).toEqual(['x', 'y'])
         expect(() => lits.run('(keys)')).toThrow()
         expect(() => lits.run('(keys (object :x) (object :x))')).toThrow()
         expect(() => lits.run('(keys 0)')).toThrow()
         expect(() => lits.run('(keys true)')).toThrow()
         expect(() => lits.run('(keys false)')).toThrow()
-        expect(() => lits.run('(keys nil)')).toThrow()
+        expect(() => lits.run('(keys null)')).toThrow()
         expect(() => lits.run('(keys [1])')).toThrow()
       })
     })
@@ -48,13 +48,13 @@ describe('object functions', () => {
       it('samples', () => {
         expect(lits.run('(vals (object))')).toEqual([])
         expect(lits.run('(vals (object :x 1))')).toEqual([1])
-        expect(lits.run('(vals (object :x nil :y 2))')).toEqual([null, 2])
+        expect(lits.run('(vals (object :x null :y 2))')).toEqual([null, 2])
         expect(() => lits.run('(vals)')).toThrow()
         expect(() => lits.run('(vals (object :x) (object :x))')).toThrow()
         expect(() => lits.run('(vals 0)')).toThrow()
         expect(() => lits.run('(vals true)')).toThrow()
         expect(() => lits.run('(vals false)')).toThrow()
-        expect(() => lits.run('(vals nil)')).toThrow()
+        expect(() => lits.run('(vals null)')).toThrow()
         expect(() => lits.run('(vals [1])')).toThrow()
       })
     })
@@ -63,7 +63,7 @@ describe('object functions', () => {
       it('samples', () => {
         expect(lits.run('(entries (object))')).toEqual([])
         expect(lits.run('(entries (object :x 1))')).toEqual([['x', 1]])
-        expect(lits.run('(entries (object :x nil :y 2))')).toEqual([
+        expect(lits.run('(entries (object :x null :y 2))')).toEqual([
           ['x', null],
           ['y', 2],
         ])
@@ -72,7 +72,7 @@ describe('object functions', () => {
         expect(() => lits.run('(entries 0)')).toThrow()
         expect(() => lits.run('(entries true)')).toThrow()
         expect(() => lits.run('(entries false)')).toThrow()
-        expect(() => lits.run('(entries nil)')).toThrow()
+        expect(() => lits.run('(entries null)')).toThrow()
         expect(() => lits.run('(entries [1])')).toThrow()
       })
     })
@@ -84,13 +84,13 @@ describe('object functions', () => {
         expect(lits.run('(find (object :x 1 :y 2) :x)')).toEqual(['x', 1])
         expect(() => lits.run('(find)')).toThrow()
         expect(() => lits.run('(find (object :x) (object :x))')).toThrow()
-        expect(() => lits.run('(find (object :x) nil)')).toThrow()
+        expect(() => lits.run('(find (object :x) null)')).toThrow()
         expect(() => lits.run('(find (object :x) true)')).toThrow()
         expect(() => lits.run('(find (object :x) false)')).toThrow()
         expect(() => lits.run('(find (object :x) :x :y)')).toThrow()
         expect(() => lits.run('(find (object :x))')).toThrow()
         expect(() => lits.run('(find [] :x)')).toThrow()
-        expect(() => lits.run('(find nil :x)')).toThrow()
+        expect(() => lits.run('(find null :x)')).toThrow()
         expect(() => lits.run('(find false :x)')).toThrow()
         expect(() => lits.run('(find 4 :x)')).toThrow()
       })
@@ -108,7 +108,7 @@ describe('object functions', () => {
         expect(() => lits.run('(dissoc 0 :x)')).toThrow()
         expect(() => lits.run('(dissoc true :x)')).toThrow()
         expect(() => lits.run('(dissoc false :x)')).toThrow()
-        expect(() => lits.run('(dissoc nil :x)')).toThrow()
+        expect(() => lits.run('(dissoc null :x)')).toThrow()
         expect(() => lits.run('(dissoc undefined :x)')).toThrow()
         expect(() => lits.run('(dissoc [1] :x)')).toThrow()
       })
@@ -146,7 +146,7 @@ describe('object functions', () => {
         expect(() => lits.run('(merge :1)')).toThrow()
         expect(() => lits.run('(merge true)')).toThrow()
         expect(() => lits.run('(merge false)')).toThrow()
-        expect(() => lits.run('(merge nil)')).toThrow()
+        expect(() => lits.run('(merge null)')).toThrow()
         expect(() => lits.run('(merge undefined)')).toThrow()
         expect(() => lits.run('(merge (array))')).toThrow()
       })
@@ -183,11 +183,11 @@ describe('object functions', () => {
 
     describe('zipmap', () => {
       it('samples', () => {
-        expect(lits.run('(zipmap [:a :b :c] [10 nil [1 2 3]])')).toEqual({ a: 10, b: null, c: [1, 2, 3] })
-        expect(lits.run('(zipmap [:a :b] [10 nil [1 2 3]])')).toEqual({ a: 10, b: null })
-        expect(lits.run('(zipmap [:a :b :c] [10 nil])')).toEqual({ a: 10, b: null })
+        expect(lits.run('(zipmap [:a :b :c] [10 null [1 2 3]])')).toEqual({ a: 10, b: null, c: [1, 2, 3] })
+        expect(lits.run('(zipmap [:a :b] [10 null [1 2 3]])')).toEqual({ a: 10, b: null })
+        expect(lits.run('(zipmap [:a :b :c] [10 null])')).toEqual({ a: 10, b: null })
         expect(lits.run('(zipmap [:a :b :c] [])')).toEqual({})
-        expect(lits.run('(zipmap [] [10 nil [1 2 3]])')).toEqual({})
+        expect(lits.run('(zipmap [] [10 null [1 2 3]])')).toEqual({})
         expect(lits.run('(zipmap [] [])')).toEqual({})
         expect(() => lits.run('(zipmap [])')).toThrow()
         expect(() => lits.run('(zipmap "abc" [])')).toThrow()

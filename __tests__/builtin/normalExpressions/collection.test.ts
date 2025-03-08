@@ -13,7 +13,7 @@ describe('collection functions', () => {
       expect(lits.run('(\'count\' (object :a 1 :b 2))')).toBe(2)
       expect(lits.run('(count "")')).toBe(0)
       expect(lits.run('(count "Albert")')).toBe(6)
-      expect(lits.run('(count nil)')).toBe(0)
+      expect(lits.run('(count null)')).toBe(0)
 
       expect(() => lits.run('(count)')).toThrow()
       expect(() => lits.run('(count [] [])')).toThrow()
@@ -46,8 +46,8 @@ describe('collection functions', () => {
       expect(lits.run('(get (object) :a :x)')).toBe('x')
       expect(lits.run('(get (object :a 1 :b 2) :a)')).toBe(1)
 
-      expect(lits.run('(get nil 1)')).toBeNull()
-      expect(lits.run('(get nil 1 99)')).toBe(99)
+      expect(lits.run('(get null 1)')).toBeNull()
+      expect(lits.run('(get null 1 99)')).toBe(99)
 
       expect(() => lits.run('(get)')).toThrow()
       expect(() => lits.run('(get [])')).toThrow()
@@ -56,7 +56,7 @@ describe('collection functions', () => {
       expect(() => lits.run('(get false)')).toThrow()
       expect(() => lits.run('(get false 2)')).toThrow()
       expect(() => lits.run('(get true)')).toThrow()
-      expect(() => lits.run('(get nil)')).toThrow()
+      expect(() => lits.run('(get null)')).toThrow()
       expect(() => lits.run('(get undefined)')).toThrow()
     })
   })
@@ -73,8 +73,8 @@ describe('collection functions', () => {
       expect(lits.run('(get_in {:a ["Albert" "Mojir"]} [:a 2] "DEFAULT")')).toBe('DEFAULT')
       expect(lits.run('(get_in {:a ["Albert" "Mojir"]} [:a 2 :x] "DEFAULT")')).toBe('DEFAULT')
 
-      expect(lits.run('(get_in nil [] "DEFAULT")')).toBeNull()
-      expect(lits.run('(get_in nil [1] "DEFAULT")')).toBe('DEFAULT')
+      expect(lits.run('(get_in null [] "DEFAULT")')).toBeNull()
+      expect(lits.run('(get_in null [1] "DEFAULT")')).toBe('DEFAULT')
       expect(lits.run('(get_in [] [] "DEFAULT")')).toEqual([])
       expect(lits.run('(get_in [1 2] [1] "DEFAULT")')).toBe(2)
       expect(lits.run('(get_in [1 2] [1 2] "DEFAULT")')).toBe('DEFAULT')
@@ -82,8 +82,8 @@ describe('collection functions', () => {
       expect(lits.run('(get_in 2 [1] "DEFAULT")')).toBe('DEFAULT')
       expect(lits.run('(get_in 2 [] "DEFAULT")')).toBe(2)
 
-      expect(lits.run('(get_in nil [])')).toBeNull()
-      expect(lits.run('(get_in nil [1])')).toBeNull()
+      expect(lits.run('(get_in null [])')).toBeNull()
+      expect(lits.run('(get_in null [1])')).toBeNull()
       expect(lits.run('(get_in [] [])')).toEqual([])
       expect(lits.run('(get_in [1 2] [1])')).toBe(2)
       expect(lits.run('(get_in [1 2] [1 2])')).toBeNull()
@@ -95,14 +95,14 @@ describe('collection functions', () => {
       expect(lits.run('(get_in "Albert" [0])')).toBe('A')
       expect(lits.run('(get_in "Albert" [:0])')).toBeNull()
 
-      expect(lits.run('(get_in "Albert" nil "DEFAULT")')).toBe('Albert')
+      expect(lits.run('(get_in "Albert" null "DEFAULT")')).toBe('Albert')
 
       expect(() => lits.run('(get_in)')).toThrow()
       expect(() => lits.run('(get_in [])')).toThrow()
       expect(() => lits.run('(get_in 12)')).toThrow()
       expect(() => lits.run('(get_in false)')).toThrow()
       expect(() => lits.run('(get_in true)')).toThrow()
-      expect(() => lits.run('(get_in nil)')).toThrow()
+      expect(() => lits.run('(get_in null)')).toThrow()
       expect(() => lits.run('(get_in undefined)')).toThrow()
     })
   })
@@ -124,8 +124,8 @@ describe('collection functions', () => {
       expect(lits.run('(contains? "Albert" 6)')).toBe(false)
       expect(lits.run('(contains? "Albert" -1)')).toBe(false)
 
-      expect(lits.run('(contains? nil 1)')).toBe(false)
-      expect(lits.run('(contains? nil :foo)')).toBe(false)
+      expect(lits.run('(contains? null 1)')).toBe(false)
+      expect(lits.run('(contains? null :foo)')).toBe(false)
 
       expect(() => lits.run('(contains? "")')).toThrow()
       expect(() => lits.run('(contains? [])')).toThrow()
@@ -135,7 +135,7 @@ describe('collection functions', () => {
       expect(() => lits.run('(contains? 12)')).toThrow()
       expect(() => lits.run('(contains? false)')).toThrow()
       expect(() => lits.run('(contains? true)')).toThrow()
-      expect(() => lits.run('(contains? nil)')).toThrow()
+      expect(() => lits.run('(contains? null)')).toThrow()
       expect(() => lits.run('(contains? undefined)')).toThrow()
     })
   })
@@ -158,8 +158,8 @@ describe('collection functions', () => {
       expect(lits.run('(has? "123" "12")')).toBe(true)
       expect(lits.run('(has? "Albert" 1)')).toBe(false)
 
-      expect(lits.run('(has? nil 1)')).toBe(false)
-      expect(lits.run('(has? nil nil)')).toBe(false)
+      expect(lits.run('(has? null 1)')).toBe(false)
+      expect(lits.run('(has? null null)')).toBe(false)
 
       expect(() => lits.run('(has? "")')).toThrow()
       expect(() => lits.run('(has? [])')).toThrow()
@@ -169,7 +169,7 @@ describe('collection functions', () => {
       expect(() => lits.run('(has? 12)')).toThrow()
       expect(() => lits.run('(has? false)')).toThrow()
       expect(() => lits.run('(has? true)')).toThrow()
-      expect(() => lits.run('(has? nil)')).toThrow()
+      expect(() => lits.run('(has? null)')).toThrow()
     })
   })
 
@@ -177,7 +177,7 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(lits.run('(has_some? [] [1])')).toBe(false)
       expect(lits.run('(has_some? [1] [])')).toBe(false)
-      expect(lits.run('(has_some? [1] nil)')).toBe(false)
+      expect(lits.run('(has_some? [1] null)')).toBe(false)
       expect(lits.run('(has_some? [1] [1])')).toBe(true)
       expect(lits.run('(has_some? [1 2 3] [0])')).toBe(false)
       expect(lits.run('(has_some? [1 2 3] [0 1])')).toBe(true)
@@ -192,9 +192,9 @@ describe('collection functions', () => {
       expect(lits.run('(has_some? [:a :b :c :d] "xyz")')).toBe(false)
       expect(lits.run('(has_some? [:a :b :c :d] "xyzc")')).toBe(true)
 
-      expect(lits.run('(has_some? nil "abc")')).toBe(false)
-      expect(lits.run('(has_some? nil [0, 1, nil])')).toBe(false)
-      expect(lits.run('(has_some? nil nil)')).toBe(false)
+      expect(lits.run('(has_some? null "abc")')).toBe(false)
+      expect(lits.run('(has_some? null [0, 1, null])')).toBe(false)
+      expect(lits.run('(has_some? null null)')).toBe(false)
 
       expect(() => lits.run('(has_some? [] [1] 1)')).toThrow()
       expect(() => lits.run('(has_some? [] 4)')).toThrow()
@@ -213,7 +213,7 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(lits.run('(has_every? [] [1])')).toBe(false)
       expect(lits.run('(has_every? [1] [])')).toBe(true)
-      expect(lits.run('(has_every? [1] nil)')).toBe(true)
+      expect(lits.run('(has_every? [1] null)')).toBe(true)
       expect(lits.run('(has_every? [1] [1])')).toBe(true)
       expect(lits.run('(has_every? [1 2 3] [0 1])')).toBe(false)
       expect(lits.run('(has_every? [1 2 3] [1 2])')).toBe(true)
@@ -227,10 +227,10 @@ describe('collection functions', () => {
       expect(lits.run('(has_every? [:a :b :c :d] "xyz")')).toBe(false)
       expect(lits.run('(has_every? [:a :b :c :d] "dcba")')).toBe(true)
 
-      expect(lits.run('(has_every? nil "abc")')).toBe(false)
-      expect(lits.run('(has_every? nil [0, 1, nil])')).toBe(false)
-      expect(lits.run('(has_every? nil nil)')).toBe(false)
-      expect(lits.run('(has_every? [1, 2, 3] nil)')).toBe(true)
+      expect(lits.run('(has_every? null "abc")')).toBe(false)
+      expect(lits.run('(has_every? null [0, 1, null])')).toBe(false)
+      expect(lits.run('(has_every? null null)')).toBe(false)
+      expect(lits.run('(has_every? [1, 2, 3] null)')).toBe(true)
 
       expect(() => lits.run('(has_every? [] [1] 1)')).toThrow()
       expect(() => lits.run('(has_every? [] 4)')).toThrow()
@@ -266,7 +266,7 @@ describe('collection functions', () => {
       expect(() => lits.run('(assoc "Albert" 7 "!")')).toThrow()
       expect(() => lits.run('(assoc [1 2 3] 4 :4)')).toThrow()
       expect(() => lits.run('(assoc (object) 0 :2)')).toThrow()
-      expect(() => lits.run('(assoc nil 0 :2)')).toThrow()
+      expect(() => lits.run('(assoc null 0 :2)')).toThrow()
       expect(() => lits.run('(assoc undefined 0 :2)')).toThrow()
       expect(() => lits.run('(assoc true 0 :2)')).toThrow()
       expect(() => lits.run('(assoc false 0 :2)')).toThrow()
@@ -276,7 +276,7 @@ describe('collection functions', () => {
       expect(() => lits.run('(assoc [1] true :2)')).toThrow()
       expect(() => lits.run('(assoc [1] false :2)')).toThrow()
       expect(() => lits.run('(assoc [1] [] :2)')).toThrow()
-      expect(() => lits.run('(assoc [1] nil :2)')).toThrow()
+      expect(() => lits.run('(assoc [1] null :2)')).toThrow()
       expect(() => lits.run('(assoc [1] undefined :2)')).toThrow()
       expect(() => lits.run('(assoc 0 :2)')).toThrow()
       expect(() => lits.run('(assoc [1 2 3] -1 :x)')).toThrow()
@@ -326,7 +326,7 @@ describe('collection functions', () => {
       expect(() => lits.run('(concat 0)')).toThrow()
       expect(() => lits.run('(concat true)')).toThrow()
       expect(() => lits.run('(concat :1 false)')).toThrow()
-      expect(() => lits.run('(concat nil :m)')).toThrow()
+      expect(() => lits.run('(concat null :m)')).toThrow()
       expect(() => lits.run('(concat undefined)')).toThrow()
     })
   })
@@ -340,7 +340,7 @@ describe('collection functions', () => {
       expect(lits.run('(not_empty "")')).toBeNull()
       expect(lits.run('(not_empty "Albert")')).toEqual('Albert')
 
-      expect(lits.run('(not_empty nil)')).toBeNull()
+      expect(lits.run('(not_empty null)')).toBeNull()
 
       expect(() => lits.run('(not_empty)')).toThrow()
       expect(() => lits.run('(not_empty)')).toThrow()
@@ -442,12 +442,12 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(
         lits.run(
-          '(def x "Albert") (update x 3 (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
+          '(def x "Albert") (update x 3 (fn [val] (if (null? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albfrt')
       expect(
         lits.run(
-          '(def x "Albert") (update x 6 (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
+          '(def x "Albert") (update x 6 (fn [val] (if (null? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albert!')
 
@@ -461,8 +461,8 @@ describe('collection functions', () => {
         b: 2,
       })
       expect(lits.run('(def x {:a 1 :b 2}) (:c x)')).toEqual(null)
-      expect(lits.run('(update {} :a (fn [val] (if (nil? val) 0)))')).toEqual({ a: 0 })
-      expect(lits.run('(def x {:a 1 :b 2}) (update x :c (fn [val] (if (nil? val) 0 (inc val))))')).toEqual({
+      expect(lits.run('(update {} :a (fn [val] (if (null? val) 0)))')).toEqual({ a: 0 })
+      expect(lits.run('(def x {:a 1 :b 2}) (update x :c (fn [val] (if (null? val) 0 (inc val))))')).toEqual({
         a: 1,
         b: 2,
         c: 0,
@@ -475,12 +475,12 @@ describe('collection functions', () => {
     it('samples', () => {
       expect(
         lits.run(
-          '(def x "Albert") (update_in x [3] (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
+          '(def x "Albert") (update_in x [3] (fn [val] (if (null? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albfrt')
       expect(
         lits.run(
-          '(def x "Albert") (update_in x [6] (fn [val] (if (nil? val) "!" (from_char_code (inc (to_char_code val))))))',
+          '(def x "Albert") (update_in x [6] (fn [val] (if (null? val) "!" (from_char_code (inc (to_char_code val))))))',
         ),
       ).toEqual('Albert!')
 
@@ -493,22 +493,22 @@ describe('collection functions', () => {
         a: 2,
         b: 2,
       })
-      expect(lits.run('(update_in {} [:a] (fn [val] (if (nil? val) 0)))')).toEqual({ a: 0 })
-      expect(lits.run('(def x {:a 1 :b 2}) (update_in x [:c] (fn [val] (if (nil? val) 0 (inc val))))')).toEqual({
+      expect(lits.run('(update_in {} [:a] (fn [val] (if (null? val) 0)))')).toEqual({ a: 0 })
+      expect(lits.run('(def x {:a 1 :b 2}) (update_in x [:c] (fn [val] (if (null? val) 0 (inc val))))')).toEqual({
         a: 1,
         b: 2,
         c: 0,
       })
-      expect(lits.run('(update_in {:a [1 2 3]} [:a 1] (fn [val] (if (nil? val) 0)))')).toEqual({
+      expect(lits.run('(update_in {:a [1 2 3]} [:a 1] (fn [val] (if (null? val) 0)))')).toEqual({
         a: [1, null, 3],
       })
-      expect(lits.run('(update_in {:a [1 nil 3]} [:a 1] (fn [val] (if (nil? val) 0)))')).toEqual({
+      expect(lits.run('(update_in {:a [1 null 3]} [:a 1] (fn [val] (if (null? val) 0)))')).toEqual({
         a: [1, 0, 3],
       })
-      expect(lits.run('(update_in {:a [1 "Albert" 3]} [:a 1 0] (fn [val] (if (nil? val) "?" "!")))')).toEqual({
+      expect(lits.run('(update_in {:a [1 "Albert" 3]} [:a 1 0] (fn [val] (if (null? val) "?" "!")))')).toEqual({
         a: [1, '!lbert', 3],
       })
-      expect(lits.run('(update_in {:a [1 "" 3]} [:a 1 0] (fn [val] (if (nil? val) "?" "!")))')).toEqual({
+      expect(lits.run('(update_in {:a [1 "" 3]} [:a 1 0] (fn [val] (if (null? val) "?" "!")))')).toEqual({
         a: [1, '?', 3],
       })
     })

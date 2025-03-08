@@ -24,7 +24,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       { argumentNames: ['seq', 'n'] },
       { argumentNames: ['seq', 'n', 'not-found'] },
     ],
-    description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `nil`.',
+    description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
     examples: [
       '(nth [1 2 3] 1)',
       '(nth [1 2 3] 3)',
@@ -34,8 +34,8 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       '(nth "A string" 3)',
       '(nth "A string" -3)',
       '(nth "A string" 30 :X)',
-      '(nth nil 1)',
-      '(nth nil 1 "Default value")',
+      '(nth null 1)',
+      '(nth null 1 "Default value")',
     ],
   },
   'push': {
@@ -85,7 +85,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     variants: [
       { argumentNames: ['seq'] },
     ],
-    description: 'Returns a copy of $seq with last element removed. If $seq is empty `nil` is returned.',
+    description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
     examples: [
       '(pop [1 2 3])',
       '(pop [])',
@@ -141,7 +141,7 @@ l`,
     variants: [
       { argumentNames: ['seq'] },
     ],
-    description: 'Returns a copy of $seq with first element removed. If $seq is empty `nil` is returned.',
+    description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
     examples: [
       '(shift [1 2 3])',
       '(shift [])',
@@ -353,7 +353,7 @@ l`,
     variants: [
       { argumentNames: ['seq', 'fn'] },
     ],
-    description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `nil` is returned.',
+    description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `null` is returned.',
     examples: [
       `
 (position
@@ -370,7 +370,7 @@ l`,
       `
 (position
   (fn [x] (> x 100))
-  nil)`,
+  null)`,
     ],
   },
   'index_of': {
@@ -392,12 +392,12 @@ l`,
     variants: [
       { argumentNames: ['seq', 'x'] },
     ],
-    description: 'Returns the index of $x in $seq. If element is not present in $seq `nil` is returned.',
+    description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
     examples: [
       '(index_of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
       '(index_of [5 10 15 20] 15)',
       '(index_of [5 10 15 20] 1)',
-      '(index_of nil 1)',
+      '(index_of null 1)',
     ],
   },
   'last_index_of': {
@@ -419,12 +419,12 @@ l`,
     variants: [
       { argumentNames: ['seq', 'x'] },
     ],
-    description: 'Returns the last index of $x in $seq. If element is not present in $seq `nil` is returned.',
+    description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
     examples: [
       '(last_index_of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
       '(last_index_of [5 10 15 20] 15)',
       '(last_index_of [5 10 15 20] 1)',
-      '(last_index_of nil 1)',
+      '(last_index_of null 1)',
     ],
   },
   'some': {
@@ -445,7 +445,7 @@ l`,
     variants: [
       { argumentNames: ['seq', 'fn'] },
     ],
-    description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `nil` is returned.',
+    description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `null` is returned.',
     examples: [
       `
 (some
@@ -465,7 +465,7 @@ l`,
   (fn [x] (> x 10)))`,
       `
 (some
-  nil
+  null
   (fn [x] (> x 10)))`,
     ],
   },
@@ -489,7 +489,7 @@ l`,
       '(reverse ["Albert" "Mojir" 160 [1 2]])',
       '(reverse [])',
       '(reverse "Albert")',
-      '(reverse nil)',
+      '(reverse null)',
     ],
   },
   'first': {
@@ -507,11 +507,11 @@ l`,
     variants: [
       { argumentNames: ['seq'] },
     ],
-    description: 'Returns the first element of $seq. If $seq is empty or `nil`, `nil` is returned.',
+    description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
     examples: [
       '(first ["Albert" "Mojir" 160 [1 2]])',
       '(first [])',
-      '(first nil)',
+      '(first null)',
     ],
   },
   'second': {
@@ -529,12 +529,12 @@ l`,
     variants: [
       { argumentNames: ['seq'] },
     ],
-    description: 'Returns the second element of $seq. If $seq has less than two elements or is `nil`, `nil` is returned.',
+    description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
     examples: [
       '(second ["Albert" "Mojir" 160 [1 2]])',
       '(second [1])',
       '(second [])',
-      '(second nil)',
+      '(second null)',
     ],
   },
   'last': {
@@ -552,13 +552,13 @@ l`,
     variants: [
       { argumentNames: ['seq'] },
     ],
-    description: 'Returns the last element of $seq. If $seq is empty, `nil` is returned.',
+    description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
     examples: [
       '(last ["Albert" "Mojir" 160 [1 2]])',
       '(last [1 2])',
       '(last [1])',
       '(last [])',
-      '(last nil)',
+      '(last null)',
     ],
   },
   'rest': {
@@ -631,7 +631,7 @@ For string $seq returns all but the first characters in $seq.`,
     variants: [
       { argumentNames: ['seq'] },
     ],
-    description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `nil` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `nil` is returned.',
+    description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
     examples: [
       '(next ["Albert" "Mojir" 160 [1 2]])',
       '(next ["Albert"])',
@@ -660,7 +660,7 @@ For string $seq returns all but the first characters in $seq.`,
     variants: [
       { argumentNames: ['seq', 'n'] },
     ],
-    description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. If $seq has less or equal than $n elements, `nil` returned. For string $seq returns all but the first $n characters in $seq. If length of string $seq is less or equal than $n, `nil` is returned.',
+    description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. If $seq has less or equal than $n elements, `null` returned. For string $seq returns all but the first $n characters in $seq. If length of string $seq is less or equal than $n, `null` is returned.',
     examples: [
       '(nthnext ["Albert" "Mojir" 160 [1 2]] 2)',
       '(nthnext "Albert" 3)',
@@ -1098,9 +1098,9 @@ For string $seq returns all but the first characters in $seq.`,
       '(partition [1 2 3 4] 10)',
       '(partition [1 2 3 4] 10 10)',
       '(partition [1 2 3 4] 10 10 [])',
-      '(partition [1 2 3 4] 10 10 nil)',
+      '(partition [1 2 3 4] 10 10 null)',
       '(partition "superfragilistic" 5)',
-      '(partition "superfragilistic" 5 5 nil)',
+      '(partition "superfragilistic" 5 5 null)',
       '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
     ],
   },
