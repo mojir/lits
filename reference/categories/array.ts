@@ -122,16 +122,20 @@ range(
     }],
     description: 'Takes a nested array $x and flattens it.',
     examples: [
-      '(flatten [1 2 [3 4] 5])',
+      'flatten([1, 2, [3, 4], 5])',
       `
-(let [foo :bar])
-(flatten
-  [1
-    " 2 A "
-    [foo [4 [:ABC]]] 6])`,
+let foo = "bar";
+flatten([
+  1,
+  " 2 A ",
+  [foo, [4, ["ABC"]]],
+  6,
+])`,
 
-      '(flatten 12)',
+      'flatten(12)',
     ],
+    algebraic: true,
+    noOperatorDocumentation: true,
   },
   mapcat: {
     title: 'mapcat',
@@ -141,7 +145,7 @@ range(
       type: 'collection',
     },
     args: {
-      f: {
+      fn: {
         type: 'function',
       },
       colls: {
@@ -150,14 +154,23 @@ range(
       },
     },
     variants: [{
-      argumentNames: ['f', 'colls'],
+      argumentNames: ['colls', 'fn'],
     }],
-    description: 'Returns the result of applying concat to the result of applying map to $f and $colls.',
+    description: 'Returns the result of applying concat to the result of applying map to $fn and $colls.',
     examples: [
-      '(mapcat reverse [[3 2 1 0] [6 5 4] [9 8 7]])',
-      '(mapcat reverse [[3 2 1 0] [6 [5] 4] [9 8 7]])',
-      '(defn foo [n] [(- n 1) n (+ n 1)]) (mapcat foo [1 2 3])',
-      '(mapcat #(remove even? %1) [[1 2] [2 2] [2 3]])',
+      'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
+      '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
+      `
+function foo(n)
+  [n - 1, n, n + 1]
+end;
+[1, 2, 3] mapcat foo`,
+      `
+mapcat(
+  [[1, 2], [2, 2], [2, 3]],
+  => $ remove even?
+)`,
     ],
+    algebraic: true,
   },
 }

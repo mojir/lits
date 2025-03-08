@@ -72,7 +72,7 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
     if (isNumberReservedSymbol(symbol)) {
       return {
         t: AstNodeType.Number,
-        v: numberReservedSymbolRecord[symbol].value,
+        v: numberReservedSymbolRecord[symbol],
         p: [],
         n: undefined,
         token: getTokenDebugData(tkn) && tkn,

@@ -987,7 +987,7 @@ function inactivateAll() {
 
 export function addToPlayground(name: string, encodedExample: string) {
   const example = decodeURIComponent(atob(encodedExample))
-  appendLitsCode(`// Example - ${name}\n\n${example}\n`)
+  appendLitsCode(`// Example - ${name}\n\n${example};\n`)
   saveState({ 'focused-panel': 'lits-code' })
   applyState()
 }

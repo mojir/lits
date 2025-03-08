@@ -6641,49 +6641,46 @@ var Playground = (function (exports) {
     }
 
     var nonNumberReservedSymbolRecord = {
-        true: { value: true, forbidden: false },
-        false: { value: false, forbidden: false },
-        nil: { value: null, forbidden: false },
-        null: { value: null, forbidden: false },
-        then: { value: null, forbidden: false },
-        else: { value: null, forbidden: false },
-        end: { value: null, forbidden: false },
-        case: { value: null, forbidden: false },
-        when: { value: null, forbidden: false },
-        while: { value: null, forbidden: false },
-        function: { value: null, forbidden: false },
-        export: { value: null, forbidden: false },
+        true: true,
+        false: false,
+        nil: null,
+        null: null,
+        then: null,
+        else: null,
+        end: null,
+        case: null,
+        when: null,
+        while: null,
+        function: null,
+        export: null,
     };
     var phi = (1 + Math.sqrt(5)) / 2;
     var numberReservedSymbolRecord = {
-        'E': { value: Math.E, forbidden: false },
-        '-E': { value: -Math.E, forbidden: false },
-        'ε': { value: Math.E, forbidden: false },
-        '-ε': { value: -Math.E, forbidden: false },
-        'PI': { value: Math.PI, forbidden: false },
-        '-PI': { value: -Math.PI, forbidden: false },
-        'π': { value: Math.PI, forbidden: false },
-        '-π': { value: -Math.PI, forbidden: false },
-        'PHI': { value: phi, forbidden: false },
-        '-PHI': { value: -phi, forbidden: false },
-        'φ': { value: phi, forbidden: false },
-        '-φ': { value: -phi, forbidden: false },
-        'POSITIVE_INFINITY': { value: Number.POSITIVE_INFINITY, forbidden: false },
-        '∞': { value: Number.POSITIVE_INFINITY, forbidden: false },
-        'NEGATIVE_INFINITY': { value: Number.NEGATIVE_INFINITY, forbidden: false },
-        '-∞': { value: Number.NEGATIVE_INFINITY, forbidden: false },
-        'MAX_SAFE_INTEGER': { value: Number.MAX_SAFE_INTEGER, forbidden: false },
-        'MIN_SAFE_INTEGER': { value: Number.MIN_SAFE_INTEGER, forbidden: false },
-        'MAX_VALUE': { value: Number.MAX_VALUE, forbidden: false },
-        'MIN_VALUE': { value: Number.MIN_VALUE, forbidden: false },
-        'EPSILON': { value: Number.EPSILON, forbidden: false },
-        '-EPSILON': { value: -Number.EPSILON, forbidden: false },
-        'NaN': { value: Number.NaN, forbidden: false },
+        'E': Math.E,
+        '-E': -Math.E,
+        'ε': Math.E,
+        '-ε': -Math.E,
+        'PI': Math.PI,
+        '-PI': -Math.PI,
+        'π': Math.PI,
+        '-π': -Math.PI,
+        'PHI': phi,
+        '-PHI': -phi,
+        'φ': phi,
+        '-φ': -phi,
+        'POSITIVE_INFINITY': Number.POSITIVE_INFINITY,
+        '∞': Number.POSITIVE_INFINITY,
+        'NEGATIVE_INFINITY': Number.NEGATIVE_INFINITY,
+        '-∞': Number.NEGATIVE_INFINITY,
+        'MAX_SAFE_INTEGER': Number.MAX_SAFE_INTEGER,
+        'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
+        'MAX_VALUE': Number.MAX_VALUE,
+        'MIN_VALUE': Number.MIN_VALUE,
+        'EPSILON': Number.EPSILON,
+        '-EPSILON': -Number.EPSILON,
+        'NaN': Number.NaN,
     };
-    var forbiddenAlgebraicReservedSymbolRecord = {
-        fn: { value: null, forbidden: true },
-    };
-    var algebraicReservedSymbolRecord = __assign(__assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord), forbiddenAlgebraicReservedSymbolRecord);
+    var algebraicReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
     __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
     function isNumberReservedSymbol(symbol) {
         return symbol in numberReservedSymbolRecord;
@@ -6735,7 +6732,7 @@ var Playground = (function (exports) {
             if (isNumberReservedSymbol(symbol)) {
                 return {
                     t: AstNodeType.Number,
-                    v: numberReservedSymbolRecord[symbol].value,
+                    v: numberReservedSymbolRecord[symbol],
                     p: [],
                     n: undefined,
                     token: getTokenDebugData(tkn) && tkn,
@@ -8533,11 +8530,8 @@ var Playground = (function (exports) {
         var symbolName = symbolMeta[1][1];
         symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName;
         var info = algebraicReservedSymbolRecord[symbolName];
-        if (!info) {
+        if (info === undefined) {
             return NO_MATCH;
-        }
-        if (info.forbidden) {
-            throw new LitsError("".concat(symbolName, " is forbidden!"), undefined);
         }
         return [symbolMeta[0], ['A_ReservedSymbol', symbolName]];
     };
@@ -9564,10 +9558,12 @@ var Playground = (function (exports) {
                 }],
             description: 'Takes a nested array $x and flattens it.',
             examples: [
-                '(flatten [1 2 [3 4] 5])',
-                "\n(let [foo :bar])\n(flatten\n  [1\n    \" 2 A \"\n    [foo [4 [:ABC]]] 6])",
-                '(flatten 12)',
+                'flatten([1, 2, [3, 4], 5])',
+                "\nlet foo = \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
+                'flatten(12)',
             ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
         mapcat: {
             title: 'mapcat',
@@ -9577,7 +9573,7 @@ var Playground = (function (exports) {
                 type: 'collection',
             },
             args: {
-                f: {
+                fn: {
                     type: 'function',
                 },
                 colls: {
@@ -9586,15 +9582,16 @@ var Playground = (function (exports) {
                 },
             },
             variants: [{
-                    argumentNames: ['f', 'colls'],
+                    argumentNames: ['colls', 'fn'],
                 }],
-            description: 'Returns the result of applying concat to the result of applying map to $f and $colls.',
+            description: 'Returns the result of applying concat to the result of applying map to $fn and $colls.',
             examples: [
-                '(mapcat reverse [[3 2 1 0] [6 5 4] [9 8 7]])',
-                '(mapcat reverse [[3 2 1 0] [6 [5] 4] [9 8 7]])',
-                '(defn foo [n] [(- n 1) n (+ n 1)]) (mapcat foo [1 2 3])',
-                '(mapcat #(remove even? %1) [[1 2] [2 2] [2 3]])',
+                'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
+                '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
+                "\nfunction foo(n)\n  [n - 1, n, n + 1]\nend;\n[1, 2, 3] mapcat foo",
+                "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  => $ remove even?\n)",
             ],
+            algebraic: true,
         },
     };
 
@@ -16541,7 +16538,7 @@ var Playground = (function (exports) {
     }
     function addToPlayground(name, encodedExample) {
         var example = decodeURIComponent(atob(encodedExample));
-        appendLitsCode("// Example - ".concat(name, "\n\n").concat(example, "\n"));
+        appendLitsCode("// Example - ".concat(name, "\n\n").concat(example, ";\n"));
         saveState({ 'focused-panel': 'lits-code' });
         applyState();
     }

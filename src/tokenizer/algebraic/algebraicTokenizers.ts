@@ -195,11 +195,8 @@ export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (
   symbolName = symbolName.startsWith('\'') ? symbolName.slice(1, symbolName.length - 1) : symbolName
 
   const info = algebraicReservedSymbolRecord[symbolName as AlgebraicReservedSymbol]
-  if (!info) {
+  if (info === undefined) {
     return NO_MATCH
-  }
-  if (info.forbidden) {
-    throw new LitsError(`${symbolName} is forbidden!`, undefined)
   }
   return [symbolMeta[0], ['A_ReservedSymbol', symbolName as ValidReservedSymbol]]
 }

@@ -6,8 +6,8 @@ import { apiReference, isFunctionReference, normalExpressionReference } from '..
 import { normalExpressionKeys, specialExpressionKeys } from '../src/builtin'
 import { canBeOperator, isUnknownRecord } from '../src/typeGuards'
 import { normalExpressions } from '../src/builtin/normalExpressions'
-import { isA_ReservedSymbolToken } from '../src/tokenizer/algebraic/algebraicTokens'
 import { isReservedSymbol } from '../src/tokenizer/algebraic/algebraicReservedNames'
+import { Lits } from '../src'
 
 function getLinkName(name: string): string {
   name = name.replace(/≠/g, '-ne2')
@@ -34,6 +34,7 @@ function getLinkName(name: string): string {
   return name
 }
 
+const lits = new Lits()
 describe('apiReference', () => {
   const referenceAliases = Object.values(apiReference)
     .filter(obj => isFunctionReference(obj))
@@ -101,6 +102,19 @@ describe('apiReference', () => {
           argumentNames.forEach((argName) => {
             expect(isReservedSymbol(argName), `${key} in ${obj.category} has invalid argument name ${argName}`).toBe(false)
           })
+        })
+      })
+    })
+  })
+
+  describe('examples', () => {
+    Object.entries(apiReference).forEach(([key, obj]) => {
+      test(key, () => {
+        obj.examples.forEach((example, index) => {
+          expect(example, `${obj.category}:${key}. Example number ${index + 1} ended with ;`).not.toMatch(/;\s*$/)
+          if (obj.algebraic) {
+            expect(() => lits.run(example), `${obj.category}:${key}. Example number ${index + 1}`).not.toThrow()
+          }
         })
       })
     })
