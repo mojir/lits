@@ -396,6 +396,6 @@ export function isDataType(arg: string): arg is DataType {
   return dataTypes.includes(arg as DataType)
 }
 
-export function getOperatorArgs(a: DataType, b: DataType): Record<string, Argument> {
+export function getOperatorArgs(a: DataType | DataType[], b: DataType | DataType[]): Record<string, Argument> {
   return { a: { type: a }, b: { type: b } }
 }

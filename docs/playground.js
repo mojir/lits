@@ -13087,11 +13087,13 @@ var Playground = (function (exports) {
             ],
             description: 'Creates a RegExp from $pattern and $flags.',
             examples: [
-                '(regexp "^\\s*(.*)$")',
+                'regexp("^\\s*(.*)$")',
                 '#"^\\s*(.*)$"',
-                '(regexp "albert" :i)',
+                'regexp("albert", "ig")',
                 '#"albert"ig',
             ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
         match: {
             title: 'match',
@@ -13102,26 +13104,21 @@ var Playground = (function (exports) {
                 type: 'any',
                 array: true,
             },
-            args: {
-                r: {
-                    type: 'regexp',
-                },
-                s: {
-                    type: 'string',
-                },
-            },
+            args: __assign({}, getOperatorArgs('regexp', 'string')),
             variants: [
-                { argumentNames: ['r', 's'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: "Matches $s against regular expression $r.\nIf $s is a string and matches the regular expression, a `match`-array is returned, otherwise `null` is returned.",
+            description: "Matches $b against regular expression $a.\nIf $b is a string and matches the regular expression, a `match`-array is returned, otherwise `null` is returned.",
             examples: [
-                '(match "  A string" (regexp "^\\s*(.*)$"))',
-                '(match "My name is Albert" #"albert"i)',
-                '(match "My name is Ben" #"albert"i)',
-                '(match null #"albert"i)',
-                '(match 1 #"albert"i)',
-                '(match {} #"albert"i)',
+                'match("  A string", regexp("^\\\\s*(.*)$"))',
+                'match("  A string", #"^\\s*(.*)$")',
+                'match("My name is Albert", #"albert"i)',
+                'match("My name is Ben", #"albert"i)',
+                'match(null, #"albert"i)',
+                'match(1, #"albert"i)',
+                'match({}, #"albert"i)',
             ],
+            algebraic: true,
         },
         replace: {
             title: 'replace',
@@ -13132,29 +13129,22 @@ var Playground = (function (exports) {
                 type: 'any',
                 array: true,
             },
-            args: {
-                s: {
+            args: __assign(__assign({}, getOperatorArgs('string', ['regexp', 'string'])), { x: {
                     type: 'string',
-                },
-                r: {
-                    type: ['regexp', 'string'],
-                },
-                x: {
-                    type: 'string',
-                },
-            },
+                } }),
             variants: [
-                { argumentNames: ['s', 'r', 'x'] },
+                { argumentNames: ['a', 'b', 'x'] },
             ],
-            description: 'Returns a new string with first match of regular expression $r replaced by $x.',
+            description: 'Returns a new string with first match of regular expression $b replaced by $x.',
             examples: [
-                '(replace "Duck duck" "u" :i)',
-                '(replace "Duck duck" (regexp :u) :i)',
-                '(replace "abcABC" (regexp :a "i") "-")',
-                '(replace "abcABC" (regexp :a "gi") "-")',
-                '(replace "abcABC" #"a"i "-")',
-                '(replace "abcABC" #"a"gi "-")',
+                'replace("Duck duck", "u", "i")',
+                'replace("Duck duck", #"u", "i")',
+                'replace("abcABC", regexp("a", "i"), "-")',
+                'replace("abcABC", regexp("a", "gi"), "-")',
+                'replace("abcABC", #"a"i, "-")',
+                'replace("abcABC", #"a"gi, "-")',
             ],
+            algebraic: true,
         },
         replace_all: {
             title: 'replace_all',
@@ -13165,29 +13155,22 @@ var Playground = (function (exports) {
                 type: 'any',
                 array: true,
             },
-            args: {
-                s: {
+            args: __assign(__assign({}, getOperatorArgs('string', ['regexp', 'string'])), { x: {
                     type: 'string',
-                },
-                r: {
-                    type: ['regexp', 'string'],
-                },
-                x: {
-                    type: 'string',
-                },
-            },
+                } }),
             variants: [
-                { argumentNames: ['s', 'r', 'x'] },
+                { argumentNames: ['a', 'b', 'x'] },
             ],
-            description: 'Returns a new string with all matches of regular expression $r replaced by $x.',
+            description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
             examples: [
-                '(replace_all "Duck duck" "u" :i)',
-                '(replace_all "Duck duck" (regexp :u) :i)',
-                '(replace_all "abcABC" (regexp :a "i") "-")',
-                '(replace_all "abcABC" (regexp :a "gi") "-")',
-                '(replace_all "abcABC" #"a"i "-")',
-                '(replace_all "abcABC" #"a"gi "-")',
+                'replace_all("Duck duck", "u", "i")',
+                'replace_all("Duck duck", regexp("u"), "i")',
+                'replace_all("abcABC", regexp("a", "i"), "-")',
+                'replace_all("abcABC", regexp("a", "gi"), "-")',
+                'replace_all("abcABC", #"a"i, "-")',
+                'replace_all("abcABC", #"a"gi, "-")',
             ],
+            algebraic: true,
         },
     };
 
