@@ -9593,7 +9593,8 @@ var Playground = (function (exports) {
         },
     };
 
-    var assertReference = { 'assert': {
+    var assertReference = {
+        'assert': {
             title: 'assert',
             category: 'Assert',
             linkName: 'assert',
@@ -9613,8 +9614,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['value', 'message'] },
             ],
             description: 'If $value is falsy it throws `AssertionError` with $message. If no $message is provided, message is set to $value.',
-            examples: ['(assert 0 "Expected a positive value")'],
-        }, 'assert=': {
+            examples: ['try assert(0, "Expected a positive value") catch (e) e.message end'],
+            algebraic: true,
+            noOperatorDocumentation: true,
+        },
+        'assert=': {
             title: 'assert=',
             category: 'Assert',
             linkName: 'assert-equal',
@@ -9622,28 +9626,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is not the same as $b it throws `AssertionError`.',
             examples: [
-                '(assert= 0 1 "Expected same values")',
-                '(assert= 0 1)',
-                '(assert= 1 1)',
+                'try assert=(0, 1, "Expected same values") catch (e) e.message end',
+                'try assert=(0, 1) catch (e) e.message end',
+                'try 0 assert= 1 catch (e) e.message end',
+                'try assert=(1, 1) catch (e) e.message end',
             ],
-        }, 'assert!=': {
+            algebraic: true,
+        },
+        'assert!=': {
             title: 'assert!=',
             category: 'Assert',
             linkName: 'assert-exclamation-equal',
@@ -9651,28 +9650,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is the same as $b it throws `AssertionError`.',
             examples: [
-                '(assert!= 0 0 "Expected different values")',
-                '(assert!= 0 0)',
-                '(assert!= 0 1)',
+                'try assert!=(0, 0, "Expected different values") catch (e) e.message end',
+                'try assert!=(0, 0) catch (e) e.message end',
+                'try 0 assert!= 0 catch (e) e.message end',
+                'try assert!=(0, 1) catch (e) e.message end',
             ],
-        }, 'assert_equal': {
+            algebraic: true,
+        },
+        'assert_equal': {
             title: 'assert_equal',
             category: 'Assert',
             linkName: 'assert_equal',
@@ -9680,28 +9674,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is not deep equal to $b it throws `AssertionError`.',
             examples: [
-                '(assert_equal { :a 1 } { :a 2 } "Expected equal values")',
-                '(assert_equal { :a 1 } { :a 2 })',
-                '(assert_equal { :a 1 } { :a 1 })',
+                'try assert_equal({ "a" = 1 }, { "a" = 2 }, "Expected equal values") catch (e) e.message end',
+                'try assert_equal({ "a" = 1 }, { "a" = 2 }) catch (e) e.message end',
+                'try assert_equal({ "a" = 1 }, { "a" = 1 }) catch (e) e.message end',
             ],
-        }, 'assert_not_equal': {
+            algebraic: true,
+        },
+        'assert_not_equal': {
             title: 'assert_not_equal',
             category: 'Assert',
             linkName: 'assert_not_equal',
@@ -9709,28 +9697,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is not deep equal to $b it throws `AssertionError`.',
             examples: [
-                '(assert_not_equal { :a 2 } { :a 2 } "Expected different values")',
-                '(assert_not_equal { :a 2 } { :a 2 })',
-                '(assert_not_equal { :a 1 } { :a 2 })',
+                'try assert_not_equal({ "a" = 2 }, { "a" = 2 }, "Expected different values") catch (e) e.message end',
+                'try assert_not_equal({ "a" = 2 }, { "a" = 2 }) catch (e) e.message end',
+                'try assert_not_equal({ "a" = 1 }, { "a" = 2 }) catch (e) e.message end',
             ],
-        }, 'assert_gt': {
+            algebraic: true,
+        },
+        'assert_gt': {
             title: 'assert_gt',
             category: 'Assert',
             linkName: 'assert_gt',
@@ -9738,28 +9720,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is not greater than $b it throws `AssertionError`.',
             examples: [
-                '(assert_gt 0 1 "Expected greater value")',
-                '(assert_gt 0 0)',
-                '(assert_gt 1 0)',
+                'try assert_gt(0, 1, "Expected greater value") catch (e) e.message end',
+                'try assert_gt(0, 0) catch (e) e.message end',
+                'try assert_gt(1, 0) catch (e) e.message end',
             ],
-        }, 'assert_lt': {
+            algebraic: true,
+        },
+        'assert_lt': {
             title: 'assert_lt',
             category: 'Assert',
             linkName: 'assert_lt',
@@ -9767,28 +9743,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is not less than $b it throws `AssertionError`.',
             examples: [
-                '(assert_lte 1 0 "Expected smaller value value")',
-                '(assert_lte 1 1)',
-                '(assert_lte 0 1)',
+                'try assert_lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'try assert_lte(1, 1) catch (e) e.message end',
+                'try assert_lte(0, 1) catch (e) e.message end',
             ],
-        }, 'assert_gte': {
+            algebraic: true,
+        },
+        'assert_gte': {
             title: 'assert_gte',
             category: 'Assert',
             linkName: 'assert_gte',
@@ -9796,28 +9766,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is less than $b it throws `AssertionError`.',
             examples: [
-                '(assert_gte 0 1 "Expected greater value")',
-                '(assert_gte 0 1)',
-                '(assert_gte 1 1)',
+                'try assert_gte(0, 1, "Expected greater value") catch (e) e.message end',
+                'try assert_gte(0, 1) catch (e) e.message end',
+                'try assert_gte(1, 1) catch (e) e.message end',
             ],
-        }, 'assert_lte': {
+            algebraic: true,
+        },
+        'assert_lte': {
             title: 'assert_lte',
             category: 'Assert',
             linkName: 'assert_lte',
@@ -9825,28 +9789,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'null',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-                message: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
             description: 'If $a is grater than $b it throws `AssertionError`.',
             examples: [
-                '(assert_lte 1 0 "Expected smaller value value")',
-                '(assert_lte 1 0)',
-                '(assert_lte 1 1)',
+                'try assert_lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'try assert_lte(1, 0) catch (e) e.message end',
+                'try assert_lte(1, 1) catch (e) e.message end',
             ],
-        }, 'assert_true': {
+            algebraic: true,
+        },
+        'assert_true': {
             title: 'assert_true',
             category: 'Assert',
             linkName: 'assert_true',
@@ -9868,11 +9826,13 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `true` it throws `AssertionError`.',
             examples: [
-                '(assert_true false "Expected true")',
-                '(assert_true false)',
-                '(assert_true true)',
+                'try assert_true(false, "Expected true") catch (e) e.message end',
+                'try assert_true(false) catch (e) e.message end',
+                'try assert_true(true) catch (e) e.message end',
             ],
-        }, 'assert_false': {
+            algebraic: true,
+        },
+        'assert_false': {
             title: 'assert_false',
             category: 'Assert',
             linkName: 'assert_false',
@@ -9894,11 +9854,13 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `false` it throws `AssertionError`.',
             examples: [
-                '(assert_false true "Expected false")',
-                '(assert_false true)',
-                '(assert_false false)',
+                'try assert_false(true, "Expected false") catch (e) e.message end',
+                'try assert_false(true) catch (e) e.message end',
+                'try assert_false(false) catch (e) e.message end',
             ],
-        }, 'assert_truthy': {
+            algebraic: true,
+        },
+        'assert_truthy': {
             title: 'assert_truthy',
             category: 'Assert',
             linkName: 'assert_truthy',
@@ -9920,18 +9882,20 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `truthy` it throws `AssertionError`.',
             examples: [
-                '(assert_truthy false "Expected truthy")',
-                '(assert_truthy false)',
-                '(assert_truthy 0)',
-                '(assert_truthy null)',
-                '(assert_truthy "")',
-                '(assert_truthy true)',
-                '(assert_truthy 1)',
-                '(assert_truthy :x)',
-                '(assert_truthy [])',
-                '(assert_truthy {})',
+                'try assert_truthy(false, "Expected truthy") catch (e) e.message end',
+                'try assert_truthy(false) catch (e) e.message end',
+                'try assert_truthy(0) catch (e) e.message end',
+                'try assert_truthy(null) catch (e) e.message end',
+                'try assert_truthy("") catch (e) e.message end',
+                'try assert_truthy(true) catch (e) e.message end',
+                'try assert_truthy(1) catch (e) e.message end',
+                'try assert_truthy("x") catch (e) e.message end',
+                'try assert_truthy([]) catch (e) e.message end',
+                'try assert_truthy({}) catch (e) e.message end',
             ],
-        }, 'assert_falsy': {
+            algebraic: true,
+        },
+        'assert_falsy': {
             title: 'assert_falsy',
             category: 'Assert',
             linkName: 'assert_falsy',
@@ -9953,17 +9917,19 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `falsy` it throws `AssertionError`.',
             examples: [
-                '(assert_falsy true "Expected falsy")',
-                '(assert_falsy :x)',
-                '(assert_falsy [])',
-                '(assert_falsy {})',
-                '(assert_falsy 1)',
-                '(assert_falsy false)',
-                '(assert_falsy 0)',
-                '(assert_falsy null)',
-                '(assert_falsy "")',
+                'try assert_falsy(true, "Expected falsy") catch (e) e.message end',
+                'try assert_falsy("x") catch (e) e.message end',
+                'try assert_falsy([]) catch (e) e.message end',
+                'try assert_falsy({}) catch (e) e.message end',
+                'try assert_falsy(1) catch (e) e.message end',
+                'try assert_falsy(false) catch (e) e.message end',
+                'try assert_falsy(0) catch (e) e.message end',
+                'try assert_falsy(null) catch (e) e.message end',
+                'try assert_falsy("") catch (e) e.message end',
             ],
-        }, 'assert_null': {
+            algebraic: true,
+        },
+        'assert_null': {
             title: 'assert_null',
             category: 'Assert',
             linkName: 'assert_null',
@@ -9985,17 +9951,19 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `null` it throws `AssertionError`.',
             examples: [
-                '(assert_null null)',
-                '(assert_null true "Expected null")',
-                '(assert_null :x)',
-                '(assert_null [])',
-                '(assert_null {})',
-                '(assert_null 1)',
-                '(assert_null false)',
-                '(assert_null 0)',
-                '(assert_null "")',
+                'try assert_null(null) catch (e) e.message end',
+                'try assert_null(true, "Expected null") catch (e) e.message end',
+                'try assert_null("x") catch (e) e.message end',
+                'try assert_null([]) catch (e) e.message end',
+                'try assert_null({}) catch (e) e.message end',
+                'try assert_null(1) catch (e) e.message end',
+                'try assert_null(false) catch (e) e.message end',
+                'try assert_null(0) catch (e) e.message end',
+                'try assert_null("") catch (e) e.message end',
             ],
-        }, 'assert_throws': {
+            algebraic: true,
+        },
+        'assert_throws': {
             title: 'assert_throws',
             category: 'Assert',
             linkName: 'assert_throws',
@@ -10016,8 +9984,9 @@ var Playground = (function (exports) {
                 { argumentNames: ['fn', 'message'] },
             ],
             description: 'If $fn does not throw, it throws `AssertionError`.',
-            examples: ['(assert_throws #(throw "Error"))', '(assert_throws #(identity "Error"))'],
-        }, 'assert_throws_error': {
+            examples: ['assert_throws(=> throw("Error"))', 'assert_throws(=> identity("Error"))'],
+        },
+        'assert_throws_error': {
             title: 'assert_throws_error',
             category: 'Assert',
             linkName: 'assert_throws_error',
@@ -10042,11 +10011,12 @@ var Playground = (function (exports) {
             ],
             description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
             examples: [
-                '(assert_throws_error #(throw :Error) :Error)',
-                '(assert_throws_error #(throw "Something else") :Error "Hej alla barn")',
-                '(assert_throws_error #(identity :Error) :Error)',
+                'try assert_throws_error(=> throw("Error"), "Error") catch (e) e.message end',
+                'try assert_throws_error(=> identity("Error"), "Error") catch (e) e.message end',
             ],
-        }, 'assert_not_throws': {
+            algebraic: true,
+        },
+        'assert_not_throws': {
             title: 'assert_not_throws',
             category: 'Assert',
             linkName: 'assert_not_throws',
@@ -10067,8 +10037,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['fn', 'message'] },
             ],
             description: 'If $fn throws, it throws `AssertionError`.',
-            examples: ['(assert_not_throws #(identity "Error"))', '(assert_not_throws #(throw "Error"))'],
-        } };
+            examples: [
+                'try assert_not_throws(=> identity("Error")) catch (e) e.message end',
+                'try assert_not_throws(=> throw("Error")) catch (e) e.message end',
+            ],
+        },
+    };
 
     var bitwiseReference = { '<<': {
             title: '<<',
