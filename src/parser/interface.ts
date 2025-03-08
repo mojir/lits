@@ -90,8 +90,8 @@ export interface SomePredFunction extends GenericLitsFunction {
   f: Arr
 }
 
-export interface FNilFunction extends GenericLitsFunction {
-  t: FunctionType.Fnil
+export interface FNullFunction extends GenericLitsFunction {
+  t: FunctionType.Fnull
   f: Any
   p: Arr
 }
@@ -112,7 +112,7 @@ export type LitsFunction =
   | ComplementFunction
   | EveryPredFunction
   | SomePredFunction
-  | FNilFunction
+  | FNullFunction
 
 export type LitsFunctionType = LitsFunction['t']
 

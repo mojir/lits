@@ -8,7 +8,7 @@ import type {
   ConstantlyFunction,
   EvaluatedFunctionOverload,
   EveryPredFunction,
-  FNilFunction,
+  FNullFunction,
   JuxtFunction,
   LitsFunctionType,
   NativeJsFunction,
@@ -161,9 +161,9 @@ export const functionExecutors: FunctionExecutors = {
     }
     return false
   },
-  [FunctionType.Fnil]: (fn: FNilFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
-    const fniledParams = params.map((param, index) => (param === null ? toAny(fn.p[index]) : param))
-    return executeFunction(toAny(fn.f), fniledParams, contextStack, sourceCodeInfo)
+  [FunctionType.Fnull]: (fn: FNullFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
+    const fnulledParams = params.map((param, index) => (param === null ? toAny(fn.p[index]) : param))
+    return executeFunction(toAny(fn.f), fnulledParams, contextStack, sourceCodeInfo)
   },
   [FunctionType.Builtin]: (fn: BuiltinFunction, params, sourceCodeInfo, contextStack, { executeFunction }) => {
     const normalExpression = asNonUndefined(normalExpressions[fn.n], sourceCodeInfo)

@@ -121,7 +121,7 @@ export const api = {
     'complement',
     'every_pred',
     'some_pred',
-    'fnil',
+    'fnull',
   ] as const,
   misc: [
     '!=',

@@ -38,7 +38,7 @@ export enum FunctionType {
   Complement = 306,
   EveryPred = 307,
   SomePred = 308,
-  Fnil = 309,
+  Fnull = 309,
   Builtin = 310,
   NativeJsFunction = 399,
 }
@@ -52,7 +52,7 @@ export const functionTypeName = new Map([
   [FunctionType.Complement, 'Complement'],
   [FunctionType.EveryPred, 'EveryPred'],
   [FunctionType.SomePred, 'SomePred'],
-  [FunctionType.Fnil, 'Fnil'],
+  [FunctionType.Fnull, 'Fnull'],
   [FunctionType.Builtin, 'Builtin'],
 ])
 

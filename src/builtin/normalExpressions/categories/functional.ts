@@ -5,7 +5,7 @@ import type {
   ComplementFunction,
   ConstantlyFunction,
   EveryPredFunction,
-  FNilFunction,
+  FNullFunction,
   JuxtFunction,
   PartialFunction,
   SomePredFunction,
@@ -127,12 +127,12 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
 
-  fnil: {
-    evaluate: ([fn, ...params], sourceCodeInfo): FNilFunction => {
+  fnull: {
+    evaluate: ([fn, ...params], sourceCodeInfo): FNullFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
         sourceCodeInfo,
-        t: FunctionType.Fnil,
+        t: FunctionType.Fnull,
         f: toAny(fn),
         p: params,
       }
