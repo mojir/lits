@@ -6,19 +6,6 @@ import { assertNumber } from '../../../typeGuards/number'
 import { assertString } from '../../../typeGuards/string'
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
-  '!=': {
-    evaluate: (params): boolean => {
-      for (let i = 0; i < params.length - 1; i += 1) {
-        for (let j = i + 1; j < params.length; j += 1) {
-          if (params[i] === params[j])
-            return false
-        }
-      }
-
-      return true
-    },
-    paramCount: { min: 1 },
-  },
   '≠': {
     evaluate: (params): boolean => {
       for (let i = 0; i < params.length - 1; i += 1) {
@@ -31,6 +18,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return true
     },
     paramCount: { min: 1 },
+    aliases: ['!='],
   },
   '==': {
     evaluate: ([first, ...rest]): boolean => {
@@ -48,6 +36,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return deepEqual(asAny(a, sourceCodeInfo), asAny(b, sourceCodeInfo), sourceCodeInfo)
     },
     paramCount: { min: 1 },
+    aliases: ['≡'],
   },
   '>': {
     evaluate: ([first, ...rest]): boolean => {
@@ -76,20 +65,6 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-
-  '>=': {
-    evaluate: ([first, ...rest]): boolean => {
-      let currentValue = first
-      for (const param of rest) {
-        if (compare(currentValue, param) < 0)
-          return false
-
-        currentValue = param
-      }
-      return true
-    },
-    paramCount: { min: 1 },
-  },
   '≥': {
     evaluate: ([first, ...rest]): boolean => {
       let currentValue = first
@@ -102,20 +77,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return true
     },
     paramCount: { min: 1 },
-  },
-
-  '<=': {
-    evaluate: ([first, ...rest]): boolean => {
-      let currentValue = first
-      for (const param of rest) {
-        if (compare(currentValue, param) > 0)
-          return false
-
-        currentValue = param
-      }
-      return true
-    },
-    paramCount: { min: 1 },
+    aliases: ['>='],
   },
   '≤': {
     evaluate: ([first, ...rest]): boolean => {
@@ -129,6 +91,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
       return true
     },
     paramCount: { min: 1 },
+    aliases: ['<='],
   },
   '!': {
     evaluate: ([first]): boolean => !first,

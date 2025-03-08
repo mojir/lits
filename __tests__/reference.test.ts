@@ -10,12 +10,10 @@ import { isReservedSymbol } from '../src/tokenizer/algebraic/algebraicReservedNa
 import { Lits } from '../src'
 
 function getLinkName(name: string): string {
-  name = name.replace(/≠/g, '-ne2')
-  name = name.replace(/<=/g, '-lte')
-  name = name.replace(/≤/g, '-lte2')
+  name = name.replace(/≠/g, '-ne')
+  name = name.replace(/≤/g, '-lte')
   name = name.replace(/</g, '-lt')
-  name = name.replace(/>=/g, '-gte')
-  name = name.replace(/≥/g, '-gte2')
+  name = name.replace(/≥/g, '-gte')
   name = name.replace(/>/g, '-gt')
   name = name.replace(/=/g, '-equal')
   name = name.replace(/\+/g, '-plus')

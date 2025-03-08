@@ -1,40 +1,17 @@
 import type { FunctionReference } from '..'
-import type { MiscApiName } from '../api'
+import { type MiscApiName, getOperatorArgs } from '../api'
 
 export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
-  '!=': {
-    title: '!=',
-    category: 'Misc',
-    clojureDocs: 'not=',
-    linkName: '-exclamation-equal',
-    returns: {
-      type: 'boolean',
-    },
-    args: {
-      x: {
-        type: 'any',
-      },
-      ys: {
-        type: 'any',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['x'] },
-      { argumentNames: ['x', 'ys'] },
-    ],
-    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
-    examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
-  },
   '≠': {
     title: '≠',
     category: 'Misc',
     clojureDocs: 'not=',
-    linkName: '-ne2',
+    linkName: '-ne',
     returns: {
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('any', 'any'),
       x: {
         type: 'any',
       },
@@ -48,7 +25,16 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x', 'ys'] },
     ],
     description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
-    examples: ['(≠ 3)', '(≠ 3 2)', '(≠ :3 3)', '(≠ 3 3 2)', '(≠ :3 :2 :1 :0)', '(≠ 0 -0)'],
+    examples: [
+      '1 ≠ 2',
+      '3 != 3',
+      '≠(3)',
+      '!=(3, 3, 2)',
+      '≠("3", "2", "1", "0",)',
+      '!=(0, -0)',
+    ],
+    aliases: ['!='],
+    algebraic: true,
   },
   '==': {
     title: '==',
@@ -120,8 +106,8 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     description: 'Returns `true` if the number $x and $ys are in decreasing order, `false` otherwise.',
     examples: ['(> 1 0)', '(> 1.01 1)', '(> 1 1)', '(> 4 3 2 1)', '(> 3 2 2 1)'],
   },
-  '<=': {
-    title: '<=',
+  '≤': {
+    title: '≤',
     category: 'Misc',
     linkName: '-lte',
     returns: {
@@ -141,33 +127,18 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x', 'ys'] },
     ],
     description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
-    examples: ['(<= 0 1)', '(<= 1 1.01)', '(<= 1 1)', '(<= 1 2 3 4)', '(<= 1 2 2 3)'],
-  },
-  '≤': {
-    title: '≤',
-    category: 'Misc',
-    linkName: '-lte2',
-    returns: {
-      type: 'boolean',
-    },
-    args: {
-      x: {
-        type: 'number',
-      },
-      ys: {
-        type: 'number',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['x'] },
-      { argumentNames: ['x', 'ys'] },
+    examples: [
+      '1 ≤ 1',
+      '<=(0, 1)',
+      '≤(1, 1.01)',
+      '<=(1, 1)',
+      '≤(1, 2, 3, 4)',
+      '<=(1, 2, 2, 3)',
     ],
-    description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
-    examples: ['(≤ 0 1)', '(≤ 1 1.01)', '(≤ 1 1)', '(≤ 1 2 3 4)', '(≤ 1 2 2 3)'],
+    aliases: ['<='],
   },
-  '>=': {
-    title: '>=',
+  '≥': {
+    title: '≥',
     category: 'Misc',
     linkName: '-gte',
     returns: {
@@ -187,30 +158,16 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x', 'ys'] },
     ],
     description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
-    examples: ['(>= 1 0)', '(>= 1.01 1)', '(>= 1 1)', '(>= 4 3 2 1)', '(>= 3 2 2 1)'],
-  },
-  '≥': {
-    title: '≥',
-    category: 'Misc',
-    linkName: '-gte2',
-    returns: {
-      type: 'boolean',
-    },
-    args: {
-      x: {
-        type: 'number',
-      },
-      ys: {
-        type: 'number',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['x'] },
-      { argumentNames: ['x', 'ys'] },
+    examples: [
+      '1 ≥ 1',
+      '0 ≥ 1',
+      '>=(1, 0)',
+      '≥(1.01, 1)',
+      '>=(1, 1)',
+      '≥(4, 3, 2, 1)',
+      '>=(3, 2, 2, 1)',
     ],
-    description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
-    examples: ['(≥ 1 0)', '(≥ 1.01 1)', '(≥ 1 1)', '(≥ 4 3 2 1)', '(≥ 3 2 2 1)'],
+    aliases: ['>='],
   },
   '!': {
     title: '!',
@@ -381,6 +338,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(== 0.3 (+ 0.1 0.2))',
       '(equal? 0.3 (+ 0.1 0.2))',
     ],
+    aliases: ['≡'],
   },
   'json_parse': {
     title: 'json_parse',
