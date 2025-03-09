@@ -88,7 +88,7 @@ describe('math functions', () => {
       expect(() => lits.run('"1" - 2')).toThrow()
     })
     it('strange bug', () => {
-      expect(lits.run('let a = 0; let b = 2; a - b')).toBe(-2)
+      expect(lits.run('let a := 0; let b := 2; a - b')).toBe(-2)
     })
   })
 

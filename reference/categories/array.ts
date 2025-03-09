@@ -124,7 +124,7 @@ range(
     examples: [
       'flatten([1, 2, [3, 4], 5])',
       `
-let foo = "bar";
+let foo := "bar";
 flatten([
   1,
   " 2 A ",

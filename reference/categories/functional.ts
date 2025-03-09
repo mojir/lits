@@ -51,7 +51,7 @@ apply(
       { argumentNames: ['x'] },
     ],
     description: 'Returns $x.',
-    examples: ['identity(1)', 'identity("Albert")', 'identity({ a = 1 })', 'identity(null)'],
+    examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
     algebraic: true,
   },
   partial: {
@@ -79,10 +79,10 @@ When called, the returned function calls \`(\`$fn \`...\`$args\` ...additional_a
     examples: [
       'partial(+, 100)',
       `
-let plusMany = partial(+, 100, 1000);
+let plusMany := partial(+, 100, 1000);
 plusMany(1, 10)`,
       `
-let addHundred = partial(+, 100);
+let addHundred := partial(+, 100);
 addHundred(10)`,
     ],
     noOperatorDocumentation: true,
@@ -112,10 +112,10 @@ addHundred(10)`,
   the next function (right-to-left) to the result, etc.`,
     examples: [
       `
-let negative-quotient = comp(-, /);
+let negative-quotient := comp(-, /);
 negative-quotient(9, 3)`,
       `
-let x = { bar = { foo = 42 } };
+let x := { bar := { foo := 42 } };
 comp("foo", "bar")(x)`,
     ],
     algebraic: true,
@@ -138,7 +138,7 @@ comp("foo", "bar")(x)`,
     description: 'Returns a function that takes any number of arguments and always returns $x.',
     examples: [
       `
-let always-true = constantly(true);
+let always-true := constantly(true);
 always-true(9, 3)`,
     ],
     algebraic: true,
@@ -178,10 +178,10 @@ juxt(+, *, min, max)(
       `
 juxt("a", "b")(
   {
-    a = 1,
-    b = 2,
-    c = 3,
-    d = 4
+    a := 1,
+    b := 2,
+    c := 3,
+    d := 4
   }
 )`,
       `

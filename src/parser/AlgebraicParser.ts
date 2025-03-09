@@ -156,7 +156,7 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken | A_SymbolToken<'
       }
     /* v8 ignore next 8 */
     case ';':
-    case '=':
+    case ':=':
     case ',':
     case '=>':
     case '...':
@@ -443,7 +443,7 @@ export class AlgebraicParser {
         n: undefined,
       })
 
-      assertA_OperatorToken(this.peek(), '=')
+      assertA_OperatorToken(this.peek(), ':=')
       this.advance()
 
       params.push(this.parseExpression())
@@ -733,7 +733,7 @@ export class AlgebraicParser {
 
     const letSymbol = parseSymbol(this.tokenStream, this.parseState)
 
-    assertA_OperatorToken(this.peek(), '=')
+    assertA_OperatorToken(this.peek(), ':=')
     this.advance()
 
     const value = this.parseExpression()
@@ -788,7 +788,7 @@ export class AlgebraicParser {
     const bindingNodes: BindingNode[] = []
     while (!this.isAtEnd() && !isRParenToken(this.peek())) {
       const symbol = parseSymbol(this.tokenStream, this.parseState)
-      assertA_OperatorToken(this.peek(), '=')
+      assertA_OperatorToken(this.peek(), ':=')
       this.advance()
       const value = this.parseExpression()
       bindingNodes.push({
@@ -1275,7 +1275,7 @@ export class AlgebraicParser {
       this.advance()
       const symbol = parseSymbol(this.tokenStream, this.parseState)
 
-      assertA_OperatorToken(this.peek(), '=')
+      assertA_OperatorToken(this.peek(), ':=')
       this.advance()
 
       const value = this.parseExpression()

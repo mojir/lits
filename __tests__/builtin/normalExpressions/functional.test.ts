@@ -34,7 +34,7 @@ describe('functional functions', () => {
         expect(lits.run('identity(null)')).toBe(null)
         expect(lits.run('identity(false)')).toBe(false)
         expect(lits.run('identity(true)')).toBe(true)
-        expect(lits.run('identity({ "a" = 1 })')).toEqual({ a: 1 })
+        expect(lits.run('identity({ a := 1 })')).toEqual({ a: 1 })
         expect(lits.run('identity([1, 2, 3])')).toEqual([1, 2, 3])
         expect(() => lits.run('identity()')).toThrow()
         expect(() => lits.run('identity(1, 2)')).toThrow()
@@ -52,7 +52,7 @@ describe('functional functions', () => {
 
     describe('comp', () => {
       it('samples', () => {
-        expect(lits.run('let negative-quotient = comp(-, /); negative-quotient(9, 3)')).toBe(-3)
+        expect(lits.run('let negative-quotient := comp(-, /); negative-quotient(9, 3)')).toBe(-3)
         expect(
           lits.run(`
         (
@@ -64,14 +64,14 @@ describe('functional functions', () => {
         )([1, 2, 3, 4, 5, 6, 7], 3)
       `),
         ).toBe(4)
-        expect(lits.run('let x = { bar = { foo = 42 }}; comp("foo", "bar")(x)')).toBe(42)
+        expect(lits.run('let x := { bar := { foo := 42 }}; comp("foo", "bar")(x)')).toBe(42)
 
         expect(lits.run('comp()(10)')).toBe(10)
         expect(lits.run('comp()(null)')).toBe(null)
-        expect(lits.run('comp()({ "a" = 10 })')).toEqual({ a: 10 })
+        expect(lits.run('comp()({ "a" := 10 })')).toEqual({ a: 10 })
         expect(lits.run('comp()(["x", 10, null])')).toEqual(['x', 10, null])
         expect(lits.run(`
-let foo = comp(!, odd?);
+let foo := comp(!, odd?);
 [2, 3, 4, 5] filter foo`)).toEqual([2, 4])
         expect(() => lits.run('comp()(1, 2)')).toThrow()
         expect(() => lits.run('comp(true)()')).toThrow()
@@ -90,7 +90,7 @@ let foo = comp(!, odd?);
     describe('juxt', () => {
       it('samples', () => {
         expect(lits.run('juxt(+, *, min, max)(3, 4, 6)')).toEqual([13, 72, 3, 6])
-        expect(lits.run('juxt("a", "b")({ a = 1, b = 2, c = 3, d = 4})')).toEqual([1, 2])
+        expect(lits.run('juxt("a", "b")({ a := 1, b := 2, c := 3, d := 4})')).toEqual([1, 2])
         expect(lits.run('apply(juxt(+, *, min, max), range(1, 5))')).toEqual([10, 24, 1, 4])
         expect(() => lits.run('juxt()')).toThrow()
       })

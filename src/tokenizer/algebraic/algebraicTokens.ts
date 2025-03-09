@@ -62,7 +62,7 @@ const otherOperators = [
   '...', // rest
   '.', // property accessor
   ',', // item separator
-  '=', // property assignment
+  ':=', // property assignment
   ';', // statement terminator
 ] as const
 

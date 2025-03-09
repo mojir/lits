@@ -240,11 +240,11 @@ describe('algebraic operators', () => {
   })
   describe('objects', () => {
     test('samples', () => {
-      expect(lits.run('{ a = 2 + 3 }')).toEqual({ a: 5 })
-      expect(lits.run('{ a = 10 }')).toEqual({ a: 10 })
-      expect(lits.run('{ " " = 10 }')).toEqual({ ' ': 10 })
-      expect(lits.run('{ a = 10, b = 2 + 3 }')).toEqual({ a: 10, b: 5 })
-      expect(lits.run('{ a = 10, b = 20, c = 2 * (1 - 2) }')).toEqual({ a: 10, b: 20, c: -2 })
+      expect(lits.run('{ a := 2 + 3 }')).toEqual({ a: 5 })
+      expect(lits.run('{ a := 10 }')).toEqual({ a: 10 })
+      expect(lits.run('{ " " := 10 }')).toEqual({ ' ': 10 })
+      expect(lits.run('{ a := 10, b := 2 + 3 }')).toEqual({ a: 10, b: 5 })
+      expect(lits.run('{ a := 10, b := 20, c := 2 * (1 - 2) }')).toEqual({ a: 10, b: 20, c: -2 })
     })
   })
   describe('arrays', () => {
@@ -274,18 +274,18 @@ describe('algebraic operators', () => {
   })
   describe('propery accessor', () => {
     test('samples', () => {
-      expect(lits.run('{ a = 200 }.a')).toBe(200)
-      expect(lits.run('{ a = { b = 1, c = 2 } }.a.c')).toBe(2)
+      expect(lits.run('{ a := 200 }.a')).toBe(200)
+      expect(lits.run('{ a := { b := 1, c := 2 } }.a.c')).toBe(2)
       expect(lits.run('[1, 2, 3][1]')).toBe(2)
     })
   })
   describe('propery accessor with brackets', () => {
     test('samples', () => {
-      expect(lits.run('{ a = 200 }["a"]')).toBe(200)
+      expect(lits.run('{ a := 200 }["a"]')).toBe(200)
       expect(lits.run('[1, [10, 20, 30], 3][1][1]')).toBe(20)
-      expect(lits.run('{ foo = [1, 2, 3] }.foo[2 - 1]')).toBe(2)
-      expect(lits.run('{ foo = [1, { bar = 20 }, 3] }.foo[1].bar')).toBe(20)
-      expect(lits.run('[1, { bar = 20 }, 3][1].bar')).toBe(20)
+      expect(lits.run('{ foo := [1, 2, 3] }.foo[2 - 1]')).toBe(2)
+      expect(lits.run('{ foo := [1, { bar := 20 }, 3] }.foo[1].bar')).toBe(20)
+      expect(lits.run('[1, { bar := 20 }, 3][1].bar')).toBe(20)
     })
   })
 
@@ -322,7 +322,7 @@ describe('algebraic operators', () => {
       expect(lits.run('try 1 + "2" catch 0 end')).toBe(0)
       expect(lits.run(`
         try
-          let x = "2";
+          let x := "2";
           1 + x
         catch (error)
           error
@@ -431,8 +431,8 @@ describe('algebraic operators', () => {
       expect(() => lits.run('2 # 3')).toThrow()
       expect(() => lits.run('(1 + 2]')).toThrow()
       expect(() => lits.run('abs 2')).toThrow()
-      expect(() => lits.run('{ 2 = 1 }')).toThrow()
-      expect(() => lits.run('{ x = 1 y = 2 }')).toThrow()
+      expect(() => lits.run('{ 2 := 1 }')).toThrow()
+      expect(() => lits.run('{ x := 1 y := 2 }')).toThrow()
       expect(() => lits.run('[1 2]')).toThrow()
       expect(() => lits.run('if(1)')).toThrow() // To few parameters
       expect(() => lits.run(']')).toThrow()
@@ -573,14 +573,14 @@ describe('algebraic operators', () => {
 
   describe('export', () => {
     test('samples', () => {
-      // expect(lits.run('export let a = 10; a')).toBe(10)
+      // expect(lits.run('export let a := 10; a')).toBe(10)
       expect(lits.run(`
         export function foo()
           10
         end;
         foo()`)).toBe(10)
     })
-    // expect(() => lits.run('export let a = 10; let a = 2;')).toThrow()
+    // expect(() => lits.run('export let a := 10; let a := 2;')).toThrow()
   })
 
   test('multinine comment', () => {
@@ -596,21 +596,21 @@ describe('algebraic operators', () => {
     test('as operand', () => {
       expect(lits.run(`
         do 
-          let a = 1 + 2 * 3;
+          let a := 1 + 2 * 3;
           a
         end + 3`)).toBe(10)
     })
     test('scope', () => {
       expect(lits.run(`
-      let a = 1;
+      let a := 1;
       do
-        let a = 2;
+        let a := 2;
       end;
       a`)).toBe(1)
 
       expect(() => lits.run(`
       do
-        let a = 2;
+        let a := 2;
       end;
       a`)).toThrow() // a is not defined
     })
@@ -629,19 +629,19 @@ describe('algebraic operators', () => {
     })
 
     it('supports object literals', () => {
-      expect(lits.run('{ a = 10, b = 20 }')).toEqual({ a: 10, b: 20 })
+      expect(lits.run('{ a := 10, b := 20 }')).toEqual({ a: 10, b: 20 })
       expect(lits.run('{}')).toEqual({})
-      expect(lits.run('{ x = 1 + 1, y = 2 * 3 }')).toEqual({ x: 2, y: 6 })
+      expect(lits.run('{ x := 1 + 1, y := 2 * 3 }')).toEqual({ x: 2, y: 6 })
     })
 
     it('supports nested objects', () => {
-      expect(lits.run('{ a = 10, b = { c = 20, d = 30 } }')).toEqual({ a: 10, b: { c: 20, d: 30 } })
-      expect(lits.run('{ x = [1, 2], y = { z = [3, 4] } }')).toEqual({ x: [1, 2], y: { z: [3, 4] } })
+      expect(lits.run('{ a := 10, b := { c := 20, d := 30 } }')).toEqual({ a: 10, b: { c: 20, d: 30 } })
+      expect(lits.run('{ x := [1, 2], y := { z := [3, 4] } }')).toEqual({ x: [1, 2], y: { z: [3, 4] } })
     })
 
     it('supports property access', () => {
-      expect(lits.run('{ a = 10, b = 20 }.a')).toBe(10)
-      expect(lits.run('{ a = 10, b = { c = 20 } }.b.c')).toBe(20)
+      expect(lits.run('{ a := 10, b := 20 }.a')).toBe(10)
+      expect(lits.run('{ a := 10, b := { c := 20 } }.b.c')).toBe(20)
     })
 
     it('supports array access', () => {
@@ -677,8 +677,8 @@ describe('algebraic operators', () => {
 
   describe('let', () => {
     it('supports let bindings', () => {
-      expect(lits.run('let a = 10; a')).toBe(10)
-      expect(lits.run('let foo = => $ + 1; foo(1)')).toBe(2)
+      expect(lits.run('let a := 10; a')).toBe(10)
+      expect(lits.run('let foo := => $ + 1; foo(1)')).toBe(2)
     })
   })
 
@@ -686,8 +686,8 @@ describe('algebraic operators', () => {
     it('supports loop expressions', () => {
       expect(lits.run(`
         loop (
-          n = 10,
-          sum = 0
+          n := 10,
+          sum := 0
         )
           if n == 0 then
             sum
@@ -716,7 +716,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
 
   test('cond expression', () => {
     expect(lits.run(`
-      let val = 8;
+      let val := 8;
 
       cond
         case val < 5 then "S"
@@ -725,7 +725,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       end ?? "No match"`)).toBe('M')
 
     expect(lits.run(`
-        let val = 20;
+        let val := 20;
 
         cond
           case val < 5 then "S"
@@ -739,14 +739,14 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       case "-" then 1
     end`)).toBe(1)
     expect(lits.run(`
-      let x = 1;
+      let x := 1;
       switch x
         case 0 then "zero"
         case 1 then "one"
         case 2 then "two"
       end`)).toBe('one')
     expect(lits.run(`
-      let x = 10;
+      let x := 10;
       switch x
         case 0 then "zero"
         case 1 then "one"
@@ -795,7 +795,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
         end`)).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
       expect(lits.run(`
          for (
-           x of { a = 10, b = 20 },
+           x of { a := 10, b := 20 },
            y of [1, 2]
          )
            repeat(x, y)
@@ -823,7 +823,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
     test('with computed bindings using let', () => {
       expect(lits.run(`
-        for (x of [1, 2] let z = x * x * x)
+        for (x of [1, 2] let z := x * x * x)
           z
         end`)).toEqual([1, 8])
     })
@@ -838,13 +838,13 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
     test('with when conditions', () => {
       expect(lits.run(`
-        for (x of [0, 1, 2, 3, 4, 5] let y = x * 3 when even?(y))
+        for (x of [0, 1, 2, 3, 4, 5] let y := x * 3 when even?(y))
           y
         end`)).toEqual([0, 6, 12])
     })
     test('with while conditions (early termination)', () => {
       expect(lits.run(`
-        for (x of [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y))
+        for (x of [0, 1, 2, 3, 4, 5] let y := x * 3 while even?(y))
           y
         end`)).toEqual([0])
     })
@@ -899,52 +899,52 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
     test('real world example', () => {
       expect(lits.run(`// Imagine these are coming from a database
-        let products = [
-          { id = "P1", name = "Phone", price = 500, category = "electronics", stockLevel = 23 },
-          { id = "P2", name = "Headphones", price = 150, category = "electronics", stockLevel = 42 },
-          { id = "P3", name = "Case", price = 30, category = "accessories", stockLevel = 56 },
+        let products := [
+          { id := "P1", name := "Phone", price := 500, category := "electronics", stockLevel := 23 },
+          { id := "P2", name := "Headphones", price := 150, category := "electronics", stockLevel := 42 },
+          { id := "P3", name := "Case", price := 30, category := "accessories", stockLevel := 56 },
         ];
-        let customerPreferences = {
-          priceLimit = 700,
-          preferredCategories = ["electronics", "accessories"],
-          recentViews = ["P1", "P3", "P5"]
+        let customerPreferences := {
+          priceLimit := 700,
+          preferredCategories := ["electronics", "accessories"],
+          recentViews := ["P1", "P3", "P5"]
         };
         
         // Generate personalized bundle recommendations
         for (
           // Start with main products
           mainProduct of products
-            let isInStock = mainProduct.stockLevel > 0
-            let isPreferredCategory = has?(customerPreferences.preferredCategories, mainProduct.category)
-            let isPriceOk = mainProduct.price <= customerPreferences.priceLimit * 0.8
+            let isInStock := mainProduct.stockLevel > 0
+            let isPreferredCategory := has?(customerPreferences.preferredCategories, mainProduct.category)
+            let isPriceOk := mainProduct.price <= customerPreferences.priceLimit * 0.8
             when (isInStock && isPreferredCategory && isPriceOk),
             
         
           // Add compatible accessories
           accessory of products
-            let isCompatible = mainProduct.id != accessory.id && accessory.stockLevel > 0
-            let totalPrice = mainProduct.price + accessory.price
-            let isRecentlyViewed = has?(customerPreferences.recentViews, accessory.id)
+            let isCompatible := mainProduct.id != accessory.id && accessory.stockLevel > 0
+            let totalPrice := mainProduct.price + accessory.price
+            let isRecentlyViewed := has?(customerPreferences.recentViews, accessory.id)
             when (isCompatible && totalPrice <= customerPreferences.priceLimit)
             while totalPrice <= customerPreferences.priceLimit * 0.9,
         
           // For high-value bundles, consider a third complementary item
           complItem of products
-            let isValid = mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0
-            let finalPrice = mainProduct.price + accessory.price + complItem.price
-            let discount = if finalPrice > 500 then 0.1 else 0.05 end
-            let discountedPrice = finalPrice * (1 - discount)
-            let matchesPreferences = has?(customerPreferences.preferredCategories, complItem.category)
+            let isValid := mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0
+            let finalPrice := mainProduct.price + accessory.price + complItem.price
+            let discount := if finalPrice > 500 then 0.1 else 0.05 end
+            let discountedPrice := finalPrice * (1 - discount)
+            let matchesPreferences := has?(customerPreferences.preferredCategories, complItem.category)
             when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
             while discountedPrice <= customerPreferences.priceLimit
         )
           // Return bundle information object
           {
-            bundle = [mainProduct, accessory, complItem],
-            originalPrice = finalPrice,
-            discountedPrice = discountedPrice,
-            savingsAmount = discount * finalPrice,
-            savingsPercentage = discount * 100
+            bundle := [mainProduct, accessory, complItem],
+            originalPrice := finalPrice,
+            discountedPrice := discountedPrice,
+            savingsAmount := discount * finalPrice,
+            savingsPercentage := discount * 100
           }
         end
         `)).toEqual([
@@ -1009,8 +1009,8 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       ])
     })
     test('error cases', () => {
-      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let y = x * 3 while even?(y), y)')).toThrow()
-      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let { x = 10 }, y)')).toThrow()
+      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let y := x * 3 while even?(y), y)')).toThrow()
+      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let { x := 10 }, y)')).toThrow()
       expect(() => lits.run('for x of [0, 1, 2, 3, 4, 5], y')).toThrow()
       expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5], x, y)')).toThrow()
       expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5], x of [10, 20], x)')).toThrow()
@@ -1032,11 +1032,11 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       expect(lits.run('5 + 3 * 2 == 11')).toBe(true)
       expect(lits.run('(5 + 3) * 2 == 16')).toBe(true)
       expect(lits.run('[1, 2, 3][1 + 1] == 3')).toBe(true)
-      expect(lits.run('{ a = 10, b = 20 }.a + { a = 5, b = 15 }.b == 25')).toBe(true)
+      expect(lits.run('{ a := 10, b := 20 }.a + { a := 5, b := 15 }.b == 25')).toBe(true)
     })
 
     it('handles complex nested expressions', () => {
-      expect(lits.run('{ a = [1, 2, { b = 3 }] }.a[2].b')).toBe(3)
+      expect(lits.run('{ a := [1, 2, { b := 3 }] }.a[2].b')).toBe(3)
       expect(lits.run('[[1, 2], [3, 4]][1][abs(-1)]')).toBe(4)
     })
 
@@ -1088,15 +1088,15 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
 
     it('supports lambda functions with let bindings', () => {
       // Support for let bindings
-      expect(lits.run('(x => (y, let x = x) => x + y)(1)(2)')).toBe(3)
+      expect(lits.run('(x => (y, let x := x) => x + y)(1)(2)')).toBe(3)
       expect(lits.run(`
 (a => 
   (b, 
-    let a = a
+    let a := a
   ) => 
     (c, 
-      let a = a 
-      let b = b
+      let a := a 
+      let b := b
     ) => 
       a * b * c
 )(2)(3)(4)`)).toBe(24)
@@ -1121,13 +1121,13 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
 
     it('supports lambda function expressions in data structures', () => {
       expect(lits.run('map([1, 2, 3], (x) => x * 2)')).toEqual([2, 4, 6])
-      expect(lits.run('{ fun = ((x) => x + 1) }.fun(5)')).toBe(6)
+      expect(lits.run('{ fun := ((x) => x + 1) }.fun(5)')).toBe(6)
     })
 
     it('supports complex expressions in lambda functions', () => {
       expect(lits.run('((x, y) => x ** 2 + y ** 2)(3, 4)')).toBe(25)
-      expect(lits.run('((a, b) => ({ sum = a + b, product = a * b }))(3, 4).sum')).toBe(7)
-      expect(lits.run('((a, b) => ({ sum = a + b, product = a * b }))(3, 4).product')).toBe(12)
+      expect(lits.run('((a, b) => ({ sum := a + b, product := a * b }))(3, 4).sum')).toBe(7)
+      expect(lits.run('((a, b) => ({ sum := a + b, product := a * b }))(3, 4).product')).toBe(12)
     })
 
     it('supports lambda functions as return values', () => {

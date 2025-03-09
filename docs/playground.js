@@ -903,7 +903,7 @@ var Playground = (function (exports) {
         '...', // rest
         '.', // property accessor
         ',', // item separator
-        '=', // property assignment
+        ':=', // property assignment
         ';', // statement terminator
     ];
     var symbolicOperators = __spreadArray(__spreadArray([], __read(binaryOperators), false), __read(otherOperators), false);
@@ -3623,18 +3623,6 @@ var Playground = (function (exports) {
     };
 
     var miscNormalExpression = {
-        '!=': {
-            evaluate: function (params) {
-                for (var i = 0; i < params.length - 1; i += 1) {
-                    for (var j = i + 1; j < params.length; j += 1) {
-                        if (params[i] === params[j])
-                            return false;
-                    }
-                }
-                return true;
-            },
-            paramCount: { min: 1 },
-        },
         '≠': {
             evaluate: function (params) {
                 for (var i = 0; i < params.length - 1; i += 1) {
@@ -3646,6 +3634,7 @@ var Playground = (function (exports) {
                 return true;
             },
             paramCount: { min: 1 },
+            aliases: ['!='],
         },
         '==': {
             evaluate: function (_a) {
@@ -3675,6 +3664,7 @@ var Playground = (function (exports) {
                 return deepEqual(asAny(a, sourceCodeInfo), asAny(b, sourceCodeInfo), sourceCodeInfo);
             },
             paramCount: { min: 1 },
+            aliases: ['≡'],
         },
         '>': {
             evaluate: function (_a) {
@@ -3724,7 +3714,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        '>=': {
+        '≥': {
             evaluate: function (_a) {
                 var e_4, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -3747,8 +3737,9 @@ var Playground = (function (exports) {
                 return true;
             },
             paramCount: { min: 1 },
+            aliases: ['>='],
         },
-        '≥': {
+        '≤': {
             evaluate: function (_a) {
                 var e_5, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -3756,7 +3747,7 @@ var Playground = (function (exports) {
                 try {
                     for (var rest_5 = __values(rest), rest_5_1 = rest_5.next(); !rest_5_1.done; rest_5_1 = rest_5.next()) {
                         var param = rest_5_1.value;
-                        if (compare(currentValue, param) < 0)
+                        if (compare(currentValue, param) > 0)
                             return false;
                         currentValue = param;
                     }
@@ -3771,54 +3762,7 @@ var Playground = (function (exports) {
                 return true;
             },
             paramCount: { min: 1 },
-        },
-        '<=': {
-            evaluate: function (_a) {
-                var e_6, _b;
-                var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                var currentValue = first;
-                try {
-                    for (var rest_6 = __values(rest), rest_6_1 = rest_6.next(); !rest_6_1.done; rest_6_1 = rest_6.next()) {
-                        var param = rest_6_1.value;
-                        if (compare(currentValue, param) > 0)
-                            return false;
-                        currentValue = param;
-                    }
-                }
-                catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                finally {
-                    try {
-                        if (rest_6_1 && !rest_6_1.done && (_b = rest_6.return)) _b.call(rest_6);
-                    }
-                    finally { if (e_6) throw e_6.error; }
-                }
-                return true;
-            },
-            paramCount: { min: 1 },
-        },
-        '≤': {
-            evaluate: function (_a) {
-                var e_7, _b;
-                var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                var currentValue = first;
-                try {
-                    for (var rest_7 = __values(rest), rest_7_1 = rest_7.next(); !rest_7_1.done; rest_7_1 = rest_7.next()) {
-                        var param = rest_7_1.value;
-                        if (compare(currentValue, param) > 0)
-                            return false;
-                        currentValue = param;
-                    }
-                }
-                catch (e_7_1) { e_7 = { error: e_7_1 }; }
-                finally {
-                    try {
-                        if (rest_7_1 && !rest_7_1.done && (_b = rest_7.return)) _b.call(rest_7);
-                    }
-                    finally { if (e_7) throw e_7.error; }
-                }
-                return true;
-            },
-            paramCount: { min: 1 },
+            aliases: ['<='],
         },
         '!': {
             evaluate: function (_a) {
@@ -6958,7 +6902,7 @@ var Playground = (function (exports) {
                 };
             /* v8 ignore next 8 */
             case ';':
-            case '=':
+            case ':=':
             case ',':
             case '=>':
             case '...':
@@ -7210,7 +7154,7 @@ var Playground = (function (exports) {
                     p: [],
                     n: undefined,
                 });
-                assertA_OperatorToken(this.peek(), '=');
+                assertA_OperatorToken(this.peek(), ':=');
                 this.advance();
                 params.push(this.parseExpression());
                 var nextToken = this.peek();
@@ -7470,7 +7414,7 @@ var Playground = (function (exports) {
             if (optionalSemicolon === void 0) { optionalSemicolon = false; }
             this.advance();
             var letSymbol = parseSymbol(this.tokenStream, this.parseState);
-            assertA_OperatorToken(this.peek(), '=');
+            assertA_OperatorToken(this.peek(), ':=');
             this.advance();
             var value = this.parseExpression();
             if (!optionalSemicolon) {
@@ -7520,7 +7464,7 @@ var Playground = (function (exports) {
             var bindingNodes = [];
             while (!this.isAtEnd() && !isRParenToken(this.peek())) {
                 var symbol = parseSymbol(this.tokenStream, this.parseState);
-                assertA_OperatorToken(this.peek(), '=');
+                assertA_OperatorToken(this.peek(), ':=');
                 this.advance();
                 var value = this.parseExpression();
                 bindingNodes.push({
@@ -7949,7 +7893,7 @@ var Playground = (function (exports) {
             if (isA_SymbolToken(this.peek(), 'let')) {
                 this.advance();
                 var symbol = parseSymbol(this.tokenStream, this.parseState);
-                assertA_OperatorToken(this.peek(), '=');
+                assertA_OperatorToken(this.peek(), ':=');
                 this.advance();
                 var value = this.parseExpression();
                 assertA_OperatorToken(this.peek(), ';');
@@ -9282,14 +9226,11 @@ var Playground = (function (exports) {
             'fnull',
         ],
         misc: [
-            '!=',
             '≠',
             '==',
             '<',
             '>',
-            '<=',
             '≤',
-            '>=',
             '≥',
             '!',
             'write!',
@@ -9557,7 +9498,7 @@ var Playground = (function (exports) {
             description: 'Takes a nested array $x and flattens it.',
             examples: [
                 'flatten([1, 2, [3, 4], 5])',
-                "\nlet foo = \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
+                "\nlet foo := \"bar\";\nflatten([\n  1,\n  \" 2 A \",\n  [foo, [4, [\"ABC\"]]],\n  6,\n])",
                 'flatten(12)',
             ],
             algebraic: true,
@@ -9683,9 +9624,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not deep equal to $b it throws `AssertionError`.',
             examples: [
-                'try assert_equal({ "a" = 1 }, { "a" = 2 }, "Expected equal values") catch (e) e.message end',
-                'try assert_equal({ "a" = 1 }, { "a" = 2 }) catch (e) e.message end',
-                'try assert_equal({ "a" = 1 }, { "a" = 1 }) catch (e) e.message end',
+                'try assert_equal({ "a" := 1 }, { "a" := 2 }, "Expected equal values") catch (e) e.message end',
+                'try assert_equal({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
+                'try assert_equal({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
             ],
             algebraic: true,
         },
@@ -9706,9 +9647,9 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not deep equal to $b it throws `AssertionError`.',
             examples: [
-                'try assert_not_equal({ "a" = 2 }, { "a" = 2 }, "Expected different values") catch (e) e.message end',
-                'try assert_not_equal({ "a" = 2 }, { "a" = 2 }) catch (e) e.message end',
-                'try assert_not_equal({ "a" = 1 }, { "a" = 2 }) catch (e) e.message end',
+                'try assert_not_equal({ "a" := 2 }, { "a" := 2 }, "Expected different values") catch (e) e.message end',
+                'try assert_not_equal({ "a" := 2 }, { "a" := 2 }) catch (e) e.message end',
+                'try assert_not_equal({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
             ],
             algebraic: true,
         },
@@ -10885,7 +10826,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Returns $x.',
-            examples: ['identity(1)', 'identity("Albert")', 'identity({ a = 1 })', 'identity(null)'],
+            examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
             algebraic: true,
         },
         partial: {
@@ -10910,8 +10851,8 @@ var Playground = (function (exports) {
             description: "Takes a function $fn and a optional number arguments $args to $fn.\nIt returns a function that takes the additional additional arguments.\nWhen called, the returned function calls `(`$fn `...`$args` ...additional_arguments)`.",
             examples: [
                 'partial(+, 100)',
-                "\nlet plusMany = partial(+, 100, 1000);\nplusMany(1, 10)",
-                "\nlet addHundred = partial(+, 100);\naddHundred(10)",
+                "\nlet plusMany := partial(+, 100, 1000);\nplusMany(1, 10)",
+                "\nlet addHundred := partial(+, 100);\naddHundred(10)",
             ],
             noOperatorDocumentation: true,
             algebraic: true,
@@ -10932,8 +10873,8 @@ var Playground = (function (exports) {
             ],
             description: "Takes a variable number of functions and returns a function that is the composition of those.\n\n  The returned function takes a variable number of arguments,\n  applies the rightmost function to the args,\n  the next function (right-to-left) to the result, etc.",
             examples: [
-                "\nlet negative-quotient = comp(-, /);\nnegative-quotient(9, 3)",
-                "\nlet x = { bar = { foo = 42 } };\ncomp(\"foo\", \"bar\")(x)",
+                "\nlet negative-quotient := comp(-, /);\nnegative-quotient(9, 3)",
+                "\nlet x := { bar := { foo := 42 } };\ncomp(\"foo\", \"bar\")(x)",
             ],
             algebraic: true,
         },
@@ -10954,7 +10895,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a function that takes any number of arguments and always returns $x.',
             examples: [
-                "\nlet always-true = constantly(true);\nalways-true(9, 3)",
+                "\nlet always-true := constantly(true);\nalways-true(9, 3)",
             ],
             algebraic: true,
         },
@@ -10978,7 +10919,7 @@ var Playground = (function (exports) {
             description: "Takes one or many function and returns a function that is the juxtaposition of those functions.  \nThe returned function takes a variable number of args,\nand returns a vector containing the result of applying each function to the args (left-to-right).",
             examples: [
                 "\njuxt(+, *, min, max)(\n  3,\n  4,\n  6,\n)",
-                "\njuxt(\"a\", \"b\")(\n  {\n    a = 1,\n    b = 2,\n    c = 3,\n    d = 4\n  }\n)",
+                "\njuxt(\"a\", \"b\")(\n  {\n    a := 1,\n    b := 2,\n    c := 3,\n    d := 4\n  }\n)",
                 "\njuxt(+, *, min, max) apply range(1, 11)",
             ],
             algebraic: true,
@@ -11788,53 +11729,35 @@ var Playground = (function (exports) {
     };
 
     var miscReference = {
-        '!=': {
-            title: '!=',
-            category: 'Misc',
-            clojureDocs: 'not=',
-            linkName: '-exclamation-equal',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'any',
-                },
-                ys: {
-                    type: 'any',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
-            examples: ['(!= 3)', '(!= 3 2)', '(!= :3 3)', '(!= 3 3 2)', '(!= :3 :2 :1 :0)', '(!= 0 -0)'],
-        },
         '≠': {
             title: '≠',
             category: 'Misc',
             clojureDocs: 'not=',
-            linkName: '-ne2',
+            linkName: '-ne',
             returns: {
                 type: 'boolean',
             },
-            args: {
-                x: {
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { x: {
                     type: 'any',
-                },
-                ys: {
+                }, ys: {
                     type: 'any',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
             description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
-            examples: ['(≠ 3)', '(≠ 3 2)', '(≠ :3 3)', '(≠ 3 3 2)', '(≠ :3 :2 :1 :0)', '(≠ 0 -0)'],
+            examples: [
+                '1 ≠ 2',
+                '3 != 3',
+                '≠(3)',
+                '!=(3, 3, 2)',
+                '≠("3", "2", "1", "0",)',
+                '!=(0, -0)',
+            ],
+            aliases: ['!='],
+            algebraic: true,
         },
         '==': {
             title: '==',
@@ -11906,8 +11829,8 @@ var Playground = (function (exports) {
             description: 'Returns `true` if the number $x and $ys are in decreasing order, `false` otherwise.',
             examples: ['(> 1 0)', '(> 1.01 1)', '(> 1 1)', '(> 4 3 2 1)', '(> 3 2 2 1)'],
         },
-        '<=': {
-            title: '<=',
+        '≤': {
+            title: '≤',
             category: 'Misc',
             linkName: '-lte',
             returns: {
@@ -11927,33 +11850,18 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'ys'] },
             ],
             description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
-            examples: ['(<= 0 1)', '(<= 1 1.01)', '(<= 1 1)', '(<= 1 2 3 4)', '(<= 1 2 2 3)'],
-        },
-        '≤': {
-            title: '≤',
-            category: 'Misc',
-            linkName: '-lte2',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-                ys: {
-                    type: 'number',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
+            examples: [
+                '1 ≤ 1',
+                '<=(0, 1)',
+                '≤(1, 1.01)',
+                '<=(1, 1)',
+                '≤(1, 2, 3, 4)',
+                '<=(1, 2, 2, 3)',
             ],
-            description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
-            examples: ['(≤ 0 1)', '(≤ 1 1.01)', '(≤ 1 1)', '(≤ 1 2 3 4)', '(≤ 1 2 2 3)'],
+            aliases: ['<='],
         },
-        '>=': {
-            title: '>=',
+        '≥': {
+            title: '≥',
             category: 'Misc',
             linkName: '-gte',
             returns: {
@@ -11973,30 +11881,16 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'ys'] },
             ],
             description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
-            examples: ['(>= 1 0)', '(>= 1.01 1)', '(>= 1 1)', '(>= 4 3 2 1)', '(>= 3 2 2 1)'],
-        },
-        '≥': {
-            title: '≥',
-            category: 'Misc',
-            linkName: '-gte2',
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                x: {
-                    type: 'number',
-                },
-                ys: {
-                    type: 'number',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['x'] },
-                { argumentNames: ['x', 'ys'] },
+            examples: [
+                '1 ≥ 1',
+                '0 ≥ 1',
+                '>=(1, 0)',
+                '≥(1.01, 1)',
+                '>=(1, 1)',
+                '≥(4, 3, 2, 1)',
+                '>=(3, 2, 2, 1)',
             ],
-            description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
-            examples: ['(≥ 1 0)', '(≥ 1.01 1)', '(≥ 1 1)', '(≥ 4 3 2 1)', '(≥ 3 2 2 1)'],
+            aliases: ['>='],
         },
         '!': {
             title: '!',
@@ -12167,6 +12061,7 @@ var Playground = (function (exports) {
                 '(== 0.3 (+ 0.1 0.2))',
                 '(equal? 0.3 (+ 0.1 0.2))',
             ],
+            aliases: ['≡'],
         },
         'json_parse': {
             title: 'json_parse',
