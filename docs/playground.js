@@ -6692,28 +6692,12 @@ var Playground = (function (exports) {
     function parseNumber(tokenStream, parseState) {
         var _a;
         var tkn = tokenStream.tokens[parseState.position++];
-        // if (isA_NumberToken(tkn)) {
-        //   let numberString = tkn[1]
-        //   const periodToken = tokenStream.tokens[parseState.position]
-        //   const decimalToken = tokenStream.tokens[parseState.position + 1]
-        //   if, '.') && isA_NumberToken(decimalToken)) {
-        //     numberString += `.${decimalToken[1]}`
-        //     parseState.position += 2
-        //   }
-        //   return {
-        //     t: AstNodeType.Number,
-        //     v: Number(numberString),
-        //     p: [],
-        //     n: undefined,
-        //     token: getTokenDebugData(tkn) && tkn,
-        //   }
-        // }
         if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
             throw new LitsError("Expected number token, got ".concat(tkn), (_a = getTokenDebugData(tkn)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
         }
         var value = tkn[1];
         var negative = value[0] === '-';
-        var numberString = negative ? value.substring(1) : value;
+        var numberString = (negative ? value.substring(1) : value).replace(/_/g, '');
         return {
             t: AstNodeType.Number,
             v: negative ? -Number(numberString) : Number(numberString),
@@ -8365,22 +8349,40 @@ var Playground = (function (exports) {
     var tokenizeA_Number = function (input, position) {
         var i;
         var negate = input[position] === '-';
-        var start = negate ? position + 1 : position;
+        var plusPrefix = input[position] === '+';
+        var start = negate || plusPrefix ? position + 1 : position;
         var hasDecimalPoint = false;
+        var hasExponent = false;
         for (i = start; i < input.length; i += 1) {
             var char = input[i];
-            if (char === '.') {
-                if (i === start || hasDecimalPoint) {
+            if (char === '_') {
+                if (!decimalNumberRegExp$1.test(input[i - 1]) || !decimalNumberRegExp$1.test(input[i + 1])) {
+                    return NO_MATCH;
+                }
+            }
+            else if (char === '.') {
+                if (i === start || hasDecimalPoint || hasExponent) {
                     return NO_MATCH;
                 }
                 hasDecimalPoint = true;
-                continue;
             }
-            if (!decimalNumberRegExp$1.test(char)) {
+            else if (char === 'e' || char === 'E') {
+                if (i === start || hasExponent) {
+                    return NO_MATCH;
+                }
+                if (input[i - 1] === '.' || input[i - 1] === '+' || input[i - 1] === '-') {
+                    return NO_MATCH;
+                }
+                if (input[i + 1] === '+' || input[i + 1] === '-') {
+                    i += 1;
+                }
+                hasExponent = true;
+            }
+            else if (!decimalNumberRegExp$1.test(char)) {
                 break;
             }
         }
-        if (negate && i === start) {
+        if ((negate || plusPrefix) && i === start) {
             return NO_MATCH;
         }
         var length = i - position;

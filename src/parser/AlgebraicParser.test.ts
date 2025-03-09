@@ -258,6 +258,9 @@ describe('algebraic operators', () => {
   })
   describe('numbers', () => {
     test('samples', () => {
+      expect(lits.run('5_000_000')).toBe(5000000)
+      expect(lits.run('5e2')).toBe(500)
+      expect(lits.run('-5.2e-1')).toBe(-0.52)
       expect(lits.run('5')).toBe(5)
       expect(lits.run('-10')).toBe(-10)
       expect(lits.tokenize('-10').tokens).toEqual([

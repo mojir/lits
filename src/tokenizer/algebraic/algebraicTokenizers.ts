@@ -69,23 +69,48 @@ const binaryNumberRegExp = /[01]/
 export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
   let i: number
   const negate = input[position] === '-'
-  const start = negate ? position + 1 : position
+  const plusPrefix = input[position] === '+'
+  const start = negate || plusPrefix ? position + 1 : position
   let hasDecimalPoint = false
+  let hasExponent = false
   for (i = start; i < input.length; i += 1) {
     const char = input[i] as string
-    if (char === '.') {
-      if (i === start || hasDecimalPoint) {
+
+    if (char === '_') {
+      if (!decimalNumberRegExp.test(input[i - 1]!) || !decimalNumberRegExp.test(input[i + 1]!)) {
+        return NO_MATCH
+      }
+    }
+
+    else if (char === '.') {
+      if (i === start || hasDecimalPoint || hasExponent) {
         return NO_MATCH
       }
       hasDecimalPoint = true
-      continue
     }
-    if (!decimalNumberRegExp.test(char)) {
+
+    else if (char === 'e' || char === 'E') {
+      if (i === start || hasExponent) {
+        return NO_MATCH
+      }
+
+      if (input[i - 1] === '.' || input[i - 1] === '+' || input[i - 1] === '-') {
+        return NO_MATCH
+      }
+
+      if (input[i + 1] === '+' || input[i + 1] === '-') {
+        i += 1
+      }
+
+      hasExponent = true
+    }
+
+    else if (!decimalNumberRegExp.test(char)) {
       break
     }
   }
 
-  if (negate && i === start) {
+  if ((negate || plusPrefix) && i === start) {
     return NO_MATCH
   }
 

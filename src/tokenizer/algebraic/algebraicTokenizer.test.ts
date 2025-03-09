@@ -45,6 +45,7 @@ describe('algebraicTokenizers', () => {
       expect(tokenizeA_Number('-1', 0)).toEqual([2, ['A_Number', '-1']])
       expect(tokenizeA_Number('1.12', 0)).toEqual([4, ['A_Number', '1.12']])
       expect(tokenizeA_Number('-1.12', 0)).toEqual([5, ['A_Number', '-1.12']])
+      expect(tokenizeA_Number('1_000', 0)).toEqual([5, ['A_Number', '1_000']])
       expect(tokenizeA_Number('.12', 0)).toEqual([0])
     })
   })

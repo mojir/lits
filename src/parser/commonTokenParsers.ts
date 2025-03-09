@@ -90,30 +90,13 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
   const tkn = tokenStream.tokens[parseState.position++]
-  // if (isA_NumberToken(tkn)) {
-  //   let numberString = tkn[1]
-  //   const periodToken = tokenStream.tokens[parseState.position]
-  //   const decimalToken = tokenStream.tokens[parseState.position + 1]
-  //   if, '.') && isA_NumberToken(decimalToken)) {
-  //     numberString += `.${decimalToken[1]}`
-  //     parseState.position += 2
-  //   }
-  //   return {
-  //     t: AstNodeType.Number,
-  //     v: Number(numberString),
-  //     p: [],
-  //     n: undefined,
-  //     token: getTokenDebugData(tkn) && tkn,
-  //   }
-  // }
-
   if (!isP_NumberToken(tkn) && !isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
     throw new LitsError(`Expected number token, got ${tkn}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
 
   const value = tkn[1]
   const negative = value[0] === '-'
-  const numberString = negative ? value.substring(1) : value
+  const numberString = (negative ? value.substring(1) : value).replace(/_/g, '')
   return {
     t: AstNodeType.Number,
     v: negative ? -Number(numberString) : Number(numberString),
