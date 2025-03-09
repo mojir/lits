@@ -27,11 +27,11 @@ export const functionalReference: Record<FunctionalApiName, FunctionReference<'F
 apply(+, [1, 2, 3])`,
       `
 apply(
-  (x, y) => sqrt(x ** 2 + y ** 2),
+  (x, y) -> sqrt(x ** 2 + y ** 2),
   [3, 4]
 )`,
       `
-(x, y) => sqrt(x ** 2 + y ** 2) apply [3, 4]`,
+(x, y) -> sqrt(x ** 2 + y ** 2) apply [3, 4]`,
     ],
     algebraic: true,
   },
@@ -238,12 +238,12 @@ Takes a number of predicates and returns a function that returns \`true\` if all
 return a truthy value against all of its arguments, else it returns \`false\`.`,
     examples: [
       `
-every_pred(string?, => count($) > 3)(
+every_pred(string?, -> count($) > 3)(
   "Albert",
   "Mojir"
 )`,
       `
-(string? every_pred => count($) > 3)(
+(string? every_pred -> count($) > 3)(
   "Albert",
   "M"
 )`,
@@ -274,10 +274,10 @@ every_pred(string?, => count($) > 3)(
     ],
     description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
     examples: [
-      'some_pred(string?, => count($) > 3)("Albert", "Mojir")',
-      'some_pred(string?, => count($) > 3)("a", "M")',
-      'some_pred(string?, => count($) > 3)("a", [1, 2, 3])',
-      'some_pred(string?, => count($) > 3)([1, 2, 3], [2])',
+      'some_pred(string?, -> count($) > 3)("Albert", "Mojir")',
+      'some_pred(string?, -> count($) > 3)("a", "M")',
+      'some_pred(string?, -> count($) > 3)("a", [1, 2, 3])',
+      'some_pred(string?, -> count($) > 3)([1, 2, 3], [2])',
     ],
     algebraic: true,
     noOperatorDocumentation: true,

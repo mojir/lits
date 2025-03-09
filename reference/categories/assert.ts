@@ -416,7 +416,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       { argumentNames: ['fn', 'message'] },
     ],
     description: 'If $fn does not throw, it throws `AssertionError`.',
-    examples: ['assert_throws(=> throw("Error"))', 'assert_throws(=> identity("Error"))'],
+    examples: ['assert_throws(-> throw("Error"))', 'assert_throws(-> identity("Error"))'],
   },
   'assert_throws_error': {
     title: 'assert_throws_error',
@@ -443,8 +443,8 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
     examples: [
-      'try assert_throws_error(=> throw("Error"), "Error") catch (e) e.message end',
-      'try assert_throws_error(=> identity("Error"), "Error") catch (e) e.message end',
+      'try assert_throws_error(-> throw("Error"), "Error") catch (e) e.message end',
+      'try assert_throws_error(-> identity("Error"), "Error") catch (e) e.message end',
     ],
     algebraic: true,
   },
@@ -470,8 +470,8 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $fn throws, it throws `AssertionError`.',
     examples: [
-      'try assert_not_throws(=> identity("Error")) catch (e) e.message end',
-      'try assert_not_throws(=> throw("Error")) catch (e) e.message end',
+      'try assert_not_throws(-> identity("Error")) catch (e) e.message end',
+      'try assert_not_throws(-> throw("Error")) catch (e) e.message end',
     ],
   },
 }

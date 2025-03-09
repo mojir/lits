@@ -56,7 +56,7 @@ describe('functional functions', () => {
         expect(
           lits.run(`
         (
-          => apply(
+          -> apply(
             comp,
             first,
             repeat(rest, $2)
@@ -107,20 +107,20 @@ let foo := comp(!, odd?);
 
     describe('every_pred', () => {
       it('samples', () => {
-        expect(lits.run('every_pred(string?, => count($1) > 3)("Albert")')).toBe(true)
-        expect(lits.run('every_pred(string?, => count($1) > 3)("Albert", "Mojir")')).toBe(true)
-        expect(lits.run('every_pred(string?, => count($1) > 3)("Albert", "L", "Mojir")')).toBe(false)
-        expect(lits.run('every_pred(string?, => count($1) > 3)("Albert", [1, 2, 3, 4])')).toBe(false)
+        expect(lits.run('every_pred(string?, -> count($1) > 3)("Albert")')).toBe(true)
+        expect(lits.run('every_pred(string?, -> count($1) > 3)("Albert", "Mojir")')).toBe(true)
+        expect(lits.run('every_pred(string?, -> count($1) > 3)("Albert", "L", "Mojir")')).toBe(false)
+        expect(lits.run('every_pred(string?, -> count($1) > 3)("Albert", [1, 2, 3, 4])')).toBe(false)
         expect(() => lits.run('every_pred()')).toThrow()
       })
     })
 
     describe('some_pred', () => {
       it('samples', () => {
-        expect(lits.run('some_pred(string?, => count($1) > 3)("Albert", "M")')).toBe(true)
-        expect(lits.run('some_pred(string?, => count($1) > 3)("A", "M")')).toBe(true)
-        expect(lits.run('some_pred(string?, => count($1) > 3)([10, 20], [20, 10])')).toBe(false)
-        expect(lits.run('some_pred(string?, => count($1) > 3)("Albert", [10, 20])')).toBe(true)
+        expect(lits.run('some_pred(string?, -> count($1) > 3)("Albert", "M")')).toBe(true)
+        expect(lits.run('some_pred(string?, -> count($1) > 3)("A", "M")')).toBe(true)
+        expect(lits.run('some_pred(string?, -> count($1) > 3)([10, 20], [20, 10])')).toBe(false)
+        expect(lits.run('some_pred(string?, -> count($1) > 3)("Albert", [10, 20])')).toBe(true)
         expect(() => lits.run('some_pred()')).toThrow()
       })
     })

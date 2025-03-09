@@ -158,7 +158,7 @@ function fromBinaryOperatorToAstNode(operator: A_OperatorToken | A_SymbolToken<'
     case ';':
     case ':=':
     case ',':
-    case '=>':
+    case '->':
     case '...':
       throw new LitsError(`Unknown binary operator: ${operatorName}`, getTokenDebugData(token)?.sourceCodeInfo)
 
@@ -364,7 +364,7 @@ export class AlgebraicParser {
         } satisfies SymbolNode
       }
 
-      if (operatorName === '=>') {
+      if (operatorName === '->') {
         return this.parseShorthandLamdaFunction()
       }
       else {
@@ -558,14 +558,14 @@ export class AlgebraicParser {
 
     if (isLParenToken(firstToken)
       && isA_SymbolToken(this.peekAhead(1))
-      && isA_OperatorToken(this.peekAhead(2), '=>')) {
+      && isA_OperatorToken(this.peekAhead(2), '->')) {
       return null
     }
 
     try {
       const { functionArguments, arity } = this.parseFunctionArguments()
 
-      if (!isA_OperatorToken(this.peek(), '=>')) {
+      if (!isA_OperatorToken(this.peek(), '->')) {
         return null
       }
       this.advance()

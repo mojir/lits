@@ -899,7 +899,7 @@ var Playground = (function (exports) {
         '??', // nullish coalescing
     ];
     var otherOperators = [
-        '=>', // lambda
+        '->', // lambda
         '...', // rest
         '.', // property accessor
         ',', // item separator
@@ -6904,7 +6904,7 @@ var Playground = (function (exports) {
             case ';':
             case ':=':
             case ',':
-            case '=>':
+            case '->':
             case '...':
                 throw new LitsError("Unknown binary operator: ".concat(operatorName), (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             default:
@@ -7095,7 +7095,7 @@ var Playground = (function (exports) {
                         n: undefined,
                     };
                 }
-                if (operatorName === '=>') {
+                if (operatorName === '->') {
                     return this.parseShorthandLamdaFunction();
                 }
                 else {
@@ -7260,12 +7260,12 @@ var Playground = (function (exports) {
             var firstToken = this.peek();
             if (isLParenToken(firstToken)
                 && isA_SymbolToken(this.peekAhead(1))
-                && isA_OperatorToken(this.peekAhead(2), '=>')) {
+                && isA_OperatorToken(this.peekAhead(2), '->')) {
                 return null;
             }
             try {
                 var _a = this.parseFunctionArguments(), functionArguments = _a.functionArguments, arity = _a.arity;
-                if (!isA_OperatorToken(this.peek(), '=>')) {
+                if (!isA_OperatorToken(this.peek(), '->')) {
                     return null;
                 }
                 this.advance();
@@ -9528,7 +9528,7 @@ var Playground = (function (exports) {
                 'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
                 '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
                 "\nfunction foo(n)\n  [n - 1, n, n + 1]\nend;\n[1, 2, 3] mapcat foo",
-                "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  => $ remove even?\n)",
+                "\nmapcat(\n  [[1, 2], [2, 2], [2, 3]],\n  -> $ remove even?\n)",
             ],
             algebraic: true,
         },
@@ -9925,7 +9925,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['fn', 'message'] },
             ],
             description: 'If $fn does not throw, it throws `AssertionError`.',
-            examples: ['assert_throws(=> throw("Error"))', 'assert_throws(=> identity("Error"))'],
+            examples: ['assert_throws(-> throw("Error"))', 'assert_throws(-> identity("Error"))'],
         },
         'assert_throws_error': {
             title: 'assert_throws_error',
@@ -9952,8 +9952,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
             examples: [
-                'try assert_throws_error(=> throw("Error"), "Error") catch (e) e.message end',
-                'try assert_throws_error(=> identity("Error"), "Error") catch (e) e.message end',
+                'try assert_throws_error(-> throw("Error"), "Error") catch (e) e.message end',
+                'try assert_throws_error(-> identity("Error"), "Error") catch (e) e.message end',
             ],
             algebraic: true,
         },
@@ -9979,8 +9979,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fn throws, it throws `AssertionError`.',
             examples: [
-                'try assert_not_throws(=> identity("Error")) catch (e) e.message end',
-                'try assert_not_throws(=> throw("Error")) catch (e) e.message end',
+                'try assert_not_throws(-> identity("Error")) catch (e) e.message end',
+                'try assert_not_throws(-> throw("Error")) catch (e) e.message end',
             ],
         },
     };
@@ -10805,8 +10805,8 @@ var Playground = (function (exports) {
             description: 'Call supplied function $fn with specified arguments $args.',
             examples: [
                 "\napply(+, [1, 2, 3])",
-                "\napply(\n  (x, y) => sqrt(x ** 2 + y ** 2),\n  [3, 4]\n)",
-                "\n(x, y) => sqrt(x ** 2 + y ** 2) apply [3, 4]",
+                "\napply(\n  (x, y) -> sqrt(x ** 2 + y ** 2),\n  [3, 4]\n)",
+                "\n(x, y) -> sqrt(x ** 2 + y ** 2) apply [3, 4]",
             ],
             algebraic: true,
         },
@@ -10970,8 +10970,8 @@ var Playground = (function (exports) {
             ],
             description: "\nTakes a number of predicates and returns a function that returns `true` if all predicates\nreturn a truthy value against all of its arguments, else it returns `false`.",
             examples: [
-                "\nevery_pred(string?, => count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
-                "\n(string? every_pred => count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
+                "\nevery_pred(string?, -> count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
+                "\n(string? every_pred -> count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
             ],
             algebraic: true,
             noOperatorDocumentation: true,
@@ -10999,10 +10999,10 @@ var Playground = (function (exports) {
             ],
             description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
             examples: [
-                'some_pred(string?, => count($) > 3)("Albert", "Mojir")',
-                'some_pred(string?, => count($) > 3)("a", "M")',
-                'some_pred(string?, => count($) > 3)("a", [1, 2, 3])',
-                'some_pred(string?, => count($) > 3)([1, 2, 3], [2])',
+                'some_pred(string?, -> count($) > 3)("Albert", "Mojir")',
+                'some_pred(string?, -> count($) > 3)("a", "M")',
+                'some_pred(string?, -> count($) > 3)("a", [1, 2, 3])',
+                'some_pred(string?, -> count($) > 3)([1, 2, 3], [2])',
             ],
             algebraic: true,
             noOperatorDocumentation: true,
@@ -15565,8 +15565,8 @@ var Playground = (function (exports) {
             clojureDocs: null,
             description: "\nShorthand for `(args, ...) => expression`.\n`$1, $2, $3, ...` are shorthand for the first, second, third, ... argument.\n\nYou can reference the first argument using either `$1` or `$`.\nHowever, please note that `$1` and `$` are mutually exclusive and cannot be used simultaneously.\nE.g. `#(* $ $1)` is not valid.",
             examples: [
-                '=> $1 + $2',
-                '(=> $ * $)(9)',
+                '-> $1 + $2',
+                '(-> $ * $)(9)',
             ],
             algebraic: true,
         },

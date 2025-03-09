@@ -58,7 +58,7 @@ const binaryOperators = [
 ] as const
 
 const otherOperators = [
-  '=>', // lambda
+  '->', // lambda
   '...', // rest
   '.', // property accessor
   ',', // item separator

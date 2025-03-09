@@ -122,7 +122,7 @@ describe('assert functions', () => {
         expect(lits.run('assert_truthy({})')).toBeNull()
         expect(lits.run('assert_truthy(1)')).toBeNull()
         expect(lits.run('assert_truthy("hej")')).toBeNull()
-        expect(lits.run('assert_truthy(=> $ + $)')).toBeNull()
+        expect(lits.run('assert_truthy(-> $ + $)')).toBeNull()
         expect(() => lits.run('assert_truthy(false)')).toThrowError(AssertionError)
         expect(() => lits.run('assert_truthy(null, "Expected true")')).toThrowError(AssertionError)
         expect(() => lits.run('assert_truthy(0)')).toThrowError(AssertionError)
@@ -137,7 +137,7 @@ describe('assert functions', () => {
         expect(() => lits.run('assert_falsy({})')).toThrowError(AssertionError)
         expect(() => lits.run('assert_falsy(1)')).toThrowError(AssertionError)
         expect(() => lits.run('assert_falsy("hej")')).toThrowError(AssertionError)
-        expect(() => lits.run('assert_falsy(=> $1 + $1)')).toThrowError(AssertionError)
+        expect(() => lits.run('assert_falsy(-> $1 + $1)')).toThrowError(AssertionError)
         expect(lits.run('assert_falsy(false)')).toBeNull()
         expect(lits.run('assert_falsy(null, "Expected true")')).toBeNull()
         expect(lits.run('assert_falsy(0)')).toBeNull()
@@ -153,30 +153,30 @@ describe('assert functions', () => {
         expect(() => lits.run('assert_null("hej")')).toThrowError(AssertionError)
         expect(() => lits.run('assert_null([])')).toThrowError(AssertionError)
         expect(() => lits.run('assert_null({})')).toThrowError(AssertionError)
-        expect(() => lits.run('assert_null(=> $ + $)')).toThrowError(AssertionError)
+        expect(() => lits.run('assert_null(-> $ + $)')).toThrowError(AssertionError)
         expect(lits.run('assert_null(null, "Should be null")')).toBeNull()
       })
     })
 
     describe('assert_throws', () => {
       it('samples', () => {
-        expect(() => lits.run('assert_throws(=> identity("X")) "Should throw")')).toThrow()
-        expect(() => lits.run('assert_throws(=> throw("X"))')).not.toThrow()
+        expect(() => lits.run('assert_throws(-> identity("X")) "Should throw")')).toThrow()
+        expect(() => lits.run('assert_throws(-> throw("X"))')).not.toThrow()
       })
     })
 
     describe('assert_not_throws', () => {
       it('samples', () => {
-        expect(() => lits.run('assert_not_throws(=> identity("X"), "Should not throw")')).not.toThrow()
-        expect(() => lits.run('assert_not_throws(=> throw("X"))')).toThrow()
+        expect(() => lits.run('assert_not_throws(-> identity("X"), "Should not throw")')).not.toThrow()
+        expect(() => lits.run('assert_not_throws(-> throw("X"))')).toThrow()
       })
     })
 
     describe('assert_throws_error', () => {
       it('samples', () => {
-        expect(() => lits.run('assert_throws_error(=> identity("X"), "X", "Should throw X")')).toThrow()
-        expect(() => lits.run('assert_throws_error(=> throw("Y"), "X")')).toThrow()
-        expect(() => lits.run('assert_throws_error(=> throw("X"), "X")')).not.toThrow()
+        expect(() => lits.run('assert_throws_error(-> identity("X"), "X", "Should throw X")')).toThrow()
+        expect(() => lits.run('assert_throws_error(-> throw("Y"), "X")')).toThrow()
+        expect(() => lits.run('assert_throws_error(-> throw("X"), "X")')).not.toThrow()
       })
     })
   }

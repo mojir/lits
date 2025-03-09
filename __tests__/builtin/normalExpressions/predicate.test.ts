@@ -15,7 +15,7 @@ describe.skip('predicates', () => {
         expect(lits.run('function?(true)')).toBe(false)
         expect(lits.run('function?(false)')).toBe(false)
         expect(lits.run('function?(+)')).toBe(true)
-        expect(lits.run('function?(=> $ - 1)')).toBe(true)
+        expect(lits.run('function?(-> $ - 1)')).toBe(true)
         expect(() => lits.run('function?()')).toThrow()
         expect(() => lits.run('function?("k", "k")')).toThrow()
       })

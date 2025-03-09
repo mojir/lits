@@ -168,7 +168,7 @@ end;
       `
 mapcat(
   [[1, 2], [2, 2], [2, 3]],
-  => $ remove even?
+  -> $ remove even?
 )`,
     ],
     algebraic: true,

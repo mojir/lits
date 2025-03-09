@@ -41,18 +41,18 @@ write!("Albert"[3]);
 write!([1, 2, 3][2]);
     `.trim(),
   },
-  //   {
-  //     id: 'simple-context-example',
-  //     name: 'Using context',
-  //     description: 'Simple example using a context.',
-  //     context: {
-  //       values: { x: 15, y: 27 },
-  //       jsFunctions: { plus: '(a, b) => a + b' },
-  //     },
-  //     code: `
-  // (plus x y)
-  //     `.trim(),
-  //   },
+  {
+    id: 'simple-context-example',
+    name: 'Using context',
+    description: 'Simple example using a context.',
+    context: {
+      values: { x: 15, y: 27 },
+      jsFunctions: { plus: '(a, b) => a + b' },
+    },
+    code: `
+  plus(x, y)
+      `.trim(),
+  },
   //   {
   //     id: 'phone-number-formatter',
   //     name: 'Phone number formatter',

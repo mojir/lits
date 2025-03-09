@@ -23,6 +23,6 @@ export function getCliFunctionSignature(fmt: Colorizer, { title: name, variants,
         return result
       }).join(' ')}${fmt.white(')')}`
 
-    return `${form} ${fmt.gray('=>')} ${getCliType(fmt, returns)}`
+    return `${form} ${fmt.gray('->')} ${getCliType(fmt, returns)}`
   }).join('\n')
 }

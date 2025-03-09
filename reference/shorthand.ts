@@ -30,8 +30,8 @@ You can reference the first argument using either \`$1\` or \`$\`.
 However, please note that \`$1\` and \`$\` are mutually exclusive and cannot be used simultaneously.
 E.g. \`#(* $ $1)\` is not valid.`,
     examples: [
-      '=> $1 + $2',
-      '(=> $ * $)(9)',
+      '-> $1 + $2',
+      '(-> $ * $)(9)',
     ],
     algebraic: true,
   },
