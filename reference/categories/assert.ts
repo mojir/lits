@@ -26,33 +26,6 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     algebraic: true,
     noOperatorDocumentation: true,
   },
-  'assert=': {
-    title: 'assert=',
-    category: 'Assert',
-    linkName: 'assert-equal',
-    clojureDocs: null,
-    returns: {
-      type: 'null',
-    },
-    args: {
-      ...getOperatorArgs('any', 'any'),
-      message: {
-        type: 'string',
-      },
-    },
-    variants: [
-      { argumentNames: ['a', 'b'] },
-      { argumentNames: ['a', 'b', 'message'] },
-    ],
-    description: 'If $a is not the same as $b it throws `AssertionError`.',
-    examples: [
-      'try assert=(0, 1, "Expected same values") catch (e) e.message end',
-      'try assert=(0, 1) catch (e) e.message end',
-      'try 0 assert= 1 catch (e) e.message end',
-      'try assert=(1, 1) catch (e) e.message end',
-    ],
-    algebraic: true,
-  },
   'assert!=': {
     title: 'assert!=',
     category: 'Assert',
@@ -80,10 +53,10 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     algebraic: true,
   },
-  'assert_equal': {
-    title: 'assert_equal',
+  'assert=': {
+    title: 'assert=',
     category: 'Assert',
-    linkName: 'assert_equal',
+    linkName: 'assert-equal',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -98,44 +71,18 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       { argumentNames: ['a', 'b'] },
       { argumentNames: ['a', 'b', 'message'] },
     ],
-    description: 'If $a is not deep equal to $b it throws `AssertionError`.',
+    description: 'If $a is not structural equal to $b it throws `AssertionError`.',
     examples: [
-      'try assert_equal({ "a" := 1 }, { "a" := 2 }, "Expected equal values") catch (e) e.message end',
-      'try assert_equal({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
-      'try assert_equal({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
+      'try assert=({ "a" := 1 }, { "a" := 2 }, "Expected equal values") catch (e) e.message end',
+      'try assert=({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
+      'try assert=({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_not_equal': {
-    title: 'assert_not_equal',
+  'assert-gt': {
+    title: 'assert-gt',
     category: 'Assert',
-    linkName: 'assert_not_equal',
-    clojureDocs: null,
-    returns: {
-      type: 'null',
-    },
-    args: {
-      ...getOperatorArgs('any', 'any'),
-      message: {
-        type: 'string',
-      },
-    },
-    variants: [
-      { argumentNames: ['a', 'b'] },
-      { argumentNames: ['a', 'b', 'message'] },
-    ],
-    description: 'If $a is not deep equal to $b it throws `AssertionError`.',
-    examples: [
-      'try assert_not_equal({ "a" := 2 }, { "a" := 2 }, "Expected different values") catch (e) e.message end',
-      'try assert_not_equal({ "a" := 2 }, { "a" := 2 }) catch (e) e.message end',
-      'try assert_not_equal({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
-    ],
-    algebraic: true,
-  },
-  'assert_gt': {
-    title: 'assert_gt',
-    category: 'Assert',
-    linkName: 'assert_gt',
+    linkName: 'assert-gt',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -152,16 +99,16 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $a is not greater than $b it throws `AssertionError`.',
     examples: [
-      'try assert_gt(0, 1, "Expected greater value") catch (e) e.message end',
-      'try assert_gt(0, 0) catch (e) e.message end',
-      'try assert_gt(1, 0) catch (e) e.message end',
+      'try assert-gt(0, 1, "Expected greater value") catch (e) e.message end',
+      'try assert-gt(0, 0) catch (e) e.message end',
+      'try assert-gt(1, 0) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_lt': {
-    title: 'assert_lt',
+  'assert-lt': {
+    title: 'assert-lt',
     category: 'Assert',
-    linkName: 'assert_lt',
+    linkName: 'assert-lt',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -178,16 +125,16 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $a is not less than $b it throws `AssertionError`.',
     examples: [
-      'try assert_lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-      'try assert_lte(1, 1) catch (e) e.message end',
-      'try assert_lte(0, 1) catch (e) e.message end',
+      'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+      'try assert-lte(1, 1) catch (e) e.message end',
+      'try assert-lte(0, 1) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_gte': {
-    title: 'assert_gte',
+  'assert-gte': {
+    title: 'assert-gte',
     category: 'Assert',
-    linkName: 'assert_gte',
+    linkName: 'assert-gte',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -204,16 +151,16 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $a is less than $b it throws `AssertionError`.',
     examples: [
-      'try assert_gte(0, 1, "Expected greater value") catch (e) e.message end',
-      'try assert_gte(0, 1) catch (e) e.message end',
-      'try assert_gte(1, 1) catch (e) e.message end',
+      'try assert-gte(0, 1, "Expected greater value") catch (e) e.message end',
+      'try assert-gte(0, 1) catch (e) e.message end',
+      'try assert-gte(1, 1) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_lte': {
-    title: 'assert_lte',
+  'assert-lte': {
+    title: 'assert-lte',
     category: 'Assert',
-    linkName: 'assert_lte',
+    linkName: 'assert-lte',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -230,16 +177,16 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $a is grater than $b it throws `AssertionError`.',
     examples: [
-      'try assert_lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-      'try assert_lte(1, 0) catch (e) e.message end',
-      'try assert_lte(1, 1) catch (e) e.message end',
+      'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+      'try assert-lte(1, 0) catch (e) e.message end',
+      'try assert-lte(1, 1) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_true': {
-    title: 'assert_true',
+  'assert-true': {
+    title: 'assert-true',
     category: 'Assert',
-    linkName: 'assert_true',
+    linkName: 'assert-true',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -258,16 +205,16 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $value is not `true` it throws `AssertionError`.',
     examples: [
-      'try assert_true(false, "Expected true") catch (e) e.message end',
-      'try assert_true(false) catch (e) e.message end',
-      'try assert_true(true) catch (e) e.message end',
+      'try assert-true(false, "Expected true") catch (e) e.message end',
+      'try assert-true(false) catch (e) e.message end',
+      'try assert-true(true) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_false': {
-    title: 'assert_false',
+  'assert-false': {
+    title: 'assert-false',
     category: 'Assert',
-    linkName: 'assert_false',
+    linkName: 'assert-false',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -286,16 +233,16 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $value is not `false` it throws `AssertionError`.',
     examples: [
-      'try assert_false(true, "Expected false") catch (e) e.message end',
-      'try assert_false(true) catch (e) e.message end',
-      'try assert_false(false) catch (e) e.message end',
+      'try assert-false(true, "Expected false") catch (e) e.message end',
+      'try assert-false(true) catch (e) e.message end',
+      'try assert-false(false) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_truthy': {
-    title: 'assert_truthy',
+  'assert-truthy': {
+    title: 'assert-truthy',
     category: 'Assert',
-    linkName: 'assert_truthy',
+    linkName: 'assert-truthy',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -314,23 +261,23 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $value is not `truthy` it throws `AssertionError`.',
     examples: [
-      'try assert_truthy(false, "Expected truthy") catch (e) e.message end',
-      'try assert_truthy(false) catch (e) e.message end',
-      'try assert_truthy(0) catch (e) e.message end',
-      'try assert_truthy(null) catch (e) e.message end',
-      'try assert_truthy("") catch (e) e.message end',
-      'try assert_truthy(true) catch (e) e.message end',
-      'try assert_truthy(1) catch (e) e.message end',
-      'try assert_truthy("x") catch (e) e.message end',
-      'try assert_truthy([]) catch (e) e.message end',
-      'try assert_truthy({}) catch (e) e.message end',
+      'try assert-truthy(false, "Expected truthy") catch (e) e.message end',
+      'try assert-truthy(false) catch (e) e.message end',
+      'try assert-truthy(0) catch (e) e.message end',
+      'try assert-truthy(null) catch (e) e.message end',
+      'try assert-truthy("") catch (e) e.message end',
+      'try assert-truthy(true) catch (e) e.message end',
+      'try assert-truthy(1) catch (e) e.message end',
+      'try assert-truthy("x") catch (e) e.message end',
+      'try assert-truthy([]) catch (e) e.message end',
+      'try assert-truthy({}) catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_falsy': {
-    title: 'assert_falsy',
+  'assert-falsy': {
+    title: 'assert-falsy',
     category: 'Assert',
-    linkName: 'assert_falsy',
+    linkName: 'assert-falsy',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -349,22 +296,22 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $value is not `falsy` it throws `AssertionError`.',
     examples: [
-      'try assert_falsy(true, "Expected falsy") catch (e) e.message end',
-      'try assert_falsy("x") catch (e) e.message end',
-      'try assert_falsy([]) catch (e) e.message end',
-      'try assert_falsy({}) catch (e) e.message end',
-      'try assert_falsy(1) catch (e) e.message end',
-      'try assert_falsy(false) catch (e) e.message end',
-      'try assert_falsy(0) catch (e) e.message end',
-      'try assert_falsy(null) catch (e) e.message end',
-      'try assert_falsy("") catch (e) e.message end',
+      'try assert-falsy(true, "Expected falsy") catch (e) e.message end',
+      'try assert-falsy("x") catch (e) e.message end',
+      'try assert-falsy([]) catch (e) e.message end',
+      'try assert-falsy({}) catch (e) e.message end',
+      'try assert-falsy(1) catch (e) e.message end',
+      'try assert-falsy(false) catch (e) e.message end',
+      'try assert-falsy(0) catch (e) e.message end',
+      'try assert-falsy(null) catch (e) e.message end',
+      'try assert-falsy("") catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_null': {
-    title: 'assert_null',
+  'assert-null': {
+    title: 'assert-null',
     category: 'Assert',
-    linkName: 'assert_null',
+    linkName: 'assert-null',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -383,22 +330,22 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $value is not `null` it throws `AssertionError`.',
     examples: [
-      'try assert_null(null) catch (e) e.message end',
-      'try assert_null(true, "Expected null") catch (e) e.message end',
-      'try assert_null("x") catch (e) e.message end',
-      'try assert_null([]) catch (e) e.message end',
-      'try assert_null({}) catch (e) e.message end',
-      'try assert_null(1) catch (e) e.message end',
-      'try assert_null(false) catch (e) e.message end',
-      'try assert_null(0) catch (e) e.message end',
-      'try assert_null("") catch (e) e.message end',
+      'try assert-null(null) catch (e) e.message end',
+      'try assert-null(true, "Expected null") catch (e) e.message end',
+      'try assert-null("x") catch (e) e.message end',
+      'try assert-null([]) catch (e) e.message end',
+      'try assert-null({}) catch (e) e.message end',
+      'try assert-null(1) catch (e) e.message end',
+      'try assert-null(false) catch (e) e.message end',
+      'try assert-null(0) catch (e) e.message end',
+      'try assert-null("") catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_throws': {
-    title: 'assert_throws',
+  'assert-throws': {
+    title: 'assert-throws',
     category: 'Assert',
-    linkName: 'assert_throws',
+    linkName: 'assert-throws',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -416,12 +363,12 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       { argumentNames: ['fn', 'message'] },
     ],
     description: 'If $fn does not throw, it throws `AssertionError`.',
-    examples: ['assert_throws(-> throw("Error"))', 'assert_throws(-> identity("Error"))'],
+    examples: ['assert-throws(-> throw("Error"))', 'assert-throws(-> identity("Error"))'],
   },
-  'assert_throws_error': {
-    title: 'assert_throws_error',
+  'assert-throws-error': {
+    title: 'assert-throws-error',
     category: 'Assert',
-    linkName: 'assert_throws_error',
+    linkName: 'assert-throws-error',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -443,15 +390,15 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
     examples: [
-      'try assert_throws_error(-> throw("Error"), "Error") catch (e) e.message end',
-      'try assert_throws_error(-> identity("Error"), "Error") catch (e) e.message end',
+      'try assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
+      'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
     ],
     algebraic: true,
   },
-  'assert_not_throws': {
-    title: 'assert_not_throws',
+  'assert-not-throws': {
+    title: 'assert-not-throws',
     category: 'Assert',
-    linkName: 'assert_not_throws',
+    linkName: 'assert-not-throws',
     clojureDocs: null,
     returns: {
       type: 'null',
@@ -470,8 +417,8 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
     ],
     description: 'If $fn throws, it throws `AssertionError`.',
     examples: [
-      'try assert_not_throws(-> identity("Error")) catch (e) e.message end',
-      'try assert_not_throws(-> throw("Error")) catch (e) e.message end',
+      'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
+      'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
     ],
   },
 }

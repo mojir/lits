@@ -23,29 +23,9 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
   'assert=': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
-      if (first !== second)
-        throw new AssertionError(`Expected ${first} to be ${second}.${message}`, sourceCodeInfo)
-
-      return null
-    },
-    paramCount: { min: 2, max: 3 },
-  },
-  'assert!=': {
-    evaluate: ([first, second, message], sourceCodeInfo): null => {
-      message = typeof message === 'string' && message ? ` "${message}"` : ''
-      if (first === second)
-        throw new AssertionError(`Expected ${first} not to be ${second}.${message}`, sourceCodeInfo)
-
-      return null
-    },
-    paramCount: { min: 2, max: 3 },
-  },
-  'assert_equal': {
-    evaluate: ([first, second, message], sourceCodeInfo): null => {
-      message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (!deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
         throw new AssertionError(
-          `Expected\n${JSON.stringify(first, null, 2)}\nto deep equal\n${JSON.stringify(second, null, 2)}.${message}`,
+          `Expected ${JSON.stringify(first, null, 2)} to deep equal ${JSON.stringify(second, null, 2)}.${message}`,
           sourceCodeInfo,
         )
       }
@@ -53,7 +33,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'assert_not_equal': {
+  'assert!=': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
@@ -66,7 +46,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'assert_gt': {
+  'assert-gt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) <= 0)
@@ -76,7 +56,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'assert_gte': {
+  'assert-gte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) < 0)
@@ -86,7 +66,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'assert_lt': {
+  'assert-lt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) >= 0)
@@ -96,7 +76,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'assert_lte': {
+  'assert-lte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (compare(first, second) > 0)
@@ -106,7 +86,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'assert_true': {
+  'assert-true': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first !== true)
@@ -116,7 +96,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'assert_false': {
+  'assert-false': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first !== false)
@@ -126,7 +106,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'assert_truthy': {
+  'assert-truthy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (!first)
@@ -136,7 +116,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'assert_falsy': {
+  'assert-falsy': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first)
@@ -146,7 +126,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'assert_null': {
+  'assert-null': {
     evaluate: ([first, message], sourceCodeInfo): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       if (first !== null)
@@ -156,7 +136,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'assert_throws': {
+  'assert-throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       assertLitsFunction(func, sourceCodeInfo)
@@ -170,7 +150,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'assert_throws_error': {
+  'assert-throws-error': {
     evaluate: ([func, throwMessage, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       assertString(throwMessage, sourceCodeInfo)
@@ -192,7 +172,7 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'assert_not_throws': {
+  'assert-not-throws': {
     evaluate: ([func, message], sourceCodeInfo, contextStack, { executeFunction }): null => {
       message = typeof message === 'string' && message ? ` "${message}"` : ''
       assertLitsFunction(func, sourceCodeInfo)

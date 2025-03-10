@@ -177,25 +177,25 @@ describe('sequence functions', () => {
     })
   })
 
-  describe('reduce_right', () => {
+  describe('reduce-right', () => {
     it('samples', () => {
-      expect(lits.run('(reduce_right [1 2 3 4 5] +)')).toBe(15)
-      expect(lits.run('(reduce_right [] +)')).toBe(0)
-      expect(lits.run('(reduce_right [1] +)')).toBe(1)
-      expect(lits.run('(reduce_right [1 2] +)')).toBe(3)
-      expect(lits.run('(reduce_right [1 2 3] + 0)')).toBe(6)
-      expect(lits.run('(reduce_right [] + 0)')).toBe(0)
-      expect(lits.run('(reduce_right [] + 0)')).toBe(0)
-      expect(lits.run('(reduce_right [:1 :2 :3] str "")')).toBe('321')
-      expect(lits.run('(reduce_right [:1 :2 :3] str)')).toBe('321')
+      expect(lits.run('(reduce-right [1 2 3 4 5] +)')).toBe(15)
+      expect(lits.run('(reduce-right [] +)')).toBe(0)
+      expect(lits.run('(reduce-right [1] +)')).toBe(1)
+      expect(lits.run('(reduce-right [1 2] +)')).toBe(3)
+      expect(lits.run('(reduce-right [1 2 3] + 0)')).toBe(6)
+      expect(lits.run('(reduce-right [] + 0)')).toBe(0)
+      expect(lits.run('(reduce-right [] + 0)')).toBe(0)
+      expect(lits.run('(reduce-right [:1 :2 :3] str "")')).toBe('321')
+      expect(lits.run('(reduce-right [:1 :2 :3] str)')).toBe('321')
 
-      expect(lits.run('(reduce_right "Albert" (fn [x y] (concat x "-" y)))')).toBe('t-r-e-b-l-A')
-      expect(lits.run('(reduce_right "Albert" (fn [x y] (concat x "-" y)) ">")')).toBe('>-t-r-e-b-l-A')
-      expect(lits.run('(reduce_right "" (fn [x y] (concat x "-" y)) ">")')).toBe('>')
+      expect(lits.run('(reduce-right "Albert" (fn [x y] (concat x "-" y)))')).toBe('t-r-e-b-l-A')
+      expect(lits.run('(reduce-right "Albert" (fn [x y] (concat x "-" y)) ">")')).toBe('>-t-r-e-b-l-A')
+      expect(lits.run('(reduce-right "" (fn [x y] (concat x "-" y)) ">")')).toBe('>')
 
-      expect(() => lits.run('(reduce_right +)')).toThrow()
-      expect(() => lits.run('(reduce_right)')).toThrow()
-      expect(() => lits.run('(reduce_right 1 + 2)')).toThrow()
+      expect(() => lits.run('(reduce-right +)')).toThrow()
+      expect(() => lits.run('(reduce-right)')).toThrow()
+      expect(() => lits.run('(reduce-right 1 + 2)')).toThrow()
     })
   })
   describe('filter', () => {
@@ -226,33 +226,33 @@ describe('sequence functions', () => {
     })
   })
 
-  describe('index_of', () => {
+  describe('index-of', () => {
     it('samples', () => {
-      expect(lits.run('(index_of [:1 :2 3] :2)')).toEqual(1)
-      expect(lits.run('(index_of [:1 :2 :3] :4)')).toBeNull()
-      expect(lits.run('(index_of [] 1)')).toBeNull()
-      expect(lits.run('(index_of null 1)')).toBeNull()
-      expect(lits.run('(index_of "AlbertAlbert" :l)')).toBe(1)
-      expect(lits.run('(index_of "Albert" "ert")')).toBe(3)
-      expect(lits.run('(index_of "Albert" :z)')).toBeNull()
-      expect(lits.run('(index_of [1] 2)')).toBeNull()
-      expect(() => lits.run('(index_of +)')).toThrow()
-      expect(() => lits.run('(index_of)')).toThrow()
+      expect(lits.run('(index-of [:1 :2 3] :2)')).toEqual(1)
+      expect(lits.run('(index-of [:1 :2 :3] :4)')).toBeNull()
+      expect(lits.run('(index-of [] 1)')).toBeNull()
+      expect(lits.run('(index-of null 1)')).toBeNull()
+      expect(lits.run('(index-of "AlbertAlbert" :l)')).toBe(1)
+      expect(lits.run('(index-of "Albert" "ert")')).toBe(3)
+      expect(lits.run('(index-of "Albert" :z)')).toBeNull()
+      expect(lits.run('(index-of [1] 2)')).toBeNull()
+      expect(() => lits.run('(index-of +)')).toThrow()
+      expect(() => lits.run('(index-of)')).toThrow()
     })
   })
 
-  describe('last_index_of', () => {
+  describe('last-index-of', () => {
     it('samples', () => {
-      expect(lits.run('(last_index_of [:1 :2 3] :2)')).toEqual(1)
-      expect(lits.run('(last_index_of [:1 :2 :3] :4)')).toBeNull()
-      expect(lits.run('(last_index_of [] 1)')).toBeNull()
-      expect(lits.run('(last_index_of null 1)')).toBeNull()
-      expect(lits.run('(last_index_of "AlbertAlbert" :l)')).toBe(7)
-      expect(lits.run('(last_index_of "Albert" "ert")')).toBe(3)
-      expect(lits.run('(last_index_of "Albert" :z)')).toBeNull()
-      expect(lits.run('(last_index_of [1] 2)')).toBeNull()
-      expect(() => lits.run('(last_index_of +)')).toThrow()
-      expect(() => lits.run('(last_index_of)')).toThrow()
+      expect(lits.run('(last-index-of [:1 :2 3] :2)')).toEqual(1)
+      expect(lits.run('(last-index-of [:1 :2 :3] :4)')).toBeNull()
+      expect(lits.run('(last-index-of [] 1)')).toBeNull()
+      expect(lits.run('(last-index-of null 1)')).toBeNull()
+      expect(lits.run('(last-index-of "AlbertAlbert" :l)')).toBe(7)
+      expect(lits.run('(last-index-of "Albert" "ert")')).toBe(3)
+      expect(lits.run('(last-index-of "Albert" :z)')).toBeNull()
+      expect(lits.run('(last-index-of [1] 2)')).toBeNull()
+      expect(() => lits.run('(last-index-of +)')).toThrow()
+      expect(() => lits.run('(last-index-of)')).toThrow()
     })
   })
 
@@ -586,52 +586,52 @@ describe('sequence functions', () => {
     })
   })
 
-  describe('take_last', () => {
+  describe('take-last', () => {
     it('samples', () => {
-      expect(lits.run('(take_last [1 2 3] 2)')).toEqual([2, 3])
-      expect(lits.run('(take_last [1 2 3] 20)')).toEqual([1, 2, 3])
-      expect(lits.run('(take_last [1 2 3] 0)')).toEqual([])
-      expect(lits.run('(take_last [1 2 3] 0.01)')).toEqual([3])
+      expect(lits.run('(take-last [1 2 3] 2)')).toEqual([2, 3])
+      expect(lits.run('(take-last [1 2 3] 20)')).toEqual([1, 2, 3])
+      expect(lits.run('(take-last [1 2 3] 0)')).toEqual([])
+      expect(lits.run('(take-last [1 2 3] 0.01)')).toEqual([3])
 
-      expect(() => lits.run('(take_last (object))')).toThrow()
-      expect(() => lits.run('(take_last null)')).toThrow()
-      expect(() => lits.run('(take_last true)')).toThrow()
-      expect(() => lits.run('(take_last false)')).toThrow()
-      expect(() => lits.run('(take_last :1)')).toThrow()
-      expect(() => lits.run('(take_last)')).toThrow()
-      expect(() => lits.run('(take_last [1 2 3])')).toThrow()
-      expect(() => lits.run('(take_last [1 2 3] 1 2)')).toThrow()
+      expect(() => lits.run('(take-last (object))')).toThrow()
+      expect(() => lits.run('(take-last null)')).toThrow()
+      expect(() => lits.run('(take-last true)')).toThrow()
+      expect(() => lits.run('(take-last false)')).toThrow()
+      expect(() => lits.run('(take-last :1)')).toThrow()
+      expect(() => lits.run('(take-last)')).toThrow()
+      expect(() => lits.run('(take-last [1 2 3])')).toThrow()
+      expect(() => lits.run('(take-last [1 2 3] 1 2)')).toThrow()
     })
 
     it('new array created', () => {
       const program = `
         (def l1 [1 2 3])
-        (def l2 (take_last l1 2))
+        (def l2 (take-last l1 2))
         (!= l1 l2)
       `
       expect(lits.run(program)).toBe(true)
     })
   })
 
-  describe('take_while', () => {
+  describe('take-while', () => {
     it('samples', () => {
-      expect(lits.run('(take_while [1 2 3 2 1] (fn [x] (< x 3)))')).toEqual([1, 2])
-      expect(lits.run('(take_while [1 2 3 2 1] (fn [x] (> x 3)))')).toEqual([])
-      expect(lits.run('(take_while "abcdabcd" (fn [x] (<= x :c)))')).toEqual('abc')
+      expect(lits.run('(take-while [1 2 3 2 1] (fn [x] (< x 3)))')).toEqual([1, 2])
+      expect(lits.run('(take-while [1 2 3 2 1] (fn [x] (> x 3)))')).toEqual([])
+      expect(lits.run('(take-while "abcdabcd" (fn [x] (<= x :c)))')).toEqual('abc')
 
-      expect(() => lits.run('(take_while (object) (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(take_while null (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(take_while true (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(take_while false (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(take_while [1 2 3] 10)')).toThrow()
-      expect(() => lits.run('(take_while)')).toThrow()
-      expect(() => lits.run('(take_while [1 2 3])')).toThrow()
-      expect(() => lits.run('(take_while [1 2 3] (fn [x] (< x 3)) 1)')).toThrow()
+      expect(() => lits.run('(take-while (object) (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(take-while null (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(take-while true (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(take-while false (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(take-while [1 2 3] 10)')).toThrow()
+      expect(() => lits.run('(take-while)')).toThrow()
+      expect(() => lits.run('(take-while [1 2 3])')).toThrow()
+      expect(() => lits.run('(take-while [1 2 3] (fn [x] (< x 3)) 1)')).toThrow()
     })
     it('new array created', () => {
       const program = `
         (def l1 [1 2 3])
-        (def l2 (take_while l1 (fn [x] (< x 3))))
+        (def l2 (take-while l1 (fn [x] (< x 3))))
         (!= l1 l2)
       `
       expect(lits.run(program)).toBe(true)
@@ -667,45 +667,45 @@ describe('sequence functions', () => {
     })
   })
 
-  describe('drop_last', () => {
+  describe('drop-last', () => {
     it('samples', () => {
-      expect(lits.run('(drop_last [1 2 3] 2)')).toEqual([1])
-      expect(lits.run('(drop_last [1 2 3] 20)')).toEqual([])
-      expect(lits.run('(drop_last [1 2 3] 0)')).toEqual([1, 2, 3])
-      expect(lits.run('(drop_last "Albert" 2)')).toEqual('Albe')
-      expect(lits.run('(drop_last [1 2 3] 0.5)')).toEqual([1, 2])
-      expect(lits.run('(drop_last "Albert" -2)')).toEqual('Albert')
+      expect(lits.run('(drop-last [1 2 3] 2)')).toEqual([1])
+      expect(lits.run('(drop-last [1 2 3] 20)')).toEqual([])
+      expect(lits.run('(drop-last [1 2 3] 0)')).toEqual([1, 2, 3])
+      expect(lits.run('(drop-last "Albert" 2)')).toEqual('Albe')
+      expect(lits.run('(drop-last [1 2 3] 0.5)')).toEqual([1, 2])
+      expect(lits.run('(drop-last "Albert" -2)')).toEqual('Albert')
 
-      expect(() => lits.run('(drop_last (object) 1)')).toThrow()
-      expect(() => lits.run('(drop_last null 1)')).toThrow()
-      expect(() => lits.run('(drop_last true 1)')).toThrow()
-      expect(() => lits.run('(drop_last false 1)')).toThrow()
-      expect(() => lits.run('(drop_last "Hej" :1)')).toThrow()
-      expect(() => lits.run('(drop_last)')).toThrow()
-      expect(() => lits.run('(drop_last [1 2 3])')).toThrow()
-      expect(() => lits.run('(drop_last [1 2 3] 1 2)')).toThrow()
+      expect(() => lits.run('(drop-last (object) 1)')).toThrow()
+      expect(() => lits.run('(drop-last null 1)')).toThrow()
+      expect(() => lits.run('(drop-last true 1)')).toThrow()
+      expect(() => lits.run('(drop-last false 1)')).toThrow()
+      expect(() => lits.run('(drop-last "Hej" :1)')).toThrow()
+      expect(() => lits.run('(drop-last)')).toThrow()
+      expect(() => lits.run('(drop-last [1 2 3])')).toThrow()
+      expect(() => lits.run('(drop-last [1 2 3] 1 2)')).toThrow()
     })
   })
 
-  describe('drop_while', () => {
+  describe('drop-while', () => {
     it('samples', () => {
-      expect(lits.run('(drop_while [1 2 3 2 1] (fn [x] (< x 3)))')).toEqual([3, 2, 1])
-      expect(lits.run('(drop_while [1 2 3 2 1] (fn [x] (> x 3)))')).toEqual([1, 2, 3, 2, 1])
-      expect(lits.run('(drop_while "abcdab" (fn [x] (<= x :c)))')).toEqual('dab')
+      expect(lits.run('(drop-while [1 2 3 2 1] (fn [x] (< x 3)))')).toEqual([3, 2, 1])
+      expect(lits.run('(drop-while [1 2 3 2 1] (fn [x] (> x 3)))')).toEqual([1, 2, 3, 2, 1])
+      expect(lits.run('(drop-while "abcdab" (fn [x] (<= x :c)))')).toEqual('dab')
 
-      expect(() => lits.run('(drop_while (object) (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(drop_while null (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(drop_while true (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(drop_while false (fn [x] (< x 3)))')).toThrow()
-      expect(() => lits.run('(drop_while [1 2 3] 10)')).toThrow()
-      expect(() => lits.run('(drop_while)')).toThrow()
-      expect(() => lits.run('(drop_while [1 2 3])')).toThrow()
-      expect(() => lits.run('(drop_while [1 2 3] (fn [x] (< x 3)) 1)')).toThrow()
+      expect(() => lits.run('(drop-while (object) (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(drop-while null (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(drop-while true (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(drop-while false (fn [x] (< x 3)))')).toThrow()
+      expect(() => lits.run('(drop-while [1 2 3] 10)')).toThrow()
+      expect(() => lits.run('(drop-while)')).toThrow()
+      expect(() => lits.run('(drop-while [1 2 3])')).toThrow()
+      expect(() => lits.run('(drop-while [1 2 3] (fn [x] (< x 3)) 1)')).toThrow()
     })
     it('new array created', () => {
       const program = `
         (def l1 [1 2 3])
-        (def l2 (take_while l1 (fn [x] (< x 3))))
+        (def l2 (take-while l1 (fn [x] (< x 3))))
         (!= l1 l2)
       `
       expect(lits.run(program)).toBe(true)
@@ -766,63 +766,63 @@ describe('sequence functions', () => {
     })
   })
 
-  describe('remove_at', () => {
+  describe('remove-at', () => {
     it('samples', () => {
-      expect(lits.run('(remove_at [1 2 3 4 5] -1)')).toEqual([1, 2, 3, 4, 5])
-      expect(lits.run('(remove_at [1 2 3 4 5] 0)')).toEqual([2, 3, 4, 5])
-      expect(lits.run('(remove_at [1 2 3 4 5] 2)')).toEqual([1, 2, 4, 5])
-      expect(lits.run('(remove_at [1 2 3 4 5] 4)')).toEqual([1, 2, 3, 4])
-      expect(lits.run('(remove_at [1 2 3 4 5] 5)')).toEqual([1, 2, 3, 4, 5])
-      expect(lits.run('(remove_at "Mojir" -1)')).toEqual('Mojir')
-      expect(lits.run('(remove_at "Mojir" 0)')).toEqual('ojir')
-      expect(lits.run('(remove_at "Mojir" 2)')).toEqual('Moir')
-      expect(lits.run('(remove_at "Mojir" 4)')).toEqual('Moji')
-      expect(lits.run('(remove_at "Mojir" 5)')).toEqual('Mojir')
-      expect(() => lits.run('(remove_at)')).toThrow()
-      expect(() => lits.run('(remove_at "Albert Mojir")')).toThrow()
-      expect(() => lits.run('(remove_at 1)')).toThrow()
-      expect(() => lits.run('(remove_at "Albert" 1 2')).toThrow()
+      expect(lits.run('(remove-at [1 2 3 4 5] -1)')).toEqual([1, 2, 3, 4, 5])
+      expect(lits.run('(remove-at [1 2 3 4 5] 0)')).toEqual([2, 3, 4, 5])
+      expect(lits.run('(remove-at [1 2 3 4 5] 2)')).toEqual([1, 2, 4, 5])
+      expect(lits.run('(remove-at [1 2 3 4 5] 4)')).toEqual([1, 2, 3, 4])
+      expect(lits.run('(remove-at [1 2 3 4 5] 5)')).toEqual([1, 2, 3, 4, 5])
+      expect(lits.run('(remove-at "Mojir" -1)')).toEqual('Mojir')
+      expect(lits.run('(remove-at "Mojir" 0)')).toEqual('ojir')
+      expect(lits.run('(remove-at "Mojir" 2)')).toEqual('Moir')
+      expect(lits.run('(remove-at "Mojir" 4)')).toEqual('Moji')
+      expect(lits.run('(remove-at "Mojir" 5)')).toEqual('Mojir')
+      expect(() => lits.run('(remove-at)')).toThrow()
+      expect(() => lits.run('(remove-at "Albert Mojir")')).toThrow()
+      expect(() => lits.run('(remove-at 1)')).toThrow()
+      expect(() => lits.run('(remove-at "Albert" 1 2')).toThrow()
     })
   })
 
-  describe('split_at', () => {
+  describe('split-at', () => {
     it('samples', () => {
-      expect(lits.run('(split_at [1 2 3 4 5] 2)')).toEqual([
+      expect(lits.run('(split-at [1 2 3 4 5] 2)')).toEqual([
         [1, 2],
         [3, 4, 5],
       ])
-      expect(lits.run('(split_at [1 2 3 4 5] 0.01)')).toEqual([[1], [2, 3, 4, 5]])
-      expect(lits.run('(split_at [1 2 3 4 5] 0)')).toEqual([[], [1, 2, 3, 4, 5]])
-      expect(lits.run('(split_at [1 2 3 4 5] -1)')).toEqual([[], [1, 2, 3, 4, 5]])
-      expect(lits.run('(split_at [1 2 3 4 5] 100)')).toEqual([[1, 2, 3, 4, 5], []])
-      expect(lits.run('(split_at "Albert" 2)')).toEqual(['Al', 'bert'])
-      expect(lits.run('(split_at "Albert" 0.01)')).toEqual(['A', 'lbert'])
-      expect(lits.run('(split_at "Albert" 0)')).toEqual(['', 'Albert'])
-      expect(lits.run('(split_at "Albert" -1)')).toEqual(['', 'Albert'])
-      expect(lits.run('(split_at "Albert" 100)')).toEqual(['Albert', ''])
+      expect(lits.run('(split-at [1 2 3 4 5] 0.01)')).toEqual([[1], [2, 3, 4, 5]])
+      expect(lits.run('(split-at [1 2 3 4 5] 0)')).toEqual([[], [1, 2, 3, 4, 5]])
+      expect(lits.run('(split-at [1 2 3 4 5] -1)')).toEqual([[], [1, 2, 3, 4, 5]])
+      expect(lits.run('(split-at [1 2 3 4 5] 100)')).toEqual([[1, 2, 3, 4, 5], []])
+      expect(lits.run('(split-at "Albert" 2)')).toEqual(['Al', 'bert'])
+      expect(lits.run('(split-at "Albert" 0.01)')).toEqual(['A', 'lbert'])
+      expect(lits.run('(split-at "Albert" 0)')).toEqual(['', 'Albert'])
+      expect(lits.run('(split-at "Albert" -1)')).toEqual(['', 'Albert'])
+      expect(lits.run('(split-at "Albert" 100)')).toEqual(['Albert', ''])
 
-      expect(() => lits.run('(split_at)')).toThrow()
-      expect(() => lits.run('(split_at 3)')).toThrow()
-      expect(() => lits.run('(split_at "Albert" 3 "Mojir")')).toThrow()
+      expect(() => lits.run('(split-at)')).toThrow()
+      expect(() => lits.run('(split-at 3)')).toThrow()
+      expect(() => lits.run('(split-at "Albert" 3 "Mojir")')).toThrow()
     })
   })
 
-  describe('split_with', () => {
+  describe('split-with', () => {
     it('samples', () => {
-      expect(lits.run('(split_with [1 2 3 4 5] #(< %1 3))')).toEqual([
+      expect(lits.run('(split-with [1 2 3 4 5] #(< %1 3))')).toEqual([
         [1, 2],
         [3, 4, 5],
       ])
-      expect(lits.run('(split_with [1 2 3 4 5] #(> %1 3))')).toEqual([[], [1, 2, 3, 4, 5]])
-      expect(lits.run('(split_with [1 2 3 4 5] #(< %1 10))')).toEqual([[1, 2, 3, 4, 5], []])
+      expect(lits.run('(split-with [1 2 3 4 5] #(> %1 3))')).toEqual([[], [1, 2, 3, 4, 5]])
+      expect(lits.run('(split-with [1 2 3 4 5] #(< %1 10))')).toEqual([[1, 2, 3, 4, 5], []])
 
-      expect(lits.run('(split_with "Albert" #(<= %1 :Z))')).toEqual(['A', 'lbert'])
-      expect(lits.run('(split_with "Albert" #(> %1 :Z))')).toEqual(['', 'Albert'])
-      expect(lits.run('(split_with "Albert" #(<= %1 :z))')).toEqual(['Albert', ''])
+      expect(lits.run('(split-with "Albert" #(<= %1 :Z))')).toEqual(['A', 'lbert'])
+      expect(lits.run('(split-with "Albert" #(> %1 :Z))')).toEqual(['', 'Albert'])
+      expect(lits.run('(split-with "Albert" #(<= %1 :z))')).toEqual(['Albert', ''])
 
-      expect(() => lits.run('(split_with)')).toThrow()
-      expect(() => lits.run('(split_with #(<= %1 :Z))')).toThrow()
-      expect(() => lits.run('(split_with "Albert" #(<= %1 :Z) "Mojir")')).toThrow()
+      expect(() => lits.run('(split-with)')).toThrow()
+      expect(() => lits.run('(split-with #(<= %1 :Z))')).toThrow()
+      expect(() => lits.run('(split-with "Albert" #(<= %1 :Z) "Mojir")')).toThrow()
     })
   })
 
@@ -853,41 +853,41 @@ describe('sequence functions', () => {
     })
   })
 
-  describe('group_by', () => {
+  describe('group-by', () => {
     it('samples', () => {
-      expect(lits.run('(group_by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")')).toEqual({
+      expect(lits.run('(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")')).toEqual({
         Albert: [{ name: 'Albert' }, { name: 'Albert' }],
         Mojir: [{ name: 'Mojir' }],
       })
-      expect(lits.run('(group_by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))')).toEqual({
+      expect(lits.run('(group-by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))')).toEqual({
         other: ['l', 'b', 'r', 't', ' ', 'M', 'j', 'r'],
         vowel: ['A', 'e', 'o', 'i'],
       })
-      expect(() => lits.run('(group_by)')).toThrow()
-      expect(() => lits.run('(group_by :a)')).toThrow()
-      expect(() => lits.run('(group_by :a {})')).toThrow()
-      expect(() => lits.run('(group_by :a 3)')).toThrow()
-      expect(() => lits.run('(group_by "" :a "")')).toThrow()
+      expect(() => lits.run('(group-by)')).toThrow()
+      expect(() => lits.run('(group-by :a)')).toThrow()
+      expect(() => lits.run('(group-by :a {})')).toThrow()
+      expect(() => lits.run('(group-by :a 3)')).toThrow()
+      expect(() => lits.run('(group-by "" :a "")')).toThrow()
     })
   })
 
-  describe('sort_by', () => {
+  describe('sort-by', () => {
     it('samples', () => {
-      expect(lits.run('(sort_by ["Albert" "Mojir" "Nina"] count)')).toEqual(['Nina', 'Mojir', 'Albert'])
-      expect(lits.run('(sort_by ["Albert" "Mojir" "Nina"] count (fn [a b] (- b a)))')).toEqual([
+      expect(lits.run('(sort-by ["Albert" "Mojir" "Nina"] count)')).toEqual(['Nina', 'Mojir', 'Albert'])
+      expect(lits.run('(sort-by ["Albert" "Mojir" "Nina"] count (fn [a b] (- b a)))')).toEqual([
         'Albert',
         'Mojir',
         'Nina',
       ])
-      expect(lits.run('(sort_by "Albert" lower_case)')).toEqual('Abelrt')
-      expect(lits.run('(sort_by "Albert" lower_case (fn [a b] (- (to_char_code b) (to_char_code a))))')).toEqual(
+      expect(lits.run('(sort-by "Albert" lower-case)')).toEqual('Abelrt')
+      expect(lits.run('(sort-by "Albert" lower-case (fn [a b] (- (to-char-code b) (to-char-code a))))')).toEqual(
         'trlebA',
       )
-      expect(() => lits.run('(sort_by)')).toThrow()
-      expect(() => lits.run('(sort_by :a)')).toThrow()
-      expect(() => lits.run('(sort_by {} :a)')).toThrow()
-      expect(() => lits.run('(sort_by 3 :a)')).toThrow()
-      expect(() => lits.run('(sort_by "" :a "")')).toThrow()
+      expect(() => lits.run('(sort-by)')).toThrow()
+      expect(() => lits.run('(sort-by :a)')).toThrow()
+      expect(() => lits.run('(sort-by {} :a)')).toThrow()
+      expect(() => lits.run('(sort-by 3 :a)')).toThrow()
+      expect(() => lits.run('(sort-by "" :a "")')).toThrow()
     })
   })
 
@@ -962,70 +962,70 @@ describe('sequence functions', () => {
     })
   })
 
-  describe('partition_all', () => {
+  describe('partition-all', () => {
     it('samples', () => {
-      expect(lits.run('(partition_all [0 1 2 3 4 5 6 7 8 9] 4)')).toEqual([
+      expect(lits.run('(partition-all [0 1 2 3 4 5 6 7 8 9] 4)')).toEqual([
         [0, 1, 2, 3],
         [4, 5, 6, 7],
         [8, 9],
       ])
-      expect(lits.run('(partition_all [0 1 2 3 4 5 6 7 8 9] 2 4)')).toEqual([
+      expect(lits.run('(partition-all [0 1 2 3 4 5 6 7 8 9] 2 4)')).toEqual([
         [0, 1],
         [4, 5],
         [8, 9],
       ])
-      expect(() => lits.run('(partition_all 1)')).toThrow()
-      expect(() => lits.run('(partition_all [1])')).toThrow()
+      expect(() => lits.run('(partition-all 1)')).toThrow()
+      expect(() => lits.run('(partition-all [1])')).toThrow()
     })
   })
 
-  describe('partition_by', () => {
+  describe('partition-by', () => {
     it('samples', () => {
-      expect(lits.run('(partition_by [1 2 3 4 5] #(= 3 %1))')).toEqual([[1, 2], [3], [4, 5]])
-      expect(lits.run('(partition_by [1 1 1 2 2 3 3] odd?)')).toEqual([
+      expect(lits.run('(partition-by [1 2 3 4 5] #(= 3 %1))')).toEqual([[1, 2], [3], [4, 5]])
+      expect(lits.run('(partition-by [1 1 1 2 2 3 3] odd?)')).toEqual([
         [1, 1, 1],
         [2, 2],
         [3, 3],
       ])
-      expect(lits.run('(partition_by "Leeeeeerrroyyy" identity)')).toEqual(['L', 'eeeeee', 'rrr', 'o', 'yyy'])
-      expect(() => lits.run('(partition_by odd?)')).toThrow()
-      expect(() => lits.run('(partition_by [1 2 3])')).toThrow()
+      expect(lits.run('(partition-by "Leeeeeerrroyyy" identity)')).toEqual(['L', 'eeeeee', 'rrr', 'o', 'yyy'])
+      expect(() => lits.run('(partition-by odd?)')).toThrow()
+      expect(() => lits.run('(partition-by [1 2 3])')).toThrow()
     })
   })
 
-  describe('starts_with?', () => {
+  describe('starts-with?', () => {
     it('samples', () => {
-      expect(lits.run('(starts_with? [1, 2, 3] 1)')).toBe(true)
-      expect(lits.run('(starts_with? [1, 2, 3] 2)')).toBe(false)
-      expect(lits.run('(starts_with? [1, 2, 3] [1])')).toBe(false)
+      expect(lits.run('(starts-with? [1, 2, 3] 1)')).toBe(true)
+      expect(lits.run('(starts-with? [1, 2, 3] 2)')).toBe(false)
+      expect(lits.run('(starts-with? [1, 2, 3] [1])')).toBe(false)
 
-      expect(lits.run('(starts_with? "Albert" "Al")')).toBe(true)
-      expect(lits.run('(starts_with? "Albert" "al")')).toBe(false)
-      expect(lits.run('(starts_with? "Albert" "")')).toBe(true)
-      expect(lits.run('(starts_with? "" "")')).toBe(true)
-      expect(lits.run('(starts_with? "Albert" "Albert")')).toBe(true)
-      expect(lits.run('(starts_with? "Albert" "Albert ")')).toBe(false)
-      expect(() => lits.run('(starts_with? "Albert" "foo" 2)')).toThrow()
-      expect(() => lits.run('(starts_with? "Albert")')).toThrow()
-      expect(() => lits.run('(starts_with?)')).toThrow()
+      expect(lits.run('(starts-with? "Albert" "Al")')).toBe(true)
+      expect(lits.run('(starts-with? "Albert" "al")')).toBe(false)
+      expect(lits.run('(starts-with? "Albert" "")')).toBe(true)
+      expect(lits.run('(starts-with? "" "")')).toBe(true)
+      expect(lits.run('(starts-with? "Albert" "Albert")')).toBe(true)
+      expect(lits.run('(starts-with? "Albert" "Albert ")')).toBe(false)
+      expect(() => lits.run('(starts-with? "Albert" "foo" 2)')).toThrow()
+      expect(() => lits.run('(starts-with? "Albert")')).toThrow()
+      expect(() => lits.run('(starts-with?)')).toThrow()
     })
   })
 
-  describe('ends_with?', () => {
+  describe('ends-with?', () => {
     it('samples', () => {
-      expect(lits.run('(ends_with? [1, 2, 3] 3)')).toBe(true)
-      expect(lits.run('(ends_with? [1, 2, 3] 2)')).toBe(false)
-      expect(lits.run('(ends_with? [1, 2, 3] [3])')).toBe(false)
+      expect(lits.run('(ends-with? [1, 2, 3] 3)')).toBe(true)
+      expect(lits.run('(ends-with? [1, 2, 3] 2)')).toBe(false)
+      expect(lits.run('(ends-with? [1, 2, 3] [3])')).toBe(false)
 
-      expect(lits.run('(ends_with? "Albert" "rt")')).toBe(true)
-      expect(lits.run('(ends_with? "Albert" "RT")')).toBe(false)
-      expect(lits.run('(ends_with? "Albert" "")')).toBe(true)
-      expect(lits.run('(ends_with? "" "")')).toBe(true)
-      expect(lits.run('(ends_with? "Albert" "Albert")')).toBe(true)
-      expect(lits.run('(ends_with? "Albert" " Albert")')).toBe(false)
-      expect(() => lits.run('(ends_with? "Albert" "foo" 2)')).toThrow()
-      expect(() => lits.run('(ends_with? "Albert")')).toThrow()
-      expect(() => lits.run('(ends_with?)')).toThrow()
+      expect(lits.run('(ends-with? "Albert" "rt")')).toBe(true)
+      expect(lits.run('(ends-with? "Albert" "RT")')).toBe(false)
+      expect(lits.run('(ends-with? "Albert" "")')).toBe(true)
+      expect(lits.run('(ends-with? "" "")')).toBe(true)
+      expect(lits.run('(ends-with? "Albert" "Albert")')).toBe(true)
+      expect(lits.run('(ends-with? "Albert" " Albert")')).toBe(false)
+      expect(() => lits.run('(ends-with? "Albert" "foo" 2)')).toThrow()
+      expect(() => lits.run('(ends-with? "Albert")')).toThrow()
+      expect(() => lits.run('(ends-with?)')).toThrow()
     })
   })
   describe('interleave', () => {

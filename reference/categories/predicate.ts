@@ -453,10 +453,10 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       '(nan? (sqrt -1))',
     ],
   },
-  'negative_infinity?': {
-    title: 'negative_infinity?',
+  'negative-infinity?': {
+    title: 'negative-infinity?',
     category: 'Predicate',
-    linkName: 'negative_infinity-question',
+    linkName: 'negative-infinity-question',
     clojureDocs: null,
     returns: {
       type: 'boolean',
@@ -471,16 +471,16 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     ],
     description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
     examples: [
-      '(negative_infinity? 1.0)',
-      '(negative_infinity? (/ 1 0))',
-      '(negative_infinity? (/ -1 0))',
-      '(negative_infinity? (sqrt -1))',
+      '(negative-infinity? 1.0)',
+      '(negative-infinity? (/ 1 0))',
+      '(negative-infinity? (/ -1 0))',
+      '(negative-infinity? (sqrt -1))',
     ],
   },
-  'positive_infinity?': {
-    title: 'positive_infinity?',
+  'positive-infinity?': {
+    title: 'positive-infinity?',
     category: 'Predicate',
-    linkName: 'positive_infinity-question',
+    linkName: 'positive-infinity-question',
     clojureDocs: null,
     returns: {
       type: 'boolean',
@@ -495,10 +495,10 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     ],
     description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
     examples: [
-      '(positive_infinity? 1.0)',
-      '(positive_infinity? (/ 1 0))',
-      '(positive_infinity? (/ -1 0))',
-      '(positive_infinity? (sqrt -1))',
+      '(positive-infinity? 1.0)',
+      '(positive-infinity? (/ 1 0))',
+      '(positive-infinity? (/ -1 0))',
+      '(positive-infinity? (sqrt -1))',
     ],
   },
   'false?': {
@@ -573,10 +573,10 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
       '(empty? null)',
     ],
   },
-  'not_empty?': {
-    title: 'not_empty?',
+  'not-empty?': {
+    title: 'not-empty?',
     category: 'Predicate',
-    linkName: 'not_empty-question',
+    linkName: 'not-empty-question',
     clojureDocs: null,
     returns: {
       type: 'boolean',
@@ -591,13 +591,13 @@ export const predicateReference: Record<PredicateApiName, FunctionReference<'Pre
     ],
     description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
     examples: [
-      '(not_empty? [])',
-      '(not_empty? [1 2 3])',
-      '(not_empty? {})',
-      '(not_empty? {:a 2})',
-      '(not_empty? "")',
-      '(not_empty? "Albert")',
-      '(not_empty? null)',
+      '(not-empty? [])',
+      '(not-empty? [1 2 3])',
+      '(not-empty? {})',
+      '(not-empty? {:a 2})',
+      '(not-empty? "")',
+      '(not-empty? "Albert")',
+      '(not-empty? null)',
     ],
   },
 }

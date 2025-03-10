@@ -103,14 +103,14 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     evaluate: ([first]): boolean => !first,
     paramCount: 1,
   },
-  'epoch>iso_date': {
+  'epoch->iso-date': {
     evaluate: ([ms], sourceCodeInfo): string => {
       assertNumber(ms, sourceCodeInfo)
       return new Date(ms).toISOString()
     },
     paramCount: 1,
   },
-  'iso_date>epoch': {
+  'iso-date->epoch': {
     evaluate: ([dateTime], sourceCodeInfo): number => {
       assertString(dateTime, sourceCodeInfo)
       const ms = new Date(dateTime).valueOf()
@@ -143,7 +143,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'json_parse': {
+  'json-parse': {
     evaluate: ([first], sourceCodeInfo): Any => {
       assertString(first, sourceCodeInfo)
       // eslint-disable-next-line ts/no-unsafe-return
@@ -151,7 +151,7 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'json_stringify': {
+  'json-stringify': {
     evaluate: ([first, second], sourceCodeInfo): string => {
       assertAny(first, sourceCodeInfo)
       if (second === undefined)

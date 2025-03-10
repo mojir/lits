@@ -108,7 +108,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'index_of': {
+  'index-of': {
     evaluate: ([seq, value], sourceCodeInfo): number | null => {
       assertAny(value, sourceCodeInfo)
       if (seq === null)
@@ -127,7 +127,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'last_index_of': {
+  'last-index-of': {
     evaluate: ([seq, value], sourceCodeInfo): number | null => {
       assertAny(value, sourceCodeInfo)
       if (seq === null)
@@ -279,7 +279,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'reduce_right': {
+  'reduce-right': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       const [seq, fn] = params
       assertSeq(seq, sourceCodeInfo)
@@ -502,7 +502,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  'sort_by': {
+  'sort-by': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Seq => {
       const [seq, keyfn] = params
       const defaultComparer = params.length === 2
@@ -564,7 +564,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'take_last': {
+  'take-last': {
     evaluate: ([array, n], sourceCodeInfo): Seq => {
       assertSeq(array, sourceCodeInfo)
       assertNumber(n, sourceCodeInfo)
@@ -574,7 +574,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'take_while': {
+  'take-while': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertSeq(seq, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
@@ -599,7 +599,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'drop_last': {
+  'drop-last': {
     evaluate: ([array, n], sourceCodeInfo): Seq => {
       assertSeq(array, sourceCodeInfo)
       assertNumber(n, sourceCodeInfo)
@@ -610,7 +610,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'drop_while': {
+  'drop-while': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertSeq(seq, sourceCodeInfo)
       assertLitsFunction(fn, sourceCodeInfo)
@@ -662,7 +662,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'remove_at': {
+  'remove-at': {
     evaluate: ([input, index], sourceCodeInfo): Seq => {
       assertNumber(index, sourceCodeInfo)
       assertSeq(input, sourceCodeInfo)
@@ -680,7 +680,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'split_at': {
+  'split-at': {
     evaluate: ([seq, pos], sourceCodeInfo): Seq => {
       assertNumber(pos, sourceCodeInfo, { finite: true })
       const intPos = toNonNegativeInteger(pos)
@@ -690,7 +690,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
 
-  'split_with': {
+  'split-with': {
     evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): Seq => {
       assertLitsFunction(fn, sourceCodeInfo)
       assertSeq(seq, sourceCodeInfo)
@@ -724,7 +724,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  'group_by': {
+  'group-by': {
     evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): Obj => {
       assertAny(fn, sourceCodeInfo)
       assertSeq(seq, sourceCodeInfo)
@@ -757,7 +757,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2, max: 4 },
   },
 
-  'partition_all': {
+  'partition-all': {
     evaluate: (params, sourceCodeInfo): Seq => {
       const seq = asSeq(params[0], sourceCodeInfo)
       const n = toNonNegativeInteger(asNumber(params[1], sourceCodeInfo))
@@ -768,7 +768,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2, max: 3 },
   },
 
-  'partition_by': {
+  'partition-by': {
     evaluate: ([seq, fn], sourceCodeInfo, contextStack, { executeFunction }): Seq => {
       assertLitsFunction(fn, sourceCodeInfo)
       assertSeq(seq, sourceCodeInfo)
@@ -789,7 +789,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'ends_with?': {
+  'ends-with?': {
     evaluate: ([str, search], sourceCodeInfo): boolean => {
       assertSeq(str, sourceCodeInfo)
 
@@ -802,7 +802,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'starts_with?': {
+  'starts-with?': {
     evaluate: ([str, search], sourceCodeInfo): boolean => {
       assertSeq(str, sourceCodeInfo)
 

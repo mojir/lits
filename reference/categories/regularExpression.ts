@@ -2,7 +2,7 @@ import type { FunctionReference } from '..'
 import { type RegularExpressionApiName, getOperatorArgs } from '../api'
 
 export const regularExpressionReference: Record<RegularExpressionApiName, FunctionReference<'Regular expression'>> = {
-  regexp: {
+  'regexp': {
     title: 'regexp',
     category: 'Regular expression',
     linkName: 'regexp',
@@ -33,7 +33,7 @@ export const regularExpressionReference: Record<RegularExpressionApiName, Functi
     algebraic: true,
     noOperatorDocumentation: true,
   },
-  match: {
+  'match': {
     title: 'match',
     category: 'Regular expression',
     linkName: 'match',
@@ -61,7 +61,7 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
     ],
     algebraic: true,
   },
-  replace: {
+  'replace': {
     title: 'replace',
     category: 'Regular expression',
     linkName: 'replace',
@@ -90,10 +90,10 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
     ],
     algebraic: true,
   },
-  replace_all: {
-    title: 'replace_all',
+  'replace-all': {
+    title: 'replace-all',
     category: 'Regular expression',
-    linkName: 'replace_all',
+    linkName: 'replace-all',
     clojureDocs: null,
     returns: {
       type: 'any',
@@ -110,12 +110,12 @@ If $b is a string and matches the regular expression, a \`match\`-array is retur
     ],
     description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
     examples: [
-      'replace_all("Duck duck", "u", "i")',
-      'replace_all("Duck duck", regexp("u"), "i")',
-      'replace_all("abcABC", regexp("a", "i"), "-")',
-      'replace_all("abcABC", regexp("a", "gi"), "-")',
-      'replace_all("abcABC", #"a"i, "-")',
-      'replace_all("abcABC", #"a"gi, "-")',
+      'replace-all("Duck duck", "u", "i")',
+      'replace-all("Duck duck", regexp("u"), "i")',
+      'replace-all("abcABC", regexp("a", "i"), "-")',
+      'replace-all("abcABC", regexp("a", "gi"), "-")',
+      'replace-all("abcABC", #"a"i, "-")',
+      'replace-all("abcABC", #"a"gi, "-")',
     ],
     algebraic: true,
   },

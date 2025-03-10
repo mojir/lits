@@ -1629,7 +1629,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2 },
         },
-        'bit_flip': {
+        'bit-flip': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1639,7 +1639,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'bit_set': {
+        'bit-set': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1649,7 +1649,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'bit_clear': {
+        'bit-clear': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1659,7 +1659,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'bit_test': {
+        'bit-test': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), num = _b[0], index = _b[1];
                 assertNumber(num, sourceCodeInfo, { integer: true });
@@ -1977,7 +1977,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'get_in': {
+        'get-in': {
             evaluate: function (params, sourceCodeInfo) {
                 var e_1, _a;
                 var _b;
@@ -2064,7 +2064,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'has_some?': {
+        'has-some?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_2, _b, e_3, _c, e_4, _d;
                 var _e = __read(_a, 2), coll = _e[0], seq = _e[1];
@@ -2124,7 +2124,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'has_every?': {
+        'has-every?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var e_5, _b, e_6, _c, e_7, _d;
                 var _e = __read(_a, 2), coll = _e[0], seq = _e[1];
@@ -2196,7 +2196,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        'assoc_in': {
+        'assoc-in': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), originalColl = _b[0], keys = _b[1], value = _b[2];
                 assertColl(originalColl, sourceCodeInfo);
@@ -2232,7 +2232,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 3 },
         },
-        'update_in': {
+        'update-in': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a), originalColl = _c[0], keys = _c[1], fn = _c[2], params = _c.slice(3);
                 var executeFunction = _b.executeFunction;
@@ -2282,7 +2282,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        'not_empty': {
+        'not-empty': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), coll = _b[0];
                 if (coll === null)
@@ -2324,7 +2324,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'not_any?': {
+        'not-any?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -2338,7 +2338,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'not_every?': {
+        'not-every?': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), coll = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -2529,7 +2529,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'index_of': {
+        'index-of': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), seq = _b[0], value = _b[1];
                 assertAny(value, sourceCodeInfo);
@@ -2548,7 +2548,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'last_index_of': {
+        'last-index-of': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), seq = _b[0], value = _b[1];
                 assertAny(value, sourceCodeInfo);
@@ -2689,7 +2689,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'reduce_right': {
+        'reduce-right': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var _b = __read(params, 2), seq = _b[0], fn = _b[1];
@@ -2894,7 +2894,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        'sort_by': {
+        'sort-by': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var _b = __read(params, 2), seq = _b[0], keyfn = _b[1];
@@ -2955,7 +2955,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'take_last': {
+        'take-last': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), array = _b[0], n = _b[1];
                 assertSeq(array, sourceCodeInfo);
@@ -2966,7 +2966,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'take_while': {
+        'take-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var e_1, _c;
                 var _d = __read(_a, 2), seq = _d[0], fn = _d[1];
@@ -3004,7 +3004,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'drop_last': {
+        'drop-last': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), array = _b[0], n = _b[1];
                 assertSeq(array, sourceCodeInfo);
@@ -3015,7 +3015,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'drop_while': {
+        'drop-while': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -3070,7 +3070,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'remove_at': {
+        'remove-at': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), input = _b[0], index = _b[1];
                 assertNumber(index, sourceCodeInfo);
@@ -3087,7 +3087,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'split_at': {
+        'split-at': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), seq = _b[0], pos = _b[1];
                 assertNumber(pos, sourceCodeInfo, { finite: true });
@@ -3097,7 +3097,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'split_with': {
+        'split-with': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -3128,7 +3128,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'group_by': {
+        'group-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -3158,7 +3158,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 4 },
         },
-        'partition_all': {
+        'partition-all': {
             evaluate: function (params, sourceCodeInfo) {
                 var seq = asSeq(params[0], sourceCodeInfo);
                 var n = toNonNegativeInteger(asNumber(params[1], sourceCodeInfo));
@@ -3167,7 +3167,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'partition_by': {
+        'partition-by': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), seq = _c[0], fn = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -3188,7 +3188,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'ends_with?': {
+        'ends-with?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), str = _b[0], search = _b[1];
                 assertSeq(str, sourceCodeInfo);
@@ -3200,7 +3200,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'starts_with?': {
+        'starts-with?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), str = _b[0], search = _b[1];
                 assertSeq(str, sourceCodeInfo);
@@ -3786,7 +3786,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'epoch>iso_date': {
+        'epoch->iso-date': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), ms = _b[0];
                 assertNumber(ms, sourceCodeInfo);
@@ -3794,7 +3794,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'iso_date>epoch': {
+        'iso-date->epoch': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), dateTime = _b[0];
                 assertString(dateTime, sourceCodeInfo);
@@ -3828,7 +3828,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        'json_parse': {
+        'json-parse': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), first = _b[0];
                 assertString(first, sourceCodeInfo);
@@ -3837,7 +3837,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'json_stringify': {
+        'json-stringify': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], second = _b[1];
                 assertAny(first, sourceCodeInfo);
@@ -3866,34 +3866,14 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
-                if (first !== second)
-                    throw new AssertionError("Expected ".concat(first, " to be ").concat(second, ".").concat(message), sourceCodeInfo);
-                return null;
-            },
-            paramCount: { min: 2, max: 3 },
-        },
-        'assert!=': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
-                if (first === second)
-                    throw new AssertionError("Expected ".concat(first, " not to be ").concat(second, ".").concat(message), sourceCodeInfo);
-                return null;
-            },
-            paramCount: { min: 2, max: 3 },
-        },
-        'assert_equal': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
-                message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
                 if (!deepEqual(asAny(first, sourceCodeInfo), asAny(second, sourceCodeInfo), sourceCodeInfo)) {
-                    throw new AssertionError("Expected\n".concat(JSON.stringify(first, null, 2), "\nto deep equal\n").concat(JSON.stringify(second, null, 2), ".").concat(message), sourceCodeInfo);
+                    throw new AssertionError("Expected ".concat(JSON.stringify(first, null, 2), " to deep equal ").concat(JSON.stringify(second, null, 2), ".").concat(message), sourceCodeInfo);
                 }
                 return null;
             },
             paramCount: { min: 2, max: 3 },
         },
-        'assert_not_equal': {
+        'assert!=': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3904,7 +3884,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'assert_gt': {
+        'assert-gt': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3914,7 +3894,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'assert_gte': {
+        'assert-gte': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3924,7 +3904,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'assert_lt': {
+        'assert-lt': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3934,7 +3914,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'assert_lte': {
+        'assert-lte': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3944,7 +3924,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'assert_true': {
+        'assert-true': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3954,7 +3934,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        'assert_false': {
+        'assert-false': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3964,7 +3944,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        'assert_truthy': {
+        'assert-truthy': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3974,7 +3954,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        'assert_falsy': {
+        'assert-falsy': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3984,7 +3964,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        'assert_null': {
+        'assert-null': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), first = _b[0], message = _b[1];
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
@@ -3994,7 +3974,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        'assert_throws': {
+        'assert-throws': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), func = _c[0], message = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -4010,7 +3990,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        'assert_throws_error': {
+        'assert-throws-error': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 3), func = _c[0], throwMessage = _c[1], message = _c[2];
                 var executeFunction = _b.executeFunction;
@@ -4031,7 +4011,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'assert_not_throws': {
+        'assert-not-throws': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a, 2), func = _c[0], message = _c[1];
                 var executeFunction = _b.executeFunction;
@@ -4050,7 +4030,7 @@ var Playground = (function (exports) {
     };
 
     var objectNormalExpression = {
-        object: {
+        'object': {
             evaluate: function (params, sourceCodeInfo) {
                 var result = {};
                 for (var i = 0; i < params.length; i += 2) {
@@ -4063,7 +4043,7 @@ var Playground = (function (exports) {
             },
             paramCount: { even: true },
         },
-        keys: {
+        'keys': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), obj = _b[0];
                 assertObj(obj, sourceCodeInfo);
@@ -4071,7 +4051,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        vals: {
+        'vals': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), obj = _b[0];
                 assertObj(obj, sourceCodeInfo);
@@ -4079,7 +4059,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        entries: {
+        'entries': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), obj = _b[0];
                 assertObj(obj, sourceCodeInfo);
@@ -4087,7 +4067,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        find: {
+        'find': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), obj = _b[0], key = _b[1];
                 assertObj(obj, sourceCodeInfo);
@@ -4098,7 +4078,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        dissoc: {
+        'dissoc': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), obj = _b[0], key = _b[1];
                 assertObj(obj, sourceCodeInfo);
@@ -4109,7 +4089,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        merge: {
+        'merge': {
             evaluate: function (params, sourceCodeInfo) {
                 if (params.length === 0)
                     return null;
@@ -4122,7 +4102,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 0 },
         },
-        merge_with: {
+        'merge-with': {
             evaluate: function (params, sourceCodeInfo, contextStack, _a) {
                 var executeFunction = _a.executeFunction;
                 var first = params[0];
@@ -4145,7 +4125,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2 },
         },
-        zipmap: {
+        'zipmap': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), keys = _b[0], values = _b[1];
                 assertStringArray(keys, sourceCodeInfo);
@@ -4160,7 +4140,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        select_keys: {
+        'select-keys': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), obj = _b[0], keys = _b[1];
                 assertStringArray(keys, sourceCodeInfo);
@@ -4309,7 +4289,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'positive_infinity?': {
+        'positive-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertNumber(value, sourceCodeInfo);
@@ -4317,7 +4297,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'negative_infinity?': {
+        'negative-infinity?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertNumber(value, sourceCodeInfo);
@@ -4353,7 +4333,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'not_empty?': {
+        'not-empty?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), coll = _b[0];
                 if (coll === null)
@@ -4370,7 +4350,7 @@ var Playground = (function (exports) {
     };
 
     var regexpNormalExpression = {
-        regexp: {
+        'regexp': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a, 2), sourceArg = _c[0], flagsArg = _c[1];
@@ -4386,7 +4366,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 2 },
         },
-        match: {
+        'match': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), text = _b[0], regexp = _b[1];
                 assertRegularExpression(regexp, sourceCodeInfo);
@@ -4400,7 +4380,7 @@ var Playground = (function (exports) {
             },
             paramCount: 2,
         },
-        replace: {
+        'replace': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), str = _b[0], regexp = _b[1], value = _b[2];
                 assertString(str, sourceCodeInfo);
@@ -4411,7 +4391,7 @@ var Playground = (function (exports) {
             },
             paramCount: 3,
         },
-        replace_all: {
+        'replace-all': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), str = _b[0], regexp = _b[1], value = _b[2];
                 assertString(str, sourceCodeInfo);
@@ -4438,7 +4418,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'string_repeat': {
+        'string-repeat': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), str = _b[0], count = _b[1];
                 assertString(str, sourceCodeInfo);
@@ -4473,7 +4453,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'from_char_code': {
+        'from-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), num = _b[0];
                 assertNumber(num, sourceCodeInfo, { finite: true });
@@ -4487,7 +4467,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'to_char_code': {
+        'to-char-code': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo, { nonEmpty: true });
@@ -4495,7 +4475,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'lower_case': {
+        'lower-case': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4503,7 +4483,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'upper_case': {
+        'upper-case': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4519,7 +4499,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'trim_left': {
+        'trim-left': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4527,7 +4507,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'trim_right': {
+        'trim-right': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4583,7 +4563,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'split_lines': {
+        'split-lines': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), str = _b[0];
                 assertString(str, sourceCodeInfo);
@@ -4591,7 +4571,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'pad_left': {
+        'pad-left': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), str = _b[0], length = _b[1], padString = _b[2];
                 assertString(str, sourceCodeInfo);
@@ -4602,7 +4582,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2, max: 3 },
         },
-        'pad_right': {
+        'pad-right': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), str = _b[0], length = _b[1], padString = _b[2];
                 assertString(str, sourceCodeInfo);
@@ -4644,7 +4624,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1, max: 10 },
         },
-        'encode_base64': {
+        'encode-base64': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4655,7 +4635,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'decode_base64': {
+        'decode-base64': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4673,7 +4653,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'encode_uri_component': {
+        'encode-uri-component': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4681,7 +4661,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'decode_uri_component': {
+        'decode-uri-component': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), value = _b[0];
                 assertString(value, sourceCodeInfo);
@@ -4731,7 +4711,7 @@ var Playground = (function (exports) {
     }
 
     var functionalNormalExpression = {
-        apply: {
+        'apply': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
                 var _c = __read(_a), func = _c[0], params = _c.slice(1);
                 var executeFunction = _b.executeFunction;
@@ -4744,14 +4724,14 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 2 },
         },
-        identity: {
+        'identity': {
             evaluate: function (_a) {
                 var _b = __read(_a, 1), value = _b[0];
                 return toAny(value);
             },
             paramCount: 1,
         },
-        partial: {
+        'partial': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a), fn = _c[0], params = _c.slice(1);
@@ -4765,7 +4745,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        comp: {
+        'comp': {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 if (fns.length > 1) {
@@ -4783,7 +4763,7 @@ var Playground = (function (exports) {
             },
             paramCount: {},
         },
-        constantly: {
+        'constantly': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a, 1), value = _c[0];
@@ -4796,7 +4776,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        juxt: {
+        'juxt': {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 return _a = {},
@@ -4808,7 +4788,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        complement: {
+        'complement': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a, 1), fn = _c[0];
@@ -4821,7 +4801,7 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        every_pred: {
+        'every-pred': {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 return _a = {},
@@ -4833,7 +4813,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        some_pred: {
+        'some-pred': {
             evaluate: function (fns, sourceCodeInfo) {
                 var _a;
                 return _a = {},
@@ -4845,7 +4825,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        fnull: {
+        'fnull': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b;
                 var _c = __read(_a), fn = _c[0], params = _c.slice(1);
@@ -9125,21 +9105,21 @@ var Playground = (function (exports) {
         collection: [
             'count',
             'get',
-            'get_in',
+            'get-in',
             'contains?',
             'has?',
-            'has_some?',
-            'has_every?',
+            'has-some?',
+            'has-every?',
             'assoc',
-            'assoc_in',
+            'assoc-in',
             'concat',
-            'not_empty',
+            'not-empty',
             'every?',
-            'not_every?',
+            'not-every?',
             'any?',
-            'not_any?',
+            'not-any?',
             'update',
-            'update_in',
+            'update-in',
         ],
         array: [
             'array',
@@ -9157,12 +9137,12 @@ var Playground = (function (exports) {
             'slice',
             'reductions',
             'reduce',
-            'reduce_right',
+            'reduce-right',
             'map',
             'filter',
             'position',
-            'index_of',
-            'last_index_of',
+            'index-of',
+            'last-index-of',
             'some',
             'reverse',
             'first',
@@ -9173,25 +9153,25 @@ var Playground = (function (exports) {
             'next',
             'nthnext',
             'take',
-            'take_last',
-            'take_while',
+            'take-last',
+            'take-while',
             'drop',
-            'drop_last',
-            'drop_while',
+            'drop-last',
+            'drop-while',
             'sort',
-            'sort_by',
+            'sort-by',
             'distinct',
             'remove',
-            'remove_at',
-            'split_at',
-            'split_with',
+            'remove-at',
+            'split-at',
+            'split-with',
             'frequencies',
-            'group_by',
+            'group-by',
             'partition',
-            'partition_all',
-            'partition_by',
-            'starts_with?',
-            'ends_with?',
+            'partition-all',
+            'partition-by',
+            'starts-with?',
+            'ends-with?',
             'interleave',
             'interpose',
         ],
@@ -9240,8 +9220,8 @@ var Playground = (function (exports) {
             'constantly',
             'juxt',
             'complement',
-            'every_pred',
-            'some_pred',
+            'every-pred',
+            'some-pred',
             'fnull',
         ],
         misc: [
@@ -9253,13 +9233,13 @@ var Playground = (function (exports) {
             '≥',
             '!',
             'write!',
-            'iso_date>epoch',
-            'epoch>iso_date',
+            'iso-date->epoch',
+            'epoch->iso-date',
             'boolean',
             'compare',
             'identical?',
-            'json_parse',
-            'json_stringify',
+            'json-parse',
+            'json-stringify',
         ],
         object: [
             'dissoc',
@@ -9269,9 +9249,9 @@ var Playground = (function (exports) {
             'entries',
             'find',
             'merge',
-            'merge_with',
+            'merge-with',
             'zipmap',
-            'select_keys',
+            'select-keys',
         ],
         predicate: [
             'boolean?',
@@ -9292,18 +9272,18 @@ var Playground = (function (exports) {
             'odd?',
             'finite?',
             'nan?',
-            'negative_infinity?',
-            'positive_infinity?',
+            'negative-infinity?',
+            'positive-infinity?',
             'false?',
             'true?',
             'empty?',
-            'not_empty?',
+            'not-empty?',
         ],
         regularExpression: [
             'regexp',
             'match',
             'replace',
-            'replace_all',
+            'replace-all',
         ],
         specialExpressions: [
             '&&',
@@ -9329,25 +9309,25 @@ var Playground = (function (exports) {
         ],
         string: [
             'subs',
-            'string_repeat',
+            'string-repeat',
             'str',
             'number',
-            'lower_case',
-            'upper_case',
+            'lower-case',
+            'upper-case',
             'trim',
-            'trim_left',
-            'trim_right',
-            'pad_left',
-            'pad_right',
+            'trim-left',
+            'trim-right',
+            'pad-left',
+            'pad-right',
             'split',
-            'split_lines',
+            'split-lines',
             'template',
-            'to_char_code',
-            'from_char_code',
-            'encode_base64',
-            'decode_base64',
-            'encode_uri_component',
-            'decode_uri_component',
+            'to-char-code',
+            'from-char-code',
+            'encode-base64',
+            'decode-base64',
+            'encode-uri-component',
+            'decode-uri-component',
             'join',
             '++',
             'capitalize',
@@ -9362,29 +9342,27 @@ var Playground = (function (exports) {
             '&!',
             '|',
             '^',
-            'bit_flip',
-            'bit_clear',
-            'bit_set',
-            'bit_test',
+            'bit-flip',
+            'bit-clear',
+            'bit-set',
+            'bit-test',
         ],
         assert: [
             'assert',
             'assert=',
             'assert!=',
-            'assert_equal',
-            'assert_not_equal',
-            'assert_gt',
-            'assert_lt',
-            'assert_gte',
-            'assert_lte',
-            'assert_true',
-            'assert_false',
-            'assert_truthy',
-            'assert_falsy',
-            'assert_null',
-            'assert_throws',
-            'assert_throws_error',
-            'assert_not_throws',
+            'assert-gt',
+            'assert-lt',
+            'assert-gte',
+            'assert-lte',
+            'assert-true',
+            'assert-false',
+            'assert-truthy',
+            'assert-falsy',
+            'assert-null',
+            'assert-throws',
+            'assert-throws-error',
+            'assert-not-throws',
         ],
         shorthand: [
             '-short-regexp',
@@ -9578,30 +9556,6 @@ var Playground = (function (exports) {
             algebraic: true,
             noOperatorDocumentation: true,
         },
-        'assert=': {
-            title: 'assert=',
-            category: 'Assert',
-            linkName: 'assert-equal',
-            clojureDocs: null,
-            returns: {
-                type: 'null',
-            },
-            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'message'] },
-            ],
-            description: 'If $a is not the same as $b it throws `AssertionError`.',
-            examples: [
-                'try assert=(0, 1, "Expected same values") catch (e) e.message end',
-                'try assert=(0, 1) catch (e) e.message end',
-                'try 0 assert= 1 catch (e) e.message end',
-                'try assert=(1, 1) catch (e) e.message end',
-            ],
-            algebraic: true,
-        },
         'assert!=': {
             title: 'assert!=',
             category: 'Assert',
@@ -9626,10 +9580,10 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        'assert_equal': {
-            title: 'assert_equal',
+        'assert=': {
+            title: 'assert=',
             category: 'Assert',
-            linkName: 'assert_equal',
+            linkName: 'assert-equal',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9641,41 +9595,18 @@ var Playground = (function (exports) {
                 { argumentNames: ['a', 'b'] },
                 { argumentNames: ['a', 'b', 'message'] },
             ],
-            description: 'If $a is not deep equal to $b it throws `AssertionError`.',
+            description: 'If $a is not structural equal to $b it throws `AssertionError`.',
             examples: [
-                'try assert_equal({ "a" := 1 }, { "a" := 2 }, "Expected equal values") catch (e) e.message end',
-                'try assert_equal({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
-                'try assert_equal({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
+                'try assert=({ "a" := 1 }, { "a" := 2 }, "Expected equal values") catch (e) e.message end',
+                'try assert=({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
+                'try assert=({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_not_equal': {
-            title: 'assert_not_equal',
+        'assert-gt': {
+            title: 'assert-gt',
             category: 'Assert',
-            linkName: 'assert_not_equal',
-            clojureDocs: null,
-            returns: {
-                type: 'null',
-            },
-            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { message: {
-                    type: 'string',
-                } }),
-            variants: [
-                { argumentNames: ['a', 'b'] },
-                { argumentNames: ['a', 'b', 'message'] },
-            ],
-            description: 'If $a is not deep equal to $b it throws `AssertionError`.',
-            examples: [
-                'try assert_not_equal({ "a" := 2 }, { "a" := 2 }, "Expected different values") catch (e) e.message end',
-                'try assert_not_equal({ "a" := 2 }, { "a" := 2 }) catch (e) e.message end',
-                'try assert_not_equal({ "a" := 1 }, { "a" := 2 }) catch (e) e.message end',
-            ],
-            algebraic: true,
-        },
-        'assert_gt': {
-            title: 'assert_gt',
-            category: 'Assert',
-            linkName: 'assert_gt',
+            linkName: 'assert-gt',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9689,16 +9620,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not greater than $b it throws `AssertionError`.',
             examples: [
-                'try assert_gt(0, 1, "Expected greater value") catch (e) e.message end',
-                'try assert_gt(0, 0) catch (e) e.message end',
-                'try assert_gt(1, 0) catch (e) e.message end',
+                'try assert-gt(0, 1, "Expected greater value") catch (e) e.message end',
+                'try assert-gt(0, 0) catch (e) e.message end',
+                'try assert-gt(1, 0) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_lt': {
-            title: 'assert_lt',
+        'assert-lt': {
+            title: 'assert-lt',
             category: 'Assert',
-            linkName: 'assert_lt',
+            linkName: 'assert-lt',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9712,16 +9643,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is not less than $b it throws `AssertionError`.',
             examples: [
-                'try assert_lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-                'try assert_lte(1, 1) catch (e) e.message end',
-                'try assert_lte(0, 1) catch (e) e.message end',
+                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'try assert-lte(1, 1) catch (e) e.message end',
+                'try assert-lte(0, 1) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_gte': {
-            title: 'assert_gte',
+        'assert-gte': {
+            title: 'assert-gte',
             category: 'Assert',
-            linkName: 'assert_gte',
+            linkName: 'assert-gte',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9735,16 +9666,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is less than $b it throws `AssertionError`.',
             examples: [
-                'try assert_gte(0, 1, "Expected greater value") catch (e) e.message end',
-                'try assert_gte(0, 1) catch (e) e.message end',
-                'try assert_gte(1, 1) catch (e) e.message end',
+                'try assert-gte(0, 1, "Expected greater value") catch (e) e.message end',
+                'try assert-gte(0, 1) catch (e) e.message end',
+                'try assert-gte(1, 1) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_lte': {
-            title: 'assert_lte',
+        'assert-lte': {
+            title: 'assert-lte',
             category: 'Assert',
-            linkName: 'assert_lte',
+            linkName: 'assert-lte',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9758,16 +9689,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $a is grater than $b it throws `AssertionError`.',
             examples: [
-                'try assert_lte(1, 0, "Expected smaller value value") catch (e) e.message end',
-                'try assert_lte(1, 0) catch (e) e.message end',
-                'try assert_lte(1, 1) catch (e) e.message end',
+                'try assert-lte(1, 0, "Expected smaller value value") catch (e) e.message end',
+                'try assert-lte(1, 0) catch (e) e.message end',
+                'try assert-lte(1, 1) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_true': {
-            title: 'assert_true',
+        'assert-true': {
+            title: 'assert-true',
             category: 'Assert',
-            linkName: 'assert_true',
+            linkName: 'assert-true',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9786,16 +9717,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `true` it throws `AssertionError`.',
             examples: [
-                'try assert_true(false, "Expected true") catch (e) e.message end',
-                'try assert_true(false) catch (e) e.message end',
-                'try assert_true(true) catch (e) e.message end',
+                'try assert-true(false, "Expected true") catch (e) e.message end',
+                'try assert-true(false) catch (e) e.message end',
+                'try assert-true(true) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_false': {
-            title: 'assert_false',
+        'assert-false': {
+            title: 'assert-false',
             category: 'Assert',
-            linkName: 'assert_false',
+            linkName: 'assert-false',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9814,16 +9745,16 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `false` it throws `AssertionError`.',
             examples: [
-                'try assert_false(true, "Expected false") catch (e) e.message end',
-                'try assert_false(true) catch (e) e.message end',
-                'try assert_false(false) catch (e) e.message end',
+                'try assert-false(true, "Expected false") catch (e) e.message end',
+                'try assert-false(true) catch (e) e.message end',
+                'try assert-false(false) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_truthy': {
-            title: 'assert_truthy',
+        'assert-truthy': {
+            title: 'assert-truthy',
             category: 'Assert',
-            linkName: 'assert_truthy',
+            linkName: 'assert-truthy',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9842,23 +9773,23 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `truthy` it throws `AssertionError`.',
             examples: [
-                'try assert_truthy(false, "Expected truthy") catch (e) e.message end',
-                'try assert_truthy(false) catch (e) e.message end',
-                'try assert_truthy(0) catch (e) e.message end',
-                'try assert_truthy(null) catch (e) e.message end',
-                'try assert_truthy("") catch (e) e.message end',
-                'try assert_truthy(true) catch (e) e.message end',
-                'try assert_truthy(1) catch (e) e.message end',
-                'try assert_truthy("x") catch (e) e.message end',
-                'try assert_truthy([]) catch (e) e.message end',
-                'try assert_truthy({}) catch (e) e.message end',
+                'try assert-truthy(false, "Expected truthy") catch (e) e.message end',
+                'try assert-truthy(false) catch (e) e.message end',
+                'try assert-truthy(0) catch (e) e.message end',
+                'try assert-truthy(null) catch (e) e.message end',
+                'try assert-truthy("") catch (e) e.message end',
+                'try assert-truthy(true) catch (e) e.message end',
+                'try assert-truthy(1) catch (e) e.message end',
+                'try assert-truthy("x") catch (e) e.message end',
+                'try assert-truthy([]) catch (e) e.message end',
+                'try assert-truthy({}) catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_falsy': {
-            title: 'assert_falsy',
+        'assert-falsy': {
+            title: 'assert-falsy',
             category: 'Assert',
-            linkName: 'assert_falsy',
+            linkName: 'assert-falsy',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9877,22 +9808,22 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `falsy` it throws `AssertionError`.',
             examples: [
-                'try assert_falsy(true, "Expected falsy") catch (e) e.message end',
-                'try assert_falsy("x") catch (e) e.message end',
-                'try assert_falsy([]) catch (e) e.message end',
-                'try assert_falsy({}) catch (e) e.message end',
-                'try assert_falsy(1) catch (e) e.message end',
-                'try assert_falsy(false) catch (e) e.message end',
-                'try assert_falsy(0) catch (e) e.message end',
-                'try assert_falsy(null) catch (e) e.message end',
-                'try assert_falsy("") catch (e) e.message end',
+                'try assert-falsy(true, "Expected falsy") catch (e) e.message end',
+                'try assert-falsy("x") catch (e) e.message end',
+                'try assert-falsy([]) catch (e) e.message end',
+                'try assert-falsy({}) catch (e) e.message end',
+                'try assert-falsy(1) catch (e) e.message end',
+                'try assert-falsy(false) catch (e) e.message end',
+                'try assert-falsy(0) catch (e) e.message end',
+                'try assert-falsy(null) catch (e) e.message end',
+                'try assert-falsy("") catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_null': {
-            title: 'assert_null',
+        'assert-null': {
+            title: 'assert-null',
             category: 'Assert',
-            linkName: 'assert_null',
+            linkName: 'assert-null',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9911,22 +9842,22 @@ var Playground = (function (exports) {
             ],
             description: 'If $value is not `null` it throws `AssertionError`.',
             examples: [
-                'try assert_null(null) catch (e) e.message end',
-                'try assert_null(true, "Expected null") catch (e) e.message end',
-                'try assert_null("x") catch (e) e.message end',
-                'try assert_null([]) catch (e) e.message end',
-                'try assert_null({}) catch (e) e.message end',
-                'try assert_null(1) catch (e) e.message end',
-                'try assert_null(false) catch (e) e.message end',
-                'try assert_null(0) catch (e) e.message end',
-                'try assert_null("") catch (e) e.message end',
+                'try assert-null(null) catch (e) e.message end',
+                'try assert-null(true, "Expected null") catch (e) e.message end',
+                'try assert-null("x") catch (e) e.message end',
+                'try assert-null([]) catch (e) e.message end',
+                'try assert-null({}) catch (e) e.message end',
+                'try assert-null(1) catch (e) e.message end',
+                'try assert-null(false) catch (e) e.message end',
+                'try assert-null(0) catch (e) e.message end',
+                'try assert-null("") catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_throws': {
-            title: 'assert_throws',
+        'assert-throws': {
+            title: 'assert-throws',
             category: 'Assert',
-            linkName: 'assert_throws',
+            linkName: 'assert-throws',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9944,12 +9875,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['fn', 'message'] },
             ],
             description: 'If $fn does not throw, it throws `AssertionError`.',
-            examples: ['assert_throws(-> throw("Error"))', 'assert_throws(-> identity("Error"))'],
+            examples: ['assert-throws(-> throw("Error"))', 'assert-throws(-> identity("Error"))'],
         },
-        'assert_throws_error': {
-            title: 'assert_throws_error',
+        'assert-throws-error': {
+            title: 'assert-throws-error',
             category: 'Assert',
-            linkName: 'assert_throws_error',
+            linkName: 'assert-throws-error',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9971,15 +9902,15 @@ var Playground = (function (exports) {
             ],
             description: 'If $fn does not throw $error-message, it throws `AssertionError`.',
             examples: [
-                'try assert_throws_error(-> throw("Error"), "Error") catch (e) e.message end',
-                'try assert_throws_error(-> identity("Error"), "Error") catch (e) e.message end',
+                'try assert-throws-error(-> throw("Error"), "Error") catch (e) e.message end',
+                'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
             ],
             algebraic: true,
         },
-        'assert_not_throws': {
-            title: 'assert_not_throws',
+        'assert-not-throws': {
+            title: 'assert-not-throws',
             category: 'Assert',
-            linkName: 'assert_not_throws',
+            linkName: 'assert-not-throws',
             clojureDocs: null,
             returns: {
                 type: 'null',
@@ -9998,8 +9929,8 @@ var Playground = (function (exports) {
             ],
             description: 'If $fn throws, it throws `AssertionError`.',
             examples: [
-                'try assert_not_throws(-> identity("Error")) catch (e) e.message end',
-                'try assert_not_throws(-> throw("Error")) catch (e) e.message end',
+                'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
+                'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
             ],
         },
     };
@@ -10192,10 +10123,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns bitwise `xor` of all arguments.',
             examples: ['(^ 0b0011 0b0110)', '(^ 0b11110000 0b00111100 0b10101010)'],
-        }, 'bit_flip': {
-            title: 'bit_flip',
+        }, 'bit-flip': {
+            title: 'bit-flip',
             category: 'Bitwise',
-            linkName: 'bit_flip',
+            linkName: 'bit-flip',
             returns: {
                 type: 'integer',
             },
@@ -10211,11 +10142,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Flips bit number $n.',
-            examples: ['(bit_flip 0b0011 1)', '(bit_flip 0b1100 1)'],
-        }, 'bit_clear': {
-            title: 'bit_clear',
+            examples: ['(bit-flip 0b0011 1)', '(bit-flip 0b1100 1)'],
+        }, 'bit-clear': {
+            title: 'bit-clear',
             category: 'Bitwise',
-            linkName: 'bit_clear',
+            linkName: 'bit-clear',
             returns: {
                 type: 'integer',
             },
@@ -10231,11 +10162,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Clears bit number $n.',
-            examples: ['(bit_clear 0b0011 1)', '(bit_clear 0b1100 1)'],
-        }, 'bit_set': {
-            title: 'bit_set',
+            examples: ['(bit-clear 0b0011 1)', '(bit-clear 0b1100 1)'],
+        }, 'bit-set': {
+            title: 'bit-set',
             category: 'Bitwise',
-            linkName: 'bit_set',
+            linkName: 'bit-set',
             returns: {
                 type: 'integer',
             },
@@ -10251,11 +10182,11 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Sets bit number $n.',
-            examples: ['(bit_set 0b0011 1)', '(bit_set 0b1100 1)'],
-        }, 'bit_test': {
-            title: 'bit_test',
+            examples: ['(bit-set 0b0011 1)', '(bit-set 0b1100 1)'],
+        }, 'bit-test': {
+            title: 'bit-test',
             category: 'Bitwise',
-            linkName: 'bit_test',
+            linkName: 'bit-test',
             returns: {
                 type: 'boolean',
             },
@@ -10271,7 +10202,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x', 'n'] },
             ],
             description: 'Checks if bit number $n is set.',
-            examples: ['(bit_test 0b0011 1)', '(bit_test 0b1100 1)'],
+            examples: ['(bit-test 0b0011 1)', '(bit-test 0b1100 1)'],
         } };
 
     var collectionReference = {
@@ -10335,10 +10266,10 @@ var Playground = (function (exports) {
                 "\n(get\n  null\n  :b\n  \"default\")",
             ],
         },
-        'get_in': {
-            title: 'get_in',
+        'get-in': {
+            title: 'get-in',
             category: 'Collection',
-            linkName: 'get_in',
+            linkName: 'get-in',
             returns: {
                 type: 'any',
             },
@@ -10359,9 +10290,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
             examples: [
-                "\n(get_in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :a 0])",
-                "\n(get_in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0])",
-                "\n(get_in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0]\n  \"Lisa\")",
+                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :a 0])",
+                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0])",
+                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0]\n  \"Lisa\")",
             ],
         },
         'contains?': {
@@ -10422,10 +10353,10 @@ var Playground = (function (exports) {
                 "\n(has?\n  null\n  :a)",
             ],
         },
-        'has_some?': {
-            title: 'has_some?',
+        'has-some?': {
+            title: 'has-some?',
             category: 'Collection',
-            linkName: 'has_some-question',
+            linkName: 'has-some-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -10445,24 +10376,24 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $coll has any of the elements in $values, otherwise returns `false`.',
             examples: [
-                "\n(has_some?\n  []\n  [])",
-                "\n(has_some?\n  [1 2 3]\n  [])",
-                "\n(has_some?\n  [1 2 3]\n  [0])",
-                "\n  (has_some?\n  [1 2 3]\n  [0 1])",
-                "\n(has_some?\n  (object :a 1 :b 2)\n  [0])",
-                "\n(has_some?\n  (object :a 1 :b 2)\n  [0 1])",
-                "\n(has_some?\n  \"Albert\"\n  \"xyz\")",
-                "\n(has_some?\n  \"Albert\"\n  \"xyzl\")",
-                "\n(has_some?\n  [:a :b :c :d]\n  \"xyz\")",
-                "\n(has_some?\n  [:a :b :c :d]\n  \"xyzc\")",
-                "\n(has_some?\n  null\n  [1])",
-                "\n(has_some?\n  null\n  \"\")",
+                "\n(has-some?\n  []\n  [])",
+                "\n(has-some?\n  [1 2 3]\n  [])",
+                "\n(has-some?\n  [1 2 3]\n  [0])",
+                "\n  (has-some?\n  [1 2 3]\n  [0 1])",
+                "\n(has-some?\n  (object :a 1 :b 2)\n  [0])",
+                "\n(has-some?\n  (object :a 1 :b 2)\n  [0 1])",
+                "\n(has-some?\n  \"Albert\"\n  \"xyz\")",
+                "\n(has-some?\n  \"Albert\"\n  \"xyzl\")",
+                "\n(has-some?\n  [:a :b :c :d]\n  \"xyz\")",
+                "\n(has-some?\n  [:a :b :c :d]\n  \"xyzc\")",
+                "\n(has-some?\n  null\n  [1])",
+                "\n(has-some?\n  null\n  \"\")",
             ],
         },
-        'has_every?': {
-            title: 'has_every?',
+        'has-every?': {
+            title: 'has-every?',
             category: 'Collection',
-            linkName: 'has_every-question',
+            linkName: 'has-every-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -10482,20 +10413,20 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $coll has all of the elements in $values, otherwise returns `false`.',
             examples: [
-                "\n(has_every?\n  []\n  [])",
-                "\n(has_every?\n  [1 2 3]\n  [])",
-                "\n(has_every?\n  [1 2 3]\n  [0 1])",
-                "\n(has_every?\n  [1 2 3]\n  [1 2])",
-                "\n(has_every?\n  (object :a 1 :b 2)\n  [0 1])",
-                "\n(has_every?\n  (object :a 1 :b 2)\n  [1 2])",
-                "\n(has_every?\n  \"Albert\"\n  \"xyz\")",
-                "\n(has_every?\n  \"Albert\"\n  \"treblA\")",
-                "\n(has_every?\n  [:a :b :c :d]\n  \"xyz\")",
-                "\n(has_every?\n  [:a :b :c :d]\n  \"dcba\")",
-                "\n(has_every?\n  null\n  \"abc\")",
-                "\n(has_every?\n  null\n  [0, 1, null])",
-                "\n(has_every?\n  null\n  null)",
-                "\n(has_every?\n  [1, 2, 3]\n  null)",
+                "\n(has-every?\n  []\n  [])",
+                "\n(has-every?\n  [1 2 3]\n  [])",
+                "\n(has-every?\n  [1 2 3]\n  [0 1])",
+                "\n(has-every?\n  [1 2 3]\n  [1 2])",
+                "\n(has-every?\n  (object :a 1 :b 2)\n  [0 1])",
+                "\n(has-every?\n  (object :a 1 :b 2)\n  [1 2])",
+                "\n(has-every?\n  \"Albert\"\n  \"xyz\")",
+                "\n(has-every?\n  \"Albert\"\n  \"treblA\")",
+                "\n(has-every?\n  [:a :b :c :d]\n  \"xyz\")",
+                "\n(has-every?\n  [:a :b :c :d]\n  \"dcba\")",
+                "\n(has-every?\n  null\n  \"abc\")",
+                "\n(has-every?\n  null\n  [0, 1, null])",
+                "\n(has-every?\n  null\n  null)",
+                "\n(has-every?\n  [1, 2, 3]\n  null)",
             ],
         },
         'assoc': {
@@ -10534,10 +10465,10 @@ var Playground = (function (exports) {
                 "\n(assoc\n  :Albert\n  6\n  :a)",
             ],
         },
-        'assoc_in': {
-            title: 'assoc_in',
+        'assoc-in': {
+            title: 'assoc-in',
             category: 'Collection',
-            linkName: 'assoc_in',
+            linkName: 'assoc-in',
             returns: {
                 type: 'collection',
             },
@@ -10558,9 +10489,9 @@ var Playground = (function (exports) {
             ],
             description: "\nAssociates a value in the nested collection $coll, where $keys is an array of keys and $value is the new value.\n\nIf any levels do not exist, objects will be created - and the corresponding keys must be of type string.",
             examples: [
-                "\n(assoc_in\n  {}\n  [:a :b :c]\n  \"Albert\")",
-                "\n(assoc_in\n  [1 2 [1 2 3]]\n  [2 1]\n  \"Albert\")",
-                "\n(assoc_in\n  [1 2 {\"name\" \"albert\"}]\n  [2 \"name\" 0]\n  :A)",
+                "\n(assoc-in\n  {}\n  [:a :b :c]\n  \"Albert\")",
+                "\n(assoc-in\n  [1 2 [1 2 3]]\n  [2 1]\n  \"Albert\")",
+                "\n(assoc-in\n  [1 2 {\"name\" \"albert\"}]\n  [2 \"name\" 0]\n  :A)",
             ],
         },
         'concat': {
@@ -10595,10 +10526,10 @@ var Playground = (function (exports) {
                 '(concat {} {:a 1})',
             ],
         },
-        'not_empty': {
-            title: 'not_empty',
+        'not-empty': {
+            title: 'not-empty',
             category: 'Collection',
-            linkName: 'not_empty',
+            linkName: 'not-empty',
             returns: {
                 type: 'boolean',
             },
@@ -10612,13 +10543,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
             examples: [
-                '(not_empty [])',
-                '(not_empty [1 2 3])',
-                '(not_empty {})',
-                '(not_empty {:a 2})',
-                '(not_empty "")',
-                '(not_empty "Albert")',
-                '(not_empty null)',
+                '(not-empty [])',
+                '(not-empty [1 2 3])',
+                '(not-empty {})',
+                '(not-empty {:a 2})',
+                '(not-empty "")',
+                '(not-empty "Albert")',
+                '(not-empty null)',
             ],
         },
         'every?': {
@@ -10650,10 +10581,10 @@ var Playground = (function (exports) {
                 "\n(every?\n  {:a 2 :b 3}\n  #(even? (second %)))",
             ],
         },
-        'not_every?': {
-            title: 'not_every?',
+        'not-every?': {
+            title: 'not-every?',
             category: 'Collection',
-            linkName: 'not_every-question',
+            linkName: 'not-every-question',
             returns: {
                 type: 'boolean',
             },
@@ -10670,13 +10601,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(not_every?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
-                "\n(not_every?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
-                "\n(not_every?\n  []\n  number?)",
-                "\n(not_every?\n  \"\"\n  number?)",
-                "\n(not_every?\n  {}\n  number?)",
-                "\n(not_every?\n  {:a 2 :b 4}\n  #(even? (second %)))",
-                "\n(not_every?\n  {:a 2 :b 3}\n  #(even? (second %)))",
+                "\n(not-every?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(not-every?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
+                "\n(not-every?\n  []\n  number?)",
+                "\n(not-every?\n  \"\"\n  number?)",
+                "\n(not-every?\n  {}\n  number?)",
+                "\n(not-every?\n  {:a 2 :b 4}\n  #(even? (second %)))",
+                "\n(not-every?\n  {:a 2 :b 3}\n  #(even? (second %)))",
             ],
         },
         'any?': {
@@ -10708,10 +10639,10 @@ var Playground = (function (exports) {
                 "\n(any?\n  {:a 1 :b 3}\n  #(even? (second %)))",
             ],
         },
-        'not_any?': {
-            title: 'not_any?',
+        'not-any?': {
+            title: 'not-any?',
             category: 'Collection',
-            linkName: 'not_any-question',
+            linkName: 'not-any-question',
             returns: {
                 type: 'boolean',
             },
@@ -10728,13 +10659,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
             examples: [
-                "\n(not_any?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
-                "\n(not_any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
-                "\n(not_any?\n  []\n  number?)",
-                "\n(not_any?\n  \"\"\n  number?)",
-                "\n(not_any?\n  {}\n  number?)",
-                "\n(not_any?\n  {:a 2 :b 3}\n  #(even? (second %)))",
-                "\n(not_any?\n  {:a 1 :b 3}\n  #(even? (second %)))",
+                "\n(not-any?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(not-any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
+                "\n(not-any?\n  []\n  number?)",
+                "\n(not-any?\n  \"\"\n  number?)",
+                "\n(not-any?\n  {}\n  number?)",
+                "\n(not-any?\n  {:a 2 :b 3}\n  #(even? (second %)))",
+                "\n(not-any?\n  {:a 1 :b 3}\n  #(even? (second %)))",
             ],
         },
         'update': {
@@ -10769,10 +10700,10 @@ var Playground = (function (exports) {
                 "\n(def x {:a 1 :b 2})\n(update\n  x\n  :c\n  (fn [val]\n    (if (null? val) 0 (inc val))))",
             ],
         },
-        'update_in': {
-            title: 'update_in',
+        'update-in': {
+            title: 'update-in',
             category: 'Collection',
-            linkName: 'update_in',
+            linkName: 'update-in',
             returns: {
                 type: 'collection',
             },
@@ -10797,16 +10728,16 @@ var Playground = (function (exports) {
             ],
             description: "Updates a value in the $coll collection, where $keys is an array of\nkeys and $fn is a function that will take the old value and\nany supplied $fn-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
             examples: [
-                "\n(update_in\n  {:a [1 2 3]}\n  [:a 1]\n  (fn [val]\n    (when (null? val) 0)))",
-                "\n(update_in\n  {:a {:foo :bar}}\n  [:a :foo]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
-                "\n(update_in\n  {:a {:foo :bar}}\n  [:a :baz]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
-                "\n(update_in\n  {:a [1 2 3]}\n  [:a 1]\n  *\n  10\n  10\n  10)",
+                "\n(update-in\n  {:a [1 2 3]}\n  [:a 1]\n  (fn [val]\n    (when (null? val) 0)))",
+                "\n(update-in\n  {:a {:foo :bar}}\n  [:a :foo]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
+                "\n(update-in\n  {:a {:foo :bar}}\n  [:a :baz]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
+                "\n(update-in\n  {:a [1 2 3]}\n  [:a 1]\n  *\n  10\n  10\n  10)",
             ],
         },
     };
 
     var functionalReference = {
-        apply: {
+        'apply': {
             title: 'apply',
             category: 'Functional',
             linkName: 'apply',
@@ -10829,7 +10760,7 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        identity: {
+        'identity': {
             title: 'identity',
             category: 'Functional',
             linkName: 'identity',
@@ -10848,7 +10779,7 @@ var Playground = (function (exports) {
             examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
             algebraic: true,
         },
-        partial: {
+        'partial': {
             title: 'partial',
             category: 'Functional',
             linkName: 'partial',
@@ -10876,7 +10807,7 @@ var Playground = (function (exports) {
             noOperatorDocumentation: true,
             algebraic: true,
         },
-        comp: {
+        'comp': {
             title: 'comp',
             category: 'Functional',
             linkName: 'comp',
@@ -10897,7 +10828,7 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        constantly: {
+        'constantly': {
             title: 'constantly',
             category: 'Functional',
             linkName: 'constantly',
@@ -10918,7 +10849,7 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        juxt: {
+        'juxt': {
             title: 'juxt',
             category: 'Functional',
             linkName: 'juxt',
@@ -10943,7 +10874,7 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        complement: {
+        'complement': {
             title: 'complement',
             category: 'Functional',
             linkName: 'complement',
@@ -10967,10 +10898,10 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        every_pred: {
-            title: 'every_pred',
+        'every-pred': {
+            title: 'every-pred',
             category: 'Functional',
-            linkName: 'every_pred',
+            linkName: 'every-pred',
             returns: {
                 type: 'function',
             },
@@ -10989,16 +10920,16 @@ var Playground = (function (exports) {
             ],
             description: "\nTakes a number of predicates and returns a function that returns `true` if all predicates\nreturn a truthy value against all of its arguments, else it returns `false`.",
             examples: [
-                "\nevery_pred(string?, -> count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
-                "\n(string? every_pred -> count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
+                "\nevery-pred(string?, -> count($) > 3)(\n  \"Albert\",\n  \"Mojir\"\n)",
+                "\n(string? every-pred -> count($) > 3)(\n  \"Albert\",\n  \"M\"\n)",
             ],
             algebraic: true,
             noOperatorDocumentation: true,
         },
-        some_pred: {
-            title: 'some_pred',
+        'some-pred': {
+            title: 'some-pred',
             category: 'Functional',
-            linkName: 'some_pred',
+            linkName: 'some-pred',
             clojureDocs: null,
             returns: {
                 type: 'function',
@@ -11018,15 +10949,15 @@ var Playground = (function (exports) {
             ],
             description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
             examples: [
-                'some_pred(string?, -> count($) > 3)("Albert", "Mojir")',
-                'some_pred(string?, -> count($) > 3)("a", "M")',
-                'some_pred(string?, -> count($) > 3)("a", [1, 2, 3])',
-                'some_pred(string?, -> count($) > 3)([1, 2, 3], [2])',
+                'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
+                'some-pred(string?, -> count($) > 3)("a", "M")',
+                'some-pred(string?, -> count($) > 3)("a", [1, 2, 3])',
+                'some-pred(string?, -> count($) > 3)([1, 2, 3], [2])',
             ],
             algebraic: true,
             noOperatorDocumentation: true,
         },
-        fnull: {
+        'fnull': {
             title: 'fnull',
             category: 'Functional',
             linkName: 'fnull',
@@ -11958,10 +11889,10 @@ var Playground = (function (exports) {
                 '(write! null true false)',
             ],
         },
-        'iso_date>epoch': {
-            title: 'iso_date>epoch',
+        'iso-date->epoch': {
+            title: 'iso-date->epoch',
             category: 'Misc',
-            linkName: 'iso_date-gtepoch',
+            linkName: 'iso-date--gtepoch',
             returns: {
                 type: 'number',
             },
@@ -11975,14 +11906,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
             examples: [
-                '(iso_date>epoch "2022-04-12T09:37:10.899Z")',
-                '(iso_date>epoch "1980-01-01")',
+                '(iso-date->epoch "2022-04-12T09:37:10.899Z")',
+                '(iso-date->epoch "1980-01-01")',
             ],
         },
-        'epoch>iso_date': {
-            title: 'epoch>iso_date',
+        'epoch->iso-date': {
+            title: 'epoch->iso-date',
             category: 'Misc',
-            linkName: 'epoch-gtiso_date',
+            linkName: 'epoch--gtiso-date',
             returns: {
                 type: 'string',
             },
@@ -11996,8 +11927,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
             examples: [
-                '(epoch>iso_date 1649756230899)',
-                '(epoch>iso_date 0)',
+                '(epoch->iso-date 1649756230899)',
+                '(epoch->iso-date 0)',
             ],
         },
         'boolean': {
@@ -12082,10 +12013,10 @@ var Playground = (function (exports) {
                 '(identical? 0.3 (+ 0.1 0.2))',
             ],
         },
-        'json_parse': {
-            title: 'json_parse',
+        'json-parse': {
+            title: 'json-parse',
             category: 'Misc',
-            linkName: 'json_parse',
+            linkName: 'json-parse',
             clojureDocs: null,
             returns: {
                 type: 'any',
@@ -12100,13 +12031,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `JSON.parse(`$x`)`.',
             examples: [
-                '(json_parse "[1, 2, 3]")',
+                '(json-parse "[1, 2, 3]")',
             ],
         },
-        'json_stringify': {
-            title: 'json_stringify',
+        'json-stringify': {
+            title: 'json-stringify',
             category: 'Misc',
-            linkName: 'json_stringify',
+            linkName: 'json-stringify',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -12126,14 +12057,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
             examples: [
-                '(json_stringify [1, 2, 3])',
-                '(json_stringify {:a {:b 10}} 2)',
+                '(json-stringify [1, 2, 3])',
+                '(json-stringify {:a {:b 10}} 2)',
             ],
         },
     };
 
     var objectReference = {
-        dissoc: {
+        'dissoc': {
             title: 'dissoc',
             category: 'Object',
             linkName: 'dissoc',
@@ -12158,7 +12089,7 @@ var Playground = (function (exports) {
                 "\n(def o { :a 5 }) (dissoc o :a)\no",
             ],
         },
-        object: {
+        'object': {
             title: 'object',
             category: 'Object',
             linkName: 'object',
@@ -12184,7 +12115,7 @@ var Playground = (function (exports) {
                 '{:a 1 :b 2}',
             ],
         },
-        keys: {
+        'keys': {
             title: 'keys',
             category: 'Object',
             linkName: 'keys',
@@ -12206,7 +12137,7 @@ var Playground = (function (exports) {
                 '(keys (object :x 10 :y true :z "A string"))',
             ],
         },
-        vals: {
+        'vals': {
             title: 'vals',
             category: 'Object',
             linkName: 'vals',
@@ -12228,7 +12159,7 @@ var Playground = (function (exports) {
                 '(vals (object :x 10 :y true :z "A string"))',
             ],
         },
-        entries: {
+        'entries': {
             title: 'entries',
             category: 'Object',
             linkName: 'entries',
@@ -12250,7 +12181,7 @@ var Playground = (function (exports) {
                 '(entries (object :x 10 :y true :z "A string"))',
             ],
         },
-        find: {
+        'find': {
             title: 'find',
             category: 'Object',
             linkName: 'find',
@@ -12274,7 +12205,7 @@ var Playground = (function (exports) {
                 '(find (object :a 1 :b 2) :c)',
             ],
         },
-        merge: {
+        'merge': {
             title: 'merge',
             category: 'Object',
             linkName: 'merge',
@@ -12296,10 +12227,10 @@ var Playground = (function (exports) {
                 '(merge (object :x 10) (object :x 15 :y 20))',
             ],
         },
-        merge_with: {
-            title: 'merge_with',
+        'merge-with': {
+            title: 'merge-with',
             category: 'Object',
-            linkName: 'merge_with',
+            linkName: 'merge-with',
             returns: {
                 type: 'object',
             },
@@ -12317,12 +12248,12 @@ var Playground = (function (exports) {
             ],
             description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fn is used to calculate the new value.\n\nIf no arguments are provided `null` is returned.",
             examples: [
-                '(merge_with (object :x 10) (object :y 20) +)',
-                '(merge_with (object :x 10) (object :x 15 :y 20) +)',
-                '(merge_with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
+                '(merge-with (object :x 10) (object :y 20) +)',
+                '(merge-with (object :x 10) (object :x 15 :y 20) +)',
+                '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
             ],
         },
-        zipmap: {
+        'zipmap': {
             title: 'zipmap',
             category: 'Object',
             linkName: 'zipmap',
@@ -12349,10 +12280,10 @@ var Playground = (function (exports) {
                 '(zipmap [] [10 null [1 2 3]])',
             ],
         },
-        select_keys: {
-            title: 'select_keys',
+        'select-keys': {
+            title: 'select-keys',
             category: 'Object',
-            linkName: 'select_keys',
+            linkName: 'select-keys',
             returns: {
                 type: 'object',
             },
@@ -12370,8 +12301,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
             examples: [
-                '(select_keys {:a 1 :b 2 :c 3} [:a :b])',
-                '(select_keys {:a 1} [:a :b])',
+                '(select-keys {:a 1 :b 2 :c 3} [:a :b])',
+                '(select-keys {:a 1} [:a :b])',
             ],
         },
     };
@@ -12828,10 +12759,10 @@ var Playground = (function (exports) {
                 '(nan? (sqrt -1))',
             ],
         },
-        'negative_infinity?': {
-            title: 'negative_infinity?',
+        'negative-infinity?': {
+            title: 'negative-infinity?',
             category: 'Predicate',
-            linkName: 'negative_infinity-question',
+            linkName: 'negative-infinity-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -12846,16 +12777,16 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
             examples: [
-                '(negative_infinity? 1.0)',
-                '(negative_infinity? (/ 1 0))',
-                '(negative_infinity? (/ -1 0))',
-                '(negative_infinity? (sqrt -1))',
+                '(negative-infinity? 1.0)',
+                '(negative-infinity? (/ 1 0))',
+                '(negative-infinity? (/ -1 0))',
+                '(negative-infinity? (sqrt -1))',
             ],
         },
-        'positive_infinity?': {
-            title: 'positive_infinity?',
+        'positive-infinity?': {
+            title: 'positive-infinity?',
             category: 'Predicate',
-            linkName: 'positive_infinity-question',
+            linkName: 'positive-infinity-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -12870,10 +12801,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
             examples: [
-                '(positive_infinity? 1.0)',
-                '(positive_infinity? (/ 1 0))',
-                '(positive_infinity? (/ -1 0))',
-                '(positive_infinity? (sqrt -1))',
+                '(positive-infinity? 1.0)',
+                '(positive-infinity? (/ 1 0))',
+                '(positive-infinity? (/ -1 0))',
+                '(positive-infinity? (sqrt -1))',
             ],
         },
         'false?': {
@@ -12948,10 +12879,10 @@ var Playground = (function (exports) {
                 '(empty? null)',
             ],
         },
-        'not_empty?': {
-            title: 'not_empty?',
+        'not-empty?': {
+            title: 'not-empty?',
             category: 'Predicate',
-            linkName: 'not_empty-question',
+            linkName: 'not-empty-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -12966,19 +12897,19 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
             examples: [
-                '(not_empty? [])',
-                '(not_empty? [1 2 3])',
-                '(not_empty? {})',
-                '(not_empty? {:a 2})',
-                '(not_empty? "")',
-                '(not_empty? "Albert")',
-                '(not_empty? null)',
+                '(not-empty? [])',
+                '(not-empty? [1 2 3])',
+                '(not-empty? {})',
+                '(not-empty? {:a 2})',
+                '(not-empty? "")',
+                '(not-empty? "Albert")',
+                '(not-empty? null)',
             ],
         },
     };
 
     var regularExpressionReference = {
-        regexp: {
+        'regexp': {
             title: 'regexp',
             category: 'Regular expression',
             linkName: 'regexp',
@@ -13009,7 +12940,7 @@ var Playground = (function (exports) {
             algebraic: true,
             noOperatorDocumentation: true,
         },
-        match: {
+        'match': {
             title: 'match',
             category: 'Regular expression',
             linkName: 'match',
@@ -13034,7 +12965,7 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        replace: {
+        'replace': {
             title: 'replace',
             category: 'Regular expression',
             linkName: 'replace',
@@ -13060,10 +12991,10 @@ var Playground = (function (exports) {
             ],
             algebraic: true,
         },
-        replace_all: {
-            title: 'replace_all',
+        'replace-all': {
+            title: 'replace-all',
             category: 'Regular expression',
-            linkName: 'replace_all',
+            linkName: 'replace-all',
             clojureDocs: null,
             returns: {
                 type: 'any',
@@ -13077,12 +13008,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a new string with all matches of regular expression $b replaced by $x.',
             examples: [
-                'replace_all("Duck duck", "u", "i")',
-                'replace_all("Duck duck", regexp("u"), "i")',
-                'replace_all("abcABC", regexp("a", "i"), "-")',
-                'replace_all("abcABC", regexp("a", "gi"), "-")',
-                'replace_all("abcABC", #"a"i, "-")',
-                'replace_all("abcABC", #"a"gi, "-")',
+                'replace-all("Duck duck", "u", "i")',
+                'replace-all("Duck duck", regexp("u"), "i")',
+                'replace-all("abcABC", regexp("a", "i"), "-")',
+                'replace-all("abcABC", regexp("a", "gi"), "-")',
+                'replace-all("abcABC", #"a"i, "-")',
+                'replace-all("abcABC", #"a"gi, "-")',
             ],
             algebraic: true,
         },
@@ -13327,10 +13258,10 @@ var Playground = (function (exports) {
                 "\n(reduce\n  (fn [result value] (+ result (if (even? value) value 0)))\n  0\n  [1 2 3 4 5 6 7 8 9])",
             ],
         },
-        'reduce_right': {
-            title: 'reduce_right',
+        'reduce-right': {
+            title: 'reduce-right',
             category: 'Sequence',
-            linkName: 'reduce_right',
+            linkName: 'reduce-right',
             clojureDocs: null,
             returns: {
                 type: 'sequence',
@@ -13352,7 +13283,7 @@ var Playground = (function (exports) {
             ],
             description: 'Runs $fn function on each element of the $seq (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
             examples: [
-                '(reduce_right str [:A :B :C] "")',
+                '(reduce-right str [:A :B :C] "")',
             ],
         },
         'map': {
@@ -13431,10 +13362,10 @@ var Playground = (function (exports) {
                 "\n(position\n  (fn [x] (> x 100))\n  null)",
             ],
         },
-        'index_of': {
-            title: 'index_of',
+        'index-of': {
+            title: 'index-of',
             category: 'Sequence',
-            linkName: 'index_of',
+            linkName: 'index-of',
             clojureDocs: null,
             returns: {
                 type: ['number', 'null'],
@@ -13452,16 +13383,16 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
             examples: [
-                '(index_of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
-                '(index_of [5 10 15 20] 15)',
-                '(index_of [5 10 15 20] 1)',
-                '(index_of null 1)',
+                '(index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
+                '(index-of [5 10 15 20] 15)',
+                '(index-of [5 10 15 20] 1)',
+                '(index-of null 1)',
             ],
         },
-        'last_index_of': {
-            title: 'last_index_of',
+        'last-index-of': {
+            title: 'last-index-of',
             category: 'Sequence',
-            linkName: 'last_index_of',
+            linkName: 'last-index-of',
             clojureDocs: null,
             returns: {
                 type: ['number', 'null'],
@@ -13479,10 +13410,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
             examples: [
-                '(last_index_of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
-                '(last_index_of [5 10 15 20] 15)',
-                '(last_index_of [5 10 15 20] 1)',
-                '(last_index_of null 1)',
+                '(last-index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
+                '(last-index-of [5 10 15 20] 15)',
+                '(last-index-of [5 10 15 20] 1)',
+                '(last-index-of null 1)',
             ],
         },
         'some': {
@@ -13736,10 +13667,10 @@ var Playground = (function (exports) {
                 '(take 50 "Albert")',
             ],
         },
-        'take_last': {
-            title: 'take_last',
+        'take-last': {
+            title: 'take-last',
             category: 'Sequence',
-            linkName: 'take_last',
+            linkName: 'take-last',
             returns: {
                 type: 'sequence',
             },
@@ -13756,14 +13687,14 @@ var Playground = (function (exports) {
             ],
             description: 'Constructs a new array with the $n last elements from $seq.',
             examples: [
-                '(take_last 3 [1 2 3 4 5])',
-                '(take_last 0 [1 2 3 4 5])',
+                '(take-last 3 [1 2 3 4 5])',
+                '(take-last 0 [1 2 3 4 5])',
             ],
         },
-        'take_while': {
-            title: 'take_while',
+        'take-while': {
+            title: 'take-while',
             category: 'Sequence',
-            linkName: 'take_while',
+            linkName: 'take-while',
             returns: {
                 type: 'sequence',
             },
@@ -13780,8 +13711,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
             examples: [
-                "\n(take_while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
-                "\n(take_while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
+                "\n(take-while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
+                "\n(take-while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
             ],
         },
         'drop': {
@@ -13810,10 +13741,10 @@ var Playground = (function (exports) {
                 '(drop "Albert" 50)',
             ],
         },
-        'drop_last': {
-            title: 'drop_last',
+        'drop-last': {
+            title: 'drop-last',
             category: 'Sequence',
-            linkName: 'drop_last',
+            linkName: 'drop-last',
             returns: {
                 type: 'sequence',
             },
@@ -13830,14 +13761,14 @@ var Playground = (function (exports) {
             ],
             description: 'Constructs a new array with the $n last elements dropped from $seq.',
             examples: [
-                '(drop_last [1 2 3 4 5] 3)',
-                '(drop_last [1 2 3 4 5] 0)',
+                '(drop-last [1 2 3 4 5] 3)',
+                '(drop-last [1 2 3 4 5] 0)',
             ],
         },
-        'drop_while': {
-            title: 'drop_while',
+        'drop-while': {
+            title: 'drop-while',
             category: 'Sequence',
-            linkName: 'drop_while',
+            linkName: 'drop-while',
             returns: {
                 type: 'sequence',
             },
@@ -13854,8 +13785,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
             examples: [
-                "\n(drop_while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
-                "\n(drop_while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
+                "\n(drop-while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
+                "\n(drop-while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
             ],
         },
         'sort': {
@@ -13885,10 +13816,10 @@ var Playground = (function (exports) {
                 "\n(sort\n  [3 1 2]\n  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))",
             ],
         },
-        'sort_by': {
-            title: 'sort_by',
+        'sort-by': {
+            title: 'sort-by',
             category: 'Sequence',
-            linkName: 'sort_by',
+            linkName: 'sort-by',
             returns: {
                 type: 'any',
                 array: true,
@@ -13910,8 +13841,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
             examples: [
-                '(sort_by ["Albert" "Mojir" "Nina"] count)',
-                '(sort_by "Albert" lower_case #(compare %2 %1))',
+                '(sort-by ["Albert" "Mojir" "Nina"] count)',
+                '(sort-by "Albert" lower-case #(compare %2 %1))',
             ],
         },
         'distinct': {
@@ -13961,10 +13892,10 @@ var Playground = (function (exports) {
                 '(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))',
             ],
         },
-        'remove_at': {
-            title: 'remove_at',
+        'remove-at': {
+            title: 'remove-at',
             category: 'Sequence',
-            linkName: 'remove_at',
+            linkName: 'remove-at',
             clojureDocs: null,
             returns: {
                 type: 'sequence',
@@ -13982,15 +13913,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a new sequence of all items in $seq except item at position $n.',
             examples: [
-                '(remove_at [1 2 3 1 3 5] 0)',
-                '(remove_at [1 2 3 1 3 5] -1)',
-                '(remove_at "Albert Mojir" 6)',
+                '(remove-at [1 2 3 1 3 5] 0)',
+                '(remove-at [1 2 3 1 3 5] -1)',
+                '(remove-at "Albert Mojir" 6)',
             ],
         },
-        'split_at': {
-            title: 'split_at',
+        'split-at': {
+            title: 'split-at',
             category: 'Sequence',
-            linkName: 'split_at',
+            linkName: 'split-at',
             returns: {
                 type: 'sequence',
                 array: true,
@@ -14008,14 +13939,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
             examples: [
-                '(split_at [1 2 3 4 5] 2)',
-                '(split_at "Albert" 2)',
+                '(split-at [1 2 3 4 5] 2)',
+                '(split-at "Albert" 2)',
             ],
         },
-        'split_with': {
-            title: 'split_with',
+        'split-with': {
+            title: 'split-with',
             category: 'Sequence',
-            linkName: 'split_with',
+            linkName: 'split-with',
             returns: {
                 type: 'sequence',
                 array: true,
@@ -14031,10 +13962,10 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
-            description: 'Returns a pair of sequences `[take_while(input, fn), drop_while(input, fn)]`.',
+            description: 'Returns a pair of sequences `[take-while(input, fn), drop-while(input, fn)]`.',
             examples: [
-                '(split_with [1 2 3 4 5] #(> %1 3))',
-                '(split_with "Albert" #(<= %1 :Z))',
+                '(split-with [1 2 3 4 5] #(> %1 3))',
+                '(split-with "Albert" #(<= %1 :Z))',
             ],
         },
         'frequencies': {
@@ -14058,10 +13989,10 @@ var Playground = (function (exports) {
                 '(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")',
             ],
         },
-        'group_by': {
-            title: 'group_by',
+        'group-by': {
+            title: 'group-by',
             category: 'Sequence',
-            linkName: 'group_by',
+            linkName: 'group-by',
             returns: {
                 type: 'object',
             },
@@ -14078,8 +14009,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
             examples: [
-                '(group_by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
-                '(group_by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))',
+                '(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
+                '(group-by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))',
             ],
         },
         'partition': {
@@ -14127,10 +14058,10 @@ var Playground = (function (exports) {
                 '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
             ],
         },
-        'partition_all': {
-            title: 'partition_all',
+        'partition-all': {
+            title: 'partition-all',
             category: 'Sequence',
-            linkName: 'partition_all',
+            linkName: 'partition-all',
             returns: {
                 type: 'sequence',
             },
@@ -14151,15 +14082,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
             examples: [
-                '(partition_all [0 1 2 3 4 5 6 7 8 9] 4)',
+                '(partition-all [0 1 2 3 4 5 6 7 8 9] 4)',
                 '(partition [0 1 2 3 4 5 6 7 8 9] 4)',
-                '(partition_all [0 1 2 3 4 5 6 7 8 9] 2 4)',
+                '(partition-all [0 1 2 3 4 5 6 7 8 9] 2 4)',
             ],
         },
-        'partition_by': {
-            title: 'partition_by',
+        'partition-by': {
+            title: 'partition-by',
             category: 'Sequence',
-            linkName: 'partition_by',
+            linkName: 'partition-by',
             returns: {
                 type: 'sequence',
             },
@@ -14176,15 +14107,15 @@ var Playground = (function (exports) {
             ],
             description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
             examples: [
-                '(partition_by [1 2 3 4 5] #(= 3 %1))',
-                '(partition_by [1 1 1 2 2 3 3] odd?)',
-                '(partition_by "Leeeeeerrroyyy" identity)',
+                '(partition-by [1 2 3 4 5] #(= 3 %1))',
+                '(partition-by [1 1 1 2 2 3 3] odd?)',
+                '(partition-by "Leeeeeerrroyyy" identity)',
             ],
         },
-        'starts_with?': {
-            title: 'starts_with?',
+        'starts-with?': {
+            title: 'starts-with?',
             category: 'Sequence',
-            linkName: 'starts_with-question',
+            linkName: 'starts-with-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -14202,16 +14133,16 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
             examples: [
-                '(starts_with? [1 2 3 4 5] 1)',
-                '(starts_with? [1 2 3 4 5] [1])',
-                '(starts_with? "Albert" "Al")',
-                '(starts_with? "Albert" "al")',
+                '(starts-with? [1 2 3 4 5] 1)',
+                '(starts-with? [1 2 3 4 5] [1])',
+                '(starts-with? "Albert" "Al")',
+                '(starts-with? "Albert" "al")',
             ],
         },
-        'ends_with?': {
-            title: 'ends_with?',
+        'ends-with?': {
+            title: 'ends-with?',
             category: 'Sequence',
-            linkName: 'ends_with-question',
+            linkName: 'ends-with-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -14229,10 +14160,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
             examples: [
-                '(ends_with? [1 2 3 4 5] 5)',
-                '(ends_with? [1 2 3 4 5] [5])',
-                '(ends_with? "Albert" "rt")',
-                '(ends_with? "Albert" "RT")',
+                '(ends-with? [1 2 3 4 5] 5)',
+                '(ends-with? [1 2 3 4 5] [5])',
+                '(ends-with? "Albert" "rt")',
+                '(ends-with? "Albert" "RT")',
             ],
         },
         'interleave': {
@@ -14831,10 +14762,10 @@ var Playground = (function (exports) {
                 '(subs "A string" 100)',
             ],
         },
-        'string_repeat': {
-            title: 'string_repeat',
+        'string-repeat': {
+            title: 'string-repeat',
             category: 'String',
-            linkName: 'string_repeat',
+            linkName: 'string-repeat',
             clojureDocs: null,
             returns: {
                 type: 'number',
@@ -14852,8 +14783,8 @@ var Playground = (function (exports) {
             ],
             description: 'Repeates $s $n times.',
             examples: [
-                '(string_repeat "*" 10)',
-                '(string_repeat "***" 0)',
+                '(string-repeat "*" 10)',
+                '(string-repeat "***" 0)',
             ],
         },
         'str': {
@@ -14903,10 +14834,10 @@ var Playground = (function (exports) {
                 '(number "-1.01")',
             ],
         },
-        'lower_case': {
-            title: 'lower_case',
+        'lower-case': {
+            title: 'lower-case',
             category: 'String',
-            linkName: 'lower_case',
+            linkName: 'lower-case',
             returns: {
                 type: 'string',
             },
@@ -14920,14 +14851,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns $s converted to lower case.',
             examples: [
-                '(lower_case "Albert")',
-                '(lower_case "")',
+                '(lower-case "Albert")',
+                '(lower-case "")',
             ],
         },
-        'upper_case': {
-            title: 'upper_case',
+        'upper-case': {
+            title: 'upper-case',
             category: 'String',
-            linkName: 'upper_case',
+            linkName: 'upper-case',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -14942,8 +14873,8 @@ var Playground = (function (exports) {
             ],
             description: 'Returns $s converted to upper case.',
             examples: [
-                '(upper_case "Albert")',
-                '(upper_case "")',
+                '(upper-case "Albert")',
+                '(upper-case "")',
             ],
         },
         'trim': {
@@ -14969,10 +14900,10 @@ var Playground = (function (exports) {
                 '(trim "")',
             ],
         },
-        'trim_left': {
-            title: 'trim_left',
+        'trim-left': {
+            title: 'trim-left',
             category: 'String',
-            linkName: 'trim_left',
+            linkName: 'trim-left',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -14987,15 +14918,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a new string with leading whitespaces removed.',
             examples: [
-                '(trim_left "  Albert  ")',
-                '(trim_left "   ")',
-                '(trim_left "")',
+                '(trim-left "  Albert  ")',
+                '(trim-left "   ")',
+                '(trim-left "")',
             ],
         },
-        'trim_right': {
-            title: 'trim_right',
+        'trim-right': {
+            title: 'trim-right',
             category: 'String',
-            linkName: 'trim_right',
+            linkName: 'trim-right',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15010,15 +14941,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a new string with trailing whitespaces removed.',
             examples: [
-                '(trim_right "  Albert  ")',
-                '(trim_right "   ")',
-                '(trim_right "")',
+                '(trim-right "  Albert  ")',
+                '(trim-right "   ")',
+                '(trim-right "")',
             ],
         },
-        'pad_left': {
-            title: 'pad_left',
+        'pad-left': {
+            title: 'pad-left',
             category: 'String',
-            linkName: 'pad_left',
+            linkName: 'pad-left',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15040,16 +14971,16 @@ var Playground = (function (exports) {
             ],
             description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
             examples: [
-                '(pad_left "Albert" 20)',
-                '(pad_left "Albert" 20 "-*-")',
-                '(pad_left "Albert" 5)',
-                '(pad_left "Albert" -1)',
+                '(pad-left "Albert" 20)',
+                '(pad-left "Albert" 20 "-*-")',
+                '(pad-left "Albert" 5)',
+                '(pad-left "Albert" -1)',
             ],
         },
-        'pad_right': {
-            title: 'pad_right',
+        'pad-right': {
+            title: 'pad-right',
             category: 'String',
-            linkName: 'pad_right',
+            linkName: 'pad-right',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15071,10 +15002,10 @@ var Playground = (function (exports) {
             ],
             description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
             examples: [
-                '(pad_right "Albert" 20)',
-                '(pad_right "Albert" 20 "-*-")',
-                '(pad_right "Albert" 5)',
-                '(pad_right "Albert" -1)',
+                '(pad-right "Albert" 20)',
+                '(pad-right "Albert" 20 "-*-")',
+                '(pad-right "Albert" 5)',
+                '(pad-right "Albert" -1)',
             ],
         },
         'split': {
@@ -15108,10 +15039,10 @@ var Playground = (function (exports) {
                 '(map number (split "0123456789" "" 5))',
             ],
         },
-        'split_lines': {
-            title: 'split_lines',
+        'split-lines': {
+            title: 'split-lines',
             category: 'String',
-            linkName: 'split_lines',
+            linkName: 'split-lines',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15126,10 +15057,10 @@ var Playground = (function (exports) {
             ],
             description: 'Divides $s into an array of substrings, each representing a line.',
             examples: [
-                '(split_lines "Albert\nMojir\n")',
-                '(split_lines "Albert\n\nMojir")',
-                '(split_lines "Albert\nMojir\n\n")',
-                '(split_lines "")',
+                '(split-lines "Albert\nMojir\n")',
+                '(split-lines "Albert\n\nMojir")',
+                '(split-lines "Albert\nMojir\n\n")',
+                '(split-lines "")',
             ],
         },
         'template': {
@@ -15169,10 +15100,10 @@ var Playground = (function (exports) {
                 '(template "No book||||One book||||Two books||||Three books||||$1 books" 4)',
             ],
         },
-        'to_char_code': {
-            title: 'to_char_code',
+        'to-char-code': {
+            title: 'to-char-code',
             category: 'String',
-            linkName: 'to_char_code',
+            linkName: 'to-char-code',
             clojureDocs: null,
             returns: {
                 type: 'number',
@@ -15187,14 +15118,14 @@ var Playground = (function (exports) {
             ],
             description: 'Return code point for first character in $c.',
             examples: [
-                '(to_char_code :A)',
-                '(to_char_code "Albert")',
+                '(to-char-code :A)',
+                '(to-char-code "Albert")',
             ],
         },
-        'from_char_code': {
-            title: 'from_char_code',
+        'from-char-code': {
+            title: 'from-char-code',
             category: 'String',
-            linkName: 'from_char_code',
+            linkName: 'from-char-code',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15209,14 +15140,14 @@ var Playground = (function (exports) {
             ],
             description: 'Return character for code point $code.',
             examples: [
-                '(from_char_code 65)',
-                '(from_char_code 0)',
+                '(from-char-code 65)',
+                '(from-char-code 0)',
             ],
         },
-        'encode_base64': {
-            title: 'encode_base64',
+        'encode-base64': {
+            title: 'encode-base64',
             category: 'String',
-            linkName: 'encode_base64',
+            linkName: 'encode-base64',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15231,13 +15162,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a Base64 encoded string from $s.',
             examples: [
-                '(encode_base64 "Albert")',
+                '(encode-base64 "Albert")',
             ],
         },
-        'decode_base64': {
-            title: 'decode_base64',
+        'decode-base64': {
+            title: 'decode-base64',
             category: 'String',
-            linkName: 'decode_base64',
+            linkName: 'decode-base64',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15252,13 +15183,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a Base64 decoded string from $base64string.',
             examples: [
-                '(decode_base64 "QWxiZXJ0IPCfkLs=")',
+                '(decode-base64 "QWxiZXJ0IPCfkLs=")',
             ],
         },
-        'encode_uri_component': {
-            title: 'encode_uri_component',
+        'encode-uri-component': {
+            title: 'encode-uri-component',
             category: 'String',
-            linkName: 'encode_uri_component',
+            linkName: 'encode-uri-component',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15273,13 +15204,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an escaped `URI` string.',
             examples: [
-                '(encode_uri_component "Hi everyone!?")',
+                '(encode-uri-component "Hi everyone!?")',
             ],
         },
-        'decode_uri_component': {
-            title: 'decode_uri_component',
+        'decode-uri-component': {
+            title: 'decode-uri-component',
             category: 'String',
-            linkName: 'decode_uri_component',
+            linkName: 'decode-uri-component',
             clojureDocs: null,
             returns: {
                 type: 'string',
@@ -15294,7 +15225,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an un-escaped `URI` string.',
             examples: [
-                '(decode_uri_component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
+                '(decode-uri-component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
             ],
         },
         'join': {

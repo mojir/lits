@@ -2,7 +2,7 @@ import type { FunctionReference } from '..'
 import type { ObjectApiName } from '../api'
 
 export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>> = {
-  dissoc: {
+  'dissoc': {
     title: 'dissoc',
     category: 'Object',
     linkName: 'dissoc',
@@ -29,7 +29,7 @@ export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>>
 o`,
     ],
   },
-  object: {
+  'object': {
     title: 'object',
     category: 'Object',
     linkName: 'object',
@@ -55,7 +55,7 @@ o`,
       '{:a 1 :b 2}',
     ],
   },
-  keys: {
+  'keys': {
     title: 'keys',
     category: 'Object',
     linkName: 'keys',
@@ -77,7 +77,7 @@ o`,
       '(keys (object :x 10 :y true :z "A string"))',
     ],
   },
-  vals: {
+  'vals': {
     title: 'vals',
     category: 'Object',
     linkName: 'vals',
@@ -99,7 +99,7 @@ o`,
       '(vals (object :x 10 :y true :z "A string"))',
     ],
   },
-  entries: {
+  'entries': {
     title: 'entries',
     category: 'Object',
     linkName: 'entries',
@@ -121,7 +121,7 @@ o`,
       '(entries (object :x 10 :y true :z "A string"))',
     ],
   },
-  find: {
+  'find': {
     title: 'find',
     category: 'Object',
     linkName: 'find',
@@ -145,7 +145,7 @@ o`,
       '(find (object :a 1 :b 2) :c)',
     ],
   },
-  merge: {
+  'merge': {
     title: 'merge',
     category: 'Object',
     linkName: 'merge',
@@ -170,10 +170,10 @@ If no arguments are provided \`null\` is returned.`,
       '(merge (object :x 10) (object :x 15 :y 20))',
     ],
   },
-  merge_with: {
-    title: 'merge_with',
+  'merge-with': {
+    title: 'merge-with',
     category: 'Object',
-    linkName: 'merge_with',
+    linkName: 'merge-with',
     returns: {
       type: 'object',
     },
@@ -195,12 +195,12 @@ If two keys appears in more than one object $fn is used to calculate the new val
 
 If no arguments are provided \`null\` is returned.`,
     examples: [
-      '(merge_with (object :x 10) (object :y 20) +)',
-      '(merge_with (object :x 10) (object :x 15 :y 20) +)',
-      '(merge_with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
+      '(merge-with (object :x 10) (object :y 20) +)',
+      '(merge-with (object :x 10) (object :x 15 :y 20) +)',
+      '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
     ],
   },
-  zipmap: {
+  'zipmap': {
     title: 'zipmap',
     category: 'Object',
     linkName: 'zipmap',
@@ -227,10 +227,10 @@ If no arguments are provided \`null\` is returned.`,
       '(zipmap [] [10 null [1 2 3]])',
     ],
   },
-  select_keys: {
-    title: 'select_keys',
+  'select-keys': {
+    title: 'select-keys',
     category: 'Object',
-    linkName: 'select_keys',
+    linkName: 'select-keys',
     returns: {
       type: 'object',
     },
@@ -248,8 +248,8 @@ If no arguments are provided \`null\` is returned.`,
     ],
     description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
     examples: [
-      '(select_keys {:a 1 :b 2 :c 3} [:a :b])',
-      '(select_keys {:a 1} [:a :b])',
+      '(select-keys {:a 1 :b 2 :c 3} [:a :b])',
+      '(select-keys {:a 1} [:a :b])',
     ],
   },
 }

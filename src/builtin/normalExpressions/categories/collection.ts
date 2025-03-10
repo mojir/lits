@@ -154,7 +154,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2, max: 3 },
   },
-  'get_in': {
+  'get-in': {
     evaluate: (params, sourceCodeInfo): Any => {
       let coll = toAny(params[0])
       const keys = params[1] ?? [] // null behaves as empty array
@@ -234,7 +234,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'has_some?': {
+  'has-some?': {
     evaluate: ([coll, seq], sourceCodeInfo): boolean => {
       if (coll === null || seq === null)
         return false
@@ -263,7 +263,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'has_every?': {
+  'has-every?': {
     evaluate: ([coll, seq], sourceCodeInfo): boolean => {
       if (coll === null)
         return false
@@ -304,7 +304,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  'assoc_in': {
+  'assoc-in': {
     evaluate: ([originalColl, keys, value], sourceCodeInfo): Coll => {
       assertColl(originalColl, sourceCodeInfo)
       assertArray(keys, sourceCodeInfo)
@@ -342,7 +342,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 3 },
   },
-  'update_in': {
+  'update-in': {
     evaluate: ([originalColl, keys, fn, ...params], sourceCodeInfo, contextStack, { executeFunction }): Coll => {
       assertColl(originalColl, sourceCodeInfo)
       assertArray(keys, sourceCodeInfo)
@@ -411,7 +411,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1 },
   },
-  'not_empty': {
+  'not-empty': {
     evaluate: ([coll], sourceCodeInfo): Coll | null => {
       if (coll === null)
         return null
@@ -457,7 +457,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'not_any?': {
+  'not-any?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertLitsFunction(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)
@@ -472,7 +472,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'not_every?': {
+  'not-every?': {
     evaluate: ([coll, fn], sourceCodeInfo, contextStack, { executeFunction }): boolean => {
       assertLitsFunction(fn, sourceCodeInfo)
       assertColl(coll, sourceCodeInfo)

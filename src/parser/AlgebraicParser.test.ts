@@ -302,7 +302,7 @@ describe('algebraic operators', () => {
       expect(lits.run('||(0, 1, 2)')).toBe(1)
       expect(lits.run('if 1 > 2 then 2 end')).toBe(null)
       expect(lits.run('if 1 < 2 then 2 end')).toBe(2)
-      expect(lits.run('remove_at([1, 2, 3], 1)')).toEqual([1, 3])
+      expect(lits.run('remove-at([1, 2, 3], 1)')).toEqual([1, 3])
     })
   })
 

@@ -80,7 +80,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2 },
   },
-  'bit_flip': {
+  'bit-flip': {
     evaluate: ([num, index], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -90,7 +90,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'bit_set': {
+  'bit-set': {
     evaluate: ([num, index], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -100,7 +100,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'bit_clear': {
+  'bit-clear': {
     evaluate: ([num, index], sourceCodeInfo): number => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })
@@ -110,7 +110,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  'bit_test': {
+  'bit-test': {
     evaluate: ([num, index], sourceCodeInfo): boolean => {
       assertNumber(num, sourceCodeInfo, { integer: true })
       assertNumber(index, sourceCodeInfo, { integer: true, nonNegative: true })

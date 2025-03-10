@@ -7,7 +7,7 @@ import { collHasKey, toAny } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const objectNormalExpression: BuiltinNormalExpressions = {
-  object: {
+  'object': {
     evaluate: (params, sourceCodeInfo): Obj => {
       const result: Obj = {}
       for (let i = 0; i < params.length; i += 2) {
@@ -21,7 +21,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: { even: true },
   },
 
-  keys: {
+  'keys': {
     evaluate: ([obj], sourceCodeInfo): string[] => {
       assertObj(obj, sourceCodeInfo)
       return Object.keys(obj)
@@ -29,7 +29,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  vals: {
+  'vals': {
     evaluate: ([obj], sourceCodeInfo): Arr => {
       assertObj(obj, sourceCodeInfo)
       return Object.values(obj)
@@ -37,7 +37,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  entries: {
+  'entries': {
     evaluate: ([obj], sourceCodeInfo): Array<[string, unknown]> => {
       assertObj(obj, sourceCodeInfo)
       return Object.entries(obj)
@@ -45,7 +45,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  find: {
+  'find': {
     evaluate: ([obj, key], sourceCodeInfo): [string, unknown] | null => {
       assertObj(obj, sourceCodeInfo)
       assertString(key, sourceCodeInfo)
@@ -57,7 +57,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
 
-  dissoc: {
+  'dissoc': {
     evaluate: ([obj, key], sourceCodeInfo): Any => {
       assertObj(obj, sourceCodeInfo)
       assertString(key, sourceCodeInfo)
@@ -68,7 +68,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
 
-  merge: {
+  'merge': {
     evaluate: (params, sourceCodeInfo): Any => {
       if (params.length === 0)
         return null
@@ -87,7 +87,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 0 },
   },
 
-  merge_with: {
+  'merge-with': {
     evaluate: (params: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       const first = params[0]
       const fn = params.at(-1)
@@ -115,7 +115,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2 },
   },
 
-  zipmap: {
+  'zipmap': {
     evaluate: ([keys, values], sourceCodeInfo): Any => {
       assertStringArray(keys, sourceCodeInfo)
       assertArray(values, sourceCodeInfo)
@@ -133,7 +133,7 @@ export const objectNormalExpression: BuiltinNormalExpressions = {
     paramCount: 2,
   },
 
-  select_keys: {
+  'select-keys': {
     evaluate: ([obj, keys], sourceCodeInfo): Any => {
       assertStringArray(keys, sourceCodeInfo)
       assertObj(obj, sourceCodeInfo)

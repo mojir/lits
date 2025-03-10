@@ -22,34 +22,34 @@ describe('misc functions', () => {
     console.warn = oldWarn
   })
   for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
-    describe('epoch>iso_date', () => {
+    describe('epoch->iso-date', () => {
       it('samples', () => {
-        expect(() => lits.run('(epoch>iso_date 1649756230899 1649756230899)')).toThrow()
-        expect(() => lits.run('(epoch>iso_date)')).toThrow()
-        expect(() => lits.run('(epoch>iso_date "1649756230899")')).toThrow()
-        expect(() => lits.run('(epoch>iso_date null)')).toThrow()
-        expect(() => lits.run('(epoch>iso_date true)')).toThrow()
-        expect(lits.run('(epoch>iso_date 1649756230899)')).toBe('2022-04-12T09:37:10.899Z')
-        expect(lits.run('(epoch>iso_date -1649756230899)')).toBe('1917-09-21T14:22:49.101Z')
-        expect(lits.run('(epoch>iso_date 0)')).toBe('1970-01-01T00:00:00.000Z')
-        expect(lits.run('(epoch>iso_date 0.999)')).toBe('1970-01-01T00:00:00.000Z')
-        expect(lits.run('(epoch>iso_date 0.999)')).toBe('1970-01-01T00:00:00.000Z')
+        expect(() => lits.run('(epoch->iso-date 1649756230899 1649756230899)')).toThrow()
+        expect(() => lits.run('(epoch->iso-date)')).toThrow()
+        expect(() => lits.run('(epoch->iso-date "1649756230899")')).toThrow()
+        expect(() => lits.run('(epoch->iso-date null)')).toThrow()
+        expect(() => lits.run('(epoch->iso-date true)')).toThrow()
+        expect(lits.run('(epoch->iso-date 1649756230899)')).toBe('2022-04-12T09:37:10.899Z')
+        expect(lits.run('(epoch->iso-date -1649756230899)')).toBe('1917-09-21T14:22:49.101Z')
+        expect(lits.run('(epoch->iso-date 0)')).toBe('1970-01-01T00:00:00.000Z')
+        expect(lits.run('(epoch->iso-date 0.999)')).toBe('1970-01-01T00:00:00.000Z')
+        expect(lits.run('(epoch->iso-date 0.999)')).toBe('1970-01-01T00:00:00.000Z')
       })
     })
 
-    describe('iso_date>epoch', () => {
+    describe('iso-date->epoch', () => {
       it('samples', () => {
         expect(() =>
-          lits.run('(iso_date>epoch "2022-04-12T09:37:10.899Z" "2022-04-12T09:37:10.899Z")'),
+          lits.run('(iso-date->epoch "2022-04-12T09:37:10.899Z" "2022-04-12T09:37:10.899Z")'),
         ).toThrow()
-        expect(() => lits.run('(iso_date>epoch)')).toThrow()
-        expect(() => lits.run('(iso_date>epoch 1649756230899)')).toThrow()
-        expect(() => lits.run('(iso_date>epoch null)')).toThrow()
-        expect(() => lits.run('(iso_date>epoch true)')).toThrow()
-        expect(() => lits.run('(iso_date>epoch "2022-04-1X")')).toThrow()
-        expect(() => lits.run('(iso_date>epoch "")')).toThrow()
-        expect(lits.run('(iso_date>epoch "2022-04-12T09:37:10.899Z")')).toBe(1649756230899)
-        expect(lits.run('(iso_date>epoch "2022-04-12")')).toBeGreaterThan(1649548800000)
+        expect(() => lits.run('(iso-date->epoch)')).toThrow()
+        expect(() => lits.run('(iso-date->epoch 1649756230899)')).toThrow()
+        expect(() => lits.run('(iso-date->epoch null)')).toThrow()
+        expect(() => lits.run('(iso-date->epoch true)')).toThrow()
+        expect(() => lits.run('(iso-date->epoch "2022-04-1X")')).toThrow()
+        expect(() => lits.run('(iso-date->epoch "")')).toThrow()
+        expect(lits.run('(iso-date->epoch "2022-04-12T09:37:10.899Z")')).toBe(1649756230899)
+        expect(lits.run('(iso-date->epoch "2022-04-12")')).toBeGreaterThan(1649548800000)
       })
     })
 
@@ -313,15 +313,15 @@ describe('misc functions', () => {
       })
     })
 
-    describe('json_stringify', () => {
+    describe('json-stringify', () => {
       it('samples', () => {
-        expect(lits.run('(json_stringify {:a 10 :b 20})')).toBe('{"a":10,"b":20}')
-        expect(lits.run('(json_stringify {:a 10 :b 20} 2)')).toBe('{\n  "a": 10,\n  "b": 20\n}')
+        expect(lits.run('(json-stringify {:a 10 :b 20})')).toBe('{"a":10,"b":20}')
+        expect(lits.run('(json-stringify {:a 10 :b 20} 2)')).toBe('{\n  "a": 10,\n  "b": 20\n}')
       })
     })
-    describe('json_parse', () => {
+    describe('json-parse', () => {
       it('samples', () => {
-        expect(lits.run('(json_parse "[1,2,3]")')).toEqual([1, 2, 3])
+        expect(lits.run('(json-parse "[1,2,3]")')).toEqual([1, 2, 3])
       })
     })
   }

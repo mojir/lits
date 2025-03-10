@@ -89,10 +89,10 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
   "default")`,
     ],
   },
-  'get_in': {
-    title: 'get_in',
+  'get-in': {
+    title: 'get-in',
     category: 'Collection',
-    linkName: 'get_in',
+    linkName: 'get-in',
     returns: {
       type: 'any',
     },
@@ -114,15 +114,15 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
     examples: [
       `
-(get_in
+(get-in
   [[1 2 3] [4 {:a "Kalle"} 6]]
   [1 1 :a 0])`,
       `
-(get_in
+(get-in
   [[1 2 3] [4 {:a "Kalle"} 6]]
   [1 1 :b 0])`,
       `
-(get_in
+(get-in
   [[1 2 3] [4 {:a "Kalle"} 6]]
   [1 1 :b 0]
   "Lisa")`,
@@ -222,10 +222,10 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
   :a)`,
     ],
   },
-  'has_some?': {
-    title: 'has_some?',
+  'has-some?': {
+    title: 'has-some?',
     category: 'Collection',
-    linkName: 'has_some-question',
+    linkName: 'has-some-question',
     clojureDocs: null,
     returns: {
       type: 'boolean',
@@ -246,59 +246,59 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     description: 'Returns `true` if $coll has any of the elements in $values, otherwise returns `false`.',
     examples: [
       `
-(has_some?
+(has-some?
   []
   [])`,
       `
-(has_some?
+(has-some?
   [1 2 3]
   [])`,
       `
-(has_some?
+(has-some?
   [1 2 3]
   [0])`,
       `
-  (has_some?
+  (has-some?
   [1 2 3]
   [0 1])`,
       `
-(has_some?
+(has-some?
   (object :a 1 :b 2)
   [0])`,
       `
-(has_some?
+(has-some?
   (object :a 1 :b 2)
   [0 1])`,
       `
-(has_some?
+(has-some?
   "Albert"
   "xyz")`,
       `
-(has_some?
+(has-some?
   "Albert"
   "xyzl")`,
       `
-(has_some?
+(has-some?
   [:a :b :c :d]
   "xyz")`,
       `
-(has_some?
+(has-some?
   [:a :b :c :d]
   "xyzc")`,
       `
-(has_some?
+(has-some?
   null
   [1])`,
       `
-(has_some?
+(has-some?
   null
   "")`,
     ],
   },
-  'has_every?': {
-    title: 'has_every?',
+  'has-every?': {
+    title: 'has-every?',
     category: 'Collection',
-    linkName: 'has_every-question',
+    linkName: 'has-every-question',
     clojureDocs: null,
     returns: {
       type: 'boolean',
@@ -319,59 +319,59 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     description: 'Returns `true` if $coll has all of the elements in $values, otherwise returns `false`.',
     examples: [
       `
-(has_every?
+(has-every?
   []
   [])`,
       `
-(has_every?
+(has-every?
   [1 2 3]
   [])`,
       `
-(has_every?
+(has-every?
   [1 2 3]
   [0 1])`,
       `
-(has_every?
+(has-every?
   [1 2 3]
   [1 2])`,
       `
-(has_every?
+(has-every?
   (object :a 1 :b 2)
   [0 1])`,
       `
-(has_every?
+(has-every?
   (object :a 1 :b 2)
   [1 2])`,
       `
-(has_every?
+(has-every?
   "Albert"
   "xyz")`,
       `
-(has_every?
+(has-every?
   "Albert"
   "treblA")`,
       `
-(has_every?
+(has-every?
   [:a :b :c :d]
   "xyz")`,
       `
-(has_every?
+(has-every?
   [:a :b :c :d]
   "dcba")`,
       `
-(has_every?
+(has-every?
   null
   "abc")`,
       `
-(has_every?
+(has-every?
   null
   [0, 1, null])`,
       `
-(has_every?
+(has-every?
   null
   null)`,
       `
-(has_every?
+(has-every?
   [1, 2, 3]
   null)`,
     ],
@@ -434,10 +434,10 @@ If $coll is an \'array\', $key must be \`number\` satisfying \`0 <=\` $key \`<= 
   :a)`,
     ],
   },
-  'assoc_in': {
-    title: 'assoc_in',
+  'assoc-in': {
+    title: 'assoc-in',
     category: 'Collection',
-    linkName: 'assoc_in',
+    linkName: 'assoc-in',
     returns: {
       type: 'collection',
     },
@@ -462,17 +462,17 @@ Associates a value in the nested collection $coll, where $keys is an array of ke
 If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `
-(assoc_in
+(assoc-in
   {}
   [:a :b :c]
   "Albert")`,
       `
-(assoc_in
+(assoc-in
   [1 2 [1 2 3]]
   [2 1]
   "Albert")`,
       `
-(assoc_in
+(assoc-in
   [1 2 {"name" "albert"}]
   [2 "name" 0]
   :A)`,
@@ -510,10 +510,10 @@ If any levels do not exist, objects will be created - and the corresponding keys
       '(concat {} {:a 1})',
     ],
   },
-  'not_empty': {
-    title: 'not_empty',
+  'not-empty': {
+    title: 'not-empty',
     category: 'Collection',
-    linkName: 'not_empty',
+    linkName: 'not-empty',
     returns: {
       type: 'boolean',
     },
@@ -527,13 +527,13 @@ If any levels do not exist, objects will be created - and the corresponding keys
     ],
     description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
     examples: [
-      '(not_empty [])',
-      '(not_empty [1 2 3])',
-      '(not_empty {})',
-      '(not_empty {:a 2})',
-      '(not_empty "")',
-      '(not_empty "Albert")',
-      '(not_empty null)',
+      '(not-empty [])',
+      '(not-empty [1 2 3])',
+      '(not-empty {})',
+      '(not-empty {:a 2})',
+      '(not-empty "")',
+      '(not-empty "Albert")',
+      '(not-empty null)',
     ],
   },
   'every?': {
@@ -586,10 +586,10 @@ If any levels do not exist, objects will be created - and the corresponding keys
   #(even? (second %)))`,
     ],
   },
-  'not_every?': {
-    title: 'not_every?',
+  'not-every?': {
+    title: 'not-every?',
     category: 'Collection',
-    linkName: 'not_every-question',
+    linkName: 'not-every-question',
     returns: {
       type: 'boolean',
     },
@@ -607,31 +607,31 @@ If any levels do not exist, objects will be created - and the corresponding keys
     description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
     examples: [
       `
-(not_every?
+(not-every?
   ["Albert" "Mojir" 160 [1 2]]
   string?)`,
       `
-(not_every?
+(not-every?
   [50 100 150 200]
   (fn [x] (> x 10)))`,
       `
-(not_every?
+(not-every?
   []
   number?)`,
       `
-(not_every?
+(not-every?
   ""
   number?)`,
       `
-(not_every?
+(not-every?
   {}
   number?)`,
       `
-(not_every?
+(not-every?
   {:a 2 :b 4}
   #(even? (second %)))`,
       `
-(not_every?
+(not-every?
   {:a 2 :b 3}
   #(even? (second %)))`,
     ],
@@ -686,10 +686,10 @@ If any levels do not exist, objects will be created - and the corresponding keys
   #(even? (second %)))`,
     ],
   },
-  'not_any?': {
-    title: 'not_any?',
+  'not-any?': {
+    title: 'not-any?',
     category: 'Collection',
-    linkName: 'not_any-question',
+    linkName: 'not-any-question',
     returns: {
       type: 'boolean',
     },
@@ -707,31 +707,31 @@ If any levels do not exist, objects will be created - and the corresponding keys
     description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
     examples: [
       `
-(not_any?
+(not-any?
   ["Albert" "Mojir" 160 [1 2]]
   string?)`,
       `
-(not_any?
+(not-any?
   [50 100 150 200]
   (fn [x] (> x 10)))`,
       `
-(not_any?
+(not-any?
   []
   number?)`,
       `
-(not_any?
+(not-any?
   ""
   number?)`,
       `
-(not_any?
+(not-any?
   {}
   number?)`,
       `
-(not_any?
+(not-any?
   {:a 2 :b 3}
   #(even? (second %)))`,
       `
-(not_any?
+(not-any?
   {:a 1 :b 3}
   #(even? (second %)))`,
     ],
@@ -780,10 +780,10 @@ If the key does not exist, \`null\` is passed as the old value.`,
     (if (null? val) 0 (inc val))))`,
     ],
   },
-  'update_in': {
-    title: 'update_in',
+  'update-in': {
+    title: 'update-in',
     category: 'Collection',
-    linkName: 'update_in',
+    linkName: 'update-in',
     returns: {
       type: 'collection',
     },
@@ -812,25 +812,25 @@ any supplied $fn-args and return the new value. If any levels do not exist,
 objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `
-(update_in
+(update-in
   {:a [1 2 3]}
   [:a 1]
   (fn [val]
     (when (null? val) 0)))`,
       `
-(update_in
+(update-in
   {:a {:foo :bar}}
   [:a :foo]
   (fn [val]
     (if (null? val) "?" "!")))`,
       `
-(update_in
+(update-in
   {:a {:foo :bar}}
   [:a :baz]
   (fn [val]
     (if (null? val) "?" "!")))`,
       `
-(update_in
+(update-in
   {:a [1 2 3]}
   [:a 1]
   *

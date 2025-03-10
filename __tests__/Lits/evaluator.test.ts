@@ -19,7 +19,7 @@ const simpleProgram = `
   [
     day (do (let [sec 1000]) (* 24 60 60 sec))
   ])
-(* (get_in info [:days 1]) day)
+(* (get-in info [:days 1]) day)
 `
 
 const formatPhoneNumber = `

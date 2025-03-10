@@ -80,28 +80,28 @@ describe('predicates', () => {
         expect(() => lits.run('(^ 1)')).toThrow()
       })
     })
-    describe('bit_clear', () => {
+    describe('bit-clear', () => {
       it('samples', () => {
-        expect(lits.run('(bit_clear 0b1111 2)')).toBe(0b1011)
-        expect(lits.run('(bit_clear 0b1111 5)')).toBe(0b1111)
+        expect(lits.run('(bit-clear 0b1111 2)')).toBe(0b1011)
+        expect(lits.run('(bit-clear 0b1111 5)')).toBe(0b1111)
       })
     })
-    describe('bit_flip', () => {
+    describe('bit-flip', () => {
       it('samples', () => {
-        expect(lits.run('(bit_flip 0b1111 2)')).toBe(0b1011)
-        expect(lits.run('(bit_flip 0 2)')).toBe(0b100)
+        expect(lits.run('(bit-flip 0b1111 2)')).toBe(0b1011)
+        expect(lits.run('(bit-flip 0 2)')).toBe(0b100)
       })
     })
-    describe('bit_set', () => {
+    describe('bit-set', () => {
       it('samples', () => {
-        expect(lits.run('(bit_set 0b1001 2)')).toBe(0b1101)
-        expect(lits.run('(bit_set 0 2)')).toBe(0b100)
+        expect(lits.run('(bit-set 0b1001 2)')).toBe(0b1101)
+        expect(lits.run('(bit-set 0 2)')).toBe(0b100)
       })
     })
-    describe('bit_test', () => {
+    describe('bit-test', () => {
       it('samples', () => {
-        expect(lits.run('(bit_test 0b1001 2)')).toBe(false)
-        expect(lits.run('(bit_test 0b1111 2)')).toBe(true)
+        expect(lits.run('(bit-test 0b1001 2)')).toBe(false)
+        expect(lits.run('(bit-test 0b1111 2)')).toBe(true)
       })
     })
   }

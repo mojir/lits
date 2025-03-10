@@ -5,7 +5,7 @@ import { REGEXP_SYMBOL } from '../../../utils/symbols'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const regexpNormalExpression: BuiltinNormalExpressions = {
-  regexp: {
+  'regexp': {
     evaluate: ([sourceArg, flagsArg], sourceCodeInfo): RegularExpression => {
       assertString(sourceArg, sourceCodeInfo)
       const source = sourceArg || '(?:)'
@@ -21,7 +21,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 1, max: 2 },
   },
-  match: {
+  'match': {
     evaluate: ([text, regexp], sourceCodeInfo): string[] | null => {
       assertRegularExpression(regexp, sourceCodeInfo)
       if (!isString(text))
@@ -37,7 +37,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 2,
   },
-  replace: {
+  'replace': {
     evaluate: ([str, regexp, value], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       assertStringOrRegularExpression(regexp, sourceCodeInfo)
@@ -48,7 +48,7 @@ export const regexpNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 3,
   },
-  replace_all: {
+  'replace-all': {
     evaluate: ([str, regexp, value], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
       assertStringOrRegularExpression(regexp, sourceCodeInfo)

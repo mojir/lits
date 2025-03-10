@@ -151,23 +151,23 @@ describe('object functions', () => {
         expect(() => lits.run('(merge (array))')).toThrow()
       })
 
-      describe('merge_with', () => {
+      describe('merge-with', () => {
         it('samples', () => {
-          expect(lits.run('(merge_with (object :x 10) (object :y 20) +)')).toEqual({
+          expect(lits.run('(merge-with (object :x 10) (object :y 20) +)')).toEqual({
             x: 10,
             y: 20,
           })
-          expect(lits.run('(merge_with (object :x 10) (object :x 15 :y 20) + )')).toEqual({
+          expect(lits.run('(merge-with (object :x 10) (object :x 15 :y 20) + )')).toEqual({
             x: 25,
             y: 20,
           })
-          expect(lits.run('(merge_with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)')).toEqual({
+          expect(lits.run('(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)')).toEqual({
             x: -80,
           })
-          expect(() => lits.run('(merge_with +)')).toThrow()
-          expect(() => lits.run('(merge_with)')).toThrow()
-          expect(() => lits.run('(merge_with + "kjh")')).toThrow()
-          expect(() => lits.run('(merge_with + [1 2 3])')).toThrow()
+          expect(() => lits.run('(merge-with +)')).toThrow()
+          expect(() => lits.run('(merge-with)')).toThrow()
+          expect(() => lits.run('(merge-with + "kjh")')).toThrow()
+          expect(() => lits.run('(merge-with + [1 2 3])')).toThrow()
         })
       })
 
@@ -196,13 +196,13 @@ describe('object functions', () => {
       })
     })
 
-    describe('select_keys', () => {
+    describe('select-keys', () => {
       it('samples', () => {
-        expect(lits.run('(select_keys {:a 1 :b 2 :c 3} [:a :b])')).toEqual({ a: 1, b: 2 })
-        expect(lits.run('(select_keys {:a 1} [:a :b])')).toEqual({ a: 1 })
-        expect(() => lits.run('(select_keys {:a 1})')).toThrow()
-        expect(() => lits.run('(select_keys {:a 1} :a)')).toThrow()
-        expect(() => lits.run('(select_keys {:a 1} [:a] [:a])')).toThrow()
+        expect(lits.run('(select-keys {:a 1 :b 2 :c 3} [:a :b])')).toEqual({ a: 1, b: 2 })
+        expect(lits.run('(select-keys {:a 1} [:a :b])')).toEqual({ a: 1 })
+        expect(() => lits.run('(select-keys {:a 1})')).toThrow()
+        expect(() => lits.run('(select-keys {:a 1} :a)')).toThrow()
+        expect(() => lits.run('(select-keys {:a 1} [:a] [:a])')).toThrow()
       })
     })
   }

@@ -189,10 +189,10 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   ],
   description: 'Returns bitwise `xor` of all arguments.',
   examples: ['(^ 0b0011 0b0110)', '(^ 0b11110000 0b00111100 0b10101010)'],
-}, 'bit_flip': {
-  title: 'bit_flip',
+}, 'bit-flip': {
+  title: 'bit-flip',
   category: 'Bitwise',
-  linkName: 'bit_flip',
+  linkName: 'bit-flip',
   returns: {
     type: 'integer',
   },
@@ -208,11 +208,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Flips bit number $n.',
-  examples: ['(bit_flip 0b0011 1)', '(bit_flip 0b1100 1)'],
-}, 'bit_clear': {
-  title: 'bit_clear',
+  examples: ['(bit-flip 0b0011 1)', '(bit-flip 0b1100 1)'],
+}, 'bit-clear': {
+  title: 'bit-clear',
   category: 'Bitwise',
-  linkName: 'bit_clear',
+  linkName: 'bit-clear',
   returns: {
     type: 'integer',
   },
@@ -228,11 +228,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Clears bit number $n.',
-  examples: ['(bit_clear 0b0011 1)', '(bit_clear 0b1100 1)'],
-}, 'bit_set': {
-  title: 'bit_set',
+  examples: ['(bit-clear 0b0011 1)', '(bit-clear 0b1100 1)'],
+}, 'bit-set': {
+  title: 'bit-set',
   category: 'Bitwise',
-  linkName: 'bit_set',
+  linkName: 'bit-set',
   returns: {
     type: 'integer',
   },
@@ -248,11 +248,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Sets bit number $n.',
-  examples: ['(bit_set 0b0011 1)', '(bit_set 0b1100 1)'],
-}, 'bit_test': {
-  title: 'bit_test',
+  examples: ['(bit-set 0b0011 1)', '(bit-set 0b1100 1)'],
+}, 'bit-test': {
+  title: 'bit-test',
   category: 'Bitwise',
-  linkName: 'bit_test',
+  linkName: 'bit-test',
   returns: {
     type: 'boolean',
   },
@@ -268,5 +268,5 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     { argumentNames: ['x', 'n'] },
   ],
   description: 'Checks if bit number $n is set.',
-  examples: ['(bit_test 0b0011 1)', '(bit_test 0b1100 1)'],
+  examples: ['(bit-test 0b0011 1)', '(bit-test 0b1100 1)'],
 } }

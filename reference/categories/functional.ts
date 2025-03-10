@@ -2,7 +2,7 @@ import { type FunctionalApiName, getOperatorArgs } from '../api'
 import type { FunctionReference } from '../index.ts'
 
 export const functionalReference: Record<FunctionalApiName, FunctionReference<'Functional'>> = {
-  apply: {
+  'apply': {
     title: 'apply',
     category: 'Functional',
     linkName: 'apply',
@@ -35,7 +35,7 @@ apply(
     ],
     algebraic: true,
   },
-  identity: {
+  'identity': {
     title: 'identity',
     category: 'Functional',
     linkName: 'identity',
@@ -54,7 +54,7 @@ apply(
     examples: ['identity(1)', 'identity("Albert")', 'identity({ a := 1 })', 'identity(null)'],
     algebraic: true,
   },
-  partial: {
+  'partial': {
     title: 'partial',
     category: 'Functional',
     linkName: 'partial',
@@ -88,7 +88,7 @@ addHundred(10)`,
     noOperatorDocumentation: true,
     algebraic: true,
   },
-  comp: {
+  'comp': {
     title: 'comp',
     category: 'Functional',
     linkName: 'comp',
@@ -120,7 +120,7 @@ comp("foo", "bar")(x)`,
     ],
     algebraic: true,
   },
-  constantly: {
+  'constantly': {
     title: 'constantly',
     category: 'Functional',
     linkName: 'constantly',
@@ -144,7 +144,7 @@ always-true(9, 3)`,
     algebraic: true,
   },
 
-  juxt: {
+  'juxt': {
     title: 'juxt',
     category: 'Functional',
     linkName: 'juxt',
@@ -189,7 +189,7 @@ juxt(+, *, min, max) apply range(1, 11)`,
     ],
     algebraic: true,
   },
-  complement: {
+  'complement': {
     title: 'complement',
     category: 'Functional',
     linkName: 'complement',
@@ -213,10 +213,10 @@ juxt(+, *, min, max) apply range(1, 11)`,
     ],
     algebraic: true,
   },
-  every_pred: {
-    title: 'every_pred',
+  'every-pred': {
+    title: 'every-pred',
     category: 'Functional',
-    linkName: 'every_pred',
+    linkName: 'every-pred',
     returns: {
       type: 'function',
     },
@@ -238,12 +238,12 @@ Takes a number of predicates and returns a function that returns \`true\` if all
 return a truthy value against all of its arguments, else it returns \`false\`.`,
     examples: [
       `
-every_pred(string?, -> count($) > 3)(
+every-pred(string?, -> count($) > 3)(
   "Albert",
   "Mojir"
 )`,
       `
-(string? every_pred -> count($) > 3)(
+(string? every-pred -> count($) > 3)(
   "Albert",
   "M"
 )`,
@@ -251,10 +251,10 @@ every_pred(string?, -> count($) > 3)(
     algebraic: true,
     noOperatorDocumentation: true,
   },
-  some_pred: {
-    title: 'some_pred',
+  'some-pred': {
+    title: 'some-pred',
     category: 'Functional',
-    linkName: 'some_pred',
+    linkName: 'some-pred',
     clojureDocs: null,
     returns: {
       type: 'function',
@@ -274,15 +274,15 @@ every_pred(string?, -> count($) > 3)(
     ],
     description: 'Takes a number of `predicates` and returns a function that returns \`true\` if at least one of the `predicates` return a truthy \`true\` value against at least one of its arguments, else it returns `false`.',
     examples: [
-      'some_pred(string?, -> count($) > 3)("Albert", "Mojir")',
-      'some_pred(string?, -> count($) > 3)("a", "M")',
-      'some_pred(string?, -> count($) > 3)("a", [1, 2, 3])',
-      'some_pred(string?, -> count($) > 3)([1, 2, 3], [2])',
+      'some-pred(string?, -> count($) > 3)("Albert", "Mojir")',
+      'some-pred(string?, -> count($) > 3)("a", "M")',
+      'some-pred(string?, -> count($) > 3)("a", [1, 2, 3])',
+      'some-pred(string?, -> count($) > 3)([1, 2, 3], [2])',
     ],
     algebraic: true,
     noOperatorDocumentation: true,
   },
-  fnull: {
+  'fnull': {
     title: 'fnull',
     category: 'Functional',
     linkName: 'fnull',

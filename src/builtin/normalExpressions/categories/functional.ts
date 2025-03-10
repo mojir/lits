@@ -17,7 +17,7 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
 
 export const functionalNormalExpression: BuiltinNormalExpressions = {
-  apply: {
+  'apply': {
     evaluate: ([func, ...params]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
       assertLitsFunction(func, sourceCodeInfo)
       const paramsLength = params.length
@@ -29,14 +29,14 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 2 },
   },
 
-  identity: {
+  'identity': {
     evaluate: ([value]): Any => {
       return toAny(value)
     },
     paramCount: 1,
   },
 
-  partial: {
+  'partial': {
     evaluate: ([fn, ...params], sourceCodeInfo): PartialFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
@@ -49,7 +49,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
 
-  comp: {
+  'comp': {
     evaluate: (fns, sourceCodeInfo): CompFunction => {
       if (fns.length > 1) {
         const last = fns[fns.length - 1]
@@ -67,7 +67,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: {},
   },
 
-  constantly: {
+  'constantly': {
     evaluate: ([value], sourceCodeInfo): ConstantlyFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
@@ -79,7 +79,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  juxt: {
+  'juxt': {
     evaluate: (fns, sourceCodeInfo): JuxtFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
@@ -91,7 +91,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
 
-  complement: {
+  'complement': {
     evaluate: ([fn], sourceCodeInfo): ComplementFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
@@ -103,7 +103,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
 
-  every_pred: {
+  'every-pred': {
     evaluate: (fns, sourceCodeInfo): EveryPredFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
@@ -115,7 +115,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
 
-  some_pred: {
+  'some-pred': {
     evaluate: (fns, sourceCodeInfo): SomePredFunction => {
       return {
         [FUNCTION_SYMBOL]: true,
@@ -127,7 +127,7 @@ export const functionalNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
 
-  fnull: {
+  'fnull': {
     evaluate: ([fn, ...params], sourceCodeInfo): FNullFunction => {
       return {
         [FUNCTION_SYMBOL]: true,

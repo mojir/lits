@@ -235,10 +235,10 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(write! null true false)',
     ],
   },
-  'iso_date>epoch': {
-    title: 'iso_date>epoch',
+  'iso-date->epoch': {
+    title: 'iso-date->epoch',
     category: 'Misc',
-    linkName: 'iso_date-gtepoch',
+    linkName: 'iso-date--gtepoch',
     returns: {
       type: 'number',
     },
@@ -252,14 +252,14 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
     examples: [
-      '(iso_date>epoch "2022-04-12T09:37:10.899Z")',
-      '(iso_date>epoch "1980-01-01")',
+      '(iso-date->epoch "2022-04-12T09:37:10.899Z")',
+      '(iso-date->epoch "1980-01-01")',
     ],
   },
-  'epoch>iso_date': {
-    title: 'epoch>iso_date',
+  'epoch->iso-date': {
+    title: 'epoch->iso-date',
     category: 'Misc',
-    linkName: 'epoch-gtiso_date',
+    linkName: 'epoch--gtiso-date',
     returns: {
       type: 'string',
     },
@@ -273,8 +273,8 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
     examples: [
-      '(epoch>iso_date 1649756230899)',
-      '(epoch>iso_date 0)',
+      '(epoch->iso-date 1649756230899)',
+      '(epoch->iso-date 0)',
     ],
   },
   'boolean': {
@@ -359,10 +359,10 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(identical? 0.3 (+ 0.1 0.2))',
     ],
   },
-  'json_parse': {
-    title: 'json_parse',
+  'json-parse': {
+    title: 'json-parse',
     category: 'Misc',
-    linkName: 'json_parse',
+    linkName: 'json-parse',
     clojureDocs: null,
     returns: {
       type: 'any',
@@ -377,13 +377,13 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns `JSON.parse(`$x`)`.',
     examples: [
-      '(json_parse "[1, 2, 3]")',
+      '(json-parse "[1, 2, 3]")',
     ],
   },
-  'json_stringify': {
-    title: 'json_stringify',
+  'json-stringify': {
+    title: 'json-stringify',
     category: 'Misc',
-    linkName: 'json_stringify',
+    linkName: 'json-stringify',
     clojureDocs: null,
     returns: {
       type: 'string',
@@ -403,8 +403,8 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
     examples: [
-      '(json_stringify [1, 2, 3])',
-      '(json_stringify {:a {:b 10}} 2)',
+      '(json-stringify [1, 2, 3])',
+      '(json-stringify {:a {:b 10}} 2)',
     ],
   },
 }
