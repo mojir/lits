@@ -4,7 +4,7 @@ import { asArray, assertArray, assertCharArray } from '../../../typeGuards/array
 import { asAny, asSeq, assertAny, assertSeq } from '../../../typeGuards/lits'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 import { asNumber, assertNumber } from '../../../typeGuards/number'
-import { assertString } from '../../../typeGuards/string'
+import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { collHasKey, compare, toAny, toNonNegativeInteger } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
@@ -473,7 +473,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       if (typeof seq === 'string') {
         const result = seq.split('')
         if (defaultComparer) {
-          result.sort(compare)
+          result.sort((a, b) => compare(a, b, sourceCodeInfo))
         }
         else {
           assertLitsFunction(comparer, sourceCodeInfo)
@@ -488,7 +488,11 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
 
       const result = [...seq]
       if (defaultComparer) {
-        result.sort(compare)
+        result.sort((a, b) => {
+          assertStringOrNumber(a, sourceCodeInfo)
+          assertStringOrNumber(b, sourceCodeInfo)
+          return compare(a, b, sourceCodeInfo)
+        })
       }
       else {
         result.sort((a, b) => {
@@ -516,8 +520,10 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         if (defaultComparer) {
           result.sort((a, b) => {
             const aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo)
+            assertStringOrNumber(aKey, sourceCodeInfo)
             const bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo)
-            return compare(aKey, bKey)
+            assertStringOrNumber(bKey, sourceCodeInfo)
+            return compare(aKey, bKey, sourceCodeInfo)
           })
         }
         else {
@@ -537,8 +543,10 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       if (defaultComparer) {
         result.sort((a, b) => {
           const aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo)
+          assertStringOrNumber(aKey, sourceCodeInfo)
           const bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo)
-          return compare(aKey, bKey)
+          assertStringOrNumber(bKey, sourceCodeInfo)
+          return compare(aKey, bKey, sourceCodeInfo)
         })
       }
       else {

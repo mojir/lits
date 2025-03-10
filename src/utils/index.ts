@@ -1,11 +1,12 @@
-import type { Any, Arr, Coll, Obj } from '../interface'
-import type { NativeJsFunction, RegularExpression } from '../parser/interface'
+import type { Any, Coll, Obj } from '../interface'
+import type { NativeJsFunction } from '../parser/interface'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import { asAny, isColl, isObj, isRegularExpression } from '../typeGuards/lits'
 import { isNumber } from '../typeGuards/number'
-import { asString } from '../typeGuards/string'
+import { asString, assertStringOrNumber } from '../typeGuards/string'
 import { isUnknownRecord } from '../typeGuards'
 import { FunctionType } from '../constants/constants'
+import { LitsError } from '../errors'
 import { FUNCTION_SYMBOL } from './symbols'
 
 export function collHasKey(coll: unknown, key: string | number): boolean {
@@ -21,87 +22,17 @@ export function collHasKey(coll: unknown, key: string | number): boolean {
   return !!Object.getOwnPropertyDescriptor(coll, key)
 }
 
-type Type = 'null' | 'boolean' | 'number' | 'string' | 'object' | 'array' | 'regexp' | 'unknown'
+export function compare<T extends string | number>(a: T, b: T, sourceCodeInfo: SourceCodeInfo | undefined): number {
+  assertStringOrNumber(a, sourceCodeInfo)
+  assertStringOrNumber(b, sourceCodeInfo)
 
-const sortOrderByType: Record<Type, number> = {
-  boolean: 0,
-  number: 1,
-  string: 2,
-  array: 3,
-  object: 4,
-  regexp: 5,
-  unknown: 6,
-  null: 7,
-}
-
-function getType(value: unknown): Type {
-  if (value === null)
-    return 'null'
-  else if (typeof value === 'boolean')
-    return 'boolean'
-  else if (typeof value === 'number')
-    return 'number'
-  else if (typeof value === 'string')
-    return 'string'
-  else if (Array.isArray(value))
-    return 'array'
-  else if (isObj(value))
-    return 'object'
-  else if (isRegularExpression(value))
-    return 'regexp'
-  else
-    return 'unknown'
-}
-
-export function compare(a: unknown, b: unknown): number {
-  const aType = getType(a)
-  const bType = getType(b)
-  if (aType !== bType)
-    return Math.sign(sortOrderByType[aType] - sortOrderByType[bType])
-
-  switch (aType) {
-    case 'null':
-      return 0
-    case 'boolean':
-      if (a === b)
-        return 0
-
-      return a === false ? -1 : 1
-    case 'number':
-      return Math.sign((a as number) - (b as number))
-    case 'string': {
-      const aString = a as string
-      const bString = b as string
-      return aString < bString ? -1 : aString > bString ? 1 : 0
-    }
-    case 'array': {
-      const aArray = a as Arr
-      const bArray = b as Arr
-      if (aArray.length < bArray.length)
-        return -1
-      else if (aArray.length > bArray.length)
-        return 1
-
-      for (let i = 0; i < aArray.length; i += 1) {
-        const innerComp = compare(aArray[i], bArray[i])
-        if (innerComp !== 0)
-          return innerComp
-      }
-      return 0
-    }
-    case 'object': {
-      const aObj = a as Obj
-      const bObj = b as Obj
-      return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length)
-    }
-    case 'regexp': {
-      const aString = (a as RegularExpression).s
-      const bString = (b as RegularExpression).s
-      return aString < bString ? -1 : aString > bString ? 1 : 0
-    }
-    case 'unknown':
-      return 0
+  if (typeof a === 'string' && typeof b === 'string') {
+    return a < b ? -1 : a > b ? 1 : 0
   }
+  if (typeof a === 'number' && typeof b === 'number') {
+    return Math.sign((a) - (b))
+  }
+  throw new LitsError(`Cannot compare values of different types: ${typeof a} and ${typeof b}`, sourceCodeInfo)
 }
 
 export function deepEqual(a: Any, b: Any, sourceCodeInfo?: SourceCodeInfo): boolean {

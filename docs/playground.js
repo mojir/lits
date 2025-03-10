@@ -1714,80 +1714,16 @@ var Playground = (function (exports) {
         }
         return !!Object.getOwnPropertyDescriptor(coll, key);
     }
-    var sortOrderByType = {
-        boolean: 0,
-        number: 1,
-        string: 2,
-        array: 3,
-        object: 4,
-        regexp: 5,
-        unknown: 6,
-        null: 7,
-    };
-    function getType(value) {
-        if (value === null)
-            return 'null';
-        else if (typeof value === 'boolean')
-            return 'boolean';
-        else if (typeof value === 'number')
-            return 'number';
-        else if (typeof value === 'string')
-            return 'string';
-        else if (Array.isArray(value))
-            return 'array';
-        else if (isObj(value))
-            return 'object';
-        else if (isRegularExpression(value))
-            return 'regexp';
-        else
-            return 'unknown';
-    }
-    function compare(a, b) {
-        var aType = getType(a);
-        var bType = getType(b);
-        if (aType !== bType)
-            return Math.sign(sortOrderByType[aType] - sortOrderByType[bType]);
-        switch (aType) {
-            case 'null':
-                return 0;
-            case 'boolean':
-                if (a === b)
-                    return 0;
-                return a === false ? -1 : 1;
-            case 'number':
-                return Math.sign(a - b);
-            case 'string': {
-                var aString = a;
-                var bString = b;
-                return aString < bString ? -1 : aString > bString ? 1 : 0;
-            }
-            case 'array': {
-                var aArray = a;
-                var bArray = b;
-                if (aArray.length < bArray.length)
-                    return -1;
-                else if (aArray.length > bArray.length)
-                    return 1;
-                for (var i = 0; i < aArray.length; i += 1) {
-                    var innerComp = compare(aArray[i], bArray[i]);
-                    if (innerComp !== 0)
-                        return innerComp;
-                }
-                return 0;
-            }
-            case 'object': {
-                var aObj = a;
-                var bObj = b;
-                return Math.sign(Object.keys(aObj).length - Object.keys(bObj).length);
-            }
-            case 'regexp': {
-                var aString = a.s;
-                var bString = b.s;
-                return aString < bString ? -1 : aString > bString ? 1 : 0;
-            }
-            case 'unknown':
-                return 0;
+    function compare(a, b, sourceCodeInfo) {
+        assertStringOrNumber(a, sourceCodeInfo);
+        assertStringOrNumber(b, sourceCodeInfo);
+        if (typeof a === 'string' && typeof b === 'string') {
+            return a < b ? -1 : a > b ? 1 : 0;
         }
+        if (typeof a === 'number' && typeof b === 'number') {
+            return Math.sign((a) - (b));
+        }
+        throw new LitsError("Cannot compare values of different types: ".concat(typeof a, " and ").concat(typeof b), sourceCodeInfo);
     }
     function deepEqual(a, b, sourceCodeInfo) {
         if (a === b)
@@ -2866,7 +2802,7 @@ var Playground = (function (exports) {
                 if (typeof seq === 'string') {
                     var result_1 = seq.split('');
                     if (defaultComparer) {
-                        result_1.sort(compare);
+                        result_1.sort(function (a, b) { return compare(a, b, sourceCodeInfo); });
                     }
                     else {
                         assertLitsFunction(comparer, sourceCodeInfo);
@@ -2880,7 +2816,11 @@ var Playground = (function (exports) {
                 }
                 var result = __spreadArray([], __read(seq), false);
                 if (defaultComparer) {
-                    result.sort(compare);
+                    result.sort(function (a, b) {
+                        assertStringOrNumber(a, sourceCodeInfo);
+                        assertStringOrNumber(b, sourceCodeInfo);
+                        return compare(a, b, sourceCodeInfo);
+                    });
                 }
                 else {
                     result.sort(function (a, b) {
@@ -2907,8 +2847,10 @@ var Playground = (function (exports) {
                     if (defaultComparer) {
                         result_2.sort(function (a, b) {
                             var aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo);
+                            assertStringOrNumber(aKey, sourceCodeInfo);
                             var bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo);
-                            return compare(aKey, bKey);
+                            assertStringOrNumber(bKey, sourceCodeInfo);
+                            return compare(aKey, bKey, sourceCodeInfo);
                         });
                     }
                     else {
@@ -2927,8 +2869,10 @@ var Playground = (function (exports) {
                 if (defaultComparer) {
                     result.sort(function (a, b) {
                         var aKey = executeFunction(keyfn, [a], contextStack, sourceCodeInfo);
+                        assertStringOrNumber(aKey, sourceCodeInfo);
                         var bKey = executeFunction(keyfn, [b], contextStack, sourceCodeInfo);
-                        return compare(aKey, bKey);
+                        assertStringOrNumber(bKey, sourceCodeInfo);
+                        return compare(aKey, bKey, sourceCodeInfo);
                     });
                 }
                 else {
@@ -3682,16 +3626,16 @@ var Playground = (function (exports) {
             paramCount: { min: 1 },
         },
         '>': {
-            evaluate: function (_a) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var e_3, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                var currentValue = first;
+                var currentValue = asStringOrNumber(first);
                 try {
                     for (var rest_3 = __values(rest), rest_3_1 = rest_3.next(); !rest_3_1.done; rest_3_1 = rest_3.next()) {
                         var param = rest_3_1.value;
-                        if (compare(currentValue, param) <= 0)
+                        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) <= 0)
                             return false;
-                        currentValue = param;
+                        currentValue = asStringOrNumber(param);
                     }
                 }
                 catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -3706,16 +3650,16 @@ var Playground = (function (exports) {
             paramCount: { min: 1 },
         },
         '<': {
-            evaluate: function (_a) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var e_4, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                var currentValue = first;
+                var currentValue = asStringOrNumber(first);
                 try {
                     for (var rest_4 = __values(rest), rest_4_1 = rest_4.next(); !rest_4_1.done; rest_4_1 = rest_4.next()) {
                         var param = rest_4_1.value;
-                        if (compare(currentValue, param) >= 0)
+                        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) >= 0)
                             return false;
-                        currentValue = param;
+                        currentValue = asStringOrNumber(param);
                     }
                 }
                 catch (e_4_1) { e_4 = { error: e_4_1 }; }
@@ -3730,16 +3674,16 @@ var Playground = (function (exports) {
             paramCount: { min: 1 },
         },
         '≥': {
-            evaluate: function (_a) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var e_5, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                var currentValue = first;
+                var currentValue = asStringOrNumber(first);
                 try {
                     for (var rest_5 = __values(rest), rest_5_1 = rest_5.next(); !rest_5_1.done; rest_5_1 = rest_5.next()) {
                         var param = rest_5_1.value;
-                        if (compare(currentValue, param) < 0)
+                        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) < 0)
                             return false;
-                        currentValue = param;
+                        currentValue = asStringOrNumber(param);
                     }
                 }
                 catch (e_5_1) { e_5 = { error: e_5_1 }; }
@@ -3755,16 +3699,16 @@ var Playground = (function (exports) {
             aliases: ['>='],
         },
         '≤': {
-            evaluate: function (_a) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var e_6, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                var currentValue = first;
+                var currentValue = asStringOrNumber(first);
                 try {
                     for (var rest_6 = __values(rest), rest_6_1 = rest_6.next(); !rest_6_1.done; rest_6_1 = rest_6.next()) {
                         var param = rest_6_1.value;
-                        if (compare(currentValue, param) > 0)
+                        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) > 0)
                             return false;
-                        currentValue = param;
+                        currentValue = asStringOrNumber(param);
                     }
                 }
                 catch (e_6_1) { e_6 = { error: e_6_1 }; }
@@ -3822,9 +3766,11 @@ var Playground = (function (exports) {
             paramCount: 1,
         },
         'compare': {
-            evaluate: function (_a) {
+            evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), a = _b[0], b = _b[1];
-                return compare(a, b);
+                assertStringOrNumber(a, sourceCodeInfo);
+                assertStringOrNumber(b, sourceCodeInfo);
+                return compare(a, b, sourceCodeInfo);
             },
             paramCount: 2,
         },
@@ -3887,8 +3833,10 @@ var Playground = (function (exports) {
         'assert-gt': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
-                if (compare(first, second) <= 0)
+                if (compare(first, second, sourceCodeInfo) <= 0)
                     throw new AssertionError("Expected ".concat(first, " to be grater than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
@@ -3897,8 +3845,10 @@ var Playground = (function (exports) {
         'assert-gte': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
-                if (compare(first, second) < 0)
+                if (compare(first, second, sourceCodeInfo) < 0)
                     throw new AssertionError("Expected ".concat(first, " to be grater than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
@@ -3907,8 +3857,10 @@ var Playground = (function (exports) {
         'assert-lt': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
-                if (compare(first, second) >= 0)
+                if (compare(first, second, sourceCodeInfo) >= 0)
                     throw new AssertionError("Expected ".concat(first, " to be less than ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
@@ -3917,8 +3869,10 @@ var Playground = (function (exports) {
         'assert-lte': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 3), first = _b[0], second = _b[1], message = _b[2];
+                assertStringOrNumber(first, sourceCodeInfo);
+                assertStringOrNumber(second, sourceCodeInfo);
                 message = typeof message === 'string' && message ? " \"".concat(message, "\"") : '';
-                if (compare(first, second) > 0)
+                if (compare(first, second, sourceCodeInfo) > 0)
                     throw new AssertionError("Expected ".concat(first, " to be less than or equal to ").concat(second, ".").concat(message), sourceCodeInfo);
                 return null;
             },
@@ -9347,6 +9301,7 @@ var Playground = (function (exports) {
             'bit-set',
             'bit-test',
         ],
+        // TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
         assert: [
             'assert',
             'assert=',
@@ -11741,21 +11696,25 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                x: {
-                    type: 'number',
-                },
-                ys: {
-                    type: 'number',
+            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
+                    type: ['number', 'string'],
+                }, ys: {
+                    type: ['number', 'string'],
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Returns `true` if the number $x and $ys are in increasing order, `false` otherwise.',
-            examples: ['(< 0 1)', '(< 1 1.01)', '(< 1 1)', '(< 1 2 2 3)', '(< :a :b)', '(< [9] [1 2])'],
+            description: 'Returns `true` if $x and $ys are in increasing order, `false` otherwise.',
+            examples: [
+                '<(0, 1)',
+                '<(1, 1.01)',
+                '<(1, 1)',
+                '<(1, 2, 2, 3)',
+                '<("a", "b")',
+            ],
+            algebraic: true,
         },
         '>': {
             title: '>',
@@ -11764,21 +11723,25 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                x: {
-                    type: 'number',
-                },
-                ys: {
-                    type: 'number',
+            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
+                    type: ['number', 'string'],
+                }, ys: {
+                    type: ['number', 'string'],
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Returns `true` if the number $x and $ys are in decreasing order, `false` otherwise.',
-            examples: ['(> 1 0)', '(> 1.01 1)', '(> 1 1)', '(> 4 3 2 1)', '(> 3 2 2 1)'],
+            description: 'Returns `true` if $x and $ys are in decreasing order, `false` otherwise.',
+            examples: [
+                '>(1, 0)',
+                '>(1.01, 1)',
+                '>(1, 1)',
+                '>(4, 3, 2, 1)',
+                '>(3, 2, 2, 1)',
+            ],
+            algebraic: true,
         },
         '≤': {
             title: '≤',
@@ -11787,20 +11750,17 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                x: {
-                    type: 'number',
-                },
-                ys: {
-                    type: 'number',
+            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
+                    type: ['number', 'string'],
+                }, ys: {
+                    type: ['number', 'string'],
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Returns `true` if the number $x and $ys are in non decreasing order, `false` otherwise.',
+            description: 'Returns `true` if $x and $ys are in non decreasing order, `false` otherwise.',
             examples: [
                 '1 ≤ 1',
                 '<=(0, 1)',
@@ -11810,6 +11770,7 @@ var Playground = (function (exports) {
                 '<=(1, 2, 2, 3)',
             ],
             aliases: ['<='],
+            algebraic: true,
         },
         '≥': {
             title: '≥',
@@ -11818,20 +11779,17 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                x: {
-                    type: 'number',
-                },
-                ys: {
-                    type: 'number',
+            args: __assign(__assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])), { x: {
+                    type: ['number', 'string'],
+                }, ys: {
+                    type: ['number', 'string'],
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Returns `true` if the number $x and $ys are in non increasing order, `false` otherwise.',
+            description: 'Returns `true` if $x and $ys are in non increasing order, `false` otherwise.',
             examples: [
                 '1 ≥ 1',
                 '0 ≥ 1',
@@ -11842,6 +11800,7 @@ var Playground = (function (exports) {
                 '>=(3, 2, 2, 1)',
             ],
             aliases: ['>='],
+            algebraic: true,
         },
         '!': {
             title: '!',
@@ -11860,7 +11819,16 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
             ],
             description: 'Computes logical negation. Note that any other $x than `false`, `0`, `null` and `\'\'` is truthy.',
-            examples: ['(! 3)', '(! true)', '(! "A string")', '(! 0)', '(! false)', '(! null)', '(! "")'],
+            examples: [
+                '!(3)',
+                '!(true)',
+                '!("A string")',
+                '!(0)',
+                '!(false)',
+                '!(null)',
+                '!("")',
+            ],
+            algebraic: true,
         },
         'write!': {
             title: 'write!',
@@ -11881,13 +11849,14 @@ var Playground = (function (exports) {
             ],
             description: 'It logs the $values and then returns the last argument. If called with no arguments `null` is returned.',
             examples: [
-                '(write! "A string")',
-                '(write! 100 "items")',
-                '(write! (object :a 10))',
-                '(write! [:a :b :c])',
-                '(write! #"^start")',
-                '(write! null true false)',
+                'write!("A string")',
+                'write!(100, "items")',
+                'write!(object("a", 10))',
+                'write!(["a", "b", "c"])',
+                'write!(#"^start")',
+                'write!(null, true, false)',
             ],
+            algebraic: true,
         },
         'iso-date->epoch': {
             title: 'iso-date->epoch',
@@ -11906,9 +11875,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns milliseconds elapsed since the UNIX epoch to `iso`.',
             examples: [
-                '(iso-date->epoch "2022-04-12T09:37:10.899Z")',
-                '(iso-date->epoch "1980-01-01")',
+                'iso-date->epoch("2022-04-12T09:37:10.899Z")',
+                'iso-date->epoch("1980-01-01")',
             ],
+            algebraic: true,
         },
         'epoch->iso-date': {
             title: 'epoch->iso-date',
@@ -11927,9 +11897,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns IOS date time string from `ms` (milliseconds elapsed since the UNIX epoch).',
             examples: [
-                '(epoch->iso-date 1649756230899)',
-                '(epoch->iso-date 0)',
+                'epoch->iso-date(1649756230899)',
+                'epoch->iso-date(0)',
             ],
+            algebraic: true,
         },
         'boolean': {
             title: 'boolean',
@@ -11948,11 +11919,12 @@ var Playground = (function (exports) {
             ],
             description: 'Coerces $x to boolean.',
             examples: [
-                '(boolean 0)',
-                '(boolean 1)',
-                '(boolean null)',
-                '(boolean "Albert")',
+                'boolean(0)',
+                'boolean(1)',
+                'boolean(null)',
+                'boolean("Albert")',
             ],
+            algebraic: true,
         },
         'compare': {
             title: 'compare',
@@ -11961,28 +11933,18 @@ var Playground = (function (exports) {
             returns: {
                 type: 'number',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-            },
+            args: __assign({}, getOperatorArgs(['number', 'string'], ['number', 'string'])),
             variants: [
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Compares two values. Returns `-1` if $a < $b, `1` if $a > $b and `0` if $a and $b have the same sort order.',
             examples: [
-                '(compare 0 1)',
-                '(compare "Albert" "Mojir")',
-                '(compare 1 :1)',
-                '(compare [1 2 3] [2 3])',
-                '(compare [1 2 3] [2 3 4])',
-                '(compare {:a 1 :b 2} {:a 1})',
-                '(compare {:a 1} [2 3])',
-                '(compare + -)',
+                'compare(0, 1)',
+                'compare(0, 0)',
+                'compare(1, 0)',
+                'compare("Albert", "Mojir")',
             ],
+            algebraic: true,
         },
         'identical?': {
             title: 'identical?',
@@ -11992,26 +11954,17 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                a: {
-                    type: 'any',
-                },
-                b: {
-                    type: 'any',
-                },
-            },
+            args: __assign({}, getOperatorArgs('any', 'any')),
             variants: [
                 { argumentNames: ['a', 'b'] },
             ],
             description: 'Returns true if $a and $b are referential equal.',
             examples: [
-                '(identical? {:a 10 :b 20} {:b 20 :a 10})',
-                '(identical? [1 true null] [1 true null])',
-                '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
-                '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
-                '(identical? 0.3 (+ 0.1 0.2))',
-                '(identical? 0.3 (+ 0.1 0.2))',
+                'identical?({ a := 10, b := 20 }, { b := 20, a := 10 })',
+                'identical?([1, true, null], [1, true, null])',
+                'identical?(0.3, 0.1 + 0.2)',
             ],
+            algebraic: true,
         },
         'json-parse': {
             title: 'json-parse',
@@ -12031,8 +11984,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `JSON.parse(`$x`)`.',
             examples: [
-                '(json-parse "[1, 2, 3]")',
+                'json-parse("[1, 2, 3]")',
             ],
+            algebraic: true,
         },
         'json-stringify': {
             title: 'json-stringify',
@@ -12057,9 +12011,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `JSON.stringify(`$x`)`. If second argument is provided, returns `JSON.stringify(`$x`, null, `$indent`)`.',
             examples: [
-                '(json-stringify [1, 2, 3])',
-                '(json-stringify {:a {:b 10}} 2)',
+                'json-stringify([1, 2, 3])',
+                'json-stringify({ a := { b := 10 }}, 2)',
             ],
+            algebraic: true,
         },
     };
 

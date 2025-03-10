@@ -721,11 +721,6 @@ describe('sequence functions', () => {
       expect(lits.run('(sort "Albert" (fn [a b] (cond (< a b) 1 (> a b) -1 true 0)))')).toBe('trlebA')
 
       expect(lits.run('(sort "Albert")')).toBe('Abelrt')
-      expect(
-        lits.run(
-          '(sort [1 true 2 false  -100 null (regexp "abc") (regexp "ABC") [] [1 2 3] [0 1 2] [0 0 0 0] {:a 1} {} "Albert" "albert"])',
-        ),
-      ).toMatchSnapshot()
 
       expect(() => lits.run('(sort 10 (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))')).toThrow()
       expect(() => lits.run('(sort (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))')).toThrow()

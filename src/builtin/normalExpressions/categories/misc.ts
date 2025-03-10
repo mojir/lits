@@ -3,7 +3,7 @@ import { compare, deepEqual } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
-import { assertString } from '../../../typeGuards/string'
+import { asStringOrNumber, assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import type { SourceCodeInfo } from '../../..'
 
 function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
@@ -45,13 +45,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     paramCount: { min: 1 },
   },
   '>': {
-    evaluate: ([first, ...rest]): boolean => {
-      let currentValue = first
+    evaluate: ([first, ...rest], sourceCodeInfo): boolean => {
+      let currentValue = asStringOrNumber(first)
       for (const param of rest) {
-        if (compare(currentValue, param) <= 0)
+        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) <= 0)
           return false
 
-        currentValue = param
+        currentValue = asStringOrNumber(param)
       }
       return true
     },
@@ -59,26 +59,26 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
   },
 
   '<': {
-    evaluate: ([first, ...rest]): boolean => {
-      let currentValue = first
+    evaluate: ([first, ...rest], sourceCodeInfo): boolean => {
+      let currentValue = asStringOrNumber(first)
       for (const param of rest) {
-        if (compare(currentValue, param) >= 0)
+        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) >= 0)
           return false
 
-        currentValue = param
+        currentValue = asStringOrNumber(param)
       }
       return true
     },
     paramCount: { min: 1 },
   },
   '≥': {
-    evaluate: ([first, ...rest]): boolean => {
-      let currentValue = first
+    evaluate: ([first, ...rest], sourceCodeInfo): boolean => {
+      let currentValue = asStringOrNumber(first)
       for (const param of rest) {
-        if (compare(currentValue, param) < 0)
+        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) < 0)
           return false
 
-        currentValue = param
+        currentValue = asStringOrNumber(param)
       }
       return true
     },
@@ -86,13 +86,13 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     aliases: ['>='],
   },
   '≤': {
-    evaluate: ([first, ...rest]): boolean => {
-      let currentValue = first
+    evaluate: ([first, ...rest], sourceCodeInfo): boolean => {
+      let currentValue = asStringOrNumber(first)
       for (const param of rest) {
-        if (compare(currentValue, param) > 0)
+        if (compare(currentValue, asStringOrNumber(param), sourceCodeInfo) > 0)
           return false
 
-        currentValue = param
+        currentValue = asStringOrNumber(param)
       }
       return true
     },
@@ -138,8 +138,10 @@ export const miscNormalExpression: BuiltinNormalExpressions = {
     paramCount: 1,
   },
   'compare': {
-    evaluate: ([a, b]): number => {
-      return compare(a, b)
+    evaluate: ([a, b], sourceCodeInfo): number => {
+      assertStringOrNumber(a, sourceCodeInfo)
+      assertStringOrNumber(b, sourceCodeInfo)
+      return compare(a, b, sourceCodeInfo)
     },
     paramCount: 2,
   },

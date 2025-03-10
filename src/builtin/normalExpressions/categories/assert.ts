@@ -4,7 +4,7 @@ import type { Any } from '../../../interface'
 import { compare, deepEqual } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
-import { assertString } from '../../../typeGuards/string'
+import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
 import { asAny } from '../../../typeGuards/lits'
 
 export const assertNormalExpression: BuiltinNormalExpressions = {
@@ -48,8 +48,10 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
   },
   'assert-gt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
+      assertStringOrNumber(first, sourceCodeInfo)
+      assertStringOrNumber(second, sourceCodeInfo)
       message = typeof message === 'string' && message ? ` "${message}"` : ''
-      if (compare(first, second) <= 0)
+      if (compare(first, second, sourceCodeInfo) <= 0)
         throw new AssertionError(`Expected ${first} to be grater than ${second}.${message}`, sourceCodeInfo)
 
       return null
@@ -58,8 +60,10 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
   },
   'assert-gte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
+      assertStringOrNumber(first, sourceCodeInfo)
+      assertStringOrNumber(second, sourceCodeInfo)
       message = typeof message === 'string' && message ? ` "${message}"` : ''
-      if (compare(first, second) < 0)
+      if (compare(first, second, sourceCodeInfo) < 0)
         throw new AssertionError(`Expected ${first} to be grater than or equal to ${second}.${message}`, sourceCodeInfo)
 
       return null
@@ -68,8 +72,10 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
   },
   'assert-lt': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
+      assertStringOrNumber(first, sourceCodeInfo)
+      assertStringOrNumber(second, sourceCodeInfo)
       message = typeof message === 'string' && message ? ` "${message}"` : ''
-      if (compare(first, second) >= 0)
+      if (compare(first, second, sourceCodeInfo) >= 0)
         throw new AssertionError(`Expected ${first} to be less than ${second}.${message}`, sourceCodeInfo)
 
       return null
@@ -78,8 +84,10 @@ export const assertNormalExpression: BuiltinNormalExpressions = {
   },
   'assert-lte': {
     evaluate: ([first, second, message], sourceCodeInfo): null => {
+      assertStringOrNumber(first, sourceCodeInfo)
+      assertStringOrNumber(second, sourceCodeInfo)
       message = typeof message === 'string' && message ? ` "${message}"` : ''
-      if (compare(first, second) > 0)
+      if (compare(first, second, sourceCodeInfo) > 0)
         throw new AssertionError(`Expected ${first} to be less than or equal to ${second}.${message}`, sourceCodeInfo)
 
       return null
