@@ -396,11 +396,11 @@ describe('specialExpressions', () => {
     })
     describe('unresolvedIdentifiers', () => {
       it('samples', () => {
-        expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a] (if (== a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
+        expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a] (if (= a 1) 1 (+ a (foo (dec a)))))'))).toEqual(
           new Set(),
         )
         expect(
-          getUndefinedSymbolNames(lits.analyze('(defn foo [a &let [x y, y z]] (if (== a 1) 1 (+ a (foo (dec a)))))')),
+          getUndefinedSymbolNames(lits.analyze('(defn foo [a &let [x y, y z]] (if (= a 1) 1 (+ a (foo (dec a)))))')),
         ).toEqual(new Set(['y', 'z']))
         expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a b] (str a b c))'))).toEqual(new Set(['c']))
         expect(getUndefinedSymbolNames(lits.analyze('(defn foo [a b] (str a b c)) (foo x y)'))).toEqual(

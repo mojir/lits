@@ -99,7 +99,7 @@ let foo := comp(!, odd?);
     describe('complement', () => {
       it('samples', () => {
         expect(lits.run('complement(>)(4, 6)')).toBe(true)
-        expect(lits.run('complement(==)(3, 3)')).toBe(false)
+        expect(lits.run('complement(=)(3, 3)')).toBe(false)
         expect(() => lits.run('complement()')).toThrow()
         expect(() => lits.run('complement(>, <)')).toThrow()
       })

@@ -888,7 +888,7 @@ var Playground = (function (exports) {
         '>', // greater than
         '>=', // greater than or equal
         '≥', // greater than or equal
-        '==', // equal
+        '=', // equal
         '!=', // not equal
         '≠', // not equal
         '&', // bitwise AND
@@ -3662,7 +3662,7 @@ var Playground = (function (exports) {
         return true;
     }
     var miscNormalExpression = {
-        '==': {
+        '=': {
             evaluate: function (params, sourceCodeInfo) {
                 return isEqual(params, sourceCodeInfo);
             },
@@ -6815,7 +6815,7 @@ var Playground = (function (exports) {
             case '>=': // greater than or equal
             case '≥': // greater than or equal
                 return 5;
-            case '==': // equal
+            case '=': // equal
             case '!=': // not equal
             case '≠': // not equal
                 return 4;
@@ -6885,7 +6885,7 @@ var Playground = (function (exports) {
             case '>':
             case '>=':
             case '≥':
-            case '==':
+            case '=':
             case '!=':
             case '≠':
             case '&':
@@ -9246,7 +9246,7 @@ var Playground = (function (exports) {
         ],
         misc: [
             '≠',
-            '==',
+            '=',
             '<',
             '>',
             '≤',
@@ -11766,7 +11766,7 @@ var Playground = (function (exports) {
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
             ],
-            description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
+            description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(!= a b c)` is same as `(! (== a b c))`.',
             examples: [
                 '1 ≠ 2',
                 '3 != 3',
@@ -11778,15 +11778,9 @@ var Playground = (function (exports) {
             aliases: ['!='],
             algebraic: true,
         },
-        '==': {
-            title: '==',
-            category: 'Misc',
-            linkName: '-equal-equal',
-            clojureDocs: '=',
-            returns: {
+        '=': __assign(__assign({}, getOperatorArgs('any', 'any')), { title: '=', category: 'Misc', linkName: '-equal', clojureDocs: '=', returns: {
                 type: 'boolean',
-            },
-            args: {
+            }, args: {
                 x: {
                     type: 'any',
                 },
@@ -11794,14 +11788,21 @@ var Playground = (function (exports) {
                     type: 'any',
                     rest: true,
                 },
-            },
-            variants: [
+            }, variants: [
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
-            ],
-            description: 'Compares `values` according to \'equal\' predicate. Result is `true` if every specified value is equal to each other, otherwise result is `false`.',
-            examples: ['(== 1 1)', '(== 1.01 1)', '(== :1 1)', '(== :2 :2 :2 :2)', '(== 2 2 1 2)'],
-        },
+            ], description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.', examples: [
+                '1 = 1',
+                '[1, 2] = [1, 2]',
+                "\n{\n a := 1,\n b := 2,\n} = {\n b := 2,\n a := 1,\n}",
+                '=(1, 1)',
+                '=(1.01, 1)',
+                '=("1", 1)',
+                '=("2", "2", "2", "2")',
+                '=(2, 2, 1, 2)',
+                '=([1, 2], [1, 2])',
+                '=({ a := 1, b := 2 }, { b := 2, a := 1 })',
+            ], algebraic: true }),
         '<': {
             title: '<',
             category: 'Misc',
@@ -12071,13 +12072,13 @@ var Playground = (function (exports) {
             variants: [
                 { argumentNames: ['a', 'b'] },
             ],
-            description: 'Returns true if $a and $b are structually equal.',
+            description: 'Returns true if $a and $b are referential equal.',
             examples: [
                 '(identical? {:a 10 :b 20} {:b 20 :a 10})',
                 '(identical? [1 true null] [1 true null])',
                 '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
                 '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
-                '(== 0.3 (+ 0.1 0.2))',
+                '(identical? 0.3 (+ 0.1 0.2))',
                 '(identical? 0.3 (+ 0.1 0.2))',
             ],
         },
@@ -14175,7 +14176,7 @@ var Playground = (function (exports) {
             ],
             description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
             examples: [
-                '(partition_by [1 2 3 4 5] #(== 3 %1))',
+                '(partition_by [1 2 3 4 5] #(= 3 %1))',
                 '(partition_by [1 1 1 2 2 3 3] odd?)',
                 '(partition_by "Leeeeeerrroyyy" identity)',
             ],
@@ -16159,14 +16160,9 @@ var Playground = (function (exports) {
         var id = location.hash.substring(1) || 'index';
         showPage(id, 'instant', 'none');
     });
-    function truncateCode(text, count) {
+    function truncateCode(code, count) {
         if (count === void 0) { count = 1000; }
-        var oneLiner = text
-            .split('\n')
-            .map(function (line) { return line.trim(); })
-            .filter(function (line) { return line.length > 0; })
-            .filter(function (line) { return !line.startsWith(';'); })
-            .join(' ');
+        var oneLiner = getLits().tokenize(code, { minify: true }).tokens.map(function (t) { return t[0] === 'A_Whitespace' ? ' ' : t[1]; }).join('').trim();
         if (oneLiner.length <= count)
             return oneLiner;
         else

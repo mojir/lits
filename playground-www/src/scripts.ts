@@ -679,13 +679,8 @@ window.addEventListener('popstate', () => {
   showPage(id, 'instant', 'none')
 })
 
-function truncateCode(text: string, count = 1000) {
-  const oneLiner = text
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
-    .filter(line => !line.startsWith(';'))
-    .join(' ')
+function truncateCode(code: string, count = 1000) {
+  const oneLiner = getLits().tokenize(code, { minify: true }).tokens.map(t => t[0] === 'A_Whitespace' ? ' ' : t[1]).join('').trim()
   if (oneLiner.length <= count)
     return oneLiner
   else

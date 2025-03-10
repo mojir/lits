@@ -26,7 +26,7 @@ const formatPhoneNumber = `
 (if (string? $data)
   (do
     (let [ phoneNumber
-          (if (== "+" (nth $data 0)) (subs $data 2) $data)
+          (if (= "+" (nth $data 0)) (subs $data 2) $data)
         ])
     (cond
       (> (count phoneNumber) 6)
@@ -82,7 +82,7 @@ describe('evaluator', () => {
   it('if statement (true)', () => {
     const tokens = tokenize(
       `
-      (if (== (get info "gender") "male") "It\\"s a boy" "It\\"s not a girl")
+      (if (= (get info "gender") "male") "It\\"s a boy" "It\\"s not a girl")
     `,
       { debug: true, polish: true },
     )
@@ -93,7 +93,7 @@ describe('evaluator', () => {
   it('if statement (false)', () => {
     const tokens = tokenize(
       `
-      (if (== (get info "gender") "female") "It\\"s a girl" "It\\"s not a girl")
+      (if (= (get info "gender") "female") "It\\"s a girl" "It\\"s not a girl")
     `,
       { debug: true, polish: true },
     )

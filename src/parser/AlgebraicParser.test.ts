@@ -166,11 +166,11 @@ describe('algebraic operators', () => {
       expect(lits.run('2 >= 1')).toBe(true)
     })
   })
-  describe('==', () => {
+  describe('=', () => {
     test('samples', () => {
-      expect(lits.run('2 == 3')).toBe(false)
-      expect(lits.run('2 == 2')).toBe(true)
-      expect(lits.run('2 == 1')).toBe(false)
+      expect(lits.run('2 = 3')).toBe(false)
+      expect(lits.run('2 = 2')).toBe(true)
+      expect(lits.run('2 = 1')).toBe(false)
     })
   })
   describe('!=', () => {
@@ -505,8 +505,8 @@ describe('algebraic operators', () => {
 
   describe('comparison operators', () => {
     it('evaluates equality operators', () => {
-      expect(lits.run('3 == 3')).toBe(true)
-      expect(lits.run('3 == 4')).toBe(false)
+      expect(lits.run('3 = 3')).toBe(true)
+      expect(lits.run('3 = 4')).toBe(false)
       expect(lits.run('3 != 4')).toBe(true)
       expect(lits.run('3 != 3')).toBe(false)
     })
@@ -695,7 +695,7 @@ describe('algebraic operators', () => {
           n := 10,
           sum := 0
         )
-          if n == 0 then
+          if n = 0 then
             sum
           else
             recur(n - 1, sum + n)
@@ -1030,15 +1030,15 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
 
     it('handles complex logical expressions', () => {
-      expect(lits.run('(5 > 3) && (10 < 20 || 5 == 5)')).toBe(true)
+      expect(lits.run('(5 > 3) && (10 < 20 || 5 = 5)')).toBe(true)
       expect(lits.run('!(5 < 3) && (3 <= 3 || 4 >= 5)')).toBe(true)
     })
 
     it('handles expressions combining different operators', () => {
-      expect(lits.run('5 + 3 * 2 == 11')).toBe(true)
-      expect(lits.run('(5 + 3) * 2 == 16')).toBe(true)
-      expect(lits.run('[1, 2, 3][1 + 1] == 3')).toBe(true)
-      expect(lits.run('{ a := 10, b := 20 }.a + { a := 5, b := 15 }.b == 25')).toBe(true)
+      expect(lits.run('5 + 3 * 2 = 11')).toBe(true)
+      expect(lits.run('(5 + 3) * 2 = 16')).toBe(true)
+      expect(lits.run('[1, 2, 3][1 + 1] = 3')).toBe(true)
+      expect(lits.run('{ a := 10, b := 20 }.a + { a := 5, b := 15 }.b = 25')).toBe(true)
     })
 
     it('handles complex nested expressions', () => {
@@ -1133,8 +1133,8 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
 
     it('supports lambda functions as return values', () => {
-      expect(lits.run('((op) -> if op == "add" then ((x, y) -> x + y) else ((x, y) -> x - y) end)("add")(5, 3)')).toBe(8)
-      expect(lits.run('((op) -> if op == "add" then ((x, y) -> x + y) else ((x, y) -> x - y) end)("subtract")(5, 3)')).toBe(2)
+      expect(lits.run('((op) -> if op = "add" then ((x, y) -> x + y) else ((x, y) -> x - y) end)("add")(5, 3)')).toBe(8)
+      expect(lits.run('((op) -> if op = "add" then ((x, y) -> x + y) else ((x, y) -> x - y) end)("subtract")(5, 3)')).toBe(2)
     })
   })
 })

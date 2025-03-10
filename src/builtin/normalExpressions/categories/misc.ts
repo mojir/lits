@@ -25,7 +25,7 @@ function isIdentical([first, ...rest]: unknown[]) {
 }
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
-  '==': {
+  '=': {
     evaluate: (params, sourceCodeInfo): boolean => {
       return isEqual(params, sourceCodeInfo)
     },

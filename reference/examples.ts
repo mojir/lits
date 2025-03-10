@@ -26,17 +26,17 @@ export const examples: Example[] = [
 // Access object properies with .
 // Access string and array elements with []
 
-let data = {
-  numbers = [1, 2, 3],
-  chars = ["a", "b", "c"],
-  string = "Albert"
+let data := {
+  numbers := [1, 2, 3],
+  chars := ["a", "b", "c"],
+  string := "Albert"
 };
 
 write!(data.numbers[0]);
 write!(data.chars[2]);
 write!(data.string[0]);
 
-write!({a=1, b=2, c=3}.b);
+write!({a := 1, b := 2, c := 3}.b);
 write!("Albert"[3]);
 write!([1, 2, 3][2]);
     `.trim(),
@@ -62,7 +62,7 @@ write!([1, 2, 3][2]);
   //   (if (string? $data)
   //     (do
   //       (let [phoneNumber
-  //             (if (== "+" (nth $data 0))
+  //             (if (= "+" (nth $data 0))
   //               (subs $data 2)
   //               $data)])
   //       (cond
@@ -107,7 +107,7 @@ write!([1, 2, 3][2]);
   //     description: 'A recursive implementation of the factorial function.',
   //     code: `
   // (defn factorial [x]
-  //   (if (== x 1)
+  //   (if (= x 1)
   //     1
   //     (* x (factorial (dec x)))
   //   )
@@ -186,14 +186,14 @@ write!([1, 2, 3][2]);
   //         (|| (< day 1) (> day 31))
   //         (&&
   //           (||
-  //             (== month 4)
-  //             (== month 6)
-  //             (== month 9)
-  //             (== month 11))
+  //             (= month 4)
+  //             (= month 6)
+  //             (= month 9)
+  //             (= month 11))
   //           (> day 30)
   //         )
   //         (&&
-  //           (== month 2)
+  //           (= month 2)
   //           (||
   //             (&& leapYear (> day 29))
   //             (&& (! leapYear) (> day 28))
@@ -216,7 +216,7 @@ write!([1, 2, 3][2]);
   //     description: 'Find label to corresponding value in array of {label value}-objects.',
   //     code: `
   // (defn label-from-value [$array $value]
-  //   (let [entry (some $array #(== $value (%1 :value)))])
+  //   (let [entry (some $array #(= $value (%1 :value)))])
   //   (if (null? entry) (str $value) (entry :label))
   // )
 
@@ -245,7 +245,7 @@ write!([1, 2, 3][2]);
   //           (let [entry
   //                  (some
   //                    $array
-  //                    #(== value (%1 :value)))])
+  //                    #(= value (%1 :value)))])
   //           (if
   //             (null? entry)
   //             (str value)

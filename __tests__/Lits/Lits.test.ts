@@ -294,7 +294,7 @@ describe('regressions', () => {
     const program = `(defn formatPhoneNumber [$data]
   (if (string? $data)
     (do
-      (let [phoneNumber (if (== "+" (nth $data 0)) (subs $data 2) $data)])
+      (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)])
       (cond
         (> (count phoneNumber) 6)
           (astr

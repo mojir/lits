@@ -24,7 +24,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x'] },
       { argumentNames: ['x', 'ys'] },
     ],
-    description: 'Result is `true` if no two `values` are equal to each other, otherwise result is `false`. Note that only two argument version result is negation of `=` function, that is `(!= a b)` is same as `(! (== a b))`.',
+    description: 'Returns `true` if all `values` are not equal to each other, otherwise result is `false`. `(!= a b c)` is same as `(! (== a b c))`.',
     examples: [
       '1 ≠ 2',
       '3 != 3',
@@ -36,10 +36,11 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     aliases: ['!='],
     algebraic: true,
   },
-  '==': {
-    title: '==',
+  '=': {
+    ...getOperatorArgs('any', 'any'),
+    title: '=',
     category: 'Misc',
-    linkName: '-equal-equal',
+    linkName: '-equal',
     clojureDocs: '=',
     returns: {
       type: 'boolean',
@@ -57,8 +58,27 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       { argumentNames: ['x'] },
       { argumentNames: ['x', 'ys'] },
     ],
-    description: 'Compares `values` according to \'equal\' predicate. Result is `true` if every specified value is equal to each other, otherwise result is `false`.',
-    examples: ['(== 1 1)', '(== 1.01 1)', '(== :1 1)', '(== :2 :2 :2 :2)', '(== 2 2 1 2)'],
+    description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
+    examples: [
+      '1 = 1',
+      '[1, 2] = [1, 2]',
+      `
+{
+ a := 1,
+ b := 2,
+} = {
+ b := 2,
+ a := 1,
+}`,
+      '=(1, 1)',
+      '=(1.01, 1)',
+      '=("1", 1)',
+      '=("2", "2", "2", "2")',
+      '=(2, 2, 1, 2)',
+      '=([1, 2], [1, 2])',
+      '=({ a := 1, b := 2 }, { b := 2, a := 1 })',
+    ],
+    algebraic: true,
   },
   '<': {
     title: '<',
@@ -329,13 +349,13 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     variants: [
       { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns true if $a and $b are structually equal.',
+    description: 'Returns true if $a and $b are referential equal.',
     examples: [
       '(identical? {:a 10 :b 20} {:b 20 :a 10})',
       '(identical? [1 true null] [1 true null])',
       '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
       '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
-      '(== 0.3 (+ 0.1 0.2))',
+      '(identical? 0.3 (+ 0.1 0.2))',
       '(identical? 0.3 (+ 0.1 0.2))',
     ],
   },

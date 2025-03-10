@@ -1153,7 +1153,7 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
     examples: [
-      '(partition_by [1 2 3 4 5] #(== 3 %1))',
+      '(partition_by [1 2 3 4 5] #(= 3 %1))',
       '(partition_by [1 1 1 2 2 3 3] odd?)',
       '(partition_by "Leeeeeerrroyyy" identity)',
     ],
