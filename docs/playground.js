@@ -3622,75 +3622,66 @@ var Playground = (function (exports) {
         },
     };
 
+    function isEqual(_a, sourceCodeInfo) {
+        var e_1, _b;
+        var _c = __read(_a), first = _c[0], rest = _c.slice(1);
+        var firstAny = asAny(first, sourceCodeInfo);
+        try {
+            for (var rest_1 = __values(rest), rest_1_1 = rest_1.next(); !rest_1_1.done; rest_1_1 = rest_1.next()) {
+                var param = rest_1_1.value;
+                if (!deepEqual(firstAny, asAny(param, sourceCodeInfo), sourceCodeInfo))
+                    return false;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (rest_1_1 && !rest_1_1.done && (_b = rest_1.return)) _b.call(rest_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return true;
+    }
+    function isIdentical(_a) {
+        var e_2, _b;
+        var _c = __read(_a), first = _c[0], rest = _c.slice(1);
+        try {
+            for (var rest_2 = __values(rest), rest_2_1 = rest_2.next(); !rest_2_1.done; rest_2_1 = rest_2.next()) {
+                var param = rest_2_1.value;
+                if (param !== first)
+                    return false;
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (rest_2_1 && !rest_2_1.done && (_b = rest_2.return)) _b.call(rest_2);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return true;
+    }
     var miscNormalExpression = {
+        '==': {
+            evaluate: function (params, sourceCodeInfo) {
+                return isEqual(params, sourceCodeInfo);
+            },
+            paramCount: { min: 1 },
+        },
         '≠': {
-            evaluate: function (params) {
-                for (var i = 0; i < params.length - 1; i += 1) {
-                    for (var j = i + 1; j < params.length; j += 1) {
-                        if (params[i] === params[j])
-                            return false;
-                    }
-                }
-                return true;
+            evaluate: function (params, sourceCodeInfo) {
+                return !isEqual(params, sourceCodeInfo);
             },
             paramCount: { min: 1 },
             aliases: ['!='],
         },
-        '==': {
-            evaluate: function (_a) {
-                var e_1, _b;
-                var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                try {
-                    for (var rest_1 = __values(rest), rest_1_1 = rest_1.next(); !rest_1_1.done; rest_1_1 = rest_1.next()) {
-                        var param = rest_1_1.value;
-                        if (param !== first)
-                            return false;
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
-                    try {
-                        if (rest_1_1 && !rest_1_1.done && (_b = rest_1.return)) _b.call(rest_1);
-                    }
-                    finally { if (e_1) throw e_1.error; }
-                }
-                return true;
+        'identical?': {
+            evaluate: function (params) {
+                return isIdentical(params);
             },
             paramCount: { min: 1 },
-        },
-        'equal?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), a = _b[0], b = _b[1];
-                return deepEqual(asAny(a, sourceCodeInfo), asAny(b, sourceCodeInfo), sourceCodeInfo);
-            },
-            paramCount: { min: 1 },
-            aliases: ['≡'],
         },
         '>': {
-            evaluate: function (_a) {
-                var e_2, _b;
-                var _c = __read(_a), first = _c[0], rest = _c.slice(1);
-                var currentValue = first;
-                try {
-                    for (var rest_2 = __values(rest), rest_2_1 = rest_2.next(); !rest_2_1.done; rest_2_1 = rest_2.next()) {
-                        var param = rest_2_1.value;
-                        if (compare(currentValue, param) <= 0)
-                            return false;
-                        currentValue = param;
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (rest_2_1 && !rest_2_1.done && (_b = rest_2.return)) _b.call(rest_2);
-                    }
-                    finally { if (e_2) throw e_2.error; }
-                }
-                return true;
-            },
-            paramCount: { min: 1 },
-        },
-        '<': {
             evaluate: function (_a) {
                 var e_3, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -3698,7 +3689,7 @@ var Playground = (function (exports) {
                 try {
                     for (var rest_3 = __values(rest), rest_3_1 = rest_3.next(); !rest_3_1.done; rest_3_1 = rest_3.next()) {
                         var param = rest_3_1.value;
-                        if (compare(currentValue, param) >= 0)
+                        if (compare(currentValue, param) <= 0)
                             return false;
                         currentValue = param;
                     }
@@ -3714,7 +3705,7 @@ var Playground = (function (exports) {
             },
             paramCount: { min: 1 },
         },
-        '≥': {
+        '<': {
             evaluate: function (_a) {
                 var e_4, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -3722,7 +3713,7 @@ var Playground = (function (exports) {
                 try {
                     for (var rest_4 = __values(rest), rest_4_1 = rest_4.next(); !rest_4_1.done; rest_4_1 = rest_4.next()) {
                         var param = rest_4_1.value;
-                        if (compare(currentValue, param) < 0)
+                        if (compare(currentValue, param) >= 0)
                             return false;
                         currentValue = param;
                     }
@@ -3737,9 +3728,8 @@ var Playground = (function (exports) {
                 return true;
             },
             paramCount: { min: 1 },
-            aliases: ['>='],
         },
-        '≤': {
+        '≥': {
             evaluate: function (_a) {
                 var e_5, _b;
                 var _c = __read(_a), first = _c[0], rest = _c.slice(1);
@@ -3747,7 +3737,7 @@ var Playground = (function (exports) {
                 try {
                     for (var rest_5 = __values(rest), rest_5_1 = rest_5.next(); !rest_5_1.done; rest_5_1 = rest_5.next()) {
                         var param = rest_5_1.value;
-                        if (compare(currentValue, param) > 0)
+                        if (compare(currentValue, param) < 0)
                             return false;
                         currentValue = param;
                     }
@@ -3758,6 +3748,31 @@ var Playground = (function (exports) {
                         if (rest_5_1 && !rest_5_1.done && (_b = rest_5.return)) _b.call(rest_5);
                     }
                     finally { if (e_5) throw e_5.error; }
+                }
+                return true;
+            },
+            paramCount: { min: 1 },
+            aliases: ['>='],
+        },
+        '≤': {
+            evaluate: function (_a) {
+                var e_6, _b;
+                var _c = __read(_a), first = _c[0], rest = _c.slice(1);
+                var currentValue = first;
+                try {
+                    for (var rest_6 = __values(rest), rest_6_1 = rest_6.next(); !rest_6_1.done; rest_6_1 = rest_6.next()) {
+                        var param = rest_6_1.value;
+                        if (compare(currentValue, param) > 0)
+                            return false;
+                        currentValue = param;
+                    }
+                }
+                catch (e_6_1) { e_6 = { error: e_6_1 }; }
+                finally {
+                    try {
+                        if (rest_6_1 && !rest_6_1.done && (_b = rest_6.return)) _b.call(rest_6);
+                    }
+                    finally { if (e_6) throw e_6.error; }
                 }
                 return true;
             },
@@ -6618,8 +6633,10 @@ var Playground = (function (exports) {
         'MIN_SAFE_INTEGER': Number.MIN_SAFE_INTEGER,
         'MAX_VALUE': Number.MAX_VALUE,
         'MIN_VALUE': Number.MIN_VALUE,
-        'EPSILON': Number.EPSILON,
-        '-EPSILON': -Number.EPSILON,
+        'DELTA': Number.EPSILON, // TODO use DELTA instead of DELTA δ
+        '-DELTA': -Number.EPSILON,
+        'δ': Number.EPSILON, // TODO use DELTA instead of DELTA δ
+        '-δ': -Number.EPSILON,
         'NaN': Number.NaN,
     };
     var algebraicReservedSymbolRecord = __assign(__assign({}, nonNumberReservedSymbolRecord), numberReservedSymbolRecord);
@@ -9240,7 +9257,7 @@ var Playground = (function (exports) {
             'epoch>iso_date',
             'boolean',
             'compare',
-            'equal?',
+            'identical?',
             'json_parse',
             'json_stringify',
         ],
@@ -12035,10 +12052,10 @@ var Playground = (function (exports) {
                 '(compare + -)',
             ],
         },
-        'equal?': {
-            title: 'equal?',
+        'identical?': {
+            title: 'identical?',
             category: 'Misc',
-            linkName: 'equal-question',
+            linkName: 'identical-question',
             clojureDocs: null,
             returns: {
                 type: 'boolean',
@@ -12056,14 +12073,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns true if $a and $b are structually equal.',
             examples: [
-                '(equal? {:a 10 :b 20} {:b 20 :a 10})',
-                '(equal? [1 true null] [1 true null])',
-                '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
-                '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
+                '(identical? {:a 10 :b 20} {:b 20 :a 10})',
+                '(identical? [1 true null] [1 true null])',
+                '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
+                '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
                 '(== 0.3 (+ 0.1 0.2))',
-                '(equal? 0.3 (+ 0.1 0.2))',
+                '(identical? 0.3 (+ 0.1 0.2))',
             ],
-            aliases: ['≡'],
         },
         'json_parse': {
             title: 'json_parse',

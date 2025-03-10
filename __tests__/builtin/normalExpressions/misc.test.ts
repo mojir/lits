@@ -56,38 +56,40 @@ describe('misc functions', () => {
     describe('!=', () => {
       it('samples', () => {
         expect(() => lits.run('(!=)')).toThrow()
-        expect(lits.run('(!= 1)')).toBe(true)
-        expect(lits.run('(!= 1 1)')).toBe(false)
-        expect(lits.run('(!= 1 2)')).toBe(true)
-        expect(lits.run('(!= 1 2 1)')).toBe(false)
-        expect(lits.run('(!= 1 2 3)')).toBe(true)
-        expect(lits.run('(!= :1)')).toBe(true)
-        expect(lits.run('(!= :1 :1)')).toBe(false)
-        expect(lits.run('(!= :1 :2)')).toBe(true)
-        expect(lits.run('(!= :1 :2 :1)')).toBe(false)
-        expect(lits.run('(!= :1 :2 3)')).toBe(true)
-        expect(lits.run('(!= null 0)')).toBe(true)
-        expect(lits.run('(!= 1 true 3)')).toBe(true)
-        expect(lits.run('(!= 1 false 3)')).toBe(true)
+        expect(lits.run('(!= 1)')).toBe(!lits.run('(== 1)'))
+        expect(lits.run('(!= 1 1)')).toBe(!lits.run('(== 1 1)'))
+        expect(lits.run('(!= 1 2)')).toBe(!lits.run('(== 1 2)'))
+        expect(lits.run('(!= 1 2 1)')).toBe(!lits.run('(== 1 2 1)'))
+        expect(lits.run('(!= 1 2 3)')).toBe(!lits.run('(== 1 2 3)'))
+        expect(lits.run('(!= :1)')).toBe(!lits.run('(== :1)'))
+        expect(lits.run('(!= :1 :1)')).toBe(!lits.run('(== :1 :1)'))
+        expect(lits.run('(!= :1 :2)')).toBe(!lits.run('(== :1 :2)'))
+        expect(lits.run('(!= :1 :2 :1)')).toBe(!lits.run('(== :1 :2 :1)'))
+        expect(lits.run('(!= :1 :2 3)')).toBe(!lits.run('(== :1 :2 3)'))
+        expect(lits.run('(!= null 0)')).toBe(!lits.run('(== null 0)'))
+        expect(lits.run('(!= 1 true 3)')).toBe(!lits.run('(== 1 true 3)'))
+        expect(lits.run('(!= 1 false 3)')).toBe(!lits.run('(== 1 false 3)'))
+        expect(lits.run('(!= [1 2 {:a 10 :b [null]}] [1 2 {:b [null] :a 10}])')).toBe(!lits.run('(== [1 2 {:a 10 :b [null]}] [1 2 {:b [null] :a 10}])'))
+        expect(lits.run('(!= [1 2 {:a 10 :b [null]}] [1 2 {:b [0] :a 10}])')).toBe(!lits.run('(== [1 2 {:a 10 :b [null]}] [1 2 {:b [0] :a 10}])'))
+        expect(lits.run('(!= {:a 10 :b 20} {:b 20 :a 10})')).toBe(!lits.run('(== {:a 10 :b 20} {:b 20 :a 10})'))
+        expect(lits.run('(!= [1 true null] [1 true null])')).toBe(!lits.run('(== [1 true null] [1 true null])'))
+        expect(lits.run('(!= {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})')).toBe(!lits.run('(== {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})'))
+        expect(lits.run('(!= {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})')).toBe(!lits.run('(== {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})'))
+        expect(lits.run('(!= [1, 2, 3] [1, 2, 3, 4])')).toBe(!lits.run('(== [1, 2, 3] [1, 2, 3, 4])'))
+        expect(lits.run('(!= {:a 10} {:a 10, :b 20})')).toBe(!lits.run('(== {:a 10} {:a 10, :b 20})'))
       })
     })
 
-    describe('equal?', () => {
+    describe('identical?', () => {
       it('samples', () => {
-        expect(() => lits.run('(!=)')).toThrow()
-        expect(lits.run('(equal? 1 1)')).toBe(true)
-        expect(lits.run('(equal? 1 2)')).toBe(false)
-        expect(lits.run('(equal? :1 :1)')).toBe(true)
-        expect(lits.run('(equal? :1 :2)')).toBe(false)
-        expect(lits.run('(equal? null 0)')).toBe(false)
-        expect(lits.run('(equal? [1 2 {:a 10 :b [null]}] [1 2 {:b [null] :a 10}])')).toBe(true)
-        expect(lits.run('(equal? [1 2 {:a 10 :b [null]}] [1 2 {:b [0] :a 10}])')).toBe(false)
-        expect(lits.run('(equal? {:a 10 :b 20} {:b 20 :a 10})')).toBe(true)
-        expect(lits.run('(equal? [1 true null] [1 true null])')).toBe(true)
-        expect(lits.run('(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})')).toBe(true)
-        expect(lits.run('(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})')).toBe(false)
-        expect(lits.run('(equal? [1, 2, 3] [1, 2, 3, 4])')).toBe(false)
-        expect(lits.run('(equal? {:a 10} {:a 10, :b 20})')).toBe(false)
+        expect(() => lits.run('(identical?)')).toThrow()
+        expect(lits.run('(identical? 1 1)')).toBe(true)
+        expect(lits.run('(identical? 1 2)')).toBe(false)
+        expect(lits.run('(identical? :1 :1)')).toBe(true)
+        expect(lits.run('(identical? :1 :2)')).toBe(false)
+        expect(lits.run('(identical? null 0)')).toBe(false)
+        expect(lits.run('(identical? [1] [1])')).toBe(false)
+        expect(lits.run('(identical? {} {})')).toBe(false)
       })
     })
 
@@ -112,24 +114,14 @@ describe('misc functions', () => {
         expect(lits.run('(== null null)')).toBe(true)
         expect(lits.run('(== true true)')).toBe(true)
         expect(lits.run('(== false false)')).toBe(true)
-      })
-
-      it('object equality', () => {
-        const program = `
-        (def obj1 (object :x 10))
-        (def obj2 (object :x 10))
-        [(== obj1 obj1) (== obj1 obj2)]
-      `
-        expect(lits.run(program)).toEqual([true, false])
-      })
-
-      it('array equality', () => {
-        const program = `
-        (def array1 [1 2 3])
-        (def array2 [1 2 3])
-        [(== array1 array1) (== array1 array2)]
-      `
-        expect(lits.run(program)).toEqual([true, false])
+        expect(lits.run('(== [1 2 {:a 10 :b [null]}] [1 2 {:b [null] :a 10}])')).toBe(true)
+        expect(lits.run('(== [1 2 {:a 10 :b [null]}] [1 2 {:b [0] :a 10}])')).toBe(false)
+        expect(lits.run('(== {:a 10 :b 20} {:b 20 :a 10})')).toBe(true)
+        expect(lits.run('(== [1 true null] [1 true null])')).toBe(true)
+        expect(lits.run('(== {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})')).toBe(true)
+        expect(lits.run('(== {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})')).toBe(false)
+        expect(lits.run('(== [1, 2, 3] [1, 2, 3, 4])')).toBe(false)
+        expect(lits.run('(== {:a 10} {:a 10, :b 20})')).toBe(false)
       })
     })
 

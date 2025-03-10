@@ -7,6 +7,9 @@ describe('algebraic operators', () => {
   describe('const E', () => {
     it('samples', () => {
       expect(lits.run('E')).toBe(Math.E)
+      expect(lits.run('ε')).toBe(Math.E)
+      expect(lits.run('-E')).toBe(-Math.E)
+      expect(lits.run('-ε')).toBe(-Math.E)
     })
   })
 
@@ -35,9 +38,9 @@ describe('algebraic operators', () => {
     })
   })
 
-  describe('const EPSILON', () => {
+  describe('const DELTA', () => {
     it('samples', () => {
-      expect(lits.run('EPSILON')).toBe(Number.EPSILON)
+      expect(lits.run('DELTA')).toBe(Number.EPSILON)
     })
   })
 
@@ -853,13 +856,13 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
     test('multiple iterations with while', () => {
       expect(lits.run(`
-        for (
-          x of [1, 2, 3],
-          y of [1, 2, 3] while x <= y,
-          z of [1, 2, 3]
-        )
-          [x, y, z]
-        end`)).toEqual([
+          for (
+            x of [1, 2, 3],
+            y of [1, 2, 3] while x <= y,
+            z of [1, 2, 3]
+          )
+            [x, y, z]
+          end`)).toEqual([
         [1, 1, 1],
         [1, 1, 2],
         [1, 1, 3],
@@ -1062,10 +1065,6 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
         // eslint-disable-next-line ts/no-unsafe-argument, no-eval
         expect(lits.run(expression)).toBeCloseTo(eval(expression))
       }
-
-      // expect(lits.run('((2 + 3) * 4 / 2 - 1) ** 2 % 5 + 6 - 7 * 8 / 9')).toBeCloseTo(4.2222, 4)
-      // expect(lits.run('2 ** 3 * 4 + 5 - 6 / 3 % 2 + (7 - 8) * 9')).toBeCloseTo(31)
-      // expect(lits.run('((10 / 2) + 3) * (4 - 1) ** 2 % 7')).toBeCloseTo(6)
     })
   })
 

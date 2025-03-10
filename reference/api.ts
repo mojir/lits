@@ -136,7 +136,7 @@ export const api = {
     'epoch>iso_date',
     'boolean',
     'compare',
-    'equal?',
+    'identical?',
     'json_parse',
     'json_stringify',
   ] as const,

@@ -4,39 +4,45 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { asAny, assertAny } from '../../../typeGuards/lits'
 import { assertNumber } from '../../../typeGuards/number'
 import { assertString } from '../../../typeGuards/string'
+import type { SourceCodeInfo } from '../../..'
+
+function isEqual([first, ...rest]: unknown[], sourceCodeInfo: SourceCodeInfo | undefined) {
+  const firstAny = asAny(first, sourceCodeInfo)
+  for (const param of rest) {
+    if (!deepEqual(firstAny, asAny(param, sourceCodeInfo), sourceCodeInfo))
+      return false
+  }
+  return true
+}
+
+function isIdentical([first, ...rest]: unknown[]) {
+  for (const param of rest) {
+    if (param !== first)
+      return false
+  }
+
+  return true
+}
 
 export const miscNormalExpression: BuiltinNormalExpressions = {
+  '==': {
+    evaluate: (params, sourceCodeInfo): boolean => {
+      return isEqual(params, sourceCodeInfo)
+    },
+    paramCount: { min: 1 },
+  },
   '≠': {
-    evaluate: (params): boolean => {
-      for (let i = 0; i < params.length - 1; i += 1) {
-        for (let j = i + 1; j < params.length; j += 1) {
-          if (params[i] === params[j])
-            return false
-        }
-      }
-
-      return true
+    evaluate: (params, sourceCodeInfo): boolean => {
+      return !isEqual(params, sourceCodeInfo)
     },
     paramCount: { min: 1 },
     aliases: ['!='],
   },
-  '==': {
-    evaluate: ([first, ...rest]): boolean => {
-      for (const param of rest) {
-        if (param !== first)
-          return false
-      }
-
-      return true
+  'identical?': {
+    evaluate: (params): boolean => {
+      return isIdentical(params)
     },
     paramCount: { min: 1 },
-  },
-  'equal?': {
-    evaluate: ([a, b], sourceCodeInfo): boolean => {
-      return deepEqual(asAny(a, sourceCodeInfo), asAny(b, sourceCodeInfo), sourceCodeInfo)
-    },
-    paramCount: { min: 1 },
-    aliases: ['≡'],
   },
   '>': {
     evaluate: ([first, ...rest]): boolean => {

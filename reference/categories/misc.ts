@@ -310,10 +310,10 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       '(compare + -)',
     ],
   },
-  'equal?': {
-    title: 'equal?',
+  'identical?': {
+    title: 'identical?',
     category: 'Misc',
-    linkName: 'equal-question',
+    linkName: 'identical-question',
     clojureDocs: null,
     returns: {
       type: 'boolean',
@@ -331,14 +331,13 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     ],
     description: 'Returns true if $a and $b are structually equal.',
     examples: [
-      '(equal? {:a 10 :b 20} {:b 20 :a 10})',
-      '(equal? [1 true null] [1 true null])',
-      '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
-      '(equal? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
+      '(identical? {:a 10 :b 20} {:b 20 :a 10})',
+      '(identical? [1 true null] [1 true null])',
+      '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 20}] :a 10})',
+      '(identical? {:a 10 :b [1 2 {:b 20}]} {:b [1 2 {:b 21}] :a 10})',
       '(== 0.3 (+ 0.1 0.2))',
-      '(equal? 0.3 (+ 0.1 0.2))',
+      '(identical? 0.3 (+ 0.1 0.2))',
     ],
-    aliases: ['≡'],
   },
   'json_parse': {
     title: 'json_parse',
