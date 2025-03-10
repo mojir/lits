@@ -246,6 +246,7 @@ export const api = {
     'bit-set',
     'bit-test',
   ] as const,
+  // TODO, remove some, add some. E.g. type guards, assert-number, assert-string, etc.
   assert: [
     'assert',
     'assert=',
