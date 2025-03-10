@@ -935,7 +935,7 @@ For string $seq returns all but the first characters in $seq.`,
     description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
     examples: [
       '(remove [1 2 3 1 3 5] even?)',
-      '(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))',
+      '(remove "Albert Mojir" #(contains? "aoueiyAOUEIY" %1))',
     ],
   },
   'remove-at': {
@@ -1056,7 +1056,7 @@ For string $seq returns all but the first characters in $seq.`,
     description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
     examples: [
       '(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
-      '(group-by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))',
+      '(group-by "Albert Mojir" (fn [char] (if (contains? "aoueiAOUEI" char) "vowel" "other")))',
     ],
   },
   'partition': {

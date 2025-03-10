@@ -3,13 +3,13 @@ import type { ContextStack } from '../../../evaluator/ContextStack'
 import type { ExecuteFunction } from '../../../evaluator/interface'
 import type { Any, Arr, Coll, Obj } from '../../../interface'
 import type { SourceCodeInfo } from '../../../tokenizer/interface'
-import { cloneColl, collHasKey, toAny, toNonNegativeInteger } from '../../../utils'
+import { cloneColl, collHasKey, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
 
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 
 import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
-import { asColl, assertAny, assertColl, assertObj, assertSeq, isColl, isObj, isSeq } from '../../../typeGuards/lits'
+import { asAny, asColl, assertAny, assertColl, assertObj, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
 import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString } from '../../../typeGuards/string'
 
@@ -195,103 +195,20 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
   },
   'contains?': {
     evaluate: ([coll, key], sourceCodeInfo): boolean => {
-      assertStringOrNumber(key, sourceCodeInfo)
       if (coll === null)
         return false
 
       assertColl(coll, sourceCodeInfo)
+      if (isString(coll)) {
+        assertString(key, sourceCodeInfo)
+        return coll.includes(key)
+      }
       if (isSeq(coll)) {
-        if (!isNumber(key, { integer: true }))
-          return false
-
-        assertNumber(key, sourceCodeInfo, { integer: true })
-        return key >= 0 && key < coll.length
+        assertAny(key, sourceCodeInfo)
+        return !!coll.find(elem => deepEqual(asAny(elem), key, sourceCodeInfo))
       }
-      return !!Object.getOwnPropertyDescriptor(coll, key)
-    },
-    paramCount: 2,
-  },
-  'has?': {
-    evaluate: ([coll, value], sourceCodeInfo): boolean => {
-      if (coll === null)
-        return false
-
-      assertColl(coll, sourceCodeInfo)
-      if (Array.isArray(coll))
-        return coll.includes(value)
-
-      if (typeof coll === 'string') {
-        if (typeof value === 'string') {
-          return coll.includes(value)
-        }
-        else if (typeof value === 'number') {
-          return coll.includes(`${value}`)
-        }
-        return false
-      }
-
-      return Object.values(coll).includes(value)
-    },
-    paramCount: 2,
-  },
-  'has-some?': {
-    evaluate: ([coll, seq], sourceCodeInfo): boolean => {
-      if (coll === null || seq === null)
-        return false
-
-      assertColl(coll, sourceCodeInfo)
-      assertSeq(seq, sourceCodeInfo)
-      if (Array.isArray(coll)) {
-        for (const value of seq) {
-          if (coll.includes(value))
-            return true
-        }
-        return false
-      }
-      if (typeof coll === 'string') {
-        for (const value of seq) {
-          if (isString(value, { char: true }) ? coll.split('').includes(value) : false)
-            return true
-        }
-        return false
-      }
-      for (const value of seq) {
-        if (Object.values(coll).includes(value))
-          return true
-      }
-      return false
-    },
-    paramCount: 2,
-  },
-  'has-every?': {
-    evaluate: ([coll, seq], sourceCodeInfo): boolean => {
-      if (coll === null)
-        return false
-
-      assertColl(coll, sourceCodeInfo)
-      if (seq === null)
-        return true
-
-      assertSeq(seq, sourceCodeInfo)
-      if (Array.isArray(coll)) {
-        for (const value of seq) {
-          if (!coll.includes(value))
-            return false
-        }
-        return true
-      }
-      if (typeof coll === 'string') {
-        for (const value of seq) {
-          if (!isString(value, { char: true }) || !coll.split('').includes(value))
-            return false
-        }
-        return true
-      }
-      for (const value of seq) {
-        if (!Object.values(coll).includes(value))
-          return false
-      }
-      return true
+      assertString(key, sourceCodeInfo)
+      return key in coll
     },
     paramCount: 2,
   },

@@ -921,7 +921,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
           // Start with main products
           mainProduct of products
             let isInStock := mainProduct.stockLevel > 0
-            let isPreferredCategory := has?(customerPreferences.preferredCategories, mainProduct.category)
+            let isPreferredCategory := contains?(customerPreferences.preferredCategories, mainProduct.category)
             let isPriceOk := mainProduct.price <= customerPreferences.priceLimit * 0.8
             when (isInStock && isPreferredCategory && isPriceOk),
             
@@ -930,7 +930,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
           accessory of products
             let isCompatible := mainProduct.id != accessory.id && accessory.stockLevel > 0
             let totalPrice := mainProduct.price + accessory.price
-            let isRecentlyViewed := has?(customerPreferences.recentViews, accessory.id)
+            let isRecentlyViewed := contains?(customerPreferences.recentViews, accessory.id)
             when (isCompatible && totalPrice <= customerPreferences.priceLimit)
             while totalPrice <= customerPreferences.priceLimit * 0.9,
         
@@ -940,7 +940,7 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
             let finalPrice := mainProduct.price + accessory.price + complItem.price
             let discount := if finalPrice > 500 then 0.1 else 0.05 end
             let discountedPrice := finalPrice * (1 - discount)
-            let matchesPreferences := has?(customerPreferences.preferredCategories, complItem.category)
+            let matchesPreferences := contains?(customerPreferences.preferredCategories, complItem.category)
             when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
             while discountedPrice <= customerPreferences.priceLimit
         )

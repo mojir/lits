@@ -1965,160 +1965,19 @@ var Playground = (function (exports) {
         'contains?': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), coll = _b[0], key = _b[1];
-                assertStringOrNumber(key, sourceCodeInfo);
                 if (coll === null)
                     return false;
                 assertColl(coll, sourceCodeInfo);
+                if (isString(coll)) {
+                    assertString(key, sourceCodeInfo);
+                    return coll.includes(key);
+                }
                 if (isSeq(coll)) {
-                    if (!isNumber(key, { integer: true }))
-                        return false;
-                    assertNumber(key, sourceCodeInfo, { integer: true });
-                    return key >= 0 && key < coll.length;
+                    assertAny(key, sourceCodeInfo);
+                    return !!coll.find(function (elem) { return deepEqual(asAny(elem), key, sourceCodeInfo); });
                 }
-                return !!Object.getOwnPropertyDescriptor(coll, key);
-            },
-            paramCount: 2,
-        },
-        'has?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), coll = _b[0], value = _b[1];
-                if (coll === null)
-                    return false;
-                assertColl(coll, sourceCodeInfo);
-                if (Array.isArray(coll))
-                    return coll.includes(value);
-                if (typeof coll === 'string') {
-                    if (typeof value === 'string') {
-                        return coll.includes(value);
-                    }
-                    else if (typeof value === 'number') {
-                        return coll.includes("".concat(value));
-                    }
-                    return false;
-                }
-                return Object.values(coll).includes(value);
-            },
-            paramCount: 2,
-        },
-        'has-some?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var e_2, _b, e_3, _c, e_4, _d;
-                var _e = __read(_a, 2), coll = _e[0], seq = _e[1];
-                if (coll === null || seq === null)
-                    return false;
-                assertColl(coll, sourceCodeInfo);
-                assertSeq(seq, sourceCodeInfo);
-                if (Array.isArray(coll)) {
-                    try {
-                        for (var seq_1 = __values(seq), seq_1_1 = seq_1.next(); !seq_1_1.done; seq_1_1 = seq_1.next()) {
-                            var value = seq_1_1.value;
-                            if (coll.includes(value))
-                                return true;
-                        }
-                    }
-                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                    finally {
-                        try {
-                            if (seq_1_1 && !seq_1_1.done && (_b = seq_1.return)) _b.call(seq_1);
-                        }
-                        finally { if (e_2) throw e_2.error; }
-                    }
-                    return false;
-                }
-                if (typeof coll === 'string') {
-                    try {
-                        for (var seq_2 = __values(seq), seq_2_1 = seq_2.next(); !seq_2_1.done; seq_2_1 = seq_2.next()) {
-                            var value = seq_2_1.value;
-                            if (isString(value, { char: true }) ? coll.split('').includes(value) : false)
-                                return true;
-                        }
-                    }
-                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
-                    finally {
-                        try {
-                            if (seq_2_1 && !seq_2_1.done && (_c = seq_2.return)) _c.call(seq_2);
-                        }
-                        finally { if (e_3) throw e_3.error; }
-                    }
-                    return false;
-                }
-                try {
-                    for (var seq_3 = __values(seq), seq_3_1 = seq_3.next(); !seq_3_1.done; seq_3_1 = seq_3.next()) {
-                        var value = seq_3_1.value;
-                        if (Object.values(coll).includes(value))
-                            return true;
-                    }
-                }
-                catch (e_4_1) { e_4 = { error: e_4_1 }; }
-                finally {
-                    try {
-                        if (seq_3_1 && !seq_3_1.done && (_d = seq_3.return)) _d.call(seq_3);
-                    }
-                    finally { if (e_4) throw e_4.error; }
-                }
-                return false;
-            },
-            paramCount: 2,
-        },
-        'has-every?': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var e_5, _b, e_6, _c, e_7, _d;
-                var _e = __read(_a, 2), coll = _e[0], seq = _e[1];
-                if (coll === null)
-                    return false;
-                assertColl(coll, sourceCodeInfo);
-                if (seq === null)
-                    return true;
-                assertSeq(seq, sourceCodeInfo);
-                if (Array.isArray(coll)) {
-                    try {
-                        for (var seq_4 = __values(seq), seq_4_1 = seq_4.next(); !seq_4_1.done; seq_4_1 = seq_4.next()) {
-                            var value = seq_4_1.value;
-                            if (!coll.includes(value))
-                                return false;
-                        }
-                    }
-                    catch (e_5_1) { e_5 = { error: e_5_1 }; }
-                    finally {
-                        try {
-                            if (seq_4_1 && !seq_4_1.done && (_b = seq_4.return)) _b.call(seq_4);
-                        }
-                        finally { if (e_5) throw e_5.error; }
-                    }
-                    return true;
-                }
-                if (typeof coll === 'string') {
-                    try {
-                        for (var seq_5 = __values(seq), seq_5_1 = seq_5.next(); !seq_5_1.done; seq_5_1 = seq_5.next()) {
-                            var value = seq_5_1.value;
-                            if (!isString(value, { char: true }) || !coll.split('').includes(value))
-                                return false;
-                        }
-                    }
-                    catch (e_6_1) { e_6 = { error: e_6_1 }; }
-                    finally {
-                        try {
-                            if (seq_5_1 && !seq_5_1.done && (_c = seq_5.return)) _c.call(seq_5);
-                        }
-                        finally { if (e_6) throw e_6.error; }
-                    }
-                    return true;
-                }
-                try {
-                    for (var seq_6 = __values(seq), seq_6_1 = seq_6.next(); !seq_6_1.done; seq_6_1 = seq_6.next()) {
-                        var value = seq_6_1.value;
-                        if (!Object.values(coll).includes(value))
-                            return false;
-                    }
-                }
-                catch (e_7_1) { e_7 = { error: e_7_1 }; }
-                finally {
-                    try {
-                        if (seq_6_1 && !seq_6_1.done && (_d = seq_6.return)) _d.call(seq_6);
-                    }
-                    finally { if (e_7) throw e_7.error; }
-                }
-                return true;
+                assertString(key, sourceCodeInfo);
+                return key in coll;
             },
             paramCount: 2,
         },
@@ -3140,19 +2999,19 @@ var Playground = (function (exports) {
                     assertString(search, sourceCodeInfo);
                     return str.endsWith(search);
                 }
-                return str.at(-1) === search;
+                return deepEqual(asAny(str.at(-1), sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo);
             },
             paramCount: 2,
         },
         'starts-with?': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), str = _b[0], search = _b[1];
-                assertSeq(str, sourceCodeInfo);
-                if (typeof str === 'string') {
+                var _b = __read(_a, 2), seq = _b[0], search = _b[1];
+                assertSeq(seq, sourceCodeInfo);
+                if (typeof seq === 'string') {
                     assertString(search, sourceCodeInfo);
-                    return str.startsWith(search);
+                    return seq.startsWith(search);
                 }
-                return str[0] === search;
+                return deepEqual(asAny(seq[0], sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo);
             },
             paramCount: 2,
         },
@@ -9061,9 +8920,6 @@ var Playground = (function (exports) {
             'get',
             'get-in',
             'contains?',
-            'has?',
-            'has-some?',
-            'has-every?',
             'assoc',
             'assoc-in',
             'concat',
@@ -10275,113 +10131,6 @@ var Playground = (function (exports) {
                 "\n(contains?\n  [1 2 3]\n  1)",
                 "\n(contains?\n  {}\n  :a)",
                 "\n(contains?\n  {:a 1 :b 2}\n  :a)",
-            ],
-        },
-        'has?': {
-            title: 'has?',
-            category: 'Collection',
-            linkName: 'has-question',
-            clojureDocs: null,
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                coll: {
-                    type: ['collection', 'null'],
-                },
-                value: {
-                    type: ['any'],
-                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'value'] },
-            ],
-            description: 'Returns `true` if $coll has $value, otherwise returns `false`.',
-            examples: [
-                "\n(has?\n  [1 2 3]\n  1)",
-                "\n(has?\n  [1 2 3]\n  0)",
-                "\n(has?\n  {:a 1 :b 2}\n  1)",
-                "\n(has?\n  {:a 1 :b 2}\n  0)",
-                "\n(has?\n  \"Albert\"\n  :A)",
-                "\n(has?\n  \"Albert\"\n  :a)",
-                "\n(has?\n  null\n  :a)",
-            ],
-        },
-        'has-some?': {
-            title: 'has-some?',
-            category: 'Collection',
-            linkName: 'has-some-question',
-            clojureDocs: null,
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                coll: {
-                    type: 'collection',
-                },
-                values: {
-                    type: 'any',
-                    array: true,
-                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'values'] },
-            ],
-            description: 'Returns `true` if $coll has any of the elements in $values, otherwise returns `false`.',
-            examples: [
-                "\n(has-some?\n  []\n  [])",
-                "\n(has-some?\n  [1 2 3]\n  [])",
-                "\n(has-some?\n  [1 2 3]\n  [0])",
-                "\n  (has-some?\n  [1 2 3]\n  [0 1])",
-                "\n(has-some?\n  (object :a 1 :b 2)\n  [0])",
-                "\n(has-some?\n  (object :a 1 :b 2)\n  [0 1])",
-                "\n(has-some?\n  \"Albert\"\n  \"xyz\")",
-                "\n(has-some?\n  \"Albert\"\n  \"xyzl\")",
-                "\n(has-some?\n  [:a :b :c :d]\n  \"xyz\")",
-                "\n(has-some?\n  [:a :b :c :d]\n  \"xyzc\")",
-                "\n(has-some?\n  null\n  [1])",
-                "\n(has-some?\n  null\n  \"\")",
-            ],
-        },
-        'has-every?': {
-            title: 'has-every?',
-            category: 'Collection',
-            linkName: 'has-every-question',
-            clojureDocs: null,
-            returns: {
-                type: 'boolean',
-            },
-            args: {
-                coll: {
-                    type: 'collection',
-                },
-                values: {
-                    type: 'any',
-                    array: true,
-                    description: 'Only support primitive values: `number`, `string`, `boolean`, or `null`.',
-                },
-            },
-            variants: [
-                { argumentNames: ['coll', 'values'] },
-            ],
-            description: 'Returns `true` if $coll has all of the elements in $values, otherwise returns `false`.',
-            examples: [
-                "\n(has-every?\n  []\n  [])",
-                "\n(has-every?\n  [1 2 3]\n  [])",
-                "\n(has-every?\n  [1 2 3]\n  [0 1])",
-                "\n(has-every?\n  [1 2 3]\n  [1 2])",
-                "\n(has-every?\n  (object :a 1 :b 2)\n  [0 1])",
-                "\n(has-every?\n  (object :a 1 :b 2)\n  [1 2])",
-                "\n(has-every?\n  \"Albert\"\n  \"xyz\")",
-                "\n(has-every?\n  \"Albert\"\n  \"treblA\")",
-                "\n(has-every?\n  [:a :b :c :d]\n  \"xyz\")",
-                "\n(has-every?\n  [:a :b :c :d]\n  \"dcba\")",
-                "\n(has-every?\n  null\n  \"abc\")",
-                "\n(has-every?\n  null\n  [0, 1, null])",
-                "\n(has-every?\n  null\n  null)",
-                "\n(has-every?\n  [1, 2, 3]\n  null)",
             ],
         },
         'assoc': {
@@ -13844,7 +13593,7 @@ var Playground = (function (exports) {
             description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
             examples: [
                 '(remove [1 2 3 1 3 5] even?)',
-                '(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))',
+                '(remove "Albert Mojir" #(contains? "aoueiyAOUEIY" %1))',
             ],
         },
         'remove-at': {
@@ -13965,7 +13714,7 @@ var Playground = (function (exports) {
             description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
             examples: [
                 '(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
-                '(group-by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))',
+                '(group-by "Albert Mojir" (fn [char] (if (contains? "aoueiAOUEI" char) "vowel" "other")))',
             ],
         },
         'partition': {

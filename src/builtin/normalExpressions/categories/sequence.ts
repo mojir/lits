@@ -5,7 +5,7 @@ import { asAny, asSeq, assertAny, assertSeq } from '../../../typeGuards/lits'
 import { assertLitsFunction } from '../../../typeGuards/litsFunction'
 import { asNumber, assertNumber } from '../../../typeGuards/number'
 import { assertString, assertStringOrNumber } from '../../../typeGuards/string'
-import { collHasKey, compare, toAny, toNonNegativeInteger } from '../../../utils'
+import { collHasKey, compare, deepEqual, toAny, toNonNegativeInteger } from '../../../utils'
 import type { BuiltinNormalExpressions } from '../../interface'
 
 export const sequenceNormalExpression: BuiltinNormalExpressions = {
@@ -806,20 +806,20 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return str.endsWith(search)
       }
 
-      return str.at(-1) === search
+      return deepEqual(asAny(str.at(-1), sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo)
     },
     paramCount: 2,
   },
   'starts-with?': {
-    evaluate: ([str, search], sourceCodeInfo): boolean => {
-      assertSeq(str, sourceCodeInfo)
+    evaluate: ([seq, search], sourceCodeInfo): boolean => {
+      assertSeq(seq, sourceCodeInfo)
 
-      if (typeof str === 'string') {
+      if (typeof seq === 'string') {
         assertString(search, sourceCodeInfo)
-        return str.startsWith(search)
+        return seq.startsWith(search)
       }
 
-      return str[0] === search
+      return deepEqual(asAny(seq[0], sourceCodeInfo), asAny(search, sourceCodeInfo), sourceCodeInfo)
     },
     paramCount: 2,
   },

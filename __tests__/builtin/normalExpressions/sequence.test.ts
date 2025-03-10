@@ -753,11 +753,11 @@ describe('sequence functions', () => {
   describe('remove', () => {
     it('samples', () => {
       expect(lits.run('(remove [1 2 3 1 3 5] even?)')).toEqual([1, 3, 1, 3, 5])
-      expect(lits.run('(remove "Albert Mojir" #(has? "aoueiyAOUEIY" %1))')).toBe('lbrt Mjr')
+      expect(lits.run('(remove "Albert Mojir" #(contains? "aoueiyAOUEIY" %1))')).toBe('lbrt Mjr')
       expect(() => lits.run('(remove)')).toThrow()
       expect(() => lits.run('(remove "Albert Mojir")')).toThrow()
-      expect(() => lits.run('(remove #(has? "aoueiyAOUEIY" %1))')).toThrow()
-      expect(() => lits.run('(remove "Albert" #(has? "aoueiyAOUEIY" %1) "Mojir")')).toThrow()
+      expect(() => lits.run('(remove #(contains? "aoueiyAOUEIY" %1))')).toThrow()
+      expect(() => lits.run('(remove "Albert" #(contains? "aoueiyAOUEIY" %1) "Mojir")')).toThrow()
     })
   })
 
@@ -854,7 +854,7 @@ describe('sequence functions', () => {
         Albert: [{ name: 'Albert' }, { name: 'Albert' }],
         Mojir: [{ name: 'Mojir' }],
       })
-      expect(lits.run('(group-by "Albert Mojir" (fn [char] (if (has? "aoueiAOUEI" char) "vowel" "other")))')).toEqual({
+      expect(lits.run('(group-by "Albert Mojir" (fn [char] (if (contains? "aoueiAOUEI" char) "vowel" "other")))')).toEqual({
         other: ['l', 'b', 'r', 't', ' ', 'M', 'j', 'r'],
         vowel: ['A', 'e', 'o', 'i'],
       })
