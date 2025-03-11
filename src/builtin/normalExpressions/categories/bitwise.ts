@@ -47,7 +47,7 @@ export const bitwiseNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 2 },
   },
-  '&!': {
+  'bit-and-not': {
     evaluate: ([first, ...rest], sourceCodeInfo): number => {
       assertNumber(first, sourceCodeInfo, { integer: true })
 

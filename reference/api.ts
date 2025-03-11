@@ -235,7 +235,7 @@ export const api = {
     '>>>',
     '~',
     '&',
-    '&!',
+    'bit-and-not',
     '|',
     '^',
     'bit-flip',
