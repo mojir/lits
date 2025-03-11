@@ -1353,12 +1353,15 @@ var Playground = (function (exports) {
     }
     function canBeOperator(count) {
         if (typeof count === 'number') {
-            return count >= 2;
+            return count === 2;
         }
         if (count.odd) {
             return false;
         }
         if (typeof count.max === 'number' && count.max < 2) {
+            return false;
+        }
+        if (typeof count.min === 'number' && count.min > 2) {
             return false;
         }
         return true;
@@ -10131,25 +10134,26 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                coll: {
+            args: __assign(__assign({}, getOperatorArgs(['collection', 'null'], ['string', 'integer'])), { coll: {
                     type: ['collection', 'null'],
-                },
-                key: {
+                }, key: {
                     type: ['string', 'number'],
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['coll', 'key'] },
             ],
             description: 'Returns `true` if $coll contains $key, otherwise returns `false`. For strings, it checks if substring is included.',
             examples: [
-                "\n(contains?\n  [],\n  1)",
-                "\n(contains?\n  [1],\n  1)",
-                "\n(contains?\n  [1, 2, 3],\n  1)",
-                "\n(contains?\n  {}\n  :a)",
-                "\n(contains?\n  {:a 1 :b 2}\n  :a)",
+                '[1, 2, 3] contains? 1',
+                'null contains? 1',
+                '{ a := 1, b := 2 } contains? "a"',
+                "\ncontains?(\n  [],\n  1\n)",
+                "\ncontains?(\n  [1],\n  1\n)",
+                "\ncontains?(\n  [1, 2, 3],\n  1\n)",
+                "\ncontains?(\n  {},\n  \"a\"\n)",
+                "\ncontains?(\n  { a := 1, b := 2 },\n  \"a\"\n)",
             ],
+            algebraic: true,
         },
         'assoc': {
             title: 'assoc',
@@ -10180,12 +10184,13 @@ var Playground = (function (exports) {
             ],
             description: "\nAdd or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.  \nIf $coll is an 'array', $key must be `number` satisfying `0 <=` $key `<= length`.",
             examples: [
-                "\n(assoc\n  [1, 2, 3]\n  1\n  \"Two\")",
-                "\n(assoc\n  [1, 2, 3]\n  3\n  \"Four\")",
-                "\n(assoc\n  {:a 1 :b 2}\n  :a\n  \"One\")",
-                "\n(assoc\n  {:a 1 :b 2}\n  :c\n  \"Three\")",
-                "\n(assoc\n  :Albert\n  6\n  :a)",
+                "\nassoc(\n  [1, 2, 3],\n  1,\n  \"Two\"\n)",
+                "\nassoc(\n  [1, 2, 3],\n  3,\n  \"Four\"\n)",
+                "\nassoc(\n  { a := 1, b := 2 },\n  \"a\",\n  \"One\")",
+                "\nassoc(\n  { a := 1, b := 2 },\n  \"c\",\n  \"Three\")",
+                "\nassoc(\n  \"Albert\",\n  6,\n  \"a\")",
             ],
+            algebraic: true,
         },
         'assoc-in': {
             title: 'assoc-in',
@@ -10211,10 +10216,11 @@ var Playground = (function (exports) {
             ],
             description: "\nAssociates a value in the nested collection $coll, where $keys is an array of keys and $value is the new value.\n\nIf any levels do not exist, objects will be created - and the corresponding keys must be of type string.",
             examples: [
-                "\n(assoc-in\n  {}\n  [:a :b :c]\n  \"Albert\")",
-                "\n(assoc-in\n  [1, 2 [1, 2, 3]]\n  [2 1]\n  \"Albert\")",
-                "\n(assoc-in\n  [1, 2 {\"name\" \"albert\"}]\n  [2 \"name\" 0]\n  :A)",
+                "\nassoc-in(\n  {},\n  [\"a\", \"b\", \"c\"],\n  \"Albert\"\n)",
+                "\nassoc-in(\n  [1, 2, [1, 2, 3]],\n  [2, 1],\n  \"Albert\"\n)",
+                "\nassoc-in(\n  [1, 2, { name := \"albert\" }],\n  [2, \"name\", 0],\n  \"A\"\n)",
             ],
+            algebraic: true,
         },
         'concat': {
             title: 'concat',
@@ -10223,30 +10229,30 @@ var Playground = (function (exports) {
             returns: {
                 type: 'collection',
             },
-            args: {
-                coll: {
+            args: __assign(__assign({}, getOperatorArgs('collection', 'collection')), { coll: {
                     type: 'collection',
-                },
-                colls: {
+                }, colls: {
                     type: 'collection',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['coll'] },
                 { argumentNames: ['coll', 'colls'] },
             ],
             description: 'Concatenates collections into one collection.',
             examples: [
-                '(concat :A :l :b :e :r :t)',
-                '(concat [1, 2] [3 4])',
-                '(concat [] [3 4])',
-                '(concat [1, 2] [])',
-                '(concat [1, 2] [3 4] [5 6])',
-                '(concat [])',
-                '(concat {:a 1 :b 2} {:b 1 :c 2})',
-                '(concat {} {:a 1})',
+                '"Hi " concat "Albert"',
+                '[1, 2] concat [3, 4]',
+                'concat("A", "l", "b", "e", "r", "t")',
+                'concat([1, 2], [3, 4])',
+                'concat([], [3, 4])',
+                'concat([1, 2], [])',
+                'concat([1, 2], [3, 4], [5, 6])',
+                'concat([])',
+                'concat({ a := 1, b := 2 }, { b := 1, c := 2 })',
+                'concat({}, { a := 1 })',
             ],
+            algebraic: true,
         },
         'not-empty': {
             title: 'not-empty',
@@ -10265,14 +10271,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
             examples: [
-                '(not-empty [])',
-                '(not-empty [1, 2, 3])',
-                '(not-empty {})',
-                '(not-empty {:a 2})',
-                '(not-empty "")',
-                '(not-empty "Albert")',
-                '(not-empty null)',
+                'not-empty([])',
+                'not-empty([1, 2, 3])',
+                'not-empty({})',
+                'not-empty({ a := 2 })',
+                'not-empty("")',
+                'not-empty("Albert")',
+                'not-empty(null)',
             ],
+            algebraic: true,
         },
         'every?': {
             title: 'every?',
@@ -10281,27 +10288,27 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                coll: {
+            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
                     type: 'collection',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['coll', 'fn'] },
             ],
             description: 'Returns `true` if all entries in $coll pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(every?\n[\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
-                "\n(every?\n[50 100 150 200]\n  (fn [x] (> x 10)))",
-                "\n(every?\n  []\n  number?)",
-                "\n(every?\n  \"\"\n  number?)",
-                "\n(every?\n  {}\n  number?)",
-                "\n(every?\n  {:a 2 :b 4}\n  #(even? (second %)))",
-                "\n(every?\n  {:a 2 :b 3}\n  #(even? (second %)))",
+                '[1, 2, 3] every? number?',
+                '[1, 2, 3] every? even?',
+                "\nevery?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?,\n)",
+                "\nevery?(\n  [50, 100, 150, 200],\n  -> $ > 10,\n)",
+                "\nevery?(\n  [],\n  number?\n)",
+                "\nevery?(\n  \"\",\n  number?\n)",
+                "\nevery?(\n  {},\n  number?\n)",
+                "\nevery?(\n  { a := 2, b := 4},\n  -> even?(second($))\n)",
+                "\nevery?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
             ],
+            algebraic: true,
         },
         'not-every?': {
             title: 'not-every?',
@@ -10310,27 +10317,25 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                coll: {
+            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
                     type: 'collection',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['coll', 'fn'] },
             ],
             description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(not-every?\n  [\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
-                "\n(not-every?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
-                "\n(not-every?\n  []\n  number?)",
-                "\n(not-every?\n  \"\"\n  number?)",
-                "\n(not-every?\n  {}\n  number?)",
-                "\n(not-every?\n  {:a 2 :b 4}\n  #(even? (second %)))",
-                "\n(not-every?\n  {:a 2 :b 3}\n  #(even? (second %)))",
+                "\nnot-every?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                "\nnot-every?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
+                "\nnot-every?(\n  [],\n  number?\n)",
+                "\nnot-every?(\n  \"\",\n  number?\n)",
+                "\nnot-every?(\n  {},\n  number?\n)",
+                "\nnot-every?(\n  { a := 2, b := 4 },\n  -> even?(second($))\n)",
+                "\nnot-every?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
             ],
+            algebraic: true,
         },
         'any?': {
             title: 'any?',
@@ -10339,27 +10344,25 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                coll: {
+            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
                     type: 'collection',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['coll', 'fn'] },
             ],
             description: 'Returns `true` if any element in $coll pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(any?\n  [\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
-                "\n(any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
-                "\n(any?\n  []\n  number?)",
-                "\n(any?\n  \"\"\n  number?)",
-                "\n(any?\n  {}\n  number?)",
-                "\n(any?\n  {:a 2 :b 3}\n  #(even? (second %)))",
-                "\n(any?\n  {:a 1 :b 3}\n  #(even? (second %)))",
+                "\nany?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                "\nany?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
+                "\nany?(\n  [],\n  number?\n)",
+                "\nany?(\n  \"\",\n  number?\n)",
+                "\nany?(\n  {},\n  number?\n)",
+                "\nany?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
+                "\nany?(\n  { a := 1, b := 3 },\n  -> even?(second($))\n)",
             ],
+            algebraic: true,
         },
         'not-any?': {
             title: 'not-any?',
@@ -10368,27 +10371,25 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                coll: {
+            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
                     type: 'collection',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['coll', 'fn'] },
             ],
             description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
             examples: [
-                "\n(not-any?\n  [\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
-                "\n(not-any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
-                "\n(not-any?\n  []\n  number?)",
-                "\n(not-any?\n  \"\"\n  number?)",
-                "\n(not-any?\n  {}\n  number?)",
-                "\n(not-any?\n  {:a 2 :b 3}\n  #(even? (second %)))",
-                "\n(not-any?\n  {:a 1 :b 3}\n  #(even? (second %)))",
+                "\nnot-any?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                "\nnot-any?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
+                "\nnot-any?(\n  [],\n  number?\n)",
+                "\nnot-any?(\n  \"\",\n  number?\n)",
+                "\nnot-any?(\n  {},\n  number?\n)",
+                "\nnot-any?(\n  { a := 2, b := 3 },\n  -> even?(second($))\n)",
+                "\nnot-any?(\n  { a := 1, b := 3 },\n  -> even?(second($))\n)",
             ],
+            algebraic: true,
         },
         'update': {
             title: 'update',
@@ -10418,9 +10419,10 @@ var Playground = (function (exports) {
             ],
             description: "\nUpdates a value in the $coll collection, where $key is a key. $fn is a function\nthat will take the old value and any supplied $fn-args and\nreturn the new value.\nIf the key does not exist, `null` is passed as the old value.",
             examples: [
-                "\n(def x {:a 1 :b 2})\n(update x :a inc)",
-                "\n(def x {:a 1 :b 2})\n(update\n  x\n  :c\n  (fn [val]\n    (if (null? val) 0 (inc val))))",
+                "\nlet x := { a := 1, b := 2 };\nupdate(x, \"a\", inc)",
+                "\nlet x := { a := 1, b := 2 };\nupdate(\n  x,\n  \"c\",\n  val -> if null?(val) then 0 else inc(val) end\n)",
             ],
+            algebraic: true,
         },
         'update-in': {
             title: 'update-in',
@@ -10450,11 +10452,12 @@ var Playground = (function (exports) {
             ],
             description: "Updates a value in the $coll collection, where $keys is an array of\nkeys and $fn is a function that will take the old value and\nany supplied $fn-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
             examples: [
-                "\n(update-in\n  {:a [1, 2, 3]}\n  [:a 1]\n  (fn [val]\n    (when (null? val) 0)))",
-                "\n(update-in\n  {:a {:foo :bar}}\n  [:a :foo]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
-                "\n(update-in\n  {:a {:foo :bar}}\n  [:a :baz]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
-                "\n(update-in\n  {:a [1, 2, 3]}\n  [:a 1]\n  *\n  10\n  10\n  10)",
+                "\nupdate-in(\n  { a := [1, 2, 3] },\n  [\"a\", 1],\n  -> if null?($) then 0 end\n)",
+                "\nupdate-in(\n  { a := { foo := \"bar\"} },\n  [\"a\", \"foo\"],\n  -> if null?($) then \"?\" else \"!\" end\n)",
+                "\nupdate-in(\n  { a := { foo := \"bar\"} },\n  [\"a\", \"baz\"],\n  -> if null?($) then \"?\" else \"!\" end\n)",
+                "\nupdate-in(\n  { a := [1, 2, 3] },\n  [\"a\", 1],\n  *,\n  10,\n  10,\n  10,\n)",
             ],
+            algebraic: true,
         },
     };
 
@@ -12066,12 +12069,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is a `boolean`, otherwise `false`.',
             examples: [
-                '(boolean? true)',
-                '(boolean? false)',
-                '(boolean? [1 2 3])',
-                '(boolean? 0)',
-                '(boolean? "A string")',
+                'boolean?(true)',
+                'boolean?(false)',
+                'boolean?([1, 2, 3])',
+                'boolean?(0)',
+                'boolean?("A string")',
             ],
+            algebraic: true,
         },
         'null?': {
             title: 'null?',
@@ -12090,12 +12094,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is `null`, otherwise `false`.',
             examples: [
-                '(null? null)',
-                '(null? false)',
-                '(null? [1 2 3])',
-                '(null? 0)',
-                '(null? "A string")',
+                'null?(null)',
+                'null?(false)',
+                'null?([1, 2, 3])',
+                'null?(0)',
+                'null?("A string")',
             ],
+            algebraic: true,
         },
         'number?': {
             title: 'number?',
@@ -12114,13 +12119,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is a number, otherwise `false`.',
             examples: [
-                '(number? 0)',
-                '(number? 2)',
-                '(number? -0.12)',
-                '(number? false)',
-                '(number? [1 2 3])',
-                '(number? "A string")',
+                'number?(0)',
+                'number?(2)',
+                'number?(-0.12)',
+                'number?(false)',
+                'number?([1, 2, 3])',
+                'number?("A string")',
             ],
+            algebraic: true,
         },
         'string?': {
             title: 'string?',
@@ -12139,13 +12145,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is a string, otherwise `false`.',
             examples: [
-                '(string? "")',
-                '(string? "A string")',
-                '(string? (if true "A string" false))',
-                '(string? false)',
-                '(string? [1 2 3])',
-                '(string? 100)',
+                'string?("")',
+                'string?("A string")',
+                'string?(if true then "A string" else false end)',
+                'string?(false)',
+                'string?([1, 2, 3])',
+                'string?(100)',
             ],
+            algebraic: true,
         },
         'function?': {
             title: 'function?',
@@ -12165,13 +12172,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is a function, otherwise `false`.',
             examples: [
-                '(function? +)',
-                '(function? /)',
-                '(function? (fn [x y] (+ x y)))',
-                '(function? false)',
-                '(function? "false")',
-                '(function? [1 2 3])',
+                'function?(+)',
+                'function?(/)',
+                'function?((x, y) -> x + y)',
+                'function?(false)',
+                'function?("false")',
+                'function?([1, 2, 3])',
             ],
+            algebraic: true,
         },
         'integer?': {
             title: 'integer?',
@@ -12190,15 +12198,16 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is an integer, otherwise `false`.',
             examples: [
-                '(integer? 0)',
-                '(integer? -12)',
-                '(integer? 42)',
-                '(integer? 10.1)',
-                '(integer? (fn [x y] (+ x y)))',
-                '(integer? false)',
-                '(integer? "false")',
-                '(integer? [1 2 3])',
+                'integer?(0)',
+                'integer?(-12)',
+                'integer?(42)',
+                'integer?(10.1)',
+                'integer?((x, y) -> x + y)',
+                'integer?(false)',
+                'integer?("false")',
+                'integer?([1, 2, 3])',
             ],
+            algebraic: true,
         },
         'array?': {
             title: 'array?',
@@ -12218,13 +12227,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is an array, otherwise `false`.',
             examples: [
-                '(array? [])',
-                '(array? [1 2 3])',
-                '(array? (object :a 10))',
-                '(array? 42)',
-                '(array? 10.1)',
-                '(array? (fn [x y] (+ x y)))',
+                'array?([])',
+                'array?([1, 2, 3])',
+                'array?(object("a", 10))',
+                'array?(42)',
+                'array?(10.1)',
+                'array?((x, y) -> x + y)',
             ],
+            algebraic: true,
         },
         'object?': {
             title: 'object?',
@@ -12244,15 +12254,16 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is an object, otherwise `false`.',
             examples: [
-                '(object? (object :a 10))',
-                '(object? (object))',
-                '(object? 42)',
-                '(object? 10.1)',
-                '(object? (fn [x y] (+ x y)))',
-                '(object? #"^start")',
-                '(object? "false")',
-                '(object? [1 2 3])',
+                'object?(object("a", 10))',
+                'object?((object))',
+                'object?(42)',
+                'object?(10.1)',
+                'object?((x, y) -> x + y)',
+                'object?(#"^start")',
+                'object?("false")',
+                'object?([1, 2, 3])',
             ],
+            algebraic: true,
         },
         'coll?': {
             title: 'coll?',
@@ -12272,14 +12283,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is a Coll i.e. an array, an object or a string, otherwise `false`.',
             examples: [
-                '(coll? [])',
-                '(coll? [1 2 3])',
-                '(coll? (object :a 10))',
-                '(coll? "Albert")',
-                '(coll? 42)',
-                '(coll? 10.1)',
-                '(coll? (fn [x y] (+ x y)))',
+                'coll?([])',
+                'coll?([1, 2, 3])',
+                'coll?(object("a", 10))',
+                'coll?("Albert")',
+                'coll?(42)',
+                'coll?(10.1)',
+                'coll?((x, y) -> x + y)',
             ],
+            algebraic: true,
         },
         'seq?': {
             title: 'seq?',
@@ -12299,14 +12311,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is a Seq i.e. an array or a string, otherwise `false`.',
             examples: [
-                '(seq? [])',
-                '(seq? [1 2 3])',
-                '(seq? (object :a 10))',
-                '(seq? "Albert")',
-                '(seq? 42)',
-                '(seq? 10.1)',
-                '(seq? (fn [x y] (+ x y)))',
+                'seq?([])',
+                'seq?([1, 2, 3])',
+                'seq?(object("a", 10))',
+                'seq?("Albert")',
+                'seq?(42)',
+                'seq?(10.1)',
+                'seq?((x, y) -> x + y)',
             ],
+            algebraic: true,
         },
         'regexp?': {
             title: 'regexp?',
@@ -12326,16 +12339,17 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is a regexp, otherwise `false`.',
             examples: [
-                '(regexp? (regexp "^start"))',
-                '(regexp? #"^start")',
-                '(regexp? -12)',
-                '(regexp? (object))',
-                '(regexp? 10.1)',
-                '(regexp? (fn [x y] (+ x y)))',
-                '(regexp? false)',
-                '(regexp? "false")',
-                '(regexp? [1 2 3])',
+                'regexp?(regexp("^start"))',
+                'regexp?(#"^start")',
+                'regexp?(-12)',
+                'regexp?((object))',
+                'regexp?(10.1)',
+                'regexp?((x, y) -> x + y)',
+                'regexp?(false)',
+                'regexp?("false")',
+                'regexp?([1, 2, 3])',
             ],
+            algebraic: true,
         },
         'zero?': {
             title: 'zero?',
@@ -12354,11 +12368,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is `0`, otherwise `false`.',
             examples: [
-                '(zero? 0)',
-                '(zero? -0.0)',
-                '(zero? 1)',
-                '(zero? 0.1)',
+                'zero?(0)',
+                'zero?(-0.0)',
+                'zero?(1)',
+                'zero?(0.1)',
             ],
+            algebraic: true,
         },
         'pos?': {
             title: 'pos?',
@@ -12377,11 +12392,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is greater than `0`, otherwise `false`.',
             examples: [
-                '(pos? 0)',
-                '(pos? -0.0)',
-                '(pos? 1)',
-                '(pos? -0.1)',
+                'pos?(0)',
+                'pos?(-0.0)',
+                'pos?(1)',
+                'pos?(-0.1)',
             ],
+            algebraic: true,
         },
         'neg?': {
             title: 'neg?',
@@ -12400,11 +12416,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is less than `0`, otherwise `false`.',
             examples: [
-                '(neg? 0)',
-                '(neg? -0.0)',
-                '(neg? 1)',
-                '(neg? -0.1)',
+                'neg?(0)',
+                'neg?(-0.0)',
+                'neg?(1)',
+                'neg?(-0.1)',
             ],
+            algebraic: true,
         },
         'even?': {
             title: 'even?',
@@ -12423,11 +12440,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is even, otherwise `false`.',
             examples: [
-                '(even? 0)',
-                '(even? -0.0)',
-                '(even? -1)',
-                '(even? 2.1)',
+                'even?(0)',
+                'even?(-0.0)',
+                'even?(-1)',
+                'even?(2.1)',
             ],
+            algebraic: true,
         },
         'odd?': {
             title: 'odd?',
@@ -12446,11 +12464,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is odd, otherwise `false`.',
             examples: [
-                '(odd? 1.0)',
-                '(odd? 1.001)',
-                '(odd? -1)',
-                '(odd? 2.1)',
+                'odd?(1.0)',
+                'odd?(1.001)',
+                'odd?(-1)',
+                'odd?(2.1)',
             ],
+            algebraic: true,
         },
         'finite?': {
             title: 'finite?',
@@ -12470,11 +12489,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is finite, otherwise `false`.',
             examples: [
-                '(finite? 1.0)',
-                '(finite? (/ 1 0))',
-                '(finite? (/ -1 0))',
-                '(finite? (sqrt -1))',
+                'finite?(1.0)',
+                'finite?(1 / 0)',
+                'finite?(-1 / 0)',
+                'finite?(sqrt(-1))',
             ],
+            algebraic: true,
         },
         'nan?': {
             title: 'nan?',
@@ -12494,11 +12514,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is NaN (! a number), otherwise `false`.',
             examples: [
-                '(nan? 1.0)',
-                '(nan? (/ 1 0))',
-                '(nan? (/ -1 0))',
-                '(nan? (sqrt -1))',
+                'nan?(1.0)',
+                'nan?(1 / 0)',
+                'nan?(-1 / 0)',
+                'nan?(sqrt(-1))',
             ],
+            algebraic: true,
         },
         'negative-infinity?': {
             title: 'negative-infinity?',
@@ -12518,11 +12539,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x equals negative infinity, otherwise `false`.',
             examples: [
-                '(negative-infinity? 1.0)',
-                '(negative-infinity? (/ 1 0))',
-                '(negative-infinity? (/ -1 0))',
-                '(negative-infinity? (sqrt -1))',
+                'negative-infinity?(1.0)',
+                'negative-infinity?(1 / 0)',
+                'negative-infinity?(-1 / 0)',
+                'negative-infinity?(sqrt(-1))',
             ],
+            algebraic: true,
         },
         'positive-infinity?': {
             title: 'positive-infinity?',
@@ -12542,11 +12564,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x equals positive infinity, otherwise `false`.',
             examples: [
-                '(positive-infinity? 1.0)',
-                '(positive-infinity? (/ 1 0))',
-                '(positive-infinity? (/ -1 0))',
-                '(positive-infinity? (sqrt -1))',
+                'positive-infinity?(1.0)',
+                'positive-infinity?(1 / 0)',
+                'positive-infinity?(-1 / 0)',
+                'positive-infinity?(sqrt(-1))',
             ],
+            algebraic: true,
         },
         'false?': {
             title: 'false?',
@@ -12565,11 +12588,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is `true`, otherwise `false`.',
             examples: [
-                '(false? false)',
-                '(false? true)',
-                '(false? 1)',
-                '(false? 0)',
+                'false?(false)',
+                'false?(true)',
+                'false?(1)',
+                'false?(0)',
             ],
+            algebraic: true,
         },
         'true?': {
             title: 'true?',
@@ -12588,11 +12612,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is `true`, otherwise `false`.',
             examples: [
-                '(true? false)',
-                '(true? true)',
-                '(true? 1)',
-                '(true? 0)',
+                'true?(false)',
+                'true?(true)',
+                'true?(1)',
+                'true?(0)',
             ],
+            algebraic: true,
         },
         'empty?': {
             title: 'empty?',
@@ -12611,14 +12636,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $x is empty or `null`, otherwise `false`.',
             examples: [
-                '(empty? [])',
-                '(empty? [1 2 3])',
-                '(empty? {})',
-                '(empty? {:a 2})',
-                '(empty? "")',
-                '(empty? "Albert")',
-                '(empty? null)',
+                'empty?([])',
+                'empty?([1, 2, 3])',
+                'empty?({})',
+                'empty?({ a := 2 })',
+                'empty?("")',
+                'empty?("Albert")',
+                'empty?(null)',
             ],
+            algebraic: true,
         },
         'not-empty?': {
             title: 'not-empty?',
@@ -12638,14 +12664,15 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `false` if $x is empty or `null`, otherwise `true`.',
             examples: [
-                '(not-empty? [])',
-                '(not-empty? [1 2 3])',
-                '(not-empty? {})',
-                '(not-empty? {:a 2})',
-                '(not-empty? "")',
-                '(not-empty? "Albert")',
-                '(not-empty? null)',
+                'not-empty?([])',
+                'not-empty?([1, 2, 3])',
+                'not-empty?({})',
+                'not-empty?({ a := 2 })',
+                'not-empty?("")',
+                'not-empty?("Albert")',
+                'not-empty?(null)',
             ],
+            algebraic: true,
         },
     };
 

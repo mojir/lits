@@ -150,6 +150,7 @@ get(
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs(['collection', 'null'], ['string', 'integer']),
       coll: {
         type: ['collection', 'null'],
       },
@@ -162,27 +163,36 @@ get(
     ],
     description: 'Returns `true` if $coll contains $key, otherwise returns `false`. For strings, it checks if substring is included.',
     examples: [
+      '[1, 2, 3] contains? 1',
+      'null contains? 1',
+      '{ a := 1, b := 2 } contains? "a"',
       `
-(contains?
+contains?(
   [],
-  1)`,
+  1
+)`,
       `
-(contains?
+contains?(
   [1],
-  1)`,
+  1
+)`,
       `
-(contains?
+contains?(
   [1, 2, 3],
-  1)`,
+  1
+)`,
       `
-(contains?
-  {}
-  :a)`,
+contains?(
+  {},
+  "a"
+)`,
       `
-(contains?
-  {:a 1 :b 2}
-  :a)`,
+contains?(
+  { a := 1, b := 2 },
+  "a"
+)`,
     ],
+    algebraic: true,
   },
   'assoc': {
     title: 'assoc',
@@ -216,31 +226,34 @@ Add or replace the value of element $key to $value in $coll. Repeated for all ke
 If $coll is an \'array\', $key must be \`number\` satisfying \`0 <=\` $key \`<= length\`.`,
     examples: [
       `
-(assoc
-  [1, 2, 3]
-  1
-  "Two")`,
+assoc(
+  [1, 2, 3],
+  1,
+  "Two"
+)`,
       `
-(assoc
-  [1, 2, 3]
-  3
-  "Four")`,
+assoc(
+  [1, 2, 3],
+  3,
+  "Four"
+)`,
       `
-(assoc
-  {:a 1 :b 2}
-  :a
+assoc(
+  { a := 1, b := 2 },
+  "a",
   "One")`,
       `
-(assoc
-  {:a 1 :b 2}
-  :c
+assoc(
+  { a := 1, b := 2 },
+  "c",
   "Three")`,
       `
-(assoc
-  :Albert
-  6
-  :a)`,
+assoc(
+  "Albert",
+  6,
+  "a")`,
     ],
+    algebraic: true,
   },
   'assoc-in': {
     title: 'assoc-in',
@@ -270,21 +283,25 @@ Associates a value in the nested collection $coll, where $keys is an array of ke
 If any levels do not exist, objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `
-(assoc-in
-  {}
-  [:a :b :c]
-  "Albert")`,
+assoc-in(
+  {},
+  ["a", "b", "c"],
+  "Albert"
+)`,
       `
-(assoc-in
-  [1, 2 [1, 2, 3]]
-  [2 1]
-  "Albert")`,
+assoc-in(
+  [1, 2, [1, 2, 3]],
+  [2, 1],
+  "Albert"
+)`,
       `
-(assoc-in
-  [1, 2 {"name" "albert"}]
-  [2 "name" 0]
-  :A)`,
+assoc-in(
+  [1, 2, { name := "albert" }],
+  [2, "name", 0],
+  "A"
+)`,
     ],
+    algebraic: true,
   },
   'concat': {
     title: 'concat',
@@ -294,6 +311,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
       type: 'collection',
     },
     args: {
+      ...getOperatorArgs('collection', 'collection'),
       coll: {
         type: 'collection',
       },
@@ -308,15 +326,18 @@ If any levels do not exist, objects will be created - and the corresponding keys
     ],
     description: 'Concatenates collections into one collection.',
     examples: [
-      '(concat :A :l :b :e :r :t)',
-      '(concat [1, 2] [3 4])',
-      '(concat [] [3 4])',
-      '(concat [1, 2] [])',
-      '(concat [1, 2] [3 4] [5 6])',
-      '(concat [])',
-      '(concat {:a 1 :b 2} {:b 1 :c 2})',
-      '(concat {} {:a 1})',
+      '"Hi " concat "Albert"',
+      '[1, 2] concat [3, 4]',
+      'concat("A", "l", "b", "e", "r", "t")',
+      'concat([1, 2], [3, 4])',
+      'concat([], [3, 4])',
+      'concat([1, 2], [])',
+      'concat([1, 2], [3, 4], [5, 6])',
+      'concat([])',
+      'concat({ a := 1, b := 2 }, { b := 1, c := 2 })',
+      'concat({}, { a := 1 })',
     ],
+    algebraic: true,
   },
   'not-empty': {
     title: 'not-empty',
@@ -335,14 +356,15 @@ If any levels do not exist, objects will be created - and the corresponding keys
     ],
     description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
     examples: [
-      '(not-empty [])',
-      '(not-empty [1, 2, 3])',
-      '(not-empty {})',
-      '(not-empty {:a 2})',
-      '(not-empty "")',
-      '(not-empty "Albert")',
-      '(not-empty null)',
+      'not-empty([])',
+      'not-empty([1, 2, 3])',
+      'not-empty({})',
+      'not-empty({ a := 2 })',
+      'not-empty("")',
+      'not-empty("Albert")',
+      'not-empty(null)',
     ],
+    algebraic: true,
   },
   'every?': {
     title: 'every?',
@@ -352,6 +374,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('collection', 'function'),
       coll: {
         type: 'collection',
       },
@@ -364,35 +387,45 @@ If any levels do not exist, objects will be created - and the corresponding keys
     ],
     description: 'Returns `true` if all entries in $coll pass the test implemented by $fn, otherwise returns `false`.',
     examples: [
+      '[1, 2, 3] every? number?',
+      '[1, 2, 3] every? even?',
       `
-(every?
-["Albert" "Mojir" 160 [1, 2]]
-  string?)`,
+every?(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?,
+)`,
       `
-(every?
-[50 100 150 200]
-  (fn [x] (> x 10)))`,
+every?(
+  [50, 100, 150, 200],
+  -> $ > 10,
+)`,
       `
-(every?
-  []
-  number?)`,
+every?(
+  [],
+  number?
+)`,
       `
-(every?
-  ""
-  number?)`,
+every?(
+  "",
+  number?
+)`,
       `
-(every?
-  {}
-  number?)`,
+every?(
+  {},
+  number?
+)`,
       `
-(every?
-  {:a 2 :b 4}
-  #(even? (second %)))`,
+every?(
+  { a := 2, b := 4},
+  -> even?(second($))
+)`,
       `
-(every?
-  {:a 2 :b 3}
-  #(even? (second %)))`,
+every?(
+  { a := 2, b := 3 },
+  -> even?(second($))
+)`,
     ],
+    algebraic: true,
   },
   'not-every?': {
     title: 'not-every?',
@@ -402,6 +435,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('collection', 'function'),
       coll: {
         type: 'collection',
       },
@@ -415,34 +449,42 @@ If any levels do not exist, objects will be created - and the corresponding keys
     description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
     examples: [
       `
-(not-every?
-  ["Albert" "Mojir" 160 [1, 2]]
-  string?)`,
+not-every?(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
       `
-(not-every?
-  [50 100 150 200]
-  (fn [x] (> x 10)))`,
+not-every?(
+  [50, 100, 150, 200],
+  x -> x > 10
+)`,
       `
-(not-every?
-  []
-  number?)`,
+not-every?(
+  [],
+  number?
+)`,
       `
-(not-every?
-  ""
-  number?)`,
+not-every?(
+  "",
+  number?
+)`,
       `
-(not-every?
-  {}
-  number?)`,
+not-every?(
+  {},
+  number?
+)`,
       `
-(not-every?
-  {:a 2 :b 4}
-  #(even? (second %)))`,
+not-every?(
+  { a := 2, b := 4 },
+  -> even?(second($))
+)`,
       `
-(not-every?
-  {:a 2 :b 3}
-  #(even? (second %)))`,
+not-every?(
+  { a := 2, b := 3 },
+  -> even?(second($))
+)`,
     ],
+    algebraic: true,
   },
   'any?': {
     title: 'any?',
@@ -452,6 +494,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('collection', 'function'),
       coll: {
         type: 'collection',
       },
@@ -465,34 +508,42 @@ If any levels do not exist, objects will be created - and the corresponding keys
     description: 'Returns `true` if any element in $coll pass the test implemented by $fn, otherwise returns `false`.',
     examples: [
       `
-(any?
-  ["Albert" "Mojir" 160 [1, 2]]
-  string?)`,
+any?(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
       `
-(any?
-  [50 100 150 200]
-  (fn [x] (> x 10)))`,
+any?(
+  [50, 100, 150, 200],
+  x -> x > 10
+)`,
       `
-(any?
-  []
-  number?)`,
+any?(
+  [],
+  number?
+)`,
       `
-(any?
-  ""
-  number?)`,
+any?(
+  "",
+  number?
+)`,
       `
-(any?
-  {}
-  number?)`,
+any?(
+  {},
+  number?
+)`,
       `
-(any?
-  {:a 2 :b 3}
-  #(even? (second %)))`,
+any?(
+  { a := 2, b := 3 },
+  -> even?(second($))
+)`,
       `
-(any?
-  {:a 1 :b 3}
-  #(even? (second %)))`,
+any?(
+  { a := 1, b := 3 },
+  -> even?(second($))
+)`,
     ],
+    algebraic: true,
   },
   'not-any?': {
     title: 'not-any?',
@@ -502,6 +553,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('collection', 'function'),
       coll: {
         type: 'collection',
       },
@@ -515,34 +567,42 @@ If any levels do not exist, objects will be created - and the corresponding keys
     description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
     examples: [
       `
-(not-any?
-  ["Albert" "Mojir" 160 [1, 2]]
-  string?)`,
+not-any?(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
       `
-(not-any?
-  [50 100 150 200]
-  (fn [x] (> x 10)))`,
+not-any?(
+  [50, 100, 150, 200],
+  x -> x > 10
+)`,
       `
-(not-any?
-  []
-  number?)`,
+not-any?(
+  [],
+  number?
+)`,
       `
-(not-any?
-  ""
-  number?)`,
+not-any?(
+  "",
+  number?
+)`,
       `
-(not-any?
-  {}
-  number?)`,
+not-any?(
+  {},
+  number?
+)`,
       `
-(not-any?
-  {:a 2 :b 3}
-  #(even? (second %)))`,
+not-any?(
+  { a := 2, b := 3 },
+  -> even?(second($))
+)`,
       `
-(not-any?
-  {:a 1 :b 3}
-  #(even? (second %)))`,
+not-any?(
+  { a := 1, b := 3 },
+  -> even?(second($))
+)`,
     ],
+    algebraic: true,
   },
   'update': {
     title: 'update',
@@ -577,16 +637,17 @@ return the new value.
 If the key does not exist, \`null\` is passed as the old value.`,
     examples: [
       `
-(def x {:a 1 :b 2})
-(update x :a inc)`,
+let x := { a := 1, b := 2 };
+update(x, "a", inc)`,
       `
-(def x {:a 1 :b 2})
-(update
-  x
-  :c
-  (fn [val]
-    (if (null? val) 0 (inc val))))`,
+let x := { a := 1, b := 2 };
+update(
+  x,
+  "c",
+  val -> if null?(val) then 0 else inc(val) end
+)`,
     ],
+    algebraic: true,
   },
   'update-in': {
     title: 'update-in',
@@ -620,31 +681,33 @@ any supplied $fn-args and return the new value. If any levels do not exist,
 objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `
-(update-in
-  {:a [1, 2, 3]}
-  [:a 1]
-  (fn [val]
-    (when (null? val) 0)))`,
+update-in(
+  { a := [1, 2, 3] },
+  ["a", 1],
+  -> if null?($) then 0 end
+)`,
       `
-(update-in
-  {:a {:foo :bar}}
-  [:a :foo]
-  (fn [val]
-    (if (null? val) "?" "!")))`,
+update-in(
+  { a := { foo := "bar"} },
+  ["a", "foo"],
+  -> if null?($) then "?" else "!" end
+)`,
       `
-(update-in
-  {:a {:foo :bar}}
-  [:a :baz]
-  (fn [val]
-    (if (null? val) "?" "!")))`,
+update-in(
+  { a := { foo := "bar"} },
+  ["a", "baz"],
+  -> if null?($) then "?" else "!" end
+)`,
       `
-(update-in
-  {:a [1, 2, 3]}
-  [:a 1]
-  *
-  10
-  10
-  10)`,
+update-in(
+  { a := [1, 2, 3] },
+  ["a", 1],
+  *,
+  10,
+  10,
+  10,
+)`,
     ],
+    algebraic: true,
   },
 }

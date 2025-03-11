@@ -96,7 +96,7 @@ function assertCount({ count, length, name, sourceCodeInfo }: { name: string | u
 
 export function canBeOperator(count: Count): boolean {
   if (typeof count === 'number') {
-    return count >= 2
+    return count === 2
   }
 
   if (count.odd) {
@@ -104,6 +104,10 @@ export function canBeOperator(count: Count): boolean {
   }
 
   if (typeof count.max === 'number' && count.max < 2) {
+    return false
+  }
+
+  if (typeof count.min === 'number' && count.min > 2) {
     return false
   }
 
