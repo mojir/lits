@@ -9319,20 +9319,18 @@ var Playground = (function (exports) {
             returns: {
                 type: 'collection',
             },
-            args: {
-                fn: {
-                    type: 'function',
-                },
-                colls: {
+            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { colls: {
                     type: 'collection',
                     array: true,
-                },
-            },
+                }, fn: {
+                    type: 'function',
+                } }),
             variants: [{
                     argumentNames: ['colls', 'fn'],
                 }],
             description: 'Returns the result of applying concat to the result of applying map to $fn and $colls.',
             examples: [
+                '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
                 'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
                 '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
                 "\nfunction foo(n)\n  [n - 1, n, n + 1]\nend;\n[1, 2, 3] mapcat foo",
@@ -9390,6 +9388,7 @@ var Playground = (function (exports) {
                 'try assert!=(0, 1) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert=': {
             title: 'assert=',
@@ -9413,6 +9412,7 @@ var Playground = (function (exports) {
                 'try assert=({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-gt': {
             title: 'assert-gt',
@@ -9436,6 +9436,7 @@ var Playground = (function (exports) {
                 'try assert-gt(1, 0) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-lt': {
             title: 'assert-lt',
@@ -9459,6 +9460,7 @@ var Playground = (function (exports) {
                 'try assert-lte(0, 1) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-gte': {
             title: 'assert-gte',
@@ -9482,6 +9484,7 @@ var Playground = (function (exports) {
                 'try assert-gte(1, 1) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-lte': {
             title: 'assert-lte',
@@ -9505,6 +9508,7 @@ var Playground = (function (exports) {
                 'try assert-lte(1, 1) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-true': {
             title: 'assert-true',
@@ -9533,6 +9537,7 @@ var Playground = (function (exports) {
                 'try assert-true(true) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-false': {
             title: 'assert-false',
@@ -9561,6 +9566,7 @@ var Playground = (function (exports) {
                 'try assert-false(false) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-truthy': {
             title: 'assert-truthy',
@@ -9596,6 +9602,7 @@ var Playground = (function (exports) {
                 'try assert-truthy({}) catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-falsy': {
             title: 'assert-falsy',
@@ -9630,6 +9637,7 @@ var Playground = (function (exports) {
                 'try assert-falsy("") catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-null': {
             title: 'assert-null',
@@ -9664,6 +9672,7 @@ var Playground = (function (exports) {
                 'try assert-null("") catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-throws': {
             title: 'assert-throws',
@@ -9686,7 +9695,12 @@ var Playground = (function (exports) {
                 { argumentNames: ['fn', 'message'] },
             ],
             description: 'If $fn does not throw, it throws `AssertionError`.',
-            examples: ['assert-throws(-> throw("Error"))', 'assert-throws(-> identity("Error"))'],
+            examples: [
+                'assert-throws(-> throw("Error"))',
+                'try assert-throws(-> identity("Error")) catch (e) e.message end',
+            ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-throws-error': {
             title: 'assert-throws-error',
@@ -9717,6 +9731,7 @@ var Playground = (function (exports) {
                 'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'assert-not-throws': {
             title: 'assert-not-throws',
@@ -9743,6 +9758,8 @@ var Playground = (function (exports) {
                 'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
                 'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
             ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
     };
 
@@ -10026,7 +10043,7 @@ var Playground = (function (exports) {
             },
             args: {
                 coll: {
-                    type: ['collection', 'string', 'null'],
+                    type: ['collection', 'null'],
                 },
             },
             variants: [
@@ -10034,13 +10051,14 @@ var Playground = (function (exports) {
             ],
             description: 'Returns number of elements in $coll.',
             examples: [
-                '(count [1 2 3])',
-                '(count [])',
-                '(count (object :a 1))',
-                '(count "")',
-                '(count "Albert")',
-                '(count null)',
+                'count([1, 2, 3])',
+                'count([])',
+                'count({ a := 1 })',
+                'count("")',
+                'count("Albert")',
+                'count(null)',
             ],
+            algebraic: true,
         },
         'get': {
             title: 'get',
@@ -10049,33 +10067,33 @@ var Playground = (function (exports) {
             returns: {
                 type: 'any',
             },
-            args: {
-                'coll': {
+            args: __assign(__assign({}, getOperatorArgs('collection', ['string', 'integer'])), { 'coll': {
                     type: 'collection',
-                },
-                'key': {
+                }, 'key': {
                     type: ['string', 'integer'],
-                },
-                'not-found': {
+                }, 'not-found': {
                     type: 'any',
                     description: 'Default value to return if $key is not found.',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['coll', 'key'] },
                 { argumentNames: ['coll', 'key', 'not-found'] },
             ],
             description: 'Returns value in $coll mapped at \`key\`.',
             examples: [
-                "\n(get\n  [1 2 3]\n  1)",
-                "\n(get\n  []\n  1)",
-                "\n(get\n  []\n  1\n  \"default\")",
-                "\n(get\n  (object :a 1)\n  :a)",
-                "\n(get\n  (object :a 1)\n  :b)",
-                "\n(get\n  (object :a 1)\n  :b\n  \"default\")",
-                "\n(get\n  null\n  :a)",
-                "\n(get\n  null\n  :b\n  \"default\")",
+                '[1, 2, 3] get 1',
+                '{ a := 1 } get "a"',
+                '"Albert" get "3"',
+                "\nget(\n  [1, 2, 3],\n  1, // Optional comma after last argument\n)",
+                "\nget(\n  [],\n  1\n)",
+                "\nget(\n  [],\n  1,\n  \"default\"\n)",
+                "\nget(\n  { a := 1 },\n  \"a\"\n)",
+                "\nget(\n  { a := 1 },\n  \"b\"\n)",
+                "\nget(\n  { a := 1 },\n  \"b\",\n  \"default\"\n)",
+                "\nget(\n  null,\n  \"a\"\n)",
+                "\nget(\n  null,\n  \"b\",\n  \"default\"\n)",
             ],
+            algebraic: true,
         },
         'get-in': {
             title: 'get-in',
@@ -10101,9 +10119,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the value in a nested collection, where $keys is an array of keys. Returns $not-found if the key is not present. If $not-found is not set, `null` is returned.',
             examples: [
-                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :a 0])",
-                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0])",
-                "\n(get-in\n  [[1 2 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0]\n  \"Lisa\")",
+                "\n(get-in\n  [[1, 2, 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :a 0])",
+                "\n(get-in\n  [[1, 2, 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0])",
+                "\n(get-in\n  [[1, 2, 3] [4 {:a \"Kalle\"} 6]]\n  [1 1 :b 0]\n  \"Lisa\")",
             ],
         },
         'contains?': {
@@ -10126,9 +10144,9 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if $coll contains $key, otherwise returns `false`. For strings, it checks if substring is included.',
             examples: [
-                "\n(contains?\n  []\n  1)",
-                "\n(contains?\n  [1]\n  1)",
-                "\n(contains?\n  [1 2 3]\n  1)",
+                "\n(contains?\n  [],\n  1)",
+                "\n(contains?\n  [1],\n  1)",
+                "\n(contains?\n  [1, 2, 3],\n  1)",
                 "\n(contains?\n  {}\n  :a)",
                 "\n(contains?\n  {:a 1 :b 2}\n  :a)",
             ],
@@ -10162,8 +10180,8 @@ var Playground = (function (exports) {
             ],
             description: "\nAdd or replace the value of element $key to $value in $coll. Repeated for all key-value pairs in $kvs.  \nIf $coll is an 'array', $key must be `number` satisfying `0 <=` $key `<= length`.",
             examples: [
-                "\n(assoc\n  [1 2 3]\n  1\n  \"Two\")",
-                "\n(assoc\n  [1 2 3]\n  3\n  \"Four\")",
+                "\n(assoc\n  [1, 2, 3]\n  1\n  \"Two\")",
+                "\n(assoc\n  [1, 2, 3]\n  3\n  \"Four\")",
                 "\n(assoc\n  {:a 1 :b 2}\n  :a\n  \"One\")",
                 "\n(assoc\n  {:a 1 :b 2}\n  :c\n  \"Three\")",
                 "\n(assoc\n  :Albert\n  6\n  :a)",
@@ -10194,8 +10212,8 @@ var Playground = (function (exports) {
             description: "\nAssociates a value in the nested collection $coll, where $keys is an array of keys and $value is the new value.\n\nIf any levels do not exist, objects will be created - and the corresponding keys must be of type string.",
             examples: [
                 "\n(assoc-in\n  {}\n  [:a :b :c]\n  \"Albert\")",
-                "\n(assoc-in\n  [1 2 [1 2 3]]\n  [2 1]\n  \"Albert\")",
-                "\n(assoc-in\n  [1 2 {\"name\" \"albert\"}]\n  [2 \"name\" 0]\n  :A)",
+                "\n(assoc-in\n  [1, 2 [1, 2, 3]]\n  [2 1]\n  \"Albert\")",
+                "\n(assoc-in\n  [1, 2 {\"name\" \"albert\"}]\n  [2 \"name\" 0]\n  :A)",
             ],
         },
         'concat': {
@@ -10221,10 +10239,10 @@ var Playground = (function (exports) {
             description: 'Concatenates collections into one collection.',
             examples: [
                 '(concat :A :l :b :e :r :t)',
-                '(concat [1 2] [3 4])',
+                '(concat [1, 2] [3 4])',
                 '(concat [] [3 4])',
-                '(concat [1 2] [])',
-                '(concat [1 2] [3 4] [5 6])',
+                '(concat [1, 2] [])',
+                '(concat [1, 2] [3 4] [5 6])',
                 '(concat [])',
                 '(concat {:a 1 :b 2} {:b 1 :c 2})',
                 '(concat {} {:a 1})',
@@ -10248,7 +10266,7 @@ var Playground = (function (exports) {
             description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
             examples: [
                 '(not-empty [])',
-                '(not-empty [1 2 3])',
+                '(not-empty [1, 2, 3])',
                 '(not-empty {})',
                 '(not-empty {:a 2})',
                 '(not-empty "")',
@@ -10276,7 +10294,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if all entries in $coll pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(every?\n[\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(every?\n[\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
                 "\n(every?\n[50 100 150 200]\n  (fn [x] (> x 10)))",
                 "\n(every?\n  []\n  number?)",
                 "\n(every?\n  \"\"\n  number?)",
@@ -10305,7 +10323,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(not-every?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(not-every?\n  [\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
                 "\n(not-every?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
                 "\n(not-every?\n  []\n  number?)",
                 "\n(not-every?\n  \"\"\n  number?)",
@@ -10334,7 +10352,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `true` if any element in $coll pass the test implemented by $fn, otherwise returns `false`.',
             examples: [
-                "\n(any?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(any?\n  [\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
                 "\n(any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
                 "\n(any?\n  []\n  number?)",
                 "\n(any?\n  \"\"\n  number?)",
@@ -10363,7 +10381,7 @@ var Playground = (function (exports) {
             ],
             description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
             examples: [
-                "\n(not-any?\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
+                "\n(not-any?\n  [\"Albert\" \"Mojir\" 160 [1, 2]]\n  string?)",
                 "\n(not-any?\n  [50 100 150 200]\n  (fn [x] (> x 10)))",
                 "\n(not-any?\n  []\n  number?)",
                 "\n(not-any?\n  \"\"\n  number?)",
@@ -10432,10 +10450,10 @@ var Playground = (function (exports) {
             ],
             description: "Updates a value in the $coll collection, where $keys is an array of\nkeys and $fn is a function that will take the old value and\nany supplied $fn-args and return the new value. If any levels do not exist,\nobjects will be created - and the corresponding keys must be of type string.",
             examples: [
-                "\n(update-in\n  {:a [1 2 3]}\n  [:a 1]\n  (fn [val]\n    (when (null? val) 0)))",
+                "\n(update-in\n  {:a [1, 2, 3]}\n  [:a 1]\n  (fn [val]\n    (when (null? val) 0)))",
                 "\n(update-in\n  {:a {:foo :bar}}\n  [:a :foo]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
                 "\n(update-in\n  {:a {:foo :bar}}\n  [:a :baz]\n  (fn [val]\n    (if (null? val) \"?\" \"!\")))",
-                "\n(update-in\n  {:a [1 2 3]}\n  [:a 1]\n  *\n  10\n  10\n  10)",
+                "\n(update-in\n  {:a [1, 2, 3]}\n  [:a 1]\n  *\n  10\n  10\n  10)",
             ],
         },
     };
@@ -10941,6 +10959,7 @@ var Playground = (function (exports) {
                 '1.123456789 round 2',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'trunc': {
             title: 'trunc',
@@ -11009,17 +11028,21 @@ var Playground = (function (exports) {
             returns: {
                 type: 'number',
             },
-            args: {
-                xs: {
+            args: __assign(__assign({}, getOperatorArgs('number', 'number')), { xs: {
                     type: 'number',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['xs'] },
             ],
             description: 'Returns the smallest number of the arguments.',
-            examples: ['min(2, 0, 1)', 'min(2, -1, 1)', 'min(2.5)', '12 min 14'],
+            examples: [
+                '2 min 3',
+                'min(2, 0, 1)',
+                'min(2, -1, 1)',
+                'min(2.5)',
+                '12 min 14',
+            ],
             algebraic: true,
         },
         'max': {
@@ -11029,17 +11052,21 @@ var Playground = (function (exports) {
             returns: {
                 type: 'number',
             },
-            args: {
-                xs: {
+            args: __assign(__assign({}, getOperatorArgs('number', 'number')), { xs: {
                     type: 'number',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['xs'] },
             ],
             description: 'Returns the largest number of the arguments.',
-            examples: ['max(2, 0, 1)', 'max(2, -1, 1)', 'max(2, 0.5)', '4 max 2'],
+            examples: [
+                ' 2 max 3',
+                'max(2, 0, 1)',
+                'max(2, -1, 1)',
+                'max(2, 0.5)',
+                '4 max 2',
+            ],
             algebraic: true,
         },
         'abs': {
@@ -11413,20 +11440,26 @@ var Playground = (function (exports) {
             aliases: ['!='],
             algebraic: true,
         },
-        '=': __assign(__assign({}, getOperatorArgs('any', 'any')), { title: '=', category: 'Misc', linkName: '-equal', clojureDocs: '=', returns: {
+        '=': {
+            title: '=',
+            category: 'Misc',
+            linkName: '-equal',
+            clojureDocs: '=',
+            returns: {
                 type: 'boolean',
-            }, args: {
-                x: {
+            },
+            args: __assign(__assign({}, getOperatorArgs('any', 'any')), { x: {
                     type: 'any',
-                },
-                ys: {
+                }, ys: {
                     type: 'any',
                     rest: true,
-                },
-            }, variants: [
+                } }),
+            variants: [
                 { argumentNames: ['x'] },
                 { argumentNames: ['x', 'ys'] },
-            ], description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.', examples: [
+            ],
+            description: 'Returns `true` if all `values` are structaul equal to each other, otherwise result is `false`.',
+            examples: [
                 '1 = 1',
                 '[1, 2] = [1, 2]',
                 "\n{\n a := 1,\n b := 2,\n} = {\n b := 2,\n a := 1,\n}",
@@ -11437,7 +11470,9 @@ var Playground = (function (exports) {
                 '=(2, 2, 1, 2)',
                 '=([1, 2], [1, 2])',
                 '=({ a := 1, b := 2 }, { b := 2, a := 1 })',
-            ], algebraic: true }),
+            ],
+            algebraic: true,
+        },
         '<': {
             title: '<',
             category: 'Misc',
@@ -11606,6 +11641,7 @@ var Playground = (function (exports) {
                 'write!(null, true, false)',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
         'iso-date->epoch': {
             title: 'iso-date->epoch',
@@ -11764,6 +11800,7 @@ var Playground = (function (exports) {
                 'json-stringify({ a := { b := 10 }}, 2)',
             ],
             algebraic: true,
+            noOperatorDocumentation: true,
         },
     };
 

@@ -1,5 +1,5 @@
-import type { SpecialExpressionsApiName } from '../api.ts'
-import type { FunctionReference } from '../index.ts'
+import type { SpecialExpressionsApiName } from '../api'
+import type { FunctionReference } from '..'
 
 export const specialExpressionsReference: Record<SpecialExpressionsApiName, FunctionReference<'Special expression'>> = {
   '&&': {

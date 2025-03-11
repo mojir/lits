@@ -145,12 +145,13 @@ flatten([
       type: 'collection',
     },
     args: {
-      fn: {
-        type: 'function',
-      },
+      ...getOperatorArgs('collection', 'function'),
       colls: {
         type: 'collection',
         array: true,
+      },
+      fn: {
+        type: 'function',
       },
     },
     variants: [{
@@ -158,6 +159,7 @@ flatten([
     }],
     description: 'Returns the result of applying concat to the result of applying map to $fn and $colls.',
     examples: [
+      '[[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]] mapcat reverse',
       'mapcat([[3, 2, 1, 0], [6, 5, 4], [9, 8, 7]], reverse)',
       '[[3, 2, 1, 0,], [6, 5, 4,], [9, 8, 7]] mapcat reverse',
       `

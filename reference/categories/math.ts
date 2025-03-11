@@ -268,6 +268,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       '1.123456789 round 2',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'trunc': {
     title: 'trunc',
@@ -337,6 +338,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       type: 'number',
     },
     args: {
+      ...getOperatorArgs('number', 'number'),
       xs: {
         type: 'number',
         rest: true,
@@ -346,7 +348,13 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['xs'] },
     ],
     description: 'Returns the smallest number of the arguments.',
-    examples: ['min(2, 0, 1)', 'min(2, -1, 1)', 'min(2.5)', '12 min 14'],
+    examples: [
+      '2 min 3',
+      'min(2, 0, 1)',
+      'min(2, -1, 1)',
+      'min(2.5)',
+      '12 min 14',
+    ],
     algebraic: true,
   },
   'max': {
@@ -357,6 +365,7 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       type: 'number',
     },
     args: {
+      ...getOperatorArgs('number', 'number'),
       xs: {
         type: 'number',
         rest: true,
@@ -366,7 +375,13 @@ export const mathReference: Record<MathApiName, FunctionReference<'Math'>> = {
       { argumentNames: ['xs'] },
     ],
     description: 'Returns the largest number of the arguments.',
-    examples: ['max(2, 0, 1)', 'max(2, -1, 1)', 'max(2, 0.5)', '4 max 2'],
+    examples: [
+      ' 2 max 3',
+      'max(2, 0, 1)',
+      'max(2, -1, 1)',
+      'max(2, 0.5)',
+      '4 max 2',
+    ],
     algebraic: true,
   },
   'abs': {

@@ -118,18 +118,17 @@ describe('apiReference', () => {
     })
   })
 
-  test.skip('operator functions', () => {
+  describe('operator functions', () => {
     Object.entries(normalExpressionReference)
+      .filter(([, value]) => value.algebraic)
       .forEach(([key, obj]) => {
-        const paramCount = normalExpressions[key]!.paramCount
-        if (canBeOperator(paramCount)) {
-          expect(obj.args.a, `${key} is missing "a" arg`).toBeDefined()
-          expect(obj.args.b, `${key} is missing "b" arg`).toBeDefined()
-        }
-        else {
-          expect(obj.args.a, `${key} has "a" arg`).toBeUndefined()
-          expect(obj.args.b, `${key} has "b" arg`).toBeUndefined()
-        }
+        test(key, () => {
+          const paramCount = normalExpressions[key]!.paramCount
+          if (canBeOperator(paramCount) && !obj.noOperatorDocumentation) {
+            expect(obj.args.a, `${obj.category} - ${key} is missing "a" arg`).toBeDefined()
+            expect(obj.args.b, `${obj.category} - ${key} is missing "b" arg`).toBeDefined()
+          }
+        })
       })
   })
 })

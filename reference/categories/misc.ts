@@ -37,7 +37,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
     algebraic: true,
   },
   '=': {
-    ...getOperatorArgs('any', 'any'),
     title: '=',
     category: 'Misc',
     linkName: '-equal',
@@ -46,6 +45,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('any', 'any'),
       x: {
         type: 'any',
       },
@@ -264,6 +264,7 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'write!(null, true, false)',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'iso-date->epoch': {
     title: 'iso-date->epoch',
@@ -426,5 +427,6 @@ export const miscReference: Record<MiscApiName, FunctionReference<'Misc'>> = {
       'json-stringify({ a := { b := 10 }}, 2)',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
 }

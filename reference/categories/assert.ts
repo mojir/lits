@@ -52,6 +52,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert!=(0, 1) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert=': {
     title: 'assert=',
@@ -78,6 +79,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert=({ "a" := 1 }, { "a" := 1 }) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-gt': {
     title: 'assert-gt',
@@ -104,6 +106,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-gt(1, 0) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-lt': {
     title: 'assert-lt',
@@ -130,6 +133,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-lte(0, 1) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-gte': {
     title: 'assert-gte',
@@ -156,6 +160,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-gte(1, 1) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-lte': {
     title: 'assert-lte',
@@ -182,6 +187,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-lte(1, 1) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-true': {
     title: 'assert-true',
@@ -210,6 +216,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-true(true) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-false': {
     title: 'assert-false',
@@ -238,6 +245,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-false(false) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-truthy': {
     title: 'assert-truthy',
@@ -273,6 +281,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-truthy({}) catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-falsy': {
     title: 'assert-falsy',
@@ -307,6 +316,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-falsy("") catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-null': {
     title: 'assert-null',
@@ -341,6 +351,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-null("") catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-throws': {
     title: 'assert-throws',
@@ -363,7 +374,12 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       { argumentNames: ['fn', 'message'] },
     ],
     description: 'If $fn does not throw, it throws `AssertionError`.',
-    examples: ['assert-throws(-> throw("Error"))', 'assert-throws(-> identity("Error"))'],
+    examples: [
+      'assert-throws(-> throw("Error"))',
+      'try assert-throws(-> identity("Error")) catch (e) e.message end',
+    ],
+    algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-throws-error': {
     title: 'assert-throws-error',
@@ -394,6 +410,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-throws-error(-> identity("Error"), "Error") catch (e) e.message end',
     ],
     algebraic: true,
+    noOperatorDocumentation: true,
   },
   'assert-not-throws': {
     title: 'assert-not-throws',
@@ -420,5 +437,7 @@ export const assertReference: Record<AssertApiName, FunctionReference<'Assert'>>
       'try assert-not-throws(-> identity("Error")) catch (e) e.message end',
       'try assert-not-throws(-> throw("Error")) catch (e) e.message end',
     ],
+    algebraic: true,
+    noOperatorDocumentation: true,
   },
 }

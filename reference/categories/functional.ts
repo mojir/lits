@@ -1,5 +1,5 @@
 import { type FunctionalApiName, getOperatorArgs } from '../api'
-import type { FunctionReference } from '../index.ts'
+import type { FunctionReference } from '..'
 
 export const functionalReference: Record<FunctionalApiName, FunctionReference<'Functional'>> = {
   'apply': {

@@ -1,5 +1,5 @@
-import type { CollectionApiName } from '../api.ts'
-import type { FunctionReference } from '../index.ts'
+import { type CollectionApiName, getOperatorArgs } from '../api'
+import type { FunctionReference } from '..'
 
 export const collectionReference: Record<CollectionApiName, FunctionReference<'Collection'>> = {
   'count': {
@@ -11,7 +11,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     },
     args: {
       coll: {
-        type: ['collection', 'string', 'null'],
+        type: ['collection', 'null'],
       },
     },
     variants: [
@@ -19,13 +19,14 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     ],
     description: 'Returns number of elements in $coll.',
     examples: [
-      '(count [1 2 3])',
-      '(count [])',
-      '(count (object :a 1))',
-      '(count "")',
-      '(count "Albert")',
-      '(count null)',
+      'count([1, 2, 3])',
+      'count([])',
+      'count({ a := 1 })',
+      'count("")',
+      'count("Albert")',
+      'count(null)',
     ],
+    algebraic: true,
   },
   'get': {
     title: 'get',
@@ -35,6 +36,7 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
       type: 'any',
     },
     args: {
+      ...getOperatorArgs('collection', ['string', 'integer']),
       'coll': {
         type: 'collection',
       },
@@ -52,42 +54,54 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     ],
     description: 'Returns value in $coll mapped at \`key\`.',
     examples: [
+      '[1, 2, 3] get 1',
+      '{ a := 1 } get "a"',
+      '"Albert" get "3"',
       `
-(get
-  [1 2 3]
-  1)`,
+get(
+  [1, 2, 3],
+  1, // Optional comma after last argument
+)`,
       `
-(get
-  []
-  1)`,
-      `
-(get
-  []
+get(
+  [],
   1
-  "default")`,
+)`,
       `
-(get
-  (object :a 1)
-  :a)`,
+get(
+  [],
+  1,
+  "default"
+)`,
       `
-(get
-  (object :a 1)
-  :b)`,
+get(
+  { a := 1 },
+  "a"
+)`,
       `
-(get
-  (object :a 1)
-  :b
-  "default")`,
+get(
+  { a := 1 },
+  "b"
+)`,
       `
-(get
-  null
-  :a)`,
+get(
+  { a := 1 },
+  "b",
+  "default"
+)`,
       `
-(get
-  null
-  :b
-  "default")`,
+get(
+  null,
+  "a"
+)`,
+      `
+get(
+  null,
+  "b",
+  "default"
+)`,
     ],
+    algebraic: true,
   },
   'get-in': {
     title: 'get-in',
@@ -115,15 +129,15 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     examples: [
       `
 (get-in
-  [[1 2 3] [4 {:a "Kalle"} 6]]
+  [[1, 2, 3] [4 {:a "Kalle"} 6]]
   [1 1 :a 0])`,
       `
 (get-in
-  [[1 2 3] [4 {:a "Kalle"} 6]]
+  [[1, 2, 3] [4 {:a "Kalle"} 6]]
   [1 1 :b 0])`,
       `
 (get-in
-  [[1 2 3] [4 {:a "Kalle"} 6]]
+  [[1, 2, 3] [4 {:a "Kalle"} 6]]
   [1 1 :b 0]
   "Lisa")`,
     ],
@@ -150,15 +164,15 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     examples: [
       `
 (contains?
-  []
+  [],
   1)`,
       `
 (contains?
-  [1]
+  [1],
   1)`,
       `
 (contains?
-  [1 2 3]
+  [1, 2, 3],
   1)`,
       `
 (contains?
@@ -203,12 +217,12 @@ If $coll is an \'array\', $key must be \`number\` satisfying \`0 <=\` $key \`<= 
     examples: [
       `
 (assoc
-  [1 2 3]
+  [1, 2, 3]
   1
   "Two")`,
       `
 (assoc
-  [1 2 3]
+  [1, 2, 3]
   3
   "Four")`,
       `
@@ -262,12 +276,12 @@ If any levels do not exist, objects will be created - and the corresponding keys
   "Albert")`,
       `
 (assoc-in
-  [1 2 [1 2 3]]
+  [1, 2 [1, 2, 3]]
   [2 1]
   "Albert")`,
       `
 (assoc-in
-  [1 2 {"name" "albert"}]
+  [1, 2 {"name" "albert"}]
   [2 "name" 0]
   :A)`,
     ],
@@ -295,10 +309,10 @@ If any levels do not exist, objects will be created - and the corresponding keys
     description: 'Concatenates collections into one collection.',
     examples: [
       '(concat :A :l :b :e :r :t)',
-      '(concat [1 2] [3 4])',
+      '(concat [1, 2] [3 4])',
       '(concat [] [3 4])',
-      '(concat [1 2] [])',
-      '(concat [1 2] [3 4] [5 6])',
+      '(concat [1, 2] [])',
+      '(concat [1, 2] [3 4] [5 6])',
       '(concat [])',
       '(concat {:a 1 :b 2} {:b 1 :c 2})',
       '(concat {} {:a 1})',
@@ -322,7 +336,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
     description: 'Returns `null` if $coll is empty or `null`, otherwise $coll.',
     examples: [
       '(not-empty [])',
-      '(not-empty [1 2 3])',
+      '(not-empty [1, 2, 3])',
       '(not-empty {})',
       '(not-empty {:a 2})',
       '(not-empty "")',
@@ -352,7 +366,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (every?
-["Albert" "Mojir" 160 [1 2]]
+["Albert" "Mojir" 160 [1, 2]]
   string?)`,
       `
 (every?
@@ -402,7 +416,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (not-every?
-  ["Albert" "Mojir" 160 [1 2]]
+  ["Albert" "Mojir" 160 [1, 2]]
   string?)`,
       `
 (not-every?
@@ -452,7 +466,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (any?
-  ["Albert" "Mojir" 160 [1 2]]
+  ["Albert" "Mojir" 160 [1, 2]]
   string?)`,
       `
 (any?
@@ -502,7 +516,7 @@ If any levels do not exist, objects will be created - and the corresponding keys
     examples: [
       `
 (not-any?
-  ["Albert" "Mojir" 160 [1 2]]
+  ["Albert" "Mojir" 160 [1, 2]]
   string?)`,
       `
 (not-any?
@@ -607,7 +621,7 @@ objects will be created - and the corresponding keys must be of type string.`,
     examples: [
       `
 (update-in
-  {:a [1 2 3]}
+  {:a [1, 2, 3]}
   [:a 1]
   (fn [val]
     (when (null? val) 0)))`,
@@ -625,7 +639,7 @@ objects will be created - and the corresponding keys must be of type string.`,
     (if (null? val) "?" "!")))`,
       `
 (update-in
-  {:a [1 2 3]}
+  {:a [1, 2, 3]}
   [:a 1]
   *
   10
