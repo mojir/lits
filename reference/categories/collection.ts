@@ -303,10 +303,10 @@ assoc-in(
     ],
     algebraic: true,
   },
-  'concat': {
-    title: 'concat',
+  '++': {
+    title: '++',
     category: 'Collection',
-    linkName: 'concat',
+    linkName: '-plus-plus',
     returns: {
       type: 'collection',
     },
@@ -326,8 +326,15 @@ assoc-in(
     ],
     description: 'Concatenates collections into one collection.',
     examples: [
+      '"Albert" ++ " " ++ "Mojir"',
+      '"Albert" ++ "Mojir"',
+
       '"Hi " concat "Albert"',
       '[1, 2] concat [3, 4]',
+
+      '++("Albert", "-", "Mojir")',
+      '++("Albert")',
+
       'concat("A", "l", "b", "e", "r", "t")',
       'concat([1, 2], [3, 4])',
       'concat([], [3, 4])',
@@ -338,6 +345,7 @@ assoc-in(
       'concat({}, { a := 1 })',
     ],
     algebraic: true,
+    aliases: ['concat'],
   },
   'not-empty': {
     title: 'not-empty',

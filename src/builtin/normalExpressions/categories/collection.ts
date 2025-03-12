@@ -11,7 +11,7 @@ import type { BuiltinNormalExpressions } from '../../interface'
 import { assertArray } from '../../../typeGuards/array'
 import { asAny, asColl, assertAny, assertColl, assertObj, isColl, isObj, isSeq } from '../../../typeGuards/lits'
 import { assertNumber, isNumber } from '../../../typeGuards/number'
-import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString } from '../../../typeGuards/string'
+import { asString, asStringOrNumber, assertString, assertStringOrNumber, isString, isStringOrNumber } from '../../../typeGuards/string'
 
 interface CollMeta {
   coll: Coll
@@ -304,18 +304,20 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: { min: 3 },
   },
-  'concat': {
+  '++': {
     evaluate: (params, sourceCodeInfo): Any => {
-      assertColl(params[0], sourceCodeInfo)
+      if (!isNumber(params[0])) {
+        assertColl(params[0], sourceCodeInfo)
+      }
       if (Array.isArray(params[0])) {
         return params.reduce((result: Arr, arr) => {
           assertArray(arr, sourceCodeInfo)
           return result.concat(arr)
         }, [])
       }
-      else if (isString(params[0])) {
+      else if (isStringOrNumber(params[0])) {
         return params.reduce((result: string, s) => {
-          assertString(s, sourceCodeInfo)
+          assertStringOrNumber(s, sourceCodeInfo)
           return `${result}${s}`
         }, '')
       }
@@ -327,6 +329,7 @@ export const collectionNormalExpression: BuiltinNormalExpressions = {
       }
     },
     paramCount: { min: 1 },
+    aliases: ['concat'],
   },
   'not-empty': {
     evaluate: ([coll], sourceCodeInfo): Coll | null => {

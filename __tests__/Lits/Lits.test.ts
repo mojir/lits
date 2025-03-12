@@ -294,23 +294,23 @@ describe('regressions', () => {
     const program = `(defn formatPhoneNumber [$data]
   (if (string? $data)
     (do
-      (let [phoneNumber (if (= "+" (nth $data 0)) (subs $data 2) $data)])
+      (let [phoneNumber (if (= "+" (nth $data 0)) (slice $data 2) $data)])
       (cond
         (> (count phoneNumber) 6)
           (astr
             "("
-            (subs phoneNumber 0 3)
+            (slice phoneNumber 0 3)
 
             ") "
-            (subs phoneNumber 3 6)
+            (slice phoneNumber 3 6)
             "-"
-            (subs phoneNumber 6))
+            (slice phoneNumber 6))
 
         (> (count phoneNumber) 3)
-          (str "(" (subs phoneNumber 0 3) ") " (subs phoneNumber 3))
+          (str "(" (slice phoneNumber 0 3) ") " (slice phoneNumber 3))
 
         (> (count phoneNumber) 0)
-          (str "(" (subs phoneNumber 0))
+          (str "(" (slice phoneNumber 0))
 
         true
           phoneNumber

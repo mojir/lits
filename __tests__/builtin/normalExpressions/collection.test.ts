@@ -207,6 +207,13 @@ describe('collection functions', () => {
 
   describe('concat', () => {
     it('samples', () => {
+      expect(lits.run('"Albert" ++ "Mojir"')).toBe('AlbertMojir')
+      expect(lits.run('"Albert" ++ " Mojir"')).toBe('Albert Mojir')
+      expect(lits.run('++("Albert", "Mojir", " ")')).toBe('AlbertMojir ')
+      expect(lits.run('++("Albert", " ", "Mojir", 1)')).toBe('Albert Mojir1')
+      expect(lits.run('++("Albert", "Mojir", " and ")')).toBe('AlbertMojir and ')
+      expect(lits.run('++("Albert")')).toBe('Albert')
+
       expect(lits.run('[1, 2] concat [3, 4]')).toEqual([1, 2, 3, 4])
       expect(lits.run('{ a := 1, b := 2 } concat { b := 20, c := 30 }')).toEqual({ a: 1, b: 20, c: 30 })
       expect(lits.run('"Al" concat "bert"')).toEqual('Albert')
@@ -222,11 +229,11 @@ describe('collection functions', () => {
       expect(lits.run('concat("1", "23")')).toBe('123')
       expect(lits.run('concat("1", "")')).toBe('1')
       expect(lits.run('concat("1")')).toBe('1')
+      expect(lits.run('concat(0)')).toBe('0')
 
       expect(() => lits.run('concat()')).toThrow()
       expect(() => lits.run('concat([1], "2")')).toThrow()
       expect(() => lits.run('concat("1", ["2"])')).toThrow()
-      expect(() => lits.run('concat(0)')).toThrow()
       expect(() => lits.run('concat(true)')).toThrow()
       expect(() => lits.run('concat("1", false)')).toThrow()
       expect(() => lits.run('concat(null, "m")')).toThrow()

@@ -27,7 +27,7 @@ describe('specialExpressions', () => {
     const litsNoDebug = new Lits({ polish: true })
     let failed = false
     try {
-      litsNoDebug.run('(throw (subs "An error" 3))')
+      litsNoDebug.run('(throw (slice "An error" 3))')
       failed = true
     }
     catch (error) {
@@ -39,12 +39,12 @@ describe('specialExpressions', () => {
     const litsDebug = new Lits({ debug: true, polish: true })
     try {
       failed = false
-      litsDebug.run('(throw (subs "An error" 3))')
+      litsDebug.run('(throw (slice "An error" 3))')
       failed = true
     }
     catch (error) {
       expect((error as UserDefinedError).message).toBe(
-        'error\n(throw (subs "An error" 3))\n^                          ',
+        'error\n(throw (slice "An error" 3))\n^                           ',
       )
     }
     if (failed)
@@ -470,7 +470,7 @@ describe('specialExpressions', () => {
   describe('throw', () => {
     it('samples', () => {
       expect(() => lits.run('(throw "An error")')).toThrowError(UserDefinedError)
-      expect(() => lits.run('(throw (subs "An error" 3))')).toThrowError(UserDefinedError)
+      expect(() => lits.run('(throw (slice "An error" 3))')).toThrowError(UserDefinedError)
       expect(() => lits.run('(throw "An error" 10)')).not.toThrowError(UserDefinedError)
       expect(() => lits.run('(throw "An error" 10)')).toThrow()
     })

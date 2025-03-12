@@ -1,37 +1,7 @@
 import type { FunctionReference } from '..'
-import type { StringApiName } from '../api'
+import { type StringApiName, getOperatorArgs } from '../api'
 
 export const stringReference: Record<StringApiName, FunctionReference<'String'>> = {
-  'subs': {
-    title: 'subs',
-    category: 'String',
-    linkName: 'subs',
-    returns: {
-      type: 'string',
-    },
-    args: {
-      s: {
-        type: 'string',
-      },
-      start: {
-        type: 'integer',
-      },
-      stop: {
-        type: 'integer',
-      },
-    },
-    variants: [
-      { argumentNames: ['s', 'start', 'stop'] },
-      { argumentNames: ['s', 'start'] },
-    ],
-    description: 'Extracts characters from $start up to but not including $stop.',
-    examples: [
-      '(subs "A string" 2)',
-      '(subs "A string" 2 5)',
-      '(subs "A string" 2 100)',
-      '(subs "A string" 100)',
-    ],
-  },
   'string-repeat': {
     title: 'string-repeat',
     category: 'String',
@@ -41,6 +11,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       type: 'number',
     },
     args: {
+      ...getOperatorArgs('string', 'integer'),
       s: {
         type: 'string',
       },
@@ -53,9 +24,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Repeates $s $n times.',
     examples: [
-      '(string-repeat "*" 10)',
-      '(string-repeat "***" 0)',
+      '"*" string-repeat 10',
+      'string-repeat("*", 10)',
+      'string-repeat("***", 0)',
     ],
+    algebraic: true,
   },
   'str': {
     title: 'str',
@@ -75,11 +48,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Concatenats $values into one string. If `value` equals `null` empty string is returned.',
     examples: [
-      '(str "A string" ", and another string" " ...and more")',
-      '(str "Just one string")',
-      '(str)',
-      '(str 0 false true null #"^kalle" [1 2 3] {:a :a})',
+      'str("A string", ", and another string", " ...and more")',
+      'str("Just one string")',
+      'str()',
+      'str(0, false, true, null, #"^kalle", [1, 2, 3], {a := "a"})',
     ],
+    algebraic: true,
+    noOperatorDocumentation: true,
   },
   'number': {
     title: 'number',
@@ -99,10 +74,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Parses $s to a number.',
     examples: [
-      '(number "10")',
-      '(number "010")',
-      '(number "-1.01")',
+      'number("10")',
+      'number("010")',
+      'number("-1.01")',
     ],
+    algebraic: true,
   },
   'lower-case': {
     title: 'lower-case',
@@ -121,9 +97,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns $s converted to lower case.',
     examples: [
-      '(lower-case "Albert")',
-      '(lower-case "")',
+      'lower-case("Albert")',
+      'lower-case("")',
     ],
+    algebraic: true,
   },
   'upper-case': {
     title: 'upper-case',
@@ -143,9 +120,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns $s converted to upper case.',
     examples: [
-      '(upper-case "Albert")',
-      '(upper-case "")',
+      'upper-case("Albert")',
+      'upper-case("")',
     ],
+    algebraic: true,
   },
   'trim': {
     title: 'trim',
@@ -165,10 +143,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a new string with leading and trailing whitespaces removed.',
     examples: [
-      '(trim "  Albert  ")',
-      '(trim "   ")',
-      '(trim "")',
+      'trim("  Albert  ")',
+      'trim("   ")',
+      'trim("")',
     ],
+    algebraic: true,
   },
   'trim-left': {
     title: 'trim-left',
@@ -188,10 +167,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a new string with leading whitespaces removed.',
     examples: [
-      '(trim-left "  Albert  ")',
-      '(trim-left "   ")',
-      '(trim-left "")',
+      'trim-left("  Albert  ")',
+      'trim-left("   ")',
+      'trim-left("")',
     ],
+    algebraic: true,
   },
   'trim-right': {
     title: 'trim-right',
@@ -211,10 +191,11 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a new string with trailing whitespaces removed.',
     examples: [
-      '(trim-right "  Albert  ")',
-      '(trim-right "   ")',
-      '(trim-right "")',
+      'trim-right("  Albert  ")',
+      'trim-right("   ")',
+      'trim-right("")',
     ],
+    algebraic: true,
   },
   'pad-left': {
     title: 'pad-left',
@@ -225,6 +206,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       type: 'string',
     },
     args: {
+      ...getOperatorArgs('string', 'integer'),
       s: {
         type: 'string',
       },
@@ -241,11 +223,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given $length.',
     examples: [
-      '(pad-left "Albert" 20)',
-      '(pad-left "Albert" 20 "-*-")',
-      '(pad-left "Albert" 5)',
-      '(pad-left "Albert" -1)',
+      '"Albert" pad-left 20',
+      'pad-left("Albert", 20)',
+      'pad-left("Albert", 20, "-*-")',
+      'pad-left("Albert", 5)',
+      'pad-left("Albert", -1)',
     ],
+    algebraic: true,
   },
   'pad-right': {
     title: 'pad-right',
@@ -256,6 +240,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       type: 'string',
     },
     args: {
+      ...getOperatorArgs('string', 'integer'),
       s: {
         type: 'string',
       },
@@ -272,11 +257,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Pads from the start of $s with `padString` (multiple times, if needed) until the resulting string reaches the given `length`.',
     examples: [
-      '(pad-right "Albert" 20)',
-      '(pad-right "Albert" 20 "-*-")',
-      '(pad-right "Albert" 5)',
-      '(pad-right "Albert" -1)',
+      '"Albert" pad-right 20',
+      'pad-right("Albert", 20)',
+      'pad-right("Albert", 20, "-*-")',
+      'pad-right("Albert", 5)',
+      'pad-right("Albert", -1)',
     ],
+    algebraic: true,
   },
   'split': {
     title: 'split',
@@ -287,6 +274,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       type: 'string',
     },
     args: {
+      ...getOperatorArgs('string', 'string'),
       s: {
         type: 'string',
       },
@@ -303,11 +291,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Divides $s into an array of substrings. The division is done by searching for `delimiter`. If `limit` as provided, at most `limit` number of substrings are returned.',
     examples: [
-      '(split "Albert Mojir" " ")',
-      '(split "abcdefghijklmnopqrstuvw" (regexp "[aoueiy]"))',
-      '(split "0123456789" "")',
-      '(map number (split "0123456789" "" 5))',
+      '"Albert Mojir" split " "',
+      'split("Albert Mojir", " ")',
+      'split("abcdefghijklmnopqrstuvw", #"[aoueiy]")',
+      'split("0123456789", "")',
+      'split("0123456789", "", 5) map number',
     ],
+    algebraic: true,
   },
   'split-lines': {
     title: 'split-lines',
@@ -327,11 +317,12 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Divides $s into an array of substrings, each representing a line.',
     examples: [
-      '(split-lines "Albert\nMojir\n")',
-      '(split-lines "Albert\n\nMojir")',
-      '(split-lines "Albert\nMojir\n\n")',
-      '(split-lines "")',
+      'split-lines("Albert\nMojir\n")',
+      'split-lines("Albert\n\nMojir")',
+      'split-lines("Albert\nMojir\n\n")',
+      'split-lines("")',
     ],
+    algebraic: true,
   },
   'template': {
     title: 'template',
@@ -355,20 +346,22 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Applies placeholders to a string. Support for basic pluralization - see examples. If pluralization is used, first placeholder must be a number.',
     examples: [
-      '(template "Hi, $1 and $2" "Carl" "Larry")',
-      '(template "Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9" :A :B :C :D :E :F :G :H :I)',
-      '(template "$1 book||||$1 books" 0)',
-      '(template "$1 book||||$1 books" 1)',
-      '(template "$1 book||||$1 books" 2)',
-      '(template "No book||||$1 book||||$1 books" 0)',
-      '(template "No book||||$1 book||||$1 books" 1)',
-      '(template "No book||||$1 book||||$1 books" 10)',
-      '(template "No book||||One book||||Two books||||Three books||||$1 books" 0)',
-      '(template "No book||||One book||||Two books||||Three books||||$1 books" 1)',
-      '(template "No book||||One book||||Two books||||Three books||||$1 books" 2)',
-      '(template "No book||||One book||||Two books||||Three books||||$1 books" 3)',
-      '(template "No book||||One book||||Two books||||Three books||||$1 books" 4)',
+      'template("Hi, $1 and $2", "Carl", "Larry")',
+      'template("Hi $1, $2, $3, $4, $5, $6, $7, $8 and $9", "A", "B", "C", "D", "E", "F", "G", "H", "I")',
+      'template("$1 book||||$1 books", 0)',
+      'template("$1 book||||$1 books", 1)',
+      'template("$1 book||||$1 books", 2)',
+      'template("No book||||$1 book||||$1 books", 0)',
+      'template("No book||||$1 book||||$1 books", 1)',
+      'template("No book||||$1 book||||$1 books", 10)',
+      'template("No book||||One book||||Two books||||Three books||||$1 books", 0)',
+      'template("No book||||One book||||Two books||||Three books||||$1 books", 1)',
+      'template("No book||||One book||||Two books||||Three books||||$1 books", 2)',
+      'template("No book||||One book||||Two books||||Three books||||$1 books", 3)',
+      'template("No book||||One book||||Two books||||Three books||||$1 books", 4)',
     ],
+    algebraic: true,
+    noOperatorDocumentation: true,
   },
   'to-char-code': {
     title: 'to-char-code',
@@ -388,9 +381,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Return code point for first character in $c.',
     examples: [
-      '(to-char-code :A)',
-      '(to-char-code "Albert")',
+      'to-char-code("A")',
+      'to-char-code("Albert")',
     ],
+    algebraic: true,
   },
   'from-char-code': {
     title: 'from-char-code',
@@ -410,9 +404,10 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Return character for code point $code.',
     examples: [
-      '(from-char-code 65)',
-      '(from-char-code 0)',
+      'from-char-code(65)',
+      'from-char-code(0)',
     ],
+    algebraic: true,
   },
   'encode-base64': {
     title: 'encode-base64',
@@ -432,8 +427,9 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a Base64 encoded string from $s.',
     examples: [
-      '(encode-base64 "Albert")',
+      'encode-base64("Albert")',
     ],
+    algebraic: true,
   },
   'decode-base64': {
     title: 'decode-base64',
@@ -453,8 +449,9 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns a Base64 decoded string from $base64string.',
     examples: [
-      '(decode-base64 "QWxiZXJ0IPCfkLs=")',
+      'decode-base64("QWxiZXJ0IPCfkLs=")',
     ],
+    algebraic: true,
   },
   'encode-uri-component': {
     title: 'encode-uri-component',
@@ -474,8 +471,9 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns an escaped `URI` string.',
     examples: [
-      '(encode-uri-component "Hi everyone!?")',
+      'encode-uri-component("Hi everyone!?")',
     ],
+    algebraic: true,
   },
   'decode-uri-component': {
     title: 'decode-uri-component',
@@ -495,8 +493,9 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns an un-escaped `URI` string.',
     examples: [
-      '(decode-uri-component "Hi%20everyone!%3F%20%F0%9F%91%8D")',
+      'decode-uri-component("Hi%20everyone!%3F%20%F0%9F%91%8D")',
     ],
+    algebraic: true,
   },
 
   'join': {
@@ -508,6 +507,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
       type: 'string',
     },
     args: {
+      ...getOperatorArgs('array', 'string'),
       arr: {
         type: 'array',
       },
@@ -520,36 +520,13 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     }],
     description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
     examples: [
-      '(join ["Albert" 10] ", ")',
-      '(join ["Albert" "Mojir"] " ")',
-      '(join (map [0 1 2 3 4 5 6 7 8 9] str) ", ")',
+      'map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str) join ", "',
+      '([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] map str) join ", "',
+      'join(["Albert", 10], ", ")',
+      'join(["Albert", "Mojir"], " ")',
+      'join(map([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], str), ", ")',
     ],
-  },
-  '++': {
-    title: '++',
-    category: 'String',
-    linkName: '-plus-plus',
-    clojureDocs: null,
-    returns: {
-      type: 'string',
-    },
-    args: {
-      strings: {
-        type: ['string', 'number', 'null'],
-        rest: true,
-      },
-    },
-    variants: [{
-      argumentNames: ['strings'],
-    }],
-    description: 'Concatenats $strings into one string.',
-    examples: [
-      '(++ "Albert" " " "Mojir")',
-      '(++ "Albert" "Mojir")',
-      '(++ "Albert" null "Mojir")',
-      '(++ "Albert")',
-      '(++)',
-    ],
+    algebraic: true,
   },
   'capitalize': {
     title: 'capitalize',
@@ -569,11 +546,12 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns $s with the first character converted to uppercase and the rest to lowercase.',
     examples: [
-      '(capitalize "albert")',
-      '(capitalize "ALBERT")',
-      '(capitalize "aLBERT")',
-      '(capitalize "")',
+      'capitalize("albert")',
+      'capitalize("ALBERT")',
+      'capitalize("aLBERT")',
+      'capitalize("")',
     ],
+    algebraic: true,
   },
   'blank?': {
     title: 'blank?',
@@ -593,11 +571,12 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     ],
     description: 'Returns true if $s is null or only contains whitespace characters.',
     examples: [
-      '(blank? "")',
-      '(blank? null)',
-      '(blank? "\n")',
-      '(blank? " ")',
-      '(blank? ".")',
+      'blank?("")',
+      'blank?(null)',
+      'blank?("\n")',
+      'blank?(" ")',
+      'blank?(".")',
     ],
+    algebraic: true,
   },
 }

@@ -1,5 +1,5 @@
 import { LitsError } from '../../../errors'
-import type { Any, Arr } from '../../../interface'
+import type { Arr } from '../../../interface'
 import type { SourceCodeInfo } from '../../../tokenizer/interface'
 import { asNonUndefined } from '../../../typeGuards'
 import { assertArray } from '../../../typeGuards/array'
@@ -11,20 +11,6 @@ import type { BuiltinNormalExpressions } from '../../interface'
 
 const blankRegexp = /^\s*$/
 export const stringNormalExpression: BuiltinNormalExpressions = {
-  'subs': {
-    evaluate: ([first, second, third], sourceCodeInfo): Any => {
-      assertString(first, sourceCodeInfo)
-      assertNumber(second, sourceCodeInfo, { integer: true, nonNegative: true })
-
-      if (third === undefined)
-        return (first).substring(second)
-
-      assertNumber(third, sourceCodeInfo, { gte: second })
-      return (first).substring(second, third)
-    },
-    paramCount: { min: 2, max: 3 },
-  },
-
   'string-repeat': {
     evaluate: ([str, count], sourceCodeInfo): string => {
       assertString(str, sourceCodeInfo)
@@ -124,32 +110,6 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
       return str.replace(/\s+$/, '')
     },
     paramCount: 1,
-  },
-
-  '++': {
-    evaluate: (params, sourceCodeInfo): string => {
-      if (params.length === 0) {
-        return ''
-      }
-      const first = params[0]
-      if (first !== null) {
-        assertStringOrNumber(first, sourceCodeInfo)
-      }
-      if (params.length === 1) {
-        return first === null ? '' : `${first}`
-      }
-
-      return params.slice(1).reduce((acc: string, str) => {
-        if (str !== null) {
-          assertStringOrNumber(str, sourceCodeInfo)
-        }
-        if (str === null) {
-          return acc
-        }
-        return `${acc}${str}`
-      }, first === null ? '' : `${first}`)
-    },
-    paramCount: {},
   },
 
   'join': {

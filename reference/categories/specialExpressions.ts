@@ -252,7 +252,7 @@ hyp`,
     description: 'Throws `UserDefinedError` with message set to $expr evaluated. $expr must evaluate to a string.',
     examples: [
       '(throw "You shall not pass!")',
-      '(throw (subs "You shall not pass!" 0 3))',
+      '(throw (slice "You shall not pass!" 0 3))',
     ],
   },
   'if': {
