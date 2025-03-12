@@ -155,7 +155,7 @@ export const stringNormalExpression: BuiltinNormalExpressions = {
   'join': {
     evaluate: ([stringList, delimiter], sourceCodeInfo): string => {
       assertArray(stringList, sourceCodeInfo)
-      stringList.forEach(str => assertString(str, sourceCodeInfo))
+      stringList.forEach(str => assertStringOrNumber(str, sourceCodeInfo))
       assertString(delimiter, sourceCodeInfo)
       return stringList.join(delimiter)
     },

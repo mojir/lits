@@ -1,5 +1,5 @@
 import type { FunctionReference } from '..'
-import type { SequenceApiName } from '../api'
+import { type SequenceApiName, getOperatorArgs } from '../api'
 
 export const sequenceReference: Record<SequenceApiName, FunctionReference<'Sequence'>> = {
   'nth': {
@@ -10,6 +10,7 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
       type: 'any',
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       'seq': {
         type: ['sequence', 'null'],
       },
@@ -26,17 +27,20 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     ],
     description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
     examples: [
-      '(nth [1 2 3] 1)',
-      '(nth [1 2 3] 3)',
-      '(nth [1 2 3] -1)',
-      '(nth [1 2 3] 3 99)',
-      '(nth "A string" 1)',
-      '(nth "A string" 3)',
-      '(nth "A string" -3)',
-      '(nth "A string" 30 :X)',
-      '(nth null 1)',
-      '(nth null 1 "Default value")',
+      '[1, 2, 3] nth 1',
+      '"A string" nth 3',
+      'nth([1, 2, 3], 1)',
+      'nth([1, 2, 3], 3)',
+      'nth([1, 2, 3], -1)',
+      'nth([1, 2, 3], 3, 99)',
+      'nth("A string", 1)',
+      'nth("A string", 3)',
+      'nth("A string", -3)',
+      'nth("A string", 30, "X")',
+      'nth(null, 1)',
+      'nth(null, 1, "Default value")',
     ],
+    algebraic: true,
   },
   'push': {
     title: 'push',
@@ -45,12 +49,11 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     clojureDocs: null,
     returns: {
       type: 'sequence',
-      array: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'any'),
       seq: {
         type: 'sequence',
-        array: true,
       },
       values: {
         type: 'any',
@@ -63,10 +66,16 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     ],
     description: 'Returns copy of $seq with $values added to the end of it.',
     examples: [
-      '(push [1 2 3] 4)',
-      '(push [1 2 3] 4 5 6)',
-      '(def l [1 2 3]) (push l 4) l',
+      '[1, 2, 3] push 4',
+      '"Albert" push "!"',
+      'push([1, 2, 3], 4)',
+      'push([1, 2, 3], 4, 5, 6)',
+      `
+let l := [1, 2, 3];
+push(l, 4);
+l`,
     ],
+    algebraic: true,
   },
   'pop': {
     title: 'pop',
@@ -74,12 +83,11 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     linkName: 'pop',
     returns: {
       type: ['sequence', 'null'],
-      array: true,
+      rest: true,
     },
     args: {
       seq: {
         type: 'sequence',
-        array: true,
       },
     },
     variants: [
@@ -87,9 +95,10 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     ],
     description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
     examples: [
-      '(pop [1 2 3])',
-      '(pop [])',
+      'pop([1, 2, 3])',
+      'pop([])',
     ],
+    algebraic: true,
   },
   'unshift': {
     title: 'unshift',
@@ -98,16 +107,15 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     clojureDocs: null,
     returns: {
       type: 'sequence',
-      array: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'any'),
       seq: {
         type: 'sequence',
-        array: true,
       },
       values: {
         type: 'any',
-        array: true,
+        rest: true,
       },
     },
     variants: [
@@ -115,13 +123,15 @@ export const sequenceReference: Record<SequenceApiName, FunctionReference<'Seque
     ],
     description: 'Returns copy of $seq with $values added to the beginning.',
     examples: [
-      '(unshift [1 2 3] 4)',
-      '(unshift [1 2 3] 4 5 6)',
+      '[1, 2, 3] unshift 4',
+      'unshift([1, 2, 3], 4)',
+      'unshift([1, 2, 3], 4, 5, 6)',
       `
-(def l [1 2 3])
-(unshift l 4)
+let l := [1, 2, 3];
+unshift(l, 4);
 l`,
     ],
+    algebraic: true,
   },
   'shift': {
     title: 'shift',
@@ -130,12 +140,10 @@ l`,
     clojureDocs: null,
     returns: {
       type: ['sequence', 'null'],
-      array: true,
     },
     args: {
       seq: {
         type: 'sequence',
-        array: true,
       },
     },
     variants: [
@@ -143,9 +151,10 @@ l`,
     ],
     description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
     examples: [
-      '(shift [1 2 3])',
-      '(shift [])',
+      'shift([1, 2, 3])',
+      'shift([])',
     ],
+    algebraic: true,
   },
   'slice': {
     title: 'slice',
@@ -153,13 +162,13 @@ l`,
     linkName: 'slice',
     clojureDocs: null,
     returns: {
-      type: 'any',
-      array: true,
+      type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       seq: {
         type: 'sequence',
-        array: true,
+        rest: true,
       },
       start: {
         type: 'integer',
@@ -177,9 +186,47 @@ l`,
     ],
     description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
     examples: [
-      '(slice [1 2 3 4 5] 2 4)',
-      '(slice [1 2 3 4 5] 2)',
+      '[1, 2, 3, 4, 5] slice 2',
+      'slice([1, 2, 3, 4, 5], 2, 4)',
+      'slice([1, 2, 3, 4, 5], 2)',
     ],
+    algebraic: true,
+  },
+  'splice': {
+    title: 'splice',
+    category: 'Sequence',
+    linkName: 'splice',
+    clojureDocs: null,
+    returns: {
+      type: 'sequence',
+    },
+    args: {
+      seq: {
+        type: 'sequence',
+        rest: true,
+      },
+      start: {
+        type: 'integer',
+      },
+      deleteCount: {
+        type: 'integer',
+      },
+      items: {
+        type: 'any',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['seq', 'start', 'deleteCount'] },
+      { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
+    ],
+    description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
+    examples: [
+      'splice([1, 2, 3, 4, 5], 2, 2, "x")',
+      'splice([1, 2, 3, 4, 5], -2, 1, "x")',
+      'splice("Albert", 2, 2, "fo")',
+    ],
+    algebraic: true,
   },
   'reductions': {
     title: 'reductions',
@@ -187,35 +234,39 @@ l`,
     linkName: 'reductions',
     returns: {
       type: 'any',
-      array: true,
+      rest: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       fn: {
         type: 'function',
       },
       seq: {
         type: 'sequence',
-        array: true,
+        rest: true,
       },
       start: {
         type: 'any',
       },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
-      { argumentNames: ['fn', 'start', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fn', 'start'] },
     ],
     description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $seq by $fn.',
     examples: [
-      '(reductions + [1 2 3])',
-      '(reductions + 10 [1 2 3])',
-      '(reductions + 0 [])',
+      '[1, 2, 3] reductions +',
+      'reductions([1, 2, 3], +)',
+      'reductions([1, 2, 3], +, 10)',
+      'reductions([], +, 0)',
       `
-(reductions
-  (fn [result value] (+ result (if (even? value) value 0)))
+reductions(
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  (result, value) -> result + if even?(value) then value else 0 end,
   0
-  [1 2 3 4 5 6 7 8 9])`,
+)`,
     ],
+    algebraic: true,
   },
   'reduce': {
     title: 'reduce',
@@ -225,6 +276,7 @@ l`,
       type: 'any',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       fn: {
         type: 'function',
       },
@@ -236,20 +288,22 @@ l`,
       },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
-      { argumentNames: ['fn', 'start', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fn', 'start'] },
     ],
     description: 'Runs $fn function on each element of the $seq, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
     examples: [
-      '(reduce + [1 2 3])',
-      '(reduce + 0 [1 2 3])',
-      '(reduce + 0 [])',
+      '[1, 2, 3] reduce +',
+      'reduce([1, 2, 3], +)',
+      'reduce([1, 2, 3], +, 0)',
+      'reduce([], +, 0)',
       `
-(reduce
-  (fn [result value] (+ result (if (even? value) value 0)))
-  0
-  [1 2 3 4 5 6 7 8 9])`,
+reduce(
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  (result, value) -> result + if even?(value) then value else 0 end,
+  0)`,
     ],
+    algebraic: true,
   },
   'reduce-right': {
     title: 'reduce-right',
@@ -260,6 +314,7 @@ l`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       fn: {
         type: 'function',
       },
@@ -271,13 +326,15 @@ l`,
       },
     },
     variants: [
-      { argumentNames: ['fn', 'seq'] },
-      { argumentNames: ['fn', 'start', 'seq'] },
+      { argumentNames: ['seq', 'fn'] },
+      { argumentNames: ['seq', 'fn', 'start'] },
     ],
     description: 'Runs $fn function on each element of the $seq (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
     examples: [
-      '(reduce-right str [:A :B :C] "")',
+      'range(1, 10) reduce-right *',
+      'reduce-right(["A", "B", "C"], str, "")',
     ],
+    algebraic: true,
   },
   'map': {
     title: 'map',
@@ -285,9 +342,10 @@ l`,
     linkName: 'map',
     returns: {
       type: 'any',
-      array: true,
+      rest: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -300,9 +358,11 @@ l`,
     ],
     description: 'Creates a new array populated with the results of calling $fn on every elements in $seq.',
     examples: [
-      '(map ["Albert" "Mojir" 42] str)',
-      '(map [1 2 3] inc)',
+      '[1, 2, 3] map -> -($)',
+      'map(["Albert", "Mojir", 42], str)',
+      'map([1, 2, 3], inc)',
     ],
+    algebraic: true,
   },
   'filter': {
     title: 'filter',
@@ -312,6 +372,7 @@ l`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -325,14 +386,17 @@ l`,
     description: 'Creates a new array with all elements that pass the test implemented by $fn.',
     examples: [
       `
-(filter
-  ["Albert" "Mojir" 160 [1 2]]
-  string?)`,
+filter(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
       `
-(filter
-[5 10 15 20]
-  (fn [x] (> x 10)))`,
+filter(
+  [5, 10, 15, 20],
+  -> $ > 10
+)`,
     ],
+    algebraic: true,
   },
   'position': {
     title: 'position',
@@ -343,6 +407,7 @@ l`,
       type: ['number', 'null'],
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: ['sequence', 'null'],
       },
@@ -356,22 +421,27 @@ l`,
     description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `null` is returned.',
     examples: [
       `
-(position
-  ["Albert" "Mojir" 160 [1 2]]
-  string?)`,
+position(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
       `
-(position
-  [5 10 15 20]
-  (fn [x] (> x 10)))`,
+position(
+  [5, 10, 15, 20],
+  -> $ > 10
+)`,
       `
-(position
-  [5 10 15 20]
-  (fn [x] (> x 100)))`,
+position(
+  [5, 10, 15, 20],
+  -> $ > 100
+)`,
       `
-(position
-  (fn [x] (> x 100))
-  null)`,
+position(
+  null,
+  -> $ > 100
+)`,
     ],
+    algebraic: true,
   },
   'index-of': {
     title: 'index-of',
@@ -382,6 +452,7 @@ l`,
       type: ['number', 'null'],
     },
     args: {
+      ...getOperatorArgs('sequence', 'any'),
       seq: {
         type: ['sequence', 'null'],
       },
@@ -394,11 +465,13 @@ l`,
     ],
     description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
     examples: [
-      '(index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
-      '(index-of [5 10 15 20] 15)',
-      '(index-of [5 10 15 20] 1)',
-      '(index-of null 1)',
+      '[[1], [2], [1], [2]] index-of [1]',
+      'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+      'index-of([5, 10, 15, 20], 15)',
+      'index-of([5, 10, 15, 20], 1)',
+      'index-of(null, 1)',
     ],
+    algebraic: true,
   },
   'last-index-of': {
     title: 'last-index-of',
@@ -409,6 +482,7 @@ l`,
       type: ['number', 'null'],
     },
     args: {
+      ...getOperatorArgs('sequence', 'any'),
       seq: {
         type: ['sequence', 'null'],
       },
@@ -421,11 +495,13 @@ l`,
     ],
     description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
     examples: [
-      '(last-index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
-      '(last-index-of [5 10 15 20] 15)',
-      '(last-index-of [5 10 15 20] 1)',
-      '(last-index-of null 1)',
+      '[[1], [2], [1], [2]] last-index-of [1]',
+      'last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+      'last-index-of([5, 10, 15, 20, 15], 15)',
+      'last-index-of([5, 10, 15, 20], 1)',
+      'last-index-of(null, 1)',
     ],
+    algebraic: true,
   },
   'some': {
     title: 'some',
@@ -435,6 +511,7 @@ l`,
       type: 'any',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: ['sequence', 'null'],
       },
@@ -448,26 +525,32 @@ l`,
     description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `null` is returned.',
     examples: [
       `
-(some
-  ["Albert" "Mojir" 160 [1 2]]
-  string?)`,
+some(
+  ["Albert", "Mojir", 160, [1, 2]],
+  string?
+)`,
       `
-(some
-  [5 10 15 20]
-  (fn [x] (> x 10)))`,
+some(
+  [5, 10, 15, 20],
+  -> $ > 10
+)`,
       `
-(some
-  [1 2 3 4]
-  (fn [x] (> x 10)))`,
+some(
+  [1, 2, 3, 4],
+  -> $ > 10
+)`,
       `
-(some
-  []
-  (fn [x] (> x 10)))`,
+some(
+  [],
+  -> $ > 10
+)`,
       `
-(some
-  null
-  (fn [x] (> x 10)))`,
+some(
+  null,
+  -> $ > 10
+)`,
     ],
+    algebraic: true,
   },
   'reverse': {
     title: 'reverse',
@@ -486,11 +569,12 @@ l`,
     ],
     description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
     examples: [
-      '(reverse ["Albert" "Mojir" 160 [1 2]])',
-      '(reverse [])',
-      '(reverse "Albert")',
-      '(reverse null)',
+      'reverse(["Albert", "Mojir", 160, [1, 2]])',
+      'reverse([])',
+      'reverse("Albert")',
+      'reverse(null)',
     ],
+    algebraic: true,
   },
   'first': {
     title: 'first',
@@ -509,10 +593,11 @@ l`,
     ],
     description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
     examples: [
-      '(first ["Albert" "Mojir" 160 [1 2]])',
-      '(first [])',
-      '(first null)',
+      'first(["Albert", "Mojir", 160, [1, 2]])',
+      'first([])',
+      'first(null)',
     ],
+    algebraic: true,
   },
   'second': {
     title: 'second',
@@ -531,11 +616,12 @@ l`,
     ],
     description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
     examples: [
-      '(second ["Albert" "Mojir" 160 [1 2]])',
-      '(second [1])',
-      '(second [])',
-      '(second null)',
+      'second(["Albert", "Mojir", 160, [1, 2]])',
+      'second([1])',
+      'second([])',
+      'second(null)',
     ],
+    algebraic: true,
   },
   'last': {
     title: 'last',
@@ -554,12 +640,13 @@ l`,
     ],
     description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
     examples: [
-      '(last ["Albert" "Mojir" 160 [1 2]])',
-      '(last [1 2])',
-      '(last [1])',
-      '(last [])',
-      '(last null)',
+      'last(["Albert", "Mojir", 160, [1, 2]])',
+      'last([1, 2])',
+      'last([1])',
+      'last([])',
+      'last(null)',
     ],
+    algebraic: true,
   },
   'rest': {
     title: 'rest',
@@ -580,41 +667,14 @@ l`,
 If $seq has less than two elements, an empty array is returned.
 For string $seq returns all but the first characters in $seq.`,
     examples: [
-      '(rest ["Albert" "Mojir" 160 [1 2]])',
-      '(rest ["Albert"])',
-      '(rest [])',
-      '(rest "Albert")',
-      '(rest :A)',
-      '(rest "")',
+      'rest(["Albert", "Mojir", 160, [1, 2]])',
+      'rest(["Albert"])',
+      'rest([])',
+      'rest("Albert")',
+      'rest("A",)',
+      'rest("")',
     ],
-  },
-  'nthrest': {
-    title: 'nthrest',
-    category: 'Sequence',
-    linkName: 'nthrest',
-    returns: {
-      type: 'any',
-      array: true,
-    },
-    args: {
-      seq: {
-        type: 'sequence',
-      },
-      n: {
-        type: 'number',
-      },
-    },
-    variants: [
-      { argumentNames: ['seq', 'n'] },
-    ],
-    description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. For string $seq returns all but the first $n characters in $seq.',
-    examples: [
-      '(nthrest ["Albert" "Mojir" 160 [1 2]] 2)',
-      '(nthrest "Albert" 3)',
-      '(nthrest "Albert" 10)',
-      '(nthrest [] 0)',
-      '(nthrest "" 0)',
-    ],
+    algebraic: true,
   },
   'next': {
     title: 'next',
@@ -633,41 +693,14 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
     examples: [
-      '(next ["Albert" "Mojir" 160 [1 2]])',
-      '(next ["Albert"])',
-      '(next [])',
-      '(next "Albert")',
-      '(next :A)',
-      '(next "")',
+      'next(["Albert", "Mojir", 160, [1, 2]])',
+      'next(["Albert"])',
+      'next([])',
+      'next("Albert")',
+      'next("A",)',
+      'next("")',
     ],
-  },
-  'nthnext': {
-    title: 'nthnext',
-    category: 'Sequence',
-    linkName: 'nthnext',
-    returns: {
-      type: ['sequence', 'null'],
-      array: true,
-    },
-    args: {
-      seq: {
-        type: 'sequence',
-      },
-      n: {
-        type: 'number',
-      },
-    },
-    variants: [
-      { argumentNames: ['seq', 'n'] },
-    ],
-    description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. If $seq has less or equal than $n elements, `null` returned. For string $seq returns all but the first $n characters in $seq. If length of string $seq is less or equal than $n, `null` is returned.',
-    examples: [
-      '(nthnext ["Albert" "Mojir" 160 [1 2]] 2)',
-      '(nthnext "Albert" 3)',
-      '(nthnext "Albert" 6)',
-      '(nthnext [] 0)',
-      '(nthnext "" 0)',
-    ],
+    algebraic: true,
   },
   'take': {
     title: 'take',
@@ -677,6 +710,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       n: {
         type: 'integer',
       },
@@ -685,15 +719,17 @@ For string $seq returns all but the first characters in $seq.`,
       },
     },
     variants: [
-      { argumentNames: ['n', 'seq'] },
+      { argumentNames: ['seq', 'n'] },
     ],
     description: 'Constructs a new array/string with the $n first elements from $seq.',
     examples: [
-      '(take 3 [1 2 3 4 5])',
-      '(take 0 [1 2 3 4 5])',
-      '(take 2 "Albert")',
-      '(take 50 "Albert")',
+      '[1, 2, 3, 4, 5] take 3',
+      'take([1, 2, 3, 4, 5], 3)',
+      'take([1, 2, 3, 4, 5], 0)',
+      'take("Albert", 2)',
+      'take("Albert", 50)',
     ],
+    algebraic: true,
   },
   'take-last': {
     title: 'take-last',
@@ -703,6 +739,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       n: {
         type: 'integer',
       },
@@ -715,9 +752,11 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Constructs a new array with the $n last elements from $seq.',
     examples: [
-      '(take-last 3 [1 2 3 4 5])',
-      '(take-last 0 [1 2 3 4 5])',
+      '[1, 2, 3, 4, 5] take-last 3',
+      'take-last([1, 2, 3, 4, 5], 3)',
+      'take-last([1, 2, 3, 4, 5], 0)',
     ],
+    algebraic: true,
   },
   'take-while': {
     title: 'take-while',
@@ -727,6 +766,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -740,13 +780,15 @@ For string $seq returns all but the first characters in $seq.`,
     description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
     examples: [
       `
-(take-while
-  [1 2 3 2 1]
-  (fn [x] (< x 3)))`,
+take-while(
+  [1, 2, 3, 2, 1],
+  -> $ < 3
+)`,
       `
-(take-while
-  [1 2 3 2 1]
-  (fn [x] (> x 3)))`,
+take-while(
+  [1, 2, 3, 2, 1],
+  -> $ > 3
+)`,
     ],
   },
   'drop': {
@@ -757,6 +799,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       seq: {
         type: 'sequence',
       },
@@ -769,10 +812,10 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
     examples: [
-      '(drop [1 2 3 4 5] 3)',
-      '(drop [1 2 3 4 5] 0)',
-      '(drop "Albert" 2)',
-      '(drop "Albert" 50)',
+      'drop([1, 2, 3, 4, 5], 3)',
+      'drop([1, 2, 3, 4, 5], 0)',
+      'drop("Albert", 2)',
+      'drop("Albert", 50)',
     ],
   },
   'drop-last': {
@@ -783,6 +826,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       seq: {
         type: 'sequence',
       },
@@ -795,9 +839,11 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Constructs a new array with the $n last elements dropped from $seq.',
     examples: [
-      '(drop-last [1 2 3 4 5] 3)',
-      '(drop-last [1 2 3 4 5] 0)',
+      '[1, 2, 3, 4, 5] drop-last 3',
+      'drop-last([1, 2, 3, 4, 5], 3)',
+      'drop-last([1, 2, 3, 4, 5], 0)',
     ],
+    algebraic: true,
   },
   'drop-while': {
     title: 'drop-while',
@@ -807,6 +853,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -820,14 +867,17 @@ For string $seq returns all but the first characters in $seq.`,
     description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
     examples: [
       `
-(drop-while
-  [1 2 3 2 1]
-  (fn [x] (< x 3)))`,
+drop-while(
+  [1, 2, 3, 2, 1],
+  -> $ < 3
+)`,
       `
-(drop-while
-  [1 2 3 2 1]
-  (fn [x] (> x 3)))`,
+drop-while(
+  [1, 2, 3, 2, 1],
+  -> $ > 3
+)`,
     ],
+    algebraic: true,
   },
   'sort': {
     title: 'sort',
@@ -835,9 +885,10 @@ For string $seq returns all but the first characters in $seq.`,
     linkName: 'sort',
     returns: {
       type: 'any',
-      array: true,
+      rest: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -851,16 +902,20 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a new sequence with the elements from $seq sorted according to $fn. If no $fn is supplied, builtin `compare` will be used.',
     examples: [
-      '(sort [3 1 2])',
+      '[3, 1, 2] sort (a, b) -> b - a',
+      'sort([3, 1, 2])',
       `
-(sort
-  [3 1 2]
-  (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)))`,
+sort(
+  [3, 1, 2],
+  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end
+)`,
       `
-(sort
-  [3 1 2]
-  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))`,
+sort(
+  [3, 1, 2],
+  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end
+)`,
     ],
+    algebraic: true,
   },
   'sort-by': {
     title: 'sort-by',
@@ -868,9 +923,10 @@ For string $seq returns all but the first characters in $seq.`,
     linkName: 'sort-by',
     returns: {
       type: 'any',
-      array: true,
+      rest: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -887,9 +943,11 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
     examples: [
-      '(sort-by ["Albert" "Mojir" "Nina"] count)',
-      '(sort-by "Albert" lower-case #(compare %2 %1))',
+      '["Albert", "Mojir", "Nina"] sort-by count',
+      'sort-by(["Albert", "Mojir", "Nina"], count)',
+      'sort-by("Albert", lower-case, -> $2 compare $1)',
     ],
+    algebraic: true,
   },
   'distinct': {
     title: 'distinct',
@@ -908,11 +966,13 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a copy of $seq with no duplicates.',
     examples: [
-      '(distinct [1 2 3 1 3 5])',
-      '(distinct "Albert Mojir")',
-      '(distinct [])',
-      '(distinct "")',
+      'distinct([[1], [2], [3], [1], [3], [5]])',
+      'distinct([1, 2, 3, 1, 3, 5])',
+      'distinct("Albert Mojir")',
+      'distinct([])',
+      'distinct("")',
     ],
+    algebraic: true,
   },
   'remove': {
     title: 'remove',
@@ -922,6 +982,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -934,9 +995,11 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
     examples: [
-      '(remove [1 2 3 1 3 5] even?)',
-      '(remove "Albert Mojir" #(contains? "aoueiyAOUEIY" %1))',
+      '[1, 2, 3, 1, 3, 5] remove odd?',
+      'remove([1, 2, 3, 1, 3, 5], even?)',
+      'remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
     ],
+    algebraic: true,
   },
   'remove-at': {
     title: 'remove-at',
@@ -947,6 +1010,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       seq: {
         type: 'sequence',
       },
@@ -957,12 +1021,15 @@ For string $seq returns all but the first characters in $seq.`,
     variants: [
       { argumentNames: ['seq', 'n'] },
     ],
-    description: 'Returns a new sequence of all items in $seq except item at position $n.',
+    description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
     examples: [
-      '(remove-at [1 2 3 1 3 5] 0)',
-      '(remove-at [1 2 3 1 3 5] -1)',
-      '(remove-at "Albert Mojir" 6)',
+      '[1, 2, 3, 1, 3, 5] remove-at 2',
+      '"Albert" remove-at -2',
+      'remove-at([1, 2, 3, 1, 3, 5], 0)',
+      'remove-at([1, 2, 3, 1, 3, 5], -1)',
+      'remove-at("Albert Mojir", 6)',
     ],
+    algebraic: true,
   },
   'split-at': {
     title: 'split-at',
@@ -970,9 +1037,9 @@ For string $seq returns all but the first characters in $seq.`,
     linkName: 'split-at',
     returns: {
       type: 'sequence',
-      array: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'integer'),
       seq: {
         type: 'sequence',
       },
@@ -985,9 +1052,12 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
     examples: [
-      '(split-at [1 2 3 4 5] 2)',
-      '(split-at "Albert" 2)',
+      '[1, 2, 3, 4, 5] split-at 2',
+      '"Albert" split-at -2',
+      'split-at([1, 2, 3, 4, 5], -2)',
+      'split-at("Albert", 2)',
     ],
+    algebraic: true,
   },
   'split-with': {
     title: 'split-with',
@@ -995,9 +1065,9 @@ For string $seq returns all but the first characters in $seq.`,
     linkName: 'split-with',
     returns: {
       type: 'sequence',
-      array: true,
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -1010,9 +1080,11 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a pair of sequences `[take-while(input, fn), drop-while(input, fn)]`.',
     examples: [
-      '(split-with [1 2 3 4 5] #(> %1 3))',
-      '(split-with "Albert" #(<= %1 :Z))',
+      '[1, 2, 3, 4, 5] split-with odd?',
+      'split-with([1, 2, 3, 4, 5], -> $ > 3)',
+      'split-with("Albert", -> $ <= "o")',
     ],
+    algebraic: true,
   },
   'frequencies': {
     title: 'frequencies',
@@ -1031,9 +1103,10 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
     examples: [
-      '(frequencies ["Albert" "Mojir" "Nina" "Mojir"])',
-      '(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")',
+      'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
+      'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
     ],
+    algebraic: true,
   },
   'group-by': {
     title: 'group-by',
@@ -1043,6 +1116,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'object',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -1055,8 +1129,9 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
     examples: [
-      '(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
-      '(group-by "Albert Mojir" (fn [char] (if (contains? "aoueiAOUEI" char) "vowel" "other")))',
+      '[{ name := "Albert" } { name := "Albert" } { name := "Mojir" }] group-by "name"',
+      'group-by([{name := "Albert"} {name := "Albert"} {name := "Mojir"}] "name")',
+      'group-by("Albert Mojir" -> if "aoueiAOUEI" contains? $ then "vowel" else "other" end)',
     ],
   },
   'partition': {
@@ -1067,6 +1142,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'number'),
       seq: {
         type: 'sequence',
       },
@@ -1087,22 +1163,24 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
     examples: [
-      '(partition (range 20) 4)',
-      '(partition (range 22) 4)',
-      '(partition (range 20) 4 6)',
-      '(partition (range 20) 4 3)',
-      '(partition (range 20) 3 6 [:a])',
-      '(partition (range 20) 4 6 [:a])',
-      '(partition (range 20) 4 6 [:a :b :c :d])',
-      '(partition [:a :b :c :d :e :f] 3 1)',
-      '(partition [1 2 3 4] 10)',
-      '(partition [1 2 3 4] 10 10)',
-      '(partition [1 2 3 4] 10 10 [])',
-      '(partition [1 2 3 4] 10 10 null)',
-      '(partition "superfragilistic" 5)',
-      '(partition "superfragilistic" 5 5 null)',
-      '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
+      'range(20) partition 4',
+      'partition(range(20), 4)',
+      'partition(range(22), 4)',
+      'partition(range(20), 4, 6)',
+      'partition(range(20), 4, 3)',
+      'partition(range(20), 3, 6, ["a"])',
+      'partition(range(20), 4, 6, ["a"])',
+      'partition(range(20), 4, 6, ["a", "b", "c", "d"])',
+      'partition(["a", "b", "c", "d", "e", "f"], 3, 1)',
+      'partition([1, 2, 3, 4], 10)',
+      'partition([1, 2, 3, 4], 10, 10)',
+      'partition([1, 2, 3, 4], 10, 10, [])',
+      'partition([1, 2, 3, 4], 10, 10, null)',
+      'partition("superfragilistic", 5)',
+      'partition("superfragilistic", 5, 5, null)',
+      'let foo := [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
     ],
+    algebraic: true,
   },
   'partition-all': {
     title: 'partition-all',
@@ -1112,6 +1190,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'number'),
       seq: {
         type: 'sequence',
       },
@@ -1128,10 +1207,12 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
     examples: [
-      '(partition-all [0 1 2 3 4 5 6 7 8 9] 4)',
-      '(partition [0 1 2 3 4 5 6 7 8 9] 4)',
-      '(partition-all [0 1 2 3 4 5 6 7 8 9] 2 4)',
+      '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] partition-all 4',
+      'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+      'partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+      'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
     ],
+    algebraic: true,
   },
   'partition-by': {
     title: 'partition-by',
@@ -1141,6 +1222,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'function'),
       seq: {
         type: 'sequence',
       },
@@ -1153,10 +1235,12 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
     examples: [
-      '(partition-by [1 2 3 4 5] #(= 3 %1))',
-      '(partition-by [1 1 1 2 2 3 3] odd?)',
-      '(partition-by "Leeeeeerrroyyy" identity)',
+      '[1, 2, 3, 4, 5] partition-by odd?',
+      'partition-by([1, 2, 3, 4, 5], -> $ = 3)',
+      'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
+      'partition-by("Leeeeeerrroyyy", identity)',
     ],
+    algebraic: true,
   },
   'starts-with?': {
     title: 'starts-with?',
@@ -1167,6 +1251,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('sequence', 'sequence'),
       seq: {
         type: 'sequence',
       },
@@ -1179,11 +1264,13 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
     examples: [
-      '(starts-with? [1 2 3 4 5] 1)',
-      '(starts-with? [1 2 3 4 5] [1])',
-      '(starts-with? "Albert" "Al")',
-      '(starts-with? "Albert" "al")',
+      '[[1], [2], [3], [4], [5]] starts-with? [1]',
+      'starts-with?([1, 2, 3, 4, 5], 1)',
+      'starts-with?([1, 2, 3, 4, 5], [1])',
+      'starts-with?("Albert", "Al")',
+      'starts-with?("Albert", "al")',
     ],
+    algebraic: true,
   },
   'ends-with?': {
     title: 'ends-with?',
@@ -1194,6 +1281,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'boolean',
     },
     args: {
+      ...getOperatorArgs('sequence', 'sequence'),
       seq: {
         type: 'sequence',
       },
@@ -1206,11 +1294,14 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
     examples: [
-      '(ends-with? [1 2 3 4 5] 5)',
-      '(ends-with? [1 2 3 4 5] [5])',
-      '(ends-with? "Albert" "rt")',
-      '(ends-with? "Albert" "RT")',
+      '[[1], [2], [3], [4], [5]] starts-with? [5]',
+      '[[1], [2], [3], [4], [5]] starts-with? 5',
+      'ends-with?([1, 2, 3, 4, 5], 5)',
+      'ends-with?([1, 2, 3, 4, 5], [5])',
+      'ends-with?("Albert", "rt")',
+      'ends-with?("Albert", "RT")',
     ],
+    algebraic: true,
   },
   'interleave': {
     title: 'interleave',
@@ -1221,9 +1312,10 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'sequence'),
       seqs: {
         type: 'sequence',
-        array: true,
+        rest: true,
       },
     },
     variants: [
@@ -1231,14 +1323,17 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
     examples: [
-      '(interleave [1 2 3] [4 5 6])',
-      '(interleave [1 2 3] [4 5 6] [7 8 9])',
-      '(interleave [1 2 3] [4 5 6] [7 8])',
-      '(interleave [1 2 3] [4 5 6] [7])',
-      '(interleave [1 2 3] [4 5 6] [])',
-      '(interleave [1 2 3] [])',
-      '(interleave [])',
+      '[1, 2, 3] interleave [4, 5, 6]',
+      '"Albert" interleave ".,.,.,"',
+      'interleave([1, 2, 3], [4, 5, 6])',
+      'interleave([1, 2, 3], [4, 5, 6], [7, 8, 9])',
+      'interleave([1, 2, 3], [4, 5, 6], [7, 8])',
+      'interleave([1, 2, 3], [4, 5, 6], [7])',
+      'interleave([1, 2, 3], [4, 5, 6], [])',
+      'interleave([1, 2, 3], [])',
+      'interleave([])',
     ],
+    algebraic: true,
   },
   'interpose': {
     title: 'interpose',
@@ -1249,6 +1344,7 @@ For string $seq returns all but the first characters in $seq.`,
       type: 'sequence',
     },
     args: {
+      ...getOperatorArgs('sequence', 'any'),
       seq: {
         type: 'sequence',
       },
@@ -1261,9 +1357,11 @@ For string $seq returns all but the first characters in $seq.`,
     ],
     description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
     examples: [
-      '(interpose :a [1 2 3 4 5])',
-      '(interpose " " ["Albert" "Mojir" "Nina"])',
-      '(interpose "." "Albert")',
+      '"Albert" interpose "-"',
+      'interpose([1, 2, 3, 4, 5], "a")',
+      'interpose(["Albert", "Mojir", "Nina"], ", ")',
+      'interpose("Albert", ".")',
     ],
+    algebraic: true,
   },
 }

@@ -2340,7 +2340,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
                 else {
-                    var index = seq.indexOf(value);
+                    var index = seq.findIndex(function (item) { return deepEqual(asAny(item, sourceCodeInfo), value); }, sourceCodeInfo);
                     return index !== -1 ? index : null;
                 }
             },
@@ -2359,7 +2359,7 @@ var Playground = (function (exports) {
                     return index !== -1 ? index : null;
                 }
                 else {
-                    var index = seq.lastIndexOf(value);
+                    var index = seq.findLastIndex(function (item) { return deepEqual(asAny(item, sourceCodeInfo), value); }, sourceCodeInfo);
                     return index !== -1 ? index : null;
                 }
             },
@@ -2548,18 +2548,6 @@ var Playground = (function (exports) {
             },
             paramCount: 1,
         },
-        'nthrest': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), seq = _b[0], count = _b[1];
-                assertSeq(seq, sourceCodeInfo);
-                assertNumber(count, sourceCodeInfo, { finite: true });
-                var integerCount = Math.max(Math.ceil(count), 0);
-                if (Array.isArray(seq))
-                    return seq.slice(integerCount);
-                return seq.substring(integerCount);
-            },
-            paramCount: 2,
-        },
         'next': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 1), seq = _b[0];
@@ -2574,20 +2562,6 @@ var Playground = (function (exports) {
                 return seq.substring(1);
             },
             paramCount: 1,
-        },
-        'nthnext': {
-            evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 2), seq = _b[0], count = _b[1];
-                assertSeq(seq, sourceCodeInfo);
-                assertNumber(count, sourceCodeInfo, { finite: true });
-                var integerCount = Math.max(Math.ceil(count), 0);
-                if (seq.length <= count)
-                    return null;
-                if (Array.isArray(seq))
-                    return seq.slice(integerCount);
-                return seq.substring(integerCount);
-            },
-            paramCount: 2,
         },
         'reverse': {
             evaluate: function (_a, sourceCodeInfo) {
@@ -2627,15 +2601,28 @@ var Playground = (function (exports) {
             evaluate: function (params, sourceCodeInfo) {
                 var _a = __read(params, 3), seq = _a[0], from = _a[1], to = _a[2];
                 assertSeq(seq, sourceCodeInfo);
-                if (params.length === 1)
-                    return seq;
                 assertNumber(from, sourceCodeInfo, { integer: true });
                 if (params.length === 2)
                     return seq.slice(from);
                 assertNumber(to, sourceCodeInfo, { integer: true });
                 return seq.slice(from, to);
             },
-            paramCount: { min: 1, max: 3 },
+            paramCount: { min: 2, max: 3 },
+        },
+        'splice': {
+            evaluate: function (params, sourceCodeInfo) {
+                var _a = __read(params), seq = _a[0], start = _a[1], deleteCount = _a[2], rest = _a.slice(3);
+                assertSeq(seq, sourceCodeInfo);
+                assertNumber(start, sourceCodeInfo, { integer: true });
+                assertNumber(deleteCount, sourceCodeInfo, { integer: true, nonNegative: true });
+                var from = start < 0 ? seq.length + start : start;
+                if (Array.isArray(seq)) {
+                    return __spreadArray(__spreadArray(__spreadArray([], __read(seq.slice(0, from)), false), __read(rest), false), __read(seq.slice(from + deleteCount)), false);
+                }
+                rest.forEach(function (elem) { return assertString(elem, sourceCodeInfo); });
+                return "".concat(seq.substring(0, from)).concat(rest.join('')).concat(seq.substring(from + deleteCount));
+            },
+            paramCount: { min: 3 },
         },
         'some': {
             evaluate: function (_a, sourceCodeInfo, contextStack, _b) {
@@ -2853,10 +2840,32 @@ var Playground = (function (exports) {
         },
         'distinct': {
             evaluate: function (_a, sourceCodeInfo) {
-                var _b = __read(_a, 1), input = _b[0];
+                var e_2, _b;
+                var _c = __read(_a, 1), input = _c[0];
                 assertSeq(input, sourceCodeInfo);
-                if (Array.isArray(input))
-                    return Array.from(new Set(input));
+                if (Array.isArray(input)) {
+                    var result = [];
+                    var _loop_1 = function (item) {
+                        assertAny(item, sourceCodeInfo);
+                        if (!result.some(function (existingItem) { return deepEqual(existingItem, item, sourceCodeInfo); })) {
+                            result.push(item);
+                        }
+                    };
+                    try {
+                        for (var input_1 = __values(input), input_1_1 = input_1.next(); !input_1_1.done; input_1_1 = input_1.next()) {
+                            var item = input_1_1.value;
+                            _loop_1(item);
+                        }
+                    }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    finally {
+                        try {
+                            if (input_1_1 && !input_1_1.done && (_b = input_1.return)) _b.call(input_1);
+                        }
+                        finally { if (e_2) throw e_2.error; }
+                    }
+                    return result;
+                }
                 return Array.from(new Set(input.split(''))).join('');
             },
             paramCount: 1,
@@ -2879,27 +2888,25 @@ var Playground = (function (exports) {
         'remove-at': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), input = _b[0], index = _b[1];
-                assertNumber(index, sourceCodeInfo);
+                assertNumber(index, sourceCodeInfo, { integer: true });
                 assertSeq(input, sourceCodeInfo);
-                var intIndex = Math.ceil(index);
-                if (intIndex < 0 || intIndex >= input.length)
+                var at = index < 0 ? input.length + index : index;
+                if (at < 0 || at >= input.length)
                     return input;
                 if (Array.isArray(input)) {
-                    var copy = __spreadArray([], __read(input), false);
-                    copy.splice(index, 1);
-                    return copy;
+                    return input.filter(function (_, i) { return i !== at; });
                 }
-                return "".concat(input.substring(0, index)).concat(input.substring(index + 1));
+                return "".concat(input.substring(0, at)).concat(input.substring(at + 1));
             },
             paramCount: 2,
         },
         'split-at': {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), seq = _b[0], pos = _b[1];
-                assertNumber(pos, sourceCodeInfo, { finite: true });
-                var intPos = toNonNegativeInteger(pos);
+                assertNumber(pos, sourceCodeInfo, { integer: true });
                 assertSeq(seq, sourceCodeInfo);
-                return [seq.slice(0, intPos), seq.slice(intPos)];
+                var at = pos < 0 ? seq.length + pos : pos;
+                return [seq.slice(0, at), seq.slice(at)];
             },
             paramCount: 2,
         },
@@ -3020,7 +3027,7 @@ var Playground = (function (exports) {
         },
         'interleave': {
             evaluate: function (_a, sourceCodeInfo) {
-                var e_2, _b;
+                var e_3, _b;
                 var _c = __read(_a), seqs = _c.slice(0);
                 var isStringSeq = typeof seqs[0] === 'string';
                 var seqsArr = isStringSeq
@@ -3038,18 +3045,18 @@ var Playground = (function (exports) {
                 var result = [];
                 for (var i = 0; i < maxLength; i += 1) {
                     try {
-                        for (var seqsArr_1 = (e_2 = void 0, __values(seqsArr)), seqsArr_1_1 = seqsArr_1.next(); !seqsArr_1_1.done; seqsArr_1_1 = seqsArr_1.next()) {
+                        for (var seqsArr_1 = (e_3 = void 0, __values(seqsArr)), seqsArr_1_1 = seqsArr_1.next(); !seqsArr_1_1.done; seqsArr_1_1 = seqsArr_1.next()) {
                             var seq = seqsArr_1_1.value;
                             if (i < seq.length)
                                 result.push(seq[i]);
                         }
                     }
-                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    catch (e_3_1) { e_3 = { error: e_3_1 }; }
                     finally {
                         try {
                             if (seqsArr_1_1 && !seqsArr_1_1.done && (_b = seqsArr_1.return)) _b.call(seqsArr_1);
                         }
-                        finally { if (e_2) throw e_2.error; }
+                        finally { if (e_3) throw e_3.error; }
                     }
                 }
                 return isStringSeq ? result.join('') : result;
@@ -4359,7 +4366,7 @@ var Playground = (function (exports) {
             evaluate: function (_a, sourceCodeInfo) {
                 var _b = __read(_a, 2), stringList = _b[0], delimiter = _b[1];
                 assertArray(stringList, sourceCodeInfo);
-                stringList.forEach(function (str) { return assertString(str, sourceCodeInfo); });
+                stringList.forEach(function (str) { return assertStringOrNumber(str, sourceCodeInfo); });
                 assertString(delimiter, sourceCodeInfo);
                 return stringList.join(delimiter);
             },
@@ -8948,6 +8955,7 @@ var Playground = (function (exports) {
             'unshift',
             'shift',
             'slice',
+            'splice',
             'reductions',
             'reduce',
             'reduce-right',
@@ -8962,9 +8970,7 @@ var Playground = (function (exports) {
             'second',
             'last',
             'rest',
-            'nthrest',
             'next',
-            'nthnext',
             'take',
             'take-last',
             'take-while',
@@ -12816,34 +12822,33 @@ var Playground = (function (exports) {
             returns: {
                 type: 'any',
             },
-            args: {
-                'seq': {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { 'seq': {
                     type: ['sequence', 'null'],
-                },
-                'n': {
+                }, 'n': {
                     type: 'integer',
-                },
-                'not-found': {
+                }, 'not-found': {
                     type: 'any',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'n'] },
                 { argumentNames: ['seq', 'n', 'not-found'] },
             ],
             description: 'Accesses element $n of $seq. Accessing out-of-bounds indices returns $not-found, if present, else `null`.',
             examples: [
-                '(nth [1 2 3] 1)',
-                '(nth [1 2 3] 3)',
-                '(nth [1 2 3] -1)',
-                '(nth [1 2 3] 3 99)',
-                '(nth "A string" 1)',
-                '(nth "A string" 3)',
-                '(nth "A string" -3)',
-                '(nth "A string" 30 :X)',
-                '(nth null 1)',
-                '(nth null 1 "Default value")',
+                '[1, 2, 3] nth 1',
+                '"A string" nth 3',
+                'nth([1, 2, 3], 1)',
+                'nth([1, 2, 3], 3)',
+                'nth([1, 2, 3], -1)',
+                'nth([1, 2, 3], 3, 99)',
+                'nth("A string", 1)',
+                'nth("A string", 3)',
+                'nth("A string", -3)',
+                'nth("A string", 30, "X")',
+                'nth(null, 1)',
+                'nth(null, 1, "Default value")',
             ],
+            algebraic: true,
         },
         'push': {
             title: 'push',
@@ -12852,28 +12857,26 @@ var Playground = (function (exports) {
             clojureDocs: null,
             returns: {
                 type: 'sequence',
-                array: true,
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
                     type: 'sequence',
-                    array: true,
-                },
-                values: {
+                }, values: {
                     type: 'any',
                     rest: true,
                     description: 'At least one.',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'values'] },
             ],
             description: 'Returns copy of $seq with $values added to the end of it.',
             examples: [
-                '(push [1 2 3] 4)',
-                '(push [1 2 3] 4 5 6)',
-                '(def l [1 2 3]) (push l 4) l',
+                '[1, 2, 3] push 4',
+                '"Albert" push "!"',
+                'push([1, 2, 3], 4)',
+                'push([1, 2, 3], 4, 5, 6)',
+                "\nlet l := [1, 2, 3];\npush(l, 4);\nl",
             ],
+            algebraic: true,
         },
         'pop': {
             title: 'pop',
@@ -12881,12 +12884,11 @@ var Playground = (function (exports) {
             linkName: 'pop',
             returns: {
                 type: ['sequence', 'null'],
-                array: true,
+                rest: true,
             },
             args: {
                 seq: {
                     type: 'sequence',
-                    array: true,
                 },
             },
             variants: [
@@ -12894,9 +12896,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a copy of $seq with last element removed. If $seq is empty `null` is returned.',
             examples: [
-                '(pop [1 2 3])',
-                '(pop [])',
+                'pop([1, 2, 3])',
+                'pop([])',
             ],
+            algebraic: true,
         },
         'unshift': {
             title: 'unshift',
@@ -12905,27 +12908,24 @@ var Playground = (function (exports) {
             clojureDocs: null,
             returns: {
                 type: 'sequence',
-                array: true,
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
                     type: 'sequence',
-                    array: true,
-                },
-                values: {
+                }, values: {
                     type: 'any',
-                    array: true,
-                },
-            },
+                    rest: true,
+                } }),
             variants: [
                 { argumentNames: ['seq', 'values'] },
             ],
             description: 'Returns copy of $seq with $values added to the beginning.',
             examples: [
-                '(unshift [1 2 3] 4)',
-                '(unshift [1 2 3] 4 5 6)',
-                "\n(def l [1 2 3])\n(unshift l 4)\nl",
+                '[1, 2, 3] unshift 4',
+                'unshift([1, 2, 3], 4)',
+                'unshift([1, 2, 3], 4, 5, 6)',
+                "\nlet l := [1, 2, 3];\nunshift(l, 4);\nl",
             ],
+            algebraic: true,
         },
         'shift': {
             title: 'shift',
@@ -12934,12 +12934,10 @@ var Playground = (function (exports) {
             clojureDocs: null,
             returns: {
                 type: ['sequence', 'null'],
-                array: true,
             },
             args: {
                 seq: {
                     type: 'sequence',
-                    array: true,
                 },
             },
             variants: [
@@ -12947,9 +12945,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a copy of $seq with first element removed. If $seq is empty `null` is returned.',
             examples: [
-                '(shift [1 2 3])',
-                '(shift [])',
+                'shift([1, 2, 3])',
+                'shift([])',
             ],
+            algebraic: true,
         },
         'slice': {
             title: 'slice',
@@ -12957,23 +12956,18 @@ var Playground = (function (exports) {
             linkName: 'slice',
             clojureDocs: null,
             returns: {
-                type: 'any',
-                array: true,
+                type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
                     type: 'sequence',
-                    array: true,
-                },
-                start: {
+                    rest: true,
+                }, start: {
                     type: 'integer',
                     description: 'Defaults to `0`.',
-                },
-                stop: {
+                }, stop: {
                     type: 'integer',
                     description: 'Defaults lenght of sequence + 1.',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq'] },
                 { argumentNames: ['seq', 'start'] },
@@ -12981,9 +12975,47 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a copy of a portion of $seq from index $start (inclusive) to $stop (exclusive).',
             examples: [
-                '(slice [1 2 3 4 5] 2 4)',
-                '(slice [1 2 3 4 5] 2)',
+                '[1, 2, 3, 4, 5] slice 2',
+                'slice([1, 2, 3, 4, 5], 2, 4)',
+                'slice([1, 2, 3, 4, 5], 2)',
             ],
+            algebraic: true,
+        },
+        'splice': {
+            title: 'splice',
+            category: 'Sequence',
+            linkName: 'splice',
+            clojureDocs: null,
+            returns: {
+                type: 'sequence',
+            },
+            args: {
+                seq: {
+                    type: 'sequence',
+                    rest: true,
+                },
+                start: {
+                    type: 'integer',
+                },
+                deleteCount: {
+                    type: 'integer',
+                },
+                items: {
+                    type: 'any',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['seq', 'start', 'deleteCount'] },
+                { argumentNames: ['seq', 'start', 'deleteCount', 'items'] },
+            ],
+            description: 'Returns a a spliced array. Removes $deleteCount elements from $seq starting at $start and replaces them with $items. If $start is negative, it is counting from the end of the array.',
+            examples: [
+                'splice([1, 2, 3, 4, 5], 2, 2, "x")',
+                'splice([1, 2, 3, 4, 5], -2, 1, "x")',
+                'splice("Albert", 2, 2, "fo")',
+            ],
+            algebraic: true,
         },
         'reductions': {
             title: 'reductions',
@@ -12991,31 +13023,29 @@ var Playground = (function (exports) {
             linkName: 'reductions',
             returns: {
                 type: 'any',
-                array: true,
+                rest: true,
             },
-            args: {
-                fn: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { fn: {
                     type: 'function',
-                },
-                seq: {
+                }, seq: {
                     type: 'sequence',
-                    array: true,
-                },
-                start: {
+                    rest: true,
+                }, start: {
                     type: 'any',
-                },
-            },
+                } }),
             variants: [
-                { argumentNames: ['fn', 'seq'] },
-                { argumentNames: ['fn', 'start', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
+                { argumentNames: ['seq', 'fn', 'start'] },
             ],
             description: 'Returns an array of the intermediate values of the reduction (see `reduce`) of $seq by $fn.',
             examples: [
-                '(reductions + [1 2 3])',
-                '(reductions + 10 [1 2 3])',
-                '(reductions + 0 [])',
-                "\n(reductions\n  (fn [result value] (+ result (if (even? value) value 0)))\n  0\n  [1 2 3 4 5 6 7 8 9])",
+                '[1, 2, 3] reductions +',
+                'reductions([1, 2, 3], +)',
+                'reductions([1, 2, 3], +, 10)',
+                'reductions([], +, 0)',
+                "\nreductions(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0\n)",
             ],
+            algebraic: true,
         },
         'reduce': {
             title: 'reduce',
@@ -13024,28 +13054,26 @@ var Playground = (function (exports) {
             returns: {
                 type: 'any',
             },
-            args: {
-                fn: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { fn: {
                     type: 'function',
-                },
-                seq: {
+                }, seq: {
                     type: 'sequence',
-                },
-                start: {
+                }, start: {
                     type: 'any',
-                },
-            },
+                } }),
             variants: [
-                { argumentNames: ['fn', 'seq'] },
-                { argumentNames: ['fn', 'start', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
+                { argumentNames: ['seq', 'fn', 'start'] },
             ],
             description: 'Runs $fn function on each element of the $seq, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
             examples: [
-                '(reduce + [1 2 3])',
-                '(reduce + 0 [1 2 3])',
-                '(reduce + 0 [])',
-                "\n(reduce\n  (fn [result value] (+ result (if (even? value) value 0)))\n  0\n  [1 2 3 4 5 6 7 8 9])",
+                '[1, 2, 3] reduce +',
+                'reduce([1, 2, 3], +)',
+                'reduce([1, 2, 3], +, 0)',
+                'reduce([], +, 0)',
+                "\nreduce(\n  [1, 2, 3, 4, 5, 6, 7, 8, 9],\n  (result, value) -> result + if even?(value) then value else 0 end,\n  0)",
             ],
+            algebraic: true,
         },
         'reduce-right': {
             title: 'reduce-right',
@@ -13055,25 +13083,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                fn: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { fn: {
                     type: 'function',
-                },
-                seq: {
+                }, seq: {
                     type: 'sequence',
-                },
-                start: {
+                }, start: {
                     type: 'any',
-                },
-            },
+                } }),
             variants: [
-                { argumentNames: ['fn', 'seq'] },
-                { argumentNames: ['fn', 'start', 'seq'] },
+                { argumentNames: ['seq', 'fn'] },
+                { argumentNames: ['seq', 'fn', 'start'] },
             ],
             description: 'Runs $fn function on each element of the $seq (starting from the last item), passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the $seq is a single value.',
             examples: [
-                '(reduce-right str [:A :B :C] "")',
+                'range(1, 10) reduce-right *',
+                'reduce-right(["A", "B", "C"], str, "")',
             ],
+            algebraic: true,
         },
         'map': {
             title: 'map',
@@ -13081,24 +13107,23 @@ var Playground = (function (exports) {
             linkName: 'map',
             returns: {
                 type: 'any',
-                array: true,
+                rest: true,
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Creates a new array populated with the results of calling $fn on every elements in $seq.',
             examples: [
-                '(map ["Albert" "Mojir" 42] str)',
-                '(map [1 2 3] inc)',
+                '[1, 2, 3] map -> -($)',
+                'map(["Albert", "Mojir", 42], str)',
+                'map([1, 2, 3], inc)',
             ],
+            algebraic: true,
         },
         'filter': {
             title: 'filter',
@@ -13107,22 +13132,20 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Creates a new array with all elements that pass the test implemented by $fn.',
             examples: [
-                "\n(filter\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
-                "\n(filter\n[5 10 15 20]\n  (fn [x] (> x 10)))",
+                "\nfilter(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                "\nfilter(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
             ],
+            algebraic: true,
         },
         'position': {
             title: 'position',
@@ -13132,24 +13155,22 @@ var Playground = (function (exports) {
             returns: {
                 type: ['number', 'null'],
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: ['sequence', 'null'],
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the index of the first elements that passes the test implemented by $fn. If no element was found, `null` is returned.',
             examples: [
-                "\n(position\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
-                "\n(position\n  [5 10 15 20]\n  (fn [x] (> x 10)))",
-                "\n(position\n  [5 10 15 20]\n  (fn [x] (> x 100)))",
-                "\n(position\n  (fn [x] (> x 100))\n  null)",
+                "\nposition(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                "\nposition(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
+                "\nposition(\n  [5, 10, 15, 20],\n  -> $ > 100\n)",
+                "\nposition(\n  null,\n  -> $ > 100\n)",
             ],
+            algebraic: true,
         },
         'index-of': {
             title: 'index-of',
@@ -13159,24 +13180,23 @@ var Playground = (function (exports) {
             returns: {
                 type: ['number', 'null'],
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
                     type: ['sequence', 'null'],
-                },
-                x: {
+                }, x: {
                     type: 'any',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'x'] },
             ],
             description: 'Returns the index of $x in $seq. If element is not present in $seq `null` is returned.',
             examples: [
-                '(index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
-                '(index-of [5 10 15 20] 15)',
-                '(index-of [5 10 15 20] 1)',
-                '(index-of null 1)',
+                '[[1], [2], [1], [2]] index-of [1]',
+                'index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+                'index-of([5, 10, 15, 20], 15)',
+                'index-of([5, 10, 15, 20], 1)',
+                'index-of(null, 1)',
             ],
+            algebraic: true,
         },
         'last-index-of': {
             title: 'last-index-of',
@@ -13186,24 +13206,23 @@ var Playground = (function (exports) {
             returns: {
                 type: ['number', 'null'],
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
                     type: ['sequence', 'null'],
-                },
-                x: {
+                }, x: {
                     type: 'any',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'x'] },
             ],
             description: 'Returns the last index of $x in $seq. If element is not present in $seq `null` is returned.',
             examples: [
-                '(last-index-of ["Albert" "Mojir" 160 [1 2]] "Mojir")',
-                '(last-index-of [5 10 15 20] 15)',
-                '(last-index-of [5 10 15 20] 1)',
-                '(last-index-of null 1)',
+                '[[1], [2], [1], [2]] last-index-of [1]',
+                'last-index-of(["Albert", "Mojir", 160, [1, 2]], "Mojir")',
+                'last-index-of([5, 10, 15, 20, 15], 15)',
+                'last-index-of([5, 10, 15, 20], 1)',
+                'last-index-of(null, 1)',
             ],
+            algebraic: true,
         },
         'some': {
             title: 'some',
@@ -13212,25 +13231,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'any',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: ['sequence', 'null'],
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the first element that passes the test implemented by $fn. I no element was found, `null` is returned.',
             examples: [
-                "\n(some\n  [\"Albert\" \"Mojir\" 160 [1 2]]\n  string?)",
-                "\n(some\n  [5 10 15 20]\n  (fn [x] (> x 10)))",
-                "\n(some\n  [1 2 3 4]\n  (fn [x] (> x 10)))",
-                "\n(some\n  []\n  (fn [x] (> x 10)))",
-                "\n(some\n  null\n  (fn [x] (> x 10)))",
+                "\nsome(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
+                "\nsome(\n  [5, 10, 15, 20],\n  -> $ > 10\n)",
+                "\nsome(\n  [1, 2, 3, 4],\n  -> $ > 10\n)",
+                "\nsome(\n  [],\n  -> $ > 10\n)",
+                "\nsome(\n  null,\n  -> $ > 10\n)",
             ],
+            algebraic: true,
         },
         'reverse': {
             title: 'reverse',
@@ -13249,11 +13266,12 @@ var Playground = (function (exports) {
             ],
             description: 'If $seq is an array, creates a new array with the elements from $seq in reversed order. If $seq is a string, returns new reversed string.',
             examples: [
-                '(reverse ["Albert" "Mojir" 160 [1 2]])',
-                '(reverse [])',
-                '(reverse "Albert")',
-                '(reverse null)',
+                'reverse(["Albert", "Mojir", 160, [1, 2]])',
+                'reverse([])',
+                'reverse("Albert")',
+                'reverse(null)',
             ],
+            algebraic: true,
         },
         'first': {
             title: 'first',
@@ -13272,10 +13290,11 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the first element of $seq. If $seq is empty or `null`, `null` is returned.',
             examples: [
-                '(first ["Albert" "Mojir" 160 [1 2]])',
-                '(first [])',
-                '(first null)',
+                'first(["Albert", "Mojir", 160, [1, 2]])',
+                'first([])',
+                'first(null)',
             ],
+            algebraic: true,
         },
         'second': {
             title: 'second',
@@ -13294,11 +13313,12 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the second element of $seq. If $seq has less than two elements or is `null`, `null` is returned.',
             examples: [
-                '(second ["Albert" "Mojir" 160 [1 2]])',
-                '(second [1])',
-                '(second [])',
-                '(second null)',
+                'second(["Albert", "Mojir", 160, [1, 2]])',
+                'second([1])',
+                'second([])',
+                'second(null)',
             ],
+            algebraic: true,
         },
         'last': {
             title: 'last',
@@ -13317,12 +13337,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns the last element of $seq. If $seq is empty, `null` is returned.',
             examples: [
-                '(last ["Albert" "Mojir" 160 [1 2]])',
-                '(last [1 2])',
-                '(last [1])',
-                '(last [])',
-                '(last null)',
+                'last(["Albert", "Mojir", 160, [1, 2]])',
+                'last([1, 2])',
+                'last([1])',
+                'last([])',
+                'last(null)',
             ],
+            algebraic: true,
         },
         'rest': {
             title: 'rest',
@@ -13341,41 +13362,14 @@ var Playground = (function (exports) {
             ],
             description: "If $seq is an array, returns a new array with all but the first element from $seq.\nIf $seq has less than two elements, an empty array is returned.\nFor string $seq returns all but the first characters in $seq.",
             examples: [
-                '(rest ["Albert" "Mojir" 160 [1 2]])',
-                '(rest ["Albert"])',
-                '(rest [])',
-                '(rest "Albert")',
-                '(rest :A)',
-                '(rest "")',
+                'rest(["Albert", "Mojir", 160, [1, 2]])',
+                'rest(["Albert"])',
+                'rest([])',
+                'rest("Albert")',
+                'rest("A",)',
+                'rest("")',
             ],
-        },
-        'nthrest': {
-            title: 'nthrest',
-            category: 'Sequence',
-            linkName: 'nthrest',
-            returns: {
-                type: 'any',
-                array: true,
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-                n: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-            ],
-            description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. For string $seq returns all but the first $n characters in $seq.',
-            examples: [
-                '(nthrest ["Albert" "Mojir" 160 [1 2]] 2)',
-                '(nthrest "Albert" 3)',
-                '(nthrest "Albert" 10)',
-                '(nthrest [] 0)',
-                '(nthrest "" 0)',
-            ],
+            algebraic: true,
         },
         'next': {
             title: 'next',
@@ -13394,41 +13388,14 @@ var Playground = (function (exports) {
             ],
             description: 'If $seq is an array, returns a new array with all but the first element from $seq. If $seq has less than two elements, `null` is returned. For string $seq returns all but the first characters in $seq. If length of string $seq is less than two, `null` is returned.',
             examples: [
-                '(next ["Albert" "Mojir" 160 [1 2]])',
-                '(next ["Albert"])',
-                '(next [])',
-                '(next "Albert")',
-                '(next :A)',
-                '(next "")',
+                'next(["Albert", "Mojir", 160, [1, 2]])',
+                'next(["Albert"])',
+                'next([])',
+                'next("Albert")',
+                'next("A",)',
+                'next("")',
             ],
-        },
-        'nthnext': {
-            title: 'nthnext',
-            category: 'Sequence',
-            linkName: 'nthnext',
-            returns: {
-                type: ['sequence', 'null'],
-                array: true,
-            },
-            args: {
-                seq: {
-                    type: 'sequence',
-                },
-                n: {
-                    type: 'number',
-                },
-            },
-            variants: [
-                { argumentNames: ['seq', 'n'] },
-            ],
-            description: 'If $seq is an array, returns a new array with all but the first $n elements from $seq. If $seq has less or equal than $n elements, `null` returned. For string $seq returns all but the first $n characters in $seq. If length of string $seq is less or equal than $n, `null` is returned.',
-            examples: [
-                '(nthnext ["Albert" "Mojir" 160 [1 2]] 2)',
-                '(nthnext "Albert" 3)',
-                '(nthnext "Albert" 6)',
-                '(nthnext [] 0)',
-                '(nthnext "" 0)',
-            ],
+            algebraic: true,
         },
         'take': {
             title: 'take',
@@ -13437,24 +13404,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                n: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { n: {
                     type: 'integer',
-                },
-                seq: {
+                }, seq: {
                     type: 'sequence',
-                },
-            },
+                } }),
             variants: [
-                { argumentNames: ['n', 'seq'] },
+                { argumentNames: ['seq', 'n'] },
             ],
             description: 'Constructs a new array/string with the $n first elements from $seq.',
             examples: [
-                '(take 3 [1 2 3 4 5])',
-                '(take 0 [1 2 3 4 5])',
-                '(take 2 "Albert")',
-                '(take 50 "Albert")',
+                '[1, 2, 3, 4, 5] take 3',
+                'take([1, 2, 3, 4, 5], 3)',
+                'take([1, 2, 3, 4, 5], 0)',
+                'take("Albert", 2)',
+                'take("Albert", 50)',
             ],
+            algebraic: true,
         },
         'take-last': {
             title: 'take-last',
@@ -13463,22 +13429,21 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                n: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { n: {
                     type: 'integer',
-                },
-                seq: {
+                }, seq: {
                     type: 'sequence',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['n', 'seq'] },
             ],
             description: 'Constructs a new array with the $n last elements from $seq.',
             examples: [
-                '(take-last 3 [1 2 3 4 5])',
-                '(take-last 0 [1 2 3 4 5])',
+                '[1, 2, 3, 4, 5] take-last 3',
+                'take-last([1, 2, 3, 4, 5], 3)',
+                'take-last([1, 2, 3, 4, 5], 0)',
             ],
+            algebraic: true,
         },
         'take-while': {
             title: 'take-while',
@@ -13487,21 +13452,18 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the members of $seq in order, stopping before the first one for which `predicate` returns a falsy value.',
             examples: [
-                "\n(take-while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
-                "\n(take-while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
+                "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
+                "\ntake-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
             ],
         },
         'drop': {
@@ -13511,23 +13473,20 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
                     type: 'sequence',
-                },
-                n: {
+                }, n: {
                     type: 'integer',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'n'] },
             ],
             description: 'Constructs a new array/string with the $n first elements dropped from $seq.',
             examples: [
-                '(drop [1 2 3 4 5] 3)',
-                '(drop [1 2 3 4 5] 0)',
-                '(drop "Albert" 2)',
-                '(drop "Albert" 50)',
+                'drop([1, 2, 3, 4, 5], 3)',
+                'drop([1, 2, 3, 4, 5], 0)',
+                'drop("Albert", 2)',
+                'drop("Albert", 50)',
             ],
         },
         'drop-last': {
@@ -13537,22 +13496,21 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
                     type: 'sequence',
-                },
-                n: {
+                }, n: {
                     type: 'integer',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'n'] },
             ],
             description: 'Constructs a new array with the $n last elements dropped from $seq.',
             examples: [
-                '(drop-last [1 2 3 4 5] 3)',
-                '(drop-last [1 2 3 4 5] 0)',
+                '[1, 2, 3, 4, 5] drop-last 3',
+                'drop-last([1, 2, 3, 4, 5], 3)',
+                'drop-last([1, 2, 3, 4, 5], 0)',
             ],
+            algebraic: true,
         },
         'drop-while': {
             title: 'drop-while',
@@ -13561,22 +13519,20 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns the members of $seq in order, skipping the fist elements for witch the `predicate` returns a truethy value.',
             examples: [
-                "\n(drop-while\n  [1 2 3 2 1]\n  (fn [x] (< x 3)))",
-                "\n(drop-while\n  [1 2 3 2 1]\n  (fn [x] (> x 3)))",
+                "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ < 3\n)",
+                "\ndrop-while(\n  [1, 2, 3, 2, 1],\n  -> $ > 3\n)",
             ],
+            algebraic: true,
         },
         'sort': {
             title: 'sort',
@@ -13584,26 +13540,25 @@ var Playground = (function (exports) {
             linkName: 'sort',
             returns: {
                 type: 'any',
-                array: true,
+                rest: true,
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq'] },
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns a new sequence with the elements from $seq sorted according to $fn. If no $fn is supplied, builtin `compare` will be used.',
             examples: [
-                '(sort [3 1 2])',
-                "\n(sort\n  [3 1 2]\n  (fn [a b] (cond (< a b) -1 (> a b) 1 true -1)))",
-                "\n(sort\n  [3 1 2]\n  (fn [a b] (cond (> a b) -1 (< a b) 1 true -1)))",
+                '[3, 1, 2] sort (a, b) -> b - a',
+                'sort([3, 1, 2])',
+                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a < b then -1 case a > b then 1 case true then -1 end\n)",
+                "\nsort(\n  [3, 1, 2],\n  (a, b) -> cond case a > b then -1 case a < b then 1 case true then -1 end\n)",
             ],
+            algebraic: true,
         },
         'sort-by': {
             title: 'sort-by',
@@ -13611,28 +13566,26 @@ var Playground = (function (exports) {
             linkName: 'sort-by',
             returns: {
                 type: 'any',
-                array: true,
+                rest: true,
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                keyfn: {
+                }, keyfn: {
                     type: 'function',
-                },
-                comp: {
+                }, comp: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'keyfn'] },
                 { argumentNames: ['seq', 'keyfn', 'comp'] },
             ],
             description: 'Returns a sorted sequence of the items in $seq, where the sort order is determined by comparing `(keyfn item)`. If no $comp is supplied, uses builtin `compare`.',
             examples: [
-                '(sort-by ["Albert" "Mojir" "Nina"] count)',
-                '(sort-by "Albert" lower-case #(compare %2 %1))',
+                '["Albert", "Mojir", "Nina"] sort-by count',
+                'sort-by(["Albert", "Mojir", "Nina"], count)',
+                'sort-by("Albert", lower-case, -> $2 compare $1)',
             ],
+            algebraic: true,
         },
         'distinct': {
             title: 'distinct',
@@ -13651,11 +13604,13 @@ var Playground = (function (exports) {
             ],
             description: 'Returns a copy of $seq with no duplicates.',
             examples: [
-                '(distinct [1 2 3 1 3 5])',
-                '(distinct "Albert Mojir")',
-                '(distinct [])',
-                '(distinct "")',
+                'distinct([[1], [2], [3], [1], [3], [5]])',
+                'distinct([1, 2, 3, 1, 3, 5])',
+                'distinct("Albert Mojir")',
+                'distinct([])',
+                'distinct("")',
             ],
+            algebraic: true,
         },
         'remove': {
             title: 'remove',
@@ -13664,22 +13619,21 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns a new sequence of items in $seq for witch `pred(item)` returns a falsy value.',
             examples: [
-                '(remove [1 2 3 1 3 5] even?)',
-                '(remove "Albert Mojir" #(contains? "aoueiyAOUEIY" %1))',
+                '[1, 2, 3, 1, 3, 5] remove odd?',
+                'remove([1, 2, 3, 1, 3, 5], even?)',
+                'remove("Albert Mojir", -> "aoueiyAOUEIY" contains? $)',
             ],
+            algebraic: true,
         },
         'remove-at': {
             title: 'remove-at',
@@ -13689,23 +13643,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
                     type: 'sequence',
-                },
-                n: {
+                }, n: {
                     type: 'number',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'n'] },
             ],
-            description: 'Returns a new sequence of all items in $seq except item at position $n.',
+            description: 'Returns a new sequence of all items in $seq except item at position $n. If $n is negative, it is counting from the end of the sequence.',
             examples: [
-                '(remove-at [1 2 3 1 3 5] 0)',
-                '(remove-at [1 2 3 1 3 5] -1)',
-                '(remove-at "Albert Mojir" 6)',
+                '[1, 2, 3, 1, 3, 5] remove-at 2',
+                '"Albert" remove-at -2',
+                'remove-at([1, 2, 3, 1, 3, 5], 0)',
+                'remove-at([1, 2, 3, 1, 3, 5], -1)',
+                'remove-at("Albert Mojir", 6)',
             ],
+            algebraic: true,
         },
         'split-at': {
             title: 'split-at',
@@ -13713,24 +13667,23 @@ var Playground = (function (exports) {
             linkName: 'split-at',
             returns: {
                 type: 'sequence',
-                array: true,
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'integer')), { seq: {
                     type: 'sequence',
-                },
-                n: {
+                }, n: {
                     type: 'number',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'n'] },
             ],
             description: 'Returns a pair of sequence `[take(pos input), drop(pos input)]`.',
             examples: [
-                '(split-at [1 2 3 4 5] 2)',
-                '(split-at "Albert" 2)',
+                '[1, 2, 3, 4, 5] split-at 2',
+                '"Albert" split-at -2',
+                'split-at([1, 2, 3, 4, 5], -2)',
+                'split-at("Albert", 2)',
             ],
+            algebraic: true,
         },
         'split-with': {
             title: 'split-with',
@@ -13738,24 +13691,22 @@ var Playground = (function (exports) {
             linkName: 'split-with',
             returns: {
                 type: 'sequence',
-                array: true,
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns a pair of sequences `[take-while(input, fn), drop-while(input, fn)]`.',
             examples: [
-                '(split-with [1 2 3 4 5] #(> %1 3))',
-                '(split-with "Albert" #(<= %1 :Z))',
+                '[1, 2, 3, 4, 5] split-with odd?',
+                'split-with([1, 2, 3, 4, 5], -> $ > 3)',
+                'split-with("Albert", -> $ <= "o")',
             ],
+            algebraic: true,
         },
         'frequencies': {
             title: 'frequencies',
@@ -13774,9 +13725,10 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an object from distinct items in $seq to the number of times they appear. Note that all items in $seq must be valid object keys i.e. strings.',
             examples: [
-                '(frequencies ["Albert" "Mojir" "Nina" "Mojir"])',
-                '(frequencies "Pneumonoultramicroscopicsilicovolcanoconiosis")',
+                'frequencies(["Albert", "Mojir", "Nina", "Mojir"])',
+                'frequencies("Pneumonoultramicroscopicsilicovolcanoconiosis")',
             ],
+            algebraic: true,
         },
         'group-by': {
             title: 'group-by',
@@ -13785,21 +13737,19 @@ var Playground = (function (exports) {
             returns: {
                 type: 'object',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Returns an object of the elements of $seq keyed by the result of $fn on each element. The value at each key will be an array of the corresponding elements.',
             examples: [
-                '(group-by [{"name" "Albert"} {"name" "Albert"} {"name" "Mojir"}] "name")',
-                '(group-by "Albert Mojir" (fn [char] (if (contains? "aoueiAOUEI" char) "vowel" "other")))',
+                '[{ name := "Albert" } { name := "Albert" } { name := "Mojir" }] group-by "name"',
+                'group-by([{name := "Albert"} {name := "Albert"} {name := "Mojir"}] "name")',
+                'group-by("Albert Mojir" -> if "aoueiAOUEI" contains? $ then "vowel" else "other" end)',
             ],
         },
         'partition': {
@@ -13809,20 +13759,15 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'number')), { seq: {
                     type: 'sequence',
-                },
-                n: {
+                }, n: {
                     type: 'number',
-                },
-                step: {
+                }, step: {
                     type: 'number',
-                },
-                pad: {
+                }, pad: {
                     type: 'array',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'n'] },
                 { argumentNames: ['seq', 'n', 'step'] },
@@ -13830,22 +13775,24 @@ var Playground = (function (exports) {
             ],
             description: 'Returns an array of sequences of $n items each, at offsets $step apart. If $step is not supplied, defaults to $n. If a $pad array is supplied, use its elements as necessary to complete last partition upto $n items. In case there are not enough padding elements, return a partition with less than $n items.',
             examples: [
-                '(partition (range 20) 4)',
-                '(partition (range 22) 4)',
-                '(partition (range 20) 4 6)',
-                '(partition (range 20) 4 3)',
-                '(partition (range 20) 3 6 [:a])',
-                '(partition (range 20) 4 6 [:a])',
-                '(partition (range 20) 4 6 [:a :b :c :d])',
-                '(partition [:a :b :c :d :e :f] 3 1)',
-                '(partition [1 2 3 4] 10)',
-                '(partition [1 2 3 4] 10 10)',
-                '(partition [1 2 3 4] 10 10 [])',
-                '(partition [1 2 3 4] 10 10 null)',
-                '(partition "superfragilistic" 5)',
-                '(partition "superfragilistic" 5 5 null)',
-                '(def foo [5 6 7 8]) (partition foo 2 1 foo)',
+                'range(20) partition 4',
+                'partition(range(20), 4)',
+                'partition(range(22), 4)',
+                'partition(range(20), 4, 6)',
+                'partition(range(20), 4, 3)',
+                'partition(range(20), 3, 6, ["a"])',
+                'partition(range(20), 4, 6, ["a"])',
+                'partition(range(20), 4, 6, ["a", "b", "c", "d"])',
+                'partition(["a", "b", "c", "d", "e", "f"], 3, 1)',
+                'partition([1, 2, 3, 4], 10)',
+                'partition([1, 2, 3, 4], 10, 10)',
+                'partition([1, 2, 3, 4], 10, 10, [])',
+                'partition([1, 2, 3, 4], 10, 10, null)',
+                'partition("superfragilistic", 5)',
+                'partition("superfragilistic", 5, 5, null)',
+                'let foo := [5, 6, 7, 8]; partition(foo, 2, 1, foo)',
             ],
+            algebraic: true,
         },
         'partition-all': {
             title: 'partition-all',
@@ -13854,27 +13801,25 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'number')), { seq: {
                     type: 'sequence',
-                },
-                n: {
+                }, n: {
                     type: 'number',
-                },
-                step: {
+                }, step: {
                     type: 'number',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'n'] },
                 { argumentNames: ['seq', 'n', 'step'] },
             ],
             description: 'Returns an array of sequences like partition, but may include partitions with fewer than n items at the end.',
             examples: [
-                '(partition-all [0 1 2 3 4 5 6 7 8 9] 4)',
-                '(partition [0 1 2 3 4 5 6 7 8 9] 4)',
-                '(partition-all [0 1 2 3 4 5 6 7 8 9] 2 4)',
+                '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] partition-all 4',
+                'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+                'partition([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 4)',
+                'partition-all([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 2, 4)',
             ],
+            algebraic: true,
         },
         'partition-by': {
             title: 'partition-by',
@@ -13883,23 +13828,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'function')), { seq: {
                     type: 'sequence',
-                },
-                fn: {
+                }, fn: {
                     type: 'function',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'fn'] },
             ],
             description: 'Applies $fn to each value in $seq, splitting it each time $fn returns a new value. Returns an array of sequences.',
             examples: [
-                '(partition-by [1 2 3 4 5] #(= 3 %1))',
-                '(partition-by [1 1 1 2 2 3 3] odd?)',
-                '(partition-by "Leeeeeerrroyyy" identity)',
+                '[1, 2, 3, 4, 5] partition-by odd?',
+                'partition-by([1, 2, 3, 4, 5], -> $ = 3)',
+                'partition-by([1, 1, 1, 2, 2, 3, 3], odd?)',
+                'partition-by("Leeeeeerrroyyy", identity)',
             ],
+            algebraic: true,
         },
         'starts-with?': {
             title: 'starts-with?',
@@ -13909,24 +13853,23 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'sequence')), { seq: {
                     type: 'sequence',
-                },
-                prefix: {
+                }, prefix: {
                     type: 'sequence',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'prefix'] },
             ],
             description: 'Returns `true` if $seq starts with $prefix, otherwise `false`.',
             examples: [
-                '(starts-with? [1 2 3 4 5] 1)',
-                '(starts-with? [1 2 3 4 5] [1])',
-                '(starts-with? "Albert" "Al")',
-                '(starts-with? "Albert" "al")',
+                '[[1], [2], [3], [4], [5]] starts-with? [1]',
+                'starts-with?([1, 2, 3, 4, 5], 1)',
+                'starts-with?([1, 2, 3, 4, 5], [1])',
+                'starts-with?("Albert", "Al")',
+                'starts-with?("Albert", "al")',
             ],
+            algebraic: true,
         },
         'ends-with?': {
             title: 'ends-with?',
@@ -13936,24 +13879,24 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'sequence')), { seq: {
                     type: 'sequence',
-                },
-                suffix: {
+                }, suffix: {
                     type: 'sequence',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'suffix'] },
             ],
             description: 'Returns `true` if $seq ends with $suffix, otherwise `false`.',
             examples: [
-                '(ends-with? [1 2 3 4 5] 5)',
-                '(ends-with? [1 2 3 4 5] [5])',
-                '(ends-with? "Albert" "rt")',
-                '(ends-with? "Albert" "RT")',
+                '[[1], [2], [3], [4], [5]] starts-with? [5]',
+                '[[1], [2], [3], [4], [5]] starts-with? 5',
+                'ends-with?([1, 2, 3, 4, 5], 5)',
+                'ends-with?([1, 2, 3, 4, 5], [5])',
+                'ends-with?("Albert", "rt")',
+                'ends-with?("Albert", "RT")',
             ],
+            algebraic: true,
         },
         'interleave': {
             title: 'interleave',
@@ -13963,25 +13906,26 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seqs: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'sequence')), { seqs: {
                     type: 'sequence',
-                    array: true,
-                },
-            },
+                    rest: true,
+                } }),
             variants: [
                 { argumentNames: ['seqs'] },
             ],
             description: 'Returns a sequence of the first item from each of the $seqs, then the second item from each of the $seqs, until all items from the shortest seq are exhausted.',
             examples: [
-                '(interleave [1 2 3] [4 5 6])',
-                '(interleave [1 2 3] [4 5 6] [7 8 9])',
-                '(interleave [1 2 3] [4 5 6] [7 8])',
-                '(interleave [1 2 3] [4 5 6] [7])',
-                '(interleave [1 2 3] [4 5 6] [])',
-                '(interleave [1 2 3] [])',
-                '(interleave [])',
+                '[1, 2, 3] interleave [4, 5, 6]',
+                '"Albert" interleave ".,.,.,"',
+                'interleave([1, 2, 3], [4, 5, 6])',
+                'interleave([1, 2, 3], [4, 5, 6], [7, 8, 9])',
+                'interleave([1, 2, 3], [4, 5, 6], [7, 8])',
+                'interleave([1, 2, 3], [4, 5, 6], [7])',
+                'interleave([1, 2, 3], [4, 5, 6], [])',
+                'interleave([1, 2, 3], [])',
+                'interleave([])',
             ],
+            algebraic: true,
         },
         'interpose': {
             title: 'interpose',
@@ -13991,23 +13935,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'sequence',
             },
-            args: {
-                seq: {
+            args: __assign(__assign({}, getOperatorArgs('sequence', 'any')), { seq: {
                     type: 'sequence',
-                },
-                separator: {
+                }, separator: {
                     type: 'any',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['seq', 'separator'] },
             ],
             description: 'Returns a sequence of the elements of $seq separated by $separator. If $seq is a string, the separator must be a string.',
             examples: [
-                '(interpose :a [1 2 3 4 5])',
-                '(interpose " " ["Albert" "Mojir" "Nina"])',
-                '(interpose "." "Albert")',
+                '"Albert" interpose "-"',
+                'interpose([1, 2, 3, 4, 5], "a")',
+                'interpose(["Albert", "Mojir", "Nina"], ", ")',
+                'interpose("Albert", ".")',
             ],
+            algebraic: true,
         },
     };
 

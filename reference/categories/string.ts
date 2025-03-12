@@ -520,6 +520,7 @@ export const stringReference: Record<StringApiName, FunctionReference<'String'>>
     }],
     description: 'Returns a new string by concatenating all of the elements in $arr, separated by $delimiter.',
     examples: [
+      '(join ["Albert" 10] ", ")',
       '(join ["Albert" "Mojir"] " ")',
       '(join (map [0 1 2 3 4 5 6 7 8 9] str) ", ")',
     ],

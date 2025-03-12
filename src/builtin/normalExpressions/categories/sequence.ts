@@ -121,7 +121,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return index !== -1 ? index : null
       }
       else {
-        const index = seq.indexOf(value)
+        const index = seq.findIndex(item => deepEqual(asAny(item, sourceCodeInfo), value), sourceCodeInfo)
         return index !== -1 ? index : null
       }
     },
@@ -140,7 +140,7 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
         return index !== -1 ? index : null
       }
       else {
-        const index = seq.lastIndexOf(value)
+        const index = seq.findLastIndex(item => deepEqual(asAny(item, sourceCodeInfo), value), sourceCodeInfo)
         return index !== -1 ? index : null
       }
     },
@@ -349,18 +349,6 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     },
     paramCount: 1,
   },
-  'nthrest': {
-    evaluate: ([seq, count], sourceCodeInfo): Arr | string => {
-      assertSeq(seq, sourceCodeInfo)
-      assertNumber(count, sourceCodeInfo, { finite: true })
-      const integerCount = Math.max(Math.ceil(count), 0)
-      if (Array.isArray(seq))
-        return seq.slice(integerCount)
-
-      return seq.substring(integerCount)
-    },
-    paramCount: 2,
-  },
   'next': {
     evaluate: ([seq], sourceCodeInfo): Arr | string | null => {
       assertSeq(seq, sourceCodeInfo)
@@ -376,21 +364,6 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       return seq.substring(1)
     },
     paramCount: 1,
-  },
-  'nthnext': {
-    evaluate: ([seq, count], sourceCodeInfo): Arr | string | null => {
-      assertSeq(seq, sourceCodeInfo)
-      assertNumber(count, sourceCodeInfo, { finite: true })
-      const integerCount = Math.max(Math.ceil(count), 0)
-      if (seq.length <= count)
-        return null
-
-      if (Array.isArray(seq))
-        return seq.slice(integerCount)
-
-      return seq.substring(integerCount)
-    },
-    paramCount: 2,
   },
   'reverse': {
     evaluate: ([seq], sourceCodeInfo): Any => {
@@ -431,10 +404,6 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
     evaluate: (params, sourceCodeInfo): Any => {
       const [seq, from, to] = params
       assertSeq(seq, sourceCodeInfo)
-
-      if (params.length === 1)
-        return seq
-
       assertNumber(from, sourceCodeInfo, { integer: true })
 
       if (params.length === 2)
@@ -443,7 +412,25 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
       assertNumber(to, sourceCodeInfo, { integer: true })
       return seq.slice(from, to)
     },
-    paramCount: { min: 1, max: 3 },
+    paramCount: { min: 2, max: 3 },
+  },
+  'splice': {
+    evaluate: (params, sourceCodeInfo): Any => {
+      const [seq, start, deleteCount, ...rest] = params
+      assertSeq(seq, sourceCodeInfo)
+      assertNumber(start, sourceCodeInfo, { integer: true })
+      assertNumber(deleteCount, sourceCodeInfo, { integer: true, nonNegative: true })
+
+      const from = start < 0 ? seq.length + start : start
+
+      if (Array.isArray(seq)) {
+        return [...seq.slice(0, from), ...rest, ...seq.slice(from + deleteCount)]
+      }
+
+      rest.forEach(elem => assertString(elem, sourceCodeInfo))
+      return `${seq.substring(0, from)}${rest.join('')}${seq.substring(from + deleteCount)}`
+    },
+    paramCount: { min: 3 },
   },
   'some': {
     evaluate: ([seq, fn]: Arr, sourceCodeInfo, contextStack, { executeFunction }): Any => {
@@ -649,8 +636,17 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   'distinct': {
     evaluate: ([input], sourceCodeInfo): Seq => {
       assertSeq(input, sourceCodeInfo)
-      if (Array.isArray(input))
-        return Array.from(new Set(input))
+
+      if (Array.isArray(input)) {
+        const result: Any[] = []
+        for (const item of input) {
+          assertAny(item, sourceCodeInfo)
+          if (!result.some(existingItem => deepEqual(existingItem, item, sourceCodeInfo))) {
+            result.push(item)
+          }
+        }
+        return result
+      }
 
       return Array.from(new Set(input.split(''))).join('')
     },
@@ -672,28 +668,27 @@ export const sequenceNormalExpression: BuiltinNormalExpressions = {
   },
   'remove-at': {
     evaluate: ([input, index], sourceCodeInfo): Seq => {
-      assertNumber(index, sourceCodeInfo)
+      assertNumber(index, sourceCodeInfo, { integer: true })
       assertSeq(input, sourceCodeInfo)
 
-      const intIndex = Math.ceil(index)
-      if (intIndex < 0 || intIndex >= input.length)
+      const at = index < 0 ? input.length + index : index
+      if (at < 0 || at >= input.length)
         return input
 
       if (Array.isArray(input)) {
-        const copy = [...input]
-        copy.splice(index, 1)
-        return copy
+        return input.filter((_, i) => i !== at)
       }
-      return `${input.substring(0, index)}${input.substring(index + 1)}`
+      return `${input.substring(0, at)}${input.substring(at + 1)}`
     },
     paramCount: 2,
   },
   'split-at': {
     evaluate: ([seq, pos], sourceCodeInfo): Seq => {
-      assertNumber(pos, sourceCodeInfo, { finite: true })
-      const intPos = toNonNegativeInteger(pos)
+      assertNumber(pos, sourceCodeInfo, { integer: true })
       assertSeq(seq, sourceCodeInfo)
-      return [seq.slice(0, intPos), seq.slice(intPos)]
+
+      const at = pos < 0 ? seq.length + pos : pos
+      return [seq.slice(0, at), seq.slice(at)]
     },
     paramCount: 2,
   },
