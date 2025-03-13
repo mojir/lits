@@ -11,17 +11,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    n: {
-      type: 'integer',
-    },
   },
   variants: [
-    { argumentNames: ['x', 'n'] },
+    { argumentNames: ['a', 'b'] },
   ],
-  description: 'Shifts $x arithmetically left by $n bit positions.',
+  description: 'Shifts $a arithmetically left by $b bit positions.',
   examples: [
     '1 << 10',
     '<<(1, 10)',
@@ -38,17 +32,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    n: {
-      type: 'integer',
-    },
   },
   variants: [
-    { argumentNames: ['x', 'n'] },
+    { argumentNames: ['a', 'b'] },
   ],
-  description: 'Shifts $x arithmetically right by $n bit positions.',
+  description: 'Shifts $a arithmetically right by $b bit positions.',
   examples: [
     '2048 >> 10',
     '>>(2048, 10)',
@@ -66,17 +54,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    n: {
-      type: 'integer',
-    },
   },
   variants: [
-    { argumentNames: ['x', 'n'] },
+    { argumentNames: ['a', 'b'] },
   ],
-  description: 'Shifts $x arithmetically right by $n bit positions without sign extension.',
+  description: 'Shifts $a arithmetically right by $b bit positions without sign extension.',
   examples: [
     '-16 >>> 2',
     '>>>(2048, 10)',
@@ -94,14 +76,14 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
     type: 'integer',
   },
   args: {
-    x: {
+    a: {
       type: 'integer',
     },
   },
   variants: [
-    { argumentNames: ['x'] },
+    { argumentNames: ['a'] },
   ],
-  description: 'Returns bitwise `not` of $x.',
+  description: 'Returns bitwise `not` of $a.',
   examples: [
     '~(0)',
     '~(255)',
@@ -117,20 +99,14 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    y: {
-      type: 'integer',
-    },
     rest: {
       type: 'integer',
       rest: true,
     },
   },
   variants: [
-    { argumentNames: ['x', 'y'] },
-    { argumentNames: ['x', 'y', 'rest'] },
+    { argumentNames: ['a', 'b'] },
+    { argumentNames: ['a', 'b', 'rest'] },
   ],
   description: 'Returns bitwise `and` of all arguments.',
   examples: [
@@ -148,20 +124,14 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    y: {
-      type: 'integer',
-    },
     rest: {
       type: 'integer',
       rest: true,
     },
   },
   variants: [
-    { argumentNames: ['x', 'y'] },
-    { argumentNames: ['x', 'y', 'rest'] },
+    { argumentNames: ['a', 'b'] },
+    { argumentNames: ['a', 'b', 'rest'] },
   ],
   description: 'Returns bitwise `and` with complement.',
   examples: [
@@ -180,20 +150,14 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    y: {
-      type: 'integer',
-    },
     rest: {
       type: 'integer',
       rest: true,
     },
   },
   variants: [
-    { argumentNames: ['x', 'y'] },
-    { argumentNames: ['x', 'y', 'rest'] },
+    { argumentNames: ['a', 'b'] },
+    { argumentNames: ['a', 'b', 'rest'] },
   ],
   description: 'Returns bitwise `or` of all arguments.',
   examples: [
@@ -212,20 +176,14 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    y: {
-      type: 'integer',
-    },
     rest: {
       type: 'integer',
       rest: true,
     },
   },
   variants: [
-    { argumentNames: ['x', 'y'] },
-    { argumentNames: ['x', 'y', 'rest'] },
+    { argumentNames: ['a', 'b'] },
+    { argumentNames: ['a', 'b', 'rest'] },
   ],
   description: 'Returns bitwise `xor` of all arguments.',
   examples: [
@@ -243,17 +201,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    n: {
-      type: 'integer',
-    },
   },
   variants: [
-    { argumentNames: ['x', 'n'] },
+    { argumentNames: ['a', 'b'] },
   ],
-  description: 'Flips bit number $n.',
+  description: 'Flips bit number $b.',
   examples: [
     '0b0011 bit-flip 1',
     'bit-flip(0b0011, 1)',
@@ -269,17 +221,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    n: {
-      type: 'integer',
-    },
   },
   variants: [
-    { argumentNames: ['x', 'n'] },
+    { argumentNames: ['a', 'b'] },
   ],
-  description: 'Clears bit number $n.',
+  description: 'Clears bit number $b.',
   examples: [
     '0b0011 bit-clear 1',
     'bit-clear(0b0011, 1)',
@@ -295,17 +241,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    n: {
-      type: 'integer',
-    },
   },
   variants: [
-    { argumentNames: ['x', 'n'] },
+    { argumentNames: ['a', 'b'] },
   ],
-  description: 'Sets bit number $n.',
+  description: 'Sets bit number $b.',
   examples: [
     '0b0010 bit-set 1',
     'bit-set(0b0011, 1)',
@@ -321,17 +261,11 @@ export const bitwiseReference: Record<BitwiseApiName, FunctionReference<'Bitwise
   },
   args: {
     ...getOperatorArgs('integer', 'integer'),
-    x: {
-      type: 'integer',
-    },
-    n: {
-      type: 'integer',
-    },
   },
   variants: [
-    { argumentNames: ['x', 'n'] },
+    { argumentNames: ['a', 'b'] },
   ],
-  description: 'Checks if bit number $n is set.',
+  description: 'Checks if bit number $b is set.',
   examples: [
     '0b0011 bit-test 1',
     'bit-test(0b0011, 1)',

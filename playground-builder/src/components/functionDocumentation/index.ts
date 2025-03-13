@@ -17,7 +17,8 @@ export function getAllDocumentationItems() {
 
 function getDocumentation(reference: Reference) {
   const { linkName, category, algebraic } = reference
-  const title = escapeTitle(reference.title)
+  const aliases = isFunctionReference(reference) ? reference.aliases : undefined
+  const title = `${escapeTitle(reference.title)}${aliases ? `, ${aliases.join(', ')}` : ''}`
 
   if (!algebraic) {
     return `

@@ -1,5 +1,5 @@
 import type { FunctionReference } from '..'
-import type { ObjectApiName } from '../api'
+import { type ObjectApiName, getOperatorArgs } from '../api'
 
 export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>> = {
   'dissoc': {
@@ -10,6 +10,7 @@ export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>>
       type: 'object',
     },
     args: {
+      ...getOperatorArgs('object', 'string'),
       obj: {
         type: 'object',
       },
@@ -22,12 +23,15 @@ export const objectReference: Record<ObjectApiName, FunctionReference<'Object'>>
     ],
     description: 'Return shallow copy of $obj with $key deleted.',
     examples: [
-      '(dissoc (object :x 10 :y 20) :x)',
-      '(dissoc { :x 10 } :y)',
+      '{ x := 10, y := 20 } dissoc "y"',
+      'dissoc({ x := 10, y := 20 }, "x")',
+      'dissoc({ x := 10 }, "y")',
       `
-(def o { :a 5 }) (dissoc o :a)
+let o := { a := 5 };
+dissoc(o, "a");
 o`,
     ],
+    algebraic: true,
   },
   'object': {
     title: 'object',
@@ -49,11 +53,13 @@ o`,
     ],
     description: 'Constructs a new object. Object members are created from the $kvps key-value pairs. Requires an even number of arguments.',
     examples: [
-      '(object)',
-      '(object :x 10 :y true :z "A string")',
+      'object()',
+      'object("x", 10, "y", true, "z", "A string")',
       '{}',
-      '{:a 1 :b 2}',
+      '{ a := 1, b := 2 }',
     ],
+    algebraic: true,
+    noOperatorDocumentation: true,
   },
   'keys': {
     title: 'keys',
@@ -73,9 +79,11 @@ o`,
     ],
     description: 'Returns array of all keys in $obj.',
     examples: [
-      '(keys (object))',
-      '(keys (object :x 10 :y true :z "A string"))',
+      'keys({})',
+      'keys({ x := 10, y := true, z := "A string" })',
+      'keys(object("x", 10, "y", true, "z", "A string"))',
     ],
+    algebraic: true,
   },
   'vals': {
     title: 'vals',
@@ -95,9 +103,11 @@ o`,
     ],
     description: 'Returns array of all values in $obj.',
     examples: [
-      '(vals (object))',
-      '(vals (object :x 10 :y true :z "A string"))',
+      'vals({})',
+      'vals({ x := 10, y := true, z := "A string" })',
+      'vals(object("x", 10, "y", true, "z", "A string"))',
     ],
+    algebraic: true,
   },
   'entries': {
     title: 'entries',
@@ -117,9 +127,11 @@ o`,
     ],
     description: 'Returns nested array of all key - value pairs in $obj.',
     examples: [
-      '(entries (object))',
-      '(entries (object :x 10 :y true :z "A string"))',
+      'entries({})',
+      'entries({ x := 10, y := true, z := "A string" })',
+      'entries(object("x", 10, "y", true, "z", "A string"))',
     ],
+    algebraic: true,
   },
   'find': {
     title: 'find',
@@ -129,6 +141,7 @@ o`,
       type: ['array', 'null'],
     },
     args: {
+      ...getOperatorArgs('object', 'string'),
       obj: {
         type: 'object',
       },
@@ -141,9 +154,11 @@ o`,
     ],
     description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
     examples: [
-      '(find (object :a 1 :b 2) :b)',
-      '(find (object :a 1 :b 2) :c)',
+      '{ a := 1, "b" := 2 } find "a"',
+      'find(object("a", 1, "b", 2), "b")',
+      'find(object("a", 1, "b", 2), "c")',
     ],
+    algebraic: true,
   },
   'merge': {
     title: 'merge',
@@ -153,6 +168,7 @@ o`,
       type: 'object',
     },
     args: {
+      ...getOperatorArgs('object', 'object'),
       objs: {
         type: 'object',
         rest: true,
@@ -166,9 +182,11 @@ o`,
 If two keys appears in more than one object the value from the last object is used.  
 If no arguments are provided \`null\` is returned.`,
     examples: [
-      '(merge (object :x 10) (object :y 20))',
-      '(merge (object :x 10) (object :x 15 :y 20))',
+      '{ x := 10 } merge { y := 20 }',
+      'merge(object("x", 10), object("y", 20))',
+      'merge(object("x", 10), object("x", 15, "y", 20))',
     ],
+    algebraic: true,
   },
   'merge-with': {
     title: 'merge-with',
@@ -195,10 +213,12 @@ If two keys appears in more than one object $fn is used to calculate the new val
 
 If no arguments are provided \`null\` is returned.`,
     examples: [
-      '(merge-with (object :x 10) (object :y 20) +)',
-      '(merge-with (object :x 10) (object :x 15 :y 20) +)',
-      '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
+      'merge-with(object("x", 10), object("y", 20), +)',
+      'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
+      'merge-with({ x := 10 }, { x := 20 }, { x := 30 }, { x := 40 }, -)',
     ],
+    algebraic: true,
+    noOperatorDocumentation: true,
   },
   'zipmap': {
     title: 'zipmap',
@@ -208,6 +228,7 @@ If no arguments are provided \`null\` is returned.`,
       type: 'object',
     },
     args: {
+      ...getOperatorArgs('string', 'any'),
       keys: {
         type: 'string',
         array: true,
@@ -222,10 +243,12 @@ If no arguments are provided \`null\` is returned.`,
     ],
     description: 'Returns a new object created by mapping $keys to $values.',
     examples: [
-      '(zipmap [:a :b :c] [10 null [1 2 3]])',
-      '(zipmap [:a :b :c] [1])',
-      '(zipmap [] [10 null [1 2 3]])',
+      '["a", "b", "c"] zipmap [1, 2, 3]',
+      'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
+      'zipmap(["a", "b", "c"], [1])',
+      'zipmap([], [10, null, [1, 2, 3]])',
     ],
+    algebraic: true,
   },
   'select-keys': {
     title: 'select-keys',
@@ -235,6 +258,7 @@ If no arguments are provided \`null\` is returned.`,
       type: 'object',
     },
     args: {
+      ...getOperatorArgs('object', 'array'),
       obj: {
         type: 'object',
       },
@@ -248,8 +272,10 @@ If no arguments are provided \`null\` is returned.`,
     ],
     description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
     examples: [
-      '(select-keys {:a 1 :b 2 :c 3} [:a :b])',
-      '(select-keys {:a 1} [:a :b])',
+      '{ a := 1, b := 2, c := 3 } select-keys ["a", "b"]',
+      'select-keys({ a := 1, b := 2, c := 3 }, ["a", "b"])',
+      'select-keys({ a := 1 }, ["a", "b"])',
     ],
+    algebraic: true,
   },
 }

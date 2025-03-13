@@ -9745,15 +9745,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, n: {
-                    type: 'integer',
-                } }),
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
             variants: [
-                { argumentNames: ['x', 'n'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Shifts $x arithmetically left by $n bit positions.',
+            description: 'Shifts $a arithmetically left by $b bit positions.',
             examples: [
                 '1 << 10',
                 '<<(1, 10)',
@@ -9768,15 +9764,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, n: {
-                    type: 'integer',
-                } }),
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
             variants: [
-                { argumentNames: ['x', 'n'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Shifts $x arithmetically right by $n bit positions.',
+            description: 'Shifts $a arithmetically right by $b bit positions.',
             examples: [
                 '2048 >> 10',
                 '>>(2048, 10)',
@@ -9792,15 +9784,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, n: {
-                    type: 'integer',
-                } }),
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
             variants: [
-                { argumentNames: ['x', 'n'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Shifts $x arithmetically right by $n bit positions without sign extension.',
+            description: 'Shifts $a arithmetically right by $b bit positions without sign extension.',
             examples: [
                 '-16 >>> 2',
                 '>>>(2048, 10)',
@@ -9818,14 +9806,14 @@ var Playground = (function (exports) {
                 type: 'integer',
             },
             args: {
-                x: {
+                a: {
                     type: 'integer',
                 },
             },
             variants: [
-                { argumentNames: ['x'] },
+                { argumentNames: ['a'] },
             ],
-            description: 'Returns bitwise `not` of $x.',
+            description: 'Returns bitwise `not` of $a.',
             examples: [
                 '~(0)',
                 '~(255)',
@@ -9839,17 +9827,13 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, y: {
-                    type: 'integer',
-                }, rest: {
+            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { rest: {
                     type: 'integer',
                     rest: true,
                 } }),
             variants: [
-                { argumentNames: ['x', 'y'] },
-                { argumentNames: ['x', 'y', 'rest'] },
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'rest'] },
             ],
             description: 'Returns bitwise `and` of all arguments.',
             examples: [
@@ -9865,17 +9849,13 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, y: {
-                    type: 'integer',
-                }, rest: {
+            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { rest: {
                     type: 'integer',
                     rest: true,
                 } }),
             variants: [
-                { argumentNames: ['x', 'y'] },
-                { argumentNames: ['x', 'y', 'rest'] },
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'rest'] },
             ],
             description: 'Returns bitwise `and` with complement.',
             examples: [
@@ -9892,17 +9872,13 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, y: {
-                    type: 'integer',
-                }, rest: {
+            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { rest: {
                     type: 'integer',
                     rest: true,
                 } }),
             variants: [
-                { argumentNames: ['x', 'y'] },
-                { argumentNames: ['x', 'y', 'rest'] },
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'rest'] },
             ],
             description: 'Returns bitwise `or` of all arguments.',
             examples: [
@@ -9919,17 +9895,13 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, y: {
-                    type: 'integer',
-                }, rest: {
+            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { rest: {
                     type: 'integer',
                     rest: true,
                 } }),
             variants: [
-                { argumentNames: ['x', 'y'] },
-                { argumentNames: ['x', 'y', 'rest'] },
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'rest'] },
             ],
             description: 'Returns bitwise `xor` of all arguments.',
             examples: [
@@ -9945,15 +9917,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, n: {
-                    type: 'integer',
-                } }),
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
             variants: [
-                { argumentNames: ['x', 'n'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Flips bit number $n.',
+            description: 'Flips bit number $b.',
             examples: [
                 '0b0011 bit-flip 1',
                 'bit-flip(0b0011, 1)',
@@ -9967,15 +9935,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, n: {
-                    type: 'integer',
-                } }),
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
             variants: [
-                { argumentNames: ['x', 'n'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Clears bit number $n.',
+            description: 'Clears bit number $b.',
             examples: [
                 '0b0011 bit-clear 1',
                 'bit-clear(0b0011, 1)',
@@ -9989,15 +9953,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'integer',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, n: {
-                    type: 'integer',
-                } }),
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
             variants: [
-                { argumentNames: ['x', 'n'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Sets bit number $n.',
+            description: 'Sets bit number $b.',
             examples: [
                 '0b0010 bit-set 1',
                 'bit-set(0b0011, 1)',
@@ -10011,15 +9971,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: __assign(__assign({}, getOperatorArgs('integer', 'integer')), { x: {
-                    type: 'integer',
-                }, n: {
-                    type: 'integer',
-                } }),
+            args: __assign({}, getOperatorArgs('integer', 'integer')),
             variants: [
-                { argumentNames: ['x', 'n'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Checks if bit number $n is set.',
+            description: 'Checks if bit number $b is set.',
             examples: [
                 '0b0011 bit-test 1',
                 'bit-test(0b0011, 1)',
@@ -11812,23 +11768,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'object',
             },
-            args: {
-                obj: {
+            args: __assign(__assign({}, getOperatorArgs('object', 'string')), { obj: {
                     type: 'object',
-                },
-                key: {
+                }, key: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['obj', 'key'] },
             ],
             description: 'Return shallow copy of $obj with $key deleted.',
             examples: [
-                '(dissoc (object :x 10 :y 20) :x)',
-                '(dissoc { :x 10 } :y)',
-                "\n(def o { :a 5 }) (dissoc o :a)\no",
+                '{ x := 10, y := 20 } dissoc "y"',
+                'dissoc({ x := 10, y := 20 }, "x")',
+                'dissoc({ x := 10 }, "y")',
+                "\nlet o := { a := 5 };\ndissoc(o, \"a\");\no",
             ],
+            algebraic: true,
         },
         'object': {
             title: 'object',
@@ -11850,11 +11805,13 @@ var Playground = (function (exports) {
             ],
             description: 'Constructs a new object. Object members are created from the $kvps key-value pairs. Requires an even number of arguments.',
             examples: [
-                '(object)',
-                '(object :x 10 :y true :z "A string")',
+                'object()',
+                'object("x", 10, "y", true, "z", "A string")',
                 '{}',
-                '{:a 1 :b 2}',
+                '{ a := 1, b := 2 }',
             ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
         'keys': {
             title: 'keys',
@@ -11874,9 +11831,11 @@ var Playground = (function (exports) {
             ],
             description: 'Returns array of all keys in $obj.',
             examples: [
-                '(keys (object))',
-                '(keys (object :x 10 :y true :z "A string"))',
+                'keys({})',
+                'keys({ x := 10, y := true, z := "A string" })',
+                'keys(object("x", 10, "y", true, "z", "A string"))',
             ],
+            algebraic: true,
         },
         'vals': {
             title: 'vals',
@@ -11896,9 +11855,11 @@ var Playground = (function (exports) {
             ],
             description: 'Returns array of all values in $obj.',
             examples: [
-                '(vals (object))',
-                '(vals (object :x 10 :y true :z "A string"))',
+                'vals({})',
+                'vals({ x := 10, y := true, z := "A string" })',
+                'vals(object("x", 10, "y", true, "z", "A string"))',
             ],
+            algebraic: true,
         },
         'entries': {
             title: 'entries',
@@ -11918,9 +11879,11 @@ var Playground = (function (exports) {
             ],
             description: 'Returns nested array of all key - value pairs in $obj.',
             examples: [
-                '(entries (object))',
-                '(entries (object :x 10 :y true :z "A string"))',
+                'entries({})',
+                'entries({ x := 10, y := true, z := "A string" })',
+                'entries(object("x", 10, "y", true, "z", "A string"))',
             ],
+            algebraic: true,
         },
         'find': {
             title: 'find',
@@ -11929,22 +11892,21 @@ var Playground = (function (exports) {
             returns: {
                 type: ['array', 'null'],
             },
-            args: {
-                obj: {
+            args: __assign(__assign({}, getOperatorArgs('object', 'string')), { obj: {
                     type: 'object',
-                },
-                key: {
+                }, key: {
                     type: 'string',
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['obj', 'key'] },
             ],
             description: 'Returns entry (key-value pair) for $key, or `null` if $key not present in $obj.',
             examples: [
-                '(find (object :a 1 :b 2) :b)',
-                '(find (object :a 1 :b 2) :c)',
+                '{ a := 1, "b" := 2 } find "a"',
+                'find(object("a", 1, "b", 2), "b")',
+                'find(object("a", 1, "b", 2), "c")',
             ],
+            algebraic: true,
         },
         'merge': {
             title: 'merge',
@@ -11953,20 +11915,20 @@ var Playground = (function (exports) {
             returns: {
                 type: 'object',
             },
-            args: {
-                objs: {
+            args: __assign(__assign({}, getOperatorArgs('object', 'object')), { objs: {
                     type: 'object',
                     rest: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['objs'] },
             ],
             description: "Returns a new object created by merging together all arguments.\n\nIf two keys appears in more than one object the value from the last object is used.  \nIf no arguments are provided `null` is returned.",
             examples: [
-                '(merge (object :x 10) (object :y 20))',
-                '(merge (object :x 10) (object :x 15 :y 20))',
+                '{ x := 10 } merge { y := 20 }',
+                'merge(object("x", 10), object("y", 20))',
+                'merge(object("x", 10), object("x", 15, "y", 20))',
             ],
+            algebraic: true,
         },
         'merge-with': {
             title: 'merge-with',
@@ -11989,10 +11951,12 @@ var Playground = (function (exports) {
             ],
             description: "\nReturns a new object created by merging together all arguments.\nIf two keys appears in more than one object $fn is used to calculate the new value.\n\nIf no arguments are provided `null` is returned.",
             examples: [
-                '(merge-with (object :x 10) (object :y 20) +)',
-                '(merge-with (object :x 10) (object :x 15 :y 20) +)',
-                '(merge-with (object :x 10) (object :x 20) (object :x 30) (object :x 40) -)',
+                'merge-with(object("x", 10), object("y", 20), +)',
+                'merge-with(object("x", 10), object("x", 15, "y", 20), +)',
+                'merge-with({ x := 10 }, { x := 20 }, { x := 30 }, { x := 40 }, -)',
             ],
+            algebraic: true,
+            noOperatorDocumentation: true,
         },
         'zipmap': {
             title: 'zipmap',
@@ -12001,25 +11965,24 @@ var Playground = (function (exports) {
             returns: {
                 type: 'object',
             },
-            args: {
-                keys: {
+            args: __assign(__assign({}, getOperatorArgs('string', 'any')), { keys: {
                     type: 'string',
                     array: true,
-                },
-                values: {
+                }, values: {
                     type: 'any',
                     array: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['keys', 'values'] },
             ],
             description: 'Returns a new object created by mapping $keys to $values.',
             examples: [
-                '(zipmap [:a :b :c] [10 null [1 2 3]])',
-                '(zipmap [:a :b :c] [1])',
-                '(zipmap [] [10 null [1 2 3]])',
+                '["a", "b", "c"] zipmap [1, 2, 3]',
+                'zipmap(["a", "b", "c"], [10, null, [1, 2, 3]])',
+                'zipmap(["a", "b", "c"], [1])',
+                'zipmap([], [10, null, [1, 2, 3]])',
             ],
+            algebraic: true,
         },
         'select-keys': {
             title: 'select-keys',
@@ -12028,23 +11991,22 @@ var Playground = (function (exports) {
             returns: {
                 type: 'object',
             },
-            args: {
-                obj: {
+            args: __assign(__assign({}, getOperatorArgs('object', 'array')), { obj: {
                     type: 'object',
-                },
-                keys: {
+                }, keys: {
                     type: 'string',
                     array: true,
-                },
-            },
+                } }),
             variants: [
                 { argumentNames: ['obj', 'keys'] },
             ],
             description: 'Returns an object containing only those entries in $obj whose key is in $keys.',
             examples: [
-                '(select-keys {:a 1 :b 2 :c 3} [:a :b])',
-                '(select-keys {:a 1} [:a :b])',
+                '{ a := 1, b := 2, c := 3 } select-keys ["a", "b"]',
+                'select-keys({ a := 1, b := 2, c := 3 }, ["a", "b"])',
+                'select-keys({ a := 1 }, ["a", "b"])',
             ],
+            algebraic: true,
         },
     };
 

@@ -20,14 +20,14 @@ function getOperatorSignature({ title: name, returns, _isOperator }: Pick<Functi
     : ''
 }
 
-export function getFunctionSignature({ title: name, variants, args, returns, _isOperator, _prefereOperator }: FunctionReference) {
+export function getFunctionSignature({ title: name, variants, args, returns, _isOperator }: FunctionReference) {
   const styleOverride: StyleOverride = {
     values: isSymbolicOperator(name) ? [] : [name],
     style: styles('text-color-Blue'),
   }
 
   return `<table>
-  ${_prefereOperator ? getOperatorSignature({ title: name, returns, _isOperator }, styleOverride) : ''}
+  ${getOperatorSignature({ title: name, returns, _isOperator }, styleOverride)}
   ${variants.map((variant) => {
     const expression = `${_isOperator ? `${name}` : name}(${variant.argumentNames.map((argName) => {
       let result = ''
@@ -53,6 +53,5 @@ export function getFunctionSignature({ title: name, variants, args, returns, _is
         <td><span>${getType(returns)}</span></td>
       </tr>`
   }).join('')}
-  ${!_prefereOperator ? getOperatorSignature({ title: name, returns, _isOperator }, styleOverride) : ''}
   </table>`
 }
