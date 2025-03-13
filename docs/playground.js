@@ -1145,158 +1145,11 @@ var Playground = (function (exports) {
         return new LitsError("Expected ".concat(typeName, ", got ").concat(valueToString(value), "."), getSourceCodeInfo(value, sourceCodeInfo));
     }
 
-    function isAstNode(value) {
-        if (value === null || typeof value !== 'object')
-            return false;
-        if (!isAstNodeType(value.t))
-            return false;
-        return true;
-    }
-    function asAstNode(value, sourceCodeInfo) {
-        assertAstNode(value, sourceCodeInfo);
-        return value;
-    }
-    function assertAstNode(value, sourceCodeInfo) {
-        if (!isAstNode(value))
-            throw getAssertionError('AstNode', value, sourceCodeInfo);
-    }
-    function isSymbolNode(value) {
-        if (!isAstNode(value))
-            return false;
-        return value.t === AstNodeType.Symbol;
-    }
-    function asSymbolNode(value, sourceCodeInfo) {
-        assertSymbolNode(value, sourceCodeInfo);
-        return value;
-    }
-    function assertSymbolNode(value, sourceCodeInfo) {
-        if (!isSymbolNode(value))
-            throw getAssertionError('SymbolNode', value, sourceCodeInfo);
-    }
-    function isNormalExpressionNode(value) {
-        if (!isAstNode(value))
-            return false;
-        return value.t === AstNodeType.NormalExpression;
-    }
-    function isNormalExpressionNodeWithName(value) {
-        if (!isAstNode(value))
-            return false;
-        return value.t === AstNodeType.NormalExpression && typeof value.n === 'string';
-    }
-    function isExpressionNode(value) {
-        if (!isAstNode(value))
-            return false;
-        return (value.t === AstNodeType.NormalExpression
-            || value.t === AstNodeType.SpecialExpression
-            || value.t === AstNodeType.Number
-            || value.t === AstNodeType.String);
-    }
-
-    var specialExpressionCommentRemovers = {
-        '&&': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'comment': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'cond': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'switch': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'defined?': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'defn': function (_node, _removeOptions) { },
-        'def': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'do': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'doseq': function (_node, _removeOptions) { },
-        'fn': function (_node, _removeOptions) { },
-        'for': function (_node, _removeOptions) { },
-        'if': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'unless': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'let': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-            node.bs.forEach(function (bindingNode) {
-                removeOptions.recursivelyRemoveCommentNodes(bindingNode.v);
-            });
-        },
-        'loop': function (_node, _removeOptions) { },
-        '||': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        '??': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'recur': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'throw': function (node, removeOptions) {
-            removeOptions.removeCommenNodesFromArray(node.p);
-            node.p.forEach(removeOptions.recursivelyRemoveCommentNodes);
-        },
-        'try': function (_node, _removeOptions) { },
-    };
-    function removeCommentNodesFromSpecialExpression(node, removeOptions) {
-        var uncommenter = specialExpressionCommentRemovers[node.n];
-        return uncommenter === null || uncommenter === void 0 ? void 0 : uncommenter(node, removeOptions);
-    }
-
-    var removeOptions = {
-        recursivelyRemoveCommentNodes: recursivelyRemoveCommentNodes,
-        removeCommenNodesFromArray: removeCommenNodesFromArray,
-    };
-    function removeCommenNodes(ast) {
-        removeCommenNodesFromArray(ast.b);
-        ast.b.forEach(recursivelyRemoveCommentNodes);
-    }
-    function recursivelyRemoveCommentNodes(astNode) {
-        if (isNormalExpressionNode(astNode)) {
-            removeCommenNodesFromArray(astNode.p);
-            astNode.p.forEach(recursivelyRemoveCommentNodes);
-        }
-        else if (astNode.t === AstNodeType.SpecialExpression) {
-            removeCommentNodesFromSpecialExpression(astNode, removeOptions);
-        }
-    }
-    function removeCommenNodesFromArray(astNodes) {
-        var i = astNodes.findIndex(function (n) { return n.t === AstNodeType.Comment; });
-        while (i >= 0) {
-            astNodes.splice(i, 1);
-            i = astNodes.findIndex(function (n) { return n.t === AstNodeType.Comment; });
-        }
-    }
-    function withoutCommentNodes(astNodes) {
-        return astNodes.filter(function (n) { return n.t !== AstNodeType.Comment; });
-    }
-
     function assertNumberOfParams(count, node) {
         var _a, _b;
         assertCount({
             count: count,
-            length: withoutCommentNodes(node.p).length,
+            length: node.p.length,
             name: (_a = node.n) !== null && _a !== void 0 ? _a : 'expression',
             sourceCodeInfo: (_b = getTokenDebugData(node.token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo,
         });
@@ -4696,13 +4549,6 @@ var Playground = (function (exports) {
         };
     }
 
-    var commentSpecialExpression = {
-        polishParse: getCommonPolishSpecialExpressionParser('comment'),
-        paramCount: {},
-        evaluate: function () { return null; },
-        findUnresolvedSymbols: function () { return new Set(); },
-    };
-
     var condSpecialExpression = {
         polishParse: getCommonPolishSpecialExpressionParser('cond'),
         paramCount: { even: true },
@@ -4776,6 +4622,48 @@ var Playground = (function (exports) {
             return findUnresolvedSymbols(node.p, contextStack, builtin);
         },
     };
+
+    function isAstNode(value) {
+        if (value === null || typeof value !== 'object')
+            return false;
+        if (!isAstNodeType(value.t))
+            return false;
+        return true;
+    }
+    function asAstNode(value, sourceCodeInfo) {
+        assertAstNode(value, sourceCodeInfo);
+        return value;
+    }
+    function assertAstNode(value, sourceCodeInfo) {
+        if (!isAstNode(value))
+            throw getAssertionError('AstNode', value, sourceCodeInfo);
+    }
+    function isSymbolNode(value) {
+        if (!isAstNode(value))
+            return false;
+        return value.t === AstNodeType.Symbol;
+    }
+    function asSymbolNode(value, sourceCodeInfo) {
+        assertSymbolNode(value, sourceCodeInfo);
+        return value;
+    }
+    function assertSymbolNode(value, sourceCodeInfo) {
+        if (!isSymbolNode(value))
+            throw getAssertionError('SymbolNode', value, sourceCodeInfo);
+    }
+    function isNormalExpressionNodeWithName(value) {
+        if (!isAstNode(value))
+            return false;
+        return value.t === AstNodeType.NormalExpression && typeof value.n === 'string';
+    }
+    function isExpressionNode(value) {
+        if (!isAstNode(value))
+            return false;
+        return (value.t === AstNodeType.NormalExpression
+            || value.t === AstNodeType.SpecialExpression
+            || value.t === AstNodeType.Number
+            || value.t === AstNodeType.String);
+    }
 
     var polishReservedNamesRecord = {
         true: { value: true },
@@ -4891,6 +4779,50 @@ var Playground = (function (exports) {
         source.forEach(function (symbol) { return target.add(symbol); });
     }
 
+    var functionSpecialExpression = {
+        polishParse: function (tokenStream, parseState, firstToken, parsers) {
+            var _a;
+            var parseToken = parsers.parseToken;
+            var functionName = parseToken(tokenStream, parseState);
+            assertSymbolNode(functionName, (_a = getTokenDebugData(functionName.token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            var functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers);
+            assertRParenToken(tokenStream.tokens[parseState.position++]);
+            var node = {
+                t: AstNodeType.SpecialExpression,
+                n: 'function',
+                f: functionName,
+                p: [],
+                o: functionOverloades,
+                token: getTokenDebugData(firstToken) && firstToken,
+            };
+            return node;
+        },
+        paramCount: {},
+        evaluate: function (node, contextStack, _a) {
+            var _b;
+            var _c, _d;
+            var builtin = _a.builtin, evaluateAstNode = _a.evaluateAstNode;
+            var name = node.f.v;
+            assertNameNotDefined(name, contextStack, builtin, (_c = getTokenDebugData(node.token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+            var evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode);
+            var litsFunction = (_b = {},
+                _b[FUNCTION_SYMBOL] = true,
+                _b.sourceCodeInfo = (_d = getTokenDebugData(node.token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo,
+                _b.t = FunctionType.UserDefined,
+                _b.n = name,
+                _b.o = evaluatedFunctionOverloades,
+                _b);
+            contextStack.addValue(name, litsFunction);
+            return null;
+        },
+        findUnresolvedSymbols: function (node, contextStack, _a) {
+            var _b;
+            var findUnresolvedSymbols = _a.findUnresolvedSymbols, builtin = _a.builtin;
+            contextStack.exportValue(node.f.v, true);
+            var newContext = (_b = {}, _b[node.f.v] = { value: true }, _b);
+            return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin, newContext);
+        },
+    };
     var defnSpecialExpression = {
         polishParse: function (tokenStream, parseState, firstToken, parsers) {
             var _a;
@@ -5740,11 +5672,11 @@ var Playground = (function (exports) {
 
     var specialExpressions = {
         '&&': andSpecialExpression,
-        'comment': commentSpecialExpression,
         'cond': condSpecialExpression,
         'switch': switchSpecialExpression,
         'def': defSpecialExpression,
         'defn': defnSpecialExpression,
+        'function': functionSpecialExpression,
         'do': doSpecialExpression,
         'doseq': doseqSpecialExpression,
         'for': forSpecialExpression,
@@ -6143,12 +6075,8 @@ var Playground = (function (exports) {
     function evaluate(ast, contextStack) {
         var e_1, _a;
         var result = null;
-        var safeAstNode = ast.hasDebugData ? JSON.parse(JSON.stringify(ast)) : ast;
-        if (safeAstNode.hasDebugData) {
-            removeCommenNodes(safeAstNode);
-        }
         try {
-            for (var _b = __values(safeAstNode.b), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values(ast.b), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var node = _c.value;
                 result = evaluateAstNode(node, contextStack);
             }
@@ -6994,7 +6922,6 @@ var Playground = (function (exports) {
                     switch (name_2) {
                         case '??':
                         case '&&':
-                        case 'comment':
                         case 'defined?':
                         case '||':
                         case 'recur':
@@ -7058,7 +6985,7 @@ var Playground = (function (exports) {
             }
         };
         AlgebraicParser.prototype.parseFunctionArguments = function () {
-            var _a, _b, _c, _d;
+            var _a, _b, _c, _d, _e;
             var firstToken = this.peek();
             if (isA_SymbolToken(firstToken)) {
                 this.advance();
@@ -7112,10 +7039,16 @@ var Playground = (function (exports) {
             while (isA_SymbolToken(token, 'let')) {
                 var letNode = this.parseLet(token, true);
                 bindingNodess.push(letNode.bs[0]);
+                if (!isA_OperatorToken(this.peek(), ',') && !isRParenToken(this.peek())) {
+                    throw new LitsError('Expected comma or closing parenthesis', (_d = getTokenDebugData(this.peek())) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                }
+                if (isA_OperatorToken(this.peek(), ',')) {
+                    this.advance();
+                }
                 token = this.peek();
             }
             if (!isRParenToken(this.peek())) {
-                throw new LitsError('Expected closing parenthesis', (_d = getTokenDebugData(this.peek())) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                throw new LitsError('Expected closing parenthesis', (_e = getTokenDebugData(this.peek())) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
             }
             var functionArguments = {
                 m: args,
@@ -7614,27 +7547,15 @@ var Playground = (function (exports) {
             assertA_ReservedSymbolToken(this.peek(), 'end');
             this.advance();
             assertA_OperatorToken(this.peek(), ';');
-            var fnNode = {
+            return {
                 t: AstNodeType.SpecialExpression,
-                n: 'fn',
+                n: 'function',
+                f: symbol,
                 p: [],
                 o: [{
                         as: functionArguments,
                         b: body,
                         a: arity,
-                    }],
-                token: getTokenDebugData(token) && token,
-            };
-            return {
-                t: AstNodeType.SpecialExpression,
-                n: 'let',
-                p: [],
-                bs: [{
-                        t: AstNodeType.Binding,
-                        n: symbol.v,
-                        v: fnNode,
-                        p: [],
-                        token: getTokenDebugData(symbol.token) && symbol.token,
                     }],
                 token: getTokenDebugData(token) && token,
             };
@@ -9078,13 +8999,13 @@ var Playground = (function (exports) {
             'let',
             'fn',
             'defn',
+            'function',
             'try',
             'throw',
             'if',
             'unless',
             'cond',
             'switch',
-            'comment',
             'do',
             'recur',
             'loop',
@@ -13972,6 +13893,36 @@ var Playground = (function (exports) {
                 "\n(\n  (fn [a b]\n    (sqrt\n      (+\n        (* a a)\n        (* b b))))\n  3\n  4)",
             ],
         },
+        'function': {
+            title: 'function',
+            category: 'Special expression',
+            linkName: 'function',
+            clojureDocs: null,
+            returns: {
+                type: 'function',
+            },
+            args: {
+                n: {
+                    type: '*name',
+                },
+                args: {
+                    type: '*arguments',
+                },
+                expressions: {
+                    type: '*expression',
+                    rest: true,
+                },
+            },
+            variants: [
+                { argumentNames: ['n', 'args', 'expressions'] },
+            ],
+            description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
+            examples: [
+                "\n(defn hyp [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\nhyp",
+                "\n(defn hyp [a b]\n  (sqrt\n    (+\n      (* a a)\n      (* b b))))\n(hyp 3 4)",
+                "\n(defn sumOfSquares [& s]\n  (apply\n    +\n    (map\n      (fn [x] (* x x))\n      s)))\n(sumOfSquares 1 2 3 4 5)",
+            ],
+        },
         'defn': {
             title: 'defn',
             category: 'Special expression',
@@ -14156,25 +14107,6 @@ var Playground = (function (exports) {
                 "\n(switch 2\n  1 (write! \"FALSE\")\n  2 (write! \"null\"))",
                 "\n(switch 3\n  1 (write! \"FALSE\")\n  2 (write! \"null\"))",
             ],
-        },
-        'comment': {
-            title: 'comment',
-            category: 'Special expression',
-            linkName: 'comment',
-            returns: {
-                type: 'null',
-            },
-            args: {
-                expressions: {
-                    type: '*expression',
-                    rest: true,
-                },
-            },
-            variants: [
-                { argumentNames: ['expressions'] },
-            ],
-            description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `null` is returned.',
-            examples: ['(comment (write! "Hi") (write! "Albert"))', '(comment)'],
         },
         'do': {
             title: 'do',

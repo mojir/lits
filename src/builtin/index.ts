@@ -1,13 +1,12 @@
 import type { Builtin } from './interface'
 import { normalExpressions } from './normalExpressions'
 import { andSpecialExpression } from './specialExpressions/and'
-import { commentSpecialExpression } from './specialExpressions/comment'
 import { condSpecialExpression } from './specialExpressions/cond'
 import { switchSpecialExpression } from './specialExpressions/switch'
 import { declaredSpecialExpression } from './specialExpressions/declared'
 import { defSpecialExpression } from './specialExpressions/def'
 import { doSpecialExpression } from './specialExpressions/do'
-import { defnSpecialExpression, fnSpecialExpression } from './specialExpressions/functions'
+import { defnSpecialExpression, fnSpecialExpression, functionSpecialExpression } from './specialExpressions/functions'
 import { ifSpecialExpression } from './specialExpressions/if'
 import { unlessSpecialExpression } from './specialExpressions/unless'
 import { letSpecialExpression } from './specialExpressions/let'
@@ -21,11 +20,11 @@ import { trySpecialExpression } from './specialExpressions/try'
 
 const specialExpressions = {
   '&&': andSpecialExpression,
-  'comment': commentSpecialExpression,
   'cond': condSpecialExpression,
   'switch': switchSpecialExpression,
   'def': defSpecialExpression,
   'defn': defnSpecialExpression,
+  'function': functionSpecialExpression,
   'do': doSpecialExpression,
   'doseq': doseqSpecialExpression,
   'for': forSpecialExpression,
@@ -47,7 +46,6 @@ export type CommonSpecialExpressionName = keyof Pick<
   typeof specialExpressions,
   | '??'
   | '&&'
-  | 'comment'
   | 'cond'
   | 'switch'
   | 'defined?'

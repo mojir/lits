@@ -2,7 +2,6 @@ import type { Count } from '../builtin/interface'
 import { LitsError } from '../errors'
 import type { UnknownRecord } from '../interface'
 import type { GenericNode } from '../parser/interface'
-import { withoutCommentNodes } from '../removeCommentNodes'
 import type { SourceCodeInfo } from '../tokenizer/interface'
 import { getTokenDebugData } from '../tokenizer/utils'
 import { valueToString } from '../utils/debug/debugTools'
@@ -11,7 +10,7 @@ import { getSourceCodeInfo } from '../utils/debug/getSourceCodeInfo'
 export function assertNumberOfParams(count: Count, node: GenericNode): void {
   assertCount({
     count,
-    length: withoutCommentNodes(node.p).length,
+    length: node.p.length,
     name: node.n ?? 'expression',
     sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
   })

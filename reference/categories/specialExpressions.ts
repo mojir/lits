@@ -150,6 +150,55 @@ Binds local variables.`,
   4)`,
     ],
   },
+  'function': {
+    title: 'function',
+    category: 'Special expression',
+    linkName: 'function',
+    clojureDocs: null,
+    returns: {
+      type: 'function',
+    },
+    args: {
+      n: {
+        type: '*name',
+      },
+      args: {
+        type: '*arguments',
+      },
+      expressions: {
+        type: '*expression',
+        rest: true,
+      },
+    },
+    variants: [
+      { argumentNames: ['n', 'args', 'expressions'] },
+    ],
+    description: 'Creates a named function. When called, evaluation of the last expression in the body is returned.',
+    examples: [
+      `
+(defn hyp [a b]
+  (sqrt
+    (+
+      (* a a)
+      (* b b))))
+hyp`,
+      `
+(defn hyp [a b]
+  (sqrt
+    (+
+      (* a a)
+      (* b b))))
+(hyp 3 4)`,
+      `
+(defn sumOfSquares [& s]
+  (apply
+    +
+    (map
+      (fn [x] (* x x))
+      s)))
+(sumOfSquares 1 2 3 4 5)`,
+    ],
+  },
   'defn': {
     title: 'defn',
     category: 'Special expression',
@@ -382,25 +431,6 @@ hyp`,
   1 (write! "FALSE")
   2 (write! "null"))`,
     ],
-  },
-  'comment': {
-    title: 'comment',
-    category: 'Special expression',
-    linkName: 'comment',
-    returns: {
-      type: 'null',
-    },
-    args: {
-      expressions: {
-        type: '*expression',
-        rest: true,
-      },
-    },
-    variants: [
-      { argumentNames: ['expressions'] },
-    ],
-    description: 'All $expressions are read and must be valid `lits` but they are not eveluated. `null` is returned.',
-    examples: ['(comment (write! "Hi") (write! "Albert"))', '(comment)'],
   },
   'do': {
     title: 'do',

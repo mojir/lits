@@ -22,7 +22,6 @@ import { assertNumber, isNumber } from '../typeGuards/number'
 import { asNonUndefined } from '../typeGuards'
 import { asAny, assertSeq, isObj } from '../typeGuards/lits'
 import { assertString } from '../typeGuards/string'
-import { removeCommenNodes } from '../removeCommentNodes'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type { ContextStack } from './ContextStack'
 import { functionExecutors } from './functionExecutors'
@@ -30,11 +29,7 @@ import { functionExecutors } from './functionExecutors'
 export function evaluate(ast: Ast, contextStack: ContextStack): Any {
   let result: Any = null
 
-  const safeAstNode = ast.hasDebugData ? JSON.parse(JSON.stringify(ast)) as Ast : ast
-  if (safeAstNode.hasDebugData) {
-    removeCommenNodes(safeAstNode)
-  }
-  for (const node of safeAstNode.b) {
+  for (const node of ast.b) {
     result = evaluateAstNode(node, contextStack)
   }
 

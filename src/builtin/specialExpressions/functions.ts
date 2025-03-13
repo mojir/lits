@@ -30,9 +30,61 @@ export interface DefnNode extends CommonSpecialExpressionNode<'defn'> {
   o: FunctionOverload[]
 }
 
+export interface FunctionNode extends CommonSpecialExpressionNode<'function'> {
+  f: SymbolNode
+  o: FunctionOverload[]
+}
+
 export interface FnNode extends CommonSpecialExpressionNode<'fn'> {
   p: AstNode[]
   o: FunctionOverload[]
+}
+
+export const functionSpecialExpression: BuiltinSpecialExpression<null, FunctionNode> = {
+  polishParse: (tokenStream, parseState, firstToken, parsers) => {
+    const { parseToken } = parsers
+    const functionName = parseToken(tokenStream, parseState)
+    assertSymbolNode(functionName, getTokenDebugData(functionName.token)?.sourceCodeInfo)
+
+    const functionOverloades = parseFunctionOverloades(tokenStream, parseState, parsers)
+    assertRParenToken(tokenStream.tokens[parseState.position++])
+
+    const node: FunctionNode = {
+      t: AstNodeType.SpecialExpression,
+      n: 'function',
+      f: functionName,
+      p: [],
+      o: functionOverloades,
+      token: getTokenDebugData(firstToken) && firstToken,
+    }
+
+    return node
+  },
+  paramCount: {},
+  evaluate: (node, contextStack, { builtin, evaluateAstNode }) => {
+    const name = node.f.v
+
+    assertNameNotDefined(name, contextStack, builtin, getTokenDebugData(node.token)?.sourceCodeInfo)
+
+    const evaluatedFunctionOverloades = evaluateFunctionOverloades(node, contextStack, evaluateAstNode)
+
+    const litsFunction: LitsFunction = {
+      [FUNCTION_SYMBOL]: true,
+      sourceCodeInfo: getTokenDebugData(node.token)?.sourceCodeInfo,
+      t: FunctionType.UserDefined,
+      n: name,
+      o: evaluatedFunctionOverloades,
+    }
+
+    contextStack.addValue(name, litsFunction)
+    return null
+  },
+
+  findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
+    contextStack.exportValue(node.f.v, true)
+    const newContext: Context = { [node.f.v]: { value: true } }
+    return addOverloadsUnresolvedSymbols(node.o, contextStack, findUnresolvedSymbols, builtin, newContext)
+  },
 }
 
 export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
@@ -74,6 +126,7 @@ export const defnSpecialExpression: BuiltinSpecialExpression<null, DefnNode> = {
     contextStack.exportValue(name, litsFunction)
     return null
   },
+
   findUnresolvedSymbols: (node, contextStack, { findUnresolvedSymbols, builtin }) => {
     contextStack.exportValue(node.f.v, true)
     const newContext: Context = { [node.f.v]: { value: true } }

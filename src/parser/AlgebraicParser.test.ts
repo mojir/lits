@@ -1096,9 +1096,10 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
   (b, 
     let a := a
   ) -> 
-    (c, 
-      let a := a 
-      let b := b
+    (
+      c, 
+      let a := a,
+      let b := b,
     ) -> 
       a * b * c
 )(2)(3)(4)`)).toBe(24)
