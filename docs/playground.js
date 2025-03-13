@@ -9214,19 +9214,15 @@ var Playground = (function (exports) {
                 type: 'number',
                 array: true,
             },
-            args: __assign({ start: {
+            args: __assign(__assign({}, getOperatorArgs('number', 'number')), { step: {
                     type: 'number',
-                }, stop: {
-                    type: 'number',
-                }, step: {
-                    type: 'number',
-                } }, getOperatorArgs('number', 'number')),
+                } }),
             variants: [
-                { argumentNames: ['stop'] },
-                { argumentNames: ['start', 'stop'] },
-                { argumentNames: ['start', 'stop', 'step'] },
+                { argumentNames: ['b'] },
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'step'] },
             ],
-            description: "$range creates an array with a range of numbers from $start to $stop (exclusive), by $step.\n\n$start defaults to 0.  \n$step defaults to 1.",
+            description: "$range creates an array with a range of numbers from $a to $b (exclusive), by $step.\n\n$a defaults to 0.  \n$step defaults to 1.",
             examples: [
                 'range(4)',
                 'range(1, 4)',
@@ -9244,15 +9240,11 @@ var Playground = (function (exports) {
                 type: 'any',
                 array: true,
             },
-            args: __assign({ x: {
-                    type: 'any',
-                }, n: {
-                    type: 'integer',
-                } }, getOperatorArgs('any', 'integer')),
+            args: __assign({}, getOperatorArgs('any', 'integer')),
             variants: [{
-                    argumentNames: ['x', 'n'],
+                    argumentNames: ['a', 'b'],
                 }],
-            description: 'Returns an array with $x repeated $n times.',
+            description: 'Returns an array with $a repeated $b times.',
             examples: [
                 'repeat(10, 3)',
                 'repeat(10, 0)',
@@ -10018,19 +10010,15 @@ var Playground = (function (exports) {
             returns: {
                 type: 'any',
             },
-            args: __assign(__assign({}, getOperatorArgs('collection', ['string', 'integer'])), { 'coll': {
-                    type: 'collection',
-                }, 'key': {
-                    type: ['string', 'integer'],
-                }, 'not-found': {
+            args: __assign(__assign({}, getOperatorArgs('collection', ['string', 'integer'])), { 'not-found': {
                     type: 'any',
-                    description: 'Default value to return if $key is not found.',
+                    description: 'Default value to return if $b is not found.',
                 } }),
             variants: [
-                { argumentNames: ['coll', 'key'] },
-                { argumentNames: ['coll', 'key', 'not-found'] },
+                { argumentNames: ['a', 'b'] },
+                { argumentNames: ['a', 'b', 'not-found'] },
             ],
-            description: 'Returns value in $coll mapped at \`key\`.',
+            description: 'Returns value in $a mapped at $b.',
             examples: [
                 '[1, 2, 3] get 1',
                 '{ a := 1 } get "a"',
@@ -10082,15 +10070,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: __assign(__assign({}, getOperatorArgs(['collection', 'null'], ['string', 'integer'])), { coll: {
-                    type: ['collection', 'null'],
-                }, key: {
-                    type: ['string', 'number'],
-                } }),
+            args: __assign({}, getOperatorArgs(['collection', 'null'], ['string', 'integer'])),
             variants: [
-                { argumentNames: ['coll', 'key'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Returns `true` if $coll contains $key, otherwise returns `false`. For strings, it checks if substring is included.',
+            description: 'Returns `true` if $a contains $b, otherwise returns `false`. For strings, it checks if substring is included.',
             examples: [
                 '[1, 2, 3] contains? 1',
                 'null contains? 1',
@@ -10177,15 +10161,13 @@ var Playground = (function (exports) {
             returns: {
                 type: 'collection',
             },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'collection')), { coll: {
-                    type: 'collection',
-                }, colls: {
+            args: __assign(__assign({}, getOperatorArgs('collection', 'collection')), { colls: {
                     type: 'collection',
                     rest: true,
                 } }),
             variants: [
-                { argumentNames: ['coll'] },
-                { argumentNames: ['coll', 'colls'] },
+                { argumentNames: ['a'] },
+                { argumentNames: ['a', 'colls'] },
             ],
             description: 'Concatenates collections into one collection.',
             examples: [
@@ -10241,15 +10223,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
-                    type: 'collection',
-                }, fn: {
-                    type: 'function',
-                } }),
+            args: __assign({}, getOperatorArgs('collection', 'function')),
             variants: [
-                { argumentNames: ['coll', 'fn'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Returns `true` if all entries in $coll pass the test implemented by $fn, otherwise returns `false`.',
+            description: 'Returns `true` if all entries in $a pass the test implemented by $b, otherwise returns `false`.',
             examples: [
                 '[1, 2, 3] every? number?',
                 '[1, 2, 3] every? even?',
@@ -10270,15 +10248,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
-                    type: 'collection',
-                }, fn: {
-                    type: 'function',
-                } }),
+            args: __assign({}, getOperatorArgs('collection', 'function')),
             variants: [
-                { argumentNames: ['coll', 'fn'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
+            description: 'Returns `true` if at least one element in $a does not pass the test implemented by $b, otherwise returns `false`.',
             examples: [
                 "\nnot-every?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                 "\nnot-every?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
@@ -10297,15 +10271,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
-                    type: 'collection',
-                }, fn: {
-                    type: 'function',
-                } }),
+            args: __assign({}, getOperatorArgs('collection', 'function')),
             variants: [
-                { argumentNames: ['coll', 'fn'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Returns `true` if any element in $coll pass the test implemented by $fn, otherwise returns `false`.',
+            description: 'Returns `true` if any element in $a pass the test implemented by $b, otherwise returns `false`.',
             examples: [
                 "\nany?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                 "\nany?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",
@@ -10324,15 +10294,11 @@ var Playground = (function (exports) {
             returns: {
                 type: 'boolean',
             },
-            args: __assign(__assign({}, getOperatorArgs('collection', 'function')), { coll: {
-                    type: 'collection',
-                }, fn: {
-                    type: 'function',
-                } }),
+            args: __assign({}, getOperatorArgs('collection', 'function')),
             variants: [
-                { argumentNames: ['coll', 'fn'] },
+                { argumentNames: ['a', 'b'] },
             ],
-            description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
+            description: 'Returns `false` if any element in $a pass the test implemented by $b, otherwise returns `true`.',
             examples: [
                 "\nnot-any?(\n  [\"Albert\", \"Mojir\", 160, [1, 2]],\n  string?\n)",
                 "\nnot-any?(\n  [50, 100, 150, 200],\n  x -> x > 10\n)",

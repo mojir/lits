@@ -37,22 +37,16 @@ export const collectionReference: Record<CollectionApiName, FunctionReference<'C
     },
     args: {
       ...getOperatorArgs('collection', ['string', 'integer']),
-      'coll': {
-        type: 'collection',
-      },
-      'key': {
-        type: ['string', 'integer'],
-      },
       'not-found': {
         type: 'any',
-        description: 'Default value to return if $key is not found.',
+        description: 'Default value to return if $b is not found.',
       },
     },
     variants: [
-      { argumentNames: ['coll', 'key'] },
-      { argumentNames: ['coll', 'key', 'not-found'] },
+      { argumentNames: ['a', 'b'] },
+      { argumentNames: ['a', 'b', 'not-found'] },
     ],
-    description: 'Returns value in $coll mapped at \`key\`.',
+    description: 'Returns value in $a mapped at $b.',
     examples: [
       '[1, 2, 3] get 1',
       '{ a := 1 } get "a"',
@@ -151,17 +145,11 @@ get(
     },
     args: {
       ...getOperatorArgs(['collection', 'null'], ['string', 'integer']),
-      coll: {
-        type: ['collection', 'null'],
-      },
-      key: {
-        type: ['string', 'number'],
-      },
     },
     variants: [
-      { argumentNames: ['coll', 'key'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns `true` if $coll contains $key, otherwise returns `false`. For strings, it checks if substring is included.',
+    description: 'Returns `true` if $a contains $b, otherwise returns `false`. For strings, it checks if substring is included.',
     examples: [
       '[1, 2, 3] contains? 1',
       'null contains? 1',
@@ -312,17 +300,14 @@ assoc-in(
     },
     args: {
       ...getOperatorArgs('collection', 'collection'),
-      coll: {
-        type: 'collection',
-      },
       colls: {
         type: 'collection',
         rest: true,
       },
     },
     variants: [
-      { argumentNames: ['coll'] },
-      { argumentNames: ['coll', 'colls'] },
+      { argumentNames: ['a'] },
+      { argumentNames: ['a', 'colls'] },
     ],
     description: 'Concatenates collections into one collection.',
     examples: [
@@ -383,17 +368,11 @@ assoc-in(
     },
     args: {
       ...getOperatorArgs('collection', 'function'),
-      coll: {
-        type: 'collection',
-      },
-      fn: {
-        type: 'function',
-      },
     },
     variants: [
-      { argumentNames: ['coll', 'fn'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns `true` if all entries in $coll pass the test implemented by $fn, otherwise returns `false`.',
+    description: 'Returns `true` if all entries in $a pass the test implemented by $b, otherwise returns `false`.',
     examples: [
       '[1, 2, 3] every? number?',
       '[1, 2, 3] every? even?',
@@ -444,17 +423,11 @@ every?(
     },
     args: {
       ...getOperatorArgs('collection', 'function'),
-      coll: {
-        type: 'collection',
-      },
-      fn: {
-        type: 'function',
-      },
     },
     variants: [
-      { argumentNames: ['coll', 'fn'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns `true` if at least one element in $coll does not pass the test implemented by $fn, otherwise returns `false`.',
+    description: 'Returns `true` if at least one element in $a does not pass the test implemented by $b, otherwise returns `false`.',
     examples: [
       `
 not-every?(
@@ -503,17 +476,11 @@ not-every?(
     },
     args: {
       ...getOperatorArgs('collection', 'function'),
-      coll: {
-        type: 'collection',
-      },
-      fn: {
-        type: 'function',
-      },
     },
     variants: [
-      { argumentNames: ['coll', 'fn'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns `true` if any element in $coll pass the test implemented by $fn, otherwise returns `false`.',
+    description: 'Returns `true` if any element in $a pass the test implemented by $b, otherwise returns `false`.',
     examples: [
       `
 any?(
@@ -562,17 +529,11 @@ any?(
     },
     args: {
       ...getOperatorArgs('collection', 'function'),
-      coll: {
-        type: 'collection',
-      },
-      fn: {
-        type: 'function',
-      },
     },
     variants: [
-      { argumentNames: ['coll', 'fn'] },
+      { argumentNames: ['a', 'b'] },
     ],
-    description: 'Returns `false` if any element in $coll pass the test implemented by $fn, otherwise returns `true`.',
+    description: 'Returns `false` if any element in $a pass the test implemented by $b, otherwise returns `true`.',
     examples: [
       `
 not-any?(

@@ -41,25 +41,19 @@ export const arrayReference: Record<ArrayApiName, FunctionReference<'Array'>> = 
       array: true,
     },
     args: {
-      start: {
-        type: 'number',
-      },
-      stop: {
-        type: 'number',
-      },
+      ...getOperatorArgs('number', 'number'),
       step: {
         type: 'number',
       },
-      ...getOperatorArgs('number', 'number'),
     },
     variants: [
-      { argumentNames: ['stop'] },
-      { argumentNames: ['start', 'stop'] },
-      { argumentNames: ['start', 'stop', 'step'] },
+      { argumentNames: ['b'] },
+      { argumentNames: ['a', 'b'] },
+      { argumentNames: ['a', 'b', 'step'] },
     ],
-    description: `$range creates an array with a range of numbers from $start to $stop (exclusive), by $step.
+    description: `$range creates an array with a range of numbers from $a to $b (exclusive), by $step.
 
-$start defaults to 0.  
+$a defaults to 0.  
 $step defaults to 1.`,
     examples: [
       'range(4)',
@@ -84,18 +78,12 @@ range(
       array: true,
     },
     args: {
-      x: {
-        type: 'any',
-      },
-      n: {
-        type: 'integer',
-      },
       ...getOperatorArgs('any', 'integer'),
     },
     variants: [{
-      argumentNames: ['x', 'n'],
+      argumentNames: ['a', 'b'],
     }],
-    description: 'Returns an array with $x repeated $n times.',
+    description: 'Returns an array with $a repeated $b times.',
     examples: [
       'repeat(10, 3)',
       'repeat(10, 0)',
