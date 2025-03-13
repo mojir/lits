@@ -8,9 +8,9 @@ import type { Analysis } from '.'
 
 describe('analyze', () => {
   describe('findUnresolvedSymbols.', () => {
-    for (const lits of [new Lits({ polish: true }), new Lits({ debug: true, polish: true })]) {
+    for (const lits of [new Lits(), new Lits({ debug: true })]) {
       it('example', () => {
-        const program = '(+ a b)'
+        const program = 'a + b'
         const tokens = lits.tokenize(program)
         const ast = lits.parse(tokens)
         const analyzeResult: Analysis = {

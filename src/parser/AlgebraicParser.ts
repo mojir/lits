@@ -16,7 +16,7 @@ import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import type { A_OperatorToken, A_ReservedSymbolToken, A_SymbolToken, AlgebraicTokenType, SymbolicBinaryOperator } from '../tokenizer/algebraic/algebraicTokens'
 import { asA_SymbolToken, assertA_OperatorToken, assertA_ReservedSymbolToken, assertA_SymbolToken, isA_BinaryOperatorToken, isA_OperatorToken, isA_ReservedSymbolToken, isA_SymbolToken, isBinaryOperator, isFunctionOperator } from '../tokenizer/algebraic/algebraicTokens'
-import { asLBraceToken, asLBracketToken, assertLParenToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
+import { asLBraceToken, asLBracketToken, assertRBraceToken, assertRBracketToken, assertRParenToken, isLBraceToken, isLBracketToken, isLParenToken, isRBraceToken, isRBracketToken, isRParenToken } from '../tokenizer/common/commonTokens'
 import type { TokenStream } from '../tokenizer/interface'
 import type { Token } from '../tokenizer/tokens'
 import { getTokenDebugData, hasTokenDebugData } from '../tokenizer/utils'
@@ -784,14 +784,15 @@ export class AlgebraicParser {
     }
   }
 
-  private parseLoop(token: A_SymbolToken): LoopNode {
-    this.advance()
-
-    assertLParenToken(this.peek())
+  private parseLoop(firstToken: A_SymbolToken): LoopNode {
     this.advance()
 
     const bindingNodes: BindingNode[] = []
-    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+    let token = this.peek()
+    while (!this.isAtEnd() && !isA_SymbolToken(token, 'do')) {
+      assertA_SymbolToken(token, 'let')
+      this.advance()
+
       const symbol = parseSymbol(this.tokenStream, this.parseState)
       assertA_OperatorToken(this.peek(), ':=')
       this.advance()
@@ -807,12 +808,13 @@ export class AlgebraicParser {
       if (isA_OperatorToken(this.peek(), ',')) {
         this.advance()
       }
+      token = this.peek()
     }
     if (bindingNodes.length === 0) {
       throw new LitsError('Expected binding', getTokenDebugData(this.peek())?.sourceCodeInfo)
     }
 
-    assertRParenToken(this.peek())
+    assertA_SymbolToken(token, 'do')
     this.advance()
 
     const params: AstNode[] = []
@@ -833,7 +835,7 @@ export class AlgebraicParser {
       n: 'loop',
       p: params,
       bs: bindingNodes,
-      token: getTokenDebugData(token) && token,
+      token: getTokenDebugData(firstToken) && firstToken,
     }
   }
 
@@ -903,21 +905,17 @@ export class AlgebraicParser {
     }
   }
 
-  private parseForOrDoseq(token: A_SymbolToken): ForNode | DoSeqNode {
-    const isDoseq = token[1] === 'doseq'
+  private parseForOrDoseq(firstToken: A_SymbolToken): ForNode | DoSeqNode {
+    const isDoseq = firstToken[1] === 'doseq'
     this.advance()
-    assertLParenToken(this.peek())
-    this.advance()
-    const forLoopBindings: LoopBindingNode[] = [
-      this.parseForLoopBinding(),
-    ]
-    while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+
+    const forLoopBindings: LoopBindingNode[] = []
+
+    while (!this.isAtEnd() && !isA_SymbolToken(this.peek(), 'do')) {
       forLoopBindings.push(this.parseForLoopBinding())
-      if (isA_OperatorToken(this.peek(), ',')) {
-        this.advance()
-      }
     }
-    assertRParenToken(this.peek())
+
+    assertA_SymbolToken(this.peek(), 'do')
     this.advance()
 
     const expressions: AstNode[] = []
@@ -939,32 +937,43 @@ export class AlgebraicParser {
       t: AstNodeType.SpecialExpression,
       n: isDoseq ? 'doseq' : 'for',
       p: expressions,
-      token: getTokenDebugData(token) && token,
+      token: getTokenDebugData(firstToken) && firstToken,
       l: forLoopBindings,
     }
   }
 
   private parseForLoopBinding(): LoopBindingNode {
+    assertA_ReservedSymbolToken(this.peek(), 'each')
+
+    this.advance()
+
     const bindingNode = this.parseBinding()
 
-    if (isRParenToken(this.peek()) || isA_OperatorToken(this.peek(), ',')) {
-      if (isA_OperatorToken(this.peek(), ',')) {
-        this.advance()
-      }
-      return {
-        b: bindingNode,
-        m: [],
-      }
-    }
+    // if (isA_SymbolToken(this.peek(), 'do') || isA_ReservedSymbolToken(this.peek(), 'each')) {
+    //   return {
+    //     b: bindingNode,
+    //     m: [],
+    //   }
+    // }
 
     const modifiers: Array<'&let' | '&when' | '&while'> = []
     let token = this.peek()
 
+    if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each') && !isA_OperatorToken(token, ',')) {
+      throw new LitsError('Expected do, each or comma', getTokenDebugData(token)?.sourceCodeInfo)
+    }
+    if (isA_OperatorToken(token, ',')) {
+      this.advance()
+      token = this.peek()
+    }
+
     if (!isA_SymbolToken(token, 'let')
       && !isA_ReservedSymbolToken(token, 'when')
       && !isA_ReservedSymbolToken(token, 'while')
+      && !isA_SymbolToken(token, 'do')
+      && !isA_ReservedSymbolToken(token, 'each')
     ) {
-      throw new LitsError('Expected symbol let, when or while', getTokenDebugData(token)?.sourceCodeInfo)
+      throw new LitsError('Expected symbol each, do, let, when or while', getTokenDebugData(token)?.sourceCodeInfo)
     }
 
     let letBindings: BindingNode[] | undefined
@@ -975,10 +984,16 @@ export class AlgebraicParser {
         const letNode = this.parseLet(token, true)
         letBindings.push(letNode.bs[0]!)
         token = this.peek()
+        if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each') && !isA_OperatorToken(token, ',')) {
+          throw new LitsError('Expected do, each or comma', getTokenDebugData(token)?.sourceCodeInfo)
+        }
+        if (isA_OperatorToken(token, ',')) {
+          this.advance()
+        }
+        token = this.peek()
       }
     }
 
-    token = this.peek()
     let whenNode: AstNode | undefined
     let whileNode: AstNode | undefined
     while (
@@ -988,18 +1003,31 @@ export class AlgebraicParser {
       this.advance()
 
       if (token[1] === 'when') {
+        if (modifiers.includes('&when')) {
+          throw new LitsError('Multiple when modifiers in for loop', getTokenDebugData(token)?.sourceCodeInfo)
+        }
         modifiers.push('&when')
         whenNode = this.parseExpression()
       }
       else {
+        if (modifiers.includes('&while')) {
+          throw new LitsError('Multiple while modifiers in for loop', getTokenDebugData(token)?.sourceCodeInfo)
+        }
         modifiers.push('&while')
         whileNode = this.parseExpression()
       }
       token = this.peek()
+      if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each') && !isA_OperatorToken(token, ',')) {
+        throw new LitsError('Expected do or comma', getTokenDebugData(token)?.sourceCodeInfo)
+      }
+      if (isA_OperatorToken(token, ',')) {
+        this.advance()
+      }
+      token = this.peek()
     }
 
-    if (isA_OperatorToken(token, ',')) {
-      this.advance()
+    if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each')) {
+      throw new LitsError('Expected do or each', getTokenDebugData(token)?.sourceCodeInfo)
     }
 
     return {
@@ -1016,10 +1044,7 @@ export class AlgebraicParser {
     const name = firstToken[1]
     this.advance()
 
-    const ofSymbol = asA_SymbolToken(this.peek())
-    if (ofSymbol[1] !== 'of') {
-      throw new LitsError('Expected "of"', getTokenDebugData(this.peek())?.sourceCodeInfo)
-    }
+    assertA_ReservedSymbolToken(this.peek(), 'in')
     this.advance()
 
     const value = this.parseExpression()

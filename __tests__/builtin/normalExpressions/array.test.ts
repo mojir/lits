@@ -4,7 +4,7 @@ import type { TestData } from '../../testUtils'
 import { checkTestData, createTestData, getLitsVariants } from '../../testUtils'
 
 let testData: TestData
-const lits = getLitsVariants(false)
+const lits = getLitsVariants()
 
 beforeEach(() => {
   testData = createTestData()

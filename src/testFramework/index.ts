@@ -45,7 +45,7 @@ export function runTest({ testPath: filePath, testNamePattern }: RunTestParams):
       }
       else {
         try {
-          const lits = new Lits({ debug: true, polish: true })
+          const lits = new Lits({ debug: true })
           const contexts = getContexts(includedFilePaths, lits)
           lits.run(testChunkProgram.program, {
             contexts,
@@ -106,7 +106,7 @@ function readIncludeDirectives(filePath: string): string[] {
   const dirname = path.dirname(filePath)
   let okToInclude = true
   return fileContent.split('\n').reduce((acc: string[], line) => {
-    const includeMatch = line.match(/^\s*;+\s*@include\s*(\S+)\s*$/)
+    const includeMatch = line.match(/^\s*\/{2}\s*@include\s*(\S+)\s*$/)
     if (includeMatch) {
       if (!okToInclude)
         throw new Error(`@include must be in the beginning of file: ${filePath}:${line + 1}`)
@@ -114,7 +114,7 @@ function readIncludeDirectives(filePath: string): string[] {
       const relativeFilePath = includeMatch[1] as string
       acc.push(path.resolve(dirname, relativeFilePath))
     }
-    if (!line.match(/^\s*;.*$/))
+    if (!line.match(/^\s*\/.*$/))
       okToInclude = false
 
     return acc
@@ -129,7 +129,7 @@ function getTestChunks(testPath: string): TestChunk[] {
   return testProgram.split('\n').reduce((result: TestChunk[], line, index) => {
     const currentLineNbr = index + 1
     // eslint-disable-next-line regexp/no-super-linear-backtracking
-    const testNameAnnotationMatch = line.match(/^\s*;+\s*@(?:(skip)-)?test\s*(.*)$/)
+    const testNameAnnotationMatch = line.match(/^\s*\/{2}\s*@(?:(skip)-)?test\s*(.*)$/)
     if (testNameAnnotationMatch) {
       const directive = (testNameAnnotationMatch[1] ?? '').toUpperCase()
       const testName = testNameAnnotationMatch[2]

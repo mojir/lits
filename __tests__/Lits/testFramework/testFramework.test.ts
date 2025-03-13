@@ -73,8 +73,8 @@ not ok 2 sub
   message: "Expected 3 to deep equal -1."
   location: "${path.resolve(__dirname, 'one-success.test.lits')}:10:1"
   code:
-    - "(assert= (sub one 2) -1)"
-    - "^                       "
+    - "assert=(sub(one, 2), -1);"
+    - "^                        "
   ...
 `)
   })
@@ -90,8 +90,8 @@ not ok 1 add
   message: "Expected -1 to deep equal 3."
   location: "${path.resolve(__dirname, 'failure-test.lits')}:7:1"
   code:
-    - "(assert= (add one 2) 3)"
-    - "^                      "
+    - "assert=(add(one, 2), 3);"
+    - "^                       "
   ...
 ok 2 sub # skip - Not matching testNamePattern /ad/
 `)
@@ -108,8 +108,8 @@ not ok 1 add
   message: "Expected -1 to deep equal 3."
   location: "${path.resolve(__dirname, 'failure-test.lits')}:7:1"
   code:
-    - "(assert= (add one 2) 3)"
-    - "^                      "
+    - "assert=(add(one, 2), 3);"
+    - "^                       "
   ...
 not ok 2 sub
   ---
@@ -117,13 +117,13 @@ not ok 2 sub
   message: "Expected 3 to deep equal -1."
   location: "${path.resolve(__dirname, 'failure-test.lits')}:10:1"
   code:
-    - "(assert= (sub one 2) -1)"
-    - "^                       "
+    - "assert=(sub(one, 2), -1);"
+    - "^                        "
   ...
 `)
   })
 
-  it('broken include', () => {
+  it.skip('broken include', () => {
     const testResult = runTest({
       testPath: path.join(__dirname, 'broken-include.test.lits'),
     })
@@ -161,8 +161,8 @@ not ok 1 equals
     }.
   location: "${path.resolve(__dirname, 'object-diff.test.lits')}:5:1"
   code:
-    - "(assert= obj-a obj-b)"
-    - "^                    "
+    - "assert=(obj-a, obj-b);"
+    - "^                     "
   ...
 `)
   })

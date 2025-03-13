@@ -123,8 +123,8 @@ export function getUndefinedSymbolNames(result: Analysis): Set<string> {
   return new Set<string>(names)
 }
 
-export function getLitsVariants(polish = true) {
-  const variants = [new Lits({ polish }), new Lits({ debug: true, polish })]
+export function getLitsVariants() {
+  const variants = [new Lits(), new Lits({ debug: true })]
   return {
     run(program: string, LitsParams?: LitsParams): unknown {
       const [result1, result2] = variants.map((l) => {

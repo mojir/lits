@@ -8,6 +8,8 @@ const nonNumberReservedSymbolRecord = {
   else: null,
   end: null,
   case: null,
+  each: null,
+  in: null,
   when: null,
   while: null,
   function: null,

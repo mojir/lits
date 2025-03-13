@@ -52,24 +52,24 @@ const values = {
 }
 
 describe('nativeJsFunction', () => {
-  const lits = new Lits({ polish: true })
+  const lits = new Lits()
   it('samples', () => {
-    expect(lits.run('(tripple 9)', { jsFunctions })).toBe(27)
-    expect(lits.run('(def a tripple) (a 9)', { jsFunctions })).toBe(27)
-    expect(() => lits.run('(throwError)', { jsFunctions })).toThrowError(LitsError)
-    expect(() => lits.run('(throwString)', { jsFunctions })).toThrowError(LitsError)
-    expect(() => lits.run('(throwNumber)', { jsFunctions })).toThrowError(LitsError)
+    expect(lits.run('tripple(9)', { jsFunctions })).toBe(27)
+    expect(lits.run('let a := tripple; a(9)', { jsFunctions })).toBe(27)
+    expect(() => lits.run('throwError()', { jsFunctions })).toThrowError(LitsError)
+    expect(() => lits.run('throwString()', { jsFunctions })).toThrowError(LitsError)
+    expect(() => lits.run('throwNumber()', { jsFunctions })).toThrowError(LitsError)
   })
   it('builtin names cannot be shadowed', () => {
     const warn = console.warn
     console.warn = vitest.fn()
-    expect(lits.run('(+ 1 2 3)', { jsFunctions: stupidJsFunctions })).toBe(6)
+    expect(lits.run('+(1, 2, 3)', { jsFunctions: stupidJsFunctions })).toBe(6)
     expect(console.warn).toHaveBeenCalledTimes(2)
-    expect(lits.run('(if true false true)', { jsFunctions: stupidJsFunctions })).toBe(false)
+    expect(lits.run('if true then false else true end', { jsFunctions: stupidJsFunctions })).toBe(false)
     expect(console.warn).toHaveBeenCalledTimes(4)
     console.warn = warn
   })
   it('nested nativeJsFunction', () => {
-    expect(lits.run('(obj.square 9)', { values })).toBe(81)
+    expect(lits.run('obj.square(9)', { values })).toBe(81)
   })
 })

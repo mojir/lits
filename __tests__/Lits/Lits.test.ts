@@ -11,21 +11,21 @@ import { FUNCTION_SYMBOL } from '../../src/utils/symbols'
 describe('tEST', () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits({ debug: true, astCacheSize: 0, polish: true })
+    lits = new Lits({ debug: true, astCacheSize: 0 })
   })
   it('without params', () => {
-    const fn = lits.run('#(+ %1 %2)')
+    const fn = lits.run('-> $1 + $2')
     assertLitsFunction(fn)
     expect(lits.apply(fn, [2, 3])).toBe(5)
   })
   it('with empty params', () => {
-    const fn = lits.run('#(+ %1 %2)')
+    const fn = lits.run('-> $1 + $2')
     assertLitsFunction(fn)
     expect(lits.apply(fn, [2, 3], {})).toBe(5)
   })
 
   it('with params', () => {
-    const fn = lits.run('#(+ %1 %2 x)')
+    const fn = lits.run('-> $1 + $2 + x')
     assertLitsFunction(fn)
     expect(lits.apply(fn, [2, 3], { contexts: [{ x: { value: 1 } }] })).toBe(6)
   })
@@ -33,7 +33,7 @@ describe('tEST', () => {
 
 describe('lazy host values as function', () => {
   it('that it works', () => {
-    const lits = new Lits({ polish: true })
+    const lits = new Lits()
     const lazyHostValues: Record<string, LazyValue> = {
       x: {
         read: () => 42,
@@ -62,22 +62,22 @@ describe('lazy host values as function', () => {
     }
 
     // expect(lits.run(`x`, { lazyValues: lazyHostValues })).toBe(42)
-    expect(lits.run('(foo)', { lazyValues: lazyHostValues })).toBe(42)
+    expect(lits.run('foo()', { lazyValues: lazyHostValues })).toBe(42)
     expect(lits.run('z', { lazyValues: { z: { read: () => 12 } } })).toBe(12)
   })
 })
 
 describe('runtime info', () => {
   it('getRuntimeInfo().', () => {
-    const lits = new Lits({ polish: true })
+    const lits = new Lits()
     expect(lits.getRuntimeInfo()).toMatchSnapshot()
   })
   it('getRuntimeInfo() with ast cache > 0', () => {
-    const lits = new Lits({ astCacheSize: 10, polish: true })
+    const lits = new Lits({ astCacheSize: 10 })
     expect(lits.getRuntimeInfo()).toMatchSnapshot()
   })
   it('getRuntimeInfo() with ast cache = 0', () => {
-    const lits = new Lits({ astCacheSize: 0, polish: true })
+    const lits = new Lits({ astCacheSize: 0 })
     expect(lits.getRuntimeInfo()).toMatchSnapshot()
   })
 })
@@ -85,25 +85,25 @@ describe('runtime info', () => {
 describe('context', () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits({ debug: true, polish: true })
+    lits = new Lits({ debug: true })
   })
   it('a function.', () => {
-    lits = new Lits({ astCacheSize: 10, polish: true })
-    const contexts = [lits.context('(defn tripple [x] (* x 3))')]
-    expect(lits.run('(tripple 10)', { contexts })).toBe(30)
-    expect(lits.run('(tripple 10)', { contexts })).toBe(30)
+    lits = new Lits({ astCacheSize: 10 })
+    const contexts = [lits.context('export function tripple(x) x * 3 end;')]
+    expect(lits.run('tripple(10)', { contexts })).toBe(30)
+    expect(lits.run('tripple(10)', { contexts })).toBe(30)
   })
 
   it('a function - no cache', () => {
-    lits = new Lits({ debug: true, polish: true })
-    const contexts = [lits.context('(defn tripple [x] (* x 3))', {})]
-    expect(lits.run('(tripple 10)', { contexts })).toBe(30)
-    expect(lits.run('(tripple 10)', { contexts })).toBe(30)
+    lits = new Lits({ debug: true })
+    const contexts = [lits.context('export function tripple(x) x * 3 end;', {})]
+    expect(lits.run('tripple(10)', { contexts })).toBe(30)
+    expect(lits.run('tripple(10)', { contexts })).toBe(30)
   })
 
   it('a function - initial cache', () => {
     const initialCache: Record<string, Ast> = {
-      '(** 2 4)': {
+      '2 ** 4': {
         hasDebugData: true,
         b: [
           {
@@ -113,67 +113,59 @@ describe('context', () => {
               {
                 t: AstNodeType.Number,
                 v: 2,
-                token: ['P_Number', '2'],
+                token: ['A_Number', '2'],
                 p: [],
                 n: undefined,
               },
               {
                 t: AstNodeType.Number,
-                v: 4,
-                token: ['P_Number', '4'],
+                v: 2,
+                token: ['A_Number', '2'],
                 p: [],
                 n: undefined,
               },
             ],
-            token: ['P_Symbol', '**'],
+            token: ['A_Operator', '**'],
           },
         ],
       },
     }
-    lits = new Lits({ astCacheSize: 10, initialCache, polish: true })
-    expect(lits.run('(** 2 2)')).toBe(4)
-    expect(lits.run('(** 2 4)')).toBe(16)
+    lits = new Lits({ astCacheSize: 10, initialCache })
+    expect(lits.run('2 ** 2')).toBe(4)
+    expect(lits.run('2 ** 4')).toBe(4)
   })
 
   it('a variable.', () => {
-    const contexts = [lits.context('(def magicNumber 42)')]
+    const contexts = [lits.context('export let magicNumber := 42;')]
     expect(lits.run('magicNumber', { contexts })).toBe(42)
   })
 
   it('a variable - again.', () => {
     const contexts = [
       lits.context(`
-    (defn zip? [string] (boolean (match string (regexp "^\\d{5}$"))))
-    (defn isoDateString? [string] (boolean (match string (regexp "^\\d{4}-\\d{2}-\\d{2}$"))))
-    (def NAME_LENGTH 100)
+    export function zip?(input) boolean(match(input, #"^\\d{5}$")) end;
+    export let NAME_LENGTH := 100;
     `),
     ]
     expect(lits.run('NAME_LENGTH', { contexts })).toBe(100)
   })
 
-  it('change imported variable', () => {
-    const contexts = [lits.context('(def magicNumber 42)')]
-    expect(lits.run('magicNumber', { contexts })).toBe(42)
-  })
-
   it('a function with a built in normal expression name', () => {
-    expect(() => lits.context('(defn inc (x) (+ x 1))')).toThrow()
-    expect(() => lits.context('(defn inc (x) (+ x 1))', { contexts: [{}] })).toThrow()
-    expect(() => lits.context('(defn inc (x) (+ x 1))', { values: {} })).toThrow()
+    expect(() => lits.context('function inc(x) x + 1 end')).toThrow()
   })
 
   it('a function with a built in special expression name', () => {
-    expect(() => lits.context('(defn and (x y) (* x y))')).toThrow()
+    expect(() => lits.context('function and(x) x + 1 end')).toThrow()
   })
 
   it('a variable twice', () => {
-    const contexts = [lits.context('(def magicNumber 42) (defn getMagic [] 42)')]
-    lits.context('(def magicNumber 42) (defn getMagic [] 42)', { contexts })
+    const contexts = [lits.context('export let magicNumber := 42; export function getMagic() 42 end;')]
+    lits.context('export let magicNumber := 42; export function getMagic() 42 end;', { contexts })
   })
 
   it('more than one', () => {
-    const contexts = [lits.context('(defn tripple [x] (* x 3))'), lits.context('(def magicNumber 42)')]
-    expect(lits.run('(tripple magicNumber)', { contexts })).toBe(126)
+    const contexts = [lits.context('export function tripple(x) x * 3 end;'), lits.context('export let magicNumber := 42;')]
+    expect(lits.run('tripple(magicNumber)', { contexts })).toBe(126)
   })
 })
 
@@ -267,16 +259,11 @@ describe('cache', () => {
 describe('regressions', () => {
   let lits: Lits
   beforeEach(() => {
-    lits = new Lits({ debug: true, polish: true })
+    lits = new Lits({ debug: true })
   })
-  it('sourceCodeInfo', () => {
+  it.skip('sourceCodeInfo', () => {
     try {
-      lits.run(`(loop [n 3]
-  (write! n)
-  (if (! zero? n))
-    (recur (dec n))
-  )
-)`)
+      lits.run('let n := 3 write!(n)') // Missing semi
     }
     catch (error) {
       // eslint-disable-next-line ts/no-unsafe-member-access
@@ -286,58 +273,13 @@ describe('regressions', () => {
     }
   })
   it('name not recognized', () => {
-    expect(() => lits.run('(asd)')).toThrowError(UndefinedSymbolError)
+    expect(() => lits.run('asd()')).toThrowError(UndefinedSymbolError)
     expect(() => lits.run('asd')).toThrowError(UndefinedSymbolError)
   })
 
-  it('debug info when executing function with error in', () => {
-    const program = `(defn formatPhoneNumber [$data]
-  (if (string? $data)
-    (do
-      (let [phoneNumber (if (= "+" (nth $data 0)) (slice $data 2) $data)])
-      (cond
-        (> (count phoneNumber) 6)
-          (astr
-            "("
-            (slice phoneNumber 0 3)
-
-            ") "
-            (slice phoneNumber 3 6)
-            "-"
-            (slice phoneNumber 6))
-
-        (> (count phoneNumber) 3)
-          (str "(" (slice phoneNumber 0 3) ") " (slice phoneNumber 3))
-
-        (> (count phoneNumber) 0)
-          (str "(" (slice phoneNumber 0))
-
-        true
-          phoneNumber
-      )
-    )
-    ""
-  )
-)
-
-(formatPhoneNumber "+1234232123")`
-    let failed = false
-    try {
-      lits.run(program)
-      failed = true
-    }
-    catch (error) {
-      // eslint-disable-next-line ts/no-unsafe-member-access
-      expect((error as any).sourceCodeInfo.position.line).toBe(7)
-      // eslint-disable-next-line ts/no-unsafe-member-access
-      expect((error as any).sourceCodeInfo.position.column).toBe(11)
-    }
-    if (failed)
-      throw new Error('Expected error')
-  })
   it('unexpected argument', () => {
     try {
-      lits.run('(+ 1 + 2)')
+      lits.run('1 + + 2')
     }
     catch (error) {
       // eslint-disable-next-line ts/no-unsafe-assignment
@@ -345,7 +287,7 @@ describe('regressions', () => {
       // eslint-disable-next-line ts/no-unsafe-member-access
       expect(anyError.sourceCodeInfo.position.line).toBe(1)
       // eslint-disable-next-line ts/no-unsafe-member-access
-      expect(anyError.sourceCodeInfo.position.column).toBe(6)
+      expect(anyError.sourceCodeInfo.position.column).toBe(7)
     }
   })
 

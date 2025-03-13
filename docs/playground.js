@@ -6304,6 +6304,8 @@ var Playground = (function (exports) {
         else: null,
         end: null,
         case: null,
+        each: null,
+        in: null,
         when: null,
         while: null,
         function: null,
@@ -7160,13 +7162,14 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(token) && token,
             };
         };
-        AlgebraicParser.prototype.parseLoop = function (token) {
+        AlgebraicParser.prototype.parseLoop = function (firstToken) {
             var _a, _b;
             this.advance();
-            assertLParenToken(this.peek());
-            this.advance();
             var bindingNodes = [];
-            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+            var token = this.peek();
+            while (!this.isAtEnd() && !isA_SymbolToken(token, 'do')) {
+                assertA_SymbolToken(token, 'let');
+                this.advance();
                 var symbol = parseSymbol(this.tokenStream, this.parseState);
                 assertA_OperatorToken(this.peek(), ':=');
                 this.advance();
@@ -7181,11 +7184,12 @@ var Playground = (function (exports) {
                 if (isA_OperatorToken(this.peek(), ',')) {
                     this.advance();
                 }
+                token = this.peek();
             }
             if (bindingNodes.length === 0) {
                 throw new LitsError('Expected binding', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
             }
-            assertRParenToken(this.peek());
+            assertA_SymbolToken(token, 'do');
             this.advance();
             var params = [];
             while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
@@ -7204,7 +7208,7 @@ var Playground = (function (exports) {
                 n: 'loop',
                 p: params,
                 bs: bindingNodes,
-                token: getTokenDebugData(token) && token,
+                token: getTokenDebugData(firstToken) && firstToken,
             };
         };
         AlgebraicParser.prototype.parseTry = function (token) {
@@ -7266,22 +7270,15 @@ var Playground = (function (exports) {
                 token: getTokenDebugData(token) && token,
             };
         };
-        AlgebraicParser.prototype.parseForOrDoseq = function (token) {
+        AlgebraicParser.prototype.parseForOrDoseq = function (firstToken) {
             var _a;
-            var isDoseq = token[1] === 'doseq';
+            var isDoseq = firstToken[1] === 'doseq';
             this.advance();
-            assertLParenToken(this.peek());
-            this.advance();
-            var forLoopBindings = [
-                this.parseForLoopBinding(),
-            ];
-            while (!this.isAtEnd() && !isRParenToken(this.peek())) {
+            var forLoopBindings = [];
+            while (!this.isAtEnd() && !isA_SymbolToken(this.peek(), 'do')) {
                 forLoopBindings.push(this.parseForLoopBinding());
-                if (isA_OperatorToken(this.peek(), ',')) {
-                    this.advance();
-                }
             }
-            assertRParenToken(this.peek());
+            assertA_SymbolToken(this.peek(), 'do');
             this.advance();
             var expressions = [];
             while (!this.isAtEnd() && !isA_ReservedSymbolToken(this.peek(), 'end')) {
@@ -7299,28 +7296,36 @@ var Playground = (function (exports) {
                 t: AstNodeType.SpecialExpression,
                 n: isDoseq ? 'doseq' : 'for',
                 p: expressions,
-                token: getTokenDebugData(token) && token,
+                token: getTokenDebugData(firstToken) && firstToken,
                 l: forLoopBindings,
             };
         };
         AlgebraicParser.prototype.parseForLoopBinding = function () {
-            var _a;
+            var _a, _b, _c, _d, _e, _f, _g;
+            assertA_ReservedSymbolToken(this.peek(), 'each');
+            this.advance();
             var bindingNode = this.parseBinding();
-            if (isRParenToken(this.peek()) || isA_OperatorToken(this.peek(), ',')) {
-                if (isA_OperatorToken(this.peek(), ',')) {
-                    this.advance();
-                }
-                return {
-                    b: bindingNode,
-                    m: [],
-                };
-            }
+            // if (isA_SymbolToken(this.peek(), 'do') || isA_ReservedSymbolToken(this.peek(), 'each')) {
+            //   return {
+            //     b: bindingNode,
+            //     m: [],
+            //   }
+            // }
             var modifiers = [];
             var token = this.peek();
+            if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each') && !isA_OperatorToken(token, ',')) {
+                throw new LitsError('Expected do, each or comma', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+            }
+            if (isA_OperatorToken(token, ',')) {
+                this.advance();
+                token = this.peek();
+            }
             if (!isA_SymbolToken(token, 'let')
                 && !isA_ReservedSymbolToken(token, 'when')
-                && !isA_ReservedSymbolToken(token, 'while')) {
-                throw new LitsError('Expected symbol let, when or while', (_a = getTokenDebugData(token)) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
+                && !isA_ReservedSymbolToken(token, 'while')
+                && !isA_SymbolToken(token, 'do')
+                && !isA_ReservedSymbolToken(token, 'each')) {
+                throw new LitsError('Expected symbol each, do, let, when or while', (_b = getTokenDebugData(token)) === null || _b === void 0 ? void 0 : _b.sourceCodeInfo);
             }
             var letBindings;
             if (token[1] === 'let') {
@@ -7330,26 +7335,45 @@ var Playground = (function (exports) {
                     var letNode = this.parseLet(token, true);
                     letBindings.push(letNode.bs[0]);
                     token = this.peek();
+                    if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each') && !isA_OperatorToken(token, ',')) {
+                        throw new LitsError('Expected do, each or comma', (_c = getTokenDebugData(token)) === null || _c === void 0 ? void 0 : _c.sourceCodeInfo);
+                    }
+                    if (isA_OperatorToken(token, ',')) {
+                        this.advance();
+                    }
+                    token = this.peek();
                 }
             }
-            token = this.peek();
             var whenNode;
             var whileNode;
             while (isA_ReservedSymbolToken(token, 'when')
                 || isA_ReservedSymbolToken(token, 'while')) {
                 this.advance();
                 if (token[1] === 'when') {
+                    if (modifiers.includes('&when')) {
+                        throw new LitsError('Multiple when modifiers in for loop', (_d = getTokenDebugData(token)) === null || _d === void 0 ? void 0 : _d.sourceCodeInfo);
+                    }
                     modifiers.push('&when');
                     whenNode = this.parseExpression();
                 }
                 else {
+                    if (modifiers.includes('&while')) {
+                        throw new LitsError('Multiple while modifiers in for loop', (_e = getTokenDebugData(token)) === null || _e === void 0 ? void 0 : _e.sourceCodeInfo);
+                    }
                     modifiers.push('&while');
                     whileNode = this.parseExpression();
                 }
                 token = this.peek();
+                if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each') && !isA_OperatorToken(token, ',')) {
+                    throw new LitsError('Expected do or comma', (_f = getTokenDebugData(token)) === null || _f === void 0 ? void 0 : _f.sourceCodeInfo);
+                }
+                if (isA_OperatorToken(token, ',')) {
+                    this.advance();
+                }
+                token = this.peek();
             }
-            if (isA_OperatorToken(token, ',')) {
-                this.advance();
+            if (!isA_SymbolToken(token, 'do') && !isA_ReservedSymbolToken(this.peek(), 'each')) {
+                throw new LitsError('Expected do or each', (_g = getTokenDebugData(token)) === null || _g === void 0 ? void 0 : _g.sourceCodeInfo);
             }
             return {
                 b: bindingNode,
@@ -7360,14 +7384,10 @@ var Playground = (function (exports) {
             };
         };
         AlgebraicParser.prototype.parseBinding = function () {
-            var _a;
             var firstToken = asA_SymbolToken(this.peek());
             var name = firstToken[1];
             this.advance();
-            var ofSymbol = asA_SymbolToken(this.peek());
-            if (ofSymbol[1] !== 'of') {
-                throw new LitsError('Expected "of"', (_a = getTokenDebugData(this.peek())) === null || _a === void 0 ? void 0 : _a.sourceCodeInfo);
-            }
+            assertA_ReservedSymbolToken(this.peek(), 'in');
             this.advance();
             var value = this.parseExpression();
             var node = {

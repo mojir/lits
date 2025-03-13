@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { getLitsVariants } from '../../testUtils'
 
-const lits = getLitsVariants(false)
+const lits = getLitsVariants()
 
 describe('collection functions', () => {
   describe('count', () => {

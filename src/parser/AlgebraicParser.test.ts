@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from 'vitest'
 import { Lits } from '..'
 
-const lits = new Lits({ polish: false })
+const lits = new Lits()
 
 describe('algebraic operators', () => {
   describe('const E', () => {
@@ -344,7 +344,7 @@ describe('algebraic operators', () => {
 
   describe('debug', () => {
     test('samples', () => {
-      const litsDebug = new Lits({ debug: true, polish: false })
+      const litsDebug = new Lits({ debug: true })
       expect(litsDebug.run('2 + 3')).toBe(5)
       expect(litsDebug.tokenize('2 + 3').tokens).toEqual([
         [
@@ -601,7 +601,7 @@ describe('algebraic operators', () => {
   describe('do', () => {
     test('as operand', () => {
       expect(lits.run(`
-        do 
+        do
           let a := 1 + 2 * 3;
           a
         end + 3`)).toBe(10)
@@ -691,10 +691,10 @@ describe('algebraic operators', () => {
   describe('loop expressions', () => {
     it('supports loop expressions', () => {
       expect(lits.run(`
-        loop (
-          n := 10,
-          sum := 0
-        )
+        loop
+          let n := 10,
+          let sum := 0
+        do
           if n = 0 then
             sum
           else
@@ -762,10 +762,10 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
 
   test('doseq', () => {
     expect(lits.run(`
-      doseq (
-        x of "Al",
-        y of [1, 2]
-      )
+      doseq
+        each x in "Al"
+        each y in [1, 2]
+      do
         x repeat y
       end`)).toBe(null)
   })
@@ -773,37 +773,37 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
   describe('for', () => {
     test('empty collections', () => {
       expect(lits.run(`
-        for (x of [])
+        for each x in [] do
           x
         end`)).toEqual([])
       expect(lits.run(`
-        for (
-          x of [1, 2, 3],
-          y of []
-        )
+        for
+          each x in [1, 2, 3]
+          each y in []
+        do
           x
         end`)).toEqual([])
       expect(lits.run(`
-        for (
-          x of [],
-          y of [1, 2, 3]
-        )
+        for
+          each x in []
+          each y in [1, 2, 3]
+        do
           x
         end`)).toEqual([])
     })
     test('string and object iteration', () => {
       expect(lits.run(`
-        for (
-          x of "Al",
-          y of [1, 2]
-        )
+        for
+          each x in "Al"
+          each y in [1, 2]
+        do
           x repeat y
         end`)).toEqual([['A'], ['A', 'A'], ['l'], ['l', 'l']])
       expect(lits.run(`
-         for (
-           x of { a := 10, b := 20 },
-           y of [1, 2]
-         )
+         for
+           each x in { a := 10, b := 20 }
+           each y in [1, 2]
+         do
            repeat(x, y)
          end`)).toEqual([
         [['a', 10]],
@@ -821,46 +821,52 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     test('basic iteration with computation', () => {
       expect(lits.run(`
         for
-          (x of [1, 2],
-          y of [1, 10]
-        )
+          each x in [1, 2]
+          each y in [1, 10]
+        do
           x * y
         end`)).toEqual([1, 10, 2, 20])
     })
     test('with computed bindings using let', () => {
       expect(lits.run(`
-        for (x of [1, 2] let z := x * x * x)
+        for
+          each x in [1, 2], let z := x * x * x,
+        do
           z
         end`)).toEqual([1, 8])
     })
     test('using previous bindings of subsequent iterations', () => {
       expect(lits.run(`
-        for (
-          x of [1, 2],
-          y of [x, 2 * x]
-        )
+        for
+          each x in [1, 2]
+          each y in [x, 2 * x]
+        do
           x * y
         end`)).toEqual([1, 2, 4, 8])
     })
     test('with when conditions', () => {
       expect(lits.run(`
-        for (x of [0, 1, 2, 3, 4, 5] let y := x * 3 when even?(y))
+        for
+          each x in [0, 1, 2, 3, 4, 5], let a := x * 3, let y := a, when even?(y), while y < 10
+        do
           y
-        end`)).toEqual([0, 6, 12])
+        end`)).toEqual([0, 6])
     })
     test('with while conditions (early termination)', () => {
       expect(lits.run(`
-        for (x of [0, 1, 2, 3, 4, 5] let y := x * 3 while even?(y))
+        for
+          each x in [0, 1, 2, 3, 4, 5], let y := x * 3, while even?(y)
+        do
           y
         end`)).toEqual([0])
     })
     test('multiple iterations with while', () => {
       expect(lits.run(`
-          for (
-            x of [1, 2, 3],
-            y of [1, 2, 3] while x <= y,
-            z of [1, 2, 3]
-          )
+          for
+            each x in [1, 2, 3]
+            each y in [1, 2, 3], while x <= y
+            each z in [1, 2, 3]
+          do
             [x, y, z]
           end`)).toEqual([
         [1, 1, 1],
@@ -876,11 +882,11 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
     })
     test('complex example with three iterations', () => {
       expect(lits.run(`
-        for (
-          x of [1, 2, 3],
-          y of [1, 2, 3],
-          z of [1, 2, 3] while x <= y
-        )
+        for
+          each x in [1, 2, 3]
+          each y in [1, 2, 3]
+          each z in [1, 2, 3], while x <= y
+        do
           [x, y, z]
         end`)).toEqual([
         [1, 1, 1],
@@ -917,33 +923,33 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
         };
         
         // Generate personalized bundle recommendations
-        for (
+        for
           // Start with main products
-          mainProduct of products
-            let isInStock := mainProduct.stockLevel > 0
-            let isPreferredCategory := contains?(customerPreferences.preferredCategories, mainProduct.category)
-            let isPriceOk := mainProduct.price <= customerPreferences.priceLimit * 0.8
+          each mainProduct in products,
+            let isInStock := mainProduct.stockLevel > 0,
+            let isPreferredCategory := contains?(customerPreferences.preferredCategories, mainProduct.category),
+            let isPriceOk := mainProduct.price <= customerPreferences.priceLimit * 0.8,
             when (isInStock && isPreferredCategory && isPriceOk),
             
         
           // Add compatible accessories
-          accessory of products
-            let isCompatible := mainProduct.id != accessory.id && accessory.stockLevel > 0
-            let totalPrice := mainProduct.price + accessory.price
-            let isRecentlyViewed := contains?(customerPreferences.recentViews, accessory.id)
-            when (isCompatible && totalPrice <= customerPreferences.priceLimit)
+          each accessory in products,
+            let isCompatible := mainProduct.id != accessory.id && accessory.stockLevel > 0,
+            let totalPrice := mainProduct.price + accessory.price,
+            let isRecentlyViewed := contains?(customerPreferences.recentViews, accessory.id),
+            when (isCompatible && totalPrice <= customerPreferences.priceLimit),
             while totalPrice <= customerPreferences.priceLimit * 0.9,
         
           // For high-value bundles, consider a third complementary item
-          complItem of products
-            let isValid := mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0
-            let finalPrice := mainProduct.price + accessory.price + complItem.price
-            let discount := if finalPrice > 500 then 0.1 else 0.05 end
-            let discountedPrice := finalPrice * (1 - discount)
-            let matchesPreferences := contains?(customerPreferences.preferredCategories, complItem.category)
-            when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences)
-            while discountedPrice <= customerPreferences.priceLimit
-        )
+          each complItem in products,
+            let isValid := mainProduct.id != complItem.id && accessory.id != complItem.id && complItem.stockLevel > 0,
+            let finalPrice := mainProduct.price + accessory.price + complItem.price,
+            let discount := if finalPrice > 500 then 0.1 else 0.05 end,
+            let discountedPrice := finalPrice * (1 - discount),
+            let matchesPreferences := contains?(customerPreferences.preferredCategories, complItem.category),
+            when (isValid && finalPrice <= customerPreferences.priceLimit && matchesPreferences),
+            while discountedPrice <= customerPreferences.priceLimit,
+        do
           // Return bundle information object
           {
             bundle := [mainProduct, accessory, complItem],
@@ -1015,11 +1021,8 @@ foo(-1, 0, 1, 2, 3)`)).toBe(6)
       ])
     })
     test('error cases', () => {
-      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let y := x * 3 while even?(y), y)')).toThrow()
-      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5] let { x := 10 }, y)')).toThrow()
-      expect(() => lits.run('for x of [0, 1, 2, 3, 4, 5], y')).toThrow()
-      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5], x, y)')).toThrow()
-      expect(() => lits.run('for (x of [0, 1, 2, 3, 4, 5], x of [10, 20], x)')).toThrow()
+      expect(() => lits.run('for each x in [0, 1, 2, 3, 4, 5], let y := x * 3, while even?(y)  y end')).toThrow()
+      expect(() => lits.run('for each x in [0, 1, 2, 3, 4, 5], let { x := 10 } do y')).toThrow()
     })
   })
 

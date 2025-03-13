@@ -1,5 +1,5 @@
-; @test add
-(assert= (add 1 2) 3)
+// @test add
+assert=(add(1, 2), 3);
 
-; @test add
-(assert= (sub 1 2) -1)
+// @test add
+assert=(sub(1, 2), -1);

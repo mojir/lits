@@ -1,1 +1,1 @@
-(defn plus [a b] (+ a b))
+export function plus(a, b) a + b end;

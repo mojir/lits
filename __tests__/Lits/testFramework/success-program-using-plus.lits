@@ -1,5 +1,5 @@
-; @include plus-lib.lits
+// @include plus-lib.lits
 
-(defn add [a b] (plus a b))
-(defn sub [a b] (- a b))
-(assert plus)
+export function add(a, b) plus(a, b) end;
+export function sub(a, b) -(a, b) end;
+assert(plus);

@@ -1,5 +1,5 @@
-(def obj-a {:id :id1 :val :value1})
-(def obj-b {:id :id2 :val :value2})
+let obj-a := { id := "id1", val := "value1" };
+let obj-b := { id := "id2", val := "value2" };
 
-; @test equals
-(assert= obj-a obj-b)
+// @test equals
+assert=(obj-a, obj-b);

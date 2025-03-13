@@ -1,11 +1,11 @@
-; @include broken-plus-lib.lits
-; @include success-program-using-plus.lits
+// @include broken-plus-lib.lits
+// @include success-program-using-plus.lits
 
-; Setup code
-(def one 1)
+// Setup code
+export let one := 1
 
-; @test add
-(assert= (add one 2) 3)
+// @test add
+assert=(add(one, 2), 3);
 
-; @test sub
-(assert= (sub one 2) -1)
+// @test sub
+assert=(sub(one, 2), -1);
