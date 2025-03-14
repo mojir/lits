@@ -1,7 +1,7 @@
 import { AstNodeType } from '../constants/constants'
 import { LitsError } from '../errors'
 import { isNumberReservedSymbol, numberReservedSymbolRecord } from '../tokenizer/reservedNames'
-import { asRegexpShorthandToken, asStringToken, asToken, isA_BasePrefixedNumberToken, isA_NumberToken, isA_ReservedSymbolToken, isA_SymbolToken } from '../tokenizer/tokens'
+import { asRegexpShorthandToken, asStringToken, asToken, isBasePrefixedNumberToken, isNumberToken, isReservedSymbolToken, isSymbolToken } from '../tokenizer/tokens'
 import type { TokenStream } from '../tokenizer/interface'
 import { getTokenDebugData } from '../tokenizer/utils'
 import type {
@@ -16,7 +16,7 @@ import type {
 
 export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): SymbolNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
-  if (!isA_SymbolToken(tkn)) {
+  if (!isSymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
   if (tkn[1][0] !== '\'') {
@@ -60,11 +60,11 @@ export function parseSymbol(tokenStream: TokenStream, parseState: ParseState): S
 export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseState): ReservedSymbolNode | NumberNode {
   const tkn = asToken(tokenStream.tokens[parseState.position++])
 
-  if (!isA_ReservedSymbolToken(tkn)) {
+  if (!isReservedSymbolToken(tkn)) {
     throw new LitsError(`Expected symbol token, got ${tkn[0]}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
 
-  if (isA_ReservedSymbolToken(tkn)) {
+  if (isReservedSymbolToken(tkn)) {
     const symbol = tkn[1]
     if (isNumberReservedSymbol(symbol)) {
       return {
@@ -87,7 +87,7 @@ export function parseReservedSymbol(tokenStream: TokenStream, parseState: ParseS
 
 export function parseNumber(tokenStream: TokenStream, parseState: ParseState): NumberNode {
   const tkn = tokenStream.tokens[parseState.position++]
-  if (!isA_BasePrefixedNumberToken(tkn) && !isA_NumberToken(tkn)) {
+  if (!isBasePrefixedNumberToken(tkn) && !isNumberToken(tkn)) {
     throw new LitsError(`Expected number token, got ${tkn}`, getTokenDebugData(tkn)?.sourceCodeInfo)
   }
 

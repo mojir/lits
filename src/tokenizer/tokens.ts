@@ -9,20 +9,20 @@ import { throwUnexpectedToken } from './utils'
 export const tokenTypes = [
   'LBrace',
   'LBracket',
-  'LParen',
   'RBrace',
   'RBracket',
+  'LParen',
   'RParen',
-  'String',
+  'BasePrefixedNumber',
+  'MultiLineComment',
+  'Number',
+  'Operator',
   'RegexpShorthand',
-  'A_Whitespace',
-  'A_Operator',
-  'A_Symbol',
-  'A_ReservedSymbol',
-  'A_SingleLineComment',
-  'A_MultiLineComment',
-  'A_Number',
-  'A_BasePrefixedNumber',
+  'ReservedSymbol',
+  'SingleLineComment',
+  'String',
+  'Symbol',
+  'Whitespace',
 ] as const
 
 export type TokenType = typeof tokenTypes[number]
@@ -32,40 +32,41 @@ export type ModifierName = typeof modifierNames[number]
 
 type GenericAlgebraicValueToken<T extends TokenType, V extends string = string> = [T, V] | [T, V, TokenDebugData]
 
-export type A_WhitespaceToken = GenericAlgebraicValueToken<'A_Whitespace'>
-export type A_NumberToken = GenericAlgebraicValueToken<'A_Number'>
-export type A_BasePrefixedNumberToken = GenericAlgebraicValueToken<'A_BasePrefixedNumber'>
-export type A_OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericAlgebraicValueToken<'A_Operator', T>
-export type A_SymbolToken<T extends string = string> = GenericAlgebraicValueToken<'A_Symbol', T>
-export type A_ReservedSymbolToken<T extends ValidReservedSymbol = ValidReservedSymbol> = GenericAlgebraicValueToken<'A_ReservedSymbol', T>
-export type A_SingleLineCommentToken = GenericAlgebraicValueToken<'A_SingleLineComment'>
-export type A_MultiLineCommentToken = GenericAlgebraicValueToken<'A_MultiLineComment'>
-export type LParenToken = GenericAlgebraicValueToken<'LParen', '('>
-export type RParenToken = GenericAlgebraicValueToken<'RParen', ')'>
-export type LBracketToken = GenericAlgebraicValueToken<'LBracket', '['>
-export type RBracketToken = GenericAlgebraicValueToken<'RBracket', ']'>
 export type LBraceToken = GenericAlgebraicValueToken<'LBrace', '{'>
+export type LBracketToken = GenericAlgebraicValueToken<'LBracket', '['>
+export type LParenToken = GenericAlgebraicValueToken<'LParen', '('>
 export type RBraceToken = GenericAlgebraicValueToken<'RBrace', '}'>
-export type StringToken = GenericAlgebraicValueToken<'String'>
+export type RBracketToken = GenericAlgebraicValueToken<'RBracket', ']'>
+export type RParenToken = GenericAlgebraicValueToken<'RParen', ')'>
+
+export type BasePrefixedNumberToken = GenericAlgebraicValueToken<'BasePrefixedNumber'>
+export type MultiLineCommentToken = GenericAlgebraicValueToken<'MultiLineComment'>
+export type NumberToken = GenericAlgebraicValueToken<'Number'>
+export type OperatorToken<T extends SymbolicOperator = SymbolicOperator> = GenericAlgebraicValueToken<'Operator', T>
 export type RegexpShorthandToken = GenericAlgebraicValueToken<'RegexpShorthand'>
+export type ReservedSymbolToken<T extends ValidReservedSymbol = ValidReservedSymbol> = GenericAlgebraicValueToken<'ReservedSymbol', T>
+export type SingleLineCommentToken = GenericAlgebraicValueToken<'SingleLineComment'>
+export type StringToken = GenericAlgebraicValueToken<'String'>
+export type SymbolToken<T extends string = string> = GenericAlgebraicValueToken<'Symbol', T>
+export type WhitespaceToken = GenericAlgebraicValueToken<'Whitespace'>
 
 export type Token =
-  | LParenToken
-  | RParenToken
-  | LBracketToken
-  | RBracketToken
   | LBraceToken
+  | LBracketToken
+  | LParenToken
   | RBraceToken
-  | StringToken
+  | RBracketToken
+  | RParenToken
+  | BasePrefixedNumberToken
+  | MultiLineCommentToken
+  | NumberToken
+  | OperatorToken
   | RegexpShorthandToken
-  | A_WhitespaceToken
-  | A_NumberToken
-  | A_BasePrefixedNumberToken
-  | A_OperatorToken
-  | A_SymbolToken
-  | A_ReservedSymbolToken
-  | A_SingleLineCommentToken
-  | A_MultiLineCommentToken
+  | ReservedSymbolToken
+  | SingleLineCommentToken
+  | StringToken
+  | SymbolToken
+  | WhitespaceToken
 
 export function isTokenType(type: string): type is TokenType {
   return typeof type === 'string' && tokenTypes.includes(type as TokenType)
@@ -84,8 +85,8 @@ export function asToken(token?: Token): Token {
   return token
 }
 
-export function isA_SymbolToken<T extends string>(token: Token | undefined, symbolName?: T): token is A_SymbolToken<T> {
-  if (token?.[0] !== 'A_Symbol') {
+export function isSymbolToken<T extends string>(token: Token | undefined, symbolName?: T): token is SymbolToken<T> {
+  if (token?.[0] !== 'Symbol') {
     return false
   }
   if (symbolName && token[1] !== symbolName) {
@@ -94,18 +95,18 @@ export function isA_SymbolToken<T extends string>(token: Token | undefined, symb
   return true
 }
 
-export function assertA_SymbolToken<T extends string>(token: Token | undefined, symbolName?: T): asserts token is A_SymbolToken<T> {
-  if (!isA_SymbolToken(token, symbolName)) {
-    throwUnexpectedToken('A_Symbol', undefined, token)
+export function assertSymbolToken<T extends string>(token: Token | undefined, symbolName?: T): asserts token is SymbolToken<T> {
+  if (!isSymbolToken(token, symbolName)) {
+    throwUnexpectedToken('Symbol', undefined, token)
   }
 }
-export function asA_SymbolToken<T extends string>(token: Token | undefined, symbolName?: T): A_SymbolToken<T> {
-  assertA_SymbolToken(token, symbolName)
+export function asSymbolToken<T extends string>(token: Token | undefined, symbolName?: T): SymbolToken<T> {
+  assertSymbolToken(token, symbolName)
   return token
 }
 
-export function isA_ReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined, symbolName?: T): token is A_ReservedSymbolToken<T> {
-  if (token?.[0] !== 'A_ReservedSymbol') {
+export function isReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined, symbolName?: T): token is ReservedSymbolToken<T> {
+  if (token?.[0] !== 'ReservedSymbol') {
     return false
   }
   if (symbolName && token[1] !== symbolName) {
@@ -113,44 +114,44 @@ export function isA_ReservedSymbolToken<T extends ValidReservedSymbol>(token: To
   }
   return true
 }
-export function assertA_ReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined, symbolName?: T): asserts token is A_ReservedSymbolToken<T> {
-  if (!isA_ReservedSymbolToken(token, symbolName)) {
-    throwUnexpectedToken('A_ReservedSymbol', symbolName, token)
+export function assertReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined, symbolName?: T): asserts token is ReservedSymbolToken<T> {
+  if (!isReservedSymbolToken(token, symbolName)) {
+    throwUnexpectedToken('ReservedSymbol', symbolName, token)
   }
 }
-export function asA_ReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined, symbolName?: T): A_ReservedSymbolToken<T> {
-  assertA_ReservedSymbolToken(token, symbolName)
+export function asReservedSymbolToken<T extends ValidReservedSymbol>(token: Token | undefined, symbolName?: T): ReservedSymbolToken<T> {
+  assertReservedSymbolToken(token, symbolName)
   return token
 }
 
-export function isA_CommentToken(token: Token | undefined): token is A_SingleLineCommentToken {
-  return token?.[0] === 'A_SingleLineComment'
+export function isA_CommentToken(token: Token | undefined): token is SingleLineCommentToken {
+  return token?.[0] === 'SingleLineComment'
 }
-export function assertA_CommentToken(token: Token | undefined): asserts token is A_SingleLineCommentToken {
+export function assertA_CommentToken(token: Token | undefined): asserts token is SingleLineCommentToken {
   if (!isA_CommentToken(token)) {
-    throwUnexpectedToken('A_SingleLineComment', undefined, token)
+    throwUnexpectedToken('SingleLineComment', undefined, token)
   }
 }
-export function asA_CommentToken(token: Token | undefined): A_SingleLineCommentToken {
+export function asA_CommentToken(token: Token | undefined): SingleLineCommentToken {
   assertA_CommentToken(token)
   return token
 }
 
-export function isA_MultiLineCommentToken(token: Token | undefined): token is A_MultiLineCommentToken {
-  return token?.[0] === 'A_MultiLineComment'
+export function isMultiLineCommentToken(token: Token | undefined): token is MultiLineCommentToken {
+  return token?.[0] === 'MultiLineComment'
 }
-export function assertA_MultiLineCommentToken(token: Token | undefined): asserts token is A_MultiLineCommentToken {
-  if (!isA_MultiLineCommentToken(token)) {
-    throwUnexpectedToken('A_MultiLineComment', undefined, token)
+export function assertMultiLineCommentToken(token: Token | undefined): asserts token is MultiLineCommentToken {
+  if (!isMultiLineCommentToken(token)) {
+    throwUnexpectedToken('MultiLineComment', undefined, token)
   }
 }
-export function asA_MultiLineCommentToken(token: Token | undefined): A_MultiLineCommentToken {
-  assertA_MultiLineCommentToken(token)
+export function asMultiLineCommentToken(token: Token | undefined): MultiLineCommentToken {
+  assertMultiLineCommentToken(token)
   return token
 }
 
-export function isA_OperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): token is A_OperatorToken<T> {
-  if (token?.[0] !== 'A_Operator') {
+export function isOperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): token is OperatorToken<T> {
+  if (token?.[0] !== 'Operator') {
     return false
   }
   if (operatorName && token[1] !== operatorName) {
@@ -158,55 +159,55 @@ export function isA_OperatorToken<T extends SymbolicOperator>(token: Token | und
   }
   return true
 }
-export function assertA_OperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): asserts token is A_OperatorToken<T> {
-  if (!isA_OperatorToken(token, operatorName)) {
+export function assertOperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): asserts token is OperatorToken<T> {
+  if (!isOperatorToken(token, operatorName)) {
     if (operatorName) {
       throw new LitsError(`Unexpected token: ${token}, expected operator ${operatorName}`, undefined)
     }
-    throwUnexpectedToken('A_Operator', operatorName, token)
+    throwUnexpectedToken('Operator', operatorName, token)
   }
 }
-export function asA_OperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): A_OperatorToken<T> {
-  assertA_OperatorToken(token, operatorName)
+export function asOperatorToken<T extends SymbolicOperator>(token: Token | undefined, operatorName?: T): OperatorToken<T> {
+  assertOperatorToken(token, operatorName)
   return token
 }
 
-export function isA_WhitespaceToken(token: Token | undefined): token is A_WhitespaceToken {
-  return token?.[0] === 'A_Whitespace'
+export function isWhitespaceToken(token: Token | undefined): token is WhitespaceToken {
+  return token?.[0] === 'Whitespace'
 }
-export function assertA_WhitespaceToken(token: Token | undefined): asserts token is A_WhitespaceToken {
-  if (!isA_WhitespaceToken(token)) {
-    throwUnexpectedToken('A_Whitespace', undefined, token)
+export function assertWhitespaceToken(token: Token | undefined): asserts token is WhitespaceToken {
+  if (!isWhitespaceToken(token)) {
+    throwUnexpectedToken('Whitespace', undefined, token)
   }
 }
-export function asA_WhitespaceToken(token: Token | undefined): A_WhitespaceToken {
-  assertA_WhitespaceToken(token)
+export function asWhitespaceToken(token: Token | undefined): WhitespaceToken {
+  assertWhitespaceToken(token)
   return token
 }
 
-export function isA_NumberToken(token: Token | undefined): token is A_NumberToken {
-  return token?.[0] === 'A_Number'
+export function isNumberToken(token: Token | undefined): token is NumberToken {
+  return token?.[0] === 'Number'
 }
-export function assertA_NumberToken(token: Token | undefined): asserts token is A_NumberToken {
-  if (!isA_NumberToken(token)) {
-    throwUnexpectedToken('A_Number', undefined, token)
+export function assertNumberToken(token: Token | undefined): asserts token is NumberToken {
+  if (!isNumberToken(token)) {
+    throwUnexpectedToken('Number', undefined, token)
   }
 }
-export function asA_NumberToken(token: Token | undefined): A_NumberToken {
-  assertA_NumberToken(token)
+export function asNumberToken(token: Token | undefined): NumberToken {
+  assertNumberToken(token)
   return token
 }
 
-export function isA_BasePrefixedNumberToken(token: Token | undefined): token is A_BasePrefixedNumberToken {
-  return token?.[0] === 'A_BasePrefixedNumber'
+export function isBasePrefixedNumberToken(token: Token | undefined): token is BasePrefixedNumberToken {
+  return token?.[0] === 'BasePrefixedNumber'
 }
-export function assertA_BasePrefixedNumberToken(token: Token | undefined): asserts token is A_BasePrefixedNumberToken {
-  if (!isA_BasePrefixedNumberToken(token)) {
-    throwUnexpectedToken('A_BasePrefixedNumber', undefined, token)
+export function assertBasePrefixedNumberToken(token: Token | undefined): asserts token is BasePrefixedNumberToken {
+  if (!isBasePrefixedNumberToken(token)) {
+    throwUnexpectedToken('BasePrefixedNumber', undefined, token)
   }
 }
-export function asA_BasePrefixedNumberToken(token: Token | undefined): A_BasePrefixedNumberToken {
-  assertA_BasePrefixedNumberToken(token)
+export function asBasePrefixedNumberToken(token: Token | undefined): BasePrefixedNumberToken {
+  assertBasePrefixedNumberToken(token)
   return token
 }
 

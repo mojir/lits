@@ -1,51 +1,51 @@
 import { describe, expect, it } from 'vitest'
-import { NO_MATCH, tokenizeA_BasePrefixedNumber, tokenizeA_MultiLineComment, tokenizeA_Number, tokenizeA_Operator, tokenizeA_SingleLineComment, tokenizeA_Symbol } from './tokenizers'
+import { NO_MATCH, tokenizeBasePrefixedNumber, tokenizeMultiLineComment, tokenizeNumber, tokenizeOperator, tokenizeSingleLineComment, tokenizeSymbol } from './tokenizers'
 
 describe('algebraicTokenizers', () => {
-  describe('tokenizeA_SingleLineComment', () => {
+  describe('tokenizeSingleLineComment', () => {
     it('should tokenize inline comment', () => {
-      expect(tokenizeA_SingleLineComment('// comment', 0)).toEqual([10, ['A_SingleLineComment', '// comment']])
-      expect(tokenizeA_SingleLineComment('... // comment', 4)).toEqual([10, ['A_SingleLineComment', '// comment']])
-      expect(tokenizeA_SingleLineComment('... // comment\n...', 4)).toEqual([10, ['A_SingleLineComment', '// comment']])
+      expect(tokenizeSingleLineComment('// comment', 0)).toEqual([10, ['SingleLineComment', '// comment']])
+      expect(tokenizeSingleLineComment('... // comment', 4)).toEqual([10, ['SingleLineComment', '// comment']])
+      expect(tokenizeSingleLineComment('... // comment\n...', 4)).toEqual([10, ['SingleLineComment', '// comment']])
     })
   })
-  describe('tokenizeA_MultiLineComment', () => {
+  describe('tokenizeMultiLineComment', () => {
     it('should tokenize block comment', () => {
-      expect(tokenizeA_MultiLineComment('/* comment */', 0)).toEqual([13, ['A_MultiLineComment', '/* comment */']])
-      expect(tokenizeA_MultiLineComment('... /* comment */', 4)).toEqual([13, ['A_MultiLineComment', '/* comment */']])
-      expect(tokenizeA_MultiLineComment('... /* comment \n comment */ ...', 4))
-        .toEqual([23, ['A_MultiLineComment', '/* comment \n comment */']])
+      expect(tokenizeMultiLineComment('/* comment */', 0)).toEqual([13, ['MultiLineComment', '/* comment */']])
+      expect(tokenizeMultiLineComment('... /* comment */', 4)).toEqual([13, ['MultiLineComment', '/* comment */']])
+      expect(tokenizeMultiLineComment('... /* comment \n comment */ ...', 4))
+        .toEqual([23, ['MultiLineComment', '/* comment \n comment */']])
     })
   })
-  describe('tokenizeA_Symbol', () => {
+  describe('tokenizeSymbol', () => {
     it('should tokenize symbol', () => {
-      expect(tokenizeA_Symbol('symbol', 0)).toEqual([6, ['A_Symbol', 'symbol']])
-      expect(tokenizeA_Symbol('A:B', 0)).toEqual([3, ['A_Symbol', 'A:B']])
-      expect(tokenizeA_Symbol('Grid1!A:B', 0)).toEqual([9, ['A_Symbol', 'Grid1!A:B']])
-      expect(tokenizeA_Symbol('number?', 0)).toEqual([7, ['A_Symbol', 'number?']])
-      expect(tokenizeA_Symbol('... A-B', 4)).toEqual([3, ['A_Symbol', 'A-B']])
-      expect(tokenizeA_Symbol('... \'A B\'', 4)).toEqual([5, ['A_Symbol', '\'A B\'']])
-      expect(tokenizeA_Symbol('... \'A\\\'B\'', 4)).toEqual([6, ['A_Symbol', '\'A\\\'B\'']])
+      expect(tokenizeSymbol('symbol', 0)).toEqual([6, ['Symbol', 'symbol']])
+      expect(tokenizeSymbol('A:B', 0)).toEqual([3, ['Symbol', 'A:B']])
+      expect(tokenizeSymbol('Grid1!A:B', 0)).toEqual([9, ['Symbol', 'Grid1!A:B']])
+      expect(tokenizeSymbol('number?', 0)).toEqual([7, ['Symbol', 'number?']])
+      expect(tokenizeSymbol('... A-B', 4)).toEqual([3, ['Symbol', 'A-B']])
+      expect(tokenizeSymbol('... \'A B\'', 4)).toEqual([5, ['Symbol', '\'A B\'']])
+      expect(tokenizeSymbol('... \'A\\\'B\'', 4)).toEqual([6, ['Symbol', '\'A\\\'B\'']])
     })
   })
-  describe('tokenizeA_Operator', () => {
+  describe('tokenizeOperator', () => {
     it('should tokenize operator', () => {
-      expect(tokenizeA_Operator('>>>', 0)).toEqual([3, ['A_Operator', '>>>']])
-      expect(tokenizeA_Operator('<=', 0)).toEqual([2, ['A_Operator', '<=']])
-      expect(tokenizeA_Operator('...', 4)).toEqual(NO_MATCH)
+      expect(tokenizeOperator('>>>', 0)).toEqual([3, ['Operator', '>>>']])
+      expect(tokenizeOperator('<=', 0)).toEqual([2, ['Operator', '<=']])
+      expect(tokenizeOperator('...', 4)).toEqual(NO_MATCH)
     })
   })
-  describe('tokenizeA_Number', () => {
+  describe('tokenizeNumber', () => {
     it('should tokenize operator', () => {
-      expect(tokenizeA_Number('1', 0)).toEqual([1, ['A_Number', '1']])
-      expect(tokenizeA_BasePrefixedNumber('0xF', 0)).toEqual([3, ['A_BasePrefixedNumber', '0xF']])
-      expect(tokenizeA_BasePrefixedNumber('0o7', 0)).toEqual([3, ['A_BasePrefixedNumber', '0o7']])
-      expect(tokenizeA_BasePrefixedNumber('0b1100', 0)).toEqual([6, ['A_BasePrefixedNumber', '0b1100']])
-      expect(tokenizeA_Number('-1', 0)).toEqual([2, ['A_Number', '-1']])
-      expect(tokenizeA_Number('1.12', 0)).toEqual([4, ['A_Number', '1.12']])
-      expect(tokenizeA_Number('-1.12', 0)).toEqual([5, ['A_Number', '-1.12']])
-      expect(tokenizeA_Number('1_000', 0)).toEqual([5, ['A_Number', '1_000']])
-      expect(tokenizeA_Number('.12', 0)).toEqual([0])
+      expect(tokenizeNumber('1', 0)).toEqual([1, ['Number', '1']])
+      expect(tokenizeBasePrefixedNumber('0xF', 0)).toEqual([3, ['BasePrefixedNumber', '0xF']])
+      expect(tokenizeBasePrefixedNumber('0o7', 0)).toEqual([3, ['BasePrefixedNumber', '0o7']])
+      expect(tokenizeBasePrefixedNumber('0b1100', 0)).toEqual([6, ['BasePrefixedNumber', '0b1100']])
+      expect(tokenizeNumber('-1', 0)).toEqual([2, ['Number', '-1']])
+      expect(tokenizeNumber('1.12', 0)).toEqual([4, ['Number', '1.12']])
+      expect(tokenizeNumber('-1.12', 0)).toEqual([5, ['Number', '-1.12']])
+      expect(tokenizeNumber('1_000', 0)).toEqual([5, ['Number', '1_000']])
+      expect(tokenizeNumber('.12', 0)).toEqual([0])
     })
   })
 })

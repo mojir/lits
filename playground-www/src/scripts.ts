@@ -680,7 +680,7 @@ window.addEventListener('popstate', () => {
 })
 
 function truncateCode(code: string, count = 1000) {
-  const oneLiner = getLits().tokenize(code, { minify: true }).tokens.map(t => t[0] === 'A_Whitespace' ? ' ' : t[1]).join('').trim()
+  const oneLiner = getLits().tokenize(code, { minify: true }).tokens.map(t => t[0] === 'Whitespace' ? ' ' : t[1]).join('').trim()
   if (oneLiner.length <= count)
     return oneLiner
   else

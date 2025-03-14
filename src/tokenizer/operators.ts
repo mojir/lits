@@ -1,5 +1,5 @@
 import { LitsError } from '../errors'
-import type { A_OperatorToken, Token } from './tokens'
+import type { OperatorToken, Token } from './tokens'
 import { throwUnexpectedToken } from './utils'
 
 const binaryOperators = [
@@ -110,15 +110,15 @@ export function asSymbolicOperator(operator: string): SymbolicOperator {
   return operator
 }
 
-export function isA_BinaryOperatorToken(token: Token | undefined): token is A_OperatorToken<SymbolicBinaryOperator> {
-  return token?.[0] === 'A_Operator' && isBinaryOperator(token[1])
+export function isA_BinaryOperatorToken(token: Token | undefined): token is OperatorToken<SymbolicBinaryOperator> {
+  return token?.[0] === 'Operator' && isBinaryOperator(token[1])
 }
-export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is A_OperatorToken<SymbolicBinaryOperator> {
+export function assertA_BinaryOperatorToken(token: Token | undefined): asserts token is OperatorToken<SymbolicBinaryOperator> {
   if (!isA_BinaryOperatorToken(token)) {
-    throwUnexpectedToken('A_Operator', undefined, token)
+    throwUnexpectedToken('Operator', undefined, token)
   }
 }
-export function asA_BinaryOperatorToken(token: Token | undefined): A_OperatorToken<SymbolicBinaryOperator> {
+export function asA_BinaryOperatorToken(token: Token | undefined): OperatorToken<SymbolicBinaryOperator> {
   assertA_BinaryOperatorToken(token)
   return token
 }

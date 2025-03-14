@@ -105,19 +105,19 @@ function getStylesFromToken(token: Token): string {
       return styles('text-color-Pink')
     case 'RegexpShorthand':
       return styles('text-color-Pink')
-    case 'A_Symbol':
+    case 'Symbol':
       return styles('text-color-Mint')
-    case 'A_BasePrefixedNumber':
-    case 'A_Number':
+    case 'BasePrefixedNumber':
+    case 'Number':
       return styles('text-color-Beige')
-    case 'A_SingleLineComment':
-    case 'A_MultiLineComment':
+    case 'SingleLineComment':
+    case 'MultiLineComment':
       return styles('text-color-gray-500', 'italic')
-    case 'A_Operator':
+    case 'Operator':
       return styles('text-color-gray-200')
-    case 'A_ReservedSymbol':
+    case 'ReservedSymbol':
       return styles('text-color-gray-200')
-    case 'A_Whitespace':
+    case 'Whitespace':
       return ''
     case 'LBrace':
     case 'RBrace':

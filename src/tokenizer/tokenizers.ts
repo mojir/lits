@@ -1,7 +1,7 @@
 import { LitsError } from '../errors'
 import type { TokenDescriptor, Tokenizer } from './interface'
 import { isSymbolicOperator } from './operators'
-import type { A_BasePrefixedNumberToken, A_MultiLineCommentToken, A_NumberToken, A_OperatorToken, A_ReservedSymbolToken, A_SingleLineCommentToken, A_SymbolToken, A_WhitespaceToken, LBraceToken, LBracketToken, LParenToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, StringToken, Token } from './tokens'
+import type { BasePrefixedNumberToken, LBraceToken, LBracketToken, LParenToken, MultiLineCommentToken, NumberToken, OperatorToken, RBraceToken, RBracketToken, RParenToken, RegexpShorthandToken, ReservedSymbolToken, SingleLineCommentToken, StringToken, SymbolToken, Token, WhitespaceToken } from './tokens'
 import type { AlgebraicReservedSymbol, ValidReservedSymbol } from './reservedNames'
 import { algebraicReservedSymbolRecord } from './reservedNames'
 
@@ -121,7 +121,7 @@ function tokenizeToken<T extends Token>(
     return NO_MATCH
 }
 
-export const tokenizeA_Whitespace: Tokenizer<A_WhitespaceToken> = (input, position) => {
+export const tokenizeWhitespace: Tokenizer<WhitespaceToken> = (input, position) => {
   let char = input[position]
   if (!char || !whitespaceRegExp.test(char)) {
     return NO_MATCH
@@ -134,7 +134,7 @@ export const tokenizeA_Whitespace: Tokenizer<A_WhitespaceToken> = (input, positi
     position += 1
     char = input[position]
   }
-  return [value.length, ['A_Whitespace', value]]
+  return [value.length, ['Whitespace', value]]
 }
 
 const decimalNumberRegExp = /\d/
@@ -142,7 +142,7 @@ const octalNumberRegExp = /[0-7]/
 const hexNumberRegExp = /[0-9a-f]/i
 const binaryNumberRegExp = /[01]/
 
-export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
+export const tokenizeNumber: Tokenizer<NumberToken> = (input, position) => {
   let i: number
   const negate = input[position] === '-'
   const plusPrefix = input[position] === '+'
@@ -195,10 +195,10 @@ export const tokenizeA_Number: Tokenizer<A_NumberToken> = (input, position) => {
     return NO_MATCH
   }
 
-  return [length, ['A_Number', input.substring(position, i)]]
+  return [length, ['Number', input.substring(position, i)]]
 }
 
-export const tokenizeA_BasePrefixedNumber: Tokenizer<A_BasePrefixedNumberToken> = (input, position) => {
+export const tokenizeBasePrefixedNumber: Tokenizer<BasePrefixedNumberToken> = (input, position) => {
   if (input[position] !== '0') {
     return NO_MATCH
   }
@@ -236,10 +236,10 @@ export const tokenizeA_BasePrefixedNumber: Tokenizer<A_BasePrefixedNumberToken> 
     return NO_MATCH
   }
 
-  return [length, ['A_BasePrefixedNumber', input.substring(position, i)]]
+  return [length, ['BasePrefixedNumber', input.substring(position, i)]]
 }
 
-export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
+export const tokenizeSymbol: Tokenizer<SymbolToken> = (input, position) => {
   let value = input[position]
 
   if (!value) {
@@ -268,7 +268,7 @@ export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
       char = input[position + length]
     }
     value += '\'' // closing quote
-    return [length + 1, ['A_Symbol', value]]
+    return [length + 1, ['Symbol', value]]
   }
 
   if (!illegalFirstSymbolCharacterSet.has(value)) {
@@ -281,14 +281,14 @@ export const tokenizeA_Symbol: Tokenizer<A_SymbolToken> = (input, position) => {
       position += 1
       char = input[position]
     }
-    return [position - initialPosition, ['A_Symbol', value]]
+    return [position - initialPosition, ['Symbol', value]]
   }
 
   return NO_MATCH
 }
 
-export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (input, position) => {
-  const symbolMeta = tokenizeA_Symbol(input, position)
+export const tokenizeReservedSymbolToken: Tokenizer<ReservedSymbolToken> = (input, position) => {
+  const symbolMeta = tokenizeSymbol(input, position)
   if (symbolMeta[0] === 0 || !symbolMeta[1]) {
     return NO_MATCH
   }
@@ -299,28 +299,28 @@ export const tokenizeA_ReservedSymbolToken: Tokenizer<A_ReservedSymbolToken> = (
   if (info === undefined) {
     return NO_MATCH
   }
-  return [symbolMeta[0], ['A_ReservedSymbol', symbolName as ValidReservedSymbol]]
+  return [symbolMeta[0], ['ReservedSymbol', symbolName as ValidReservedSymbol]]
 }
 
-export const tokenizeA_Operator: Tokenizer<A_OperatorToken> = (input, position) => {
+export const tokenizeOperator: Tokenizer<OperatorToken> = (input, position) => {
   const threeChars = input.slice(position, position + 3)
   if (position + 2 < input.length && isSymbolicOperator(threeChars)) {
-    return [3, ['A_Operator', threeChars]]
+    return [3, ['Operator', threeChars]]
   }
 
   const twoChars = input.slice(position, position + 2)
   if (position + 1 < input.length && isSymbolicOperator(twoChars)) {
-    return [2, ['A_Operator', twoChars]]
+    return [2, ['Operator', twoChars]]
   }
 
   const oneChar = input[position] ?? ''
   if (isSymbolicOperator(oneChar)) {
-    return [1, ['A_Operator', oneChar]]
+    return [1, ['Operator', oneChar]]
   }
   return NO_MATCH
 }
 
-export const tokenizeA_MultiLineComment: Tokenizer<A_MultiLineCommentToken> = (input, position) => {
+export const tokenizeMultiLineComment: Tokenizer<MultiLineCommentToken> = (input, position) => {
   if (input[position] === '/' && input[position + 1] === '*') {
     let length = 2
     let value = '/*'
@@ -334,12 +334,12 @@ export const tokenizeA_MultiLineComment: Tokenizer<A_MultiLineCommentToken> = (i
     value += '*/'
     length += 2
 
-    return [length, ['A_MultiLineComment', value]]
+    return [length, ['MultiLineComment', value]]
   }
   return NO_MATCH
 }
 
-export const tokenizeA_SingleLineComment: Tokenizer<A_SingleLineCommentToken> = (input, position) => {
+export const tokenizeSingleLineComment: Tokenizer<SingleLineCommentToken> = (input, position) => {
   if (input[position] === '/' && input[position + 1] === '/') {
     let length = 2
     let value = '//'
@@ -348,17 +348,17 @@ export const tokenizeA_SingleLineComment: Tokenizer<A_SingleLineCommentToken> = 
       length += 1
     }
 
-    return [length, ['A_SingleLineComment', value]]
+    return [length, ['SingleLineComment', value]]
   }
   return NO_MATCH
 }
 
 // All tokenizers, order matters!
 export const tokenizers = [
-  tokenizeA_Whitespace,
-  tokenizeA_MultiLineComment,
-  tokenizeA_SingleLineComment,
-  tokenizeA_ReservedSymbolToken,
+  tokenizeWhitespace,
+  tokenizeMultiLineComment,
+  tokenizeSingleLineComment,
+  tokenizeReservedSymbolToken,
   tokenizeLParen,
   tokenizeRParen,
   tokenizeLBracket,
@@ -367,8 +367,8 @@ export const tokenizers = [
   tokenizeRBrace,
   tokenizeString,
   tokenizeRegexpShorthand,
-  tokenizeA_BasePrefixedNumber,
-  tokenizeA_Number,
-  tokenizeA_Operator,
-  tokenizeA_Symbol,
+  tokenizeBasePrefixedNumber,
+  tokenizeNumber,
+  tokenizeOperator,
+  tokenizeSymbol,
 ] as const satisfies Tokenizer<Token>[]

@@ -267,7 +267,7 @@ describe('algebraic operators', () => {
       expect(lits.run('5')).toBe(5)
       expect(lits.run('-10')).toBe(-10)
       expect(lits.tokenize('-10').tokens).toEqual([
-        ['A_Number', '-10'],
+        ['Number', '-10'],
       ])
     })
   })
@@ -348,7 +348,7 @@ describe('algebraic operators', () => {
       expect(litsDebug.run('2 + 3')).toBe(5)
       expect(litsDebug.tokenize('2 + 3').tokens).toEqual([
         [
-          'A_Number',
+          'Number',
           '2',
           {
             sourceCodeInfo: {
@@ -361,7 +361,7 @@ describe('algebraic operators', () => {
           },
         ],
         [
-          'A_Whitespace',
+          'Whitespace',
           ' ',
           {
             sourceCodeInfo: {
@@ -374,7 +374,7 @@ describe('algebraic operators', () => {
           },
         ],
         [
-          'A_Operator',
+          'Operator',
           '+',
           {
             sourceCodeInfo: {
@@ -387,7 +387,7 @@ describe('algebraic operators', () => {
           },
         ],
         [
-          'A_Whitespace',
+          'Whitespace',
           ' ',
           {
             sourceCodeInfo: {
@@ -400,7 +400,7 @@ describe('algebraic operators', () => {
           },
         ],
         [
-          'A_Number',
+          'Number',
           '3',
           {
             sourceCodeInfo: {
@@ -416,7 +416,7 @@ describe('algebraic operators', () => {
       expect(litsDebug.run('-2')).toBe(-2)
       expect(litsDebug.tokenize('-2').tokens).toEqual([
         [
-          'A_Number',
+          'Number',
           '-2',
           {
             sourceCodeInfo: {
